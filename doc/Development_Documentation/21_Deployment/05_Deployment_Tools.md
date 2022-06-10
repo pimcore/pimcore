@@ -21,7 +21,7 @@ be added to version control systems and be deployed to different deployment stag
 
 The PHP configuration files and PHP classes will be written to the `var/classes` directory by default.
 
-To disallow modification and turn a class into be read-only, you can create a copy
+To disallow modification and turn a class to be read-only, you can create a copy
 at `config/pimcore/classes`.
 However, it is possible to re-enable write access and update class definitions in `config/pimcore/classes` by setting the env variable `PIMCORE_CLASS_DEFINITION_WRITABLE=1`.
 
