@@ -284,7 +284,9 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                     text: t("add_layout"),
                     iconCls: "pimcore_icon_add",
                     handler: this.suggestIdentifier.bind(this),
-                    hidden: typeof this.klass.id === 'undefined'
+                    hidden: typeof this.klass.id === 'undefined',
+                    //TODO: find a way to pass the ENV
+                    //disabled: true
                 },
                 {
                     xtype: "button",

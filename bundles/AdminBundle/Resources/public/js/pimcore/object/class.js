@@ -92,7 +92,9 @@ pimcore.object.klass = Class.create({
                         {
                             text: t("add"),
                             iconCls: "pimcore_icon_class pimcore_icon_overlay_add",
-                            handler: this.suggestIdentifier.bind(this)
+                            handler: this.suggestIdentifier.bind(this),
+                            //TODO: should be based on isWriteable/PIMCORE_CLASS_DEFINITION_WRITABLE
+                            //disabled: true
                         }
                     ]
                 }

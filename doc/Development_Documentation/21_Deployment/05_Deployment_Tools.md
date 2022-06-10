@@ -19,10 +19,14 @@ can be defined.
 As with Pimcore configurations also Pimcore class definitions are saved as PHP configuration files and therefore can
 be added to version control systems and be deployed to different deployment stages.
 
-The PHP configuration files and PHP classes will be written to the `var/classes` directory by default. However, you can create a copy
-at `config/pimcore/classes` which is then read-only.
-You can set the env variable `PIMCORE_CLASS_DEFINITION_WRITABLE=1` to
-enable write access and update your class definitions in `config/pimcore/classes`.
+The PHP configuration files and PHP classes will be written to the `var/classes` directory by default.
+
+To disallow modification and turn a class into be read-only, you can create a copy
+at `config/pimcore/classes`.
+However, it is possible to re-enable write access and update class definitions in `config/pimcore/classes` by setting the env variable `PIMCORE_CLASS_DEFINITION_WRITABLE=1`.
+
+You can also set the env variable `PIMCORE_CLASS_DEFINITION_WRITABLE=0` to completely disable write access. 
+The difference between `0` and not having the env variable set is that with `0` you can also disable the creation of new classes, while without setting the `PIMCORE_CLASS_DEFINITION_WRITABLE`, you would be allowed to create new classes. 
 
 > **Note**: Changes on Pimcore class definitions not only have influence to configuration files but also on the database.
 > If deploying changes between different deployment stages also database changes need to be deployed. This can be done
