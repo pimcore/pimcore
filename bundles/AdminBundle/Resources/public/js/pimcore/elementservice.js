@@ -123,8 +123,14 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
 
         let ids = Ext.isString(id) ? id.split(',') : [id];
         ids.forEach(function (elementId) {
+           try {
+                pimcore.plugin.broker.fireEvent(preDeleteEventName, elementId);
+            } catch (e) {
+                pimcore.helpers.showPrettyError('asset', t("error"), t("delete_failed"), e.message);
+                return false;
+            }
+
             pimcore.helpers.addTreeNodeLoadingIndicator(elementType, elementId);
-            pimcore.plugin.broker.fireEvent(preDeleteEventName, elementId);
         });
 
         var affectedNodes = pimcore.elementservice.getAffectedNodes(elementType, id);
