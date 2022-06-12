@@ -35,6 +35,11 @@ trait RuntimeCacheTrait
      */
     public static function setCacheEnabled(bool $cacheEnabled): void
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use \Pimcore\Cache\Runtime::set() instead.', __METHOD__)
+        );
         self::$cacheEnabled = $cacheEnabled;
     }
 
@@ -44,6 +49,11 @@ trait RuntimeCacheTrait
      */
     public static function getCacheEnabled(): bool
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use \Pimcore\Cache\Runtime::set() instead.', __METHOD__)
+        );
         return self::$cacheEnabled;
     }
 
@@ -56,6 +66,11 @@ trait RuntimeCacheTrait
      */
     private static function setCache(mixed $config, string $cacheKey): void
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use \Pimcore\Cache\Runtime::set() and \Pimcore\Cache::save() instead.', __METHOD__)
+        );
         if (self::$cacheEnabled) {
             Cache\Runtime::set($cacheKey, $config);
         }
@@ -71,6 +86,11 @@ trait RuntimeCacheTrait
      */
     private static function removeCache(string $cacheKey): void
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use \Pimcore\Cache\Runtime::set() and \Pimcore\Cache::remove() instead.', __METHOD__)
+        );
         Cache::remove($cacheKey);
         Cache\Runtime::set($cacheKey, null);
     }
@@ -87,6 +107,12 @@ trait RuntimeCacheTrait
      */
     private static function getCache(string $cacheKey): mixed
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use \Pimcore\Cache\Runtime::get() and \Pimcore\Cache::load() instead.', __METHOD__)
+        );
+
         if (self::$cacheEnabled && Cache\Runtime::isRegistered($cacheKey) && $config = Cache\Runtime::get($cacheKey)) {
             return $config;
         }
