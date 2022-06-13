@@ -175,7 +175,9 @@ class Service extends Model\AbstractModel
      * @param Dependency $d
      * @param int|null $offset
      * @param int|null $limit
+     *
      * @return array
+     *
      * @internal
      *
      */
@@ -202,7 +204,9 @@ class Service extends Model\AbstractModel
      * @param Dependency $d
      * @param int|null $offset
      * @param int|null $limit
+     *
      * @return array
+     *
      * @internal
      *
      */
