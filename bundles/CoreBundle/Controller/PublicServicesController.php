@@ -246,7 +246,7 @@ class PublicServicesController extends Controller
 
         $customAdminPathIdentifier = $this->getParameter('pimcore_admin.custom_admin_path_identifier');
         if (!empty($customAdminPathIdentifier) && $request->cookies->get('pimcore_custom_admin') != $customAdminPathIdentifier) {
-            $redirect->headers->setCookie(new Cookie('pimcore_custom_admin', $customAdminPathIdentifier, strtotime('+1 year'), '/', null, false, true));
+            $redirect->headers->setCookie(new Cookie('pimcore_custom_admin', $customAdminPathIdentifier, strtotime('+1 year')));
         }
 
         return $redirect;

@@ -114,7 +114,7 @@ class LogoutListener implements EventSubscriberInterface, LoggerAwareInterface
         }
 
         // cleanup pimcore-cookies => 315554400 => strtotime('1980-01-01')
-        $response->headers->setCookie(new Cookie('pimcore_opentabs', null, 315554400, '/'));
+        $response->headers->setCookie(new Cookie('pimcore_opentabs', null, 315554400));
         $response->headers->clearCookie('pimcore_admin_sid', '/', null, false, true);
 
         if ($response instanceof RedirectResponse) {
