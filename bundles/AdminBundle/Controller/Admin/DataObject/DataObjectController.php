@@ -1087,7 +1087,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
                 return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
             }
-        } elseif ($object->isAllowed('rename') && $key) {
+        } elseif ($key && $object->isAllowed('rename')) {
             $this->adminJson($this->renameObject($object, $key));
         } else {
             Logger::debug('prevented update object because of missing permissions.');
