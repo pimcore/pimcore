@@ -89,7 +89,7 @@ trait RuntimeCacheTrait
         trigger_deprecation(
             'pimcore/pimcore',
             '10.5.0',
-            sprintf('%s is deprecated and will be removed in Pimcore 11. Use \Pimcore\Cache\Runtime::set() and \Pimcore\Cache::remove() instead.', __METHOD__)
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use \Pimcore\Cache\Runtime::set() with null value and \Pimcore\Cache::remove() instead.', __METHOD__)
         );
         Cache::remove($cacheKey);
         Cache\Runtime::set($cacheKey, null);
