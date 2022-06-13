@@ -149,7 +149,7 @@ class Bootstrap
         if (!($_SERVER['PIMCORE_SKIP_DOTENV_FILE'] ?? false)) {
             if (class_exists('Symfony\Component\Dotenv\Dotenv')) {
                 (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT . '/.env');
-            }else{
+            } else {
                 $_SERVER += $_ENV;
             }
         }
