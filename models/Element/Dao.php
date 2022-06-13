@@ -121,7 +121,9 @@ abstract class Dao extends Model\Dao\AbstractDao
         }
 
         $parentIds = $this->getParentIds();
-        $parentIds[] = $this->model->getId();
+        if ($id = $this->model->getId()) {
+            $parentIds[] = $id;
+        }
 
         $currentUserId = $user->getId();
         $userIds = $user->getRoles();
