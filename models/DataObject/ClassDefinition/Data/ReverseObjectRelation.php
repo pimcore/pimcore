@@ -240,11 +240,17 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function preGetData($container, $params = [])
     {
         return $this->load($container);
     }
 
+    /**
+     * @return false
+     */
     public function supportsInheritance()
     {
         return false;

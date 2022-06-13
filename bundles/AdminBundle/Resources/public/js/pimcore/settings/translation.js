@@ -303,7 +303,7 @@ pimcore.settings.translation.domain = Class.create({
         })
         ;
 
-        if (this.domain === 'admin' || pimcore.settings.websiteLanguages.length == this.editableLanguages.length) {
+        if (pimcore.globalmanager.get("user").admin || this.domain === 'admin' || pimcore.settings.websiteLanguages.length == this.editableLanguages.length) {
             typesColumns.push({
                 xtype: 'actioncolumn',
                 menuText: t('delete'),

@@ -6,9 +6,7 @@ and no other user will be able to access the website or the admin interface.
 All other users get a [default "Temporary not available" page](https://rawgit.com/pimcore/pimcore/master/bundles/CoreBundle/Resources/misc/maintenance.html)
 displayed. 
 
-Moreover, maintenance scripts and headless executions of Pimcore will be prevented.  
-The Maintenance Mode is also activated by Pimcore during Pimcore Update.
-
+Moreover, maintenance scripts and headless executions of Pimcore will be prevented.
 In addition, you can enable or disable the maintenance mode via the following console command:
 
 ```shell script
