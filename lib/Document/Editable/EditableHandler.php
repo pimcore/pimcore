@@ -19,6 +19,7 @@ use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
 use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
+use Pimcore\Extension\Document\Areabrick\PreviewAwareInterface;
 use Pimcore\Extension\Document\Areabrick\TemplateAreabrickInterface;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\RequestHelper;
@@ -208,6 +209,10 @@ class EditableHandler implements LoggerAwareInterface
                 }
             }
 
+            $previewHtml = $brick instanceof PreviewAwareInterface
+                ? $brick->getPreviewHtml()
+                : null;
+
             if ($this->editmodeResolver->isEditmode()) {
                 $name = $this->translator->trans($name);
                 $desc = $this->translator->trans($desc);
@@ -218,6 +223,7 @@ class EditableHandler implements LoggerAwareInterface
                 'description' => $desc,
                 'type' => $brick->getId(),
                 'icon' => $icon,
+                'previewHtml' => $previewHtml,
                 'limit' => $limit,
                 'needsReload' => $brick->needsReload(),
                 'hasDialogBoxConfiguration' => $hasDialogBoxConfiguration,
