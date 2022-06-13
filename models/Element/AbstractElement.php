@@ -305,7 +305,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @return self|null
      */
-    public function getParent() /** :?self  */
+    public function getParent()
     {
         if ($this->parent === null) {
             $parent = Service::getElementById(Service::getElementType($this), $this->getParentId());
@@ -806,9 +806,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $this->setInDumpState(false);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __clone()
     {
         parent::__clone();
