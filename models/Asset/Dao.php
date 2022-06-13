@@ -480,7 +480,9 @@ class Dao extends Model\Element\Dao
                 $obj = $obj->getParent();
             }
         }
-        $parentIds[] = $this->model->getId();
+        if ($id = $this->model->getId()) {
+            $parentIds[] = $id;
+        }
 
         $userIds = $user->getRoles();
         $userIds[] = $user->getId();
