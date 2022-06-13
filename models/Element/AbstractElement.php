@@ -213,7 +213,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $columns = array_diff(array_keys($vars), $ignored);
 
         foreach ($columns as $name) {
-            $permissions[$name] = 1;
+            $permissions[$name] = true;
         }
 
         if (null === $user) {
@@ -229,7 +229,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             $event = new ElementEvent($this, ['isAllowed' => $isAllowed, 'permissionType' => $type, 'user' => $user]);
             \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::ELEMENT_PERMISSION_IS_ALLOWED);
 
-            $permissions[$type] = $event->getArgument('isAllowed');
+            $permissions[$type] = boolval($event->getArgument('isAllowed'));
         }
 
         return $permissions;
