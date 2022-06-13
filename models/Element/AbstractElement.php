@@ -571,7 +571,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         }
 
         foreach ($columns as $name) {
-            $permissions[$name] = $defaultValue;
+            $permissions[$name] = boolval($defaultValue);
         }
 
         if (!$user || $user->isAdmin() || !$user->isAllowed(Service::getElementType($this) . 's')) {
@@ -584,7 +584,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             $event = new ElementEvent($this, ['isAllowed' => $isAllowed, 'permissionType' => $type, 'user' => $user]);
             \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::ELEMENT_PERMISSION_IS_ALLOWED);
 
-            $permissions[$type] = $event->getArgument('isAllowed');
+            $permissions[$type] = boolval($event->getArgument('isAllowed'));
         }
 
         return $permissions;
