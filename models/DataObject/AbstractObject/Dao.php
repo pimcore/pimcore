@@ -496,7 +496,9 @@ class Dao extends Model\Element\Dao
     protected function collectParentIds()
     {
         $parentIds = $this->getParentIds();
-        $parentIds[] = $this->model->getId();
+        if ($id = $this->model->getId()) {
+            $parentIds[] = $id;
+        }
 
         return $parentIds;
     }
