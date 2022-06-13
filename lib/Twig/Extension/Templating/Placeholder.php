@@ -65,7 +65,7 @@ class Placeholder extends AbstractExtension
     /**
      * Retrieve object instance; optionally add meta tag
      *
-     * @param string $containerName
+     * @param null|string $containerName
      *
      * @return Container
      */
