@@ -108,11 +108,11 @@ class GlobalAction implements NotesAwareInterface
 
     /**
      * @param Workflow $workflow
-     * @param mixed $subject
+     * @param object $subject
      *
-     * @return bool
+     * @return mixed
      */
-    public function isGuardValid(Workflow $workflow, $subject): bool
+    public function isGuardValid(Workflow $workflow, $subject): mixed
     {
         if (empty($this->getGuard())) {
             return true;
