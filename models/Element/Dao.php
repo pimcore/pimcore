@@ -109,7 +109,7 @@ abstract class Dao extends Model\Dao\AbstractDao
      * @param User $user
      * @param string $tableSuffix
      *
-     * @return array
+     * @return array<string, int>
      *
      * @internal
      */
