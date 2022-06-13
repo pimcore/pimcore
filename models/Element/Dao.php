@@ -139,7 +139,7 @@ abstract class Dao extends Model\Dao\AbstractDao
             //if it's the current user, this is the permission that rules them all, no need to check others
             if ($highestWorkspace['userId'] == $currentUserId) {
                 foreach ($columns as $type) {
-                    $permissions[$type] = $highestWorkspace[$type];
+                    $permissions[$type] = (int) $highestWorkspace[$type];
                 }
 
                 if ($permissions['list'] == 0) {
