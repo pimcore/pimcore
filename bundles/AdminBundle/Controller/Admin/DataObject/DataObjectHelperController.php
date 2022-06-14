@@ -1619,6 +1619,12 @@ class DataObjectHelperController extends AdminController
 
                                 /** @var DataObject\Classificationstore $classificationStoreData */
                                 $classificationStoreData = $object->$getter();
+                                if ($append) {
+                                    $oldValues = $classificationStoreData->getLocalizedKeyValue($groupId, $keyId);
+                                    if(is_array($oldValues)) {
+                                        $value = array_merge($oldValues, $value);
+                                    }
+                                }
                                 $classificationStoreData->setLocalizedKeyValue(
                                     $groupId,
                                     $keyId,
