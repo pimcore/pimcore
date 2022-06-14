@@ -543,8 +543,14 @@ class Dao extends Model\Element\Dao
         return false;
     }
 
-    public function addToThumbnailCache(string $name, string $filename, int $filesize, int $width, int $height): void
+    public function addToThumbnailCache(string $name, string $filename, ?int $filesize = null, ?int $width = null, ?int $height = null): void
     {
+        if ($filesize === null || $width === null || $height === null) {
+            trigger_deprecation('pimcore/pimcore', '10.5',
+                sprintf('Not passing "filesize", "width" and "height" arguments to %s is deprecated and will be removed in Pimcore 11.', __METHOD__)
+            );
+        }
+
         $assetId = $this->model->getId();
         $thumb = [
             'cid' => $assetId,
