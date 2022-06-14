@@ -461,7 +461,7 @@ class Processor
             ];
         }
 
-        if ($statusCacheEnabled) {
+        if ($statusCacheEnabled && isset($filesize) && isset($width) && isset($height)) {
             $asset->getDao()->addToThumbnailCache($config->getName(), $filename, $filesize, $width, $height);
         }
 
