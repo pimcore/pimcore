@@ -32,7 +32,7 @@ use Twig\Environment;
  */
 class AdminSessionBagListener implements EventSubscriberInterface
 {
-    public function __construct(protected RequestStack $requestStack, protected Config $config)
+    public function __construct(protected Config $config)
     {
     }
 
