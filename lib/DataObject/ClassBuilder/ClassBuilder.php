@@ -38,27 +38,27 @@ class ClassBuilder implements ClassBuilderInterface
         $cd = '<?php';
         $cd .= "\n\n";
         $cd .= '/**' . "\n";
-        $cd .= '* Inheritance: '.($classDefinition->getAllowInherit() ? 'yes' : 'no')."\n";
-        $cd .= '* Variants: '.($classDefinition->getAllowVariants() ? 'yes' : 'no')."\n";
+        $cd .= ' * Inheritance: '.($classDefinition->getAllowInherit() ? 'yes' : 'no')."\n";
+        $cd .= ' * Variants: '.($classDefinition->getAllowVariants() ? 'yes' : 'no')."\n";
 
-        if ($classDefinition->getDescription()) {
+        if ($description = $classDefinition->getDescription()) {
             $description = str_replace(
                 ['/**', '*/', '//', "\n"],
-                ['', '', '', "\n* "],
-                $classDefinition->getDescription()
+                ['', '', '', "\n * "],
+                $description
             );
 
-            $cd .= '* '.$description."\n";
+            $cd .= ' * '.$description."\n";
         }
 
-        $cd .= "\n\n";
-        $cd .= "Fields Summary:\n";
+        $cd .= " *\n";
+        $cd .= " * Fields Summary:\n";
 
         foreach ($classDefinition->getFieldDefinitions() as $fieldDefinition) {
-            $cd .= $this->fieldDefinitionDocBlockBuilder->buildFieldDefinitionDocBlock($fieldDefinition);
+            $cd .= ' * ' . str_replace("\n", "\n * ", trim($this->fieldDefinitionDocBlockBuilder->buildFieldDefinitionDocBlock($fieldDefinition))) . "\n";
         }
 
-        $cd .= '*/';
+        $cd .= ' */';
         $cd .= "\n\n";
         $cd .= 'namespace Pimcore\\Model\\DataObject;';
         $cd .= "\n\n";

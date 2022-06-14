@@ -489,6 +489,13 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         return 'string|null';
     }
 
+    /**
+     * @param mixed $data
+     * @param bool $omitMandatoryCheck
+     * @param array $params
+     *
+     * @throws Model\Element\ValidationException|\Exception
+     */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck && ($this->getMinimumLength() && strlen($data) < $this->getMinimumLength())) {

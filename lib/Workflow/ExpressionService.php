@@ -17,7 +17,7 @@ namespace Pimcore\Workflow;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\AuthenticationTrustResolverInterface;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
+use Symfony\Component\Security\Core\Authentication\Token\NullToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
@@ -75,7 +75,7 @@ class ExpressionService
     // code should be sync with Symfony\Component\Security\Core\Authorization\Voter\ExpressionVoter
     private function getVariables($subject)
     {
-        $token = $this->tokenStorage->getToken() ?: new AnonymousToken('', 'anonymous', []);
+        $token = $this->tokenStorage->getToken() ?: new NullToken;
 
         $roleNames = $token->getRoleNames();
         if (null !== $this->roleHierarchy) {
@@ -84,7 +84,7 @@ class ExpressionService
 
         $variables = [
             'token' => $token,
-            'user' => $token->getUser(),
+            'user' => $token->getUser() ?: 'anonymous',
             'object' => $subject,
             'subject' => $subject,
             'role_names' => $roleNames,

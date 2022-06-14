@@ -74,6 +74,7 @@ final class RedirectHandler implements LoggerAwareInterface
      * @param RequestHelper $requestHelper
      * @param SiteResolver $siteResolver
      * @param Config $config
+     * @param LockFactory $lockFactory
      */
     public function __construct(RequestHelper $requestHelper, SiteResolver $siteResolver, Config $config, LockFactory $lockFactory)
     {
@@ -120,6 +121,16 @@ final class RedirectHandler implements LoggerAwareInterface
         return null;
     }
 
+    /**
+     * @param Redirect $redirect
+     * @param Request $request
+     * @param RedirectUrlPartResolver $partResolver
+     * @param Site|null $sourceSite
+     *
+     * @return RedirectResponse|null
+     *
+     * @throws \Exception
+     */
     private function matchRegexRedirect(
         Redirect $redirect,
         Request $request,

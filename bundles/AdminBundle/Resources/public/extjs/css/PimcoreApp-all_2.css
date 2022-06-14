@@ -1714,12 +1714,9 @@
     content: "\e613";
 }
 
-.x-grid-tree-loading .x-tree-icon {
-    background-image: url(../img/tree/loading.gif);
-}
-
+.x-grid-tree-loading .x-tree-icon,
 .x-grid-tree-loading .x-rtl.x-tree-icon {
-    background-image: url(../img/tree/loading.gif);
+    background-image: url(/bundles/pimcoreadmin/extjs/img/tree/loading.gif);
 }
 
 .x-tree-node-text {
@@ -1735,19 +1732,19 @@
     padding: 7px 10px 6px 6px;
 }
 
-.x-tree-drop-ok-append .x-dd-drop-icon,
-.x-tree-drop-ok-above .x-dd-drop-icon,
-.x-tree-drop-ok-below .x-dd-drop-icon,
-.x-tree-drop-ok-between .x-dd-drop-icon {
+.x-tree-drop-ok-append .x-dd-drop-icon {
     font: 16px/1 'Font Awesome 5 Free';
     color: #a4cf6d;
 }
 
-.x-tree-drop-ok-append .x-dd-drop-icon:before,
-.x-tree-drop-ok-above .x-dd-drop-icon:before,
-.x-tree-drop-ok-below .x-dd-drop-icon:before,
-.x-tree-drop-ok-between .x-dd-drop-icon:before {
+.x-tree-drop-ok-append .x-dd-drop-icon:before {
     content: '\f055';
+}
+
+.x-tree-drop-ok-above .x-dd-drop-icon,
+.x-tree-drop-ok-below .x-dd-drop-icon,
+.x-tree-drop-ok-between .x-dd-drop-icon {
+    background-image: url(/bundles/pimcoreadmin/extjs/img/tree/drop-between.gif);
 }
 
 .x-tree-ddindicator {
@@ -12045,7 +12042,7 @@
 }
 
 .x-treelist-nav .x-treelist-item-loading .x-treelist-item-icon {
-    background-image: url(../img/tree/loading.gif);
+    background-image: url(/bundles/pimcoreadmin/extjs/img/tree/loading.gif);
     color: transparent;
 }
 

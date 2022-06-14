@@ -10,20 +10,25 @@ entry point to console commands registered to the `Symfony\Console` application.
 ### Implementing own Commands
 Have a look at the `Symfony\Console` [documentation](https://symfony.com/doc/5.2/console.html) 
 for details how commands are implemented. However, it makes sense to let your command classes extend 
-`Pimcore\Console\AbstractCommand` to get some defaults like the `--ignore-maintenance-mode` option 
-and a helper for the [Symfony VarDumper Component](https://symfony.com/doc/5.2/components/var_dumper/index.html) 
+`Pimcore\Console\AbstractCommand` to get some defaults like a helper for the 
+[Symfony VarDumper Component](https://symfony.com/doc/5.2/components/var_dumper/index.html) 
 set up automatically (see below).
 
 ### Registering Commands
-Command must be registered as services and tagged with the `console.command` tag. If you're using the default `services.yaml` of Pimcore skeleton (or demos) for  configuration, this is already done for you for the `App`. , thanks to autoconfiguration.
+Command must be registered as services and tagged with the `console.command` tag. If you're using the default `services.yaml` 
+of Pimcore skeleton (or demos) for  configuration, this is already done for you for the `App`. , thanks to autoconfiguration.
 
 ### Helpers provided by `Pimcore\Console\AbstractCommand`
 The `AbstractCommand` base class provides helpers which make your life easier.
 
 ##### `--ignore-maintenance-mode`
-The console application implicitly adds the `--ignore-maintenance-mode` option found in other scripts.
-`AbstractConsoleCommand` checks for the option and aborts the command if the system is in maintenance 
+The console application implicitly adds the `--ignore-maintenance-mode` option to all commands.
+Pimcore checks for the option and prevents starting the command if the system is in maintenance 
 mode and the option is not set.
+
+##### `--maintenance-mode`
+The console application implicitly adds the `--maintenance-mode` option to all commands.
+With this option set, Pimcore is set into maintenance mode while that command is executed. 
 
 ##### `dump()` and `dumpVerbose()`
 Better `var_dump` through [`VarDumper`](https://symfony.com/doc/5.2/components/var_dumper/introduction.html). 

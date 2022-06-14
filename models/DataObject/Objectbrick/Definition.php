@@ -261,8 +261,10 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
             $data = '<?php';
             $data .= "\n\n";
+            $data .= $this->getInfoDocBlock();
+            $data .= "\n\n";
 
-            $data .= "\nreturn " . $exportedClass . ";\n";
+            $data .= 'return ' . $exportedClass . ";\n";
 
             \Pimcore\File::put($definitionFile, $data);
         }
@@ -577,11 +579,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      */
     public function isWritable(): bool
     {
-        if ($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? false) {
-            return true;
-        }
-
-        return !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
+        return $_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
     }
 
     /**

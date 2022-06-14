@@ -15,15 +15,9 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Sitemap;
+namespace Pimcore\Extension\Document\Areabrick;
 
-interface UrlGeneratorInterface
+interface PreviewAwareInterface
 {
-    /**
-     * @param string $path
-     * @param array $options
-     *
-     * @return string
-     */
-    public function generateUrl(string $path, array $options = []);
+    public function getPreviewHtml(): string;
 }

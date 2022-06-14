@@ -76,7 +76,7 @@
 {% endif %}
 
 <img style="visibility: hidden" id='image' src="{{ imageUrl }}" />
-<script>
+<script {{ pimcore_csp.getNonceHtmlAttribute()|raw }}>
     window.addEventListener('load', function (e) {
         var image = document.getElementById('image');
         window.Layers.insert({

@@ -118,6 +118,23 @@ If you want to wrap buttons in a div or change the Position.
 {% do block.end() %}
 ```
 
+### Using Manual Mode with additional css class for element in editmode
+
+```twig
+{% set block = pimcore_block("gridblock", {"manual": true}).start() %}
+<div>
+    {% for b in block.iterator %}
+        {% do block.blockConstruct() %}
+            {% do block.blockStart(true, false, 'my-additional-class') %}
+                Add additional class 'my-addional-class' to editmode-div
+            {% do block.blockEnd() %}
+        {% do block.blockDestruct() %}
+    {% endfor %}
+</div>
+{% do block.end() %}
+```
+
+
 ### Accessing Data Within a Block Element
 
 Bricks and structure refer to the CMS demo (content/default template).

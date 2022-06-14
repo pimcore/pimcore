@@ -59,7 +59,7 @@ class Builder
      * @param RequestHelper $requestHelper
      * @param string|null $pageClass
      */
-    public function __construct(RequestHelper $requestHelper, string $pageClass = null)
+    public function __construct(RequestHelper $requestHelper, ?string $pageClass = null)
     {
         $this->requestHelper = $requestHelper;
 

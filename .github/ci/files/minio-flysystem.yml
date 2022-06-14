@@ -55,3 +55,9 @@ flysystem:
             options:
                 client: 'minio_client'
                 bucket: 'emaillog'
+        pimcore.temp.storage:
+            adapter: 'aws'
+            visibility: public
+            options:
+                client: 'minio_client'
+                bucket: 'temp'

@@ -15,6 +15,8 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Asset;
 
+use League\Flysystem\FilesystemException;
+use League\Flysystem\UnableToReadFile;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
@@ -32,11 +34,14 @@ use Pimcore\Model\GridConfigShare;
 use Pimcore\Model\Metadata;
 use Pimcore\Model\User;
 use Pimcore\Tool;
+use Pimcore\Tool\Storage;
 use Pimcore\Version;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -720,7 +725,8 @@ class AssetHelperController extends AdminController
         $jobs = array_chunk($ids, 20);
 
         $fileHandle = uniqid('asset-export-');
-        file_put_contents($this->getCsvFile($fileHandle), '');
+        $storage = Storage::get('temp');
+        $storage->write($this->getCsvFile($fileHandle), '');
 
         return $this->adminJson(['success' => true, 'jobs' => $jobs, 'fileHandle' => $fileHandle]);
     }
@@ -758,20 +764,26 @@ class AssetHelperController extends AdminController
 
         $csv = $this->getCsvData($request, $language, $list, $fields, $addTitles);
 
-        $fp = fopen($this->getCsvFile($fileHandle), 'a');
+        $storage = Storage::get('temp');
+        $csvFile = $this->getCsvFile($fileHandle);
+
+        $fileStream = $storage->readStream($csvFile);
+
+        $temp = tmpfile();
+        stream_copy_to_stream($fileStream, $temp, null, 0);
 
         $firstLine = true;
         foreach ($csv as $line) {
             if ($addTitles && $firstLine) {
                 $firstLine = false;
                 $line = implode($delimiter, $line) . "\r\n";
-                fwrite($fp, $line);
+                fwrite($temp, $line);
             } else {
-                fwrite($fp, implode($delimiter, array_map([$this, 'encodeFunc'], $line)) . "\r\n");
+                fwrite($temp, implode($delimiter, array_map([$this, 'encodeFunc'], $line)) . "\r\n");
             }
         }
 
-        fclose($fp);
+        $storage->writeStream($csvFile, $temp);
 
         return $this->adminJson(['success' => true]);
     }
@@ -865,7 +877,7 @@ class AssetHelperController extends AdminController
      */
     protected function getCsvFile($fileHandle)
     {
-        return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $fileHandle . '.csv';
+        return $fileHandle . '.csv';
     }
 
     /**
@@ -873,22 +885,31 @@ class AssetHelperController extends AdminController
      *
      * @param Request $request
      *
-     * @return BinaryFileResponse
+     * @return Response
      */
     public function downloadCsvFileAction(Request $request)
     {
+        $storage = Storage::get('temp');
         $fileHandle = \Pimcore\File::getValidFilename($request->get('fileHandle'));
         $csvFile = $this->getCsvFile($fileHandle);
-        if (file_exists($csvFile)) {
-            $response = new BinaryFileResponse($csvFile);
+
+        try {
+            $csvData = $storage->read($csvFile);
+            $response = new Response($csvData);
             $response->headers->set('Content-Type', 'application/csv');
-            $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export.csv');
-            $response->deleteFileAfterSend(true);
+            $disposition = HeaderUtils::makeDisposition(
+                HeaderUtils::DISPOSITION_ATTACHMENT,
+                'export.csv'
+            );
+
+            $response->headers->set('Content-Disposition', $disposition);
+            $storage->delete($csvFile);
 
             return $response;
+        } catch (FilesystemException | UnableToReadFile $exception) {
+            // handle the error
+            throw $this->createNotFoundException('CSV file not found');
         }
-
-        throw $this->createNotFoundException('CSV file not found');
     }
 
     /**
@@ -900,14 +921,23 @@ class AssetHelperController extends AdminController
      */
     public function downloadXlsxFileAction(Request $request)
     {
+        $storage = Storage::get('temp');
         $fileHandle = \Pimcore\File::getValidFilename($request->get('fileHandle'));
         $csvFile = $this->getCsvFile($fileHandle);
-        if (file_exists($csvFile)) {
+
+        try {
+            $csvStream= $storage->readStream($csvFile);
+
             $csvReader = new Csv();
             $csvReader->setDelimiter(';');
             $csvReader->setSheetIndex(0);
 
-            $spreadsheet = $csvReader->load($csvFile);
+            $temp = tmpfile();
+            stream_copy_to_stream($csvStream, $temp, null, 0);
+            $tempMetaData = stream_get_meta_data($temp);
+            //TODO: use this method and storage->read() to avoid the extra temp file, is not available in the current version. See: https://github.com/PHPOffice/PhpSpreadsheet/pull/2792
+            //$spreadsheet = $csvReader->loadSpreadsheetFromString($csvData);
+            $spreadsheet = $csvReader->load($tempMetaData['uri']);
             $writer = new Xlsx($spreadsheet);
             $xlsxFilename = PIMCORE_SYSTEM_TEMP_DIRECTORY. '/' .$fileHandle. '.xlsx';
             $writer->save($xlsxFilename);
@@ -917,10 +947,13 @@ class AssetHelperController extends AdminController
             $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export.xlsx');
             $response->deleteFileAfterSend(true);
 
-            return $response;
-        }
+            $storage->delete($csvFile);
 
-        throw $this->createNotFoundException('XLSX file not found');
+            return $response;
+        } catch (FilesystemException | UnableToReadFile $exception) {
+            // handle the error
+            throw $this->createNotFoundException('XLSX file not found');
+        }
     }
 
     /**
