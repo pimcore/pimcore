@@ -25,6 +25,7 @@ pimcore.object.gridexport.xlsx = Class.create(pimcore.element.gridexport.abstrac
             fieldLabel: t('enable_inheritance'),
             name: 'enableInheritance',
             value: true,
+            inputValue: true,
             labelWidth: 200
         });
 

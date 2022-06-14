@@ -26,6 +26,7 @@ pimcore.object.gridexport.csv = Class.create(pimcore.element.gridexport.abstract
             fieldLabel: t('enable_inheritance'),
             name: 'enableInheritance',
             value: true,
+            inputValue: true,
             labelWidth: 200
         });
 
