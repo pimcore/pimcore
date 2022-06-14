@@ -429,6 +429,8 @@ class Processor
                 if (is_resource($stream)) {
                     fclose($stream);
                 }
+                $filesize = filesize($tmpFsPath);
+                [$width, $height] = @getimagesize($tmpFsPath);
                 unlink($tmpFsPath);
 
                 $generated = true;
@@ -460,7 +462,7 @@ class Processor
         }
 
         if ($statusCacheEnabled) {
-            $asset->getDao()->addToThumbnailCache($config->getName(), $filename);
+            $asset->getDao()->addToThumbnailCache($config->getName(), $filename, $filesize, $width, $height);
         }
 
         return [
