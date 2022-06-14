@@ -214,7 +214,13 @@ trait ImageThumbnailTrait
             $asset = $this->getAsset();
             $dimensions = [];
 
-            if ($this->exists()) {
+            $thumbnail = $asset->getDao()->getCachedThumbnail($config->getName(), $asset->getFilename());
+            if ($thumbnail !== null) {
+                $dimensions['width'] = $thumbnail['width'];
+                $dimensions['height'] = $thumbnail['height'];
+            }
+
+            if (empty($dimensions) && $this->exists()) {
                 $dimensions = $this->readDimensionsFromFile();
             }
 
