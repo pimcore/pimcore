@@ -45,6 +45,7 @@ interface TargetingStorageInterface
     /**
      * @param VisitorInfo $visitorInfo
      * @param string $scope
+     *
      * @return array
      */
     public function all(VisitorInfo $visitorInfo, string $scope): array;
@@ -53,6 +54,7 @@ interface TargetingStorageInterface
      * @param VisitorInfo $visitorInfo
      * @param string $scope
      * @param string $name
+     *
      * @return bool
      */
     public function has(VisitorInfo $visitorInfo, string $scope, string $name): bool;
@@ -70,6 +72,7 @@ interface TargetingStorageInterface
      * @param string $scope
      * @param string $name
      * @param mixed $default
+     *
      * @return mixed
      */
     public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null);
@@ -90,6 +93,7 @@ interface TargetingStorageInterface
     /**
      * @param VisitorInfo $visitorInfo
      * @param string $scope
+     *
      * @return \DateTimeImmutable|null
      */
     public function getCreatedAt(VisitorInfo $visitorInfo, string $scope);
@@ -97,6 +101,7 @@ interface TargetingStorageInterface
     /**
      * @param VisitorInfo $visitorInfo
      * @param string $scope
+     *
      * @return \DateTimeImmutable|null
      */
     public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope);

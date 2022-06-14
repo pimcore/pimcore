@@ -261,6 +261,7 @@ class CookieStorage implements TargetingStorageInterface
 
     /**
      * @param string $scope
+     *
      * @return \DateTime|int
      */
     protected function expiryFor(string $scope)

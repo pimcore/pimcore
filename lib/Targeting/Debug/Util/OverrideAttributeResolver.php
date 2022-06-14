@@ -26,6 +26,7 @@ class OverrideAttributeResolver
      * @param Request $request
      * @param string $key
      * @param mixed|null $value
+     *
      * @return void
      */
     public static function setOverrideValue(Request $request, string $key, $value)
@@ -40,6 +41,7 @@ class OverrideAttributeResolver
      * @param Request $request
      * @param string $key
      * @param mixed|null $default
+     *
      * @return mixed|null
      */
     public static function getOverrideValue(Request $request, string $key, $default = null)
