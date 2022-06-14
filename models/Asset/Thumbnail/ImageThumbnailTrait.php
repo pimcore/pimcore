@@ -189,18 +189,18 @@ trait ImageThumbnailTrait
 
                 if (null !== $localFile) {
                     $info = @getimagesize($localFile);
-                    $filesize = filesize($localFile);
-
-                    $config = $this->getConfig();
-                    $asset = $this->getAsset();
-
-                    $asset->getDao()->addToThumbnailCache($config->getName(), $asset->getFilename(), $filesize, $info['width'], $info['height']);
 
                     if ($info) {
                         $dimensions = [
                             'width' => $info[0],
                             'height' => $info[1],
                         ];
+
+                        $filesize = filesize($localFile);
+                        $config = $this->getConfig();
+                        $asset = $this->getAsset();
+
+                        $asset->getDao()->addToThumbnailCache($config->getName(), $asset->getFilename(), $filesize, $dimensions['width'], $dimensions['height']);
                     }
                 }
             } catch (\Exception $e) {

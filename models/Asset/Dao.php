@@ -546,20 +546,20 @@ class Dao extends Model\Element\Dao
     public function addToThumbnailCache(string $name, string $filename, int $filesize, int $width, int $height): void
     {
         $assetId = $this->model->getId();
-        $time = time();
-        $this->db->insertOrUpdate('assets_image_thumbnail_cache', [
+        $thumb = [
             'cid' => $assetId,
             'name' => $name,
             'filename' => $filename,
-            'modificationDate' => $time,
+            'modificationDate' => time(),
             'filesize' => $filesize,
             'width' => $width,
             'height' => $height,
-        ]);
+        ];
+        $this->db->insertOrUpdate('assets_image_thumbnail_cache', $thumb);
 
         if (isset(self::$thumbnailStatusCache[$assetId])) {
             $hash = $name . $filename;
-            self::$thumbnailStatusCache[$assetId][$hash] = $time;
+            self::$thumbnailStatusCache[$assetId][$hash] = $thumb;
         }
     }
 
