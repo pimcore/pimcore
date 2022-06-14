@@ -489,8 +489,7 @@ class DefinitionModifierTest extends ModelTestCase
     public function testGetByIdIgnoreCaseWithValidId()
     {
         $id = 'Inheritance';
-        $classDef = new ClassDefinition();
-        $checkVal = $classDef->getByIdIgnoreCase($id);
+        $checkVal = ClassDefinition::getByIdIgnoreCase($id);
 
         $this->assertNotEmpty($checkVal);
     }
