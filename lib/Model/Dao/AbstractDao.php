@@ -96,6 +96,12 @@ abstract class AbstractDao implements DaoInterface
         Cache::clearTags(['system', 'resource']);
     }
 
+    /**
+     * @param string $table
+     * @param string $column
+     *
+     * @return string
+     */
     public static function getForeignKeyName($table, $column)
     {
         $fkName = 'fk_'.$table.'__'.$column;

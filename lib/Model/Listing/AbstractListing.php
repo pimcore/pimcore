@@ -38,17 +38,17 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     protected $orderKey = [];
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $limit;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $offset;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $condition;
 
@@ -58,12 +58,12 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     protected $conditionVariables = [];
 
     /**
-     * @var array
+     * @var array|null
      */
     protected $conditionVariablesFromSetCondition;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $groupBy;
 
@@ -121,7 +121,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getLimit()
     {
@@ -129,7 +129,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getOffset()
     {
@@ -383,7 +383,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getGroupBy()
     {
@@ -495,7 +495,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @return array
+     * @return array|null
      */
     public function getConditionVariablesFromSetCondition()
     {

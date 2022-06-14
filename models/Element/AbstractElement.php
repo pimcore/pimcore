@@ -305,7 +305,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @return self|null
      */
-    public function getParent() /** :?self  */
+    public function getParent()
     {
         if ($this->parent === null) {
             $parent = Service::getElementById(Service::getElementType($this), $this->getParentId());
@@ -562,7 +562,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $columns = array_diff(array_keys($vars), $ignored);
         $defaultValue = 0;
 
-        if ((!$user && php_sapi_name() === 'cli') || $user->isAdmin()) {
+        if (null === $user) {
+            $user = \Pimcore\Tool\Admin::getCurrentUser();
+        }
+
+        if ((!$user && php_sapi_name() === 'cli') || $user?->isAdmin()) {
             $defaultValue = 1;
         }
 
@@ -570,9 +574,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
             $permissions[$name] = $defaultValue;
         }
 
-        if (null === $user) {
-            $user = \Pimcore\Tool\Admin::getCurrentUser();
-        }
         if (!$user || $user->isAdmin() || !$user->isAllowed(Service::getElementType($this) . 's')) {
             return $permissions;
         }
@@ -805,9 +806,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $this->setInDumpState(false);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __clone()
     {
         parent::__clone();

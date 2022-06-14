@@ -265,6 +265,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'staticroutes-writeable' => (new Staticroute())->isWriteable(),
             'perspectives-writeable' => \Pimcore\Perspective\Config::isWriteable(),
             'custom-views-writeable' => \Pimcore\CustomView\Config::isWriteable(),
+            'class-definition-writeable' => isset($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE']) ? (bool)$_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] : true,
         ];
 
         $this
