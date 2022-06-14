@@ -32,6 +32,9 @@ class SessionConfigurator implements SessionConfiguratorInterface, EventSubscrib
 
     const TARGETING_BAG_VISITOR = 'pimcore_targeting_visitor';
 
+    /**
+     * @return string[]
+     */
     public static function getSubscribedEvents()
     {
         return [
