@@ -1498,7 +1498,7 @@ final class ClassDefinition extends Model\AbstractModel
         }
     }
 
-    public static function getByIdIgnoreCase(string $id):ClassDefinition|null
+    public static function getByIdIgnoreCase(string $id): ClassDefinition|null
     {
         try {
             $class = new self();

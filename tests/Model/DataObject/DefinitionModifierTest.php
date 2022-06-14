@@ -479,10 +479,10 @@ class DefinitionModifierTest extends ModelTestCase
 
     public function testGetByIdIgnoreCaseWithoutValidId()
     {
-            $id = '-9999';
-            $checkVal = ClassDefinition::getByIdIgnoreCase($id);
+        $id = '-9999';
+        $checkVal = ClassDefinition::getByIdIgnoreCase($id);
 
-            $this->assertNull($checkVal);
+        $this->assertNull($checkVal);
     }
 
     public function testGetByIdIgnoreCaseWithValidId()

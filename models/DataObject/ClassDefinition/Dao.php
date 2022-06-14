@@ -312,7 +312,7 @@ class Dao extends Model\Dao\AbstractDao
         ]);
     }
 
-    public function getNameByIdIgnoreCase(string $id):string|null
+    public function getNameByIdIgnoreCase(string $id): string|null
     {
         $name = null;
 
