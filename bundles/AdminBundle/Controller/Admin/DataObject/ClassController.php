@@ -555,6 +555,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
             try {
                 $layout = DataObject\ClassDefinition\Service::generateLayoutTreeFromArray($importData['layoutDefinitions'], true);
                 $customLayout->setLayoutDefinitions($layout);
+                if (isset($importData['name']) === true) {
+                    $customLayout->setName($importData['name']);
+                }
                 $customLayout->setDescription($importData['description']);
                 $customLayout->save();
                 $success = true;
@@ -693,6 +696,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
             if ($customLayout) {
                 $name = $customLayout->getName();
                 $customLayoutData = [
+                    'name' => $customLayout->getName(),
                     'description' => $customLayout->getDescription(),
                     'layoutDefinitions' => $customLayout->getLayoutDefinitions(),
                     'default' => $customLayout->getDefault() ?: 0,
