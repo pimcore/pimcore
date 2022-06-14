@@ -1497,4 +1497,26 @@ final class ClassDefinition extends Model\AbstractModel
             $children = array_values($children);
         }
     }
+
+    public static function getByIdIgnoreCase(string $id):ClassDefinition|null
+    {
+        try {
+            $class = new self();
+            $name = $class->getDao()->getNameByIdIgnoreCase($id);
+            $definitionFile = $class->getDefinitionFile($name);
+            $class = @include $definitionFile;
+
+            if (!$class instanceof self) {
+                throw new \Exception('Class definition with name ' . $name . ' or ID ' . $id . ' does not exist');
+            }
+
+            $class->setId($id);
+        } catch (\Exception $e) {
+            Logger::info($e->getMessage());
+
+            return null;
+        }
+
+        return $class;
+    }
 }
