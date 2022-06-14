@@ -194,6 +194,13 @@ trait ImageThumbnailTrait
                             'width' => $info[0],
                             'height' => $info[1],
                         ];
+
+                        $filesize = filesize($localFile);
+                        $config = $this->getConfig();
+                        $asset = $this->getAsset();
+                        $filename = pathinfo($pathReference['storagePath'], PATHINFO_FILENAME);
+
+                        $asset->getDao()->addToThumbnailCache($config->getName(), $filename, $filesize, $dimensions['width'], $dimensions['height']);
                     }
                 }
             } catch (\Exception $e) {
@@ -214,7 +221,13 @@ trait ImageThumbnailTrait
             $asset = $this->getAsset();
             $dimensions = [];
 
-            if ($this->exists()) {
+            $thumbnail = $asset->getDao()->getCachedThumbnail($config->getName(), $asset->getFilename());
+            if ($thumbnail !== null && isset($thumbnail['width']) && isset($thumbnail['height'])) {
+                $dimensions['width'] = $thumbnail['width'];
+                $dimensions['height'] = $thumbnail['height'];
+            }
+
+            if (empty($dimensions) && $this->exists()) {
                 $dimensions = $this->readDimensionsFromFile();
             }
 

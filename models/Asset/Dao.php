@@ -545,24 +545,44 @@ class Dao extends Model\Element\Dao
         return false;
     }
 
-    public function addToThumbnailCache(string $name, string $filename): void
+    public function addToThumbnailCache(string $name, string $filename, ?int $filesize = null, ?int $width = null, ?int $height = null): void
     {
+        if ($filesize === null || $width === null || $height === null) {
+            trigger_deprecation('pimcore/pimcore', '10.5',
+                sprintf('Not passing "filesize", "width" and "height" arguments to %s is deprecated and will be removed in Pimcore 11.', __METHOD__)
+            );
+        }
+
         $assetId = $this->model->getId();
-        $time = time();
-        $this->db->insertOrUpdate('assets_image_thumbnail_cache', [
+        $thumb = [
             'cid' => $assetId,
             'name' => $name,
             'filename' => $filename,
-            'modificationDate' => $time,
-        ]);
+            'modificationDate' => time(),
+            'filesize' => $filesize,
+            'width' => $width,
+            'height' => $height,
+        ];
+        $this->db->insertOrUpdate('assets_image_thumbnail_cache', $thumb);
 
         if (isset(self::$thumbnailStatusCache[$assetId])) {
             $hash = $name . $filename;
-            self::$thumbnailStatusCache[$assetId][$hash] = $time;
+            self::$thumbnailStatusCache[$assetId][$hash] = $thumb;
         }
     }
 
     public function getCachedThumbnailModificationDate(string $name, string $filename): ?int
+    {
+        $thumbnail = $this->getCachedThumbnail($name, $filename);
+
+        if ($thumbnail === null) {
+            return null;
+        }
+
+        return $thumbnail['modificationDate'];
+    }
+
+    public function getCachedThumbnail(string $name, string $filename): ?array
     {
         $assetId = $this->model->getId();
 
@@ -576,7 +596,7 @@ class Dao extends Model\Element\Dao
 
             foreach ($thumbs as $thumb) {
                 $hash = $thumb['name'] . $thumb['filename'];
-                self::$thumbnailStatusCache[$assetId][$hash] = $thumb['modificationDate'];
+                self::$thumbnailStatusCache[$assetId][$hash] = $thumb;
             }
         }
 
