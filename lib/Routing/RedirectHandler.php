@@ -126,7 +126,9 @@ final class RedirectHandler implements LoggerAwareInterface
      * @param Request $request
      * @param RedirectUrlPartResolver $partResolver
      * @param Site|null $sourceSite
+     *
      * @return RedirectResponse|null
+     *
      * @throws \Exception
      */
     private function matchRegexRedirect(
