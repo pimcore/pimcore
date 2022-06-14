@@ -24,6 +24,7 @@ pimcore.object.gridexport.xlsx = Class.create(pimcore.element.gridexport.abstrac
         var enableInheritance = new Ext.form.Checkbox({
             fieldLabel: t('enable_inheritance'),
             name: 'enableInheritance',
+            value: true,
             inputValue: true,
             labelWidth: 200
         });
