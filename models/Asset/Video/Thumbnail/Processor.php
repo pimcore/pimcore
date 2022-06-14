@@ -265,13 +265,11 @@ class Processor
                         $converter->getStorageFile(),
                         1
                     );
-                }
-                else {
+                } else {
                     $conversionStatus = 'error';
                 }
 
                 $converter->destroy();
-
             } catch (\Exception $e) {
                 Logger::error((string) $e);
             }
