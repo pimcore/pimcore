@@ -25,12 +25,14 @@ trait RuntimeCacheTrait
 {
     /**
      * @var bool
+     *
      * @deprecated
      */
     private static bool $cacheEnabled = false;
 
     /**
      * @param bool $cacheEnabled
+     *
      * @deprecated
      */
     public static function setCacheEnabled(bool $cacheEnabled): void
@@ -45,6 +47,7 @@ trait RuntimeCacheTrait
 
     /**
      * @return bool
+     *
      * @deprecated
      */
     public static function getCacheEnabled(): bool
@@ -54,6 +57,7 @@ trait RuntimeCacheTrait
             '10.5.0',
             sprintf('%s is deprecated and will be removed in Pimcore 11.', __METHOD__)
         );
+
         return self::$cacheEnabled;
     }
 
@@ -62,6 +66,7 @@ trait RuntimeCacheTrait
      *
      * @param mixed $config
      * @param string $cacheKey
+     *
      * @deprecated
      */
     private static function setCache(mixed $config, string $cacheKey): void
@@ -82,6 +87,7 @@ trait RuntimeCacheTrait
      * Remove a cache item for a given cache key
      *
      * @param string $cacheKey
+     *
      * @deprecated
      */
     private static function removeCache(string $cacheKey): void
@@ -99,6 +105,7 @@ trait RuntimeCacheTrait
      * Get a cache item for a given cache key
      *
      * @deprecated
+     *
      * @param string $cacheKey
      *
      * @return mixed

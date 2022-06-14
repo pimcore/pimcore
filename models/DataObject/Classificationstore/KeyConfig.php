@@ -101,6 +101,7 @@ final class KeyConfig extends Model\AbstractModel
 
             if (!$force && $config = Cache::load($cacheKey)) {
                 Cache\Runtime::set($cacheKey, $config);
+
                 return $config;
             }
             $config = new self();
@@ -108,6 +109,7 @@ final class KeyConfig extends Model\AbstractModel
 
             Cache\Runtime::set($cacheKey, $config);
             Cache::save($config, $cacheKey);
+
             return $config;
         } catch (Model\Exception\NotFoundException $e) {
             return null;
@@ -134,6 +136,7 @@ final class KeyConfig extends Model\AbstractModel
 
             if (!$force && ($config = Cache::load($cacheKey))) {
                 Cache\Runtime::set($cacheKey, $config);
+
                 return $config;
             }
 
@@ -144,6 +147,7 @@ final class KeyConfig extends Model\AbstractModel
 
             Cache\Runtime::set($cacheKey, $config);
             Cache::save($config, $cacheKey);
+
             return $config;
         } catch (Model\Exception\NotFoundException $e) {
             return null;

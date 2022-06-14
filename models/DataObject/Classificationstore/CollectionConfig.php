@@ -75,11 +75,12 @@ final class CollectionConfig extends Model\AbstractModel
         $cacheKey = self::getCacheKey($id);
 
         try {
-            if(!$force && Runtime::isRegistered($cacheKey)) {
+            if (!$force && Runtime::isRegistered($cacheKey)) {
                 return Runtime::get($cacheKey);
             }
             if (!$force && $config = Cache::load($cacheKey)) {
                 Runtime::set($cacheKey, $config);
+
                 return $config;
             }
 
@@ -115,6 +116,7 @@ final class CollectionConfig extends Model\AbstractModel
 
             if (!$force && $config = Cache::load($cacheKey)) {
                 Runtime::set($cacheKey, $config);
+
                 return $config;
             }
 
