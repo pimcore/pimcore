@@ -189,7 +189,6 @@ trait ImageThumbnailTrait
 
                 if (null !== $localFile) {
                     $info = @getimagesize($localFile);
-
                     if ($info) {
                         $dimensions = [
                             'width' => $info[0],
