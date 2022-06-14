@@ -29,8 +29,13 @@ pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.cl
     initialize: function (treeNode, initData) {
         this.type = "classificationstore";
 
+        initData.visibleGridView = false
+        initData.visibleSearch = false
+
         this.initData(initData);
         this.treeNode = treeNode;
+
+        this.availableSettingsFields = ["tooltip","mandatory","index","name","title","noteditable","invisible","style"];
     },
 
     getTypeName: function () {
