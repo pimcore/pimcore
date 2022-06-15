@@ -134,7 +134,7 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
         return $places;
     }
 
-     /**
+    /**
      *
      * @param string|PropertyPathInterface $property
      * @param mixed $places

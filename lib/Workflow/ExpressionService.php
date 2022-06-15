@@ -69,6 +69,7 @@ class ExpressionService
 
     /**
      * @param object $subject
+     *
      * @return mixed
      */
     public function evaluateExpression(WorkflowInterface $workflow, $subject, string $expression)
@@ -78,6 +79,7 @@ class ExpressionService
 
     /**
      * @param object $subject
+     *
      * @return array
      */
     // code should be sync with Symfony\Component\Security\Core\Authorization\Voter\ExpressionVoter

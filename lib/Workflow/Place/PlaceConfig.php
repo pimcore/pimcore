@@ -89,6 +89,7 @@ class PlaceConfig
 
     /**
      * @param object $subject
+     *
      * @return string|null
      */
     public function getObjectLayout(Workflow $workflow, $subject): ?string

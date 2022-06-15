@@ -211,6 +211,7 @@ class Manager
 
     /**
      * @param object $subject
+     *
      * @return Workflow|null
      */
     public function getWorkflowIfExists($subject, string $workflowName): ?Workflow

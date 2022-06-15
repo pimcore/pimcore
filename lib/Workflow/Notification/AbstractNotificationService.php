@@ -21,7 +21,6 @@ use Pimcore\Model\User;
 
 class AbstractNotificationService
 {
-
     /**
      * @param int $id
      */
@@ -49,9 +48,9 @@ class AbstractNotificationService
      * @param array $users
      * @param array $roles
      * @param bool $includeAllUsers
+     *
      * @return User[][]
      */
-
     protected function getNotificationUsersByName($users, $roles, $includeAllUsers = false): array
     {
         $notifyUsers = [];

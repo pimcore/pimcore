@@ -67,6 +67,7 @@ class ExpressionSupportStrategy implements WorkflowSupportStrategyInterface
 
     /**
      * @param object $subject
+     *
      * @return bool
      */
     private function supportsClass($subject)
