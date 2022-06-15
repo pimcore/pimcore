@@ -54,7 +54,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      */
     public function getByKeyCartId($key, $cartId)
     {
-        $classRaw = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE `key`=' . $this->db->quote($key). ' AND cartId = ' . $this->db->quote($cartId));
+        $classRaw = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE `key`=' . $this->db->quote($key). ' AND cartId = ' . $this->db->quote($cartId));
         if (empty($classRaw)) {
             throw new NotFoundException('CartItem for cartid ' . $cartId . ' and key ' . $key . ' not found.');
         }

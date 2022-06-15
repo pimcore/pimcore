@@ -38,7 +38,7 @@ class Dao extends Model\Element\Dao
      */
     public function getById($id)
     {
-        $data = $this->db->fetchRow("SELECT documents.*, tree_locks.locked FROM documents
+        $data = $this->db->fetchAssociative("SELECT documents.*, tree_locks.locked FROM documents
             LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
                 WHERE documents.id = ?", $id);
 
@@ -59,13 +59,13 @@ class Dao extends Model\Element\Dao
     public function getByPath($path)
     {
         $params = $this->extractKeyAndPath($path);
-        $data = $this->db->fetchRow('SELECT id FROM documents WHERE path = BINARY :path AND `key` = BINARY :key', $params);
+        $data = $this->db->fetchAssociative('SELECT id FROM documents WHERE path = BINARY :path AND `key` = BINARY :key', $params);
 
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
             // try to find a page with a pretty URL (use the original $path)
-            $data = $this->db->fetchRow('SELECT id FROM documents_page WHERE prettyUrl = :prettyUrl', [
+            $data = $this->db->fetchAssociative('SELECT id FROM documents_page WHERE prettyUrl = :prettyUrl', [
                 'prettyUrl' => $path,
             ]);
 
@@ -590,7 +590,7 @@ class Dao extends Model\Element\Dao
      */
     public function __isBasedOnLatestData()
     {
-        $data = $this->db->fetchRow('SELECT modificationDate,versionCount from documents WHERE id = ?', [$this->model->getId()]);
+        $data = $this->db->fetchAssociative('SELECT modificationDate,versionCount from documents WHERE id = ?', [$this->model->getId()]);
         if ($data['modificationDate'] == $this->model->__getDataVersionTimestamp() && $data['versionCount'] == $this->model->getVersionCount()) {
             return true;
         }

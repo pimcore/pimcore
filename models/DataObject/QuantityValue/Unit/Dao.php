@@ -49,7 +49,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getByAbbreviation($abbreviation)
     {
-        $classRaw = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE abbreviation=' . $this->db->quote($abbreviation));
+        $classRaw = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE abbreviation=' . $this->db->quote($abbreviation));
         if (empty($classRaw)) {
             throw new Model\Exception\NotFoundException('Unit ' . $abbreviation . ' not found.');
         }
@@ -63,7 +63,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getByReference($reference)
     {
-        $classRaw = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE reference=' . $this->db->quote($reference));
+        $classRaw = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE reference=' . $this->db->quote($reference));
         if (empty($classRaw)) {
             throw new Model\Exception\NotFoundException('Unit ' . $reference . ' not found.');
         }
@@ -77,7 +77,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getById($id)
     {
-        $classRaw = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id=' . $this->db->quote($id));
+        $classRaw = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id=' . $this->db->quote($id));
         if (empty($classRaw)) {
             throw new Model\Exception\NotFoundException('Unit ' . $id . ' not found.');
         }

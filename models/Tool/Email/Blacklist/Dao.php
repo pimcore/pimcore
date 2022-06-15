@@ -31,7 +31,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getByAddress($address)
     {
-        $data = $this->db->fetchRow('SELECT * FROM email_blacklist WHERE address = ?', $address);
+        $data = $this->db->fetchAssociative('SELECT * FROM email_blacklist WHERE address = ?', $address);
 
         if (empty($data['address'])) {
             throw new Model\Exception\NotFoundException('blacklist item with address ' . $address . ' not found');

@@ -171,7 +171,7 @@ class Dao extends Model\Dao\AbstractDao
         $data['fieldname'] = $this->model->getFieldname();
 
         $this->inheritanceHelper->resetFieldsToCheck();
-        $oldData = $this->db->fetchRow('SELECT * FROM ' . $querytable . ' WHERE o_id = ?', $object->getId());
+        $oldData = $this->db->fetchAssociative('SELECT * FROM ' . $querytable . ' WHERE o_id = ?', $object->getId());
 
         $inheritanceEnabled = $object->getClass()->getAllowInherit();
         $parentData = null;
@@ -183,7 +183,7 @@ class Dao extends Model\Dao\AbstractDao
                 // we cannot DataObject::setGetInheritedValues(true); and then $this->model->$method();
                 // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
                 // so the data of the parent cannot be changed while this transaction is on progress
-                $parentData = $this->db->fetchRow('SELECT * FROM ' . $querytable . ' WHERE o_id = ? FOR UPDATE', $parentForInheritance->getId());
+                $parentData = $this->db->fetchAssociative('SELECT * FROM ' . $querytable . ' WHERE o_id = ? FOR UPDATE', $parentForInheritance->getId());
             }
         }
 
@@ -300,7 +300,7 @@ class Dao extends Model\Dao\AbstractDao
         // update data for query table
         $queryTable = $this->model->getDefinition()->getTableName($object->getClass(), true);
 
-        $oldData = $this->db->fetchRow('SELECT * FROM ' . $queryTable . ' WHERE o_id = ?', $object->getId());
+        $oldData = $this->db->fetchAssociative('SELECT * FROM ' . $queryTable . ' WHERE o_id = ?', $object->getId());
         $this->db->delete($queryTable, ['o_id' => $object->getId()]);
 
         //update data for relations table

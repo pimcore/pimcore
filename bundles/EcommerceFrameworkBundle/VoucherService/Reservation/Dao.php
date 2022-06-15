@@ -50,7 +50,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
             $params[] = $cart->getId();
         }
 
-        $result = $this->db->fetchRow($query, $params);
+        $result = $this->db->fetchAssociative($query, $params);
         if (empty($result)) {
             throw new NotFoundException('Reservation for token ' . $code . ' not found.');
         }

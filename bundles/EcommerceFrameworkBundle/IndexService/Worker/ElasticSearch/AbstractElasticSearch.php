@@ -409,7 +409,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         }
 
         if (empty($data)) {
-            $dataEntry = $this->db->fetchRow('SELECT data, metadata FROM ' . $this->getStoreTableName() . ' WHERE o_id = ? AND tenant = ?', [$objectId, $this->name]);
+            $dataEntry = $this->db->fetchAssociative('SELECT data, metadata FROM ' . $this->getStoreTableName() . ' WHERE o_id = ? AND tenant = ?', [$objectId, $this->name]);
             if ($dataEntry) {
                 $data = json_decode($dataEntry['data'], true);
                 $metadata = $dataEntry['metadata'];
@@ -626,7 +626,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     {
         $esClient = $this->getElasticSearchClient();
 
-        $storeEntry = \Pimcore\Db::get()->fetchRow('SELECT * FROM ' . $this->getStoreTableName() . ' WHERE  o_id=? AND tenant=? ', [$objectId, $this->getTenantConfig()->getTenantName()]);
+        $storeEntry = \Pimcore\Db::get()->fetchAssociative('SELECT * FROM ' . $this->getStoreTableName() . ' WHERE  o_id=? AND tenant=? ', [$objectId, $this->getTenantConfig()->getTenantName()]);
         if ($storeEntry) {
             $isLocked = $this->checkIndexLock(false);
             if ($isLocked) {

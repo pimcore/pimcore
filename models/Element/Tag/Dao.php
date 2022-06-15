@@ -32,7 +32,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getById($id)
     {
-        $data = $this->db->fetchRow('SELECT * FROM tags WHERE id = ?', $id);
+        $data = $this->db->fetchAssociative('SELECT * FROM tags WHERE id = ?', $id);
         if (!$data) {
             throw new Model\Exception\NotFoundException('Tag item with id ' . $id . ' not found');
         }

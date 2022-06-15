@@ -37,7 +37,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow('SELECT * FROM targeting_rules WHERE id = ?', $this->model->getId());
+        $data = $this->db->fetchAssociative('SELECT * FROM targeting_rules WHERE id = ?', $this->model->getId());
 
         if (!empty($data['id'])) {
             $data['conditions'] = (isset($data['conditions']) ? Serialize::unserialize($data['conditions']) : []);

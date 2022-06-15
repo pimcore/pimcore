@@ -272,7 +272,7 @@ class Dao extends Model\Dao\AbstractDao
                 $oldData = [];
 
                 try {
-                    $oldData = $this->db->fetchRow($sql);
+                    $oldData = $this->db->fetchAssociative($sql);
                 } catch (TableNotFoundException $e) {
                     // if the table doesn't exist -> create it!
 
@@ -310,7 +310,7 @@ class Dao extends Model\Dao\AbstractDao
                         // we cannot DataObject\AbstractObject::setGetInheritedValues(true); and then $this->model->getLocalizedValue($key, $language)
                         // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
                         // so the data of the parent cannot be changed while this transaction is on progress
-                        $parentData = $this->db->fetchRow(
+                        $parentData = $this->db->fetchAssociative(
                             'SELECT * FROM '.$queryTable.' WHERE ooo_id = ? AND language = ? FOR UPDATE',
                             [$parentForInheritance->getId(), $language]
                         );

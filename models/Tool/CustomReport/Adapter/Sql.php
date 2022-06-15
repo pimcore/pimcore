@@ -75,7 +75,7 @@ class Sql extends AbstractAdapter
         if (!preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i', $sql, $matches)) {
             $sql .= ' LIMIT 0,1';
             $db = Db::get();
-            $res = $db->fetchRow($sql);
+            $res = $db->fetchAssociative($sql);
             if ($res) {
                 return array_keys($res);
             }

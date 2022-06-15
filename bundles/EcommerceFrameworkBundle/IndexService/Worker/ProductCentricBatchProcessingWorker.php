@@ -99,7 +99,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
      */
     protected function insertDataToIndex($data, $subObjectId)
     {
-        $currentEntry = $this->db->fetchRow('SELECT crc_current, in_preparation_queue FROM ' . $this->getStoreTableName() . ' WHERE o_id = ? AND tenant = ?', [$subObjectId, $this->name]);
+        $currentEntry = $this->db->fetchAssociative('SELECT crc_current, in_preparation_queue FROM ' . $this->getStoreTableName() . ' WHERE o_id = ? AND tenant = ?', [$subObjectId, $this->name]);
         if (!$currentEntry) {
             $this->db->insert($this->getStoreTableName(), $data);
         } elseif ($currentEntry['crc_current'] != $data['crc_current']) {

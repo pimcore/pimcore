@@ -73,7 +73,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getById(string $id, ?string $scope = null): bool
     {
-        $item = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id = :id AND scope = :scope', [
+        $item = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id = :id AND scope = :scope', [
             'id' => $id,
             'scope' => (string) $scope,
         ]);

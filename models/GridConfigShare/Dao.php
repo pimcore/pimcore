@@ -32,7 +32,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getByGridConfigAndSharedWithId($gridConfigId, $sharedWithUserId)
     {
-        $data = $this->db->fetchRow('SELECT * FROM gridconfig_shares WHERE gridConfigId = ? AND sharedWithUserId = ?', [$gridConfigId, $sharedWithUserId]);
+        $data = $this->db->fetchAssociative('SELECT * FROM gridconfig_shares WHERE gridConfigId = ? AND sharedWithUserId = ?', [$gridConfigId, $sharedWithUserId]);
 
         if (!$data) {
             throw new Model\Exception\NotFoundException('gridconfig share with gridConfigId ' . $gridConfigId . ' and shared with ' . $sharedWithUserId . ' not found');

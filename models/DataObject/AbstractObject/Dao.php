@@ -37,7 +37,7 @@ class Dao extends Model\Element\Dao
      */
     public function getById($id)
     {
-        $data = $this->db->fetchRow("SELECT objects.*, tree_locks.locked as o_locked FROM objects
+        $data = $this->db->fetchAssociative("SELECT objects.*, tree_locks.locked as o_locked FROM objects
             LEFT JOIN tree_locks ON objects.o_id = tree_locks.id AND tree_locks.type = 'object'
                 WHERE o_id = ?", $id);
 
@@ -58,7 +58,7 @@ class Dao extends Model\Element\Dao
     public function getByPath($path)
     {
         $params = $this->extractKeyAndPath($path);
-        $data = $this->db->fetchRow('SELECT o_id FROM objects WHERE o_path = :path AND `o_key` = :key', $params);
+        $data = $this->db->fetchAssociative('SELECT o_id FROM objects WHERE o_path = :path AND `o_key` = :key', $params);
 
         if (!empty($data['o_id'])) {
             $this->assignVariablesToModel($data);
@@ -106,7 +106,7 @@ class Dao extends Model\Element\Dao
 
         // check the type before updating, changing the type or class of an object is not possible
         $checkColumns = ['o_type', 'o_classId', 'o_className'];
-        $existingData = $this->db->fetchRow('SELECT ' . implode(',', $checkColumns) . ' FROM objects WHERE o_id = ?', [$this->model->getId()]);
+        $existingData = $this->db->fetchAssociative('SELECT ' . implode(',', $checkColumns) . ' FROM objects WHERE o_id = ?', [$this->model->getId()]);
         foreach ($checkColumns as $column) {
             if ($column == 'o_type' && in_array($data[$column], [DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT]) && (isset($existingData[$column]) && in_array($existingData[$column], [DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT]))) {
                 // type conversion variant <=> object should be possible
@@ -420,7 +420,7 @@ class Dao extends Model\Element\Dao
      */
     public function getTypeById($id)
     {
-        $t = $this->db->fetchRow('SELECT o_type,o_className,o_classId FROM objects WHERE o_id = ?', $id);
+        $t = $this->db->fetchAssociative('SELECT o_type,o_className,o_classId FROM objects WHERE o_id = ?', $id);
 
         if (!$t) {
             throw new Model\Exception\NotFoundException('object with ID ' . $id . ' not found');
@@ -628,7 +628,7 @@ class Dao extends Model\Element\Dao
             }
 
             $orderByType = $type ? ', `' . $type . '` DESC' : '';
-            $permissions = $this->db->fetchRow('SELECT ' . $queryType . ' FROM users_workspaces_object WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $user->getId() . ') DESC' . $orderByType . ' LIMIT 1');
+            $permissions = $this->db->fetchAssociative('SELECT ' . $queryType . ' FROM users_workspaces_object WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $user->getId() . ') DESC' . $orderByType . ' LIMIT 1');
 
             return $permissions;
         } catch (\Exception $e) {
@@ -685,7 +685,7 @@ class Dao extends Model\Element\Dao
      */
     public function __isBasedOnLatestData()
     {
-        $data = $this->db->fetchRow('SELECT o_modificationDate, o_versionCount  from objects WHERE o_id = ?', [$this->model->getId()]);
+        $data = $this->db->fetchAssociative('SELECT o_modificationDate, o_versionCount  from objects WHERE o_id = ?', [$this->model->getId()]);
 
         return $data
             && $data['o_modificationDate'] == $this->model->__getDataVersionTimestamp()

@@ -32,7 +32,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getById($id)
     {
-        $data = $this->db->fetchRow('SELECT * FROM recyclebin WHERE id = ?', $id);
+        $data = $this->db->fetchAssociative('SELECT * FROM recyclebin WHERE id = ?', $id);
 
         if (!$data) {
             throw new Model\Exception\NotFoundException('Recyclebin item with id ' . $id . ' not found');

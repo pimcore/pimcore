@@ -91,7 +91,7 @@ class PermissionChecker
                 $userPermission[$columnName] = false;
 
                 try {
-                    $permissionsParent = $db->fetchRow(
+                    $permissionsParent = $db->fetchAssociative(
                         'SELECT * FROM users_workspaces_'.$type.' , users u WHERE userId = u.id AND cid IN ('.implode(
                             ',',
                             $parentIds
@@ -117,7 +117,7 @@ class PermissionChecker
                             $path = '/';
                         }
 
-                        $permissionsChilds = $db->fetchRow(
+                        $permissionsChilds = $db->fetchAssociative(
                             'SELECT list FROM users_workspaces_'.$type.', users u WHERE userId = u.id AND cpath LIKE ? AND userId IN ('.implode(
                                 ',',
                                 $userIds

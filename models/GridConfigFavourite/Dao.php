@@ -41,7 +41,7 @@ class Dao extends Model\Dao\AbstractDao
             $params[] = $objectId;
         }
 
-        $data = $this->db->fetchRow($query, $params);
+        $data = $this->db->fetchAssociative($query, $params);
 
         if (!$data) {
             throw new Model\Exception\NotFoundException('gridconfig favourite with ownerId ' . $ownerId . ' and class id ' . $classId . ' not found');

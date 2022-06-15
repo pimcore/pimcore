@@ -33,7 +33,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getById($id)
     {
-        $data = $this->db->fetchRow('SELECT * FROM versions WHERE id = ?', $id);
+        $data = $this->db->fetchAssociative('SELECT * FROM versions WHERE id = ?', $id);
 
         if (!$data) {
             throw new NotFoundException('version with id ' . $id . ' not found');

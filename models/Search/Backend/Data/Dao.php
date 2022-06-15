@@ -41,7 +41,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
                 throw new \Exception('unknown type of element with id [ '.$element->getId().' ] ');
             }
 
-            $data = $this->db->fetchRow('SELECT * FROM search_backend_data WHERE id = ? AND maintype = ? ', [$element->getId(), $maintype]);
+            $data = $this->db->fetchAssociative('SELECT * FROM search_backend_data WHERE id = ? AND maintype = ? ', [$element->getId(), $maintype]);
             if (is_array($data)) {
                 unset($data['id']);
                 $this->assignVariablesToModel($data);

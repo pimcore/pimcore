@@ -133,7 +133,7 @@ abstract class Dao extends Model\Dao\AbstractDao
             ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $currentUserId . ') DESC LIMIT 1
         ';
 
-        $highestWorkspace = $this->db->fetchRow($highestWorkspaceQuery);
+        $highestWorkspace = $this->db->fetchAssociative($highestWorkspaceQuery);
 
         if ($highestWorkspace) {
             //if it's the current user, this is the permission that rules them all, no need to check others
