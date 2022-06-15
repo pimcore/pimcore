@@ -161,7 +161,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     public $maxItems;
 
@@ -784,7 +784,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $getInheritedValues = DataObject::doGetInheritedValues();
 
         if (!$omitMandatoryCheck) {
-            if ($this->maxItems > 0 && count($activeGroups) > $this->maxItems) {
+            if ($this->maxItems && count($activeGroups) > $this->maxItems) {
                 throw new Model\Element\ValidationException(
                     'Groups in field [' . $this->getName() . '] is bigger than ' . $this->getMaxItems()
                 );
@@ -940,15 +940,15 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param int $maxItems
+     * @param int|null $maxItems
      */
     public function setMaxItems($maxItems)
     {
-        $this->maxItems = (int) $maxItems;
+        $this->maxItems = $this->getAsIntegerCast($maxItems);
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getMaxItems()
     {
