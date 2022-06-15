@@ -245,9 +245,9 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $whereLocalizedFields = "(ownertype = 'localizedfield' AND "
-            . Helper::quoteInto('ownername LIKE ?', '/fieldcollection~'
+            . Helper::quoteInto($this->db, 'ownername LIKE ?', '/fieldcollection~'
                 . $this->model->getFieldname() . '/%')
-            . ' AND ' . Helper::quoteInto('src_id = ?', $object->getId()). ')';
+            . ' AND ' . Helper::quoteInto($this->db, 'src_id = ?', $object->getId()). ')';
 
         if ($saveMode) {
             if (!DataObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields() && $hasLocalizedFields) {
@@ -258,7 +258,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $where = "(ownertype = 'fieldcollection' AND " . Helper::quoteInto('ownername = ?', $this->model->getFieldname())
+        $where = "(ownertype = 'fieldcollection' AND " . Helper::quoteInto($this->db, 'ownername = ?', $this->model->getFieldname())
             . ' AND ' . Helper::quoteInto($this->db, 'src_id = ?', $object->getId()) . ')';
 
         // empty relation table
