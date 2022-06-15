@@ -39,7 +39,7 @@ class Dao extends Model\Dao\AbstractDao
             'SELECT documents.id FROM documents
             LEFT JOIN documents_page ON documents.id = documents_page.id
             WHERE documents.path LIKE ? AND documents_page.prettyUrl = ?',
-            [$this->db->escapeLike($site->getRootPath()) . '/%', rtrim($path, '/')]
+            [Helper::escapeLike($site->getRootPath()) . '/%', rtrim($path, '/')]
         );
     }
 

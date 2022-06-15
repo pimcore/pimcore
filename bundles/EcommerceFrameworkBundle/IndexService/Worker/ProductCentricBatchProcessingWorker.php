@@ -19,6 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInt
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
+use Pimcore\Db\Helper;
 use Pimcore\Event\Ecommerce\IndexServiceEvents;
 use Pimcore\Event\Model\Ecommerce\IndexService\PreprocessAttributeErrorEvent;
 use Pimcore\Event\Model\Ecommerce\IndexService\PreprocessErrorEvent;
@@ -140,9 +141,8 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
     public function fillupPreparationQueue(IndexableInterface $object)
     {
         if ($object instanceof Concrete) {
-
             //need check, if there are sub objects because update on empty result set is too slow
-            $objects = $this->db->fetchFirstColumn('SELECT o_id FROM objects WHERE o_path LIKE ?', [$this->db->escapeLike($object->getFullPath()) . '/%']);
+            $objects = $this->db->fetchFirstColumn('SELECT o_id FROM objects WHERE o_path LIKE ?', [Helper::escapeLike($object->getFullPath()) . '/%']);
             if ($objects) {
                 $this->executeTransactionalQuery(function () use ($objects) {
                     $updateStatement = 'UPDATE ' . $this->getStoreTableName() . ' SET in_preparation_queue = 1 WHERE tenant = ? AND o_id IN ('.implode(',', $objects).')';
