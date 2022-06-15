@@ -104,7 +104,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
             $this->db->insert($this->getStoreTableName(), $data);
         } elseif ($currentEntry['crc_current'] != $data['crc_current']) {
             $this->executeTransactionalQuery(function () use ($data, $subObjectId) {
-                $this->db->updateWhere($this->getStoreTableName(), $data, 'o_id = ' . $this->db->quote((string)$subObjectId) . ' AND tenant = ' . $this->db->quote($this->name));
+                $this->db->update($this->getStoreTableName(), $data, ['o_id' => (string)$subObjectId, 'tenant' => $this->name]);
             });
         } elseif ($currentEntry['in_preparation_queue']) {
 

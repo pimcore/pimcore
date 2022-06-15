@@ -520,10 +520,10 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                             json_decode($data['update_error'], true)
                         );
 
-                        $this->db->updateWhere(
+                        $this->db->update(
                             $this->getStoreTableName(),
                             $data,
-                            'o_id = ' . $this->db->quote($response[$operation]['_id']) . ' AND tenant = ' . $this->db->quote($this->name)
+                            ['o_id' => $response[$operation]['_id'], 'tenant' => $this->name]
                         );
                     } else {
 

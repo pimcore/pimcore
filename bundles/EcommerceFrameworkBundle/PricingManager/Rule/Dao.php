@@ -124,7 +124,7 @@ class Dao extends AbstractDao
             }
         }
 
-        $this->db->updateWhere(self::TABLE_NAME, $data, 'id=' . $this->db->quote($this->model->getId()));
+        $this->db->update(self::TABLE_NAME, $data, ['id' => $this->model->getId()]);
     }
 
     /**

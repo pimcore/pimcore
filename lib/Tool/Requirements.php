@@ -199,10 +199,10 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->updateWhere('__pimcore_req_check', [
+            $db->update('__pimcore_req_check', [
                 'field' => uniqid(),
                 'alter_field' => uniqid(),
-            ]);
+            ], []);
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -728,11 +728,11 @@ final class Requirements
     }
 
     /**
-     * @param ConnectionInterface $db
+     * @param Connection $db
      *
      * @return array
      */
-    public static function checkAll(ConnectionInterface $db): array
+    public static function checkAll(Connection $db): array
     {
         return [
             'checksPHP' => static::checkPhp(),
