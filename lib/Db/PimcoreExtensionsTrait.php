@@ -37,12 +37,15 @@ trait PimcoreExtensionsTrait
      */
     protected $autoQuoteIdentifiers = true;
 
+    /**
+     * @var array
+     */
     private static array $tablePrimaryKeyCache = [];
 
     /**
-     *@return bool
+     * @see \Doctrine\DBAL\Connection::connect
      *
-     *@see \Doctrine\DBAL\Connection::connect
+     * @return bool
      */
     public function connect()// : bool
     {
@@ -193,8 +196,8 @@ trait PimcoreExtensionsTrait
     /**
      * Deletes table rows based on a custom WHERE clause.
      *
-     * @param  mixed        $table The table to update.
-     * @param  mixed        $where DELETE WHERE clause(s).
+     * @param  string        $table The table to update.
+     * @param  string        $where DELETE WHERE clause(s).
      *
      * @return int          The number of affected rows.
      *
@@ -213,9 +216,9 @@ trait PimcoreExtensionsTrait
     /**
      * Updates table rows with specified data based on a custom WHERE clause.
      *
-     * @param  mixed        $table The table to update.
+     * @param  string        $table The table to update.
      * @param  array        $data  Column-value pairs.
-     * @param  mixed        $where UPDATE WHERE clause(s).
+     * @param  string        $where UPDATE WHERE clause(s).
      *
      * @return int          The number of affected rows.
      *

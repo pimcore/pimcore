@@ -41,9 +41,7 @@ final class Config implements \ArrayAccess
     protected static $systemConfig = null;
 
     /**
-     * @param  mixed $offset
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function offsetExists($offset): bool
     {
@@ -51,10 +49,7 @@ final class Config implements \ArrayAccess
     }
 
     /**
-     * @param  mixed $offset
-     * @param  mixed $value
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function offsetSet($offset, $value): void
     {
@@ -62,9 +57,7 @@ final class Config implements \ArrayAccess
     }
 
     /**
-     * @param  mixed $offset
-     *
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function offsetUnset($offset): void
     {
@@ -72,9 +65,7 @@ final class Config implements \ArrayAccess
     }
 
     /**
-     * @param string $offset
-     *
-     * @return array|null
+     * {@inheritdoc}
      */
     public function offsetGet($offset): ?array
     {
@@ -194,7 +185,9 @@ final class Config implements \ArrayAccess
     /**
      * @static
      *
-     * @return \Pimcore\Config\Config
+     * @param string|null $language
+     *
+     * @return PimcoreConfig
      */
     public static function getWebsiteConfig($language = null)
     {
@@ -225,7 +218,7 @@ final class Config implements \ArrayAccess
                 $cacheKey = $cacheKey . '_site_' . $siteId;
             }
 
-            /** @var \Pimcore\Config\Config|null $config */
+            /** @var PimcoreConfig|null $config */
             $config = Cache::load($cacheKey);
             if (!$config) {
                 $settingsArray = [];
@@ -320,11 +313,11 @@ final class Config implements \ArrayAccess
     /**
      * Returns whole website config or only a given setting for the current site
      *
-     * @param null|mixed $key       Config key to directly load. If null, the whole config will be returned
-     * @param null|mixed $default   Default value to use if the key is not set
-     * @param null|string $language   Language
+     * @param string|null $key  Config key to directly load. If null, the whole config will be returned
+     * @param mixed $default    Default value to use if the key is not set
+     * @param string|null $language
      *
-     * @return Config\Config|mixed
+     * @return mixed
      */
     public static function getWebsiteConfigValue($key = null, $default = null, $language = null)
     {
@@ -374,12 +367,13 @@ final class Config implements \ArrayAccess
     }
 
     /**
-     * @internal
      * @static
      *
-     * @param \Pimcore\Config\Config $config
+     * @param PimcoreConfig $config
+     *
+     * @internal
      */
-    public static function setReportConfig(\Pimcore\Config\Config $config)
+    public static function setReportConfig(PimcoreConfig $config)
     {
         \Pimcore\Cache\Runtime::set('pimcore_config_report', $config);
     }
@@ -387,7 +381,7 @@ final class Config implements \ArrayAccess
     /**
      * @static
      *
-     * @return \Pimcore\Config\Config
+     * @return PimcoreConfig
      *
      * @internal
      */
@@ -406,9 +400,9 @@ final class Config implements \ArrayAccess
                     $configData[$siteId] = $robots->getData();
                 }
 
-                $config = new \Pimcore\Config\Config($configData);
+                $config = new PimcoreConfig($configData);
             } catch (\Exception $e) {
-                $config = new \Pimcore\Config\Config([]);
+                $config = new PimcoreConfig([]);
             }
 
             self::setRobotsConfig($config);
@@ -420,20 +414,21 @@ final class Config implements \ArrayAccess
     /**
      * @static
      *
-     * @param \Pimcore\Config\Config $config
+     * @param PimcoreConfig $config
      *
      * @internal
      */
-    public static function setRobotsConfig(\Pimcore\Config\Config $config)
+    public static function setRobotsConfig(PimcoreConfig $config)
     {
         \Pimcore\Cache\Runtime::set('pimcore_config_robots', $config);
     }
 
     /**
-     * @internal
      * @static
      *
-     * @return \Pimcore\Config\Config
+     * @return PimcoreConfig
+     *
+     * @internal
      */
     public static function getWeb2PrintConfig()
     {
@@ -448,21 +443,23 @@ final class Config implements \ArrayAccess
     }
 
     /**
-     * @internal
      * @static
      *
-     * @param \Pimcore\Config\Config $config
+     * @param PimcoreConfig $config
+     *
+     * @internal
      */
-    public static function setWeb2PrintConfig(\Pimcore\Config\Config $config)
+    public static function setWeb2PrintConfig(PimcoreConfig $config)
     {
         \Pimcore\Cache\Runtime::set('pimcore_config_web2print', $config);
     }
 
     /**
-     * @internal
      * @static
      *
-     * @param \Pimcore\Config\Config $config
+     * @param PimcoreConfig $config
+     *
+     * @internal
      */
     public static function setModelClassMappingConfig($config)
     {
@@ -525,7 +522,7 @@ final class Config implements \ArrayAccess
      * @param string $file
      * @param bool $asArray
      *
-     * @return null|Config\Config|array
+     * @return Config\Config|array
      *
      * @throws \Exception
      */
@@ -544,7 +541,7 @@ final class Config implements \ArrayAccess
                     return $content;
                 }
 
-                return new \Pimcore\Config\Config($content);
+                return new PimcoreConfig($content);
             }
         } else {
             throw new \Exception($file . " doesn't exist");
