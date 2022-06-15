@@ -37,7 +37,7 @@ abstract class AbstractPropertiesTest extends ModelTestCase
     protected $testElement;
 
     /**
-     * @param PropertiesTestHelper $testData
+     * @param PropertiesTestHelper $testHelper
      */
     public function _inject(PropertiesTestHelper $testHelper)
     {

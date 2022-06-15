@@ -15,6 +15,8 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
+use League\Flysystem\FilesystemException;
+use League\Flysystem\UnableToReadFile;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
@@ -31,11 +33,14 @@ use Pimcore\Model\GridConfigFavourite;
 use Pimcore\Model\GridConfigShare;
 use Pimcore\Model\User;
 use Pimcore\Tool;
+use Pimcore\Tool\Storage;
 use Pimcore\Version;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -188,11 +193,12 @@ class DataObjectHelperController extends AdminController
      * @Route("/grid-delete-column-config", name="griddeletecolumnconfig", methods={"DELETE"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      * @param Config $config
      *
      * @return JsonResponse
      */
-    public function gridDeleteColumnConfigAction(Request $request, Config $config)
+    public function gridDeleteColumnConfigAction(Request $request, EventDispatcherInterface $eventDispatcher, Config $config)
     {
         $gridConfigId = $request->get('gridConfigId');
         $gridConfig = GridConfig::getById($gridConfigId);
@@ -209,6 +215,16 @@ class DataObjectHelperController extends AdminController
         $newGridConfig = $this->doGetGridColumnConfig($request, $config, true);
         $newGridConfig['deleteSuccess'] = $success;
 
+        $event = new GenericEvent($this, [
+            'data' => $newGridConfig,
+            'request' => $request,
+            'config' => $config,
+            'context' => 'delete',
+        ]);
+
+        $eventDispatcher->dispatch($event, AdminEvents::OBJECT_GRID_GET_COLUMN_CONFIG_PRE_SEND_DATA);
+        $newGridConfig = $event->getArgument('data');
+
         return $this->adminJson($newGridConfig);
     }
 
@@ -216,13 +232,24 @@ class DataObjectHelperController extends AdminController
      * @Route("/grid-get-column-config", name="gridgetcolumnconfig", methods={"GET"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      * @param Config $config
      *
      * @return JsonResponse
      */
-    public function gridGetColumnConfigAction(Request $request, Config $config)
+    public function gridGetColumnConfigAction(Request $request, EventDispatcherInterface $eventDispatcher, Config $config)
     {
         $result = $this->doGetGridColumnConfig($request, $config);
+
+        $event = new GenericEvent($this, [
+            'data' => $result,
+            'request' => $request,
+            'config' => $config,
+            'context' => 'get',
+        ]);
+
+        $eventDispatcher->dispatch($event, AdminEvents::OBJECT_GRID_GET_COLUMN_CONFIG_PRE_SEND_DATA);
+        $result = $event->getArgument('data');
 
         return $this->adminJson($result);
     }
@@ -1267,7 +1294,7 @@ class DataObjectHelperController extends AdminController
      */
     protected function getCsvFile($fileHandle)
     {
-        return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $fileHandle . '.csv';
+        return $fileHandle . '.csv';
     }
 
     /**
@@ -1299,7 +1326,9 @@ class DataObjectHelperController extends AdminController
         $jobs = array_chunk($ids, 20);
 
         $fileHandle = uniqid('export-');
-        file_put_contents($this->getCsvFile($fileHandle), '');
+
+        $storage = Storage::get('temp');
+        $storage->write($this->getCsvFile($fileHandle), '');
 
         return $this->adminJson(['success' => true, 'jobs' => $jobs, 'fileHandle' => $fileHandle]);
     }
@@ -1378,13 +1407,19 @@ class DataObjectHelperController extends AdminController
 
         $csv = DataObject\Service::getCsvData($requestedLanguage, $localeService, $list, $fields, $addTitles, $context);
 
-        $fp = fopen($this->getCsvFile($fileHandle), 'a');
+        $storage = Storage::get('temp');
+        $csvFile = $this->getCsvFile($fileHandle);
+
+        $fileStream = $storage->readStream($csvFile);
+
+        $temp = tmpfile();
+        stream_copy_to_stream($fileStream, $temp, null, 0);
 
         $firstLine = true;
         $lineCount = count($csv);
 
         if (!$addTitles && $lineCount > 0) {
-            fwrite($fp, "\r\n");
+            fwrite($temp, "\r\n");
         }
 
         for ($i = 0; $i < $lineCount; $i++) {
@@ -1392,16 +1427,15 @@ class DataObjectHelperController extends AdminController
             if ($addTitles && $firstLine) {
                 $firstLine = false;
                 $line = implode($delimiter, $line);
-                fwrite($fp, $line);
+                fwrite($temp, $line);
             } else {
-                fwrite($fp, implode($delimiter, array_map([$this, 'encodeFunc'], $line)));
+                fwrite($temp, implode($delimiter, array_map([$this, 'encodeFunc'], $line)));
             }
             if ($i < $lineCount - 1) {
-                fwrite($fp, "\r\n");
+                fwrite($temp, "\r\n");
             }
         }
-
-        fclose($fp);
+        $storage->writeStream($csvFile, $temp);
 
         return $this->adminJson(['success' => true]);
     }
@@ -1418,22 +1452,31 @@ class DataObjectHelperController extends AdminController
      *
      * @param Request $request
      *
-     * @return BinaryFileResponse
+     * @return Response
      */
     public function downloadCsvFileAction(Request $request)
     {
+        $storage = Storage::get('temp');
         $fileHandle = \Pimcore\File::getValidFilename($request->get('fileHandle'));
         $csvFile = $this->getCsvFile($fileHandle);
-        if (file_exists($csvFile)) {
-            $response = new BinaryFileResponse($csvFile);
+
+        try {
+            $csvData = $storage->read($csvFile);
+            $response = new Response($csvData);
             $response->headers->set('Content-Type', 'application/csv');
-            $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export.csv');
-            $response->deleteFileAfterSend(true);
+            $disposition = HeaderUtils::makeDisposition(
+                HeaderUtils::DISPOSITION_ATTACHMENT,
+                'export.csv'
+            );
+
+            $response->headers->set('Content-Disposition', $disposition);
+            $storage->delete($csvFile);
 
             return $response;
+        } catch (FilesystemException | UnableToReadFile $exception) {
+            // handle the error
+            throw $this->createNotFoundException('CSV file not found');
         }
-
-        throw $this->createNotFoundException('CSV file not found');
     }
 
     /**
@@ -1445,14 +1488,23 @@ class DataObjectHelperController extends AdminController
      */
     public function downloadXlsxFileAction(Request $request)
     {
+        $storage = Storage::get('temp');
         $fileHandle = \Pimcore\File::getValidFilename($request->get('fileHandle'));
         $csvFile = $this->getCsvFile($fileHandle);
-        if (file_exists($csvFile)) {
+
+        try {
+            $csvStream= $storage->readStream($csvFile);
+
             $csvReader = new Csv();
             $csvReader->setDelimiter(';');
             $csvReader->setSheetIndex(0);
 
-            $spreadsheet = $csvReader->load($csvFile);
+            $temp = tmpfile();
+            stream_copy_to_stream($csvStream, $temp, null, 0);
+            $tempMetaData = stream_get_meta_data($temp);
+            //TODO: use this method and storage->read() to avoid the extra temp file, is not available in the current version. See: https://github.com/PHPOffice/PhpSpreadsheet/pull/2792
+            //$spreadsheet = $csvReader->loadSpreadsheetFromString($csvData);
+            $spreadsheet = $csvReader->load($tempMetaData['uri']);
             $writer = new Xlsx($spreadsheet);
             $xlsxFilename = PIMCORE_SYSTEM_TEMP_DIRECTORY. '/' .$fileHandle. '.xlsx';
             $writer->save($xlsxFilename);
@@ -1462,10 +1514,15 @@ class DataObjectHelperController extends AdminController
             $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export.xlsx');
             $response->deleteFileAfterSend(true);
 
-            return $response;
-        }
+            $storage->delete($csvFile);
 
-        throw $this->createNotFoundException('XLSX file not found');
+            $storage->delete($csvFile);
+
+            return $response;
+        } catch (FilesystemException | UnableToReadFile $exception) {
+            // handle the error
+            throw $this->createNotFoundException('XLSX file not found');
+        }
     }
 
     /**

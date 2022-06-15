@@ -30,6 +30,9 @@ class SessionStorage implements TargetingStorageInterface
 
     const STORAGE_KEY_UPDATED_AT = '_u';
 
+    /**
+     * {@inheritdoc }
+     */
     public function all(VisitorInfo $visitorInfo, string $scope): array
     {
         $bag = $this->getSessionBag($visitorInfo, $scope, true);
@@ -51,6 +54,9 @@ class SessionStorage implements TargetingStorageInterface
         return $result;
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function has(VisitorInfo $visitorInfo, string $scope, string $name): bool
     {
         $bag = $this->getSessionBag($visitorInfo, $scope, true);
@@ -61,6 +67,9 @@ class SessionStorage implements TargetingStorageInterface
         return $bag->has($name);
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function set(VisitorInfo $visitorInfo, string $scope, string $name, $value)
     {
         $bag = $this->getSessionBag($visitorInfo, $scope);
@@ -73,6 +82,9 @@ class SessionStorage implements TargetingStorageInterface
         $this->updateTimestamps($bag);
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null)
     {
         $bag = $this->getSessionBag($visitorInfo, $scope, true);
@@ -83,6 +95,9 @@ class SessionStorage implements TargetingStorageInterface
         return $bag->get($name, $default);
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function clear(VisitorInfo $visitorInfo, string $scope = null)
     {
         if (null !== $scope) {
@@ -100,6 +115,9 @@ class SessionStorage implements TargetingStorageInterface
         }
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope)
     {
         // only allow migration if a session bag is available as otherwise the fallback
@@ -122,6 +140,9 @@ class SessionStorage implements TargetingStorageInterface
         );
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function getCreatedAt(VisitorInfo $visitorInfo, string $scope)
     {
         $bag = $this->getSessionBag($visitorInfo, $scope);
@@ -132,6 +153,9 @@ class SessionStorage implements TargetingStorageInterface
         return \DateTimeImmutable::createFromFormat('U', (string)$bag->get(self::STORAGE_KEY_CREATED_AT));
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope)
     {
         $bag = $this->getSessionBag($visitorInfo, $scope);

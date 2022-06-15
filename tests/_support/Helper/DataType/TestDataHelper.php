@@ -383,7 +383,6 @@ class TestDataHelper extends AbstractTestDataHelper
     /**
      * @param Concrete $object
      * @param string $field
-     * @param          $comparisonObject
      * @param int $seed
      */
     public function assertGeopolygon(Concrete $object, $field, $seed = 1)
@@ -748,7 +747,6 @@ class TestDataHelper extends AbstractTestDataHelper
     /**
      * @param Concrete|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData $object
      * @param string $field
-     * @param Concrete|null $comparisonObject
      * @param int $seed
      * @param string|null $language
      */

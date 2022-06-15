@@ -139,7 +139,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
      * @param string $position
      * @param int $index
      *
-     * @return mixed
+     * @return ObjectMetadata|null
      */
     public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index)
     {

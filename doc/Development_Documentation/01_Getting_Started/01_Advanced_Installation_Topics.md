@@ -39,15 +39,6 @@ pimcore_install:
             
             # env variables can be directly read with the %env() syntax
             # see https://symfony.com/blog/new-in-symfony-3-2-runtime-environment-variables
-            host:                 %env(DB_HOST)%
-            port:                 %env(DB_PORT)%
-```
-
-
-## Add some randomness to the maintenance cron job
-```bash
-# We need bash since RANDOM is a bash builtin
-SHELL=/bin/bash
-
-*/5 * * * * sleep $[ ( $RANDOM \% 120 ) + 1 ]s ; /your/project/bin/console maintenance
+            host:                 "%env(DB_HOST)%"
+            port:                 "%env(DB_PORT)%"
 ```

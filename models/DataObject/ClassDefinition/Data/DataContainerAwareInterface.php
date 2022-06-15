@@ -20,16 +20,12 @@ interface DataContainerAwareInterface
     /**
      * @param mixed $containerDefinition
      * @param array $params
-     *
-     * @return mixed
      */
     public function preSave($containerDefinition, $params = []);
 
     /**
      * @param mixed $containerDefinition
      * @param array $params
-     *
-     * @return mixed
      */
     public function postSave($containerDefinition, $params = []);
 }

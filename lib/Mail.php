@@ -240,7 +240,7 @@ class Mail extends Email
      *
      * @param array $options
      *
-     * @return \Pimcore\Mail
+     * @return $this
      */
     public function setHtml2TextOptions(array $options = [])
     {
@@ -262,7 +262,7 @@ class Mail extends Email
     /**
      * Clears list of recipient email addresses
      *
-     * @return \Pimcore\Mail Provides fluent interface
+     * @return $this Provides fluent interface
      */
     public function clearRecipients()
     {
@@ -279,7 +279,7 @@ class Mail extends Email
     /**
      * Disables email logging
      *
-     * @return \Pimcore\Mail Provides fluent interface
+     * @return $this Provides fluent interface
      */
     public function disableLogging()
     {
@@ -291,7 +291,7 @@ class Mail extends Email
     /**
      * Enables email logging (by default it's enabled)
      *
-     * @return \Pimcore\Mail Provides fluent interface
+     * @return $this Provides fluent interface
      */
     public function enableLogging()
     {
@@ -315,7 +315,7 @@ class Mail extends Email
      *
      * @param array $params
      *
-     * @return \Pimcore\Mail Provides fluent interface
+     * @return $this Provides fluent interface
      */
     public function setParams(array $params)
     {
@@ -332,7 +332,7 @@ class Mail extends Email
      * @param string|int $key
      * @param mixed $value
      *
-     * @return \Pimcore\Mail Provides fluent interface
+     * @return $this Provides fluent interface
      */
     public function setParam($key, $value)
     {
@@ -382,7 +382,7 @@ class Mail extends Email
      *
      * @param array $params
      *
-     * @return \Pimcore\Mail Provides fluent interface
+     * @return $this Provides fluent interface
      */
     public function unsetParams(array $params)
     {
@@ -398,7 +398,7 @@ class Mail extends Email
      *
      * @param string|int $key
      *
-     * @return \Pimcore\Mail Provides fluent interface
+     * @return $this Provides fluent interface
      */
     public function unsetParam($key)
     {
@@ -414,7 +414,7 @@ class Mail extends Email
     /**
      * Sets the settings which are defined in the Document Settings (from,to,cc,bcc,replyTo)
      *
-     * @return \Pimcore\Mail Provides fluent interface
+     * @return $this Provides fluent interface
      */
     private function setDocumentSettings()
     {
@@ -477,7 +477,7 @@ class Mail extends Email
      *
      * @param  MailerInterface|null $mailer
      *
-     * @return \Pimcore\Mail Provides fluent interface
+     * @return $this Provides fluent interface
      */
     public function send(MailerInterface $mailer = null)
     {
@@ -511,7 +511,7 @@ class Mail extends Email
      *
      * @param MailerInterface|null $mailer
      *
-     * @return \Pimcore\Mail
+     * @return $this
      *
      * @throws \Exception
      */
@@ -818,7 +818,7 @@ class Mail extends Email
      *
      * @internal
      *
-     * @return \Pimcore\Mail
+     * @return $this
      */
     public function preventDebugInformationAppending()
     {
@@ -880,7 +880,7 @@ class Mail extends Email
      * @param string $body
      * @param string $charset
      *
-     * @return \Pimcore\Mail
+     * @return $this
      */
     public function setBodyHtml($body, string $charset = 'utf-8')
     {

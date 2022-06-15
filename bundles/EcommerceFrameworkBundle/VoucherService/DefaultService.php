@@ -222,7 +222,7 @@ class DefaultService implements VoucherServiceInterface
 
         // calculate not applied rules with voucher conditions
         $notAppliedRules = array_udiff($validRules, $appliedRules, function ($rule1, $rule2) {
-            return strcmp($rule1->getId(), $rule2->getId());
+            return $rule1->getId() <=> $rule2->getId();
         });
         $notAppliedRulesWithVoucherCondition = [];
         foreach ($notAppliedRules as $notAppliedRule) {

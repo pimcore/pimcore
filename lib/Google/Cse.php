@@ -33,7 +33,7 @@ class Cse implements PaginateListingInterface
      * @param array $config
      * @param string|null $facet
      *
-     * @return Cse
+     * @return self
      */
     public static function search($query, $offset = 0, $perPage = 10, array $config = [], $facet = null)
     {
@@ -50,6 +50,11 @@ class Cse implements PaginateListingInterface
         return $list;
     }
 
+    /**
+     * @return Item[]
+     *
+     * @throws \Exception
+     */
     public function load()
     {
         $client = Api::getSimpleClient();
@@ -152,7 +157,7 @@ class Cse implements PaginateListingInterface
     public $facets = [];
 
     /**
-     * @param null|mixed $googleResponse
+     * @param Search|null $googleResponse
      */
     public function __construct($googleResponse = null)
     {
@@ -368,6 +373,8 @@ class Cse implements PaginateListingInterface
      * @param bool $retry
      *
      * @return Item[]
+     *
+     * @throws \Exception
      */
     public function getResults($retry = true)
     {
@@ -417,7 +424,9 @@ class Cse implements PaginateListingInterface
      * @param int $offset
      * @param int $itemCountPerPage
      *
-     * @return array
+     * @return Item[]
+     *
+     * @throws \Exception
      */
     public function getItems($offset, $itemCountPerPage)
     {

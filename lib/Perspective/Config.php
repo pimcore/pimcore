@@ -44,11 +44,8 @@ final class Config
     private static function getRepository()
     {
         if (!self::$locationAwareConfigRepository) {
-            $config = [];
             $containerConfig = \Pimcore::getContainer()->getParameter('pimcore.config');
-            if (isset($containerConfig[self::CONFIG_ID]['definitions'])) {
-                $config = $containerConfig[self::CONFIG_ID]['definitions'];
-            }
+            $config = $containerConfig[self::CONFIG_ID]['definitions'];
 
             self::$locationAwareConfigRepository = new LocationAwareConfigRepository(
                 $config,
@@ -81,7 +78,7 @@ final class Config
         $keys = $repository->fetchAllKeys();
         foreach ($keys as $key) {
             $configKey = $repository->loadConfigByKey(($key));
-            if (isset($configKey) && is_array(($configKey))) {
+            if (isset($configKey[0])) {
                 $configKey[0]['writeable'] = $repository->isWriteable($key, $configKey[1]);
                 $config = array_merge($config, [$key => $configKey[0]]);
             }
@@ -258,6 +255,7 @@ final class Config
 
         $event = new GenericEvent(null, [
             'result' => $result,
+            'configName' => $currentConfigName,
         ]);
         \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::PERSPECTIVE_POST_GET_RUNTIME);
 

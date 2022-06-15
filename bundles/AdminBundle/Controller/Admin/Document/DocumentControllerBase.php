@@ -134,7 +134,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
                         $property->setDataFromEditmode($value);
                         $property->setInheritable($propertyData['inheritable']);
 
-                        if ($propertyName == 'language') {
+                        if ($propertyName === 'language') {
                             $property->setInherited($this->getPropertyInheritance($document, $propertyName, $value));
                         }
 
@@ -299,11 +299,11 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
     /**
      * @param Model\Document $document
      * @param string $propertyName
-     * @param string $propertyValue
+     * @param mixed $propertyValue
      *
      * @return bool
      */
-    protected function getPropertyInheritance(Model\Document $document, string $propertyName, string $propertyValue): bool
+    protected function getPropertyInheritance(Model\Document $document, string $propertyName, mixed $propertyValue): bool
     {
         if ($document->getParent()) {
             return $propertyValue == $document->getParent()->getProperty($propertyName);
@@ -448,8 +448,11 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
 
                 break;
             case $task === self::TASK_SCHEDULER && $document->isAllowed('settings'):
-                $this->setValuesToDocument($request, $document);
-                $document->save();
+                if ($document instanceof Model\Document\PageSnippet
+                    || $document instanceof Model\Document\Hardlink
+                    || $document instanceof Model\Document\Link) {
+                    $document->saveScheduledTasks();
+                }
 
                 break;
             default:

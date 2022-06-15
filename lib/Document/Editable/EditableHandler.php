@@ -19,6 +19,7 @@ use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
 use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
+use Pimcore\Extension\Document\Areabrick\PreviewAwareInterface;
 use Pimcore\Extension\Document\Areabrick\TemplateAreabrickInterface;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\RequestHelper;
@@ -148,7 +149,10 @@ class EditableHandler implements LoggerAwareInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param Editable $editable
+     * @param AreabrickInterface|string|bool $brick
+     *
+     * @return bool
      */
     public function isBrickEnabled(Editable $editable, $brick)
     {
@@ -160,7 +164,10 @@ class EditableHandler implements LoggerAwareInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param Editable\Areablock $editable
+     * @param array $options
+     *
+     * @return array
      */
     public function getAvailableAreablockAreas(Editable\Areablock $editable, array $options)
     {
@@ -202,6 +209,10 @@ class EditableHandler implements LoggerAwareInterface
                 }
             }
 
+            $previewHtml = $brick instanceof PreviewAwareInterface
+                ? $brick->getPreviewHtml()
+                : null;
+
             if ($this->editmodeResolver->isEditmode()) {
                 $name = $this->translator->trans($name);
                 $desc = $this->translator->trans($desc);
@@ -212,6 +223,7 @@ class EditableHandler implements LoggerAwareInterface
                 'description' => $desc,
                 'type' => $brick->getId(),
                 'icon' => $icon,
+                'previewHtml' => $previewHtml,
                 'limit' => $limit,
                 'needsReload' => $brick->needsReload(),
                 'hasDialogBoxConfiguration' => $hasDialogBoxConfiguration,
@@ -291,6 +303,9 @@ class EditableHandler implements LoggerAwareInterface
         return $html;
     }
 
+    /**
+     * @param Response|null $result
+     */
     protected function handleBrickActionResult($result)
     {
 
@@ -390,7 +405,11 @@ class EditableHandler implements LoggerAwareInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $controller
+     * @param array $attributes
+     * @param array $query
+     *
+     * @return string|Response
      */
     public function renderAction($controller, array $attributes = [], array $query = [])
     {

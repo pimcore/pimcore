@@ -108,7 +108,7 @@ class GlobalAction implements NotesAwareInterface
 
     /**
      * @param Workflow $workflow
-     * @param mixed $subject
+     * @param object $subject
      *
      * @return bool
      */
@@ -118,7 +118,7 @@ class GlobalAction implements NotesAwareInterface
             return true;
         }
 
-        return $this->expressionService->evaluateExpression($workflow, $subject, $this->getGuard());
+        return (bool)$this->expressionService->evaluateExpression($workflow, $subject, $this->getGuard());
     }
 
     public function getWorkflowName(): string

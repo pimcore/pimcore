@@ -74,33 +74,33 @@ as registered on the areabrick manager (see below).
 
 | Location | Path                                           |
 |----------|------------------------------------------------|
-| global   | `templates/areas/<brickId>`          |
+| global   | `templates/areas/<brickId>`                    |
 | bundle   | `<bundlePath>/Resources/views/Areas/<brickId>` |
-
 
 Depending on the template location, the following files will be used. You can always completely control locations by 
 implementing the methods for templates and icon yourself (see `AreabrickInterface`):
 
-| Type |  Location |
-|---------------------------|-------------------------------------------------------------------------------------------------|
+| Type          | Location                            |
+|---------------|-------------------------------------|
 | view template | `<templateLocation>/view.html.twig` |
-
 
 If the brick defines an icon in the `public` resources directory of the bundle, the icon will be automatically used 
 in editmode. If the icon is at another location, you can override the `getIcon()` method and specify an URL to be 
 included as icon. When rendering editmode, the following location will be searched for the brick icon and is expected
  to be a 16x16 pixel PNG: `<bundlePath>/Resources/public/areas/<brickId>/icon.png` which resolves to the URL  
  `/bundles/<bundleUrl>/areas/<brickId>/icon.png` when included in editmode.
- 
+
+You can optionally implement `Pimcore\Extension\Document\Areabrick\PreviewAwareInterface` to add a custom html tooltip
+for your brick that will be shown as a tooltip when hovering over the add-brick button.  
 Given our `iframe` brick defined before, the following paths will be used.
 
 ### `global` template location
 
-| Location      | Path                                                    |
-|---------------|---------------------------------------------------------|
-| view template | `templates/areas/iframe/view.html.twig` |
-| icon path     | `public/bundles/app/areas/iframe/icon.png`                 |
-| icon URL      | `/bundles/app/areas/iframe/icon.png`                    |
+| Location      | Path                                       |
+|---------------|--------------------------------------------|
+| view template | `templates/areas/iframe/view.html.twig`    |
+| icon path     | `public/bundles/app/areas/iframe/icon.png` |
+| icon URL      | `/bundles/app/areas/iframe/icon.png`       |
 
 ### `bundle` template location
 
@@ -108,7 +108,7 @@ The icon path and URL are the same as above, but the view scripts are expected i
 
 | Location      | Path                                                    |
 |---------------|---------------------------------------------------------|
-| view template | `templates/areas/iframe/view.html.twig` |
+| view template | `templates/areas/iframe/view.html.twig`                 |
 
 ## How to Create a Brick
  

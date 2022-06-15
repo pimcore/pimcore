@@ -38,17 +38,17 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     protected $orderKey = [];
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $limit;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $offset;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $condition;
 
@@ -58,12 +58,12 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     protected $conditionVariables = [];
 
     /**
-     * @var array
+     * @var array|null
      */
     protected $conditionVariablesFromSetCondition;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $groupBy;
 
@@ -121,7 +121,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getLimit()
     {
@@ -129,7 +129,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getOffset()
     {
@@ -244,25 +244,27 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @param string $key
+     * @param string $condition
      * @param mixed $value
      * @param string $concatenator
      *
      * @return $this
      */
-    public function addConditionParam($key, $value = null, $concatenator = 'AND')
+    public function addConditionParam($condition, $value = null, $concatenator = 'AND')
     {
         $this->setData(null);
 
-        $key = '('.$key.')';
-        $ignore = true;
-        if (strpos($key, '?') !== false || strpos($key, ':') !== false) {
-            $ignore = false;
+        $condition = '('.$condition.')';
+        $ignoreParameter = true;
+
+        $conditionWithoutQuotedStrings = preg_replace('/["\'][^"\']*?["\']/', '', $condition);
+        if (str_contains($conditionWithoutQuotedStrings, '?') || str_contains($conditionWithoutQuotedStrings, ':')) {
+            $ignoreParameter = false;
         }
-        $this->conditionParams[$key] = [
+        $this->conditionParams[$condition] = [
             'value' => $value,
             'concatenator' => $concatenator,
-            'ignore-value' => $ignore, // If there is not a placeholder, ignore value!
+            'ignore-value' => $ignoreParameter, // If there is not a placeholder, ignore value!
         ];
 
         return $this;
@@ -381,7 +383,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getGroupBy()
     {
@@ -493,7 +495,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @return array
+     * @return array|null
      */
     public function getConditionVariablesFromSetCondition()
     {
@@ -544,7 +546,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @return mixed
+     * @return int|string|null
      */
     #[\ReturnTypeWillChange]
     public function key()// : mixed

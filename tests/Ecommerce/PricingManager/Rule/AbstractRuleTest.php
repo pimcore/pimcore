@@ -132,7 +132,7 @@ class AbstractRuleTest extends EcommerceTestCase
     /**
      * @param int $id
      * @param float $grossPrice
-     * @param PricingManagerInterface $pricingManager
+     * @param PricingManagerInterface|null $pricingManager
      * @param array $categories
      * @param array $taxes
      * @param string $combinationType

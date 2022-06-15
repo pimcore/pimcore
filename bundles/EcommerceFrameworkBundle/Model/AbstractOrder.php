@@ -305,7 +305,7 @@ abstract class AbstractOrder extends Concrete
     abstract public function setCustomerFirstname(?string $customerFirstname);
 
     /**
-     * @return string
+     * @return string|null
      */
     abstract public function getCustomerLastname(): ?string;
 

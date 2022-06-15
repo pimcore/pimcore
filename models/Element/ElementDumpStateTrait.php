@@ -26,8 +26,6 @@ trait ElementDumpStateTrait
 
     /**
      * @param bool $dumpState
-     *
-     * @return mixed|void
      */
     public function setInDumpState(bool $dumpState)
     {

@@ -110,6 +110,11 @@ class Image extends Model\Asset
             $reference = $thumbnail->getPathReference();
             if (in_array($reference['type'], ['asset', 'thumbnail'])) {
                 $image = $thumbnail->getLocalFile();
+
+                if (null === $image) {
+                    return false;
+                }
+
                 $imageWidth = $thumbnail->getWidth();
                 $imageHeight = $thumbnail->getHeight();
 
@@ -172,6 +177,10 @@ class Image extends Model\Asset
         if (class_exists('Imagick')) {
             // Imagick fallback
             $path = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig())->getLocalFile();
+
+            if (null === $path) {
+                return false;
+            }
 
             $imagick = new \Imagick($path);
             $imagick->setImageFormat('jpg');
@@ -282,7 +291,7 @@ EOT;
     /**
      * Returns a path to a given thumbnail or an thumbnail configuration.
      *
-     * @param string|array|Image\Thumbnail\Config $config
+     * @param null|string|array|Image\Thumbnail\Config $config
      * @param bool $deferred
      *
      * @return Image\Thumbnail
@@ -354,6 +363,10 @@ EOT;
 
         if (!$path) {
             $path = $this->getLocalFile();
+        }
+
+        if (!$path) {
+            return null;
         }
 
         $dimensions = null;

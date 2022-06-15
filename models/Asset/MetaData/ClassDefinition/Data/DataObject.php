@@ -110,7 +110,7 @@ class DataObject extends Data
      * @param mixed $data
      * @param array $params
      *
-     * @return mixed
+     * @return int|string|null
      */
     public function getDataFromEditMode($data, $params = [])
     {
@@ -199,7 +199,7 @@ class DataObject extends Data
      * @param mixed $data
      * @param array $params
      *
-     * @return mixed
+     * @return int|null
      */
     public function getDataFromListfolderGrid($data, $params = [])
     {

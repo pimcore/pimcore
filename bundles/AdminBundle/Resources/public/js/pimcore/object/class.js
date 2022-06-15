@@ -71,7 +71,6 @@ pimcore.object.klass = Class.create({
                 }
             });
 
-
             this.tree = Ext.create('Ext.tree.Panel', {
                 id: "pimcore_panel_classes_tree",
                 store: this.store,
@@ -92,7 +91,8 @@ pimcore.object.klass = Class.create({
                         {
                             text: t("add"),
                             iconCls: "pimcore_icon_class pimcore_icon_overlay_add",
-                            handler: this.suggestIdentifier.bind(this)
+                            handler: this.suggestIdentifier.bind(this),
+                            disabled: !pimcore.settings['class-definition-writeable']
                         }
                     ]
                 }
@@ -332,7 +332,7 @@ pimcore.object.klass = Class.create({
 
     deleteClass: function (tree, record) {
 
-        Ext.Msg.confirm(t('delete'), sprintf(t('delete_class_message'), record.data.text), function (btn) {
+        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('class'), record.data.text), function (btn) {
             if (btn == 'yes') {
                 Ext.Ajax.request({
                     url: Routing.generate('pimcore_admin_dataobject_class_delete'),

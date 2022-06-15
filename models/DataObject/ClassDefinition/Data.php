@@ -123,7 +123,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         'userpermissions', 'dependencies', 'modificationdate', 'usermodification', 'byid', 'bypath', 'data',
         'versions', 'properties', 'permissions', 'permissionsforuser', 'childamount', 'apipluginbroker', 'resource',
         'parentClass', 'definition', 'locked', 'language', 'omitmandatorycheck', 'idpath', 'object', 'fieldname',
-        'property', 'parentid', 'children', 'scheduledtasks',
+        'property', 'parentid', 'children', 'scheduledtasks', 'latestVersion',
     ];
 
     /**
@@ -1449,7 +1449,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      * @param array|null $existingData
      * @param array $additionalData
      *
-     * @return mixed
+     * @return array|null
      */
     public function appendData($existingData, $additionalData)
     {
@@ -1517,6 +1517,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $listing->addFilterByField($this->getName(), $operator, $data);
     }
 
+    /**
+     * @return bool
+     */
     public function isForbiddenName()
     {
         return in_array($this->getName(), self::FORBIDDEN_NAMES);

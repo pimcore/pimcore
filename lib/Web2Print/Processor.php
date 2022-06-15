@@ -18,6 +18,7 @@ namespace Pimcore\Web2Print;
 use Pimcore\Config;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
+use Pimcore\Helper\Mail;
 use Pimcore\Logger;
 use Pimcore\Messenger\GenerateWeb2PrintPdfMessage;
 use Pimcore\Model;
@@ -36,7 +37,7 @@ abstract class Processor
     private static $lock = null;
 
     /**
-     * @return HeadlessChrome|PdfReactor|WkHtmlToPdf
+     * @return Processor
      *
      * @throws \Exception
      */
@@ -95,6 +96,8 @@ abstract class Processor
      * @param int $documentId
      *
      * @return string|null
+     *
+     * @throws Model\Element\ValidationException
      */
     public function startPdfGeneration($documentId)
     {
@@ -257,6 +260,8 @@ abstract class Processor
      * @param array $params
      *
      * @return string
+     *
+     * @throws \Exception
      */
     protected function processHtml($html, $params)
     {
@@ -267,11 +272,14 @@ abstract class Processor
         $template = $twig->createTemplate((string) $html);
         $html = $twig->render($template, $params);
 
-        $html = \Pimcore\Helper\Mail::setAbsolutePaths($html, $document, $hostUrl);
-
-        return $html;
+        return Mail::setAbsolutePaths($html, $document, $hostUrl);
     }
 
+    /**
+     * @param Document\PrintAbstract $document
+     *
+     * @return LockInterface
+     */
     protected function getLock(Document\PrintAbstract $document): LockInterface
     {
         if (!self::$lock) {

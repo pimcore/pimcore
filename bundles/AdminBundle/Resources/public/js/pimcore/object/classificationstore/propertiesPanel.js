@@ -198,15 +198,19 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
                         var data = grid.getStore().getAt(rowIndex);
                         var id = data.data.id;
 
-                        Ext.Ajax.request({
-                            url: Routing.generate('pimcore_admin_dataobject_classificationstore_deleteproperty'),
-                            method: 'DELETE',
-                            params: {
-                                id: id
-                            },
-                            success: function (response) {
-                                this.store.reload();
-                            }.bind(this)});
+                        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('classificationstore_property'), data.data.name), function(btn) {
+                            if (btn == 'yes') {
+                                Ext.Ajax.request({
+                                    url: Routing.generate('pimcore_admin_dataobject_classificationstore_deleteproperty'),
+                                    method: 'DELETE',
+                                    params: {
+                                        id: id
+                                    },
+                                    success: function (response) {
+                                        this.store.reload();
+                                    }.bind(this)});
+                            }
+                        }.bind(this));
                     }.bind(this)
                 }
             ]

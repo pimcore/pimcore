@@ -363,22 +363,23 @@ Add a few lines in the template file (`templates/content/product.html.twig`):
 
 ```twig
 {% extends 'layout.html.twig' %}
+{% block content %}
+    <h1>{{ pimcore_input("headline", {"width": 540}) }}</h1>
 
-<h1>{{ pimcore_input("headline", {"width": 540}) }}</h1>
-
-<div class="product-info">
-    {% if editmode %}
-        {{ pimcore_relation("product") }}
-    {% else %}
-        {% set product = pimcore_relation("product").element %} 
-        {% if product %} 
-            <h2>{{ product.name }}</h2>
-            <div class="content">
-                {{ product.description|raw }}
-            </div>
+    <div class="product-info">
+        {% if editmode %}
+            {{ pimcore_relation("product") }}
+        {% else %}
+            {% set product = pimcore_relation("product").element %} 
+            {% if product %} 
+                <h2>{{ product.name }}</h2>
+                <div class="content">
+                    {{ product.description|raw }}
+                </div>
+            {% endif %}
         {% endif %}
-    {% endif %}
-</div>
+    </div>
+{% endblock %}
 ```
 
 You are now able to access the linked object above by using the method `getElement()`.
