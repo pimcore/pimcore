@@ -15,6 +15,8 @@
 
 namespace Pimcore\Db;
 
+use Pimcore\Model\Element\ValidationException;
+
 class Helper
 {
     public static function insertOrUpdate(\Doctrine\DBAL\Connection $connection, $table, array $data)
@@ -48,6 +50,22 @@ class Helper
         $bind = array_merge($bind, $bind);
 
         return $connection->executeStatement($sql, $bind);
+    }
+
+    public static function queryIgnoreError(\Doctrine\DBAL\Connection $db, $sql, $exclusions = [])
+    {
+        try {
+            return $db->executeQuery($sql);
+        } catch (\Exception $e) {
+            foreach ($exclusions as $exclusion) {
+                if ($e instanceof $exclusion) {
+                    throw new ValidationException($e->getMessage(), 0, $e);
+                }
+            }
+            // we simply ignore the error
+        }
+
+        return null;
     }
 
     public static function quoteInto(\Doctrine\DBAL\Connection $db, $text, $value, $type = null, $count = null)

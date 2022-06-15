@@ -692,7 +692,7 @@ class InheritanceHelper
     protected function updateQueryTable($oo_id, $ids, $fieldname)
     {
         if (!empty($ids)) {
-            $value = $this->db->fetchOne("SELECT `$fieldname` FROM " . $this->querytable . ' WHERE ' . $this->idField . ' = ?', $oo_id);
+            $value = $this->db->fetchOne("SELECT `$fieldname` FROM " . $this->querytable . ' WHERE ' . $this->idField . ' = ?', [$oo_id]);
             $this->db->executeStatement('UPDATE ' . $this->querytable .' SET ' . $this->db->quoteIdentifier($fieldname) . '=? WHERE ' . $this->db->quoteIdentifier($this->idField) . ' IN (' . implode(',', $ids) . ')', [$value]);
         }
     }

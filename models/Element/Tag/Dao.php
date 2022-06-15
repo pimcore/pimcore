@@ -62,7 +62,7 @@ class Dao extends Model\Dao\AbstractDao
 
             $originalIdPath = null;
             if ($this->model->getId()) {
-                $originalIdPath = $this->db->fetchOne('SELECT idPath FROM tags WHERE id = ?', $this->model->getId());
+                $originalIdPath = $this->db->fetchOne('SELECT idPath FROM tags WHERE id = ?', [$this->model->getId()]);
             }
 
             $data = [];
@@ -342,6 +342,6 @@ class Dao extends Model\Dao\AbstractDao
             return false;
         }
 
-        return (bool) $this->db->fetchOne('SELECT COUNT(*) FROM tags WHERE id = ?', $this->model->getId());
+        return (bool) $this->db->fetchOne('SELECT COUNT(*) FROM tags WHERE id = ?', [$this->model->getId()]);
     }
 }

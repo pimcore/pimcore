@@ -15,6 +15,7 @@
 
 namespace Pimcore\Maintenance\Tasks;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Db;
 use Pimcore\Maintenance\TaskInterface;
 
@@ -24,14 +25,14 @@ use Pimcore\Maintenance\TaskInterface;
 class LogErrorCleanupTask implements TaskInterface
 {
     /**
-     * @var Db\ConnectionInterface
+     * @var Connection
      */
     private $db;
 
     /**
-     * @param Db\ConnectionInterface $db
+     * @param Connection $db
      */
-    public function __construct(Db\ConnectionInterface $db)
+    public function __construct(Connection $db)
     {
         $this->db = $db;
     }

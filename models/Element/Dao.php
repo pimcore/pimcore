@@ -102,7 +102,7 @@ abstract class Dao extends Model\Dao\AbstractDao
         userId IN (' . implode(',', $userIds) . ')
         ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . end($userIds) . ') DESC, ' . $this->db->quoteIdentifier($type) . ' DESC LIMIT 1';
 
-        return (int)$this->db->fetchOne($sql, $fullPath);
+        return (int)$this->db->fetchOne($sql, [$fullPath]);
     }
 
     /**
