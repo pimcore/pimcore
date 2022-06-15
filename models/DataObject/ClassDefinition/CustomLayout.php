@@ -25,6 +25,8 @@ use Pimcore\Model\DataObject;
 
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\CustomLayout\Dao getDao()
+ * @method bool isWriteable()
+ * @method string getWriteTarget()
  */
 class CustomLayout extends Model\AbstractModel
 {
@@ -213,7 +215,7 @@ class CustomLayout extends Model\AbstractModel
             \Pimcore\File::mkdir(PIMCORE_CUSTOMLAYOUT_DIRECTORY);
         }
 
-        $this->getDao()->save($isUpdate);
+        $this->getDao()->save();
 
         $this->saveCustomLayoutFile($saveDefinitionFile);
 
@@ -348,9 +350,7 @@ class CustomLayout extends Model\AbstractModel
     {
         try {
             $customLayout = new self();
-            $identifier = $customLayout->getDao()->getLatestIdentifier($classId);
-
-            return $identifier;
+            return $customLayout->getDao()->getLatestIdentifier($classId);
         } catch (\Exception $e) {
             Logger::error((string) $e);
 

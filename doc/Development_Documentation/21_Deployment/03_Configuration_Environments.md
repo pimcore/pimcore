@@ -41,6 +41,7 @@ This feature is currently supported by the following configurations:
 - Static Routes
 - Perspectives
 - Custom views
+- DataObject Custom Layouts
 
 
 You can change the write target individually for each type by using environment variables.
@@ -81,6 +82,7 @@ PIMCORE_CONFIG_STORAGE_DIR_PREDEFINED_ASSET_METADATA=/var/www/html/var/config/pr
 PIMCORE_CONFIG_STORAGE_DIR_STATICROUTES=/var/www/html/var/config/staticroutes
 PIMCORE_CONFIG_STORAGE_DIR_PERSPECTIVES=/var/www/html/var/config/perspectives
 PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_VIEWS=/var/www/html/var/config/custom-views
+PIMCORE_CONFIG_STORAGE_DIR_OBJECT_CUSTOM_LAYOUTS=/var/www/html/var/config/custom-layouts
 ```
 
 #### Production environment with `symfony-config`
