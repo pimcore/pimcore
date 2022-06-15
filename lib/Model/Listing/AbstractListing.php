@@ -18,6 +18,7 @@ namespace Pimcore\Model\Listing;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Db;
+use Pimcore\Db\Helper;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Listing\Dao\AbstractDao;
 
@@ -453,7 +454,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     {
         $db = Db::get();
 
-        return $db->escapeLike($value);
+        return Helper::escapeLike($value);
     }
 
     /**

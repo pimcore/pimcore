@@ -16,6 +16,7 @@
 namespace Pimcore\Model\Element;
 
 use Pimcore\Db;
+use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -121,7 +122,7 @@ class PermissionChecker
                                 ',',
                                 $userIds
                             ).') AND list = 1 LIMIT 1',
-                            $db->escapeLike($path) .'%'
+                            Helper::escapeLike($path) .'%'
                         );
                         if ($permissionsChilds) {
                             $result[$columnName] = $permissionsChilds[$columnName] ? true : false;
