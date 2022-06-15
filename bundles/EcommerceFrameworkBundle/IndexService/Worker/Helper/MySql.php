@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\Helper;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
 use Pimcore\Cache;
@@ -35,11 +36,11 @@ class MySql
     protected $tenantConfig;
 
     /**
-     * @var ConnectionInterface
+     * @var Connection
      */
     protected $db;
 
-    public function __construct(MysqlConfigInterface $tenantConfig, ConnectionInterface $db)
+    public function __construct(MysqlConfigInterface $tenantConfig, Connection $db)
     {
         $this->tenantConfig = $tenantConfig;
         $this->db = $db;

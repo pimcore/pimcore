@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model\Workflow;
 
-use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
 
@@ -70,7 +69,7 @@ class Dao extends Model\Dao\PhpArrayTable
             $data[$key] = $value;
         }
 
-        Helper::insertOrUpdate($this->db, $data, $this->model->getId());
+        $this->db->insertOrUpdate($data, $this->model->getId());
 
         if (!$this->model->getId()) {
             $this->model->setId($this->db->getLastInsertId());
