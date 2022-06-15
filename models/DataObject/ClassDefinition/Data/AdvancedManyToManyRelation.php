@@ -599,22 +599,22 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                 $ownerName = '/' . $context['containerType'] . '~' . $containerName . '/%';
             }
 
-            $sql = $db->quoteInto('o_id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
-                . $db->quoteInto('ownername LIKE ?', $ownerName)
-                . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
-                . ' AND ' . $db->quoteInto('position = ?', $position);
+            $sql = Db\Helper::quoteInto($db, 'o_id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
+                . Db\Helper::quoteInto($db, 'ownername LIKE ?', $ownerName)
+                . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
+                . ' AND ' . Db\Helper::quoteInto($db, 'position = ?', $position);
         } else {
-            $sql = $db->quoteInto('o_id = ?', $objectId) . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
-                . ' AND ' . $db->quoteInto('position = ?', $position);
+            $sql = Db\Helper::quoteInto($db, 'o_id = ?', $objectId) . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
+                . ' AND ' . Db\Helper::quoteInto($db, 'position = ?', $position);
 
             if ($context) {
                 if (!empty($context['fieldname'])) {
-                    $sql .= ' AND ' . $db->quoteInto('ownername = ?', $context['fieldname']);
+                    $sql .= ' AND ' . Db\Helper::quoteInto($db, 'ownername = ?', $context['fieldname']);
                 }
 
                 if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
                     if ($context['containerType']) {
-                        $sql .= ' AND ' . $db->quoteInto('ownertype = ?', $context['containerType']);
+                        $sql .= ' AND ' . Db\Helper::quoteInto($db, 'ownertype = ?', $context['containerType']);
                     }
                 }
             }

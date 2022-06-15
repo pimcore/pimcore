@@ -105,10 +105,10 @@ class Dao extends Model\Dao\AbstractDao
 
         try {
             $this->db->delete('tags_assignment', ['tagid' => $this->model->getId()]);
-            $this->db->executeStatement('DELETE FROM tags_assignment WHERE ' . $this->db->quoteInto('tagid IN (SELECT id FROM tags WHERE idPath LIKE ?)', Helper::escapeLike($this->model->getIdPath()) . $this->model->getId() . '/%'));
+            $this->db->executeStatement('DELETE FROM tags_assignment WHERE ' . Helper::quoteInto($this->db, 'tagid IN (SELECT id FROM tags WHERE idPath LIKE ?)', Helper::escapeLike($this->model->getIdPath()) . $this->model->getId() . '/%'));
 
             $this->db->delete('tags', ['id' => $this->model->getId()]);
-            $this->db->executeStatement('DELETE FROM tags WHERE ' . $this->db->quoteInto('idPath LIKE ?', Helper::escapeLike($this->model->getIdPath()) . $this->model->getId() . '/%'));
+            $this->db->executeStatement('DELETE FROM tags WHERE ' . Helper::quoteInto($this->db, 'idPath LIKE ?', Helper::escapeLike($this->model->getIdPath()) . $this->model->getId() . '/%'));
 
             $this->db->commit();
         } catch (\Exception $e) {
@@ -261,8 +261,8 @@ class Dao extends Model\Dao\AbstractDao
             $select->innerJoin('tags_assignment', 'tags', 'tags', 'tags.id = tags_assignment.tagid');
             $select->andWhere(
                 '(' .
-                $this->db->quoteInto('tags_assignment.tagid = ?', $tag->getId()) . ' OR ' .
-                $this->db->quoteInto('tags.idPath LIKE ?', Helper::escapeLike($tag->getFullIdPath()) . '%')
+                Helper::quoteInto($this->db, 'tags_assignment.tagid = ?', $tag->getId()) . ' OR ' .
+                Helper::quoteInto($this->db, 'tags.idPath LIKE ?', Helper::escapeLike($tag->getFullIdPath()) . '%')
                 . ')'
             );
         } else {

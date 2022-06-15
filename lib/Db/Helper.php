@@ -50,6 +50,15 @@ class Helper
         return $connection->executeStatement($sql, $bind);
     }
 
+    public static function quoteInto(\Doctrine\DBAL\Connection $db, $text, $value, $type = null, $count = null)
+    {
+        if ($count === null) {
+            return str_replace('?', $db->quote($value, $type), $text);
+        }
+
+        return implode($db->quote($value, $type), explode('?', $text, $count + 1));
+    }
+
     public static function escapeLike(string $like): string
     {
         return str_replace(['_', '%'], ['\\_', '\\%'], $like);

@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Fieldcollection;
 
+use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -244,9 +245,9 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $whereLocalizedFields = "(ownertype = 'localizedfield' AND "
-            . $this->db->quoteInto('ownername LIKE ?', '/fieldcollection~'
+            . Helper::quoteInto('ownername LIKE ?', '/fieldcollection~'
                 . $this->model->getFieldname() . '/%')
-            . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()). ')';
+            . ' AND ' . Helper::quoteInto('src_id = ?', $object->getId()). ')';
 
         if ($saveMode) {
             if (!DataObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields() && $hasLocalizedFields) {
@@ -257,8 +258,8 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $where = "(ownertype = 'fieldcollection' AND " . $this->db->quoteInto('ownername = ?', $this->model->getFieldname())
-            . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()) . ')';
+        $where = "(ownertype = 'fieldcollection' AND " . Helper::quoteInto('ownername = ?', $this->model->getFieldname())
+            . ' AND ' . Helper::quoteInto($this->db, 'src_id = ?', $object->getId()) . ')';
 
         // empty relation table
         $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $where);

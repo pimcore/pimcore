@@ -567,8 +567,8 @@ class Dao extends Model\Dao\AbstractDao
                 throw new \Exception('no container type set');
             }
 
-            $sql = $this->db->quoteInto('src_id = ?', $objectId)." AND ownertype = 'localizedfield' AND "
-                .$this->db->quoteInto(
+            $sql = Helper::quoteInto($this->db, 'src_id = ?', $objectId)." AND ownertype = 'localizedfield' AND "
+                .Helper::quoteInto($this->db,
                     'ownername LIKE ?',
                     '/'.$context['containerType'].'~'.$containerName.'/'.$index.'/%'
                 ).$dirtyLanguageCondition;

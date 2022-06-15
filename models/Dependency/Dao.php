@@ -16,6 +16,7 @@
 namespace Pimcore\Model\Dependency;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Messenger\SanityCheckMessage;
 use Pimcore\Model;
@@ -84,7 +85,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $this->db->selectAndDeleteWhere('dependencies', 'id', $this->db->quoteInto('sourceid = ?', $id) . ' AND  ' . $this->db->quoteInto('sourcetype = ?', $type));
+            $this->db->selectAndDeleteWhere('dependencies', 'id', Helper::quoteInto($this->db, 'sourceid = ?', $id) . ' AND  ' . Helper::quoteInto($this->db, 'sourcetype = ?', $type));
         } catch (\Exception $e) {
             Logger::error((string) $e);
         }
@@ -98,7 +99,7 @@ class Dao extends Model\Dao\AbstractDao
     public function clear()
     {
         try {
-            $this->db->selectAndDeleteWhere('dependencies', 'id', $this->db->quoteInto('sourceid = ?', $this->model->getSourceId()) . ' AND  ' . $this->db->quoteInto('sourcetype = ?', $this->model->getSourceType()));
+            $this->db->selectAndDeleteWhere('dependencies', 'id', Helper::quoteInto($this->db, 'sourceid = ?', $this->model->getSourceId()) . ' AND  ' . Helper::quoteInto($this->db, 'sourcetype = ?', $this->model->getSourceType()));
         } catch (\Exception $e) {
             Logger::error((string) $e);
         }
