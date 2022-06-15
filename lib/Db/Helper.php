@@ -52,6 +52,25 @@ class Helper
         return $connection->executeStatement($sql, $bind);
     }
 
+    public static function selectAndDeleteWhere(\Doctrine\DBAL\Connection $db, $table, $idColumn = 'id', $where = '')
+    {
+        $sql = 'SELECT ' . $db->quoteIdentifier($idColumn) . '  FROM ' . $table;
+
+        if ($where) {
+            $sql .= ' WHERE ' . $where;
+        }
+
+        $idsForDeletion = $db->fetchFirstColumn($sql);
+
+        if (!empty($idsForDeletion)) {
+            $chunks = array_chunk($idsForDeletion, 1000);
+            foreach ($chunks as $chunk) {
+                $idString = implode(',', array_map([$db, 'quote'], $chunk));
+                $db->executeStatement('DELETE FROM ' . $table . ' WHERE ' . $idColumn . ' IN (' . $idString . ')');
+            }
+        }
+    }
+
     public static function queryIgnoreError(\Doctrine\DBAL\Connection $db, $sql, $exclusions = [])
     {
         try {
