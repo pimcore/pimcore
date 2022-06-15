@@ -684,7 +684,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
             $containerName = $context['fieldname'] ?? null;
 
             if ($context['containerType'] === 'objectbrick') {
-                db->executeStatement(
+                $db->executeStatement(
                     'DELETE FROM object_metadata_' . $object->getClassId() . ' WHERE ' .
                     Db\Helper::quoteInto($db, 'o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
                     . Db\Helper::quoteInto($db, 'ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/%')
