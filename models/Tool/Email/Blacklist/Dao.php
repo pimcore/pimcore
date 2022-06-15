@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Tool\Email\Blacklist;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 
 /**
@@ -63,7 +64,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate('email_blacklist', $data);
+        Helper::insertOrUpdate($this->db, 'email_blacklist', $data);
     }
 
     /**

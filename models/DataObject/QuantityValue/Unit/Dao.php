@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\QuantityValue\Unit;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 
 /**
@@ -123,7 +124,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate(self::TABLE_NAME, $data);
+        Helper::insertOrUpdate($this->db, self::TABLE_NAME, $data);
     }
 
     /**

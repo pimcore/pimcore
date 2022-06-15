@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Tool\TmpStore;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 
 /**
@@ -41,7 +42,7 @@ class Dao extends Model\Dao\AbstractDao
                 $data = serialize($data);
             }
 
-            $this->db->insertOrUpdate('tmp_store', [
+            Helper::insertOrUpdate($this->db, 'tmp_store', [
                 'id' => $id,
                 'data' => $data,
                 'tag' => $tag,

@@ -16,6 +16,7 @@
 namespace Pimcore\Model\DataObject\Objectbrick\Data;
 
 use Pimcore\Db;
+use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -274,7 +275,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate($querytable, $data);
+        Helper::insertOrUpdate($this->db, $querytable, $data);
 
         if ($inheritanceEnabled) {
             $this->inheritanceHelper->doUpdate($object->getId(), true,

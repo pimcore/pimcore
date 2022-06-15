@@ -16,6 +16,7 @@
 namespace Pimcore\Model\DataObject\AbstractObject;
 
 use Pimcore\Db;
+use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -118,7 +119,7 @@ class Dao extends Model\Element\Dao
             }
         }
 
-        $this->db->insertOrUpdate('objects', $data);
+        Helper::insertOrUpdate($this->db, 'objects', $data);
 
         // tree_locks
         $this->db->delete('tree_locks', ['id' => $this->model->getId(), 'type' => 'object']);

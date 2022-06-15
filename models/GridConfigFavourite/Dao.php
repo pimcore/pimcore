@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\GridConfigFavourite;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 
 /**
@@ -70,7 +71,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate('gridconfig_favourites', $data);
+        Helper::insertOrUpdate($this->db, 'gridconfig_favourites', $data);
 
         return $this->model;
     }

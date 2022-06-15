@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Element\Editlock;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 
 /**
@@ -65,8 +66,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        //var_dump($data);exit;
-        $this->db->insertOrUpdate('edit_lock', $data);
+        Helper::insertOrUpdate($this->db, 'edit_lock', $data);
 
         $lastInsertId = $this->db->lastInsertId();
         if (!$this->model->getId() && $lastInsertId) {

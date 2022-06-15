@@ -19,6 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInter
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
 use Pimcore\Cache;
 use Pimcore\Db\ConnectionInterface;
+use Pimcore\Db\Helper;
 use Pimcore\Logger;
 
 class MySql
@@ -70,7 +71,7 @@ class MySql
             }
         }
 
-        $this->db->insertOrUpdate($this->tenantConfig->getTablename(), $data);
+        Helper::insertOrUpdate($this->db, $this->tenantConfig->getTablename(), $data);
     }
 
     public function getSystemAttributes()

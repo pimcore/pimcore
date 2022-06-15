@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Version;
 
+use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
@@ -64,7 +65,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate('versions', $data);
+        Helper::insertOrUpdate($this->db, 'versions', $data);
 
         $lastInsertId = $this->db->lastInsertId();
         if (!$this->model->getId() && $lastInsertId) {

@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Notification;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\Element;
 use Pimcore\Model\Exception\NotFoundException;
@@ -63,7 +64,7 @@ class Dao extends AbstractDao
             $model->setCreationDate($model->getModificationDate());
         }
 
-        $this->db->insertOrUpdate(static::DB_TABLE_NAME, $this->getData($model));
+        Helper::insertOrUpdate($this->db, static::DB_TABLE_NAME, $this->getData($model));
 
         if ($model->getId() === null) {
             $model->setId((int) $this->db->lastInsertId());

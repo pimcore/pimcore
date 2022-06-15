@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Document\Service;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
@@ -111,7 +112,7 @@ class Dao extends Model\Dao\AbstractDao
             $language = $translation->getProperty('language');
         }
 
-        $this->db->insertOrUpdate('documents_translations', [
+        Helper::insertOrUpdate($this->db, 'documents_translations', [
             'id' => $translation->getId(),
             'sourceId' => $sourceId,
             'language' => $language,

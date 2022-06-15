@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Classificationstore;
 
+use Pimcore\Db\Helper;
 use Pimcore\Element\MarshallerService;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -118,7 +119,7 @@ class Dao extends Model\Dao\AbstractDao
                     $data['value'] = $encodedData['value'] ?? null;
                     $data['value2'] = $encodedData['value2'] ?? null;
 
-                    $this->db->insertOrUpdate($dataTable, $data);
+                    Helper::insertOrUpdate($this->db, $dataTable, $data);
                 }
             }
         }
@@ -139,7 +140,7 @@ class Dao extends Model\Dao\AbstractDao
                         'groupId' => $activeGroupId,
                         'fieldname' => $fieldname,
                     ];
-                    $this->db->insertOrUpdate($groupsTable, $data);
+                    Helper::insertOrUpdate($this->db, $groupsTable, $data);
                 }
             }
         }

@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\Exception\NotFoundException;
@@ -95,6 +96,6 @@ class Dao extends AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate(self::TABLE_NAME_RELATIONS, $data);
+        Helper::insertOrUpdate($this->db, self::TABLE_NAME_RELATIONS, $data);
     }
 }

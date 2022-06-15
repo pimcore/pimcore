@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Asset;
 
+use Pimcore\Db\Helper;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -160,7 +161,7 @@ class Dao extends Model\Element\Dao
             }
         }
 
-        $this->db->insertOrUpdate('assets', $data);
+        Helper::insertOrUpdate($this->db, 'assets', $data);
         if ($data['hasMetaData'] && count($metadataItems)) {
             foreach ($metadataItems as $metadataItem) {
                 $this->db->insert('assets_metadata', $metadataItem);
@@ -547,7 +548,7 @@ class Dao extends Model\Element\Dao
     {
         $assetId = $this->model->getId();
         $time = time();
-        $this->db->insertOrUpdate('assets_image_thumbnail_cache', [
+        Helper::insertOrUpdate($this->db, 'assets_image_thumbnail_cache', [
             'cid' => $assetId,
             'name' => $name,
             'filename' => $filename,

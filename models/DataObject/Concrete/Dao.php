@@ -16,6 +16,7 @@
 namespace Pimcore\Model\DataObject\Concrete;
 
 use Pimcore\Db;
+use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -404,7 +405,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         }
         $data['oo_id'] = $this->model->getId();
 
-        $this->db->insertOrUpdate('object_query_' . $this->model->getClassId(), $data);
+        Helper::insertOrUpdate($this->db, 'object_query_' . $this->model->getClassId(), $data);
 
         DataObject::setGetInheritedValues($inheritedValues);
     }

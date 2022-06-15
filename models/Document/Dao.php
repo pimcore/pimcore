@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Document;
 
+use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\User;
@@ -148,10 +149,10 @@ class Dao extends Model\Element\Dao
         $dataDocument['path'] = $this->model->getRealPath();
 
         // update the values in the database
-        $this->db->insertOrUpdate('documents', $dataDocument);
+        Helper::insertOrUpdate($this->db, 'documents', $dataDocument);
 
         if ($typeSpecificTable) {
-            $this->db->insertOrUpdate($typeSpecificTable, $dataTypeSpecific);
+            Helper::insertOrUpdate($this->db, $typeSpecificTable, $dataTypeSpecific);
         }
 
         $this->updateLocks();

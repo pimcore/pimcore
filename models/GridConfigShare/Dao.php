@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\GridConfigShare;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 
 /**
@@ -56,7 +57,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate('gridconfig_shares', $data);
+        Helper::insertOrUpdate($this->db, 'gridconfig_shares', $data);
     }
 
     /**

@@ -17,6 +17,7 @@ namespace Pimcore\Model\DataObject\Localizedfield;
 
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Pimcore\Db;
+use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -236,7 +237,7 @@ class Dao extends Model\Dao\AbstractDao
                 if ((isset($params['newParent']) && $params['newParent']) || !isset($params['isUpdate']) || !$params['isUpdate'] || $this->model->isLanguageDirty(
                         $language
                     )) {
-                    $this->db->insertOrUpdate($storeTable, $insertData);
+                    Helper::insertOrUpdate($this->db, $storeTable, $insertData);
                 }
             } catch (TableNotFoundException $e) {
                 // if the table doesn't exist -> create it! deferred creation for object bricks ...
@@ -418,7 +419,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
 
                 $queryTable = $this->getQueryTableName().'_'.$language;
-                $this->db->insertOrUpdate($queryTable, $data);
+                Helper::insertOrUpdate($this->db, $queryTable, $data);
                 if ($inheritanceEnabled) {
                     $context = isset($params['context']) ? $params['context'] : [];
                     if ($context['containerType'] === 'objectbrick') {

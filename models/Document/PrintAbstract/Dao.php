@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Document\PrintAbstract;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Exception\NotFoundException;
 
@@ -110,8 +111,8 @@ class Dao extends Document\PageSnippet\Dao
             }
         }
 
-        $this->db->insertOrUpdate('documents', $dataDocument);
-        $this->db->insertOrUpdate('documents_printpage', $dataPage);
+        Helper::insertOrUpdate($this->db, 'documents', $dataDocument);
+        Helper::insertOrUpdate($this->db, 'documents_printpage', $dataPage);
 
         $this->updateLocks();
     }

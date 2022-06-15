@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Element\WorkflowState;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 
 /**
@@ -59,7 +60,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate('element_workflow_state', $data);
+        Helper::insertOrUpdate($this->db, 'element_workflow_state', $data);
 
         return true;
     }

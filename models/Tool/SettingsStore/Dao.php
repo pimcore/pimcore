@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Tool\SettingsStore;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Tool\SettingsStore;
 
@@ -38,7 +39,7 @@ class Dao extends Model\Dao\AbstractDao
     public function set(string $id, $data, string $type = 'string', ?string $scope = null): bool
     {
         try {
-            $this->db->insertOrUpdate(self::TABLE_NAME, [
+            Helper::insertOrUpdate($this->db, self::TABLE_NAME, [
                 'id' => $id,
                 'data' => $data,
                 'scope' => (string) $scope,

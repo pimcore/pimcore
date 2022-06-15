@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Element\Tag;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Element\Tag;
 
@@ -71,7 +72,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $this->db->insertOrUpdate('tags', $data);
+            Helper::insertOrUpdate($this->db, 'tags', $data);
 
             $lastInsertId = $this->db->lastInsertId();
             if (!$this->model->getId() && $lastInsertId) {
@@ -161,7 +162,7 @@ class Dao extends Model\Dao\AbstractDao
             'ctype' => $cType,
             'cid' => $cId,
         ];
-        $this->db->insertOrUpdate('tags_assignment', $data);
+        Helper::insertOrUpdate($this->db, 'tags_assignment', $data);
     }
 
     /**

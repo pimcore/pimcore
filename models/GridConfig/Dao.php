@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\GridConfig;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
 
@@ -61,7 +62,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate('gridconfigs', $data);
+        Helper::insertOrUpdate($this->db, 'gridconfigs', $data);
 
         $lastInsertId = $this->db->lastInsertId();
         if (!$this->model->getId() && $lastInsertId) {

@@ -15,10 +15,41 @@
 
 namespace Pimcore\Db;
 
-use Pimcore\Model\Element\ValidationException;
-
 class Helper
 {
+    public static function insertOrUpdate(\Doctrine\DBAL\Connection $connection, $table, array $data)
+    {
+        // extract and quote col names from the array keys
+        $i = 0;
+        $bind = [];
+        $cols = [];
+        $vals = [];
+        foreach ($data as $col => $val) {
+            $cols[] = $connection->quoteIdentifier($col);
+            $bind[':col' . $i] = $val;
+            $vals[] = ':col' . $i;
+            $i++;
+        }
+
+        // build the statement
+        $set = [];
+        foreach ($cols as $i => $col) {
+            $set[] = sprintf('%s = %s', $col, $vals[$i]);
+        }
+
+        $sql = sprintf(
+            'INSERT INTO %s (%s) VALUES (%s) ON DUPLICATE KEY UPDATE %s;',
+            $connection->quoteIdentifier($table),
+            implode(', ', $cols),
+            implode(', ', $vals),
+            implode(', ', $set)
+        );
+
+        $bind = array_merge($bind, $bind);
+
+        return $connection->executeStatement($sql, $bind);
+    }
+
     public static function escapeLike(string $like): string
     {
         return str_replace(['_', '%'], ['\\_', '\\%'], $like);

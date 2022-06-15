@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Translation;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
@@ -79,7 +80,7 @@ class Dao extends Model\Dao\AbstractDao
                         'modificationDate' => $this->model->getModificationDate(),
                         'creationDate' => $this->model->getCreationDate(),
                     ];
-                    $this->db->insertOrUpdate($this->getDatabaseTableName(), $data);
+                    Helper::insertOrUpdate($this->db, $this->getDatabaseTableName(), $data);
                 }
             }
         }

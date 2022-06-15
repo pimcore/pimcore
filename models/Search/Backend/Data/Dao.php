@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Search\Backend\Data;
 
+use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
 
@@ -71,7 +72,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
                 'properties' => $this->model->getProperties(),
             ];
 
-            $this->db->insertOrUpdate('search_backend_data', $data);
+            Helper::insertOrUpdate($this->db, 'search_backend_data', $data);
         } catch (\Exception $e) {
             Logger::error((string) $e);
         }

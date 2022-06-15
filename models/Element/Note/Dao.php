@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Element\Note;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -100,7 +101,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate('notes', $data);
+        Helper::insertOrUpdate($this->db, 'notes', $data);
 
         $lastInsertId = $this->db->lastInsertId();
         if (!$this->model->getId() && $lastInsertId) {
