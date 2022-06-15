@@ -57,7 +57,7 @@ class Dao extends Document\PageSnippet\Dao
         $data = $this->db->fetchAssociative("SELECT documents.*, documents_printpage.*, tree_locks.locked FROM documents
             LEFT JOIN documents_printpage ON documents.id = documents_printpage.id
             LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
-                WHERE documents.id = ?", $this->model->getId());
+                WHERE documents.id = ?", [$this->model->getId()]);
 
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);

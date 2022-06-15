@@ -40,7 +40,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchAssociative('SELECT * FROM redirects WHERE id = ?', $this->model->getId());
+        $data = $this->db->fetchAssociative('SELECT * FROM redirects WHERE id = ?', [$this->model->getId()]);
         if (!$data) {
             throw new NotFoundException(sprintf('Redirect with ID %d doesn\'t exist', $this->model->getId()));
         }

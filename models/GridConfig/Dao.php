@@ -32,7 +32,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getById($id)
     {
-        $data = $this->db->fetchAssociative('SELECT * FROM gridconfigs WHERE id = ?', $id);
+        $data = $this->db->fetchAssociative('SELECT * FROM gridconfigs WHERE id = ?', [$id]);
 
         if (!$data) {
             throw new NotFoundException('gridconfig with id ' . $id . ' not found');

@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Concrete\Dao;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Model\DataObject;
 
@@ -34,7 +35,7 @@ class InheritanceHelper
     const DEFAULT_QUERY_ID_COLUMN = 'ooo_id';
 
     /**
-     * @var ConnectionInterface
+     * @var Connection
      */
     protected $db;
 
@@ -228,7 +229,7 @@ class InheritanceHelper
                 $fields = ', `' . $fields . '`';
             }
 
-            $result = $this->db->fetchAssociative('SELECT ' . $this->idField . ' AS id' . $fields . ' FROM ' . $this->storetable . ' WHERE ' . $this->idField . ' = ?', $oo_id);
+            $result = $this->db->fetchAssociative('SELECT ' . $this->idField . ' AS id' . $fields . ' FROM ' . $this->storetable . ' WHERE ' . $this->idField . ' = ?', [$oo_id]);
             $o = [
                 'id' => $result['id'],
                 'values' => $result ?? null,
@@ -298,7 +299,7 @@ class InheritanceHelper
                 $missingIds = $this->db->fetchFirstColumn($query);
 
                 // create entries for children that don't have an entry yet
-                $originalEntry = $this->db->fetchAssociative('SELECT * FROM ' . $this->querytable . ' WHERE ' . $this->idField . ' = ?', $oo_id);
+                $originalEntry = $this->db->fetchAssociative('SELECT * FROM ' . $this->querytable . ' WHERE ' . $this->idField . ' = ?', [$oo_id]);
                 foreach ($missingIds as $id) {
                     $originalEntry[$this->idField] = $id;
                     $this->db->insert($this->querytable, $originalEntry);

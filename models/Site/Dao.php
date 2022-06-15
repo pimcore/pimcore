@@ -32,7 +32,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getById($id)
     {
-        $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE id = ?', $id);
+        $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE id = ?', [$id]);
         if (empty($data['id'])) {
             throw new NotFoundException(sprintf('Unable to load site with ID `%s`', $id));
         }
@@ -46,7 +46,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getByRootId($id)
     {
-        $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE rootId = ?', $id);
+        $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE rootId = ?', [$id]);
         if (empty($data['id'])) {
             throw new NotFoundException(sprintf('Unable to load site with ID `%s`', $id));
         }

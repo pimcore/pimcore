@@ -39,7 +39,7 @@ class Dao extends Model\Element\Dao
     {
         $data = $this->db->fetchAssociative("SELECT objects.*, tree_locks.locked as o_locked FROM objects
             LEFT JOIN tree_locks ON objects.o_id = tree_locks.id AND tree_locks.type = 'object'
-                WHERE o_id = ?", $id);
+                WHERE o_id = ?", [$id]);
 
         if (!empty($data['o_id'])) {
             $this->assignVariablesToModel($data);
@@ -163,7 +163,7 @@ class Dao extends Model\Element\Dao
     {
         if ($this->hasChildren(DataObject::$types)) {
             //get objects to empty their cache
-            $objects = $this->db->fetchFirstColumn('SELECT o_id FROM objects WHERE o_path LIKE ?', $this->db->escapeLike($oldPath) . '%');
+            $objects = $this->db->fetchFirstColumn('SELECT o_id FROM objects WHERE o_path LIKE ?', [$this->db->escapeLike($oldPath) . '%']);
 
             $userId = '0';
             if ($user = \Pimcore\Tool\Admin::getCurrentUser()) {
@@ -420,7 +420,7 @@ class Dao extends Model\Element\Dao
      */
     public function getTypeById($id)
     {
-        $t = $this->db->fetchAssociative('SELECT o_type,o_className,o_classId FROM objects WHERE o_id = ?', $id);
+        $t = $this->db->fetchAssociative('SELECT o_type,o_className,o_classId FROM objects WHERE o_id = ?', [$id]);
 
         if (!$t) {
             throw new Model\Exception\NotFoundException('object with ID ' . $id . ' not found');

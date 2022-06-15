@@ -40,7 +40,7 @@ class Dao extends Model\Element\Dao
     {
         $data = $this->db->fetchAssociative("SELECT documents.*, tree_locks.locked FROM documents
             LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
-                WHERE documents.id = ?", $id);
+                WHERE documents.id = ?", [$id]);
 
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);

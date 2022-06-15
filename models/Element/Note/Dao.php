@@ -34,7 +34,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getById($id)
     {
-        $data = $this->db->fetchAssociative('SELECT * FROM notes WHERE id = ?', $id);
+        $data = $this->db->fetchAssociative('SELECT * FROM notes WHERE id = ?', [$id]);
 
         if (!$data) {
             throw new Model\Exception\NotFoundException('Note item with id ' . $id . ' not found');

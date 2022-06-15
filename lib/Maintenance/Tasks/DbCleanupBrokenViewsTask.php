@@ -15,7 +15,7 @@
 
 namespace Pimcore\Maintenance\Tasks;
 
-use Pimcore\Db;
+use Doctrine\DBAL\Connection;
 use Pimcore\Maintenance\TaskInterface;
 use Psr\Log\LoggerInterface;
 
@@ -25,7 +25,7 @@ use Psr\Log\LoggerInterface;
 class DbCleanupBrokenViewsTask implements TaskInterface
 {
     /**
-     * @var Db\ConnectionInterface
+     * @var Connection
      */
     private $db;
 
@@ -35,10 +35,10 @@ class DbCleanupBrokenViewsTask implements TaskInterface
     private $logger;
 
     /**
-     * @param Db\ConnectionInterface   $db
+     * @param Connection $db
      * @param LoggerInterface $logger
      */
-    public function __construct(Db\ConnectionInterface $db, LoggerInterface $logger)
+    public function __construct(Connection $db, LoggerInterface $logger)
     {
         $this->db = $db;
         $this->logger = $logger;

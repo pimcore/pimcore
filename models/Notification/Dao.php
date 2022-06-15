@@ -40,7 +40,7 @@ class Dao extends AbstractDao
     public function getById(int $id): void
     {
         $sql = sprintf('SELECT * FROM `%s` WHERE id = ?', static::DB_TABLE_NAME);
-        $data = $this->db->fetchAssociative($sql, $id);
+        $data = $this->db->fetchAssociative($sql, [$id]);
 
         if ($data === false) {
             $message = sprintf('Notification with id %d not found', $id);

@@ -43,7 +43,7 @@ class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDao
         $data = $this->db->fetchAssociative("SELECT documents.*, documents_snippet.*, tree_locks.locked FROM documents
             LEFT JOIN documents_snippet ON documents.id = documents_snippet.id
             LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
-                WHERE documents.id = ?", $this->model->getId());
+                WHERE documents.id = ?", [$this->model->getId()]);
 
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);

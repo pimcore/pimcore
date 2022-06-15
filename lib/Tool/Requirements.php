@@ -15,6 +15,7 @@
 
 namespace Pimcore\Tool;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\File;
 use Pimcore\Image;
@@ -67,11 +68,11 @@ final class Requirements
     }
 
     /**
-     * @param ConnectionInterface $db
+     * @param Connection $db
      *
      * @return Check[]
      */
-    public static function checkMysql(ConnectionInterface $db)
+    public static function checkMysql(Connection $db)
     {
         $checks = [];
 

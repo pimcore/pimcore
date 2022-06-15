@@ -37,7 +37,7 @@ class Dao extends Model\Dao\AbstractDao
         if ($this->model->getType()) {
             $data = $this->db->fetchAssociative('SELECT * FROM users WHERE `type` = ? AND id = ?', [$this->model->getType(), $id]);
         } else {
-            $data = $this->db->fetchAssociative('SELECT * FROM users WHERE `id` = ?', $id);
+            $data = $this->db->fetchAssociative('SELECT * FROM users WHERE `id` = ?', [$id]);
         }
 
         if ($data) {

@@ -48,7 +48,7 @@ class ImportConfigListener implements EventSubscriberInterface
 
         // collect gridConfigs for that class id
         $db = Db::get();
-        $importConfigIds = $db->fetchFirstColumn('select id from importconfigs where classId = ?', $classId);
+        $importConfigIds = $db->fetchFirstColumn('select id from importconfigs where classId = ?', [$classId]);
         if ($importConfigIds) {
             $db->query('delete from importconfig_shares where importConfigId in (' . implode($importConfigIds) . ')');
         }

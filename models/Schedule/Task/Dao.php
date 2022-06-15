@@ -31,7 +31,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getById($id)
     {
-        $data = $this->db->fetchAssociative('SELECT * FROM schedule_tasks WHERE id = ?', $id);
+        $data = $this->db->fetchAssociative('SELECT * FROM schedule_tasks WHERE id = ?', [$id]);
         if (!$data) {
             throw new Model\Exception\NotFoundException('there is no task for the requested id');
         }
