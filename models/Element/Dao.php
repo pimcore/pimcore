@@ -201,7 +201,7 @@ abstract class Dao extends Model\Dao\AbstractDao
             WHERE cpath LIKE ? AND userId IN (' . implode(',', $userIds) . ') AND list = 1
             AND NOT EXISTS( SELECT list FROM users_workspaces_'.$tableSuffix.' WHERE cid = uw.cid AND list = 0 AND userId ='.end($userIds).')
             LIMIT 1',
-            Helper::escapeLike($path) . '%');
+            [Helper::escapeLike($path) . '%']);
 
         return (int)$permissionsChildren;
     }
