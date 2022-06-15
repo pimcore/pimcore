@@ -373,6 +373,7 @@ class Cse implements PaginateListingInterface
      * @param bool $retry
      *
      * @return Item[]
+     *
      * @throws \Exception
      */
     public function getResults($retry = true)
@@ -424,6 +425,7 @@ class Cse implements PaginateListingInterface
      * @param int $itemCountPerPage
      *
      * @return Item[]
+     *
      * @throws \Exception
      */
     public function getItems($offset, $itemCountPerPage)

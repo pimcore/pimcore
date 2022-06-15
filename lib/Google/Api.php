@@ -175,6 +175,7 @@ class Api
 
     /**
      * @return array
+     *
      * @throws \Exception
      */
     public static function getAnalyticsDimensions()
@@ -184,6 +185,7 @@ class Api
 
     /**
      * @return array
+     *
      * @throws \Exception
      */
     public static function getAnalyticsMetrics()

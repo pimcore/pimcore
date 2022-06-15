@@ -80,6 +80,7 @@ final class Config
 
     /**
      * @return bool
+     *
      * @throws \Exception
      */
     public static function isWriteable(): bool

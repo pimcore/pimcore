@@ -260,6 +260,7 @@ abstract class Processor
      * @param array $params
      *
      * @return string
+     *
      * @throws \Exception
      */
     protected function processHtml($html, $params)
