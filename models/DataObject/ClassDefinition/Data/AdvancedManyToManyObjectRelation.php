@@ -139,7 +139,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                 $targets[] = $targetId;
             }
 
-            $existingTargets = $db->fetchCol(
+            $existingTargets = $db->fetchFirstColumn(
                 'SELECT o_id FROM objects WHERE o_id IN ('.implode(',', $targets).')'
             );
 

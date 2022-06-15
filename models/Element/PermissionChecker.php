@@ -193,7 +193,7 @@ class PermissionChecker
         $details[] = self::createDetail($user, '<b>User Permissions</b>', null, null, null);
 
         $db = Db::get();
-        $permissions = $db->fetchCol('select `key` from users_permission_definitions');
+        $permissions = $db->fetchFirstColumn('select `key` from users_permission_definitions');
         foreach ($permissions as $permissionKey) {
             $entry = null;
 

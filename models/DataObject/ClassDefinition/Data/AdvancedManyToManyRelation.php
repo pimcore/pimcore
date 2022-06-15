@@ -137,7 +137,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
             foreach ($targets as $targetType => $targetIds) {
                 $identifier = $targetType === 'object' ? 'o_id' : 'id';
 
-                $result = $db->fetchCol(
+                $result = $db->fetchFirstColumn(
                     'SELECT ' . $identifier . ' FROM ' . $targetType . 's'
                     . ' WHERE ' . $identifier . ' IN (' . implode(',', $targetIds) . ')'
                 );

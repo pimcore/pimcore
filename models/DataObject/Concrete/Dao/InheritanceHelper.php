@@ -295,7 +295,7 @@ class InheritanceHelper
                     AND l.{$this->queryIdField} is null;
                 ";
 
-                $missingIds = $this->db->fetchCol($query);
+                $missingIds = $this->db->fetchFirstColumn($query);
 
                 // create entries for children that don't have an entry yet
                 $originalEntry = $this->db->fetchRow('SELECT * FROM ' . $this->querytable . ' WHERE ' . $this->idField . ' = ?', $oo_id);

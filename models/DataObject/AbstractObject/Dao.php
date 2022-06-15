@@ -163,7 +163,7 @@ class Dao extends Model\Element\Dao
     {
         if ($this->hasChildren(DataObject::$types)) {
             //get objects to empty their cache
-            $objects = $this->db->fetchCol('SELECT o_id FROM objects WHERE o_path LIKE ?', $this->db->escapeLike($oldPath) . '%');
+            $objects = $this->db->fetchFirstColumn('SELECT o_id FROM objects WHERE o_path LIKE ?', $this->db->escapeLike($oldPath) . '%');
 
             $userId = '0';
             if ($user = \Pimcore\Tool\Admin::getCurrentUser()) {
@@ -456,7 +456,7 @@ class Dao extends Model\Element\Dao
      */
     public function unlockPropagate()
     {
-        $lockIds = $this->db->fetchCol('SELECT o_id from objects WHERE o_path LIKE ' . $this->db->quote($this->db->escapeLike($this->model->getRealFullPath()) . '/%') . ' OR o_id = ' . $this->model->getId());
+        $lockIds = $this->db->fetchFirstColumn('SELECT o_id from objects WHERE o_path LIKE ' . $this->db->quote($this->db->escapeLike($this->model->getRealFullPath()) . '/%') . ' OR o_id = ' . $this->model->getId());
         $this->db->deleteWhere('tree_locks', "type = 'object' AND id IN (" . implode(',', $lockIds) . ')');
 
         return $lockIds;

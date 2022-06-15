@@ -145,7 +145,7 @@ class Dao extends Model\Dao\AbstractDao
                 if (isset($elementType['days']) && !is_null($elementType['days'])) {
                     // by days
                     $deadline = time() - ($elementType['days'] * 86400);
-                    $tmpVersionIds = $this->db->fetchCol('SELECT id FROM versions as a WHERE (ctype = ? AND date < ?) AND NOT public AND id NOT IN (' . $ignoreIdsList . ')', [$elementType['elementType'], $deadline]);
+                    $tmpVersionIds = $this->db->fetchFirstColumn('SELECT id FROM versions as a WHERE (ctype = ? AND date < ?) AND NOT public AND id NOT IN (' . $ignoreIdsList . ')', [$elementType['elementType'], $deadline]);
                     $versionIds = array_merge($versionIds, $tmpVersionIds);
                 } else {
                     // by steps

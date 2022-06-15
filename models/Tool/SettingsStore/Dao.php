@@ -97,6 +97,6 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getIdsByScope(string $scope): array
     {
-        return $this->db->fetchCol('SELECT id FROM ' . self::TABLE_NAME . ' WHERE scope = ?', [$scope]);
+        return $this->db->fetchFirstColumn('SELECT id FROM ' . self::TABLE_NAME . ' WHERE scope = ?', [$scope]);
     }
 }

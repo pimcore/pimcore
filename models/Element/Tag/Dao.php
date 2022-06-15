@@ -126,7 +126,7 @@ class Dao extends Model\Dao\AbstractDao
     public function getTagsForElement($cType, $cId)
     {
         $tags = [];
-        $tagIds = $this->db->fetchCol('SELECT tagid FROM tags_assignment WHERE cid = ? AND ctype = ?', [$cId, $cType]);
+        $tagIds = $this->db->fetchFirstColumn('SELECT tagid FROM tags_assignment WHERE cid = ? AND ctype = ?', [$cId, $cType]);
 
         foreach ($tagIds as $tagId) {
             $tags[] = Model\Element\Tag::getById($tagId);

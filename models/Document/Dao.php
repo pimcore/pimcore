@@ -475,7 +475,7 @@ class Dao extends Model\Element\Dao
      */
     public function unlockPropagate()
     {
-        $lockIds = $this->db->fetchCol('SELECT id from documents WHERE path LIKE ' . $this->db->quote($this->db->escapeLike($this->model->getRealFullPath()) . '/%') . ' OR id = ' . $this->model->getId());
+        $lockIds = $this->db->fetchFirstColumn('SELECT id from documents WHERE path LIKE ' . $this->db->quote($this->db->escapeLike($this->model->getRealFullPath()) . '/%') . ' OR id = ' . $this->model->getId());
         $this->db->deleteWhere('tree_locks', "type = 'document' AND id IN (" . implode(',', $lockIds) . ')');
 
         return $lockIds;

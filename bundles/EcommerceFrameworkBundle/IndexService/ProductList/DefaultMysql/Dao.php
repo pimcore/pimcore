@@ -127,7 +127,7 @@ class Dao
                 . $condition . ' GROUP BY ' . $this->db->quoteIdentifier($fieldname);
 
             $this->logger->info('Query: ' . $query);
-            $result = $this->db->fetchCol($query);
+            $result = $this->db->fetchFirstColumn($query);
             $this->logger->info('Query done.');
 
             return $result;
@@ -175,7 +175,7 @@ class Dao
             $query .= ' AND src IN (' . $subquery . ') GROUP BY dest';
 
             $this->logger->info('Query: ' . $query);
-            $result = $this->db->fetchCol($query);
+            $result = $this->db->fetchFirstColumn($query);
             $this->logger->info('Query done.');
 
             return $result;

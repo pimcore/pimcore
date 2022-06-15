@@ -93,7 +93,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getIdsByTag($tag)
     {
-        $items = $this->db->fetchCol('SELECT id FROM tmp_store WHERE tag = ?', [$tag]);
+        $items = $this->db->fetchFirstColumn('SELECT id FROM tmp_store WHERE tag = ?', [$tag]);
 
         return $items;
     }

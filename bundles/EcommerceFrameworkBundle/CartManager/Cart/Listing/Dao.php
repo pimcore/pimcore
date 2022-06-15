@@ -30,7 +30,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
     public function load()
     {
         $carts = [];
-        $cartIds = $this->db->fetchCol('SELECT id FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart\Dao::TABLE_NAME .
+        $cartIds = $this->db->fetchFirstColumn('SELECT id FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart\Dao::TABLE_NAME .
                                                  $this->getCondition() . $this->getOrder() . $this->getOffsetLimit());
 
         foreach ($cartIds as $id) {

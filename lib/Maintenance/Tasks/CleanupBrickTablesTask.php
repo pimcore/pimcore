@@ -78,7 +78,7 @@ class CleanupBrickTablesTask implements TaskInterface
                 }
 
                 $fieldsQuery = 'SELECT fieldname FROM ' . $tableName . ' GROUP BY fieldname';
-                $fieldNames = $db->fetchCol($fieldsQuery);
+                $fieldNames = $db->fetchFirstColumn($fieldsQuery);
 
                 foreach ($fieldNames as $fieldName) {
                     $fieldDef = $classDefinition->getFieldDefinition($fieldName);

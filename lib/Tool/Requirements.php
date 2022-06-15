@@ -76,7 +76,7 @@ final class Requirements
         $checks = [];
 
         // storage engines
-        $engines = $db->fetchCol('SHOW ENGINES;');
+        $engines = $db->fetchFirstColumn('SHOW ENGINES;');
 
         // innodb
         $checks[] = new Check([

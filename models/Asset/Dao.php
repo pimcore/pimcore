@@ -202,7 +202,7 @@ class Dao extends Model\Element\Dao
     public function updateChildPaths($oldPath)
     {
         //get assets to empty their cache
-        $assets = $this->db->fetchCol('SELECT id FROM assets WHERE path LIKE ' . $this->db->quote($this->db->escapeLike($oldPath) . '%'));
+        $assets = $this->db->fetchFirstColumn('SELECT id FROM assets WHERE path LIKE ' . $this->db->quote($this->db->escapeLike($oldPath) . '%'));
 
         $userId = '0';
         if ($user = \Pimcore\Tool\Admin::getCurrentUser()) {
@@ -442,7 +442,7 @@ class Dao extends Model\Element\Dao
      */
     public function unlockPropagate()
     {
-        $lockIds = $this->db->fetchCol('SELECT id from assets WHERE path LIKE ' . $this->db->quote($this->db->escapeLike($this->model->getRealFullPath()) . '/%') . ' OR id = ' . $this->model->getId());
+        $lockIds = $this->db->fetchFirstColumn('SELECT id from assets WHERE path LIKE ' . $this->db->quote($this->db->escapeLike($this->model->getRealFullPath()) . '/%') . ' OR id = ' . $this->model->getId());
         $this->db->deleteWhere('tree_locks', "type = 'asset' AND id IN (" . implode(',', $lockIds) . ')');
 
         return $lockIds;
