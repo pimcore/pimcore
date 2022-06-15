@@ -127,7 +127,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
      */
     protected function deleteFromStoreTable($objectId)
     {
-        $this->db->deleteWhere($this->getStoreTableName(), 'o_id = ' . $this->db->quote((string)$objectId) . ' AND tenant = ' . $this->db->quote($this->name));
+        $this->db->delete($this->getStoreTableName(), ['o_id' => (string)$objectId, 'tenant' => $this->name]);
     }
 
     /**

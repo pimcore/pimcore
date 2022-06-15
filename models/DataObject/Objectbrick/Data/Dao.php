@@ -86,10 +86,10 @@ class Dao extends Model\Dao\AbstractDao
                 }
                 if ($dirtyRelations) {
                     $where .= ' AND fieldname IN (' . implode(',', $dirtyRelations) . ')';
-                    $this->db->deleteWhere('object_relations_' . $object->getClassId(), $where);
+                    $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $where);
                 }
             } else {
-                $this->db->deleteWhere('object_relations_' . $object->getClassId(), $where);
+                $this->db->executeStatement('DELETE FROM object_relations_' . $object->getClassId() . ' WHERE ' . $where);
             }
         } catch (\Exception $e) {
             Logger::warning('Error during removing old relations: ' . $e);

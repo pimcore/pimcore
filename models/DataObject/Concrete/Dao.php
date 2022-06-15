@@ -234,7 +234,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         $dataExists = $this->db->fetchOne('SELECT `src_id` FROM `object_relations_'. $this->model->getClassId().'`
         WHERE '.$condition .' LIMIT 1');
         if ($dataExists) {
-            $this->db->deleteWhere('object_relations_' . $this->model->getClassId(), $condition);
+            $this->db->executeStatement('DELETE FROM object_relations_' . $this->model->getClassId() . ' WHERE ' . $condition);
         }
 
         $inheritedValues = DataObject::doGetInheritedValues();

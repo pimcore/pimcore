@@ -74,10 +74,10 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
 
     protected function doDeleteFromIndex($subObjectId, IndexableInterface $object = null)
     {
-        $this->db->deleteWhere($this->tenantConfig->getTablename(), 'o_id = ' . $this->db->quote($subObjectId));
-        $this->db->deleteWhere($this->tenantConfig->getRelationTablename(), 'src = ' . $this->db->quote($subObjectId));
+        $this->db->delete($this->tenantConfig->getTablename(), ['o_id' => $subObjectId]);
+        $this->db->delete($this->tenantConfig->getRelationTablename(), ['src' => $subObjectId]);
         if ($this->tenantConfig->getTenantRelationTablename()) {
-            $this->db->deleteWhere($this->tenantConfig->getTenantRelationTablename(), 'o_id = ' . $this->db->quote($subObjectId));
+            $this->db->delete($this->tenantConfig->getTenantRelationTablename(), ['o_id' => $subObjectId]);
         }
     }
 
@@ -195,7 +195,7 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
                 }
 
                 try {
-                    $this->db->deleteWhere($this->tenantConfig->getRelationTablename(), 'src = ' . $this->db->quote($subObjectId));
+                    $this->db->delete($this->tenantConfig->getRelationTablename(), ['src' => $subObjectId]);
                     foreach ($relationData as $rd) {
                         $this->db->insert($this->tenantConfig->getRelationTablename(), $rd);
                     }
@@ -206,20 +206,20 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
                 Logger::info("Don't adding product " . $subObjectId . ' to index.');
 
                 try {
-                    $this->db->deleteWhere($this->tenantConfig->getTablename(), 'o_id = ' . $this->db->quote($subObjectId));
+                    $this->db->delete($this->tenantConfig->getTablename(), ['o_id' => $subObjectId]);
                 } catch (\Exception $e) {
                     Logger::warn('Error during updating index table: ' . $e);
                 }
 
                 try {
-                    $this->db->deleteWhere($this->tenantConfig->getRelationTablename(), 'src = ' . $this->db->quote($subObjectId));
+                    $this->db->delete($this->tenantConfig->getRelationTablename(), ['src' => $subObjectId]);
                 } catch (\Exception $e) {
                     Logger::warn('Error during updating index relation table: ' . $e);
                 }
 
                 try {
                     if ($this->tenantConfig->getTenantRelationTablename()) {
-                        $this->db->deleteWhere($this->tenantConfig->getTenantRelationTablename(), 'o_id = ' . $this->db->quote($subObjectId));
+                        $this->db->delete($this->tenantConfig->getTenantRelationTablename(), ['o_id' => $subObjectId]);
                     }
                 } catch (\Exception $e) {
                     Logger::warn('Error during updating index tenant relation table: ' . $e);

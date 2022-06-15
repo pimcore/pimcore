@@ -572,13 +572,13 @@ class Dao extends Model\Dao\AbstractDao
                     '/'.$context['containerType'].'~'.$containerName.'/'.$index.'/%'
                 ).$dirtyLanguageCondition;
 
-            $this->db->deleteWhere('object_relations_'.$object->getClassId(), $sql);
+            $this->db->executeStatement('DELETE FROM object_relations_'.$object->getClassId() . ' WHERE ' . $sql);
 
             return true;
         }
 
         $sql = 'ownertype = "localizedfield" AND ownername = "localizedfield" and src_id = '.$this->model->getObject()->getId().$dirtyLanguageCondition;
-        $this->db->deleteWhere('object_relations_'.$this->model->getObject()->getClassId(), $sql);
+        $this->db->executeStatement('DELETE FROM object_relations_'.$this->model->getObject()->getClassId() . ' WHERE ' . $sql);
 
         return false;
     }

@@ -104,10 +104,10 @@ class Dao extends Model\Dao\AbstractDao
 
         try {
             $this->db->delete('tags_assignment', ['tagid' => $this->model->getId()]);
-            $this->db->deleteWhere('tags_assignment', $this->db->quoteInto('tagid IN (SELECT id FROM tags WHERE idPath LIKE ?)', $this->db->escapeLike($this->model->getIdPath()) . $this->model->getId() . '/%'));
+            $this->db->executeStatement('DELETE FROM tags_assignment WHERE ' . $this->db->quoteInto('tagid IN (SELECT id FROM tags WHERE idPath LIKE ?)', $this->db->escapeLike($this->model->getIdPath()) . $this->model->getId() . '/%'));
 
             $this->db->delete('tags', ['id' => $this->model->getId()]);
-            $this->db->deleteWhere('tags', $this->db->quoteInto('idPath LIKE ?', $this->db->escapeLike($this->model->getIdPath()) . $this->model->getId() . '/%'));
+            $this->db->executeStatement('DELETE FROM tags WHERE ' . $this->db->quoteInto('idPath LIKE ?', $this->db->escapeLike($this->model->getIdPath()) . $this->model->getId() . '/%'));
 
             $this->db->commit();
         } catch (\Exception $e) {
@@ -216,7 +216,7 @@ class Dao extends Model\Dao\AbstractDao
             foreach ($cIds as $cId) {
                 $quotedCIds[] = $this->db->quote($cId);
             }
-            $this->db->deleteWhere('tags_assignment', 'ctype = ' . $this->db->quote($cType) . ' AND cid IN (' . implode(',', $quotedCIds) . ')');
+            $this->db->executeStatement('DELETE FROM tags_assignment WHERE ' . 'ctype = ' . $this->db->quote($cType) . ' AND cid IN (' . implode(',', $quotedCIds) . ')');
         }
 
         foreach ($tagIds as $tagId) {

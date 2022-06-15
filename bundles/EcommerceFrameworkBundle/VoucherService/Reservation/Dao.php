@@ -78,7 +78,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      */
     public function remove()
     {
-        $this->db->deleteWhere(self::TABLE_NAME, 'token = ' . $this->db->quote($this->model->getToken()));
+        $this->db->delete(self::TABLE_NAME, ['token' => $this->model->getToken()]);
 
         return true;
     }

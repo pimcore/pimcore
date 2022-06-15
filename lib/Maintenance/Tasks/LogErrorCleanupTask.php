@@ -45,6 +45,6 @@ class LogErrorCleanupTask implements TaskInterface
         // it's allowed to store the IP for 7 days for security reasons (DoS, ...)
         $limit = time() - (6 * 86400);
 
-        $this->db->deleteWhere('http_error_log', 'date < '.$limit);
+        $this->db->executeStatement('DELETE FROM http_error_log WHERE `date` < :limit', [$limit]);
     }
 }

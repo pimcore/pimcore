@@ -134,7 +134,7 @@ class Dao extends AbstractDao
      */
     public function delete()
     {
-        $this->db->deleteWhere(self::TABLE_NAME, 'id=' . $this->db->quote($this->model->getId()));
+        $this->db->delete(self::TABLE_NAME, ['id' => $this->model->getId()]);
     }
 
     /**

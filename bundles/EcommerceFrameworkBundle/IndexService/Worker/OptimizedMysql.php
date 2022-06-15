@@ -76,10 +76,10 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
     {
         try {
             $this->db->beginTransaction();
-            $this->db->deleteWhere($this->tenantConfig->getTablename(), 'o_id = ' . $this->db->quote($objectId));
-            $this->db->deleteWhere($this->tenantConfig->getRelationTablename(), 'src = ' . $this->db->quote($objectId));
+            $this->db->delete($this->tenantConfig->getTablename(), ['o_id' => $objectId]);
+            $this->db->delete($this->tenantConfig->getRelationTablename(), ['src' => $objectId]);
             if ($this->tenantConfig->getTenantRelationTablename()) {
-                $this->db->deleteWhere($this->tenantConfig->getTenantRelationTablename(), 'o_id = ' . $this->db->quote($objectId));
+                $this->db->delete($this->tenantConfig->getTenantRelationTablename(), ['o_id' => $objectId]);
             }
 
             $this->deleteFromMockupCache($objectId);
@@ -132,7 +132,7 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
                 $this->mySqlHelper->doInsertData($data['data']);
 
                 //insert relation data
-                $this->db->deleteWhere($this->tenantConfig->getRelationTablename(), 'src = ' . $this->db->quote($objectId));
+                $this->db->delete($this->tenantConfig->getRelationTablename(), ['src' => $objectId]);
                 foreach ($data['relations'] as $rd) {
                     $this->db->insert($this->tenantConfig->getRelationTablename(), $rd);
                 }

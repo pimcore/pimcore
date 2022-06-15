@@ -112,7 +112,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->deleteWhere(self::TABLE_NAME, 'itemKey=' . $this->db->quote($this->model->getItemKey()) . ' AND cartId = ' . $this->db->quote($this->model->getCartId()) . ' AND parentItemKey = ' . $this->db->quote($this->model->getParentItemKey()));
+        $this->db->delete(self::TABLE_NAME, ['itemKey' => $this->model->getItemKey(), 'cartId' => $this->model->getCartId(), 'parentItemKey' => $this->model->getParentItemKey()]);
     }
 
     /**
@@ -120,6 +120,6 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      */
     public function removeAllFromCart($cartId)
     {
-        $this->db->deleteWhere(self::TABLE_NAME, 'cartId = ' . $this->db->quote($cartId));
+        $this->db->delete(self::TABLE_NAME, ['cartId' => $cartId]);
     }
 }

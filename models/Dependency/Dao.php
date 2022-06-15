@@ -47,7 +47,7 @@ class Dao extends Model\Dao\AbstractDao
         // requires
         $data = $this->db->fetchAll('SELECT dependencies.targetid,dependencies.targettype
             FROM dependencies
-            LEFT JOIN objects ON dependencies.targettype="object" AND dependencies.targetid=objects.o_id 
+            LEFT JOIN objects ON dependencies.targettype="object" AND dependencies.targetid=objects.o_id
             LEFT JOIN assets ON dependencies.targettype="asset" AND dependencies.targetid=assets.id
             LEFT JOIN documents ON dependencies.targettype="document" AND dependencies.targetid=documents.id
             WHERE dependencies.sourceid = ? AND dependencies.sourcetype = ?
@@ -154,7 +154,7 @@ class Dao extends Model\Dao\AbstractDao
 
         if ($idsForDeletion) {
             $idString = implode(',', $idsForDeletion);
-            $this->db->deleteWhere('dependencies', 'id IN (' . $idString . ')');
+            $this->db->executeStatement('DELETE FROM dependencies WHERE id IN (' . $idString . ')');
         }
 
         if ($newData) {

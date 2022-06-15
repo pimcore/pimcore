@@ -397,7 +397,7 @@ class InheritanceHelper
         }
 
         if ($toBeRemovedItemIds) {
-            $this->db->deleteWhere($this->querytable, $this->idField . ' IN (' . implode(',', $toBeRemovedItemIds) . ')');
+            $this->db->executeStatement('DELETE FROM ' . $this->querytable . ' WHERE ' . $this->idField . ' IN (' . implode(',', $toBeRemovedItemIds) . ')');
         }
     }
 

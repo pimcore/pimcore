@@ -178,7 +178,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
      */
     public function updateSubTenantEntries($objectId, $subTenantData, $subObjectId = null)
     {
-        $this->db->deleteWhere($this->getTenantRelationTablename(), 'o_id = ' . $this->db->quote($subObjectId ? $subObjectId : $objectId));
+        $this->db->delete($this->getTenantRelationTablename(), ['o_id' => $subObjectId ?: $objectId]);
 
         if ($subTenantData) {
             //implementation specific tenant get logic
