@@ -293,6 +293,8 @@ class Document extends Element\AbstractElement
             return null;
         }
 
+        \Pimcore::getEventDispatcher()->dispatch(new DocumentEvent($document), DocumentEvents::POST_LOAD);
+
         return $document;
     }
 

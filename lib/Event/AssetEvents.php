@@ -117,6 +117,13 @@ final class AssetEvents
     const POST_DELETE_FAILURE = 'pimcore.asset.postDeleteFailure';
 
     /**
+     * @Event("Pimcore\Event\Model\AssetEvent")
+     *
+     * @var string
+     */
+    const POST_LOAD = 'pimcore.asset.postLoad';
+
+    /**
      * Arguments:
      *  - target_element | Pimcore\Model\Asset | contains the target asset used in copying process
      *

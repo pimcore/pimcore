@@ -105,6 +105,13 @@ final class DocumentEvents
     const POST_DELETE_FAILURE = 'pimcore.document.postDeleteFailure';
 
     /**
+     * @Event("Pimcore\Event\Model\DocumentEvent")
+     *
+     * @var string
+     */
+    const POST_LOAD = 'pimcore.document.postLoad';
+
+    /**
      * Processor contains the processor object used to generate the PDF
      *
      * Arguments:

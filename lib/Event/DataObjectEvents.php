@@ -117,6 +117,13 @@ final class DataObjectEvents
     const POST_DELETE_FAILURE = 'pimcore.dataobject.postDeleteFailure';
 
     /**
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
+     *
+     * @var string
+     */
+    const POST_LOAD = 'pimcore.dataobject.postLoad';
+
+    /**
      * Arguments:
      *  - target_element | Pimcore\Model\AbstractObject | contains the target object used in copying process
      *
