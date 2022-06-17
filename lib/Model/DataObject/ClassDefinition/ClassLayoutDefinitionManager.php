@@ -26,12 +26,20 @@ class ClassLayoutDefinitionManager
     public const DELETED = 'deleted';
 
     /**
+     * @deprecated
+     *
      * Delete all custom layouts from db
      */
     public function cleanUpDeletedLayoutDefinitions(): array
     {
         $db = \Pimcore\Db::get();
-        $layouts = $db->fetchAllAssociative('SELECT * FROM custom_layouts');
+
+        try {
+            $layouts = $db->fetchAll('SELECT * FROM custom_layouts');
+        } catch (\Exception $e) {
+            $layouts = [];
+        }
+
         $deleted = [];
 
         foreach ($layouts as $layout) {

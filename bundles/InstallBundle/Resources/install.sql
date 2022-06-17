@@ -80,21 +80,6 @@ CREATE TABLE `classes` (
 	UNIQUE INDEX `name` (`name`)
 ) DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS `custom_layouts` ;
-CREATE TABLE `custom_layouts` (
-	`id` varchar(64) NOT NULL,
-	`classId` VARCHAR(50) NOT NULL,
-	`name` VARCHAR(190) NULL DEFAULT NULL,
-	`description` TEXT NULL,
-	`creationDate` INT(11) UNSIGNED NULL DEFAULT NULL,
-	`modificationDate` INT(11) UNSIGNED NULL DEFAULT NULL,
-	`userOwner` INT(11) UNSIGNED NULL DEFAULT NULL,
-	`userModification` INT(11) UNSIGNED NULL DEFAULT NULL,
-	`default` tinyint(1) NOT NULL DEFAULT '0',
-	PRIMARY KEY (`id`),
-	UNIQUE INDEX `name` (`name`, `classId`)
-) DEFAULT CHARSET=utf8mb4;
-
 DROP TABLE IF EXISTS `dependencies` ;
 CREATE TABLE `dependencies` (
 	`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
