@@ -24,6 +24,7 @@ use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
+use Pimcore\Model\Exception\ConfigWriteException;
 use Pimcore\Model\Translation;
 use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -259,6 +260,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
                     );
 
                     $customLayout->setId($request->get('id'));
+                    if (!$customLayout->isWriteable()) {
+                        throw new ConfigWriteException();
+                    }
                     $customLayout->save();
                 }
             }
@@ -328,6 +332,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
         );
 
         $customLayout->setId($layoutId);
+        if (!$customLayout->isWriteable()) {
+            throw new ConfigWriteException();
+        }
         $customLayout->save();
 
         $isWriteable = $customLayout->isWriteable();
@@ -406,6 +413,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
             $customLayout->setName($values['name']);
             $customLayout->setDescription($values['description']);
             $customLayout->setDefault($values['default']);
+            if (!$customLayout->isWriteable()) {
+                throw new ConfigWriteException();
+            }
             $customLayout->save();
 
             return $this->adminJson(['success' => true, 'id' => $customLayout->getId(), 'data' => $customLayout->getObjectVars()]);
@@ -556,6 +566,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 $layout = DataObject\ClassDefinition\Service::generateLayoutTreeFromArray($importData['layoutDefinitions'], true);
                 $customLayout->setLayoutDefinitions($layout);
                 $customLayout->setDescription($importData['description']);
+                if (!$customLayout->isWriteable()) {
+                    throw new ConfigWriteException();
+                }
                 $customLayout->save();
                 $success = true;
             } catch (\Exception $e) {
