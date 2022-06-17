@@ -147,7 +147,7 @@ class Dao extends AbstractDao
             'creationDate' => $model->getCreationDate(),
             'modificationDate' => $model->getModificationDate(),
             'sender' => $model->getSender() ? $model->getSender()->getId() : null,
-            'recipient' => $model->getRecipient() ? $model->getRecipient()->getId() : null,
+            'recipient' => $model->getRecipient(),
             'title' => $model->getTitle(),
             'message' => $model->getMessage(),
             'linkedElement' => $model->getLinkedElement() ? $model->getLinkedElement()->getId() : null,
