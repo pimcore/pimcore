@@ -43,7 +43,7 @@ class PublicServicesController extends Controller
     /**
      * @param Request $request
      *
-     * @return BinaryFileResponse|StreamedResponse
+     * @return RedirectResponse|StreamedResponse
      */
     public function thumbnailAction(Request $request)
     {
