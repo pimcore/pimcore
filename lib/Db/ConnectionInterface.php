@@ -26,6 +26,10 @@ use Pimcore\Model\Element\ValidationException;
 
 /**
  * @method \Doctrine\DBAL\Schema\AbstractSchemaManager getSchemaManager()
+ * @method array fetchFirstColumn(string $query, array $params = [], array $types = [])
+ * @method array<string, mixed>|false fetchAssociative(string $query, array $params = [], array $types = [])
+ * @method int executeStatement($sql, array $params = [], array $types = [])
+ * @method array<int,array<string,mixed>> fetchAllAssociative(string $query, array $params = [], array $types = [])
  *
  * @deprecated will be removed in Pimcore 11
  */

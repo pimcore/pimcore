@@ -578,6 +578,9 @@ class Installer
 
     public function setupDatabase(array $userCredentials, array $errors = []): array
     {
+        /**
+         * @var \Doctrine\DBAL\Connection $db
+         */
         $db = \Pimcore\Db::get();
         $db->query('SET FOREIGN_KEY_CHECKS=0;');
 

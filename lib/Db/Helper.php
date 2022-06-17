@@ -20,7 +20,7 @@ use Pimcore\Model\Element\ValidationException;
 
 class Helper
 {
-    public static function insertOrUpdate(\Doctrine\DBAL\Connection $connection, $table, array $data)
+    public static function insertOrUpdate(ConnectionInterface|\Doctrine\DBAL\Connection $connection, $table, array $data)
     {
         // extract and quote col names from the array keys
         $i = 0;
@@ -53,7 +53,7 @@ class Helper
         return $connection->executeStatement($sql, $bind);
     }
 
-    public static function fetchPairs(\Doctrine\DBAL\Connection $db, $sql, array $params = [], $types = [])
+    public static function fetchPairs(ConnectionInterface|\Doctrine\DBAL\Connection $db, $sql, array $params = [], $types = [])
     {
         $params = static::prepareParams($params);
         $stmt = $db->executeQuery($sql, $params, $types);
@@ -81,7 +81,7 @@ class Helper
         return $params;
     }
 
-    public static function selectAndDeleteWhere(\Doctrine\DBAL\Connection $db, $table, $idColumn = 'id', $where = '')
+    public static function selectAndDeleteWhere(ConnectionInterface|\Doctrine\DBAL\Connection $db, $table, $idColumn = 'id', $where = '')
     {
         $sql = 'SELECT ' . $db->quoteIdentifier($idColumn) . '  FROM ' . $table;
 
@@ -100,7 +100,7 @@ class Helper
         }
     }
 
-    public static function queryIgnoreError(\Doctrine\DBAL\Connection $db, $sql, $exclusions = [])
+    public static function queryIgnoreError(ConnectionInterface|\Doctrine\DBAL\Connection $db, $sql, $exclusions = [])
     {
         try {
             return $db->executeQuery($sql);
@@ -116,7 +116,7 @@ class Helper
         return null;
     }
 
-    public static function quoteInto(\Doctrine\DBAL\Connection $db, $text, $value, $type = null, $count = null)
+    public static function quoteInto(ConnectionInterface|\Doctrine\DBAL\Connection $db, $text, $value, $type = null, $count = null)
     {
         if ($count === null) {
             return str_replace('?', $db->quote($value, $type), $text);
