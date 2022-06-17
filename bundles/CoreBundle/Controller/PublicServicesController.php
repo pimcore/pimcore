@@ -172,7 +172,7 @@ class PublicServicesController extends Controller
                 } catch (\Exception $e) {
                     Logger::error($e->getMessage());
 
-                    return new BinaryFileResponse(PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/filetype-not-supported.svg', 200);
+                    return new RedirectResponse('/bundles/pimcoreadmin/img/filetype-not-supported.svg');
                 }
             }
         }
