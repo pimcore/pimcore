@@ -84,4 +84,12 @@ class Listing extends Model\Listing\AbstractListing implements CallableFilterLis
 
         return $this->layoutDefinitions;
     }
+
+    /**
+     * @return Model\DataObject\ClassDefinition\CustomLayout[]|null
+     */
+    public function load()
+    {
+        return $this->getLayoutDefinitions();
+    }
 }

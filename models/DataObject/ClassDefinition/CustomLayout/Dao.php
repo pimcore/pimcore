@@ -15,9 +15,9 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
 
-use Pimcore\Bundle\DataHubFileExportBundle\Model\Dao\AbstractDao;
 use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Model;
+use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Tool\Serialize;
 use Symfony\Component\Uid\Uuid as Uid;
 use Symfony\Component\Uid\UuidV4;
@@ -54,7 +54,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         };
 
         parent::configure([
-            'containerConfig' => $config['object']['custom_layout']['definitions'],
+            'containerConfig' => $config['objects']['custom_layout']['definitions'],
             'settingsStoreScope' => 'pimcore_object_custom_layout',
             'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_OBJECT_CUSTOM_LAYOUTS'] ?? PIMCORE_CONFIGURATION_DIRECTORY  . '/object-custom-layouts',
             'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_OBJECT_CUSTOM_LAYOUTS',
@@ -82,6 +82,10 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
                 $data['id'] = $id;
             }
 
+            if (is_string($data['layoutDefinitions'])) {
+                $data['layoutDefinitions'] = unserialize($data['layoutDefinitions']);
+            }
+
             if (!empty($data['id'])) {
                 $this->assignVariablesToModel($data);
             } else {
@@ -92,8 +96,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
     /**
      * @param string $name
-     *
-     * @return mixed|null
      */
     public function getByName($name)
     {
@@ -124,17 +126,27 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     {
         $name = null;
 
-        try {
-            if (!empty($id)) {
-                $name = $this->db->fetchOne('SELECT name FROM custom_layouts WHERE id = ?', [$id]);
+        $list = new Listing();
+        /** @var Model\DataObject\ClassDefinition\CustomLayout[] $definitions */
+        $definitions = array_values(array_filter($list->getLayoutDefinitions(), function ($item) use ($id) {
+            $return = true;
+            if ($id && $item->getId() != $id) {
+                $return = false;
             }
-        } catch (\Exception $e) {
+
+            return $return;
+        }));
+
+        if (count($definitions) && $definitions[0]->getId()) {
+            $name = $definitions[0]->getName();
         }
 
         return $name;
     }
 
     /**
+     * @deprecated
+     *
      * @param string $name
      * @param string $classId
      *
@@ -145,10 +157,21 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $id = null;
 
         try {
-            if (!empty($name) && !empty($classId)) {
-                $id = $this->db->fetchOne('SELECT id FROM custom_layouts WHERE name = ? AND classId = ?', [$name, $classId]);
-            }
+            $list = new Listing();
+            /** @var Model\DataObject\ClassDefinition\CustomLayout[] $definitions */
+            $definitions = array_values(array_filter($list->getLayoutDefinitions(), function ($item) use ($name, $classId) {
+                $return = false;
+                if ($item->getName() == $name && $item->getClassId() == $classId) {
+                    $return = true;
+                }
+
+                return $return;
+            }));
         } catch (\Exception $e) {
+        }
+
+        if (count($definitions) && $definitions[0] instanceof Model\DataObject\ClassDefinition\CustomLayout) {
+            $id = $definitions[0]->getId();
         }
 
         return $id;
@@ -195,10 +218,11 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $this->model->setModificationDate($ts);
 
         $data = [];
-        $validColumns = (new AbstractDao())->getValidTableColumns('custom_layouts');
+        $allowedProperties = ['id', 'name', 'description', 'creationDate', 'modificationDate',
+            'userOwner', 'userModification', 'classId', 'default', 'layoutDefinitions'];
         $dataRaw = $this->model->getObjectVars();
         foreach ($dataRaw as $key => $value) {
-            if (in_array($key, $validColumns)) {
+            if (in_array($key, $allowedProperties)) {
                 if (is_array($value) || is_object($value)) {
                     $value = Serialize::serialize($value);
                 } elseif (is_bool($value)) {
