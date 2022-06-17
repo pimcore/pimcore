@@ -16,7 +16,6 @@
 namespace Pimcore\Model\DataObject\Concrete\Dao;
 
 use Doctrine\DBAL\Connection;
-use Pimcore\Db\ConnectionInterface;
 use Pimcore\Model\DataObject;
 
 /**

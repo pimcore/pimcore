@@ -15,6 +15,7 @@
 
 namespace Pimcore\Log\Handler;
 
+use Doctrine\DBAL\Connection;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Logger;
 use Pimcore\Db;
@@ -36,13 +37,13 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     private $db;
 
     /**
-     * @param Db\ConnectionInterface $db
+     * @param Connection $db
      * @param int|string $level
      * @param bool $bubble
      *
      * @phpstan-param Level|LevelName|LogLevel::* $level
      */
-    public function __construct(Db\ConnectionInterface $db, $level = Logger::DEBUG, $bubble = true)
+    public function __construct(Connection $db, $level = Logger::DEBUG, $bubble = true)
     {
         $this->db = $db;
         parent::__construct($level, $bubble);

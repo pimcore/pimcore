@@ -19,7 +19,6 @@ use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
 use Pimcore\Cache;
-use Pimcore\Db\ConnectionInterface;
 use Pimcore\Db\Helper;
 use Pimcore\Logger;
 

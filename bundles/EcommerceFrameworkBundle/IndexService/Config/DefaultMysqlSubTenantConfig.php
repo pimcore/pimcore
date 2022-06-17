@@ -15,9 +15,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
-use Pimcore\Db\ConnectionInterface;
 
 /**
  * Sample implementation for sub-tenants based on mysql.
@@ -32,7 +32,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
     protected $environment;
 
     /**
-     * @var ConnectionInterface
+     * @var Connection
      */
     protected $db;
 
@@ -46,7 +46,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
         array $filterTypes,
         array $options,
         EnvironmentInterface $environment,
-        ConnectionInterface $db
+        Connection $db
     ) {
         $this->environment = $environment;
         $this->db = $db;

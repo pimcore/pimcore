@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
@@ -51,7 +52,7 @@ class LogController extends AdminController implements KernelControllerEventInte
      *
      * @return JsonResponse
      */
-    public function showAction(Request $request, Db\ConnectionInterface $db)
+    public function showAction(Request $request, Connection $db)
     {
         $qb = $db->createQueryBuilder();
         $qb
@@ -122,7 +123,7 @@ class LogController extends AdminController implements KernelControllerEventInte
         $total = (int) $total['count'];
 
         $stmt = $qb->execute();
-        $result = $stmt->fetchAll();
+        $result = $stmt->fetchAssociative();
 
         $logEntries = [];
         foreach ($result as $row) {

@@ -15,8 +15,8 @@
 
 namespace Pimcore\Maintenance\Tasks;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Config;
-use Pimcore\Db;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Maintenance\TaskInterface;
 use Symfony\Component\Mime\Address;
@@ -27,7 +27,7 @@ use Symfony\Component\Mime\Address;
 class LogMailMaintenanceTask implements TaskInterface
 {
     /**
-     * @var Db\ConnectionInterface
+     * @var Connection
      */
     private $db;
 
@@ -37,9 +37,9 @@ class LogMailMaintenanceTask implements TaskInterface
     private $config;
 
     /**
-     * @param Db\ConnectionInterface $db
+     * @param Connection $db
      */
-    public function __construct(Db\ConnectionInterface $db, Config $config)
+    public function __construct(Connection $db, Config $config)
     {
         $this->db = $db;
         $this->config = $config;
