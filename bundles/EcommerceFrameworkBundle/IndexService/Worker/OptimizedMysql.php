@@ -15,9 +15,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\OptimizedMysql as OptimizedMysqlConfig;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
-use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -39,10 +39,10 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
 
     /**
      * @param OptimizedMysqlConfig $tenantConfig
-     * @param ConnectionInterface $db
+     * @param Connection $db
      * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(OptimizedMysqlConfig $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher)
+    public function __construct(OptimizedMysqlConfig $tenantConfig, Connection $db, EventDispatcherInterface $eventDispatcher)
     {
         parent::__construct($tenantConfig, $db, $eventDispatcher);
 

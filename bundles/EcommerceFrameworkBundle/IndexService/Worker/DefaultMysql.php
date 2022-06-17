@@ -15,12 +15,12 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
-use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -42,7 +42,7 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
      */
     protected $mySqlHelper;
 
-    public function __construct(MysqlConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher)
+    public function __construct(MysqlConfigInterface $tenantConfig, Connection $db, EventDispatcherInterface $eventDispatcher)
     {
         parent::__construct($tenantConfig, $db, $eventDispatcher);
 

@@ -26,7 +26,6 @@ use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
 use Pimcore\Config;
 use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Db\Connection;
-use Pimcore\Db\ConnectionInterface;
 use Pimcore\Model\User;
 use Pimcore\Tool\AssetsInstaller;
 use Pimcore\Tool\Console;
@@ -171,7 +170,7 @@ class Installer
         return empty($this->dbCredentials);
     }
 
-    public function checkPrerequisites(ConnectionInterface $db = null): array
+    public function checkPrerequisites(Connection $db = null): array
     {
         $checks = array_merge(
             Requirements::checkFilesystem(),

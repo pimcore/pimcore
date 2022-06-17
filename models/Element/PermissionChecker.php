@@ -110,7 +110,7 @@ class PermissionChecker
                     }
 
                     // exception for list permission
-                    if (empty($permissionsParent) && $columnName == 'list') {
+                    if (false === $permissionsParent && $columnName === 'list') {
                         // check for childs with permissions
                         $path = $element->getRealFullPath().'/';
                         if ($element->getId() == 1) {

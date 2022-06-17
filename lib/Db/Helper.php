@@ -15,6 +15,7 @@
 
 namespace Pimcore\Db;
 
+use Doctrine\DBAL\Driver\Result;
 use Pimcore\Model\Element\ValidationException;
 
 class Helper
@@ -50,6 +51,34 @@ class Helper
         $bind = array_merge($bind, $bind);
 
         return $connection->executeStatement($sql, $bind);
+    }
+
+    public static function fetchPairs(\Doctrine\DBAL\Connection $db, $sql, array $params = [], $types = [])
+    {
+        $params = static::prepareParams($params);
+        $stmt = $db->executeQuery($sql, $params, $types);
+        $data = [];
+        if ($stmt instanceof Result) {
+            while ($row = $stmt->fetchNumeric()) {
+                $data[$row[0]] = $row[1];
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param array|scalar $params
+     *
+     * @return array
+     */
+    protected static function prepareParams($params)
+    {
+        if (!is_array($params)) {
+            $params = [$params];
+        }
+
+        return $params;
     }
 
     public static function selectAndDeleteWhere(\Doctrine\DBAL\Connection $db, $table, $idColumn = 'id', $where = '')

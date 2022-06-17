@@ -232,7 +232,7 @@ class InheritanceHelper
             $result = $this->db->fetchAssociative('SELECT ' . $this->idField . ' AS id' . $fields . ' FROM ' . $this->storetable . ' WHERE ' . $this->idField . ' = ?', [$oo_id]);
             $o = [
                 'id' => $result['id'],
-                'values' => $result ?? null,
+                'values' => $result,
             ];
 
             $o['children'] = $this->buildTree($result['id'], $fields, null, $params);
