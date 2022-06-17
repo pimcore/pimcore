@@ -42,4 +42,12 @@ class Listing extends Model\Listing\AbstractListing
     {
         return $this->getData();
     }
+
+    /**
+     * @return Model\DataObject\ClassDefinition\CustomLayout[]|null
+     */
+    public function load()
+    {
+        return $this->getLayoutDefinitions();
+    }
 }

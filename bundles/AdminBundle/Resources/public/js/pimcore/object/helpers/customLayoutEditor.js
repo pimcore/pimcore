@@ -285,7 +285,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                     iconCls: "pimcore_icon_add",
                     handler: this.suggestIdentifier.bind(this),
                     hidden: typeof this.klass.id === 'undefined',
-                    disabled: !pimcore.settings['class-definition-writeable']
+                    disabled: !pimcore.settings['object-custom-layout-writeable']
                 },
                 {
                     xtype: "button",

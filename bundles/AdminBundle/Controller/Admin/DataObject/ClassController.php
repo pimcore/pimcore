@@ -267,7 +267,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 throw $this->createNotFoundException();
             }
         }
-        $isWriteable = $customLayout->isWritable();
+        $isWriteable = $customLayout->isWriteable();
         $customLayout = $customLayout->getObjectVars();
         $customLayout['isWriteable'] = $isWriteable;
 
@@ -330,7 +330,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $customLayout->setId($layoutId);
         $customLayout->save();
 
-        $isWriteable = $customLayout->isWritable();
+        $isWriteable = $customLayout->isWriteable();
         $data = $customLayout->getObjectVars();
         $data['isWriteable'] = $isWriteable;
 
