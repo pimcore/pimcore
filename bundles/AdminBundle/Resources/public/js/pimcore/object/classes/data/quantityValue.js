@@ -132,7 +132,7 @@ pimcore.object.classes.data.quantityValue = Class.create(pimcore.object.classes.
                     xtype: "numberfield",
                     fieldLabel: t("decimal_precision"),
                     name: "decimalPrecision",
-                    maxValue: 65,
+                    maxValue: 30,
                     value: this.datax.decimalPrecision
                 },
                 {
