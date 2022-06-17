@@ -140,7 +140,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
     protected function logToHttpErrorLog(Request $request, $statusCode)
     {
         $uri = $request->getUri();
-        $exists = $this->db->fetchOne('SELECT date FROM http_error_log WHERE uri = ?', $uri);
+        $exists = $this->db->fetchOne('SELECT date FROM http_error_log WHERE uri = ?', [$uri]);
         if ($exists) {
             $this->db->executeQuery('UPDATE http_error_log SET `count` = `count` + 1, date = ? WHERE uri = ?', [time(), $uri]);
         } else {

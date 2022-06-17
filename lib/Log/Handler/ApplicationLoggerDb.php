@@ -32,7 +32,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     const TABLE_ARCHIVE_PREFIX = 'application_logs_archive';
 
     /**
-     * @var Db\ConnectionInterface
+     * @var Connection
      */
     private $db;
 
