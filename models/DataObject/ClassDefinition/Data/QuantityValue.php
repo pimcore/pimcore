@@ -534,7 +534,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if ($data[$this->getName() . '__value'] !== null || $data[$this->getName() . '__unit']) {
-            if (is_numeric($data[$this->getName() . '__value'])) {
+            if (!is_numeric($data[$this->getName() . '__value'])) {
                 $value = $this->toNumeric($data[$this->getName() . '__value']);
             } else {
                 $value = $data[$this->getName() . '__value'];
