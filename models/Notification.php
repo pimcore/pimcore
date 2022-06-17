@@ -214,7 +214,7 @@ class Notification extends AbstractModel
     /**
      * @return User
      */
-    public function getRecipient(): ?User
+    public function getRecipient(): User
     {
         return $this->recipient;
     }
