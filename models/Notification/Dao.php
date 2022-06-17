@@ -20,6 +20,7 @@ namespace Pimcore\Model\Notification;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\Element;
 use Pimcore\Model\Exception\NotFoundException;
+
 use Pimcore\Model\Notification;
 use Pimcore\Model\User;
 
@@ -102,6 +103,18 @@ class Dao extends AbstractDao
             if ($user instanceof User) {
                 $recipient = $user;
             }
+        }
+
+        if (!$recipient instanceof User) {
+            throw new \UnexpectedValueException(sprintf('No user found with the ID %d', $data['recipient']));
+        }
+
+        if(empty($data['title'])) {
+            throw new \UnexpectedValueException('Title of the Notification cannot be empty');
+        }
+
+        if (empty($data['message'])) {
+            throw new \UnexpectedValueException('Message text of the Notification cannot be empty');
         }
 
         $linkedElement = null;

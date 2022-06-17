@@ -61,14 +61,14 @@ class Notification extends AbstractModel
     /**
      * @internal
      *
-     * @var User|null
+     * @var User
      */
     protected $recipient;
 
     /**
      * @internal
      *
-     * @var string|null
+     * @var string
      */
     protected $title;
 
@@ -82,7 +82,7 @@ class Notification extends AbstractModel
     /**
      * @internal
      *
-     * @var string|null
+     * @var string
      */
     protected $message;
 
@@ -212,7 +212,7 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @return User|null
+     * @return User
      */
     public function getRecipient(): ?User
     {
@@ -220,11 +220,11 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @param User|null $recipient
+     * @param User $recipient
      *
      * @return Notification
      */
-    public function setRecipient(?User $recipient): self
+    public function setRecipient(User $recipient): self
     {
         $this->recipient = $recipient;
 
@@ -232,19 +232,19 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    public function getTitle(): ?string
+    public function getTitle(): string
     {
         return $this->title;
     }
 
     /**
-     * @param string|null $title
+     * @param string $title
      *
      * @return Notification
      */
-    public function setTitle(?string $title): self
+    public function setTitle(string $title): self
     {
         $this->title = $title;
 
@@ -272,19 +272,19 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    public function getMessage(): ?string
+    public function getMessage(): string
     {
         return $this->message;
     }
 
     /**
-     * @param string|null $message
+     * @param string $message
      *
      * @return Notification
      */
-    public function setMessage(?string $message): self
+    public function setMessage(string $message): self
     {
         $this->message = $message;
 
