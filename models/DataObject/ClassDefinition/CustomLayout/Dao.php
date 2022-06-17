@@ -82,7 +82,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
                 $data['id'] = $id;
             }
 
-            if (is_string($data['layoutDefinitions'])) {
+            if ($data && is_string($data['layoutDefinitions'] ?? null)) {
                 $data['layoutDefinitions'] = unserialize($data['layoutDefinitions']);
             }
 
