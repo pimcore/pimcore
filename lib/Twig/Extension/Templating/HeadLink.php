@@ -121,6 +121,8 @@ class HeadLink extends CacheBusterAware
      * Returns current object instance. Optionally, allows passing array of
      * values to build link.
      *
+     * @param array|null $attributes
+     * @param string $placement
      * @return HeadLink
      */
     public function __invoke(?array $attributes = null, $placement = Container::APPEND)
