@@ -411,14 +411,14 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         if ($groupBy) {
             $this->groupBy = $groupBy;
 
-          if ($qoute) {
+            if ($qoute) {
                 $quotedParts = [];
-                $parts = explode(",", trim($groupBy, '`'));
-                foreach($parts as $part) {
+                $parts = explode(',', trim($groupBy, '`'));
+                foreach ($parts as $part) {
                     $quotedParts[] = $this->quoteIdentifier(trim($part));
                 }
 
-                $this->groupBy = implode(", ", $quotedParts);
+                $this->groupBy = implode(', ', $quotedParts);
             }
         }
 
