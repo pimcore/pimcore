@@ -52,6 +52,10 @@ class GridHelperService
                 $filterField = $filter['property'];
                 $filterOperator = $filter['operator'];
 
+                if(!isset($filter['type'])) {
+                    $filter['type'] = 'string';
+                }
+
                 if ($filter['type'] == 'string') {
                     $operator = 'LIKE';
                 } elseif ($filter['type'] == 'numeric') {
@@ -191,6 +195,10 @@ class GridHelperService
 
                     $filterField = $filter['property'];
                     $filterOperator = $filter['operator'];
+
+                    if(!isset($filter['type'])) {
+                        $filter['type'] = 'string';
+                    }
 
                     if ($filter['type'] == 'string') {
                         $operator = 'LIKE';
