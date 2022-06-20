@@ -121,9 +121,11 @@ class HeadLink extends CacheBusterAware
      * Returns current object instance. Optionally, allows passing array of
      * values to build link.
      *
+     * @param array|null $attributes
+     * @param string $placement
      * @return HeadLink
      */
-    public function __invoke(array $attributes = null, $placement = Container::APPEND)
+    public function __invoke(?array $attributes = null, $placement = Container::APPEND)
     {
         if (null !== $attributes) {
             $item = $this->createData($attributes);
@@ -253,7 +255,7 @@ class HeadLink extends CacheBusterAware
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function offsetSet($index, $value)// : void
+    public function offsetSet($index, $value)
     {
         if (!$this->_isValid($value)) {
             throw new Exception('offsetSet() expects a data token; please use one of the custom offsetSet*() methods');
@@ -335,7 +337,7 @@ class HeadLink extends CacheBusterAware
     /**
      * Render link elements as string
      *
-     * @param  string|int $indent
+     * @param  null|string|int $indent
      *
      * @return string
      */
