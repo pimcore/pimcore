@@ -98,6 +98,8 @@ class Xliff12Escaper
                 $el->ownerDocument->textContent = $content;
             }
             $content = $xml->text();
+        } else {
+            $content = html_entity_decode(trim($content));
         }
 
         return $content;

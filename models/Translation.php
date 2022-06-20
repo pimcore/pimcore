@@ -474,7 +474,7 @@ final class Translation extends AbstractModel
                         $keyValueArray[$keys[$counter]] = $rd;
                     }
 
-                    $textKey = $keyValueArray['key'];
+                    $textKey = $keyValueArray['key'] ?? null;
                     if ($textKey) {
                         $t = static::getByKey($textKey, $domain, true);
                         $dirty = false;
