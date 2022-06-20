@@ -311,4 +311,18 @@ class Dao extends Model\Dao\AbstractDao
             'oo_className' => $newName,
         ]);
     }
+
+    public function getNameByIdIgnoreCase(string $id): string|null
+    {
+        $name = null;
+
+        try {
+            if (!empty($id)) {
+                $name = $this->db->fetchOne('SELECT name FROM classes WHERE LOWER(id) = ?', [strtolower($id)]);
+            }
+        } catch (\Exception $e) {
+        }
+
+        return $name;
+    }
 }

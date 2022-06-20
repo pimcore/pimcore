@@ -80,7 +80,7 @@ class CleanupFieldcollectionTablesTask implements TaskInterface
                     $classId = substr($classId, strlen('localized_'));
                 }
 
-                $classDefinition = ClassDefinition::getById($classId);
+                $classDefinition = ClassDefinition::getByIdIgnoreCase($classId);
                 if (!$classDefinition) {
                     $this->logger->error("Classdefinition '" . $classId . "' not found. Please check table " . $tableName);
 

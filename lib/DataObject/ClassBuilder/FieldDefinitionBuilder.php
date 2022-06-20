@@ -27,12 +27,6 @@ class FieldDefinitionBuilder implements FieldDefinitionBuilderInterface
             $cd .= $fieldDefinition->getSetterCode($classDefinition);
         }
 
-        // call the method "classSaved" if exists, this is used to create additional data tables or whatever which depends on the field definition, for example for localizedfields
-        //TODO Pimcore 11 remove method_exists call
-        if (!$fieldDefinition instanceof ClassDefinition\Data\DataContainerAwareInterface && method_exists($fieldDefinition, 'classSaved')) {
-            $fieldDefinition->classSaved($classDefinition);
-        }
-
         return $cd;
     }
 }
