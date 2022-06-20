@@ -25,7 +25,7 @@ final class AdminEvents
      * @var string
      */
     const GET_VALUES_FOR_FILTER_FIELD_PRE_SEND_DATA = 'pimcore.admin.ecommerce.getValuesForFilterFieldPreSendData';
-    
+
     /**
      * Fired when filter fields get fetched
      *
