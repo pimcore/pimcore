@@ -35,6 +35,12 @@ class Token implements ConditionInterface
      */
     public function check(EnvironmentInterface $environment)
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5',
+            sprintf('%s is deprecated. It will be removed in Pimcore 11.', __CLASS__)
+        );
+
         $token = $environment->getSession()->get('token');
 
         return $token === $this->getToken();
@@ -45,6 +51,12 @@ class Token implements ConditionInterface
      */
     public function toJSON()
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5',
+            sprintf('%s is deprecated. It will be removed in Pimcore 11.', __CLASS__)
+        );
+
         // basic
         $json = [
             'type' => 'Token', 'token' => $this->getToken(),
@@ -60,6 +72,12 @@ class Token implements ConditionInterface
      */
     public function fromJSON($string)
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5',
+            sprintf('%s is deprecated. It will be removed in Pimcore 11.', __CLASS__)
+        );
+
         $json = json_decode($string);
         $this->setToken($json->token);
 
