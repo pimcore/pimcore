@@ -159,7 +159,7 @@ class IndexController extends AdminController
         ksort($fields);
 
         $event = new GenericEvent(null, ['data' => $fields]);
-        $eventDispatcher->dispatch($event, AdminEvents::GET_FIELD_NAMES_PRE_SEND_DATA);
+        $eventDispatcher->dispatch($event, AdminEvents::GET_INDEX_FIELD_NAMES_PRE_SEND_DATA);
         $data = $event->getArgument('data');
         return $this->adminJson(['data' => array_values($data)]);
     }

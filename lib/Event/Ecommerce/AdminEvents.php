@@ -33,5 +33,5 @@ final class AdminEvents
      *
      * @var string
      */
-    const GET_FIELD_NAMES_PRE_SEND_DATA = 'pimcore.admin.ecommerce.getFieldNamesPreSendData';
+    const GET_INDEX_FIELD_NAMES_PRE_SEND_DATA = 'pimcore.admin.ecommerce.getIndexFieldNamesPreSendData';
 }
