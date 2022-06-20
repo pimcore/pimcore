@@ -79,6 +79,7 @@ class AdminExtension extends AbstractExtension
 
     /**
      * @param string $url
+     *
      * @return string
      */
     private function getScriptTag($url): string
@@ -88,6 +89,7 @@ class AdminExtension extends AbstractExtension
 
     /**
      * @param string $icon
+     *
      * @return string
      */
     public function inlineIcon(string $icon)

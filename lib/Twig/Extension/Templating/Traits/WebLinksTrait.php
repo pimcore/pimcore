@@ -39,6 +39,7 @@ trait WebLinksTrait
 
     /**
      * @param bool|null $enabled
+     *
      * @return bool
      */
     public function webLinksEnabled(?bool $enabled = null)

@@ -37,6 +37,7 @@ class DumpExtension extends AbstractExtension
 
     /**
      * @param mixed $value
+     *
      * @return null|string
      */
     public function dump($value)

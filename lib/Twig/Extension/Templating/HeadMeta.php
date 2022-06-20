@@ -130,6 +130,7 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
 
     /**
      * @param string $type
+     *
      * @return string
      */
     protected function _normalizeType($type)
