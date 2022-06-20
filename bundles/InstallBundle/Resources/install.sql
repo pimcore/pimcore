@@ -63,6 +63,9 @@ CREATE TABLE `assets_image_thumbnail_cache` (
     `name` varchar(190) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
     `filename` varchar(190) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
     `modificationDate` INT(11) UNSIGNED DEFAULT NULL,
+    `filesize` INT(11) UNSIGNED DEFAULT NULL,
+    `width` SMALLINT UNSIGNED DEFAULT NULL,
+    `height` SMALLINT UNSIGNED DEFAULT NULL,
     PRIMARY KEY (`cid`, `name`, `filename`),
     CONSTRAINT `FK_assets_image_thumbnail_cache_assets` FOREIGN KEY (`cid`) REFERENCES `assets` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
@@ -283,7 +286,7 @@ CREATE TABLE `email_log` (
   `bcc` longtext,
   `sentDate` int(11) UNSIGNED DEFAULT NULL,
   `subject` varchar(500) DEFAULT NULL,
-  `error` text DEFAULT NULL, 
+  `error` text DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `sentDate` (`sentDate`, `id`),
   FULLTEXT KEY `fulltext` (`from`,`to`,`cc`,`bcc`,`subject`,`params`),
