@@ -79,6 +79,8 @@ class TrackingManager implements TrackingManagerInterface
     }
 
     /**
+     * @deprecated
+     *
      * @param Session $session
      * @required
      */

@@ -65,7 +65,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     public function getSessionId()
     {
-        if ($this->requestHelper->getSession()->isStarted()) {
+        if (!$this->requestHelper->getSession()->isStarted()) {
             // this is just to initialize the session :)
             $this->useSession(static function (SessionInterface $session) {
                 return $session->getId();
