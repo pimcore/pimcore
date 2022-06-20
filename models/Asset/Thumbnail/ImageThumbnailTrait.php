@@ -198,8 +198,9 @@ trait ImageThumbnailTrait
                         $filesize = filesize($localFile);
                         $config = $this->getConfig();
                         $asset = $this->getAsset();
+                        $filename = pathinfo($pathReference['storagePath'], PATHINFO_FILENAME);
 
-                        $asset->getDao()->addToThumbnailCache($config->getName(), $asset->getFilename(), $filesize, $dimensions['width'], $dimensions['height']);
+                        $asset->getDao()->addToThumbnailCache($config->getName(), $filename, $filesize, $dimensions['width'], $dimensions['height']);
                     }
                 }
             } catch (\Exception $e) {
