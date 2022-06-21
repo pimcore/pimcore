@@ -394,7 +394,7 @@ final class Staticroute extends AbstractModel
     }
 
     /**
-     * @param string|array $siteId
+     * @param string|array|null $siteId
      *
      * @return $this
      */
