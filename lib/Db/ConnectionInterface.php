@@ -208,7 +208,7 @@ interface ConnectionInterface extends Connection
      * @param string $sql
      * @param array $exclusions
      *
-     * @return ResultStatement
+     * @return ResultStatement|null
      *
      * @throws ValidationException
      */

@@ -64,6 +64,9 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
         $resolver->setAllowedTypes('tableName', 'string');
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function all(VisitorInfo $visitorInfo, string $scope): array
     {
         if (!$visitorInfo->hasVisitorId()) {
@@ -98,6 +101,9 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
         return $data;
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function has(VisitorInfo $visitorInfo, string $scope, string $name): bool
     {
         if (!$visitorInfo->hasVisitorId()) {
@@ -130,6 +136,9 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
         return 1 === $result;
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function set(VisitorInfo $visitorInfo, string $scope, string $name, $value)
     {
         if (!$visitorInfo->hasVisitorId()) {
@@ -160,6 +169,9 @@ EOF;
         $this->cleanup($scope);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null)
     {
         if (!$visitorInfo->hasVisitorId()) {
@@ -201,6 +213,9 @@ EOF;
         return $decoded;
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function clear(VisitorInfo $visitorInfo, string $scope = null)
     {
         if (!$visitorInfo->hasVisitorId()) {
@@ -225,6 +240,9 @@ EOF;
         }
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope)
     {
         // only allow migration if a visitor ID is available as otherwise the fallback
@@ -259,16 +277,25 @@ EOF;
         }
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function getCreatedAt(VisitorInfo $visitorInfo, string $scope)
     {
         return $this->loadDate($visitorInfo, $scope, 'MIN(creationDate)');
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope)
     {
         return $this->loadDate($visitorInfo, $scope, 'MAX(modificationDate)');
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function maintenance()
     {
         // clean up expired keys scopes with an expiration

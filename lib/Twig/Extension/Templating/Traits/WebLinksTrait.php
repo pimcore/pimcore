@@ -37,7 +37,12 @@ trait WebLinksTrait
      */
     protected $webLinksEnabled = false;
 
-    public function webLinksEnabled(bool $enabled = null)
+    /**
+     * @param bool|null $enabled
+     *
+     * @return bool
+     */
+    public function webLinksEnabled(?bool $enabled = null)
     {
         if (null !== $enabled) {
             $this->webLinksEnabled = $enabled;

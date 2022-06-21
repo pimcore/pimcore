@@ -37,14 +37,29 @@ class LocationAwareConfigRepository
 
     public const LOCATION_DISABLED = 'disabled';
 
+    /**
+     * @var array
+     */
     protected array $containerConfig = [];
 
+    /**
+     * @var string|null
+     */
     protected ?string $settingsStoreScope = null;
 
+    /**
+     * @var string|null
+     */
     protected ?string $storageDirectory = null;
 
+    /**
+     * @var string|null
+     */
     protected ?string $writeTargetEnvVariableName = null;
 
+    /**
+     * @var string|null
+     */
     protected ?string $defaultWriteLocation = self::LOCATION_SYMFONY_CONFIG;
 
     /**
@@ -91,6 +106,11 @@ class LocationAwareConfigRepository
         $this->loadLegacyConfigCallback = $loadLegacyConfigCallback;
     }
 
+    /**
+     * @param string $key
+     *
+     * @return array
+     */
     public function loadConfigByKey(string $key)
     {
         $dataSource = null;
@@ -116,8 +136,9 @@ class LocationAwareConfigRepository
 
     /**
      * @param string $key
+     * @param string|null $dataSource
      *
-     * @return mixed|null
+     * @return mixed
      */
     private function getDataFromContainerConfig(string $key, ?string &$dataSource)
     {
@@ -130,8 +151,9 @@ class LocationAwareConfigRepository
 
     /**
      * @param string $key
+     * @param string|null $dataSource
      *
-     * @return mixed|null
+     * @return mixed
      */
     private function getDataFromSettingsStore(string $key, ?string &$dataSource)
     {
@@ -173,7 +195,12 @@ class LocationAwareConfigRepository
     }
 
     /**
+     * @param string|null $key
+     * @param string|null $dataSource
+     *
      * @return bool
+     *
+     * @throws \Exception
      */
     public function isWriteable(?string $key = null, ?string $dataSource = null): bool
     {
@@ -200,7 +227,7 @@ class LocationAwareConfigRepository
      */
     public function getWriteTarget(): string
     {
-        $env = $this->writeTargetEnvVariableName ? $_ENV[$this->writeTargetEnvVariableName] ?? null : null;
+        $env = $this->writeTargetEnvVariableName ? $_SERVER[$this->writeTargetEnvVariableName] ?? null : null;
         if ($env) {
             $writeLocation = $env;
         } else {
@@ -323,6 +350,7 @@ class LocationAwareConfigRepository
 
     /**
      * @param string $key
+     * @param string|null $dataSource
      *
      * @throws \Exception
      */

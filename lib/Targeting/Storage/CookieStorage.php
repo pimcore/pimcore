@@ -103,6 +103,9 @@ class CookieStorage implements TargetingStorageInterface
         return isset($this->data[$scope][$name]);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null)
     {
         $this->loadData($visitorInfo, $scope);
@@ -114,6 +117,9 @@ class CookieStorage implements TargetingStorageInterface
         return $default;
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function set(VisitorInfo $visitorInfo, string $scope, string $name, $value)
     {
         $this->loadData($visitorInfo, $scope);
@@ -124,6 +130,9 @@ class CookieStorage implements TargetingStorageInterface
         $this->addSaveListener($visitorInfo);
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function clear(VisitorInfo $visitorInfo, string $scope = null)
     {
         if (null === $scope) {
@@ -137,6 +146,9 @@ class CookieStorage implements TargetingStorageInterface
         $this->addSaveListener($visitorInfo);
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope)
     {
         $values = $storage->all($visitorInfo, $scope);
@@ -157,6 +169,9 @@ class CookieStorage implements TargetingStorageInterface
         $this->addSaveListener($visitorInfo);
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function getCreatedAt(VisitorInfo $visitorInfo, string $scope)
     {
         $this->loadData($visitorInfo, $scope);
@@ -168,6 +183,9 @@ class CookieStorage implements TargetingStorageInterface
         return \DateTimeImmutable::createFromFormat('U', (string)$this->data[$scope][self::STORAGE_KEY_CREATED_AT]);
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope)
     {
         $this->loadData($visitorInfo, $scope);
@@ -241,6 +259,11 @@ class CookieStorage implements TargetingStorageInterface
         }
     }
 
+    /**
+     * @param string $scope
+     *
+     * @return \DateTime|int
+     */
     protected function expiryFor(string $scope)
     {
         $expiry = 0;

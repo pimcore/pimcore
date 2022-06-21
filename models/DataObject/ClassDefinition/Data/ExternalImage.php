@@ -37,21 +37,21 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     public $previewWidth;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     public $inputWidth;
 
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     public $previewHeight;
 
@@ -82,7 +82,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param int $previewWidth
+     * @param int|null $previewWidth
      */
     public function setPreviewWidth($previewWidth)
     {
@@ -90,7 +90,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getPreviewHeight()
     {
@@ -98,7 +98,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param int $previewHeight
+     * @param int|null $previewHeight
      */
     public function setPreviewHeight($previewHeight)
     {
@@ -106,7 +106,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getInputWidth()
     {
@@ -114,7 +114,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param int $inputWidth
+     * @param int|null $inputWidth
      */
     public function setInputWidth($inputWidth)
     {

@@ -158,7 +158,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      * or script file to include.
      *
      * @param  string $mode Script or file
-     * @param  string $spec Script/url
+     * @param  null|string $spec Script/url
      * @param  string $placement Append, prepend, or set
      * @param  array $attrs Array of script attributes
      * @param  string $type Script type and/or array of script attributes
@@ -524,7 +524,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
     /**
      * Retrieve string representation
      *
-     * @param  string|int $indent
+     * @param  null|string|int $indent
      *
      * @return string
      */
@@ -599,7 +599,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      * @param  string $type
      * @param  array $attributes
-     * @param  string $content
+     * @param  null|string $content
      *
      * @return \stdClass
      */

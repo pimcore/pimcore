@@ -147,7 +147,11 @@ class Bootstrap
     private static function prepareEnvVariables()
     {
         if (!($_SERVER['PIMCORE_SKIP_DOTENV_FILE'] ?? false)) {
-            (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT .'/.env');
+            if (class_exists('Symfony\Component\Dotenv\Dotenv')) {
+                (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT . '/.env');
+            } else {
+                $_SERVER += $_ENV;
+            }
         }
     }
 

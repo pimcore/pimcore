@@ -330,6 +330,12 @@ class VisitorInfo implements \IteratorAggregate
         return isset($this->data[$key]);
     }
 
+    /**
+     * @param string|int $key
+     * @param mixed $default
+     *
+     * @return mixed|null
+     */
     public function get($key, $default = null)
     {
         return $this->data[$key] ?? $default;

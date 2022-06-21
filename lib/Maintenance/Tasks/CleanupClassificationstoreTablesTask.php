@@ -53,7 +53,7 @@ class CleanupClassificationstoreTablesTask implements TaskInterface
                 $tableName = current($tableName);
                 $classId = substr($tableName, strlen($prefix));
 
-                $classDefinition = ClassDefinition::getById($classId);
+                $classDefinition = ClassDefinition::getByIdIgnoreCase($classId);
                 if (!$classDefinition) {
                     $this->logger->error("Classdefinition '" . $classId . "' not found. Please check table " . $tableName);
 
