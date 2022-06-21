@@ -216,7 +216,7 @@ abstract class Adapter
     }
 
     /**
-     * @return float
+     * @return float|null
      *
      * @throws \Exception
      */
