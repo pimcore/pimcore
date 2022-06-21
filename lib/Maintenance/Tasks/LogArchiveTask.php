@@ -71,6 +71,7 @@ class LogArchiveTask implements TaskInterface
     public function execute()
     {
         $db = $this->db;
+        $storage = Storage::get('application_log');
 
         $date = new \DateTime('now');
         $tablename = ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX.'_'.$date->format('m').'_'.$date->format('Y');
@@ -101,28 +102,15 @@ class LogArchiveTask implements TaskInterface
                     ) ENGINE = ARCHIVE ROW_FORMAT = DEFAULT;");
 
             $db->query('INSERT INTO '.$tablename.' '.sprintf($sql, '*'));
-            $db->query('DELETE FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY);');
-        }
 
-        if (date('H') <= 4 && $this->lock->acquire()) {
-            // execution should be only sometime between 0:00 and 4:59 -> less load expected
             $this->logger->debug('Deleting referenced FileObjects of application_logs which are older than '. $archive_threshold.' days');
 
-            $storage = Storage::get('application_log');
-
-            $listing = $storage->listContents('/', true);
-            $oldestAllowedTimestamp = time() - $archive_threshold * 86400;
-
-            /** @var \League\Flysystem\StorageAttributes $item */
-            foreach ($listing as $item) {
-                $path = $item->path();
-                $storage->delete($path);
-                if ($item instanceof \League\Flysystem\FileAttributes && $storage->lastModified($path) < $oldestAllowedTimestamp) {
-                    $storage->delete($path);
-                }
+            $fileObjectPaths = $db->fetchAll(sprintf($sql, 'fileobject'));
+            foreach ($fileObjectPaths as $objectPath){
+                $storage->delete($objectPath['fileobject']);
             }
-        } else {
-            $this->logger->debug('Skip cleaning up referenced FileObjects of application_logs, was done within the last 24 hours');
+
+            $db->query('DELETE FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY);');
         }
 
         $deleteArchiveLogDate = (new DateTimeImmutable())->sub(new DateInterval('P'. ($this->config['applicationlog']['delete_archive_threshold'] ?? 6) .'M'));
@@ -142,6 +130,8 @@ class LogArchiveTask implements TaskInterface
             }
 
             $deleteArchiveLogDate = $deleteArchiveLogDate->sub(new DateInterval('P1M'));
+            $storage->deleteDirectory($deleteArchiveLogDate->format('Y/m'));
+
         } while ($archiveTableExists);
     }
 }
