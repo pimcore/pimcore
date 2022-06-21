@@ -253,7 +253,7 @@ class Ffmpeg extends Adapter
     }
 
     /**
-     * @return float
+     * @return float|null
      *
      * @throws \Exception
      */
