@@ -545,14 +545,8 @@ class Dao extends Model\Element\Dao
         return false;
     }
 
-    public function addToThumbnailCache(string $name, string $filename, ?int $filesize = null, ?int $width = null, ?int $height = null): void
+    public function addToThumbnailCache(string $name, string $filename, int $filesize, int $width, int $height): void
     {
-        if ($filesize === null || $width === null || $height === null) {
-            trigger_deprecation('pimcore/pimcore', '10.5',
-                sprintf('Not passing "filesize", "width" and "height" arguments to %s is deprecated and will be removed in Pimcore 11.', __METHOD__)
-            );
-        }
-
         $assetId = $this->model->getId();
         $thumb = [
             'cid' => $assetId,
@@ -573,13 +567,7 @@ class Dao extends Model\Element\Dao
 
     public function getCachedThumbnailModificationDate(string $name, string $filename): ?int
     {
-        $thumbnail = $this->getCachedThumbnail($name, $filename);
-
-        if ($thumbnail === null) {
-            return null;
-        }
-
-        return $thumbnail['modificationDate'];
+        return $this->getCachedThumbnail($name, $filename)['modificationDate'] ?? null;
     }
 
     public function getCachedThumbnail(string $name, string $filename): ?array
@@ -605,7 +593,7 @@ class Dao extends Model\Element\Dao
         return self::$thumbnailStatusCache[$assetId][$hash] ?? null;
     }
 
-    public function deleteFromThumbnailCache(?string $name = null): void
+    public function deleteFromThumbnailCache(?string $name = null, ?string $filename = null): void
     {
         $assetId = $this->model->getId();
         $where = [
@@ -614,6 +602,10 @@ class Dao extends Model\Element\Dao
 
         if ($name) {
             $where['name'] = $name;
+        }
+
+        if ($filename) {
+            $where['filename'] = $filename;
         }
 
         $this->db->delete('assets_image_thumbnail_cache', $where);

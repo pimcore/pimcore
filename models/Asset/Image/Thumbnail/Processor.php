@@ -429,8 +429,13 @@ class Processor
                 if (is_resource($stream)) {
                     fclose($stream);
                 }
-                $filesize = filesize($tmpFsPath);
-                [$width, $height] = @getimagesize($tmpFsPath);
+
+                if ($statusCacheEnabled) {
+                    if ($imageInfo = @getimagesize($tmpFsPath)) {
+                        $asset->getDao()->addToThumbnailCache($config->getName(), $filename, filesize($tmpFsPath), $imageInfo[0], $imageInfo[1]);
+                    }
+                }
+
                 unlink($tmpFsPath);
 
                 $generated = true;
@@ -454,19 +459,12 @@ class Processor
         // if the file is corrupted the file will be created on the fly when requested by the browser (because it's deleted here)
         if ($storage->fileExists($storagePath) && $storage->fileSize($storagePath) < 50) {
             $storage->delete($storagePath);
+            $asset->getDao()->deleteFromThumbnailCache($config->getName(), $filename);
 
             return [
                 'src' => $storagePath,
                 'type' => 'deferred',
             ];
-        }
-
-        if ($statusCacheEnabled) {
-            if (isset($filesize) && isset($width) && isset($height)) {
-                $asset->getDao()->addToThumbnailCache($config->getName(), $filename, $filesize, $width, $height);
-            } else {
-                $asset->getDao()->addToThumbnailCache($config->getName(), $filename);
-            }
         }
 
         return [
