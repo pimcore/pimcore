@@ -24,8 +24,6 @@ use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Tool\Storage;
 use Psr\Log\LoggerInterface;
 use SplFileInfo;
-use Symfony\Component\Lock\LockFactory;
-use Symfony\Component\Lock\LockInterface;
 
 /**
  * @internal
@@ -48,21 +46,15 @@ class LogArchiveTask implements TaskInterface
     private $logger;
 
     /**
-     * @var LockInterface
-     */
-    private $lock;
-
-    /**
      * @param Db\ConnectionInterface $db
      * @param Config $config
      * @param LoggerInterface $logger
      */
-    public function __construct(Db\ConnectionInterface $db, Config $config, LoggerInterface $logger, LockFactory $lockFactory)
+    public function __construct(Db\ConnectionInterface $db, Config $config, LoggerInterface $logger)
     {
         $this->db = $db;
         $this->config = $config;
         $this->logger = $logger;
-        $this->lock = $lockFactory->createLock(self::class, 86400);
     }
 
     /**
@@ -127,10 +119,10 @@ class LogArchiveTask implements TaskInterface
 
             if ($archiveTableExists) {
                 $db->exec('DROP TABLE IF EXISTS `' . ($this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase()) . '`.' . $applicationLogArchiveTable);
+                $storage->deleteDirectory($deleteArchiveLogDate->format('Y/m'));
             }
 
             $deleteArchiveLogDate = $deleteArchiveLogDate->sub(new DateInterval('P1M'));
-            $storage->deleteDirectory($deleteArchiveLogDate->format('Y/m'));
 
         } while ($archiveTableExists);
     }
