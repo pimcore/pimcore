@@ -262,11 +262,11 @@ class Ffmpeg extends Adapter
         $output = $this->getVideoInfo();
 
         // get total video duration
-        $result = preg_match("/\s+Duration: ((\d\d):(\d\d):(\d\d)\.(\d+))/", $output, $matches);
+        $result = preg_match("/Duration: (\d\d):(\d\d):(\d\d\.\d+),/", $output, $matches);
 
-        if (false !== $result && 0 !== $result && count($matches) === 6) {
+        if ($result) {
             // calculate duration in seconds
-            $duration = ((int)$matches[2] * 3600) + ((int)$matches[3] * 60) + (float)$matches[4];
+            $duration = ((int)$matches[1] * 3600) + ((int)$matches[2] * 60) + (float)$matches[3];
 
             return $duration;
         }
