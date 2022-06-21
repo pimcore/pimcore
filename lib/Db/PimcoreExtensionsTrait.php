@@ -43,23 +43,6 @@ trait PimcoreExtensionsTrait
     private static array $tablePrimaryKeyCache = [];
 
     /**
-     * @see \Doctrine\DBAL\Connection::connect
-     *
-     * @return bool
-     */
-    public function connect()// : bool
-    {
-        $returnValue = parent::connect();
-
-        if ($returnValue) {
-            $this->_conn->query('SET default_storage_engine=InnoDB;');
-            $this->_conn->query("SET sql_mode = '';");
-        }
-
-        return $returnValue;
-    }
-
-    /**
      * @see \Doctrine\DBAL\Connection::executeQuery
      *
      * @return ResultStatement
