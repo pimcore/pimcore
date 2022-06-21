@@ -68,21 +68,31 @@ class Builder
         }
     }
 
+
     /**
-     * @param Document|null $activeDocument
-     * @param Document|null $navigationRootDocument
-     * @param string|null $htmlMenuIdPrefix
-     * @param \Closure|null $pageCallback
-     * @param bool|string $cache
-     * @param int|null $maxDepth
-     * @param int|null $cacheLifetime
-     *
+     * @param array $params
      * @return mixed|\Pimcore\Navigation\Container
-     *
      * @throws \Exception
      */
-    public function getNavigation($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true, ?int $maxDepth = null, ?int $cacheLifetime = null)
+
+    public function getNavigation (...$params)
     {
+        //TODO Pimcore 11: remove the if(count($params) > 1) block BC layer
+        if (count ($params) > 1) {
+            trigger_deprecation ('pimcore/pimcore', '10.5', 'Calling Pimcore\Navigation\Builder::getNavigation() using extra arguments is deprecated and will be removed in Pimcore 11. Instead, specify the arguments as an array
+            ');
+
+            list($activeDocument, $navigationRootDocument, $htmlMenuIdPrefix, $pageCallback, $cache, $maxDepth, $cacheLifetime) = $params;
+        } else {
+            $activeDocument = isset($params['active']) ?? null;
+            $navigationRootDocument = isset($params['root']) ?? null;
+            $htmlMenuIdPrefix = isset($params['htmlMenuPrefix']) ?? null;
+            $pageCallback = isset($params['pageCallback']) ?? null;
+            $cache = isset($params['cache']) ?? null;
+            $maxDepth = isset($params['maxDepth']) ?? null;
+            $cacheLifetime = isset($params['cacheLifetime']) ?? null;
+        }
+
         $cacheEnabled = $cache !== false;
 
         $this->htmlMenuIdPrefix = $htmlMenuIdPrefix;
