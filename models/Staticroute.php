@@ -401,6 +401,10 @@ final class Staticroute extends AbstractModel
     public function setSiteId($siteId)
     {
         $result = [];
+        
+        if (null === $siteId) {
+            $siteId = [];
+        }
 
         if (!is_array($siteId)) {
             // backwards compatibility
