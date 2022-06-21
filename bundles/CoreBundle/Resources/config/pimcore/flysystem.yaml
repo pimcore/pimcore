@@ -69,3 +69,10 @@ flysystem:
             visibility: private
             options:
                 directory: '%kernel.project_dir%/var/tmp'
+        pimcore.application_log.storage:
+            # Storage for application logs
+            adapter: 'aws'
+            visibility: public
+            options:
+                client: 'minio_client'
+                bucket: 'applicationlog'

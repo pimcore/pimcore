@@ -21,6 +21,7 @@ use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Maintenance\TaskInterface;
+use Pimcore\Tool\Storage;
 use Psr\Log\LoggerInterface;
 use SplFileInfo;
 use Symfony\Component\Lock\LockFactory;
@@ -103,23 +104,21 @@ class LogArchiveTask implements TaskInterface
             $db->query('DELETE FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY);');
         }
 
-        if (date('H') <= 4 && $this->lock->acquire()) {
+        if (true) {
             // execution should be only sometime between 0:00 and 4:59 -> less load expected
             $this->logger->debug('Deleting referenced FileObjects of application_logs which are older than '. $archive_threshold.' days');
-            $fileIterator = new \DirectoryIterator(PIMCORE_LOG_FILEOBJECT_DIRECTORY);
 
+            $storage = Storage::get('application_log');
+
+            $listing = $storage->listContents('/', true);
             $oldestAllowedTimestamp = time() - $archive_threshold * 86400;
-            $fileIterator = new \CallbackFilterIterator(
-                $fileIterator,
-                static function (\SplFileInfo $fileInfo) use ($oldestAllowedTimestamp) {
-                    return $fileInfo->getMTime() < $oldestAllowedTimestamp;
-                }
-            );
 
-            /** @var SplFileInfo $fileInfo */
-            foreach ($fileIterator as $fileInfo) {
-                if ($fileInfo->isFile()) {
-                    @unlink($fileInfo->getPathname());
+            /** @var \League\Flysystem\StorageAttributes $item */
+            foreach ($listing as $item) {
+                $path = $item->path();
+                $storage->delete($path);
+                if ($item instanceof \League\Flysystem\FileAttributes && $storage->lastModified($path) < $oldestAllowedTimestamp) {
+                    $storage->delete($path);
                 }
             }
         } else {
