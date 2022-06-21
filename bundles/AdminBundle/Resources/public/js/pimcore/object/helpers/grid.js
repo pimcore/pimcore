@@ -404,7 +404,7 @@ pimcore.object.helpers.grid = Class.create({
 
                         fc.locked = this.getColumnLock(field);
 
-                        if ((fieldType === "select" || fieldType === "multiselect") && field.layout.options.length > 0) {
+                        if ((fieldType === "select" || fieldType === "multiselect") && field.layout.options && field.layout.options.length > 0) {
                             field.layout.options.forEach(option => {
                                 option.key = t(option.key);
                             });
