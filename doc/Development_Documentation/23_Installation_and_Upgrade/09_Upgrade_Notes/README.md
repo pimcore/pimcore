@@ -13,6 +13,7 @@
   Listing, grid, tree view are not severely affected as the main permission is checked on a Kernel event level that prevents the page to be shown and prevents any process that iterate isAllowed() calls. 
   The only cases could be affected are those where the workspace are set but master permissions are disallowed, before this change, it could lead to (not intended) false positive.
 - [Security/User] `UsernameNotFoundException` (deprecated since Symfony 5.3) occurences have been replaced with `UserNotFoundException`.
+- [Application Logger] File Objects are now stored in the flysystem. Due some incompatibilities of checking files by modification date (cloud storages) and for perfomance issues (scan folders/file), the cleanup task now do not run in time range from [midnight and 4 a.m.](https://github.com/pimcore/pimcore/pull/7164) anymore, but it deletes the file matching the column in the database as soon as the database entries are archived.
 
 ## 10.4.2
 - When maintenance mode is active, all commands are prevented from starting (not just commands inheriting from `AbstractCommand`).
