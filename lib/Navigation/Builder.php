@@ -84,13 +84,14 @@ class Builder
 
             list($activeDocument, $navigationRootDocument, $htmlMenuIdPrefix, $pageCallback, $cache, $maxDepth, $cacheLifetime) = $params;
         } else {
-            $activeDocument = $params['active'];
-            $navigationRootDocument = $params['root'];
-            $htmlMenuIdPrefix = $params['htmlMenuPrefix'];
-            $pageCallback = $params['pageCallback'];
-            $cache = $params['cache'];
-            $maxDepth = $params['maxDepth'];
-            $cacheLifetime = $params['cacheLifetime'];
+
+            $activeDocument = $params[0]['active'];
+            $navigationRootDocument = $params[0]['root'];
+            $htmlMenuIdPrefix = $params[0]['htmlMenuPrefix'];
+            $pageCallback = $params[0]['pageCallback'];
+            $cache = $params[0]['cache'];
+            $maxDepth = $params[0]['maxDepth'];
+            $cacheLifetime = $params[0]['cacheLifetime'];
         }
 
         $cacheEnabled = $cache !== false;
