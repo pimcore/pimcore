@@ -18,6 +18,7 @@ namespace Pimcore\Log;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\UnableToWriteFile;
 use Pimcore\File;
+use Pimcore\Logger;
 use Pimcore\Tool\Storage;
 
 final class FileObject
@@ -50,7 +51,7 @@ final class FileObject
         try {
             $storage->write($this->filename, $this->data);
         } catch (FilesystemException | UnableToWriteFile $exception) {
-            throwException($exception);
+            Logger::warn('Application Logger could not write File Object:'.$this->filename);
         }
     }
 
