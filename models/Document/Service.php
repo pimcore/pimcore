@@ -678,15 +678,16 @@ class Service extends Model\Element\Service
 
         if ($tool) {
             /** @var Chromium|HtmlToImage $tool */
-            $tool::convert($url, $tmpFile);
-            $im = \Pimcore\Image::getInstance();
-            $im->load($tmpFile);
-            $im->scaleByWidth(800);
-            $im->save($file, 'jpeg', 85);
+            if ($tool::convert($url, $tmpFile)) {
+                $im = \Pimcore\Image::getInstance();
+                $im->load($tmpFile);
+                $im->scaleByWidth(800);
+                $im->save($file, 'jpeg', 85);
 
-            unlink($tmpFile);
+                unlink($tmpFile);
 
-            $success = true;
+                $success = true;
+            }
         }
 
         return $success;
