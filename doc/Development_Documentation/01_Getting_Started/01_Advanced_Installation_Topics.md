@@ -51,3 +51,13 @@ SHELL=/bin/bash
 
 */5 * * * * sleep $[ ( $RANDOM \% 120 ) + 1 ]s ; /your/project/bin/console maintenance
 ```
+
+## Set a timezone
+Make sure to set the corresponding timezone in your configuration. 
+It will be used for displaying date/time values in the admin backend.
+
+```yaml
+pimcore:
+    general:
+        timezone: Europe/Berlin
+```
