@@ -43,7 +43,7 @@ class PublicServicesController extends Controller
     /**
      * @param Request $request
      *
-     * @return BinaryFileResponse|StreamedResponse
+     * @return RedirectResponse|StreamedResponse
      */
     public function thumbnailAction(Request $request)
     {
@@ -172,7 +172,7 @@ class PublicServicesController extends Controller
                 } catch (\Exception $e) {
                     Logger::error($e->getMessage());
 
-                    return new BinaryFileResponse(PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/filetype-not-supported.svg', 200);
+                    return new RedirectResponse('/bundles/pimcoreadmin/img/filetype-not-supported.svg');
                 }
             }
         }
