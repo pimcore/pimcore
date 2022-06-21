@@ -1619,6 +1619,14 @@ class DataObjectHelperController extends AdminController
 
                                 /** @var DataObject\Classificationstore $classificationStoreData */
                                 $classificationStoreData = $object->$getter();
+                                if ($append) {
+                                    $oldValue = $classificationStoreData->getLocalizedKeyValue($groupId, $keyId);
+                                    $value = $dataDefinition->appendData($oldValue, $value);
+                                }
+                                if ($remove) {
+                                    $oldValue = $classificationStoreData->getLocalizedKeyValue($groupId, $keyId);
+                                    $value = $dataDefinition->removeData($oldValue, $value);
+                                }
                                 $classificationStoreData->setLocalizedKeyValue(
                                     $groupId,
                                     $keyId,
