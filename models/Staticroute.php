@@ -403,7 +403,7 @@ final class Staticroute extends AbstractModel
         $result = [];
         
         if (null === $siteId) {
-            return;
+            $siteId = [];
         }
 
         if (!is_array($siteId)) {
