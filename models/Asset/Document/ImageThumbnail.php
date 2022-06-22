@@ -139,6 +139,7 @@ final class ImageThumbnail
             $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($cacheFilePath);
             if ($lock->acquire()) {
                 $tempFile = File::getLocalTempFilePath('png');
+
                 try {
                     $converter = \Pimcore\Document::getInstance();
                     $converter->load($this->asset);
