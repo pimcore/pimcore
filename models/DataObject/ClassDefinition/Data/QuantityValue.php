@@ -653,12 +653,11 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
-        if ($omitMandatoryCheck) {
-            return;
-        }
-
-        if ($this->getMandatory() &&
-            ($data === null || $data->getValue() === null || $data->getUnitId() === null)) {
+        if (
+            !$omitMandatoryCheck
+            && $this->getMandatory()
+            && ($data === null || $data->getValue() === null || $data->getUnitId() === null)
+        ) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
@@ -666,7 +665,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
             throw new Model\Element\ValidationException('field ['.$this->getName().' ] - invalid numeric data [' . $data->getValue() . '] ');
         }
 
-        if (!empty($data)) {
+        if (!empty($data) && !$omitMandatoryCheck) {
             $value = $data->getValue();
             if ((!empty($value) && !is_numeric($data->getValue()))) {
                 throw new Model\Element\ValidationException('Invalid dimension unit data ' . $this->getName());
