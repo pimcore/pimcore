@@ -426,6 +426,7 @@ trait ImageThumbnailTrait
     private function getFilename(): string
     {
         $pathReference = $this->getPathReference(true);
+
         return basename($pathReference['src']);
     }
 }
