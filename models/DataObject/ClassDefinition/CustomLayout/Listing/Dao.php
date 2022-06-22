@@ -78,7 +78,7 @@ class Dao extends Model\DataObject\ClassDefinition\CustomLayout\Dao
     {
         $files = glob(PIMCORE_CUSTOMLAYOUT_DIRECTORY . '/*.php');
 
-        $layouts = null;
+        $layouts = [];
         foreach ($files as $file) {
             $layout = @include $file;
             if ($layout instanceof Model\DataObject\ClassDefinition\CustomLayout) {
