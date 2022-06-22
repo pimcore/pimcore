@@ -154,7 +154,7 @@ class Processor
                 if ($originalText !== $text) {
                     $domNode = $parentNode->getNode(0);
                     $fragment = $domNode->ownerDocument->createDocumentFragment();
-                    $fragment->appendXML($text);
+                    $fragment->appendXML(html_entity_decode($text));
                     $clone = $domNode->cloneNode();
                     $clone->appendChild($fragment);
                     $domNode->parentNode->replaceChild($clone, $domNode);
