@@ -176,7 +176,9 @@ class ApplicationLogger implements LoggerInterface
             $context['relatedObjectType'] = Service::getElementType($relatedObject);
         }
 
-        $context['source'] = $this->resolveLoggingSource();
+        if (!isset($context['source'])) {
+            $context['source'] = $this->resolveLoggingSource();
+        }
 
         foreach ($this->loggers as $logger) {
             if ($logger instanceof \Psr\Log\LoggerInterface) {
@@ -422,6 +424,11 @@ class ApplicationLogger implements LoggerInterface
         return implode("\n", $data);
     }
 
+    /**
+     * @param \Throwable $exceptionObject
+     *
+     * @return FileObject
+     */
     private static function createExceptionFileObject(\Throwable $exceptionObject)
     {
         $data = self::exceptionToString($exceptionObject, true, true);

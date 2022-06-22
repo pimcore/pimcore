@@ -61,7 +61,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     public $maxItems;
 
@@ -644,7 +644,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param string|int|null $maxItems
+     * @param int|null $maxItems
      *
      * @return $this
      */
@@ -656,7 +656,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getMaxItems()
     {
@@ -698,7 +698,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return array|string
+     * @return array
      */
     public function getDiffVersionPreview($data, $object = null, $params = [])
     {
@@ -775,7 +775,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @param mixed $value
      * @param mixed $params
      *
-     * @return mixed
+     * @return array|null
      */
     public function denormalize($value, $params = [])
     {
@@ -816,7 +816,12 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * {@inheritdoc}
+     * @param Element\ElementInterface[]|null $originalData
+     * @param array|null $data
+     * @param null|DataObject\Concrete $object
+     * @param array $params
+     *
+     * @return array
      */
     protected function processDiffDataForEditMode($originalData, $data, $object = null, $params = [])
     {
@@ -889,7 +894,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return mixed
+     * @return array|null
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
@@ -907,7 +912,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
             return $this->getDataFromEditmode($result, $object, $params);
         }
 
-        return;
+        return null;
     }
 
     /**

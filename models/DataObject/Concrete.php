@@ -29,7 +29,7 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 /**
  * @method \Pimcore\Model\DataObject\Concrete\Dao getDao()
- * @method \Pimcore\Model\Version|null getLatestVersion($userId = null)
+ * @method \Pimcore\Model\Version|null getLatestVersion(?int $userId = null)
  */
 class Concrete extends DataObject implements LazyLoadedFieldsInterface
 {
@@ -153,12 +153,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                                 throw $newException;
                             }
                         } else {
-                            if ($e instanceof Model\Element\ValidationException) {
-                                throw $e;
-                            }
-                            $exceptionClass = get_class($e);
-
-                            throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e);
+                            throw $e;
                         }
                     }
                 }
@@ -524,7 +519,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @internal
      *
-     * @return AbstractObject|null
+     * @return Concrete|null
      */
     public function getNextParentForInheritance()
     {
@@ -615,6 +610,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                 throw new \Exception("Static getter '::getBy".ucfirst($realPropertyName)."' is not allowed for fieldtype '" . $field->getFieldType() . "'");
             }
 
+            $db = Db::get();
+
             if ($field instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
                 $arguments = array_pad($arguments, 6, 0);
 
@@ -632,7 +629,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     throw new \Exception("Static getter '::getBy".ucfirst($realPropertyName)."' is not allowed for fieldtype '" . $localizedField->getFieldType() . "'");
                 }
 
-                $defaultCondition = $localizedPropertyName . ' = ' . Db::get()->quote($value) . ' ';
+                $defaultCondition = $db->quoteIdentifier($localizedPropertyName) . ' = ' . $db->quote($value) . ' ';
                 $listConfig = [
                     'condition' => $defaultCondition,
                 ];
@@ -645,7 +642,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                 [$value, $limit, $offset, $objectTypes] = $arguments;
 
                 if (!$field instanceof AbstractRelations) {
-                    $defaultCondition = $realPropertyName . ' = ' . Db::get()->quote($value) . ' ';
+                    $defaultCondition = $db->quoteIdentifier($realPropertyName) . ' = ' . $db->quote($value) . ' ';
                 }
                 $listConfig = [
                     'condition' => $defaultCondition,
@@ -890,8 +887,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     {
         if ($this->__rawRelationData === null) {
             $db = Db::get();
-            $relations = $db->fetchAll('SELECT * FROM object_relations_' . $this->getClassId() . ' WHERE src_id = ?', [$this->getId()]);
-            $this->__rawRelationData = $relations ?? [];
+            $this->__rawRelationData = $db->fetchAll('SELECT * FROM object_relations_' . $this->getClassId() . ' WHERE src_id = ?', [$this->getId()]);
         }
 
         return $this->__rawRelationData;

@@ -98,8 +98,8 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Retrieve object instance; optionally add meta tag
      *
-     * @param  string $content
-     * @param  string $keyValue
+     * @param  null|string $content
+     * @param  null|string $keyValue
      * @param  string $keyType
      * @param  array $modifiers
      * @param  string $placement
@@ -128,6 +128,11 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
         return $this;
     }
 
+    /**
+     * @param string $type
+     *
+     * @return string
+     */
     protected function _normalizeType($type)
     {
         switch ($type) {
@@ -230,7 +235,7 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Append
      *
-     * @param  string $value
+     * @param  \stdClass $value
      *
      * @return void
      *
@@ -249,7 +254,7 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
      * OffsetSet
      *
      * @param  string|int $index
-     * @param  string $value
+     * @param  \stdClass $value
      *
      * @return void
      *
@@ -374,7 +379,7 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Render placeholder as string
      *
-     * @param  string|int $indent
+     * @param  null|string|int $indent
      *
      * @return string
      */
@@ -448,7 +453,7 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
 
     /**
      * @param string $string
-     * @param int $length
+     * @param null|int $length
      * @param string $suffix
      *
      * @return $this

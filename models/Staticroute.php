@@ -66,7 +66,7 @@ final class Staticroute extends AbstractModel
     /**
      * @var array
      */
-    protected $siteId;
+    protected $siteId = [];
 
     /**
      * @var array
@@ -215,9 +215,14 @@ final class Staticroute extends AbstractModel
      */
     private function getDefaultsArray()
     {
+        $defaultsString = $this->getDefaults();
+        if (empty($defaultsString)) {
+            return [];
+        }
+
         $defaults = [];
 
-        $t = explode('|', $this->getDefaults());
+        $t = explode('|', $defaultsString);
         foreach ($t as $v) {
             $d = explode('=', $v);
             if (strlen($d[0]) > 0 && strlen($d[1]) > 0) {
@@ -389,13 +394,17 @@ final class Staticroute extends AbstractModel
     }
 
     /**
-     * @param string|array $siteId
+     * @param string|array|null $siteId
      *
      * @return $this
      */
     public function setSiteId($siteId)
     {
         $result = [];
+
+        if (null === $siteId) {
+            $siteId = [];
+        }
 
         if (!is_array($siteId)) {
             // backwards compatibility

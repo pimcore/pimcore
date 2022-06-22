@@ -38,7 +38,7 @@ class Dao extends Model\Dao\AbstractDao
             'SELECT documents.id FROM documents
             LEFT JOIN documents_page ON documents.id = documents_page.id
             WHERE documents.path LIKE ? AND documents_page.prettyUrl = ?',
-        [$this->db->escapeLike($site->getRootPath()) . '/%', rtrim($path, '/')]
+            [$this->db->escapeLike($site->getRootPath()) . '/%', rtrim($path, '/')]
         );
     }
 
@@ -49,7 +49,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getTranslationSourceId(Document $document)
     {
-        $sourceId = $this->db->fetchOne('SELECT sourceId FROM documents_translations WHERE id = ?', $document->getId());
+        $sourceId = $this->db->fetchOne('SELECT sourceId FROM documents_translations WHERE id = ?', [$document->getId()]);
         if (!$sourceId) {
             $sourceId = $document->getId();
         }
@@ -61,7 +61,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param Document $document
      * @param string $task
      *
-     * @return array
+     * @return int[]
      */
     public function getTranslations(Document $document, $task = 'open')
     {
@@ -70,7 +70,7 @@ class Dao extends Model\Dao\AbstractDao
 
         if ($task == 'open') {
             $linkedData = [];
-            foreach ($data as $key => $value) {
+            foreach ($data as $value) {
                 $linkedData = $this->db->fetchAll('SELECT id,language FROM documents_translations WHERE sourceId = ? UNION SELECT sourceId as id,"source" FROM documents_translations WHERE id = ?', [$value['id'], $value['id']]);
             }
 
@@ -82,10 +82,10 @@ class Dao extends Model\Dao\AbstractDao
         $translations = [];
         foreach ($data as $translation) {
             if ($translation['language'] == 'source') {
-                $sourceDocument = Document::getById($translation['id']);
-                $translations[$sourceDocument->getProperty('language')] = $translation['id'];
+                $sourceDocument = Document::getById((int) $translation['id']);
+                $translations[$sourceDocument->getProperty('language')] = $sourceDocument->getId();
             } else {
-                $translations[$translation['language']] = $translation['id'];
+                $translations[$translation['language']] = (int) $translation['id'];
             }
         }
 
@@ -124,7 +124,7 @@ class Dao extends Model\Dao\AbstractDao
     public function removeTranslation(Document $document)
     {
         // if $document is a source-document, we need to move them over to a new document
-        $newSourceId = $this->db->fetchOne('SELECT id FROM documents_translations WHERE sourceId = ?', $document->getId());
+        $newSourceId = $this->db->fetchOne('SELECT id FROM documents_translations WHERE sourceId = ?', [$document->getId()]);
         if ($newSourceId) {
             $this->db->update('documents_translations', ['sourceId' => $newSourceId], ['sourceId' => $document->getId()]);
             $this->db->delete('documents_translations', ['id' => $newSourceId]);

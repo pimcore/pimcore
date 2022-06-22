@@ -117,7 +117,7 @@ class ConditionMatcher implements ConditionMatcherInterface
         try {
             $condition = $this->conditionFactory->build($config);
         } catch (\Throwable $e) {
-            $this->logger->error($e);
+            $this->logger->error((string) $e);
 
             return false;
         }
@@ -137,12 +137,10 @@ class ConditionMatcher implements ConditionMatcherInterface
             $condition->preMatch($visitorInfo, $this->eventDispatcher);
         }
 
-        $result = false;
-
         try {
             $result = $condition->match($visitorInfo);
         } catch (\Throwable $e) {
-            $this->logger->error($e);
+            $this->logger->error((string) $e);
 
             return false;
         }

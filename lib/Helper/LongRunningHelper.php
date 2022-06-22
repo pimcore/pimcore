@@ -24,8 +24,14 @@ final class LongRunningHelper
 {
     use LoggerAwareTrait;
 
+    /**
+     * @var ConnectionRegistry
+     */
     protected $connectionRegistry;
 
+    /**
+     * @var string[]
+     */
     protected $pimcoreRuntimeCacheProtectedItems = [
         'Config_system',
         'pimcore_admin_user',
@@ -35,9 +41,14 @@ final class LongRunningHelper
         'Pimcore_Db',
     ];
 
+    /**
+     * @var array
+     */
     protected $monologHandlers = [];
 
-    /** @var string[] */
+    /**
+     * @var string[]
+     */
     protected $tmpFilePaths = [];
 
     /**

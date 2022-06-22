@@ -168,7 +168,7 @@ class DefaultFindologic implements ProductListInterface
     }
 
     /**
-     * @param string $condition
+     * @param array|string $condition
      * @param string $fieldname
      */
     public function addCondition($condition, $fieldname = '')
@@ -374,15 +374,12 @@ class DefaultFindologic implements ProductListInterface
             switch ($this->getVariantMode()) {
                 case self::VARIANT_MODE_INCLUDE:
                 case self::VARIANT_MODE_HIDE:
-                    $id = $item['id'];
+                    $id = (int) $item['id'];
 
                     break;
-
                 case self::VARIANT_MODE_VARIANTS_ONLY:
                 case self::VARIANT_MODE_INCLUDE_PARENT_OBJECT:
                     throw new InvalidConfigException('Variant Mode ' . $this->getVariantMode() . ' not supported.');
-
-                    break;
             }
 
             if ($id) {
@@ -617,7 +614,7 @@ class DefaultFindologic implements ProductListInterface
      * @param bool $countValues
      * @param bool $fieldnameShouldBeExcluded
      *
-     * @return array|void
+     * @return array
      */
     public function getGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
     {
@@ -699,7 +696,7 @@ class DefaultFindologic implements ProductListInterface
      * @param bool   $countValues
      * @param bool   $fieldnameShouldBeExcluded
      *
-     * @return array|void
+     * @return array
      */
     public function getGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
     {

@@ -137,7 +137,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             }
         }
 
-        array_multisort(array_map('strlen', $tables), $tables);
+        $tablesLen = array_map('strlen', $tables);
+        array_multisort($tablesLen, $tables);
         $longestTablename = end($tables);
 
         $length = strlen($longestTablename);
@@ -209,18 +210,22 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         }
     }
 
+    /**
+     * @param DataObject\ClassDefinition\Data[] $fds
+     * @param array $found
+     *
+     * @throws \Exception
+     */
     private function enforceBlockRules($fds, $found = [])
     {
-        if (($found['block'] ?? false) && ($found['localizedfield'] ?? false)) {
-            throw new \Exception('A localizedfield cannot be nested inside a block and vice versa');
-        }
-        /** @var DataObject\ClassDefinition\Data $fd */
         foreach ($fds as $fd) {
             $childParams = $found;
             if ($fd instanceof DataObject\ClassDefinition\Data\Block) {
                 $childParams['block'] = true;
             } elseif ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                $childParams['localizedfield'] = true;
+                if ($found['block'] ?? false) {
+                    throw new \Exception('A localizedfield cannot be nested inside a block');
+                }
             }
             if (method_exists($fd, 'getFieldDefinitions')) {
                 $this->enforceBlockRules($fd->getFieldDefinitions(), $childParams);
@@ -260,8 +265,10 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
             $data = '<?php';
             $data .= "\n\n";
+            $data .= $this->getInfoDocBlock();
+            $data .= "\n\n";
 
-            $data .= "\nreturn " . $exportedClass . ";\n";
+            $data .= 'return ' . $exportedClass . ";\n";
 
             \Pimcore\File::put($definitionFile, $data);
         }
@@ -576,11 +583,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      */
     public function isWritable(): bool
     {
-        if ($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? false) {
-            return true;
-        }
-
-        return !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
+        return $_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
     }
 
     /**
@@ -596,7 +599,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @internal
      * @internal
      *
      * @return string

@@ -352,13 +352,11 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if (strlen($data['value']) > 0 || $data['unit']) {
-            if ($data['unit']) {
-                if ($data['unit'] == -1 || $data['unit'] == null || empty($data['unit'])) {
-                    return new Model\DataObject\Data\QuantityValue($data['value'], null);
-                }
-
-                return new Model\DataObject\Data\QuantityValue($data['value'], $data['unit']);
+            if ($data['unit'] == -1 || $data['unit'] == null || empty($data['unit'])) {
+                return new Model\DataObject\Data\QuantityValue($data['value'], null);
             }
+
+            return new Model\DataObject\Data\QuantityValue($data['value'], $data['unit']);
         }
 
         return null;
@@ -487,7 +485,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
                     Runtime::set(Model\DataObject\QuantityValue\Unit::CACHE_KEY, $table);
                 }
             } catch (\Exception $e) {
-                Logger::error($e);
+                Logger::error((string) $e);
             }
 
             if (is_array($table)) {
@@ -526,6 +524,9 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         return $obj;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getFilterCondition($value, $operator, $params = [])
     {
         /** @var UnitConversionService $converter */

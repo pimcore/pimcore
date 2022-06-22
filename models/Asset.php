@@ -66,27 +66,6 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @var int|null
-     */
-    protected $id;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
-    protected $parentId;
-
-    /**
-     * @internal
-     *
-     * @var self|null
-     */
-    protected $parent;
-
-    /**
-     * @internal
-     *
      * @var string
      */
     protected $type = '';
@@ -103,28 +82,7 @@ class Asset extends Element\AbstractElement
      *
      * @var string|null
      */
-    protected $path;
-
-    /**
-     * @internal
-     *
-     * @var string|null
-     */
     protected $mimetype;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
-    protected $creationDate;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
-    protected $modificationDate;
 
     /**
      * @internal
@@ -132,27 +90,6 @@ class Asset extends Element\AbstractElement
      * @var resource|null
      */
     protected $stream;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
-    protected ?int $userOwner = null;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
-    protected ?int $userModification = null;
-
-    /**
-     * @internal
-     *
-     * @var array
-     */
-    protected $properties = null;
 
     /**
      * @internal
@@ -167,15 +104,6 @@ class Asset extends Element\AbstractElement
      * @var array
      */
     protected $metadata = [];
-
-    /**
-     * @internal
-     *
-     * enum('self','propagate') nullable
-     *
-     * @var string|null
-     */
-    protected $locked;
 
     /**
      * List of some custom settings  [key] => value
@@ -216,11 +144,20 @@ class Asset extends Element\AbstractElement
     protected $dataChanged = false;
 
     /**
-     * @internal
-     *
-     * @var int
+     * {@inheritdoc}
      */
-    protected $versionCount = 0;
+    protected function getBlockedVars(): array
+    {
+        $blockedVars = ['scheduledTasks', 'hasChildren', 'versions', 'parent', 'stream'];
+
+        if (!$this->isInDumpState()) {
+
+            // for caching asset
+            $blockedVars = array_merge($blockedVars, ['children', 'properties']);
+        }
+
+        return $blockedVars;
+    }
 
     /**
      *
@@ -248,7 +185,7 @@ class Asset extends Element\AbstractElement
         $path = Element\Service::correctPath($path);
 
         try {
-            $asset = new Asset();
+            $asset = new static();
             $asset->getDao()->getByPath($path);
 
             return static::getById($asset->getId(), $force);
@@ -299,16 +236,19 @@ class Asset extends Element\AbstractElement
         }
 
         if ($force || !($asset = \Pimcore\Cache::load($cacheKey))) {
-            $asset = new Asset();
+            $asset = new static();
 
             try {
                 $asset->getDao()->getById($id);
                 $className = 'Pimcore\\Model\\Asset\\' . ucfirst($asset->getType());
 
-                /** @var Asset $asset */
-                $asset = self::getModelFactory()->build($className);
+                if (get_class($asset) !== $className) {
+                    /** @var Asset $asset */
+                    $asset = self::getModelFactory()->build($className);
+                    $asset->getDao()->getById($id);
+                }
+
                 \Pimcore\Cache\Runtime::set($cacheKey, $asset);
-                $asset->getDao()->getById($id);
                 $asset->__setDataVersionTimestamp($asset->getModificationDate());
 
                 $asset->resetDirtyMap();
@@ -432,7 +372,7 @@ class Asset extends Element\AbstractElement
     /**
      * @param array $config
      *
-     * @return mixed
+     * @return Listing
      *
      * @throws \Exception
      */
@@ -444,6 +384,7 @@ class Asset extends Element\AbstractElement
 
         $listClass = Listing::class;
 
+        /** @var Listing $list */
         $list = self::getModelFactory()->build($listClass);
         $list->setValues($config);
 
@@ -597,7 +538,7 @@ class Asset extends Element\AbstractElement
                         $this->rollBack();
                     } catch (\Exception $er) {
                         // PDO adapter throws exceptions if rollback fails
-                        Logger::error($er);
+                        Logger::error((string) $er);
                     }
 
                     // we try to start the transaction $maxRetries times again (deadlocks, ...)
@@ -1021,24 +962,6 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getLocked()
-    {
-        return $this->locked;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setLocked($locked)
-    {
-        $this->locked = $locked;
-
-        return $this;
-    }
-
-    /**
      * @throws \League\Flysystem\FilesystemException
      */
     private function deletePhysicalFile()
@@ -1112,13 +1035,13 @@ class Asset extends Element\AbstractElement
                 $this->rollBack();
             } catch (\Exception $er) {
                 // PDO adapter throws exceptions if rollback fails
-                Logger::info($er);
+                Logger::info((string) $er);
             }
 
             $failureEvent = new AssetEvent($this);
             $failureEvent->setArgument('exception', $e);
             $this->dispatchEvent($failureEvent, AssetEvents::POST_DELETE_FAILURE);
-            Logger::crit($e);
+            Logger::crit((string) $e);
 
             throw $e;
         }
@@ -1143,24 +1066,8 @@ class Asset extends Element\AbstractElement
 
             \Pimcore\Cache::clearTags($tags);
         } catch (\Exception $e) {
-            Logger::crit($e);
+            Logger::crit((string) $e);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCreationDate()
-    {
-        return $this->creationDate;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**
@@ -1182,53 +1089,9 @@ class Asset extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function getModificationDate()
-    {
-        return $this->modificationDate;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getParentId()
-    {
-        return $this->parentId;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPath()
-    {
-        return $this->path;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getType()
     {
         return $this->type;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setCreationDate($creationDate)
-    {
-        $this->creationDate = (int)$creationDate;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setId($id)
-    {
-        $this->id = (int)$id;
-
-        return $this;
     }
 
     /**
@@ -1252,41 +1115,6 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function setModificationDate($modificationDate)
-    {
-        $this->markFieldDirty('modificationDate');
-
-        $this->modificationDate = (int)$modificationDate;
-
-        return $this;
-    }
-
-    /**
-     * @param int $parentId
-     *
-     * @return $this
-     */
-    public function setParentId($parentId)
-    {
-        $this->parentId = (int)$parentId;
-        $this->parent = null;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setPath($path)
-    {
-        $this->path = (string)$path;
-
-        return $this;
-    }
-
-    /**
      * @param string $type
      *
      * @return $this
@@ -1299,7 +1127,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return mixed
+     * @return string|false
      */
     public function getData()
     {
@@ -1403,97 +1231,6 @@ class Asset extends Element\AbstractElement
     public function setDataChanged($changed = true)
     {
         $this->dataChanged = $changed;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getProperties()
-    {
-        if ($this->properties === null) {
-            // try to get from cache
-            $cacheKey = 'asset_properties_' . $this->getId();
-            $properties = \Pimcore\Cache::load($cacheKey);
-            if (!is_array($properties)) {
-                $properties = $this->getDao()->getProperties();
-                $elementCacheTag = $this->getCacheTag();
-                $cacheTags = ['asset_properties' => 'asset_properties', $elementCacheTag => $elementCacheTag];
-                \Pimcore\Cache::save($properties, $cacheKey, $cacheTags);
-            }
-
-            $this->setProperties($properties);
-        }
-
-        return $this->properties;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setProperties(?array $properties)
-    {
-        $this->properties = $properties;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setProperty($name, $type, $data, $inherited = false, $inheritable = false)
-    {
-        $this->getProperties();
-
-        $property = new Property();
-        $property->setType($type);
-        $property->setCid($this->getId());
-        $property->setName($name);
-        $property->setCtype('asset');
-        $property->setData($data);
-        $property->setInherited($inherited);
-        $property->setInheritable($inheritable);
-
-        $this->properties[$name] = $property;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getUserOwner()
-    {
-        return $this->userOwner;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getUserModification()
-    {
-        return $this->userModification;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setUserOwner($userOwner)
-    {
-        $this->userOwner = (int)$userOwner;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setUserModification($userModification)
-    {
-        $this->markFieldDirty('userModification');
-
-        $this->userModification = (int)$userModification;
 
         return $this;
     }
@@ -1656,7 +1393,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param array|\stdClass[] $metadata for each array item: mandatory keys: name, type - optional keys: data, language
+     * @param array[]|\stdClass[] $metadata for each array item: mandatory keys: name, type - optional keys: data, language
      *
      * @return self
      */
@@ -1873,15 +1610,13 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * {@inheritdoc}
+     * @return Asset|null
      */
-    public function getParent()
+    public function getParent() /** : ?Asset */
     {
-        if ($this->parent === null) {
-            $this->setParent(Asset::getById($this->getParentId()));
-        }
+        $parent = parent::getParent();
 
-        return $this->parent;
+        return $parent instanceof Asset ? $parent : null;
     }
 
     /**
@@ -1897,22 +1632,6 @@ class Asset extends Element\AbstractElement
         }
 
         return $this;
-    }
-
-    public function __sleep()
-    {
-        $parentVars = parent::__sleep();
-        $blockedVars = ['scheduledTasks', 'hasChildren', 'versions', 'parent', 'stream'];
-
-        if ($this->isInDumpState()) {
-            // this is if we want to make a full dump of the asset (eg. for a new version), including children for recyclebin
-            $this->removeInheritedProperties();
-        } else {
-            // this is if we want to cache the asset
-            $blockedVars = array_merge($blockedVars, ['children', 'properties']);
-        }
-
-        return array_diff($parentVars, $blockedVars);
     }
 
     public function __wakeup()
@@ -1937,24 +1656,6 @@ class Asset extends Element\AbstractElement
     {
         // close open streams
         $this->closeStream();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getVersionCount(): int
-    {
-        return $this->versionCount ? $this->versionCount : 0;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setVersionCount(?int $versionCount): ElementInterface
-    {
-        $this->versionCount = (int)$versionCount;
-
-        return $this;
     }
 
     /**
@@ -2007,6 +1708,8 @@ class Asset extends Element\AbstractElement
                 $storage = Storage::get($storageName);
                 $storage->deleteDirectory($this->getRealPath() . $this->getId());
             }
+
+            $this->getDao()->deleteFromThumbnailCache();
         }
     }
 
@@ -2103,6 +1806,7 @@ class Asset extends Element\AbstractElement
     {
         try {
             Storage::get('thumbnail')->deleteDirectory($this->getRealPath().'/'.$this->getId().'/image-thumb__'.$this->getId().'__'.$name);
+            $this->getDao()->deleteFromThumbnailCache($name);
         } catch (\Exception $e) {
             // noting to do
         }

@@ -33,7 +33,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
         parent::configure([
-            'containerConfig' => $config['assets']['image']['thumbnails']['definitions'] ?? [],
+            'containerConfig' => $config['assets']['image']['thumbnails']['definitions'],
             'settingsStoreScope' => 'pimcore_image_thumbnails',
             'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_IMAGE_THUMBNAILS'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/image-thumbnails',
             'legacyConfigFile' => 'image-thumbnails.php',
@@ -112,6 +112,8 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             // thumbnail already existed
             $this->autoClearTempFiles();
         }
+
+        $this->clearDatabaseCache();
     }
 
     /**
@@ -148,6 +150,17 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         } else {
             $this->autoClearTempFiles();
         }
+
+        $this->clearDatabaseCache();
+    }
+
+    private function clearDatabaseCache(): void
+    {
+        \Pimcore\Db::get()->delete('assets_image_thumbnail_cache', [
+            'name' => $this->model->getName(),
+        ]);
+
+        Model\Asset\Dao::$thumbnailStatusCache = [];
     }
 
     protected function autoClearTempFiles()

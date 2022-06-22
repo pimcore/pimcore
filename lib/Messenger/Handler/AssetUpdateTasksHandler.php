@@ -33,13 +33,17 @@ class AssetUpdateTasksHandler
     public function __invoke(AssetUpdateTasksMessage $message)
     {
         $asset = Asset::getById($message->getId());
+        if (!$asset) {
+            $this->logger->debug(sprintf('Asset with ID %s not found', $message->getId()));
+
+            return;
+        }
+        $this->logger->debug(sprintf('Processing asset with ID %s | Path: %s', $asset->getId(), $asset->getRealFullPath()));
 
         if ($asset instanceof Asset\Image) {
             $this->processImage($asset);
-        } elseif ($asset instanceof Asset\Document && !$asset->getCustomSetting('document_page_count')) {
-            $this->logger->debug(sprintf('Processing document with ID %s | Path: %s', $asset->getId(), $asset->getRealFullPath()));
-            $asset->processPageCount();
-            $this->saveAsset($asset);
+        } elseif ($asset instanceof Asset\Document) {
+            $this->processDocument($asset);
         } elseif ($asset instanceof Asset\Video) {
             $this->processVideo($asset);
         }
@@ -50,6 +54,16 @@ class AssetUpdateTasksHandler
         Version::disable();
         $asset->save();
         Version::enable();
+    }
+
+    private function processDocument(Asset\Document $asset)
+    {
+        if (!$asset->getCustomSetting('document_page_count')) {
+            $asset->processPageCount();
+            $this->saveAsset($asset);
+        }
+
+        $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
     }
 
     private function processVideo(Asset\Video $asset): void
@@ -75,6 +89,8 @@ class AssetUpdateTasksHandler
 
         $asset->handleEmbeddedMetaData(true);
         $this->saveAsset($asset);
+
+        $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
     }
 
     private function processImage(Asset\Image $image): void

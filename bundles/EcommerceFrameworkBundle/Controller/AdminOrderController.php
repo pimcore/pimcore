@@ -19,7 +19,6 @@ use GuzzleHttp\ClientInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
-use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
@@ -44,13 +43,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 
 /**
  * Class AdminOrderController
  *
+ * @internal
+ *
  * @Route("/admin-order")
  *
- * @internal
  */
 class AdminOrderController extends AdminController implements KernelControllerEventInterface
 {
@@ -67,10 +68,12 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         // set language
-        $user = $this->get(TokenStorageUserResolver::class)->getUser();
+        $user = $this->getTokenResolver()->getUser();
 
         if ($user) {
-            $this->get('translator')->setLocale($user->getLanguage());
+            if ($this->getTranslator() instanceof LocaleAwareInterface) {
+                $this->getTranslator()->setLocale($user->getLanguage());
+            }
             $event->getRequest()->setLocale($user->getLanguage());
         }
 
@@ -208,7 +211,10 @@ class AdminOrderController extends AdminController implements KernelControllerEv
         $pimcoreSymfonyConfig = $this->getParameter('pimcore.config');
 
         // init
-        $order = OnlineShopOrder::getById($request->get('id'));
+        $order = OnlineShopOrder::getById((int) $request->get('id'));
+        if (!$order) {
+            throw $this->createNotFoundException();
+        }
         $orderAgent = $this->orderManager->createOrderAgent($order);
 
         /**
@@ -277,7 +283,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
             $customer = $order->getCustomer();
 
             // register
-            $register = \DateTime::createFromFormat('U', $order->getCreationDate());
+            $register = \DateTime::createFromFormat('U', (string) $order->getCreationDate());
             $arrCustomerAccount['created'] = $formatter->formatDateTime($register, IntlFormatter::DATE_MEDIUM);
 
             // mail
@@ -383,7 +389,10 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     public function itemCancelAction(Request $request, CsrfProtectionHandler $csrfProtection)
     {
         // init
-        $orderItem = OnlineShopOrderItem::getById($request->get('id'));
+        $orderItem = OnlineShopOrderItem::getById((int) $request->get('id'));
+        if (!$orderItem) {
+            throw $this->createNotFoundException();
+        }
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed') && $orderItem->isCancelAble()) {
@@ -417,7 +426,10 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     public function itemEditAction(Request $request, CsrfProtectionHandler $csrfProtectionHandler)
     {
         // init
-        $orderItem = OnlineShopOrderItem::getById($request->get('id'));
+        $orderItem = OnlineShopOrderItem::getById((int) $request->get('id'));
+        if (!$orderItem) {
+            throw $this->createNotFoundException();
+        }
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {
@@ -450,7 +462,10 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     public function itemComplaintAction(Request $request, CsrfProtectionHandler $csrfProtectionHandler)
     {
         // init
-        $orderItem = OnlineShopOrderItem::getById($request->get('id'));
+        $orderItem = OnlineShopOrderItem::getById((int) $request->get('id'));
+        if (!$orderItem) {
+            throw $this->createNotFoundException();
+        }
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {

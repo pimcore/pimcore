@@ -24,7 +24,6 @@ use Pimcore\Controller\KernelResponseEventInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Event\Admin\IndexActionSettingsEvent;
 use Pimcore\Event\AdminEvents;
-use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Maintenance\Executor;
 use Pimcore\Maintenance\ExecutorInterface;
 use Pimcore\Model\Document\DocType;
@@ -183,10 +182,8 @@ class IndexController extends AdminController implements KernelResponseEventInte
      */
     protected function addPluginAssets(array &$templateParams)
     {
-        $bundleManager = $this->get(PimcoreBundleManager::class);
-
-        $templateParams['pluginJsPaths'] = $bundleManager->getJsPaths();
-        $templateParams['pluginCssPaths'] = $bundleManager->getCssPaths();
+        $templateParams['pluginJsPaths'] = $this->getBundleManager()->getJsPaths();
+        $templateParams['pluginCssPaths'] = $this->getBundleManager()->getCssPaths();
 
         return $this;
     }
@@ -231,6 +228,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'debug_admin_translations' => (bool)$config['general']['debug_admin_translations'],
             'document_generatepreviews' => (bool)$config['documents']['generate_preview'],
             'asset_disable_tree_preview' => (bool)$config['assets']['disable_tree_preview'],
+            'chromium' => \Pimcore\Image\Chromium::isSupported(),
             'htmltoimage' => \Pimcore\Image\HtmlToImage::isSupported(),
             'videoconverter' => \Pimcore\Video::isAvailable(),
             'asset_hide_edit' => (bool)$config['assets']['hide_edit_image'],
@@ -267,6 +265,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'staticroutes-writeable' => (new Staticroute())->isWriteable(),
             'perspectives-writeable' => \Pimcore\Perspective\Config::isWriteable(),
             'custom-views-writeable' => \Pimcore\CustomView\Config::isWriteable(),
+            'class-definition-writeable' => isset($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE']) ? (bool)$_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] : true,
         ];
 
         $this

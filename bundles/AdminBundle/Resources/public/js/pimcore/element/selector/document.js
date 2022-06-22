@@ -152,7 +152,7 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                             return '<div class="pimcore_icon_' + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                         }
                     },
-                    {text: t("filename"), flex: 1, sortable: false, dataIndex: 'filename'}
+                    {text: t("filename"), flex: 1, sortable: true, dataIndex: 'filename'}
                 ],
                 viewConfig: {
                     forceFit: true
@@ -201,7 +201,7 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                 {text: t("path"), flex: 200, sortable: true, dataIndex: 'fullpath'},
                 {text: t("title"), flex: 200, sortable: false, dataIndex: 'title', hidden: false},
                 {text: t("description"), width: 200, sortable: false, dataIndex: 'description', hidden: true},
-                {text: t("filename"), width: 200, sortable: false, dataIndex: 'filename', hidden: true}
+                {text: t("filename"), width: 200, sortable: true, dataIndex: 'filename', hidden: true}
             ];
 
             this.pagingtoolbar = this.getPagingToolbar();
@@ -251,6 +251,7 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
         let proxy = this.store.getProxy();
         let query = Ext.util.Format.htmlEncode(formValues.query);
         proxy.setExtraParam("query", query);
+        proxy.setExtraParam("type", 'document');
         proxy.setExtraParam("subtype", formValues.subtype);
 
         if (this.parent.config && this.parent.config.context) {

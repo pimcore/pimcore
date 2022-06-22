@@ -89,7 +89,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     {
         $element = $parameters['element'] ?? null;
         if ($element instanceof ElementInterface) {
-            return sprintf('Element (Type: %s, ID: %d)', $parameters['element']->getType(), $parameters['element']->getId());
+            return sprintf('Element (Type: %s, ID: %d)', $element->getType(), $element->getId());
         }
 
         return 'No element';
@@ -101,6 +101,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH)// : string
     {
         $element = $parameters['element'] ?? null;
+        unset($parameters['element']);
         if ($element instanceof Document || $element instanceof Asset) {
             $schemeAuthority = '';
             $host = $this->context->getHost();

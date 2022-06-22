@@ -122,7 +122,7 @@ abstract class AbstractRelations extends Data implements
                 } catch (\Exception $e) {
                     Logger::error('It seems that the relation ' . $relation['src_id'] . ' => ' . $relation['dest_id']
                         . ' (fieldname: ' . $this->getName() . ') already exist -> please check immediately!');
-                    Logger::error($e);
+                    Logger::error((string) $e);
 
                     // try it again with an update if the insert fails, shouldn't be the case, but it seems that
                     // sometimes the insert throws an exception

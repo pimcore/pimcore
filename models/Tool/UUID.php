@@ -141,7 +141,7 @@ final class UUID extends Model\AbstractModel
     /**
      * @internal
      *
-     * @return mixed
+     * @return string
      *
      * @throws \Exception
      */
@@ -156,7 +156,9 @@ final class UUID extends Model\AbstractModel
         $uuid = Uid::v5($namespace, $this->getInstanceIdentifier() . '~' . $this->getType() . '~' . $this->getItemId());
         $this->uuid = $uuid->toRfc4122();
 
-        $this->getDao()->save();
+        if (!$this->getDao()->exists($this->uuid)) {
+            $this->getDao()->create();
+        }
 
         return $this->uuid;
     }
@@ -198,7 +200,7 @@ final class UUID extends Model\AbstractModel
     }
 
     /**
-     * @param int $item
+     * @param mixed $item
      *
      * @return UUID
      *
@@ -216,7 +218,7 @@ final class UUID extends Model\AbstractModel
     /**
      * @param string $uuid
      *
-     * @return mixed
+     * @return self
      */
     public static function getByUuid($uuid)
     {

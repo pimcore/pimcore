@@ -315,7 +315,7 @@ class Link extends Model\Document
     }
 
     /**
-     * @param Model\Element\ElementInterface $element
+     * @param Model\Element\ElementInterface|null $element
      *
      * @return $this
      */
@@ -376,7 +376,7 @@ class Link extends Model\Document
                 }
             }
         } catch (\Exception $e) {
-            Logger::warn($e);
+            Logger::warn((string) $e);
             $this->internalType = '';
             $this->internal = null;
             $this->object = null;

@@ -15,17 +15,30 @@
 
 namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
-abstract class Data implements DataDefinitionInterface
+use Pimcore\Model\DataObject\Traits\SimpleNormalizerTrait;
+use Pimcore\Normalizer\NormalizerInterface;
+
+abstract class Data implements DataDefinitionInterface, NormalizerInterface
 {
+    use SimpleNormalizerTrait;
+
     /**
      * @param mixed $value
      * @param array $params
      *
      * @return mixed
+     *
+     * @deprecated use normalize() instead, will be removed in Pimcore 11
      */
     public function marshal($value, $params = [])
     {
-        return $value;
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.4',
+            sprintf('%s is deprecated, please use normalize() instead. It will be removed in Pimcore 11.', __METHOD__)
+        );
+
+        return $this->normalize($value, $params);
     }
 
     /**
@@ -33,12 +46,23 @@ abstract class Data implements DataDefinitionInterface
      * @param array $params
      *
      * @return mixed
+     *
+     * @deprecated use denormalize() instead, will be removed in Pimcore 11
      */
     public function unmarshal($value, $params = [])
     {
-        return $value;
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.4',
+            sprintf('%s is deprecated, please use denormalize() instead. It will be removed in Pimcore 11.', __METHOD__)
+        );
+
+        return $this->denormalize($value, $params);
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return get_class($this);
@@ -177,7 +201,7 @@ abstract class Data implements DataDefinitionInterface
      * @param mixed $data
      * @param array $params
      *
-     * @return mixed
+     * @return string|null
      */
     public function getDataForSearchIndex($data, $params = [])
     {

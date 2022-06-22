@@ -273,6 +273,13 @@ pimcore:
                 enabled: true
                 priority: 100
                 generator_id: Pimcore\Sitemap\Document\DocumentTreeGenerator
+    redirects:
+        status_codes:
+            300: Multiple Choices
+            301: Moved Permanently
+            302: Found
+            303: See Other
+            307: Temporary Redirect
 
 presta_sitemap:
     # do not add properties by default

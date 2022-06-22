@@ -383,7 +383,6 @@ class TestDataHelper extends AbstractTestDataHelper
     /**
      * @param Concrete $object
      * @param string $field
-     * @param          $comparisonObject
      * @param int $seed
      */
     public function assertGeopolygon(Concrete $object, $field, $seed = 1)
@@ -748,7 +747,6 @@ class TestDataHelper extends AbstractTestDataHelper
     /**
      * @param Concrete|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData $object
      * @param string $field
-     * @param Concrete|null $comparisonObject
      * @param int $seed
      * @param string|null $language
      */
@@ -1110,7 +1108,7 @@ class TestDataHelper extends AbstractTestDataHelper
 
         $this->assertTrue(is_array($value) && count($value) == 1, 'expected one item');
 
-        /** @var $value DataObject\Data\UrlSlug */
+        /** @var DataObject\Data\UrlSlug $value */
         $value = $value[0];
         $value = $value->getSlug();
 

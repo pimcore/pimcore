@@ -53,5 +53,29 @@ You modify several objects at once by using the grid's batch update feature. The
 * _Batch append to all_: Same as batch edit all but the data will be appended. Currently only supported for relational types.
 * _Batch append to selected_: Same as "batch append" but only applied to the selected ones. 
 
+## Filtering
+
+It is possible to filter data on the grid by columns of the following datatypes:
+* Text Datatypes 
+  - ![Text](../img/gridconfig/filter_text_type_img.png)
+* Number Datatypes 
+  - ![img.png](../img/gridconfig/filter_number_type_img.png)
+* Select Datatypes 
+  - ![img.png](../img/gridconfig/filter_select_type_img.png)
+* Date Datatypes 
+  - ![Date](../img/gridconfig/filter_date_type_img.png)
+* Relation Datatypes
+  - one to many
+  - many to many
+  - many to many object
+  - advanced many to many
+  - advanced many to many object
+  - image
+  - advanced image
+  - ![Relation](../img/gridconfig/filter_relation_type_img.png)
+  - Select using search function or drag & drop from the tree
+  - ![Relation](../img/gridconfig/filter_relation_type_img2.png)
+  - when applied with empty value then only objects with empty relation are shown.
+
 
 

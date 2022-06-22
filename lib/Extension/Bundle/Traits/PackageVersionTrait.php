@@ -17,13 +17,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Extension\Bundle\Traits;
 
-use PackageVersions\Versions;
+use Composer\InstalledVersions;
 use Pimcore\Composer\PackageInfo;
 
 /**
- * Exposes a simple getVersion() implementation by looking up the installed versions via ocramius/package-versions
- * which is generated on composer install. This trait can be used by using it from a bundle class and implementing
- * getComposerPackageName() to return the name of the composer package to lookup.
+ * Exposes a simple getVersion() and getComposerPackageName() implementation by looking up the installed versions
+ * via composer's version info which is generated on composer install.
  */
 trait PackageVersionTrait
 {
@@ -32,24 +31,39 @@ trait PackageVersionTrait
      *
      * @return string
      */
-    abstract protected function getComposerPackageName(): string;
+    public function getComposerPackageName(): string
+    {
+        foreach (InstalledVersions::getAllRawData() as $installed) {
+            foreach ($installed['versions'] as $packageName => $packageInfo) {
+                if (!isset($packageInfo['install_path'])) {
+                    // It's a replaced or provided (virtual) package
+                    continue;
+                }
+
+                if (str_starts_with(__DIR__, realpath($packageInfo['install_path']))) {
+                    return $packageName;
+                }
+            }
+        }
+
+        return '';
+    }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getVersion()
     {
-        $version = Versions::getVersion($this->getComposerPackageName());
+        $version = InstalledVersions::getPrettyVersion($this->getComposerPackageName());
 
-        // normalizes v2.3.0@9e016f4898c464f5c895c17993416c551f1697d3 to 2.3.0
+        // normalizes e.g. 'v2.3.0' to '2.3.0'
         $version = preg_replace('/^v/', '', $version);
-        $version = preg_replace('/@(.+)$/', '', $version);
 
         return $version;
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getDescription()
     {

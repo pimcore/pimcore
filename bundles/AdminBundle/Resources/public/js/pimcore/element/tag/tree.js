@@ -251,7 +251,7 @@ pimcore.element.tag.tree = Class.create({
                 text: t('delete'),
                 iconCls: "pimcore_icon_delete",
                 handler: function (tree, record) {
-                    Ext.Msg.confirm(t('delete'), t('delete_message'), function (btn) {
+                    Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('tag'), record.data.text), function (btn) {
                         if (btn == 'yes') {
                             Ext.Ajax.request({
                                 url: Routing.generate('pimcore_admin_tags_delete'),

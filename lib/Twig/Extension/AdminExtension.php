@@ -39,6 +39,9 @@ class AdminExtension extends AbstractExtension
         ];
     }
 
+    /**
+     * @return array
+     */
     public function getFilters()
     {
         return [
@@ -74,15 +77,30 @@ class AdminExtension extends AbstractExtension
         return $returnHtml;
     }
 
+    /**
+     * @param string $url
+     *
+     * @return string
+     */
     private function getScriptTag($url): string
     {
         return '<script src="' . $url . '"></script>' . "\n";
     }
 
+    /**
+     * @param string $icon
+     *
+     * @return string
+     */
     public function inlineIcon(string $icon)
     {
         $content = file_get_contents($icon);
 
-        return sprintf('<img src="data:%s;base64,%s" title="%s"/>', mime_content_type($icon), base64_encode($content), basename($icon));
+        return sprintf('<img src="data:%s;base64,%s" title="%s" data-imgpath="%s" />',
+            mime_content_type($icon),
+            base64_encode($content),
+            basename($icon),
+            str_replace(PIMCORE_WEB_ROOT, '', $icon)
+        );
     }
 }

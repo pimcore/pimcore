@@ -271,7 +271,7 @@ use \Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 // ...
 
 public function testAction(Request $request) {
-    $object = DataObject::getById($request->get("id")); 
+    $object = DataObject::getById((int) $request->get('id')); 
     if( !$object || ( !$object->isPublished() && !$this->editmode) ) {
         throw new NotFoundHttpException('Not found');
     }

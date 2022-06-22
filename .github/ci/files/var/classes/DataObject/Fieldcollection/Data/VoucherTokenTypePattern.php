@@ -165,10 +165,10 @@ public function setSeparator(?string $separator)
 }
 
 /**
-* Get separatorCount - Every x character 
-* @return string|null
+* Get separatorCount - Every x character
+* @return int|null
 */
-public function getSeparatorCount(): ?string
+public function getSeparatorCount(): ?int
 {
 	$data = $this->separatorCount;
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
@@ -179,11 +179,11 @@ public function getSeparatorCount(): ?string
 }
 
 /**
-* Set separatorCount - Every x character 
-* @param string|null $separatorCount
+* Set separatorCount - Every x character
+* @param int|null $separatorCount
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern
 */
-public function setSeparatorCount(?string $separatorCount)
+public function setSeparatorCount(?int $separatorCount)
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("separatorCount");

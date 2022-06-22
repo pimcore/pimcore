@@ -93,7 +93,7 @@ class CacheClearer
     }
 
     /**
-     * @param \Closure $runCallback
+     * @param \Closure|null $runCallback
      */
     public function setRunCallback(\Closure $runCallback = null)
     {

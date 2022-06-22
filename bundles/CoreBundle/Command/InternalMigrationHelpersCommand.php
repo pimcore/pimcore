@@ -56,7 +56,7 @@ class InternalMigrationHelpersCommand extends AbstractCommand
                 if (\Pimcore::isInstalled()) {
                     $this->metadataStorage->__invoke($this->dependencyFactory);
                     $this->metadataStorage->ensureInitialized();
-                    $output->write(1);
+                    $output->write('1');
                 }
             } catch (\Throwable $e) {
                 // nothing to do

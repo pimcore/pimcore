@@ -77,6 +77,11 @@ class GeoIp implements DataProviderInterface
         );
     }
 
+    /**
+     * @param VisitorInfo $visitorInfo
+     *
+     * @return array|null
+     */
     public function loadData(VisitorInfo $visitorInfo)
     {
         $result = null;
@@ -145,7 +150,7 @@ class GeoIp implements DataProviderInterface
         try {
             $city = $this->geoIpProvider->city($ip);
         } catch (\Throwable $e) {
-            $this->logger->error($e);
+            $this->logger->error((string) $e);
 
             return null;
         }

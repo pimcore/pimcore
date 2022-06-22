@@ -43,9 +43,7 @@ class PackageInfo
                 $type = [$type];
             }
 
-            $packages = array_filter($packages, function (array $package) use ($type) {
-                return in_array($package['type'], $type);
-            });
+            $packages = array_filter($packages, static fn (array $package) => in_array($package['type'], $type, true));
         }
 
         return $packages;
@@ -63,22 +61,16 @@ class PackageInfo
         // try to read composer.lock first
         $json = $this->readComposerFile(PIMCORE_PROJECT_ROOT . '/composer.lock');
         if ($json && isset($json['packages']) && is_array($json['packages'])) {
-            $this->installedPackages = $json['packages'];
+            return $this->installedPackages = $json['packages'];
         }
 
-        if (null === $this->installedPackages) {
-            // try to read vendor/composer/installed.json as fallback
-            $json = $this->readComposerFile(PIMCORE_COMPOSER_PATH . '/composer/installed.json');
-            if ($json && is_array($json)) {
-                $this->installedPackages = $json['packages'] ?? $json;
-            }
+        // try to read vendor/composer/installed.json as fallback
+        $json = $this->readComposerFile(PIMCORE_COMPOSER_PATH . '/composer/installed.json');
+        if ($json && is_array($json)) {
+            return $this->installedPackages = $json['packages'] ?? $json;
         }
 
-        if (null === $this->installedPackages) {
-            $this->installedPackages = [];
-        }
-
-        return $this->installedPackages;
+        return $this->installedPackages = [];
     }
 
     /**
@@ -88,14 +80,12 @@ class PackageInfo
      */
     private function readComposerFile(string $path)
     {
-        if (file_exists($path) && is_readable($path)) {
-            $json = json_decode(file_get_contents($path), true);
-
-            if (null === $json) {
-                throw new \RuntimeException(sprintf('Failed to parse composer file %s', $path));
+        if (is_file($path) && is_readable($path)) {
+            try {
+                return json_decode(file_get_contents($path), true, flags: JSON_THROW_ON_ERROR);
+            } catch (\JsonException $e) {
+                throw new \RuntimeException(sprintf('Failed to parse composer file %s', $path), previous: $e);
             }
-
-            return $json;
         }
 
         return null;

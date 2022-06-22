@@ -24,7 +24,7 @@ use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
-class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface
+class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface, VarExporterInterface
 {
     use Element\ChildsCompatibilityTrait;
 
@@ -161,7 +161,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     public $maxItems;
 
@@ -633,7 +633,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @param int $keyId
      *
-     * @return mixed
+     * @return DataObject\Classificationstore\KeyConfig
      */
     public function getKeyConfiguration($keyId)
     {
@@ -729,7 +729,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @param string $title
      *
-     * @return $this|void
+     * @return $this
      */
     public function setTitle($title)
     {
@@ -784,7 +784,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $getInheritedValues = DataObject::doGetInheritedValues();
 
         if (!$omitMandatoryCheck) {
-            if ($this->maxItems > 0 && count($activeGroups) > $this->maxItems) {
+            if ($this->maxItems && count($activeGroups) > $this->maxItems) {
                 throw new Model\Element\ValidationException(
                     'Groups in field [' . $this->getName() . '] is bigger than ' . $this->getMaxItems()
                 );
@@ -815,7 +815,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                             $keyDef = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition()), $keyGroupRelation->getType());
 
                             if ($keyGroupRelation->isMandatory()) {
-                                $keyDef->setMandatory(1);
+                                $keyDef->setMandatory(true);
                             }
 
                             try {
@@ -882,14 +882,23 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @return array
      */
-    public function __sleep()
+    public function getBlockedVarsForExport(): array
     {
-        $vars = get_object_vars($this);
-        $blockedVars = [
+        return [
             'fieldDefinitionsCache',
             'referencedFields',
             'blockedVarsForExport',
+            'childs',
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public function __sleep()
+    {
+        $vars = get_object_vars($this);
+        $blockedVars = $this->getBlockedVarsForExport();
 
         foreach ($blockedVars as $blockedVar) {
             unset($vars[$blockedVar]);
@@ -931,15 +940,15 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param int $maxItems
+     * @param int|null $maxItems
      */
     public function setMaxItems($maxItems)
     {
-        $this->maxItems = (int) $maxItems;
+        $this->maxItems = $this->getAsIntegerCast($maxItems);
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getMaxItems()
     {
@@ -963,7 +972,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @return array
+     * @return array|null
      */
     public function getPermissionView(): ?array
     {
@@ -979,7 +988,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @return array
+     * @return array|null
      */
     public function getPermissionEdit(): ?array
     {
@@ -1417,5 +1426,15 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $code .= "}\n\n";
 
         return $code;
+    }
+
+    public static function __set_state($data)
+    {
+        $obj = new static();
+        $obj->setValues($data);
+
+        $obj->childs = $obj->children;  // @phpstan-ignore-line
+
+        return $obj;
     }
 }

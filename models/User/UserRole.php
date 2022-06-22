@@ -263,7 +263,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param array $classes
+     * @param array|string $classes
      *
      * @return $this
      */
@@ -285,7 +285,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param array $docTypes
+     * @param array|string $docTypes
      *
      * @return $this
      */
@@ -307,7 +307,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getPerspectives()
     {
@@ -337,7 +337,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param array $websiteTranslationLanguagesView
+     * @param array|string $websiteTranslationLanguagesView
      *
      * @return $this
      */
@@ -359,7 +359,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param array $websiteTranslationLanguagesEdit
+     * @param array|string $websiteTranslationLanguagesEdit
      *
      * @return $this
      */
@@ -384,10 +384,8 @@ class UserRole extends AbstractUser
      */
     protected function prepareArray($array)
     {
-        if (is_string($array)) {
-            if (strlen($array)) {
-                $array = explode(',', $array);
-            }
+        if (is_string($array) && strlen($array)) {
+            $array = explode(',', $array);
         }
 
         if (empty($array) || !is_array($array)) {

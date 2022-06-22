@@ -32,6 +32,9 @@ class PropertiesProcessor implements ProcessorInterface
 
     const PROPERTY_PRIORITY = 'sitemaps_priority';
 
+    /**
+     * {@inheritdoc}
+     */
     public function process(Url $url, ElementInterface $element, GeneratorContextInterface $context)
     {
         if (!$url instanceof UrlConcrete) {

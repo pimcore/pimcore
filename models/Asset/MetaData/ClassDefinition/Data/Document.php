@@ -21,29 +21,47 @@ use Pimcore\Model\Element\Service;
 class Document extends Data
 {
     /**
-     * @param mixed $value
-     * @param array $params
-     *
-     * @return null|int
+     * {@inheritdoc}
      */
-    public function marshal($value, $params = [])
+    public function normalize($value, $params = [])
     {
         $element = Service::getElementByPath('document', $value);
         if ($element) {
             return $element->getId();
-        } else {
-            return null;
         }
+
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function denormalize($value, $params = [])
+    {
+        $element = null;
+        if (is_numeric($value)) {
+            $element = Service::getElementById('document', $value);
+        }
+
+        return $element;
     }
 
     /**
      * @param mixed $value
      * @param array $params
      *
+     * @deprecated use denormalize() instead, will be removed in Pimcore 11
+     *
      * @return string
      */
     public function unmarshal($value, $params = [])
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.4',
+            sprintf('%s is deprecated, please use denormalize() instead. It will be removed in Pimcore 11.', __METHOD__)
+        );
+
         $element = null;
         if (is_numeric($value)) {
             $element = Service::getElementById('document', $value);
@@ -91,7 +109,7 @@ class Document extends Data
      * @param mixed $data
      * @param array $params
      *
-     * @return mixed
+     * @return int|string|null
      */
     public function getDataFromEditMode($data, $params = [])
     {
@@ -180,7 +198,7 @@ class Document extends Data
      * @param mixed $data
      * @param array $params
      *
-     * @return mixed
+     * @return int|null
      */
     public function getDataFromListfolderGrid($data, $params = [])
     {

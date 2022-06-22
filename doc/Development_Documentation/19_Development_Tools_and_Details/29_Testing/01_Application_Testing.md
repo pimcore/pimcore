@@ -333,6 +333,9 @@ define('PIMCORE_PROJECT_ROOT', realpath(__DIR__ . '/..'));
 // set the used pimcore/symfony environment
 putenv('APP_ENV=test');
 
+// skip loading default .env file during bootstrap
+putenv('PIMCORE_SKIP_DOTENV_FILE=true');
+
 
 require_once PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
 

@@ -22,7 +22,6 @@ use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
-use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
 use Pimcore\Logger;
@@ -43,20 +42,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class ExtensionManagerController extends AdminController implements KernelControllerEventInterface
 {
     /**
-     * @var PimcoreBundleManager
-     */
-    private $bundleManager;
-
-    /**
      * @var AreabrickManagerInterface
      */
     private $areabrickManager;
 
     public function __construct(
-        PimcoreBundleManager $bundleManager,
         AreabrickManagerInterface $areabrickManager
     ) {
-        $this->bundleManager = $bundleManager;
         $this->areabrickManager = $areabrickManager;
     }
 
@@ -125,7 +117,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
             $updates[$id] = $options;
         }
 
-        $this->bundleManager->setStates($updates);
+        $this->getBundleManager()->setStates($updates);
 
         return $this->adminJson([
             'extensions' => $this->getBundleList(array_keys($updates)),
@@ -160,7 +152,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
         ];
 
         if ($type === 'bundle') {
-            $this->bundleManager->setState($id, ['enabled' => $enable]);
+            $this->getBundleManager()->setState($id, ['enabled' => $enable]);
             $reload = true;
 
             $message = $this->installAssets($assetsInstaller, $enable);
@@ -254,17 +246,17 @@ class ExtensionManagerController extends AdminController implements KernelContro
     private function handleInstallation(Request $request, $install = true)
     {
         try {
-            $bundle = $this->bundleManager->getActiveBundle($request->get('id'), false);
+            $bundle = $this->getBundleManager()->getActiveBundle($request->get('id'), false);
 
             if ($install) {
-                $this->bundleManager->install($bundle);
+                $this->getBundleManager()->install($bundle);
             } else {
-                $this->bundleManager->uninstall($bundle);
+                $this->getBundleManager()->uninstall($bundle);
             }
 
             $data = [
                 'success' => true,
-                'reload' => $this->bundleManager->needsReloadAfterInstall($bundle),
+                'reload' => $this->getBundleManager()->needsReloadAfterInstall($bundle),
             ];
 
             if (!empty($message = $this->getInstallerOutput($bundle))) {
@@ -292,7 +284,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
      */
     private function getBundleList(array $filter = [])
     {
-        $bm = $this->bundleManager;
+        $bm = $this->getBundleManager();
 
         $results = [];
         foreach ($bm->getEnabledBundleNames() as $className) {
@@ -301,7 +293,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
 
                 $results[$bm->getBundleIdentifier($bundle)] = $this->buildBundleInfo($bundle, true, $bm->isInstalled($bundle));
             } catch (\Throwable $e) {
-                Logger::error($e);
+                Logger::error((string) $e);
             }
         }
 
@@ -381,7 +373,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
      */
     private function buildBundleInfo(PimcoreBundleInterface $bundle, $enabled = false, $installed = false)
     {
-        $bm = $this->bundleManager;
+        $bm = $this->getBundleManager();
 
         $state = $bm->getState($bundle);
 
@@ -480,11 +472,11 @@ class ExtensionManagerController extends AdminController implements KernelContro
 
     private function getInstallerOutput(PimcoreBundleInterface $bundle, bool $decorated = false)
     {
-        if (!$this->bundleManager->isEnabled($bundle)) {
+        if (!$this->getBundleManager()->isEnabled($bundle)) {
             return null;
         }
 
-        $installer = $this->bundleManager->getInstaller($bundle);
+        $installer = $this->getBundleManager()->getInstaller($bundle);
         if (null !== $installer) {
             $output = $installer->getOutput();
             if ($output instanceof BufferedOutput) {

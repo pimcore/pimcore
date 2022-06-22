@@ -119,7 +119,7 @@ class OrderAgent implements OrderAgentInterface
         //        $cancel = true;
         //        foreach($this->getOrder()->getItems() as $i)
         //        {
-        //            /* @var OrderItem $i */
+        //            /** @var OrderItem $i */
         //            if($i->getOrderState() != Order::ORDER_STATE_CANCELLED)
         //            {
         //                $cancel = false;
@@ -667,9 +667,9 @@ class OrderAgent implements OrderAgentInterface
      * Hook to extract and save additional information in payment information
      *
      * @param StatusInterface $status
-     * @param PaymentInfo $currentPaymentInformation
+     * @param AbstractPaymentInformation $currentPaymentInformation
      */
-    protected function extractAdditionalPaymentInformation(StatusInterface $status, PaymentInfo $currentPaymentInformation)
+    protected function extractAdditionalPaymentInformation(StatusInterface $status, AbstractPaymentInformation $currentPaymentInformation)
     {
     }
 

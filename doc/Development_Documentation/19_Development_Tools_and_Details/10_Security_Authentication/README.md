@@ -1,6 +1,6 @@
 # Security and Authentication
 
-You can make full use of the [Symfony Security Component](https://symfony.com/doc/5.2/security.html) to handle complex
+You can make full use of the [Symfony Security Component](https://symfony.com/doc/5.3/security.html) to handle complex
 authentication/authorization scenarios. 
 Please be aware that also the Pimcore admin UI uses the Security component, so be careful 
 when changing/modifying the configuration. 
@@ -17,4 +17,4 @@ secured areas:
 A simplified guide to this setup is illustrated in [Authenticate against Pimcore Objects](./01_Authenticate_Pimcore_Objects.md).
 
 For more complex examples, custom user providers and a full configuration reference please read the
-[Symfony Security Component documentation](https://symfony.com/doc/5.2/security.html).
+[Symfony Security Component documentation](https://symfony.com/doc/5.3/security.html).

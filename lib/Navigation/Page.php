@@ -241,7 +241,7 @@ abstract class Page extends Container
     /**
      * Page constructor
      *
-     * @param  array $options   [optional] page options. Default is null, which should set defaults.
+     * @param  array|null $options   [optional] page options. Default is null, which should set defaults.
      *
      * @throws \Exception    if invalid options are given
      */
@@ -649,7 +649,7 @@ abstract class Page extends Container
     /**
      * Sets page order to use in parent container
      *
-     * @param  int|string $order                 [optional] page order in container.
+     * @param  int|string|null $order                 [optional] page order in container.
      *                                    Default is null, which sets no
      *                                    specific order.
      *
@@ -1142,8 +1142,16 @@ abstract class Page extends Container
         return str_replace(' ', '', ucwords(str_replace('_', ' ', $property)));
     }
 
+    /**
+     * @param string|null $type
+     *
+     * @throws \Exception
+     *
+     * TODO: In Pimcore 11, deprecate/remove the IF block and mark these methods as internal in the phpdoc block
+     */
     public static function setDefaultPageType($type = null)
     {
+        // @phpstan-ignore-next-line
         if ($type !== null && !is_string($type)) {
             throw new \Exception(
                 'Cannot set default page type: type is no string but should be'
@@ -1153,6 +1161,9 @@ abstract class Page extends Container
         self::$_defaultPageType = $type;
     }
 
+    /**
+     * @return string
+     */
     public static function getDefaultPageType()
     {
         return self::$_defaultPageType;

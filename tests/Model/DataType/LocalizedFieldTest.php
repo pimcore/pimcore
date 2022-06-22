@@ -15,6 +15,7 @@
 
 namespace Pimcore\Tests\Model\DataType;
 
+use Pimcore\Config;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Localizedfield;
@@ -91,5 +92,81 @@ class LocalizedFieldTest extends ModelTestCase
 
         //new value (de): index 0
         $this->assertEquals('textDE', $loadedItem->getLinput('de'), 'New localized value inside fieldcollection not saved or loaded properly');
+    }
+
+    public function testLocalizedFieldFallback()
+    {
+        $configuration = Config::getSystemConfiguration();
+        $configuration['general']['fallback_languages']['de'] = 'en';
+        Config::setSystemConfiguration($configuration);
+
+        $object = TestHelper::createEmptyObject();
+
+        //en values
+        $object->setLinput('TestEN', 'en');
+        $object->setLcheckbox(true, 'en');
+        $object->setLnumber(123, 'en');
+
+        //de values
+        $object->setLinput('TestDE', 'de');
+        $object->setLcheckbox(true, 'de');
+        $object->setLnumber(456, 'de');
+
+        $object->save();
+
+        //check values stored properly
+        $object = DataObject\Unittest::getById($object->getId(), true);
+        $this->assertEquals('TestDE', $object->getLinput('de'));
+        $this->assertEquals(true, $object->getLcheckbox('de'));
+        $this->assertEquals(456, $object->getLnumber('de'));
+
+        //empty de values check fallback
+        $object->setLinput('', 'de');
+        $object->setLcheckbox(null, 'de');
+        $object->setLnumber(null, 'de');
+        $object->save();
+
+        $object = DataObject\Unittest::getById($object->getId(), true);
+
+        $this->assertEquals('TestEN', $object->getLinput('de'));
+        $this->assertEquals(123, $object->getLnumber('de'));
+        $this->assertEquals(true, $object->getLcheckbox('de'));
+
+        //asset listing works with fallback value
+        $listing = new DataObject\Unittest\Listing();
+        $listing->setLocale('de');
+
+        $listing->setCondition("linput = 'TestEN'");
+        $this->assertEquals(1, count($listing->load()), 'Expected 1 item for fallback en condition');
+
+        $listing->setCondition("lcheckbox = '1'");
+        $this->assertEquals(1, count($listing->load()), 'Expected 1 item for fallback en condition');
+
+        $listing->setCondition("lnumber = '123'");
+        $this->assertEquals(1, count($listing->load()), 'Expected 1 item for fallback en condition');
+
+        //special case checkbox: set value to false and test fallback should not work
+        $object->setLcheckbox(false, 'de');
+        $object->save();
+
+        $this->assertEquals(false, $object->getLcheckbox('de')); //should not take the fallback
+
+        $listing = new DataObject\Unittest\Listing();
+        $listing->setLocale('de');
+
+        $listing->setCondition("lcheckbox = '1'");
+        $this->assertEquals(0, count($listing->load()), 'Expected 0 item for fallback en condition as locale set to "de"');
+
+        //special case number: set value to 0 and test fallback should not work
+        $object->setLnumber(0, 'de');
+        $object->save();
+
+        $this->assertEquals(0, $object->getLnumber('de')); //should not take the fallback
+
+        $listing = new DataObject\Unittest\Listing();
+        $listing->setLocale('de');
+
+        $listing->setCondition("lcheckbox = '123'");
+        $this->assertEquals(0, count($listing->load()), 'Expected 0 item for fallback en condition as locale set to "de"');
     }
 }

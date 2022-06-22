@@ -57,6 +57,19 @@ CREATE TABLE `assets_metadata` (
   CONSTRAINT `FK_assets_metadata_assets` FOREIGN KEY (`cid`) REFERENCES `assets` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `assets_image_thumbnail_cache`;
+CREATE TABLE `assets_image_thumbnail_cache` (
+    `cid` int(11) unsigned NOT NULL,
+    `name` varchar(190) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
+    `filename` varchar(190) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+    `modificationDate` INT(11) UNSIGNED DEFAULT NULL,
+    `filesize` INT(11) UNSIGNED DEFAULT NULL,
+    `width` SMALLINT UNSIGNED DEFAULT NULL,
+    `height` SMALLINT UNSIGNED DEFAULT NULL,
+    PRIMARY KEY (`cid`, `name`, `filename`),
+    CONSTRAINT `FK_assets_image_thumbnail_cache_assets` FOREIGN KEY (`cid`) REFERENCES `assets` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
+) DEFAULT CHARSET=utf8mb4;
+
 DROP TABLE IF EXISTS `cache_items`; /* this table is created by the installer (see: Pimcore\Bundle\InstallBundle\Installer::setupDatabase) */
 
 DROP TABLE IF EXISTS `classes` ;
@@ -192,7 +205,7 @@ CREATE TABLE `documents_page` (
   `metaData` text,
   `prettyUrl` varchar(255) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
-  `targetGroupIds` varchar(255) DEFAULT NULL,
+  `targetGroupIds` varchar(255) NOT NULL DEFAULT '',
   `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
   `staticGeneratorEnabled` tinyint(1) unsigned DEFAULT NULL,
   `staticGeneratorLifetime` int(11) DEFAULT NULL,
@@ -273,7 +286,7 @@ CREATE TABLE `email_log` (
   `bcc` longtext,
   `sentDate` int(11) UNSIGNED DEFAULT NULL,
   `subject` varchar(500) DEFAULT NULL,
-  `error` text DEFAULT NULL, 
+  `error` text DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `sentDate` (`sentDate`, `id`),
   FULLTEXT KEY `fulltext` (`from`,`to`,`cc`,`bcc`,`subject`,`params`),
@@ -375,7 +388,7 @@ CREATE TABLE `objects` (
   KEY `index` (`o_index`),
   KEY `published` (`o_published`),
   KEY `parentId` (`o_parentId`),
-  KEY `type` (`o_type`),
+  KEY `type_path_classId` (`o_type`, `o_path`, `o_classId`),
   KEY `o_modificationDate` (`o_modificationDate`),
   KEY `o_classId` (`o_classId`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
@@ -449,6 +462,8 @@ CREATE TABLE `schedule_tasks` (
 DROP TABLE IF EXISTS `search_backend_data`;
 CREATE TABLE `search_backend_data` (
   `id` int(11) NOT NULL,
+  `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin default '',
+  `index` int(11) unsigned DEFAULT '0',
   `fullpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `maintype` varchar(8) NOT NULL DEFAULT '',
   `type` varchar(20) DEFAULT NULL,
@@ -461,6 +476,8 @@ CREATE TABLE `search_backend_data` (
   `data` longtext,
   `properties` text,
   PRIMARY KEY (`id`,`maintype`),
+  KEY `key` (`key`),
+  KEY `index` (`index`),
   KEY `fullpath` (`fullpath`),
   KEY `maintype` (`maintype`),
   KEY `type` (`type`),
@@ -622,7 +639,7 @@ CREATE TABLE `users` (
   `closeWarning` tinyint(1) DEFAULT NULL,
   `memorizeTabs` tinyint(1) DEFAULT NULL,
   `allowDirtyClose` tinyint(1) unsigned DEFAULT '1',
-  `docTypes` varchar(255) DEFAULT NULL,
+  `docTypes` text DEFAULT NULL,
   `classes` text DEFAULT NULL,
   `twoFactorAuthentication` varchar(255) DEFAULT NULL,
 	`activePerspective` VARCHAR(255) NULL DEFAULT NULL,
@@ -739,12 +756,14 @@ CREATE TABLE `versions` (
   `binaryFileHash` VARCHAR(128) NULL DEFAULT NULL COLLATE 'ascii_general_ci',
   `binaryFileId` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
   `autoSave` TINYINT(4) NOT NULL DEFAULT 0,
+  `storageType` VARCHAR(5) NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `cid` (`cid`),
   KEY `ctype_cid` (`ctype`, `cid`),
   KEY `date` (`date`),
   KEY `binaryFileHash` (`binaryFileHash`),
-  KEY `autoSave` (`autoSave`)
+  KEY `autoSave` (`autoSave`),
+  KEY `stackTrace` (`stackTrace`(1))
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `website_settings`;

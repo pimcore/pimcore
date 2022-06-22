@@ -31,6 +31,7 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -49,6 +50,8 @@ abstract class ElementControllerBase extends AdminController
     }
 
     /**
+     * @Route("/tree-get-root", name="treegetroot", methods={"GET"})
+     *
      * @param Request $request
      *
      * @return JsonResponse
@@ -75,6 +78,8 @@ abstract class ElementControllerBase extends AdminController
     }
 
     /**
+     * @Route("/delete-info", name="deleteinfo", methods={"GET"})
+     *
      * @param Request $request
      * @param EventDispatcherInterface $eventDispatcher
      *
@@ -97,7 +102,7 @@ abstract class ElementControllerBase extends AdminController
 
         foreach ($ids as $id) {
             try {
-                $element = Service::getElementById($type, $id);
+                $element = Service::getElementById($type, (int) $id);
                 if (!$element) {
                     continue;
                 }
@@ -204,7 +209,7 @@ abstract class ElementControllerBase extends AdminController
         // get the element key in case of just one
         $elementKey = false;
         if (count($ids) === 1) {
-            $element = Service::getElementById($type, $ids[0]);
+            $element = Service::getElementById($type, (int) $ids[0]);
 
             if ($element instanceof ElementInterface) {
                 $elementKey = $element->getKey();

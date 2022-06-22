@@ -25,7 +25,7 @@ You can define:
 
 You can define an arbitrary number of perspectives and switch between them via the File menu.
 
-![Perspectives - menu](../img/pespectives_menu.png)
+![Perspectives - menu](../img/perspectives_menu.png)
 
 You can restrict the access to certain perspectives via the user settings.
 
@@ -71,10 +71,18 @@ The custom view definition would look like that:
 ```php
 [
     "treetype" => "object",
-    "name" => "products",
-    "rootfolder" => "/products-workflow",
+    "name" => "Cars",
+    "condition" => NULL,
+    "icon" => "/bundles/pimcoreadmin/img/flat-white-icons/automotive.svg",
     "id" => 1,
-    "showroot" => false
+    "rootfolder" => "/Product Data/Cars",
+    "showroot" => FALSE,
+    "classes" => [
+        "CAR" => 3
+    ],
+    "position" => "left",
+    "sort" => "3",
+    "expanded" => TRUE
 ]
 ```
 

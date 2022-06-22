@@ -39,6 +39,7 @@
     "ext-json": "*",
     "ext-mbstring": "*",
     "ext-mysqli": "*",
+    "ext-pdo": "*",
     "ext-pdo_mysql": "*",
     "ext-zip": "*",
     "ext-zlib": "*",
@@ -48,15 +49,16 @@
     "cbschuld/browser.php": "^1.9.6",
     "colinmollenhour/credis": "^1.10.0",
     "composer/ca-bundle": "^1.2",
+    "composer-runtime-api": "^2.0",
     "defuse/php-encryption": "^2.2.0",
     "doctrine/annotations": "^1.12",
     "doctrine/collections": "^1.6.5",
     "doctrine/persistence": "^2.1.0",
     "doctrine/dbal": "^2.12",
-    "doctrine/doctrine-bundle": "^2.2.1",
+    "doctrine/doctrine-bundle": "^2.6.3",
     "doctrine/doctrine-migrations-bundle": "^3.0.2",
     "doctrine/inflector": "^1.4.2 || ^2",
-    "symfony/doctrine-messenger": "^5.2.0",
+    "symfony/doctrine-messenger": "^5.2.0 || ^6.0",
     "egulias/email-validator": "^3.0.0",
     "endroid/qr-code": "^4",
     "friendsofsymfony/jsrouting-bundle": "^2.7",
@@ -67,14 +69,14 @@
     "lcobucci/jwt": "^4.0",
     "league/csv": "^9.7",
     "mjaschen/phpgeo": "^3.0",
+    "monolog/monolog": "^2.3",
     "mpratt/embera": "^2.0.14",
     "myclabs/deep-copy": "^1.10.1",
     "neitanod/forceutf8": "^2.0.4",
     "nesbot/carbon": "^2.27",
-    "ocramius/package-versions": "^2.3",
     "pear/net_url2": "^2.2",
     "matomo/device-detector": "^4.0",
-    "presta/sitemap-bundle": "^2.1",
+    "presta/sitemap-bundle": "^2.1 || ^3.2",
     "sabre/dav": "^4.1.2",
     "sensio/framework-extra-bundle": "^6.1",
     "sensiolabs/ansi-to-html": "^1.1",
@@ -83,7 +85,7 @@
     "symfony/monolog-bundle": "^3.5",
     "symfony/asset": "^5.3",
     "symfony/browser-kit": "^5.2.0",
-    "symfony/cache": "^5.2.0",
+    "symfony/cache": "^5.4",
     "symfony/config": "^5.3",
     "symfony/console": "^5.3.0",
     "symfony/css-selector": "^5.2.0",
@@ -118,8 +120,8 @@
     "symfony/proxy-manager-bridge": "^5.2.0",
     "symfony/rate-limiter": "^5.2.0",
     "symfony/routing": "^5.3",
-    "symfony/security-bundle": "^5.3.0",
-    "symfony/security-core": "^5.3.0",
+    "symfony/security-bundle": "^5.4.0",
+    "symfony/security-core": "^5.4.0",
     "symfony/security-csrf": "^5.3",
     "symfony/security-guard": "^5.3",
     "symfony/security-http": "^5.3",
@@ -139,6 +141,7 @@
     "symfony/web-profiler-bundle": "^5.2.0",
     "symfony/workflow": "^5.2.0",
     "symfony/yaml": "^5.2.0",
+    "symfony/polyfill-intl-icu": "^1.21",
     "symfony/polyfill-php81": "^1.23.0",
     "tijsverkoyen/css-to-inline-styles": "^2.2.3",
     "twig/twig": "^3.0.4",
@@ -156,7 +159,8 @@
     "onnov/detect-encoding": "^2.0",
     "knplabs/knp-paginator-bundle": "^5.4.2",
     "masterminds/html5" : "^2.7",
-    "league/flysystem-bundle" : "^2.0"
+    "league/flysystem-bundle" : "^2.0",
+    "spatie/image-optimizer": "^1.6.2"
   },
   "conflict": {
     "symfony/symfony": "*",
@@ -165,22 +169,23 @@
     "sabre/dav": "4.2.2"
   },
   "require-dev": {
-    "cache/integration-tests": "dev-master",
     "codeception/codeception": "^4.1.12",
-    "codeception/module-symfony": "^1.6.0",
     "codeception/phpunit-wrapper": "^9",
-    "phpstan/phpstan": "^1.4.9",
-    "phpstan/phpstan-symfony": "^1.1.7",
+    "phpstan/phpstan": "^1.7.3",
+    "phpstan/phpstan-symfony": "^1.2.2",
     "phpunit/phpunit": "^9.3",
     "spiritix/php-chrome-html2pdf": "^1.6",
     "elasticsearch/elasticsearch": "^7.11",
-    "composer/composer": "*"
+    "composer/composer": "*",
+    "chrome-php/chrome": "^1.4.0"
   },
   "suggest": {
+    "ext-sockets": "*",
     "ext-imagick": "^3.4.0",
     "ext-redis": "*",
     "spiritix/php-chrome-html2pdf": "Required for the Headless Chrome Web2Print Extension",
-    "elasticsearch/elasticsearch": "Required for Elastic Search service"
+    "elasticsearch/elasticsearch": "Required for Elastic Search service",
+    "chrome-php/chrome": "Required for Documents Page Previews"
   },
   "autoload": {
     "files": [
@@ -228,6 +233,9 @@
   "config": {
     "preferred-install": {
       "symfony/symfony": "source"
+    },
+    "allow-plugins": {
+      "eloquent/composer-npm-bridge": false
     }
   }
 }

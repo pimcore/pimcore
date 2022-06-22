@@ -94,8 +94,6 @@ class AdminExceptionListener implements EventSubscriberInterface
 
             $response = new JsonResponse($data, $code, $headers);
             $event->setResponse($response);
-
-            return;
         }
     }
 
@@ -119,7 +117,7 @@ class AdminExceptionListener implements EventSubscriberInterface
     }
 
     /**
-     * @param ValidationException[] $items
+     * @param \Exception[] $items
      * @param string $message
      * @param string $detailedInfo
      */
@@ -131,7 +129,9 @@ class AdminExceptionListener implements EventSubscriberInterface
         foreach ($items as $e) {
             if ($e->getMessage()) {
                 $message .= '<b>' . $e->getMessage() . '</b>';
-                $this->addContext($e, $message);
+                if ($e instanceof ValidationException) {
+                    $this->addContext($e, $message);
+                }
                 $message .= '<br>';
 
                 $detailedInfo .= '<br><b>Message:</b><br>';
@@ -141,7 +141,9 @@ class AdminExceptionListener implements EventSubscriberInterface
                 $detailedInfo .= '<br><b>Trace:</b> ' . $inner->getTraceAsString() . '<br>';
             }
 
-            $this->recursiveAddValidationExceptionSubItems($e->getSubItems(), $message, $detailedInfo);
+            if ($e instanceof ValidationException) {
+                $this->recursiveAddValidationExceptionSubItems($e->getSubItems(), $message, $detailedInfo);
+            }
         }
     }
 

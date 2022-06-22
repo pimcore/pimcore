@@ -15,6 +15,7 @@
 
 namespace Pimcore\Image;
 
+use Pimcore\Logger;
 use Pimcore\Tool\Console;
 use Pimcore\Tool\Session;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
@@ -22,6 +23,8 @@ use Symfony\Component\Process\Process;
 
 /**
  * @internal
+ *
+ * @deprecated
  */
 class HtmlToImage
 {
@@ -58,6 +61,11 @@ class HtmlToImage
      */
     public static function convert($url, $outputFile, $screenWidth = 1200, $format = 'png')
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.4',
+            sprintf('%s has been deprecated and will be removed in Pimcore 11. Use %s with chrome-php/chrome instead.', __CLASS__, Chromium::class)
+        );
 
         // add parameter pimcore_preview to prevent inclusion of google analytics code, cache, etc.
         $url .= (strpos($url, '?') ? '&' : '?') . 'pimcore_preview=true';
@@ -98,6 +106,8 @@ class HtmlToImage
         if (file_exists($outputFile) && filesize($outputFile) > 1000) {
             return true;
         }
+
+        Logger::debug('Could not create image from url: ' . $url);
 
         return false;
     }

@@ -224,7 +224,7 @@ class Dao extends Model\Dao\AbstractDao
             //$this->db->query('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `objects` left JOIN `' . $objectTable . '` ON `objects`.`o_id` = `' . $objectTable . '`.`oo_id` WHERE `objects`.`o_classId` = ' . $this->model->getId() . ';');
             $this->db->query('CREATE OR REPLACE VIEW `' . $objectView . '` AS SELECT * FROM `' . $objectTable . '` JOIN `objects` ON `objects`.`o_id` = `' . $objectTable . '`.`oo_id`;');
         } catch (\Exception $e) {
-            Logger::debug($e);
+            Logger::debug((string) $e);
         }
 
         $this->updateCompositeIndices($objectDatastoreTable, 'store', $this->model->getCompositeIndices());
@@ -310,5 +310,19 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->updateWhere('object_query_' . $this->model->getId(), [
             'oo_className' => $newName,
         ]);
+    }
+
+    public function getNameByIdIgnoreCase(string $id): string|null
+    {
+        $name = null;
+
+        try {
+            if (!empty($id)) {
+                $name = $this->db->fetchOne('SELECT name FROM classes WHERE LOWER(id) = ?', [strtolower($id)]);
+            }
+        } catch (\Exception $e) {
+        }
+
+        return $name;
     }
 }

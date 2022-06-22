@@ -103,7 +103,7 @@ final class Console
                 $paths = explode(PATH_SEPARATOR, $systemConfig['path_variable']);
             }
         } catch (\Exception $e) {
-            Logger::warning($e);
+            Logger::warning((string) $e);
         }
 
         array_push($paths, '');
@@ -231,7 +231,7 @@ final class Console
      * @param string $script
      * @param array $arguments
      * @param string|null $outputFile
-     * @param int|null $timeout
+     * @param float|null $timeout
      *
      * @return string
      */

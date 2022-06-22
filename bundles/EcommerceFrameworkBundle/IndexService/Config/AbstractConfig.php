@@ -303,7 +303,7 @@ abstract class AbstractConfig implements ConfigInterface
      * @param IndexableInterface $object
      * @param array $subIds
      *
-     * @return mixed
+     * @return array
      */
     public function getSubIdsToCleanup(IndexableInterface $object, array $subIds)
     {
@@ -317,7 +317,7 @@ abstract class AbstractConfig implements ConfigInterface
      * @param IndexableInterface $object
      * @param int $subId
      *
-     * @return mixed
+     * @return int|string|null
      */
     public function createVirtualParentIdForSubId(IndexableInterface $object, $subId)
     {
@@ -331,7 +331,7 @@ abstract class AbstractConfig implements ConfigInterface
      * @param int $objectId
      * @param bool $onlyMainObject - only returns main object
      *
-     * @return mixed
+     * @return DataObject|null
      */
     public function getObjectById($objectId, $onlyMainObject = false)
     {
@@ -344,11 +344,16 @@ abstract class AbstractConfig implements ConfigInterface
      *
      * @param int $objectId
      *
-     * @return IndexableInterface|array
+     * @return IndexableInterface|null
      */
     public function getObjectMockupById($objectId)
     {
-        return $this->getObjectById($objectId);
+        $object = $this->getObjectById($objectId);
+        if ($object instanceof IndexableInterface) {
+            return $object;
+        }
+
+        return null;
     }
 
     /**

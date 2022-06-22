@@ -97,7 +97,7 @@ class Manager
      * @param string $workflowName
      * @param string $action
      * @param array $actionConfig
-     * @param CustomHtmlServiceInterface $customHtmlService
+     * @param CustomHtmlServiceInterface|null $customHtmlService
      *
      * @return $this
      */
@@ -131,7 +131,7 @@ class Manager
      * Returns all PlaceConfigs (for given marking) ordered by it's appearence in the workflow config file
      *
      * @param Workflow $workflow
-     * @param Marking $marking
+     * @param Marking|null $marking
      *
      * @return PlaceConfig[];
      */
@@ -153,6 +153,9 @@ class Manager
         return $placeConfigs;
     }
 
+    /**
+     * @return array|PlaceConfig[]
+     */
     public function getPlaceConfigsByWorkflowName(string $workflowName)
     {
         return $this->placeConfigs[$workflowName] ?? [];
@@ -206,6 +209,11 @@ class Manager
         return $workflows;
     }
 
+    /**
+     * @param object $subject
+     *
+     * @return Workflow|null
+     */
     public function getWorkflowIfExists($subject, string $workflowName): ?Workflow
     {
         try {

@@ -74,15 +74,15 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @return int
+     * @return bool
      */
     public function hasChildren()
     {
         if (!$this->model->getId()) {
-            return 0;
+            return false;
         }
 
-        return (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM ' . self::TABLE_NAME_GROUPS . ' WHERE parentId = ?', [$this->model->getId()]);
+        return (bool) $this->db->fetchOne('SELECT COUNT(*) as amount FROM ' . self::TABLE_NAME_GROUPS . ' WHERE parentId = ?', [$this->model->getId()]);
     }
 
     /**
@@ -140,6 +140,6 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->db->insert(self::TABLE_NAME_GROUPS, []);
 
-        $this->model->setId($this->db->lastInsertId());
+        $this->model->setId((int) $this->db->lastInsertId());
     }
 }

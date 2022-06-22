@@ -14,6 +14,7 @@ services:
 
     Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface:
         class: 'Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilder'
+        public: true
 
     Pimcore\DataObject\ClassBuilder\FieldDefinitionPropertiesBuilderInterface:
         class: 'Pimcore\DataObject\ClassBuilder\FieldDefinitionPropertiesBuilder'
@@ -45,4 +46,4 @@ services:
     Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassDumperInterface:
         class: 'Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassDumper'
         public: true
-    
+

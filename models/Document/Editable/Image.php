@@ -174,9 +174,6 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
             $marker = $rewritePath($this->marker);
             $hotspots = $rewritePath($this->hotspots);
 
-            $marker = object2array($marker);
-            $hotspots = object2array($hotspots);
-
             return [
                 'id' => $this->id,
                 'path' => $image->getRealFullPath(),

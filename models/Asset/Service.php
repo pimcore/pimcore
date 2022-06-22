@@ -97,7 +97,7 @@ class Service extends Model\Element\Service
         $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
-        $new->setLocked(false);
+        $new->setLocked(null);
         $new->setCreationDate(time());
         $new->setStream($source->getStream());
         $new->save();
@@ -153,7 +153,7 @@ class Service extends Model\Element\Service
         $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
         $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
-        $new->setLocked(false);
+        $new->setLocked(null);
         $new->setCreationDate(time());
         $new->setStream($source->getStream());
         $new->save();
@@ -175,13 +175,12 @@ class Service extends Model\Element\Service
      * @param Asset $target
      * @param Asset $source
      *
-     * @return mixed
+     * @return Asset
      *
      * @throws \Exception
      */
     public function copyContents($target, $source)
     {
-
         // check if the type is the same
         if (get_class($source) != get_class($target)) {
             throw new \Exception('Source and target have to be the same type');
@@ -193,8 +192,7 @@ class Service extends Model\Element\Service
         }
 
         $target->setUserModification($this->_user ? $this->_user->getId() : 0);
-        $newProps = Element\Service::cloneMe($source->getProperties());
-        $target->setProperties($newProps);
+        $target->setProperties(self::cloneProperties($source->getProperties()));
         $target->save();
 
         return $target;

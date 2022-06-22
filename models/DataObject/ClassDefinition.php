@@ -16,12 +16,12 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Cache;
+use Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface;
 use Pimcore\DataObject\ClassBuilder\PHPClassDumperInterface;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
-use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -266,6 +266,13 @@ final class ClassDefinition extends Model\AbstractModel
     public $enableGridLocking = false;
 
     /**
+     * @internal
+     *
+     * @var ClassDefinition\Data[]
+     */
+    private array $deletedDataComponents = [];
+
+    /**
      * @param string $id
      * @param bool $force
      *
@@ -425,7 +432,8 @@ final class ClassDefinition extends Model\AbstractModel
         if (!$this->getId()) {
             $db = Db::get();
             $maxId = $db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM classes;');
-            $this->setId($maxId ? $maxId + 1 : 1);
+            $maxId = $maxId ? $maxId + 1 : 1;
+            $this->setId((string) $maxId);
         }
 
         if (!preg_match('/[a-zA-Z][a-zA-Z0-9_]+/', $this->getName())) {
@@ -458,6 +466,14 @@ final class ClassDefinition extends Model\AbstractModel
 
         $this->generateClassFiles($saveDefinitionFile);
 
+        foreach ($fieldDefinitions as $fd) {
+            // call the method "classSaved" if exists, this is used to create additional data tables or whatever which depends on the field definition, for example for localizedfields
+            //TODO Pimcore 11 remove method_exists call
+            if (!$fd instanceof ClassDefinition\Data\DataContainerAwareInterface && method_exists($fd, 'classSaved')) {
+                $fd->classSaved($this);
+            }
+        }
+
         // empty object cache
         try {
             Cache::clearTag('class_'.$this->getId());
@@ -475,6 +491,8 @@ final class ClassDefinition extends Model\AbstractModel
         } else {
             $this->dispatchEvent(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::POST_ADD);
         }
+
+        $this->deleteDeletedDataComponentsInCustomLayout();
     }
 
     /**
@@ -507,11 +525,44 @@ final class ClassDefinition extends Model\AbstractModel
 
             $data = '<?php';
             $data .= "\n\n";
+            $data .= $this->getInfoDocBlock();
+            $data .= "\n\n";
 
-            $data .= "\nreturn ".$exportedClass.";\n";
+            $data .= 'return '.$exportedClass.";\n";
 
             \Pimcore\File::putPhpFile($definitionFile, $data);
         }
+    }
+
+    /**
+     * @return string
+     *
+     * @internal
+     */
+    protected function getInfoDocBlock(): string
+    {
+        $cd = '/**' . "\n";
+        $cd .= ' * Inheritance: '.($this->getAllowInherit() ? 'yes' : 'no')."\n";
+        $cd .= ' * Variants: '.($this->getAllowVariants() ? 'yes' : 'no')."\n";
+
+        if ($description = $this->getDescription()) {
+            $description = str_replace(['/**', '*/', '//'], '', $description);
+            $description = str_replace("\n", "\n * ", $description);
+
+            $cd .= ' * '.$description."\n";
+        }
+
+        $cd .= " *\n";
+        $cd .= " * Fields Summary:\n";
+
+        $fieldDefinitionDocBlockBuilder = \Pimcore::getContainer()->get(FieldDefinitionDocBlockBuilderInterface::class);
+        foreach ($this->getFieldDefinitions() as $fieldDefinition) {
+            $cd .= ' * ' . str_replace("\n", "\n * ", trim($fieldDefinitionDocBlockBuilder->buildFieldDefinitionDocBlock($fieldDefinition))) . "\n";
+        }
+
+        $cd .= ' */';
+
+        return $cd;
     }
 
     public function delete()
@@ -586,15 +637,15 @@ final class ClassDefinition extends Model\AbstractModel
     /**
      * @internal
      *
+     * with PIMCORE_CLASS_DEFINITION_WRITABLE set, it globally allow/disallow creation and change in classes
+     * when the ENV is not set, it allows modification and creation of new in classes in /var/classes but disables modification of classes in config/pimcore/classes
+     * more details in 05_Deployment_Tools.md
+     *
      * @return bool
      */
     public function isWritable(): bool
     {
-        if ($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? false) {
-            return true;
-        }
-
-        return !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
+        return $_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
     }
 
     /**
@@ -844,10 +895,27 @@ final class ClassDefinition extends Model\AbstractModel
      */
     public function setLayoutDefinitions($layoutDefinitions)
     {
+        $oldFieldDefinitions = null;
+        if ($this->layoutDefinitions !== null) {
+            $this->setDeletedDataComponents([]);
+            $oldFieldDefinitions = $this->getFieldDefinitions();
+        }
+
         $this->layoutDefinitions = $layoutDefinitions;
 
         $this->fieldDefinitions = [];
         $this->extractDataDefinitions($this->layoutDefinitions);
+
+        if ($oldFieldDefinitions !== null) {
+            $newFieldDefinitions = $this->getFieldDefinitions();
+            $deletedComponents = [];
+            foreach ($oldFieldDefinitions as $fieldDefinition) {
+                if (!array_key_exists($fieldDefinition->getName(), $newFieldDefinitions)) {
+                    array_push($deletedComponents, $fieldDefinition);
+                }
+            }
+            $this->setDeletedDataComponents($deletedComponents);
+        }
 
         return $this;
     }
@@ -1369,5 +1437,86 @@ final class ClassDefinition extends Model\AbstractModel
         $this->generateTypeDeclarations = (bool) $generateTypeDeclarations;
 
         return $this;
+    }
+
+    /**
+     * @return ClassDefinition\Data[]
+     */
+    public function getDeletedDataComponents()
+    {
+        return $this->deletedDataComponents;
+    }
+
+    /**
+     * @param ClassDefinition\Data[] $deletedDataComponents
+     *
+     * @return $this
+     */
+    public function setDeletedDataComponents(array $deletedDataComponents): ClassDefinition
+    {
+        $this->deletedDataComponents = $deletedDataComponents;
+
+        return $this;
+    }
+
+    private function deleteDeletedDataComponentsInCustomLayout(): void
+    {
+        if (empty($this->getDeletedDataComponents())) {
+            return;
+        }
+        $customLayouts = new ClassDefinition\CustomLayout\Listing();
+        $customLayouts->setCondition('classId = ?', $this->getId());
+        $customLayouts = $customLayouts->load();
+
+        foreach ($customLayouts as $customLayout) {
+            $layoutDefinition = $customLayout->getLayoutDefinitions();
+            $this->deleteDeletedDataComponentsInLayoutDefinition($layoutDefinition);
+            $customLayout->setLayoutDefinitions($layoutDefinition);
+            $customLayout->save();
+        }
+    }
+
+    private function deleteDeletedDataComponentsInLayoutDefinition(ClassDefinition\Layout $layoutDefinition): void
+    {
+        $componentsToDelete = $this->getDeletedDataComponents();
+        $componentDeleted = false;
+
+        $children = &$layoutDefinition->getChildrenByRef();
+        $count = count($children);
+        for ($i = 0; $i < $count; $i++) {
+            $component = $children[$i];
+            if (in_array($component, $componentsToDelete)) {
+                unset($children[$i]);
+                $componentDeleted = true;
+            }
+            if ($component instanceof ClassDefinition\Layout) {
+                $this->deleteDeletedDataComponentsInLayoutDefinition($component);
+            }
+        }
+        if ($componentDeleted) {
+            $children = array_values($children);
+        }
+    }
+
+    public static function getByIdIgnoreCase(string $id): ClassDefinition|null
+    {
+        try {
+            $class = new self();
+            $name = $class->getDao()->getNameByIdIgnoreCase($id);
+            $definitionFile = $class->getDefinitionFile($name);
+            $class = @include $definitionFile;
+
+            if (!$class instanceof self) {
+                throw new \Exception('Class definition with name ' . $name . ' or ID ' . $id . ' does not exist');
+            }
+
+            $class->setId($id);
+        } catch (\Exception $e) {
+            Logger::info($e->getMessage());
+
+            return null;
+        }
+
+        return $class;
     }
 }

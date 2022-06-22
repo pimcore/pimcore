@@ -96,7 +96,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param int $data
+     * @param string|null $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -314,7 +314,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param Model\DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return mixed
+     * @return Carbon|null
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {

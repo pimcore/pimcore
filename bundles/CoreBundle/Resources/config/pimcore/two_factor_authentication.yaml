@@ -22,4 +22,4 @@ scheb_two_factor:
         issuer: Pimcore 2 Factor Authentication             # Issuer name used in QR code
 
     security_tokens:
-        - Pimcore\Bundle\AdminBundle\Security\Authentication\Token\TwoFactorRequiredToken
+        - Pimcore\Bundle\AdminBundle\Security\Authentication\Token\LegacyTwoFactorRequiredToken

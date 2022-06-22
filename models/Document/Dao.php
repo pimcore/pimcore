@@ -17,6 +17,7 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\User;
 use Pimcore\Tool\Serialize;
 
 /**
@@ -86,10 +87,10 @@ class Dao extends Model\Element\Dao
             'index' => 0,
         ]);
 
-        $this->model->setId($this->db->lastInsertId());
+        $this->model->setId((int) $this->db->lastInsertId());
 
         if (!$this->model->getKey()) {
-            $this->model->setKey($this->model->getId());
+            $this->model->setKey((string) $this->model->getId());
         }
     }
 
@@ -222,7 +223,7 @@ class Dao extends Model\Element\Dao
         $path = null;
 
         try {
-            $path = $this->db->fetchOne('SELECT CONCAT(path,`key`) as path FROM documents WHERE id = ?', $this->model->getId());
+            $path = $this->db->fetchOne('SELECT CONCAT(path,`key`) as path FROM documents WHERE id = ?', [$this->model->getId()]);
         } catch (\Exception $e) {
             Logger::error('could not  get current document path from DB');
         }
@@ -332,21 +333,29 @@ class Dao extends Model\Element\Dao
             return false;
         }
 
-        $sql = 'SELECT id FROM documents d WHERE parentId = ?';
+        $sql = 'SELECT id FROM documents d WHERE parentId = ? ';
+
+        if ($user && !$user->isAdmin()) {
+            $userIds = $user->getRoles();
+            $currentUserId = $user->getId();
+            $userIds[] = $currentUserId;
+
+            $inheritedPermission = $this->isInheritingPermission('list', $userIds);
+
+            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_document uwd WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(d.path,d.`key`),cpath)=1 AND
+                NOT EXISTS(SELECT list FROM users_workspaces_document WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwd.cpath))';
+            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
+
+            $sql .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
+        }
 
         if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
             $sql .= ' AND published = 1';
         }
-        if ($user && !$user->isAdmin()) {
-            $userIds = $user->getRoles();
-            $userIds[] = $user->getId();
-
-            $sql .= ' AND (select `list` as locate from `users_workspaces_document` where `userId` in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(d.path,d.`key`))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1';
-        }
 
         $sql .= ' LIMIT 1';
 
-        $c = $this->db->fetchOne($sql, $this->model->getId());
+        $c = $this->db->fetchOne($sql, [$this->model->getId()]);
 
         return (bool)$c;
     }
@@ -363,18 +372,22 @@ class Dao extends Model\Element\Dao
         if (!$this->model->getId()) {
             return 0;
         }
-
+        $sql = 'SELECT count(*) FROM documents d WHERE parentId = ? ';
         if ($user && !$user->isAdmin()) {
             $userIds = $user->getRoles();
-            $userIds[] = $user->getId();
+            $currentUserId = $user->getId();
+            $userIds[] = $currentUserId;
 
-            $query = 'select count(*) from documents d where parentId = ?
-                    and (select list as locate from users_workspaces_document where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(d.path,d.`key`))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1;';
-        } else {
-            $query = 'SELECT COUNT(*) AS count FROM documents WHERE parentId = ?';
+            $inheritedPermission = $this->isInheritingPermission('list', $userIds);
+
+            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_document uwd WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(d.path,d.`key`),cpath)=1 AND
+                NOT EXISTS(SELECT list FROM users_workspaces_document WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwd.cpath))';
+            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
+
+            $sql .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
         }
 
-        return (int) $this->db->fetchOne($query, [$this->model->getId()]);
+        return (int) $this->db->fetchOne($sql, [$this->model->getId()]);
     }
 
     /**
@@ -469,6 +482,19 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * @param string $type
+     * @param array $userIds
+     *
+     * @return int
+     *
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function isInheritingPermission(string $type, array $userIds)
+    {
+        return $this->InheritingPermission($type, $userIds, 'document');
+    }
+
+    /**
      * Checks if the action is allowed.
      *
      * @param string $type
@@ -488,7 +514,9 @@ class Dao extends Model\Element\Dao
                 $obj = $obj->getParent();
             }
         }
-        $parentIds[] = $this->model->getId();
+        if ($id = $this->model->getId()) {
+            $parentIds[] = $id;
+        }
 
         $userIds = $user->getRoles();
         $userIds[] = $user->getId();
@@ -518,6 +546,18 @@ class Dao extends Model\Element\Dao
         }
 
         return false;
+    }
+
+    /**
+     * @param array $columns
+     * @param User $user
+     *
+     * @return array<string, int>
+     *
+     */
+    public function areAllowed(array $columns, User $user)
+    {
+        return $this->permissionByTypes($columns, $user, 'document');
     }
 
     /**
@@ -552,7 +592,7 @@ class Dao extends Model\Element\Dao
      */
     public function __isBasedOnLatestData()
     {
-        $data = $this->db->fetchRow('SELECT modificationDate,versionCount from documents WHERE id = ?', $this->model->getId());
+        $data = $this->db->fetchRow('SELECT modificationDate,versionCount from documents WHERE id = ?', [$this->model->getId()]);
         if ($data['modificationDate'] == $this->model->__getDataVersionTimestamp() && $data['versionCount'] == $this->model->getVersionCount()) {
             return true;
         }

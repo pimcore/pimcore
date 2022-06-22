@@ -122,7 +122,7 @@ interface ConnectionInterface extends Connection
      * @param array|scalar $params
      * @param array $types
      *
-     * @return mixed
+     * @return array
      *
      * @throws DBALException
      * @throws DriverException
@@ -208,7 +208,7 @@ interface ConnectionInterface extends Connection
      * @param string $sql
      * @param array $exclusions
      *
-     * @return ResultStatement
+     * @return ResultStatement|null
      *
      * @throws ValidationException
      */

@@ -110,6 +110,11 @@ class Image extends Model\Asset
             $reference = $thumbnail->getPathReference();
             if (in_array($reference['type'], ['asset', 'thumbnail'])) {
                 $image = $thumbnail->getLocalFile();
+
+                if (null === $image) {
+                    return false;
+                }
+
                 $imageWidth = $thumbnail->getWidth();
                 $imageHeight = $thumbnail->getHeight();
 
@@ -148,6 +153,11 @@ class Image extends Model\Asset
         return false;
     }
 
+    private function isLowQualityPreviewEnabled(): bool
+    {
+        return \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['low_quality_image_preview']['enabled'];
+    }
+
     /**
      * @internal
      *
@@ -159,9 +169,7 @@ class Image extends Model\Asset
      */
     public function generateLowQualityPreview($generator = null)
     {
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['low_quality_image_preview'];
-
-        if (!$config['enabled']) {
+        if (!$this->isLowQualityPreviewEnabled()) {
             return false;
         }
 
@@ -169,6 +177,10 @@ class Image extends Model\Asset
         if (class_exists('Imagick')) {
             // Imagick fallback
             $path = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig())->getLocalFile();
+
+            if (null === $path) {
+                return false;
+            }
 
             $imagick = new \Imagick($path);
             $imagick->setImageFormat('jpg');
@@ -215,7 +227,7 @@ EOT;
 
         if (Tool::isFrontend()) {
             $path = urlencode_ignore_slash($storagePath);
-            $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['source'];
+            $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
             $path = $prefix . $path;
         }
 
@@ -247,6 +259,10 @@ EOT;
      */
     public function getLowQualityPreviewDataUri(): ?string
     {
+        if (!$this->isLowQualityPreviewEnabled()) {
+            return null;
+        }
+
         try {
             $dataUri = 'data:image/svg+xml;base64,' . base64_encode(Storage::get('thumbnail')->read($this->getLowQualityPreviewStoragePath()));
         } catch (\Exception $e) {
@@ -275,7 +291,7 @@ EOT;
     /**
      * Returns a path to a given thumbnail or an thumbnail configuration.
      *
-     * @param string|array|Image\Thumbnail\Config $config
+     * @param null|string|array|Image\Thumbnail\Config $config
      * @param bool $deferred
      *
      * @return Image\Thumbnail
@@ -347,6 +363,10 @@ EOT;
 
         if (!$path) {
             $path = $this->getLocalFile();
+        }
+
+        if (!$path) {
+            return null;
         }
 
         $dimensions = null;

@@ -6,7 +6,7 @@ Similar to a field collection, an unlimited number of block elements can be crea
 A block element can be placed into a localized field but can also contain a localized field itself. 
 Nesting is not possible.
 
-![Block data type](../../../img/ObjectsBlocks_data_container.jpg)
+![Block data type](../../../img/ObjectsBlocks_data_container.png)
 
 ![Block, edit peview](../../../img/ObjectsBlocks_edit_preview.png)
 
@@ -28,9 +28,7 @@ The value of the second input field can be retrieved as follows:
 
 ```php
         $object = DataObject\BlockClass::getById(48);
-        /** @var  $blockData DataObject\ClassDefinition\Data\Block */
         $blockItems = $object->getBlockElement1();
-        /** @var  $firstBlockItem DataObject\Data\BlockElement */
         $firstBlockItem = $blockItems[0];
         echo($firstBlockItem["input2"]->getData());
 ```
@@ -49,9 +47,7 @@ Get Values of Localized Block Entries:
 
 ```php
         $object = DataObject\BlockClass::getById(48);
-        /** @var  $blockData DataObject\ClassDefinition\Data\Block */
         $blockItems = $object->getBlockElement1();
-        /** @var  $firstBlockItem DataObject\Data\BlockElement */
         $firstBlockItem = $blockItems[0];
         $localizedfields = $firstBlockItem["localizedfields"]->getData();
         // after that use it as you would to it with `Pimcore\Model\DataObject\LocalizedField::getLocalizedValue`

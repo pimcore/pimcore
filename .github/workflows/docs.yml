@@ -6,11 +6,15 @@ on:
         branches:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"
+        paths:
+            - 'docs/**'
     push:
         branches:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"
             - "*_actions"
+        paths:
+            - 'docs/**'
 
 jobs:
     docs:

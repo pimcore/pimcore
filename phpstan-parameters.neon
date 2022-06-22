@@ -1,5 +1,5 @@
 parameters:
-    level: 4
+    level: 5
 
     paths:
         - bundles
@@ -17,6 +17,7 @@ parameters:
         - '**/Processor/PdfReactor.php'
         - '**/PDFreactor.class.php'
         - '**/bundles/AdminBundle/Security/Guard/AdminAuthenticator.php'
+        - '**/bundles/AdminBundle/Security/Authenticator/AdminAbstractAuthenticator.php'
 
     ignoreErrors:
         - '~^Method Doctrine\\DBAL(\\.*)?Connection::query\(\) invoked with \d+ parameters?, 0 required\.\z~'

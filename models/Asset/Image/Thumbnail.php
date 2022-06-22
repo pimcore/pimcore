@@ -90,33 +90,6 @@ final class Thumbnail
         return $path;
     }
 
-    public function getFileSize(): ?int
-    {
-        $pathReference = $this->getPathReference(false);
-        if ($pathReference['type'] === 'asset') {
-            return $this->asset->getFileSize();
-        } elseif (isset($pathReference['storagePath'])) {
-            return Tool\Storage::get('thumbnail')->fileSize($pathReference['storagePath']);
-        }
-
-        return null;
-    }
-
-    /**
-     * @return null|resource
-     */
-    public function getStream()
-    {
-        $pathReference = $this->getPathReference(false);
-        if ($pathReference['type'] === 'asset') {
-            return $this->asset->getStream();
-        } elseif (isset($pathReference['storagePath'])) {
-            return Tool\Storage::get('thumbnail')->readStream($pathReference['storagePath']);
-        }
-
-        return null;
-    }
-
     /**
      * @param string $eventName
      *
@@ -219,24 +192,10 @@ final class Thumbnail
 
     private function getSourceTagHtml(Image\Thumbnail\Config $thumbConfig, string $mediaQuery, Image $image, array $options): string
     {
-        $srcSetValues = [];
         $sourceTagAttributes = [];
+        $sourceTagAttributes['srcset'] = $this->getSrcset($thumbConfig, $image, $options, $mediaQuery);
+        $thumb = $image->getThumbnail($thumbConfig, true);
 
-        foreach ([1, 2] as $highRes) {
-            $thumbConfigRes = clone $thumbConfig;
-            $thumbConfigRes->selectMedia($mediaQuery);
-            $thumbConfigRes->setHighResolution($highRes);
-            $thumb = $image->getThumbnail($thumbConfigRes, true);
-
-            $descriptor = $highRes . 'x';
-            $srcSetValues[] = $this->addCacheBuster($thumb . ' ' . $descriptor, $options, $image);
-
-            if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
-                break;
-            }
-        }
-
-        $sourceTagAttributes['srcset'] = implode(', ', $srcSetValues);
         if ($mediaQuery) {
             $sourceTagAttributes['media'] = $mediaQuery;
             $thumb->reset();
@@ -412,6 +371,13 @@ final class Thumbnail
             $attributes = $callback($attributes);
         }
 
+        $thumbConfig = $this->getConfig();
+        if ($thumbConfig) {
+            $srcsetAttribute = isset($options['previewDataUri']) ? 'data-srcset' : 'srcset';
+
+            $attributes[$srcsetAttribute] = $this->getSrcset($thumbConfig, $image, $options);
+        }
+
         $htmlImgTag = '';
         if (!empty($attributes)) {
             $htmlImgTag = '<img ' . array_to_html_attribute_string($attributes) . ' />';
@@ -466,5 +432,37 @@ final class Thumbnail
         }
 
         return $thumbnailConfig;
+    }
+
+    /**
+     * Get value that can be directly used ina srcset HTML attribute for images.
+     *
+     * @param Image\Thumbnail\Config $thumbConfig
+     * @param Image $image
+     * @param array $options
+     * @param string|null $mediaQuery Can be empty string if no media queries are defined.
+     *
+     * @return string Relative paths to different thunbnail images with 1x and 2x resolution
+     */
+    private function getSrcset(Image\Thumbnail\Config $thumbConfig, Image $image, array $options, ?string $mediaQuery = null): string
+    {
+        $srcSetValues = [];
+        foreach ([1, 2] as $highRes) {
+            $thumbConfigRes = clone $thumbConfig;
+            if ($mediaQuery) {
+                $thumbConfigRes->selectMedia($mediaQuery);
+            }
+            $thumbConfigRes->setHighResolution($highRes);
+            $thumb = $image->getThumbnail($thumbConfigRes, true);
+
+            $descriptor = $highRes . 'x';
+            $srcSetValues[] = $this->addCacheBuster($thumb . ' ' . $descriptor, $options, $image);
+
+            if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
+                break;
+            }
+        }
+
+        return implode(', ', $srcSetValues);
     }
 }

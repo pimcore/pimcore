@@ -20,11 +20,11 @@ namespace Pimcore\Messenger;
  */
 class GenerateWeb2PrintPdfMessage
 {
-    public function __construct(protected string $processId)
+    public function __construct(protected int $processId)
     {
     }
 
-    public function getProcessId(): string
+    public function getProcessId(): int
     {
         return $this->processId;
     }

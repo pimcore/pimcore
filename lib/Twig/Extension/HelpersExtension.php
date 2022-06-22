@@ -41,6 +41,9 @@ class HelpersExtension extends AbstractExtension
         $this->pimcoreUrlHelper = $pimcoreUrlHelper;
     }
 
+    /**
+     * @return array
+     */
     public function getFilters()
     {
         return [
@@ -71,6 +74,9 @@ class HelpersExtension extends AbstractExtension
         ];
     }
 
+    /**
+     * @return array
+     */
     public function getTests()
     {
         return [

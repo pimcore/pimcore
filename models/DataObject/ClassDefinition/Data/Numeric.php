@@ -56,7 +56,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @internal
      *
-     * @var float
+     * @var float|int|string|null
      */
     public $defaultValue;
 
@@ -174,7 +174,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @return int|null
+     * @return float|int|string|null
      */
     public function getDefaultValue()
     {
@@ -186,7 +186,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param int $defaultValue
+     * @param float|int|string|null $defaultValue
      *
      * @return $this
      */
@@ -423,13 +423,14 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
      * @param float|int|string $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return float|int|string
+     * @return float|int|string|null
+     *
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
+     *
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -437,7 +438,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
             return $this->toNumeric($data);
         }
 
-        return $data;
+        return null;
     }
 
     /**
@@ -561,11 +562,11 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function isEmpty($data)
     {
-        return strlen($data) < 1;
+        return !is_numeric($data);
     }
 
     /**
-     * @param string $value
+     * @param mixed $value
      *
      * @return float|int|string
      */

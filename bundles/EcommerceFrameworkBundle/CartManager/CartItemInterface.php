@@ -119,7 +119,7 @@ interface CartItemInterface
     /**
      * @static
      *
-     * @param int $cartId
+     * @param string|int $cartId
      * @param string $itemKey
      * @param string $parentKey
      *
@@ -130,7 +130,7 @@ interface CartItemInterface
     /**
      * @static
      *
-     * @param int $cartId
+     * @param string|int $cartId
      */
     public static function removeAllFromCart($cartId);
 
@@ -140,7 +140,7 @@ interface CartItemInterface
     public function save();
 
     /**
-     * @param \DateTime $date
+     * @param \DateTime|null $date
      *
      * @return void
      */

@@ -42,7 +42,7 @@ abstract class AbstractOffer extends Concrete
     /**
      * @param string|null $totalPriceBeforeDiscount
      *
-     * @return mixed
+     * @return $this
      */
     abstract public function setTotalPriceBeforeDiscount(?string $totalPriceBeforeDiscount);
 
@@ -54,7 +54,7 @@ abstract class AbstractOffer extends Concrete
     /**
      * @param string|null $totalPrice
      *
-     * @return mixed
+     * @return $this
      */
     abstract public function setTotalPrice(?string $totalPrice);
 
@@ -66,7 +66,7 @@ abstract class AbstractOffer extends Concrete
     /**
      * @param string|null $discount
      *
-     * @return mixed
+     * @return $this
      */
     abstract public function setDiscount(?string $discount);
 
@@ -78,7 +78,7 @@ abstract class AbstractOffer extends Concrete
     /**
      * @param string|null $discountType
      *
-     * @return mixed
+     * @return $this
      */
     abstract public function setDiscountType(?string $discountType);
 
@@ -90,7 +90,7 @@ abstract class AbstractOffer extends Concrete
     /**
      * @param \Carbon\Carbon|null $dateCreated
      *
-     * @return mixed
+     * @return $this
      */
     abstract public function setDateCreated(?\Carbon\Carbon $dateCreated);
 
@@ -102,7 +102,7 @@ abstract class AbstractOffer extends Concrete
     /**
      * @param \Carbon\Carbon|null $dateValidUntil
      *
-     * @return mixed
+     * @return $this
      */
     abstract public function setDateValidUntil(?\Carbon\Carbon $dateValidUntil);
 
@@ -154,7 +154,7 @@ abstract class AbstractOffer extends Concrete
     /**
      * @param string|null $cartId
      *
-     * @return mixed
+     * @return $this
      */
     abstract public function setCartId(?string $cartId);
 
@@ -162,7 +162,7 @@ abstract class AbstractOffer extends Concrete
      * @param AbstractOfferToolProduct $product
      * @param int $amount
      *
-     * @return AbstractOfferItem
+     * @return AbstractOfferItem|null
      */
     public function addCustomItemFromProduct(AbstractOfferToolProduct $product, $amount = 1): ?AbstractOfferItem
     {
@@ -172,7 +172,7 @@ abstract class AbstractOffer extends Concrete
             $item = $service->getNewOfferItemObject();
             $item->setParent($this);
             $item->setPublished(true);
-            $item->setCartItemKey($product->getId());
+            $item->setCartItemKey((string) $product->getId());
             $item->setKey('custom_' . $product->getId());
 
             $item->setAmount($amount);
@@ -187,7 +187,7 @@ abstract class AbstractOffer extends Concrete
         } else {
             $item->setAmount($item->getAmount() + $amount);
 
-            $price = $product->getOSPriceInfo($item->getAmount())->getTotalPrice()->getAmount();
+            $price = $product->getOSPriceInfo((int) $item->getAmount())->getTotalPrice()->getAmount();
 
             $item->setOriginalTotalPrice($price->asString());
             $item->setFinalTotalPrice($price->asString());
@@ -205,7 +205,7 @@ abstract class AbstractOffer extends Concrete
     /**
      * @param string $groupName
      *
-     * @return AbstractOfferItem
+     * @return AbstractOfferItem|null
      */
     public function getCustomItemsByGroup($groupName): ?AbstractOfferItem
     {
@@ -217,7 +217,7 @@ abstract class AbstractOffer extends Concrete
             }
         }
 
-        return $groupedItems[$groupName];
+        return $groupedItems[$groupName] ?? null;
     }
 
     /**
