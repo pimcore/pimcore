@@ -66,7 +66,7 @@ final class Staticroute extends AbstractModel
     /**
      * @var array
      */
-    protected $siteId;
+    protected $siteId = [];
 
     /**
      * @var array
@@ -398,12 +398,12 @@ final class Staticroute extends AbstractModel
      *
      * @return $this
      */
-    public function setSiteId($siteId = [])
+    public function setSiteId($siteId)
     {
         $result = [];
         
         if (null === $siteId) {
-            $siteId = [];
+            return;
         }
 
         if (!is_array($siteId)) {
