@@ -45,6 +45,7 @@ class ListingClassBuilder implements ListingClassBuilderInterface
         $cd .= ' * @method DataObject\\'.ucfirst($classDefinition->getName())."|false current()\n";
         $cd .= ' * @method DataObject\\'.ucfirst($classDefinition->getName())."[] load()\n";
         $cd .= ' * @method DataObject\\'.ucfirst($classDefinition->getName())."[] getData()\n";
+        $cd .= ' * @method DataObject\\'.ucfirst($classDefinition->getName())."[] getObjects()\n";
         $cd .= ' */';
         $cd .= "\n\n";
         $cd .= 'class Listing extends '.$extendListingClass . "\n";
