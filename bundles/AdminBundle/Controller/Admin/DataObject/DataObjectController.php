@@ -1026,12 +1026,15 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
 
         $values = $this->decodeJson($request->get('values'));
+        $key = $values['key'] ?? null;
 
         if ($object->isAllowed('settings')) {
-            if (isset($values['key']) && $values['key'] && $object->isAllowed('rename')) {
-                $object->setKey($values['key']);
-            } elseif (!isset($values['key']) || $values['key'] != $object->getKey()) {
-                Logger::debug('prevented renaming object because of missing permissions ');
+            if ($key) {
+                if ($object->isAllowed('rename')) {
+                    $object->setKey($key);
+                } elseif ($key !== $object->getKey()) {
+                    Logger::debug('prevented renaming object because of missing permissions ');
+                }
             }
 
             if (!empty($values['parentId'])) {
@@ -1084,7 +1087,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
                 return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
             }
-        } elseif ($object->isAllowed('rename') && $key = $values['key']) {
+        } elseif ($key && $object->isAllowed('rename')) {
             $this->adminJson($this->renameObject($object, $key));
         } else {
             Logger::debug('prevented update object because of missing permissions.');

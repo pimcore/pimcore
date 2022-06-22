@@ -236,30 +236,35 @@ class Processor
                 $success = $converter->save();
                 Logger::info('finished video ' . $converter->getFormat() . ' to ' . $converter->getDestinationFile());
 
-                $source = fopen($converter->getDestinationFile(), 'rb');
-                Storage::get('thumbnail')->writeStream($converter->getStorageFile(), $source);
-                fclose($source);
-                unlink($converter->getDestinationFile());
-
-                if ($converter->getFormat() === 'mpd') {
-                    $streamFilesPath = str_replace('.mpd', '-stream*.mp4', $converter->getDestinationFile());
-                    $streams = glob($streamFilesPath);
-                    $parentPath = dirname($converter->getStorageFile());
-
-                    foreach ($streams as $steam) {
-                        $storagePath = $parentPath . '/' . basename($steam);
-                        $source = fopen($steam, 'rb');
-                        Storage::get('thumbnail')->writeStream($storagePath, $source);
-                        fclose($source);
-                        unlink($steam);
-
-                        // set proper permissions
-                        @chmod($storagePath, File::getDefaultMode());
-                    }
-                }
-
                 if ($success) {
-                    $formats[$converter->getFormat()] =  preg_replace('/' . preg_quote($asset->getRealPath(), '/') . '/', '', $converter->getStorageFile(), 1);
+                    $source = fopen($converter->getDestinationFile(), 'rb');
+                    Storage::get('thumbnail')->writeStream($converter->getStorageFile(), $source);
+                    fclose($source);
+                    unlink($converter->getDestinationFile());
+
+                    if ($converter->getFormat() === 'mpd') {
+                        $streamFilesPath = str_replace('.mpd', '-stream*.mp4', $converter->getDestinationFile());
+                        $streams = glob($streamFilesPath);
+                        $parentPath = dirname($converter->getStorageFile());
+
+                        foreach ($streams as $steam) {
+                            $storagePath = $parentPath.'/'.basename($steam);
+                            $source = fopen($steam, 'rb');
+                            Storage::get('thumbnail')->writeStream($storagePath, $source);
+                            fclose($source);
+                            unlink($steam);
+
+                            // set proper permissions
+                            @chmod($storagePath, File::getDefaultMode());
+                        }
+                    }
+
+                    $formats[$converter->getFormat()] = preg_replace(
+                        '/'.preg_quote($asset->getRealPath(), '/').'/',
+                        '',
+                        $converter->getStorageFile(),
+                        1
+                    );
                 } else {
                     $conversionStatus = 'error';
                 }
