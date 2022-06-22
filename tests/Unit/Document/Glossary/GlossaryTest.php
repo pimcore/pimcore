@@ -11,13 +11,14 @@ declare(strict_types=1);
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace Pimcore\Tests\Unit\Document\Glossary;
 
 use Pimcore\Model\Glossary;
+use Pimcore\Tests\Helper\Pimcore;
 use Pimcore\Tests\Test\TestCase;
 use Pimcore\Tool\Glossary\Processor;
 
@@ -33,7 +34,8 @@ class GlossaryTest extends TestCase
     {
         parent::setUp();
 
-        $this->processor = \Pimcore::getContainer()->get(Processor::class);
+        $pimcoreModule = $this->getModule('\\'.Pimcore::class);
+        $this->processor = $pimcoreModule->grabService(Processor::class);
     }
 
     public function testGlossary()
@@ -59,7 +61,13 @@ class GlossaryTest extends TestCase
         $entry->setLanguage('en');
         $entry->save();
 
-        $result = $this->processor->parse('<body><p>This is a Test for the&nbsp;Entity &copy;</p></body>', [], 'en', null, null);
+        $result = $this->processor->parse(
+            '<body><p>This is a Test for the&nbsp;Entity &copy;</p></body>',
+            [],
+            'en',
+            null,
+            null
+        );
 
         $expect = '<body><p>This is a Test for the&nbsp;<a class="pimcore_glossary" href="/test">Entity</a> &copy;</p></body>';
 
@@ -89,7 +97,8 @@ class GlossaryTest extends TestCase
         $entry->setLanguage('en');
         $entry->save();
 
-        $result = $this->processor->parse('<section class="c-content" id="c-20-content-0">
+        $result = $this->processor->parse(
+            '<section class="c-content" id="c-20-content-0">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-12 col-lg-10">
@@ -101,7 +110,11 @@ class GlossaryTest extends TestCase
                 </div>
             </div>
         </div>
-    </section>', [], 'en', null, null);
+    </section>', [],
+            'en',
+            null,
+            null
+        );
 
         $expect = '<section class="c-content" id="c-20-content-0">
         <div class="container">

@@ -52,7 +52,7 @@ services:
     # GLOSSARY
 
     Pimcore\Tool\Glossary\Processor:
-        public: true #For Tests
+        public: false
 
     Symfony\Component\Templating\EngineInterface: '@pimcore.templating.engine.delegating'
 
