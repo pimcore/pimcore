@@ -312,7 +312,6 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                         var data = grid.getStore().getAt(rowIndex);
                         var id = data.data.id;
 
-                        this.relationsStore.removeAll(true);
                         this.relationsGrid.hide();
                         this.relationsPanel.disable();
 
