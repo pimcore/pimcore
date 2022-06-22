@@ -132,7 +132,7 @@ class Processor
 
         $es->each(function ($parentNode, $i) use ($options, $data) {
             /** @var DomCrawler|null $parentNode */
-            $text = $parentNode->html();
+            $text = htmlspecialchars($parentNode->text(), ENT_QUOTES | ENT_HTML5);
             if (
                 $parentNode instanceof DomCrawler &&
                 !in_array((string)$parentNode->nodeName(), $this->blockedTags) &&
