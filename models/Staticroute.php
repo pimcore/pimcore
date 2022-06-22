@@ -398,7 +398,7 @@ final class Staticroute extends AbstractModel
      *
      * @return $this
      */
-    public function setSiteId($siteId)
+    public function setSiteId($siteId = [])
     {
         $result = [];
         
