@@ -278,7 +278,7 @@ trait PimcoreExtensionsTrait
         $stmt = $this->executeQuery($sql, $params, $types);
         $data = [];
         if ($stmt instanceof Result) {
-            while ($row = $stmt->fetchOne()) {
+            while (($row = $stmt->fetchOne()) || $row !== false) {
                 $data[] = $row;
             }
             $stmt->free();
