@@ -172,7 +172,7 @@
     "phpstan/phpstan": "^1.7.3",
     "phpstan/phpstan-symfony": "^1.2.2",
     "phpunit/phpunit": "^9.3",
-    "spiritix/php-chrome-html2pdf": "^1.6",
+    "spiritix/php-chrome-html2pdf": "~1.6.0",
     "elasticsearch/elasticsearch": "^7.11",
     "composer/composer": "*",
     "chrome-php/chrome": "^1.4.0"

@@ -95,6 +95,8 @@ Additionally, two settings can be used to add header and footer by the content o
 * header: URL for header content
 * footer: URL for footer content
 
+> Note: Only package spiritix/php-chrome-html2pdf:1.6.x is supported, not higher version due to dependency on Node > 18.
+
 ## Relevant Log Files
 
 If PDF rendering doesn't work properly, following log files should give you a hit for the reason.
