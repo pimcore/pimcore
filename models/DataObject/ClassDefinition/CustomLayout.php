@@ -377,6 +377,7 @@ class CustomLayout extends Model\AbstractModel
     {
         try {
             $customLayout = new self();
+
             return $customLayout->getDao()->getLatestIdentifier($classId);
         } catch (\Exception $e) {
             Logger::error((string) $e);

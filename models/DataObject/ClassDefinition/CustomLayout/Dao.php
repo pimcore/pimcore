@@ -17,7 +17,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
 
 use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Model;
-use Pimcore\Model\Tool\SettingsStore;
 use Pimcore\Tool\Serialize;
 use Symfony\Component\Uid\Uuid as Uid;
 use Symfony\Component\Uid\UuidV4;
@@ -58,7 +57,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             'settingsStoreScope' => 'pimcore_object_custom_layout',
             'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_OBJECT_CUSTOM_LAYOUTS'] ?? PIMCORE_CONFIGURATION_DIRECTORY  . '/object-custom-layouts',
             'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_OBJECT_CUSTOM_LAYOUTS',
-            'loadLegacyConfigCallback' => $loadLegacyConfigCallback
+            'loadLegacyConfigCallback' => $loadLegacyConfigCallback,
         ]);
     }
 
@@ -186,7 +185,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
         $data = [];
         $allowedProperties = ['id', 'name', 'description', 'creationDate', 'modificationDate',
-            'userOwner', 'userModification', 'classId', 'default', 'layoutDefinitions'];
+            'userOwner', 'userModification', 'classId', 'default', 'layoutDefinitions', ];
         $dataRaw = $this->model->getObjectVars();
         foreach ($dataRaw as $key => $value) {
             if (in_array($key, $allowedProperties)) {
@@ -201,7 +200,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         }
 
         $this->saveData($this->model->getId(), $data);
-
     }
 
     /**
@@ -222,11 +220,11 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
                 'objects' => [
                     'custom_layout' => [
                         'definitions' => [
-                            $id => $data
-                        ]
-                    ]
-                ]
-            ]
+                            $id => $data,
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 }
