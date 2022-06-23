@@ -419,7 +419,7 @@ class GridHelperService
                     $alreadyJoined[$mappedKey] = 1;
 
                     $table = $me->getDao()->getTableName();
-                    $select->addSelect('value AS ' . $mappedKey);
+                    $select->addSelect($mappedKey . '.value AS ' . $mappedKey);
                     $select->leftJoin(
                         $table,
                         'object_classificationstore_data_' . $class->getId(),
