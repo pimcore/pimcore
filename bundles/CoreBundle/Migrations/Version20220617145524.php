@@ -34,5 +34,7 @@ final class Version20220617145524 extends AbstractMigration
                 PRIMARY KEY (`id`),
                 UNIQUE INDEX `name` (`name`, `classId`)
             ) DEFAULT CHARSET=utf8mb4;');
+
+        $this->write(sprintf('Please restore your custom layout data by running bin/console pimcore:definition:import:customlayout -c manually.'));
     }
 }
