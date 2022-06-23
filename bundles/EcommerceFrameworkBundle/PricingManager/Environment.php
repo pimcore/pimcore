@@ -212,20 +212,36 @@ class Environment implements EnvironmentInterface
     }
 
     /**
+     * @deprecated
+     *
      * @return AttributeBagInterface|null
      */
     public function getSession()
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5',
+            sprintf('%s is deprecated. It will be removed in Pimcore 11.', __METHOD__)
+        );
+
         return $this->session;
     }
 
     /**
+     * @deprecated
+     *
      * @param AttributeBagInterface $session
      *
      * @return EnvironmentInterface
      */
     public function setSession(AttributeBagInterface $session)
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5',
+            sprintf('%s is deprecated. It will be removed in Pimcore 11.', __METHOD__)
+        );
+
         $this->session = $session;
 
         return $this;

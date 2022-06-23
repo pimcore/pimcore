@@ -113,6 +113,8 @@ interface EnvironmentInterface
     public function getCategories();
 
     /**
+     * @deprecated will be removed in Pimcore 11
+     *
      * @param AttributeBagInterface $namespace
      *
      * @return EnvironmentInterface
@@ -120,6 +122,8 @@ interface EnvironmentInterface
     public function setSession(AttributeBagInterface $namespace);
 
     /**
+     * @deprecated will be removed in Pimcore 11
+     *
      * @return AttributeBagInterface|null
      */
     public function getSession();
