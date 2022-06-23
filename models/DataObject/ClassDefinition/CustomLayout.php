@@ -16,15 +16,19 @@
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
 use Pimcore\Cache;
+use Pimcore\Cache\Runtime;
 use Pimcore\Event\DataObjectCustomLayoutEvents;
 use Pimcore\Event\Model\DataObject\CustomLayoutEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Symfony\Component\Uid\UuidV4;
 
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\CustomLayout\Dao getDao()
+ * @method bool isWriteable()
+ * @method string getWriteTarget()
  */
 class CustomLayout extends Model\AbstractModel
 {
@@ -91,7 +95,7 @@ class CustomLayout extends Model\AbstractModel
         $cacheKey = 'customlayout_' . $id;
 
         try {
-            $customLayout = \Pimcore\Cache\Runtime::get($cacheKey);
+            $customLayout = Runtime::get($cacheKey);
             if (!$customLayout) {
                 throw new \Exception('Custom Layout in registry is null');
             }
@@ -99,7 +103,7 @@ class CustomLayout extends Model\AbstractModel
             try {
                 $customLayout = new self();
                 $customLayout->getDao()->getById($id);
-                \Pimcore\Cache\Runtime::set($cacheKey, $customLayout);
+                Runtime::set($cacheKey, $customLayout);
             } catch (Model\Exception\NotFoundException $e) {
                 return null;
             }
@@ -117,10 +121,24 @@ class CustomLayout extends Model\AbstractModel
      */
     public static function getByName(string $name)
     {
-        $customLayout = new self();
-        $id = $customLayout->getDao()->getIdByName($name);
+        $cacheKey = 'customlayout_' . $name;
 
-        return self::getById($id);
+        try {
+            $customLayout = Runtime::get($cacheKey);
+            if (!$customLayout) {
+                throw new \Exception('Custom Layout in registry is null');
+            }
+        } catch (\Exception $e) {
+            try {
+                $customLayout = new self();
+                $customLayout->getDao()->getByName($name);
+                Runtime::set($cacheKey, $customLayout);
+            } catch (Model\Exception\NotFoundException $e) {
+                return null;
+            }
+        }
+
+        return $customLayout;
     }
 
     /**
@@ -133,10 +151,19 @@ class CustomLayout extends Model\AbstractModel
      */
     public static function getByNameAndClassId(string $name, $classId)
     {
-        $customLayout = new self();
-        $id = $customLayout->getDao()->getIdByNameAndClassId($name, $classId);
+        try {
+            $customLayout = new self();
+            $customLayout->getDao()->getByName($name);
 
-        return self::getById($id);
+            if ($customLayout->getClassId() != $classId) {
+                throw new Model\Exception\NotFoundException('classId does not match');
+            }
+
+            return $customLayout;
+        } catch (Model\Exception\NotFoundException $e) {
+        }
+
+        return null;
     }
 
     /**
@@ -194,7 +221,7 @@ class CustomLayout extends Model\AbstractModel
      */
     public function save($saveDefinitionFile = true)
     {
-        if ($saveDefinitionFile && !$this->isWritable()) {
+        if ($saveDefinitionFile && !$this->isWriteable()) {
             throw new DataObject\Exception\DefinitionWriteException();
         }
 
@@ -213,7 +240,7 @@ class CustomLayout extends Model\AbstractModel
             \Pimcore\File::mkdir(PIMCORE_CUSTOMLAYOUT_DIRECTORY);
         }
 
-        $this->getDao()->save($isUpdate);
+        $this->getDao()->save();
 
         $this->saveCustomLayoutFile($saveDefinitionFile);
 
@@ -258,10 +285,12 @@ class CustomLayout extends Model\AbstractModel
      * @internal
      *
      * @return bool
+     *
+     * @deprecated will be removed in Pimcore 11. Use isWriteable() instead.
      */
     public function isWritable(): bool
     {
-        return $_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
+        return $this->isWriteable();
     }
 
     /**
@@ -342,15 +371,13 @@ class CustomLayout extends Model\AbstractModel
      *
      * @param string $classId
      *
-     * @return int|null
+     * @return UuidV4|null
      */
     public static function getIdentifier($classId)
     {
         try {
             $customLayout = new self();
-            $identifier = $customLayout->getDao()->getLatestIdentifier($classId);
-
-            return $identifier;
+            return $customLayout->getDao()->getLatestIdentifier($classId);
         } catch (\Exception $e) {
             Logger::error((string) $e);
 
