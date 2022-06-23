@@ -34,6 +34,9 @@ class TargetingSessionBagListener implements EventSubscriberInterface
 
     const TARGETING_BAG_VISITOR = 'pimcore_targeting_visitor';
 
+    /**
+     * {@inheritdoc}
+     */
     public static function getSubscribedEvents()
     {
         return [
