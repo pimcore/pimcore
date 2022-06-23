@@ -236,7 +236,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
                 if ($quote === false) {
                     $this->orderKey[] = $o;
                 } elseif ($this->isValidOrderKey($o)) {
-                    $this->orderKey[] = '`' . $o . '`';
+                    $this->orderKey[] = $this->quoteIdentifier($o);
                 }
             }
         }
@@ -412,8 +412,14 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         if ($groupBy) {
             $this->groupBy = $groupBy;
 
-            if ($qoute && strpos($groupBy, '`') !== 0) {
-                $this->groupBy = '`' . $this->groupBy . '`';
+            if ($qoute) {
+                $quotedParts = [];
+                $parts = explode(',', trim($groupBy, '`'));
+                foreach ($parts as $part) {
+                    $quotedParts[] = $this->quoteIdentifier(trim($part));
+                }
+
+                $this->groupBy = implode(', ', $quotedParts);
             }
         }
 
@@ -430,6 +436,13 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         $this->validOrders = $validOrders;
 
         return $this;
+    }
+
+    public function quoteIdentifier(string $value): string
+    {
+        $db = Db::get();
+
+        return $db->quoteIdentifier($value);
     }
 
     /**

@@ -497,7 +497,9 @@ class Dao extends Model\Element\Dao
     protected function collectParentIds()
     {
         $parentIds = $this->getParentIds();
-        $parentIds[] = $this->model->getId();
+        if ($id = $this->model->getId()) {
+            $parentIds[] = $id;
+        }
 
         return $parentIds;
     }
@@ -559,7 +561,7 @@ class Dao extends Model\Element\Dao
      * @param array $columns
      * @param User $user
      *
-     * @return array
+     * @return array<string, int>
      *
      */
     public function areAllowed(array $columns, User $user)

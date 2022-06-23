@@ -253,7 +253,7 @@ class Ffmpeg extends Adapter
     }
 
     /**
-     * @return float
+     * @return float|null
      *
      * @throws \Exception
      */
@@ -262,14 +262,16 @@ class Ffmpeg extends Adapter
         $output = $this->getVideoInfo();
 
         // get total video duration
-        preg_match("/Duration: ([0-9:\.]+),/", $output, $matches);
-        $durationRaw = $matches[1];
-        $durationParts = explode(':', $durationRaw);
+        $result = preg_match("/Duration: (\d\d):(\d\d):(\d\d\.\d+),/", $output, $matches);
 
-        // calculate duration in seconds
-        $duration = ((int)$durationParts[0] * 3600) + ((int)$durationParts[1] * 60) + (float)$durationParts[2];
+        if ($result) {
+            // calculate duration in seconds
+            $duration = ((int)$matches[1] * 3600) + ((int)$matches[2] * 60) + (float)$matches[3];
 
-        return $duration;
+            return $duration;
+        }
+
+        return null;
     }
 
     /**

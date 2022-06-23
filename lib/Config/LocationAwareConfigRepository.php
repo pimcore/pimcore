@@ -227,7 +227,7 @@ class LocationAwareConfigRepository
      */
     public function getWriteTarget(): string
     {
-        $env = $this->writeTargetEnvVariableName ? $_ENV[$this->writeTargetEnvVariableName] ?? null : null;
+        $env = $this->writeTargetEnvVariableName ? $_SERVER[$this->writeTargetEnvVariableName] ?? null : null;
         if ($env) {
             $writeLocation = $env;
         } else {

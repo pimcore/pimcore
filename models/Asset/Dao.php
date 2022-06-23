@@ -481,7 +481,9 @@ class Dao extends Model\Element\Dao
                 $obj = $obj->getParent();
             }
         }
-        $parentIds[] = $this->model->getId();
+        if ($id = $this->model->getId()) {
+            $parentIds[] = $id;
+        }
 
         $userIds = $user->getRoles();
         $userIds[] = $user->getId();
@@ -517,7 +519,7 @@ class Dao extends Model\Element\Dao
      * @param array $columns
      * @param User $user
      *
-     * @return array
+     * @return array<string, int>
      *
      */
     public function areAllowed(array $columns, User $user)
@@ -544,24 +546,32 @@ class Dao extends Model\Element\Dao
         return false;
     }
 
-    public function addToThumbnailCache(string $name, string $filename): void
+    public function addToThumbnailCache(string $name, string $filename, int $filesize, int $width, int $height): void
     {
         $assetId = $this->model->getId();
-        $time = time();
-        Helper::insertOrUpdate($this->db, 'assets_image_thumbnail_cache', [
+        $thumb = [
             'cid' => $assetId,
             'name' => $name,
             'filename' => $filename,
-            'modificationDate' => $time,
-        ]);
+            'modificationDate' => time(),
+            'filesize' => $filesize,
+            'width' => $width,
+            'height' => $height,
+        ];
+        Helper::insertOrUpdate($this->db, 'assets_image_thumbnail_cache', $thumb);
 
         if (isset(self::$thumbnailStatusCache[$assetId])) {
             $hash = $name . $filename;
-            self::$thumbnailStatusCache[$assetId][$hash] = $time;
+            self::$thumbnailStatusCache[$assetId][$hash] = $thumb;
         }
     }
 
     public function getCachedThumbnailModificationDate(string $name, string $filename): ?int
+    {
+        return $this->getCachedThumbnail($name, $filename)['modificationDate'] ?? null;
+    }
+
+    public function getCachedThumbnail(string $name, string $filename): ?array
     {
         $assetId = $this->model->getId();
 
@@ -575,7 +585,7 @@ class Dao extends Model\Element\Dao
 
             foreach ($thumbs as $thumb) {
                 $hash = $thumb['name'] . $thumb['filename'];
-                self::$thumbnailStatusCache[$assetId][$hash] = $thumb['modificationDate'];
+                self::$thumbnailStatusCache[$assetId][$hash] = $thumb;
             }
         }
 
@@ -584,7 +594,7 @@ class Dao extends Model\Element\Dao
         return self::$thumbnailStatusCache[$assetId][$hash] ?? null;
     }
 
-    public function deleteFromThumbnailCache(?string $name = null): void
+    public function deleteFromThumbnailCache(?string $name = null, ?string $filename = null): void
     {
         $assetId = $this->model->getId();
         $where = [
@@ -593,6 +603,10 @@ class Dao extends Model\Element\Dao
 
         if ($name) {
             $where['name'] = $name;
+        }
+
+        if ($filename) {
+            $where['filename'] = $filename;
         }
 
         $this->db->delete('assets_image_thumbnail_cache', $where);

@@ -39,6 +39,9 @@ class AdminExtension extends AbstractExtension
         ];
     }
 
+    /**
+     * @return array
+     */
     public function getFilters()
     {
         return [
@@ -74,11 +77,21 @@ class AdminExtension extends AbstractExtension
         return $returnHtml;
     }
 
+    /**
+     * @param string $url
+     *
+     * @return string
+     */
     private function getScriptTag($url): string
     {
         return '<script src="' . $url . '"></script>' . "\n";
     }
 
+    /**
+     * @param string $icon
+     *
+     * @return string
+     */
     public function inlineIcon(string $icon)
     {
         $content = file_get_contents($icon);

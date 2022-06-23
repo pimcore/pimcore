@@ -42,3 +42,13 @@ pimcore_install:
             host:                 "%env(DB_HOST)%"
             port:                 "%env(DB_PORT)%"
 ```
+
+## Set a timezone
+Make sure to set the corresponding timezone in your configuration. 
+It will be used for displaying date/time values in the admin backend.
+
+```yaml
+pimcore:
+    general:
+        timezone: Europe/Berlin
+```
