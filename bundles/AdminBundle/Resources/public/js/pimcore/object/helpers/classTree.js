@@ -236,7 +236,7 @@ pimcore.object.helpers.classTree = Class.create({
             var draggable = true;
 
             // localizedfields can be a drop target
-            if (brickDescriptor && brickDescriptor.insideLocalizedFields) {
+            if (type == "localizedfields") {
                 isLeaf = false;
                 draggable = false;
             }
