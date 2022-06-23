@@ -1207,7 +1207,8 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/tag.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_quantityValue {
+.pimcore_icon_quantityValue,
+.pimcore_icon_quantityValueRange {
     background: url(/bundles/pimcoreadmin/img/twemoji/1f4c8.svg) center center no-repeat !important;
 }
 
