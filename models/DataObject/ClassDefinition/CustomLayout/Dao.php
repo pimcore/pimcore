@@ -17,6 +17,8 @@ namespace Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
 
 use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Tool\Serialize;
 use Symfony\Component\Uid\Uuid as Uid;
 use Symfony\Component\Uid\UuidV4;
@@ -187,6 +189,8 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $allowedProperties = ['id', 'name', 'description', 'creationDate', 'modificationDate',
             'userOwner', 'userModification', 'classId', 'default', 'layoutDefinitions', ];
         $dataRaw = $this->model->getObjectVars();
+        self::cleanupForSave($dataRaw['layoutDefinitions']);
+
         foreach ($dataRaw as $key => $value) {
             if (in_array($key, $allowedProperties)) {
                 if (is_array($value) || is_object($value)) {
@@ -200,6 +204,38 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         }
 
         $this->saveData($this->model->getId(), $data);
+    }
+
+    /**
+     * @param Data|Layout|null $data
+     */
+    private static function cleanupForSave(&$data)
+    {
+        if (is_null($data)) {
+            return;
+        }
+
+        if ($data instanceof Data\VarExporterInterface) {
+            $blockedVars = $data->resolveBlockedVars();
+            foreach ($blockedVars as $blockedVar) {
+                if (isset($data->{$blockedVar})) {
+                    unset($data->{$blockedVar});
+                }
+            }
+
+            if (isset($data->blockedVarsForExport)) {
+                unset($data->blockedVarsForExport);
+            }
+        }
+
+        if (method_exists($data, 'getChildren')) {
+            $children = $data->getChildren();
+            if (is_array($children)) {
+                foreach ($children as $child) {
+                    self::cleanupForExport($child);
+                }
+            }
+        }
     }
 
     /**

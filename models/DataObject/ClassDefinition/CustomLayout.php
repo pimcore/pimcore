@@ -266,38 +266,6 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @param Data|Layout|null $data
-     */
-    private static function cleanupForExport(&$data)
-    {
-        if (is_null($data)) {
-            return;
-        }
-
-        if ($data instanceof DataObject\ClassDefinition\Data\VarExporterInterface) {
-            $blockedVars = $data->resolveBlockedVars();
-            foreach ($blockedVars as $blockedVar) {
-                if (isset($data->{$blockedVar})) {
-                    unset($data->{$blockedVar});
-                }
-            }
-
-            if (isset($data->blockedVarsForExport)) {
-                unset($data->blockedVarsForExport);
-            }
-        }
-
-        if (method_exists($data, 'getChildren')) {
-            $children = $data->getChildren();
-            if (is_array($children)) {
-                foreach ($children as $child) {
-                    self::cleanupForExport($child);
-                }
-            }
-        }
-    }
-
-    /**
      * @internal
      *
      * @return string
