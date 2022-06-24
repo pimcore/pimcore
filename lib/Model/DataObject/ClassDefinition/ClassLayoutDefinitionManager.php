@@ -15,8 +15,9 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
-use Pimcore\Db;
-
+/**
+ * @deprecated will be removed in Pimcore 11
+ */
 class ClassLayoutDefinitionManager
 {
     public const SAVED = 'saved';
@@ -26,46 +27,34 @@ class ClassLayoutDefinitionManager
     public const DELETED = 'deleted';
 
     /**
-     * @deprecated will be removed in Pimcore 11
+     * @deprecated
      *
      * Delete all custom layouts from db
      */
     public function cleanUpDeletedLayoutDefinitions(): array
     {
-        $db = \Pimcore\Db::get();
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated. It will be removed in Pimcore 11. Custom Layouts are not managed in db anymore.', __METHOD__)
+        );
 
-        try {
-            $layouts = $db->fetchAll('SELECT * FROM custom_layouts');
-        } catch (\Exception $e) {
-            $layouts = [];
-        }
-
-        $deleted = [];
-
-        foreach ($layouts as $layout) {
-            $id = $layout['id'];
-            $name = $layout['name'];
-
-            $cls = new CustomLayout();
-            $cls->setId($id);
-            $definitionFile = $cls->getDefinitionFile();
-
-            if (!file_exists($definitionFile)) {
-                $deleted[] = [$name, $id];
-
-                //CustomLayout doesn't exist anymore, therefore we delete it
-                $cls->delete();
-            }
-        }
-
-        return $deleted;
+        return [];
     }
 
     /**
+     * @deprecated
+     *
      * Updates all custom layouts from PIMCORE_CUSTOMLAYOUT_DIRECTORY
      */
     public function createOrUpdateLayoutDefinitions(): array
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated. It will be removed in Pimcore 11. Custom Layouts are not managed in db anymore.', __METHOD__)
+        );
+
         $customLayoutFolder = PIMCORE_CUSTOMLAYOUT_DIRECTORY;
         $files = glob($customLayoutFolder.'/*.php');
 
@@ -79,10 +68,10 @@ class ClassLayoutDefinitionManager
 
                 if ($existingLayout instanceof CustomLayout) {
                     $changes[] = [$layout->getName(), $layout->getId(), self::SAVED];
-                    $existingLayout->save(false);
+                    $existingLayout->save();
                 } else {
                     $changes[] = [$layout->getName(), $layout->getId(), self::CREATED];
-                    $layout->save(false);
+                    $layout->save();
                 }
             }
         }

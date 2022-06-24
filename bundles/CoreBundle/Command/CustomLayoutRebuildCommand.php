@@ -73,28 +73,10 @@ class CustomLayoutRebuildCommand extends AbstractCommand
         );
 
         if ($input->getOption('delete-custom-layouts')) {
-            $questionResult = true;
+            $this->io->warning(
+                '<error>Nothing to delete! Custom Layouts are not managed in the database anymore. </error>',
+            );
 
-            if ($input->isInteractive()) {
-                $questionResult = $this->io->confirm(
-                    '<error>You are going to delete custom layouts that don\'t have custom-layout-definitions anymore. This could lead to data loss! Do you want to continue?</error>',
-                    false
-                );
-            }
-
-            if ($questionResult) {
-                if ($output->isVerbose()) {
-                    $output->writeln('---------------------');
-                    $output->writeln('Delete custom layouts that don\'t have custom-layout-definitions anymore.');
-                }
-
-                foreach ($this->classLayoutDefinitionManager->cleanUpDeletedLayoutDefinitions() as $deleted) {
-                    if ($output->isVerbose()) {
-                        [$layout, $id, $action] = $deleted;
-                        $output->writeln(sprintf('%s [%s] %s', $layout, $id, $action));
-                    }
-                }
-            }
         }
 
         $list = new ClassDefinition\CustomLayout\Listing();

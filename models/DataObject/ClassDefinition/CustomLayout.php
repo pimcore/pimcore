@@ -215,13 +215,22 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @param bool $saveDefinitionFile
+     * @param bool|null $saveDefinitionFile
      *
      * @throws DataObject\Exception\DefinitionWriteException
      */
-    public function save($saveDefinitionFile = true)
+    public function save($saveDefinitionFile = null)
     {
-        if ($saveDefinitionFile && !$this->isWriteable()) {
+        if ($saveDefinitionFile !== null) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '10.5',
+                'Passing $saveDefinitionFile param in %s is deprecated and will be removed from Pimcore in 11.',
+                __METHOD__
+            );
+        }
+
+        if (!$this->isWriteable()) {
             throw new DataObject\Exception\DefinitionWriteException();
         }
 
@@ -235,49 +244,12 @@ class CustomLayout extends Model\AbstractModel
 
         $this->setModificationDate(time());
 
-        // create directory if not exists
-        if (!is_dir(PIMCORE_CUSTOMLAYOUT_DIRECTORY)) {
-            \Pimcore\File::mkdir(PIMCORE_CUSTOMLAYOUT_DIRECTORY);
-        }
-
         $this->getDao()->save();
-
-        $this->saveCustomLayoutFile($saveDefinitionFile);
 
         // empty custom layout cache
         try {
             Cache::clearTag('customlayout_' . $this->getId());
         } catch (\Exception $e) {
-        }
-    }
-
-    /**
-     * @param bool $saveDefinitionFile
-     *
-     * @throws \Exception
-     */
-    private function saveCustomLayoutFile($saveDefinitionFile = true)
-    {
-        // save definition as a php file
-        $definitionFile = $this->getDefinitionFile();
-        if (!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
-            throw new \Exception(
-                'Cannot write definition file in: '.$definitionFile.' please check write permission on this directory.'
-            );
-        }
-
-        $infoDocBlock = $this->getInfoDocBlock();
-
-        $clone = clone $this;
-        $clone->setDao(null);
-        unset($clone->fieldDefinitions);
-
-        self::cleanupForExport($clone->layoutDefinitions);
-
-        if ($saveDefinitionFile) {
-            $data = to_php_data_file_format($clone, $infoDocBlock);
-
-            \Pimcore\File::putPhpFile($definitionFile, $data);
         }
     }
 
@@ -291,27 +263,6 @@ class CustomLayout extends Model\AbstractModel
     public function isWritable(): bool
     {
         return $this->isWriteable();
-    }
-
-    /**
-     * @internal
-     *
-     * @param string|null $id
-     *
-     * @return string
-     */
-    public function getDefinitionFile($id = null)
-    {
-        if (!$id) {
-            $id = $this->getId();
-        }
-
-        $customFile = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/classes/customlayouts/custom_definition_'. $id .'.php';
-        if (is_file($customFile)) {
-            return $customFile;
-        } else {
-            return PIMCORE_CUSTOMLAYOUT_DIRECTORY.'/custom_definition_'. $id .'.php';
-        }
     }
 
     /**
