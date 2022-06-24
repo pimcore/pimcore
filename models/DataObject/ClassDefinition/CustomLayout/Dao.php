@@ -232,7 +232,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             $children = $data->getChildren();
             if (is_array($children)) {
                 foreach ($children as $child) {
-                    self::cleanupForExport($child);
+                    self::cleanupForSave($child);
                 }
             }
         }
