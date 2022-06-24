@@ -65,8 +65,7 @@ class MkdirCacheWarmer implements CacheWarmerInterface
         }
 
         $fs = new Filesystem();
-        $uniqueDirectories = array_unique($directories);
-        foreach ($uniqueDirectories as $directory) {
+        foreach (array_unique($directories) as $directory) {
             if (!$fs->exists($directory)) {
                 $fs->mkdir($directory, $this->mode);
             }
