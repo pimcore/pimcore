@@ -17,10 +17,11 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tools;
 
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\SessionBagListener;
+use Pimcore\Session\SessionConfiguratorInterface;
 
 /**
  * @deprecated will be removed in Pimcore 11. Use SessionBagListener instead.
  */
-class SessionConfigurator extends SessionBagListener
+class SessionConfigurator extends SessionBagListener implements SessionConfiguratorInterface
 {
 }
