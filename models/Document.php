@@ -184,7 +184,7 @@ class Document extends Element\AbstractElement
         $path = Element\Service::correctPath($path);
 
         $cacheKey = self::getPathCacheKey($path);
-        $params = self::prepareGetByIdParams($force, __METHOD__);
+        $params = self::prepareGetByIdParams($force, __METHOD__, func_num_args());
 
         if (!$params['force'] && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
             $document = \Pimcore\Cache\Runtime::get($cacheKey);
