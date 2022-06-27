@@ -101,7 +101,7 @@ class CustomBundle extends Bundle implements DependentBundleInterface
         // call addBundle with a class name as string and restrict it to the dev environment
         $collection->addBundle(FooBundle::class, 0, ['dev']);
 
-        // directly add a LazyLoadedItem - this is was addBundle does internally when gets a string
+        // directly add a LazyLoadedItem - this is what addBundle does internally when gets a string
         $collection->add(new LazyLoadedItem(FooBundle::class, 0, ['dev']));
     }
 }
