@@ -24,6 +24,7 @@ use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
+use Pimcore\Model\Exception\ConfigWriteException;
 use Pimcore\Model\Translation;
 use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -572,6 +573,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
                         $customLayout->setName($importData['name']);
                     }
                     $customLayout->setDescription($importData['description']);
+                    if (!$customLayout->isWritable()) {
+                        throw new ConfigWriteException();
+                    }
                     $customLayout->save();
                     $success = true;
                 } catch (\Exception $e) {
