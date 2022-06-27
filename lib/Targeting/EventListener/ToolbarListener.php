@@ -95,6 +95,9 @@ class ToolbarListener implements EventSubscriberInterface
         $this->codeInjector = $codeInjector;
     }
 
+    /**
+     * @return array[]
+     */
     public static function getSubscribedEvents()
     {
         return [

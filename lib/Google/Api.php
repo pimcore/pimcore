@@ -29,13 +29,11 @@ class Api
      */
     public static function getPrivateKeyPath()
     {
-        $path = \Pimcore\Config::locateConfigFile('google-api-private-key.json');
-
-        return $path;
+        return \Pimcore\Config::locateConfigFile('google-api-private-key.json');
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public static function getConfig()
     {
@@ -87,7 +85,7 @@ class Api
     /**
      * @param string $type
      *
-     * @return Client
+     * @return Client|false returns false, if client not configured
      */
     public static function getClient($type = 'service')
     {
@@ -101,7 +99,7 @@ class Api
     /**
      * @param array|null $scope
      *
-     * @return bool|Client
+     * @return Client|false
      */
     public static function getServiceClient($scope = null)
     {
@@ -177,6 +175,8 @@ class Api
 
     /**
      * @return array
+     *
+     * @throws \Exception
      */
     public static function getAnalyticsDimensions()
     {
@@ -185,6 +185,8 @@ class Api
 
     /**
      * @return array
+     *
+     * @throws \Exception
      */
     public static function getAnalyticsMetrics()
     {

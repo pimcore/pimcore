@@ -46,7 +46,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     public $maxItems;
 
@@ -58,7 +58,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     public $border = false;
 
     /**
-     * @param string|int|null $maxItems
+     * @param int|null $maxItems
      *
      * @return $this
      */
@@ -70,7 +70,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getMaxItems()
     {

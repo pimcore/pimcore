@@ -80,6 +80,9 @@ class FallbackStorage implements TargetingStorageInterface
         $resolver->setAllowedTypes('clear_after_migration', 'bool');
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function all(VisitorInfo $visitorInfo, string $scope): array
     {
         if ($visitorInfo->hasVisitorId()) {
@@ -91,6 +94,9 @@ class FallbackStorage implements TargetingStorageInterface
         }
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function has(VisitorInfo $visitorInfo, string $scope, string $name): bool
     {
         if ($visitorInfo->hasVisitorId()) {
@@ -104,6 +110,9 @@ class FallbackStorage implements TargetingStorageInterface
         }
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function set(VisitorInfo $visitorInfo, string $scope, string $name, $value)
     {
         if ($visitorInfo->hasVisitorId()) {
@@ -113,6 +122,9 @@ class FallbackStorage implements TargetingStorageInterface
         }
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null)
     {
         if ($visitorInfo->hasVisitorId()) {
@@ -126,6 +138,9 @@ class FallbackStorage implements TargetingStorageInterface
         }
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function clear(VisitorInfo $visitorInfo, string $scope = null)
     {
         $this->fallbackStorage->clear($visitorInfo, $scope);
@@ -135,11 +150,17 @@ class FallbackStorage implements TargetingStorageInterface
         }
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope): bool
     {
         throw new \LogicException('migrateFromStorage() is not supported in FallbackStorage');
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function getCreatedAt(VisitorInfo $visitorInfo, string $scope)
     {
         if ($visitorInfo->hasVisitorId()) {
@@ -149,6 +170,9 @@ class FallbackStorage implements TargetingStorageInterface
         }
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope)
     {
         if ($visitorInfo->hasVisitorId()) {

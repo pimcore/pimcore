@@ -119,7 +119,6 @@ class Installer
         'setup_database' => 'Running database setup...',
         'install_assets' => 'Installing assets...',
         'install_classes' => 'Installing classes ...',
-        'install_custom_layouts' => 'Installing custom layouts ...',
         'migrations' => 'Marking all migrations as done ...',
         'complete' => 'Install complete!',
     ];
@@ -414,9 +413,6 @@ class Installer
         $this->dispatchStepEvent('install_classes');
         $this->installClasses();
 
-        $this->dispatchStepEvent('install_custom_layouts');
-        $this->installCustomLayouts();
-
         $this->dispatchStepEvent('migrations');
         $this->markMigrationsAsDone();
 
@@ -490,14 +486,6 @@ class Installer
             'pimcore:deployment:classes-rebuild',
             '-c',
         ], 'Installing class definitions');
-    }
-
-    private function installCustomLayouts()
-    {
-        $this->runCommand([
-            'pimcore:deployment:custom-layouts-rebuild',
-            '-c',
-        ], 'Installing custom layout definitions');
     }
 
     private function installAssets(KernelInterface $kernel)

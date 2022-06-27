@@ -51,7 +51,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     public $maxItems;
 
@@ -557,7 +557,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param int|string|null $maxItems
+     * @param int|null $maxItems
      *
      * @return $this
      */
@@ -569,7 +569,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getMaxItems()
     {

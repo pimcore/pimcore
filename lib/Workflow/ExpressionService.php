@@ -48,12 +48,12 @@ class ExpressionService
     private $trustResolver;
 
     /**
-     * @var RoleHierarchyInterface
+     * @var RoleHierarchyInterface|null
      */
     private $roleHierarchy;
 
     /**
-     * @var ValidatorInterface
+     * @var ValidatorInterface|null
      */
     private $validator;
 
@@ -67,11 +67,21 @@ class ExpressionService
         $this->validator = $validator;
     }
 
+    /**
+     * @param object $subject
+     *
+     * @return mixed
+     */
     public function evaluateExpression(WorkflowInterface $workflow, $subject, string $expression)
     {
         return $this->expressionLanguage->evaluate($expression, $this->getVariables($subject));
     }
 
+    /**
+     * @param object $subject
+     *
+     * @return array
+     */
     // code should be sync with Symfony\Component\Security\Core\Authorization\Voter\ExpressionVoter
     private function getVariables($subject)
     {

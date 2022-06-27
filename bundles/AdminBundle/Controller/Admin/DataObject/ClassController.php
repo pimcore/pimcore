@@ -260,6 +260,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
                     );
 
                     $customLayout->setId($request->get('id'));
+                    if (!$customLayout->isWriteable()) {
+                        throw new ConfigWriteException();
+                    }
                     $customLayout->save();
                 }
             }
@@ -268,7 +271,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 throw $this->createNotFoundException();
             }
         }
-        $isWriteable = $customLayout->isWritable();
+        $isWriteable = $customLayout->isWriteable();
         $customLayout = $customLayout->getObjectVars();
         $customLayout['isWriteable'] = $isWriteable;
 
@@ -329,9 +332,12 @@ class ClassController extends AdminController implements KernelControllerEventIn
         );
 
         $customLayout->setId($layoutId);
+        if (!$customLayout->isWriteable()) {
+            throw new ConfigWriteException();
+        }
         $customLayout->save();
 
-        $isWriteable = $customLayout->isWritable();
+        $isWriteable = $customLayout->isWriteable();
         $data = $customLayout->getObjectVars();
         $data['isWriteable'] = $isWriteable;
 
@@ -407,6 +413,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
             $customLayout->setName($values['name']);
             $customLayout->setDescription($values['description']);
             $customLayout->setDefault($values['default']);
+            if (!$customLayout->isWriteable()) {
+                throw new ConfigWriteException();
+            }
             $customLayout->save();
 
             return $this->adminJson(['success' => true, 'id' => $customLayout->getId(), 'data' => $customLayout->getObjectVars()]);
@@ -556,7 +565,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
 
             if ($existingLayout instanceof DataObject\ClassDefinition\CustomLayout) {
                 $response = $this->adminJson([
-                    'success' => $success,
+                    'success' => false,
                     'nameAlreadyInUse' => true,
                 ]);
             }
@@ -613,7 +622,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         foreach ($list as $item) {
             $result[] = [
                 'id' => $item->getId(),
-                'name' => $item->getName() . ' (ID: ' . $item->getId() . ')',
+                'name' => $item->getName(),
                 'default' => $item->getDefault() ?: 0,
             ];
         }

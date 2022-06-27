@@ -15,6 +15,7 @@
 
 namespace Pimcore\Image;
 
+use Pimcore\Logger;
 use Pimcore\Tool\Console;
 use Pimcore\Tool\Session;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
@@ -105,6 +106,8 @@ class HtmlToImage
         if (file_exists($outputFile) && filesize($outputFile) > 1000) {
             return true;
         }
+
+        Logger::debug('Could not create image from url: ' . $url);
 
         return false;
     }
