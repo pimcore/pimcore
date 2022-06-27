@@ -556,6 +556,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     public function importCustomLayoutDefinitionAction(Request $request)
     {
         $success = false;
+        $responseContent = [];
         $json = file_get_contents($_FILES['Filedata']['tmp_name']);
         $importData = $this->decodeJson($json);
 
@@ -564,10 +565,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
             $existingLayout = DataObject\ClassDefinition\CustomLayout::getByName($importData['name']);
 
             if ($existingLayout instanceof DataObject\ClassDefinition\CustomLayout) {
-                $response = $this->adminJson([
-                    'success' => false,
-                    'nameAlreadyInUse' => true,
-                ]);
+                $responseContent['nameAlreadyInUse'] = true;
             }
         }
 
@@ -592,10 +590,10 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 }
             }
 
-            $response = $this->adminJson([
-                'success' => $success,
-            ]);
+            $responseContent['success'] = $success;
         }
+
+        $response = $this->adminJson($responseContent);
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
