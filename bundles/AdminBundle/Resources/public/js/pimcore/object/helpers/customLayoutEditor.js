@@ -996,7 +996,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                 }.bind(this)
 
             });
-        }.bind(this), function () {
+        }.bind(this), function (response) {
             var data = Ext.decode(response.response.responseText);
 
             if (data && data.nameAlreadyInUse) {
