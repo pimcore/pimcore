@@ -373,7 +373,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
 
-        $params = self::prepareGetByIdParams($force, __METHOD__);
+        $params = self::prepareGetByIdParams($force, __METHOD__, func_num_args());
 
         if (!$params['force'] && Runtime::isRegistered($cacheKey)) {
             $object = Runtime::get($cacheKey);
