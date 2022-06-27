@@ -721,7 +721,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
             if ($customLayout) {
                 $name = $customLayout->getName();
                 $customLayoutData = [
-                    'name' => $customLayout->getName(),
+                    'name' => $name,
                     'description' => $customLayout->getDescription(),
                     'layoutDefinitions' => $customLayout->getLayoutDefinitions(),
                     'default' => $customLayout->getDefault() ?: 0,
