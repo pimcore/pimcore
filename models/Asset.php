@@ -172,7 +172,7 @@ class Asset extends Element\AbstractElement
      * Static helper to get an asset by the passed path
      *
      * @param string $path
-     * @param bool $force
+     * @param array|bool $force
      *
      * @return static|null
      */
@@ -215,7 +215,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param int $id
-     * @param bool $force
+     * @param array|bool $force
      *
      * @return static|null
      */
@@ -228,14 +228,16 @@ class Asset extends Element\AbstractElement
         $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
 
-        if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+        $params = self::prepareGetByIdParams($force, __METHOD__);
+
+        if (!$params['force'] && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
             $asset = \Pimcore\Cache\Runtime::get($cacheKey);
             if ($asset && static::typeMatch($asset)) {
                 return $asset;
             }
         }
 
-        if ($force || !($asset = \Pimcore\Cache::load($cacheKey))) {
+        if ($params['force'] || !($asset = \Pimcore\Cache::load($cacheKey))) {
             $asset = new static();
 
             try {

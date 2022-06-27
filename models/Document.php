@@ -171,7 +171,7 @@ class Document extends Element\AbstractElement
 
     /**
      * @param string $path
-     * @param bool $force
+     * @param array|bool $force
      *
      * @return static|null
      */
@@ -184,8 +184,9 @@ class Document extends Element\AbstractElement
         $path = Element\Service::correctPath($path);
 
         $cacheKey = self::getPathCacheKey($path);
+        $params = self::prepareGetByIdParams($force, __METHOD__);
 
-        if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+        if (!$params['force'] && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
             $document = \Pimcore\Cache\Runtime::get($cacheKey);
             if ($document && static::typeMatch($document)) {
                 return $document;
@@ -195,7 +196,7 @@ class Document extends Element\AbstractElement
         try {
             $helperDoc = new Document();
             $helperDoc->getDao()->getByPath($path);
-            $doc = static::getById($helperDoc->getId(), $force);
+            $doc = static::getById($helperDoc->getId(), $params);
             \Pimcore\Cache\Runtime::set($cacheKey, $doc);
         } catch (NotFoundException $e) {
             $doc = null;
@@ -225,7 +226,7 @@ class Document extends Element\AbstractElement
 
     /**
      * @param int $id
-     * @param bool $force
+     * @param array|bool $force
      *
      * @return static|null
      */
@@ -237,15 +238,16 @@ class Document extends Element\AbstractElement
 
         $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
+        $params = self::prepareGetByIdParams($force, __METHOD__);
 
-        if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+        if (!$params['force'] && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
             $document = \Pimcore\Cache\Runtime::get($cacheKey);
             if ($document && static::typeMatch($document)) {
                 return $document;
             }
         }
 
-        if ($force || !($document = \Pimcore\Cache::load($cacheKey))) {
+        if ($params['force'] || !($document = \Pimcore\Cache::load($cacheKey))) {
             $reflectionClass = new \ReflectionClass(static::class);
             if ($reflectionClass->isAbstract()) {
                 $document = new Document();
