@@ -49,6 +49,6 @@ class DataTypeTest extends AbstractDataTypeTestCase
 
     public function refreshObject()
     {
-        $this->testObject = AbstractObject::getById($this->testObject->getId(), true);
+        $this->testObject = AbstractObject::getById($this->testObject->getId(), ['force' => true]);
     }
 }

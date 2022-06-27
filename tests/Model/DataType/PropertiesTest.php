@@ -39,7 +39,7 @@ class PropertiesTest extends AbstractPropertiesTest
 
     public function reloadElement(): ElementInterface
     {
-        $this->testElement = AbstractObject::getById($this->testElement->getId(), true);
+        $this->testElement = AbstractObject::getById($this->testElement->getId(), ['force' => true]);
 
         return $this->testElement;
     }

@@ -75,7 +75,7 @@ class LinkTest extends ModelTestCase
         $linkObject->setLtestlink($link);
         $linkObject->save();
 
-        $linkObjectReloaded = unittestLink::getById($linkObject->getId(), true);
+        $linkObjectReloaded = unittestLink::getById($linkObject->getId(), ['force' => true]);
 
         $this->assertEquals($link->getDirect(), $linkObjectReloaded->getTestlink()->getDirect());
         $this->assertEquals($link->getDirect(), $linkObjectReloaded->getLtestlink()->getDirect());
