@@ -582,7 +582,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                         $customLayout->setName($importData['name']);
                     }
                     $customLayout->setDescription($importData['description']);
-                    if (!$customLayout->isWritable()) {
+                    if (!$customLayout->isWriteable()) {
                         throw new ConfigWriteException();
                     }
                     $customLayout->save();
