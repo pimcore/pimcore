@@ -176,6 +176,7 @@ class Processor
 
     /**
      * @param string $locale
+     *
      * @return array
      */
     private function getData(string $locale): array
