@@ -147,7 +147,11 @@ class Bootstrap
     private static function prepareEnvVariables()
     {
         if (!($_SERVER['PIMCORE_SKIP_DOTENV_FILE'] ?? false)) {
-            (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT .'/.env');
+            if (class_exists('Symfony\Component\Dotenv\Dotenv')) {
+                (new Dotenv())->bootEnv(PIMCORE_PROJECT_ROOT . '/.env');
+            } else {
+                $_SERVER += $_ENV;
+            }
         }
     }
 
@@ -205,7 +209,6 @@ class Bootstrap
         $resolveConstant('PIMCORE_CLASS_DEFINITION_DIRECTORY', PIMCORE_CLASS_DIRECTORY);
         $resolveConstant('PIMCORE_CUSTOMLAYOUT_DIRECTORY', PIMCORE_CLASS_DEFINITION_DIRECTORY . '/customlayouts');
         $resolveConstant('PIMCORE_SYSTEM_TEMP_DIRECTORY', PIMCORE_PRIVATE_VAR . '/tmp');
-        $resolveConstant('PIMCORE_LOG_MAIL_PERMANENT', PIMCORE_PRIVATE_VAR . '/email');
 
         // configure PHP's error logging
         $resolveConstant('PIMCORE_PHP_ERROR_LOG', PIMCORE_LOG_DIRECTORY . '/php.log');

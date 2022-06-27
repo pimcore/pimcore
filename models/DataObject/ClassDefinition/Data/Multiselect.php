@@ -75,7 +75,7 @@ class Multiselect extends Data implements
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     public $maxItems;
 
@@ -196,7 +196,7 @@ class Multiselect extends Data implements
     }
 
     /**
-     * @param int|string|null $maxItems
+     * @param int|null $maxItems
      *
      * @return $this
      */
@@ -208,7 +208,7 @@ class Multiselect extends Data implements
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getMaxItems()
     {

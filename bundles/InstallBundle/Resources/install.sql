@@ -63,6 +63,9 @@ CREATE TABLE `assets_image_thumbnail_cache` (
     `name` varchar(190) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
     `filename` varchar(190) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
     `modificationDate` INT(11) UNSIGNED DEFAULT NULL,
+    `filesize` INT(11) UNSIGNED DEFAULT NULL,
+    `width` SMALLINT UNSIGNED DEFAULT NULL,
+    `height` SMALLINT UNSIGNED DEFAULT NULL,
     PRIMARY KEY (`cid`, `name`, `filename`),
     CONSTRAINT `FK_assets_image_thumbnail_cache_assets` FOREIGN KEY (`cid`) REFERENCES `assets` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
@@ -75,21 +78,6 @@ CREATE TABLE `classes` (
 	`name` VARCHAR(190) NOT NULL DEFAULT '',
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `name` (`name`)
-) DEFAULT CHARSET=utf8mb4;
-
-DROP TABLE IF EXISTS `custom_layouts` ;
-CREATE TABLE `custom_layouts` (
-	`id` varchar(64) NOT NULL,
-	`classId` VARCHAR(50) NOT NULL,
-	`name` VARCHAR(190) NULL DEFAULT NULL,
-	`description` TEXT NULL,
-	`creationDate` INT(11) UNSIGNED NULL DEFAULT NULL,
-	`modificationDate` INT(11) UNSIGNED NULL DEFAULT NULL,
-	`userOwner` INT(11) UNSIGNED NULL DEFAULT NULL,
-	`userModification` INT(11) UNSIGNED NULL DEFAULT NULL,
-	`default` tinyint(1) NOT NULL DEFAULT '0',
-	PRIMARY KEY (`id`),
-	UNIQUE INDEX `name` (`name`, `classId`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `dependencies` ;
@@ -283,7 +271,7 @@ CREATE TABLE `email_log` (
   `bcc` longtext,
   `sentDate` int(11) UNSIGNED DEFAULT NULL,
   `subject` varchar(500) DEFAULT NULL,
-  `error` text DEFAULT NULL, 
+  `error` text DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `sentDate` (`sentDate`, `id`),
   FULLTEXT KEY `fulltext` (`from`,`to`,`cc`,`bcc`,`subject`,`params`),

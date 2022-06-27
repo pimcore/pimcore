@@ -779,13 +779,12 @@ class GridHelperService
                     $value = $db->quote($value);
                 }
 
-                if ($filterField == 'fullpath') {
-                    $filterField = 'CONCAT(path,filename)';
-                } else {
-                    $filterField = $db->quoteIdentifier($filterField);
-                }
-
                 if (isset($filterDef[1]) && $filterDef[1] == 'system') {
+                    if ($filterField == 'fullpath') {
+                        $filterField = 'CONCAT(path,filename)';
+                    } else {
+                        $filterField = $db->quoteIdentifier($filterField);
+                    }
                     $conditionFilters[] = $filterField . ' ' . $operator . ' ' . $value;
                 } else {
                     $language = $allParams['language'];

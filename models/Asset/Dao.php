@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model\Asset;
 
-use Pimcore\Db\Helper;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -49,9 +48,9 @@ class Dao extends Model\Element\Dao
      */
     public function getById($id)
     {
-        $data = $this->db->fetchAssociative("SELECT assets.*, tree_locks.locked FROM assets
+        $data = $this->db->fetchRow("SELECT assets.*, tree_locks.locked FROM assets
             LEFT JOIN tree_locks ON assets.id = tree_locks.id AND tree_locks.type = 'asset'
-                WHERE assets.id = ?", [$id]);
+                WHERE assets.id = ?", $id);
 
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
@@ -94,7 +93,7 @@ class Dao extends Model\Element\Dao
     public function getByPath($path)
     {
         $params = $this->extractKeyAndPath($path);
-        $data = $this->db->fetchAssociative('SELECT id FROM assets WHERE path = :path AND `filename` = :key', $params);
+        $data = $this->db->fetchRow('SELECT id FROM assets WHERE path = :path AND `filename` = :key', $params);
 
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
@@ -161,7 +160,7 @@ class Dao extends Model\Element\Dao
             }
         }
 
-        Helper::insertOrUpdate($this->db, 'assets', $data);
+        $this->db->insertOrUpdate('assets', $data);
         if ($data['hasMetaData'] && count($metadataItems)) {
             foreach ($metadataItems as $metadataItem) {
                 $this->db->insert('assets_metadata', $metadataItem);
@@ -203,7 +202,7 @@ class Dao extends Model\Element\Dao
     public function updateChildPaths($oldPath)
     {
         //get assets to empty their cache
-        $assets = $this->db->fetchFirstColumn('SELECT id FROM assets WHERE path LIKE ' . $this->db->quote(Helper::escapeLike($oldPath) . '%'));
+        $assets = $this->db->fetchCol('SELECT id FROM assets WHERE path LIKE ' . $this->db->quote($this->db->escapeLike($oldPath) . '%'));
 
         $userId = '0';
         if ($user = \Pimcore\Tool\Admin::getCurrentUser()) {
@@ -212,13 +211,13 @@ class Dao extends Model\Element\Dao
 
         //update assets child paths
         // we don't update the modification date here, as this can have side-effects when there's an unpublished version for an element
-        $this->db->query('update assets set path = replace(path,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . "), userModification = '" . $userId . "' where path like " . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
+        $this->db->query('update assets set path = replace(path,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . "), userModification = '" . $userId . "' where path like " . $this->db->quote($this->db->escapeLike($oldPath) . '/%') . ';');
 
         //update assets child permission paths
-        $this->db->query('update users_workspaces_asset set cpath = replace(cpath,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . ') where cpath like ' . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
+        $this->db->query('update users_workspaces_asset set cpath = replace(cpath,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . ') where cpath like ' . $this->db->quote($this->db->escapeLike($oldPath) . '/%') . ';');
 
         //update assets child properties paths
-        $this->db->query('update properties set cpath = replace(cpath,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . ') where cpath like ' . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
+        $this->db->query('update properties set cpath = replace(cpath,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . ') where cpath like ' . $this->db->quote($this->db->escapeLike($oldPath) . '/%') . ';');
 
         return $assets;
     }
@@ -353,7 +352,7 @@ class Dao extends Model\Element\Dao
         }
 
         $query .= ' LIMIT 1;';
-        $c = $this->db->fetchOne($query, [$this->model->getId()]);
+        $c = $this->db->fetchOne($query, $this->model->getId());
 
         return (bool)$c;
     }
@@ -422,7 +421,7 @@ class Dao extends Model\Element\Dao
     public function isLocked()
     {
         // check for an locked element below this element
-        $belowLocks = $this->db->fetchOne("SELECT tree_locks.id FROM tree_locks INNER JOIN assets ON tree_locks.id = assets.id WHERE assets.path LIKE ? AND tree_locks.type = 'asset' AND tree_locks.locked IS NOT NULL AND tree_locks.locked != '' LIMIT 1", [Helper::escapeLike($this->model->getRealFullPath()) . '/%']);
+        $belowLocks = $this->db->fetchOne("SELECT tree_locks.id FROM tree_locks INNER JOIN assets ON tree_locks.id = assets.id WHERE assets.path LIKE ? AND tree_locks.type = 'asset' AND tree_locks.locked IS NOT NULL AND tree_locks.locked != '' LIMIT 1", $this->db->escapeLike($this->model->getRealFullPath()) . '/%');
 
         if ($belowLocks > 0) {
             return true;
@@ -443,8 +442,8 @@ class Dao extends Model\Element\Dao
      */
     public function unlockPropagate()
     {
-        $lockIds = $this->db->fetchFirstColumn('SELECT id from assets WHERE path LIKE ' . $this->db->quote(Helper::escapeLike($this->model->getRealFullPath()) . '/%') . ' OR id = ' . $this->model->getId());
-        $this->db->executeStatement("DELETE FROM tree_locks WHERE type = 'asset' AND id IN (" . implode(',', $lockIds) . ')');
+        $lockIds = $this->db->fetchCol('SELECT id from assets WHERE path LIKE ' . $this->db->quote($this->db->escapeLike($this->model->getRealFullPath()) . '/%') . ' OR id = ' . $this->model->getId());
+        $this->db->deleteWhere('tree_locks', "type = 'asset' AND id IN (" . implode(',', $lockIds) . ')');
 
         return $lockIds;
     }
@@ -481,7 +480,9 @@ class Dao extends Model\Element\Dao
                 $obj = $obj->getParent();
             }
         }
-        $parentIds[] = $this->model->getId();
+        if ($id = $this->model->getId()) {
+            $parentIds[] = $id;
+        }
 
         $userIds = $user->getRoles();
         $userIds[] = $user->getId();
@@ -501,7 +502,7 @@ class Dao extends Model\Element\Dao
                     $path = '/';
                 }
 
-                $permissionsChildren = $this->db->fetchOne('SELECT list FROM users_workspaces_asset WHERE cpath LIKE ? AND userId IN (' . implode(',', $userIds) . ') AND list = 1 LIMIT 1', [Helper::escapeLike($path) . '%']);
+                $permissionsChildren = $this->db->fetchOne('SELECT list FROM users_workspaces_asset WHERE cpath LIKE ? AND userId IN (' . implode(',', $userIds) . ') AND list = 1 LIMIT 1', $this->db->escapeLike($path) . '%');
                 if ($permissionsChildren) {
                     return true;
                 }
@@ -517,7 +518,7 @@ class Dao extends Model\Element\Dao
      * @param array $columns
      * @param User $user
      *
-     * @return array
+     * @return array<string, int>
      *
      */
     public function areAllowed(array $columns, User $user)
@@ -536,7 +537,7 @@ class Dao extends Model\Element\Dao
      */
     public function __isBasedOnLatestData()
     {
-        $data = $this->db->fetchAssociative('SELECT modificationDate, versionCount from assets WHERE id = ?', [$this->model->getId()]);
+        $data = $this->db->fetchRow('SELECT modificationDate, versionCount from assets WHERE id = ?', [$this->model->getId()]);
         if ($data['modificationDate'] == $this->model->__getDataVersionTimestamp() && $data['versionCount'] == $this->model->getVersionCount()) {
             return true;
         }
@@ -544,24 +545,32 @@ class Dao extends Model\Element\Dao
         return false;
     }
 
-    public function addToThumbnailCache(string $name, string $filename): void
+    public function addToThumbnailCache(string $name, string $filename, int $filesize, int $width, int $height): void
     {
         $assetId = $this->model->getId();
-        $time = time();
-        Helper::insertOrUpdate($this->db, 'assets_image_thumbnail_cache', [
+        $thumb = [
             'cid' => $assetId,
             'name' => $name,
             'filename' => $filename,
-            'modificationDate' => $time,
-        ]);
+            'modificationDate' => time(),
+            'filesize' => $filesize,
+            'width' => $width,
+            'height' => $height,
+        ];
+        $this->db->insertOrUpdate('assets_image_thumbnail_cache', $thumb);
 
         if (isset(self::$thumbnailStatusCache[$assetId])) {
             $hash = $name . $filename;
-            self::$thumbnailStatusCache[$assetId][$hash] = $time;
+            self::$thumbnailStatusCache[$assetId][$hash] = $thumb;
         }
     }
 
     public function getCachedThumbnailModificationDate(string $name, string $filename): ?int
+    {
+        return $this->getCachedThumbnail($name, $filename)['modificationDate'] ?? null;
+    }
+
+    public function getCachedThumbnail(string $name, string $filename): ?array
     {
         $assetId = $this->model->getId();
 
@@ -575,7 +584,7 @@ class Dao extends Model\Element\Dao
 
             foreach ($thumbs as $thumb) {
                 $hash = $thumb['name'] . $thumb['filename'];
-                self::$thumbnailStatusCache[$assetId][$hash] = $thumb['modificationDate'];
+                self::$thumbnailStatusCache[$assetId][$hash] = $thumb;
             }
         }
 
@@ -584,7 +593,7 @@ class Dao extends Model\Element\Dao
         return self::$thumbnailStatusCache[$assetId][$hash] ?? null;
     }
 
-    public function deleteFromThumbnailCache(?string $name = null): void
+    public function deleteFromThumbnailCache(?string $name = null, ?string $filename = null): void
     {
         $assetId = $this->model->getId();
         $where = [
@@ -593,6 +602,10 @@ class Dao extends Model\Element\Dao
 
         if ($name) {
             $where['name'] = $name;
+        }
+
+        if ($filename) {
+            $where['filename'] = $filename;
         }
 
         $this->db->delete('assets_image_thumbnail_cache', $where);
