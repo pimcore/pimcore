@@ -280,6 +280,24 @@ pimcore:
             303: See Other
             307: Temporary Redirect
 
+    glossary:
+        blocked_tags:
+            - a
+            - script
+            - style
+            - code
+            - pre
+            - textarea
+            - acronym
+            - abbr
+            - option
+            - h1
+            - h2
+            - h3
+            - h4
+            - h5
+            - h6
+
 presta_sitemap:
     # do not add properties by default
     defaults:
