@@ -299,7 +299,6 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         $conditionString = '';
         $conditionVariableTypes = [];
         $conditionParams = $this->getConditionParams();
-        $db = \Pimcore\Db::get();
 
         $params = [];
         if (!empty($conditionParams)) {
@@ -356,9 +355,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
 
         $this->setConditionVariableTypes($conditionVariableTypes);
 
-        $condition = $this->condition . $conditionString;
-
-        return $condition;
+        return $this->condition . $conditionString;
     }
 
     /**

@@ -45,7 +45,7 @@ class Db
     public static function get()
     {
         /** @var ConnectionInterface|Connection $db */
-        $db = \Pimcore::getContainer()->get('database_connection');
+        $db = \Pimcore::getContainer()->get('doctrine.dbal.default_connection');
 
         return $db;
     }
@@ -64,7 +64,7 @@ class Db
 
     public static function close()
     {
-        $db = \Pimcore::getContainer()->get('database_connection');
+        $db = \Pimcore::getContainer()->get('doctrine.dbal.default_connection');
         $db->close();
     }
 }

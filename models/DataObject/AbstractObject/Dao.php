@@ -661,7 +661,7 @@ class Dao extends Model\Element\Dao
 
             $cid = $this->model->getId();
             $sql = 'SELECT ' . $type . ' FROM users_workspaces_object WHERE cid != ' . $cid . ' AND cpath LIKE ' . $this->db->quote(Helper::escapeLike($this->model->getRealFullPath()) . '%') . ' AND userId IN (' . implode(',', $userIds) . ') ORDER BY LENGTH(cpath) DESC';
-            $permissions = $this->db->fetchAll($sql);
+            $permissions = $this->db->fetchAllAssociative($sql);
         } catch (\Exception $e) {
             Logger::warn('Unable to get permission ' . $type . ' for object ' . $this->model->getId());
         }
