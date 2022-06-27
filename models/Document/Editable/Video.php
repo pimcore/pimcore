@@ -196,7 +196,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return 'video';
     }
 
-
     /**
      * @param array $allowedTypes
      *
@@ -1035,6 +1034,10 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      */
     public function getVideoType()
     {
+        if (empty($this->type) === true) {
+            $this->type = $this->allowedTypes[0];
+        }
+
         return $this->type;
     }
 
@@ -1043,7 +1046,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      */
     public function getVideoAsset()
     {
-        if ($this->getVideoType() == self::TYPE_ASSET) {
+        if ($this->getVideoType() === self::TYPE_ASSET) {
             return Asset\Video::getById($this->id);
         }
 
