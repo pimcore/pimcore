@@ -66,7 +66,7 @@ class ImportConfigListener implements EventSubscriberInterface
 
         $db = Db::get();
 
-        $importConfigIds = $db->fetchFirstColumn('select id from importconfigs where ownerId = ' . $userId);
+        $importConfigIds = $db->fetchFirstColumn('select id from importconfigs where ownerId = ?', [$userId]);
         if ($importConfigIds) {
             $db->query('delete from importconfig_shares where importConfigId in (' . implode($importConfigIds) . ')');
         }
