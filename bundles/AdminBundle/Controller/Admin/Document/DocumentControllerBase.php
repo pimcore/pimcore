@@ -68,7 +68,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      */
     protected function preSendDataActions(array &$data, Model\Document $document, ?Version $draftVersion = null): JsonResponse
     {
-        $documentFromDatabase = Model\Document::getById($document->getId(), true);
+        $documentFromDatabase = Model\Document::getById($document->getId(), ['force' => true]);
 
         $data['versionDate'] = $documentFromDatabase->getModificationDate();
         $data['userPermissions'] = $document->getUserPermissions();

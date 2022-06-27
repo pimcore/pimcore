@@ -167,7 +167,7 @@ class FieldcollectionTest extends ModelTestCase
         $object->save();
 
         //Reload object from db
-        $object = DataObject::getById($object->getId(), ['force' => ['force' => true]]);
+        $object = DataObject::getById($object->getId(), ['force' => true]);
         $loadedFieldcollectionItem = $object->getFieldcollection()->get(0);
         $rel = $loadedFieldcollectionItem->getLRelation('en');
         $this->assertEquals($target1->getId(), $rel->getId());
@@ -181,7 +181,7 @@ class FieldcollectionTest extends ModelTestCase
         $object->save();
 
         //Reload object from db
-        $object = DataObject::getById($object->getId(), true);
+        $object = DataObject::getById($object->getId(), ['force' => true]);
 
         $loadedFieldcollectionItem = $object->getFieldcollection()->get(1);
         $lrel = $loadedFieldcollectionItem->getLRelation('en');

@@ -45,7 +45,7 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
         $source->setRelations([$unpub]);
         $source->save();
 
-        $source = LazyLoading::getById($source->getId(), true);
+        $source = LazyLoading::getById($source->getId(), ['force' => true]);
 
         $this->assertEquals(0, count($source->getRelations()), 'expected 0 items');
 
@@ -55,7 +55,7 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
         Concrete::setHideUnpublished(true);
         $source->setRelations([]);
         $source->save();
-        $source = LazyLoading::getById($source->getId(), true);
+        $source = LazyLoading::getById($source->getId(), ['force' => true]);
 
         Concrete::setHideUnpublished(false);
         $this->assertEquals(0, count($source->getRelations()), 'expected 0 items');
@@ -81,7 +81,7 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
             \Pimcore::collectGarbage();
 
             //reload data object from database
-            $object = LazyLoading::getById($id, true);
+            $object = LazyLoading::getById($id, ['force' => true]);
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix);
@@ -112,7 +112,7 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
             \Pimcore::collectGarbage();
 
             //reload data object from database
-            $object = LazyLoading::getById($id, true);
+            $object = LazyLoading::getById($id, ['force' => true]);
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix);
@@ -146,7 +146,7 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
             \Pimcore::collectGarbage();
 
             //reload data object from database
-            $object = LazyLoading::getById($id, true);
+            $object = LazyLoading::getById($id, ['force' => true]);
 
             // inherited data isn't assigned to a property, it's only returned by the getter and therefore doesn't get serialized
             $contentShouldBeIncluded = ($objectType === 'inherited') ? false : true;
@@ -184,7 +184,7 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
             \Pimcore::collectGarbage();
 
             //reload data object from database
-            $object = LazyLoading::getById($id, true);
+            $object = LazyLoading::getById($id, ['force' => true]);
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix);
@@ -221,7 +221,7 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
             \Pimcore::collectGarbage();
 
             //reload data object from database
-            $object = LazyLoading::getById($id, true);
+            $object = LazyLoading::getById($id, ['force' => true]);
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);
@@ -255,7 +255,7 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
 
         $lRelations1 = $item->getLRelations();
 
-        $object = LazyLoading::getById($object->getId(), true);
+        $object = LazyLoading::getById($object->getId(), ['force' => true]);
         $collection = $object->getFieldcollection();
         /** @var Fieldcollection\Data\LazyLoadingLocalizedTest $firstItem */
         $firstItem = $collection->get(0);
@@ -264,7 +264,7 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
 
         $this->assertTrue(count($lRelations1) > 0);
 
-        $object = LazyLoading::getById($object->getId(), true);
+        $object = LazyLoading::getById($object->getId(), ['force' => true]);
 
         //load relation and check if relation loads correctly
         $collection = $object->getFieldcollection();
@@ -280,7 +280,7 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
 
         $object->save();
 
-        $object = LazyLoading::getById($object->getId(), true);
+        $object = LazyLoading::getById($object->getId(), ['force' => true]);
 
         //load relation and check if relation loads correctly
         $collection = $object->getFieldcollection();
@@ -299,7 +299,7 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
 
             //reload data object from database
 
-            $object = LazyLoading::getById($id, true);
+            $object = LazyLoading::getById($id, ['force' => true]);
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);
@@ -334,7 +334,7 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
             \Pimcore::collectGarbage();
 
             //reload data object from database
-            $object = LazyLoading::getById($id, true);
+            $object = LazyLoading::getById($id, ['force' => true]);
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);
@@ -365,11 +365,11 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
 
         $brick->setLInput(uniqid());
         $object->save();
-        $object = Concrete::getById($object->getId(), true);
+        $object = Concrete::getById($object->getId(), ['force' => true]);
         $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLRelations('en')) > 0);
         $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLRelations('de')) > 0);
 
-        $object = Concrete::getById($object->getId(), true);
+        $object = Concrete::getById($object->getId(), ['force' => true]);
         $newRelations = $this->loadRelations()->load();
         array_pop($newRelations);
         $brick = $object->getBricks()->getLazyLoadingLocalizedTest();
@@ -380,7 +380,7 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
         $lFields->setLocalizedValue('lrelations', $newRelations, 'de');
         $object->save();
 
-        $object = Concrete::getById($object->getId(), true);
+        $object = Concrete::getById($object->getId(), ['force' => true]);
         $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLRelations('en')) > 0);
         $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLRelations('de')) > 0);
 
@@ -395,7 +395,7 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
             \Pimcore::collectGarbage();
 
             //reload data object from database
-            $object = LazyLoading::getById($id, true);
+            $object = LazyLoading::getById($id, ['force' => true]);
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);

@@ -648,7 +648,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         $this->refreshObject();
 
-        $this->testObject = Concrete::getById($this->testObject->getId(), true);
+        $this->testObject = Concrete::getById($this->testObject->getId(), ['force' => true]);
         $this->testDataHelper->assertUrlSlug($this->testObject, 'lurlSlug', $this->seed, 'en');
         $this->testDataHelper->assertUrlSlug($this->testObject, 'lurlSlug', $this->seed, 'de');
     }
