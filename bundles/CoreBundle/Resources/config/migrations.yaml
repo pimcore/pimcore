@@ -13,3 +13,6 @@ services:
     Doctrine\Migrations\DependencyFactory:
         alias: 'doctrine.migrations.dependency_factory'
 
+    Pimcore\Migrations\DirectoryAwareVersionComparator:
+        arguments:
+            $config: '@doctrine.migrations.configuration'

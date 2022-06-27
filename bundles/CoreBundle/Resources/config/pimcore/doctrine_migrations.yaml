@@ -1,7 +1,7 @@
 doctrine_migrations:
     connection: default
     migrations_paths:
-        'Pimcore\Bundle\CoreBundle\Migrations': '@PimcoreCoreBundle/Migrations'
+        Pimcore\Bundle\CoreBundle\Migrations: '@PimcoreCoreBundle/Migrations'
     storage:
         table_storage:
             table_name: 'migration_versions'
@@ -12,8 +12,7 @@ doctrine_migrations:
     all_or_nothing: false
     check_database_platform: false
     factories:
-        'Doctrine\Migrations\MigrationsRepository': 'Pimcore\Migrations\FilteredMigrationsRepository'
-        'Doctrine\Migrations\Metadata\Storage\MetadataStorage': 'Pimcore\Migrations\FilteredTableMetadataStorage'
-
-
-
+        Doctrine\Migrations\MigrationsRepository: 'Pimcore\Migrations\FilteredMigrationsRepository'
+        Doctrine\Migrations\Metadata\Storage\MetadataStorage: 'Pimcore\Migrations\FilteredTableMetadataStorage'
+    services:
+        Doctrine\Migrations\Version\Comparator: 'Pimcore\Migrations\DirectoryAwareVersionComparator'
