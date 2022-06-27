@@ -557,7 +557,7 @@ class Dao extends Model\Element\Dao
             'width' => $width,
             'height' => $height,
         ];
-        $this->db->insertOrUpdate('assets_image_thumbnail_cache', $thumb);
+        Helper::insertOrUpdate($this->db, 'assets_image_thumbnail_cache', $thumb);
 
         if (isset(self::$thumbnailStatusCache[$assetId])) {
             $hash = $name . $filename;
