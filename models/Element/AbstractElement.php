@@ -879,6 +879,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         if(is_bool($params) && $numArgs > 1) {
             trigger_deprecation('pimcore/pimcore', '10.5', 'Using $force=%s on %s is deprecated, please use array-syntax [force=>true] instead.', $params ? 'true' : 'false', $method);
             $params = ['force' => $params];
+        } elseif ($params === false) {
+            $params = [];
         }
 
         $resolver = new OptionsResolver();
