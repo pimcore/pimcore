@@ -877,8 +877,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     protected static function prepareGetByIdParams(/*array */$params, string $method): array
     {
         if(is_bool($params)) {
-            trigger_deprecation('pimcore/pimcore', '10.5', 'Using $force=%s on %s is deprecated, please use array-syntax [force=>true] instead.', $force ? 'true' : 'false', $method);
-            $params = ['force' => $force];
+            trigger_deprecation('pimcore/pimcore', '10.5', 'Using $force=%s on %s is deprecated, please use array-syntax [force=>true] instead.', $params ? 'true' : 'false', $method);
+            $params = ['force' => $params];
         }
 
         $resolver = new OptionsResolver();
