@@ -444,7 +444,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $object = new static();
             $object->getDao()->getByPath($path);
 
-            return static::getById($object->getId(), $force);
+            return static::getById($object->getId(), self::prepareGetByIdParams($force, __METHOD__, func_num_args()));
         } catch (Model\Exception\NotFoundException $e) {
             return null;
         }

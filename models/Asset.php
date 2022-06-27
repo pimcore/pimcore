@@ -187,8 +187,7 @@ class Asset extends Element\AbstractElement
         try {
             $asset = new static();
             $asset->getDao()->getByPath($path);
-
-            return static::getById($asset->getId(), $force);
+            return static::getById($asset->getId(), self::prepareGetByIdParams($force, __METHOD__, func_num_args()));
         } catch (NotFoundException $e) {
             return null;
         }
