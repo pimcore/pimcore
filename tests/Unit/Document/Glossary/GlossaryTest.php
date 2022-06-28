@@ -132,4 +132,24 @@ class GlossaryTest extends TestCase
 
         $this->assertSame($result, $expect);
     }
+
+    public function testGlossaryWithAnotherHtml()
+    {
+        $entry = new Glossary();
+        $entry->setText('hans');
+        $entry->setLink('/hans');
+        $entry->setLanguage('en');
+        $entry->save();
+
+        $result = $this->processor->parse(
+            '<p>hans &amp; gretl</p>', [],
+            'en',
+            null,
+            null
+        );
+
+        $expect = '<p><a class="pimcore_glossary" href="/hans">hans</a> &amp; gretl</p>';
+
+        $this->assertSame($result, $expect);
+    }
 }
