@@ -227,7 +227,7 @@ class Asset extends Element\AbstractElement
         $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
 
-        $params = self::prepareGetByIdParams($force, __METHOD__, func_num_args());
+        $params = Service::prepareGetByIdParams($force, __METHOD__, func_num_args() > 1);
 
         if (!$params['force'] && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
             $asset = \Pimcore\Cache\Runtime::get($cacheKey);

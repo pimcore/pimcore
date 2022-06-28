@@ -23,7 +23,6 @@ use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Model;
 use Pimcore\Model\Element\Traits\DirtyIndicatorTrait;
 use Pimcore\Model\User;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @method Model\Document\Dao|Model\Asset\Dao|Model\DataObject\AbstractObject\Dao getDao()
@@ -867,29 +866,5 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $myProperties = $this->getProperties();
         $inheritedProperties = $this->getDao()->getProperties(true);
         $this->setProperties(array_merge($inheritedProperties, $myProperties));
-    }
-
-    /**
-     * @internal
-     * @param bool|array $params
-     * @return array
-     */
-    protected static function prepareGetByIdParams(/*array */$params, string $method, int $numArgs): array
-    {
-        if(is_bool($params) && $numArgs > 1) {
-            trigger_deprecation('pimcore/pimcore', '10.5', 'Using $force=%s on %s is deprecated, please use array-syntax [force=>true] instead.', $params ? 'true' : 'false', $method);
-            $params = ['force' => $params];
-        } elseif ($params === false) {
-            $params = [];
-        }
-
-        $resolver = new OptionsResolver();
-        $resolver->setDefaults([
-            'force' => false,
-        ]);
-
-        $resolver->setAllowedTypes('force', 'bool');
-
-        return $resolver->resolve($params);
     }
 }

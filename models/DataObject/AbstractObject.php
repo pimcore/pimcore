@@ -373,7 +373,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
 
-        $params = self::prepareGetByIdParams($force, __METHOD__, func_num_args());
+        $params = Model\Element\Service::prepareGetByIdParams($force, __METHOD__, func_num_args() > 1);
 
         if (!$params['force'] && Runtime::isRegistered($cacheKey)) {
             $object = Runtime::get($cacheKey);
@@ -444,7 +444,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $object = new static();
             $object->getDao()->getByPath($path);
 
-            return static::getById($object->getId(), self::prepareGetByIdParams($force, __METHOD__, func_num_args()));
+            return static::getById($object->getId(), Model\Element\Service::prepareGetByIdParams($force, __METHOD__, func_num_args() > 1));
         } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
