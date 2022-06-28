@@ -186,8 +186,8 @@ class Processor
 
         $cacheKey = 'glossary_' . $locale . '_' . $siteId;
 
-        if (Cache\Runtime::isRegistered($cacheKey)) {
-            return Cache\Runtime::get($cacheKey);
+        if (Cache\RuntimeCache::isRegistered($cacheKey)) {
+            return Cache\RuntimeCache::get($cacheKey);
         }
 
         if (!$data = Cache::load($cacheKey)) {
@@ -200,7 +200,7 @@ class Processor
             $data = $this->prepareData($data);
 
             Cache::save($data, $cacheKey, ['glossary'], null, 995);
-            Cache\Runtime::set($cacheKey, $data);
+            Cache\RuntimeCache::set($cacheKey, $data);
         }
 
         return $data;

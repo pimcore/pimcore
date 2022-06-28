@@ -15,7 +15,10 @@
 
 namespace Pimcore\Tool;
 
+use Pimcore;
 use Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
+use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 
@@ -65,13 +68,13 @@ final class Frontend
     public static function getSiteForDocument($document)
     {
         $cacheKey = 'sites_full_list';
-        if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
-            $sites = \Pimcore\Cache\Runtime::get($cacheKey);
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            $sites = RuntimeCache::get($cacheKey);
         } else {
             $sites = new Site\Listing();
             $sites->setOrderKey('(SELECT LENGTH(path) FROM documents WHERE documents.id = sites.rootId) DESC', false);
             $sites = $sites->load();
-            \Pimcore\Cache\Runtime::set($cacheKey, $sites);
+            RuntimeCache::set($cacheKey, $sites);
         }
 
         foreach ($sites as $site) {
@@ -88,7 +91,7 @@ final class Frontend
      */
     public static function isOutputCacheEnabled()
     {
-        $cacheService = \Pimcore::getContainer()->get(FullPageCacheListener::class);
+        $cacheService = Pimcore::getContainer()->get(FullPageCacheListener::class);
 
         if ($cacheService->isEnabled()) {
             return [

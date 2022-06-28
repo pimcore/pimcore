@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
-use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\Event\WorkerMessageReceivedEvent;
 
@@ -38,6 +38,6 @@ class MessengerClearRuntimeCacheListener implements EventSubscriberInterface
 
     public function handle(WorkerMessageReceivedEvent $event)
     {
-        Runtime::clear();
+        RuntimeCache::clear();
     }
 }

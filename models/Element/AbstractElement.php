@@ -16,7 +16,7 @@
 namespace Pimcore\Model\Element;
 
 use Pimcore\Cache;
-use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\Model\ElementEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
@@ -859,8 +859,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         // add to registry to avoid infinite regresses in the following $this->getDao()->getProperties()
         $cacheKey = self::getCacheKey($this->getId());
-        if (!Runtime::isRegistered($cacheKey)) {
-            Runtime::set($cacheKey, $this);
+        if (!RuntimeCache::isRegistered($cacheKey)) {
+            RuntimeCache::set($cacheKey, $this);
         }
 
         $myProperties = $this->getProperties();

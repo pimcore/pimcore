@@ -117,12 +117,12 @@ class Notification extends AbstractModel
         $cacheKey = sprintf('notification_%d', $id);
 
         try {
-            $notification = Cache\Runtime::get($cacheKey);
+            $notification = Cache\RuntimeCache::get($cacheKey);
         } catch (\Exception $ex) {
             try {
                 $notification = new self();
                 $notification->getDao()->getById($id);
-                Cache\Runtime::set($cacheKey, $notification);
+                Cache\RuntimeCache::set($cacheKey, $notification);
             } catch (NotFoundException $e) {
                 $notification = null;
             }

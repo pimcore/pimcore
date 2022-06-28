@@ -68,6 +68,8 @@ final class Runtime extends RuntimeCache
      *   the value.
      * @param mixed $value The object to store in the ArrayObject.
      *
+     * @deprecated
+     *
      * @return void
      */
     public static function set($index, $value)
@@ -85,6 +87,8 @@ final class Runtime extends RuntimeCache
      * or FALSE if $index was not found in the registry.
      *
      * @param  string $index
+     *
+     * @deprecated
      *
      * @return bool
      */

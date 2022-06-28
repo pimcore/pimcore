@@ -94,7 +94,7 @@ final class WebsiteSetting extends AbstractModel
         $cacheKey = 'website_setting_' . $id;
 
         try {
-            $setting = \Pimcore\Cache\Runtime::get($cacheKey);
+            $setting = \Pimcore\Cache\RuntimeCache::get($cacheKey);
             if (!$setting) {
                 throw new \Exception('Website setting in registry is null');
             }
@@ -102,7 +102,7 @@ final class WebsiteSetting extends AbstractModel
             try {
                 $setting = new self();
                 $setting->getDao()->getById((int)$id);
-                \Pimcore\Cache\Runtime::set($cacheKey, $setting);
+                \Pimcore\Cache\RuntimeCache::set($cacheKey, $setting);
             } catch (NotFoundException $e) {
                 return null;
             }
