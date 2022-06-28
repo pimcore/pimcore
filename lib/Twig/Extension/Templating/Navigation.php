@@ -71,21 +71,7 @@ class Navigation implements RuntimeExtensionInterface
      */
     public function build(array $params): Container
     {
-        $optionsResolver = new OptionsResolver();
-        $optionsResolver->setDefaults([
-           'root' => null,
-           'htmlMenuPrefix' => null,
-           'pageCallback' => null,
-           'cache' => true,
-           'cacheLifetime' => null,
-           'maxDepth' => null,
-           'active' => null,
-        ]);
-
-        $options = $optionsResolver->resolve($params);
-
-        return $this->builder->getNavigation($options);
-
+        return $this->builder->getNavigation($params);
     }
 
     /**

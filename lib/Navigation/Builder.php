@@ -23,6 +23,7 @@ use Pimcore\Model\Site;
 use Pimcore\Navigation\Iterator\PrefixRecursiveFilterIterator;
 use Pimcore\Navigation\Page\Document as DocumentPage;
 use Pimcore\Navigation\Page\Url;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Builder
 {
@@ -56,6 +57,11 @@ class Builder
     private $navCacheTags = [];
 
     /**
+     * @var OptionsResolver
+     */
+    private $optionsResolver;
+
+    /**
      * @param RequestHelper $requestHelper
      * @param string|null $pageClass
      */
@@ -66,32 +72,73 @@ class Builder
         if (null !== $pageClass) {
             $this->pageClass = $pageClass;
         }
+
+        $this->optionsResolver = new OptionsResolver();
+        $this->configureOptions($this->optionsResolver);
     }
 
+    /**
+     * @param OptionsResolver $options
+     */
+    protected function configureOptions(OptionsResolver $options)
+    {
+        $options->setDefaults([
+            'root' => null,
+            'htmlMenuPrefix' => null,
+            'pageCallback' => null,
+            'cache' => true,
+            'cacheLifetime' => null,
+            'maxDepth' => null,
+            'active' => null,
+        ]);
+
+        $options->setAllowedTypes('root', [Document::class, 'null']);
+        $options->setAllowedTypes('htmlMenuPrefix', ['string', 'null']);
+        $options->setAllowedTypes('pageCallback', ['callable', 'null']);
+        $options->setAllowedTypes('cache', 'bool');
+        $options->setAllowedTypes('cacheLifetime', ['int', 'null']);
+        $options->setAllowedTypes('maxDepth', ['int', 'null']);
+        $options->setAllowedTypes('active', [Document::class, 'null']);
+    }
 
     /**
-     * @param array $params
+     * @param array $options
+     *
+     * @return array
+     */
+    protected function resolveOptions(array $options): array
+    {
+        return $this->optionsResolver->resolve($options);
+    }
+
+    /**
+     * @param array|Document|null $activeDocument
+     * @param Document|null $navigationRootDocument
+     * @param string|null $htmlMenuIdPrefix
+     * @param \Closure|null $pageCallback
+     * @param bool|string $cache
+     * @param int|null $maxDepth
+     * @param int|null $cacheLifetime
+     *
      * @return mixed|\Pimcore\Navigation\Container
      * @throws \Exception
      */
-
-    public function getNavigation (...$params)
+    public function getNavigation($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true, ?int $maxDepth = null, ?int $cacheLifetime = null)
     {
         //TODO Pimcore 11: remove the if(count($params) > 1) block BC layer
-        if (count ($params) > 1) {
-            trigger_deprecation ('pimcore/pimcore', '10.5', 'Calling Pimcore\Navigation\Builder::getNavigation() using extra arguments is deprecated and will be removed in Pimcore 11. Instead, specify the arguments as an array
+        if (count(func_get_args()) > 1) {
+            trigger_deprecation ('pimcore/pimcore', '10.5', 'Calling Pimcore\Navigation\Builder::getNavigation() using extra arguments is deprecated and will be removed in Pimcore 11.
+            Instead, specify the arguments as an array
             ');
-
-            list($activeDocument, $navigationRootDocument, $htmlMenuIdPrefix, $pageCallback, $cache, $maxDepth, $cacheLifetime) = $params;
         } else {
-
-            $activeDocument = $params[0]['active'];
-            $navigationRootDocument = $params[0]['root'];
-            $htmlMenuIdPrefix = $params[0]['htmlMenuPrefix'];
-            $pageCallback = $params[0]['pageCallback'];
-            $cache = $params[0]['cache'];
-            $maxDepth = $params[0]['maxDepth'];
-            $cacheLifetime = $params[0]['cacheLifetime'];
+            $params = $this->resolveOptions($activeDocument);
+            $activeDocument = $params['active'];
+            $navigationRootDocument = $params['root'];
+            $htmlMenuIdPrefix = $params['htmlMenuPrefix'];
+            $pageCallback = $params['pageCallback'];
+            $cache = $params['cache'];
+            $maxDepth = $params['maxDepth'];
+            $cacheLifetime = $params['cacheLifetime'];
         }
 
         $cacheEnabled = $cache !== false;
