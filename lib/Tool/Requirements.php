@@ -198,10 +198,10 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->update('__pimcore_req_check', [
+            $db->executeQuery('UPDATE __pimcore_req_check SET field = :field, alter_field = :alterField', [
                 'field' => uniqid(),
                 'alter_field' => uniqid(),
-            ], ['1' => '1']);
+            ]);
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -257,7 +257,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->delete('__pimcore_req_check', ['1' => '1']);
+            $db->executeQuery('DELETE FROM __pimcore_req_check');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
