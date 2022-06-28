@@ -39,7 +39,6 @@ $_ENV['PIMCORE_WRITE_TARGET_PREDEFINED_ASSET_METADATA'] = 'settings-store';
 $_ENV['PIMCORE_WRITE_TARGET_STATICROUTES'] = 'settings-store';
 $_ENV['PIMCORE_WRITE_TARGET_PERSPECTIVES'] = 'settings-store';
 $_ENV['PIMCORE_WRITE_TARGET_CUSTOM_VIEWS'] = 'settings-store';
-$_ENV['PIMCORE_WRITE_TARGET_OBJECT_CUSTOM_LAYOUTS'] = 'settings-store';
 
 include PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
 \Pimcore\Bootstrap::setProjectRoot();

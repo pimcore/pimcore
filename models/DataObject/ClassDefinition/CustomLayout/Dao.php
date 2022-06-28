@@ -15,51 +15,20 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
 
-use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Model;
 use Pimcore\Tool\Serialize;
-use Symfony\Component\Uid\Uuid as Uid;
-use Symfony\Component\Uid\UuidV4;
 
 /**
  * @internal
  *
  * @property \Pimcore\Model\DataObject\ClassDefinition\CustomLayout $model
  */
-class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
+class Dao extends Model\Dao\AbstractDao
 {
     /**
      * @var Model\DataObject\ClassDefinition\CustomLayout
      */
     protected $model;
-
-    public function configure()
-    {
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config');
-
-        // @deprecated legacy will be removed in Pimcore 11
-        $loadLegacyConfigCallback = function ($legacyRepo, &$dataSource) {
-            $file = PIMCORE_CUSTOMLAYOUT_DIRECTORY . '/custom_definition_'. $this->model->getId() .'.php';
-            if (is_file($file)) {
-                $content = @include $file;
-                if ($content instanceof Model\DataObject\ClassDefinition\CustomLayout) {
-                    $dataSource = LocationAwareConfigRepository::LOCATION_LEGACY;
-
-                    return $content;
-                }
-            }
-
-            return null;
-        };
-
-        parent::configure([
-            'containerConfig' => $config['objects']['custom_layout']['definitions'],
-            'settingsStoreScope' => 'pimcore_object_custom_layout',
-            'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_OBJECT_CUSTOM_LAYOUTS'] ?? PIMCORE_CONFIGURATION_DIRECTORY  . '/object-custom-layouts',
-            'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_OBJECT_CUSTOM_LAYOUTS',
-            'loadLegacyConfigCallback' => $loadLegacyConfigCallback,
-        ]);
-    }
 
     /**
      * @param string|null $id
@@ -68,52 +37,38 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      */
     public function getById($id = null)
     {
-        if ($id != null) {
-            $this->model->setId($id);
+        if (!$id) {
+            $id = $this->model->getId();
         }
 
-        $data = $this->getDataByName($this->model->getId());
+        $layoutRaw = $this->db->fetchRow('SELECT * FROM custom_layouts WHERE id = ?', [$id]);
 
-        if ($data instanceof Model\DataObject\ClassDefinition\CustomLayout) {
-            $this->assignVariablesToModel($data->getObjectVars());
+        if (!empty($layoutRaw['id'])) {
+            $this->assignVariablesToModel($layoutRaw);
+
+            $this->model->setLayoutDefinitions($this->getLayoutData());
         } else {
-            if ($data && $id != null) {
-                $data['id'] = $id;
-            }
-
-            if ($data && is_string($data['layoutDefinitions'] ?? null)) {
-                $data['layoutDefinitions'] = unserialize($data['layoutDefinitions']);
-            }
-
-            if (!empty($data['id'])) {
-                $this->assignVariablesToModel($data);
-            } else {
-                throw new Model\Exception\NotFoundException('Layout with ID ' . $id . " doesn't exist");
-            }
+            throw new Model\Exception\NotFoundException('Layout with ID ' . $id . " doesn't exist");
         }
     }
 
     /**
      * @param string $name
+     *
+     * @return mixed|null
      */
-    public function getByName($name)
+    public function getIdByName($name)
     {
-        $list = new Listing();
-        /** @var Model\DataObject\ClassDefinition\CustomLayout[] $definitions */
-        $definitions = array_values(array_filter($list->getLayoutDefinitions(), function ($item) use ($name) {
-            $return = true;
-            if ($name && $item->getName() != $name) {
-                $return = false;
+        $id = null;
+
+        try {
+            if (!empty($name)) {
+                $id = $this->db->fetchOne('SELECT id FROM custom_layouts WHERE name = ?', $name);
             }
-
-            return $return;
-        }));
-
-        if (count($definitions) && $definitions[0]->getId()) {
-            $this->assignVariablesToModel($definitions[0]->getObjectVars());
-        } else {
-            throw new Model\Exception\NotFoundException(sprintf('Predefined metadata config with name "%s" does not exist.', $name));
+        } catch (\Exception $e) {
         }
+
+        return $id;
     }
 
     /**
@@ -124,33 +79,63 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     public function getNameById($id)
     {
         $name = null;
-        $list = new Listing();
-        /** @var Model\DataObject\ClassDefinition\CustomLayout[] $definitions */
-        $definitions = array_values(array_filter($list->getLayoutDefinitions(), function ($item) use ($id) {
-            $return = true;
-            if ($id && $item->getId() != $id) {
-                $return = false;
+
+        try {
+            if (!empty($id)) {
+                $name = $this->db->fetchOne('SELECT name FROM custom_layouts WHERE id = ?', $id);
             }
-
-            return $return;
-        }));
-
-        if (count($definitions) && $definitions[0]->getId()) {
-            $name = $definitions[0]->getName();
+        } catch (\Exception $e) {
         }
 
         return $name;
     }
 
     /**
-     * @return UuidV4
+     * @param string $name
+     * @param string $classId
+     *
+     * @return string|null
+     */
+    public function getIdByNameAndClassId($name, $classId)
+    {
+        $id = null;
+
+        try {
+            if (!empty($name) && !empty($classId)) {
+                $id = $this->db->fetchOne('SELECT id FROM custom_layouts WHERE name = ? AND classId = ?', [$name, $classId]);
+            }
+        } catch (\Exception $e) {
+        }
+
+        return $id;
+    }
+
+    /**
+     * @return int
      */
     public function getNewId()
     {
-        $newId = Uid::v4();
+        $maxId = $this->db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM custom_layouts;');
+        $newId = $maxId ? $maxId + 1 : 1;
         $this->model->setId((string) $newId);
 
         return $newId;
+    }
+
+    /**
+     * @return Model\DataObject\ClassDefinition\Layout|null
+     */
+    protected function getLayoutData()
+    {
+        $file = PIMCORE_CUSTOMLAYOUT_DIRECTORY . '/custom_definition_'. $this->model->getId() .'.php';
+        if (is_file($file)) {
+            $layout = @include $file;
+            if ($layout instanceof Model\DataObject\ClassDefinition\CustomLayout) {
+                return $layout->getLayoutDefinitions();
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -158,72 +143,78 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @param string $classId
      *
-     * @return UuidV4
+     * @return int
      */
     public function getLatestIdentifier($classId)
     {
-        return Uid::v4();
+        $maxId = $this->db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM custom_layouts');
+
+        return $maxId ? $maxId + 1 : 1;
     }
 
     /**
-     * Save custom layout
+     * Save layout to database
+     *
+     * @param bool $isUpdate
      *
      * @throws \Exception
      */
-    public function save()
+    public function save($isUpdate = true)
     {
         if (!$this->model->getId()) {
-            $this->model->setId(Uid::v4());
+            $maxId = $this->db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM custom_layouts;');
+            $maxId = $maxId ? $maxId + 1 : 1;
+            $this->model->setId((string) $maxId);
         }
 
-        $ts = time();
-        if (!$this->model->getCreationDate()) {
-            $this->model->setCreationDate($ts);
+        if (!$isUpdate) {
+            $this->create();
+        } else {
+            $this->update();
         }
-        $this->model->setModificationDate($ts);
+    }
 
+    /**
+     * @throws \Exception
+     */
+    public function update()
+    {
+        $class = $this->model->getObjectVars();
         $data = [];
-        $allowedProperties = ['id', 'name', 'description', 'creationDate', 'modificationDate',
-            'userOwner', 'userModification', 'classId', 'default', 'layoutDefinitions', ];
-        $dataRaw = $this->model->getObjectVars();
-        foreach ($dataRaw as $key => $value) {
-            if (in_array($key, $allowedProperties)) {
+
+        foreach ($class as $key => $value) {
+            if (in_array($key, $this->getValidTableColumns('custom_layouts'))) {
                 if (is_array($value) || is_object($value)) {
                     $value = Serialize::serialize($value);
                 } elseif (is_bool($value)) {
                     $value = (int)$value;
                 }
-
                 $data[$key] = $value;
             }
         }
 
-        $this->saveData($this->model->getId(), $data);
+        $this->db->update('custom_layouts', $data, ['id' => $this->model->getId()]);
     }
 
     /**
-     * Deletes custom layout
+     * Create a new record for the object in database
+     */
+    public function create()
+    {
+        $this->db->insert('custom_layouts', ['id' => $this->model->getId(), 'name' => $this->model->getName(), 'classId' => $this->model->getClassId()]);
+
+        $this->model->setCreationDate(time());
+        $this->model->setModificationDate(time());
+
+        $this->update();
+    }
+
+    /**
+     * Deletes object from database
      */
     public function delete()
     {
-        $this->deleteData($this->model->getId());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function prepareDataStructureForYaml(string $id, $data)
-    {
-        return [
-            'pimcore' => [
-                'objects' => [
-                    'custom_layout' => [
-                        'definitions' => [
-                            $id => $data,
-                        ],
-                    ],
-                ],
-            ],
-        ];
+        $this->db->delete('custom_layouts', ['id' => $this->model->getId()]);
+        @unlink(PIMCORE_CUSTOMLAYOUT_DIRECTORY.'/custom_definition_'. $this->model->getId() .'.php');
     }
 }
