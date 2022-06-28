@@ -120,7 +120,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->query('CREATE TABLE __pimcore_req_check (
+            $db->executeQuery('CREATE TABLE __pimcore_req_check (
                   id int(11) NOT NULL AUTO_INCREMENT,
                   field varchar(190) DEFAULT NULL,
                   PRIMARY KEY (id)
@@ -138,7 +138,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->query('ALTER TABLE __pimcore_req_check ADD COLUMN alter_field varchar(190) NULL DEFAULT NULL');
+            $db->executeQuery('ALTER TABLE __pimcore_req_check ADD COLUMN alter_field varchar(190) NULL DEFAULT NULL');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -152,8 +152,8 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->query('CREATE INDEX field_alter_field ON __pimcore_req_check (field, alter_field);');
-            $db->query('DROP INDEX field_alter_field ON __pimcore_req_check;');
+            $db->executeQuery('CREATE INDEX field_alter_field ON __pimcore_req_check (field, alter_field);');
+            $db->executeQuery('DROP INDEX field_alter_field ON __pimcore_req_check;');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -167,7 +167,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->query('ALTER TABLE __pimcore_req_check ADD FULLTEXT INDEX `fulltextFieldIndex` (`field`)');
+            $db->executeQuery('ALTER TABLE __pimcore_req_check ADD FULLTEXT INDEX `fulltextFieldIndex` (`field`)');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -201,7 +201,7 @@ final class Requirements
             $db->update('__pimcore_req_check', [
                 'field' => uniqid(),
                 'alter_field' => uniqid(),
-            ], []);
+            ], ['1' => '1']);
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -215,7 +215,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->fetchAll('SELECT * FROM __pimcore_req_check');
+            $db->fetchAllAssociative('SELECT * FROM __pimcore_req_check');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -229,7 +229,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->query('CREATE OR REPLACE VIEW __pimcore_req_check_view AS SELECT * FROM __pimcore_req_check');
+            $db->executeQuery('CREATE OR REPLACE VIEW __pimcore_req_check_view AS SELECT * FROM __pimcore_req_check');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -243,7 +243,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->fetchAll('SELECT * FROM __pimcore_req_check_view');
+            $db->fetchAllAssociative('SELECT * FROM __pimcore_req_check_view');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -257,7 +257,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->delete('__pimcore_req_check', []);
+            $db->delete('__pimcore_req_check', ['1' => '1']);
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -271,7 +271,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->query('SHOW CREATE VIEW __pimcore_req_check_view');
+            $db->executeQuery('SHOW CREATE VIEW __pimcore_req_check_view');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -285,7 +285,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->query('SHOW CREATE TABLE __pimcore_req_check');
+            $db->executeQuery('SHOW CREATE TABLE __pimcore_req_check');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -299,7 +299,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->query('DROP VIEW __pimcore_req_check_view');
+            $db->executeQuery('DROP VIEW __pimcore_req_check_view');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -313,7 +313,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->query('DROP TABLE __pimcore_req_check');
+            $db->executeQuery('DROP TABLE __pimcore_req_check');
         } catch (\Exception $e) {
             $queryCheck = false;
         }
@@ -327,7 +327,7 @@ final class Requirements
         $queryCheck = true;
 
         try {
-            $db->query(
+            $db->executeQuery(
                 'WITH RECURSIVE counter AS (
                     SELECT 1 as n UNION ALL SELECT n + 1 FROM counter WHERE n < 10
                 )
