@@ -16,7 +16,6 @@
 namespace Pimcore\Maintenance\Tasks;
 
 use Doctrine\DBAL\Connection;
-use Pimcore\Db;
 use Pimcore\Maintenance\TaskInterface;
 
 /**

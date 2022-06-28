@@ -49,6 +49,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @deprecated
+     *
      * @param string $query
      * @param array $params
      * @param array $types
@@ -96,6 +97,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @deprecated
+     *
      * @param string $table
      * @param string $where
      *
@@ -107,6 +109,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @deprecated
+     *
      * @param string $table
      * @param array $data
      * @param string $where
@@ -119,6 +122,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @deprecated
+     *
      * @param string $sql
      * @param array|scalar $params
      * @param array $types
@@ -129,6 +133,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @deprecated
+     *
      * @param string $sql
      * @param array|scalar $params
      * @param array $types
@@ -153,6 +158,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @deprecated
+     *
      * @param string $sql
      * @param array $params
      * @param array $types
@@ -166,6 +172,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @deprecated
+     *
      * @param string $table
      * @param array $data
      *
@@ -184,6 +191,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @deprecated
+     *
      * @param string $text
      * @param mixed $value
      * @param string|null $type
@@ -195,6 +203,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @deprecated
+     *
      * @param string|array $ident
      * @param string $alias
      *
@@ -204,6 +213,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @deprecated
+     *
      * @param string $ident
      * @param string|null $alias
      *
@@ -213,6 +223,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @deprecated
+     *
      * @param string $sql
      * @param int $count
      * @param int $offset
@@ -223,6 +234,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @deprecated
+     *
      * @param string $sql
      * @param array $exclusions
      *
@@ -234,6 +246,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @deprecated
+     *
      * @param bool $autoQuoteIdentifiers
      *
      * @return void
@@ -242,6 +255,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @deprecated
+     *
      * @param string $statement
      * @param mixed[] $params
      * @param int[]|string[] $types
@@ -252,6 +266,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @deprecated
+     *
      * @param string $statement
      * @param mixed[] $params
      * @param int[]|string[] $types
@@ -262,6 +277,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @deprecated
+     *
      * @param string $statement
      * @param mixed[] $params
      * @param int $column
@@ -282,6 +298,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @deprecated
+     *
      * @param string $sql
      * @param mixed[] $params
      * @param int[]|string[] $types
@@ -302,6 +319,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @deprecated
+     *
      * @param string $table
      * @param string $idColumn
      * @param string $where
@@ -315,6 +333,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @deprecated
+     *
      * @param string $like
      *
      * @return string

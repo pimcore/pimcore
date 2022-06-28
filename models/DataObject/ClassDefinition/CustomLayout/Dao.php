@@ -104,7 +104,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             $return = true;
             if ($name && $item->getName() != $name) {
                 $return = false;
-
             }
 
             return $return;

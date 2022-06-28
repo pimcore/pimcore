@@ -15,7 +15,6 @@
 
 namespace Pimcore\Tool;
 
-use Doctrine\DBAL\Connection;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\File;
 use Pimcore\Image;
