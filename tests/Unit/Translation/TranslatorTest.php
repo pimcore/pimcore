@@ -219,5 +219,14 @@ class TranslatorTest extends TestCase
 
         $translations = $translations->getTranslations();
         $this->assertCount(1, $translations);
+
+        //test: Filter by languages
+        $translations = new Translation\Listing();
+        $translations->setDomain('messages');
+        $translations->setLanguages(['en', 'de']);
+
+        $translations = $translations->getTranslations();
+        $translationValues = $translations[0]->getTranslations();
+        $this->assertArrayNotHasKey('fr', array_keys($translationValues));
     }
 }
