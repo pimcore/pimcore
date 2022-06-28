@@ -17,6 +17,7 @@ namespace Pimcore\Model\DataObject\Localizedfield;
 
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Pimcore\Db;
+use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -236,7 +237,7 @@ class Dao extends Model\Dao\AbstractDao
                 if ((isset($params['newParent']) && $params['newParent']) || !isset($params['isUpdate']) || !$params['isUpdate'] || $this->model->isLanguageDirty(
                         $language
                     )) {
-                    $this->db->insertOrUpdate($storeTable, $insertData);
+                    Helper::insertOrUpdate($this->db, $storeTable, $insertData);
                 }
             } catch (TableNotFoundException $e) {
                 // if the table doesn't exist -> create it! deferred creation for object bricks ...
@@ -272,7 +273,7 @@ class Dao extends Model\Dao\AbstractDao
                 $oldData = [];
 
                 try {
-                    $oldData = $this->db->fetchRow($sql);
+                    $oldData = $this->db->fetchAssociative($sql);
                 } catch (TableNotFoundException $e) {
                     // if the table doesn't exist -> create it!
 
@@ -310,7 +311,7 @@ class Dao extends Model\Dao\AbstractDao
                         // we cannot DataObject\AbstractObject::setGetInheritedValues(true); and then $this->model->getLocalizedValue($key, $language)
                         // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
                         // so the data of the parent cannot be changed while this transaction is on progress
-                        $parentData = $this->db->fetchRow(
+                        $parentData = $this->db->fetchAssociative(
                             'SELECT * FROM '.$queryTable.' WHERE ooo_id = ? AND language = ? FOR UPDATE',
                             [$parentForInheritance->getId(), $language]
                         );
@@ -418,7 +419,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
 
                 $queryTable = $this->getQueryTableName().'_'.$language;
-                $this->db->insertOrUpdate($queryTable, $data);
+                Helper::insertOrUpdate($this->db, $queryTable, $data);
                 if ($inheritanceEnabled) {
                     $context = isset($params['context']) ? $params['context'] : [];
                     if ($context['containerType'] === 'objectbrick') {
@@ -566,19 +567,19 @@ class Dao extends Model\Dao\AbstractDao
                 throw new \Exception('no container type set');
             }
 
-            $sql = $this->db->quoteInto('src_id = ?', $objectId)." AND ownertype = 'localizedfield' AND "
-                .$this->db->quoteInto(
+            $sql = Helper::quoteInto($this->db, 'src_id = ?', $objectId)." AND ownertype = 'localizedfield' AND "
+                .Helper::quoteInto($this->db,
                     'ownername LIKE ?',
                     '/'.$context['containerType'].'~'.$containerName.'/'.$index.'/%'
                 ).$dirtyLanguageCondition;
 
-            $this->db->deleteWhere('object_relations_'.$object->getClassId(), $sql);
+            $this->db->executeStatement('DELETE FROM object_relations_'.$object->getClassId() . ' WHERE ' . $sql);
 
             return true;
         }
 
         $sql = 'ownertype = "localizedfield" AND ownername = "localizedfield" and src_id = '.$this->model->getObject()->getId().$dirtyLanguageCondition;
-        $this->db->deleteWhere('object_relations_'.$this->model->getObject()->getClassId(), $sql);
+        $this->db->executeStatement('DELETE FROM object_relations_'.$this->model->getObject()->getClassId() . ' WHERE ' . $sql);
 
         return false;
     }

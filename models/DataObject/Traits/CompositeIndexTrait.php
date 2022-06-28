@@ -15,12 +15,12 @@
 
 namespace Pimcore\Model\DataObject\Traits;
 
-use Pimcore\Db\ConnectionInterface;
+use Doctrine\DBAL\Connection;
 
 /**
  * @internal
  *
- * @property ConnectionInterface $db
+ * @property Connection $db
  */
 trait CompositeIndexTrait
 {

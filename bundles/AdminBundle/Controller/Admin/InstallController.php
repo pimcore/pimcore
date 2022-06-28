@@ -15,8 +15,8 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Db\ConnectionInterface;
 use Pimcore\Tool\Requirements;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,12 +34,12 @@ class InstallController extends AdminController
      * @Route("/check", name="pimcore_admin_install_check", methods={"GET", "POST"})
      *
      * @param Request $request
-     * @param ConnectionInterface $db
+     * @param Connection $db
      * @param Profiler|null $profiler
      *
      * @return Response
      */
-    public function checkAction(Request $request, ConnectionInterface $db, ?Profiler $profiler)
+    public function checkAction(Request $request, Connection $db, ?Profiler $profiler)
     {
         if ($profiler) {
             $profiler->disable();

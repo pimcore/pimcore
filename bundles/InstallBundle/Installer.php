@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\InstallBundle;
 
 use Doctrine\DBAL\Configuration;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
 use Doctrine\DBAL\DriverManager;
 use PDO;
@@ -25,8 +26,6 @@ use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
 use Pimcore\Config;
 use Pimcore\Console\Style\PimcoreStyle;
-use Pimcore\Db\Connection;
-use Pimcore\Db\ConnectionInterface;
 use Pimcore\Model\User;
 use Pimcore\Tool\AssetsInstaller;
 use Pimcore\Tool\Console;
@@ -170,7 +169,7 @@ class Installer
         return empty($this->dbCredentials);
     }
 
-    public function checkPrerequisites(ConnectionInterface $db = null): array
+    public function checkPrerequisites(Connection $db = null): array
     {
         $checks = array_merge(
             Requirements::checkFilesystem(),
@@ -567,6 +566,9 @@ class Installer
 
     public function setupDatabase(array $userCredentials, array $errors = []): array
     {
+        /**
+         * @var \Doctrine\DBAL\Connection $db
+         */
         $db = \Pimcore\Db::get();
         $db->query('SET FOREIGN_KEY_CHECKS=0;');
 

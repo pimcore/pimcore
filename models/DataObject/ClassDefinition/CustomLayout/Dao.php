@@ -104,6 +104,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             $return = true;
             if ($name && $item->getName() != $name) {
                 $return = false;
+
             }
 
             return $return;
@@ -124,7 +125,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     public function getNameById($id)
     {
         $name = null;
-
         $list = new Listing();
         /** @var Model\DataObject\ClassDefinition\CustomLayout[] $definitions */
         $definitions = array_values(array_filter($list->getLayoutDefinitions(), function ($item) use ($id) {

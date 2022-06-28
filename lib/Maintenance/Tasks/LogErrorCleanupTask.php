@@ -15,6 +15,7 @@
 
 namespace Pimcore\Maintenance\Tasks;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Db;
 use Pimcore\Maintenance\TaskInterface;
 
@@ -24,14 +25,14 @@ use Pimcore\Maintenance\TaskInterface;
 class LogErrorCleanupTask implements TaskInterface
 {
     /**
-     * @var Db\ConnectionInterface
+     * @var Connection
      */
     private $db;
 
     /**
-     * @param Db\ConnectionInterface $db
+     * @param Connection $db
      */
-    public function __construct(Db\ConnectionInterface $db)
+    public function __construct(Connection $db)
     {
         $this->db = $db;
     }
@@ -45,6 +46,6 @@ class LogErrorCleanupTask implements TaskInterface
         // it's allowed to store the IP for 7 days for security reasons (DoS, ...)
         $limit = time() - (6 * 86400);
 
-        $this->db->deleteWhere('http_error_log', 'date < '.$limit);
+        $this->db->executeStatement('DELETE FROM http_error_log WHERE `date` < :limit', [$limit]);
     }
 }

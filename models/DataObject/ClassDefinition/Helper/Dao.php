@@ -16,6 +16,7 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Pimcore\Db\Helper;
 use Pimcore\Model\DataObject;
 
 /**
@@ -56,8 +57,7 @@ trait Dao
                                 $columnName .= ',`fieldname`';
                             }
                         }
-                        $this->db->queryIgnoreError(
-                            'ALTER TABLE `'.$table.'` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName.'` ('.$columnName.');',
+                        Helper::queryIgnoreError($this->db, 'ALTER TABLE `'.$table.'` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName.'` ('.$columnName.');',
                             [UniqueConstraintViolationException::class]
                         );
                     }
@@ -72,8 +72,7 @@ trait Dao
                             $columnName .= ',`fieldname`';
                         }
                     }
-                    $this->db->queryIgnoreError(
-                        'ALTER TABLE `'.$table.'` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName.'` ('.$columnName.');',
+                    Helper::queryIgnoreError($this->db, 'ALTER TABLE `'.$table.'` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName.'` ('.$columnName.');',
                         [UniqueConstraintViolationException::class]
                     );
                 }
@@ -82,12 +81,12 @@ trait Dao
                     // multicolumn field
                     foreach ($columnType as $fkey => $fvalue) {
                         $columnName = $field->getName().'__'.$fkey;
-                        $this->db->queryIgnoreError('ALTER TABLE `'.$table.'` DROP INDEX `'. $prefix . $columnName.'`;');
+                        Helper::queryIgnoreError($this->db, 'ALTER TABLE `'.$table.'` DROP INDEX `'. $prefix . $columnName.'`;');
                     }
                 } else {
                     // single -column field
                     $columnName = $field->getName();
-                    $this->db->queryIgnoreError('ALTER TABLE `'.$table.'` DROP INDEX `'. $prefix . $columnName.'`;');
+                    Helper::queryIgnoreError($this->db, 'ALTER TABLE `'.$table.'` DROP INDEX `'. $prefix . $columnName.'`;');
                 }
             }
         }
@@ -187,7 +186,7 @@ trait Dao
         if (is_array($columnsToRemove) && count($columnsToRemove) > 0) {
             foreach ($columnsToRemove as $value) {
                 if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
-                    $this->db->queryIgnoreError('ALTER TABLE `'.$table.'` DROP INDEX `u_index_'. $value . '`;');
+                    Helper::queryIgnoreError($this->db, 'ALTER TABLE `'.$table.'` DROP INDEX `u_index_'. $value . '`;');
                 }
             }
             $this->resetValidTableColumnsCache($table);
