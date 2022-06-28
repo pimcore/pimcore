@@ -41,7 +41,7 @@ class Dao extends Model\Dao\AbstractDao
             $id = $this->model->getId();
         }
 
-        $layoutRaw = $this->db->fetchRow('SELECT * FROM custom_layouts WHERE id = ?', [$id]);
+        $layoutRaw = $this->db->fetchAssociative('SELECT * FROM custom_layouts WHERE id = ?', [$id]);
 
         if (!empty($layoutRaw['id'])) {
             $this->assignVariablesToModel($layoutRaw);
@@ -63,7 +63,7 @@ class Dao extends Model\Dao\AbstractDao
 
         try {
             if (!empty($name)) {
-                $id = $this->db->fetchOne('SELECT id FROM custom_layouts WHERE name = ?', $name);
+                $id = $this->db->fetchOne('SELECT id FROM custom_layouts WHERE name = ?', [$name]);
             }
         } catch (\Exception $e) {
         }
@@ -82,7 +82,7 @@ class Dao extends Model\Dao\AbstractDao
 
         try {
             if (!empty($id)) {
-                $name = $this->db->fetchOne('SELECT name FROM custom_layouts WHERE id = ?', $id);
+                $name = $this->db->fetchOne('SELECT name FROM custom_layouts WHERE id = ?', [$id]);
             }
         } catch (\Exception $e) {
         }
