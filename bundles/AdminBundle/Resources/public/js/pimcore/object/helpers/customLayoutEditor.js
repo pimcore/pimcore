@@ -996,8 +996,14 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                 }.bind(this)
 
             });
-        }.bind(this), function () {
-            Ext.MessageBox.alert(t("error"), t("error"));
+        }.bind(this), function (response) {
+            var data = Ext.decode(response.response.responseText);
+
+            if (data && data.nameAlreadyInUse) {
+                Ext.MessageBox.alert(t('error'), sprintf(t('name_already_in_use'), data.name));
+            } else {
+                Ext.MessageBox.alert(t("error"), t("error"));
+            }
         });
     },
 

@@ -556,29 +556,44 @@ class ClassController extends AdminController implements KernelControllerEventIn
     public function importCustomLayoutDefinitionAction(Request $request)
     {
         $success = false;
+        $responseContent = [];
         $json = file_get_contents($_FILES['Filedata']['tmp_name']);
         $importData = $this->decodeJson($json);
 
-        $customLayoutId = $request->get('id');
-        $customLayout = DataObject\ClassDefinition\CustomLayout::getById($customLayoutId);
-        if ($customLayout) {
-            try {
-                $layout = DataObject\ClassDefinition\Service::generateLayoutTreeFromArray($importData['layoutDefinitions'], true);
-                $customLayout->setLayoutDefinitions($layout);
-                $customLayout->setDescription($importData['description']);
-                if (!$customLayout->isWriteable()) {
-                    throw new ConfigWriteException();
-                }
-                $customLayout->save();
-                $success = true;
-            } catch (\Exception $e) {
-                Logger::error($e->getMessage());
+        $existingLayout = null;
+        if (isset($importData['name'])) {
+            $existingLayout = DataObject\ClassDefinition\CustomLayout::getByName($importData['name']);
+
+            if ($existingLayout instanceof DataObject\ClassDefinition\CustomLayout) {
+                $responseContent['nameAlreadyInUse'] = true;
             }
         }
 
-        $response = $this->adminJson([
-            'success' => $success,
-        ]);
+        if (!$existingLayout instanceof DataObject\ClassDefinition\CustomLayout) {
+            $customLayoutId = $request->get('id');
+            $customLayout = DataObject\ClassDefinition\CustomLayout::getById($customLayoutId);
+            if ($customLayout) {
+                try {
+                    $layout = DataObject\ClassDefinition\Service::generateLayoutTreeFromArray($importData['layoutDefinitions'], true);
+                    $customLayout->setLayoutDefinitions($layout);
+                    if (isset($importData['name']) === true) {
+                        $customLayout->setName($importData['name']);
+                    }
+                    $customLayout->setDescription($importData['description']);
+                    if (!$customLayout->isWriteable()) {
+                        throw new ConfigWriteException();
+                    }
+                    $customLayout->save();
+                    $success = true;
+                } catch (\Exception $e) {
+                    Logger::error($e->getMessage());
+                }
+            }
+
+            $responseContent['success'] = $success;
+        }
+
+        $response = $this->adminJson($responseContent);
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
@@ -706,6 +721,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
             if ($customLayout) {
                 $name = $customLayout->getName();
                 $customLayoutData = [
+                    'name' => $name,
                     'description' => $customLayout->getDescription(),
                     'layoutDefinitions' => $customLayout->getLayoutDefinitions(),
                     'default' => $customLayout->getDefault() ?: 0,
