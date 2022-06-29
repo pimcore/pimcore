@@ -319,16 +319,17 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                         var data = grid.getStore().getAt(rowIndex);
                         var id = data.data.id;
 
-                        //necessary for aborting all pending proxy requests
-                        //https://github.com/pimcore/pimcore/issues/11284
-                        this.relationsStore.getProxy().destroy();
-                        this.relationsStore.setProxy(this.getRelationsProxy());
-
-                        this.relationsGrid.hide();
-                        this.relationsPanel.disable();
-
                         Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('classificationstore_group'), data.data.name), function(btn) {
                             if (btn == 'yes') {
+
+                                //necessary for aborting all pending proxy requests
+                                //https://github.com/pimcore/pimcore/issues/11284
+                                this.relationsStore.getProxy().destroy();
+                                this.relationsStore.setProxy(this.getRelationsProxy());
+
+                                this.relationsGrid.hide();
+                                this.relationsPanel.disable();
+
                                 Ext.Ajax.request({
                                     url: Routing.generate('pimcore_admin_dataobject_classificationstore_deletegroup'),
                                     method: 'DELETE',
