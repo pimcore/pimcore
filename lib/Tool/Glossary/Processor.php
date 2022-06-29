@@ -137,7 +137,7 @@ class Processor
 
         $es->each(function ($parentNode, $i) use ($options, $data) {
             /** @var DomCrawler|null $parentNode */
-            $text = $parentNode->text();
+            $text = htmlentities($parentNode->text(), ENT_XML1);
             if (
                 $parentNode instanceof DomCrawler &&
                 !in_array((string)$parentNode->nodeName(), $this->blockedTags) &&
@@ -159,7 +159,7 @@ class Processor
                 if ($originalText !== $text) {
                     $domNode = $parentNode->getNode(0);
                     $fragment = $domNode->ownerDocument->createDocumentFragment();
-                    $fragment->appendXML(html_entity_decode($text));
+                    $fragment->appendXML($text);
                     $clone = $domNode->cloneNode();
                     $clone->appendChild($fragment);
                     $domNode->parentNode->replaceChild($clone, $domNode);
