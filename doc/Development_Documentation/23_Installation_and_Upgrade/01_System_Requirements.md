@@ -99,7 +99,7 @@ On Debian based systems, you can use the following command to install all requir
 - FFMPEG (>= 3)
 - Ghostscript (>= 9.16)
 - LibreOffice (>= 4.3)
-- wkhtmltopdf (>= 0.12)
+- wkhtmltopdf (>= 0.12) (deprecated)
 - Chromium/Chrome
 - xvfb
 - timeout (GNU core utils)
