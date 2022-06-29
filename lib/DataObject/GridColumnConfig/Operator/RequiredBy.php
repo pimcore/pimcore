@@ -73,7 +73,7 @@ final class RequiredBy extends AbstractOperator
             $result->value = $count;
         } else {
             $resultList = [];
-            $query = 'select * from dependencies where targettype = ? AND targetid = ' . $element->getId() . $typeCondition;
+            $query = 'select * from dependencies where targettype = ? AND targetid = ?'. $typeCondition;
             $dependencies = $db->fetchAll($query, [Service::getElementType($element), $element->getId()]);
             foreach ($dependencies as $dependency) {
                 $sourceType = $dependency['sourcetype'];
