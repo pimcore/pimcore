@@ -515,7 +515,7 @@ final class Translation extends AbstractModel
                     }
 
                     // call the garbage collector if memory consumption is > 100MB
-                    if (memory_get_usage() > 100000000) {
+                    if (memory_get_usage() > 100_000_000) {
                         \Pimcore::collectGarbage();
                     }
                 }
