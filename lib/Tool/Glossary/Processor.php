@@ -77,7 +77,20 @@ class Processor
      */
     public function process(string $content, array $options): string
     {
-        $data = $this->getData();
+        if ($this->editmodeResolver->isEditmode()) {
+            return $content;
+        }
+
+        $locale = $this->requestHelper->getMainRequest()->getLocale();
+        $currentDocument = $this->documentResolver->getDocument();
+        $uri = $this->requestHelper->getMainRequest()->getRequestUri();
+
+        return $this->parse($content, $options, $locale, $currentDocument, $uri);
+    }
+
+    public function parse(string $content, array $options, string $locale, ?Document $document, ?string $uri): string
+    {
+        $data = $this->getData($locale);
         if (empty($data)) {
             return $content;
         }
@@ -85,10 +98,6 @@ class Processor
         $options = array_merge([
             'limit' => -1,
         ], $options);
-
-        if ($this->editmodeResolver->isEditmode()) {
-            return $content;
-        }
 
         // why not using a simple str_ireplace(array(), array(), $subject) ?
         // because if you want to replace the terms "Donec vitae" and "Donec" you will get nested links, so the content
@@ -101,25 +110,21 @@ class Processor
             'replace' => [],
         ];
 
-        // get initial document from request (requested document, if it was a "document" request)
-        $currentDocument = $this->documentResolver->getDocument();
-        $currentUri = $this->requestHelper->getMainRequest()->getRequestUri();
-
         foreach ($data as $entry) {
-            if ($currentDocument && $currentDocument instanceof Document) {
+            if ($document instanceof Document) {
                 // check if the current document is the target link (id check)
-                if ($entry['linkType'] == 'internal' && $currentDocument->getId() == $entry['linkTarget']) {
+                if ($entry['linkType'] == 'internal' && $document->getId() == $entry['linkTarget']) {
                     continue;
                 }
 
                 // check if the current document is the target link (path check)
-                if ($currentDocument->getFullPath() == rtrim($entry['linkTarget'], ' /')) {
+                if ($document->getFullPath() == rtrim($entry['linkTarget'], ' /')) {
                     continue;
                 }
             }
 
             // check if the current URI is the target link (path check)
-            if ($currentUri == rtrim($entry['linkTarget'], ' /')) {
+            if ($uri === rtrim($entry['linkTarget'], ' /')) {
                 continue;
             }
 
@@ -132,7 +137,7 @@ class Processor
 
         $es->each(function ($parentNode, $i) use ($options, $data) {
             /** @var DomCrawler|null $parentNode */
-            $text = $parentNode->html();
+            $text = htmlentities($parentNode->text(), ENT_XML1);
             if (
                 $parentNode instanceof DomCrawler &&
                 !in_array((string)$parentNode->nodeName(), $this->blockedTags) &&
@@ -170,15 +175,12 @@ class Processor
     }
 
     /**
+     * @param string $locale
+     *
      * @return array
      */
-    private function getData(): array
+    private function getData(string $locale): array
     {
-        $locale = $this->requestHelper->getMainRequest()->getLocale();
-        if (!$locale) {
-            return [];
-        }
-
         $siteId = '';
         if (Site::isSiteRequest()) {
             $siteId = Site::getCurrentSite()->getId();
