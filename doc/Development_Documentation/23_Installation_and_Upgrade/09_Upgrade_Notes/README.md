@@ -1,7 +1,7 @@
 # Upgrade Notes
 
 ## 10.5.0
-- [Navigation Builder] Calling the method Pimcore\Navigation\Builder::getNavigation() using extra arguments is deprecated and will be removed in Pimcore 11. Instead of using the extra arguments, it is recommended to call the method using the params array. eg: Instead of calling getNavigation($activeDocument = null, $navigationRootDocument = null,..) use getNavigation($params)
+- [Navigation Builder] Calling the method `Pimcore\Navigation\Builder::getNavigation()` using extra arguments is deprecated and will be removed in Pimcore 11. Instead of using the extra arguments, it is recommended to call the method using the params array. eg: Instead of calling `getNavigation($activeDocument = null, $navigationRootDocument = null,..)` use `getNavigation($params)`
 - [Runtime Cache] The trait `\Pimcore\Cache\RuntimeCacheTrait` has been deprecated because of its ambiguous naming and usage of persisted cache along with the runtime object cache.
   It is recommended to use `\Pimcore\Cache\Runtime` instead of this trait. For persisted cache, please use `\Pimcore\Cache` instead.
 - [Sitemap] Pimcore is now also supporting Presta/Sitemap `^3.2` (which supports Symfony 6 and uses max level of PHPStan).
