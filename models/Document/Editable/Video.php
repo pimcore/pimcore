@@ -226,18 +226,18 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
             $path = $video->getFullPath();
         }
 
-        $this->allowedTypes = self::ALLOWED_TYPES;
+        $this->updateAllowedTypesFromConfig($this->getConfig());
 
         if (
-            isset($this->getConfig()['allowedTypes']) === true
-            && empty($this->getConfig()['allowedTypes']) === false
-            && empty(array_diff($this->getConfig()['allowedTypes'], self::ALLOWED_TYPES))
+            empty($this->type) === true
+            || in_array($this->type, $this->allowedTypes, true) === false
         ) {
-            $this->allowedTypes = $this->getConfig()['allowedTypes'];
-        }
+            // Set the first type in array as default selection for dropdown
+            $this->type = $this->allowedTypes[0];
 
-        if (empty($this->type) === true) {
-            $this->type = $this->allowedTypes[0]; // Set the first type in array as default selection for dropdown
+            // Reset "id" and "path" to prevent invalid references
+            $this->id   = '';
+            $path       = '';
         }
 
         $poster = Asset::getById($this->poster);
@@ -274,12 +274,18 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     public function frontend()
     {
         $inAdmin = false;
-        $args = func_get_args();
+        $args    = func_get_args();
         if (array_key_exists(0, $args)) {
             $inAdmin = $args[0];
         }
 
-        if (!$this->id || !$this->type) {
+        $this->updateAllowedTypesFromConfig($this->getConfig());
+
+        if (
+            empty($this->id) === true
+            || empty($this->type) === true
+            || in_array($this->type, $this->allowedTypes, true) === false
+        ) {
             return $this->getEmptyCode();
         } elseif ($this->type === self::TYPE_ASSET) {
             return $this->getAssetCode($inAdmin);
@@ -1015,6 +1021,19 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         $uid = 'video_' . uniqid();
 
         return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video"><div class="pimcore_editable_video_empty" id="' . $uid . '" style="width: ' . $this->getWidth() . 'px; height: ' . $this->getHeight() . 'px;"></div></div>';
+    }
+
+    private function updateAllowedTypesFromConfig(array $config): void {
+
+        $this->allowedTypes = self::ALLOWED_TYPES;
+
+        if (
+            isset($config['allowedTypes']) === true
+            && empty($config['allowedTypes']) === false
+            && empty(array_diff($config['allowedTypes'], self::ALLOWED_TYPES))
+        ) {
+            $this->allowedTypes = $config['allowedTypes'];
+        }
     }
 
     /**
