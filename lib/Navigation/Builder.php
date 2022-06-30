@@ -126,11 +126,10 @@ class Builder
      */
     public function getNavigation($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true, ?int $maxDepth = null, ?int $cacheLifetime = null)
     {
-        //TODO Pimcore 11: remove the if(count(func_get_args) > 1) block to remove the BC layer
-        if (count(func_get_args()) > 1) {
-            trigger_deprecation('pimcore/pimcore', '10.5', 'Calling Pimcore\Navigation\Builder::getNavigation() using extra arguments is deprecated and will be removed in Pimcore 11.
-            Instead, specify the arguments as an array
-            ');
+        //TODO Pimcore 11: remove the `if (func_num_args() > 1)` block to remove the BC layer
+        if (func_num_args() > 1) {
+            trigger_deprecation('pimcore/pimcore', '10.5', 'Calling Pimcore\Navigation\Builder::getNavigation() using extra arguments is deprecated and will be removed in Pimcore 11.' .
+            'Instead, specify the arguments as an array');
         } else {
             $params = $this->resolveOptions($activeDocument);
             $activeDocument = $params['active'];
