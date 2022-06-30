@@ -131,14 +131,15 @@ class Builder
             trigger_deprecation('pimcore/pimcore', '10.5', 'Calling Pimcore\Navigation\Builder::getNavigation() using extra arguments is deprecated and will be removed in Pimcore 11.' .
             'Instead, specify the arguments as an array');
         } else {
-            $params = $this->resolveOptions($activeDocument);
-            $activeDocument = $params['active'];
-            $navigationRootDocument = $params['root'];
-            $htmlMenuIdPrefix = $params['htmlMenuPrefix'];
-            $pageCallback = $params['pageCallback'];
-            $cache = $params['cache'];
-            $maxDepth = $params['maxDepth'];
-            $cacheLifetime = $params['cacheLifetime'];
+            [
+                'root' => $navigationRootDocument,
+                'htmlMenuPrefix' => $htmlMenuIdPrefix,
+                'pageCallback' => $pageCallback,
+                'cache' => $cache,
+                'cacheLifetime' => $cacheLifetime,
+                'maxDepth' => $maxDepth,
+                'active' => $activeDocument,
+            ] = $this->resolveOptions($activeDocument);
         }
 
         $cacheEnabled = $cache !== false;
