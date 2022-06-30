@@ -95,7 +95,7 @@ class Builder
         $options->setAllowedTypes('root', [Document::class, 'null']);
         $options->setAllowedTypes('htmlMenuPrefix', ['string', 'null']);
         $options->setAllowedTypes('pageCallback', ['callable', 'null']);
-        $options->setAllowedTypes('cache', 'bool');
+        $options->setAllowedTypes('cache', ['string', 'bool']);
         $options->setAllowedTypes('cacheLifetime', ['int', 'null']);
         $options->setAllowedTypes('maxDepth', ['int', 'null']);
         $options->setAllowedTypes('active', [Document::class, 'null']);
