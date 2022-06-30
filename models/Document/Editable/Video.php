@@ -27,8 +27,11 @@ use Pimcore\Tool;
 class Video extends Model\Document\Editable implements IdRewriterInterface
 {
     public const TYPE_ASSET = 'asset';
+
     public const TYPE_YOUTUBE = 'youtube';
+
     public const TYPE_VIMEO = 'vimeo';
+
     public const TYPE_DAILYMOTION = 'dailymotion';
 
     public const ALLOWED_TYPES = [
@@ -1023,8 +1026,8 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video"><div class="pimcore_editable_video_empty" id="' . $uid . '" style="width: ' . $this->getWidth() . 'px; height: ' . $this->getHeight() . 'px;"></div></div>';
     }
 
-    private function updateAllowedTypesFromConfig(array $config): void {
-
+    private function updateAllowedTypesFromConfig(array $config): void
+    {
         $this->allowedTypes = self::ALLOWED_TYPES;
 
         if (
