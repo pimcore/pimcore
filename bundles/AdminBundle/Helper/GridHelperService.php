@@ -113,12 +113,12 @@ class GridHelperService
                     if ($field instanceof Model\DataObject\ClassDefinition\Data) {
                         $mappedKey = 'cskey_' . $fieldName . '_' . $groupId . '_' . $keyid;
                         $featureJoins[] = ['fieldname' => $fieldName, 'groupId' => $groupId, 'keyId' => $keyid, 'language' => $language];
-                        if(isset($filter['value'])) {
+                        if (isset($filter['value'])) {
                             $featureCondition = $field->getFilterConditionExt(
                                 $filter['value'],
                                 $operator,
                                 [
-                                    'name' => $mappedKey,]
+                                    'name' => $mappedKey, ]
                             );
 
                             $featureConditions[$mappedKey] = $featureCondition;

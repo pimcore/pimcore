@@ -704,37 +704,35 @@ class GeneralTest extends AbstractClassificationStoreTest
 
         $list->setCondition("(o_path = '/tmp' OR o_path LIKE '/tmp/%') AND 1 = 1");
         $list->setLimit(25);
-        $list->setOffset("0");
+        $list->setOffset('0');
         $list->setGroupBy('oo_id');
-        $list->setOrder("ASC");
+        $list->setOrder('ASC');
 
         $featureJoins = [];
         $featureJoins[0] = [
-            "fieldname" => "teststore",
-            "groupId" => 1,
-            "keyId" => 1,
-            "language" => "default"
+            'fieldname' => 'teststore',
+            'groupId' => 1,
+            'keyId' => 1,
+            'language' => 'default',
         ];
         $featureJoins[1] = [
-            "fieldname" => "teststore",
-            "groupId" => 1,
-            "keyId" => 2,
-            "language" => "default"
+            'fieldname' => 'teststore',
+            'groupId' => 1,
+            'keyId' => 2,
+            'language' => 'default',
         ];
 
-
         $featureConditions = [
-            "cskey_teststore_1_1" => "`cskey_teststore_1_1` LIKE '%t%'",
-            "cskey_teststore_1_2" => "`cskey_teststore_1_2` LIKE '%t77%'"
+            'cskey_teststore_1_1' => "`cskey_teststore_1_1` LIKE '%t%'",
+            'cskey_teststore_1_2' => "`cskey_teststore_1_2` LIKE '%t77%'",
         ];
 
         $featureAndSlugFilters = [
-            "featureJoins" => $featureJoins,
-            "slugJoins" => [],
-            "featureConditions" => $featureConditions,
-            "slugConditions" => []
+            'featureJoins' => $featureJoins,
+            'slugJoins' => [],
+            'featureConditions' => $featureConditions,
+            'slugConditions' => [],
         ];
-
 
         $queryBuilder = Db::get()->createQueryBuilder();
 
@@ -746,25 +744,24 @@ class GeneralTest extends AbstractClassificationStoreTest
         $method = $this->getPrivateMethod($dao, 'applyListingParametersToQueryBuilder');
         $method->invokeArgs($dao, [$queryBuilder]);
 
-
         $expectedJoin0 = [
-            "joinType" => "left",
-            "joinTable" => "object_classificationstore_data_inheritance",
-            "joinAlias" => "cskey_teststore_1_1",
-            "joinCondition" => "(cskey_teststore_1_1.o_id = object_localized_inheritance_en.o_id and cskey_teststore_1_1.fieldname = 'teststore' and cskey_teststore_1_1.groupId=1 and cskey_teststore_1_1.keyId=1 and cskey_teststore_1_1.language = 'default')"
+            'joinType' => 'left',
+            'joinTable' => 'object_classificationstore_data_inheritance',
+            'joinAlias' => 'cskey_teststore_1_1',
+            'joinCondition' => "(cskey_teststore_1_1.o_id = object_localized_inheritance_en.o_id and cskey_teststore_1_1.fieldname = 'teststore' and cskey_teststore_1_1.groupId=1 and cskey_teststore_1_1.keyId=1 and cskey_teststore_1_1.language = 'default')",
         ];
 
         $expectedJoin1 = [
-            "joinType" => "left",
-            "joinTable" => "object_classificationstore_data_inheritance",
-            "joinAlias" => "cskey_teststore_1_2",
-            "joinCondition" => "(cskey_teststore_1_2.o_id = object_localized_inheritance_en.o_id and cskey_teststore_1_2.fieldname = 'teststore' and cskey_teststore_1_2.groupId=1 and cskey_teststore_1_2.keyId=2 and cskey_teststore_1_2.language = 'default')"
+            'joinType' => 'left',
+            'joinTable' => 'object_classificationstore_data_inheritance',
+            'joinAlias' => 'cskey_teststore_1_2',
+            'joinCondition' => "(cskey_teststore_1_2.o_id = object_localized_inheritance_en.o_id and cskey_teststore_1_2.fieldname = 'teststore' and cskey_teststore_1_2.groupId=1 and cskey_teststore_1_2.keyId=2 and cskey_teststore_1_2.language = 'default')",
         ];
 
         $selectParts = $queryBuilder->getQueryPart('select');
 
-        $this->assertTrue(in_array( "cskey_teststore_1_1.value AS cskey_teststore_1_1", $selectParts));
-        $this->assertTrue(in_array( "cskey_teststore_1_2.value AS cskey_teststore_1_2", $selectParts));
+        $this->assertTrue(in_array('cskey_teststore_1_1.value AS cskey_teststore_1_1', $selectParts));
+        $this->assertTrue(in_array('cskey_teststore_1_2.value AS cskey_teststore_1_2', $selectParts));
 
         $joins = $queryBuilder->getQueryPart('join')['object_localized_inheritance_en'];
 
@@ -774,10 +771,11 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals("`cskey_teststore_1_1` LIKE '%t%' AND `cskey_teststore_1_2` LIKE '%t77%'", $queryBuilder->getQueryPart('having')->__toString());
     }
 
-    public function getPrivateMethod( mixed $className, string $methodName ): \ReflectionMethod {
-        $reflector = new \ReflectionClass( $className );
-        $method = $reflector->getMethod( $methodName );
-        $method->setAccessible( true );
+    public function getPrivateMethod(mixed $className, string $methodName): \ReflectionMethod
+    {
+        $reflector = new \ReflectionClass($className);
+        $method = $reflector->getMethod($methodName);
+        $method->setAccessible(true);
 
         return $method;
     }
