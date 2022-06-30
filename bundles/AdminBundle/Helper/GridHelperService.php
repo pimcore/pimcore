@@ -113,14 +113,16 @@ class GridHelperService
                     if ($field instanceof Model\DataObject\ClassDefinition\Data) {
                         $mappedKey = 'cskey_' . $fieldName . '_' . $groupId . '_' . $keyid;
                         $featureJoins[] = ['fieldname' => $fieldName, 'groupId' => $groupId, 'keyId' => $keyid, 'language' => $language];
-                        $featureCondition = $field->getFilterConditionExt(
-                            $filter['value'],
-                            $operator,
-                            [
-                                'name' => $mappedKey, ]
-                        );
+                        if(isset($filter['value'])) {
+                            $featureCondition = $field->getFilterConditionExt(
+                                $filter['value'],
+                                $operator,
+                                [
+                                    'name' => $mappedKey,]
+                            );
 
-                        $featureConditions[$mappedKey] = $featureCondition;
+                            $featureConditions[$mappedKey] = $featureCondition;
+                        }
                     }
                 } elseif (count($keyParts) > 1) {
                     $brickType = $keyParts[0];
@@ -419,7 +421,7 @@ class GridHelperService
                     $alreadyJoined[$mappedKey] = 1;
 
                     $table = $me->getDao()->getTableName();
-                    $select->addSelect('value AS ' . $mappedKey);
+                    $select->addSelect($mappedKey . '.value AS ' . $mappedKey);
                     $select->leftJoin(
                         $table,
                         'object_classificationstore_data_' . $class->getId(),
