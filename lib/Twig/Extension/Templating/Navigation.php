@@ -27,7 +27,6 @@ use Pimcore\Twig\Extension\Templating\Navigation\Exception\InvalidRendererExcept
 use Pimcore\Twig\Extension\Templating\Navigation\Exception\RendererNotFoundException;
 use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Twig\Extension\RuntimeExtensionInterface;
 
 /**
