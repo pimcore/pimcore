@@ -22,7 +22,7 @@ use Pimcore\Model;
  *
  * @property \Pimcore\Model\DataObject\ClassDefinition\CustomLayout\Listing $model
  */
-class Dao extends Model\Listing\Dao\AbstractDao
+class Dao extends Model\DataObject\ClassDefinition\CustomLayout\Dao
 {
     /**
      * Loads a list of custom layouts for the specified parameters, returns an array of DataObject\ClassDefinition\CustomLayout elements
@@ -33,10 +33,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $layouts = [];
 
-        $layoutsRaw = $this->db->fetchCol('SELECT id FROM custom_layouts' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
-
-        foreach ($layoutsRaw as $classRaw) {
-            $customLayout = Model\DataObject\ClassDefinition\CustomLayout::getById($classRaw);
+        foreach ($this->loadIdList() as $id) {
+            $customLayout = Model\DataObject\ClassDefinition\CustomLayout::getById($id);
             if ($customLayout) {
                 $layouts[] = $customLayout;
             }
@@ -53,9 +51,41 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount()
     {
         try {
-            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM custom_layouts ' . $this->getCondition(), $this->model->getConditionVariables());
+            return count($this->loadIdList());
         } catch (\Exception $e) {
             return 0;
         }
+    }
+
+    /**
+     * @TODO remove in Pimcore 11
+     *
+     * @return array
+     */
+    protected function loadIdList(): array
+    {
+        $list = parent::loadIdList();
+
+        return array_merge($list, array_keys($this->loadLegacyConfigs()));
+    }
+
+    /**
+     * @TODO remove in Pimcore 11
+     *
+     * @return array
+     */
+    private function loadLegacyConfigs(): array
+    {
+        $files = glob(PIMCORE_CUSTOMLAYOUT_DIRECTORY . '/*.php');
+
+        $layouts = [];
+        foreach ($files as $file) {
+            $layout = @include $file;
+            if ($layout instanceof Model\DataObject\ClassDefinition\CustomLayout) {
+                $layouts[$layout->getId()] = $layout->getObjectVars();
+            }
+        }
+
+        return $layouts;
     }
 }

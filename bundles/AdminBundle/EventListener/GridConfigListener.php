@@ -62,7 +62,7 @@ class GridConfigListener implements EventSubscriberInterface
 
         // collect gridConfigs for that class id
         $db = Db::get();
-        $gridConfigIds = $db->fetchCol('select id from gridconfigs where classId = ?', $classId);
+        $gridConfigIds = $db->fetchFirstColumn('select id from gridconfigs where classId = ?', [$classId]);
         if ($gridConfigIds) {
             $db->query('delete from gridconfig_shares where gridConfigId in (' . implode($gridConfigIds) . ')');
         }
@@ -81,7 +81,7 @@ class GridConfigListener implements EventSubscriberInterface
 
         $db = Db::get();
 
-        $gridConfigIds = $db->fetchCol('select id from gridconfigs where ownerId = ' . $userId);
+        $gridConfigIds = $db->fetchFirstColumn('select id from gridconfigs where ownerId = ' . $userId);
         if ($gridConfigIds) {
             $db->query('delete from gridconfig_shares where gridConfigId in (' . implode($gridConfigIds) . ')');
         }

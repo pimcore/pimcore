@@ -15,9 +15,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql;
 
+use Doctrine\DBAL\Connection;
 use Monolog\Logger;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
+use Pimcore\Db\ConnectionInterface;
 
 /**
  * @internal
@@ -25,7 +27,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductList
 class Dao
 {
     /**
-     * @var \Pimcore\Db\ConnectionInterface
+     * @var ConnectionInterface|Connection
      */
     private $db;
 
@@ -127,7 +129,7 @@ class Dao
                 . $condition . ' GROUP BY ' . $this->db->quoteIdentifier($fieldname);
 
             $this->logger->info('Query: ' . $query);
-            $result = $this->db->fetchCol($query);
+            $result = $this->db->fetchFirstColumn($query);
             $this->logger->info('Query done.');
 
             return $result;
@@ -175,7 +177,7 @@ class Dao
             $query .= ' AND src IN (' . $subquery . ') GROUP BY dest';
 
             $this->logger->info('Query: ' . $query);
-            $result = $this->db->fetchCol($query);
+            $result = $this->db->fetchFirstColumn($query);
             $this->logger->info('Query done.');
 
             return $result;
@@ -249,13 +251,13 @@ class Dao
             $query = 'SELECT ' . $fieldString . ' FROM ' . $this->model->getCurrentTenantConfig()->getTablename() . ' a WHERE a.o_id = ?;';
 
             $this->logger->info('Query: ' . $query);
-            $objectValues = $this->db->fetchRow($query, $objectId);
+            $objectValues = $this->db->fetchAssociative($query, [$objectId]);
             $this->logger->info('Query done.');
 
             $query = 'SELECT ' . $maxFieldString . ' FROM ' . $this->model->getCurrentTenantConfig()->getTablename() . ' a';
 
             $this->logger->info('Query: ' . $query);
-            $maxObjectValues = $this->db->fetchRow($query);
+            $maxObjectValues = $this->db->fetchAssociative($query);
             $this->logger->info('Query done.');
 
             if (!empty($objectValues)) {

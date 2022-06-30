@@ -111,7 +111,7 @@ class AssetHelperController extends AdminController
                     where (c1.searchType = ' . $db->quote($searchType) . ' and ((c1.id = s.gridConfigId and s.sharedWithUserId IN (' . $userIds . '))) and c1.classId = ' . $db->quote($classId) . ')
                             UNION distinct select c2.id from gridconfigs c2 where shareGlobally = 1 and c2.classId = '. $db->quote($classId) . '  and c2.ownerId != ' . $db->quote($user->getId());
 
-        $ids = $db->fetchCol($query);
+        $ids = $db->fetchFirstColumn($query);
 
         if ($ids) {
             $ids = implode(',', $ids);

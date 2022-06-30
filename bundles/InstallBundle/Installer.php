@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\InstallBundle;
 
 use Doctrine\DBAL\Configuration;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
 use Doctrine\DBAL\DriverManager;
 use PDO;
@@ -25,8 +26,6 @@ use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
 use Pimcore\Config;
 use Pimcore\Console\Style\PimcoreStyle;
-use Pimcore\Db\Connection;
-use Pimcore\Db\ConnectionInterface;
 use Pimcore\Model\User;
 use Pimcore\Tool\AssetsInstaller;
 use Pimcore\Tool\Console;
@@ -119,7 +118,6 @@ class Installer
         'setup_database' => 'Running database setup...',
         'install_assets' => 'Installing assets...',
         'install_classes' => 'Installing classes ...',
-        'install_custom_layouts' => 'Installing custom layouts ...',
         'migrations' => 'Marking all migrations as done ...',
         'complete' => 'Install complete!',
     ];
@@ -171,7 +169,7 @@ class Installer
         return empty($this->dbCredentials);
     }
 
-    public function checkPrerequisites(ConnectionInterface $db = null): array
+    public function checkPrerequisites(Connection $db = null): array
     {
         $checks = array_merge(
             Requirements::checkFilesystem(),
@@ -301,7 +299,6 @@ class Installer
             'host' => 'localhost',
             'port' => 3306,
             'driver' => 'pdo_mysql',
-            'wrapperClass' => Connection::class,
         ];
 
         // do not handle parameters if db credentials are set via config
@@ -414,9 +411,6 @@ class Installer
         $this->dispatchStepEvent('install_classes');
         $this->installClasses();
 
-        $this->dispatchStepEvent('install_custom_layouts');
-        $this->installCustomLayouts();
-
         $this->dispatchStepEvent('migrations');
         $this->markMigrationsAsDone();
 
@@ -490,14 +484,6 @@ class Installer
             'pimcore:deployment:classes-rebuild',
             '-c',
         ], 'Installing class definitions');
-    }
-
-    private function installCustomLayouts()
-    {
-        $this->runCommand([
-            'pimcore:deployment:custom-layouts-rebuild',
-            '-c',
-        ], 'Installing custom layout definitions');
     }
 
     private function installAssets(KernelInterface $kernel)
@@ -579,6 +565,9 @@ class Installer
 
     public function setupDatabase(array $userCredentials, array $errors = []): array
     {
+        /**
+         * @var \Doctrine\DBAL\Connection $db
+         */
         $db = \Pimcore\Db::get();
         $db->query('SET FOREIGN_KEY_CHECKS=0;');
 

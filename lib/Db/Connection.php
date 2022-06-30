@@ -15,6 +15,9 @@
 
 namespace Pimcore\Db;
 
+/**
+ * @deprecated will be removed in Pimcore 11
+ */
 class Connection extends \Doctrine\DBAL\Connection implements ConnectionInterface
 {
     use PimcoreExtensionsTrait;

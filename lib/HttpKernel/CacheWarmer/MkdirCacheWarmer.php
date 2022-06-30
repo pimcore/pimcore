@@ -54,16 +54,19 @@ class MkdirCacheWarmer implements CacheWarmerInterface
         $directories = [
             // var
             PIMCORE_CLASS_DIRECTORY,
-            PIMCORE_CLASS_DEFINITION_DIRECTORY,
             PIMCORE_CONFIGURATION_DIRECTORY,
-            PIMCORE_CUSTOMLAYOUT_DIRECTORY,
             PIMCORE_LOG_DIRECTORY,
-            PIMCORE_LOG_MAIL_PERMANENT,
+            PIMCORE_LOG_FILEOBJECT_DIRECTORY,
             PIMCORE_SYSTEM_TEMP_DIRECTORY,
         ];
 
+        // Since #12392, PIMCORE_CLASS_DEFINITION_WRITABLE = 0 doesn't allow creation in var/classes but is allowed when not set or 1.
+        if (true == ($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? true)) {
+            $directories[] = PIMCORE_CLASS_DEFINITION_DIRECTORY;
+        }
+
         $fs = new Filesystem();
-        foreach ($directories as $directory) {
+        foreach (array_unique($directories) as $directory) {
             if (!$fs->exists($directory)) {
                 $fs->mkdir($directory, $this->mode);
             }

@@ -76,7 +76,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function loadIdList()
     {
         $queryBuilder = $this->getQueryBuilder(['assets.id']);
-        $assetIds = $this->db->fetchCol((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $assetIds = $this->db->fetchFirstColumn((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return array_map('intval', $assetIds);
     }

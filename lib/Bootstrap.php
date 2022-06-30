@@ -208,7 +208,6 @@ class Bootstrap
         $resolveConstant('PIMCORE_CLASS_DEFINITION_DIRECTORY', PIMCORE_CLASS_DIRECTORY);
         $resolveConstant('PIMCORE_CUSTOMLAYOUT_DIRECTORY', PIMCORE_CLASS_DEFINITION_DIRECTORY . '/customlayouts');
         $resolveConstant('PIMCORE_SYSTEM_TEMP_DIRECTORY', PIMCORE_PRIVATE_VAR . '/tmp');
-        $resolveConstant('PIMCORE_LOG_MAIL_PERMANENT', PIMCORE_PRIVATE_VAR . '/email');
 
         // configure PHP's error logging
         $resolveConstant('PIMCORE_PHP_ERROR_LOG', PIMCORE_LOG_DIRECTORY . '/php.log');

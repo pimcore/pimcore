@@ -26,9 +26,19 @@ use Pimcore\Normalizer\NormalizerInterface;
 
 class QuantityValue extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
+    use Extension\ColumnType {
+        getColumnType as public genericGetColumnType;
+
+    }
+    use Extension\QueryColumnType {
+        getQueryColumnType as public genericGetQueryColumnType;
+
+    }
     use Model\DataObject\Traits\DefaultValueTrait;
+
+    const DECIMAL_SIZE_DEFAULT = 64;
+
+    const DECIMAL_PRECISION_DEFAULT = 0;
 
     /**
      * Static type of this element
@@ -56,7 +66,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @internal
      *
-     * @var float|null
+     * @var float|int|string|null
      */
     public $defaultValue;
 
@@ -77,7 +87,56 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @internal
      *
-     * @var int
+     * @var bool
+     */
+    public $integer = false;
+
+    /**
+     * @internal
+     *
+     * @var bool
+     */
+    public $unsigned = false;
+
+    /**
+     * @internal
+     *
+     * @var float|null
+     */
+    public $minValue;
+
+    /**
+     * @internal
+     *
+     * @var float|null
+     */
+    public $maxValue;
+
+    /**
+     * @internal
+     *
+     * @var bool
+     */
+    public $unique;
+
+    /**
+     * This is the x part in DECIMAL(x, y) and denotes the total amount of digits. In MySQL this is called precision
+     * but as decimalPrecision already existed to denote the amount of digits after the point (as it is called on the ExtJS
+     * number field), decimalSize was chosen instead.
+     *
+     * @internal
+     *
+     * @var int|null
+     */
+    public $decimalSize;
+
+    /**
+     * This is the y part in DECIMAL(x, y) and denotes amount of digits after a comma. In MySQL this is called scale. See
+     * comment on decimalSize.
+     *
+     * @internal
+     *
+     * @var int|null
      */
     public $decimalPrecision;
 
@@ -151,26 +210,24 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @return float|null
+     * @return float|int|string|null
      */
     public function getDefaultValue()
     {
-        // Default values such as "0" and "0.0" should be accepted and returned as float,
-        // while empty strings and nulls should not
-        if (is_numeric($this->defaultValue)) {
-            return (float) $this->defaultValue;
+        if ($this->defaultValue !== null) {
+            return $this->toNumeric($this->defaultValue);
         }
 
         return null;
     }
 
     /**
-     * @param float|null $defaultValue
+     * @param float|int|string|null $defaultValue
      */
     public function setDefaultValue($defaultValue)
     {
-        if (is_numeric($defaultValue)) {
-            $this->defaultValue = (float) $defaultValue;
+        if ((string)$defaultValue !== '') {
+            $this->defaultValue = $defaultValue;
         } else {
             $this->defaultValue = null;
         }
@@ -209,7 +266,103 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @return int
+     * @param bool $integer
+     */
+    public function setInteger($integer)
+    {
+        $this->integer = $integer;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getInteger()
+    {
+        return $this->integer;
+    }
+
+    /**
+     * @param float|null $maxValue
+     */
+    public function setMaxValue($maxValue)
+    {
+        $this->maxValue = $maxValue;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getMaxValue()
+    {
+        return $this->maxValue;
+    }
+
+    /**
+     * @param float|null $minValue
+     */
+    public function setMinValue($minValue)
+    {
+        $this->minValue = $minValue;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getMinValue()
+    {
+        return $this->minValue;
+    }
+
+    /**
+     * @param bool $unsigned
+     */
+    public function setUnsigned($unsigned)
+    {
+        $this->unsigned = $unsigned;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getUnsigned()
+    {
+        return $this->unsigned;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getDecimalSize()
+    {
+        return $this->decimalSize;
+    }
+
+    /**
+     * @param int|null $decimalSize
+     */
+    public function setDecimalSize($decimalSize)
+    {
+        if (!is_numeric($decimalSize)) {
+            $decimalSize = null;
+        }
+
+        $this->decimalSize = $decimalSize;
+    }
+
+    /**
+     * @param int|null $decimalPrecision
+     */
+    public function setDecimalPrecision($decimalPrecision)
+    {
+        if (!is_numeric($decimalPrecision)) {
+            $decimalPrecision = null;
+        }
+
+        $this->decimalPrecision = $decimalPrecision;
+    }
+
+    /**
+     * @return int|null
      */
     public function getDecimalPrecision()
     {
@@ -217,11 +370,19 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param int $decimalPrecision
+     * @return bool
      */
-    public function setDecimalPrecision($decimalPrecision)
+    public function getUnique()
     {
-        $this->decimalPrecision = $decimalPrecision;
+        return $this->unique;
+    }
+
+    /**
+     * @param bool $unique
+     */
+    public function setUnique($unique)
+    {
+        $this->unique = $unique;
     }
 
     /**
@@ -238,6 +399,101 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public function setAutoConvert($autoConvert)
     {
         $this->autoConvert = (bool)$autoConvert;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getColumnType()
+    {
+        if ($this->getInteger()) {
+            return [
+                'value' => 'bigint(20)',
+                'unit' => 'varchar(64)',
+            ];
+        }
+
+        if ($this->isDecimalType()) {
+            return [
+                'value' => $this->buildDecimalColumnType(),
+                'unit' => 'varchar(64)',
+            ];
+        }
+
+        return $this->genericGetColumnType();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getQueryColumnType()
+    {
+        if ($this->getInteger()) {
+            return [
+                'value' => 'bigint(20)',
+                'unit' => 'varchar(64)',
+            ];
+        }
+
+        if ($this->isDecimalType()) {
+            return [
+                'value' => $this->buildDecimalColumnType(),
+                'unit' => 'varchar(64)',
+            ];
+        }
+
+        return $this->genericGetQueryColumnType();
+    }
+
+    /**
+     * @return bool
+     */
+    private function isDecimalType(): bool
+    {
+        return null !== $this->getDecimalSize() || null !== $this->getDecimalPrecision();
+    }
+
+    /**
+     * @return string
+     */
+    private function buildDecimalColumnType(): string
+    {
+        // decimalPrecision already existed in earlier versions to denote the amount of digits after the
+        // comma (and is used in ExtJS). To avoid migrations, decimalSize was chosen to denote the total amount
+        // of supported digits despite the confusing naming.
+        //
+        // The two properties used in the class definition translate to the following MySQL naming:
+        //
+        // DECIMAL(precision, scale) = DECIMAL(decimalSize, decimalPrecision)
+
+        // these are named after what MySQL expects - DECIMAL(precision, scale)
+        $precision = self::DECIMAL_SIZE_DEFAULT;
+        $scale = self::DECIMAL_PRECISION_DEFAULT;
+
+        if (null !== $this->decimalSize) {
+            $precision = (int)$this->decimalSize;
+        }
+
+        if (null !== $this->decimalPrecision) {
+            $scale = (int)$this->decimalPrecision;
+        }
+
+        if ($precision < 1 || $precision > 65) {
+            throw new \InvalidArgumentException('Decimal precision must be a value between 1 and 65');
+        }
+
+        if ($scale < 0 || $scale > 30 || $scale > $precision) {
+            throw new \InvalidArgumentException('Decimal scale must be a value between 0 and 30');
+        }
+
+        if ($scale > $precision) {
+            throw new \InvalidArgumentException(sprintf(
+                'Decimal scale can\'t be larger than precision (%d)',
+                $precision
+            ));
+        }
+
+        return sprintf('DECIMAL(%d, %d)', $precision, $scale);
     }
 
     /**
@@ -278,8 +534,12 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if ($data[$this->getName() . '__value'] !== null || $data[$this->getName() . '__unit']) {
-            $value = $data[$this->getName() . '__value'];
-            $quantityValue = new Model\DataObject\Data\QuantityValue($value !== null ? (float)$value : null, $data[$this->getName() . '__unit']);
+            if (!is_numeric($data[$this->getName() . '__value'])) {
+                $value = $this->toNumeric($data[$this->getName() . '__value']);
+            } else {
+                $value = $data[$this->getName() . '__value'];
+            }
+            $quantityValue = new Model\DataObject\Data\QuantityValue((float) $value, $data[$this->getName() . '__unit']);
 
             if (isset($params['owner'])) {
                 $quantityValue->_setOwner($params['owner']);
@@ -393,19 +653,46 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
-        if ($omitMandatoryCheck) {
-            return;
-        }
-
-        if ($this->getMandatory() &&
-            ($data === null || $data->getValue() === null || $data->getUnitId() === null)) {
+        if (
+            !$omitMandatoryCheck
+            && $this->getMandatory()
+            && ($data === null || $data->getValue() === null || $data->getUnitId() === null)
+        ) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
-        if (!empty($data)) {
+        if ($data !== null && !$this->isEmpty($data->getValue()) && !is_numeric($data->getValue())) {
+            throw new Model\Element\ValidationException('field ['.$this->getName().' ] - invalid numeric data [' . $data->getValue() . '] ');
+        }
+
+        if (!empty($data) && !$omitMandatoryCheck) {
             $value = $data->getValue();
             if ((!empty($value) && !is_numeric($data->getValue()))) {
                 throw new Model\Element\ValidationException('Invalid dimension unit data ' . $this->getName());
+            }
+        }
+
+        if ($data !== null && !$this->isEmpty($data->getValue())) {
+            $value = $this->toNumeric($data->getValue());
+
+            if ($value >= PHP_INT_MAX) {
+                throw new Model\Element\ValidationException('Value exceeds PHP_INT_MAX please use an input data type instead of numeric!');
+            }
+
+            if ($this->getInteger() && strpos((string) $value, '.') !== false) {
+                throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is not an integer');
+            }
+
+            if ($this->getMinValue() !== null && $this->getMinValue() > $value) {
+                throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is not at least ' . $this->getMinValue());
+            }
+
+            if ($this->getMaxValue() !== null && $value > $this->getMaxValue()) {
+                throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is bigger than ' . $this->getMaxValue());
+            }
+
+            if ($this->getUnsigned() && $value < 0) {
+                throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is not unsigned (bigger than 0)');
             }
         }
     }
@@ -499,6 +786,26 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
+     * @param mixed $value
+     *
+     * @return float|int|string
+     */
+    private function toNumeric($value)
+    {
+        $value = str_replace(',', '.', (string) $value);
+
+        if ($this->isDecimalType()) {
+            return $value;
+        }
+
+        if (strpos($value, '.') === false) {
+            return (int) $value;
+        }
+
+        return (float) $value;
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function doGetDefaultValue($object, $context = [])
@@ -562,7 +869,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
                     '=',
                     ['name' => $this->getName().'__unit']
                 ).
-            ')';
+                ')';
         }
 
         return implode(' OR ', $conditions);
@@ -588,7 +895,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
             return false;
         }
 
-        return $oldValue->getValue() === $newValue->getValue()
+        return $this->toNumeric($oldValue->getValue()) === $this->toNumeric($newValue->getValue())
             && $this->prepareUnitIdForComparison($oldValue->getUnitId()) === $this->prepareUnitIdForComparison($newValue->getUnitId());
     }
 

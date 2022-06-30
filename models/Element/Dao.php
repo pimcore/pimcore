@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Element;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\User;
 
@@ -101,7 +102,7 @@ abstract class Dao extends Model\Dao\AbstractDao
         userId IN (' . implode(',', $userIds) . ')
         ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . end($userIds) . ') DESC, ' . $this->db->quoteIdentifier($type) . ' DESC LIMIT 1';
 
-        return (int)$this->db->fetchOne($sql, $fullPath);
+        return (int)$this->db->fetchOne($sql, [$fullPath]);
     }
 
     /**
@@ -135,7 +136,7 @@ abstract class Dao extends Model\Dao\AbstractDao
             ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $currentUserId . ') DESC LIMIT 1
         ';
 
-        $highestWorkspace = $this->db->fetchRow($highestWorkspaceQuery);
+        $highestWorkspace = $this->db->fetchAssociative($highestWorkspaceQuery);
 
         if ($highestWorkspace) {
             //if it's the current user, this is the permission that rules them all, no need to check others
@@ -202,7 +203,7 @@ abstract class Dao extends Model\Dao\AbstractDao
             WHERE cpath LIKE ? AND userId IN (' . implode(',', $userIds) . ') AND list = 1
             AND NOT EXISTS( SELECT list FROM users_workspaces_'.$tableSuffix.' WHERE cid = uw.cid AND list = 0 AND userId ='.end($userIds).')
             LIMIT 1',
-            $this->db->escapeLike($path) . '%');
+            [Helper::escapeLike($path) . '%']);
 
         return (int)$permissionsChildren;
     }

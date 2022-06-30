@@ -17,6 +17,7 @@ namespace Pimcore\Image;
 
 use HeadlessChromium\BrowserFactory;
 use HeadlessChromium\Communication\Message;
+use Pimcore\Logger;
 use Pimcore\Tool\Console;
 use Pimcore\Tool\Session;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
@@ -96,10 +97,15 @@ class Chromium
                 'captureBeyondViewport' => true,
                 'clip' => $page->getFullPageClip(),
             ])->saveToFile($outputFile);
+        } catch (\Throwable $e) {
+            Logger::debug('Could not create image from url: ' . $url);
+            Logger::debug((string) $e);
+
+            return false;
         } finally {
             $browser->close();
-
-            return true;
         }
+
+        return true;
     }
 }

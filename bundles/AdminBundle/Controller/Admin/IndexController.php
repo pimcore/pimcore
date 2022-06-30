@@ -15,17 +15,18 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
 use Pimcore\Controller\KernelResponseEventInterface;
-use Pimcore\Db\ConnectionInterface;
 use Pimcore\Event\Admin\IndexActionSettingsEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Maintenance\Executor;
 use Pimcore\Maintenance\ExecutorInterface;
+use Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
 use Pimcore\Model\Document\DocType;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Staticroute;
@@ -120,18 +121,18 @@ class IndexController extends AdminController implements KernelResponseEventInte
      * @Route("/index/statistics", name="pimcore_admin_index_statistics", methods={"GET"})
      *
      * @param Request $request
-     * @param ConnectionInterface $db
+     * @param Connection $db
      * @param KernelInterface $kernel
      *
      * @return JsonResponse
      *
      * @throws \Exception
      */
-    public function statisticsAction(Request $request, ConnectionInterface $db, KernelInterface $kernel)
+    public function statisticsAction(Request $request, Connection $db, KernelInterface $kernel)
     {
         // DB
         try {
-            $tables = $db->fetchAll('SELECT TABLE_NAME as name,TABLE_ROWS as `rows` from information_schema.TABLES
+            $tables = $db->fetchAllAssociative('SELECT TABLE_NAME as name,TABLE_ROWS as `rows` from information_schema.TABLES
                 WHERE TABLE_ROWS IS NOT NULL AND TABLE_SCHEMA = ?', [$db->getDatabase()]);
         } catch (\Exception $e) {
             $tables = [];
@@ -266,6 +267,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'perspectives-writeable' => \Pimcore\Perspective\Config::isWriteable(),
             'custom-views-writeable' => \Pimcore\CustomView\Config::isWriteable(),
             'class-definition-writeable' => isset($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE']) ? (bool)$_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] : true,
+            'object-custom-layout-writeable' => (new CustomLayout())->isWriteable(),
         ];
 
         $this

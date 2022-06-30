@@ -65,6 +65,13 @@ class CustomLayoutRebuildCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5',
+            'Running Custom Layout Rebuild Command is deprecated in favor of LocationAwareConfigRepository and will be removed from Pimcore in 11.',
+            __CLASS__
+        );
+
         if ($input->getOption('delete-custom-layouts')) {
             $questionResult = true;
 

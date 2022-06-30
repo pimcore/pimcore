@@ -231,7 +231,7 @@ services:
     Symfony\Component\Lock\PersistingStoreInterface:
         class: Symfony\Component\Lock\Store\PdoStore
         arguments:
-            - '@database_connection'
+            - '@doctrine.dbal.default_connection'
 
     Symfony\Component\Lock\LockFactory:
         public: true

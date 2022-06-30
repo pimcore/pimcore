@@ -16,6 +16,7 @@
 namespace Pimcore\Model\Element;
 
 use Pimcore\Db;
+use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -90,7 +91,7 @@ class PermissionChecker
                 $userPermission[$columnName] = false;
 
                 try {
-                    $permissionsParent = $db->fetchRow(
+                    $permissionsParent = $db->fetchAssociative(
                         'SELECT * FROM users_workspaces_'.$type.' , users u WHERE userId = u.id AND cid IN ('.implode(
                             ',',
                             $parentIds
@@ -109,19 +110,19 @@ class PermissionChecker
                     }
 
                     // exception for list permission
-                    if (empty($permissionsParent) && $columnName == 'list') {
+                    if (false === $permissionsParent && $columnName === 'list') {
                         // check for childs with permissions
                         $path = $element->getRealFullPath().'/';
                         if ($element->getId() == 1) {
                             $path = '/';
                         }
 
-                        $permissionsChilds = $db->fetchRow(
+                        $permissionsChilds = $db->fetchAssociative(
                             'SELECT list FROM users_workspaces_'.$type.', users u WHERE userId = u.id AND cpath LIKE ? AND userId IN ('.implode(
                                 ',',
                                 $userIds
                             ).') AND list = 1 LIMIT 1',
-                            $db->escapeLike($path) .'%'
+                            [Helper::escapeLike($path) .'%']
                         );
                         if ($permissionsChilds) {
                             $result[$columnName] = $permissionsChilds[$columnName] ? true : false;
@@ -192,7 +193,7 @@ class PermissionChecker
         $details[] = self::createDetail($user, '<b>User Permissions</b>', null, null, null);
 
         $db = Db::get();
-        $permissions = $db->fetchCol('select `key` from users_permission_definitions');
+        $permissions = $db->fetchFirstColumn('select `key` from users_permission_definitions');
         foreach ($permissions as $permissionKey) {
             $entry = null;
 

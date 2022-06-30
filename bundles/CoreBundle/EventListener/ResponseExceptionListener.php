@@ -15,9 +15,9 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Config;
-use Pimcore\Db\ConnectionInterface;
 use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
@@ -42,14 +42,14 @@ class ResponseExceptionListener implements EventSubscriberInterface
 
     /**
      * @param DocumentRenderer $documentRenderer
-     * @param ConnectionInterface $db
+     * @param Connection $db
      * @param Config $config
      * @param Document\Service $documentService
      * @param SiteResolver $siteResolver
      */
     public function __construct(
         protected DocumentRenderer $documentRenderer,
-        protected ConnectionInterface $db,
+        protected Connection $db,
         protected Config $config,
         protected Document\Service $documentService,
         protected SiteResolver $siteResolver
@@ -140,9 +140,9 @@ class ResponseExceptionListener implements EventSubscriberInterface
     protected function logToHttpErrorLog(Request $request, $statusCode)
     {
         $uri = $request->getUri();
-        $exists = $this->db->fetchOne('SELECT date FROM http_error_log WHERE uri = ?', $uri);
+        $exists = $this->db->fetchOne('SELECT date FROM http_error_log WHERE uri = ?', [$uri]);
         if ($exists) {
-            $this->db->query('UPDATE http_error_log SET `count` = `count` + 1, date = ? WHERE uri = ?', [time(), $uri]);
+            $this->db->executeQuery('UPDATE http_error_log SET `count` = `count` + 1, date = ? WHERE uri = ?', [time(), $uri]);
         } else {
             $this->db->insert('http_error_log', [
                 'uri' => $uri,

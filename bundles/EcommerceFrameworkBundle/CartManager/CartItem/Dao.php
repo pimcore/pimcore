@@ -58,7 +58,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      */
     public function getByCartIdItemKey($cartId, $itemKey, $parentKey = '')
     {
-        $classRaw = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE itemKey=' . $this->db->quote($itemKey). ' AND cartId = ' . $this->db->quote($cartId) . ' AND parentItemKey = ' . $this->db->quote($parentKey));
+        $classRaw = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE itemKey=' . $this->db->quote($itemKey). ' AND cartId = ' . $this->db->quote($cartId) . ' AND parentItemKey = ' . $this->db->quote($parentKey));
         if (empty($classRaw)) {
             throw new NotFoundException('CartItem for cartId ' . $cartId . ' and itemKey ' . $itemKey . ' not found.');
         }
@@ -101,7 +101,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         try {
             $this->db->insert(self::TABLE_NAME, $data);
         } catch (\Exception $e) {
-            $this->db->updateWhere(self::TABLE_NAME, $data, 'itemKey=' . $this->db->quote($this->model->getItemKey()). ' AND cartId = ' . $this->db->quote($this->model->getCartId()) . ' AND parentItemKey = ' . $this->db->quote($this->model->getParentItemKey()));
+            $this->db->update(self::TABLE_NAME, $data, ['itemKey' => $this->model->getItemKey(), 'cartId' => $this->model->getCartId(),  'parentItemKey' => $this->model->getParentItemKey()]);
         }
     }
 
@@ -112,7 +112,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      */
     public function delete()
     {
-        $this->db->deleteWhere(self::TABLE_NAME, 'itemKey=' . $this->db->quote($this->model->getItemKey()) . ' AND cartId = ' . $this->db->quote($this->model->getCartId()) . ' AND parentItemKey = ' . $this->db->quote($this->model->getParentItemKey()));
+        $this->db->delete(self::TABLE_NAME, ['itemKey' => $this->model->getItemKey(), 'cartId' => $this->model->getCartId(), 'parentItemKey' => $this->model->getParentItemKey()]);
     }
 
     /**
@@ -120,6 +120,6 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      */
     public function removeAllFromCart($cartId)
     {
-        $this->db->deleteWhere(self::TABLE_NAME, 'cartId = ' . $this->db->quote($cartId));
+        $this->db->delete(self::TABLE_NAME, ['cartId' => $cartId]);
     }
 }

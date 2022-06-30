@@ -17,8 +17,8 @@ namespace Pimcore\Maintenance\Tasks;
 
 use DateInterval;
 use DateTimeImmutable;
+use Doctrine\DBAL\Connection;
 use Pimcore\Config;
-use Pimcore\Db;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Tool\Storage;
@@ -31,7 +31,7 @@ use SplFileInfo;
 class LogArchiveTask implements TaskInterface
 {
     /**
-     * @var Db\ConnectionInterface
+     * @var Connection
      */
     private $db;
 
@@ -46,11 +46,11 @@ class LogArchiveTask implements TaskInterface
     private $logger;
 
     /**
-     * @param Db\ConnectionInterface $db
+     * @param Connection $db
      * @param Config $config
      * @param LoggerInterface $logger
      */
-    public function __construct(Db\ConnectionInterface $db, Config $config, LoggerInterface $logger)
+    public function __construct(Connection $db, Config $config, LoggerInterface $logger)
     {
         $this->db = $db;
         $this->config = $config;
