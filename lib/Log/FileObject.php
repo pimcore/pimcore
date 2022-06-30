@@ -17,7 +17,6 @@ namespace Pimcore\Log;
 
 use League\Flysystem\FilesystemException;
 use League\Flysystem\UnableToWriteFile;
-use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Tool\Storage;
 
@@ -39,7 +38,6 @@ final class FileObject
      */
     public function __construct($data, $filename = null)
     {
-
         $this->data = $data;
         $this->filename = $filename;
 
@@ -48,6 +46,7 @@ final class FileObject
             $this->filename = $folderpath.'/'.uniqid('fileobject_', true);
         }
         $storage = Storage::get('application_log');
+
         try {
             $storage->write($this->filename, $this->data);
         } catch (FilesystemException | UnableToWriteFile $exception) {

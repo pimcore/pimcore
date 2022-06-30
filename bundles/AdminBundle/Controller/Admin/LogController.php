@@ -241,7 +241,6 @@ class LogController extends AdminController implements KernelControllerEventInte
         $filePath = $request->get('filePath');
         $storage = Storage::get('application_log');
 
-
         if ($storage->fileExists($filePath)) {
             $fileData = $storage->readStream($filePath);
             $response = new StreamedResponse(

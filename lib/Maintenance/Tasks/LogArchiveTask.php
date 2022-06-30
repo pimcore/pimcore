@@ -23,7 +23,6 @@ use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Tool\Storage;
 use Psr\Log\LoggerInterface;
-use SplFileInfo;
 
 /**
  * @internal
@@ -98,7 +97,7 @@ class LogArchiveTask implements TaskInterface
             $this->logger->debug('Deleting referenced FileObjects of application_logs which are older than '. $archive_threshold.' days');
 
             $fileObjectPaths = $db->fetchAll(sprintf($sql, 'fileobject'));
-            foreach ($fileObjectPaths as $objectPath){
+            foreach ($fileObjectPaths as $objectPath) {
                 $storage->delete($objectPath['fileobject']);
             }
 
@@ -123,7 +122,6 @@ class LogArchiveTask implements TaskInterface
             }
 
             $deleteArchiveLogDate = $deleteArchiveLogDate->sub(new DateInterval('P1M'));
-
         } while ($archiveTableExists);
     }
 }
