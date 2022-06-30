@@ -21,7 +21,15 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
         this.setType("video");
         this.addLoadingPanel();
 
-        pimcore.plugin.broker.fireEvent("preOpenAsset", this, "video");
+        const preOpenAssetVideo = new CustomEvent(pimcore.events.preOpenAsset, {
+            detail: {
+                object: this,
+                type: "video"
+            }
+        });
+
+        document.dispatchEvent(preOpenAssetVideo);
+
 
         var user = pimcore.globalmanager.get("user");
 

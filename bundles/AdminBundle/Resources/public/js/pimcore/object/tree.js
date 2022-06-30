@@ -198,7 +198,15 @@ pimcore.object.tree = Class.create({
             try {
 
                 var eventData =  {record: record, preventDefault: false};
-                pimcore.plugin.broker.fireEvent("prepareOnObjectTreeNodeClick", eventData);
+
+                const prepareOnObjectTreeNodeClick = new CustomEvent(pimcore.events.prepareOnObjectTreeNodeClick, {
+                    detail: {
+                        eventData: eventData
+                    }
+                });
+
+                document.dispatchEvent(prepareOnObjectTreeNodeClick);
+
                 if (eventData.preventDefault) {
                     return;
                 }
@@ -753,7 +761,16 @@ pimcore.object.tree = Class.create({
 
         pimcore.helpers.hideRedundantSeparators(menu);
 
-        pimcore.plugin.broker.fireEvent("prepareObjectTreeContextMenu", menu, this, record);
+        const prepareObjectTreeContextMenu = new CustomEvent(pimcore.events.prepareObjectTreeContextMenu, {
+            detail: {
+                menu: menu,
+                object: this,
+                record: record
+            }
+        });
+
+        document.dispatchEvent(prepareObjectTreeContextMenu);
+
 
         menu.showAt(e.pageX+1, e.pageY+1);
     },
