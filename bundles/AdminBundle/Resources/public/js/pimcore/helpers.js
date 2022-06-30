@@ -1999,6 +1999,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
 
 pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
 
+    const allowedTypes = data.allowedTypes;
     var window = null;
     var form = null;
     var fieldPath = new Ext.form.TextField({
@@ -2011,13 +2012,16 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         enableKeyEvents: true,
         listeners: {
             keyup: function (el) {
-                if ((el.getValue().indexOf("youtu.be") >= 0 || el.getValue().indexOf("youtube.com") >= 0) && el.getValue().indexOf("http") >= 0) {
+                if (allowedTypes.includes("youtube")
+                    && (el.getValue().indexOf("youtu.be") >= 0 || el.getValue().indexOf("youtube.com") >= 0) && el.getValue().indexOf("http") >= 0) {
                     form.getComponent("type").setValue("youtube");
                     updateType("youtube");
-                } else if (el.getValue().indexOf("vimeo") >= 0 && el.getValue().indexOf("http") >= 0) {
+                } else if (allowedTypes.includes("vimeo")
+                    && el.getValue().indexOf("vimeo") >= 0 && el.getValue().indexOf("http") >= 0) {
                     form.getComponent("type").setValue("vimeo");
                     updateType("vimeo");
-                } else if ((el.getValue().indexOf("dai.ly") >= 0 || el.getValue().indexOf("dailymotion") >= 0) && el.getValue().indexOf("http") >= 0) {
+                } else if (allowedTypes.includes("dailymotion")
+                    && (el.getValue().indexOf("dai.ly") >= 0 || el.getValue().indexOf("dailymotion") >= 0) && el.getValue().indexOf("http") >= 0) {
                     form.getComponent("type").setValue("dailymotion");
                     updateType("dailymotion");
                 }
@@ -2093,8 +2097,10 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         });
     };
 
-    fieldPath.on("render", initDD);
-    poster.on("render", initDD);
+    if (allowedTypes.includes("asset")) {
+        fieldPath.on("render", initDD);
+        poster.on("render", initDD);
+    }
 
     var searchButton = new Ext.Button({
         iconCls: "pimcore_icon_search",
@@ -2196,7 +2202,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             editable: false,
             width: 270,
             mode: "local",
-            store: ["asset", "youtube", "vimeo", "dailymotion"],
+            store: allowedTypes,
             value: data.type,
             listeners: {
                 select: function (combo) {
@@ -2249,7 +2255,6 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             }
         ]
     });
-
 
     window = new Ext.Window({
         width: 510,

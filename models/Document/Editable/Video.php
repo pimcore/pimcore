@@ -26,6 +26,18 @@ use Pimcore\Tool;
  */
 class Video extends Model\Document\Editable implements IdRewriterInterface
 {
+    public const TYPE_ASSET = 'asset';
+    public const TYPE_YOUTUBE = 'youtube';
+    public const TYPE_VIMEO = 'vimeo';
+    public const TYPE_DAILYMOTION = 'dailymotion';
+
+    public const ALLOWED_TYPES = [
+        self::TYPE_ASSET,
+        self::TYPE_YOUTUBE,
+        self::TYPE_VIMEO,
+        self::TYPE_DAILYMOTION,
+    ];
+
     /**
      * contains depending on the type of the video the unique identifier eg. "http://www.youtube.com", "789", ...
      *
@@ -36,13 +48,13 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     protected $id;
 
     /**
-     * one of asset, youtube, vimeo, dailymotion
+     * one of self::ALLOWED_TYPES
      *
      * @internal
      *
      * @var string|null
      */
-    protected $type = 'asset';
+    protected $type;
 
     /**
      * asset ID of poster image
@@ -66,6 +78,33 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      * @var string
      */
     protected $description = '';
+
+    /**
+     * @internal
+     *
+     * @var array
+     */
+    protected $allowedTypes;
+
+    /**
+     * @param int|string $id
+     *
+     * @return Video
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * @return int|string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * @param string $title
@@ -158,24 +197,59 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
+     * @param array $allowedTypes
+     *
+     * @return $this
+     */
+    public function setAllowedTypes($allowedTypes)
+    {
+        $this->allowedTypes = $allowedTypes;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAllowedTypes()
+    {
+        return $this->allowedTypes;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getData()
     {
         $path = $this->id;
-        if ($this->type == 'asset' && ($video = Asset::getById($this->id))) {
+        if ($this->type === self::TYPE_ASSET && ($video = Asset::getById($this->id))) {
             $path = $video->getFullPath();
+        }
+
+        $this->updateAllowedTypesFromConfig($this->getConfig());
+
+        if (
+            empty($this->type) === true
+            || in_array($this->type, $this->allowedTypes, true) === false
+        ) {
+            // Set the first type in array as default selection for dropdown
+            $this->type = $this->allowedTypes[0];
+
+            // Reset "id" and "path" to prevent invalid references
+            $this->id   = '';
+            $path       = '';
         }
 
         $poster = Asset::getById($this->poster);
 
         return [
-            'id' => $this->id,
-            'type' => $this->type,
-            'title' => $this->title,
-            'description' => $this->description,
-            'path' => $path,
-            'poster' => $poster ? $poster->getFullPath() : '',
+            'id'           => $this->id,
+            'type'         => $this->type,
+            'allowedTypes' => $this->allowedTypes,
+            'title'        => $this->title,
+            'description'  => $this->description,
+            'path'         => $path,
+            'poster'       => $poster ? $poster->getFullPath() : '',
         ];
     }
 
@@ -185,11 +259,12 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     public function getDataForResource()
     {
         return [
-            'id' => $this->id,
-            'type' => $this->type,
-            'title' => $this->title,
-            'description' => $this->description,
-            'poster' => $this->poster,
+            'id'           => $this->id,
+            'type'         => $this->type,
+            'allowedTypes' => $this->allowedTypes,
+            'title'        => $this->title,
+            'description'  => $this->description,
+            'poster'       => $this->poster,
         ];
     }
 
@@ -199,22 +274,28 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     public function frontend()
     {
         $inAdmin = false;
-        $args = func_get_args();
+        $args    = func_get_args();
         if (array_key_exists(0, $args)) {
             $inAdmin = $args[0];
         }
 
-        if (!$this->id || !$this->type) {
+        $this->updateAllowedTypesFromConfig($this->getConfig());
+
+        if (
+            empty($this->id) === true
+            || empty($this->type) === true
+            || in_array($this->type, $this->allowedTypes, true) === false
+        ) {
             return $this->getEmptyCode();
-        } elseif ($this->type == 'asset') {
+        } elseif ($this->type === self::TYPE_ASSET) {
             return $this->getAssetCode($inAdmin);
-        } elseif ($this->type == 'youtube') {
+        } elseif ($this->type === self::TYPE_YOUTUBE) {
             return $this->getYoutubeCode();
-        } elseif ($this->type == 'vimeo') {
+        } elseif ($this->type === self::TYPE_VIMEO) {
             return $this->getVimeoCode();
-        } elseif ($this->type == 'dailymotion') {
+        } elseif ($this->type === self::TYPE_DAILYMOTION) {
             return $this->getDailymotionCode();
-        } elseif ($this->type == 'url') {
+        } elseif ($this->type === 'url') {
             return $this->getUrlCode();
         }
 
@@ -228,13 +309,13 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     {
         $dependencies = [];
 
-        if ($this->type == 'asset') {
+        if ($this->type === self::TYPE_ASSET) {
             $asset = Asset::getById($this->id);
             if ($asset instanceof Asset) {
                 $key = 'asset_' . $asset->getId();
                 $dependencies[$key] = [
                     'id' => $asset->getId(),
-                    'type' => 'asset',
+                    'type' => self::TYPE_ASSET,
                 ];
             }
         }
@@ -243,7 +324,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
             $key = 'asset_' . $poster->getId();
             $dependencies[$key] = [
                 'id' => $poster->getId(),
-                'type' => 'asset',
+                'type' => self::TYPE_ASSET,
             ];
         }
 
@@ -255,24 +336,24 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      */
     public function checkValidity()
     {
-        $sane = true;
-        if ($this->type == 'asset' && !empty($this->id)) {
+        $valid = true;
+        if ($this->type === self::TYPE_ASSET && !empty($this->id)) {
             $el = Asset::getById($this->id);
             if (!$el instanceof Asset) {
-                $sane = false;
-                Logger::notice('Detected insane relation, removing reference to non existent asset with id [' . $this->id . ']');
-                $this->id = null;
+                $valid = false;
+                Logger::notice('Detected invalid relation, removing reference to non existent asset with id ['.$this->id.']');
+                $this->id   = null;
                 $this->type = null;
             }
         }
 
         if (!($poster = Asset::getById($this->poster))) {
-            $sane = false;
-            Logger::notice('Detected insane relation, removing reference to non existent asset with id [' . $this->id . ']');
+            $valid = false;
+            Logger::notice('Detected invalid relation, removing reference to non existent asset with id ['.$this->id.']');
             $this->poster = null;
         }
 
-        return $sane;
+        return $valid;
     }
 
     /**
@@ -312,7 +393,9 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      */
     public function setDataFromEditmode($data)
     {
-        if (isset($data['type'])) {
+        if (isset($data['type'])
+            && in_array($data['type'], self::ALLOWED_TYPES, true) === true
+        ) {
             $this->type = $data['type'];
         }
 
@@ -496,7 +579,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     private function parseYoutubeId()
     {
         $youtubeId = '';
-        if ($this->type == 'youtube') {
+        if ($this->type === self::TYPE_YOUTUBE) {
             if ($youtubeId = $this->id) {
                 if (strpos($youtubeId, '//') !== false) {
                     $parts = parse_url($this->id);
@@ -592,8 +675,8 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
         // this is to be backward compatible to <= v 1.4.7
         $configurations = $clipConfig;
-        if (array_key_exists('youtube', $config) && is_array($config['youtube'])) {
-            $configurations = array_merge($clipConfig, $config['youtube']);
+        if (array_key_exists(self::TYPE_YOUTUBE, $config) && is_array($config[self::TYPE_YOUTUBE])) {
+            $configurations = array_merge($clipConfig, $config[self::TYPE_YOUTUBE]);
         }
 
         if (!empty($configurations)) {
@@ -667,8 +750,8 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
             // this is to be backward compatible to <= v 1.4.7
             $configurations = $clipConfig;
-            if (isset($config['vimeo']) && is_array($config['vimeo'])) {
-                $configurations = array_merge($clipConfig, $config['vimeo']);
+            if (isset($config[self::TYPE_VIMEO]) && is_array($config[self::TYPE_VIMEO])) {
+                $configurations = array_merge($clipConfig, $config[self::TYPE_VIMEO]);
             }
 
             if (!empty($configurations)) {
@@ -735,8 +818,8 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
             // this is to be backward compatible to <= v 1.4.7
             $configurations = $clipConfig;
-            if (isset($config['dailymotion']) && is_array($config['dailymotion'])) {
-                $configurations = array_merge($clipConfig, $config['dailymotion']);
+            if (isset($config[self::TYPE_DAILYMOTION]) && is_array($config[self::TYPE_DAILYMOTION])) {
+                $configurations = array_merge($clipConfig, $config[self::TYPE_DAILYMOTION]);
             }
 
             if (!empty($configurations)) {
@@ -940,6 +1023,19 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video"><div class="pimcore_editable_video_empty" id="' . $uid . '" style="width: ' . $this->getWidth() . 'px; height: ' . $this->getHeight() . 'px;"></div></div>';
     }
 
+    private function updateAllowedTypesFromConfig(array $config): void {
+
+        $this->allowedTypes = self::ALLOWED_TYPES;
+
+        if (
+            isset($config['allowedTypes']) === true
+            && empty($config['allowedTypes']) === false
+            && empty(array_diff($config['allowedTypes'], self::ALLOWED_TYPES))
+        ) {
+            $this->allowedTypes = $config['allowedTypes'];
+        }
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -957,6 +1053,10 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      */
     public function getVideoType()
     {
+        if (empty($this->type) === true) {
+            $this->type = $this->allowedTypes[0];
+        }
+
         return $this->type;
     }
 
@@ -965,7 +1065,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      */
     public function getVideoAsset()
     {
-        if ($this->getVideoType() == 'asset') {
+        if ($this->getVideoType() === self::TYPE_ASSET) {
             return Asset\Video::getById($this->id);
         }
 
@@ -1013,32 +1113,12 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
-     * @param int|string $id
-     *
-     * @return Video
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    /**
-     * @return int|string
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
      * { @inheritdoc }
      */
     public function rewriteIds($idMapping) /** : void */
     {
-        if ($this->type == 'asset' && array_key_exists('asset', $idMapping) && array_key_exists($this->getId(), $idMapping['asset'])) {
-            $this->setId($idMapping['asset'][$this->getId()]);
+        if ($this->type == self::TYPE_ASSET && array_key_exists(self::TYPE_ASSET, $idMapping) && array_key_exists($this->getId(), $idMapping[self::TYPE_ASSET])) {
+            $this->setId($idMapping[self::TYPE_ASSET][$this->getId()]);
         }
     }
 }
