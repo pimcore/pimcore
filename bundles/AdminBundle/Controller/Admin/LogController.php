@@ -22,7 +22,6 @@ use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Db;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
-use Pimcore\Tool\Storage;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -124,7 +123,7 @@ class LogController extends AdminController implements KernelControllerEventInte
         $total = (int) $total['count'];
 
         $stmt = $qb->execute();
-        $result = $stmt->fetchAllAssociative();
+        $result = $stmt->fetchAssociative();
 
         $logEntries = [];
         foreach ($result as $row) {
@@ -239,21 +238,34 @@ class LogController extends AdminController implements KernelControllerEventInte
     public function showFileObjectAction(Request $request)
     {
         $filePath = $request->get('filePath');
-        $storage = Storage::get('application_log');
 
+        if (!filter_var($filePath, FILTER_VALIDATE_URL)) {
+            if (!file_exists($filePath)) {
+                $filePath = PIMCORE_PROJECT_ROOT.DIRECTORY_SEPARATOR.$filePath;
+            }
+            $filePath = realpath($filePath);
+            $fileObjectPath = realpath(PIMCORE_LOG_FILEOBJECT_DIRECTORY);
+        } else {
+            $fileObjectPath = PIMCORE_LOG_FILEOBJECT_DIRECTORY;
+        }
 
-        if ($storage->fileExists($filePath)) {
-            $fileData = $storage->readStream($filePath);
+        if (!str_starts_with($filePath, $fileObjectPath)) {
+            throw new AccessDeniedHttpException('Accessing file out of scope');
+        }
+
+        if (file_exists($filePath)) {
             $response = new StreamedResponse(
-                static function () use ($fileData) {
-                    echo stream_get_contents($fileData);
+                static function () use ($filePath) {
+                    $handle = fopen($filePath, 'rb');
+                    fpassthru($handle);
+                    fclose($handle);
                 }
             );
             $response->headers->set('Content-Type', 'text/plain');
         } else {
             $response = new Response();
             $response->headers->set('Content-Type', 'text/plain');
-            $response->setContent('File `'.$filePath.'` not found.');
+            $response->setContent('Path `'.$filePath.'` not found.');
             $response->setStatusCode(404);
         }
 
