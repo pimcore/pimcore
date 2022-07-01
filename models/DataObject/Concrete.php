@@ -531,7 +531,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @return self|null
      */
-    private function getClosestParentOfClass(string $classId): ?self
+    public function getClosestParentOfClass(string $classId): ?self
     {
         $parent = $this->getParent();
         if ($parent instanceof AbstractObject) {
