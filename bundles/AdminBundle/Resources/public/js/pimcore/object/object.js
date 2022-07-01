@@ -814,14 +814,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                                     pimcore.helpers.updateTreeElementStyle('object', this.id, rdata.treeData);
                                     const postSaveObject = new CustomEvent(pimcore.events.postSaveObject, {
                                         detail: {
-                                            object: this,
+                                            object: this
                                         }
                                     });
 
                                     document.dispatchEvent(postSaveObject);
-
-                                    // for internal use ID.
-                                    pimcore.eventDispatcher.fireEvent("postSaveObject", this, task);
                                 } else {
                                     pimcore.helpers.showPrettyError("error", t("saving_failed"), rdata.message);
                                 }
