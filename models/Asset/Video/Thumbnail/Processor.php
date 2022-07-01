@@ -32,9 +32,10 @@ class Processor
      * @var array
      */
     protected static $argumentMapping = [
-        'resize' => ['width', 'height'],
-        'scaleByWidth' => ['width'],
+        'resize'        => ['width', 'height'],
+        'scaleByWidth'  => ['width'],
         'scaleByHeight' => ['height'],
+        'cut'           => ['start', 'duration'],
     ];
 
     /**

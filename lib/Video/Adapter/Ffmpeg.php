@@ -418,4 +418,16 @@ class Ffmpeg extends Adapter
         $height = ceil($height / 2) * 2;
         $this->addArgument('-filter:v', 'scale=trunc(oh/(ih/iw)/2)*2:'.$height);
     }
+
+    /**
+     * @param integer $start
+     * @param integer $duration
+     */
+    public function cut(int $start, ?int $duration)
+    {
+        $this->addArgument('-ss', $start);
+        if (!empty($duration)) {
+            $this->addArgument('-t', $duration);
+        }
+    }
 }

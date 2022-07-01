@@ -459,5 +459,47 @@ pimcore.settings.videothumbnail.items = {
         });
 
         return item;
-    }
+    },
+
+    itemCut: function (panel, data, getName) {
+
+        var niceName = t("cut");
+        if (typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if (typeof data == "undefined") {
+            data = { start: 0 };
+        }
+        var myId = Ext.id();
+
+        var item = new Ext.form.FormPanel({
+            id: myId,
+            style: "margin-top: 10px",
+            border: true,
+            bodyStyle: "padding: 10px;",
+            tbar: this.getTopBar(niceName, myId, panel),
+            items: [{
+                xtype: 'numberfield',
+                name: "start",
+                fieldLabel: t("start"),
+                minValue: 0,
+                width: 250,
+                value: data.start
+            }, {
+                xtype: 'numberfield',
+                name: "duration",
+                fieldLabel: t("duration"),
+                minValue: 0,
+                width: 250,
+                value: data.duration
+            }, {
+                xtype: "hidden",
+                name: "type",
+                value: "cut"
+            }]
+        });
+
+        return item;
+    },
 };
