@@ -469,7 +469,10 @@ pimcore.settings.videothumbnail.items = {
         }
 
         if (typeof data == "undefined") {
-            data = { start: 0 };
+            data = {
+                start: 0,
+                duration: 0
+            };
         }
         var myId = Ext.id();
 
