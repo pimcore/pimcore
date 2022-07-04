@@ -877,10 +877,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     'o_published' => true,
                 ]);
 
-                $folder->setCreationDate(time());
-                $folder->setUserOwner($this->getAdminUser()->getId());
-                $folder->setUserModification($this->getAdminUser()->getId());
-
                 try {
                     $folder->save();
                     $success = true;
