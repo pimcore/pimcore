@@ -505,4 +505,71 @@ pimcore.settings.videothumbnail.items = {
 
         return item;
     },
-};
+
+    itemMute: function (panel, data, getName) {
+
+        var niceName = t("mute");
+        if (typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if (typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item = new Ext.form.FormPanel({
+            id: myId,
+            style: "margin-top: 10px",
+            border: true,
+            bodyStyle: "padding: 10px;",
+            tbar: this.getTopBar(niceName, myId, panel),
+            items: [{
+                xtype: 'container',
+                html: t('this_filter_has_no_settings')
+            }, {
+                xtype: "hidden",
+                name: "type",
+                value: "mute"
+            }]
+        });
+
+        return item;
+    },
+
+    itemSetFramerate: function (panel, data, getName) {
+
+        var niceName = t("setframerate");
+        if (typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if (typeof data == "undefined") {
+            data = { fps: 1 };
+        }
+        var myId = Ext.id();
+
+        var item = new Ext.form.FormPanel({
+            id: myId,
+            style: "margin-top: 10px",
+            border: true,
+            bodyStyle: "padding: 10px;",
+            tbar: this.getTopBar(niceName, myId, panel),
+            items: [{
+                xtype: 'numberfield',
+                name: "fps",
+                fieldLabel: t("fps"),
+                minValue: 0,
+                maxValue: 60,
+                width: 250,
+                value: data.fps
+            }, {
+                xtype: "hidden",
+                name: "type",
+                value: "setFramerate"
+            }]
+        });
+
+        return item;
+    }
+}

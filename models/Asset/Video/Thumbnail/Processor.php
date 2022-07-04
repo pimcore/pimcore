@@ -36,6 +36,8 @@ class Processor
         'scaleByWidth'  => ['width'],
         'scaleByHeight' => ['height'],
         'cut'           => ['start', 'duration'],
+        'setFramerate'  => ['fps'],
+        'mute'          => [],
     ];
 
     /**

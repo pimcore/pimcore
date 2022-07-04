@@ -333,9 +333,17 @@ class Ffmpeg extends Adapter
      * @param string $key
      * @param string $value
      */
-    public function addArgument($key, $value)
+    public function addArgument(string $key, string $value): void
     {
         array_push($this->arguments, $key, $value);
+    }
+
+    /**
+     * @param string $flag
+     */
+    public function addFlag(string $flag): void
+    {
+        array_push($this->arguments, $flag);
     }
 
     /**
@@ -423,11 +431,24 @@ class Ffmpeg extends Adapter
      * @param integer $start
      * @param integer $duration
      */
-    public function cut(int $start, ?int $duration)
+    public function cut(int $start, ?int $duration): void
     {
         $this->addArgument('-ss', (string) $start);
         if (!empty($duration)) {
             $this->addArgument('-t', (string) $duration);
         }
+    }
+
+    /**
+     * @param integer $fps
+     */
+    public function setFramerate(int $fps): void
+    {
+        $this->addArgument('-filter:v', 'fps='.$fps);
+    }
+
+    public function mute(): void
+    {
+        $this->addFlag('-an');
     }
 }
