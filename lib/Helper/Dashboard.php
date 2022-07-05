@@ -87,17 +87,15 @@ final class Dashboard
             $dashboardCfg = $perspectiveCfg['dashboards'] ?? [];
             $dashboardsPerspective = $dashboardCfg['predefined'] ?? [];
 
-            if(empty($this->dashboards)) {
+            if (empty($this->dashboards)) {
                 $this->dashboards = $dashboardsPerspective;
-            }
-            else {
+            } else {
                 foreach ($dashboardsPerspective as $key => $dashboard) {
                     if (!isset($this->dashboards[$key])) {
                         $this->dashboards[$key] = $dashboard;
                     }
                 }
             }
-
         }
 
         return $this->dashboards;
