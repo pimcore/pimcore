@@ -177,7 +177,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             clicksToEdit: 1
         });
 
-        var plugins = [this.cellEditing, 'gridfilters'];
+        let plugins = [this.cellEditing, 'pimcore.gridfilters'];
 
         let tbar = this.getToolbar(fromConfig, save);
         tbar.insert(0,{
