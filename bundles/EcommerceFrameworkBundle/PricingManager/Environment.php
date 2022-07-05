@@ -221,7 +221,7 @@ class Environment implements EnvironmentInterface
         trigger_deprecation(
             'pimcore/pimcore',
             '10.5',
-            sprintf('%s is deprecated. It will be removed in Pimcore 11.', __METHOD__)
+            sprintf('Calling setSession and getSession on Environment is deprecated. It will be removed in Pimcore 11.')
         );
 
         return $this->session;
@@ -236,12 +236,6 @@ class Environment implements EnvironmentInterface
      */
     public function setSession(AttributeBagInterface $session)
     {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.5',
-            sprintf('%s is deprecated. It will be removed in Pimcore 11.', __METHOD__)
-        );
-
         $this->session = $session;
 
         return $this;
