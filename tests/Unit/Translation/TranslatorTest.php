@@ -227,6 +227,6 @@ class TranslatorTest extends TestCase
 
         $translations = $translations->getTranslations();
         $translationValues = $translations[0]->getTranslations();
-        $this->assertArrayNotHasKey('fr', array_keys($translationValues));
+        $this->assertArrayNotHasKey('fr', $translationValues);
     }
 }
