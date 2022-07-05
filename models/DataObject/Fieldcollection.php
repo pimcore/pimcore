@@ -332,9 +332,6 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      */
     public function setObject(?Concrete $object)
     {
-        $this->objectId = $object ? $object->getId() : null;
-        $this->object = $object;
-
         // update all items with the new $object
         if (is_array($this->getItems())) {
             foreach ($this->getItems() as $item) {

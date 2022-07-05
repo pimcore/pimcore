@@ -856,7 +856,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * @internal
      *
-     * @param array $tag
+     * @param array $tags
      * @return $this
      */
     public function removeClearedTags(array $tags)
