@@ -75,7 +75,7 @@ class ClassBuilder implements ClassBuilderInterface
                         $classDefinition->getName()
                     ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
                         $classDefinition->getName()
-                    ).'|$fieldDefinition getBy'.ucfirst(
+                    ).'|null getBy'.ucfirst(
                         $fieldDefinition->getName()
                     ).'($field, $value, $locale = null, $limit = 0, $offset = 0, $objectTypes = null)'."\n";
 
