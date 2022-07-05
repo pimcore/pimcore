@@ -133,7 +133,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $translationsData = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables());
 
         foreach ($translationsData as $t) {
-            $transObj = Model\Translation::getByKey($t['key'], $this->model->getDomain());
+            $transObj = Model\Translation::getByKey(id: $t['key'], domain: $this->model->getDomain(), languages: $this->model->getLanguages());
+
             if ($transObj) {
                 $translations[] = $transObj;
             }

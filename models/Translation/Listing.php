@@ -45,6 +45,13 @@ class Listing extends Model\Listing\AbstractListing
     protected $domain = Model\Translation::DOMAIN_DEFAULT;
 
     /**
+     * @internal
+     *
+     * @var string[]|null
+     */
+    protected ?array $languages = null;
+
+    /**
      * @return string
      */
     public function getDomain(): string
@@ -62,6 +69,22 @@ class Listing extends Model\Listing\AbstractListing
         }
 
         $this->domain = $domain;
+    }
+
+    /**
+     * @return string[]|null
+     */
+    public function getLanguages(): ?array
+    {
+        return $this->languages;
+    }
+
+    /**
+     * @param string[]|null $languages
+     */
+    public function setLanguages(?array $languages): void
+    {
+        $this->languages = $languages;
     }
 
     /**
