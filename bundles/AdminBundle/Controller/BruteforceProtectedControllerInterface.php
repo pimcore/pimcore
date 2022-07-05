@@ -22,6 +22,7 @@ use Pimcore\Bundle\AdminBundle\EventListener\BruteforceProtectionListener;
  * Tagging interface used to protect certain controllers from brute force attacks
  *
  * @see BruteforceProtectionListener
+ * @deprecated
  */
 interface BruteforceProtectedControllerInterface
 {

@@ -16,6 +16,7 @@
 namespace Pimcore\Model\DataObject\Concrete;
 
 use Pimcore\Db;
+use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -53,9 +54,9 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      */
     public function getById($id)
     {
-        $data = $this->db->fetchRow("SELECT objects.*, tree_locks.locked as o_locked FROM objects
+        $data = $this->db->fetchAssociative("SELECT objects.*, tree_locks.locked as o_locked FROM objects
             LEFT JOIN tree_locks ON objects.o_id = tree_locks.id AND tree_locks.type = 'object'
-                WHERE o_id = ?", $id);
+                WHERE o_id = ?", [$id]);
 
         if (!empty($data['o_id'])) {
             $this->assignVariablesToModel($data);
@@ -148,7 +149,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             return;
         }
 
-        if (!$data = $this->db->fetchRow('SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ?', [$this->model->getId()])) {
+        if (!$data = $this->db->fetchAssociative('SELECT * FROM object_store_' . $this->model->getClassId() . ' WHERE oo_id = ?', [$this->model->getId()])) {
             return;
         }
 
@@ -222,7 +223,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         // empty relation table except the untouchable fields (eg. lazy loading fields)
         if (count($untouchable) > 0) {
             $untouchables = "'" . implode("','", $untouchable) . "'";
-            $condition = $this->db->quoteInto('src_id = ? AND fieldname not in (' . $untouchables . ") AND ownertype = 'object'", $this->model->getId());
+            $condition = Helper::quoteInto($this->db, 'src_id = ? AND fieldname not in (' . $untouchables . ") AND ownertype = 'object'", $this->model->getId());
         } else {
             $condition = 'src_id = ' . $db->quote($this->model->getId()) . ' AND ownertype = "object"';
         }
@@ -234,7 +235,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         $dataExists = $this->db->fetchOne('SELECT `src_id` FROM `object_relations_'. $this->model->getClassId().'`
         WHERE '.$condition .' LIMIT 1');
         if ($dataExists) {
-            $this->db->deleteWhere('object_relations_' . $this->model->getClassId(), $condition);
+            $this->db->executeStatement('DELETE FROM object_relations_' . $this->model->getClassId() . ' WHERE ' . $condition);
         }
 
         $inheritedValues = DataObject::doGetInheritedValues();
@@ -293,7 +294,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         // get data for query table
         $data = [];
         $this->inheritanceHelper->resetFieldsToCheck();
-        $oldData = $this->db->fetchRow('SELECT * FROM object_query_' . $this->model->getClassId() . ' WHERE oo_id = ?', [$this->model->getId()]);
+        $oldData = $this->db->fetchAssociative('SELECT * FROM object_query_' . $this->model->getClassId() . ' WHERE oo_id = ?', [$this->model->getId()]);
 
         $inheritanceEnabled = $this->model->getClass()->getAllowInherit();
         $parentData = null;
@@ -305,7 +306,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                 // we cannot DataObject::setGetInheritedValues(true); and then $this->model->$method();
                 // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
                 // so the data of the parent cannot be changed while this transaction is on progress
-                $parentData = $this->db->fetchRow('SELECT * FROM object_query_' . $this->model->getClassId() . ' WHERE oo_id = ? FOR UPDATE', $parentForInheritance->getId());
+                $parentData = $this->db->fetchAssociative('SELECT * FROM object_query_' . $this->model->getClassId() . ' WHERE oo_id = ? FOR UPDATE', [$parentForInheritance->getId()]);
             }
         }
 
@@ -404,7 +405,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         }
         $data['oo_id'] = $this->model->getId();
 
-        $this->db->insertOrUpdate('object_query_' . $this->model->getClassId(), $data);
+        Helper::insertOrUpdate($this->db, 'object_query_' . $this->model->getClassId(), $data);
 
         DataObject::setGetInheritedValues($inheritedValues);
     }

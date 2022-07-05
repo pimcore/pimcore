@@ -38,7 +38,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      */
     public function getById($id)
     {
-        $result = $this->db->fetchOne('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id = ? GROUP BY date', $id);
+        $result = $this->db->fetchOne('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id = ? GROUP BY date', [$id]);
         if (empty($result)) {
             throw new NotFoundException('Statistic with id ' . $id . ' not found.');
         }

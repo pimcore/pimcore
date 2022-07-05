@@ -148,16 +148,20 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                         var keyId = data.data.keyId;
                         var groupId = data.data.groupId;
 
-                        Ext.Ajax.request({
-                            url: Routing.generate('pimcore_admin_dataobject_classificationstore_deleterelation'),
-                            method: 'DELETE',
-                            params: {
-                                keyId: keyId,
-                                groupId: groupId
-                            },
-                            success: function (response) {
-                                this.relationsStore.reload();
-                            }.bind(this)});
+                        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('classificationstore_relation'), data.data.keyName), function(btn) {
+                            if (btn == 'yes') {
+                                Ext.Ajax.request({
+                                    url: Routing.generate('pimcore_admin_dataobject_classificationstore_deleterelation'),
+                                    method: 'DELETE',
+                                    params: {
+                                        keyId: keyId,
+                                        groupId: groupId
+                                    },
+                                    success: function (response) {
+                                        this.relationsStore.reload();
+                                    }.bind(this)});
+                            }
+                        }.bind(this));
                     }.bind(this)
                 }
             ]
@@ -315,23 +319,28 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                         var data = grid.getStore().getAt(rowIndex);
                         var id = data.data.id;
 
-                        //necessary for aborting all pending proxy requests
-                        //https://github.com/pimcore/pimcore/issues/11284
-                        this.relationsStore.getProxy().destroy();
-                        this.relationsStore.setProxy(this.getRelationsProxy());
+                        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('classificationstore_group'), data.data.name), function(btn) {
+                            if (btn == 'yes') {
 
-                        this.relationsGrid.hide();
-                        this.relationsPanel.disable();
+                                //necessary for aborting all pending proxy requests
+                                //https://github.com/pimcore/pimcore/issues/11284
+                                this.relationsStore.getProxy().destroy();
+                                this.relationsStore.setProxy(this.getRelationsProxy());
 
-                        Ext.Ajax.request({
-                            url: Routing.generate('pimcore_admin_dataobject_classificationstore_deletegroup'),
-                            method: 'DELETE',
-                            params: {
-                                id: id
-                            },
-                            success: function (response) {
-                                this.groupsStore.reload();
-                            }.bind(this)});
+                                this.relationsGrid.hide();
+                                this.relationsPanel.disable();
+
+                                Ext.Ajax.request({
+                                    url: Routing.generate('pimcore_admin_dataobject_classificationstore_deletegroup'),
+                                    method: 'DELETE',
+                                    params: {
+                                        id: id
+                                    },
+                                    success: function (response) {
+                                        this.groupsStore.reload();
+                                    }.bind(this)});
+                            }
+                        }.bind(this));
                     }.bind(this)
                 }
             ]

@@ -353,7 +353,7 @@ class UrlSlug implements OwnerAwareFieldInterface
                 $filterSiteId
             );
 
-            $rawItem = $db->fetchRow($query);
+            $rawItem = $db->fetchAssociative($query);
 
             if ($rawItem) {
                 $slug = self::createFromDataRow($rawItem);
@@ -424,7 +424,7 @@ class UrlSlug implements OwnerAwareFieldInterface
                             $fc = $object->$getter();
                             if ($fc instanceof Fieldcollection) {
                                 $index = explode('/', $objectFieldnameParts);
-                                $index = $index[1];
+                                $index = (int) $index[1];
                                 $item = $fc->get($index);
                                 if ($item instanceof AbstractData) {
                                     if ($colDef = Fieldcollection\Definition::getByKey($item->getType())) {
@@ -459,7 +459,7 @@ class UrlSlug implements OwnerAwareFieldInterface
                 if (method_exists($object, $getter)) {
                     $fcValue = $object->$getter();
                     if ($fcValue instanceof Fieldcollection) {
-                        $item = $fcValue->get($this->getPosition());
+                        $item = $fcValue->get($this->getIndex());
                         $fcType = $item->getType();
                         if ($fcDef = Fieldcollection\Definition::getByKey($fcType)) {
                             $fd = $fcDef->getFieldDefinition($this->getFieldname());

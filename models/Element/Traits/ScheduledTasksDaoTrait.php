@@ -34,6 +34,6 @@ trait ScheduledTasksDaoTrait
         if ($ignoreIds) {
             $where .= ' AND `id` NOT IN (' . implode(',', $ignoreIds) . ')';
         }
-        $this->db->deleteWhere('schedule_tasks', $where);
+        $this->db->executeStatement('DELETE FROM schedule_tasks WHERE ' . $where);
     }
 }

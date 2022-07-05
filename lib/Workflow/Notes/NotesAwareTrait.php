@@ -22,6 +22,10 @@ namespace Pimcore\Workflow\Notes;
  */
 trait NotesAwareTrait
 {
+    /**
+     *
+     * @var null|CustomHtmlServiceInterface
+     */
     protected $customHtmlService = null;
 
     public function getNotes(): ?array

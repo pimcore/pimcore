@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Controller\BruteforceProtectedControllerInterface;
+use Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminLoginAuthenticator;
 use Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
@@ -25,7 +26,6 @@ use Pimcore\Controller\KernelResponseEventInterface;
 use Pimcore\Event\Admin\Login\LoginRedirectEvent;
 use Pimcore\Event\Admin\Login\LostPasswordEvent;
 use Pimcore\Event\AdminEvents;
-use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Http\ResponseHelper;
 use Pimcore\Logger;
 use Pimcore\Model\User;
@@ -42,20 +42,16 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 
 /**
  * @internal
  */
 class LoginController extends AdminController implements BruteforceProtectedControllerInterface, KernelControllerEventInterface, KernelResponseEventInterface
 {
-    /**
-     * @var ResponseHelper
-     */
-    protected $reponseHelper;
-
-    public function __construct(ResponseHelper $responseHelper)
-    {
-        $this->reponseHelper = $responseHelper;
+    public function __construct(
+        protected ResponseHelper $responseHelper,
+    ) {
     }
 
     /**
@@ -75,7 +71,9 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             }
         }
 
-        $this->get('translator')->setLocale($locale);
+        if ($this->getTranslator() instanceof LocaleAwareInterface) {
+            $this->getTranslator()->setLocale($locale);
+        }
     }
 
     /**
@@ -85,7 +83,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     {
         $response = $event->getResponse();
         $response->headers->set('X-Frame-Options', 'deny', true);
-        $this->reponseHelper->disableCache($response, true);
+        $this->responseHelper->disableCache($response, true);
     }
 
     /**
@@ -157,7 +155,8 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      *
      * @Route("/login/login", name="pimcore_admin_login_check")
      *
-     * @see AdminAuthenticator for the security implementation
+     * @see AdminLoginAuthenticator for the security implementation
+     * @see AdminAuthenticator for the security implementation (Authenticator Based Security)
      */
     public function loginCheckAction()
     {
@@ -273,11 +272,9 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
     protected function buildLoginPageViewParams(Config $config): array
     {
-        $bundleManager = $this->get(PimcoreBundleManager::class);
-
         return [
             'config' => $config,
-            'pluginCssPaths' => $bundleManager->getCssPaths(),
+            'pluginCssPaths' => $this->getBundleManager()->getCssPaths(),
         ];
     }
 

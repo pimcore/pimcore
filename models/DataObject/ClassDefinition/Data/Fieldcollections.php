@@ -321,7 +321,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function load($object, $params = [])
     {
-        $container = new DataObject\Fieldcollection(null, $this->getName());
+        $container = new DataObject\Fieldcollection([], $this->getName());
         $container->load($object);
 
         if ($container->isEmpty()) {
@@ -336,7 +336,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function delete($object, $params = [])
     {
-        $container = new DataObject\Fieldcollection(null, $this->getName());
+        $container = new DataObject\Fieldcollection([], $this->getName());
         $container->delete($object);
     }
 

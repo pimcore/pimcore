@@ -15,14 +15,13 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tools;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
-use Pimcore\Db\ConnectionInterface;
 use Pimcore\Extension\Bundle\Installer\AbstractInstaller;
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Model\DataObject\Fieldcollection;
-use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Model\Translation;
 use Pimcore\Model\User\Permission;
 use Symfony\Component\Finder\Finder;
@@ -146,7 +145,7 @@ class Installer extends AbstractInstaller
     protected $bundle;
 
     /**
-     * @var ConnectionInterface
+     * @var Connection
      */
     protected $db;
 
@@ -157,7 +156,7 @@ class Installer extends AbstractInstaller
 
     public function __construct(
         BundleInterface $bundle,
-        ConnectionInterface $connection
+        Connection $connection
     ) {
         $this->installSourcesPath = __DIR__ . '/../Resources/install';
         $this->bundle = $bundle;

@@ -56,7 +56,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * @var bool
      */
-    public $locked;
+    public $locked = false;
 
     /**
      * @var string
@@ -558,7 +558,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public function getFilterConditionExt($value, $operator, $params = [])
     {
         $db = \Pimcore\Db::get();
-        $name = $params['name'] ? $params['name'] : $this->name;
+        $name = $params['name'] ?: $this->name;
         $key = $db->quoteIdentifier($name);
         if (!empty($params['brickPrefix'])) {
             $key = $params['brickPrefix'].$key;
@@ -1517,6 +1517,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $listing->addFilterByField($this->getName(), $operator, $data);
     }
 
+    /**
+     * @return bool
+     */
     public function isForbiddenName()
     {
         return in_array($this->getName(), self::FORBIDDEN_NAMES);

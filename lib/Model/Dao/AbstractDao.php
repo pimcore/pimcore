@@ -15,8 +15,10 @@
 
 namespace Pimcore\Model\Dao;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Cache;
 use Pimcore\Db;
+use Pimcore\Db\ConnectionInterface;
 
 abstract class AbstractDao implements DaoInterface
 {
@@ -25,7 +27,7 @@ abstract class AbstractDao implements DaoInterface
     const CACHEKEY = 'system_resource_columns_';
 
     /**
-     * @var \Pimcore\Db\ConnectionInterface
+     * @var ConnectionInterface|Connection
      */
     public $db;
 
@@ -96,6 +98,12 @@ abstract class AbstractDao implements DaoInterface
         Cache::clearTags(['system', 'resource']);
     }
 
+    /**
+     * @param string $table
+     * @param string $column
+     *
+     * @return string
+     */
     public static function getForeignKeyName($table, $column)
     {
         $fkName = 'fk_'.$table.'__'.$column;

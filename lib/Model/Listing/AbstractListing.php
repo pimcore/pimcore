@@ -18,6 +18,7 @@ namespace Pimcore\Model\Listing;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Db;
+use Pimcore\Db\Helper;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Listing\Dao\AbstractDao;
 
@@ -38,17 +39,17 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     protected $orderKey = [];
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $limit;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $offset;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $condition;
 
@@ -58,12 +59,12 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     protected $conditionVariables = [];
 
     /**
-     * @var array
+     * @var array|null
      */
     protected $conditionVariablesFromSetCondition;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $groupBy;
 
@@ -121,7 +122,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getLimit()
     {
@@ -129,7 +130,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getOffset()
     {
@@ -298,7 +299,6 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         $conditionString = '';
         $conditionVariableTypes = [];
         $conditionParams = $this->getConditionParams();
-        $db = \Pimcore\Db::get();
 
         $params = [];
         if (!empty($conditionParams)) {
@@ -355,9 +355,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
 
         $this->setConditionVariableTypes($conditionVariableTypes);
 
-        $condition = $this->condition . $conditionString;
-
-        return $condition;
+        return $this->condition . $conditionString;
     }
 
     /**
@@ -383,7 +381,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getGroupBy()
     {
@@ -464,9 +462,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
      */
     public function escapeLike(string $value): string
     {
-        $db = Db::get();
-
-        return $db->escapeLike($value);
+        return Helper::escapeLike($value);
     }
 
     /**
@@ -508,7 +504,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @return array
+     * @return array|null
      */
     public function getConditionVariablesFromSetCondition()
     {

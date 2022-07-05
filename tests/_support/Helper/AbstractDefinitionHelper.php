@@ -68,13 +68,13 @@ abstract class AbstractDefinitionHelper extends Module
      * @param string $type
      * @param string|null $name
      * @param bool $mandatory
-     * @param bool $index
+     * @param int $index
      * @param bool $visibleInGridView
      * @param bool $visibleInSearchResult
      *
      * @return Data
      */
-    public function createDataChild($type, $name = null, $mandatory = false, $index = true, $visibleInGridView = true, $visibleInSearchResult = true)
+    public function createDataChild($type, $name = null, $mandatory = false, $index = 0, $visibleInGridView = true, $visibleInSearchResult = true)
     {
         if (!$name) {
             $name = $type;

@@ -966,7 +966,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 $query = 'select ' . $db->quoteIdentifier($field) . ' from object_localized_data_' . $object->getClassId() . ' where language = ' . $db->quote($params['language']) . ' and  ooo_id  = ' . $object->getId();
             }
             $data = $db->fetchOne($query);
-            $data = $this->getDataFromResource($data, $container, $params);
+            $data = $this->getDataFromResource($data, $object, $params);
         } elseif ($container instanceof DataObject\Objectbrick\Data\AbstractData) {
             $context = $params['context'];
 
@@ -977,7 +977,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             $query = 'select ' . $db->quoteIdentifier($brickField) . ' from object_brick_store_' . $brickType . '_' . $object->getClassId()
                 . ' where  o_id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($fieldname);
             $data = $db->fetchOne($query);
-            $data = $this->getDataFromResource($data, $container, $params);
+            $data = $this->getDataFromResource($data, $object, $params);
         } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
             $context = $params['context'];
             $collectionType = $context['containerKey'];
@@ -989,7 +989,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             $query = 'select ' . $db->quoteIdentifier($field) . ' from object_collection_' . $collectionType . '_' . $object->getClassId()
                 . ' where  o_id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($fcField) . ' and `index` = ' . $context['index'];
             $data = $db->fetchOne($query);
-            $data = $this->getDataFromResource($data, $container, $params);
+            $data = $this->getDataFromResource($data, $object, $params);
         }
 
         return $data;

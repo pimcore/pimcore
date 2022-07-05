@@ -15,10 +15,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\Helper;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
 use Pimcore\Cache;
-use Pimcore\Db\ConnectionInterface;
+use Pimcore\Db\Helper;
 use Pimcore\Logger;
 
 class MySql
@@ -34,11 +35,11 @@ class MySql
     protected $tenantConfig;
 
     /**
-     * @var ConnectionInterface
+     * @var Connection
      */
     protected $db;
 
-    public function __construct(MysqlConfigInterface $tenantConfig, ConnectionInterface $db)
+    public function __construct(MysqlConfigInterface $tenantConfig, Connection $db)
     {
         $this->tenantConfig = $tenantConfig;
         $this->db = $db;
@@ -70,7 +71,7 @@ class MySql
             }
         }
 
-        $this->db->insertOrUpdate($this->tenantConfig->getTablename(), $data);
+        Helper::insertOrUpdate($this->db, $this->tenantConfig->getTablename(), $data);
     }
 
     public function getSystemAttributes()

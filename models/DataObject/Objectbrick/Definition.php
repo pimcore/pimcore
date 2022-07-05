@@ -137,7 +137,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             }
         }
 
-        array_multisort(array_map('strlen', $tables), $tables);
+        $tablesLen = array_map('strlen', $tables);
+        array_multisort($tablesLen, $tables);
         $longestTablename = end($tables);
 
         $length = strlen($longestTablename);
@@ -582,11 +583,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      */
     public function isWritable(): bool
     {
-        if ($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? false) {
-            return true;
-        }
-
-        return !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
+        return $_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
     }
 
     /**
@@ -602,7 +599,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
-     * @internal
      * @internal
      *
      * @return string

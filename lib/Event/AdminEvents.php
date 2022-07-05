@@ -386,6 +386,20 @@ final class AdminEvents
     const OBJECT_GET_PRE_SEND_DATA = 'pimcore.admin.dataobject.get.preSendData';
 
     /**
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject\DataObjectHelperController
+     * Arguments:
+     *  - data | array | the response data which this can be modified
+     *  - request | Request | the Request object passed to the action
+     *  - config | Config | the Config object passed to the action
+     *  - context | string | 'get' or 'delete'
+     *
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
+     *
+     * @var string
+     */
+    const OBJECT_GRID_GET_COLUMN_CONFIG_PRE_SEND_DATA = 'pimcore.admin.dataobject.gridGetColumnConfig.preSendData';
+
+    /**
      * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\DataObjectController
      * Arguments:
      *  - objects | array | the list of object tree nodes

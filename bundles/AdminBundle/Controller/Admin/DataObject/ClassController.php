@@ -24,6 +24,7 @@ use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
+use Pimcore\Model\Exception\ConfigWriteException;
 use Pimcore\Model\Translation;
 use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -246,9 +247,31 @@ class ClassController extends AdminController implements KernelControllerEventIn
     {
         $customLayout = DataObject\ClassDefinition\CustomLayout::getById($request->get('id'));
         if (!$customLayout) {
-            throw $this->createNotFoundException();
+            $brickLayoutSeparator = strpos($request->get('id'), '.brick.');
+            if ($brickLayoutSeparator !== false) {
+                $customLayout = DataObject\ClassDefinition\CustomLayout::getById(substr($request->get('id'), 0, $brickLayoutSeparator));
+                if ($customLayout instanceof DataObject\ClassDefinition\CustomLayout) {
+                    $customLayout = DataObject\ClassDefinition\CustomLayout::create(
+                        [
+                            'name' => $customLayout->getName().' '.substr($request->get('id'), $brickLayoutSeparator+strlen('.brick.')),
+                            'userOwner' => $this->getAdminUser()->getId(),
+                            'classId' => $customLayout->getClassId(),
+                        ]
+                    );
+
+                    $customLayout->setId($request->get('id'));
+                    if (!$customLayout->isWriteable()) {
+                        throw new ConfigWriteException();
+                    }
+                    $customLayout->save();
+                }
+            }
+
+            if (!$customLayout) {
+                throw $this->createNotFoundException();
+            }
         }
-        $isWriteable = $customLayout->isWritable();
+        $isWriteable = $customLayout->isWriteable();
         $customLayout = $customLayout->getObjectVars();
         $customLayout['isWriteable'] = $isWriteable;
 
@@ -309,9 +332,12 @@ class ClassController extends AdminController implements KernelControllerEventIn
         );
 
         $customLayout->setId($layoutId);
+        if (!$customLayout->isWriteable()) {
+            throw new ConfigWriteException();
+        }
         $customLayout->save();
 
-        $isWriteable = $customLayout->isWritable();
+        $isWriteable = $customLayout->isWriteable();
         $data = $customLayout->getObjectVars();
         $data['isWriteable'] = $isWriteable;
 
@@ -345,8 +371,10 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function deleteCustomLayoutAction(Request $request)
     {
-        $customLayout = DataObject\ClassDefinition\CustomLayout::getById($request->get('id'));
-        if ($customLayout) {
+        $customLayouts = new DataObject\ClassDefinition\CustomLayout\Listing();
+        $customLayouts->addConditionParam('id=?', $request->get('id'));
+        $customLayouts->addConditionParam('id LIKE ?', $request->get('id').'.brick.%', 'OR');
+        foreach ($customLayouts as $customLayout) {
             $customLayout->delete();
         }
 
@@ -385,6 +413,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
             $customLayout->setName($values['name']);
             $customLayout->setDescription($values['description']);
             $customLayout->setDefault($values['default']);
+            if (!$customLayout->isWriteable()) {
+                throw new ConfigWriteException();
+            }
             $customLayout->save();
 
             return $this->adminJson(['success' => true, 'id' => $customLayout->getId(), 'data' => $customLayout->getObjectVars()]);
@@ -525,26 +556,44 @@ class ClassController extends AdminController implements KernelControllerEventIn
     public function importCustomLayoutDefinitionAction(Request $request)
     {
         $success = false;
+        $responseContent = [];
         $json = file_get_contents($_FILES['Filedata']['tmp_name']);
         $importData = $this->decodeJson($json);
 
-        $customLayoutId = $request->get('id');
-        $customLayout = DataObject\ClassDefinition\CustomLayout::getById($customLayoutId);
-        if ($customLayout) {
-            try {
-                $layout = DataObject\ClassDefinition\Service::generateLayoutTreeFromArray($importData['layoutDefinitions'], true);
-                $customLayout->setLayoutDefinitions($layout);
-                $customLayout->setDescription($importData['description']);
-                $customLayout->save();
-                $success = true;
-            } catch (\Exception $e) {
-                Logger::error($e->getMessage());
+        $existingLayout = null;
+        if (isset($importData['name'])) {
+            $existingLayout = DataObject\ClassDefinition\CustomLayout::getByName($importData['name']);
+
+            if ($existingLayout instanceof DataObject\ClassDefinition\CustomLayout) {
+                $responseContent['nameAlreadyInUse'] = true;
             }
         }
 
-        $response = $this->adminJson([
-            'success' => $success,
-        ]);
+        if (!$existingLayout instanceof DataObject\ClassDefinition\CustomLayout) {
+            $customLayoutId = $request->get('id');
+            $customLayout = DataObject\ClassDefinition\CustomLayout::getById($customLayoutId);
+            if ($customLayout) {
+                try {
+                    $layout = DataObject\ClassDefinition\Service::generateLayoutTreeFromArray($importData['layoutDefinitions'], true);
+                    $customLayout->setLayoutDefinitions($layout);
+                    if (isset($importData['name']) === true) {
+                        $customLayout->setName($importData['name']);
+                    }
+                    $customLayout->setDescription($importData['description']);
+                    if (!$customLayout->isWriteable()) {
+                        throw new ConfigWriteException();
+                    }
+                    $customLayout->save();
+                    $success = true;
+                } catch (\Exception $e) {
+                    Logger::error($e->getMessage());
+                }
+            }
+
+            $responseContent['success'] = $success;
+        }
+
+        $response = $this->adminJson($responseContent);
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
@@ -562,16 +611,16 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function getCustomLayoutDefinitionsAction(Request $request)
     {
-        $classId = $request->get('classId');
+        $classIds = explode(',', $request->get('classId'));
         $list = new DataObject\ClassDefinition\CustomLayout\Listing();
 
-        $list->setCondition('classId = ' . $list->quote($classId));
+        $list->setCondition('classId IN (' . rtrim(str_repeat('?,', count($classIds)), ',').') AND id not LIKE \'%.brick.%\'', $classIds);
         $list = $list->load();
         $result = [];
         foreach ($list as $item) {
             $result[] = [
                 'id' => $item->getId(),
-                'name' => $item->getName() . ' (ID: ' . $item->getId() . ')',
+                'name' => $item->getName(),
                 'default' => $item->getDefault() ?: 0,
             ];
         }
@@ -593,6 +642,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $mapping = [];
 
         $customLayouts = new DataObject\ClassDefinition\CustomLayout\Listing();
+        $customLayouts->setCondition('id not LIKE \'%.brick.%\'');
         $customLayouts->setOrder('ASC');
         $customLayouts->setOrderKey('name');
         $customLayouts = $customLayouts->load();
@@ -671,6 +721,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
             if ($customLayout) {
                 $name = $customLayout->getName();
                 $customLayoutData = [
+                    'name' => $name,
                     'description' => $customLayout->getDescription(),
                     'layoutDefinitions' => $customLayout->getLayoutDefinitions(),
                     'default' => $customLayout->getDefault() ?: 0,
@@ -1296,7 +1347,19 @@ class ClassController extends AdminController implements KernelControllerEventIn
                     ];
                 }
                 if ($forObjectEditor) {
-                    $itemLayoutDefinitions = $item->getLayoutDefinitions();
+                    $layoutId = $request->get('layoutId');
+                    $itemLayoutDefinitions = null;
+                    if ($layoutId) {
+                        $layout = DataObject\ClassDefinition\CustomLayout::getById($layoutId.'.brick.'.$item->getKey());
+                        if ($layout instanceof DataObject\ClassDefinition\CustomLayout) {
+                            $itemLayoutDefinitions = $layout->getLayoutDefinitions();
+                        }
+                    }
+
+                    if ($itemLayoutDefinitions === null) {
+                        $itemLayoutDefinitions = $item->getLayoutDefinitions();
+                    }
+
                     DataObject\Service::enrichLayoutDefinition($itemLayoutDefinitions, $object);
 
                     $layoutDefinitions[$item->getKey()] = $itemLayoutDefinitions;
@@ -1319,7 +1382,11 @@ class ClassController extends AdminController implements KernelControllerEventIn
                     $user = $this->getAdminUser();
                     if ($currentLayoutId == -1 && $user->isAdmin()) {
                         DataObject\Service::createSuperLayout($layout);
-                        $objectData['layout'] = $layout;
+                    } elseif ($currentLayoutId) {
+                        $customLayout = DataObject\ClassDefinition\CustomLayout::getById($currentLayoutId.'.brick.'.$item->getKey());
+                        if ($customLayout instanceof DataObject\ClassDefinition\CustomLayout) {
+                            $layout = $customLayout->getLayoutDefinitions();
+                        }
                     }
 
                     $context = [
@@ -1876,7 +1943,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $db = Db::get();
         $maxId = $db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM classes;');
 
-        $existingIds = $db->fetchCol('select LOWER(id) from classes');
+        $existingIds = $db->fetchFirstColumn('select LOWER(id) from classes');
 
         $result = [
             'suggestedIdentifier' => $maxId ? $maxId + 1 : 1,

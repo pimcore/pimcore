@@ -92,6 +92,14 @@ class ConditionFactory implements ConditionFactoryInterface
             ));
         }
 
+        if (!is_subclass_of($class, ConditionInterface::class)) {
+            throw new \RuntimeException(sprintf(
+'Configured condition class "%s" for type "%s" has not the ConditionInterface',
+                $class,
+                $type
+            ));
+        }
+
         return $class::fromConfig($config);
     }
 }

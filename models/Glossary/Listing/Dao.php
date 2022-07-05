@@ -31,7 +31,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        $glossarysData = $this->db->fetchCol('SELECT id FROM glossary' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $glossarysData = $this->db->fetchFirstColumn('SELECT id FROM glossary' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         $glossary = [];
         foreach ($glossarysData as $glossaryData) {

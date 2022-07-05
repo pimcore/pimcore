@@ -74,8 +74,11 @@ doctrine:
                 charset: UTF8MB4
                 logging: false
                 profiling: false
+                options:
+                  !php/const PDO::MYSQL_ATTR_INIT_COMMAND: "SET sql_mode = '';"
                 default_table_options:
                     charset: UTF8MB4
+                    engine: InnoDB
                     collate: utf8mb4_general_ci
 
 # Monolog Configuration

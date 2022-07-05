@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Data\ObjectMetadata;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
@@ -60,7 +61,7 @@ class Dao extends Model\Dao\AbstractDao
             $data = $dataTemplate;
             $data['column'] = $column;
             $data['data'] = $this->model->$getter();
-            $this->db->insertOrUpdate($table, $data);
+            Helper::insertOrUpdate($this->db, $table, $data);
         }
     }
 

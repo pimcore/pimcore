@@ -245,7 +245,7 @@ class Imagick extends Adapter
             }
         }
         if (!$this->isPreserveColor()) {
-            $i->profileImage('*', null);
+            $i->profileImage('*', '');
         }
 
         if ($quality && !$this->isPreserveColor()) {
@@ -883,7 +883,7 @@ class Imagick extends Adapter
         $image = PIMCORE_PROJECT_ROOT . '/' . $image;
 
         if (is_file($image)) {
-            $this->resource->setImageMatte(1);
+            $this->resource->setImageMatte(true);
             $newImage = new \Imagick();
             $newImage->readimage($image);
             $newImage->resizeimage($this->getWidth(), $this->getHeight(), \Imagick::FILTER_UNDEFINED, 1, false);

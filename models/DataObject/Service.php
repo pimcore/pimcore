@@ -1021,7 +1021,7 @@ class Service extends Model\Element\Service
         $classId = $object->getClassId();
         $list = new ClassDefinition\CustomLayout\Listing();
         $list->setOrderKey('name');
-        $condition = 'classId = ' . $list->quote($classId);
+        $condition = 'classId = ' . $list->quote($classId).' AND id NOT LIKE \'%.brick.%\'';
         if (is_array($layoutPermissions) && count($layoutPermissions)) {
             $layoutIds = array_values($layoutPermissions);
             $condition .= ' AND id IN (' . implode(',', array_map([$list, 'quote'], $layoutIds)) . ')';
@@ -1060,7 +1060,7 @@ class Service extends Model\Element\Service
 
         if (method_exists($layout, 'getChildren')) {
             $children = $layout->getChildren();
-            $insideDataType |= is_a($layout, $targetClass);
+            $insideDataType = $insideDataType || is_a($layout, $targetClass);
             if (is_array($children)) {
                 foreach ($children as $child) {
                     $targetList = self::extractFieldDefinitions($child, $targetClass, $targetList, $insideDataType);
@@ -1200,7 +1200,7 @@ class Service extends Model\Element\Service
 
         $permissionList = [];
 
-        $parentPermissionSet = $object->getPermissions(null, $user, true);
+        $parentPermissionSet = $object->getPermissions(null, $user);
         if ($parentPermissionSet) {
             $permissionList[] = $parentPermissionSet;
         }
@@ -1337,7 +1337,7 @@ class Service extends Model\Element\Service
                 return false;
             }
 
-            $layout->setNoteditable($layout->getNoteditable() | $fieldDefinitions[$name]->getNoteditable());
+            $layout->setNoteditable($layout->getNoteditable() || $fieldDefinitions[$name]->getNoteditable());
         }
 
         if (method_exists($layout, 'getChildren')) {
@@ -1719,7 +1719,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param Concrete $container
+     * @param Model\AbstractModel $container
      * @param ClassDefinition|ClassDefinition\Data $fd
      */
     public static function doResetDirtyMap($container, $fd)
@@ -1738,7 +1738,7 @@ class Service extends Model\Element\Service
                     $value->resetLanguageDirtyMap();
                 }
 
-                if ($value instanceof DirtyIndicatorInterface) {
+                if ($value instanceof Model\AbstractModel && $value instanceof DirtyIndicatorInterface) {
                     $value->resetDirtyMap();
                     self::doResetDirtyMap($value, $fieldDefinitions[$fieldDefinition->getName()]);
                 }
@@ -1784,7 +1784,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param AbstractObject $object
+     * @param Concrete $object
      * @param string $requestedLanguage
      * @param array $fields
      * @param array $helperDefinitions
@@ -1796,7 +1796,7 @@ class Service extends Model\Element\Service
      *
      * @internal
      */
-    public static function getCsvDataForObject(AbstractObject $object, $requestedLanguage, $fields, $helperDefinitions, LocaleServiceInterface $localeService, $returnMappedFieldNames = false, $context = [])
+    public static function getCsvDataForObject(Concrete $object, $requestedLanguage, $fields, $helperDefinitions, LocaleServiceInterface $localeService, $returnMappedFieldNames = false, $context = [])
     {
         $objectData = [];
         $mappedFieldnames = [];
@@ -1863,8 +1863,6 @@ class Service extends Model\Element\Service
      */
     public static function getCsvData($requestedLanguage, LocaleServiceInterface $localeService, $list, $fields, $addTitles = true, $context = [])
     {
-        $mappedFieldnames = [];
-
         $data = [];
         Logger::debug('objects in list:' . count($list->getObjects()));
 

@@ -61,6 +61,9 @@ class DocumentTargetGroupListener implements EventSubscriberInterface
         $this->eventDispatcher = $eventDispatcher;
     }
 
+    /**
+     * @return string[]
+     */
     public static function getSubscribedEvents()
     {
         return [

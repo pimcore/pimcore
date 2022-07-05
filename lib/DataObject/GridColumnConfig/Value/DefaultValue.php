@@ -16,7 +16,6 @@
 namespace Pimcore\DataObject\GridColumnConfig\Value;
 
 use Pimcore\Localization\LocaleServiceInterface;
-use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Concrete;
@@ -202,7 +201,7 @@ final class DefaultValue extends AbstractValue
         }
 
         if ($this->attribute && method_exists($element, $getter)) {
-            if ($element instanceof AbstractObject) {
+            if ($element instanceof Concrete) {
                 try {
                     $result = $this->getValueForObject($element, $this->attribute, $brickType, $brickKey);
                 } catch (\Exception $e) {

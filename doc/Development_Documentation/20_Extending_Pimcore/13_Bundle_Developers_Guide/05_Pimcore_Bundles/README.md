@@ -119,14 +119,11 @@ An example of a `composer.json` defining a Pimcore bundle:
 
 #### Returning the composer package version in extension manager
 
-If you provide your bundle as composer package, you'll probably want to show the composer version of your bundle in the
-extension manager grid. As pimcore includes the [ocramius/package-versions](https://github.com/Ocramius/PackageVersions)
-library which generates a list of package versions installed via composer you can easily use that library to return the 
-installed version of your bundle.
+Pimcore provides a `Pimcore\Extension\Bundle\Traits\PackageVersionTrait` which you can include in your bundle. The trait
+includes a `getComposerPackageName` method which will return the name defined in your `composer.json` file.
 
-Pimcore provides a `Pimcore\Extension\Bundle\Traits\PackageVersionTrait` which you can include in your bundle. All you need
-to do is to implement a `getComposerPackageName` method returning the name of your composer package (e.g. `company/foo-bundle`):
-
+If you want to change the default behavior, all you need to do is to override the `getComposerPackageName` method returning
+the name of your composer package (e.g. `company/foo-bundle`):
 
 ```php
 <?php

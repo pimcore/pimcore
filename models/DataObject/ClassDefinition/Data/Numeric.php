@@ -126,7 +126,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     /**
      * This is the y part in DECIMAL(x, y) and denotes amount of digits after a comma. In MySQL this is called scale. See
-     * commend on decimalSize.
+     * comment on decimalSize.
      *
      * @internal
      *

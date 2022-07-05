@@ -769,6 +769,10 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     {
         $reduced = [];
         foreach ($classes as $class) {
+            if (null === $class) {
+                continue;
+            }
+
             $reduced[] = [
                 'id' => $class->getId(),
                 'name' => $class->getName(),

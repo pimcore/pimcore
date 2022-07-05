@@ -19,6 +19,7 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Config;
+use Pimcore\Db\Helper;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Asset;
@@ -224,7 +225,7 @@ class SearchController extends AdminController
                     $tag = Element\Tag::getById($tagId);
                     if ($tag) {
                         $tagPath = $tag->getFullIdPath();
-                        $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid WHERE '.$tagsTypeCondition.' (id = ' .(int)$tagId. ' OR idPath LIKE ' . $db->quote($db->escapeLike($tagPath) . '%') . '))';
+                        $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid WHERE '.$tagsTypeCondition.' (id = ' .(int)$tagId. ' OR idPath LIKE ' . $db->quote(Helper::escapeLike($tagPath) . '%') . '))';
                     }
                 } else {
                     $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment WHERE '.$tagsTypeCondition.' tagid = ' .(int)$tagId. ')';
@@ -245,6 +246,13 @@ class SearchController extends AdminController
 
         $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
         if ($sortingSettings['orderKey']) {
+            // Order by key column instead of filename
+            $orderKeyQuote = true;
+            if ($sortingSettings['orderKey'] === 'filename') {
+                $sortingSettings['orderKey'] = 'CAST(`key` AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
+                $orderKeyQuote = false;
+            }
+
             // we need a special mapping for classname as this is stored in subtype column
             $sortMapping = [
                 'classname' => 'subtype',
@@ -254,7 +262,7 @@ class SearchController extends AdminController
             if (array_key_exists($sortingSettings['orderKey'], $sortMapping)) {
                 $sort = $sortMapping[$sortingSettings['orderKey']];
             }
-            $searcherList->setOrderKey($sort);
+            $searcherList->setOrderKey($sort, $orderKeyQuote);
         }
         if ($sortingSettings['order']) {
             $searcherList->setOrder($sortingSettings['order']);

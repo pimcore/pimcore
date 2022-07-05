@@ -142,6 +142,13 @@ trait EmbeddedMetaDataTrait
         return $data;
     }
 
+    /**
+     * @param string|null $filePath
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
     public function getXMPData(?string $filePath = null)
     {
         if (!$filePath) {

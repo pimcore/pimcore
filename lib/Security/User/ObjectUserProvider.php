@@ -18,7 +18,7 @@ namespace Pimcore\Security\User;
 use Pimcore\Model\DataObject\AbstractObject;
 use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
@@ -96,7 +96,7 @@ class ObjectUserProvider implements UserProviderInterface
             return $user;
         }
 
-        throw new UsernameNotFoundException(sprintf('User %s was not found', $username));
+        throw new UserNotFoundException(sprintf('User %s was not found', $username));
     }
 
     /**

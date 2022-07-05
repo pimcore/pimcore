@@ -196,16 +196,35 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     },
 
     getLayoutSelection: function () {
+        var classId = [];
+        if(typeof this.klass.id !== 'undefined') {
+            classId = [this.klass.id];
+        } else if(typeof this.klass.classDefinitions !== 'undefined') {
+            for(var i in this.klass.availableClasses) {
+                classId.push(this.klass.availableClasses[i].id);
+            }
+        }
         this.layoutComboStore = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
                 url: Routing.generate('pimcore_admin_dataobject_class_getcustomlayoutdefinitions'),
                 extraParams: {
-                    classId: this.klass.id
+                    classId: classId.join(',')
                 },
                 reader: {
                     type: 'json',
-                    rootProperty: 'data'
+                    rootProperty: 'data',
+                    transform: function (data) {
+                        if (data.data) {
+                            Ext.each(data.data, function (data) {
+                                if(typeof this.klass.key !== 'undefined') {
+                                    data.id = data.id+'.brick.'+this.klass.key;
+                                }
+                            }.bind(this));
+                        }
+
+                        return data;
+                    }.bind(this),
                 }
             },
             fields: ['id', 'name'],
@@ -264,14 +283,17 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                     xtype: "button",
                     text: t("add_layout"),
                     iconCls: "pimcore_icon_add",
-                    handler: this.suggestIdentifier.bind(this)
+                    handler: this.suggestIdentifier.bind(this),
+                    hidden: typeof this.klass.id === 'undefined',
+                    disabled: !pimcore.settings['object-custom-layout-writeable']
                 },
                 {
                     xtype: "button",
                     text: t("delete_layout"),
                     iconCls: "pimcore_icon_delete",
                     disabled: false,
-                    handler: this.deleteLayout.bind(this)
+                    handler: this.deleteLayout.bind(this),
+                    hidden: typeof this.klass.id === 'undefined'
                 }
             ]
         };
@@ -457,7 +479,11 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
     getClassDefinitionPanel: function () {
         if (!this.classDefinitionPanel) {
-            this.classDefinitionPanel = this.getClassTree(Routing.generate('pimcore_admin_dataobject_class_get'), this.klass.id);
+            if (typeof this.klass.id !== 'undefined') {
+                this.classDefinitionPanel = this.getClassTree(Routing.generate('pimcore_admin_dataobject_class_get'), this.klass.id);
+            } else if(typeof this.klass.key !== 'undefined') {
+                this.classDefinitionPanel = this.getClassTree(Routing.generate('pimcore_admin_dataobject_class_objectbrickget'), this.klass.key);
+            }
         }
 
         return this.classDefinitionPanel;
@@ -521,6 +547,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             title: t('class'),
             region: "west",
             autoScroll: true,
+            rootVisible: false,
             split: true,
             disabled: true,
             root: {
@@ -597,7 +624,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                     baseNode.appendChild(this.recursiveAddNode(child, baseNode, attributePrefix, isCustom));
                 }
                 rootNode.expand();
-                baseNode.expand();
             }
         }
     },
@@ -818,7 +844,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         var identifierField = new Ext.form.field.Text({
             fieldLabel: t('unique_identifier'),
             labelWidth: 200,
-            maxLength: 20,
             value: suggestedIdentifier
         });
 
@@ -834,10 +859,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             buttonAlign: 'center',
             items: [
                 nameField,
-                identifierField, {
-                    xtype: 'panel',
-                    html: t('identifier_warning')
-                }
+                identifierField
             ],
             buttons: [
                 {
@@ -879,7 +901,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             return false;
         }
 
-        var layoutIdentifierRegresult = layoutIdentifier.match(/[a-zA-Z0-9]+/);
+        var layoutIdentifierRegresult = layoutIdentifier.match(/[a-zA-Z0-9\-]+/);
 
         if (layoutIdentifier.length < 1 || layoutIdentifierRegresult != layoutIdentifier) {
             Ext.Msg.alert(' ', t('invalid_identifier'));
@@ -932,7 +954,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         var id = this.layoutChangeCombo.getValue();
 
         Ext.Msg.confirm(t('delete'), t('delete_message'), function(btn){
-            if (btn == 'yes'){
+            if (btn == 'yes') {
                 Ext.Ajax.request({
                     url: Routing.generate('pimcore_admin_dataobject_class_deletecustomlayout'),
                     method: 'DELETE',
@@ -974,8 +996,14 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                 }.bind(this)
 
             });
-        }.bind(this), function () {
-            Ext.MessageBox.alert(t("error"), t("error"));
+        }.bind(this), function (response) {
+            var data = Ext.decode(response.response.responseText);
+
+            if (data && data.nameAlreadyInUse) {
+                Ext.MessageBox.alert(t('error'), sprintf(t('name_already_in_use'), data.name));
+            } else {
+                Ext.MessageBox.alert(t("error"), t("error"));
+            }
         });
     },
 

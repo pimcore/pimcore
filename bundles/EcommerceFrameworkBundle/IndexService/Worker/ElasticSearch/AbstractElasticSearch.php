@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch;
 
+use Doctrine\DBAL\Connection;
 use Elasticsearch\Common\Exceptions\BadRequest400Exception;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
 use Elasticsearch\Common\Exceptions\NoNodesAvailableException;
@@ -24,7 +25,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInt
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
-use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
 use Pimcore\Model\Tool\TmpStore;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -95,10 +95,10 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
 
     /**
      * @param ElasticSearchConfigInterface $tenantConfig
-     * @param ConnectionInterface $db
+     * @param Connection $db
      * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher)
+    public function __construct(ElasticSearchConfigInterface $tenantConfig, Connection $db, EventDispatcherInterface $eventDispatcher)
     {
         parent::__construct($tenantConfig, $db, $eventDispatcher);
 
@@ -409,7 +409,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         }
 
         if (empty($data)) {
-            $dataEntry = $this->db->fetchRow('SELECT data, metadata FROM ' . $this->getStoreTableName() . ' WHERE o_id = ? AND tenant = ?', [$objectId, $this->name]);
+            $dataEntry = $this->db->fetchAssociative('SELECT data, metadata FROM ' . $this->getStoreTableName() . ' WHERE o_id = ? AND tenant = ?', [$objectId, $this->name]);
             if ($dataEntry) {
                 $data = json_decode($dataEntry['data'], true);
                 $metadata = $dataEntry['metadata'];
@@ -520,15 +520,15 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                             json_decode($data['update_error'], true)
                         );
 
-                        $this->db->updateWhere(
+                        $this->db->update(
                             $this->getStoreTableName(),
                             $data,
-                            'o_id = ' . $this->db->quote($response[$operation]['_id']) . ' AND tenant = ' . $this->db->quote($this->name)
+                            ['o_id' => $response[$operation]['_id'], 'tenant' => $this->name]
                         );
                     } else {
 
                         //update crc sums in store table to mark element as indexed
-                        $this->db->query(
+                        $this->db->executeQuery(
                             'UPDATE ' . $this->getStoreTableName() . ' SET crc_index = crc_current, update_status = ?, update_error = ?, metadata = ? WHERE o_id = ? and tenant = ?',
                             [$data['update_status'], $data['update_error'], $data['metadata'], $response[$operation]['_id'], $this->name]
                         );
@@ -626,7 +626,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     {
         $esClient = $this->getElasticSearchClient();
 
-        $storeEntry = \Pimcore\Db::get()->fetchRow('SELECT * FROM ' . $this->getStoreTableName() . ' WHERE  o_id=? AND tenant=? ', [$objectId, $this->getTenantConfig()->getTenantName()]);
+        $storeEntry = \Pimcore\Db::get()->fetchAssociative('SELECT * FROM ' . $this->getStoreTableName() . ' WHERE  o_id=? AND tenant=? ', [$objectId, $this->getTenantConfig()->getTenantName()]);
         if ($storeEntry) {
             $isLocked = $this->checkIndexLock(false);
             if ($isLocked) {

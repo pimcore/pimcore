@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Search\Backend\Data;
 
+use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Model;
 
@@ -41,7 +42,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
                 throw new \Exception('unknown type of element with id [ '.$element->getId().' ] ');
             }
 
-            $data = $this->db->fetchRow('SELECT * FROM search_backend_data WHERE id = ? AND maintype = ? ', [$element->getId(), $maintype]);
+            $data = $this->db->fetchAssociative('SELECT * FROM search_backend_data WHERE id = ? AND maintype = ? ', [$element->getId(), $maintype]);
             if (is_array($data)) {
                 unset($data['id']);
                 $this->assignVariablesToModel($data);
@@ -56,6 +57,8 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         try {
             $data = [
                 'id' => $this->model->getId()->getId(),
+                'key' => $this->model->getKey(),
+                'index' => $this->model->getIndex(),
                 'fullpath' => $this->model->getFullPath(),
                 'maintype' => $this->model->getId()->getType(),
                 'type' => $this->model->getType(),
@@ -69,7 +72,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
                 'properties' => $this->model->getProperties(),
             ];
 
-            $this->db->insertOrUpdate('search_backend_data', $data);
+            Helper::insertOrUpdate($this->db, 'search_backend_data', $data);
         } catch (\Exception $e) {
             Logger::error((string) $e);
         }

@@ -17,17 +17,42 @@ namespace Pimcore\Localization;
 
 interface LocaleServiceInterface
 {
+    /**
+     * @param string $locale
+     *
+     * @return bool
+     */
     public function isLocale($locale);
 
+    /**
+     * @return string
+     */
     public function findLocale();
 
+    /**
+     * @return array
+     */
     public function getLocaleList();
 
+    /**
+     * @param string|null $locale
+     *
+     * @return array
+     */
     public function getDisplayRegions($locale = null);
 
+    /**
+     * @return string|null
+     */
     public function getLocale();
 
+    /**
+     * @param string|null $locale
+     */
     public function setLocale($locale);
 
+    /**
+     * @return bool
+     */
     public function hasLocale();
 }

@@ -172,11 +172,14 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param Dependency $d
+     * @param int|null $offset
+     * @param int|null $limit
      *
      * @return array
+     *
+     * @internal
+     *
      */
     public static function getRequiredByDependenciesForFrontend(Dependency $d, $offset, $limit)
     {
@@ -198,11 +201,14 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param Dependency $d
+     * @param int|null $offset
+     * @param int|null $limit
      *
      * @return array
+     *
+     * @internal
+     *
      */
     public static function getRequiresDependenciesForFrontend(Dependency $d, $offset, $limit)
     {
@@ -350,7 +356,7 @@ class Service extends Model\AbstractModel
                         throw new \Exception('unknown type');
                 }
                 $query = 'SELECT ' . $idColumn . ' FROM ' . $elementType . 's WHERE ' . $publishedColumn . '=1 AND ' . $idColumn . ' IN (' . implode(',', $idList) . ');';
-                $publishedIds = $db->fetchCol($query);
+                $publishedIds = $db->fetchFirstColumn($query);
                 $publishedMapping[$elementType] = $publishedIds;
             }
 
@@ -1502,10 +1508,8 @@ class Service extends Model\AbstractModel
         $tmpStoreKey = self::getSessionKey($elementType, $element->getId(), $postfix);
         $tag = $elementType . '-session' . $postfix;
 
-        if ($element instanceof ElementDumpStateInterface) {
-            self::loadAllFields($element);
-            $element->setInDumpState(true);
-        }
+        self::loadAllFields($element);
+        $element->setInDumpState(true);
         $serializedData = Serialize::serialize($element);
 
         TmpStore::set($tmpStoreKey, $serializedData, $tag);

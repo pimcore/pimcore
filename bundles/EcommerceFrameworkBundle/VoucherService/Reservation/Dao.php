@@ -50,7 +50,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
             $params[] = $cart->getId();
         }
 
-        $result = $this->db->fetchRow($query, $params);
+        $result = $this->db->fetchAssociative($query, $params);
         if (empty($result)) {
             throw new NotFoundException('Reservation for token ' . $code . ' not found.');
         }
@@ -78,7 +78,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      */
     public function remove()
     {
-        $this->db->deleteWhere(self::TABLE_NAME, 'token = ' . $this->db->quote($this->model->getToken()));
+        $this->db->delete(self::TABLE_NAME, ['token' => $this->model->getToken()]);
 
         return true;
     }

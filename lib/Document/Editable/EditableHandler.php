@@ -19,6 +19,7 @@ use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
 use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
+use Pimcore\Extension\Document\Areabrick\PreviewAwareInterface;
 use Pimcore\Extension\Document\Areabrick\TemplateAreabrickInterface;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\RequestHelper;
@@ -148,7 +149,10 @@ class EditableHandler implements LoggerAwareInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param Editable $editable
+     * @param AreabrickInterface|string|bool $brick
+     *
+     * @return bool
      */
     public function isBrickEnabled(Editable $editable, $brick)
     {
@@ -160,7 +164,10 @@ class EditableHandler implements LoggerAwareInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param Editable\Areablock $editable
+     * @param array $options
+     *
+     * @return array
      */
     public function getAvailableAreablockAreas(Editable\Areablock $editable, array $options)
     {
@@ -184,7 +191,7 @@ class EditableHandler implements LoggerAwareInterface
 
             $hasDialogBoxConfiguration = $brick instanceof EditableDialogBoxInterface;
 
-            // autoresolve icon as <bundleName>/Resources/public/areas/<id>/icon.png
+            // autoresolve icon as <bundleName>/Resources/public/areas/<id>/icon.png or <bundleName>/public/areas/<id>/icon.png
             if (null === $icon) {
                 $bundle = null;
 
@@ -192,7 +199,8 @@ class EditableHandler implements LoggerAwareInterface
                     $bundle = $this->bundleLocator->getBundle($brick);
 
                     // check if file exists
-                    $iconPath = sprintf('%s/Resources/public/areas/%s/icon.png', $bundle->getPath(), $brick->getId());
+                    $publicDir = is_dir($bundle->getPath().'/Resources/public') ? $bundle->getPath().'/Resources/public' : $bundle->getPath().'/public';
+                    $iconPath = sprintf('%s/areas/%s/icon.png', $publicDir, $brick->getId());
                     if (file_exists($iconPath)) {
                         // build URL to icon
                         $icon = $this->webPathResolver->getPath($bundle, 'areas/' . $brick->getId(), 'icon.png');
@@ -201,6 +209,10 @@ class EditableHandler implements LoggerAwareInterface
                     $icon = '';
                 }
             }
+
+            $previewHtml = $brick instanceof PreviewAwareInterface
+                ? $brick->getPreviewHtml()
+                : null;
 
             if ($this->editmodeResolver->isEditmode()) {
                 $name = $this->translator->trans($name);
@@ -212,6 +224,7 @@ class EditableHandler implements LoggerAwareInterface
                 'description' => $desc,
                 'type' => $brick->getId(),
                 'icon' => $icon,
+                'previewHtml' => $previewHtml,
                 'limit' => $limit,
                 'needsReload' => $brick->needsReload(),
                 'hasDialogBoxConfiguration' => $hasDialogBoxConfiguration,
@@ -291,6 +304,9 @@ class EditableHandler implements LoggerAwareInterface
         return $html;
     }
 
+    /**
+     * @param Response|null $result
+     */
     protected function handleBrickActionResult($result)
     {
 
@@ -390,7 +406,11 @@ class EditableHandler implements LoggerAwareInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $controller
+     * @param array $attributes
+     * @param array $query
+     *
+     * @return string|Response
      */
     public function renderAction($controller, array $attributes = [], array $query = [])
     {

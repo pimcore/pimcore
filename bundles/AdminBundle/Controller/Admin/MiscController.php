@@ -610,7 +610,7 @@ class MiscController extends AdminController
         }
 
         $db = Db::get();
-        $data = $db->fetchRow('SELECT * FROM http_error_log WHERE uri = ?', [$request->get('uri')]);
+        $data = $db->fetchAssociative('SELECT * FROM http_error_log WHERE uri = ?', [$request->get('uri')]);
 
         foreach ($data as $key => &$value) {
             if (in_array($key, ['parametersGet', 'parametersPost', 'serverVars', 'cookies'])) {

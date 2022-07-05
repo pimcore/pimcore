@@ -30,7 +30,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function load()
     {
         $sql = 'SELECT id FROM website_settings' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit();
-        $settingsData = $this->db->fetchCol($sql, $this->model->getConditionVariables());
+        $settingsData = $this->db->fetchFirstColumn($sql, $this->model->getConditionVariables());
 
         $settings = [];
         foreach ($settingsData as $settingData) {

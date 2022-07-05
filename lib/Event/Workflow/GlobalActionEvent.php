@@ -63,6 +63,9 @@ class GlobalActionEvent extends Event
         return $this->workflow;
     }
 
+    /**
+     * @return mixed
+     */
     public function getSubject()
     {
         return $this->subject;

@@ -95,6 +95,9 @@ class ToolbarListener implements EventSubscriberInterface
         $this->codeInjector = $codeInjector;
     }
 
+    /**
+     * @return array[]
+     */
     public static function getSubscribedEvents()
     {
         return [
@@ -159,7 +162,7 @@ class ToolbarListener implements EventSubscriberInterface
             return false;
         }
 
-        $cookieValue = (bool)$request->cookies->get('pimcore_targeting_debug', false);
+        $cookieValue = (bool)$request->cookies->get('pimcore_targeting_debug');
         if (!$cookieValue) {
             return false;
         }
