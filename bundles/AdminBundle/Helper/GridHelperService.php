@@ -297,7 +297,7 @@ class GridHelperService
                             foreach ($filter['value'] as $filterValue) {
                                 $brickCondition = '(' . $brickField->getFilterCondition($filterValue, $operator,
                                         ['brickPrefix' => $brickPrefix]
-                                    ) . ' AND ' . $brickPrefix . 'fieldname = ' . $db->quote($brickFilterField) . ')';
+                                    ) . ' AND ' . $brickType . '.fieldname = ' . $db->quote($brickFilterField) . ')';
                                 $fieldConditions[] = $brickCondition;
                             }
 
@@ -306,7 +306,7 @@ class GridHelperService
                             }
                         } else {
                             $brickCondition = '(' . $brickField->getFilterCondition($filter['value'], $operator,
-                                    ['brickPrefix' => $brickPrefix]) . ' AND ' . $brickPrefix . 'fieldname = ' . $db->quote($brickFilterField) . ')';
+                                    ['brickPrefix' => $brickPrefix]) . ' AND ' . $brickType . '.fieldname = ' . $db->quote($brickFilterField) . ')';
                             $conditionPartsFilters[] = $brickCondition;
                         }
                     } elseif ($field instanceof ClassDefinition\Data\UrlSlug) {
