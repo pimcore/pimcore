@@ -513,6 +513,11 @@ final class Translation extends AbstractModel
                             $t->save();
                         }
                     }
+
+                    // call the garbage collector if memory consumption is > 100MB
+                    if (memory_get_usage() > 100_000_000) {
+                        \Pimcore::collectGarbage();
+                    }
                 }
                 static::clearDependentCache();
             } else {
