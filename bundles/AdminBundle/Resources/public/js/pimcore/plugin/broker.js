@@ -64,3 +64,18 @@ pimcore.plugin.broker = {
         }
     }
 };
+
+
+
+//TODO: delete in Pimcore11
+for (let oldKey in pimcore.events.eventMappings) {
+    document.addEventListener(pimcore.events.eventMappings[oldKey], (e) => {
+        let parameters = []
+
+        for (let key in e.detail) {
+            parameters.push(e.detail[key]);
+        }
+
+        pimcore.plugin.broker.fireEvent(oldKey, ...parameters);
+    });
+}

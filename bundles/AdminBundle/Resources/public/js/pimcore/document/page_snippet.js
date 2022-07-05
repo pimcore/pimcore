@@ -65,7 +65,16 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
 
         this.tab.on("afterrender", function (tabId) {
             this.tabPanel.setActiveItem(tabId);
-            pimcore.plugin.broker.fireEvent("postOpenDocument", this, this.data.type);
+
+            const postOpenDocument = new CustomEvent(pimcore.events.postOpenDocument, {
+                detail: {
+                    object: this,
+                    type: this.data.type
+                }
+            });
+
+            document.dispatchEvent(postOpenDocument);
+
         }.bind(this, tabId));
 
         this.removeLoadingPanel();

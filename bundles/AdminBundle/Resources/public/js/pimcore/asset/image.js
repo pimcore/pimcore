@@ -21,7 +21,14 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
         this.setType("image");
         this.addLoadingPanel();
 
-        pimcore.plugin.broker.fireEvent("preOpenAsset", this, "image");
+        const preOpenAssetImage = new CustomEvent(pimcore.events.preOpenAsset, {
+            detail: {
+                object: this,
+                type: "image"
+            }
+        });
+
+        document.dispatchEvent(preOpenAssetImage);
 
         var user = pimcore.globalmanager.get("user");
 
