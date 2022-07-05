@@ -22,7 +22,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface as PriceSystemPriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
-use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -231,17 +230,8 @@ class PricingManager implements PricingManagerInterface
      */
     public function getEnvironment()
     {
-        try {
-            $session = \Pimcore::getContainer()->get('request_stack')->getSession();
-        } catch (SessionNotFoundException $e) {
-            trigger_deprecation('pimcore/pimcore', '10.5',
-                sprintf('Session used with non existing request stack in %s, that will not be possible in Pimcore 11.', __CLASS__));
-
-            $session = \Pimcore::getContainer()->get('session');
-        }
-
         /** @var AttributeBagInterface $sessionBag */
-        $sessionBag = $session->getBag(SessionConfigurator::ATTRIBUTE_BAG_PRICING_ENVIRONMENT);
+        $sessionBag = $this->session->getBag(SessionConfigurator::ATTRIBUTE_BAG_PRICING_ENVIRONMENT);
 
         $class = $this->options['environment_class'];
 
