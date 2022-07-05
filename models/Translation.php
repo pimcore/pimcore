@@ -268,7 +268,7 @@ final class Translation extends AbstractModel
     {
         $cacheKey = 'translation_' . $id . '_' . $domain;
         if (is_array($languages)) {
-            $cacheKey .= '_' . implode("-", $languages);
+            $cacheKey .= '_' . implode('-', $languages);
         }
 
         if (Runtime::isRegistered($cacheKey)) {
