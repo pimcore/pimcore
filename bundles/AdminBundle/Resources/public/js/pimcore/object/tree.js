@@ -291,6 +291,12 @@ pimcore.object.tree = Class.create({
             return false;
         }
 
+        // dropping objects not allowed on the paginated tree
+        if((newParent.needsPaging) || (newParent.childNodes.length > pimcore.settings['object_tree_paging_limit'])){
+            pimcore.helpers.showNotification(t("error"), t("element_cannot_be_moved_because_target_is_paginated"), "error");
+            return false;
+        }
+
         if(newParent.data.id == oldParent.data.id && oldParent.data.sortBy != 'index') {
             pimcore.helpers.showNotification(t("error"), t("element_cannot_be_moved"), "error");
             return false;

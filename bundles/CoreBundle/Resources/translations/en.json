@@ -167,6 +167,7 @@
     "locked": "Locked",
     "element_cannot_be_move_because_it_is_locked": "Element cannot be moved because it is locked.",
     "element_cannot_be_moved": "The element cannot be moved here",
+    "element_cannot_be_moved_because_target_is_paginated": "The element cannot be dragged here because the target is a paginated tree/folder. Please use \"Search & Move\" option under the \"Advanced\" context menu of the target to move the elements.",
     "no_collections_allowed": "No Collections allowed",
     "filter_condition": "Filter Condition",
     "all_types": "All Types",
