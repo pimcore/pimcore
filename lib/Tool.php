@@ -565,10 +565,10 @@ final class Tool
 
             //need to insert get params from url to $paramsGet because otherwise they would be ignored
             $urlParts = parse_url($url);
-            
+
             if (isset($urlParts['query'])) {
                 $urlParams = [];
-                
+
                 parse_str($urlParts['query'], $urlParams);
 
                 if ($urlParams) {
