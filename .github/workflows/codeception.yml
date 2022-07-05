@@ -29,6 +29,9 @@ env:
     MINIO_ACCESS_KEY: "PIMCORE_OBJECT_STORAGE_ACCESS_KEY"
     MINIO_SECRET_KEY: "PIMCORE_OBJECT_STORAGE_SECRET_KEY"
 
+permissions:
+  contents: read
+
 jobs:
     codeception-tests:
         name: "Codeception tests"
