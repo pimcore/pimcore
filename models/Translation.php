@@ -258,6 +258,7 @@ final class Translation extends AbstractModel
      * @param string $domain
      * @param bool $create
      * @param bool $returnIdIfEmpty
+     * @param array|null $languages
      *
      * @return static|null
      *
@@ -266,6 +267,10 @@ final class Translation extends AbstractModel
     public static function getByKey(string $id, $domain = self::DOMAIN_DEFAULT, $create = false, $returnIdIfEmpty = false, $languages = null)
     {
         $cacheKey = 'translation_' . $id . '_' . $domain;
+        if (is_array($languages)) {
+            $cacheKey .= '_' . implode("-", $languages);
+        }
+
         if (Runtime::isRegistered($cacheKey)) {
             return Runtime::get($cacheKey);
         }
