@@ -39,6 +39,8 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
         /** @var DataObject\ClassDefinition\Data\Objectbricks $fieldDef */
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
 
+        $object->__objectAwareFields[$this->model->getFieldname()] = true;
+
         $values = [];
 
         foreach ($fieldDef->getAllowedTypes() as $type) {

@@ -49,6 +49,8 @@ class Dao extends Model\Dao\AbstractDao
     {
         /** @var DataObject\ClassDefinition\Data\Fieldcollections $fieldDef */
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname(), ['suppressEnrichment' => true]);
+        $object->__objectAwareFields[$this->model->getFieldname()] = true;
+
         $values = [];
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
