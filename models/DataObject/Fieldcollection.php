@@ -26,7 +26,7 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
  * @method Fieldcollection\Dao getDao()
  * @method array load(Concrete $object)
  */
-class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyIndicatorInterface
+class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyIndicatorInterface, ObjectAwareFieldInterface
 {
     use Model\Element\Traits\DirtyIndicatorTrait;
 
@@ -324,6 +324,26 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
 
         return null;
     }
+
+    /**
+     * @param Concrete|null $object
+     *
+     * @return $this
+     */
+    public function setObject(?Concrete $object)
+    {
+        // update all items with the new $object
+        if (is_array($this->getItems())) {
+            foreach ($this->getItems() as $item) {
+                if ($item instanceof Model\DataObject\Fieldcollection\Data\AbstractData) {
+                    $item->setObject($object);
+                }
+            }
+        }
+
+        return $this;
+    }
+
 
     /**
      * @internal

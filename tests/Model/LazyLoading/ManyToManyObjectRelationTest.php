@@ -54,6 +54,12 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix);
+
+            //check if data also loaded correctly when loaded from cache
+            $this->forceSavingAndLoadingFromCache($object, function($objectCache) use ($relationObjects, $messagePrefix) {
+                $relationObjects = $objectCache->getObjects();
+                $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
+            });
         }
     }
 
@@ -85,6 +91,12 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix);
+
+            //check if data also loaded correctly when loaded from cache
+            $this->forceSavingAndLoadingFromCache($object, function($objectCache) use ($relationObjects, $messagePrefix) {
+                $relationObjects = $objectCache->getLobjects();
+                $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
+            });
         }
     }
 
@@ -123,6 +135,13 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, $contentShouldBeIncluded);
+
+            //check if data also loaded correctly when loaded from cache
+            $this->forceSavingAndLoadingFromCache($object, function($objectCache) use ($relationObjects, $messagePrefix) {
+                $blockItems = $objectCache->getTestBlock();
+                $relationObjects = $blockItems[0]['blockobjects']->getData();
+                $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
+            });
         }
     }
 
@@ -158,6 +177,13 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix);
+
+            //check if data also loaded correctly when loaded from cache
+            $this->forceSavingAndLoadingFromCache($object, function($objectCache) use ($relationObjects, $messagePrefix) {
+                $blockItems = $objectCache->getTestBlockLazyloaded();
+                $relationObjects = $blockItems[0]['blockobjectsLazyLoaded']->getData();
+                $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
+            });
         }
     }
 
@@ -198,6 +224,16 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);
+
+            //check if data also loaded correctly when loaded from cache
+            $this->forceSavingAndLoadingFromCache($object, function($objectCache) use ($objectType, $relationObjects, $messagePrefix) {
+                $collection = $objectCache->getFieldcollection();
+                if ($objectType == 'parent') {
+                    $item = $collection->get(0);
+                    $relationObjects = $item->getObjects();
+                    $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
+                }
+            });
         }
     }
 
@@ -258,6 +294,16 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);
+
+            //check if data also loaded correctly when loaded from cache
+            $this->forceSavingAndLoadingFromCache($object, function($objectCache) use ($objectType, $relationObjects, $messagePrefix) {
+                $collection = $objectCache->getFieldcollection();
+                if ($objectType == 'parent') {
+                    $item = $collection->get(0);
+                    $relationObjects = $item->getLObjects();
+                    $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
+                }
+            });
         }
     }
 
@@ -292,6 +338,13 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);
+
+            //check if data also loaded correctly when loaded from cache
+            $this->forceSavingAndLoadingFromCache($object, function($objectCache) use ($relationObjects, $messagePrefix) {
+                $brick = $objectCache->getBricks()->getLazyLoadingTest();
+                $relationObjects = $brick->getObjects();
+                $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
+            });
         }
     }
 
@@ -350,6 +403,13 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);
+
+            //check if data also loaded correctly when loaded from cache
+            $this->forceSavingAndLoadingFromCache($object, function($objectCache) use ($relationObjects, $messagePrefix) {
+                $brick = $objectCache->getBricks()->getLazyLoadingLocalizedTest();
+                $relationObjects = $brick->getLocalizedFields()->getLocalizedValue('lobjects');
+                $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
+            });
         }
     }
 }
