@@ -761,11 +761,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     }
 
     /**
-     * @param DataObject\ClassDefinition[] $classes
+     * @param DataObject\ClassDefinition[]|null $classes
      *
      * @return array
      */
-    protected function prepareChildClasses($classes)
+    protected function prepareChildClasses(array $classes): array
     {
         $reduced = [];
         foreach ($classes as $class) {
