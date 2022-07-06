@@ -62,7 +62,7 @@ trait ElementWithMetadataComparisonTrait
 
             $data1 = $container1->getData();
             $data2 = $container2->getData();
-            if (serialize($data1) != serialize($data2)) {
+            if ($data1 != $data2) {
                 return false;
             }
         }
