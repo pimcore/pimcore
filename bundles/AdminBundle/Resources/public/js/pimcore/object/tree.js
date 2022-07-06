@@ -1139,7 +1139,7 @@ pimcore.object.tree = Class.create({
             if(record.needsPaging) {
                 Ext.MessageBox.alert(
                     t("error"),
-                    t("error_object_change_children_sort_to_index")+" "+t("error_sort_to_index_paginated_tree"));
+                    t("error_object_change_children_sort_to_index"));
             }
             else {
                 Ext.MessageBox.confirm(t("warning"), t("reindex_warning"),
