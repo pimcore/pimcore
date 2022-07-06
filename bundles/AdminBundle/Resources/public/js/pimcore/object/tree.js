@@ -1137,7 +1137,7 @@ pimcore.object.tree = Class.create({
 
             // Do not allow sort by index(Manual Indexes) for a paginated tree/folder
             if(record.needsPaging) {
-                pimcore.helpers.showNotification(
+                Ext.MessageBox.alert(
                     t("error"),
                     t("error_object_change_children_sort_to_index")+" "+t("error_sort_to_index_paginated_tree"));
             }
