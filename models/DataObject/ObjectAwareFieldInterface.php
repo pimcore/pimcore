@@ -23,5 +23,4 @@ interface ObjectAwareFieldInterface
      * @return $this
      */
     public function setObject(?Concrete $object);
-
 }

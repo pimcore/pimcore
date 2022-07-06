@@ -137,7 +137,8 @@ class AbstractLazyLoadingTest extends ModelTestCase
         }
     }
 
-    protected function forceSavingAndLoadingFromCache(Concrete $object, $callback) {
+    protected function forceSavingAndLoadingFromCache(Concrete $object, $callback)
+    {
 
         //enable cache
         $cacheEnabled = Cache::isEnabled();
@@ -148,7 +149,7 @@ class AbstractLazyLoadingTest extends ModelTestCase
 
         //save object to cache
         Cache::getHandler()->removeClearedTags($object->getCacheTags());
-        Cache::save($object,  \Pimcore\Model\Element\Service::getElementCacheTag('object', $object->getId()), [], null, 9999, true);
+        Cache::save($object, \Pimcore\Model\Element\Service::getElementCacheTag('object', $object->getId()), [], null, 9999, true);
 
         Cache\Runtime::clear();
         //reload from cache and check again
@@ -164,9 +165,5 @@ class AbstractLazyLoadingTest extends ModelTestCase
             Cache::disable();
             Cache::getHandler()->setHandleCli(false);
         }
-
-
-
-
     }
 }

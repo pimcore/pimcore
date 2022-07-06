@@ -82,7 +82,7 @@ class AdvancedManyToManyRelationTest extends AbstractLazyLoadingTest
             $this->checkSerialization($object, $messagePrefix);
 
             //check if data also loaded correctly when loaded from cache
-            $this->forceSavingAndLoadingFromCache($object, function($objectCache) use ($relationObjects, $messagePrefix) {
+            $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($relationObjects, $messagePrefix) {
                 //load relation and check if relation loads correctly
                 $relationObjects = $objectCache->getAdvancedRelations();
                 $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
@@ -126,7 +126,7 @@ class AdvancedManyToManyRelationTest extends AbstractLazyLoadingTest
             $this->checkSerialization($object, $messagePrefix);
 
             //check if data also loaded correctly when loaded from cache
-            $this->forceSavingAndLoadingFromCache($object, function($objectCache) use ($relationObjects, $messagePrefix) {
+            $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($relationObjects, $messagePrefix) {
                 //load relation and check if relation loads correctly
                 $relationObjects = $objectCache->getLadvancedRelations();
                 $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
@@ -177,7 +177,7 @@ class AdvancedManyToManyRelationTest extends AbstractLazyLoadingTest
             $this->checkSerialization($object, $messagePrefix, $contentShouldBeIncluded);
 
             //check if data also loaded correctly when loaded from cache
-            $this->forceSavingAndLoadingFromCache($object, function($objectCache) use ($relationObjects, $messagePrefix) {
+            $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($relationObjects, $messagePrefix) {
                 //load relation and check if relation loads correctly
                 $blockItems = $objectCache->getTestBlock();
                 $relationObjects = $blockItems[0]['blockadvancedRelations']->getData();
@@ -226,7 +226,7 @@ class AdvancedManyToManyRelationTest extends AbstractLazyLoadingTest
             $this->checkSerialization($object, $messagePrefix);
 
             //check if data also loaded correctly when loaded from cache
-            $this->forceSavingAndLoadingFromCache($object, function($objectCache) use ($relationObjects, $messagePrefix) {
+            $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($relationObjects, $messagePrefix) {
                 //load relation and check if relation loads correctly
                 $blockItems = $objectCache->getTestBlockLazyloaded();
                 $relationObjects = $blockItems[0]['blockadvancedRelationsLazyLoaded']->getData();
@@ -280,7 +280,7 @@ class AdvancedManyToManyRelationTest extends AbstractLazyLoadingTest
             $this->checkSerialization($object, $messagePrefix, false);
 
             //check if data also loaded correctly when loaded from cache
-            $this->forceSavingAndLoadingFromCache($object, function($objectCache) use ($objectType, $relationObjects, $messagePrefix) {
+            $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($objectType, $relationObjects, $messagePrefix) {
                 //load relation and check if relation loads correctly
                 $collection = $objectCache->getFieldcollection();
                 if ($objectType == 'parent') {
@@ -337,7 +337,7 @@ class AdvancedManyToManyRelationTest extends AbstractLazyLoadingTest
             $this->checkSerialization($object, $messagePrefix, false);
 
             //check if data also loaded correctly when loaded from cache
-            $this->forceSavingAndLoadingFromCache($object, function($objectCache) use ($objectType, $relationObjects, $messagePrefix) {
+            $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($objectType, $relationObjects, $messagePrefix) {
                 $collection = $objectCache->getFieldcollection();
                 if ($objectType == 'parent') {
                     $item = $collection->get(0);
@@ -387,7 +387,7 @@ class AdvancedManyToManyRelationTest extends AbstractLazyLoadingTest
             $this->checkSerialization($object, $messagePrefix, false);
 
             //check if data also loaded correctly when loaded from cache
-            $this->forceSavingAndLoadingFromCache($object, function($objectCache) use ($relationObjects, $messagePrefix) {
+            $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($relationObjects, $messagePrefix) {
                 //load relation and check if relation loads correctly
                 $brick = $objectCache->getBricks()->getLazyLoadingTest();
                 $relationObjects = $brick->getAdvancedRelations();
@@ -458,7 +458,7 @@ class AdvancedManyToManyRelationTest extends AbstractLazyLoadingTest
             $this->checkSerialization($object, $messagePrefix, false);
 
             //check if data also loaded correctly when loaded from cache
-            $this->forceSavingAndLoadingFromCache($object, function($objectCache) use ($relationObjects, $messagePrefix) {
+            $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($relationObjects, $messagePrefix) {
                 //load relation and check if relation loads correctly
                 $brick = $objectCache->getBricks()->getLazyLoadingLocalizedTest();
                 $relationObjects = $brick->getLocalizedFields()->getLocalizedValue('ladvancedRelations');

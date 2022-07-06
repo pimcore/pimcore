@@ -344,7 +344,6 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
         return $this;
     }
 
-
     /**
      * @internal
      */

@@ -22,7 +22,6 @@ use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\LazyLoading;
 use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingLocalizedTest;
 use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingTest;
-use Pimcore\Model\Element\Service;
 
 class ManyToOneRelationTest extends AbstractLazyLoadingTest
 {
@@ -57,13 +56,11 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix);
 
-
             //check if data also loaded correctly when loaded from cache
-            $this->forceSavingAndLoadingFromCache($object, function($objectCache) use ($relationObject, $messagePrefix) {
+            $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($relationObject, $messagePrefix) {
                 //load relation and check if relation loads correctly
                 $loadedRelation = $objectCache->getRelation();
                 $this->assertEquals($relationObject->getId(), $loadedRelation->getId(), $messagePrefix . 'relations not loaded properly');
-
             });
         }
     }
@@ -100,7 +97,7 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
             $this->checkSerialization($object, $messagePrefix);
 
             //check if data also loaded correctly when loaded from cache
-            $this->forceSavingAndLoadingFromCache($object, function($objectCache) use ($relationObject, $messagePrefix) {
+            $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($relationObject, $messagePrefix) {
                 $loadedRelation = $objectCache->getLrelation();
                 $this->assertEquals($relationObject->getId(), $loadedRelation->getId(), $messagePrefix . 'relations not loaded properly');
             });
@@ -146,7 +143,7 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
             $this->checkSerialization($object, $messagePrefix, $contentShouldBeIncluded);
 
             //check if data also loaded correctly when loaded from cache
-            $this->forceSavingAndLoadingFromCache($object, function($objectCache) use ($relationObject, $messagePrefix) {
+            $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($relationObject, $messagePrefix) {
                 $blockItems = $objectCache->getTestBlock();
                 $loadedRelation = $blockItems[0]['blockrelation']->getData();
                 $this->assertEquals($relationObject->getId(), $loadedRelation->getId(), $messagePrefix . 'relations not loaded properly');
@@ -190,12 +187,11 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
             $this->checkSerialization($object, $messagePrefix);
 
             //check if data also loaded correctly when loaded from cache
-            $this->forceSavingAndLoadingFromCache($object, function($objectCache) use ($relationObject, $messagePrefix) {
+            $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($relationObject, $messagePrefix) {
                 //load relation and check if relation loads correctly
                 $blockItems = $objectCache->getTestBlockLazyloaded();
                 $loadedRelation = $blockItems[0]['blockrelationLazyLoaded']->getData();
                 $this->assertEquals($relationObject->getId(), $loadedRelation->getId(), $messagePrefix . 'relations not loaded properly');
-
             });
         }
     }
@@ -241,7 +237,7 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
             $this->checkSerialization($object, $messagePrefix, false);
 
             //check if data also loaded correctly when loaded from cache
-            $this->forceSavingAndLoadingFromCache($object, function($objectCache) use ($objectType, $relationObject, $messagePrefix) {
+            $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($objectType, $relationObject, $messagePrefix) {
                 $collection = $objectCache->getFieldcollection();
                 if ($objectType == 'parent') {
                     $item = $collection->get(0);
@@ -313,7 +309,7 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
             $this->checkSerialization($object, $messagePrefix, false);
 
             //check if data also loaded correctly when loaded from cache
-            $this->forceSavingAndLoadingFromCache($object, function($objectCache) use ($objectType, $relationObject, $messagePrefix) {
+            $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($objectType, $relationObject, $messagePrefix) {
                 $collection = $objectCache->getFieldcollection();
                 if ($objectType == 'parent') {
                     $item = $collection->get(0);
@@ -359,7 +355,7 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
             $this->checkSerialization($object, $messagePrefix, false);
 
             //check if data also loaded correctly when loaded from cache
-            $this->forceSavingAndLoadingFromCache($object, function($objectCache) use ($relationObject, $messagePrefix) {
+            $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($relationObject, $messagePrefix) {
                 //load relation and check if relation loads correctly
                 $brick = $objectCache->getBricks()->getLazyLoadingTest();
                 $loadedRelation = $brick->getRelation();
@@ -425,7 +421,7 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
             $this->checkSerialization($object, $messagePrefix, false);
 
             //check if data also loaded correctly when loaded from cache
-            $this->forceSavingAndLoadingFromCache($object, function($objectCache) use ($relation, $messagePrefix) {
+            $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($relation, $messagePrefix) {
                 //load relation and check if relation loads correctly
                 $brick = $objectCache->getBricks()->getLazyLoadingLocalizedTest();
                 $loadedRelation = $brick->getLocalizedFields()->getLocalizedValue('lrelation');
