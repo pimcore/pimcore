@@ -563,13 +563,17 @@ final class Tool
 
         if (is_array($paramsGet) && count($paramsGet) > 0) {
 
-            //need to insert get params from url to $paramsGet because otherwise the would be ignored
+            //need to insert get params from url to $paramsGet because otherwise they would be ignored
             $urlParts = parse_url($url);
-            $urlParams = [];
-            parse_str($urlParts['query'], $urlParams);
 
-            if ($urlParams) {
-                $paramsGet = array_merge($urlParams, $paramsGet);
+            if (isset($urlParts['query'])) {
+                $urlParams = [];
+
+                parse_str($urlParts['query'], $urlParams);
+
+                if ($urlParams) {
+                    $paramsGet = array_merge($urlParams, $paramsGet);
+                }
             }
 
             $options[RequestOptions::QUERY] = $paramsGet;

@@ -80,7 +80,7 @@ pimcore.asset.versions = Class.create({
                 plugins: [this.cellEditing, 'gridfilters'],
                 columns: [
                     {text: t("published"), width:50, sortable: false, dataIndex: 'id', renderer: function(d, metaData, cellValues) {
-                        var d = cellValues.get('date');
+                        var d = Ext.Date.format(cellValues.get('date'), "timestamp");
                         var versionCount = cellValues.get('versionCount');
                         var index = cellValues.get('index');
                         if (index === 0 && d == this.asset.data.versionDate && versionCount == this.asset.data.versionCount) {

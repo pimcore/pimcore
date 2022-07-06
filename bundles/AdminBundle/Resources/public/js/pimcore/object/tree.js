@@ -299,6 +299,12 @@ pimcore.object.tree = Class.create({
             return false;
         }
 
+        // dropping objects not allowed if the tree/folder is paginated and sort by index (manual indexes) is enabled
+        if(((newParent.needsPaging) || (newParent.childNodes.length > pimcore.settings['object_tree_paging_limit'])) && (newParent.data.sortBy == "index")){
+            pimcore.helpers.showNotification(t("error"), t("element_cannot_be_moved_because_target_is_paginated"), "error");
+            return false;
+        }
+
         if(newParent.data.id == oldParent.data.id && oldParent.data.sortBy != 'index') {
             pimcore.helpers.showNotification(t("error"), t("element_cannot_be_moved"), "error");
             return false;
@@ -1145,12 +1151,21 @@ pimcore.object.tree = Class.create({
         let currentSortMethod = record.data.sortBy;
 
         if (currentSortMethod != sortBy && sortBy == "index") {
-            Ext.MessageBox.confirm(t("warning"), t("reindex_warning"),
-                function (tree, record, sortBy, childrenSortOrder, buttonValue) {
-                    if (buttonValue == "yes") {
-                        this.doChangeObjectChildrenSortBy(tree, record, sortBy, childrenSortOrder);
-                    }
-                }.bind(this, tree, record, sortBy, childrenSortOrder));
+
+            // Do not allow sort by index(Manual Indexes) for a paginated tree/folder
+            if(record.needsPaging) {
+                Ext.MessageBox.alert(
+                    t("error"),
+                    t("error_object_change_children_sort_to_index"));
+            }
+            else {
+                Ext.MessageBox.confirm(t("warning"), t("reindex_warning"),
+                    function (tree, record, sortBy, childrenSortOrder, buttonValue) {
+                        if (buttonValue == "yes") {
+                            this.doChangeObjectChildrenSortBy(tree, record, sortBy, childrenSortOrder);
+                        }
+                    }.bind(this, tree, record, sortBy, childrenSortOrder));
+            }
         } else {
             this.doChangeObjectChildrenSortBy(tree, record, sortBy, childrenSortOrder);
         }

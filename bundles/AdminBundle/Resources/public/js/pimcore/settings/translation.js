@@ -508,8 +508,8 @@ pimcore.settings.translation.domain = Class.create({
                                         win.close();
                                     }
                                 }.bind(this),
-                                failure: function (el, res) {
-                                    Ext.MessageBox.alert(t("error"), t("error"));
+                                failure: function (message) {
+                                    Ext.MessageBox.alert(t("error"), t("error"), t(message));
                                     win.close();
                                 }
                             });

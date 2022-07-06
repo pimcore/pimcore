@@ -113,14 +113,16 @@ class GridHelperService
                     if ($field instanceof Model\DataObject\ClassDefinition\Data) {
                         $mappedKey = 'cskey_' . $fieldName . '_' . $groupId . '_' . $keyid;
                         $featureJoins[] = ['fieldname' => $fieldName, 'groupId' => $groupId, 'keyId' => $keyid, 'language' => $language];
-                        $featureCondition = $field->getFilterConditionExt(
-                            $filter['value'],
-                            $operator,
-                            [
-                                'name' => $mappedKey, ]
-                        );
+                        if (isset($filter['value'])) {
+                            $featureCondition = $field->getFilterConditionExt(
+                                $filter['value'],
+                                $operator,
+                                [
+                                    'name' => $mappedKey, ]
+                            );
 
-                        $featureConditions[$mappedKey] = $featureCondition;
+                            $featureConditions[$mappedKey] = $featureCondition;
+                        }
                     }
                 } elseif (count($keyParts) > 1) {
                     $brickType = $keyParts[0];
@@ -295,7 +297,7 @@ class GridHelperService
                             foreach ($filter['value'] as $filterValue) {
                                 $brickCondition = '(' . $brickField->getFilterCondition($filterValue, $operator,
                                         ['brickPrefix' => $brickPrefix]
-                                    ) . ' AND ' . $brickPrefix . 'fieldname = ' . $db->quote($brickFilterField) . ')';
+                                    ) . ' AND ' . $brickType . '.fieldname = ' . $db->quote($brickFilterField) . ')';
                                 $fieldConditions[] = $brickCondition;
                             }
 
@@ -304,7 +306,7 @@ class GridHelperService
                             }
                         } else {
                             $brickCondition = '(' . $brickField->getFilterCondition($filter['value'], $operator,
-                                    ['brickPrefix' => $brickPrefix]) . ' AND ' . $brickPrefix . 'fieldname = ' . $db->quote($brickFilterField) . ')';
+                                    ['brickPrefix' => $brickPrefix]) . ' AND ' . $brickType . '.fieldname = ' . $db->quote($brickFilterField) . ')';
                             $conditionPartsFilters[] = $brickCondition;
                         }
                     } elseif ($field instanceof ClassDefinition\Data\UrlSlug) {
@@ -419,7 +421,7 @@ class GridHelperService
                     $alreadyJoined[$mappedKey] = 1;
 
                     $table = $me->getDao()->getTableName();
-                    $select->addSelect('value AS ' . $mappedKey);
+                    $select->addSelect($mappedKey . '.value AS ' . $mappedKey);
                     $select->leftJoin(
                         $table,
                         'object_classificationstore_data_' . $class->getId(),

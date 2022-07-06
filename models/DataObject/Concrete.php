@@ -46,6 +46,15 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @internal
      *
+     * Necessary for assigning object reference to corresponding fields while wakeup
+     *
+     * @var array
+     */
+    public $__objectAwareFields = [];
+
+    /**
+     * @internal
+     *
      * @var array
      */
     public const SYSTEM_COLUMN_NAMES = ['id', 'fullpath', 'key', 'published', 'creationDate', 'modificationDate', 'filename', 'classname', 'index'];
@@ -787,6 +796,13 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         // no clue why this happens
         if (property_exists($this, 'localizedfields') && $this->localizedfields instanceof Localizedfield) {
             $this->localizedfields->setObject($this, false);
+        }
+
+        // renew object reference to other object aware fields
+        foreach ($this->__objectAwareFields as $objectAwareField => $exists) {
+            if (isset($this->$objectAwareField) && $this->$objectAwareField instanceof ObjectAwareFieldInterface) {
+                $this->$objectAwareField->setObject($this);
+            }
         }
     }
 
