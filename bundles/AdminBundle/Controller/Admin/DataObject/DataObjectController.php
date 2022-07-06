@@ -761,7 +761,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     }
 
     /**
-     * @param DataObject\ClassDefinition[]|null $classes
+     * @param array<DataObject\ClassDefinition[]|null> $classes
      *
      * @return array
      */
