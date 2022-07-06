@@ -47,10 +47,7 @@ class Processor
     /**
      * @var array
      */
-    private $blockedTags = [
-        'a', 'script', 'style', 'code', 'pre', 'textarea', 'acronym',
-        'abbr', 'option', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-    ];
+    private $blockedTags = [];
 
     /**
      * @param RequestHelper $requestHelper
@@ -60,11 +57,13 @@ class Processor
     public function __construct(
         RequestHelper $requestHelper,
         EditmodeResolver $editmodeResolver,
-        DocumentResolver $documentResolver
+        DocumentResolver $documentResolver,
+        array $blockedTags = [],
     ) {
         $this->requestHelper = $requestHelper;
         $this->editmodeResolver = $editmodeResolver;
         $this->documentResolver = $documentResolver;
+        $this->blockedTags = $blockedTags;
     }
 
     /**
