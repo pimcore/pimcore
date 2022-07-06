@@ -800,9 +800,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
         // renew object reference to other object aware fields
         foreach($this->__objectAwareFields as $objectAwareField => $exists) {
-            $brickContainer = $this->$objectAwareField;
-            if($brickContainer instanceof ObjectAwareFieldInterface) {
-                $brickContainer->setObject($this);
+            if(isset($this->$objectAwareField) && $this->$objectAwareField instanceof ObjectAwareFieldInterface) {
+                $this->$objectAwareField->setObject($this);
             }
         }
     }
