@@ -324,7 +324,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
         if (null === $value) {
             $value = [];
         }
-                
+
         if (!is_array($value)) {
             $value = [$value];
         }
