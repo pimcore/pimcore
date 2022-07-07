@@ -37,6 +37,7 @@ services:
     # MISC
     #
 
+    Pimcore\Bundle\AdminBundle\EventListener\AdminSessionBagListener: ~
     Pimcore\Bundle\AdminBundle\EventListener\HttpCacheListener: ~
 
     Pimcore\Bundle\AdminBundle\EventListener\CustomAdminEntryPointCheckListener:

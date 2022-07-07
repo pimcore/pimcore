@@ -20,7 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Dis
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface as PriceSystemPriceInfoInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\SessionBagListener;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -231,7 +231,7 @@ class PricingManager implements PricingManagerInterface
     public function getEnvironment()
     {
         /** @var AttributeBagInterface $sessionBag */
-        $sessionBag = $this->session->getBag(SessionConfigurator::ATTRIBUTE_BAG_PRICING_ENVIRONMENT);
+        $sessionBag = $this->session->getBag(SessionBagListener::ATTRIBUTE_BAG_PRICING_ENVIRONMENT);
 
         $class = $this->options['environment_class'];
 
