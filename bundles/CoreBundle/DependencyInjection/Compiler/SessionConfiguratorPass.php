@@ -68,7 +68,7 @@ final class SessionConfiguratorPass implements CompilerPassInterface
         $taggedServices = $container->findTaggedServiceIds('pimcore.session.configurator');
 
         foreach ($taggedServices as $id => $tags) {
-            if ($tags[0]['type'] !== 'internal') {
+            if (($tags[0]['type'] ?? null) !== 'internal') {
                 trigger_deprecation('pimcore/pimcore', '10.5',
                     sprintf('Implementation of %s is deprecated since version 10.5 and will be removed in Pimcore 11.' .
                         'Implement the Event Listener instead.', SessionConfiguratorInterface::class));
