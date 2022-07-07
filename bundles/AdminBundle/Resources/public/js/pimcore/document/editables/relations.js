@@ -470,11 +470,11 @@ pimcore.document.editables.relations = Class.create(pimcore.document.editable, {
                         type: items[i].type,
                         subtype: subtype
                     });
-
-                    if (this.config.reload) {
-                        this.reloadDocument();
-                    }
                 }
+            }
+
+            if (this.config.reload) {
+                this.reloadDocument();
             }
         }
     },
