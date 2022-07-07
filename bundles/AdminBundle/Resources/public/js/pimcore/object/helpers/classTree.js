@@ -147,7 +147,6 @@ pimcore.object.helpers.classTree = Class.create({
                         };
 
                         text = t(data[keys[i]].nodeLabel) + " " + t("columns");
-
                     }
                     var baseNode = {
                         type: "layout",
@@ -175,6 +174,14 @@ pimcore.object.helpers.classTree = Class.create({
 
         var fn = null;
         var newNode = null;
+
+        if (con.fieldtype == "localizedfields") {
+            // create a copy because we have to pop this state
+            brickDescriptor = Ext.clone(brickDescriptor);
+            Ext.apply(brickDescriptor, {
+                insideLocalizedFields: true
+            });
+        }
 
         if (con.datatype == "layout") {
             fn = this.addLayoutChild.bind(scope, con.fieldtype, con);
@@ -230,16 +237,8 @@ pimcore.object.helpers.classTree = Class.create({
 
             // localizedfields can be a drop target
             if (type == "localizedfields") {
-
                 isLeaf = false;
                 draggable = false;
-
-                // create a copy because we have to pop this state
-                brickDescriptor = Ext.clone(brickDescriptor);
-                Ext.apply(brickDescriptor, {
-                    insideLocalizedFields: true
-                });
-
             }
 
             var key = initData.name;

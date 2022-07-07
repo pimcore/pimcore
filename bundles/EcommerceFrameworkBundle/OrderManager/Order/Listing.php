@@ -321,6 +321,10 @@ class Listing extends AbstractOrderList implements OrderListInterface
      */
     public function addCondition($condition, $value = null)
     {
+        if (null === $value) {
+            $value = [];
+        }
+
         if (!is_array($value)) {
             $value = [$value];
         }

@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * Pimcore
  *
@@ -15,11 +13,14 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Exception;
+namespace Pimcore\Model\DataObject;
 
-/**
- * @deprecated
- */
-class MissingDependencyException extends \RuntimeException
+interface ObjectAwareFieldInterface
 {
+    /**
+     * @param Concrete|null $object
+     *
+     * @return $this
+     */
+    public function setObject(?Concrete $object);
 }

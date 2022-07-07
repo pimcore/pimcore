@@ -21,7 +21,14 @@ pimcore.asset.audio = Class.create(pimcore.asset.asset, {
         this.setType("audio");
         this.addLoadingPanel();
 
-        pimcore.plugin.broker.fireEvent("preOpenAsset", this, "audio");
+        const preOpenAssetAudio = new CustomEvent(pimcore.events.preOpenAsset, {
+            detail: {
+                object: this,
+                type: "audio"
+            }
+        });
+
+        document.dispatchEvent(preOpenAssetAudio);
 
         var user = pimcore.globalmanager.get("user");
 

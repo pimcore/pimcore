@@ -47,6 +47,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @internal
+ *
+ * @deprecated will be removed in Pimcore 11
  */
 class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwareInterface
 {

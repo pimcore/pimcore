@@ -18,7 +18,6 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
     dirty: false,
 
     initialize: function (data, fieldConfig) {
-
         this.dirty = false;
         this.data = [];
         this.currentElements = [];
@@ -30,7 +29,8 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         }
         this.fieldConfig = fieldConfig;
 
-        this.eventDispatcherKey = pimcore.eventDispatcher.registerTarget(this.eventDispatcherKey, this);
+        document.addEventListener(pimcore.events.postSaveObject, this.postSaveObject.bind(this));
+
     },
 
     setObject:function (object) {
@@ -93,16 +93,15 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         this.component = new Ext.Panel(panelConf);
 
         this.component.on("destroy", function() {
-            pimcore.eventDispatcher.unregisterTarget(this.eventDispatcherKey);
+            document.removeEventListener(pimcore.events.postSaveObject, this.postSaveObject.bind(this));
         }.bind(this));
 
         return this.component;
     },
 
 
-    postSaveObject: function(object, task) {
-
-        if (object.id == this.object.id) {
+    postSaveObject: function(e) {
+        if (e.detail.object.id === this.object.id) {
             for (var itemIndex = 0; itemIndex < this.component.items.items.length; itemIndex++) {
                 var item = this.component.items.items[itemIndex];
                 item["pimcore_oIndex"] = itemIndex;
