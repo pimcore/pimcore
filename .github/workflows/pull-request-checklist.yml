@@ -3,7 +3,7 @@ name: "PR Checklist"
 
 on:
     pull_request:
-        types: [opened]
+#        types: [opened]
 
 jobs:
     comment:
@@ -27,6 +27,6 @@ jobs:
                         issue_number: context.issue.number,
                         owner: context.repo.owner,
                         repo: context.repo.repo,
-                        body: ${MESSAGE}
+                        body: "${MESSAGE}"
                       })
                       
