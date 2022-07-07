@@ -160,7 +160,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         // create a random number and hand it over to the calculator via the runtime and then make sure it will be returned
         $value = uniqid();
-        Cache\Runtime::set('modeltest.testCalculatedValue.value', $value);
+        Cache\RuntimeCache::set('modeltest.testCalculatedValue.value', $value);
 
         $valueFromCalculator = $this->testObject->getCalculatedValue();
         $this->assertEquals($value, $valueFromCalculator, 'calculated value does not match');
@@ -573,7 +573,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertObjects($this->testObject, 'lmultihrefLazy', $this->seed, 'de');
 
         Cache::clearAll();
-        Cache\Runtime::clear();
+        Cache\RuntimeCache::clear();
 
         $this->testObject = DataObject::getById($this->testObject->getId());
 

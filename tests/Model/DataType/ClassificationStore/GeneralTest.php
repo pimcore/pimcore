@@ -228,7 +228,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $o->save();
 
         Cache::clearAll();
-        Cache\Runtime::clear();
+        Cache\RuntimeCache::clear();
 
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId());
         /** @var \Pimcore\Model\DataObject\Data\QuantityValue $value1 */
@@ -242,7 +242,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $o->save();
 
         Cache::clearAll();
-        Cache\Runtime::clear();
+        Cache\RuntimeCache::clear();
 
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId());
         /** @var \Pimcore\Model\DataObject\Data\QuantityValue $value1 */
@@ -255,7 +255,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $o->save();
 
         Cache::clearAll();
-        Cache\Runtime::clear();
+        Cache\RuntimeCache::clear();
 
         $o = \Pimcore\Model\DataObject\Csstore::getById($o->getId());
         /** @var \Pimcore\Model\DataObject\Data\QuantityValue $value1 */

@@ -15,7 +15,7 @@
 
 namespace Pimcore\Tests\Helper\DataType;
 
-use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\DataObject\ClassDefinition\CalculatorClassInterface;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\CalculatedValue;
@@ -31,8 +31,8 @@ class Calculator implements CalculatorClassInterface
     public function compute($object, $context): string
     {
         $value = '';
-        if (Runtime::isRegistered('modeltest.testCalculatedValue.value')) {
-            $value = Runtime::get('modeltest.testCalculatedValue.value');
+        if (RuntimeCache::isRegistered('modeltest.testCalculatedValue.value')) {
+            $value = RuntimeCache::get('modeltest.testCalculatedValue.value');
         }
 
         return $value;
