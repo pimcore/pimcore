@@ -12,7 +12,7 @@ jobs:
             - uses: actions/github-script@v6
               env:
                   MESSAGE: |
-                      ### Quality Assurance Checklist (to be used by Pimconauts 🧑‍🚀) .
+                      ### Quality Assurance Checklist (to be used by Pimconauts 🧑‍🚀)
                       
                       - [ ] Target branch (`10.4` for bug fixes, others `10.x`)
                       - [ ] Tests (if it's testable code, there should be a test for it - [get help](https://pimcore.com/docs/pimcore/current/Development_Documentation/Development_Tools_and_Details/Testing/Core_Tests.html))
@@ -27,6 +27,6 @@ jobs:
                         issue_number: context.issue.number,
                         owner: context.repo.owner,
                         repo: context.repo.repo,
-                        body: '${MESSAGE}'
+                        body: ${MESSAGE}
                       })
                       
