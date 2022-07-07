@@ -51,7 +51,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     /**
      * @internal
      */
-    public string $defaultUnit;
+    public ?string $defaultUnit;
 
     /**
      * @internal
@@ -61,7 +61,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     /**
      * @internal
      */
-    public int $decimalPrecision;
+    public ?int $decimalPrecision;
 
     /**
      * @internal
@@ -128,22 +128,22 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
         $this->validUnits = $validUnits;
     }
 
-    public function getDefaultUnit(): string
+    public function getDefaultUnit(): ?string
     {
         return $this->defaultUnit;
     }
 
-    public function setDefaultUnit(string $defaultUnit): void
+    public function setDefaultUnit(?string $defaultUnit): void
     {
         $this->defaultUnit = $defaultUnit;
     }
 
-    public function getDecimalPrecision(): int
+    public function getDecimalPrecision(): ?int
     {
         return $this->decimalPrecision;
     }
 
-    public function setDecimalPrecision(int $decimalPrecision): void
+    public function setDecimalPrecision(?int $decimalPrecision): void
     {
         $this->decimalPrecision = $decimalPrecision;
     }

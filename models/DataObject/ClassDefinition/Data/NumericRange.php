@@ -191,10 +191,6 @@ class NumericRange extends Data implements
 
     public function setDecimalPrecision(?int $decimalPrecision): void
     {
-        if (!\is_numeric($decimalPrecision)) {
-            $decimalPrecision = null;
-        }
-
         $this->decimalPrecision = $decimalPrecision;
     }
 
