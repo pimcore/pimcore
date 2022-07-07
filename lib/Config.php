@@ -23,9 +23,9 @@ use Pimcore\Config\Config as PimcoreConfig;
 use Pimcore\Config\ReportConfigWriter;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Tool\SettingsStore;
+use function preg_replace;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\Yaml\Yaml;
-use function preg_replace;
 
 final class Config implements ArrayAccess
 {

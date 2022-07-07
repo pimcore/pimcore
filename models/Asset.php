@@ -17,6 +17,7 @@ namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\DeadlockException;
 use Exception;
+use function is_array;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToMoveFile;
@@ -51,7 +52,6 @@ use Pimcore\Tool\Storage;
 use stdClass;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Mime\MimeTypes;
-use function is_array;
 
 /**
  * @method Dao getDao()

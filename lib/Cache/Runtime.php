@@ -29,6 +29,7 @@ final class Runtime extends RuntimeCache
             '10.5.0',
             sprintf('%s is deprecated. Use %s instead!', __METHOD__, 'RuntimeCache::getInstance')
         );
+
         return parent::getInstance();
     }
 
@@ -54,6 +55,7 @@ final class Runtime extends RuntimeCache
             '10.5.0',
             sprintf('%s is deprecated. Use %s instead!', __METHOD__, 'RuntimeCache::get')
         );
+
         return parent::get($index);
     }
 
@@ -99,6 +101,7 @@ final class Runtime extends RuntimeCache
             '10.5.0',
             sprintf('%s is deprecated. Use %s instead!', __METHOD__, 'RuntimeCache::isRegistered')
         );
+
         return RuntimeCache::isRegistered($index);
     }
 
@@ -122,6 +125,7 @@ final class Runtime extends RuntimeCache
     /**
      * @param int|string $index
      * @param mixed $value
+     *
      * @deprecated
      */
     public function offsetSet($index, $value): void
@@ -136,7 +140,9 @@ final class Runtime extends RuntimeCache
 
     /**
      * Alias of self::set() to be compatible with Pimcore\Cache
+     *
      * @deprecated
+     *
      * @param mixed $data
      * @param string $id
      */
@@ -166,6 +172,7 @@ final class Runtime extends RuntimeCache
             '10.5.0',
             sprintf('%s is deprecated. Use %s instead!', __METHOD__, 'RuntimeCache::load')
         );
+
         return parent::load($id);
     }
 

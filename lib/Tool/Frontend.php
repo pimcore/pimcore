@@ -17,7 +17,6 @@ namespace Pimcore\Tool;
 
 use Pimcore;
 use Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
-use Pimcore\Cache\Runtime;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;

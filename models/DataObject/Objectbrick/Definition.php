@@ -16,7 +16,6 @@
 namespace Pimcore\Model\DataObject\Objectbrick;
 
 use Pimcore\Cache;
-use Pimcore\Cache\Runtime;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassDumperInterface;
 use Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassDumperInterface;
