@@ -16,6 +16,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
+use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class SessionCart extends AbstractCart implements CartInterface
@@ -43,8 +44,17 @@ class SessionCart extends AbstractCart implements CartInterface
 
     protected static function getSessionBag(): AttributeBagInterface
     {
+        try {
+            $session = \Pimcore::getContainer()->get('request_stack')->getSession();
+        } catch (SessionNotFoundException $e) {
+            trigger_deprecation('pimcore/pimcore', '10.5',
+                sprintf('Session used with non existing request stack in %s, that will not be possible in Pimcore 11.', __CLASS__));
+
+            $session = \Pimcore::getContainer()->get('session');
+        }
+
         /** @var AttributeBagInterface $sessionBag */
-        $sessionBag = \Pimcore::getContainer()->get('session')->getBag(SessionConfigurator::ATTRIBUTE_BAG_CART);
+        $sessionBag = $session->getBag(SessionConfigurator::ATTRIBUTE_BAG_CART);
 
         if (empty($sessionBag->get('carts'))) {
             $sessionBag->set('carts', []);

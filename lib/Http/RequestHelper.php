@@ -15,8 +15,10 @@
 
 namespace Pimcore\Http;
 
+use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\RequestContext;
 
 class RequestHelper
@@ -267,5 +269,15 @@ class RequestHelper
         );
 
         return $request;
+    }
+
+    /**
+     * Gets the current session from RequestStack
+     *
+     * @throws SessionNotFoundException
+     */
+    public function getSession() : SessionInterface
+    {
+        return $this->requestStack->getSession();
     }
 }

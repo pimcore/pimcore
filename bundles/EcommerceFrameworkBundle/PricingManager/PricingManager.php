@@ -48,6 +48,9 @@ class PricingManager implements PricingManagerInterface
     protected $actionMapping = [];
 
     /**
+     *
+     * @deprecated will be removed in Pimcore 11
+     *
      * @var SessionInterface
      */
     protected $session;

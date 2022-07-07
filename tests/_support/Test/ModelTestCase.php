@@ -17,12 +17,23 @@ namespace Pimcore\Tests\Test;
 
 use Pimcore\Tests\Helper\DataType\Calculator;
 use Pimcore\Tests\ModelTester;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
 /**
  * @property ModelTester $tester
  */
 abstract class ModelTestCase extends TestCase
 {
+
+    /**
+     * @var SessionInterface
+     */
+    private $session;
+
+
     /**
      * {@inheritdoc}
      */
@@ -50,5 +61,23 @@ abstract class ModelTestCase extends TestCase
     protected function needsDb()
     {
         return true;
+    }
+
+
+    protected function buildSession(): SessionInterface
+    {
+        if (null === $this->session) {
+            $this->session = new Session(new MockArraySessionStorage());
+
+            $requestStack = \Pimcore::getContainer()->get('request_stack');
+            if (!$request = $requestStack->getCurrentRequest()) {
+                $request = new Request();
+                $requestStack->push($request);
+            }
+
+            $request->setSession($this->session);
+        }
+
+        return $this->session;
     }
 }
