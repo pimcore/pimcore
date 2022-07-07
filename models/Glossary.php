@@ -27,7 +27,7 @@ class Glossary extends AbstractModel
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $id;
 
@@ -136,7 +136,7 @@ class Glossary extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {

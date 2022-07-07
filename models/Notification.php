@@ -61,7 +61,7 @@ class Notification extends AbstractModel
     /**
      * @internal
      *
-     * @var User
+     * @var User|null
      */
     protected $recipient;
 
@@ -82,7 +82,7 @@ class Notification extends AbstractModel
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $message;
 
@@ -200,7 +200,7 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @param User|null $sender
+     * @param null|User $sender
      *
      * @return Notification
      */
@@ -212,19 +212,19 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @return User
+     * @return null|User
      */
-    public function getRecipient(): User
+    public function getRecipient(): ?User
     {
         return $this->recipient;
     }
 
     /**
-     * @param User $recipient
+     * @param null|User $recipient
      *
      * @return Notification
      */
-    public function setRecipient(User $recipient): self
+    public function setRecipient(?User $recipient): self
     {
         $this->recipient = $recipient;
 
@@ -232,19 +232,19 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->title;
     }
 
     /**
-     * @param string $title
+     * @param null|string $title
      *
      * @return Notification
      */
-    public function setTitle(string $title): self
+    public function setTitle(?string $title): self
     {
         $this->title = $title;
 
@@ -252,7 +252,7 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @return string|null
+     * @return null|string
      */
     public function getType(): ?string
     {
@@ -260,7 +260,7 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @param string|null $type
+     * @param null|string $type
      *
      * @return Notification
      */
@@ -272,19 +272,19 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getMessage(): string
+    public function getMessage(): ?string
     {
         return $this->message;
     }
 
     /**
-     * @param string $message
+     * @param null|string $message
      *
      * @return Notification
      */
-    public function setMessage(string $message): self
+    public function setMessage(?string $message): self
     {
         $this->message = $message;
 
@@ -292,7 +292,7 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @return Element\ElementInterface|null
+     * @return null|Element\ElementInterface
      */
     public function getLinkedElement(): ?Element\ElementInterface
     {
@@ -300,7 +300,7 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @param Element\ElementInterface|null $linkedElement
+     * @param null|Element\ElementInterface $linkedElement
      *
      * @return Notification
      */

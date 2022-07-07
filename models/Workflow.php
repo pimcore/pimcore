@@ -24,7 +24,7 @@ use Pimcore\Model\Exception\NotFoundException;
 class Workflow extends AbstractModel
 {
     /**
-     * @var int
+     * @var int|null
      */
     protected $id;
 
@@ -144,7 +144,7 @@ class Workflow extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
