@@ -15,7 +15,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tools;
 
-
 use Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\SessionBagListener;
 use Pimcore\Session\SessionConfiguratorInterface;
 

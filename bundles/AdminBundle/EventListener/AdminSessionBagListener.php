@@ -15,17 +15,12 @@
 
 namespace Pimcore\Bundle\AdminBundle\EventListener;
 
-use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
-use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Config;
-use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Session\Attribute\LockableAttributeBag;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Twig\Environment;
 
 /**
  * @internal

@@ -17,8 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Storage;
 
-use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\EventListener\TargetingSessionBagListener;
+use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\Storage\Traits\TimestampsTrait;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 
