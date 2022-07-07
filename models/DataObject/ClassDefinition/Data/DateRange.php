@@ -147,7 +147,7 @@ class DateRange extends Data implements
                 return null;
             }
 
-            $period = CarbonPeriod::start($startDate);
+            $period = CarbonPeriod::create()->setStartDate($startDate);
 
             if ($endDate instanceof Carbon) {
                 $period->setEndDate($endDate);
