@@ -276,7 +276,7 @@ class RequestHelper
      *
      * @throws SessionNotFoundException
      */
-    public function getSession() : SessionInterface
+    public function getSession(): SessionInterface
     {
         return $this->requestStack->getSession();
     }

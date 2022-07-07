@@ -93,6 +93,7 @@ class TrackingManager implements TrackingManagerInterface
      * @TODO move to constructor injection in Pimcore 11
      *
      * @required
+     *
      * @internal
      *
      * @param RequestStack $requestStack

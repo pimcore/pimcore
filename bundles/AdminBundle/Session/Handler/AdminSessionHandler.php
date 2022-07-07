@@ -22,7 +22,6 @@ use Pimcore\Session\Attribute\LockableAttributeBagInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -41,7 +40,6 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      * so the session isn't closed automatically after the action is done
      */
     private $openedSessions = 0;
-
 
     protected $readOnlySessionBagsCache = [];
 

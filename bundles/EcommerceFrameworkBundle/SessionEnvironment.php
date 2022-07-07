@@ -67,6 +67,7 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
      * @TODO move to constructor injection in Pimcore 11
      *
      * @required
+     *
      * @internal
      *
      * @param RequestStack $requestStack
@@ -154,14 +155,12 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
         return $sessionBag;
     }
 
-
-    private function getSession(bool $preventDeprecationWarning = false): SessionInterface {
-
+    private function getSession(bool $preventDeprecationWarning = false): SessionInterface
+    {
         try {
             return $this->requestStack->getSession();
         } catch (SessionNotFoundException $e) {
-
-            if(!$preventDeprecationWarning) {
+            if (!$preventDeprecationWarning) {
                 trigger_deprecation('pimcore/pimcore', '10.5',
                     sprintf('Session used with non existing request stack in %s, that will not be possible in Pimcore 11.', SessionEnvironment::class));
             }
@@ -172,13 +171,13 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
 
     /**
      * @deprecated
+     *
      * @todo Remove in Pimcore 11
      */
-    private function checkSessionStartedInCli(): bool {
-
+    private function checkSessionStartedInCli(): bool
+    {
         $session = $this->getSession(true);
-        if($session->isStarted()) {
-
+        if ($session->isStarted()) {
             trigger_deprecation('pimcore/pimcore', '10.5',
                 sprintf('Do not depend on started session in CLI mode for %s, that will not be possible in Pimcore 11.', SessionEnvironment::class));
 
@@ -187,5 +186,4 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
 
         return false;
     }
-
 }

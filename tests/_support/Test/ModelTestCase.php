@@ -27,12 +27,10 @@ use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
  */
 abstract class ModelTestCase extends TestCase
 {
-
     /**
      * @var SessionInterface
      */
     private $session;
-
 
     /**
      * {@inheritdoc}
@@ -62,7 +60,6 @@ abstract class ModelTestCase extends TestCase
     {
         return true;
     }
-
 
     protected function buildSession(): SessionInterface
     {
