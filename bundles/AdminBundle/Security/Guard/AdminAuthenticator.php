@@ -18,7 +18,7 @@ namespace Pimcore\Bundle\AdminBundle\Security\Guard;
 use Pimcore\Bundle\AdminBundle\Security\Authentication\Token\LegacyTwoFactorRequiredToken;
 use Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler;
 use Pimcore\Bundle\AdminBundle\Security\User\User;
-use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\Admin\Login\LoginCredentialsEvent;
 use Pimcore\Event\Admin\Login\LoginFailedEvent;
 use Pimcore\Event\Admin\Login\LoginRedirectEvent;
@@ -306,7 +306,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
         $this->translator->setLocale($user->getLanguage());
 
         // set user on runtime cache for legacy compatibility
-        Runtime::set('pimcore_admin_user', $user);
+        RuntimeCache::set('pimcore_admin_user', $user);
 
         if ($user->isAdmin()) {
             if (Admin::isMaintenanceModeScheduledForLogin()) {

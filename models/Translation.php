@@ -17,7 +17,7 @@ namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Pimcore\Cache;
-use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\Model\TranslationEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\TranslationEvents;
@@ -271,8 +271,8 @@ final class Translation extends AbstractModel
             $cacheKey .= '_' . implode('-', $languages);
         }
 
-        if (Runtime::isRegistered($cacheKey)) {
-            return Runtime::get($cacheKey);
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            return RuntimeCache::get($cacheKey);
         }
 
         $translation = new static();
@@ -312,7 +312,7 @@ final class Translation extends AbstractModel
         }
 
         // add to key cache
-        Runtime::set($cacheKey, $translation);
+        RuntimeCache::set($cacheKey, $translation);
 
         return $translation;
     }

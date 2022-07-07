@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Fieldcollection;
 
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface;
 use Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumperInterface;
 use Pimcore\Model;
@@ -95,7 +96,7 @@ class Definition extends Model\AbstractModel
         $cacheKey = 'fieldcollection_' . $key;
 
         try {
-            $fc = \Pimcore\Cache\Runtime::get($cacheKey);
+            $fc = RuntimeCache::get($cacheKey);
             if (!$fc) {
                 throw new \Exception('FieldCollection in registry is not valid');
             }
@@ -106,7 +107,7 @@ class Definition extends Model\AbstractModel
 
             if (is_file($fieldFile)) {
                 $fc = include $fieldFile;
-                \Pimcore\Cache\Runtime::set($cacheKey, $fc);
+                RuntimeCache::set($cacheKey, $fc);
             }
         }
 

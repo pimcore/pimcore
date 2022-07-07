@@ -17,6 +17,7 @@ namespace Pimcore\Model\Dao;
 
 use Doctrine\DBAL\Connection;
 use Pimcore\Cache;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Db\ConnectionInterface;
 
@@ -64,8 +65,8 @@ abstract class AbstractDao implements DaoInterface
     {
         $cacheKey = self::CACHEKEY . $table;
 
-        if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
-            $columns = \Pimcore\Cache\Runtime::get($cacheKey);
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            $columns = RuntimeCache::get($cacheKey);
         } else {
             $columns = Cache::load($cacheKey);
 
@@ -78,7 +79,7 @@ abstract class AbstractDao implements DaoInterface
                 Cache::save($columns, $cacheKey, ['system', 'resource'], null, 997);
             }
 
-            \Pimcore\Cache\Runtime::set($cacheKey, $columns);
+            RuntimeCache::set($cacheKey, $columns);
         }
 
         return $columns;
@@ -92,8 +93,8 @@ abstract class AbstractDao implements DaoInterface
     public function resetValidTableColumnsCache($table)
     {
         $cacheKey = self::CACHEKEY . $table;
-        if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
-            \Pimcore\Cache\Runtime::getInstance()->offsetUnset($cacheKey);
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            RuntimeCache::getInstance()->offsetUnset($cacheKey);
         }
         Cache::clearTags(['system', 'resource']);
     }

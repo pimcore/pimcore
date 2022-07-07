@@ -104,7 +104,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         $object->save();
         $this->assertFalse($object->isFieldDirty('advancedObjects'), 'Advanced relation must not be dirty after saving');
 
-        Cache\Runtime::clear();
+        Cache\RuntimeCache::clear();
         $object = LazyLoading::getByPath('/lazy1');
         $this->assertFalse($object->isFieldDirty('advancedObjects'), 'Advanced relation must not be dirty directly after loading');
 

@@ -17,7 +17,7 @@ namespace Pimcore\Model\DataObject;
 
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
-use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\DataObject\GridColumnConfig\ConfigElementInterface;
 use Pimcore\DataObject\GridColumnConfig\Operator\AbstractOperator;
 use Pimcore\DataObject\GridColumnConfig\Service as GridColumnConfigService;
@@ -520,8 +520,8 @@ class Service extends Model\Element\Service
         if (isset($context['language'])) {
             $cacheKey .= '_' . $context['language'];
         }
-        if (Runtime::isRegistered($cacheKey)) {
-            $config = Runtime::get($cacheKey);
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            $config = RuntimeCache::get($cacheKey);
         } else {
             $definition = $helperDefinitions[$key];
             $attributes = json_decode(json_encode($definition->attributes));
@@ -534,7 +534,7 @@ class Service extends Model\Element\Service
                 return null;
             }
             $config = $config[0];
-            Runtime::save($config, $cacheKey);
+            RuntimeCache::save($config, $cacheKey);
         }
 
         return $config;

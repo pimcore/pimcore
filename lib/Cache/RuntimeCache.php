@@ -15,21 +15,65 @@
 
 namespace Pimcore\Cache;
 
-final class Runtime extends RuntimeCache
+class RuntimeCache extends \ArrayObject
 {
+    private const SERVICE_ID = __CLASS__;
+
+    /**
+     * @var self|null
+     */
+    protected static $tempInstance;
+
+    /**
+     * @var self|null
+     */
+    protected static $instance;
+
     /**
      * Retrieves the default registry instance.
      *
-     * @return RuntimeCache
+     * @return self
      */
-    public static function getInstance(): RuntimeCache
+    public static function getInstance(): self
     {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.5.0',
-            sprintf('%s is deprecated. Use %s instead!', __METHOD__, 'RuntimeCache::getInstance')
-        );
-        return parent::getInstance();
+        if (self::$instance) {
+            return self::$instance;
+        }
+
+        if (\Pimcore::hasContainer()) {
+            $container = \Pimcore::getContainer();
+
+            /** @var self $instance */
+            $instance = null;
+            if ($container->initialized(self::SERVICE_ID)) {
+                $instance = $container->get(self::SERVICE_ID);
+            } else {
+                $instance = new self;
+                $container->set(self::SERVICE_ID, $instance);
+            }
+
+            self::$instance = $instance;
+
+            if (self::$tempInstance) {
+                // copy values from static temp. instance to the service instance
+                foreach (self::$tempInstance as $key => $value) {
+                    $instance->offsetSet($key, $value);
+                }
+
+                self::$tempInstance = null;
+            }
+
+            return $instance;
+        }
+
+        // create a temp. instance
+        // this is necessary because the runtime cache is sometimes in use before the actual service container
+        // is initialized
+        if (!self::$tempInstance) {
+            self::$tempInstance = new self;
+        }
+
+        return self::$tempInstance;
     }
 
     /**
@@ -43,18 +87,17 @@ final class Runtime extends RuntimeCache
      *
      * @return mixed
      *
-     * @deprecated
-     *
      * @throws \Exception if no entry is registered for $index.
      */
     public static function get($index)
     {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.5.0',
-            sprintf('%s is deprecated. Use %s instead!', __METHOD__, 'RuntimeCache::get')
-        );
-        return parent::get($index);
+        $instance = self::getInstance();
+
+        if (!$instance->offsetExists($index)) {
+            throw new \Exception("No entry is registered for key '$index'");
+        }
+
+        return $instance->offsetGet($index);
     }
 
     /**
@@ -68,18 +111,12 @@ final class Runtime extends RuntimeCache
      *   the value.
      * @param mixed $value The object to store in the ArrayObject.
      *
-     * @deprecated
-     *
      * @return void
      */
     public static function set($index, $value)
     {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.5.0',
-            sprintf('%s is deprecated. Use %s instead!', __METHOD__, 'RuntimeCache::set')
-        );
-        parent::set($index, $value);
+        $instance = self::getInstance();
+        $instance->offsetSet($index, $value);
     }
 
     /**
@@ -88,18 +125,13 @@ final class Runtime extends RuntimeCache
      *
      * @param  string $index
      *
-     * @deprecated
-     *
      * @return bool
      */
     public static function isRegistered($index)
     {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.5.0',
-            sprintf('%s is deprecated. Use %s instead!', __METHOD__, 'RuntimeCache::isRegistered')
-        );
-        return RuntimeCache::isRegistered($index);
+        $instance = self::getInstance();
+
+        return $instance->offsetExists($index);
     }
 
     /**
@@ -111,18 +143,11 @@ final class Runtime extends RuntimeCache
      */
     public function __construct($array = [], $flags = parent::ARRAY_AS_PROPS)
     {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.5.0',
-            sprintf('%s is deprecated. Use %s instead!', __METHOD__, 'new RuntimeCache($array, $flags)')
-        );
         parent::__construct($array, $flags);
     }
 
     /**
-     * @param int|string $index
-     * @param mixed $value
-     * @deprecated
+     * {@inheritdoc}
      */
     public function offsetSet($index, $value): void
     {
@@ -136,24 +161,17 @@ final class Runtime extends RuntimeCache
 
     /**
      * Alias of self::set() to be compatible with Pimcore\Cache
-     * @deprecated
+     *
      * @param mixed $data
      * @param string $id
      */
     public static function save($data, $id)
     {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.5.0',
-            sprintf('%s is deprecated. Use %s instead!', __METHOD__, 'RuntimeCache::save')
-        );
-        parent::save($data, $id);
+        self::set($id, $data);
     }
 
     /**
      * Alias of self::get() to be compatible with Pimcore\Cache
-     *
-     * @deprecated
      *
      * @param string $id
      *
@@ -161,26 +179,25 @@ final class Runtime extends RuntimeCache
      */
     public static function load($id)
     {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.5.0',
-            sprintf('%s is deprecated. Use %s instead!', __METHOD__, 'RuntimeCache::load')
-        );
-        return parent::load($id);
+        return self::get($id);
     }
 
     /**
      * @param array $keepItems
-     *
-     * @deprecated
      */
     public static function clear($keepItems = [])
     {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.5.0',
-            sprintf('%s is deprecated. Use %s instead!', __METHOD__, 'RuntimeCache::clear')
-        );
-        parent::clear($keepItems);
+        self::$instance = null;
+        $newInstance = new self();
+        $oldInstance = self::getInstance();
+
+        foreach ($keepItems as $key) {
+            if ($oldInstance->offsetExists($key)) {
+                $newInstance->offsetSet($key, $oldInstance->offsetGet($key));
+            }
+        }
+
+        \Pimcore::getContainer()->set(self::SERVICE_ID, $newInstance);
+        self::$instance = $newInstance;
     }
 }
