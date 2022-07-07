@@ -20,3 +20,12 @@ It's stored as a string in a VARCHAR(5) column in the database and can be set pr
 string like for example "11:00" to the field's setter.
 
 
+## Date Range
+
+The `dateRange` object field consists of two `date` fields (start and end date) and can be filled
+with the usual calendar widget in the Pimcore GUI or programmatically via the Pimcore API.
+
+![Date Range Field](../../../img/classes-datatypes-date3.jpg)
+
+The two dates are stored as unix timestamps in two separate INT columns in the database. Programmatically
+the date range is represented by a [CarbonPeriod](https://carbon.nesbot.com/docs/#api-period) Object.
