@@ -90,6 +90,7 @@ class Builder
             'cacheLifetime' => null,
             'maxDepth' => null,
             'active' => null,
+            'markActiveTrail' => true,
         ]);
 
         $options->setAllowedTypes('root', [Document::class, 'null']);
@@ -99,6 +100,7 @@ class Builder
         $options->setAllowedTypes('cacheLifetime', ['int', 'null']);
         $options->setAllowedTypes('maxDepth', ['int', 'null']);
         $options->setAllowedTypes('active', [Document::class, 'null']);
+        $options->setAllowedTypes('markActiveTrail', ['bool']);
     }
 
     /**
@@ -139,9 +141,11 @@ class Builder
                 'cacheLifetime' => $cacheLifetime,
                 'maxDepth' => $maxDepth,
                 'active' => $activeDocument,
+                'markActiveTrail' => $markActiveTrail,
             ] = $this->resolveOptions($activeDocument);
         }
 
+        $markActiveTrail ??= true; //TODO Pimcore 11: remove with the BC layer
         $cacheEnabled = $cache !== false;
 
         $this->htmlMenuIdPrefix = $htmlMenuIdPrefix;
@@ -191,7 +195,23 @@ class Builder
             }
         }
 
-        // set active path
+        if ($markActiveTrail) {
+            $this->markActiveTrail($navigation, $activeDocument);
+        }
+
+        return $navigation;
+    }
+
+    /**
+     * @internal
+     *
+     * @param Container $navigation
+     * @param Document|null $activeDocument
+     *
+     * @return void
+     */
+    protected function markActiveTrail(Container $navigation, ?Document $activeDocument): void
+    {
         $activePages = [];
 
         if ($this->requestHelper->hasMainRequest()) {
@@ -260,8 +280,6 @@ class Builder
                 }
             }
         }
-
-        return $navigation;
     }
 
     /**
