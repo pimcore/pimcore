@@ -418,6 +418,8 @@ abstract class Kernel extends SymfonyKernel
     /**
      * Registers bundles enabled via extension manager
      *
+     * @deprecated will be removed in Pimcore 11
+     *
      * @param BundleCollection $collection
      */
     protected function registerExtensionManagerBundles(BundleCollection $collection)

@@ -22,6 +22,8 @@ use Pimcore\File;
 
 /**
  * @internal
+ *
+ * @deprecated
  */
 class Config
 {
@@ -67,12 +69,21 @@ class Config
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function locateConfigFile(): string
+    public function locateConfigFile(): ?string
     {
         if (null === $this->file) {
-            $this->file = PimcoreConfig::locateConfigFile('extensions.php');
+            $extensionsConfigFile = PimcoreConfig::locateConfigFile('extensions.php');
+            if ($extensionsConfigFile) {
+                trigger_deprecation(
+                    'pimcore/pimcore',
+                    '10.5',
+                    'Registering bundles through extensions.php is deprecated and will not work on Pimcore 11. Use config/bundles.php to register/deregister bundles.'
+                );
+            }
+
+            $this->file = $extensionsConfigFile;
         }
 
         return $this->file;
