@@ -217,10 +217,6 @@ abstract class Kernel extends SymfonyKernel
                 'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_VIEWS',
                 'defaultStorageDirectoryName' => 'custom-views',
             ],
-            [
-                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_OBJECT_CUSTOM_LAYOUTS',
-                'defaultStorageDirectoryName' => 'custom-layouts',
-            ],
         ];
 
         foreach ($configArray as $config) {
