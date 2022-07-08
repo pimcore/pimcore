@@ -53,6 +53,8 @@ services:
 
     Pimcore\Tool\Glossary\Processor:
         public: false
+        arguments:
+            $blockedTags: '%pimcore.glossary.blocked_tags%'
 
     Symfony\Component\Templating\EngineInterface: '@pimcore.templating.engine.delegating'
 

@@ -58,13 +58,6 @@ class PackageInfo
             return $this->installedPackages;
         }
 
-        // try to read composer.lock first
-        $json = $this->readComposerFile(PIMCORE_PROJECT_ROOT . '/composer.lock');
-        if ($json && isset($json['packages']) && is_array($json['packages'])) {
-            return $this->installedPackages = $json['packages'];
-        }
-
-        // try to read vendor/composer/installed.json as fallback
         $json = $this->readComposerFile(PIMCORE_COMPOSER_PATH . '/composer/installed.json');
         if ($json && is_array($json)) {
             return $this->installedPackages = $json['packages'] ?? $json;

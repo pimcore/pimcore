@@ -16,6 +16,7 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Cache;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface;
 use Pimcore\DataObject\ClassBuilder\PHPClassDumperInterface;
 use Pimcore\Db;
@@ -288,7 +289,7 @@ final class ClassDefinition extends Model\AbstractModel
             if ($force) {
                 throw new \Exception('Forced load');
             }
-            $class = \Pimcore\Cache\Runtime::get($cacheKey);
+            $class = RuntimeCache::get($cacheKey);
             if (!$class) {
                 throw new \Exception('Class in registry is null');
             }
@@ -305,7 +306,7 @@ final class ClassDefinition extends Model\AbstractModel
 
                 $class->setId($id);
 
-                \Pimcore\Cache\Runtime::set($cacheKey, $class);
+                RuntimeCache::set($cacheKey, $class);
             } catch (\Exception $e) {
                 Logger::info($e->getMessage());
 

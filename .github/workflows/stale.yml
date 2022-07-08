@@ -4,13 +4,17 @@ on:
     schedule:
         - cron: '37 7 * * *'
 
+permissions:
+  contents: read
+
 jobs:
     stale:
+        permissions:
+          issues: write  # for actions/stale to close stale issues
         runs-on: ubuntu-latest
         steps:
             - uses: actions/stale@v4
               with:
-                debug-only: true
                 days-before-stale: 20
                 days-before-close: 180
                 days-before-pr-stale: -1

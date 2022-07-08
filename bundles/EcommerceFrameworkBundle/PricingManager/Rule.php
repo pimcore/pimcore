@@ -20,7 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\CartActionInte
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\ProductActionInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\BracketInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Dao;
-use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Logger;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Exception\NotFoundException;
@@ -40,7 +40,7 @@ class Rule extends AbstractModel implements RuleInterface
         $cacheKey = Dao::TABLE_NAME . '_' . $id;
 
         try {
-            $rule = Runtime::get($cacheKey);
+            $rule = RuntimeCache::get($cacheKey);
         } catch (\Exception $e) {
             try {
                 $ruleClass = get_called_class();
@@ -48,7 +48,7 @@ class Rule extends AbstractModel implements RuleInterface
                 $rule = new $ruleClass();
                 $rule->getDao()->getById($id);
 
-                Runtime::set($cacheKey, $rule);
+                RuntimeCache::set($cacheKey, $rule);
             } catch (NotFoundException $ex) {
                 Logger::debug($ex->getMessage());
 

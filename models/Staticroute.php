@@ -142,7 +142,7 @@ final class Staticroute extends AbstractModel
         $cacheKey = 'staticroute_' . $id;
 
         try {
-            $route = \Pimcore\Cache\Runtime::get($cacheKey);
+            $route = \Pimcore\Cache\RuntimeCache::get($cacheKey);
             if (!$route) {
                 throw new \Exception('Route in registry is null');
             }
@@ -151,7 +151,7 @@ final class Staticroute extends AbstractModel
                 $route = new self();
                 $route->setId($id);
                 $route->getDao()->getById();
-                \Pimcore\Cache\Runtime::set($cacheKey, $route);
+                \Pimcore\Cache\RuntimeCache::set($cacheKey, $route);
             } catch (NotFoundException $e) {
                 return null;
             }

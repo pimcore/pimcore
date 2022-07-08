@@ -22,7 +22,7 @@ use Symfony\Component\Security\Http\Logout\LogoutSuccessHandlerInterface;
  *
  * @internal
  *
- * @deprecated
+ * @deprecated will be removed in Pimcore 11
  */
 class LogoutSuccessHandler extends LogoutListener implements LogoutSuccessHandlerInterface
 {

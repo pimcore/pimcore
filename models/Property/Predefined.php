@@ -110,7 +110,7 @@ final class Predefined extends Model\AbstractModel
         $cacheKey = 'property_predefined_' . $key;
 
         try {
-            $property = \Pimcore\Cache\Runtime::get($cacheKey);
+            $property = \Pimcore\Cache\RuntimeCache::get($cacheKey);
             if (!$property) {
                 throw new \Exception('Predefined property in registry is null');
             }
@@ -118,7 +118,7 @@ final class Predefined extends Model\AbstractModel
             try {
                 $property = new self();
                 $property->getDao()->getByKey($key);
-                \Pimcore\Cache\Runtime::set($cacheKey, $property);
+                \Pimcore\Cache\RuntimeCache::set($cacheKey, $property);
             } catch (Model\Exception\NotFoundException $e) {
                 return null;
             }

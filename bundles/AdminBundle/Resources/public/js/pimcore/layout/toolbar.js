@@ -1334,7 +1334,15 @@ pimcore.layout.toolbar = Class.create({
     },
 
     editTranslations: function (domain) {
-        pimcore.plugin.broker.fireEvent("preEditTranslations", this, domain ?? "website");
+        const preEditTranslations = new CustomEvent(pimcore.events.preEditTranslations, {
+            detail: {
+                object: this,
+                domain: domain ?? "website"
+            }
+        });
+
+        document.dispatchEvent(preEditTranslations);
+
         try {
             pimcore.globalmanager.get("translationdomainmanager").activate();
         }

@@ -300,7 +300,6 @@ class Installer
             'host' => 'localhost',
             'port' => 3306,
             'driver' => 'pdo_mysql',
-            'wrapperClass' => Connection::class,
         ];
 
         // do not handle parameters if db credentials are set via config

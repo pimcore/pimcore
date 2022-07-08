@@ -856,7 +856,16 @@ pimcore.asset.tree = Class.create({
         }
 
         pimcore.helpers.hideRedundantSeparators(menu);
-        pimcore.plugin.broker.fireEvent("prepareAssetTreeContextMenu", menu, this, record);
+
+        const prepareAssetTreeContextMenu = new CustomEvent(pimcore.events.prepareAssetTreeContextMenu, {
+            detail: {
+                menu: menu,
+                object: this,
+                record: record
+            }
+        });
+
+        document.dispatchEvent(prepareAssetTreeContextMenu);
 
         menu.showAt(e.pageX+1, e.pageY+1);
     },

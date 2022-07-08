@@ -9,6 +9,9 @@ on:
         paths:
             - 'bundles/CoreBundle/Resources/translations/en.*json'
 
+permissions:
+  contents: read
+
 jobs:
     poeditor:
         runs-on: ubuntu-latest

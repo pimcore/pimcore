@@ -17,7 +17,7 @@ namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Pimcore\Cache;
-use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\Model\TranslationEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\TranslationEvents;
@@ -258,25 +258,30 @@ final class Translation extends AbstractModel
      * @param string $domain
      * @param bool $create
      * @param bool $returnIdIfEmpty
+     * @param array|null $languages
      *
      * @return static|null
      *
      * @throws \Exception
      */
-    public static function getByKey(string $id, $domain = self::DOMAIN_DEFAULT, $create = false, $returnIdIfEmpty = false)
+    public static function getByKey(string $id, $domain = self::DOMAIN_DEFAULT, $create = false, $returnIdIfEmpty = false, $languages = null)
     {
         $cacheKey = 'translation_' . $id . '_' . $domain;
-        if (Runtime::isRegistered($cacheKey)) {
-            return Runtime::get($cacheKey);
+        if (is_array($languages)) {
+            $cacheKey .= '_' . implode('-', $languages);
+        }
+
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            return RuntimeCache::get($cacheKey);
         }
 
         $translation = new static();
         $translation->setDomain($domain);
         $idOriginal = $id;
-        $languages = static::getValidLanguages($domain);
+        $languages = $languages ? array_intersect(static::getValidLanguages($domain), $languages) : static::getValidLanguages($domain);
 
         try {
-            $translation->getDao()->getByKey($id);
+            $translation->getDao()->getByKey($id, $languages);
         } catch (\Exception $e) {
             if (!$create && !$returnIdIfEmpty) {
                 return null;
@@ -307,7 +312,7 @@ final class Translation extends AbstractModel
         }
 
         // add to key cache
-        Runtime::set($cacheKey, $translation);
+        RuntimeCache::set($cacheKey, $translation);
 
         return $translation;
     }
@@ -474,7 +479,7 @@ final class Translation extends AbstractModel
                         $keyValueArray[$keys[$counter]] = $rd;
                     }
 
-                    $textKey = $keyValueArray['key'];
+                    $textKey = $keyValueArray['key'] ?? null;
                     if ($textKey) {
                         $t = static::getByKey($textKey, $domain, true);
                         $dirty = false;
@@ -512,6 +517,11 @@ final class Translation extends AbstractModel
                             $t->setModificationDate(time()); //ignore modificationDate from file
                             $t->save();
                         }
+                    }
+
+                    // call the garbage collector if memory consumption is > 100MB
+                    if (memory_get_usage() > 100_000_000) {
+                        \Pimcore::collectGarbage();
                     }
                 }
                 static::clearDependentCache();

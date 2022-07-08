@@ -15,7 +15,7 @@
 
 namespace Pimcore\Model;
 
-use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\Model\VersionEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\VersionEvents;
@@ -368,7 +368,7 @@ final class Version extends AbstractModel
 
             $data = Serialize::unserialize($data);
             //clear runtime cache to avoid dealing with marshalled data
-            Runtime::clear();
+            RuntimeCache::clear();
             if ($data instanceof \__PHP_Incomplete_Class) {
                 Logger::err('Version: cannot read version data from file system because of incompatible class.');
 

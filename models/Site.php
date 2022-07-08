@@ -15,7 +15,7 @@
 
 namespace Pimcore\Model;
 
-use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Logger;
 use Pimcore\Model\Exception\NotFoundException;
 
@@ -97,8 +97,8 @@ final class Site extends AbstractModel
     {
         $cacheKey = 'site_id_'. $id;
 
-        if (Runtime::isRegistered($cacheKey)) {
-            $site = Runtime::get($cacheKey);
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            $site = RuntimeCache::get($cacheKey);
         } elseif (!$site = \Pimcore\Cache::load($cacheKey)) {
             try {
                 $site = new self();
@@ -114,7 +114,7 @@ final class Site extends AbstractModel
             $site = null;
         }
 
-        Runtime::set($cacheKey, $site);
+        RuntimeCache::set($cacheKey, $site);
 
         return $site;
     }
@@ -146,8 +146,8 @@ final class Site extends AbstractModel
         // cached because this is called in the route
         $cacheKey = 'site_domain_'. md5($domain);
 
-        if (Runtime::isRegistered($cacheKey)) {
-            $site = Runtime::get($cacheKey);
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            $site = RuntimeCache::get($cacheKey);
         } elseif (!$site = \Pimcore\Cache::load($cacheKey)) {
             try {
                 $site = new self();
@@ -163,7 +163,7 @@ final class Site extends AbstractModel
             $site = null;
         }
 
-        Runtime::set($cacheKey, $site);
+        RuntimeCache::set($cacheKey, $site);
 
         return $site;
     }

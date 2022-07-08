@@ -73,7 +73,14 @@ pimcore.layout.treepanelmanager = {
                 this.onReadyCallback[i]();
             }
         }
-        pimcore.plugin.broker.fireEvent("pimcoreReady", pimcore.viewport);
+
+        const pimcoreReady = new CustomEvent(pimcore.events.pimcoreReady, {
+            detail: {
+                viewport: pimcore.viewport,
+            }
+        });
+
+        document.dispatchEvent(pimcoreReady);
     },
 
     addOnReadyCallback: function (event) {

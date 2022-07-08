@@ -17,82 +17,16 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Session;
 
-use Pimcore\Event\Cache\FullPage\IgnoredSessionKeysEvent;
-use Pimcore\Event\Cache\FullPage\PrepareResponseEvent;
-use Pimcore\Event\FullPageCacheEvents;
 use Pimcore\Session\SessionConfiguratorInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
+use Pimcore\Targeting\EventListener\TargetingSessionBagListener;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-class SessionConfigurator implements SessionConfiguratorInterface, EventSubscriberInterface
+/**
+ * @deprecated will be removed in Pimcore 11. Use TargetingSessionBagListener instead.
+ */
+class SessionConfigurator extends TargetingSessionBagListener implements SessionConfiguratorInterface
 {
-    const TARGETING_BAG_SESSION = 'pimcore_targeting_session';
-
-    const TARGETING_BAG_VISITOR = 'pimcore_targeting_visitor';
-
-    /**
-     * @return string[]
-     */
-    public static function getSubscribedEvents()
-    {
-        return [
-            FullPageCacheEvents::IGNORED_SESSION_KEYS => 'configureIgnoredSessionKeys',
-            FullPageCacheEvents::PREPARE_RESPONSE => 'prepareFullPageCacheResponse',
-        ];
-    }
-
     public function configure(SessionInterface $session)
     {
-        $sessionBag = new AttributeBag('_' . self::TARGETING_BAG_SESSION);
-        $sessionBag->setName(self::TARGETING_BAG_SESSION);
-
-        $visitorBag = new AttributeBag('_' . self::TARGETING_BAG_VISITOR);
-        $visitorBag->setName(self::TARGETING_BAG_VISITOR);
-
-        $session->registerBag($sessionBag);
-        $session->registerBag($visitorBag);
-    }
-
-    public function configureIgnoredSessionKeys(IgnoredSessionKeysEvent $event)
-    {
-        // configures full page cache to ignore session data in targeting storage
-        $event->setKeys(array_merge($event->getKeys(), [
-            '_' . self::TARGETING_BAG_SESSION,
-            '_' . self::TARGETING_BAG_VISITOR,
-        ]));
-    }
-
-    /**
-     * Removes session cookie from cached response
-     *
-     * @param PrepareResponseEvent $event
-     */
-    public function prepareFullPageCacheResponse(PrepareResponseEvent $event)
-    {
-        $request = $event->getRequest();
-        $response = $event->getResponse();
-
-        if (!$request->hasSession()) {
-            return;
-        }
-
-        $sessionName = $request->getSession()->getName();
-        if (empty($sessionName)) {
-            return;
-        }
-
-        $cookies = $response->headers->getCookies();
-
-        foreach ($cookies as $cookie) {
-            if ($cookie->getName() === $sessionName) {
-                $response->headers->removeCookie(
-                    $cookie->getName(),
-                    $cookie->getPath(),
-                    $cookie->getDomain()
-                );
-            }
-        }
     }
 }

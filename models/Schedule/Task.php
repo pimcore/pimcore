@@ -75,7 +75,7 @@ class Task extends Model\AbstractModel
         $cacheKey = 'scheduled_task_' . $id;
 
         try {
-            $task = \Pimcore\Cache\Runtime::get($cacheKey);
+            $task = \Pimcore\Cache\RuntimeCache::get($cacheKey);
             if (!$task) {
                 throw new \Exception('Scheduled Task in Registry is not valid');
             }
@@ -83,7 +83,7 @@ class Task extends Model\AbstractModel
             try {
                 $task = new self();
                 $task->getDao()->getById((int)$id);
-                \Pimcore\Cache\Runtime::set($cacheKey, $task);
+                \Pimcore\Cache\RuntimeCache::set($cacheKey, $task);
             } catch (Model\Exception\NotFoundException $e) {
                 return null;
             }
