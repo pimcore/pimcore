@@ -110,7 +110,7 @@ class Dao extends AbstractDao
             throw new \UnexpectedValueException(sprintf('No user found with the ID %d', $data['recipient']));
         }
 
-        if(empty($data['title'])) {
+        if (empty($data['title'])) {
             throw new \UnexpectedValueException('Title of the Notification cannot be empty');
         }
 
