@@ -530,7 +530,7 @@ final class Redirect extends AbstractModel
         return $this->userModification;
     }
 
-    /**s
+    /**
      * @param int $userModification
      */
     public function setUserModification($userModification)
