@@ -283,7 +283,7 @@ final class Predefined extends Model\AbstractModel
      */
     public function getInheritable()
     {
-        return (bool) $this->inheritable;
+        return $this->inheritable;
     }
 
     /**

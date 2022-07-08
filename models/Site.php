@@ -54,7 +54,7 @@ final class Site extends AbstractModel
     protected ?Document\Page $rootDocument = null;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $rootPath;
 
@@ -327,7 +327,7 @@ final class Site extends AbstractModel
     }
 
     /**
-     * @param string $path
+     * @param string|null $path
      *
      * @return $this
      */
@@ -339,7 +339,7 @@ final class Site extends AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getRootPath()
     {

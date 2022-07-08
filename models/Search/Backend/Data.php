@@ -105,7 +105,7 @@ class Data extends \Pimcore\Model\AbstractModel
     /**
      * User-ID of the user last modified the element
      *
-     * @var int
+     * @var int|null
      */
     protected $userModification;
 
@@ -274,7 +274,7 @@ class Data extends \Pimcore\Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getUserModification()
     {

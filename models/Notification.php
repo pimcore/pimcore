@@ -54,14 +54,14 @@ class Notification extends AbstractModel
     /**
      * @internal
      *
-     * @var User
+     * @var User|null
      */
     protected $sender;
 
     /**
      * @internal
      *
-     * @var User
+     * @var User|null
      */
     protected $recipient;
 
@@ -75,14 +75,14 @@ class Notification extends AbstractModel
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $type;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $message;
 
@@ -96,7 +96,7 @@ class Notification extends AbstractModel
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $linkedElementType;
 
@@ -192,7 +192,7 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @return null|User
+     * @return User|null
      */
     public function getSender(): ?User
     {
@@ -313,7 +313,9 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @return null|string
+     * enum('document','asset', 'object) nullable
+     *
+     * @return string|null
      */
     public function getLinkedElementType(): ?string
     {

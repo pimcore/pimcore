@@ -254,7 +254,7 @@ class Workflow extends AbstractModel
     }
 
     /**
-     * Returns whether or not a state name is valid within the workflow
+     * Returns whether a state name is valid within the workflow
      *
      * @param string $stateName
      *

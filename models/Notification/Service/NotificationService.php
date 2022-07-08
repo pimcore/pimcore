@@ -67,6 +67,14 @@ class NotificationService
             throw new \UnexpectedValueException(sprintf('No user found with the ID %d', $userId));
         }
 
+        if (empty($title)) {
+            throw new \UnexpectedValueException('Title of the Notification cannot be empty');
+        }
+
+        if (empty($message)) {
+            throw new \UnexpectedValueException('Message text of the Notification cannot be empty');
+        }
+
         $notification = new Notification();
         $notification->setRecipient($recipient);
         $notification->setSender($sender);
