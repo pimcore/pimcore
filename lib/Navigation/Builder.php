@@ -226,7 +226,7 @@ class Builder
             }
         }
 
-        if ($activeDocument instanceof Document) {
+        if ($activeDocument) {
             if (empty($activePages)) {
                 // use the provided pimcore document
                 $activePages = $this->findActivePages($navigation, 'realFullPath', $activeDocument->getRealFullPath());
@@ -238,43 +238,37 @@ class Builder
             }
         }
 
+        $isLink = static fn ($page): bool => $page instanceof DocumentPage && $page->getDocumentType() === 'link';
+
         // cleanup active pages from links
         // pages have priority, if we don't find any active page, we use all we found
-        $tmpPages = [];
-        foreach ($activePages as $page) {
-            if ($page instanceof DocumentPage && $page->getDocumentType() !== 'link') {
-                $tmpPages[] = $page;
-            }
-        }
-        if (count($tmpPages)) {
-            $activePages = $tmpPages;
+        if ($nonLinkPages = array_filter($activePages, static fn ($page): bool => !$isLink($page))) {
+            $activePages = $nonLinkPages;
         }
 
-        if (!empty($activePages)) {
+        if ($activePages) {
             // we found an active document, so we can build the active trail by getting respectively the parent
             foreach ($activePages as $activePage) {
                 $this->addActiveCssClasses($activePage, true);
             }
-        } elseif ($activeDocument instanceof Document) {
+
+            return;
+        }
+
+        if ($activeDocument) {
             // we didn't find the active document, so we try to build the trail on our own
             $allPages = new \RecursiveIteratorIterator($navigation, \RecursiveIteratorIterator::SELF_FIRST);
 
             foreach ($allPages as $page) {
-                $activeTrail = false;
-
-                if ($page instanceof Url && $page->getUri()) {
-                    if (str_starts_with($activeDocument->getRealFullPath(), $page->getUri() . '/')) {
-                        $activeTrail = true;
-                    } elseif (
-                        $page instanceof DocumentPage &&
-                        $page->getDocumentType() === 'link' &&
-                        str_starts_with($activeDocument->getFullPath(), $page->getUri() . '/')
-                    ) {
-                        $activeTrail = true;
-                    }
+                if (!$page instanceof Url || !$page->getUri()) {
+                    continue;
                 }
 
-                if ($activeTrail) {
+                $uri = $page->getUri() . '/';
+                $isActive = str_starts_with($activeDocument->getRealFullPath(), $uri)
+                    || ($isLink($page) && str_starts_with($activeDocument->getFullPath(), $uri));
+
+                if ($isActive) {
                     $page->setActive(true);
                     $page->setClass($page->getClass() . ' active active-trail');
                 }
