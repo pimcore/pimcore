@@ -683,7 +683,7 @@ class Installer
         $dumpFile = preg_replace("/\s*(?!<\")\/\*[^\*]+\*\/(?!\")\s*/", '', $dumpFile);
 
         if (strpos($file, 'atomic') !== false) {
-            $db->exec($dumpFile);
+            $db->executeStatement($dumpFile);
         } else {
 
             // get every command as single part - ; at end of line
@@ -698,12 +698,12 @@ class Installer
                 }
 
                 if (count($batchQueries) > 500) {
-                    $db->exec(implode("\n", $batchQueries));
+                    $db->executeStatement(implode("\n", $batchQueries));
                     $batchQueries = [];
                 }
             }
 
-            $db->exec(implode("\n", $batchQueries));
+            $db->executeStatement(implode("\n", $batchQueries));
         }
 
         // set the id of the system user to 0
