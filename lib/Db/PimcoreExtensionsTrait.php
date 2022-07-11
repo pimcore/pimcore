@@ -198,7 +198,7 @@ trait PimcoreExtensionsTrait
             $sql .= ' WHERE ' . $where;
         }
 
-        return $this->executeUpdate($sql);
+        return $this->executeStatement($sql);
     }
 
     /**
@@ -230,7 +230,7 @@ trait PimcoreExtensionsTrait
             $sql .= ' WHERE ' . $where;
         }
 
-        return $this->executeUpdate($sql, $paramValues);
+        return $this->executeStatement($sql, $paramValues);
     }
 
     /**
@@ -375,7 +375,7 @@ trait PimcoreExtensionsTrait
             implode(', ', $set)
         );
 
-        return $this->executeUpdate($sql, $bind);
+        return $this->executeStatement($sql, $bind);
     }
 
     /**
