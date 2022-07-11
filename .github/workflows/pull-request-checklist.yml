@@ -17,11 +17,12 @@ jobs:
                       - [ ] Target branch (`10.4` for bug fixes, others `10.x`)
                       - [ ] Tests (if it's testable code, there should be a test for it - [get help](https://pimcore.com/docs/pimcore/current/Development_Documentation/Development_Tools_and_Details/Testing/Core_Tests.html))
                       - [ ] Docs (every functionality needs to be documented, [see here](https://github.com/pimcore/pimcore/tree/10.x/doc)) 
-                      - [ ] Migration incl. `install.sql` (e.g. if the database schema changes, ...) 
+                      - [ ] [Migration](https://pimcore.com/docs/pimcore/current/Development_Documentation/Development_Tools_and_Details/Migrations.html) incl. `install.sql` (e.g. if the database schema changes, ...) 
                       - [ ] Upgrade notes (deprecations, important information, migration hints, ...) 
                       - [ ] Label
                       - [ ] Milestone
               with:
+                  github-token: ${{secrets.GITHUB_TOKEN}}
                   script: |
                       const { MESSAGE } = process.env
                       github.rest.issues.createComment({
