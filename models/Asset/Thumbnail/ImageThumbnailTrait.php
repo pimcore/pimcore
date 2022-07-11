@@ -440,7 +440,7 @@ trait ImageThumbnailTrait
     public function getThumbnailAs(string $format, $deferred = true)
     {
         $validImageFormats = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
-        if (in_array($format, $validImageFormats)) {
+        if (in_array(strtolower($format), $validImageFormats)) {
             $pathInfo = pathinfo($this->getPath($deferred));
             return $pathInfo['dirname'] . DIRECTORY_SEPARATOR . $pathInfo['filename'] . '.' . $format;
         }
