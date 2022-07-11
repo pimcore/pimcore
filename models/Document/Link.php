@@ -369,6 +369,11 @@ class Link extends Model\Document
             if ($this->internal) {
                 if ($this->internalType == 'document') {
                     $this->object = Document::getById($this->internal);
+
+                    if ($this->getId() == $this->internal){
+                        throw new \Exception('Prevented infinite redirection loop: attempted to linking "'. $this->getKey().'" to itself. ');
+                    }
+
                 } elseif ($this->internalType == 'asset') {
                     $this->object = Asset::getById($this->internal);
                 } elseif ($this->internalType == 'object') {
