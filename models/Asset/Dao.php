@@ -57,7 +57,7 @@ class Dao extends Model\Element\Dao
             $this->assignVariablesToModel($data);
 
             if ($data['hasMetaData']) {
-                $metadataRaw = $this->db->fetchAll('SELECT * FROM assets_metadata WHERE cid = ?', [$data['id']]);
+                $metadataRaw = $this->db->fetchAllAssociative('SELECT * FROM assets_metadata WHERE cid = ?', [$data['id']]);
                 $metadata = [];
                 foreach ($metadataRaw as $md) {
                     $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
@@ -236,7 +236,7 @@ class Dao extends Model\Element\Dao
 
         // collect properties via parent - ids
         $parentIds = $this->getParentIds();
-        $propertiesRaw = $this->db->fetchAll('SELECT * FROM properties WHERE ((cid IN (' . implode(',', $parentIds) . ") AND inheritable = 1) OR cid = ? )  AND ctype='asset'", [$this->model->getId()]);
+        $propertiesRaw = $this->db->fetchAllAssociative('SELECT * FROM properties WHERE ((cid IN (' . implode(',', $parentIds) . ") AND inheritable = 1) OR cid = ? )  AND ctype='asset'", [$this->model->getId()]);
 
         // because this should be faster than mysql
         usort($propertiesRaw, function ($left, $right) {
@@ -579,7 +579,7 @@ class Dao extends Model\Element\Dao
         // so this runtime cache wouldn't be as efficient
         if (!isset(self::$thumbnailStatusCache[$assetId])) {
             self::$thumbnailStatusCache[$assetId] = [];
-            $thumbs = $this->db->fetchAll('SELECT * FROM assets_image_thumbnail_cache WHERE cid = :cid', [
+            $thumbs = $this->db->fetchAllAssociative('SELECT * FROM assets_image_thumbnail_cache WHERE cid = :cid', [
                 'cid' => $this->model->getId(),
             ]);
 

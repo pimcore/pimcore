@@ -1782,7 +1782,7 @@ class SettingsController extends AdminController
     protected function deleteViews($language, $dbName)
     {
         $db = \Pimcore\Db::get();
-        $views = $db->fetchAll('SHOW FULL TABLES IN ' . $db->quoteIdentifier($dbName) . " WHERE TABLE_TYPE LIKE 'VIEW'");
+        $views = $db->fetchAllAssociative('SHOW FULL TABLES IN ' . $db->quoteIdentifier($dbName) . " WHERE TABLE_TYPE LIKE 'VIEW'");
 
         foreach ($views as $view) {
             if (preg_match('/^object_localized_[0-9]+_' . $language . '$/', $view['Tables_in_' . $dbName])) {

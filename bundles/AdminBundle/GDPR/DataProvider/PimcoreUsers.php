@@ -161,7 +161,7 @@ class PimcoreUsers implements DataProviderInterface
     protected function getVersionDataForUser(User\AbstractUser $user): array
     {
         $db = Db::get();
-        $versions = $db->fetchAll("SELECT ctype, cid, note, FROM_UNIXTIME(`date`) AS 'date' FROM versions WHERE userId = ?", [$user->getId()]);
+        $versions = $db->fetchAllAssociative("SELECT ctype, cid, note, FROM_UNIXTIME(`date`) AS 'date' FROM versions WHERE userId = ?", [$user->getId()]);
 
         return $versions;
     }

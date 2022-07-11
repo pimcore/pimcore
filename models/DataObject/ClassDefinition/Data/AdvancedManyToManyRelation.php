@@ -281,7 +281,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                     $className = '';
                 }
 
-                $result = $db->fetchAll(
+                $result = $db->fetchAllAssociative(
                     'SELECT '
                     . $identifier . ' id, '
                     . $typeCol . ' type' . $className

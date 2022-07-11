@@ -38,7 +38,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $assets = [];
 
         $queryBuilder = $this->getQueryBuilder(['assets.id', 'assets.type']);
-        $assetsData = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $assetsData = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         foreach ($assetsData as $assetData) {
             if ($assetData['type']) {

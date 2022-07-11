@@ -172,7 +172,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $query = 'SELECT * FROM ' . $groupsTableName . ' WHERE o_id = ' . $this->db->quote($objectId) . ' AND fieldname = ' . $this->db->quote($fieldname);
 
-        $data = $this->db->fetchAll($query);
+        $data = $this->db->fetchAllAssociative($query);
         $list = [];
 
         foreach ($data as $item) {
@@ -181,7 +181,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $query = 'SELECT * FROM ' . $dataTableName . ' WHERE o_id = ' . $this->db->quote($objectId) . ' AND fieldname = ' . $this->db->quote($fieldname);
 
-        $data = $this->db->fetchAll($query);
+        $data = $this->db->fetchAllAssociative($query);
 
         $groupCollectionMapping = [];
 

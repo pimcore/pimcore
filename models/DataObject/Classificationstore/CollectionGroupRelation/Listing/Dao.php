@@ -45,7 +45,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
             . ',' . DataObject\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS
             . $condition . $this->getOrder() . $this->getOffsetLimit();
 
-        $data = $this->db->fetchAll($sql, $this->model->getConditionVariables());
+        $data = $this->db->fetchAllAssociative($sql, $this->model->getConditionVariables());
 
         $configData = [];
         foreach ($data as $dataItem) {
@@ -66,7 +66,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getDataArray()
     {
-        $configsData = $this->db->fetchAll('SELECT * FROM ' . DataObject\Classificationstore\CollectionGroupRelation\Dao::TABLE_NAME_RELATIONS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $configsData = $this->db->fetchAllAssociative('SELECT * FROM ' . DataObject\Classificationstore\CollectionGroupRelation\Dao::TABLE_NAME_RELATIONS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         return $configsData;
     }

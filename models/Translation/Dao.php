@@ -113,7 +113,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getAvailableLanguages()
     {
-        $l = $this->db->fetchAll('SELECT * FROM ' . $this->getDatabaseTableName()  . '  GROUP BY `language`;');
+        $l = $this->db->fetchAllAssociative('SELECT * FROM ' . $this->getDatabaseTableName()  . '  GROUP BY `language`;');
         $languages = [];
 
         foreach ($l as $values) {
@@ -130,7 +130,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getAvailableDomains()
     {
-        $domainTables = $this->db->fetchAll("SHOW TABLES LIKE 'translations_%'");
+        $domainTables = $this->db->fetchAllAssociative("SHOW TABLES LIKE 'translations_%'");
         $domains = [];
 
         foreach ($domainTables as $domainTable) {

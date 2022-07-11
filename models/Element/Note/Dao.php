@@ -44,7 +44,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->assignVariablesToModel($data);
 
         // get key-value data
-        $keyValues = $this->db->fetchAll('SELECT * FROM notes_data WHERE id = ?', [$id]);
+        $keyValues = $this->db->fetchAllAssociative('SELECT * FROM notes_data WHERE id = ?', [$id]);
         $preparedData = [];
 
         foreach ($keyValues as $keyValue) {

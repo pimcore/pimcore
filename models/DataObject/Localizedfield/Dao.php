@@ -603,7 +603,7 @@ class Dao extends Model\Dao\AbstractDao
 
             $container = DataObject\Fieldcollection\Definition::getByKey($containerKey);
 
-            $data = $this->db->fetchAll(
+            $data = $this->db->fetchAllAssociative(
                 'SELECT * FROM '.$this->getTableName()
                 .' WHERE ooo_id = ? AND language IN ('.implode(
                     ',',
@@ -620,7 +620,7 @@ class Dao extends Model\Dao\AbstractDao
             $container = DataObject\Objectbrick\Definition::getByKey($containerKey);
             $fieldname = $context['fieldname'];
 
-            $data = $this->db->fetchAll(
+            $data = $this->db->fetchAllAssociative(
                 'SELECT * FROM '.$this->getTableName()
                 .' WHERE ooo_id = ? AND language IN ('.implode(',', $validLanguages).') AND `fieldname` = ?',
                 [
@@ -630,7 +630,7 @@ class Dao extends Model\Dao\AbstractDao
             );
         } else {
             $container = $this->model->getClass();
-            $data = $this->db->fetchAll(
+            $data = $this->db->fetchAllAssociative(
                 'SELECT * FROM '.$this->getTableName().' WHERE ooo_id = ? AND language IN ('.implode(
                     ',',
                     $validLanguages
@@ -738,10 +738,10 @@ class Dao extends Model\Dao\AbstractDao
 
                 // get available columns
                 $viewColumns = array_merge(
-                    $this->db->fetchAll('SHOW COLUMNS FROM `'.$defaultTable.'`'),
-                    $this->db->fetchAll('SHOW COLUMNS FROM `objects`')
+                    $this->db->fetchAllAssociative('SHOW COLUMNS FROM `'.$defaultTable.'`'),
+                    $this->db->fetchAllAssociative('SHOW COLUMNS FROM `objects`')
                 );
-                $localizedColumns = $this->db->fetchAll('SHOW COLUMNS FROM `'.$tablename.'`');
+                $localizedColumns = $this->db->fetchAllAssociative('SHOW COLUMNS FROM `'.$tablename.'`');
 
                 // get view fields
                 $viewFields = [];

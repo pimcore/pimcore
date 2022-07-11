@@ -248,7 +248,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
             if ($allowedGroupIds) {
                 $db = \Pimcore\Db::get();
                 $query = 'select * from classificationstore_collectionrelations where groupId in (' . implode(',', $allowedGroupIds) .')';
-                $relationList = $db->fetchAll($query);
+                $relationList = $db->fetchAllAssociative($query);
 
                 if (is_array($relationList)) {
                     foreach ($relationList as $item) {
@@ -975,7 +975,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
         if ($ids) {
             $db = \Pimcore\Db::get();
             $mappedData = [];
-            $groupsData = $db->fetchAll('select * from classificationstore_groups g, classificationstore_collectionrelations c where colId IN (:ids) and g.id = c.groupId', [
+            $groupsData = $db->fetchAllAssociative('select * from classificationstore_groups g, classificationstore_collectionrelations c where colId IN (:ids) and g.id = c.groupId', [
                 'ids' => implode(',', array_filter($ids, 'intval')),
             ]);
 
@@ -1562,7 +1562,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
         }
 
         $db->query('select @rownum := 0;');
-        $result = $db->fetchAll($query);
+        $result = $db->fetchAllAssociative($query);
 
         $page = (int) $result[0]['page'] ;
 

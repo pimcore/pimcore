@@ -37,7 +37,7 @@ trait CompositeIndexTrait
         // fetch existing indices
         $existingMap = [];
         // prefix with "c_"
-        $existingIndicesRaw = $this->db->fetchAll('SHOW INDEXES FROM ' . $this->db->quoteIdentifier($table) . " WHERE Key_Name LIKE 'c\_%'");
+        $existingIndicesRaw = $this->db->fetchAllAssociative('SHOW INDEXES FROM ' . $this->db->quoteIdentifier($table) . " WHERE Key_Name LIKE 'c\_%'");
         foreach ($existingIndicesRaw as $item) {
             $key = $item['Key_name'];
             $column = $item['Column_name'];

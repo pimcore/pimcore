@@ -63,14 +63,14 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
             $languageList[] = $db->quote($language);
         }
 
-        $tables = $db->fetchAll("SHOW TABLES LIKE 'object\_localized\_data\_%'");
+        $tables = $db->fetchAllAssociative("SHOW TABLES LIKE 'object\_localized\_data\_%'");
 
         foreach ($tables as $table) {
             $printLine = false;
             $table = current($table);
             $classId = str_replace('object_localized_data_', '', $table);
 
-            $result = $db->fetchAll('SELECT DISTINCT `language` FROM ' . $table . ' WHERE `language` NOT IN(' . implode(',', $languageList) .')');
+            $result = $db->fetchAllAssociative('SELECT DISTINCT `language` FROM ' . $table . ' WHERE `language` NOT IN(' . implode(',', $languageList) .')');
             $result = ($result ? $result : []);
 
             //delete data from object_localized_data_classID tables
@@ -89,7 +89,7 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
             }
 
             //drop unused localized view e.g. object_localized_classId_*
-            $existingViews = $db->fetchAll("SHOW TABLES LIKE 'object\_localized\_{$classId}\_%'");
+            $existingViews = $db->fetchAllAssociative("SHOW TABLES LIKE 'object\_localized\_{$classId}\_%'");
 
             if (is_array($existingViews)) {
                 foreach ($existingViews as $existingView) {
@@ -111,7 +111,7 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
             }
 
             //drop unused localized table e.g. object_localized_query_classId_*
-            $existingTables = $db->fetchAll("SHOW TABLES LIKE 'object\_localized\_query\_{$classId}\_%'");
+            $existingTables = $db->fetchAllAssociative("SHOW TABLES LIKE 'object\_localized\_query\_{$classId}\_%'");
             if (is_array($existingTables)) {
                 foreach ($existingTables as $existingTable) {
                     $localizedTable = current($existingTable);

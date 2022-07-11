@@ -54,7 +54,7 @@ class MysqlToolsCommand extends AbstractCommand
         $db = \Pimcore\Db::get();
 
         if ($input->getOption('mode') == 'optimize') {
-            $tables = $db->fetchAll('SHOW TABLES');
+            $tables = $db->fetchAllAssociative('SHOW TABLES');
 
             foreach ($tables as $table) {
                 $t = current($table);
@@ -67,7 +67,7 @@ class MysqlToolsCommand extends AbstractCommand
                 }
             }
         } elseif ($input->getOption('mode') == 'warmup') {
-            $tables = $db->fetchAll('SHOW TABLES');
+            $tables = $db->fetchAllAssociative('SHOW TABLES');
 
             foreach ($tables as $table) {
                 $t = current($table);

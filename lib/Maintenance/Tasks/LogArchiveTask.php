@@ -96,7 +96,7 @@ class LogArchiveTask implements TaskInterface
 
             $this->logger->debug('Deleting referenced FileObjects of application_logs which are older than '. $archive_threshold.' days');
 
-            $fileObjectPaths = $db->fetchAll(sprintf($sql, 'fileobject'));
+            $fileObjectPaths = $db->fetchAllAssociative(sprintf($sql, 'fileobject'));
             foreach ($fileObjectPaths as $objectPath) {
                 $storage->delete($objectPath['fileobject']);
             }
