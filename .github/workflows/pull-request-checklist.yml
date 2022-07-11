@@ -25,7 +25,6 @@ jobs:
                       - [ ] Label
                       - [ ] Milestone
               with:
-                  github-token: ${{secrets.GITHUB_TOKEN}}
                   script: |
                       const { MESSAGE } = process.env
                       github.rest.issues.createComment({
