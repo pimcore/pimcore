@@ -38,7 +38,7 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function load()
     {
-        $workflowsData = $this->db->fetchAllAssociative($this->model->getFilter(), $this->model->getOrder());
+        $workflowsData = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
 
         $workflows = [];
         foreach ($workflowsData as $workflowData) {
@@ -55,7 +55,7 @@ class Dao extends Model\Dao\PhpArrayTable
      */
     public function getTotalCount()
     {
-        $data = $this->db->fetchAllAssociative($this->model->getFilter(), $this->model->getOrder());
+        $data = $this->db->fetchAll($this->model->getFilter(), $this->model->getOrder());
         $amount = count($data);
 
         return $amount;
