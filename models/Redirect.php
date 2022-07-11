@@ -101,7 +101,7 @@ final class Redirect extends AbstractModel
     protected $active = true;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $expiry;
 
@@ -125,7 +125,7 @@ final class Redirect extends AbstractModel
     /**
      * ID of the user who make the latest changes
      *
-     * @var int
+     * @var int|null
      */
     protected $userModification;
 
@@ -215,6 +215,8 @@ final class Redirect extends AbstractModel
     }
 
     /**
+     * enum('entire_uri','path_query','path','auto_create')
+     *
      * @return string
      */
     public function getType()
@@ -223,6 +225,8 @@ final class Redirect extends AbstractModel
     }
 
     /**
+     * enum('entire_uri','path_query','path','auto_create')
+     *
      * @param string $type
      */
     public function setType($type)
@@ -327,7 +331,7 @@ final class Redirect extends AbstractModel
     }
 
     /**
-     * @param int|string $expiry
+     * @param int|string|null $expiry
      *
      * @return $this
      */
@@ -342,7 +346,7 @@ final class Redirect extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getExpiry()
     {
@@ -350,7 +354,7 @@ final class Redirect extends AbstractModel
     }
 
     /**
-     * @return bool
+     * @return bool|null
      */
     public function getRegex()
     {
@@ -363,17 +367,13 @@ final class Redirect extends AbstractModel
     }
 
     /**
-     * @param bool $regex
+     * @param bool|null $regex
      *
      * @return $this
      */
     public function setRegex($regex)
     {
-        if ($regex) {
-            $this->regex = (bool) $regex;
-        } else {
-            $this->regex = null;
-        }
+        $this->regex = $regex ? (bool) $regex : null;
 
         return $this;
     }
@@ -523,7 +523,7 @@ final class Redirect extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getUserModification()
     {

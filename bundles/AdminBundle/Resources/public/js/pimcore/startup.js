@@ -186,7 +186,7 @@ Ext.onReady(function () {
         var jsonData = response.responseJson;
         if (!jsonData) {
             try {
-                jsonData = Ext.decode(response.responseText, response.aborted);
+                jsonData = JSON.parse(response.responseText);
             } catch (e) {
 
             }
@@ -237,7 +237,26 @@ Ext.onReady(function () {
                         bodyStyle: "padding: 20px;",
                         html: t("the_system_is_in_maintenance_mode_please_wait"),
                         closeAction: "close",
-                        modal: true
+                        modal: true,
+                        listeners: {
+                            show: function () {
+                                window.setInterval(function () {
+                                    Ext.Ajax.request({
+                                        url: Routing.generate('pimcore_admin_misc_ping'),
+                                        success: function (response) {
+                                            if (pimcore.maintenanceWindow) {
+                                                pimcore.maintenanceWindow.close();
+                                                window.setTimeout(function () {
+                                                    delete pimcore.maintenanceWindow;
+                                                }, 2000);
+                                                pimcore.viewport.updateLayout();
+                                            }
+                                        }
+                                    });
+                                }, 30000);
+                            }
+                        }
+
                     });
                     pimcore.viewport.add(pimcore.maintenanceWindow);
                     pimcore.maintenanceWindow.show();

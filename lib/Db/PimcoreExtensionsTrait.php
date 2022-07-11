@@ -25,6 +25,8 @@ use Pimcore\Model\Element\ValidationException;
 
 /**
  * @property \Doctrine\DBAL\Driver\Connection $_conn
+ *
+ * @deprecated will be removed in Pimcore 11
  */
 trait PimcoreExtensionsTrait
 {
@@ -86,6 +88,7 @@ trait PimcoreExtensionsTrait
     }
 
     /**
+     * @deprecated
      * @see \Doctrine\DBAL\Connection::executeUpdate
      *
      * @param string $query The SQL query.
@@ -179,6 +182,8 @@ trait PimcoreExtensionsTrait
     /**
      * Deletes table rows based on a custom WHERE clause.
      *
+     * @deprecated
+     *
      * @param  string        $table The table to update.
      * @param  string        $where DELETE WHERE clause(s).
      *
@@ -198,6 +203,8 @@ trait PimcoreExtensionsTrait
 
     /**
      * Updates table rows with specified data based on a custom WHERE clause.
+     *
+     * @deprecated
      *
      * @param  string        $table The table to update.
      * @param  array        $data  Column-value pairs.
@@ -229,6 +236,8 @@ trait PimcoreExtensionsTrait
     /**
      * Fetches the first row of the SQL result.
      *
+     * @deprecated
+     *
      * @param string $sql
      * @param array|scalar $params
      * @param array $types
@@ -247,6 +256,8 @@ trait PimcoreExtensionsTrait
     /**
      * Fetches the first column of all SQL result rows as an array.
      *
+     * @deprecated
+     *
      * @param string $sql
      * @param array|scalar $params
      * @param array $types
@@ -264,8 +275,10 @@ trait PimcoreExtensionsTrait
         $stmt = $this->executeQuery($sql, $params, $types);
         $data = [];
         if ($stmt instanceof Result) {
-            while ($row = $stmt->fetchOne()) {
+            $row = $stmt->fetchOne();
+            while (false !== $row) {
                 $data[] = $row;
+                $row = $stmt->fetchOne();
             }
             $stmt->free();
         }
@@ -297,6 +310,8 @@ trait PimcoreExtensionsTrait
      * The first column is the key, the second column is the
      * value.
      *
+     * @deprecated
+     *
      * @param string $sql
      * @param array $params
      * @param array $types
@@ -321,6 +336,8 @@ trait PimcoreExtensionsTrait
     }
 
     /**
+     * @deprecated
+     *
      * @param string $table
      * @param array $data
      *
@@ -374,6 +391,8 @@ trait PimcoreExtensionsTrait
      * // $safe = "WHERE date < '2005-01-02'"
      * </code>
      *
+     * @deprecated
+     *
      * @param string $text The text with a placeholder.
      * @param mixed $value The value to quote.
      * @param string|null $type OPTIONAL SQL datatype
@@ -393,6 +412,8 @@ trait PimcoreExtensionsTrait
     /**
      * Quote a column identifier and alias.
      *
+     * @deprecated
+     *
      * @param string|array $ident The identifier or expression.
      * @param string|null $alias An alias for the column.
      *
@@ -406,6 +427,8 @@ trait PimcoreExtensionsTrait
     /**
      * Quote a table identifier and alias.
      *
+     * @deprecated
+     *
      * @param string|array $ident The identifier or expression.
      * @param string|null $alias An alias for the table.
      *
@@ -418,6 +441,8 @@ trait PimcoreExtensionsTrait
 
     /**
      * Quote an identifier and an optional alias.
+     *
+     * @deprecated
      *
      * @param string|array $ident The identifier or expression.
      * @param string|null $alias An optional alias.
@@ -454,6 +479,8 @@ trait PimcoreExtensionsTrait
     /**
      * Quote an identifier.
      *
+     * @deprecated
+     *
      * @param string $value The identifier or expression.
      * @param bool $auto If true, heed the AUTO_QUOTE_IDENTIFIERS config option.
      *
@@ -472,6 +499,8 @@ trait PimcoreExtensionsTrait
 
     /**
      * Adds an adapter-specific LIMIT clause to the SELECT statement.
+     *
+     * @deprecated
      *
      * @param string $sql
      * @param int $count
@@ -502,6 +531,8 @@ trait PimcoreExtensionsTrait
     }
 
     /**
+     * @deprecated
+     *
      * @param string $sql
      * @param array $exclusions
      *
@@ -526,6 +557,8 @@ trait PimcoreExtensionsTrait
     }
 
     /**
+     * @deprecated
+     *
      * @param array|scalar $params
      *
      * @return array
@@ -540,6 +573,8 @@ trait PimcoreExtensionsTrait
     }
 
     /**
+     * @deprecated
+     *
      * @param array $data
      *
      * @return array
@@ -559,6 +594,8 @@ trait PimcoreExtensionsTrait
     }
 
     /**
+     * @deprecated
+     *
      * @param bool $autoQuoteIdentifiers
      */
     public function setAutoQuoteIdentifiers($autoQuoteIdentifiers)
@@ -567,6 +604,8 @@ trait PimcoreExtensionsTrait
     }
 
     /**
+     * @deprecated
+     *
      * @param string $table
      * @param string $idColumn
      * @param string $where
@@ -579,7 +618,7 @@ trait PimcoreExtensionsTrait
             $sql .= ' WHERE ' . $where;
         }
 
-        $idsForDeletion = $this->fetchCol($sql);
+        $idsForDeletion = $this->fetchFirstColumn($sql);
 
         if (!empty($idsForDeletion)) {
             $chunks = array_chunk($idsForDeletion, 1000);
@@ -591,6 +630,8 @@ trait PimcoreExtensionsTrait
     }
 
     /**
+     * @deprecated
+     *
      * @param string $like
      *
      * @return string

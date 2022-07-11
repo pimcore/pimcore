@@ -178,6 +178,7 @@ final class Configuration implements ConfigurationInterface
         $this->addStaticRoutesNode($rootNode);
         $this->addPerspectivesNode($rootNode);
         $this->addCustomViewsNode($rootNode);
+        $this->addGlossaryNode($rootNode);
         $this->buildRedirectsStatusCodes($rootNode);
 
         return $treeBuilder;
@@ -765,28 +766,6 @@ final class Configuration implements ConfigurationInterface
                                         })
                                     ->end()
                                     ->defaultFalse()
-                                ->end()
-                            ->end()
-                        ->end()
-                        ->arrayNode('custom_layout')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->arrayNode('definitions')
-                                ->normalizeKeys(false)
-                                    ->prototype('array')
-                                        ->children()
-                                            ->scalarNode('id')->end()
-                                            ->scalarNode('name')->end()
-                                            ->scalarNode('description')->end()
-                                            ->integerNode('creationDate')->end()
-                                            ->integerNode('modificationDate')->end()
-                                            ->integerNode('userOwner')->end()
-                                            ->integerNode('userModification')->end()
-                                            ->scalarNode('classId')->end()
-                                            ->integerNode('default')->end()
-                                            ->variableNode('layoutDefinitions')->end()
-                                        ->end()
-                                    ->end()
                                 ->end()
                             ->end()
                         ->end()
@@ -2206,6 +2185,9 @@ final class Configuration implements ConfigurationInterface
                                     ->variableNode('toolbar')->end()
                                     ->arrayNode('dashboards')
                                         ->children()
+                                            ->variableNode('disabledPortlets')->end()
+                                        ->end()
+                                        ->children()
                                             ->variableNode('predefined')->end()
                                         ->end()
                                     ->end()
@@ -2278,5 +2260,20 @@ final class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end();
+    }
+
+    /**
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addGlossaryNode(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('glossary')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('blocked_tags')
+                            ->useAttributeAsKey('name')
+                            ->prototype('scalar');
     }
 }

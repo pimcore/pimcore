@@ -62,7 +62,7 @@ class Dao extends AbstractDao
      */
     public function getById($id)
     {
-        $classRaw = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id=' . $this->db->quote($id));
+        $classRaw = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id=' . $this->db->quote($id));
         if (empty($classRaw)) {
             throw new NotFoundException('pricing rule ' . $id . ' not found.');
         }
@@ -124,7 +124,7 @@ class Dao extends AbstractDao
             }
         }
 
-        $this->db->updateWhere(self::TABLE_NAME, $data, 'id=' . $this->db->quote($this->model->getId()));
+        $this->db->update(self::TABLE_NAME, $data, ['id' => $this->model->getId()]);
     }
 
     /**
@@ -134,7 +134,7 @@ class Dao extends AbstractDao
      */
     public function delete()
     {
-        $this->db->deleteWhere(self::TABLE_NAME, 'id=' . $this->db->quote($this->model->getId()));
+        $this->db->delete(self::TABLE_NAME, ['id' => $this->model->getId()]);
     }
 
     /**

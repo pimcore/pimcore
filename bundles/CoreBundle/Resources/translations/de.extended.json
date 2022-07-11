@@ -367,7 +367,7 @@
     "mandatory": "Verpflichtend",
     "emails": "E-Mails",
     "disallow_addremove": "Hinzufügen/Entfernen ablehnen",
-    "disallow_reorder": "Aufnahme ablehnen",
+    "disallow_reorder": "Umsortierung ablehnen",
     "reload_definition": "Definition neu laden",
     "bulk_export": "Massenexport",
     "bulk_import": "Massenimport",

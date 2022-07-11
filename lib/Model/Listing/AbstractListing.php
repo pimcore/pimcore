@@ -18,6 +18,7 @@ namespace Pimcore\Model\Listing;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Db;
+use Pimcore\Db\Helper;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Listing\Dao\AbstractDao;
 
@@ -298,7 +299,6 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         $conditionString = '';
         $conditionVariableTypes = [];
         $conditionParams = $this->getConditionParams();
-        $db = \Pimcore\Db::get();
 
         $params = [];
         if (!empty($conditionParams)) {
@@ -355,9 +355,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
 
         $this->setConditionVariableTypes($conditionVariableTypes);
 
-        $condition = $this->condition . $conditionString;
-
-        return $condition;
+        return $this->condition . $conditionString;
     }
 
     /**
@@ -464,9 +462,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
      */
     public function escapeLike(string $value): string
     {
-        $db = Db::get();
-
-        return $db->escapeLike($value);
+        return Helper::escapeLike($value);
     }
 
     /**

@@ -102,6 +102,15 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     protected $marker = [];
 
     /**
+     * The Thumbnail config of the image
+     *
+     * @internal
+     *
+     * @var string
+     */
+    protected $thumbnail;
+
+    /**
      * {@inheritdoc}
      */
     public function getType()
@@ -124,6 +133,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
             'cropLeft' => $this->cropLeft,
             'hotspots' => $this->hotspots,
             'marker' => $this->marker,
+            'thumbnail' => $this->thumbnail,
         ];
     }
 
@@ -142,6 +152,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
             'cropLeft' => $this->cropLeft,
             'hotspots' => $this->hotspots,
             'marker' => $this->marker,
+            'thumbnail' => $this->thumbnail,
         ];
     }
 
@@ -185,6 +196,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
                 'cropLeft' => $this->cropLeft,
                 'hotspots' => $hotspots,
                 'marker' => $marker,
+                'thumbnail' => $this->thumbnail,
                 'predefinedDataTemplates' => $this->getConfig()['predefinedDataTemplates'] ?? null,
             ];
         }
@@ -325,6 +337,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         $this->cropLeft = $data['cropLeft'] ?? null;
         $this->marker = $data['marker'] ?? null;
         $this->hotspots = $data['hotspots'] ?? null;
+        $this->thumbnail = $data['thumbnail'] ?? null;
 
         return $this;
     }
@@ -372,6 +385,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
             $this->cropLeft = $data['cropLeft'] ?? null;
             $this->marker = $data['marker'] ?? null;
             $this->hotspots = $data['hotspots'] ?? null;
+            $this->thumbnail = $data['thumbnail'] ?? null;
         }
 
         return $this;
@@ -399,6 +413,14 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     public function getAlt()
     {
         return $this->getText();
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getThumbnailConfig()
+    {
+        return $this->thumbnail;
     }
 
     /**

@@ -27,6 +27,9 @@ env:
     PIMCORE_TEST: 1
     PIMCORE_STORAGE: 'local'
 
+permissions:
+  contents: read
+
 jobs:
     static-analysis-phpstan:
         name: "Static Analysis with PHPStan"

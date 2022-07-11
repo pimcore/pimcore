@@ -17,8 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\Storage;
 
+use Pimcore\Targeting\EventListener\TargetingSessionBagListener;
 use Pimcore\Targeting\Model\VisitorInfo;
-use Pimcore\Targeting\Session\SessionConfigurator;
 use Pimcore\Targeting\Storage\Traits\TimestampsTrait;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 
@@ -194,12 +194,12 @@ class SessionStorage implements TargetingStorageInterface
 
         switch ($scope) {
             case self::SCOPE_SESSION:
-                $bag = $session->getBag(SessionConfigurator::TARGETING_BAG_SESSION);
+                $bag = $session->getBag(TargetingSessionBagListener::TARGETING_BAG_SESSION);
 
                 break;
 
             case self::SCOPE_VISITOR:
-                $bag = $session->getBag(SessionConfigurator::TARGETING_BAG_VISITOR);
+                $bag = $session->getBag(TargetingSessionBagListener::TARGETING_BAG_VISITOR);
 
                 break;
 

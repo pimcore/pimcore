@@ -83,10 +83,18 @@ final class Dashboard
                 }
             }
 
+            $perspectiveCfg = \Pimcore\Perspective\Config::getRuntimePerspective();
+            $dashboardCfg = $perspectiveCfg['dashboards'] ?? [];
+            $dashboardsPerspective = $dashboardCfg['predefined'] ?? [];
+
             if (empty($this->dashboards)) {
-                $perspectiveCfg = \Pimcore\Perspective\Config::getRuntimePerspective();
-                $dashboardCfg = $perspectiveCfg['dashboards'] ?? [];
-                $this->dashboards = $dashboardCfg['predefined'] ?? [];
+                $this->dashboards = $dashboardsPerspective;
+            } else {
+                foreach ($dashboardsPerspective as $key => $dashboard) {
+                    if (!isset($this->dashboards[$key])) {
+                        $this->dashboards[$key] = $dashboard;
+                    }
+                }
             }
         }
 

@@ -19,6 +19,8 @@ use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
 
 /**
  * @internal
+ *
+ * @deprecated will be removed in Pimcore 11
  */
 class LegacyTwoFactorRequiredToken extends PostAuthenticationGuardToken
 {

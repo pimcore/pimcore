@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Asset\Video\Thumbnail;
 
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model;
 
 /**
@@ -121,7 +122,7 @@ final class Config extends Model\AbstractModel
         $cacheKey = 'videothumb_' . crc32($name);
 
         try {
-            $thumbnail = \Pimcore\Cache\Runtime::get($cacheKey);
+            $thumbnail = RuntimeCache::get($cacheKey);
             if (!$thumbnail) {
                 throw new \Exception('Thumbnail in registry is null');
             }
@@ -131,7 +132,7 @@ final class Config extends Model\AbstractModel
                 /** @var Model\Asset\Video\Thumbnail\Config\Dao $dao */
                 $dao = $thumbnail->getDao();
                 $dao->getByName($name);
-                \Pimcore\Cache\Runtime::set($cacheKey, $thumbnail);
+                RuntimeCache::set($cacheKey, $thumbnail);
             } catch (Model\Exception\NotFoundException $e) {
                 return null;
             }

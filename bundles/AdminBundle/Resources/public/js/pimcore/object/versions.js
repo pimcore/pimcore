@@ -84,7 +84,7 @@ pimcore.object.versions = Class.create({
                         sortable: false,
                         dataIndex: 'id',
                         renderer: function (d, metaData, cellValues) {
-                            var d = cellValues.get('date');
+                            var d = Ext.Date.format(cellValues.get('date'), "timestamp");
                             var versionCount = cellValues.get('versionCount');
                             var index = cellValues.get('index');
                             if (index === 0 && d == this.object.data.general.versionDate && versionCount == this.object.data.general.versionCount) {

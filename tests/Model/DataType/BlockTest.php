@@ -136,7 +136,7 @@ class BlockTest extends ModelTestCase
         $object->setTestblock([$data]);
         $object->save();
 
-        Cache\Runtime::clear();
+        Cache\RuntimeCache::clear();
 
         //reload from cache and save again
         $objectRef = DataObject::getById($object->getId());
@@ -187,7 +187,7 @@ class BlockTest extends ModelTestCase
         $object->setLtestblock([$data], 'de');
         $object->save();
 
-        Cache\Runtime::clear();
+        Cache\RuntimeCache::clear();
 
         //reload from cache and save again
         $objectRef = DataObject::getById($object->getId());

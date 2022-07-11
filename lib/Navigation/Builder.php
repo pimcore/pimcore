@@ -23,6 +23,7 @@ use Pimcore\Model\Site;
 use Pimcore\Navigation\Iterator\PrefixRecursiveFilterIterator;
 use Pimcore\Navigation\Page\Document as DocumentPage;
 use Pimcore\Navigation\Page\Url;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Builder
 {
@@ -56,6 +57,11 @@ class Builder
     private $navCacheTags = [];
 
     /**
+     * @var OptionsResolver
+     */
+    private $optionsResolver;
+
+    /**
      * @param RequestHelper $requestHelper
      * @param string|null $pageClass
      */
@@ -66,10 +72,47 @@ class Builder
         if (null !== $pageClass) {
             $this->pageClass = $pageClass;
         }
+
+        $this->optionsResolver = new OptionsResolver();
+        $this->configureOptions($this->optionsResolver);
     }
 
     /**
-     * @param Document|null $activeDocument
+     * @param OptionsResolver $options
+     */
+    protected function configureOptions(OptionsResolver $options)
+    {
+        $options->setDefaults([
+            'root' => null,
+            'htmlMenuPrefix' => null,
+            'pageCallback' => null,
+            'cache' => true,
+            'cacheLifetime' => null,
+            'maxDepth' => null,
+            'active' => null,
+        ]);
+
+        $options->setAllowedTypes('root', [Document::class, 'null']);
+        $options->setAllowedTypes('htmlMenuPrefix', ['string', 'null']);
+        $options->setAllowedTypes('pageCallback', ['callable', 'null']);
+        $options->setAllowedTypes('cache', ['string', 'bool']);
+        $options->setAllowedTypes('cacheLifetime', ['int', 'null']);
+        $options->setAllowedTypes('maxDepth', ['int', 'null']);
+        $options->setAllowedTypes('active', [Document::class, 'null']);
+    }
+
+    /**
+     * @param array $options
+     *
+     * @return array
+     */
+    protected function resolveOptions(array $options): array
+    {
+        return $this->optionsResolver->resolve($options);
+    }
+
+    /**
+     * @param array|Document|null $activeDocument
      * @param Document|null $navigationRootDocument
      * @param string|null $htmlMenuIdPrefix
      * @param \Closure|null $pageCallback
@@ -83,6 +126,22 @@ class Builder
      */
     public function getNavigation($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true, ?int $maxDepth = null, ?int $cacheLifetime = null)
     {
+        //TODO Pimcore 11: remove the `if (func_num_args() > 1)` block to remove the BC layer
+        if (func_num_args() > 1) {
+            trigger_deprecation('pimcore/pimcore', '10.5', 'Calling Pimcore\Navigation\Builder::getNavigation() using extra arguments is deprecated and will be removed in Pimcore 11.' .
+            'Instead, specify the arguments as an array');
+        } else {
+            [
+                'root' => $navigationRootDocument,
+                'htmlMenuPrefix' => $htmlMenuIdPrefix,
+                'pageCallback' => $pageCallback,
+                'cache' => $cache,
+                'cacheLifetime' => $cacheLifetime,
+                'maxDepth' => $maxDepth,
+                'active' => $activeDocument,
+            ] = $this->resolveOptions($activeDocument);
+        }
+
         $cacheEnabled = $cache !== false;
 
         $this->htmlMenuIdPrefix = $htmlMenuIdPrefix;

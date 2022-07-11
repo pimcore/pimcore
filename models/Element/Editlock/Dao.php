@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Element\Editlock;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 
 /**
@@ -32,7 +33,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getByElement($cid, $ctype)
     {
-        $data = $this->db->fetchRow('SELECT * FROM edit_lock WHERE cid = ? AND ctype = ?', [$cid, $ctype]);
+        $data = $this->db->fetchAssociative('SELECT * FROM edit_lock WHERE cid = ? AND ctype = ?', [$cid, $ctype]);
 
         if (!$data) {
             throw new Model\Exception\NotFoundException('Lock with cid ' . $cid . ' and ctype ' . $ctype . ' not found');
@@ -65,8 +66,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        //var_dump($data);exit;
-        $this->db->insertOrUpdate('edit_lock', $data);
+        Helper::insertOrUpdate($this->db, 'edit_lock', $data);
 
         $lastInsertId = $this->db->lastInsertId();
         if (!$this->model->getId() && $lastInsertId) {

@@ -17,7 +17,7 @@ namespace Pimcore\Tests\Helper\DataType;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection;
 use Pimcore\Cache;
-use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -78,7 +78,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals(15, count($fieldLazyRelation), 'expected 15 items');
 
         Cache::clearAll();
-        Runtime::clear();
+        RuntimeCache::clear();
         $object = AbstractObject::getById($object->getId());
         $value = $object->$getter();
         $value = $value->getItems();
@@ -254,7 +254,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals(15, count($fieldLazyRelation), 'expected 15 items');
 
         Cache::clearAll();
-        Runtime::clear();
+        RuntimeCache::clear();
         $object = AbstractObject::getById($object->getId());
         $value = $object->$getter();
         $value = $value->getItems();

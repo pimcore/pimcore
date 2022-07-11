@@ -18,7 +18,7 @@ namespace Pimcore\Model\DataObject;
 use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Cache;
-use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
@@ -375,8 +375,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
         $params = Model\Element\Service::prepareGetByIdParams($force, __METHOD__, func_num_args() > 1);
 
-        if (!$params['force'] && Runtime::isRegistered($cacheKey)) {
-            $object = Runtime::get($cacheKey);
+        if (!$params['force'] && RuntimeCache::isRegistered($cacheKey)) {
+            $object = RuntimeCache::get($cacheKey);
             if ($object && static::typeMatch($object)) {
                 return $object;
             }
@@ -397,7 +397,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
                     /** @var AbstractObject $object */
                     $object = self::getModelFactory()->build($className);
-                    Runtime::set($cacheKey, $object);
+                    RuntimeCache::set($cacheKey, $object);
                     $object->getDao()->getById($id);
                     $object->__setDataVersionTimestamp($object->getModificationDate());
 
@@ -416,7 +416,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 return null;
             }
         } else {
-            Runtime::set($cacheKey, $object);
+            RuntimeCache::set($cacheKey, $object);
         }
 
         if (!$object || !static::typeMatch($object)) {
@@ -655,9 +655,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
             //clear parent data from registry
             $parentCacheKey = self::getCacheKey($this->getParentId());
-            if (Runtime::isRegistered($parentCacheKey)) {
+            if (RuntimeCache::isRegistered($parentCacheKey)) {
                 /** @var AbstractObject $parent * */
-                $parent = Runtime::get($parentCacheKey);
+                $parent = RuntimeCache::get($parentCacheKey);
                 if ($parent instanceof self) {
                     $parent->setChildren(null);
                 }
@@ -683,7 +683,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $this->clearDependentCache();
 
         //clear object from registry
-        Runtime::set(self::getCacheKey($this->getId()), null);
+        RuntimeCache::set(self::getCacheKey($this->getId()), null);
 
         $this->dispatchEvent(new DataObjectEvent($this), DataObjectEvents::POST_DELETE);
     }
@@ -805,7 +805,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                     $additionalTags[] = $tag;
 
                     // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
-                    Runtime::set($tag, null);
+                    RuntimeCache::set($tag, null);
                 }
             }
             $this->clearDependentCache($additionalTags);
@@ -934,7 +934,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $d->save();
 
         //set object to registry
-        Runtime::set(self::getCacheKey($this->getId()), $this);
+        RuntimeCache::set(self::getCacheKey($this->getId()), $this);
     }
 
     /**

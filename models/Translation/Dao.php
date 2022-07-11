@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Translation;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
@@ -40,12 +41,24 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param string $key
+     * @param ?array $languages
      *
      * @throws NotFoundResourceException
+     * @throws \Doctrine\DBAL\Exception
      */
-    public function getByKey($key)
+    public function getByKey($key, $languages = null)
     {
-        $data = $this->db->fetchAll('SELECT * FROM ' . $this->getDatabaseTableName() . ' WHERE `key` = ? ORDER BY `creationDate` ', [$key]);
+        if (is_array($languages)) {
+            $sql = 'SELECT * FROM ' . $this->getDatabaseTableName() . ' WHERE `key` = :key
+            AND `language` IN (:languages) ORDER BY `creationDate` ';
+        } else {
+            $sql ='SELECT * FROM ' . $this->getDatabaseTableName() . ' WHERE `key` = :key ORDER BY `creationDate` ';
+        }
+
+        $data = $this->db->fetchAllAssociative($sql,
+            ['key' => $key, 'languages' => $languages],
+            ['languages' => \Doctrine\DBAL\Connection::PARAM_STR_ARRAY]
+        );
 
         if (!empty($data)) {
             foreach ($data as $d) {
@@ -79,7 +92,7 @@ class Dao extends Model\Dao\AbstractDao
                         'modificationDate' => $this->model->getModificationDate(),
                         'creationDate' => $this->model->getCreationDate(),
                     ];
-                    $this->db->insertOrUpdate($this->getDatabaseTableName(), $data);
+                    Helper::insertOrUpdate($this->db, $this->getDatabaseTableName(), $data);
                 }
             }
         }

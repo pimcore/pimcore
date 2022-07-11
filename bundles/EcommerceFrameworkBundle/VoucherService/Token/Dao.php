@@ -43,7 +43,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      */
     public function getByCode($code)
     {
-        $result = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME . ' WHERE token = ?', $code);
+        $result = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE token = ?', [$code]);
         if (empty($result)) {
             throw new NotFoundException('Token ' . $code . ' not found.');
         }

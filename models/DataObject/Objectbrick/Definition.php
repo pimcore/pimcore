@@ -16,7 +16,7 @@
 namespace Pimcore\Model\DataObject\Objectbrick;
 
 use Pimcore\Cache;
-use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\DataObject\ClassBuilder\PHPObjectBrickClassDumperInterface;
 use Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassDumperInterface;
 use Pimcore\Logger;
@@ -80,7 +80,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $cacheKey = 'objectbrick_' . $key;
 
         try {
-            $brick = \Pimcore\Cache\Runtime::get($cacheKey);
+            $brick = RuntimeCache::get($cacheKey);
             if (!$brick) {
                 throw new \Exception('ObjectBrick in Registry is not valid');
             }
@@ -91,7 +91,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
             if (is_file($fieldFile)) {
                 $brick = include $fieldFile;
-                \Pimcore\Cache\Runtime::set($cacheKey, $brick);
+                RuntimeCache::set($cacheKey, $brick);
             }
         }
 
@@ -198,7 +198,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
         $cacheKey = 'objectbrick_' . $this->getKey();
         // for localized fields getting a fresh copy
-        Runtime::set($cacheKey, $this);
+        RuntimeCache::set($cacheKey, $this);
 
         $this->createContainerClasses();
         $this->updateDatabase();

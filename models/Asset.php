@@ -16,8 +16,15 @@
 namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\DeadlockException;
+use Exception;
+use function is_array;
+use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToMoveFile;
+use Pimcore;
+use Pimcore\Cache;
+use Pimcore\Cache\RuntimeCache;
+use Pimcore\Config;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\AssetEvent;
@@ -28,6 +35,7 @@ use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Messenger\AssetUpdateTasksMessage;
 use Pimcore\Messenger\VersionDeleteMessage;
+use Pimcore\Model\Asset\Dao;
 use Pimcore\Model\Asset\Folder;
 use Pimcore\Model\Asset\Listing;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
@@ -39,12 +47,14 @@ use Pimcore\Model\Element\Traits\ScheduledTasksTrait;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
+use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Storage;
+use stdClass;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Mime\MimeTypes;
 
 /**
- * @method \Pimcore\Model\Asset\Dao getDao()
+ * @method Dao getDao()
  * @method bool __isBasedOnLatestData()
  * @method int getChildAmount($user = null)
  * @method string|null getCurrentFullPath()
@@ -229,14 +239,14 @@ class Asset extends Element\AbstractElement
 
         $params = Service::prepareGetByIdParams($force, __METHOD__, func_num_args() > 1);
 
-        if (!$params['force'] && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
-            $asset = \Pimcore\Cache\Runtime::get($cacheKey);
+        if (!$params['force'] && RuntimeCache::isRegistered($cacheKey)) {
+            $asset = RuntimeCache::get($cacheKey);
             if ($asset && static::typeMatch($asset)) {
                 return $asset;
             }
         }
 
-        if ($params['force'] || !($asset = \Pimcore\Cache::load($cacheKey))) {
+        if ($params['force'] || !($asset = Cache::load($cacheKey))) {
             $asset = new static();
 
             try {
@@ -249,17 +259,17 @@ class Asset extends Element\AbstractElement
                     $asset->getDao()->getById($id);
                 }
 
-                \Pimcore\Cache\Runtime::set($cacheKey, $asset);
+                RuntimeCache::set($cacheKey, $asset);
                 $asset->__setDataVersionTimestamp($asset->getModificationDate());
 
                 $asset->resetDirtyMap();
 
-                \Pimcore\Cache::save($asset, $cacheKey);
+                Cache::save($asset, $cacheKey);
             } catch (NotFoundException $e) {
                 return null;
             }
         } else {
-            \Pimcore\Cache\Runtime::set($cacheKey, $asset);
+            RuntimeCache::set($cacheKey, $asset);
         }
 
         if (!$asset || !static::typeMatch($asset)) {
@@ -351,7 +361,7 @@ class Asset extends Element\AbstractElement
         // this check is intentionally done in Asset::create() because in Asset::update() it would result
         // in an additional download from remote storage if configured, so in terms of performance
         // this is the more efficient way
-        $maxPixels = (int) \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['max_pixels'];
+        $maxPixels = (int) Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['max_pixels'];
         if ($size = @getimagesize($localPath)) {
             $imagePixels = (int) ($size[0] * $size[1]);
             if ($imagePixels > $maxPixels) {
@@ -375,12 +385,12 @@ class Asset extends Element\AbstractElement
      *
      * @return Listing
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getList($config = [])
     {
-        if (!\is_array($config)) {
-            throw new \Exception('Unable to initiate list class - please provide valid configuration array');
+        if (!is_array($config)) {
+            throw new Exception('Unable to initiate list class - please provide valid configuration array');
         }
 
         $listClass = Listing::class;
@@ -534,10 +544,10 @@ class Asset extends Element\AbstractElement
                     $this->commit();
 
                     break; // transaction was successfully completed, so we cancel the loop here -> no restart required
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     try {
                         $this->rollBack();
-                    } catch (\Exception $er) {
+                    } catch (Exception $er) {
                         // PDO adapter throws exceptions if rollback fails
                         Logger::error((string) $er);
                     }
@@ -563,7 +573,7 @@ class Asset extends Element\AbstractElement
                     $additionalTags[] = $tag;
 
                     // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
-                    \Pimcore\Cache\Runtime::set($tag, null);
+                    RuntimeCache::set($tag, null);
                 }
             }
             $this->clearDependentCache($additionalTags);
@@ -587,7 +597,7 @@ class Asset extends Element\AbstractElement
             }
 
             return $this;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $failureEvent = new AssetEvent($this, $params);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
@@ -603,7 +613,7 @@ class Asset extends Element\AbstractElement
     /**
      * @internal
      *
-     * @throws \Exception|DuplicateFullPathException
+     * @throws Exception|DuplicateFullPathException
      */
     public function correctPath()
     {
@@ -611,15 +621,15 @@ class Asset extends Element\AbstractElement
         if ($this->getId() != 1) { // not for the root node
 
             if (!Element\Service::isValidKey($this->getKey(), 'asset')) {
-                throw new \Exception("invalid filename '" . $this->getKey() . "' for asset with id [ " . $this->getId() . ' ]');
+                throw new Exception("invalid filename '" . $this->getKey() . "' for asset with id [ " . $this->getId() . ' ]');
             }
 
             if ($this->getParentId() == $this->getId()) {
-                throw new \Exception("ParentID and ID is identical, an element can't be the parent of itself.");
+                throw new Exception("ParentID and ID is identical, an element can't be the parent of itself.");
             }
 
             if ($this->getFilename() === '..' || $this->getFilename() === '.') {
-                throw new \Exception('Cannot create asset called ".." or "."');
+                throw new Exception('Cannot create asset called ".." or "."');
             }
 
             $parent = Asset::getById($this->getParentId());
@@ -646,7 +656,7 @@ class Asset extends Element\AbstractElement
         }
 
         if (mb_strlen($this->getFilename()) > 255) {
-            throw new \Exception('Filenames longer than 255 characters are not allowed');
+            throw new Exception('Filenames longer than 255 characters are not allowed');
         }
 
         if (Asset\Service::pathExists($this->getRealFullPath())) {
@@ -667,7 +677,7 @@ class Asset extends Element\AbstractElement
      *
      * @param array $params additional parameters (e.g. "versionNote" for the version note)
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function update($params = [])
     {
@@ -722,7 +732,7 @@ class Asset extends Element\AbstractElement
                 // not only check if the type is set but also if the implementation can be found
                 $className = 'Pimcore\\Model\\Asset\\' . ucfirst($this->getType());
                 if (!self::getModelFactory()->supports($className)) {
-                    throw new \Exception('unable to resolve asset implementation with type: ' . $this->getType());
+                    throw new Exception('unable to resolve asset implementation with type: ' . $this->getType());
                 }
             }
         } else {
@@ -769,12 +779,12 @@ class Asset extends Element\AbstractElement
 
         //set asset to registry
         $cacheKey = self::getCacheKey($this->getId());
-        \Pimcore\Cache\Runtime::set($cacheKey, $this);
+        RuntimeCache::set($cacheKey, $this);
         if (static::class === Asset::class || $typeChanged) {
             // get concrete type of asset
             // this is important because at the time of creating an asset it's not clear which type (resp. class) it will have
             // the type (image, document, ...) depends on the mime-type
-            \Pimcore\Cache\Runtime::set($cacheKey, null);
+            RuntimeCache::set($cacheKey, null);
             Asset::getById($this->getId()); // call it to load it to the runtime cache again
         }
 
@@ -796,7 +806,7 @@ class Asset extends Element\AbstractElement
      *
      * @return null|Version
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null)
     {
@@ -822,7 +832,7 @@ class Asset extends Element\AbstractElement
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the asset)
-            $assetsConfig = \Pimcore\Config::getSystemConfiguration('assets');
+            $assetsConfig = Config::getSystemConfiguration('assets');
             if ((is_null($assetsConfig['versions']['days'] ?? null) && is_null($assetsConfig['versions']['steps'] ?? null))
                 || (!empty($assetsConfig['versions']['steps']))
                 || !empty($assetsConfig['versions']['days'])
@@ -840,7 +850,7 @@ class Asset extends Element\AbstractElement
             }
 
             return $version;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $event = new AssetEvent($this, [
                 'saveVersionOnly' => true,
                 'exception' => $e,
@@ -877,7 +887,7 @@ class Asset extends Element\AbstractElement
         $path = $this->getPath() . $this->getFilename();
         $path = urlencode_ignore_slash($path);
 
-        $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['source'];
+        $prefix = Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['source'];
         $path = $prefix . $path;
 
         $event = new GenericEvent($this, [
@@ -963,7 +973,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @throws \League\Flysystem\FilesystemException
+     * @throws FilesystemException
      */
     private function deletePhysicalFile()
     {
@@ -981,7 +991,7 @@ class Asset extends Element\AbstractElement
     public function delete(bool $isNested = false)
     {
         if ($this->getId() == 1) {
-            throw new \Exception('root-node cannot be deleted');
+            throw new Exception('root-node cannot be deleted');
         }
 
         $this->dispatchEvent(new AssetEvent($this), AssetEvents::PRE_DELETE);
@@ -999,7 +1009,7 @@ class Asset extends Element\AbstractElement
             }
 
             // Dispatch Symfony Message Bus to delete versions
-            \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+            Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
                 new VersionDeleteMessage(Service::getElementType($this), $this->getId())
             );
 
@@ -1031,10 +1041,10 @@ class Asset extends Element\AbstractElement
 
             //remove target parent folder preview thumbnails
             $this->clearFolderThumbnails($this);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             try {
                 $this->rollBack();
-            } catch (\Exception $er) {
+            } catch (Exception $er) {
                 // PDO adapter throws exceptions if rollback fails
                 Logger::info((string) $er);
             }
@@ -1051,7 +1061,7 @@ class Asset extends Element\AbstractElement
         $this->clearDependentCache();
 
         // clear asset from registry
-        \Pimcore\Cache\Runtime::set(self::getCacheKey($this->getId()), null);
+        RuntimeCache::set(self::getCacheKey($this->getId()), null);
 
         $this->dispatchEvent(new AssetEvent($this), AssetEvents::POST_DELETE);
     }
@@ -1065,8 +1075,8 @@ class Asset extends Element\AbstractElement
             $tags = [$this->getCacheTag(), 'asset_properties', 'output'];
             $tags = array_merge($tags, $additionalTags);
 
-            \Pimcore\Cache::clearTags($tags);
-        } catch (\Exception $e) {
+            Cache::clearTags($tags);
+        } catch (Exception $e) {
             Logger::crit((string) $e);
         }
     }
@@ -1170,7 +1180,7 @@ class Asset extends Element\AbstractElement
         if (!$this->stream && $this->getType() !== 'folder') {
             try {
                 $this->stream = Storage::get('asset')->readStream($this->getRealFullPath());
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->stream = tmpfile();
             }
         }
@@ -1267,7 +1277,7 @@ class Asset extends Element\AbstractElement
      *
      * @return string
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getTemporaryFile(bool $keep = false)
     {
@@ -1279,7 +1289,7 @@ class Asset extends Element\AbstractElement
      *
      * @return string
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getLocalFile()
     {
@@ -1339,10 +1349,10 @@ class Asset extends Element\AbstractElement
     public function setCustomSettings($customSettings)
     {
         if (is_string($customSettings)) {
-            $customSettings = \Pimcore\Tool\Serialize::unserialize($customSettings);
+            $customSettings = Serialize::unserialize($customSettings);
         }
 
-        if ($customSettings instanceof \stdClass) {
+        if ($customSettings instanceof stdClass) {
             $customSettings = (array)$customSettings;
         }
 
@@ -1394,7 +1404,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param array[]|\stdClass[] $metadata for each array item: mandatory keys: name, type - optional keys: data, language
+     * @param array[]|stdClass[] $metadata for each array item: mandatory keys: name, type - optional keys: data, language
      *
      * @return self
      */
@@ -1462,7 +1472,7 @@ class Asset extends Element\AbstractElement
                 'language' => $language,
             ];
 
-            $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+            $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
 
             try {
                 /** @var Data $instance */
@@ -1526,7 +1536,7 @@ class Asset extends Element\AbstractElement
         $this->metadata = $preEvent->getArgument('metadata');
 
         $convert = function ($metaData) {
-            $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+            $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
             $transformedData = $metaData['data'];
 
             try {
@@ -1541,7 +1551,7 @@ class Asset extends Element\AbstractElement
 
         if ($name) {
             if ($language === null) {
-                $language = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
+                $language = Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
             }
 
             $data = null;
@@ -1599,7 +1609,7 @@ class Asset extends Element\AbstractElement
     {
         try {
             $bytes = Storage::get('asset')->fileSize($this->getRealFullPath());
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $bytes = 0;
         }
 
@@ -1667,7 +1677,7 @@ class Asset extends Element\AbstractElement
         $dependencies = [parent::resolveDependencies()];
 
         if ($this->hasMetaData) {
-            $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+            $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
 
             foreach ($this->getMetadata() as $metaData) {
                 if (!empty($metaData['data'])) {
@@ -1719,7 +1729,7 @@ class Asset extends Element\AbstractElement
      * @param string $oldPath
      * @param string|null $newPath
      *
-     * @throws \League\Flysystem\FilesystemException
+     * @throws FilesystemException
      */
     private function updateChildPaths(FilesystemOperator $storage, string $oldPath, string $newPath = null)
     {
@@ -1746,7 +1756,7 @@ class Asset extends Element\AbstractElement
     /**
      * @param string $oldPath
      *
-     * @throws \League\Flysystem\FilesystemException
+     * @throws FilesystemException
      */
     private function relocateThumbnails(string $oldPath)
     {
@@ -1808,7 +1818,7 @@ class Asset extends Element\AbstractElement
         try {
             Storage::get('thumbnail')->deleteDirectory($this->getRealPath().'/'.$this->getId().'/image-thumb__'.$this->getId().'__'.$name);
             $this->getDao()->deleteFromThumbnailCache($name);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // noting to do
         }
     }
@@ -1818,7 +1828,7 @@ class Asset extends Element\AbstractElement
      */
     protected function addToUpdateTaskQueue(): void
     {
-        \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
+        Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
             new AssetUpdateTasksMessage($this->getId())
         );
     }

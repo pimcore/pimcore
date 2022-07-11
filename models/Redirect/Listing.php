@@ -34,7 +34,7 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @param array $redirects
+     * @param Model\Redirect[]|null $redirects
      *
      * @return static
      */
