@@ -374,7 +374,7 @@
   "target_subtype": "Target Type",
   "mandatory": "Mandatory",
   "disallow_addremove": "Disallow Add\/Remove",
-  "disallow_reorder": "Dissallow Reordering",
+  "disallow_reorder": "Disallow Reordering",
   "reload_definition": "Reload Definition",
   "saving": "Saving",
   "definition": "Definition",

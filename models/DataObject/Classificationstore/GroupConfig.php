@@ -16,7 +16,7 @@
 namespace Pimcore\Model\DataObject\Classificationstore;
 
 use Pimcore\Cache;
-use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\DataObjectClassificationStoreEvents;
 use Pimcore\Event\Model\DataObject\ClassificationStore\GroupConfigEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
@@ -85,19 +85,19 @@ final class GroupConfig extends Model\AbstractModel
         $cacheKey = self::getCacheKey($id);
 
         try {
-            if (!$force && Cache\Runtime::isRegistered($cacheKey)) {
-                return Cache\Runtime::get($cacheKey);
+            if (!$force && Cache\RuntimeCache::isRegistered($cacheKey)) {
+                return Cache\RuntimeCache::get($cacheKey);
             }
 
             if (!$force && $config = Cache::load($cacheKey)) {
-                Cache\Runtime::set($cacheKey, $config);
+                Cache\RuntimeCache::set($cacheKey, $config);
 
                 return $config;
             }
             $config = new self();
             $config->getDao()->getById($id);
 
-            Cache\Runtime::set($cacheKey, $config);
+            Cache\RuntimeCache::set($cacheKey, $config);
             Cache::save($config, $cacheKey);
 
             return $config;
@@ -120,11 +120,11 @@ final class GroupConfig extends Model\AbstractModel
         $cacheKey = self::getCacheKey($storeId, $name);
 
         try {
-            if (!$force && Cache\Runtime::isRegistered($cacheKey)) {
-                return Cache\Runtime::get($cacheKey);
+            if (!$force && Cache\RuntimeCache::isRegistered($cacheKey)) {
+                return Cache\RuntimeCache::get($cacheKey);
             }
             if (!$force && $config = Cache::load($cacheKey)) {
-                Cache\Runtime::set($cacheKey, $config);
+                Cache\RuntimeCache::set($cacheKey, $config);
 
                 return $config;
             }
@@ -134,7 +134,7 @@ final class GroupConfig extends Model\AbstractModel
             $config->setStoreId($storeId ? $storeId : 1);
             $config->getDao()->getByName();
 
-            Cache\Runtime::set($cacheKey, $config);
+            Cache\RuntimeCache::set($cacheKey, $config);
             Cache::save($config, $cacheKey);
 
             return $config;
@@ -369,8 +369,8 @@ final class GroupConfig extends Model\AbstractModel
     private function removeCache(): void
     {
         // Remove runtime cache
-        Runtime::set(self::getCacheKey($this->getId()), null);
-        Runtime::set(self::getCacheKey($this->getStoreId(), $this->getName()), null);
+        RuntimeCache::set(self::getCacheKey($this->getId()), null);
+        RuntimeCache::set(self::getCacheKey($this->getStoreId(), $this->getName()), null);
 
         // Remove persisted cache
         Cache::remove(self::getCacheKey($this->getId()));

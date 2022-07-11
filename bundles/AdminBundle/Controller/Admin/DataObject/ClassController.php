@@ -24,7 +24,6 @@ use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
-use Pimcore\Model\Exception\ConfigWriteException;
 use Pimcore\Model\Translation;
 use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -260,9 +259,6 @@ class ClassController extends AdminController implements KernelControllerEventIn
                     );
 
                     $customLayout->setId($request->get('id'));
-                    if (!$customLayout->isWriteable()) {
-                        throw new ConfigWriteException();
-                    }
                     $customLayout->save();
                 }
             }
@@ -271,7 +267,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 throw $this->createNotFoundException();
             }
         }
-        $isWriteable = $customLayout->isWriteable();
+        $isWriteable = $customLayout->isWritable();
         $customLayout = $customLayout->getObjectVars();
         $customLayout['isWriteable'] = $isWriteable;
 
@@ -332,12 +328,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
         );
 
         $customLayout->setId($layoutId);
-        if (!$customLayout->isWriteable()) {
-            throw new ConfigWriteException();
-        }
         $customLayout->save();
 
-        $isWriteable = $customLayout->isWriteable();
+        $isWriteable = $customLayout->isWritable();
         $data = $customLayout->getObjectVars();
         $data['isWriteable'] = $isWriteable;
 
@@ -413,9 +406,6 @@ class ClassController extends AdminController implements KernelControllerEventIn
             $customLayout->setName($values['name']);
             $customLayout->setDescription($values['description']);
             $customLayout->setDefault($values['default']);
-            if (!$customLayout->isWriteable()) {
-                throw new ConfigWriteException();
-            }
             $customLayout->save();
 
             return $this->adminJson(['success' => true, 'id' => $customLayout->getId(), 'data' => $customLayout->getObjectVars()]);
@@ -580,9 +570,6 @@ class ClassController extends AdminController implements KernelControllerEventIn
                         $customLayout->setName($importData['name']);
                     }
                     $customLayout->setDescription($importData['description']);
-                    if (!$customLayout->isWriteable()) {
-                        throw new ConfigWriteException();
-                    }
                     $customLayout->save();
                     $success = true;
                 } catch (\Exception $e) {
@@ -620,7 +607,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         foreach ($list as $item) {
             $result[] = [
                 'id' => $item->getId(),
-                'name' => $item->getName(),
+                'name' => $item->getName() . ' (ID: ' . $item->getId() . ')',
                 'default' => $item->getDefault() ?: 0,
             ];
         }
@@ -721,7 +708,6 @@ class ClassController extends AdminController implements KernelControllerEventIn
             if ($customLayout) {
                 $name = $customLayout->getName();
                 $customLayoutData = [
-                    'name' => $name,
                     'description' => $customLayout->getDescription(),
                     'layoutDefinitions' => $customLayout->getLayoutDefinitions(),
                     'default' => $customLayout->getDefault() ?: 0,

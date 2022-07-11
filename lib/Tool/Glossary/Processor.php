@@ -47,10 +47,7 @@ class Processor
     /**
      * @var array
      */
-    private $blockedTags = [
-        'a', 'script', 'style', 'code', 'pre', 'textarea', 'acronym',
-        'abbr', 'option', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-    ];
+    private $blockedTags = [];
 
     /**
      * @param RequestHelper $requestHelper
@@ -60,11 +57,13 @@ class Processor
     public function __construct(
         RequestHelper $requestHelper,
         EditmodeResolver $editmodeResolver,
-        DocumentResolver $documentResolver
+        DocumentResolver $documentResolver,
+        array $blockedTags = [],
     ) {
         $this->requestHelper = $requestHelper;
         $this->editmodeResolver = $editmodeResolver;
         $this->documentResolver = $documentResolver;
+        $this->blockedTags = $blockedTags;
     }
 
     /**
@@ -188,8 +187,8 @@ class Processor
 
         $cacheKey = 'glossary_' . $locale . '_' . $siteId;
 
-        if (Cache\Runtime::isRegistered($cacheKey)) {
-            return Cache\Runtime::get($cacheKey);
+        if (Cache\RuntimeCache::isRegistered($cacheKey)) {
+            return Cache\RuntimeCache::get($cacheKey);
         }
 
         if (!$data = Cache::load($cacheKey)) {
@@ -202,7 +201,7 @@ class Processor
             $data = $this->prepareData($data);
 
             Cache::save($data, $cacheKey, ['glossary'], null, 995);
-            Cache\Runtime::set($cacheKey, $data);
+            Cache\RuntimeCache::set($cacheKey, $data);
         }
 
         return $data;

@@ -21,7 +21,7 @@ use FOS\JsRoutingBundle\FOSJsRoutingBundle;
 use League\FlysystemBundle\FlysystemBundle;
 use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
-use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config\BundleConfigLocator;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Extension\Bundle\Config\StateConfig;
@@ -217,10 +217,6 @@ abstract class Kernel extends SymfonyKernel
                 'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_VIEWS',
                 'defaultStorageDirectoryName' => 'custom-views',
             ],
-            [
-                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_OBJECT_CUSTOM_LAYOUTS',
-                'defaultStorageDirectoryName' => 'custom-layouts',
-            ],
         ];
 
         foreach ($configArray as $config) {
@@ -300,7 +296,7 @@ abstract class Kernel extends SymfonyKernel
         parent::initializeContainer();
 
         // initialize runtime cache (defined as synthetic service)
-        Runtime::getInstance();
+        RuntimeCache::getInstance();
 
         // set the extension config on the container
         $this->getContainer()->set(Extension\Config::class, $this->extensionConfig);

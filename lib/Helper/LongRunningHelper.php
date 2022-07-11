@@ -17,7 +17,10 @@ namespace Pimcore\Helper;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ConnectionRegistry;
+use Exception;
+use LogicException;
 use Monolog\Handler\HandlerInterface;
+use Pimcore\Cache\RuntimeCache;
 use Psr\Log\LoggerAwareTrait;
 
 final class LongRunningHelper
@@ -77,13 +80,13 @@ final class LongRunningHelper
         try {
             foreach ($this->connectionRegistry->getConnections() as $name => $connection) {
                 if (!($connection instanceof Connection)) {
-                    throw new \LogicException('Expected only instances of Connection');
+                    throw new LogicException('Expected only instances of Connection');
                 }
                 if ($connection->isTransactionActive() === false) {
                     $connection->close();
                 }
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // connection couldn't be established, this is e.g. the case when Pimcore isn't installed yet
         }
     }
@@ -109,7 +112,7 @@ final class LongRunningHelper
             $protectedItems = array_merge($protectedItems, $options['keepItems']);
         }
 
-        \Pimcore\Cache\Runtime::clear($protectedItems);
+        RuntimeCache::clear($protectedItems);
     }
 
     /**

@@ -21,10 +21,8 @@ use Doctrine\DBAL\Connection;
 use Pimcore\Config;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Maintenance\TaskInterface;
+use Pimcore\Tool\Storage;
 use Psr\Log\LoggerInterface;
-use SplFileInfo;
-use Symfony\Component\Lock\LockFactory;
-use Symfony\Component\Lock\LockInterface;
 
 /**
  * @internal
@@ -47,21 +45,15 @@ class LogArchiveTask implements TaskInterface
     private $logger;
 
     /**
-     * @var LockInterface
-     */
-    private $lock;
-
-    /**
      * @param Connection $db
      * @param Config $config
      * @param LoggerInterface $logger
      */
-    public function __construct(Connection $db, Config $config, LoggerInterface $logger, LockFactory $lockFactory)
+    public function __construct(Connection $db, Config $config, LoggerInterface $logger)
     {
         $this->db = $db;
         $this->config = $config;
         $this->logger = $logger;
-        $this->lock = $lockFactory->createLock(self::class, 86400);
     }
 
     /**
@@ -70,6 +62,7 @@ class LogArchiveTask implements TaskInterface
     public function execute()
     {
         $db = $this->db;
+        $storage = Storage::get('application_log');
 
         $date = new \DateTime('now');
         $tablename = ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX.'_'.$date->format('m').'_'.$date->format('Y');
@@ -100,30 +93,15 @@ class LogArchiveTask implements TaskInterface
                     ) ENGINE = ARCHIVE ROW_FORMAT = DEFAULT;");
 
             $db->query('INSERT INTO '.$tablename.' '.sprintf($sql, '*'));
-            $db->query('DELETE FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY);');
-        }
 
-        if (date('H') <= 4 && $this->lock->acquire()) {
-            // execution should be only sometime between 0:00 and 4:59 -> less load expected
             $this->logger->debug('Deleting referenced FileObjects of application_logs which are older than '. $archive_threshold.' days');
-            $fileIterator = new \DirectoryIterator(PIMCORE_LOG_FILEOBJECT_DIRECTORY);
 
-            $oldestAllowedTimestamp = time() - $archive_threshold * 86400;
-            $fileIterator = new \CallbackFilterIterator(
-                $fileIterator,
-                static function (\SplFileInfo $fileInfo) use ($oldestAllowedTimestamp) {
-                    return $fileInfo->getMTime() < $oldestAllowedTimestamp;
-                }
-            );
-
-            /** @var SplFileInfo $fileInfo */
-            foreach ($fileIterator as $fileInfo) {
-                if ($fileInfo->isFile()) {
-                    @unlink($fileInfo->getPathname());
-                }
+            $fileObjectPaths = $db->fetchAll(sprintf($sql, 'fileobject'));
+            foreach ($fileObjectPaths as $objectPath) {
+                $storage->delete($objectPath['fileobject']);
             }
-        } else {
-            $this->logger->debug('Skip cleaning up referenced FileObjects of application_logs, was done within the last 24 hours');
+
+            $db->query('DELETE FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY);');
         }
 
         $deleteArchiveLogDate = (new DateTimeImmutable())->sub(new DateInterval('P'. ($this->config['applicationlog']['delete_archive_threshold'] ?? 6) .'M'));
@@ -140,6 +118,7 @@ class LogArchiveTask implements TaskInterface
 
             if ($archiveTableExists) {
                 $db->exec('DROP TABLE IF EXISTS `' . ($this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase()) . '`.' . $applicationLogArchiveTable);
+                $storage->deleteDirectory($deleteArchiveLogDate->format('Y/m'));
             }
 
             $deleteArchiveLogDate = $deleteArchiveLogDate->sub(new DateInterval('P1M'));

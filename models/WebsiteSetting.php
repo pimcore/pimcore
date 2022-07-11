@@ -87,14 +87,14 @@ final class WebsiteSetting extends AbstractModel
     /**
      * @param int $id
      *
-     * @return WebsiteSetting|null
+     * @return self|null
      */
     public static function getById($id)
     {
         $cacheKey = 'website_setting_' . $id;
 
         try {
-            $setting = \Pimcore\Cache\Runtime::get($cacheKey);
+            $setting = \Pimcore\Cache\RuntimeCache::get($cacheKey);
             if (!$setting) {
                 throw new \Exception('Website setting in registry is null');
             }
@@ -102,7 +102,7 @@ final class WebsiteSetting extends AbstractModel
             try {
                 $setting = new self();
                 $setting->getDao()->getById((int)$id);
-                \Pimcore\Cache\Runtime::set($cacheKey, $setting);
+                \Pimcore\Cache\RuntimeCache::set($cacheKey, $setting);
             } catch (NotFoundException $e) {
                 return null;
             }
@@ -117,7 +117,7 @@ final class WebsiteSetting extends AbstractModel
      * @param string|null $language language, if property cannot be found the value of property without language is returned
      * @param string|null $fallbackLanguage fallback language
      *
-     * @return null|WebsiteSetting
+     * @return WebsiteSetting|null
      *
      * @throws \Exception
      */
@@ -287,6 +287,8 @@ final class WebsiteSetting extends AbstractModel
     }
 
     /**
+     * enum('text','document','asset','object','bool')
+     *
      * @param string $type
      *
      * @return $this
@@ -299,6 +301,8 @@ final class WebsiteSetting extends AbstractModel
     }
 
     /**
+     * enum('text','document','asset','object','bool')
+     *
      * @return string
      */
     public function getType()

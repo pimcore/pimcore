@@ -21,7 +21,15 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
         this.setType("email");
         this.addLoadingPanel();
 
-        pimcore.plugin.broker.fireEvent("preOpenDocument", this, this.getType());
+        const preOpenDocument = new CustomEvent(pimcore.events.preOpenDocument, {
+            detail: {
+                object: this,
+                type: this.getType()
+            }
+        });
+
+        document.dispatchEvent(preOpenDocument);
+
         this.getData();
     },
 

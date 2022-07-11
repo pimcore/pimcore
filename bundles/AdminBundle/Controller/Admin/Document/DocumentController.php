@@ -15,8 +15,12 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
+use Exception;
+use Imagick;
+use Pimcore;
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Db;
@@ -27,6 +31,7 @@ use Pimcore\Image\HtmlToImage;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\DocType;
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\ConfigWriteException;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Site;
@@ -158,7 +163,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $cv = false;
         if ($document->hasChildren()) {
             if ($allParams['view']) {
-                $cv = \Pimcore\Model\Element\Service::getCustomViewById($allParams['view']);
+                $cv = Service::getCustomViewById($allParams['view']);
             }
 
             $db = Db::get();
@@ -193,7 +198,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
             $list->setLimit($limit);
             $list->setOffset($offset);
 
-            \Pimcore\Model\Element\Service::addTreeFilterJoins($cv, $list);
+            Service::addTreeFilterJoins($cv, $list);
 
             $beforeListLoadEvent = new GenericEvent($this, [
                 'list' => $list,
@@ -261,7 +266,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                     'published' => false,
                 ];
 
-                $createValues['key'] = \Pimcore\Model\Element\Service::getValidKey($request->get('key'), 'document');
+                $createValues['key'] = Service::getValidKey($request->get('key'), 'document');
 
                 // check for a docType
                 $docType = Document\DocType::getById($request->get('docTypeId'));
@@ -323,7 +328,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                         try {
                             $document->save();
                             $success = true;
-                        } catch (\Exception $e) {
+                        } catch (Exception $e) {
                             return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                         }
 
@@ -333,9 +338,9 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
                         // this is the fallback for custom document types using prefixes
                         // so we need to check if the class exists first
-                        if (!\Pimcore\Tool::classExists($classname)) {
+                        if (!Tool::classExists($classname)) {
                             $oldStyleClass = '\\Document_' . ucfirst($request->get('type'));
-                            if (\Pimcore\Tool::classExists($oldStyleClass)) {
+                            if (Tool::classExists($oldStyleClass)) {
                                 $classname = $oldStyleClass;
                             }
                         }
@@ -346,7 +351,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                             try {
                                 $document->save();
                                 $success = true;
-                            } catch (\Exception $e) {
+                            } catch (Exception $e) {
                                 return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                             }
 
@@ -438,12 +443,12 @@ class DocumentController extends ElementControllerBase implements KernelControll
             if ($document && $document->isAllowed('delete')) {
                 try {
                     if ($document->isLocked()) {
-                        throw new \Exception('prevented deleting document, because it is locked: ID: ' . $document->getId());
+                        throw new Exception('prevented deleting document, because it is locked: ID: ' . $document->getId());
                     }
                     $document->delete();
 
                     return $this->adminJson(['success' => true]);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     Logger::err((string) $e);
 
                     return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
@@ -461,7 +466,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return JsonResponse
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function updateAction(Request $request)
     {
@@ -490,7 +495,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 //check if parent is changed
                 if ($document->getParentId() != $parentDocument->getId()) {
                     if (!$parentDocument->isAllowed('create')) {
-                        throw new \Exception('Prevented moving document - no create permission on new parent ');
+                        throw new Exception('Prevented moving document - no create permission on new parent ');
                     }
 
                     $intendedPath = $parentDocument->getRealPath();
@@ -539,7 +544,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                     $success = true;
 
                     $this->createRedirectForFormerPath($request, $document, $oldPath, $oldDocument);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                 }
             } else {
@@ -557,7 +562,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 $success = true;
 
                 $this->createRedirectForFormerPath($request, $document, $oldPath, $oldDocument);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
             }
         } else {
@@ -603,7 +608,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
                             $count++;
                             if ($count % 10 === 0) {
-                                \Pimcore::collectGarbage();
+                                Pimcore::collectGarbage();
                             }
                         }
                     }
@@ -831,7 +836,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 $document->setUserModification($this->getAdminUser()->getId());
 
                 $document->save();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
             }
         }
@@ -861,7 +866,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         }
 
         $localizedErrorDocuments = [];
-        $validLanguages = \Pimcore\Tool::getValidLanguages();
+        $validLanguages = Tool::getValidLanguages();
 
         foreach ($validLanguages as $language) {
             // localized error pages
@@ -1171,11 +1176,11 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $tool::convert($fromUrl, $fromFile);
         $tool::convert($toUrl, $toFile);
 
-        $image1 = new \Imagick($fromFile);
-        $image2 = new \Imagick($toFile);
+        $image1 = new Imagick($fromFile);
+        $image2 = new Imagick($toFile);
 
         if ($image1->getImageWidth() == $image2->getImageWidth() && $image1->getImageHeight() == $image2->getImageHeight()) {
-            $result = $image1->compareImages($image2, \Imagick::METRIC_MEANSQUAREERROR);
+            $result = $image1->compareImages($image2, Imagick::METRIC_MEANSQUAREERROR);
             $result[0]->setImageFormat('png');
 
             $result[0]->writeImage($diffFile);
@@ -1365,7 +1370,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return JsonResponse
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function languageTreeRootAction(Request $request)
     {
@@ -1476,7 +1481,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
             $new = new $class;
 
             // overwrite internal store to avoid "duplicate full path" error
-            \Pimcore\Cache\Runtime::set('document_' . $document->getId(), $new);
+            RuntimeCache::set('document_' . $document->getId(), $new);
 
             $props = $document->getObjectVars();
             foreach ($props as $name => $value) {
@@ -1542,16 +1547,16 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
         if ($sourceDocument && $targetDocument) {
             if (empty($sourceDocument->getProperty('language'))) {
-                throw new \Exception(sprintf('Source Document(ID:%s) Language(Properties) missing', $sourceDocument->getId()));
+                throw new Exception(sprintf('Source Document(ID:%s) Language(Properties) missing', $sourceDocument->getId()));
             }
 
             if (empty($targetDocument->getProperty('language'))) {
-                throw new \Exception(sprintf('Target Document(ID:%s) Language(Properties) missing', $sourceDocument->getId()));
+                throw new Exception(sprintf('Target Document(ID:%s) Language(Properties) missing', $sourceDocument->getId()));
             }
 
             $service = new Document\Service;
             if ($service->getTranslationSourceId($targetDocument) != $targetDocument->getId()) {
-                throw new \Exception('Target Document already linked to Source Document ID('.$service->getTranslationSourceId($targetDocument).'). Please unlink existing relation first.');
+                throw new Exception('Target Document already linked to Source Document ID('.$service->getTranslationSourceId($targetDocument).'). Please unlink existing relation first.');
             }
             $service->addTranslation($sourceDocument, $targetDocument);
         }

@@ -16,7 +16,7 @@
 namespace Pimcore\Bundle\AdminBundle\Security\Authenticator;
 
 use Pimcore\Bundle\AdminBundle\Security\Authentication\Token\TwoFactorRequiredToken;
-use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\User as UserModel;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\Authentication;
@@ -92,7 +92,7 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
         $this->translator->setLocale($user->getLanguage());
 
         // set user on runtime cache for legacy compatibility
-        Runtime::set('pimcore_admin_user', $user);
+        RuntimeCache::set('pimcore_admin_user', $user);
 
         if ($user->isAdmin()) {
             if (Admin::isMaintenanceModeScheduledForLogin()) {

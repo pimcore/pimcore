@@ -124,7 +124,13 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
         let ids = Ext.isString(id) ? id.split(',') : [id];
         try {
             ids.forEach(function (elementId) {
-                pimcore.plugin.broker.fireEvent(preDeleteEventName, elementId);
+                const preDeleteEvent = new CustomEvent(pimcore.events[preDeleteEventName], {
+                    detail: {
+                        elementId: elementId
+                    }
+                });
+
+                document.dispatchEvent(preDeleteEvent);
             });
         } catch (e) {
             pimcore.helpers.showPrettyError('asset', t("error"), t("delete_failed"), e.message);
@@ -203,7 +209,13 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
                 this.deleteWindow = null;
 
                 ids.forEach(function (elementId) {
-                    pimcore.plugin.broker.fireEvent(postDeleteEventName, elementId);
+                    const postDeleteEvent = new CustomEvent(pimcore.events[postDeleteEventName], {
+                        detail: {
+                            elementId: elementId
+                        }
+                    });
+
+                    document.dispatchEvent(postDeleteEvent);
                 });
 
                 if(typeof successHandler == "function") {
@@ -788,7 +800,15 @@ pimcore.elementservice.addDocumentComplete = function (options, response) {
             let docTypes = pimcore.globalmanager.get('document_valid_types');
             if (in_array(response["type"], docTypes)) {
                 pimcore.helpers.openDocument(response.id, response.type);
-                pimcore.plugin.broker.fireEvent("postAddDocumentTree", response.id);
+
+                const postAddDocumentTree = new CustomEvent(pimcore.events.postAddDocumentTree, {
+                    detail: {
+                        id: response.id,
+                    }
+                });
+
+                document.dispatchEvent(postAddDocumentTree);
+
             }
         }  else {
             pimcore.helpers.showNotification(t("error"), t("failed_to_create_new_item"), "error",
@@ -808,7 +828,14 @@ pimcore.elementservice.addObjectComplete = function(options, response) {
             if (rdata.id && rdata.type) {
                 if (rdata.type == "object") {
                     pimcore.helpers.openObject(rdata.id, rdata.type);
-                    pimcore.plugin.broker.fireEvent("postAddObjectTree", rdata.id);
+
+                    const postAddObjectTree = new CustomEvent(pimcore.events.postAddObjectTree, {
+                        detail: {
+                            id: rdata.id,
+                        }
+                    });
+
+                    document.dispatchEvent(postAddObjectTree);
                 }
             }
         }  else {

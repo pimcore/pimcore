@@ -15,14 +15,18 @@
 
 namespace Pimcore\Google;
 
+use Exception;
 use Google\Service\CustomSearchAPI;
 use Google\Service\CustomSearchAPI\Result;
 use Google\Service\CustomSearchAPI\Search;
+use Pimcore;
 use Pimcore\Cache;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Google\Cse\Item;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 use Pimcore\Model\Paginator\PaginateListingInterface;
+use ReturnTypeWillChange;
 
 class Cse implements PaginateListingInterface
 {
@@ -53,7 +57,7 @@ class Cse implements PaginateListingInterface
     /**
      * @return Item[]
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function load()
     {
@@ -67,7 +71,7 @@ class Cse implements PaginateListingInterface
             $search = new CustomSearchAPI($client);
 
             // determine language
-            $language = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
+            $language = Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
 
             if ($position = strpos($language, '_')) {
                 $language = substr($language, 0, $position);
@@ -95,13 +99,13 @@ class Cse implements PaginateListingInterface
                 $cacheKey = 'google_cse_' . md5($query . serialize($config));
 
                 // this is just a protection so that no query get's sent twice in a request (loops, ...)
-                if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
-                    $result = \Pimcore\Cache\Runtime::get($cacheKey);
+                if (RuntimeCache::isRegistered($cacheKey)) {
+                    $result = RuntimeCache::get($cacheKey);
                 } else {
                     if (!$result = Cache::load($cacheKey)) {
                         $result = $search->cse->listCse($config);
                         Cache::save($result, $cacheKey, ['google_cse'], 3600, 999);
-                        \Pimcore\Cache\Runtime::set($cacheKey, $result);
+                        RuntimeCache::set($cacheKey, $result);
                     }
                 }
 
@@ -112,7 +116,7 @@ class Cse implements PaginateListingInterface
 
             return [];
         } else {
-            throw new \Exception('Google Simple API Key is not configured in System-Settings.');
+            throw new Exception('Google Simple API Key is not configured in System-Settings.');
         }
     }
 
@@ -374,7 +378,7 @@ class Cse implements PaginateListingInterface
      *
      * @return Item[]
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getResults($retry = true)
     {
@@ -412,7 +416,7 @@ class Cse implements PaginateListingInterface
     /**
      * @return int
      */
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function count()// : int
     {
         $this->getResults();
@@ -426,7 +430,7 @@ class Cse implements PaginateListingInterface
      *
      * @return Item[]
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getItems($offset, $itemCountPerPage)
     {
@@ -443,7 +447,7 @@ class Cse implements PaginateListingInterface
     /**
      * @return void
      */
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function rewind()// : void
     {
         reset($this->results);
@@ -452,7 +456,7 @@ class Cse implements PaginateListingInterface
     /**
      * @return Item|false
      */
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function current()// : Item|false
     {
         $this->getResults();
@@ -463,7 +467,7 @@ class Cse implements PaginateListingInterface
     /**
      * @return int|null
      */
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function key()// : int|null
     {
         $this->getResults();
@@ -474,7 +478,7 @@ class Cse implements PaginateListingInterface
     /**
      * @return void
      */
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function next()// : void
     {
         $this->getResults();
@@ -484,7 +488,7 @@ class Cse implements PaginateListingInterface
     /**
      * @return bool
      */
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function valid()// : bool
     {
         $this->getResults();

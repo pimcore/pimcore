@@ -26,7 +26,7 @@ class Listing extends Model\Listing\JsonListing
     /**
      * @internal
      *
-     * @var array|null
+     * @var Workflow[]|null
      */
     protected $workflows = null;
 
@@ -43,7 +43,7 @@ class Listing extends Model\Listing\JsonListing
     }
 
     /**
-     * @param Workflow[] $workflows
+     * @param Workflow[]|null $workflows
      */
     public function setWorkflows($workflows)
     {

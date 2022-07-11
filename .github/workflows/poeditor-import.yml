@@ -10,8 +10,13 @@ on:
                 default: ''
 
 
+permissions:
+  contents: read
+
 jobs:
     poeditor:
+        permissions:
+          contents: write  # for stefanzweifel/git-auto-commit-action to push code in repo
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2

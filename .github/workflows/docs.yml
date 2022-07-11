@@ -16,6 +16,9 @@ on:
         paths:
             - 'docs/**'
 
+permissions:
+  contents: read
+
 jobs:
     docs:
         name: "Generate docs with Daux"

@@ -367,7 +367,7 @@
     "mandatory": "Obowiązkowy",
     "emails": "E-maile",
     "disallow_addremove": "Disallow Add/Remove",
-    "disallow_reorder": "Dissallow Reordering",
+    "disallow_reorder": "Disallow Reordering",
     "reload_definition": "Przeładuj Definicję",
     "bulk_export": "Masowy eksport konfiguracji",
     "bulk_import": "Maskowy import konfiguracji",

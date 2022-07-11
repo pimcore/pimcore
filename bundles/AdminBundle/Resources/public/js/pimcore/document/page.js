@@ -21,7 +21,15 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
         this.setType("page");
         this.addLoadingPanel();
 
-        pimcore.plugin.broker.fireEvent("preOpenDocument", this, "page");
+        const preOpenDocumentPage = new CustomEvent(pimcore.events.preOpenDocument, {
+            detail: {
+                object: this,
+                type: "page"
+            }
+        });
+
+        document.dispatchEvent(preOpenDocumentPage);
+
         this.getData();
 
     },

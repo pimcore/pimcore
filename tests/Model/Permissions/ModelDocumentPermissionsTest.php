@@ -728,23 +728,23 @@ class ModelDocumentPermissionsTest extends ModelTestCase
         //update role
         $role = User\Role::getByName('Testrole');
         $role->setWorkspacesDocument([
-            (new User\Workspace\Document())->setValues(['cId' => $manyElementX->getId(), 'cPath' => $manyElementX->getFullpath(), 'list' => true, 'view' => true]),
-            (new User\Workspace\Document())->setValues(['cId' => $this->groupfolder->getId(), 'cPath' => $this->groupfolder->getFullpath(), 'list' => true, 'view' => true]),
+            (new User\Workspace\Document())->setValues(['cId' => $manyElementX->getId(), 'cPath' => $manyElementX->getRealFullPath(), 'list' => true, 'view' => true]),
+            (new User\Workspace\Document())->setValues(['cId' => $this->groupfolder->getId(), 'cPath' => $this->groupfolder->getRealFullPath(), 'list' => true, 'view' => true]),
         ]);
         $role->save();
 
         //search manyelement
         $this->doTestSearch('manyelement', $admin, array_merge(
                 array_map(function ($item) {
-                    return $item->getFullpath();
+                    return $item->getRealFullPath();
                 }, $manyElementList),
-                [ $manyElementX->getFullpath() ]
+                [ $manyElementX->getRealFullPath() ]
             ), $elementCount + 1
         );
-        $this->doTestSearch('manyelement', $this->userPermissionTest1, [$manyElementX->getFullpath()], $elementCount + 1);
-        $this->doTestSearch('manyelement', $this->userPermissionTest2, [$manyElementX->getFullpath()], $elementCount + 1);
+        $this->doTestSearch('manyelement', $this->userPermissionTest1, [$manyElementX->getRealFullPath()], $elementCount + 1);
+        $this->doTestSearch('manyelement', $this->userPermissionTest2, [$manyElementX->getRealFullPath()], $elementCount + 1);
 
-        $this->doTestSearch('manyelement', $this->userPermissionTest1, [$manyElementX->getFullpath()], $elementCount);
-        $this->doTestSearch('manyelement', $this->userPermissionTest2, [$manyElementX->getFullpath()], $elementCount);
+        $this->doTestSearch('manyelement', $this->userPermissionTest1, [$manyElementX->getRealFullPath()], $elementCount);
+        $this->doTestSearch('manyelement', $this->userPermissionTest2, [$manyElementX->getRealFullPath()], $elementCount);
     }
 }

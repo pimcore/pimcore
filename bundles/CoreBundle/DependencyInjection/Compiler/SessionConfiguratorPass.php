@@ -16,12 +16,15 @@
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
 use Pimcore\Session\SessionConfigurator;
+use Pimcore\Session\SessionConfiguratorInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
+ * @TODO remove in Pimcore 11
+ *
  * @internal
  */
 final class SessionConfiguratorPass implements CompilerPassInterface
@@ -31,16 +34,18 @@ final class SessionConfiguratorPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition('session')) {
+        // @phpstan-ignore-next-line
+        if (!$container->has('session')) {
             return;
         }
 
-        if (!$container->hasDefinition(SessionConfigurator::class)) {
+        // @phpstan-ignore-next-line
+        if (!$container->has(SessionConfigurator::class)) {
             return;
         }
 
         // configure the core session through our configurator service (mainly to register custom attribute bags)
-        $session = $container->getDefinition('session');
+        $session = $container->findDefinition('session');
 
         // just to make sure nobody else (symfony core, other bundle) sets a configurator and we overwrite it here
         if ($session->getConfigurator()) {
@@ -63,6 +68,12 @@ final class SessionConfiguratorPass implements CompilerPassInterface
         $taggedServices = $container->findTaggedServiceIds('pimcore.session.configurator');
 
         foreach ($taggedServices as $id => $tags) {
+            if (($tags[0]['type'] ?? null) !== 'internal') {
+                trigger_deprecation('pimcore/pimcore', '10.5',
+                    sprintf('Implementation of %s is deprecated since version 10.5 and will be removed in Pimcore 11.' .
+                        'Implement the Event Listener instead.', SessionConfiguratorInterface::class));
+            }
+
             $configurator->addMethodCall('addConfigurator', [new Reference($id)]);
         }
     }

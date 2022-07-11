@@ -28,7 +28,15 @@ pimcore.asset.metadata.editor = Class.create({
         // hook for providing a custom implementation of the asset metadata tab
         // e.g. https://github.com/pimcore/asset-metadata-class-definitions
 
-        pimcore.plugin.broker.fireEvent("preCreateAssetMetadataEditor", this, eventData);
+        const preCreateAssetMetadataEditor = new CustomEvent(pimcore.events.preCreateAssetMetadataEditor, {
+            detail: {
+                object: this,
+                eventData: eventData
+            }
+        });
+
+        document.dispatchEvent(preCreateAssetMetadataEditor);
+
         this.editorInstance = eventData.instance;
 
         if (!this.editorInstance) {

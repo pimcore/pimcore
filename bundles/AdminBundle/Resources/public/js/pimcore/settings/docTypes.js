@@ -301,7 +301,14 @@ pimcore.settings.document.doctypes = Class.create({
             }
         });
 
-        pimcore.plugin.broker.fireEvent("prepareDocumentTypesGrid", this.grid, this);
+        const prepareDocumentTypesGrid = new CustomEvent(pimcore.events.prepareDocumentTypesGrid, {
+            detail: {
+                grid: this.grid,
+                object: this
+            }
+        });
+
+        document.dispatchEvent(prepareDocumentTypesGrid);
 
         return this.grid;
     },

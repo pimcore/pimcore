@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
@@ -292,7 +293,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
 
                 // TODO remove \Pimcore\Cache\Runtime
                 // add the object to the registry so every call to DataObject::getById() will return this object instead of the real one
-                \Pimcore\Cache\Runtime::set('object_' . $object->getId(), $object);
+                RuntimeCache::set('object_' . $object->getId(), $object);
             }
         }
     }

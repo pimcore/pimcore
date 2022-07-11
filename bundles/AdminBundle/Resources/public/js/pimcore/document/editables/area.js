@@ -18,8 +18,12 @@ pimcore.document.editables.area = Class.create(pimcore.document.area_abstract, {
 
         this.id = id;
         this.name = name;
-        this.elements = [];
+        this.datax = {};
         this.config = this.parseConfig(config);
+
+        if (data) {
+            this.datax = data;
+        }
 
         //editable dialog box button
         try {
@@ -46,19 +50,11 @@ pimcore.document.editables.area = Class.create(pimcore.document.area_abstract, {
     },
 
     getValue: function () {
-        var data = [];
-        for (var i = 0; i < this.elements.length; i++) {
-            if (this.elements[i]) {
-                if (this.elements[i].key) {
-                    data.push({
-                        key: this.elements[i].key,
-                        type: this.elements[i].type
-                    });
-                }
-            }
+        if(this.config['type'] !== undefined){
+            this.datax['type'] = this.config['type'];
         }
 
-        return data;
+        return this.datax;
     },
 
     getType: function () {

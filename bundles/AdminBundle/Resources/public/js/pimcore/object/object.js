@@ -18,7 +18,15 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         this.id = intval(id);
         this.options = options;
 
-        pimcore.plugin.broker.fireEvent("preOpenObject", this, "object");
+        const preOpenObject = new CustomEvent(pimcore.events.preOpenObject, {
+            detail: {
+                object: this,
+                type: "object"
+            }
+        });
+
+        document.dispatchEvent(preOpenObject);
+
 
         this.addLoadingPanel();
 
@@ -212,7 +220,14 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
         this.tab.on("afterrender", function (tabId) {
             this.tabPanel.setActiveItem(tabId);
-            pimcore.plugin.broker.fireEvent("postOpenObject", this, "object");
+            const postOpenObject = new CustomEvent(pimcore.events.postOpenObject, {
+                detail: {
+                    object: this,
+                    type: "object"
+                }
+            });
+
+            document.dispatchEvent(postOpenObject);
 
             if(this.options && this.options['uiState']) {
                 this.setUiState(this.tabbar, this.options['uiState']);
@@ -740,7 +755,14 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
         if (saveData && saveData.data != false && saveData.data != "false") {
             try {
-                pimcore.plugin.broker.fireEvent('preSaveObject', this, 'object');
+                const preSaveObject = new CustomEvent(pimcore.events.preSaveObject, {
+                    detail: {
+                        object: this,
+                        type: "object"
+                    }
+                });
+
+                document.dispatchEvent(preSaveObject);
             } catch (e) {
                 if (e instanceof pimcore.error.ValidationException) {
                     this.tab.unmask();
@@ -790,10 +812,13 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                                     }
 
                                     pimcore.helpers.updateTreeElementStyle('object', this.id, rdata.treeData);
-                                    pimcore.plugin.broker.fireEvent("postSaveObject", this);
+                                    const postSaveObject = new CustomEvent(pimcore.events.postSaveObject, {
+                                        detail: {
+                                            object: this
+                                        }
+                                    });
 
-                                    // for internal use ID.
-                                    pimcore.eventDispatcher.fireEvent("postSaveObject", this, task);
+                                    document.dispatchEvent(postSaveObject);
                                 } else {
                                     pimcore.helpers.showPrettyError("error", t("saving_failed"), rdata.message);
                                 }
