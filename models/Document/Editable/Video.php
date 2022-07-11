@@ -374,7 +374,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
         // compatibility mode when FFMPEG is not present or no thumbnail config is given
         if (!\Pimcore\Video::isAvailable() || !$thumbnailConfig) {
-            if ($asset instanceof Asset && preg_match("/\.(f4v|flv|mp4)/", $asset->getFullPath())) {
+            if ($asset instanceof Asset && preg_match("/\.(f4v|flv|mp4)/i", $asset->getFullPath())) {
                 $image = $this->getPosterThumbnailImage($asset);
 
                 return $this->getHtml5Code(['mp4' => (string) $asset], $image);
