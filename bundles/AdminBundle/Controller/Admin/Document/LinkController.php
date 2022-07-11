@@ -124,6 +124,11 @@ class LinkController extends DocumentControllerBase
                 if ($data['linktype'] == 'internal' && $data['internalType']) {
                     $target = Element\Service::getElementByPath($data['internalType'], $path);
                     if ($target) {
+
+                        if ($link->getId() == $target->getId()){
+                            throw new \RuntimeException('Detected infinite redirection loop: the selected target is the same as the link itself.');
+                        }
+
                         $data['internal'] = $target->getId();
                     }
                 }
@@ -133,6 +138,11 @@ class LinkController extends DocumentControllerBase
                         $data['linktype'] = 'internal';
                         $data['internalType'] = 'document';
                         $data['internal'] = $target->getId();
+
+                        if ($link->getPath() == $target->getPath()){
+                            throw new \RuntimeException('Detected infinite redirection loop: the path filled is the same as the link itself.');
+                        }
+
                     } elseif ($target = Asset::getByPath($path)) {
                         $data['linktype'] = 'internal';
                         $data['internalType'] = 'asset';
@@ -151,6 +161,10 @@ class LinkController extends DocumentControllerBase
                         $data['linktype'] = 'internal';
                     }
                 }
+
+
+                $link->getId();
+
             } else {
                 // clear content of link
                 $data['linktype'] = 'internal';
