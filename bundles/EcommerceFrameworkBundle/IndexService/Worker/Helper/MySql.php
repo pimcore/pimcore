@@ -179,7 +179,7 @@ class MySql
     protected function dbexec($sql)
     {
         $this->logSql($sql);
-        $this->db->query($sql);
+        $this->db->executeQuery($sql);
     }
 
     protected function logSql($sql)

@@ -81,7 +81,7 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
                     $printLine = true;
                     if (!$this->isDryRun()) {
                         $output->writeln($sqlDeleteData);
-                        $db->query($sqlDeleteData);
+                        $db->executeQuery($sqlDeleteData);
                     } else {
                         $output->writeln($this->dryRunMessage($sqlDeleteData));
                     }
@@ -102,7 +102,7 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
 
                         if (!$this->isDryRun()) {
                             $output->writeln($sqlDropView);
-                            $db->query($sqlDropView);
+                            $db->executeQuery($sqlDropView);
                         } else {
                             $output->writeln($this->dryRunMessage($sqlDropView));
                         }
@@ -123,7 +123,7 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
 
                         if (!$this->isDryRun()) {
                             $output->writeln($sqlDropTable);
-                            $db->query($sqlDropTable);
+                            $db->executeQuery($sqlDropTable);
                         } else {
                             $output->writeln($this->dryRunMessage($sqlDropTable));
                         }

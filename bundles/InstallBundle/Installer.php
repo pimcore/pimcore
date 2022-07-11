@@ -581,7 +581,7 @@ class Installer
          * @var \Doctrine\DBAL\Connection $db
          */
         $db = \Pimcore\Db::get();
-        $db->query('SET FOREIGN_KEY_CHECKS=0;');
+        $db->executeQuery('SET FOREIGN_KEY_CHECKS=0;');
 
         if ($this->createDatabaseStructure) {
             $mysqlInstallScript = file_get_contents(__DIR__ . '/Resources/install.sql');
@@ -597,7 +597,7 @@ class Installer
                 $sql = trim($m);
                 if (strlen($sql) > 0) {
                     $sql .= ';';
-                    $db->query($sql);
+                    $db->executeQuery($sql);
                 }
             }
 
@@ -630,7 +630,7 @@ class Installer
             }
         }
 
-        $db->query('SET FOREIGN_KEY_CHECKS=1;');
+        $db->executeQuery('SET FOREIGN_KEY_CHECKS=1;');
 
         return $errors;
     }

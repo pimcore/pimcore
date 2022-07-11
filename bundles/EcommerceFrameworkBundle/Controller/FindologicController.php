@@ -91,7 +91,7 @@ XML;
 
             // mark items as transmitted
             if ($transmitIds) {
-                $db->query(sprintf(
+                $db->executeQuery(sprintf(
                     'UPDATE %1$s SET last_transmit = now() WHERE id in(%2$s)',
                     $this->getExportTableName(),
                     implode(',', $transmitIds)

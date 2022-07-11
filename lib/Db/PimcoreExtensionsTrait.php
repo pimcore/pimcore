@@ -543,7 +543,7 @@ trait PimcoreExtensionsTrait
     public function queryIgnoreError($sql, $exclusions = [])
     {
         try {
-            return $this->query($sql);
+            return $this->executeQuery($sql);
         } catch (\Exception $e) {
             foreach ($exclusions as $exclusion) {
                 if ($e instanceof $exclusion) {

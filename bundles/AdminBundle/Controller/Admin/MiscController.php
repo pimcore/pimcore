@@ -586,7 +586,7 @@ class MiscController extends AdminController
         $this->checkPermission('http_errors');
 
         $db = Db::get();
-        $db->query('TRUNCATE TABLE http_error_log');
+        $db->executeQuery('TRUNCATE TABLE http_error_log');
 
         return $this->adminJson([
             'success' => true,

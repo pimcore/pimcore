@@ -808,7 +808,7 @@ class SettingsController extends AdminController
 
         // public files
         Tool\Storage::get('thumbnail')->deleteDirectory('/');
-        Db::get()->query('TRUNCATE TABLE assets_image_thumbnail_cache');
+        Db::get()->executeQuery('TRUNCATE TABLE assets_image_thumbnail_cache');
 
         Tool\Storage::get('asset_cache')->deleteDirectory('/');
 
@@ -1787,7 +1787,7 @@ class SettingsController extends AdminController
         foreach ($views as $view) {
             if (preg_match('/^object_localized_[0-9]+_' . $language . '$/', $view['Tables_in_' . $dbName])) {
                 $sql = 'DROP VIEW ' . $db->quoteIdentifier($view['Tables_in_' . $dbName]);
-                $db->query($sql);
+                $db->executeQuery($sql);
             }
         }
     }

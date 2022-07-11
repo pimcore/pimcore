@@ -241,7 +241,7 @@ class Dao extends Model\Dao\AbstractDao
         $groupsTable = $this->getGroupsTableName();
         $dataTable = $this->getDataTableName();
 
-        $this->db->query('CREATE TABLE IF NOT EXISTS `' . $groupsTable . '` (
+        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $groupsTable . '` (
             `o_id` INT(11) UNSIGNED NOT NULL,
             `groupId` BIGINT(20) NOT NULL,
             `fieldname` VARCHAR(70) NOT NULL,
@@ -249,7 +249,7 @@ class Dao extends Model\Dao\AbstractDao
             CONSTRAINT `'.self::getForeignKeyName($groupsTable, 'o_id').'` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
         ) DEFAULT CHARSET=utf8mb4;');
 
-        $this->db->query('CREATE TABLE IF NOT EXISTS `' . $dataTable . '` (
+        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $dataTable . '` (
             `o_id` INT(11) UNSIGNED NOT NULL,
             `collectionId` BIGINT(20) NULL,
             `groupId` BIGINT(20) NOT NULL,

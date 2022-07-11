@@ -97,7 +97,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
         $db = $db = \Pimcore\Db::get();
 
         try {
-            $db->query('INSERT INTO ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic\Dao::TABLE_NAME . ' (voucherSeriesId,date) VALUES (?,NOW())', [(int)$seriesId]);
+            $db->executeQuery('INSERT INTO ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic\Dao::TABLE_NAME . ' (voucherSeriesId,date) VALUES (?,NOW())', [(int)$seriesId]);
 
             return true;
         } catch (\Exception $e) {
@@ -125,7 +125,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
         $db = \Pimcore\Db::get();
 
         try {
-            $db->query($query, $params);
+            $db->executeQuery($query, $params);
 
             return true;
         } catch (\Exception $e) {

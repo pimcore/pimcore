@@ -788,7 +788,7 @@ QUERY;
                 }
 
                 // execute
-                $this->db->query($viewQuery);
+                $this->db->executeQuery($viewQuery);
             } catch (\Exception $e) {
                 Logger::error((string) $e);
             }
@@ -806,7 +806,7 @@ QUERY;
 
         $context = $this->model->getContext();
         if (isset($context['containerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick')) {
-            $this->db->query(
+            $this->db->executeQuery(
                 'CREATE TABLE IF NOT EXISTS `'.$table."` (
               `ooo_id` int(11) UNSIGNED NOT NULL default '0',
               `index` INT(11) NOT NULL DEFAULT '0',
@@ -820,7 +820,7 @@ QUERY;
             ) DEFAULT CHARSET=utf8mb4;'
             );
         } else {
-            $this->db->query(
+            $this->db->executeQuery(
                 'CREATE TABLE IF NOT EXISTS `'.$table."` (
               `ooo_id` int(11) UNSIGNED NOT NULL default '0',
               `language` varchar(10) NOT NULL DEFAULT '',
@@ -886,7 +886,7 @@ QUERY;
                 $queryTable = $this->getQueryTableName();
                 $queryTable .= '_'.$language;
 
-                $this->db->query(
+                $this->db->executeQuery(
                     'CREATE TABLE IF NOT EXISTS `'.$queryTable."` (
                       `ooo_id` int(11) UNSIGNED NOT NULL default '0',
                       `language` varchar(10) NOT NULL DEFAULT '',

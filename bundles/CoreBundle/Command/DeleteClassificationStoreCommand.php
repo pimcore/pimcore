@@ -55,7 +55,7 @@ class DeleteClassificationStoreCommand extends AbstractCommand
             $theTable = current($table);
             $sql = 'delete from ' . $theTable . ' where keyId In (select id from classificationstore_keys where storeId = ' . $db->quote($storeId) . ')';
             echo $sql . "\n";
-            $db->query($sql);
+            $db->executeQuery($sql);
         }
 
         $tableList = $db->fetchAllAssociative("show tables like 'object_classificationstore_groups_%'");
@@ -63,24 +63,24 @@ class DeleteClassificationStoreCommand extends AbstractCommand
             $theTable = current($table);
             $sql = 'delete from ' . $theTable . ' where groupId In (select id from classificationstore_groups where storeId = ' . $db->quote($storeId) . ')';
             echo $sql . "\n";
-            $db->query($sql);
+            $db->executeQuery($sql);
         }
 
         $sql = 'delete from classificationstore_keys where storeId = ' . $db->quote($storeId);
         echo $sql . "\n";
-        $db->query($sql);
+        $db->executeQuery($sql);
 
         $sql = 'delete from classificationstore_groups where storeId = ' . $db->quote($storeId);
         echo $sql . "\n";
-        $db->query($sql);
+        $db->executeQuery($sql);
 
         $sql = 'delete from classificationstore_collections where storeId = ' . $db->quote($storeId);
         echo $sql . "\n";
-        $db->query($sql);
+        $db->executeQuery($sql);
 
         $sql = 'delete from classificationstore_stores where id = ' . $db->quote($storeId);
         echo $sql . "\n";
-        $db->query($sql);
+        $db->executeQuery($sql);
 
         Cache::clearAll();
 

@@ -1561,7 +1561,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
                   ) all_rows) item where id = ' .  $id . ';';
         }
 
-        $db->query('select @rownum := 0;');
+        $db->executeQuery('select @rownum := 0;');
         $result = $db->fetchAllAssociative($query);
 
         $page = (int) $result[0]['page'] ;

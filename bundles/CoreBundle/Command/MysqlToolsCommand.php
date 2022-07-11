@@ -61,7 +61,7 @@ class MysqlToolsCommand extends AbstractCommand
 
                 try {
                     Logger::debug('Running: OPTIMIZE TABLE ' . $t);
-                    $db->query('OPTIMIZE TABLE ' . $t);
+                    $db->executeQuery('OPTIMIZE TABLE ' . $t);
                 } catch (\Exception $e) {
                     Logger::error((string) $e);
                 }

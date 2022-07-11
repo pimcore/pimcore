@@ -63,7 +63,7 @@ class DbCleanupBrokenViewsTask implements TaskInterface
                         $this->logger->error('view '.$name.' seems to be a broken one, it will be removed');
                         $this->logger->error('error message was: '.$e->getMessage());
 
-                        $this->db->query('DROP VIEW '.$name);
+                        $this->db->executeQuery('DROP VIEW '.$name);
                     } else {
                         $this->logger->error((string) $e);
                     }

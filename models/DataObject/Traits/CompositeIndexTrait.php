@@ -79,12 +79,12 @@ trait CompositeIndexTrait
         }
 
         foreach ($drop as $key) {
-            $this->db->query('ALTER TABLE `'.$table.'` DROP INDEX `'. $key.'`;');
+            $this->db->executeQuery('ALTER TABLE `'.$table.'` DROP INDEX `'. $key.'`;');
         }
 
         foreach ($add as $key) {
             $columnName = $newIndicesMap[$key];
-            $this->db->query(
+            $this->db->executeQuery(
                 'ALTER TABLE `'.$table.'` ADD INDEX `' . $key.'` ('.$columnName.');'
             );
         }
