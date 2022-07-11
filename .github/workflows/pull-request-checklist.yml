@@ -2,8 +2,11 @@
 name: "PR Checklist"
 
 on:
-    pull_request:
+    pull_request_target:
         types: [opened]
+
+permissions:
+    pull-requests: write
 
 jobs:
     comment:
