@@ -464,7 +464,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @return array
+     * @return DataObject\ClassDefinition[]
      */
     public function getClasses()
     {
@@ -485,7 +485,9 @@ class Dao extends Model\Element\Dao
 
         $classes = [];
         foreach ($classIds as $classId) {
-            $classes[] = DataObject\ClassDefinition::getById($classId);
+            if ($class = DataObject\ClassDefinition::getById($classId)) {
+                $classes[] = $class;
+            }
         }
 
         return $classes;

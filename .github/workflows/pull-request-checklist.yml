@@ -15,8 +15,7 @@ jobs:
             - uses: actions/github-script@v6
               env:
                   MESSAGE: |
-                      ### Quality Assurance Checklist (to be used by Pimconauts 🧑‍🚀) 
-                      
+                      ### Review Checklist
                       - [ ] Target branch (`10.4` for bug fixes, others `10.x`)
                       - [ ] Tests (if it's testable code, there should be a test for it - [get help](https://pimcore.com/docs/pimcore/current/Development_Documentation/Development_Tools_and_Details/Testing/Core_Tests.html))
                       - [ ] Docs (every functionality needs to be documented, [see here](https://github.com/pimcore/pimcore/tree/10.x/doc)) 
