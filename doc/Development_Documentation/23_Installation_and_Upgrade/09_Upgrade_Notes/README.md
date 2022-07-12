@@ -27,7 +27,7 @@
   Implement an [EventListener](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/EventListener/SessionBagListener.php) to register a session bag before the session is started.
 - [Ecommerce][PricingManager] Token condition is deprecated and will be removed in Pimcore 11.
 - Parameter `pimcore.admin.session.attribute_bags` is deprecated and will be removed in Pimcore 11.
-- Extension Manager - Registering or managing bundles through `Tools -> Bundles & Bricks` or manually through `var/config/extensions.php` is deprecated and will not work on Pimcore 11.
+- Extension Manager - Registering or managing bundles/areabricks through `Tools -> Bundles & Bricks` or manually through `var/config/extensions.php` is deprecated and will not work on Pimcore 11.
   Please use `config/bundles.php` to register/manage bundles instead.
 - [Web2Print] Wkhtmltopdf Processor has been deprecated and will be removed in Pimcore 11. Please use HeadlessChrome or PDFreactor instead.
 
