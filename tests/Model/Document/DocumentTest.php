@@ -261,6 +261,7 @@ class DocumentTest extends ModelTestCase
         $this->assertEquals(1, $linkDocument->getInternal());
 
         //Set the same internal target id as itself
+        codecept_debug('[WARNING] Testing document/link circular reference, if it is not progressing from here, please stop the tests and fix the code');
         $linkDocument->setInternal($linkDocument->getId());
         $linkDocument->save();
 
