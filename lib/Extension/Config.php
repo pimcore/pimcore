@@ -45,6 +45,14 @@ class Config
         if (!$this->config) {
             if ($this->configFileExists()) {
                 $this->config = new PimcoreConfig\Config(include $this->locateConfigFile(), true);
+
+                if (isset($this->config->bundle) && $this->config->bundle->count() > 0) {
+                    trigger_deprecation(
+                        'pimcore/pimcore',
+                        '10.5',
+                        'Registering bundles through extensions.php is deprecated and will not work on Pimcore 11. Use config/bundles.php to register/deregister bundles.'
+                    );
+                }
             }
 
             if (!$this->config) {
@@ -69,21 +77,12 @@ class Config
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    public function locateConfigFile(): ?string
+    public function locateConfigFile(): string
     {
         if (null === $this->file) {
-            $extensionsConfigFile = PimcoreConfig::locateConfigFile('extensions.php');
-            if ($extensionsConfigFile) {
-                trigger_deprecation(
-                    'pimcore/pimcore',
-                    '10.5',
-                    'Registering bundles through extensions.php is deprecated and will not work on Pimcore 11. Use config/bundles.php to register/deregister bundles.'
-                );
-            }
-
-            $this->file = $extensionsConfigFile;
+            $this->file = PimcoreConfig::locateConfigFile('extensions.php');
         }
 
         return $this->file;

@@ -59,6 +59,8 @@ abstract class Kernel extends SymfonyKernel
     }
 
     /**
+     * @deprecated will be removed in Pimcore 11
+     *
      * @var Extension\Config
      */
     protected $extensionConfig;
@@ -229,6 +231,12 @@ abstract class Kernel extends SymfonyKernel
         }
     }
 
+    /**
+     * @param ContainerBuilder $container
+     * @return void
+     *
+     * @deprecated Remove in Pimcore 11
+     */
     private function registerExtensionConfigFileResources(ContainerBuilder $container)
     {
         $filenames = [
