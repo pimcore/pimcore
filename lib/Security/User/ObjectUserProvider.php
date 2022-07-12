@@ -86,7 +86,7 @@ class ObjectUserProvider implements UserProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadUserByUsername($username)
+    public function loadUserByIdentifier(string $username)
     {
         $getter = sprintf('getBy%s', ucfirst($this->usernameField));
 
@@ -97,6 +97,16 @@ class ObjectUserProvider implements UserProviderInterface
         }
 
         throw new UserNotFoundException(sprintf('User %s was not found', $username));
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @deprecated use loadUserByIdentifier() instead.
+     */
+    public function loadUserByUsername($username)
+    {
+        return $this->loadUserByIdentifier($username);
     }
 
     /**
