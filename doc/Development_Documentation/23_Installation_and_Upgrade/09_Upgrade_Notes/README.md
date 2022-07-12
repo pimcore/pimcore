@@ -24,6 +24,7 @@
 - [JS Events/Disabled] The plugin broker for fire events has been disabled. 
 The plugins are still supported, but they are deprecated and will be removed in Pimcore 11   
 Please use event listener instead of plugins for JS events.
+- [Web2Print] Wkhtmltopdf Processor has been deprecated and will be removed in Pimcore 11. Please use HeadlessChrome or PDFreactor instead.
 
 ## 10.4.2
 - When maintenance mode is active, all commands are prevented from starting (not just commands inheriting from `AbstractCommand`).
