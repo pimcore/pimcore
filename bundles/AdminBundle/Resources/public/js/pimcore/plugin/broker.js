@@ -37,6 +37,7 @@ pimcore.plugin.broker = {
 
     executePlugin: function (plugin, event, params) {
         if (typeof plugin[event] == "function") {
+            console.warn("Plugins are depreacted. Please use event listener");
             params.push(this);
             plugin[event].apply(plugin, params);
         }
