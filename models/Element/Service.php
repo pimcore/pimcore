@@ -526,12 +526,14 @@ class Service extends Model\AbstractModel
 
     /**
      * @internal
+     *
      * @param bool|array $params
+     *
      * @return array
      */
     public static function prepareGetByIdParams(/*array */$params, string $method, bool $paramsGiven): array
     {
-        if(is_bool($params) && $paramsGiven) {
+        if (is_bool($params) && $paramsGiven) {
             trigger_deprecation('pimcore/pimcore', '10.5', 'Using $force=%s on %s is deprecated, please use array-syntax [force=>true] instead.', $params ? 'true' : 'false', $method);
             $params = ['force' => $params];
         } elseif ($params === false) {
