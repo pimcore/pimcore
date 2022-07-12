@@ -129,7 +129,7 @@ class VersionTest extends TestCase
         $sourceObject->setMultihref([$targetObject]);
         $sourceObject->save();
 
-        $sourceObjectFromDb = Unittest::getById($sourceObject->getId(), true);
+        $sourceObjectFromDb = Unittest::getById($sourceObject->getId(), ['force' => true]);
 
         $targetObjects = $sourceObject->getMultihref();
         $this->assertEquals(1, count($targetObjects), 'expected one target');

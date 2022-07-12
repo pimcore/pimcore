@@ -166,7 +166,7 @@ class AssetTest extends ModelTestCase
 
     public function reloadAsset()
     {
-        $this->testAsset = Asset::getById($this->testAsset->getId(), true);
+        $this->testAsset = Asset::getById($this->testAsset->getId(), ['force' => true]);
     }
 
     /**
@@ -184,7 +184,7 @@ class AssetTest extends ModelTestCase
         $this->assertEquals($userId, $asset->getUserModification(), 'Expected custom user modification id');
 
         //auto generated user modification
-        $asset = Asset::getById($asset->getId(), true);
+        $asset = Asset::getById($asset->getId(), ['force' => true]);
         $asset->save();
         $this->assertEquals(0, $asset->getUserModification(), 'Expected auto assigned user modification id');
     }
@@ -207,8 +207,16 @@ class AssetTest extends ModelTestCase
 
         //auto generated modification date
         $currentTime = time();
-        $asset = Asset::getById($asset->getId(), true);
+        $asset = Asset::getById($asset->getId(), ['force' => true]);
         $asset->save();
         $this->assertGreaterThanOrEqual($currentTime, $asset->getModificationDate(), 'Expected auto assigned modification date');
+    }
+
+    public function testForceReload()
+    {
+        $asset = TestHelper::createImageAsset();
+
+        $this->assertTrue(Asset::getById($asset->getId()) === Asset::getById($asset->getId()));
+        $this->assertFalse(Asset::getById($asset->getId()) === Asset::getById($asset->getId(), ['force' => true]));
     }
 }

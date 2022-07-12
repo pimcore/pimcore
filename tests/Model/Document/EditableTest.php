@@ -217,7 +217,7 @@ class EditableTest extends ModelTestCase
 
     public function reloadPage()
     {
-        $this->testPage = Page::getById($this->testPage->getId(), true);
+        $this->testPage = Page::getById($this->testPage->getId(), ['force' => true]);
     }
 
     public function testSelect()
