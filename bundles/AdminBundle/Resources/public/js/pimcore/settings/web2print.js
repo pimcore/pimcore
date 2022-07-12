@@ -292,7 +292,7 @@ pimcore.settings.web2print = Class.create({
                                 value: this.getValue("generalTool"),
                                 store: [
                                     ["pdfreactor", "PDFreactor"],
-                                    ["wkhtmltopdf", "WkHtmlToPdf"],
+                                    ["wkhtmltopdf", "WkHtmlToPdf (Deprecated)"],
                                     ["headlesschrome", "Headless Chrome"],
                                 ],
                                 mode: "local",
