@@ -21,6 +21,9 @@
   Implement an [EventListener](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/EventListener/SessionBagListener.php) to register a session bag before the session is started.
 - [Ecommerce][PricingManager] Token condition is deprecated and will be removed in Pimcore 11.
 - Parameter `pimcore.admin.session.attribute_bags` is deprecated and will be removed in Pimcore 11.
+- [JS Events/Disabled] The plugin broker for fire events has been disabled. 
+The plugins are still supported, but they are deprecated and will be removed in Pimcore 11   
+Please use event listener instead of plugins for JS events.
 
 ## 10.4.2
 - When maintenance mode is active, all commands are prevented from starting (not just commands inheriting from `AbstractCommand`).
