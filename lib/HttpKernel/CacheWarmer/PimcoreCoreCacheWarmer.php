@@ -15,7 +15,6 @@
 
 namespace Pimcore\HttpKernel\CacheWarmer;
 
-use Doctrine\DBAL\Exception\DriverException;
 use Pimcore\Bootstrap;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -58,7 +57,6 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
         $this->getClassesFromDirectory($dir, $excludePattern, 'Pimcore', $classes);
     }
 
-
     private function modelClasses(array &$classes): void
     {
         $excludePattern = '@/models/(GridConfig|ImportConfig|Notification|Schedule|Tool/CustomReport|User|Workflow)@';
@@ -89,7 +87,6 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
 
     private function dataObjectClasses(array &$classes): void
     {
-
         $objectClassesFolder = PIMCORE_CLASS_DEFINITION_DIRECTORY;
         $files = glob($objectClassesFolder.'/*.php');
 
