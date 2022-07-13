@@ -16,6 +16,7 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
 
 use Pimcore\Model;
+use Pimcore\Model\Listing\Traits\FilterListingTrait;
 
 /**
  * @internal
@@ -26,6 +27,8 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\AbstractListing
 {
+    use FilterListingTrait;
+
     /**
      * @param Model\DataObject\ClassDefinition\CustomLayout[]|null $layoutDefinitions
      *

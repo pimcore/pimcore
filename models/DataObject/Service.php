@@ -1021,12 +1021,14 @@ class Service extends Model\Element\Service
         $classId = $object->getClassId();
         $list = new ClassDefinition\CustomLayout\Listing();
         $list->setOrderKey('name');
-        $condition = 'classId = ' . $list->quote($classId).' AND id NOT LIKE \'%.brick.%\'';
+        //$condition = 'classId = ' . $list->quote($classId).' AND id NOT LIKE \'%.brick.%\'';
         if (is_array($layoutPermissions) && count($layoutPermissions)) {
             $layoutIds = array_values($layoutPermissions);
-            $condition .= ' AND id IN (' . implode(',', array_map([$list, 'quote'], $layoutIds)) . ')';
         }
-        $list->setCondition($condition);
+        $list->setFilter(function (DataObject\ClassDefinition\CustomLayout $layout) use ($classId, $layoutIds) {
+            $currentLayoutClassId = $layout->getClassId();
+            return $currentLayoutClassId === $classId && !str_contains($currentLayoutClassId, ".brick.");
+        });
         $list = $list->load();
 
         if ((!count($resultList) && !count($list)) || (count($resultList) == 1 && !count($list))) {

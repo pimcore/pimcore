@@ -13,33 +13,31 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Listing;
+namespace Pimcore\Model\Listing\Traits;
 
-use Pimcore\Model\AbstractModel;
-use Pimcore\Model\Listing\Traits\FilterListingTrait;
-
-abstract class JsonListing extends AbstractModel
+/**
+ * @internal
+ */
+trait FilterListingTrait
 {
-    use FilterListingTrait;
-
     /**
      * @var callable|null
      */
-    protected $order;
+    protected $filter;
 
     /**
      * @return callable|null
      */
-    public function getOrder()
+    public function getFilter()
     {
-        return $this->order;
+        return $this->filter;
     }
 
     /**
-     * @param callable|null $order
+     * @param callable|null $filter
      */
-    public function setOrder($order)
+    public function setFilter($filter)
     {
-        $this->order = $order;
+        $this->filter = $filter;
     }
 }

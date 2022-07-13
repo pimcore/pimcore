@@ -365,8 +365,11 @@ class ClassController extends AdminController implements KernelControllerEventIn
     public function deleteCustomLayoutAction(Request $request)
     {
         $customLayouts = new DataObject\ClassDefinition\CustomLayout\Listing();
-        $customLayouts->addConditionParam('id=?', $request->get('id'));
-        $customLayouts->addConditionParam('id LIKE ?', $request->get('id').'.brick.%', 'OR');
+        $id = $request->get('id');
+        $customLayouts->setFilter(function(DataObject\ClassDefinition\CustomLayout $layout) use ($id) {
+            $currentLayoutId = $layout->getId();
+            return $currentLayoutId === $id || str_starts_with($currentLayoutId, $id . ".brick.");
+        });
         foreach ($customLayouts as $customLayout) {
             $customLayout->delete();
         }
@@ -601,7 +604,10 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $classIds = explode(',', $request->get('classId'));
         $list = new DataObject\ClassDefinition\CustomLayout\Listing();
 
-        $list->setCondition('classId IN (' . rtrim(str_repeat('?,', count($classIds)), ',').') AND id not LIKE \'%.brick.%\'', $classIds);
+        $list->setFilter(function (DataObject\ClassDefinition\CustomLayout $layout) use ($classIds) {
+            $classId = $layout->getClassId();
+            return in_array($classId, $classIds) && !str_contains($classId, ".brick.");
+        });
         $list = $list->load();
         $result = [];
         foreach ($list as $item) {
@@ -629,7 +635,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $mapping = [];
 
         $customLayouts = new DataObject\ClassDefinition\CustomLayout\Listing();
-        $customLayouts->setCondition('id not LIKE \'%.brick.%\'');
+        $customLayouts->setFilter(function (DataObject\ClassDefinition\CustomLayout $layout) {
+            return !str_contains($layout->getId(), ".brick.");
+        });
         $customLayouts->setOrder('ASC');
         $customLayouts->setOrderKey('name');
         $customLayouts = $customLayouts->load();
@@ -1620,8 +1628,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
                     $classId = $class->getId();
 
                     $layoutList = new DataObject\ClassDefinition\CustomLayout\Listing();
-                    $db = \Pimcore\Db::get();
-                    $layoutList->setCondition('name = ' . $db->quote($layoutName) . ' AND classId = ' . $classId);
+                    $layoutList->setFilter(function (DataObject\ClassDefinition\CustomLayout $layout) use ($layoutName, $classId) {
+                        return $layout->getName() === $layoutName && $layout->getClassId() === $classId;
+                    });
                     $layoutList = $layoutList->load();
 
                     $layoutDefinition = null;
