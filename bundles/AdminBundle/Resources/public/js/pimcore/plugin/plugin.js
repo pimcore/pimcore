@@ -11,6 +11,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
+//TODO remove in Pimcore 11
 pimcore.registerNS("pimcore.plugin.admin");
 pimcore.plugin.admin = Class.create({
 
