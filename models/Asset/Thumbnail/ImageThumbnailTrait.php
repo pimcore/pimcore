@@ -437,7 +437,7 @@ trait ImageThumbnailTrait
      * @param bool $deferred
      * @return string
      */
-    public function getThumbnailPathAs(string $format, $deferred = false)
+    public function getThumbnailPathAs(string $format, $deferred = true)
     {
         $config = $this->getConfig();
 
