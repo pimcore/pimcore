@@ -142,7 +142,7 @@ document.addEventListener(pimcore.events.preSaveObject, (e) => {
 
 ## I18n texts for js
 
-Pimcore supports i18n for UI extensions. Fist see the [i18n section for bundles](./README.md) how to prepare the data 
+Pimcore supports i18n for UI extensions. First see the [i18n section for bundles](./README.md) how to prepare the data 
 server-side. 
 
 Once this is done, translations can be accessed anywhere in the javascript code by calling
