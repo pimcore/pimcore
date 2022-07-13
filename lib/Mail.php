@@ -653,7 +653,8 @@ class Mail extends Email
      */
     private function renderParams(string $string): string
     {
-        $twig = \Pimcore::getContainer()->get('twig');
+        $templatingEngine = \Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
+        $twig = $templatingEngine->getTwigEnvironment();
         $template = $twig->createTemplate($string);
 
         return $template->render($this->getParams());
