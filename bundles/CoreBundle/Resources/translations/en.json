@@ -207,6 +207,7 @@
     "deletedby": "Deleted By",
     "open_select_editor": "Open Selection-Editor",
     "ignore": "Ignore",
+    "email_log": "Email Log",
     "email_log_resend": "Resend email",
     "email_log_resend_window_msg": "Please confirm that you want to send the email again to all recipients.",
     "select_site": "Select a site",
