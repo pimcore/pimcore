@@ -65,3 +65,9 @@ services:
     # Grid Helper Service
     #
     Pimcore\Bundle\AdminBundle\Helper\GridHelperService: ~
+
+    #
+    # Admin JS Helper Service
+    #
+    Pimcore\Bundle\AdminBundle\Helper\AdminJsHelperService:
+        public: true

@@ -31,6 +31,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Pimcore\Bundle\AdminBundle\Helper\AdminJsHelperService;
 
 /**
  * @Route("/misc")
@@ -39,7 +40,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class MiscController extends AdminController
 {
-    /**
+    public function __construct (private AdminJsHelperService $adminJsHelperService)
+    {
+    }
+        /**
      * @Route("/get-available-controller-references", name="pimcore_admin_misc_getavailablecontroller_references", methods={"GET"})
      *
      * @param Request $request
@@ -127,9 +131,18 @@ class MiscController extends AdminController
     public function scriptProxyAction(Request $request)
     {
         if ($storageFile = $request->get('storageFile')) {
-            $fileExtension = \Pimcore\File::getFileExtension($storageFile);
-            $storage = Storage::get('admin');
-            $scriptsContent = $storage->read($storageFile);
+            $fileExtension = \Pimcore\File::getFileExtension ($storageFile);
+
+            $cacheDir = \Pimcore::getKernel ()->getCacheDir ();
+            $jsCacheDir = $cacheDir . '/minifiedJs/';
+            if ($this->adminJsHelperService->isMinifiedScriptExists ($storageFile)) {
+                $scriptsContent = file_get_contents ($jsCacheDir . $storageFile);
+            }
+            else {
+                trigger_deprecation ('pimcore/pimcore', '10.5', 'saving the minified js scripts in the var/admin folder is deprecated and would be removed in Pimcore 11.');
+                $storage = Storage::get ('admin');
+                $scriptsContent = $storage->read ($storageFile);
+            }
         } else {
             trigger_deprecation('pimcore/pimcore', '10.1', 'Calling /admin/misc/script-proxy without the parameter storageFile is deprecated and will not work in Pimcore 11.');
             $allowedFileTypes = ['js', 'css'];

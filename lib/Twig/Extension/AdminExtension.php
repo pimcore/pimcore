@@ -22,13 +22,14 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
+use Pimcore\Bundle\AdminBundle\Helper\AdminJsHelperService;
 
 /**
  * @internal
  */
 class AdminExtension extends AbstractExtension
 {
-    public function __construct(private UrlGeneratorInterface $generator)
+    public function __construct(private UrlGeneratorInterface $generator, private AdminJsHelperService $adminJsService)
     {
     }
 
@@ -36,6 +37,7 @@ class AdminExtension extends AbstractExtension
     {
         return [
             new TwigFunction('pimcore_minimize_scripts', [$this, 'minimize']),
+            new TwigFunction('pimcore_process_scripts', [$this, 'processScriptPaths']),
         ];
     }
 
@@ -49,8 +51,38 @@ class AdminExtension extends AbstractExtension
         ];
     }
 
+    public function processScriptPaths ()
+    {
+        $returnScriptPath = '';
+
+        $scriptTypeArr = ['lib', 'internal', 'bundle'];
+        foreach ($scriptTypeArr as $scriptType) {
+            if ($scriptType == 'lib') {
+                foreach ($this->adminJsService->getScriptPaths ('lib') as $libScriptPath) {
+                    $returnScriptPath .= $this->getScriptTag ($libScriptPath);
+                }
+            } else {
+                if (\Pimcore::disableMinifyJs ()) {
+                    foreach ($this->adminJsService->getScriptPaths ($scriptType) as $scriptPaths) {
+                        $returnScriptPath .= $this->getScriptTag ($scriptPaths);
+                    }
+                } else {
+                    $url = $this->generator->generate ('pimcore_admin_misc_scriptproxy', $this->adminJsService->getScriptPaths ($scriptType), UrlGeneratorInterface::ABSOLUTE_PATH);
+                    $returnScriptPath .= $this->getScriptTag ($url);
+                }
+            }
+        }
+        return $returnScriptPath;
+    }
+
+
     public function minimize(array $paths): string
     {
+        trigger_deprecation (
+            'pimcore/pimcore',
+            '10.5',
+            sprintf ('%s is deprecated and it will be removed in Pimcore 11.', __METHOD__)
+        );
         $returnHtml = '';
         $scriptContents = '';
         foreach ($paths as $path) {
