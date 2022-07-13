@@ -46,7 +46,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         // requires
-        $data = $this->db->fetchAll('SELECT dependencies.targetid,dependencies.targettype
+        $data = $this->db->fetchAllAssociative('SELECT dependencies.targetid,dependencies.targettype
             FROM dependencies
             LEFT JOIN objects ON dependencies.targettype="object" AND dependencies.targetid=objects.o_id
             LEFT JOIN assets ON dependencies.targettype="asset" AND dependencies.targetid=assets.id
@@ -76,7 +76,7 @@ class Dao extends Model\Dao\AbstractDao
             $type = Element\Service::getElementType($element);
 
             //schedule for sanity check
-            $data = $this->db->fetchAll('SELECT `sourceid`, `sourcetype` FROM dependencies WHERE targettype = ? AND targetid = ?', [$type, $id]);
+            $data = $this->db->fetchAllAssociative('SELECT `sourceid`, `sourcetype` FROM dependencies WHERE targettype = ? AND targetid = ?', [$type, $id]);
             if (is_array($data)) {
                 foreach ($data as $row) {
                     \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
@@ -113,7 +113,7 @@ class Dao extends Model\Dao\AbstractDao
     public function save()
     {
         // get existing dependencies
-        $existingDependenciesRaw = $this->db->fetchAll('SELECT id, targetType, targetId FROM dependencies WHERE sourceType= ? AND sourceId = ?',
+        $existingDependenciesRaw = $this->db->fetchAllAssociative('SELECT id, targetType, targetId FROM dependencies WHERE sourceType= ? AND sourceId = ?',
             [$this->model->getSourceType(), $this->model->getSourceId()]);
 
         $existingDepencies = [];
@@ -196,7 +196,7 @@ class Dao extends Model\Dao\AbstractDao
             $query = sprintf($query . ' LIMIT %d,%d', $offset, $limit);
         }
 
-        $data = $this->db->fetchAll($query, [$this->model->getSourceType(), $this->model->getSourceId()]);
+        $data = $this->db->fetchAllAssociative($query, [$this->model->getSourceType(), $this->model->getSourceId()]);
 
         $requiredBy = [];
 
@@ -262,7 +262,7 @@ class Dao extends Model\Dao\AbstractDao
             $query .= ' LIMIT ' . $offset . ', ' . $limit;
         }
 
-        $requiredBy = $this->db->fetchAll($query);
+        $requiredBy = $this->db->fetchAllAssociative($query);
 
         if (is_array($requiredBy) && count($requiredBy) > 0) {
             return $requiredBy;

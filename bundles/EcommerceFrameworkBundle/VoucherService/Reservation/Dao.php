@@ -67,7 +67,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     {
         if (!Reservation::reservationExists($code, $cart)) {
             // Single Type Token --> only one token per Cart! --> Update on duplicate key!
-            $this->db->query('INSERT INTO ' . self::TABLE_NAME . ' (token,cart_id,timestamp) VALUES (?,?,NOW())', [$code, $cart->getId()]);
+            $this->db->executeQuery('INSERT INTO ' . self::TABLE_NAME . ' (token,cart_id,timestamp) VALUES (?,?,NOW())', [$code, $cart->getId()]);
         }
 
         $this->get($code, $cart);

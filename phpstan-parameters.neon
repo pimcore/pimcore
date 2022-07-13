@@ -20,7 +20,6 @@ parameters:
         - '**/bundles/AdminBundle/Security/Authenticator/AdminAbstractAuthenticator.php'
 
     ignoreErrors:
-        - '~^Method Doctrine\\DBAL(\\.*)?Connection::query\(\) invoked with \d+ parameters?, 0 required\.\z~'
         - '~^Unsafe usage of new static\(\)~'
 
     # see https://phpstan.org/config-reference#universal-object-crates

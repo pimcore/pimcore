@@ -80,7 +80,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         if (!empty($this->model->getConditionParams()) || !$translations = Cache::load($cacheKey)) {
             $translations = [];
             $queryBuilder->setMaxResults(null); //retrieve all results
-            $translationsData = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables());
+            $translationsData = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables());
 
             foreach ($translationsData as $t) {
                 if (!isset($translations[$t['key']])) {
@@ -115,7 +115,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function loadRaw()
     {
         $queryBuilder = $this->getQueryBuilder(['*']);
-        $translationsData = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables());
+        $translationsData = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables());
 
         return $translationsData;
     }
@@ -130,7 +130,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $this->model->setGroupBy($this->getDatabaseTableName() . '.key', false);
 
         $queryBuilder = $this->getQueryBuilder([$this->getDatabaseTableName() . '.key']);
-        $translationsData = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables());
+        $translationsData = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables());
 
         foreach ($translationsData as $t) {
             $transObj = Model\Translation::getByKey(id: $t['key'], domain: $this->model->getDomain(), languages: $this->model->getLanguages());

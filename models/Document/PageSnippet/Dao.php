@@ -42,7 +42,7 @@ abstract class Dao extends Model\Document\Dao
      */
     public function getEditables()
     {
-        $editablesRaw = $this->db->fetchAll('SELECT * FROM documents_editables WHERE documentId = ?', [$this->model->getId()]);
+        $editablesRaw = $this->db->fetchAllAssociative('SELECT * FROM documents_editables WHERE documentId = ?', [$this->model->getId()]);
 
         $editables = [];
         $loader = \Pimcore::getContainer()->get(Document\Editable\Loader\EditableLoader::class);

@@ -65,7 +65,7 @@ class Dao extends Model\Dao\AbstractDao
 
             // check for wildcards
             // @TODO: refactor this to be more clear
-            $sitesRaw = $this->db->fetchAll('SELECT id,domains FROM sites');
+            $sitesRaw = $this->db->fetchAllAssociative('SELECT id,domains FROM sites');
             $wildcardDomains = [];
             foreach ($sitesRaw as $site) {
                 if (!empty($site['domains']) && strpos($site['domains'], '*')) {

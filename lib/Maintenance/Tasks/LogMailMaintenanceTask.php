@@ -63,7 +63,7 @@ class LogMailMaintenanceTask implements TaskInterface
 
             $query = 'SELECT * FROM '.ApplicationLoggerDb::TABLE_NAME." WHERE maintenanceChecked IS NULL AND priority <= $logLevel order by id desc";
 
-            $rows = $db->fetchAll($query);
+            $rows = $db->fetchAllAssociative($query);
             $limit = 100;
             $rowsProcessed = 0;
 
@@ -99,6 +99,6 @@ class LogMailMaintenanceTask implements TaskInterface
         // flag them as checked, regardless if email notifications are enabled or not
         // otherwise, when activating email notifications, you'll receive all log-messages from the past and not
         // since the point when you enabled the notifications
-        $db->query('UPDATE '.ApplicationLoggerDb::TABLE_NAME.' set maintenanceChecked = 1 WHERE maintenanceChecked != 1 OR maintenanceChecked IS NULL');
+        $db->executeQuery('UPDATE '.ApplicationLoggerDb::TABLE_NAME.' set maintenanceChecked = 1 WHERE maintenanceChecked != 1 OR maintenanceChecked IS NULL');
     }
 }

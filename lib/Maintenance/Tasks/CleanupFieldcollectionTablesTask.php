@@ -54,7 +54,7 @@ class CleanupFieldcollectionTablesTask implements TaskInterface
         foreach ($tasks as $task) {
             $prefix = $task['prefix'];
             $pattern = $task['pattern'];
-            $tableNames = $db->fetchAll("SHOW TABLES LIKE '" . $pattern . "'");
+            $tableNames = $db->fetchAllAssociative("SHOW TABLES LIKE '" . $pattern . "'");
 
             foreach ($tableNames as $tableName) {
                 $tableName = current($tableName);
