@@ -139,7 +139,7 @@ class MiscController extends AdminController
                 $scriptsContent = file_get_contents ($jsCacheDir . $storageFile);
             }
             else {
-                trigger_deprecation ('pimcore/pimcore', '10.5', 'saving the minified js scripts in the var/admin folder is deprecated and would be removed in Pimcore 11.');
+                trigger_deprecation ('pimcore/pimcore', '10.5', 'saving the minified js scripts in the var/admin folder is deprecated and will be removed in Pimcore 11.');
                 $storage = Storage::get ('admin');
                 $scriptsContent = $storage->read ($storageFile);
             }
