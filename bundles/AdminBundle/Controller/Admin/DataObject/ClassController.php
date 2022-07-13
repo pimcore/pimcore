@@ -605,8 +605,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $list = new DataObject\ClassDefinition\CustomLayout\Listing();
 
         $list->setFilter(function (DataObject\ClassDefinition\CustomLayout $layout) use ($classIds) {
-            $classId = $layout->getClassId();
-            return in_array($classId, $classIds) && !str_contains($classId, ".brick.");
+            return in_array($layout->getClassId(), $classIds) && !str_contains($layout->getId(), ".brick.");
         });
         $list = $list->load();
         $result = [];
