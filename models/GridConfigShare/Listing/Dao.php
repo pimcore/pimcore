@@ -32,7 +32,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function load()
     {
         $gridConfigs = [];
-        $data = $this->db->fetchAll('SELECT * FROM gridconfig_shares' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $data = $this->db->fetchAllAssociative('SELECT * FROM gridconfig_shares' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($data as $configData) {
             $gridConfig = new Model\GridConfigShare();

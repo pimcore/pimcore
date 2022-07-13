@@ -1133,7 +1133,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $fn = function () use ($parentObject, $currentSortOrder) {
             $list = new DataObject\Listing();
 
-            Db::get()->executeUpdate(
+            Db::get()->executeStatement(
                 'UPDATE '.$list->getDao()->getTableName().' o,
                     (
                     SELECT newIndex, o_id FROM (
@@ -1151,7 +1151,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             );
 
             $db = Db::get();
-            $children = $db->fetchAll(
+            $children = $db->fetchAllAssociative(
                 'SELECT o_id, o_modificationDate, o_versionCount FROM objects'
                 .' WHERE o_parentId = ? ORDER BY o_index ASC',
                 [$parentObject->getId()]
@@ -1198,7 +1198,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $list = new DataObject\Listing();
             $updatedObject->saveIndex($newIndex);
 
-            Db::get()->executeUpdate(
+            Db::get()->executeStatement(
                 'UPDATE '.$list->getDao()->getTableName().' o,
                     (
                         SELECT newIndex, o_id FROM (SELECT @n := IF(@n = ? - 1,@n + 2,@n + 1) AS newIndex, o_id
@@ -1225,7 +1225,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             );
 
             $db = Db::get();
-            $siblings = $db->fetchAll(
+            $siblings = $db->fetchAllAssociative(
                 'SELECT o_id, o_modificationDate, o_versionCount FROM objects'
                 ." WHERE o_parentId = ? AND o_id != ? AND o_type IN ('object', 'variant','folder') ORDER BY o_index ASC",
                 [$updatedObject->getParentId(), $updatedObject->getId()]

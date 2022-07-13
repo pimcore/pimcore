@@ -81,7 +81,7 @@ class Dao extends Model\Dao\AbstractDao
 
             //check for id-path and update it, if path has changed -> update all other tags that have idPath == idPath/id
             if ($originalIdPath && $originalIdPath != $this->model->getIdPath()) {
-                $this->db->query('UPDATE tags SET idPath = REPLACE(idPath, ?, ?)  WHERE idPath LIKE ?;', [$originalIdPath, $this->model->getIdPath(), Helper::escapeLike($originalIdPath) . $this->model->getId() . '/%']);
+                $this->db->executeQuery('UPDATE tags SET idPath = REPLACE(idPath, ?, ?)  WHERE idPath LIKE ?;', [$originalIdPath, $this->model->getIdPath(), Helper::escapeLike($originalIdPath) . $this->model->getId() . '/%']);
             }
 
             $this->db->commit();
@@ -285,7 +285,7 @@ class Dao extends Model\Dao\AbstractDao
             $select->andWhere('o_className IN ( ' .  implode(',', $quotedClassNames) . ' )');
         }
 
-        $res = $this->db->query((string) $select, $select->getParameters());
+        $res = $this->db->executeQuery((string) $select, $select->getParameters());
 
         while ($row = $res->fetch()) {
             $el = $map[$type][3]::getById($row['cid']);

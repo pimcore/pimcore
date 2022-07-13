@@ -133,7 +133,7 @@ abstract class AbstractOrderList implements OrderListInterface
             // load
             $conn = \Pimcore\Db::getConnection();
             $queryBuilder = $this->getQueryBuilder();
-            $this->list = new \ArrayIterator($conn->fetchAll((string) $queryBuilder, $queryBuilder->getParameters(), $queryBuilder->getParameterTypes()));
+            $this->list = new \ArrayIterator($conn->fetchAllAssociative((string) $queryBuilder, $queryBuilder->getParameters(), $queryBuilder->getParameterTypes()));
             $this->rowCount = $this->list->count();
         }
 

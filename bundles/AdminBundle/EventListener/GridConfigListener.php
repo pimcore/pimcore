@@ -64,7 +64,7 @@ class GridConfigListener implements EventSubscriberInterface
         $db = Db::get();
         $gridConfigIds = $db->fetchFirstColumn('select id from gridconfigs where classId = ?', [$classId]);
         if ($gridConfigIds) {
-            $db->query('delete from gridconfig_shares where gridConfigId in (' . implode($gridConfigIds) . ')');
+            $db->executeQuery('delete from gridconfig_shares where gridConfigId in (' . implode($gridConfigIds) . ')');
         }
 
         $this->cleanupGridConfigs('classId = ' . $db->quote($classId));
@@ -83,7 +83,7 @@ class GridConfigListener implements EventSubscriberInterface
 
         $gridConfigIds = $db->fetchFirstColumn('select id from gridconfigs where ownerId = ' . $userId);
         if ($gridConfigIds) {
-            $db->query('delete from gridconfig_shares where gridConfigId in (' . implode($gridConfigIds) . ')');
+            $db->executeQuery('delete from gridconfig_shares where gridConfigId in (' . implode($gridConfigIds) . ')');
         }
 
         $this->cleanupGridConfigs('ownerId = ' . $userId);
@@ -93,12 +93,12 @@ class GridConfigListener implements EventSubscriberInterface
     protected function cleanupGridConfigs($condition)
     {
         $db = Db::get();
-        $db->query('DELETE FROM gridconfigs where ' . $condition);
+        $db->executeQuery('DELETE FROM gridconfigs where ' . $condition);
     }
 
     protected function cleanupGridConfigFavourites($condition)
     {
         $db = Db::get();
-        $db->query('DELETE FROM gridconfig_favourites where ' . $condition);
+        $db->executeQuery('DELETE FROM gridconfig_favourites where ' . $condition);
     }
 }

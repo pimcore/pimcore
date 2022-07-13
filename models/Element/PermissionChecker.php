@@ -47,7 +47,7 @@ class PermissionChecker
         }
         $db = Db::get();
         $tableName = 'users_workspaces_'.$type;
-        $tableDesc = $db->fetchAll('describe '.$tableName);
+        $tableDesc = $db->fetchAllAssociative('describe '.$tableName);
 
         $result = [
             'columns' => [],

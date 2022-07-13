@@ -160,7 +160,7 @@ abstract class Dao extends Model\Dao\AbstractDao
              WHERE cid = ' . $highestWorkspace['cid'] . ' AND userId IN (' . implode(',', $userIds) . ')
              ORDER BY FIELD(userId, ' . $currentUserId . ') DESC
              ';
-            $objectPermissions = $this->db->fetchAll($roleWorkspaceSql);
+            $objectPermissions = $this->db->fetchAllAssociative($roleWorkspaceSql);
 
             //this performs the additive rule when conflicting rules with multiple roles,
             //breaks the loop when permission=1 is found and move on to check next permission type.

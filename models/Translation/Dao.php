@@ -113,7 +113,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getAvailableLanguages()
     {
-        $l = $this->db->fetchAll('SELECT * FROM ' . $this->getDatabaseTableName()  . '  GROUP BY `language`;');
+        $l = $this->db->fetchAllAssociative('SELECT * FROM ' . $this->getDatabaseTableName()  . '  GROUP BY `language`;');
         $languages = [];
 
         foreach ($l as $values) {
@@ -130,7 +130,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getAvailableDomains()
     {
-        $domainTables = $this->db->fetchAll("SHOW TABLES LIKE 'translations_%'");
+        $domainTables = $this->db->fetchAllAssociative("SHOW TABLES LIKE 'translations_%'");
         $domains = [];
 
         foreach ($domainTables as $domainTable) {
@@ -166,7 +166,7 @@ class Dao extends Model\Dao\AbstractDao
             throw new \Exception('Domain is missing to create new translation domain');
         }
 
-        $this->db->query('CREATE TABLE IF NOT EXISTS `' . $table . "` (
+        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $table . "` (
                           `key` varchar(190) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '',
                           `type` varchar(10) DEFAULT NULL,
                           `language` varchar(10) NOT NULL DEFAULT '',

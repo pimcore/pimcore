@@ -91,7 +91,7 @@ class Dao extends Model\Dao\AbstractDao
         $typeQuery = " AND (type = 'object' or type = '')";
 
         $query = 'SELECT * FROM ' . $this->getTablename($source) . ' WHERE o_id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? and `index` = ? ' . $typeQuery;
-        $dataRaw = $this->db->fetchAll($query, [$source->getId(), $destinationId, $fieldname, $ownertype, $ownername, $position, $index]);
+        $dataRaw = $this->db->fetchAllAssociative($query, [$source->getId(), $destinationId, $fieldname, $ownertype, $ownername, $position, $index]);
         if (!empty($dataRaw)) {
             $this->model->setObjectId($destinationId);
             $this->model->setFieldname($fieldname);
@@ -117,7 +117,7 @@ class Dao extends Model\Dao\AbstractDao
         $classId = $class->getId();
         $table = 'object_metadata_' . $classId;
 
-        $this->db->query('CREATE TABLE IF NOT EXISTS `' . $table . "` (
+        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $table . "` (
               `o_id` int(11) UNSIGNED NOT NULL default '0',
               `dest_id` int(11) NOT NULL default '0',
 	          `type` VARCHAR(50) NOT NULL DEFAULT '',

@@ -194,7 +194,7 @@ class Dao extends Model\Element\Dao
     public function updateChildPaths($oldPath)
     {
         //get documents to empty their cache
-        $documents = $this->db->fetchAll('SELECT id, CONCAT(path,`key`) AS path FROM documents WHERE path LIKE ?', [Helper::escapeLike($oldPath) . '%']);
+        $documents = $this->db->fetchAllAssociative('SELECT id, CONCAT(path,`key`) AS path FROM documents WHERE path LIKE ?', [Helper::escapeLike($oldPath) . '%']);
 
         $userId = '0';
         if ($user = \Pimcore\Tool\Admin::getCurrentUser()) {
@@ -203,13 +203,13 @@ class Dao extends Model\Element\Dao
 
         //update documents child paths
         // we don't update the modification date here, as this can have side-effects when there's an unpublished version for an element
-        $this->db->query('update documents set path = replace(path,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . "), userModification = '" . $userId . "' where path like " . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
+        $this->db->executeQuery('update documents set path = replace(path,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . "), userModification = '" . $userId . "' where path like " . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
 
         //update documents child permission paths
-        $this->db->query('update users_workspaces_document set cpath = replace(cpath,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . ') where cpath like ' . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
+        $this->db->executeQuery('update users_workspaces_document set cpath = replace(cpath,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . ') where cpath like ' . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
 
         //update documents child properties paths
-        $this->db->query('update properties set cpath = replace(cpath,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . ') where cpath like ' . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
+        $this->db->executeQuery('update properties set cpath = replace(cpath,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . ') where cpath like ' . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
 
         return $documents;
     }
@@ -264,10 +264,10 @@ class Dao extends Model\Element\Dao
         $properties = [];
 
         if ($onlyDirect) {
-            $propertiesRaw = $this->db->fetchAll("SELECT * FROM properties WHERE cid = ? AND ctype='document'", [$this->model->getId()]);
+            $propertiesRaw = $this->db->fetchAllAssociative("SELECT * FROM properties WHERE cid = ? AND ctype='document'", [$this->model->getId()]);
         } else {
             $parentIds = $this->getParentIds();
-            $propertiesRaw = $this->db->fetchAll('SELECT * FROM properties WHERE ((cid IN (' . implode(',', $parentIds) . ") AND inheritable = 1) OR cid = ? )  AND ctype='document'", [$this->model->getId()]);
+            $propertiesRaw = $this->db->fetchAllAssociative('SELECT * FROM properties WHERE ((cid IN (' . implode(',', $parentIds) . ") AND inheritable = 1) OR cid = ? )  AND ctype='document'", [$this->model->getId()]);
         }
 
         // because this should be faster than mysql

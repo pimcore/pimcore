@@ -77,7 +77,7 @@ class LogArchiveTask implements TaskInterface
         $sql = 'SELECT %s FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY)';
 
         if ($db->fetchOne(sprintf($sql, 'COUNT(*)')) > 0) {
-            $db->query('CREATE TABLE IF NOT EXISTS '.$tablename." (
+            $db->executeQuery('CREATE TABLE IF NOT EXISTS '.$tablename." (
                        id BIGINT(20) NOT NULL,
                        `pid` INT(11) NULL DEFAULT NULL,
                        `timestamp` DATETIME NOT NULL,
@@ -92,16 +92,16 @@ class LogArchiveTask implements TaskInterface
                        maintenanceChecked TINYINT(1)
                     ) ENGINE = ARCHIVE ROW_FORMAT = DEFAULT;");
 
-            $db->query('INSERT INTO '.$tablename.' '.sprintf($sql, '*'));
+            $db->executeQuery('INSERT INTO '.$tablename.' '.sprintf($sql, '*'));
 
             $this->logger->debug('Deleting referenced FileObjects of application_logs which are older than '. $archive_threshold.' days');
 
-            $fileObjectPaths = $db->fetchAll(sprintf($sql, 'fileobject'));
+            $fileObjectPaths = $db->fetchAllAssociative(sprintf($sql, 'fileobject'));
             foreach ($fileObjectPaths as $objectPath) {
                 $storage->delete($objectPath['fileobject']);
             }
 
-            $db->query('DELETE FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY);');
+            $db->executeQuery('DELETE FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY);');
         }
 
         $deleteArchiveLogDate = (new DateTimeImmutable())->sub(new DateInterval('P'. ($this->config['applicationlog']['delete_archive_threshold'] ?? 6) .'M'));
@@ -117,7 +117,7 @@ class LogArchiveTask implements TaskInterface
                 ]);
 
             if ($archiveTableExists) {
-                $db->exec('DROP TABLE IF EXISTS `' . ($this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase()) . '`.' . $applicationLogArchiveTable);
+                $db->executeStatement('DROP TABLE IF EXISTS `' . ($this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase()) . '`.' . $applicationLogArchiveTable);
                 $storage->deleteDirectory($deleteArchiveLogDate->format('Y/m'));
             }
 

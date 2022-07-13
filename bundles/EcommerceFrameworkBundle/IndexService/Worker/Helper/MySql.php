@@ -51,7 +51,7 @@ class MySql
 
         if (!Cache\RuntimeCache::isRegistered($cacheKey)) {
             $columns = [];
-            $data = $this->db->fetchAll('SHOW COLUMNS FROM ' . $table);
+            $data = $this->db->fetchAllAssociative('SHOW COLUMNS FROM ' . $table);
             foreach ($data as $d) {
                 $columns[] = $d['Field'];
             }
@@ -99,7 +99,7 @@ class MySql
           PRIMARY KEY  (`o_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
-        $data = $this->db->fetchAll('SHOW COLUMNS FROM ' . $this->tenantConfig->getTablename());
+        $data = $this->db->fetchAllAssociative('SHOW COLUMNS FROM ' . $this->tenantConfig->getTablename());
         $columns = [];
         foreach ($data as $d) {
             $columns[$d['Field']] = $d;
@@ -179,7 +179,7 @@ class MySql
     protected function dbexec($sql)
     {
         $this->logSql($sql);
-        $this->db->query($sql);
+        $this->db->executeQuery($sql);
     }
 
     protected function logSql($sql)

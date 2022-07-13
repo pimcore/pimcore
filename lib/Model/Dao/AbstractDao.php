@@ -72,7 +72,7 @@ abstract class AbstractDao implements DaoInterface
 
             if (!$columns || !$cache) {
                 $columns = [];
-                $data = $this->db->fetchAll('SHOW COLUMNS FROM ' . $table);
+                $data = $this->db->fetchAllAssociative('SHOW COLUMNS FROM ' . $table);
                 foreach ($data as $d) {
                     $columns[] = $d['Field'];
                 }

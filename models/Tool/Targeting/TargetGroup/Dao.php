@@ -59,7 +59,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setName($name);
         }
 
-        $data = $this->db->fetchAll('SELECT id FROM targeting_target_groups WHERE name = ?', [$this->model->getName()]);
+        $data = $this->db->fetchAllAssociative('SELECT id FROM targeting_target_groups WHERE name = ?', [$this->model->getName()]);
 
         if (count($data) === 1) {
             $this->getById($data[0]['id']);

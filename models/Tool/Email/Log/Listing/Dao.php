@@ -49,7 +49,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getDataArray()
     {
-        $emailLogData = $this->db->fetchAll('SELECT * FROM email_log ' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $emailLogData = $this->db->fetchAllAssociative('SELECT * FROM email_log ' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         return $emailLogData;
     }

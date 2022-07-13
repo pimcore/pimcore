@@ -603,7 +603,7 @@ class Dao extends Model\Dao\AbstractDao
 
             $container = DataObject\Fieldcollection\Definition::getByKey($containerKey);
 
-            $data = $this->db->fetchAll(
+            $data = $this->db->fetchAllAssociative(
                 'SELECT * FROM '.$this->getTableName()
                 .' WHERE ooo_id = ? AND language IN ('.implode(
                     ',',
@@ -620,7 +620,7 @@ class Dao extends Model\Dao\AbstractDao
             $container = DataObject\Objectbrick\Definition::getByKey($containerKey);
             $fieldname = $context['fieldname'];
 
-            $data = $this->db->fetchAll(
+            $data = $this->db->fetchAllAssociative(
                 'SELECT * FROM '.$this->getTableName()
                 .' WHERE ooo_id = ? AND language IN ('.implode(',', $validLanguages).') AND `fieldname` = ?',
                 [
@@ -630,7 +630,7 @@ class Dao extends Model\Dao\AbstractDao
             );
         } else {
             $container = $this->model->getClass();
-            $data = $this->db->fetchAll(
+            $data = $this->db->fetchAllAssociative(
                 'SELECT * FROM '.$this->getTableName().' WHERE ooo_id = ? AND language IN ('.implode(
                     ',',
                     $validLanguages
@@ -738,10 +738,10 @@ class Dao extends Model\Dao\AbstractDao
 
                 // get available columns
                 $viewColumns = array_merge(
-                    $this->db->fetchAll('SHOW COLUMNS FROM `'.$defaultTable.'`'),
-                    $this->db->fetchAll('SHOW COLUMNS FROM `objects`')
+                    $this->db->fetchAllAssociative('SHOW COLUMNS FROM `'.$defaultTable.'`'),
+                    $this->db->fetchAllAssociative('SHOW COLUMNS FROM `objects`')
                 );
-                $localizedColumns = $this->db->fetchAll('SHOW COLUMNS FROM `'.$tablename.'`');
+                $localizedColumns = $this->db->fetchAllAssociative('SHOW COLUMNS FROM `'.$tablename.'`');
 
                 // get view fields
                 $viewFields = [];
@@ -788,7 +788,7 @@ QUERY;
                 }
 
                 // execute
-                $this->db->query($viewQuery);
+                $this->db->executeQuery($viewQuery);
             } catch (\Exception $e) {
                 Logger::error((string) $e);
             }
@@ -806,7 +806,7 @@ QUERY;
 
         $context = $this->model->getContext();
         if (isset($context['containerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick')) {
-            $this->db->query(
+            $this->db->executeQuery(
                 'CREATE TABLE IF NOT EXISTS `'.$table."` (
               `ooo_id` int(11) UNSIGNED NOT NULL default '0',
               `index` INT(11) NOT NULL DEFAULT '0',
@@ -820,7 +820,7 @@ QUERY;
             ) DEFAULT CHARSET=utf8mb4;'
             );
         } else {
-            $this->db->query(
+            $this->db->executeQuery(
                 'CREATE TABLE IF NOT EXISTS `'.$table."` (
               `ooo_id` int(11) UNSIGNED NOT NULL default '0',
               `language` varchar(10) NOT NULL DEFAULT '',
@@ -886,7 +886,7 @@ QUERY;
                 $queryTable = $this->getQueryTableName();
                 $queryTable .= '_'.$language;
 
-                $this->db->query(
+                $this->db->executeQuery(
                     'CREATE TABLE IF NOT EXISTS `'.$queryTable."` (
                       `ooo_id` int(11) UNSIGNED NOT NULL default '0',
                       `language` varchar(10) NOT NULL DEFAULT '',

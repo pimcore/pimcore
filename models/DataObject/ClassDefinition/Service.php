@@ -405,7 +405,7 @@ class Service
         $db = \Pimcore\Db::get();
         $tmp = [];
         foreach ($tableNames as $tableName) {
-            $tmp[$tableName] = $db->fetchAll('show columns from ' . $tableName);
+            $tmp[$tableName] = $db->fetchAllAssociative('show columns from ' . $tableName);
         }
 
         foreach ($tmp as $tableName => $columns) {
