@@ -277,6 +277,11 @@ class Asset extends Element\AbstractElement
             return null;
         }
 
+        \Pimcore::getEventDispatcher()->dispatch(
+            new AssetEvent($asset, ['params' => $params]),
+            AssetEvents::POST_LOAD
+        );
+
         return $asset;
     }
 
