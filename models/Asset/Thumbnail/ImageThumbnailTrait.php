@@ -435,15 +435,18 @@ trait ImageThumbnailTrait
      * @description Returns path for thumbnail image in a given file format
      * @param string $format
      * @param bool $deferred
-     * @return string
+     * @return self
      */
-    public function getThumbnailPathAs(string $format, $deferred = true)
+    public function getAsFormat(string $format, bool $deferred = true): self
     {
         $config = $this->getConfig();
         $config->setFormat($format);
 
         $this->config = $config;
 
-        return $this->getPath($deferred);
+        // In case we need to pre-populate the thumbnail in specific format before we use it.
+        $this->getPath($deferred);
+
+        return $this;
     }
 }
