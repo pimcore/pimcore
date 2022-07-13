@@ -440,11 +440,10 @@ trait ImageThumbnailTrait
     public function getThumbnailPathAs(string $format, $deferred = true)
     {
         $config = $this->getConfig();
-
         $config->setFormat($format);
+
         $this->config = $config;
 
-        $pathInfo = pathinfo($this->getPath($deferred));
-        return $pathInfo['dirname'] . DIRECTORY_SEPARATOR . $pathInfo['filename'] . '.' . $format;
+        return $this->getPath($deferred);
     }
 }
