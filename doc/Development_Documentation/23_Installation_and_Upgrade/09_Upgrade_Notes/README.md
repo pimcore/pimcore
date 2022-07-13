@@ -42,6 +42,7 @@
 - [Ecommerce][PricingManager] Token condition is deprecated and will be removed in Pimcore 11.
 - Parameter `pimcore.admin.session.attribute_bags` is deprecated and will be removed in Pimcore 11.
 - [Web2Print] Wkhtmltopdf Processor has been deprecated and will be removed in Pimcore 11. Please use HeadlessChrome or PDFreactor instead.
+- [Config] `Pimcore\Config\Config` has been deprecated and will be removed in Pimcore 11.
 
 
 ## 10.4.2
