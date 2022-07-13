@@ -117,6 +117,9 @@ final class AssetEvents
     const POST_DELETE_FAILURE = 'pimcore.asset.postDeleteFailure';
 
     /**
+     * Arguments:
+     *  - params | array | contains the values that were passed to getById() as the second parameter
+     *
      * @Event("Pimcore\Event\Model\AssetEvent")
      *
      * @var string
