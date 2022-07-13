@@ -157,7 +157,7 @@ class AbstractLazyLoadingTest extends ModelTestCase
 
         //once more reload object from database to check consistency of
         //data object loaded from cache - see also https://github.com/pimcore/pimcore/issues/12290
-        Concrete::getById($object->getId(), true);
+        Concrete::getById($object->getId(), ['force' => true]);
 
         $callback($objectCache);
 

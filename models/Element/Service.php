@@ -44,6 +44,7 @@ use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -504,22 +505,49 @@ class Service extends Model\AbstractModel
     /**
      * @param  string $type
      * @param  int $id
-     * @param  bool $force
+     * @param  array|bool $force
      *
      * @return Asset|AbstractObject|Document|null
      */
     public static function getElementById($type, $id, $force = false)
     {
         $element = null;
+        $params = self::prepareGetByIdParams($force, __METHOD__, func_num_args() > 2);
         if ($type === 'asset') {
-            $element = Asset::getById($id, $force);
+            $element = Asset::getById($id, $params);
         } elseif ($type === 'object') {
-            $element = DataObject::getById($id, $force);
+            $element = DataObject::getById($id, $params);
         } elseif ($type === 'document') {
-            $element = Document::getById($id, $force);
+            $element = Document::getById($id, $params);
         }
 
         return $element;
+    }
+
+    /**
+     * @internal
+     *
+     * @param bool|array $params
+     *
+     * @return array
+     */
+    public static function prepareGetByIdParams(/*array */$params, string $method, bool $paramsGiven): array
+    {
+        if (is_bool($params) && $paramsGiven) {
+            trigger_deprecation('pimcore/pimcore', '10.5', 'Using $force=%s on %s is deprecated, please use array-syntax [force=>true] instead.', $params ? 'true' : 'false', $method);
+            $params = ['force' => $params];
+        } elseif ($params === false) {
+            $params = [];
+        }
+
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults([
+            'force' => false,
+        ]);
+
+        $resolver->setAllowedTypes('force', 'bool');
+
+        return $resolver->resolve($params);
     }
 
     /**

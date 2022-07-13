@@ -67,7 +67,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             \Pimcore::collectGarbage();
 
             //reload data object from database
-            $object = LazyLoading::getById($id, true);
+            $object = LazyLoading::getById($id, ['force' => true]);
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix);
@@ -129,7 +129,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             \Pimcore::collectGarbage();
 
             //reload data object from database
-            $object = LazyLoading::getById($id, true);
+            $object = LazyLoading::getById($id, ['force' => true]);
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix);
@@ -176,7 +176,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             \Pimcore::collectGarbage();
 
             //reload data object from database
-            $object = LazyLoading::getById($id, true);
+            $object = LazyLoading::getById($id, ['force' => true]);
 
             $contentShouldBeIncluded = ($objectType === 'inherited') ? false : true;
 
@@ -227,7 +227,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             \Pimcore::collectGarbage();
 
             //reload data object from database
-            $object = LazyLoading::getById($id, true);
+            $object = LazyLoading::getById($id, ['force' => true]);
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix);
@@ -278,7 +278,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             \Pimcore::collectGarbage();
 
             //reload data object from database
-            $object = LazyLoading::getById($id, true);
+            $object = LazyLoading::getById($id, ['force' => true]);
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);
@@ -335,7 +335,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             \Pimcore::collectGarbage();
 
             //reload data object from database
-            $object = LazyLoading::getById($id, true);
+            $object = LazyLoading::getById($id, ['force' => true]);
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);
@@ -389,7 +389,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             \Pimcore::collectGarbage();
 
             //reload data object from database
-            $object = LazyLoading::getById($id, true);
+            $object = LazyLoading::getById($id, ['force' => true]);
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);
@@ -431,11 +431,11 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         $object->getBricks()->setLazyLoadingLocalizedTest($brick);
         $object->save();
 
-        $object = Concrete::getById($object->getId(), true);
+        $object = Concrete::getById($object->getId(), ['force' => true]);
         $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLadvancedObjects('en')) > 0);
         $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLadvancedObjects('de')) > 0);
 
-        $object = Concrete::getById($object->getId(), true);
+        $object = Concrete::getById($object->getId(), ['force' => true]);
         array_pop($relations);
 
         $brick = $object->getBricks()->getLazyLoadingLocalizedTest();
@@ -444,7 +444,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         $lFields->setLocalizedValue('ladvancedObjects', $relations, 'de');
         $object->save();
 
-        $object = Concrete::getById($object->getId(), true);
+        $object = Concrete::getById($object->getId(), ['force' => true]);
         $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLadvancedObjects('en')) > 0);
         $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLadvancedObjects('de')) > 0);
 
@@ -459,7 +459,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             \Pimcore::collectGarbage();
 
             //reload data object from database
-            $object = LazyLoading::getById($id, true);
+            $object = LazyLoading::getById($id, ['force' => true]);
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);

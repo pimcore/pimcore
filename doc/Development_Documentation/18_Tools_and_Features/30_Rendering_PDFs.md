@@ -6,7 +6,7 @@ You can use the built in Web2Print functionality to accomplish this.
 Please make sure that you have set up the web2print functionality correctly ("Settings" -> "Web2Print Settings").
 
 You don't need to enable the Web2Print Documents in Pimcore, you 
-just have to provide the correct settings (Tool -> WkHtmlToPdf / PDFreactor) and the corresponding settings.
+just have to provide the correct settings (Tool -> HeadlessChrome / PDFreactor) and the corresponding settings.
 
 In your controller you just have to return the PDF instead of the HTML. 
 
@@ -51,8 +51,19 @@ class BlogController extends FrontendController
 
             $adapter = \Pimcore\Web2Print\Processor::getInstance();
             //add custom settings if necessary
-            if ($adapter instanceof \Pimcore\Web2Print\Processor\WkHtmlToPdf) {
-                $params['adapterConfig'] = '-O landscape';
+            if ($adapter instanceof \Pimcore\Web2Print\Processor\HeadlessChrome) {
+                $params['adapterConfig'] = [
+                    'landscape' => false,
+                    'printBackground' => true,
+                    'format' => 'A4',
+                    'margin' => [
+                        'top' => '16 mm',
+                        'bottom' => '30 mm',
+                        'right' => '8 mm',
+                        'left' => '8 mm',
+                    ],
+                    'displayHeaderFooter' => false,
+                ];
             } elseif($adapter instanceof \Pimcore\Web2Print\Processor\PdfReactor) {
                 //Config settings -> http://www.pdfreactor.com/product/doc/webservice/php.html#Configuration
                 $params['adapterConfig'] = [

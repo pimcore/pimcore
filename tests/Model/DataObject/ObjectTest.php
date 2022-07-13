@@ -133,7 +133,7 @@ class ObjectTest extends ModelTestCase
         $this->assertEquals($userId, $object->getUserModification(), 'Expected custom user modification id');
 
         //auto generated user modification
-        $object = DataObject::getById($object->getId(), true);
+        $object = DataObject::getById($object->getId(), ['force' => true]);
         $object->save();
         $this->assertEquals(0, $object->getUserModification(), 'Expected auto assigned user modification id');
     }
@@ -156,7 +156,7 @@ class ObjectTest extends ModelTestCase
 
         //auto generated modification date
         $currentTime = time();
-        $object = DataObject::getById($object->getId(), true);
+        $object = DataObject::getById($object->getId(), ['force' => true]);
         $object->save();
         $this->assertGreaterThanOrEqual($currentTime, $object->getModificationDate(), 'Expected auto assigned modification date');
     }

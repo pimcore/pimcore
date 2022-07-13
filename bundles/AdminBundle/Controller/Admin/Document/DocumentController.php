@@ -476,7 +476,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $document = Document::getById((int) $request->get('id'));
 
         $oldPath = $document->getDao()->getCurrentFullPath();
-        $oldDocument = Document::getById($document->getId(), true);
+        $oldDocument = Document::getById($document->getId(), ['force' => true]);
 
         // this prevents the user from renaming, relocating (actions in the tree) if the newest version isn't the published one
         // the reason is that otherwise the content of the newer not published version will be overwritten

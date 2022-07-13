@@ -182,7 +182,7 @@ class Asset extends Element\AbstractElement
      * Static helper to get an asset by the passed path
      *
      * @param string $path
-     * @param bool $force
+     * @param array|bool $force
      *
      * @return static|null
      */
@@ -198,7 +198,7 @@ class Asset extends Element\AbstractElement
             $asset = new static();
             $asset->getDao()->getByPath($path);
 
-            return static::getById($asset->getId(), $force);
+            return static::getById($asset->getId(), Service::prepareGetByIdParams($force, __METHOD__, func_num_args() > 1));
         } catch (NotFoundException $e) {
             return null;
         }
@@ -225,7 +225,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param int $id
-     * @param bool $force
+     * @param array|bool $force
      *
      * @return static|null
      */
@@ -238,14 +238,16 @@ class Asset extends Element\AbstractElement
         $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
 
-        if (!$force && RuntimeCache::isRegistered($cacheKey)) {
+        $params = Service::prepareGetByIdParams($force, __METHOD__, func_num_args() > 1);
+
+        if (!$params['force'] && RuntimeCache::isRegistered($cacheKey)) {
             $asset = RuntimeCache::get($cacheKey);
             if ($asset && static::typeMatch($asset)) {
                 return $asset;
             }
         }
 
-        if ($force || !($asset = Cache::load($cacheKey))) {
+        if ($params['force'] || !($asset = Cache::load($cacheKey))) {
             $asset = new static();
 
             try {

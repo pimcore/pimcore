@@ -1,6 +1,12 @@
 # Upgrade Notes
 
 ## 10.5.0
+
+- [Element Getter] Calling the methods `Asset::getById()`, `Document::getById()` and `DataObject::getById()` using the `$force` parameter (true/false) is deprecated and will be    removed in Pimcore 11.  Instead of using the `$force` parameter, it  is recommended to call the method using the params array.
+  eg: Currently, (To load the latest element data from database), the method is called like `Asset::getById($id, true)`, `Document::getById($id, true)` or `DataObject::getById($id, true)`. According to the new implementation (To
+  load the latest element data from database), you should call the method like `Asset::getById($id, ['force' => true])`, `Document::getById($id, ['force' => true])` or `DataObject::getById($id, ['force' => true])`. So, to
+  load the latest element data from database, second argument should be an associative array with the key `force` and the value true/false.
+
 - [Navigation Builder] Calling the method `Pimcore\Navigation\Builder::getNavigation()` using extra arguments is deprecated and will be removed in Pimcore 11. Instead of using the extra arguments, it is recommended to call the method using the params array. eg: Currently, the `getNavigation()` method can be called by passing the config params `activeDocument`, `navigationRootDocument`, `htmlMenuIdPrefix`, `pageCallback`, `cache`, `maxDepth` and `cacheLifetime` as the arguments i.e `getNavigation($activeDocument, $navigationRootDocument, $htmlMenuIdPrefix, $pageCallback, $cache,$maxDepth, $cacheLifetime)`. According to the new implementation you should call the method like `getNavigation($params)` where `$params` should be an associative array with the keys `active`, `root`, `htmlMenuPrefix`, `pageCallback`, `cache`, `maxDepth` and `cacheLifetime`.
   
 - [Runtime Cache] The trait `\Pimcore\Cache\RuntimeCacheTrait` has been deprecated because of its ambiguous naming and usage of persisted cache along with the runtime object cache.
@@ -21,6 +27,8 @@
   Implement an [EventListener](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/EventListener/SessionBagListener.php) to register a session bag before the session is started.
 - [Ecommerce][PricingManager] Token condition is deprecated and will be removed in Pimcore 11.
 - Parameter `pimcore.admin.session.attribute_bags` is deprecated and will be removed in Pimcore 11.
+- [Web2Print] Wkhtmltopdf Processor has been deprecated and will be removed in Pimcore 11. Please use HeadlessChrome or PDFreactor instead.
+
 
 ## 10.4.2
 - When maintenance mode is active, all commands are prevented from starting (not just commands inheriting from `AbstractCommand`).

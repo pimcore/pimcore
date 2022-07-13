@@ -360,7 +360,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * Static helper to get an object by the passed ID
      *
      * @param int $id
-     * @param bool $force
+     * @param array|bool $force
      *
      * @return static|null
      */
@@ -373,14 +373,16 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
 
-        if (!$force && RuntimeCache::isRegistered($cacheKey)) {
+        $params = Model\Element\Service::prepareGetByIdParams($force, __METHOD__, func_num_args() > 1);
+
+        if (!$params['force'] && RuntimeCache::isRegistered($cacheKey)) {
             $object = RuntimeCache::get($cacheKey);
             if ($object && static::typeMatch($object)) {
                 return $object;
             }
         }
 
-        if ($force || !($object = Cache::load($cacheKey))) {
+        if ($params['force'] || !($object = Cache::load($cacheKey))) {
             $object = new Model\DataObject();
 
             try {
@@ -426,7 +428,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @param string $path
-     * @param bool $force
+     * @param array|bool $force
      *
      * @return static|null
      */
@@ -442,7 +444,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             $object = new static();
             $object->getDao()->getByPath($path);
 
-            return static::getById($object->getId(), $force);
+            return static::getById($object->getId(), Model\Element\Service::prepareGetByIdParams($force, __METHOD__, func_num_args() > 1));
         } catch (Model\Exception\NotFoundException $e) {
             return null;
         }

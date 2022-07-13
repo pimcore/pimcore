@@ -761,7 +761,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     }
 
     /**
-     * @param array<DataObject\ClassDefinition|null> $classes
+     * @param DataObject\ClassDefinition[] $classes
      *
      * @return array
      */
@@ -769,10 +769,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     {
         $reduced = [];
         foreach ($classes as $class) {
-            if (null === $class) {
-                continue;
-            }
-
             $reduced[] = [
                 'id' => $class->getId(),
                 'name' => $class->getName(),
@@ -1363,7 +1359,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $object->save();
             $treeData = $this->getTreeNodeConfig($object);
 
-            $newObject = DataObject::getById($object->getId(), true);
+            $newObject = DataObject::getById($object->getId(), ['force' => true]);
 
             if ($request->get('task') == 'publish') {
                 $object->deleteAutoSaveVersions($this->getAdminUser()->getId());
@@ -1409,7 +1405,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             $treeData = $this->getTreeNodeConfig($object);
 
-            $newObject = DataObject::getById($object->getId(), true);
+            $newObject = DataObject::getById($object->getId(), ['force' => true]);
 
             return $this->adminJson([
                 'success' => true,

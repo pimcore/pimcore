@@ -78,7 +78,7 @@ class DocumentTest extends ModelTestCase
 
     public function reloadPage()
     {
-        $this->testPage = Page::getById($this->testPage->getId(), true);
+        $this->testPage = Page::getById($this->testPage->getId(), ['force' => true]);
     }
 
     public function testCacheChildren()
@@ -139,7 +139,7 @@ class DocumentTest extends ModelTestCase
 
         //auto generated modification date
         $currentTime = time();
-        $document = \Pimcore\Model\Document::getById($document->getId(), true);
+        $document = \Pimcore\Model\Document::getById($document->getId(), ['force' => true]);
         $document->save();
         $this->assertGreaterThanOrEqual($currentTime, $document->getModificationDate(), 'Expected auto assigned modification date');
     }
@@ -159,7 +159,7 @@ class DocumentTest extends ModelTestCase
         $this->assertEquals($userId, $document->getUserModification(), 'Expected custom user modification id');
 
         //auto generated user modification
-        $document = \Pimcore\Model\Document::getById($document->getId(), true);
+        $document = \Pimcore\Model\Document::getById($document->getId(), ['force' => true]);
         $document->save();
         $this->assertEquals(0, $document->getUserModification(), 'Expected auto assigned user modification id');
     }
@@ -183,7 +183,7 @@ class DocumentTest extends ModelTestCase
         $emailDocument->setReplyTo($replyTo);
 
         $emailDocument->save();
-        $emailDocument = Email::getById($emailDocument->getId(), true);
+        $emailDocument = Email::getById($emailDocument->getId(), ['force' => true]);
 
         $this->assertEquals($subject, $emailDocument->getSubject());
         $this->assertEquals($to, $emailDocument->getTo());
@@ -217,7 +217,7 @@ class DocumentTest extends ModelTestCase
         // transform to child
         $sibling->setParentId($this->testPage->getId());
         $sibling->save();
-        $child = Page::getById($sibling->getId(), true);
+        $child = Page::getById($sibling->getId(), ['force' => true]);
         // editable should still be null as no master document is set
 
         $childEditable = $child->getEditable('headline');
@@ -226,7 +226,7 @@ class DocumentTest extends ModelTestCase
         // set master document
         $child->setContentMasterDocumentId($this->testPage->getId());
         $child->save();
-        $child = Page::getById($child->getId(), true);
+        $child = Page::getById($child->getId(), ['force' => true]);
 
         // now the value should get inherited
         $childEditable = $child->getEditable('headline');

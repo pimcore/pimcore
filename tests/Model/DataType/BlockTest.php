@@ -143,7 +143,7 @@ class BlockTest extends ModelTestCase
         $objectRef->save(); //block data should retain here
 
         //reload from db
-        $object = DataObject::getById($objectRef->getId(), true);
+        $object = DataObject::getById($objectRef->getId(), ['force' => true]);
 
         $loadedData = $object->getTestblock();
 
@@ -194,7 +194,7 @@ class BlockTest extends ModelTestCase
         $objectRef->save(); //block data should retain here
 
         //reload from db
-        $object = DataObject::getById($objectRef->getId(), true);
+        $object = DataObject::getById($objectRef->getId(), ['force' => true]);
         $loadedData = $object->getLtestblock('de');
 
         $loadedLink = $loadedData[0]['lblocklink']->getData();
@@ -241,7 +241,7 @@ class BlockTest extends ModelTestCase
         $source->save();
 
         //reload target and fetch source
-        $target = DataObject::getById($target->getId(), true);
+        $target = DataObject::getById($target->getId(), ['force' => true]);
         $sourceFromRef = $target->getHref();
 
         $loadedReference = $sourceFromRef->getLtestblock('de')[0]['lblockadvancedRelations']->getData();
