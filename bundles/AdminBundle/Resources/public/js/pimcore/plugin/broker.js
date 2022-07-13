@@ -38,7 +38,7 @@ pimcore.plugin.broker = {
 
     executePlugin: function (plugin, event, params) {
         if (typeof plugin[event] == "function") {
-            const warnText = `Plugins are depreacted. Please use event listener - ${plugin.getClassName()}::${event}`;
+            const warnText = `Plugins are deprecated. Please use event listener - ${plugin.getClassName()}::${event}`;
             if(!this.printedWarns.includes(warnText)) {
                 console.warn(warnText);
                 this.printedWarns.push(warnText);
