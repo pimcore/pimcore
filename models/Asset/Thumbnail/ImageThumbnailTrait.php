@@ -432,18 +432,19 @@ trait ImageThumbnailTrait
 
 
     /**
-     * @description Returns public path for selected thumbnail with given type
+     * @description Returns path for thumbnail image in a given file format
      * @param string $format
      * @param bool $deferred
      * @return string
      */
-    public function getThumbnailAs(string $format, $deferred = true)
+    public function getThumbnailPathAs(string $format, $deferred = false)
     {
-        $validImageFormats = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
-        if (in_array(strtolower($format), $validImageFormats)) {
-            $pathInfo = pathinfo($this->getPath($deferred));
-            return $pathInfo['dirname'] . DIRECTORY_SEPARATOR . $pathInfo['filename'] . '.' . $format;
-        }
-        return $this->getPath($deferred);
+        $config = $this->getConfig();
+
+        $config->setFormat($format);
+        $this->config = $config;
+
+        $pathInfo = pathinfo($this->getPath($deferred));
+        return $pathInfo['dirname'] . DIRECTORY_SEPARATOR . $pathInfo['filename'] . '.' . $format;
     }
 }
