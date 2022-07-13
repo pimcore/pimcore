@@ -121,7 +121,6 @@ final class Config
                 $config[$data['id']] = $data;
             }
         }
-        //$config = new \Pimcore\Config\Config($config, true);
 
         return $config;
     }
