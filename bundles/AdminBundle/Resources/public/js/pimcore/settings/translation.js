@@ -312,7 +312,10 @@ pimcore.settings.translation.domain = Class.create({
                     tooltip: t('delete'),
                     icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                     handler: function (grid, rowIndex) {
-                        grid.getStore().removeAt(rowIndex);
+                        let data = grid.getStore().getAt(rowIndex);
+                        pimcore.helpers.deleteConfirm(t('translation'), data.data.key, function () {
+                            grid.getStore().removeAt(rowIndex);
+                        }.bind(this));
                     }.bind(this)
                 }]
             });

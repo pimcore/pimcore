@@ -228,19 +228,17 @@ pimcore.settings.videothumbnail.panel = Class.create({
     },
 
     deleteField: function (tree, record) {
-        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('thumbnail'), record.data.text), function (btn) {
-            if (btn == 'yes') {
-                Ext.Ajax.request({
-                    url: Routing.generate('pimcore_admin_settings_videothumbnaildelete'),
-                    method: 'DELETE',
-                    params: {
-                        name: record.data.id
-                    }
-                });
+        pimcore.helpers.deleteConfirm(t('thumbnail'), record.data.text, function () {
+            Ext.Ajax.request({
+                url: Routing.generate('pimcore_admin_settings_videothumbnaildelete'),
+                method: 'DELETE',
+                params: {
+                    name: record.data.id
+                }
+            });
 
-                this.getEditPanel().removeAll();
-                record.remove();
-            }
+            this.getEditPanel().removeAll();
+            record.remove();
         }.bind(this));
     }
 });

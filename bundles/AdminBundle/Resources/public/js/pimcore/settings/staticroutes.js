@@ -185,11 +185,10 @@ pimcore.settings.staticroutes = Class.create({
                         if (!data.data.writeable) {
                             return;
                         }
-                        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('staticroute'), data.data.name), function (btn) {
-                            if (btn == 'yes') {
-                                grid.getStore().removeAt(rowIndex);
-                            }
-                        }.bind(this))
+
+                        pimcore.helpers.deleteConfirm(t('staticroute'), data.data.name, function () {
+                            grid.getStore().removeAt(rowIndex);
+                        }.bind(this));
                     }.bind(this)
                 }]
             }
