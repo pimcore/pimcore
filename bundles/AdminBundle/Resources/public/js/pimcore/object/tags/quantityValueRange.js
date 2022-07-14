@@ -18,6 +18,21 @@ pimcore.object.tags.quantityValueRange = Class.create(pimcore.object.tags.abstra
     initialize: function (data, fieldConfig) {
         this.data = data;
         this.fieldConfig = fieldConfig;
+        this.applyDefaultValue();
+    },
+
+    applyDefaultValue: function() {
+        this.defaultUnit = null;
+        this.autoConvert = false;
+
+        if ((typeof this.data === "undefined" || this.data === null) && (this.fieldConfig.defaultUnit || this.fieldConfig.autoConvert)) {
+            this.data = {
+                unit: this.fieldConfig.defaultUnit,
+                autoConvert: this.fieldConfig.autoConvert
+            };
+            this.defaultUnit = this.data.unit;
+            this.autoConvert = this.data.autoConvert;
+        }
     },
 
     finishSetup: function () {
