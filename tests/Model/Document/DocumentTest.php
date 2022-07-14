@@ -76,8 +76,11 @@ class DocumentTest extends ModelTestCase
         $this->assertFalse($newParent->hasChildren());
     }
 
+    /**
+     * Verifies that asset PHP API version note is saved
+     */
     public function testSavingVersionNotes(){
-        $versionNote = ["versionNote" => "a new version"];
+        $versionNote = ["versionNote" => "a new version of this document"];
         $this->testPage = TestHelper::createEmptyDocumentPage();
         $this->testPage->save($versionNote);
         $versions = $this->testPage->getVersions();

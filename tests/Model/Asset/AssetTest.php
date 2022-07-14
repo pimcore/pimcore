@@ -88,6 +88,17 @@ class AssetTest extends ModelTestCase
         $this->assertFalse($newParent->hasChildren());
     }
 
+    /**
+     * Verifies that asset PHP API version note is saved
+     */
+    public function testSavingVersionNotes(){
+        $versionNote = ["versionNote" => "a new version of this asset"];
+        $this->testAsset = TestHelper::createImageAsset('', null, true, 'assets/images/image1.jpg');
+        $this->testAsset->save($versionNote);
+        $versions = $this->testAsset->getVersions();
+        $this->assertEquals(end($versions)->getNote(), $versionNote['versionNote']);
+    }
+
     public function testThumbnails()
     {
         $this->testAsset = TestHelper::createImageAsset('', null, true, 'assets/images/image1.jpg');
