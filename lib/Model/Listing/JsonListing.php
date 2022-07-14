@@ -17,15 +17,13 @@ namespace Pimcore\Model\Listing;
 
 use Pimcore\Model\AbstractModel;
 
-use Pimcore\Model\Listing\FilterListingInterface;
-use Pimcore\Model\Listing\OrderListingInterface;
 use Pimcore\Model\Listing\Traits\FilterListingTrait;
 use Pimcore\Model\Listing\Traits\OrderListingTrait;
 
 /**
  * @deprecated
  */
-abstract class JsonListing extends AbstractModel implements FilterListingInterface, OrderListingInterface
+abstract class JsonListing extends AbstractModel implements CallableFilterListingInterface, CallableOrderListingInterface
 {
     use FilterListingTrait;
     use OrderListingTrait;

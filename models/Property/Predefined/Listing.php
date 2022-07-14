@@ -17,8 +17,8 @@ namespace Pimcore\Model\Property\Predefined;
 
 use Pimcore\Model;
 use Pimcore\Model\AbstractModel;
-use Pimcore\Model\Listing\FilterListingInterface;
-use Pimcore\Model\Listing\OrderListingInterface;
+use Pimcore\Model\Listing\CallableFilterListingInterface;
+use Pimcore\Model\Listing\CallableOrderListingInterface;
 use Pimcore\Model\Listing\Traits\FilterListingTrait;
 use Pimcore\Model\Listing\Traits\OrderListingTrait;
 
@@ -28,7 +28,7 @@ use Pimcore\Model\Listing\Traits\OrderListingTrait;
  * @method \Pimcore\Model\Property\Predefined\Listing\Dao getDao()
  * @method int getTotalCount()
  */
-class Listing extends AbstractModel implements FilterListingInterface, OrderListingInterface
+class Listing extends AbstractModel implements CallableFilterListingInterface, CallableOrderListingInterface
 {
     use FilterListingTrait;
     use OrderListingTrait;

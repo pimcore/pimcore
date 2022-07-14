@@ -16,15 +16,17 @@
 
 namespace Pimcore\Model\Listing;
 
-interface OrderListingInterface
+interface CallableFilterListingInterface
 {
     /**
-     * @param callable|null $order
+     * @param callable|null $filter
      */
-    public function setOrder($order);
+    public function setFilter($filter);
 
     /**
      * @return callable|null
      */
-    public function getOrder();
+    public function getFilter();
+
+
 }
