@@ -1,4 +1,4 @@
-# Upgrading Pimcore from Version 10.x to Version 11
+# Preparing Pimcore for Version 11
 
 ## Preparatory Work
 - Replace plugins with [event listener](../../20_Extending_Pimcore/13_Bundle_Developers_Guide/06_Event_Listener_UI.md) as follows:

@@ -24,5 +24,5 @@ use: `bin/console doctrine:migrations:migrate --prefix=Pimcore\\Bundle\\CoreBund
 
 ## Upgrading from earlier Versions
 - [Upgrade from Version 6 to Version X](./10_V6_to_V10.md)
-- [Upgrade from Version X to Version XI](./11_V10_to_V11.md)
+- [Preparing for Version 11](./11_Preparing_for_V11.md)
 
