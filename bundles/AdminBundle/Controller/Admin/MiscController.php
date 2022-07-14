@@ -40,9 +40,7 @@ use Pimcore\Bundle\AdminBundle\Helper\AdminJsHelperService;
  */
 class MiscController extends AdminController
 {
-    public function __construct (private AdminJsHelperService $adminJsHelperService)
-    {
-    }
+
         /**
      * @Route("/get-available-controller-references", name="pimcore_admin_misc_getavailablecontroller_references", methods={"GET"})
      *
@@ -128,14 +126,14 @@ class MiscController extends AdminController
      *
      * @return Response
      */
-    public function scriptProxyAction(Request $request)
+    public function scriptProxyAction(Request $request, AdminJsHelperService $adminJsHelperService)
     {
         if ($storageFile = $request->get('storageFile')) {
             $fileExtension = \Pimcore\File::getFileExtension ($storageFile);
 
             $cacheDir = \Pimcore::getKernel ()->getCacheDir ();
             $jsCacheDir = $cacheDir . '/minifiedJs/';
-            if ($this->adminJsHelperService->isMinifiedScriptExists ($storageFile)) {
+            if ($adminJsHelperService->isMinifiedScriptExists ($storageFile)) {
                 $scriptsContent = file_get_contents ($jsCacheDir . $storageFile);
             }
             else {
