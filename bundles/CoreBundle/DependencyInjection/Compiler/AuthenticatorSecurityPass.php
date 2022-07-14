@@ -15,7 +15,6 @@
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
-use Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
