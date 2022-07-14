@@ -2,6 +2,8 @@
 
 ## 10.5.0
 
+- [Listings] `JsonListing` class is deprecated. Please use `FilterListingInterface`, `FilterListingTrait` and `OrderListingInterface`, `OrderListingTrait` instead. 
+  For examples please see existing classes, e.g. `Pimcore\Model\Document\DocType\Listing`.
 - [Element Getter] Calling the methods `Asset::getById()`, `Document::getById()` and `DataObject::getById()` using the `$force` parameter (true/false) is deprecated and will be    removed in Pimcore 11.  Instead of using the `$force` parameter, it  is recommended to call the method using the params array.
   eg: Currently, (To load the latest element data from database), the method is called like `Asset::getById($id, true)`, `Document::getById($id, true)` or `DataObject::getById($id, true)`. According to the new implementation (To
   load the latest element data from database), you should call the method like `Asset::getById($id, ['force' => true])`, `Document::getById($id, ['force' => true])` or `DataObject::getById($id, ['force' => true])`. So, to

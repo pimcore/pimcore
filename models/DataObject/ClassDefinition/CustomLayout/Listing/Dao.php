@@ -47,6 +47,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
         if ($this->model->getFilter()) {
             $layouts = array_filter($layouts, $this->model->getFilter());
         }
+        if ($this->model->getOrder()) {
+            usort($layouts, $this->model->getOrder());
+        }
         $this->model->setLayoutDefinitions($layouts);
 
         return $layouts;

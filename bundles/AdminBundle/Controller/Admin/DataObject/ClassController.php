@@ -370,7 +370,8 @@ class ClassController extends AdminController implements KernelControllerEventIn
             $currentLayoutId = $layout->getId();
             return $currentLayoutId === $id || str_starts_with($currentLayoutId, $id . ".brick.");
         });
-        foreach ($customLayouts as $customLayout) {
+
+        foreach ($customLayouts->getLayoutDefinitions() as $customLayout) {
             $customLayout->delete();
         }
 
@@ -637,8 +638,10 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $customLayouts->setFilter(function (DataObject\ClassDefinition\CustomLayout $layout) {
             return !str_contains($layout->getId(), ".brick.");
         });
-        $customLayouts->setOrder('ASC');
-        $customLayouts->setOrderKey('name');
+        $customLayouts->setOrder(function (DataObject\ClassDefinition\CustomLayout $a, DataObject\ClassDefinition\CustomLayout $b) {
+            return strcmp($a->getName(), $b->getName());
+        });
+
         $customLayouts = $customLayouts->load();
         foreach ($customLayouts as $layout) {
             $mapping[$layout->getClassId()][] = $layout;

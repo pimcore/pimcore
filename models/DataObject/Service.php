@@ -1021,7 +1021,9 @@ class Service extends Model\Element\Service
 
         $classId = $object->getClassId();
         $list = new ClassDefinition\CustomLayout\Listing();
-        $list->setOrderKey('name');
+        $list->setOrder(function (ClassDefinition\CustomLayout $a, ClassDefinition\CustomLayout $b) {
+            return strcmp($a->getName(), $b->getName());
+        });
         if (is_array($layoutPermissions) && count($layoutPermissions)) {
             $layoutIds = array_values($layoutPermissions);
         }

@@ -15,26 +15,26 @@
 
 namespace Pimcore\Model\Listing\Traits;
 
-trait FilterListingTrait
+trait OrderListingTrait
 {
     /**
      * @var callable|null
      */
-    protected $filter;
+    protected $order;
 
     /**
      * @return callable|null
      */
-    public function getFilter()
+    public function getOrder()
     {
-        return $this->filter;
+        return $this->order;
     }
 
     /**
-     * @param callable|null $filter
+     * @param callable|null $order
      */
-    public function setFilter($filter)
+    public function setOrder($order)
     {
-        $this->filter = $filter;
+        $this->order = $order;
     }
 }
