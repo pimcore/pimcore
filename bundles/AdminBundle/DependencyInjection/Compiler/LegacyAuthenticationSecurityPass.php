@@ -39,6 +39,7 @@ final class LegacyAuthenticationSecurityPass implements CompilerPassInterface
             new FileLocator(__DIR__.'/../../Resources/config')
         );
 
+        // @phpstan-ignore-next-line always enabled when new authenticator is set
         if (!$container->hasParameter('security.authenticator.manager.enabled')) {
             $loader->load('security_services_legacy.yaml');
         }
