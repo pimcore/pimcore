@@ -52,11 +52,6 @@ final class PimcoreAdminExtension extends Extension
         $loader->load('export.yaml');
         $loader->load('aliases.yaml');
 
-        //@TODO: Remove in Pimcore 11
-        if(!$container->hasParameter('security.authenticator.manager.enabled')) {
-            $loader->load('security_services_legacy.yaml');
-        }
-
 
         //Set Config for GDPR data providers to container parameters
         $container->setParameter('pimcore.gdpr-data-extrator.dataobjects', $config['gdpr_data_extractor']['dataObjects']);

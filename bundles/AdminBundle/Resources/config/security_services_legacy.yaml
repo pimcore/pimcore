@@ -2,6 +2,7 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
+        public: false
 
     #
     # SECURITY
@@ -9,7 +10,7 @@ services:
 
     # guard implementation handling admin form login for the main admin firewall
     Pimcore\Bundle\AdminBundle\Security\Guard\AdminAuthenticator:
-        public: false
+        class: Pimcore\Bundle\AdminBundle\Security\Guard\AdminAuthenticator
         arguments:
             $httpUtils: '@security.http_utils'
         calls:
@@ -19,7 +20,7 @@ services:
 
 
     Pimcore\Bundle\AdminBundle\Security\LogoutSuccessHandler:
-        public: false
+        class: Pimcore\Bundle\AdminBundle\Security\LogoutSuccessHandler
         arguments:
             - '@security.token_storage'
             - '@router'
@@ -30,13 +31,14 @@ services:
             - { name: monolog.logger, channel: security }
 
     Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler:
-        public: false
+        class: Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler
         calls:
             - [setLogger, ['@logger']]
         tags:
             - { name: monolog.logger, channel: security }
 
-    Pimcore\Bundle\AdminBundle\EventListener\BruteforceProtectionListener: ~
+    Pimcore\Bundle\AdminBundle\EventListener\BruteforceProtectionListener:
+        class: Pimcore\Bundle\AdminBundle\EventListener\BruteforceProtectionListener
 
     pimcore_admin.security.admin_authenticator:
         alias: Pimcore\Bundle\AdminBundle\Security\Guard\AdminAuthenticator
