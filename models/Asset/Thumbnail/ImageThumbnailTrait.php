@@ -433,9 +433,10 @@ trait ImageThumbnailTrait
 
 
     /**
-     * @description Returns path for thumbnail image in a given file format
+     * Returns path for thumbnail image in a given file format
+     *
      * @param string $format
-     * @return self
+     * @return $this
      */
     public function getAsFormat(string $format): self
     {
