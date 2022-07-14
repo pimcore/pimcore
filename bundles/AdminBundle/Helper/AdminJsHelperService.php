@@ -21,12 +21,13 @@ use Pimcore\Bundle\AdminBundle\Security\ContentSecurityPolicyHandler;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
+use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 use Pimcore\Version;
 
 /**
  * @internal
  */
-class AdminJsHelperService implements WarmableInterface
+class AdminJsHelperService implements CacheWarmerInterface
 {
 
     /**
@@ -56,6 +57,7 @@ class AdminJsHelperService implements WarmableInterface
         "pimcore/elementservice.js",
         "pimcore/helpers.js",
         "pimcore/error.js",
+        "pimcore/events.js",
 
         "pimcore/treenodelocator.js",
         "pimcore/helpers/generic-grid.js",
@@ -459,8 +461,6 @@ class AdminJsHelperService implements WarmableInterface
         "pimcore/plugin/broker.js",
         "pimcore/plugin/plugin.js",
 
-        "pimcore/event-dispatcher.js",
-
 
         "pimcore/report/panel.js",
         "pimcore/report/broker.js",
@@ -618,6 +618,8 @@ class AdminJsHelperService implements WarmableInterface
 
 
         if ($this->isMinifiedScriptExists ($storageFile)) {
+
+
             return ['storageFile' => basename ($storageFile),
                 '_dc' => \Pimcore\Version::getRevision ()
             ];
@@ -687,6 +689,7 @@ class AdminJsHelperService implements WarmableInterface
         $fileName = $dirPath . $fileName;
         $this->filesystem->dumpFile ($fileName, $scriptContent);
 
+
         return ['storageFile' => basename ($fileName),
             '_dc' => \Pimcore\Version::getRevision ()
         ];
@@ -721,15 +724,28 @@ class AdminJsHelperService implements WarmableInterface
     public function warmUp (string $cacheDir): array
     {
         if (!\Pimcore::disableMinifyJs ()) {
+            $storagePaths = array();
             $storageFiles = [self::SCRIPT_INTERNAL . '_minified_javascript_core.js', self::SCRIPT_BUNDLE . '_minified_javascript_core.js'];
             foreach ($storageFiles as $storageFile) {
-                ($storageFile == self::SCRIPT_INTERNAL . '_minified_javascript_core.js')? $this->minifyAndSaveJs ($this->internalScriptPaths, $storageFile):
-                $this->minifyAndSaveJs ($this->bundleScriptPaths, $storageFile);
+                if ($storageFile == self::SCRIPT_INTERNAL . '_minified_javascript_core.js') {
+                    $minifiedPaths = $this->minifyAndSaveJs ($this->internalScriptPaths, $storageFile);
+                } else {
+                    $minifiedPaths = $this->minifyAndSaveJs ($this->bundleScriptPaths, $storageFile);
+                }
+                $storagePaths[] = $this->jsCacheDir . $minifiedPaths['storageFile'];
             }
-            return $this->warmUp ($cacheDir);
+            return $storagePaths;
         } else {
-            return [];
+             return [];
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isOptional (): bool
+    {
+        return false;
     }
 
 }

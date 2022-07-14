@@ -31,6 +31,7 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Routing\RouterInterface;
+use Pimcore\Bundle\AdminBundle\Helper\AdminJsHelperService;
 
 /**
  * Modifies responses for editmode
@@ -49,6 +50,8 @@ class EditmodeListener implements EventSubscriberInterface
         'text/html',
     ];
 
+     protected const MIN_JS_STORAGE_PATH = 'edit_mode_minified_javascript_core.js';
+
     /**
      * @param EditmodeResolver $editmodeResolver
      * @param DocumentResolver $documentResolver
@@ -56,6 +59,7 @@ class EditmodeListener implements EventSubscriberInterface
      * @param PimcoreBundleManager $bundleManager
      * @param RouterInterface $router
      * @param EditmodeEditableDefinitionCollector $editableConfigCollector
+     * @param AdminJsHelperService $adminJsService
      */
     public function __construct(
         protected EditmodeResolver $editmodeResolver,
@@ -63,7 +67,8 @@ class EditmodeListener implements EventSubscriberInterface
         protected UserLoader $userLoader,
         protected PimcoreBundleManager $bundleManager,
         protected RouterInterface $router,
-        private EditmodeEditableDefinitionCollector $editableConfigCollector
+        private EditmodeEditableDefinitionCollector $editableConfigCollector,
+        private AdminJsHelperService $adminJsService
     ) {
     }
 
@@ -248,12 +253,16 @@ class EditmodeListener implements EventSubscriberInterface
                 $headHtml .= "\n";
             }
         } else {
-            $scriptContents = '';
-            foreach ($scripts as $scriptUrl) {
-                $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . $scriptUrl) . "\n\n\n";
-            }
 
-            $headHtml .= '<script src="' . $this->router->generate('pimcore_admin_misc_scriptproxy', \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents)) . '"></script>' . "\n";
+
+           if(!$this->adminJsService->isMinifiedScriptExists (self::MIN_JS_STORAGE_PATH)) {
+               $this->adminJsService->minifyAndSaveJs($scripts, self::MIN_JS_STORAGE_PATH);
+           }
+            $editModeMinScriptsFile = [
+                'storageFile' => basename (self::MIN_JS_STORAGE_PATH),
+                '_dc' => \Pimcore\Version::getRevision ()
+            ];
+            $headHtml .= '<script src="' . $this->router->generate ('pimcore_admin_misc_scriptproxy', $editModeMinScriptsFile) . '"></script>' . "\n";
         }
         $path = $this->router->generate('pimcore_admin_misc_jsontranslationssystem', [
             'language' => $language,
