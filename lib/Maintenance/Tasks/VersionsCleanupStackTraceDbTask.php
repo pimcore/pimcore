@@ -28,7 +28,7 @@ class VersionsCleanupStackTraceDbTask implements TaskInterface
      */
     public function execute()
     {
-        Db::get()->executeUpdate(
+        Db::get()->executeStatement(
             'UPDATE versions SET stackTrace = NULL WHERE date < ? AND stackTrace IS NOT NULL',
             [time() - 86400 * 7]
         );

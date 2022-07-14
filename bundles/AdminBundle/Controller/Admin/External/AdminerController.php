@@ -281,7 +281,7 @@ namespace {
 
                     if (!$return = Cache::load($cacheKey)) {
                         $db = Pimcore\Db::get();
-                        $return = $db->fetchAll('SELECT SCHEMA_NAME FROM information_schema.SCHEMATA');
+                        $return = $db->fetchAllAssociative('SELECT SCHEMA_NAME FROM information_schema.SCHEMATA');
 
                         foreach ($return as &$ret) {
                             $ret = $ret['SCHEMA_NAME'];

@@ -171,7 +171,7 @@
   "require-dev": {
     "codeception/codeception": "^4.1.12",
     "codeception/phpunit-wrapper": "^9",
-    "phpstan/phpstan": "^1.7.3",
+    "phpstan/phpstan": "^1.8.1",
     "phpstan/phpstan-symfony": "^1.2.2",
     "phpunit/phpunit": "^9.3",
     "spiritix/php-chrome-html2pdf": "^1.6",

@@ -91,7 +91,7 @@ class Dao
                 . $condition . $orderBy . ' ' . $limit;
         }
         $this->logger->info('Query: ' . $query);
-        $result = $this->db->fetchAll($query);
+        $result = $this->db->fetchAllAssociative($query);
         $this->lastRecordCount = (int)$this->db->fetchOne('SELECT FOUND_ROWS()');
         $this->logger->info('Query done.');
 
@@ -118,7 +118,7 @@ class Dao
             }
 
             $this->logger->info('Query: ' . $query);
-            $result = $this->db->fetchAll($query);
+            $result = $this->db->fetchAllAssociative($query);
             $this->logger->info('Query done.');
 
             return $result;
@@ -161,7 +161,7 @@ class Dao
             $query .= ' AND src IN (' . $subquery . ') GROUP BY dest';
 
             $this->logger->info('Query: ' . $query);
-            $result = $this->db->fetchAll($query);
+            $result = $this->db->fetchAllAssociative($query);
             $this->logger->info('Query done.');
 
             return $result;

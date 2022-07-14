@@ -786,7 +786,7 @@ class DataObjectHelperController extends AdminController
             $searchType = $request->get('searchType');
             $user = $this->getAdminUser();
             $db = Db::get();
-            $db->query('delete from gridconfig_favourites where '
+            $db->executeQuery('delete from gridconfig_favourites where '
                 . 'ownerId = ' . $user->getId()
                 . ' and classId = ' . $db->quote($classId) .
                 ' and searchType = ' . $db->quote($searchType)
@@ -872,7 +872,7 @@ class DataObjectHelperController extends AdminController
         ];
 
         $db = Db::get();
-        $allShares = $db->fetchAll('select s.sharedWithUserId, u.type from gridconfig_shares s, users u
+        $allShares = $db->fetchAllAssociative('select s.sharedWithUserId, u.type from gridconfig_shares s, users u
                       where s.sharedWithUserId = u.id and s.gridConfigId = ' . $gridConfigId);
 
         if ($allShares) {

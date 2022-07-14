@@ -67,12 +67,12 @@ class Dao extends Model\Dao\AbstractDao
     public function getTranslations(Document $document, $task = 'open')
     {
         $sourceId = $this->getTranslationSourceId($document);
-        $data = $this->db->fetchAll('SELECT id,language FROM documents_translations WHERE sourceId IN(?, ?) UNION SELECT sourceId as id,"source" FROM documents_translations WHERE id = ?', [$sourceId, $document->getId(), $document->getId()]);
+        $data = $this->db->fetchAllAssociative('SELECT id,language FROM documents_translations WHERE sourceId IN(?, ?) UNION SELECT sourceId as id,"source" FROM documents_translations WHERE id = ?', [$sourceId, $document->getId(), $document->getId()]);
 
         if ($task == 'open') {
             $linkedData = [];
             foreach ($data as $value) {
-                $linkedData = $this->db->fetchAll('SELECT id,language FROM documents_translations WHERE sourceId = ? UNION SELECT sourceId as id,"source" FROM documents_translations WHERE id = ?', [$value['id'], $value['id']]);
+                $linkedData = $this->db->fetchAllAssociative('SELECT id,language FROM documents_translations WHERE sourceId = ? UNION SELECT sourceId as id,"source" FROM documents_translations WHERE id = ?', [$value['id'], $value['id']]);
             }
 
             if (count($linkedData) > 0) {

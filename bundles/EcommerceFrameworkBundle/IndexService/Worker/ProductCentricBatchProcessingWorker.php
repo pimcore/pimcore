@@ -71,7 +71,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
         $primaryIdColumnType = $this->tenantConfig->getIdColumnType(true);
         $idColumnType = $this->tenantConfig->getIdColumnType(false);
 
-        $this->db->query('CREATE TABLE IF NOT EXISTS `' . $this->getBatchProcessingStoreTableName() . "` (
+        $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $this->getBatchProcessingStoreTableName() . "` (
           `o_id` $primaryIdColumnType,
           `o_virtualProductId` $idColumnType,
           `tenant` varchar(50) NOT NULL DEFAULT '',
@@ -111,7 +111,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
 
             //since no data has changed, just update flags, not data
             $this->executeTransactionalQuery(function () use ($subObjectId) {
-                $this->db->query('UPDATE ' . $this->getStoreTableName() . ' SET in_preparation_queue = 0 WHERE o_id = ? AND tenant = ?', [$subObjectId, $this->name]);
+                $this->db->executeQuery('UPDATE ' . $this->getStoreTableName() . ' SET in_preparation_queue = 0 WHERE o_id = ? AND tenant = ?', [$subObjectId, $this->name]);
             });
         }
     }
@@ -146,7 +146,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
             if ($objects) {
                 $this->executeTransactionalQuery(function () use ($objects) {
                     $updateStatement = 'UPDATE ' . $this->getStoreTableName() . ' SET in_preparation_queue = 1 WHERE tenant = ? AND o_id IN ('.implode(',', $objects).')';
-                    $this->db->query($updateStatement, [$this->name]);
+                    $this->db->executeQuery($updateStatement, [$this->name]);
                 });
             }
         }
@@ -400,7 +400,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
                     preparation_error = '',
                     trigger_info = ?,
                     in_preparation_queue = 1 WHERE tenant = ?";
-        $this->db->query($query, [
+        $this->db->executeQuery($query, [
             sprintf('Reset preparation queue in "%s".', $className),
             $this->name,
         ]);
@@ -416,7 +416,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
         $query = 'UPDATE '. $this->getStoreTableName() .' SET
                     trigger_info = ?,
                     crc_index = 0 WHERE tenant = ?';
-        $this->db->query($query, [
+        $this->db->executeQuery($query, [
             sprintf('Reset indexing queue in "%s".', $className),
             $this->name,
         ]);

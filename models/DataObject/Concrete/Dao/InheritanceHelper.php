@@ -370,12 +370,12 @@ class InheritanceHelper
         // remove the query row entirely ...
         if ($affectedIds) {
             $objectsWithBrickIds = [];
-            $objectsWithBricks = $this->db->fetchAll('SELECT ' . $this->idField . ' FROM ' . $this->storetable . ' WHERE ' . $this->idField . ' IN (' . implode(',', $affectedIds) . ')');
+            $objectsWithBricks = $this->db->fetchAllAssociative('SELECT ' . $this->idField . ' FROM ' . $this->storetable . ' WHERE ' . $this->idField . ' IN (' . implode(',', $affectedIds) . ')');
             foreach ($objectsWithBricks as $item) {
                 $objectsWithBrickIds[] = $item[$this->idField];
             }
 
-            $currentQueryItems = $this->db->fetchAll('SELECT * FROM ' . $this->querytable . ' WHERE ' . $this->idField . ' IN (' . implode(',', $affectedIds) . ')');
+            $currentQueryItems = $this->db->fetchAllAssociative('SELECT * FROM ' . $this->querytable . ' WHERE ' . $this->idField . ' IN (' . implode(',', $affectedIds) . ')');
 
             foreach ($currentQueryItems as $queryItem) {
                 $toBeRemoved = true;
@@ -484,7 +484,7 @@ class InheritanceHelper
             }
 
             if (!$parentIdGroups) {
-                $result = $this->db->fetchAll($query);
+                $result = $this->db->fetchAllAssociative($query);
 
                 if (isset($params['language'])) {
                     $result = $this->filterResultByLanguage($result, $params['language'], 'language');
@@ -573,12 +573,12 @@ class InheritanceHelper
         $relationCondition = $this->getRelationCondition($params);
 
         if (isset($params['language'])) {
-            $objectRelationsResult = $this->db->fetchAll('SELECT src_id as id, fieldname, position, count(*) as COUNT FROM ' . $this->relationtable . ' WHERE ' . $relationCondition . " src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') "
+            $objectRelationsResult = $this->db->fetchAllAssociative('SELECT src_id as id, fieldname, position, count(*) as COUNT FROM ' . $this->relationtable . ' WHERE ' . $relationCondition . " src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') "
                 . ' GROUP BY position, fieldname'
                 . ' HAVING `position` = "' . $params['language'] . '" OR ISNULL(`position`)', [$node['id']]);
             $objectRelationsResult = $this->filterResultByLanguage($objectRelationsResult, $params['language'], 'position');
         } else {
-            $objectRelationsResult = $this->db->fetchAll('SELECT fieldname, count(*) as COUNT FROM ' . $this->relationtable . ' WHERE ' . $relationCondition . " src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') GROUP BY fieldname;", [$node['id']]);
+            $objectRelationsResult = $this->db->fetchAllAssociative('SELECT fieldname, count(*) as COUNT FROM ' . $this->relationtable . ' WHERE ' . $relationCondition . " src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') GROUP BY fieldname;", [$node['id']]);
         }
 
         $objectRelations = [];

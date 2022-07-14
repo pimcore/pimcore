@@ -118,6 +118,16 @@ final class DataObjectEvents
 
     /**
      * Arguments:
+     *  - params | array | contains the values that were passed to getById() as the second parameter
+     *
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
+     *
+     * @var string
+     */
+    const POST_LOAD = 'pimcore.dataobject.postLoad';
+
+    /**
+     * Arguments:
      *  - target_element | Pimcore\Model\AbstractObject | contains the target object used in copying process
      *
      * @Event("Pimcore\Event\Model\DataObjectEvent")

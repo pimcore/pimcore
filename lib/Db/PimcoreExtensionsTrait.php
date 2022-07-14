@@ -198,7 +198,7 @@ trait PimcoreExtensionsTrait
             $sql .= ' WHERE ' . $where;
         }
 
-        return $this->executeUpdate($sql);
+        return $this->executeStatement($sql);
     }
 
     /**
@@ -230,7 +230,7 @@ trait PimcoreExtensionsTrait
             $sql .= ' WHERE ' . $where;
         }
 
-        return $this->executeUpdate($sql, $paramValues);
+        return $this->executeStatement($sql, $paramValues);
     }
 
     /**
@@ -375,7 +375,7 @@ trait PimcoreExtensionsTrait
             implode(', ', $set)
         );
 
-        return $this->executeUpdate($sql, $bind);
+        return $this->executeStatement($sql, $bind);
     }
 
     /**
@@ -543,7 +543,7 @@ trait PimcoreExtensionsTrait
     public function queryIgnoreError($sql, $exclusions = [])
     {
         try {
-            return $this->query($sql);
+            return $this->executeQuery($sql);
         } catch (\Exception $e) {
             foreach ($exclusions as $exclusion) {
                 if ($e instanceof $exclusion) {

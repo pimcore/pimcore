@@ -763,7 +763,7 @@ class Service extends Model\AbstractModel
         }
 
         $workspaceCids = [];
-        $userWorkspaces = $db->fetchAll('SELECT cpath, cid, list FROM users_workspaces_' . $type . ' WHERE userId = ?', [$user->getId()]);
+        $userWorkspaces = $db->fetchAllAssociative('SELECT cpath, cid, list FROM users_workspaces_' . $type . ' WHERE userId = ?', [$user->getId()]);
         if ($userWorkspaces) {
             // this collects the array that are on user-level, which have top priority
             foreach ($userWorkspaces as $userWorkspace) {
@@ -778,7 +778,7 @@ class Service extends Model\AbstractModel
             }
             $roleWorkspacesSql .= ' GROUP BY cpath';
 
-            $roleWorkspaces = $db->fetchAll($roleWorkspacesSql);
+            $roleWorkspaces = $db->fetchAllAssociative($roleWorkspacesSql);
         }
 
         $uniquePaths = [];

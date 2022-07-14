@@ -56,7 +56,7 @@ class Sql extends AbstractAdapter
                 $sql .= " LIMIT $offset,$limit";
             }
 
-            $data = $db->fetchAll($sql);
+            $data = $db->fetchAllAssociative($sql);
         }
 
         return ['data' => $data, 'total' => $total];
@@ -252,7 +252,7 @@ class Sql extends AbstractAdapter
         $data = [];
         if ($baseQuery) {
             $sql = $baseQuery['data'] . ' GROUP BY ' . $db->quoteIdentifier($field);
-            $data = $db->fetchAll($sql);
+            $data = $db->fetchAllAssociative($sql);
         }
 
         $filteredData = [];

@@ -15,6 +15,9 @@
 
 namespace Pimcore\Cache;
 
+/**
+ * @deprecated
+ */
 final class Runtime extends RuntimeCache
 {
     /**

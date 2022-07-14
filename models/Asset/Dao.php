@@ -57,7 +57,7 @@ class Dao extends Model\Element\Dao
             $this->assignVariablesToModel($data);
 
             if ($data['hasMetaData']) {
-                $metadataRaw = $this->db->fetchAll('SELECT * FROM assets_metadata WHERE cid = ?', [$data['id']]);
+                $metadataRaw = $this->db->fetchAllAssociative('SELECT * FROM assets_metadata WHERE cid = ?', [$data['id']]);
                 $metadata = [];
                 foreach ($metadataRaw as $md) {
                     $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
@@ -212,13 +212,13 @@ class Dao extends Model\Element\Dao
 
         //update assets child paths
         // we don't update the modification date here, as this can have side-effects when there's an unpublished version for an element
-        $this->db->query('update assets set path = replace(path,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . "), userModification = '" . $userId . "' where path like " . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
+        $this->db->executeQuery('update assets set path = replace(path,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . "), userModification = '" . $userId . "' where path like " . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
 
         //update assets child permission paths
-        $this->db->query('update users_workspaces_asset set cpath = replace(cpath,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . ') where cpath like ' . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
+        $this->db->executeQuery('update users_workspaces_asset set cpath = replace(cpath,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . ') where cpath like ' . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
 
         //update assets child properties paths
-        $this->db->query('update properties set cpath = replace(cpath,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . ') where cpath like ' . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
+        $this->db->executeQuery('update properties set cpath = replace(cpath,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . ') where cpath like ' . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
 
         return $assets;
     }
@@ -236,7 +236,7 @@ class Dao extends Model\Element\Dao
 
         // collect properties via parent - ids
         $parentIds = $this->getParentIds();
-        $propertiesRaw = $this->db->fetchAll('SELECT * FROM properties WHERE ((cid IN (' . implode(',', $parentIds) . ") AND inheritable = 1) OR cid = ? )  AND ctype='asset'", [$this->model->getId()]);
+        $propertiesRaw = $this->db->fetchAllAssociative('SELECT * FROM properties WHERE ((cid IN (' . implode(',', $parentIds) . ") AND inheritable = 1) OR cid = ? )  AND ctype='asset'", [$this->model->getId()]);
 
         // because this should be faster than mysql
         usort($propertiesRaw, function ($left, $right) {
@@ -579,7 +579,7 @@ class Dao extends Model\Element\Dao
         // so this runtime cache wouldn't be as efficient
         if (!isset(self::$thumbnailStatusCache[$assetId])) {
             self::$thumbnailStatusCache[$assetId] = [];
-            $thumbs = $this->db->fetchAll('SELECT * FROM assets_image_thumbnail_cache WHERE cid = :cid', [
+            $thumbs = $this->db->fetchAllAssociative('SELECT * FROM assets_image_thumbnail_cache WHERE cid = :cid', [
                 'cid' => $this->model->getId(),
             ]);
 
