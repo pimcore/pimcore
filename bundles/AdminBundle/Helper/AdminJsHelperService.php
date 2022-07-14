@@ -23,6 +23,9 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 use Pimcore\Version;
 
+/**
+ * @internal
+ */
 class AdminJsHelperService implements WarmableInterface
 {
 
