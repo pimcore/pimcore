@@ -357,26 +357,34 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
      */
     public function checkValidity($data, $omitMandatoryCheck = false, $params = []): void
     {
-        if ($omitMandatoryCheck) {
-            return;
+        $fieldName = $this->getName();
+
+        if ($data && !$data instanceof DataObject\Data\QuantityValueRange) {
+            throw new ValidationException('Expected an instance of QuantityValueRange');
         }
 
-        if ($this->getMandatory()
+        if ($omitMandatoryCheck === false && $this->getMandatory()
             && ($data === null
                 || $data->getMinimum() === null
                 || $data->getMaximum() === null
                 || $data->getUnitId() === null
             )
         ) {
-            throw new ValidationException(\sprintf('Empty mandatory field [ %s ]', $this->getName()));
+            throw new ValidationException(\sprintf('Empty mandatory field [ %s ]', $fieldName));
         }
 
         if (!empty($data)) {
             $minimum = $data->getMinimum();
             $maximum = $data->getMaximum();
 
-            if ((!empty($minimum) && (!\is_numeric($minimum) || !\is_numeric($maximum)))) {
-                throw new ValidationException(sprintf('Invalid dimension unit data: %s', $this->getName()));
+            if ($minimum !== null && (!\is_numeric($minimum) || !\is_numeric($maximum))) {
+                throw new ValidationException(sprintf('Invalid dimension unit data: %s', $fieldName));
+            }
+
+            if ($minimum > $maximum) {
+                throw new ValidationException(
+                    \sprintf('Minimum value in field [ %s ] is bigger than the maximum value', $fieldName)
+                );
             }
         }
     }
