@@ -76,6 +76,14 @@ class DocumentTest extends ModelTestCase
         $this->assertFalse($newParent->hasChildren());
     }
 
+    public function testSavingVersionNotes(){
+        $versionNote = ["versionNote" => "a new version"];
+        $this->testPage = TestHelper::createEmptyDocumentPage();
+        $this->testPage->save($versionNote);
+        $versions = $this->testPage->getVersions();
+        $this->assertEquals(end($versions)->getNote(), $versionNote['versionNote']);
+    }
+
     public function reloadPage()
     {
         $this->testPage = Page::getById($this->testPage->getId(), true);
