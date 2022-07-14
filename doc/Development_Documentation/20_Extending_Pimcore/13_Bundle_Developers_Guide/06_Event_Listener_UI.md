@@ -70,42 +70,6 @@ document.addEventListener(pimcore.events.pimcoreReady, (e) => {
 
 For registering events just add a listener with some of the events from [events.js](https://github.com/pimcore/pimcore/blob/10.x/bundles/AdminBundle/Resources/public/js/pimcore/events.js). 
 
-| Name                                 | Description                                                                                                     | Notes    |
-|--------------------------------------|-----------------------------------------------------------------------------------------------------------------|----------|
-| pimcoreReady                         | Pimcore backend UI is loaded, viewport is passed as parameter                                                   |          |
-| preOpenAsset                         | before asset is opened, asset and type are passed as parameters                                                 |          |
-| postOpenAsset                        | after asset is opened, asset and type are passed as parameters                                                  |          |
-| preSaveAsset                         | before asset is saved, asset id is passed as parameter                                                          |          |
-| postSaveAsset                        | after asset is saved, asset id is passed as parameter                                                           |          |
-| preDeleteAsset                       | before asset is deleted, asset id is passed as parameter                                                        |          |
-| postDeleteAsset                      | after asset is deleted, asset id is passed as parameter                                                         |          |
-| preOpenDocument                      | before document is opened, document and type are passed as parameters                                           |          |
-| postOpenDocument                     | after document is opened, document and type are passed as parameters                                            |          |
-| preSaveDocument                      | before document is saved, document, type, task and onlySaveVersion are passed as parameters                     |          |
-| postSaveDocument                     | after document is saved, document, type, task and onlySaveVersion are passed as parameters                      |          |
-| preDeleteDocument                    | before document is deleted, document id is passed as parameter                                                  |          |
-| postDeleteDocument                   | after document is deleted, document id is passed as parameter                                                   |          |
-| postAddDocumentTree                  | after the document is successfully created in the tree, document id is passed as parameter                      |          |
-| preOpenObject                        | before object is opened, object and type are passed as parameters                                               |          |
-| postOpenObject                       | after object is opened, object and type are passed as parameters                                                |          |
-| preSaveObject                        | before object is saved, object and type are passed as parameters                                                |          |
-| postSaveObject                       | after object is saved, object is passed as parameter                                                            |          |
-| preDeleteObject                      | before object is deleted, object id is passed as parameter                                                      |          |
-| postDeleteObject                     | after object is deleted, object id is passed as parameter                                                       |          |
-| postAddObjectTree                    | after the object is successfully created in the tree, object id is passed as parameter                          |          |
-| preCreateMenuOption                  | called before navigation menu is created                                                                        |          |
-| preCreateAssetMetadataEditor         | fired when asset metadata editor tab is created                                                                 | internal |
-| prepareAssetMetadataGridConfigurator | before opening the grid config dialog, url returning the metadata definitions is passed as parameter            |          |
-| prepareAssetTreeContextMenu          | before context menu is opened, menu, tree class and asset record are passed as parameters                       |          |
-| prepareObjectTreeContextMenu         | before context menu is opened, menu, tree class and object record are passed as parameters                      |          |
-| prepareDocumentTreeContextMenu       | before context menu is opened, menu, tree and document record are passed as parameters                          |          |
-| prepareClassLayoutContextMenu        | before context menu is opened, allowedTypes array is passed as parameters                                       |          |
-| prepareOnRowContextmenu              | before context menu is opened object folder grid, menu, folder class and object record are passed as parameters |          |
-| prepareOnObjectTreeNodeClick         | before the data object is opened, after a tree node has been clicked. The node item is passed as parameter.     |          | 
-| preGetObjectFolder                   | before the data object grid folder configuration is loaded from the server. request configuration is passed.    |          |
-| preCreateObjectGrid                  | before the data object grid items are loaded from the server. request configuration are passed.                 |          |
-| postOpenReport                       | fired when a report has been opened, report grid panel gets passed as argument                                  |          |
-| ...                                  | ...                                                                                                             |          |
 
 ## Validate Pimcore Object's Data in frontend before saving
 
@@ -159,8 +123,8 @@ It is possible to add leftside main navigation via event listener. See the follo
   So, the `xxx` part of the id `pimcore_menu_xxx` must match `pimcore.layout.toolbar.prototype.xxxMenu` to display the navigation item.
 
 ```javascript
-this.navEl = Ext.get('pimcore_menu_search').insertSibling('<li id="pimcore_menu_mds" data-menu-tooltip="mds extension" class="pimcore_menu_item pimcore_menu_needs_children">mds extension</li>', 'after');
-this.menu = new Ext.menu.Menu({
+let navEl = Ext.get('pimcore_menu_search').insertSibling('<li id="pimcore_menu_mds" data-menu-tooltip="mds extension" class="pimcore_menu_item pimcore_menu_needs_children">mds extension</li>', 'after');
+const menu = new Ext.menu.Menu({
     items: [{
         text: "Item 1",
         iconCls: "pimcore_icon_apply",
@@ -176,12 +140,12 @@ this.menu = new Ext.menu.Menu({
     }],
     cls: "pimcore_navigation_flyout"
 });
-pimcore.layout.toolbar.prototype.mdsMenu = this.menu;
+pimcore.layout.toolbar.prototype.mdsMenu = menu;
 
 
 document.addEventListener(pimcore.events.pimcoreReady, (e) => {
-    var toolbar = pimcore.globalmanager.get("layout_toolbar");
-    this.navEl.on("mousedown", toolbar.showSubMenu.bind(toolbar.mdsMenu));
+    let toolbar = pimcore.globalmanager.get("layout_toolbar");
+    navEl.on("mousedown", toolbar.showSubMenu.bind(toolbar.mdsMenu));
 
     const mdsMenuReady = new CustomEvent("mdsMenuReady", {
         detail: {

@@ -23,7 +23,7 @@
 - Parameter `pimcore.admin.session.attribute_bags` is deprecated and will be removed in Pimcore 11.
 - [JS Events/Disabled] The plugin broker for fire events has been disabled. 
 The plugins are still supported, but they are deprecated and will be removed in Pimcore 11   
-Please use event listener instead of plugins for JS events.
+Please use [event listener](../../20_Extending_Pimcore/13_Bundle_Developers_Guide/06_Event_Listener_UI.md) instead of plugins for JS events.
 - [Web2Print] Wkhtmltopdf Processor has been deprecated and will be removed in Pimcore 11. Please use HeadlessChrome or PDFreactor instead.
 
 ## 10.4.2
