@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -13,18 +15,19 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
+namespace Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler;
 
-use Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 /**
+ * @deprecated remove in Pimcore 11
+ *
  * @internal
  */
-final class AuthenticatorSecurityPass implements CompilerPassInterface
+final class LegacyAuthenticationSecurityPass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc}
@@ -36,10 +39,9 @@ final class AuthenticatorSecurityPass implements CompilerPassInterface
             new FileLocator(__DIR__.'/../../Resources/config')
         );
 
-        if ($container->hasDefinition('security.authenticator.manager')) {
-            $loader->load('authenticator_security.yaml');
-
-            $container->setParameter('security.authenticator.manager.enabled', true);
+        // @phpstan-ignore-next-line always enabled when new authenticator is set
+        if (!$container->hasParameter('security.authenticator.manager.enabled')) {
+            $loader->load('security_services_legacy.yaml');
         }
     }
 }

@@ -220,7 +220,7 @@ services:
             - { name: request.param_converter, priority: -2, converter: data_object_converter }
 
     Symfony\Component\Lock\PersistingStoreInterface:
-        class: Symfony\Component\Lock\Store\PdoStore
+        class: Symfony\Component\Lock\Store\DoctrineDbalStore
         arguments:
             - '@doctrine.dbal.default_connection'
 
