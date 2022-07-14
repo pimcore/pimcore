@@ -66,11 +66,6 @@ parameters:
 			path: bundles/CoreBundle/EventListener/Frontend/RoutingListener.php
 
 		-
-			message: "#^Parameter \\#1 \\$document of method Pimcore\\\\Document\\\\Renderer\\\\DocumentRenderer\\:\\:render\\(\\) expects Pimcore\\\\Model\\\\Document\\\\PageSnippet, Pimcore\\\\Model\\\\Document\\|null given\\.$#"
-			count: 1
-			path: bundles/CoreBundle/EventListener/ResponseExceptionListener.php
-
-		-
 			message: "#^Parameter \\#2 \\$default of method Symfony\\\\Component\\\\HttpFoundation\\\\InputBag\\<string\\>\\:\\:get\\(\\) expects string\\|null, false given\\.$#"
 			count: 1
 			path: bundles/CoreBundle/EventListener/TranslationDebugListener.php
