@@ -53,7 +53,7 @@ final class PimcoreAdminExtension extends Extension
         $loader->load('aliases.yaml');
 
         //@TODO: Remove in Pimcore 11
-        if(!$container->hasParameter('pimcore_admin.security.logout_success_handler')) {
+        if(!$container->hasParameter('security.authenticator.manager.enabled')) {
             $loader->load('security_services_legacy.yaml');
         }
 
