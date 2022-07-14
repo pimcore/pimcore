@@ -439,11 +439,11 @@ trait ImageThumbnailTrait
      */
     public function getAsFormat(string $format): self
     {
-        $config = $this->getConfig() ?? new Config();
+        $thumb = clone $this;
+        $config = clone $thumb->getConfig();
         $config->setFormat($format);
+        $thumb->setConfig($config); 
 
-        $this->config = $config;
-
-        return $this;
+        return $thumb ;
     }
 }
