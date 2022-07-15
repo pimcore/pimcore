@@ -27,7 +27,7 @@ use Pimcore\Version;
 /**
  * @internal
  */
-class AdminJsHelperService implements CacheWarmerInterface
+class AdminJsHelperService implements WarmableInterface
 {
 
     /**
@@ -739,15 +739,6 @@ class AdminJsHelperService implements CacheWarmerInterface
              return [];
         }
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isOptional (): bool
-    {
-        return false;
-    }
-
 }
 
 
