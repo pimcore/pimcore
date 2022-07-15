@@ -24,16 +24,16 @@ use Pimcore\Model\Version;
 trait VersionDaoTrait
 {
     /**
-     * Get latest available version, using $includeCurrent to also consider the published one
+     * Get latest available version, using $includingPublished to also consider the published one
      *
      * @param int|null $userId
      * @param bool $includeCurrent
      *
      * @return Version|null
      */
-    public function getLatestVersion($userId = null, $includeCurrent = false)
+    public function getLatestVersion($userId = null, $includingPublished = false)
     {
-        $operator = $includeCurrent ? '>=' : '>';
+        $operator = $includingPublished ? '>=' : '>';
         $versionId = $this->db->fetchOne('SELECT id FROM versions WHERE cid = :cid AND ctype = :ctype AND (`date` ' . $operator . ' :mdate OR versionCount ' . $operator . ' :versionCount) AND ((autoSave = 1 AND userId = :userId) OR autoSave = 0) ORDER BY `versionCount` DESC LIMIT 1', [
             'cid' => $this->model->getId(),
             'ctype' => Element\Service::getElementType($this->model),
