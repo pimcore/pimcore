@@ -1,6 +1,9 @@
 # Upgrade Notes
 
 ## 10.5.0
+- [Listings] `JsonListing` class is deprecated. Please use `CallableFilterListingInterface`, `FilterListingTrait` and `CallableOrderListingInterface`, `OrderListingTrait` instead.
+  For examples please see existing classes, e.g. `Pimcore\Model\Document\DocType\Listing`.
+
 - [Security] It is recommended to use new [Authenticator based system](https://pimcore.com/docs/pimcore/current/Development_Documentation/19_Development_Tools_and_Details/10_Security_Authentication/05_Authenticator_Based_Security.md) for authentication/authorization.
   To use new authenticator, add following symfony config in `security.yaml`:
     ```yaml

@@ -16,6 +16,11 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
 
 use Pimcore\Model;
+use Pimcore\Model\AbstractModel;
+use Pimcore\Model\Listing\CallableFilterListingInterface;
+use Pimcore\Model\Listing\CallableOrderListingInterface;
+use Pimcore\Model\Listing\Traits\FilterListingTrait;
+use Pimcore\Model\Listing\Traits\OrderListingTrait;
 
 /**
  * @internal
@@ -24,8 +29,13 @@ use Pimcore\Model;
  * @method Model\DataObject\ClassDefinition\CustomLayout[] load()
  * @method Model\DataObject\ClassDefinition\CustomLayout|false current()
  */
-class Listing extends Model\Listing\AbstractListing
+class Listing extends AbstractModel implements CallableFilterListingInterface, CallableOrderListingInterface
 {
+    use FilterListingTrait;
+    use OrderListingTrait;
+
+    protected ?array $layoutDefinitions = null;
+
     /**
      * @param Model\DataObject\ClassDefinition\CustomLayout[]|null $layoutDefinitions
      *
@@ -33,7 +43,9 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function setLayoutDefinitions($layoutDefinitions)
     {
-        return $this->setData($layoutDefinitions);
+        $this->layoutDefinitions = $layoutDefinitions;
+
+        return $this;
     }
 
     /**
@@ -41,6 +53,10 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getLayoutDefinitions()
     {
-        return $this->getData();
+        if ($this->layoutDefinitions === null) {
+            $this->layoutDefinitions = $this->load();
+        }
+
+        return $this->layoutDefinitions;
     }
 }

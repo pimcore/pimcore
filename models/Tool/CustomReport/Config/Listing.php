@@ -16,14 +16,22 @@
 namespace Pimcore\Model\Tool\CustomReport\Config;
 
 use Pimcore\Model;
+use Pimcore\Model\Listing\CallableFilterListingInterface;
+use Pimcore\Model\Listing\JsonListing;
+use Pimcore\Model\Listing\CallableOrderListingInterface;
+use Pimcore\Model\Listing\Traits\FilterListingTrait;
+use Pimcore\Model\Listing\Traits\OrderListingTrait;
 
 /**
  * @internal
  *
  * @method \Pimcore\Model\Tool\CustomReport\Config\Listing\Dao getDao()
  */
-class Listing extends Model\Listing\JsonListing
+class Listing extends JsonListing implements CallableFilterListingInterface, CallableOrderListingInterface
 {
+    use FilterListingTrait;
+    use OrderListingTrait;
+
     /**
      * @var Model\Tool\CustomReport\Config[]|null
      */
