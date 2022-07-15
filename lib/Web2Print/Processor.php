@@ -282,7 +282,7 @@ abstract class Processor
     }
 
     /**
-     * returns the path to the generated pdf file
+     * Returns the generated pdf file. Its path or data depending supplied parameter
      *
      * @param string $html
      * @param array $params
