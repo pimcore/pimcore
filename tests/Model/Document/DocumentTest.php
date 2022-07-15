@@ -83,8 +83,7 @@ class DocumentTest extends ModelTestCase
         $versionNote = ["versionNote" => "a new version of this document"];
         $this->testPage = TestHelper::createEmptyDocumentPage();
         $this->testPage->save($versionNote);
-        $versions = $this->testPage->getVersions();
-        $this->assertEquals(end($versions)->getNote(), $versionNote['versionNote']);
+        $this->assertEquals($this->testPage->getLatestVersion(null, true)->getNote(), $versionNote['versionNote']);
     }
 
     public function reloadPage()

@@ -49,7 +49,7 @@ class ObjectTest extends ModelTestCase
         $this->testObject = TestHelper::createEmptyObject();
         $this->testObject->save($versionNote);
         $versions = $this->testObject->getVersions();
-        $this->assertEquals(end($versions)->getNote(), $versionNote['versionNote']);
+        $this->assertEquals($this->testObject->getLatestVersion(null, true)->getNote(), $versionNote['versionNote']);
     }
 
     /**

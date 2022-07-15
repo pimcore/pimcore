@@ -96,7 +96,7 @@ class AssetTest extends ModelTestCase
         $this->testAsset = TestHelper::createImageAsset('', null, true, 'assets/images/image1.jpg');
         $this->testAsset->save($versionNote);
         $versions = $this->testAsset->getVersions();
-        $this->assertEquals(end($versions)->getNote(), $versionNote['versionNote']);
+        $this->assertEquals($this->testAsset->getLatestVersion(null, true)->getNote(), $versionNote['versionNote']);
     }
 
     public function testThumbnails()
