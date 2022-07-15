@@ -161,22 +161,20 @@ pimcore.settings.targeting.targetGroups.panel= Class.create({
     },
 
     deleteTargetGroup: function (tree, record) {
-        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('target_group'), record.data.text), function (btn) {
-            if (btn == 'yes') {
-                Ext.Ajax.request({
-                    url: Routing.generate('pimcore_admin_targeting_targetgroupdelete'),
-                    method: 'DELETE',
-                    params: {
-                        id: record.data.id
-                    },
-                    success: function () {
-                        this.tree.getStore().load();
+        pimcore.helpers.deleteConfirm(t('target_group'), record.data.text, function () {
+            Ext.Ajax.request({
+                url: Routing.generate('pimcore_admin_targeting_targetgroupdelete'),
+                method: 'DELETE',
+                params: {
+                    id: record.data.id
+                },
+                success: function () {
+                    this.tree.getStore().load();
 
-                        pimcore.globalmanager.get("target_group_store").reload();
-                    }.bind(this)
-                });
-            }
-      }.bind(this));
+                    pimcore.globalmanager.get("target_group_store").reload();
+                }.bind(this)
+            });
+        }.bind(this));
     },
 
     openTargetGroup: function (node) {

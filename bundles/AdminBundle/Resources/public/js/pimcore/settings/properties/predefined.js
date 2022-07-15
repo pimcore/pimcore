@@ -164,7 +164,10 @@ pimcore.settings.properties.predefined = Class.create({
                     },
                     tooltip: t('delete'),
                     handler: function (grid, rowIndex) {
-                        grid.getStore().removeAt(rowIndex);
+                        let data = grid.getStore().getAt(rowIndex);
+                        pimcore.helpers.deleteConfirm(t('predefined_properties'), data.data.name, function () {
+                            grid.getStore().removeAt(rowIndex);
+                        }.bind(this));
                     }.bind(this)
                 }]
             },{
