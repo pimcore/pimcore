@@ -27,7 +27,7 @@ trait VersionDaoTrait
      * Get latest available version, using $includingPublished to also consider the published one
      *
      * @param int|null $userId
-     * @param bool $includeCurrent
+     * @param bool $includingPublished
      *
      * @return Version|null
      */
