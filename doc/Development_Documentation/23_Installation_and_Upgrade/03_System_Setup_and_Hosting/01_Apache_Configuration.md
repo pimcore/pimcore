@@ -4,7 +4,7 @@
 Make sure `Allowoverride All` is set for the `DocumentRoot`, which enables `.htaccess` support. 
 
 All the necessary rewrite rules, which are needed for Pimcore to work, are defined in the `.htaccess` of the install package, 
-see [https://github.com/pimcore/skeleton/blob/10.x/public/.htaccess](https://github.com/pimcore/skeleton/blob/10.x/public/.htaccess). 
+see [https://github.com/pimcore/skeleton/blob/10.1/public/.htaccess](https://github.com/pimcore/skeleton/blob/10.x/public/.htaccess). 
 
 #### Example 
 ```
