@@ -547,6 +547,8 @@ class AdminJsHelperService implements WarmableInterface
         PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/js/'
     ];
 
+    protected const MINIFIED_SCRIPT_PATH = '_minified_javascript_core.js';
+
     /**
      * @string
      */
@@ -654,7 +656,7 @@ class AdminJsHelperService implements WarmableInterface
      */
     public function getMinifiedScriptPaths(string $prefix, array $scriptPaths): array
     {
-        $storageFile = $prefix . '_minified_javascript_core.js';
+        $storageFile = $this->getMinifiedScriptFileName($prefix);
 
         if (!$this->isMinifiedScriptExists($storageFile)) {
             $storageFile = $this->minifyAndSaveJs($scriptPaths, $storageFile);
@@ -664,6 +666,16 @@ class AdminJsHelperService implements WarmableInterface
             'storageFile' => basename ($storageFile),
             '_dc' => Version::getRevision()
         ];
+    }
+
+    /**
+     * @param string $prefix
+     *
+     * @return string
+     */
+    public function getMinifiedScriptFileName(string $prefix): string
+    {
+        return $prefix . self::MINIFIED_SCRIPT_PATH;
     }
 
     /**
@@ -779,8 +791,8 @@ class AdminJsHelperService implements WarmableInterface
             $storagePaths = [];
 
             foreach ([
-                         self::SCRIPT_INTERNAL . '_minified_javascript_core.js' => $this->internalScriptPaths,
-                         self::SCRIPT_BUNDLE . '_minified_javascript_core.js' => $this->bundleScriptPaths
+                         self::SCRIPT_INTERNAL . self::SCRIPT_PATH => $this->internalScriptPaths,
+                         self::SCRIPT_BUNDLE . self::SCRIPT_PATH => $this->bundleScriptPaths
                      ] as $filename => $scripts) {
                 $minifiedPaths = $this->minifyAndSaveJs($scripts, $filename);
                 $storagePaths[] = $this->jsCacheDir . $minifiedPaths;

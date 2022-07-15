@@ -50,8 +50,6 @@ class EditmodeListener implements EventSubscriberInterface
         'text/html',
     ];
 
-     protected const MIN_JS_STORAGE_PATH = 'edit_mode_minified_javascript_core.js';
-
     /**
      * @param EditmodeResolver $editmodeResolver
      * @param DocumentResolver $documentResolver
@@ -253,13 +251,14 @@ class EditmodeListener implements EventSubscriberInterface
                 $headHtml .= "\n";
             }
         } else {
-
-
-           if(!$this->adminJsService->isMinifiedScriptExists (self::MIN_JS_STORAGE_PATH)) {
-               $this->adminJsService->minifyAndSaveJs($scripts, self::MIN_JS_STORAGE_PATH);
+            $scriptPathPrefix = 'edit_mode';
+            $scriptPath = $this->adminJsService->getMinifiedScriptFileName($scriptPathPrefix);
+           if (!$scriptPaths = $this->adminJsService->isMinifiedScriptExists($scriptPath)) {
+               $scriptPaths =  $this->adminJsService->getMinifiedScriptPaths('edit_mode', $scripts);
            }
+
             $editModeMinScriptsFile = [
-                'storageFile' => basename (self::MIN_JS_STORAGE_PATH),
+                'storageFile' => basename ($scriptPaths),
                 '_dc' => \Pimcore\Version::getRevision ()
             ];
             $headHtml .= '<script src="' . $this->router->generate ('pimcore_admin_misc_scriptproxy', $editModeMinScriptsFile) . '"></script>' . "\n";
