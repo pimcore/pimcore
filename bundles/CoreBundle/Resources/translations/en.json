@@ -768,6 +768,7 @@
     "showAllFields": "Show all Fields",
     "considerTenants": "Consider Tenants",
     "bundle_ecommerce_mainmenu": "Online Shop",
+    "bundle_ecommerce_pricing_rule": "Pricing Rule",
     "bundle_ecommerce_pricing_rules": "Pricing Rules",
     "bundle_ecommerce_pricing_config_behavior": "Behavior",
     "bundle_ecommerce_pricing_config_additiv": "Additiv",
