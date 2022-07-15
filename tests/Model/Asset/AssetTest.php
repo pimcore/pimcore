@@ -95,7 +95,6 @@ class AssetTest extends ModelTestCase
         $versionNote = ["versionNote" => "a new version of this asset"];
         $this->testAsset = TestHelper::createImageAsset('', null, true, 'assets/images/image1.jpg');
         $this->testAsset->save($versionNote);
-        $versions = $this->testAsset->getVersions();
         $this->assertEquals($this->testAsset->getLatestVersion(null, true)->getNote(), $versionNote['versionNote']);
     }
 
