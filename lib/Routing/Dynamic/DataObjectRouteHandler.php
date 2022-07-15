@@ -66,6 +66,11 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
                     return $this->buildRouteForFromSlug($slug, $object);
                 }
             }
+        }else{
+            $object = DataObject::getByPath($name);
+            if ($object instanceof DataObject\Concrete && $object->isPublished() && $linkGenerator = $object->getClass()->getLinkGenerator()) {
+                return $this->buildRouteForFromPath($linkGenerator->generate($object), $object);
+            }
         }
 
         throw new RouteNotFoundException(sprintf("Route for name '%s' was not found", $name));
@@ -110,6 +115,30 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
         if ($slug->getOwnertype() === 'localizedfield') {
             $route->setDefault('_locale', $slug->getPosition());
         }
+
+        $route->setDefault(
+            ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS,
+            $this->config['routing']['allow_processing_unpublished_fallback_document']
+        );
+
+        return $route;
+    }
+
+    /**
+     * @param string $path
+     * @param DataObject\Concrete $object
+     *
+     * @return DataObjectRoute
+     *
+     */
+    private function buildRouteForFromPath(string $path, DataObject\Concrete $object): DataObjectRoute
+    {
+        $site = $this->siteResolver->getSite();
+        $route = new DataObjectRoute($path);
+        $route->setOption('utf8', true);
+        $route->setObject($object);
+        $route->setSite($site);
+        $route->setDefault('object', $object);
 
         $route->setDefault(
             ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS,
