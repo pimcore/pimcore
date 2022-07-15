@@ -337,6 +337,15 @@ trait ImageThumbnailTrait
     }
 
     /**
+     * @param bool $deferred
+     * @return string
+     */
+    public function getFrontendPath(bool $deferred = true): string
+    {
+        return Tool::getHostUrl() . $this->getPath($deferred);
+    }
+
+    /**
      * @internal
      *
      * @return string|null
