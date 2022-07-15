@@ -40,6 +40,7 @@ final class Configuration implements ConfigurationInterface
         $rootNode->append($this->buildObjectsNode());
         $rootNode->append($this->buildAssetsNode());
         $rootNode->append($this->buildDocumentsNode());
+        $rootNode->append($this->buildScriptsNode());
 
         $rootNode->children()
             ->arrayNode('admin_languages')
@@ -266,5 +267,27 @@ final class Configuration implements ConfigurationInterface
             ->append($this->buildEventsNode());
 
         return $documentsNode;
+    }
+
+    /**
+     * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
+     */
+    protected function buildScriptsNode()
+    {
+        $treeBuilder = new TreeBuilder('scripts');
+        $scriptsNode = $treeBuilder->getRootNode();
+
+        $scriptsNode
+            ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('library')
+                        ->prototype('scalar')->end()
+                    ->end()
+                    ->arrayNode('internal')
+                        ->prototype('scalar')->end()
+                    ->end()
+                ->end();
+
+        return $scriptsNode;
     }
 }

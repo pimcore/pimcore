@@ -71,5 +71,6 @@ services:
     #
     Pimcore\Bundle\AdminBundle\Helper\AdminJsHelperService:
         public: true
-        tags:
-            - { name: kernel.cache_warmer }
+        arguments:
+            $libScriptPaths: '%pimcore_admin.scripts.library_scripts%'
+            $internalScriptPaths: '%pimcore_admin.scripts.internal_scripts%'
