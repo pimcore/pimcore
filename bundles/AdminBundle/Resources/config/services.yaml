@@ -71,3 +71,5 @@ services:
     #
     Pimcore\Bundle\AdminBundle\Helper\AdminJsHelperService:
         public: true
+        tags:
+            - { name: kernel.cache_warmer }
