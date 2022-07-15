@@ -49,30 +49,12 @@ Following steps are necessary to do so:
    You can do this via the JavaScript UI events.
 
    Here is an example:
-   ```javascript
-   // public/js/MyTestBundle.js
-   
-   pimcore.registerNS("pimcore.plugin.MyTestBundle");
-   
-   pimcore.plugin.MyTestBundle = Class.create(pimcore.plugin.admin, {
-       getClassName: function () {
-           return "pimcore.plugin.MyTestBundle";
-       },
-
-       initialize: function () {
-           pimcore.plugin.broker.registerPlugin(this);
-       },
-
-       prepareClassLayoutContextMenu: function (allowedTypes, source) {
-           if (allowedTypes.root !== undefined) {
-               allowedTypes.root.push('myLayoutType');
-           }
-   
-           return allowedTypes;
-       }
+    ```javascript
+   document.addEventListener(pimcore.events.prepareClassLayoutContextMenu, (e) => {
+        if (e.detail.allowedTypes.root !== undefined) {
+            e.detail.allowedTypes.root.push('myLayoutType');
+        }
    });
-
-   var MyTestBundle = new pimcore.plugin.MyTestBundle();
    ```
    
    You can also add the layout type to any currently supported layout types by using this code snippet:
