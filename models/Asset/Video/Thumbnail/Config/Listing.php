@@ -17,8 +17,8 @@ namespace Pimcore\Model\Asset\Video\Thumbnail\Config;
 
 use Pimcore\Model;
 use Pimcore\Model\Listing\CallableFilterListingInterface;
-use Pimcore\Model\Listing\JsonListing;
 use Pimcore\Model\Listing\CallableOrderListingInterface;
+use Pimcore\Model\Listing\JsonListing;
 use Pimcore\Model\Listing\Traits\FilterListingTrait;
 use Pimcore\Model\Listing\Traits\OrderListingTrait;
 

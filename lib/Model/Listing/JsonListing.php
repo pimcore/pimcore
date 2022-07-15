@@ -35,6 +35,7 @@ abstract class JsonListing extends AbstractModel implements CallableFilterListin
             '10.5.0',
             sprintf('%s is deprecated. Use %s instead!', __METHOD__, 'FilterListingTrait')
         );
+
         return $this->filter;
     }
 
@@ -55,6 +56,7 @@ abstract class JsonListing extends AbstractModel implements CallableFilterListin
             '10.5.0',
             sprintf('%s is deprecated. Use %s instead!', __METHOD__, 'OrderListingTrait')
         );
+
         return $this->order;
     }
 

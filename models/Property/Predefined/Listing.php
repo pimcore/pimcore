@@ -32,6 +32,7 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
 {
     use FilterListingTrait;
     use OrderListingTrait;
+
     /**
      * @var array|null
      */

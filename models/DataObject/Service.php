@@ -1030,10 +1030,11 @@ class Service extends Model\Element\Service
         $list->setFilter(function (DataObject\ClassDefinition\CustomLayout $layout) use ($classId, $layoutIds) {
             $currentLayoutClassId = $layout->getClassId();
             $currentLayoutId = $layout->getId();
-            $keep = $currentLayoutClassId === $classId && !str_contains($currentLayoutId, ".brick.");
-            if($keep && $layoutIds !== null) {
+            $keep = $currentLayoutClassId === $classId && !str_contains($currentLayoutId, '.brick.');
+            if ($keep && $layoutIds !== null) {
                 $keep = in_array($currentLayoutId, $layoutIds);
             }
+
             return $keep;
         });
         $list = $list->load();

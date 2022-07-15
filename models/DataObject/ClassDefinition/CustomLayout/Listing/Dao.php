@@ -24,8 +24,8 @@ use Pimcore\Model;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
-
-    protected function loadIdList() {
+    protected function loadIdList()
+    {
         return $this->db->fetchFirstColumn('SELECT id FROM custom_layouts');
     }
 
