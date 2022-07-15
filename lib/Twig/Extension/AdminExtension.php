@@ -51,27 +51,36 @@ class AdminExtension extends AbstractExtension
         ];
     }
 
-    public function processScriptPaths ()
+    /**
+     * @return string
+     */
+    public function processScriptPaths(): string
     {
         $returnScriptPath = '';
 
-        $scriptTypeArr = ['lib', 'internal', 'bundle'];
-        foreach ($scriptTypeArr as $scriptType) {
-            if ($scriptType == 'lib') {
-                foreach ($this->adminJsService->getScriptPaths ('lib') as $libScriptPath) {
-                    $returnScriptPath .= $this->getScriptTag ($libScriptPath);
-                }
-            } else {
-                if (\Pimcore::disableMinifyJs ()) {
-                    foreach ($this->adminJsService->getScriptPaths ($scriptType) as $scriptPaths) {
-                        $returnScriptPath .= $this->getScriptTag ($scriptPaths);
-                    }
-                } else {
-                    $url = $this->generator->generate ('pimcore_admin_misc_scriptproxy', $this->adminJsService->getScriptPaths ($scriptType), UrlGeneratorInterface::ABSOLUTE_PATH);
-                    $returnScriptPath .= $this->getScriptTag ($url);
-                }
-            }
+        //lib script paths
+        foreach ($this->adminJsService->getLibScriptPaths() as $libScriptPath) {
+            $returnScriptPath .= $this->getScriptTag($libScriptPath);
         }
+
+        if (\Pimcore::disableMinifyJs ()) {
+            //internal script paths
+            foreach ($this->adminJsService->getInternalScriptPaths() as $scriptPaths) {
+                $returnScriptPath .= $this->getScriptTag($scriptPaths);
+            }
+
+            //bundle script paths
+            foreach ($this->adminJsService->getBundleScriptPaths() as $scriptPaths) {
+                $returnScriptPath .= $this->getScriptTag($scriptPaths);
+            }
+        } else {
+            $url = $this->generator->generate ('pimcore_admin_misc_scriptproxy', $this->adminJsService->getInternalScriptPaths(), UrlGeneratorInterface::ABSOLUTE_PATH);
+            $returnScriptPath .= $this->getScriptTag($url);
+
+            $url = $this->generator->generate ('pimcore_admin_misc_scriptproxy', $this->adminJsService->getBundleScriptPaths(), UrlGeneratorInterface::ABSOLUTE_PATH);
+            $returnScriptPath .= $this->getScriptTag($url);
+        }
+
         return $returnScriptPath;
     }
 

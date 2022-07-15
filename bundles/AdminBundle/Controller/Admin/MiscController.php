@@ -131,15 +131,8 @@ class MiscController extends AdminController
         if ($storageFile = $request->get('storageFile')) {
             $fileExtension = \Pimcore\File::getFileExtension ($storageFile);
 
-            $cacheDir = \Pimcore::getKernel ()->getCacheDir ();
-            $jsCacheDir = $cacheDir . '/minifiedJs/';
-            if ($adminJsHelperService->isMinifiedScriptExists ($storageFile)) {
-                $scriptsContent = file_get_contents ($jsCacheDir . $storageFile);
-            }
-            else {
-                trigger_deprecation ('pimcore/pimcore', '10.5', 'saving the minified js scripts in the var/admin folder is deprecated and will be removed in Pimcore 11.');
-                $storage = Storage::get ('admin');
-                $scriptsContent = $storage->read ($storageFile);
+            if ($minifiedScriptPath = $adminJsHelperService->isMinifiedScriptExists($storageFile)) {
+                $scriptsContent = file_get_contents ($minifiedScriptPath);
             }
         } else {
             trigger_deprecation('pimcore/pimcore', '10.1', 'Calling /admin/misc/script-proxy without the parameter storageFile is deprecated and will not work in Pimcore 11.');

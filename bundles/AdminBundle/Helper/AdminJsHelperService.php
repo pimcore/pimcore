@@ -539,10 +539,27 @@ class AdminJsHelperService implements WarmableInterface
      */
     protected $filesystem;
 
-    protected const WEBROOTPATHS = [PIMCORE_WEB_ROOT, PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/js/'];
+    /**
+     * @array
+     */
+    protected const WEBROOTPATHS = [
+        PIMCORE_WEB_ROOT,
+        PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/js/'
+    ];
+
+    /**
+     * @string
+     */
     protected const SCRIPT_INTERNAL = 'library';
+
+    /**
+     * @string
+     */
     protected const SCRIPT_BUNDLE = 'bundle';
 
+    /**
+     * @string
+     */
     protected const SCRIPT_PATH = '/bundles/pimcoreadmin/js/';
 
     /**
@@ -550,194 +567,229 @@ class AdminJsHelperService implements WarmableInterface
      * @param ContentSecurityPolicyHandler $contentSecurityPolicyHandler
      * @param LocaleService $localeService
      */
-    public function __construct (private PimcoreBundleManager $pimcoreBundleManager, private ContentSecurityPolicyHandler $contentSecurityPolicyHandler, private LocaleService $localeService)
-    {
-        $this->setLibScriptPaths ();
-        $this->setBundleScriptPaths ();
+    public function __construct (
+        private PimcoreBundleManager $pimcoreBundleManager,
+        private ContentSecurityPolicyHandler $contentSecurityPolicyHandler,
+        private LocaleService $localeService
+    ) {
+        $this->initLibScriptPaths();
+        $this->initBundleScriptPaths();
 
         $this->filesystem = new Filesystem();
-
-        // Set cache Directory Path
-        $cacheDir = \Pimcore::getKernel ()->getCacheDir ();
-        $this->jsCacheDir = $cacheDir . '/minifiedJs/';
+        $this->jsCacheDir = \Pimcore::getKernel()->getCacheDir() . '/minifiedJs/';
     }
 
-    public function setLibScriptPaths ()
+    public function initLibScriptPaths()
     {
-        // library scripts are not minified. They are loaded as such. So they would be same for both environments.
-
         // Add the suffix 'debug' to ext-all.js script path if the environment is not dev
         $debugSuffix = '';
-        if (\Pimcore::disableMinifyJs ()) {
+        if (\Pimcore::disableMinifyJs()) {
             $debugSuffix = "-debug";
         }
         $this->libScriptPaths = str_replace ("../extjs/js/ext-all.js", "../extjs/js/ext-all$debugSuffix.js", $this->libScriptPaths);
 
         // Include the js file according to the locale
-        $language = $this->localeService->getLocale ();
+        $language = $this->localeService->getLocale();
         if (file_exists (PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/js/lib/ext-locale/locale-' . $language . '.js')) {
             array_push ($this->libScriptPaths, 'lib/ext-locale/locale-' . $language . '.js');
         }
     }
 
-    public function setBundleScriptPaths ()
+    public function initBundleScriptPaths()
     {
-        $this->bundleScriptPaths = $this->pimcoreBundleManager->getJsPaths ();
+        $this->bundleScriptPaths = $this->pimcoreBundleManager->getJsPaths();
     }
 
-
-    // Get the JS script paths according to the script type. Script Type should be 'lib', 'bundle' or 'internal'
-
     /**
-     * @param string $scriptType
-     *
      * @param bool $setDcVersion
      *
-     */
-    public function getScriptPaths (string $scriptType = 'lib', bool $setDcVersion = true): array
-    {
-
-        $setDcVersionText = ($setDcVersion) ? $this->setDcText () : '';
-
-        if ($scriptType == 'lib') {
-            return $this->getFormattedScripts ($setDcVersionText . $this->setNoOnceCspText (), $this->libScriptPaths, self::SCRIPT_PATH);
-        }
-
-        if (\Pimcore::disableMinifyJs ()) {
-            if ($scriptType == 'bundle') {
-                $setDcVersionText = ($setDcVersion) ? $this->setDcText ('1') : '';
-                return $this->getFormattedScripts ($setDcVersionText . $this->setNoOnceCspText (), $this->bundleScriptPaths);
-            } else if ($scriptType == 'internal') {
-                return $this->getFormattedScripts ($setDcVersionText, $this->internalScriptPaths, self::SCRIPT_PATH);
-            }
-        }
-        // for production environment
-        $storageFile = ($scriptType == 'bundle') ? self::SCRIPT_BUNDLE . '_minified_javascript_core.js' : self::SCRIPT_INTERNAL . '_minified_javascript_core.js';
-
-        $scriptPaths = ($scriptType == 'bundle') ? $this->bundleScriptPaths : $this->internalScriptPaths;
-
-
-        if ($this->isMinifiedScriptExists ($storageFile)) {
-
-
-            return ['storageFile' => basename ($storageFile),
-                '_dc' => \Pimcore\Version::getRevision ()
-            ];
-        }
-        return $this->minifyAndSaveJs ($scriptPaths, $storageFile);
-    }
-
-    public function isMinifiedScriptExists ($storageFile)
-    {
-        $storageFile = $this->jsCacheDir . $storageFile;
-        if ($this->filesystem->exists ($storageFile)) {
-            return true;
-        }
-    }
-
-    // Add prefixes like the path from root and postfixes like dc_version, nonce etc to the script paths
-
-    /**
-     * @param string $postFixText
-     * @param array $scripts
-     * @param string $setPrefixText
      * @return array
      */
-    public function getFormattedScripts (string $postFixText, array $scripts, string $setPrefixText = ''): array
+    public function getLibScriptPaths(bool $setDcVersion = true): array
     {
-        return array_map (function ($eachScriptPath) use ($setPrefixText, $postFixText) {
-            return $setPrefixText . $eachScriptPath . $postFixText;
-        }, $scripts);
-    }
+        $setDcVersionText = ($setDcVersion) ? $this->getDcText() : '';
 
-    // Minify all the script files passed to a single js script file
-
-    /**
-     * @param array $jsScripts
-     * @param string $storageFile
-     * @return array
-     */
-    public function minifyAndSaveJs (array $jsScripts, string $storageFile): array
-    {
-        $scriptContents = '';
-
-        foreach ($jsScripts as $scriptPath) {
-            $found = false;
-            foreach (self::WEBROOTPATHS as $webRootPath) {
-
-                $fullPath = $webRootPath . $scriptPath;
-                if (file_exists ($fullPath)) {
-
-                    $scriptContents .= file_get_contents ($fullPath) . "\n\n\n";
-                    // $found = true;
-                }
-            }
-            /* if (!$found) {
-                 $returnHtml .= $this->getScriptTag ($scriptPath);
-             }*/
-        }
-        return $this->writeToFile ($this->jsCacheDir, $storageFile, $scriptContents);
+        return $this->getFormattedScripts($setDcVersionText . $this->getNonceText(), $this->libScriptPaths, self::SCRIPT_PATH);
     }
 
     /**
-     * @param $fileName
-     * @param $scriptContent
+     * @param bool $setDcVersion
      *
+     * @return array
      */
-    public function writeToFile ($dirPath, $fileName, $scriptContent)
+    public function getBundleScriptPaths(bool $setDcVersion = true): array
     {
-        $fileName = $dirPath . $fileName;
-        $this->filesystem->dumpFile ($fileName, $scriptContent);
+        if (\Pimcore::disableMinifyJs()) {
+            $setDcVersionText = ($setDcVersion) ? $this->getDcText('1') : '';
 
+            return $this->getFormattedScripts($setDcVersionText . $this->getNoncetext(), $this->bundleScriptPaths);
+        }
 
-        return ['storageFile' => basename ($fileName),
-            '_dc' => \Pimcore\Version::getRevision ()
+        return $this->getMinifiedScriptPaths(self::SCRIPT_BUNDLE, $this->bundleScriptPaths);
+    }
+
+    /**
+     * @param bool $setDcVersion
+     *
+     * @return array
+     */
+    public function getInternalScriptPaths(bool $setDcVersion = true): array
+    {
+        if (\Pimcore::disableMinifyJs()) {
+            $setDcVersionText = ($setDcVersion) ? $this->getDcText('1') : '';
+
+            return $this->getFormattedScripts($setDcVersionText, $this->internalScriptPaths, self::SCRIPT_PATH);
+        }
+
+        return $this->getMinifiedScriptPaths(self::SCRIPT_INTERNAL, $this->internalScriptPaths);
+    }
+
+    /**
+     * Get either pre-generated or runtime generated minified JS script paths
+     *
+     * @param string $prefix
+     * @param array $scriptPaths
+     *
+     * @return array
+     */
+    public function getMinifiedScriptPaths(string $prefix, array $scriptPaths): array
+    {
+        $storageFile = $prefix . '_minified_javascript_core.js';
+
+        if (!$this->isMinifiedScriptExists($storageFile)) {
+            $storageFile = $this->minifyAndSaveJs($scriptPaths, $storageFile);
+        }
+
+        return [
+            'storageFile' => basename ($storageFile),
+            '_dc' => Version::getRevision()
         ];
     }
 
     /**
-     * @param string $dcVal
+     * @param $storageFile
+     *
+     * returns false when script doesn't exist and path when exist
+     *
+     * @return bool|string
+     */
+    public function isMinifiedScriptExists($storageFile): bool|string
+    {
+        if ($this->filesystem->exists($this->jsCacheDir . $storageFile)) {
+            return $this->jsCacheDir . $storageFile;
+        }
+
+        return false;
+    }
+
+    /**
+     * Add prefixes like the path from root and postfixes like dc_version, nonce etc to the script paths
+     *
+     * @param string $postFixText
+     * @param array $scripts
+     * @param string $setPrefixText
+     *
+     * @return array
+     */
+    public function getFormattedScripts(string $postFixText, array $scripts, string $setPrefixText = ''): array
+    {
+        return array_map(function ($eachScriptPath) use ($setPrefixText, $postFixText) {
+            return $setPrefixText . $eachScriptPath . $postFixText;
+        }, $scripts);
+    }
+
+    /**
+     * Minify all the script files passed to a single js script file
+     *
+     * @param array $jsScripts
+     * @param string $storageFile
+     *
      * @return string
      */
-    private function setDcText (string $dcVal = ''): string
+    protected function minifyAndSaveJs(array $jsScripts, string $storageFile): string
+    {
+        $scriptContents = '';
+        foreach ($jsScripts as $scriptPath) {
+            foreach (self::WEBROOTPATHS as $webRootPath) {
+                $fullPath = $webRootPath . $scriptPath;
+                if (file_exists ($fullPath)) {
+                    $scriptContents .= file_get_contents ($fullPath) . "\n\n\n";
+                }
+            }
+        }
+
+        if ($this->writeToFile($this->jsCacheDir, $storageFile, $scriptContents)) {
+            return $storageFile;
+        }
+
+        return '';
+    }
+
+    /**
+     * @param string $dirPath
+     * @param string $fileName
+     * @param string $scriptContent
+     *
+     * @return bool
+     */
+    private function writeToFile(string $dirPath, string $fileName,string $scriptContent): bool
+    {
+        try {
+            $fileName = $dirPath . $fileName;
+            $this->filesystem->dumpFile($fileName, $scriptContent);
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param string $dcVal
+     *
+     * @return string
+     */
+    protected function getDcText(string $dcVal = ''): string
     {
         if (!$dcVal) {
-            $dcVal = Version::getRevision ();
+            $dcVal = Version::getRevision();
         }
+
         return '?_dc=' . $dcVal . '"';
     }
 
     /**
      * @return string
      */
-    private function setNoOnceCspText (): string
+    private function getNonceText(): string
     {
-        return $this->contentSecurityPolicyHandler->getNonceHtmlAttribute ();
+        return $this->contentSecurityPolicyHandler->getNonceHtmlAttribute();
     }
 
-    // Warm up the js_cache folder on cache:warmup command
-
     /**
+     * Warm up the js_cache folder on cache:warmup command
+     *
      * @param string $cacheDir
+     *
      * @return array|string[]
      */
     public function warmUp (string $cacheDir): array
     {
         if (!\Pimcore::disableMinifyJs ()) {
-            $storagePaths = array();
-            $storageFiles = [self::SCRIPT_INTERNAL . '_minified_javascript_core.js', self::SCRIPT_BUNDLE . '_minified_javascript_core.js'];
-            foreach ($storageFiles as $storageFile) {
-                if ($storageFile == self::SCRIPT_INTERNAL . '_minified_javascript_core.js') {
-                    $minifiedPaths = $this->minifyAndSaveJs ($this->internalScriptPaths, $storageFile);
-                } else {
-                    $minifiedPaths = $this->minifyAndSaveJs ($this->bundleScriptPaths, $storageFile);
-                }
-                $storagePaths[] = $this->jsCacheDir . $minifiedPaths['storageFile'];
+            $storagePaths = [];
+
+            foreach ([
+                         self::SCRIPT_INTERNAL . '_minified_javascript_core.js' => $this->internalScriptPaths,
+                         self::SCRIPT_BUNDLE . '_minified_javascript_core.js' => $this->bundleScriptPaths
+                     ] as $filename => $scripts) {
+                $minifiedPaths = $this->minifyAndSaveJs($scripts, $filename);
+                $storagePaths[] = $this->jsCacheDir . $minifiedPaths;
             }
+
             return $storagePaths;
-        } else {
-             return [];
         }
+
+        return [];
     }
 }
 
