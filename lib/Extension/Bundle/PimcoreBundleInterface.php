@@ -50,6 +50,8 @@ interface PimcoreBundleInterface extends BundleInterface
     public function getInstaller();
 
     /**
+     * @deprecated will be removed in Pimcore 11
+     *
      * Get path to include in admin iframe
      *
      * @return string|RouteReferenceInterface|null

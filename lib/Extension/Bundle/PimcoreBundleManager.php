@@ -34,6 +34,8 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class PimcoreBundleManager
 {
     /**
+     * @deprecated
+     *
      * @var StateConfig
      */
     protected $stateConfig;
@@ -64,6 +66,8 @@ class PimcoreBundleManager
     protected $availableBundles;
 
     /**
+     * @deprecated
+     *
      * @var array
      */
     protected $enabledBundles;
@@ -159,6 +163,8 @@ class PimcoreBundleManager
     }
 
     /**
+     * @deprecated
+     *
      * Lists enabled bundle names
      *
      * @return array
@@ -236,7 +242,7 @@ class PimcoreBundleManager
     }
 
     /**
-     * Determines if a bundle exists (is enabled or can be enabled)
+     * Determines if a bundle exists
      *
      * @param string|PimcoreBundleInterface $bundle
      *
@@ -308,6 +314,8 @@ class PimcoreBundleManager
     }
 
     /**
+     * @deprecated
+     *
      * Checks if a state change (enable/disable, priority, environments) is possible
      *
      * @param string $identifier
@@ -323,6 +331,8 @@ class PimcoreBundleManager
     }
 
     /**
+     * @deprecated
+     *
      * Determines if bundle is allowed to change state (can be enabled/disabled)
      *
      * @param string|PimcoreBundleInterface $bundle
@@ -339,6 +349,8 @@ class PimcoreBundleManager
     }
 
     /**
+     * @deprecated
+     *
      * Reads bundle state from config
      *
      * @param string|PimcoreBundleInterface $bundle
@@ -359,6 +371,8 @@ class PimcoreBundleManager
     }
 
     /**
+     * @deprecated
+     *
      * Updates state for a bundle and writes it to config
      *
      * @param string|PimcoreBundleInterface $bundle
@@ -375,6 +389,8 @@ class PimcoreBundleManager
     }
 
     /**
+     * @deprecated
+     *
      * Batch updates bundle states
      *
      * @param array $states
@@ -396,6 +412,8 @@ class PimcoreBundleManager
     }
 
     /**
+     * @deprecated
+     *
      * Enables a bundle
      *
      * @param string|PimcoreBundleInterface $bundle
@@ -411,6 +429,8 @@ class PimcoreBundleManager
     }
 
     /**
+     * @deprecated
+     *
      * Disables a bundle
      *
      * @param string|PimcoreBundleInterface $bundle
@@ -421,6 +441,8 @@ class PimcoreBundleManager
     }
 
     /**
+     * @deprecated
+     *
      * Determines if a bundle is enabled
      *
      * @param string|PimcoreBundleInterface $bundle
