@@ -120,7 +120,7 @@ abstract class PageSnippet extends Model\Document
             throw new Model\Element\ValidationException('Prevented publishing document - missing values for required editables');
         }
 
-        return parent::save();
+        return parent::save(...func_get_args());
     }
 
     /**
