@@ -17,47 +17,56 @@ namespace Pimcore\Model\Listing;
 
 use Pimcore\Model\AbstractModel;
 
-abstract class JsonListing extends AbstractModel
+use Pimcore\Model\Listing\Traits\FilterListingTrait;
+use Pimcore\Model\Listing\Traits\OrderListingTrait;
+
+/**
+ * @deprecated
+ */
+abstract class JsonListing extends AbstractModel implements CallableFilterListingInterface, CallableOrderListingInterface
 {
-    /**
-     * @var callable|null
-     */
-    protected $filter;
+    use FilterListingTrait;
+    use OrderListingTrait;
 
-    /**
-     * @var callable|null
-     */
-    protected $order;
-
-    /**
-     * @return callable|null
-     */
     public function getFilter()
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated. Use %s instead!', __METHOD__, 'FilterListingTrait')
+        );
+
         return $this->filter;
     }
 
-    /**
-     * @param callable|null $filter
-     */
     public function setFilter($filter)
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated. Use %s instead!', __METHOD__, 'FilterListingTrait')
+        );
         $this->filter = $filter;
     }
 
-    /**
-     * @return callable|null
-     */
     public function getOrder()
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated. Use %s instead!', __METHOD__, 'OrderListingTrait')
+        );
+
         return $this->order;
     }
 
-    /**
-     * @param callable|null $order
-     */
     public function setOrder($order)
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated. Use %s instead!', __METHOD__, 'OrderListingTrait')
+        );
         $this->order = $order;
     }
 }

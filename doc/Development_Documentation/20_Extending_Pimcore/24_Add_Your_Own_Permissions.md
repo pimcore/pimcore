@@ -37,14 +37,9 @@ class AdminController extends PimcoreAdminController
 
 ### In the frontend (bundle)
 ```js
-pimcore.registerNS("pimcore.plugin.App");
-
-pimcore.plugin.App = Class.create(pimcore.plugin.admin, {
-    pimcoreReady: function (params, broker) {
-
-        if(pimcore.currentuser.permissions.indexOf("my_permission") >= 0) {
-            ...
-        }
+document.addEventListener(pimcore.events.pimcoreReady, (e) => {
+    if(pimcore.currentuser.permissions.indexOf("my_permission") >= 0) {
+        ...
     }
 });
 ```

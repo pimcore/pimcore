@@ -268,7 +268,8 @@ abstract class Processor
         $document = $params['document'] ?? null;
         $hostUrl = $params['hostUrl'] ?? null;
 
-        $twig = \Pimcore::getContainer()->get('twig');
+        $templatingEngine = \Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
+        $twig = $templatingEngine->getTwigEnvironment();
         $template = $twig->createTemplate((string) $html);
         $html = $twig->render($template, $params);
 
@@ -290,7 +291,7 @@ abstract class Processor
     }
 
     /**
-     * returns the path to the generated pdf file
+     * Returns the generated pdf file. Its path or data depending supplied parameter
      *
      * @param string $html
      * @param array $params

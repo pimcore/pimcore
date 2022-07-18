@@ -3215,4 +3215,23 @@ pimcore.helpers.formatTimeDuration = function (dataDuration) {
     durationString += ("0" + Math.round(dataDuration % 60)).slice(-2);
 
     return durationString;
-}
+};
+
+/**
+ * Delete confim dialog box
+ *
+ * @param title
+ * @param name
+ * @param deleteCallback
+ */
+pimcore.helpers.deleteConfirm = function (title, name, deleteCallback) {
+    Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'),
+            title, name),
+        function (btn) {
+            if (btn == 'yes') {
+                if (typeof deleteCallback == "function") {
+                    deleteCallback();
+                }
+            }
+        }.bind(this))
+};

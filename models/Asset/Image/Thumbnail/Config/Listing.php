@@ -16,12 +16,20 @@
 namespace Pimcore\Model\Asset\Image\Thumbnail\Config;
 
 use Pimcore\Model;
+use Pimcore\Model\Listing\CallableFilterListingInterface;
+use Pimcore\Model\Listing\CallableOrderListingInterface;
+use Pimcore\Model\Listing\JsonListing;
+use Pimcore\Model\Listing\Traits\FilterListingTrait;
+use Pimcore\Model\Listing\Traits\OrderListingTrait;
 
 /**
  * @method \Pimcore\Model\Asset\Image\Thumbnail\Config\Listing\Dao getDao()
  */
-class Listing extends Model\Listing\JsonListing
+class Listing extends JsonListing implements CallableFilterListingInterface, CallableOrderListingInterface
 {
+    use FilterListingTrait;
+    use OrderListingTrait;
+
     /**
      * @internal
      *

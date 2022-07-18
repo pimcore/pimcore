@@ -528,7 +528,7 @@ class SettingsController extends AdminController
                     'color_login_screen' => $values['branding.color_login_screen'],
                     'color_admin_interface' => $values['branding.color_admin_interface'],
                     'color_admin_interface_background' => $values['branding.color_admin_interface_background'],
-                    'login_screen_custom_image' => $values['branding.login_screen_custom_image'],
+                    'login_screen_custom_image' => str_replace('%', '%%', $values['branding.login_screen_custom_image']),
                 ],
         ];
 

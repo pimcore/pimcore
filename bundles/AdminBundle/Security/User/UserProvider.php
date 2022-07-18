@@ -26,7 +26,7 @@ class UserProvider implements UserProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadUserByUsername($username)
+    public function loadUserByIdentifier(string $username): UserInterface
     {
         $pimcoreUser = PimcoreUser::getByName($username);
 
@@ -35,6 +35,16 @@ class UserProvider implements UserProviderInterface
         }
 
         throw new UserNotFoundException(sprintf('User %s was not found', $username));
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @deprecated use loadUserByIdentifier() instead.
+     */
+    public function loadUserByUsername($identifier)
+    {
+        return $this->loadUserByIdentifier($identifier);
     }
 
     /**

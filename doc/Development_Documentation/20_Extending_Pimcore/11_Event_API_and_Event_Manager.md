@@ -6,7 +6,7 @@ Pimcore provides an extensive number of events that are fired during execution o
 used to hook into many Pimcore functions such as saving an object, asset or document and can be used to change or extend 
 the default behavior of Pimcore.
 
-The most common use-case for events is using them in a [bundle/extension](13_Bundle_Developers_Guide/06_Plugin_Backend_UI.md), but 
+The most common use-case for events is using them in a [bundle/extension](13_Bundle_Developers_Guide/06_Event_Listener_UI.md), but 
 of course you can use them also anywhere in your code or in your dependency injection configuration (`config/services.yaml`). 
 
 Pimcore implements the standard Symfony framework event dispatcher and just adds some pimcore specific events, 

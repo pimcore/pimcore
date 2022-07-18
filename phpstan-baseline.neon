@@ -176,11 +176,6 @@ parameters:
 			path: lib/Mail.php
 
 		-
-			message: "#^Method Pimcore\\\\Model\\\\Document\\\\PageSnippet\\:\\:save\\(\\) invoked with 1 parameter, 0 required\\.$#"
-			count: 1
-			path: lib/Messenger/Handler/SanityCheckHandler.php
-
-		-
 			message: "#^Parameter \\#2 \\$eventDispatcher of method Pimcore\\\\Targeting\\\\Condition\\\\EventDispatchingConditionInterface\\:\\:postMatch\\(\\) expects Symfony\\\\Component\\\\EventDispatcher\\\\EventDispatcherInterface, Symfony\\\\Contracts\\\\EventDispatcher\\\\EventDispatcherInterface given\\.$#"
 			count: 1
 			path: lib/Targeting/ConditionMatcher.php

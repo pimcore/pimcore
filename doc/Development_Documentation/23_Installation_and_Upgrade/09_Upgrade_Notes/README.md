@@ -1,6 +1,9 @@
 # Upgrade Notes
 
 ## 10.5.0
+- [Listings] `JsonListing` class is deprecated. Please use `CallableFilterListingInterface`, `FilterListingTrait` and `CallableOrderListingInterface`, `OrderListingTrait` instead.
+  For examples please see existing classes, e.g. `Pimcore\Model\Document\DocType\Listing`.
+
 - [Security] It is recommended to use new [Authenticator based system](https://pimcore.com/docs/pimcore/current/Development_Documentation/19_Development_Tools_and_Details/10_Security_Authentication/05_Authenticator_Based_Security.md) for authentication/authorization.
   To use new authenticator, add following symfony config in `security.yaml`:
     ```yaml
@@ -41,8 +44,11 @@
   Implement an [EventListener](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/EventListener/SessionBagListener.php) to register a session bag before the session is started.
 - [Ecommerce][PricingManager] Token condition is deprecated and will be removed in Pimcore 11.
 - Parameter `pimcore.admin.session.attribute_bags` is deprecated and will be removed in Pimcore 11.
+- [JS Events/Disabled] The plugin broker for fire events has been disabled. 
+The plugins are still supported, but they are deprecated and will be removed in Pimcore 11   
+Please use [event listener](../../20_Extending_Pimcore/13_Bundle_Developers_Guide/06_Event_Listener_UI.md) instead of plugins for JS events.
 - [Web2Print] Wkhtmltopdf Processor has been deprecated and will be removed in Pimcore 11. Please use HeadlessChrome or PDFreactor instead.
-
+- [Config] `Pimcore\Config\Config` has been deprecated and will be removed in Pimcore 11.
 
 ## 10.4.2
 - When maintenance mode is active, all commands are prevented from starting (not just commands inheriting from `AbstractCommand`).

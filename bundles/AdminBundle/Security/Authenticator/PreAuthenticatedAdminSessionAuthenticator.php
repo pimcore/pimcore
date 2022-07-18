@@ -126,6 +126,9 @@ class PreAuthenticatedAdminSessionAuthenticator implements InteractiveAuthentica
         }
     }
 
+    /**
+     * @deprecated
+     */
     public function createAuthenticatedToken(PassportInterface $passport, string $firewallName): TokenInterface
     {
         /** @var Passport $passport */
