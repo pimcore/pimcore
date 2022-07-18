@@ -337,12 +337,20 @@ trait ImageThumbnailTrait
     }
 
     /**
-     * @param bool $deferred
      * @return string
      */
-    public function getFrontendPath(bool $deferred = true): string
+    public function getFrontendPath(): string
     {
-        return Tool::getHostUrl() . $this->getPath($deferred);
+        $pathReference = $this->getPathReference();
+        $type = $pathReference['type'] ?? null;
+
+        if ($type === 'data-uri') {
+            return $pathReference['src'];
+        }
+
+        $path = $this->convertToWebPath($pathReference);
+
+        return Tool::getHostUrl() . $path;
     }
 
     /**
