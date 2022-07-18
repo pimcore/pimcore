@@ -55,10 +55,12 @@ class Listing extends Model\Listing\AbstractListing implements CallableFilterLis
                 please pass callable function instead.', __METHOD__)
             );
 
-            parent::setOrder($order);
-        } else {
-            $this->order = $order;
+            return parent::setOrder($order);
         }
+
+        $this->order = $order;
+
+        return $this;
     }
 
     /**
