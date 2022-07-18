@@ -28,7 +28,7 @@ use Pimcore\Tests\Util\TestHelper;
 class ObjectTest extends ModelTestCase
 {
     /**
-     * Verifies that a object with the same parent ID cannot be created.
+     * Verifies that an object with the same parent ID cannot be created.
      */
     public function testParentIdentical()
     {
@@ -39,6 +39,16 @@ class ObjectTest extends ModelTestCase
 
         $savedObject->setParentId($savedObject->getId());
         $savedObject->save();
+    }
+
+    /**
+     * Verifies that object PHP API version note is saved
+     */
+    public function testSavingVersionNotes(){
+        $versionNote = ["versionNote" => "a new version of this object"];
+        $this->testObject = TestHelper::createEmptyObject();
+        $this->testObject->save($versionNote);
+        $this->assertEquals($this->testObject->getLatestVersion(null, true)->getNote(), $versionNote['versionNote']);
     }
 
     /**

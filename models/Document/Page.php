@@ -281,7 +281,7 @@ class Page extends TargetingDocument
 
     public function save()
     {
-        $response = parent::save();
+        $response = parent::save(...func_get_args());
 
         // Dispatch page preview message, if preview is enabled.
         $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
