@@ -98,6 +98,11 @@ class Admin
      */
     public static function getMinimizedScriptPath($scriptContent)
     {
+        trigger_deprecation (
+            'pimcore/pimcore',
+            '10.5',
+            sprintf ('%s is deprecated and it will be removed in Pimcore 11.', __METHOD__)
+        );
         $scriptPath = 'minified_javascript_core_'.md5($scriptContent).'.js';
 
         $storage = Storage::get('admin');
