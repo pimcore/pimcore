@@ -30,6 +30,13 @@ upstream php-pimcore10 {
     server unix:/var/run/php/pimcore.sock;
 }
 
+map $args $static_page_root {
+    default                                 /var/tmp/pages;
+    "~*(^|&)pimcore_editmode=true(&|$)"     /var/nonexistent;
+    "~*(^|&)pimcore_preview=true(&|$)"      /var/nonexistent;
+    "~*(^|&)pimcore_version=[^&]+(&|$)"     /var/nonexistent;
+}
+
 server {
     listen 80;
     server_name YOUPROJECT.local;
@@ -119,7 +126,7 @@ server {
 
     location / {
         error_page 404 /meta/404;
-        try_files $uri /index.php$is_args$args;
+        try_files $static_page_root$uri.html $uri /index.php$is_args$args;
     }
 
     # Use this location when the installer has to be run
@@ -189,6 +196,13 @@ The following configuration provides an approperiate base for a secure applicati
 
 upstream php-pimcore10 {
     server unix:/var/run/php/pimcore.sock;
+}
+
+map $args $static_page_root {
+    default                                 /var/tmp/pages;
+    "~*(^|&)pimcore_editmode=true(&|$)"     /var/nonexistent;
+    "~*(^|&)pimcore_preview=true(&|$)"      /var/nonexistent;
+    "~*(^|&)pimcore_version=[^&]+(&|$)"     /var/nonexistent;
 }
 
 server {
@@ -395,7 +409,7 @@ server {
 
     location / {
         error_page 404 /meta/404;
-        try_files $uri /index.php$is_args$args;
+        try_files $static_page_root$uri.html $uri /index.php$is_args$args;
     }
 
     # Use this location when the installer has to be run
