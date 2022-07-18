@@ -151,11 +151,6 @@ class RuntimeCache extends \ArrayObject
      */
     public function offsetSet($index, $value): void
     {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.5.0',
-            sprintf('%s is deprecated. Use %s instead!', __METHOD__, 'RuntimeCache::offsetSet')
-        );
         parent::offsetSet($index, $value);
     }
 
