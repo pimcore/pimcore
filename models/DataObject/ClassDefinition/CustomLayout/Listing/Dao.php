@@ -26,7 +26,14 @@ class Dao extends Model\Listing\Dao\AbstractDao
 {
     protected function loadIdList()
     {
-        return $this->db->fetchFirstColumn('SELECT id FROM custom_layouts');
+        $sql = 'SELECT id FROM custom_layouts' . $this->getCondition();
+        if (!is_callable($this->model->getOrder())) {
+            $sql .= $this->getOrder();
+        }
+
+        $sql .= $this->getOffsetLimit();
+
+        return $this->db->fetchFirstColumn($sql, $this->model->getConditionVariables());
     }
 
     /**
@@ -47,7 +54,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         if ($this->model->getFilter()) {
             $layouts = array_filter($layouts, $this->model->getFilter());
         }
-        if ($this->model->getOrder()) {
+        if (is_callable($this->model->getOrder())) {
             usort($layouts, $this->model->getOrder());
         }
         $this->model->setLayoutDefinitions($layouts);
@@ -60,6 +67,22 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
-        return count($this->load());
+        try {
+            $layouts = $this->db->fetchFirstColumn('SELECT id FROM custom_layouts ' . $this->getCondition(), $this->model->getConditionVariables());
+            foreach ($layouts as $id) {
+                $customLayout = Model\DataObject\ClassDefinition\CustomLayout::getById($id);
+                if ($customLayout) {
+                    $layouts[] = $customLayout;
+                }
+            }
+
+            if ($this->model->getFilter()) {
+                $layouts = array_filter($layouts, $this->model->getFilter());
+            }
+
+            return count($layouts);
+        } catch (\Exception $e) {
+            return 0;
+        }
     }
 }

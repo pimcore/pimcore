@@ -31,9 +31,40 @@ use Pimcore\Model\Listing\Traits\OrderListingTrait;
 class Listing extends Model\Listing\AbstractListing implements CallableFilterListingInterface, CallableOrderListingInterface
 {
     use FilterListingTrait;
-    use OrderListingTrait;
+
+    /**
+     * @var array|string|callable|null
+     */
+    protected $order = [];
 
     protected ?array $layoutDefinitions = null;
+
+    /**
+     * @return array|string|callable|null
+     */
+    public function getOrder()
+    {
+        return $this->order;
+    }
+
+    /**
+     * @param array|string|callable|null $order
+     */
+    public function setOrder($order): void
+    {
+        if (is_array($order) || is_string($order)) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '10.5',
+                sprintf('Passing array or string to %s is deprecated,
+                please pass callable function instead.', __METHOD__)
+            );
+
+            parent::setOrder($order);
+        } else {
+            $this->order = $order;
+        }
+    }
 
     /**
      * @param Model\DataObject\ClassDefinition\CustomLayout[]|null $layoutDefinitions
