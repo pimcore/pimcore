@@ -16,7 +16,6 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
 
 use Pimcore\Model;
-use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Listing\CallableFilterListingInterface;
 use Pimcore\Model\Listing\CallableOrderListingInterface;
 use Pimcore\Model\Listing\Traits\FilterListingTrait;
@@ -29,12 +28,40 @@ use Pimcore\Model\Listing\Traits\OrderListingTrait;
  * @method Model\DataObject\ClassDefinition\CustomLayout[] load()
  * @method Model\DataObject\ClassDefinition\CustomLayout|false current()
  */
-class Listing extends AbstractModel implements CallableFilterListingInterface, CallableOrderListingInterface
+class Listing extends Model\Listing\AbstractListing implements CallableFilterListingInterface, CallableOrderListingInterface
 {
     use FilterListingTrait;
-    use OrderListingTrait;
 
     protected ?array $layoutDefinitions = null;
+
+    /**
+     * @return array|string|callable|null
+     */
+    public function getOrder()
+    {
+        return $this->order;
+    }
+
+    /**
+     * @param array|string|callable|null $order
+     */
+    public function setOrder($order)
+    {
+        if (is_array($order) || is_string($order)) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '10.5',
+                sprintf('Passing array or string to %s is deprecated,
+                please pass callable function instead.', __METHOD__)
+            );
+
+            return parent::setOrder($order);
+        }
+
+        $this->order = $order;
+
+        return $this;
+    }
 
     /**
      * @param Model\DataObject\ClassDefinition\CustomLayout[]|null $layoutDefinitions
