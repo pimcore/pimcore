@@ -782,7 +782,7 @@ class Installer
             ['key' => 'http_errors'],
             ['key' => 'notes_events'],
             ['key' => 'objects'],
-            ['key' => 'plugins'],
+            ['key' => 'plugins'], // TODO: to be removed in Pimcore 11
             ['key' => 'predefined_properties'],
             ['key' => 'asset_metadata'],
             ['key' => 'recyclebin'],

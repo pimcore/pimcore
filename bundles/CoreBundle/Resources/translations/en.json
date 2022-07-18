@@ -960,7 +960,7 @@
     "by_key_reverse": "Key (Z to A)",
     "deprecated": "Deprecated",
     "version_currently_saved_in_database": "Currently saved in database (but not published)",
-    "deprecated_feature": "<p style='color: orange;'>Deprecated feature. Use %s<br>instead</p>",
+    "deprecated_feature": "<span style='color: orange;'>Deprecated feature. Use %s instead</span>",
     "edit_as_custom_text": "Edit as custom text",
     "symfony_translation_link": "Translation Format: https://symfony.com/doc/current/translation/message_format.html",
     "no_action_available": "No action available",
