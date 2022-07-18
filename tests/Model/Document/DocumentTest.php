@@ -282,7 +282,6 @@ class DocumentTest extends ModelTestCase
         $this->assertNull($linkDocument->getInternal());
     }
 
-
     public function testSetGetChildren()
     {
         $parentDoc = TestHelper::createEmptyDocumentPage();
