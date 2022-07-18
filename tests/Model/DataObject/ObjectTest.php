@@ -44,8 +44,9 @@ class ObjectTest extends ModelTestCase
     /**
      * Verifies that object PHP API version note is saved
      */
-    public function testSavingVersionNotes(){
-        $versionNote = ["versionNote" => "a new version of this object"];
+    public function testSavingVersionNotes()
+    {
+        $versionNote = ['versionNote' => 'a new version of this object'];
         $this->testObject = TestHelper::createEmptyObject();
         $this->testObject->save($versionNote);
         $this->assertEquals($this->testObject->getLatestVersion(null, true)->getNote(), $versionNote['versionNote']);
