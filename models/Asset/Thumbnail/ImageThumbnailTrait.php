@@ -445,6 +445,7 @@ trait ImageThumbnailTrait
         $config->setFormat($format);
 
         $thumb->config = $config;
+        $thumb->reset();
 
         return $thumb ;
     }
