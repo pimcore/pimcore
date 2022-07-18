@@ -341,16 +341,12 @@ trait ImageThumbnailTrait
      */
     public function getFrontendPath(): string
     {
-        $pathReference = $this->getPathReference();
-        $type = $pathReference['type'] ?? null;
-
-        if ($type === 'data-uri') {
-            return $pathReference['src'];
+        $path = $this->getPath();
+        if(!\preg_match('@^(https?|data):@', $path)) {
+            $path = \Pimcore\Tool::getHostUrl() . $path;
         }
 
-        $path = $this->convertToWebPath($pathReference);
-
-        return Tool::getHostUrl() . $path;
+        return $path;
     }
 
     /**
