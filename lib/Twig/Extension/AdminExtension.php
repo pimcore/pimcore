@@ -79,6 +79,11 @@ class AdminExtension extends AbstractExtension
 
             $url = $this->generator->generate ('pimcore_admin_misc_scriptproxy', $this->adminJsService->getBundleScriptPaths(), UrlGeneratorInterface::ABSOLUTE_PATH);
             $returnScriptPath .= $this->getScriptTag($url);
+
+            $PathUrls = $this->adminJsService->getExtraScriptPaths ();
+            foreach ($PathUrls as $PathUrl) {
+                $returnScriptPath .= $this->getScriptTag ($PathUrl);
+            }
         }
 
         return $returnScriptPath;

@@ -61,7 +61,8 @@ class AdminJsHelperService
         PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/js/'
     ];
     protected const MINIFIED_SCRIPT_FILENAME = '_minified_javascript_core.js';
-    protected const SCRIPT_INTERNAL_PREFIX = 'library';
+    protected const EXTRA_SCRIPT_FILENAME = 'extra_script_paths.txt';
+    protected const SCRIPT_INTERNAL_PREFIX = 'internal';
     protected const SCRIPT_BUNDLE_PREFIX = 'bundle';
     protected const SCRIPT_PATH = '/bundles/pimcoreadmin/js/';
 
@@ -159,6 +160,22 @@ class AdminJsHelperService
     }
 
     /**
+     * Get the scripts/files that doesn't exists in the WEBROOTPATHS from the file
+     *
+     * @return array
+     */
+    public function getExtraScriptPaths (): array
+    {
+        if (!\Pimcore::disableMinifyJs ()) {
+            if ($this->filesystem->exists ($this->jsCacheDir . self::EXTRA_SCRIPT_FILENAME)) {
+                $extraScriptPaths = file_get_contents ($this->jsCacheDir . self::EXTRA_SCRIPT_FILENAME);
+                return explode ("\n", $extraScriptPaths);
+            }
+        }
+        return [];
+    }
+
+    /**
      * Get either pre-generated or runtime generated minified JS script paths
      *
      * @param string $prefix
@@ -234,11 +251,17 @@ class AdminJsHelperService
     {
         $scriptContents = '';
         foreach ($jsScripts as $scriptPath) {
+            $found = false;
             foreach (self::WEBROOTPATHS as $webRootPath) {
                 $fullPath = $webRootPath . $scriptPath;
                 if (file_exists ($fullPath)) {
                     $scriptContents .= file_get_contents ($fullPath) . "\n\n\n";
+                    $found = true;
                 }
+            }
+            // Write additional script paths like `settings-json`, `config/js-config` to an extra file
+            if(!$found) {
+                $this->writeToFile ($this->jsCacheDir, self::EXTRA_SCRIPT_FILENAME, $scriptPath. PHP_EOL,true);
             }
         }
 
@@ -253,14 +276,18 @@ class AdminJsHelperService
      * @param string $dirPath
      * @param string $fileName
      * @param string $scriptContent
+     * @param bool $append
      *
      * @return bool
      */
-    private function writeToFile(string $dirPath, string $fileName,string $scriptContent): bool
+    private function writeToFile(string $dirPath, string $fileName,string $scriptContent, bool $append = false): bool
     {
         try {
             $fileName = $dirPath . $fileName;
-            $this->filesystem->dumpFile($fileName, $scriptContent);
+            if($append)
+                $this->filesystem->appendToFile ($fileName, $scriptContent);
+            else
+                $this->filesystem->dumpFile($fileName, $scriptContent);
         } catch (\Exception $e) {
             return false;
         }
