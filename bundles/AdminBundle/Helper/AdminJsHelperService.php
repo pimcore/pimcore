@@ -168,8 +168,8 @@ class AdminJsHelperService
     {
         if (!\Pimcore::disableMinifyJs ()) {
             if ($this->filesystem->exists ($this->jsCacheDir . self::EXTRA_SCRIPT_FILENAME)) {
-                $extraScriptPaths = file_get_contents ($this->jsCacheDir . self::EXTRA_SCRIPT_FILENAME);
-                return explode ("\n", $extraScriptPaths);
+                $extraScriptPaths = trim(file_get_contents ($this->jsCacheDir . self::EXTRA_SCRIPT_FILENAME));
+                return explode (PHP_EOL, $extraScriptPaths);
             }
         }
         return [];
