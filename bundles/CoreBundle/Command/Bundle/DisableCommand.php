@@ -48,11 +48,16 @@ class DisableCommand extends AbstractBundleCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $deprecation = 'Disabling bundle is deprecated and will not work in Pimcore 11. Use config/bundles.php to register/de-register bundles instead.';
         trigger_deprecation(
             'pimcore/pimcore',
             '10.5',
-            'Disabling bundle is deprecated and will not work in Pimcore 11. Use config/bundles.php to register/de-register bundles instead.'
+            $deprecation
         );
+
+        if ($output->isVerbose()) {
+            $output->writeln(sprintf('Since pimcore/pimcore 10.5, %s', $deprecation));
+        }
 
         $bundle = $this->getBundle();
 
