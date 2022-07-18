@@ -16,7 +16,6 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
 
 use Pimcore\Model;
-use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Listing\CallableFilterListingInterface;
 use Pimcore\Model\Listing\CallableOrderListingInterface;
 use Pimcore\Model\Listing\Traits\FilterListingTrait;
@@ -29,7 +28,7 @@ use Pimcore\Model\Listing\Traits\OrderListingTrait;
  * @method Model\DataObject\ClassDefinition\CustomLayout[] load()
  * @method Model\DataObject\ClassDefinition\CustomLayout|false current()
  */
-class Listing extends AbstractModel implements CallableFilterListingInterface, CallableOrderListingInterface
+class Listing extends Model\Listing\AbstractListing implements CallableFilterListingInterface, CallableOrderListingInterface
 {
     use FilterListingTrait;
     use OrderListingTrait;
