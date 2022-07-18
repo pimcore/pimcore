@@ -32,11 +32,6 @@ class Listing extends Model\Listing\AbstractListing implements CallableFilterLis
 {
     use FilterListingTrait;
 
-    /**
-     * @var array|string|callable|null
-     */
-    protected $order;
-
     protected ?array $layoutDefinitions = null;
 
     /**
@@ -50,7 +45,7 @@ class Listing extends Model\Listing\AbstractListing implements CallableFilterLis
     /**
      * @param array|string|callable|null $order
      */
-    public function setOrder($order): void
+    public function setOrder($order)
     {
         if (is_array($order) || is_string($order)) {
             trigger_deprecation(
