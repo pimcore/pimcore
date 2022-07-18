@@ -16,6 +16,10 @@
 namespace Pimcore\Model\Property\Predefined;
 
 use Pimcore\Model;
+use Pimcore\Model\Listing\CallableFilterListingInterface;
+use Pimcore\Model\Listing\CallableOrderListingInterface;
+use Pimcore\Model\Listing\Traits\FilterListingTrait;
+use Pimcore\Model\Listing\Traits\OrderListingTrait;
 
 /**
  * @internal
@@ -23,8 +27,11 @@ use Pimcore\Model;
  * @method \Pimcore\Model\Property\Predefined\Listing\Dao getDao()
  * @method int getTotalCount()
  */
-class Listing extends Model\Listing\JsonListing
+class Listing extends Model\Listing\JsonListing implements CallableFilterListingInterface, CallableOrderListingInterface
 {
+    use FilterListingTrait;
+    use OrderListingTrait;
+
     /**
      * @var array|null
      */

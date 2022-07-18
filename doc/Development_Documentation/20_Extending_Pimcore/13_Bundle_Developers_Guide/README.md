@@ -105,7 +105,7 @@ If you need persistent storage, create a unique directory in `PIMCORE_PRIVATE_VA
 ### Extending the Admin UI
 
 The following section explains how to design and structure bundles and how to register for and utilize the events provided
-in the PHP backend and the Ext JS frontend: [Plugin_Backend_UI](./06_Plugin_Backend_UI.md)
+in the PHP backend and the Ext JS frontend: [Event_Listener_UI](./06_Event_Listener_UI.md)
 
 ### Adding Document Editables
 

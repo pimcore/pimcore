@@ -594,7 +594,10 @@ final class ClassDefinition extends Model\AbstractModel
         }
 
         $customLayouts = new ClassDefinition\CustomLayout\Listing();
-        $customLayouts->setCondition('classId = ?', $this->getId());
+        $id = $this->getId();
+        $customLayouts->setFilter(function (DataObject\ClassDefinition\CustomLayout $layout) use ($id) {
+            return $layout->getClassId() === $id;
+        });
         $customLayouts = $customLayouts->load();
 
         foreach ($customLayouts as $customLayout) {
@@ -1466,7 +1469,10 @@ final class ClassDefinition extends Model\AbstractModel
             return;
         }
         $customLayouts = new ClassDefinition\CustomLayout\Listing();
-        $customLayouts->setCondition('classId = ?', $this->getId());
+        $id = $this->getId();
+        $customLayouts->setFilter(function (DataObject\ClassDefinition\CustomLayout $layout) use ($id) {
+            return $layout->getClassId() === $id;
+        });
         $customLayouts = $customLayouts->load();
 
         foreach ($customLayouts as $customLayout) {

@@ -19,15 +19,6 @@ services:
         arguments:
             - Pimcore\Bundle\AdminBundle\Security\Encoder\AdminPasswordEncoder
 
-    # guard implementation handling admin form login for the main admin firewall
-    Pimcore\Bundle\AdminBundle\Security\Guard\AdminAuthenticator:
-        public: false
-        arguments:
-            $httpUtils: '@security.http_utils'
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: monolog.logger, channel: security }
 
     # the password hasher factory builds a dedicated hasher per user
     # as we need the user instance to hash passwords.
@@ -73,30 +64,12 @@ services:
 
     Pimcore\Bundle\AdminBundle\Security\Event\LogoutListener: ~
 
-    Pimcore\Bundle\AdminBundle\Security\LogoutSuccessHandler:
-        public: false
-        arguments:
-            - '@security.token_storage'
-            - '@router'
-            - '@event_dispatcher'
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: monolog.logger, channel: security }
-
     Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver:
         public: true
         arguments:
             - '@security.token_storage'
 
     Pimcore\Bundle\AdminBundle\Security\User\UserLoader: ~
-
-    Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler:
-        public: false
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: monolog.logger, channel: security }
 
     Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler:
         public: true

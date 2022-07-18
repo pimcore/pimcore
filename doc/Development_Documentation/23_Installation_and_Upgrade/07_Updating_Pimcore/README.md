@@ -22,6 +22,7 @@ If you do not want to run Pimcore migrations automatically please remove `"Pimco
 To run core migrations manually (e.g. when using composer install), 
 use: `bin/console doctrine:migrations:migrate --prefix=Pimcore\\Bundle\\CoreBundle`
 
-## Upgrading to Version X from earlier Versions
+## Upgrading from earlier Versions
 - [Upgrade from Version 6 to Version X](./10_V6_to_V10.md)
+- [Preparing for Version 11](./11_Preparing_for_V11.md)
 

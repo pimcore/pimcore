@@ -24,6 +24,18 @@ use Pimcore\Model;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
+    protected function loadIdList()
+    {
+        $sql = 'SELECT id FROM custom_layouts' . $this->getCondition();
+        if (!is_callable($this->model->getOrder())) {
+            $sql .= $this->getOrder();
+        }
+
+        $sql .= $this->getOffsetLimit();
+
+        return $this->db->fetchFirstColumn($sql, $this->model->getConditionVariables());
+    }
+
     /**
      * Loads a list of custom layouts for the specified parameters, returns an array of DataObject\ClassDefinition\CustomLayout elements
      *
@@ -33,15 +45,18 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $layouts = [];
 
-        $layoutsRaw = $this->db->fetchFirstColumn('SELECT id FROM custom_layouts' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
-
-        foreach ($layoutsRaw as $classRaw) {
-            $customLayout = Model\DataObject\ClassDefinition\CustomLayout::getById($classRaw);
+        foreach ($this->loadIdList() as $id) {
+            $customLayout = Model\DataObject\ClassDefinition\CustomLayout::getById($id);
             if ($customLayout) {
                 $layouts[] = $customLayout;
             }
         }
-
+        if ($this->model->getFilter()) {
+            $layouts = array_filter($layouts, $this->model->getFilter());
+        }
+        if (is_callable($this->model->getOrder())) {
+            usort($layouts, $this->model->getOrder());
+        }
         $this->model->setLayoutDefinitions($layouts);
 
         return $layouts;
@@ -53,7 +68,19 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount()
     {
         try {
-            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM custom_layouts ' . $this->getCondition(), $this->model->getConditionVariables());
+            $layouts = $this->db->fetchFirstColumn('SELECT id FROM custom_layouts ' . $this->getCondition(), $this->model->getConditionVariables());
+            foreach ($layouts as $id) {
+                $customLayout = Model\DataObject\ClassDefinition\CustomLayout::getById($id);
+                if ($customLayout) {
+                    $layouts[] = $customLayout;
+                }
+            }
+
+            if ($this->model->getFilter()) {
+                $layouts = array_filter($layouts, $this->model->getFilter());
+            }
+
+            return count($layouts);
         } catch (\Exception $e) {
             return 0;
         }
