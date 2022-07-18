@@ -35,7 +35,7 @@ class Listing extends Model\Listing\AbstractListing implements CallableFilterLis
     /**
      * @var array|string|callable|null
      */
-    protected $order = [];
+    protected $order;
 
     protected ?array $layoutDefinitions = null;
 
