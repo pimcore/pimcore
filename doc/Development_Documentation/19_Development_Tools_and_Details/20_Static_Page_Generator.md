@@ -88,4 +88,4 @@ pimcore:
 | config         | Description                                                   |
 |----------------|---------------------------------------------------------------|
 | enabled        | Set it true to enable Static Page Router                      |
-| route_pattern | Regular expression to match routes for static page rendering  |
+| route_pattern  | Regular expression to match routes for static page rendering  |
