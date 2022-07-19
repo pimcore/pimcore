@@ -51,11 +51,6 @@ parameters:
 			path: bundles/CoreBundle/Command/Definition/Import/ObjectBrickCommand.php
 
 		-
-			message: "#^Parameter \\#1 \\$messages of method Symfony\\\\Component\\\\Console\\\\Output\\\\OutputInterface\\:\\:write\\(\\) expects iterable\\|string, int given\\.$#"
-			count: 1
-			path: bundles/CoreBundle/Command/InternalMigrationHelpersCommand.php
-
-		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 3
 			path: bundles/CoreBundle/DependencyInjection/PimcoreCoreExtension.php
