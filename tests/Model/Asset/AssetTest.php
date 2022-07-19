@@ -227,14 +227,14 @@ class AssetTest extends ModelTestCase
 
         $thumbnailConfig = TestHelper::createThumbnailConfigurationScaleByWidth();
 
-        $this->assertRegExp('@^(https?|data):@', $asset->getFrontendPath());
+        $this->assertMatchesRegularExpression('@^(https?|data):@', $asset->getFrontendPath());
         $this->assertStringContainsString($asset->getFullPath(), $asset->getFrontendPath());
 
         $thumbnail = $asset->getThumbnail($thumbnailConfig->getName());
 
         $thumbnailFullUrl = $thumbnail->getFrontendPath();
 
-        $this->assertRegExp('@^(https?|data):@', $thumbnailFullUrl);
+        $this->assertMatchesRegularExpression('@^(https?|data):@', $thumbnailFullUrl);
         $this->assertStringContainsString($thumbnail->getPath(), $thumbnailFullUrl);
 
     }
