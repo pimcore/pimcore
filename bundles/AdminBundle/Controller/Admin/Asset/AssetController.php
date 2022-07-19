@@ -102,6 +102,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     public function getDataByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $assetId = (int)$request->get('id');
+        $type = (string)$request->get('type');
+
         $asset = Asset::getById($assetId);
         if (!$asset instanceof Asset) {
             return $this->adminJson(['success' => false, 'message' => "asset doesn't exist"]);
