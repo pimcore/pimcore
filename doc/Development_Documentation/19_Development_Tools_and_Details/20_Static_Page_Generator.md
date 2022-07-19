@@ -14,7 +14,7 @@ and last generated information is displayed in document settings, when the gener
 ![Static Page Detail](../img/static_page3.png)
 
 In addition, if you are using default local storage for static pages, then make sure your project `.htaccess` has this below section (after the `# Thumbnails` section), which is responsible for looking up static page before passing to templating engine. 
-```
+```apache
 # static pages
 RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)
 RewriteCond %{QUERY_STRING}   !(pimcore_editmode=true|pimcore_preview|pimcore_version)
@@ -22,20 +22,27 @@ RewriteCond %{DOCUMENT_ROOT}/var/tmp/pages%{REQUEST_URI}.html -f
 RewriteRule ^(.*)$ /var/tmp/pages%{REQUEST_URI}.html [PT,L]
 ```
 
-If you are using NGINX as web server, the following modification must be done to the location block that matches all requests 
+If you are using NGINX as web server, this must be added **before** the `server` block
+```nginx
+map $args $static_page_root {
+    default                                 /var/tmp/pages;
+    "~*(^|&)pimcore_editmode=true(&|$)"     /var/nonexistent;
+    "~*(^|&)pimcore_preview=true(&|$)"      /var/nonexistent;
+    "~*(^|&)pimcore_version=[^&]+(&|$)"     /var/nonexistent;
+}
 ```
-    location @staticpage{
-        try_files /var/tmp/pages$uri.html $uri /index.php$is_args$args;
-    }
-
+and the following modification must be done to the location block that matches all requests 
+```nginx
+server {
+    ... 
+    
     location / {
         error_page 404 /meta/404;
-        error_page 418 = @staticpage;
-        if ($args ~* ^(?!pimcore_editmode=true|pimcore_preview|pimcore_version)(.*)$){
-            return 418;
-        }
-        try_files $uri /index.php$is_args$args;
+        try_files $static_page_root$uri.html $uri /index.php$is_args$args;
     }
+    
+    ...
+}
 ```
 
 ## Processing
@@ -81,4 +88,4 @@ pimcore:
 | config         | Description                                                   |
 |----------------|---------------------------------------------------------------|
 | enabled        | Set it true to enable Static Page Router                      |
-| route_pattern | Regular expression to match routes for static page rendering  |
+| route_pattern  | Regular expression to match routes for static page rendering  |

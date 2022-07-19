@@ -12,13 +12,13 @@
     ```
 - [Elements] Calling the methods `Asset::getById()`, `Document::getById()` and `DataObject::getById()` with second boolean parameter `$force` is deprecated and will throw exception in Pimcore 11. Instead pass the second parameter as associative array with `$force` value.
   e.g. Before 
-   ```
+   ```php
     Asset::getById($id, true);
     Document::getById($id, true);
     DataObject::getById($id, true);
    ```
     After
-   ```
+   ```php
     Asset::getById($id, ['force' => true]);
     Document::getById($id, ['force' => true]);
     DataObject::getById($id, ['force' => true]);
@@ -51,6 +51,47 @@ Please use [event listener](../../20_Extending_Pimcore/13_Bundle_Developers_Guid
   Please use `config/bundles.php` to register/manage bundles instead.
 - [Web2Print] Wkhtmltopdf Processor has been deprecated and will be removed in Pimcore 11. Please use HeadlessChrome or PDFreactor instead.
 - [Config] `Pimcore\Config\Config` has been deprecated and will be removed in Pimcore 11.
+- The recommended nginx config for static pages has been updated (the old one still works!) from
+  ```nginx
+  server {
+      ...
+
+      location @staticpage{
+          try_files /var/tmp/pages$uri.html $uri /index.php$is_args$args;
+      }
+
+      location / {
+          error_page 404 /meta/404;
+          error_page 418 = @staticpage;
+          if ($args ~* ^(?!pimcore_editmode=true|pimcore_preview|pimcore_version)(.*)$){
+              return 418;
+          }
+          try_files $uri /index.php$is_args$args;
+      }
+
+      ...
+  }
+  ```
+  to
+  ```nginx
+  map $args $static_page_root {
+      default                                 /var/tmp/pages;
+      "~*(^|&)pimcore_editmode=true(&|$)"     /var/nonexistent;
+      "~*(^|&)pimcore_preview=true(&|$)"      /var/nonexistent;
+      "~*(^|&)pimcore_version=[^&]+(&|$)"     /var/nonexistent;
+  }
+
+  server {
+      ... 
+
+      location / {
+          error_page 404 /meta/404;
+          try_files $static_page_root$uri.html $uri /index.php$is_args$args;
+      }
+
+      ...
+  }
+  ```
 
 ## 10.4.2
 - When maintenance mode is active, all commands are prevented from starting (not just commands inheriting from `AbstractCommand`).
