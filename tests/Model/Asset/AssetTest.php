@@ -15,6 +15,8 @@
 
 namespace Pimcore\Tests\Model\Asset;
 
+use Codeception\Test\Test;
+use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
@@ -218,5 +220,22 @@ class AssetTest extends ModelTestCase
 
         $this->assertTrue(Asset::getById($asset->getId()) === Asset::getById($asset->getId()));
         $this->assertFalse(Asset::getById($asset->getId()) === Asset::getById($asset->getId(), ['force' => true]));
+    }
+
+    public function testAssetFullPath() {
+        $asset = TestHelper::createImageAsset();
+
+        $thumbnailConfig = TestHelper::createThumbnailConfigurationScaleByWidth();
+
+        $this->assertRegExp('@^(https?|data):@', $asset->getFrontendPath());
+        $this->assertStringContainsString($asset->getFullPath(), $asset->getFrontendPath());
+
+        $thumbnail = $asset->getThumbnail($thumbnailConfig->getName());
+
+        $thumbnailFullUrl = $thumbnail->getFrontendPath();
+
+        $this->assertRegExp('@^(https?|data):@', $thumbnailFullUrl);
+        $this->assertStringContainsString($thumbnail->getPath(), $thumbnailFullUrl);
+
     }
 }
