@@ -189,6 +189,9 @@ $thumbnail->getHtml([
     'disableImgTag' => true,
     'lowQualityPlaceholder' => true,
 ]);
+// get thumbnail instance in a specific file format
+$webpThumbnail = $thumbnail->getAsFormat('webp');
+$webpThumbnail->getHtml();
 ```
 
 ## More Examples

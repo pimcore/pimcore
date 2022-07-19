@@ -18,6 +18,7 @@ namespace Pimcore\Model\Asset\Thumbnail;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
+use Pimcore\Model\Asset\Image\Thumbnail\Config;
 use Pimcore\Tool;
 use Pimcore\Tool\Storage;
 use Symfony\Component\Mime\MimeTypes;
@@ -36,7 +37,7 @@ trait ImageThumbnailTrait
     /**
      * @internal
      *
-     * @var Image\Thumbnail\Config|null
+     * @var Config|null
      */
     protected $config;
 
@@ -264,7 +265,7 @@ trait ImageThumbnailTrait
     }
 
     /**
-     * @return Image\Thumbnail\Config|null
+     * @return Config|null
      */
     public function getConfig()
     {
@@ -428,5 +429,25 @@ trait ImageThumbnailTrait
         $pathReference = $this->getPathReference(true);
 
         return basename($pathReference['src']);
+    }
+
+
+    /**
+     * Returns path for thumbnail image in a given file format
+     *
+     * @param string $format
+     * @return static
+     */
+    public function getAsFormat(string $format): self
+    {
+        $thumb = clone $this;
+
+        $config = $thumb->getConfig() ? clone $thumb->getConfig() : new Config();
+        $config->setFormat($format);
+
+        $thumb->config = $config;
+        $thumb->reset();
+
+        return $thumb ;
     }
 }
