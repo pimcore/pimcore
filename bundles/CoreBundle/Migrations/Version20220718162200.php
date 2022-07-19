@@ -24,7 +24,7 @@ final class Version20220718162200 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Improve data object grid loading performance';
+        return 'Improve object url slugs loading performance';
     }
 
     public function up(Schema $schema): void
