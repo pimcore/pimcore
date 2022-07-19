@@ -86,6 +86,7 @@ class AssetUpdateTasksHandler
                 $asset->removeCustomSetting('videoHeight');
             }
         } catch (\Exception $e) {
+            Logger::err('Unable to get dimensions of video: ' . $asset->getId());
             throw new UnrecoverableMessageHandlingException($e->getMessage (), 0, $e);
         }
 
