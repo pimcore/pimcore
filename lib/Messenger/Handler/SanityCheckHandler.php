@@ -46,7 +46,7 @@ class SanityCheckHandler implements BatchHandlerInterface
 
         foreach ($jobs as [$message, $ack]) {
             try {
-                $element = Service::getElementById($message->getType(), $message->getId(), true);
+                $element = Service::getElementById($message->getType(), $message->getId(), ['force' => true]);
                 if ($element) {
                     $this->performSanityCheck($element);
                 }
