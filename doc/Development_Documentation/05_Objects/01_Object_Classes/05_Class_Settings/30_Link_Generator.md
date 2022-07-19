@@ -148,7 +148,7 @@ would produce the following output
 ```twig
 <ul class="foo">
     {% for car in carList %}
-        <li><a href="{{ path(car) }}">{{ car.getName() }}</a></li>
+        <li><a href="{{ path('pimcore_element', {'element': car}) }}">{{ car.getName() }}</a></li>
     {% endfor %}
 </ul>
 ```
