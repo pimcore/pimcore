@@ -132,6 +132,7 @@ pimcore.asset.helpers.metadataTree = Class.create({
             if (data[keys[i]]) {
                 
                 //BC layer for asset metadata class definition
+                //TODO: Remove this in Pimcore 11 
                 if(!data[keys[i]].children) {
                     data[keys[i]].children = data[keys[i]].childs;
                 }
