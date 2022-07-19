@@ -34,6 +34,6 @@ final class Version20220718162200 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE `object_url_slugs` DROP INDEX `object_url_slugs`');
+        $this->addSql('ALTER TABLE `object_url_slugs` DROP INDEX `fieldname_ownertype_position_objectId`');
     }
 }
