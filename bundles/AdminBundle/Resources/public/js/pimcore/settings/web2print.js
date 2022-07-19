@@ -217,7 +217,7 @@ pimcore.settings.web2print = Class.create({
                         value: t('web2print_headlesschrome_puppeteer_documentation'),
                         autoEl:{
                             tag: 'a',
-                            href: "https://pptr.dev/api/puppeteer.pdfoptions",
+                            href: "https://github.com/spiritix/php-chrome-html2pdf#options",
                         }
                     },{
                         xtype: "displayfield",
