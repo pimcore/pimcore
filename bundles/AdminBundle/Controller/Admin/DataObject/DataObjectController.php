@@ -696,12 +696,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     public function getFolderAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $objectId = (int)$request->get('id');
-        // check for lock
-        if (Element\Editlock::isLocked($objectId, 'object')) {
-            return $this->getEditLockResponse($objectId, 'object');
-        }
-        Element\Editlock::lock($objectId, 'object');
-
         $object = DataObject::getById($objectId);
 
         if (!$object) {
