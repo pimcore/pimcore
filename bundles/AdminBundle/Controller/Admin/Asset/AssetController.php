@@ -107,8 +107,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             return $this->adminJson(['success' => false, 'message' => "asset doesn't exist"]);
         }
 
-        // check for lock
-        if ($asset->isAllowed('publish') || $asset->isAllowed('delete')) {
+        // check for lock on non-folder items only.
+        if ($type !== 'folder' && ($asset->isAllowed('publish') || $asset->isAllowed('delete'))) {
             if (Element\Editlock::isLocked($assetId, 'asset')) {
                 return $this->getEditLockResponse($assetId, 'asset');
             }
