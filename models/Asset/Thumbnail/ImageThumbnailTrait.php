@@ -431,11 +431,11 @@ trait ImageThumbnailTrait
         return basename($pathReference['src']);
     }
 
-
     /**
      * Returns path for thumbnail image in a given file format
      *
      * @param string $format
+     *
      * @return static
      */
     public function getAsFormat(string $format): self
