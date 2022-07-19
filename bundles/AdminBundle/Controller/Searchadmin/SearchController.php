@@ -198,9 +198,6 @@ class SearchController extends AdminController
         }
 
         if (is_array($classnames) && !empty($classnames[0])) {
-            if (in_array('folder', $subtypes)) {
-                $classnames[] = 'folder';
-            }
             $conditionClassnameParts = [];
             foreach ($classnames as $classname) {
                 $conditionClassnameParts[] = $db->quote($classname);
