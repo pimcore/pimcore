@@ -1003,6 +1003,7 @@ CREATE TABLE `object_url_slugs` (
       INDEX `ownername` (`ownername`),
       INDEX `slug` (`slug`),
       INDEX `siteId` (`siteId`),
+      INDEX `fieldname_ownertype_position_objectId` (`fieldname`,`ownertype`,`position`,`objectId`),
       CONSTRAINT `fk_object_url_slugs__objectId` FOREIGN KEY (`objectId`) REFERENCES objects (`o_id`) ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
