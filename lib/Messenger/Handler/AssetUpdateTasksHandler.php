@@ -73,7 +73,8 @@ class AssetUpdateTasksHandler
             $asset->setCustomSetting('duration', $asset->getDurationFromBackend());
         } catch (\Exception $e) {
             Logger::err('Unable to get duration of video: ' . $asset->getId());
-            throw new UnrecoverableMessageHandlingException($e->getMessage (), 0, $e);
+
+            throw new UnrecoverableMessageHandlingException($e->getMessage(), 0, $e);
         }
 
         try {
@@ -87,7 +88,8 @@ class AssetUpdateTasksHandler
             }
         } catch (\Exception $e) {
             Logger::err('Unable to get dimensions of video: ' . $asset->getId());
-            throw new UnrecoverableMessageHandlingException($e->getMessage (), 0, $e);
+
+            throw new UnrecoverableMessageHandlingException($e->getMessage(), 0, $e);
         }
 
         $asset->handleEmbeddedMetaData(true);
