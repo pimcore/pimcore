@@ -151,7 +151,7 @@ class AbstractLazyLoadingTest extends ModelTestCase
         Cache::getHandler()->removeClearedTags($object->getCacheTags());
         Cache::save($object, \Pimcore\Model\Element\Service::getElementCacheTag('object', $object->getId()), [], null, 9999, true);
 
-        Cache\Runtime::clear();
+        Cache\RuntimeCache::clear();
         //reload from cache and check again
         $objectCache = Concrete::getById($object->getId());
 
