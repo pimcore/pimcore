@@ -29,7 +29,7 @@ final class Version20220718162200 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE `object_url_slugs` ADD INDEX `object_url_slugs` (`fieldname`,`ownertype`,`position`,`objectId`)');
+        $this->addSql('ALTER TABLE `object_url_slugs` ADD INDEX `fieldname_ownertype_position_objectId` (`fieldname`,`ownertype`,`position`,`objectId`)');
     }
 
     public function down(Schema $schema): void
