@@ -37,6 +37,7 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
+ * @deprecated will be removed in Pimcore 11
  * @internal
  */
 class ExtensionManagerController extends AdminController implements KernelControllerEventInterface

@@ -29,7 +29,7 @@ pimcore.extensionmanager.admin = Class.create({
         if (!this.panel) {
             this.panel = new Ext.Panel({
                 id: "pimcore_extensionmanager_admin",
-                title: t("bundles") + ' & ' + t('bricks'),
+                title: t("bundles") + ' & ' + t('bricks') + ' (' + t('deprecated') + ')',
                 iconCls: "pimcore_icon_plugin",
                 border: false,
                 layout: "fit",
@@ -116,6 +116,7 @@ pimcore.extensionmanager.admin = Class.create({
                     iconCls: "pimcore_icon_reload",
                     handler: this.reload.bind(this)
                 },
+                '<span>' + t("deprecated_feature").replace("%s","config/bundles.php for managing extensions") + '</span>',
                 '->',
                 '<b id="ext-manager-reload-info" style="visibility: hidden">' + t("please_dont_forget_to_reload_pimcore_after_modifications") + '!</b>',
                 {

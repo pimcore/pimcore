@@ -47,6 +47,8 @@
 - [JS Events/Disabled] The plugin broker for fire events has been disabled. 
 The plugins are still supported, but they are deprecated and will be removed in Pimcore 11   
 Please use [event listener](../../20_Extending_Pimcore/13_Bundle_Developers_Guide/06_Event_Listener_UI.md) instead of plugins for JS events.
+- Extension Manager - Registering or managing bundles/areabricks through `Tools -> Bundles & Bricks` or manually through `var/config/extensions.php` is deprecated and will not work on Pimcore 11.
+  Please use `config/bundles.php` to register/manage bundles instead.
 - [Web2Print] Wkhtmltopdf Processor has been deprecated and will be removed in Pimcore 11. Please use HeadlessChrome or PDFreactor instead.
 - [Config] `Pimcore\Config\Config` has been deprecated and will be removed in Pimcore 11.
 

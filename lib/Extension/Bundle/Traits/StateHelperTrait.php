@@ -26,6 +26,8 @@ use Pimcore\Extension\Bundle\PimcoreBundleManager;
 trait StateHelperTrait
 {
     /**
+     * @deprecated will be removed in Pimcore 11
+     *
      * Helper method to check enabled state from class definitions/non-service instances
      *
      * @return bool
