@@ -41,6 +41,7 @@ class VisitedPagesCountListener implements EventSubscriberInterface
 
     /**
      * {@inheritdoc}
+     *
      * @return array
      */
     public static function getSubscribedEvents()// : array
