@@ -343,7 +343,7 @@ trait ImageThumbnailTrait
     public function getFrontendPath(): string
     {
         $path = $this->getPath();
-        if(!\preg_match('@^(https?|data):@', $path)) {
+        if (!\preg_match('@^(https?|data):@', $path)) {
             $path = \Pimcore\Tool::getHostUrl() . $path;
         }
 

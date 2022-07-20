@@ -240,7 +240,8 @@ class AssetTest extends ModelTestCase
         $this->assertFalse(Asset::getById($asset->getId()) === Asset::getById($asset->getId(), ['force' => true]));
     }
 
-    public function testAssetFullPath() {
+    public function testAssetFullPath()
+    {
         $asset = TestHelper::createImageAsset();
 
         $thumbnailConfig = TestHelper::createThumbnailConfigurationScaleByWidth();
@@ -254,6 +255,5 @@ class AssetTest extends ModelTestCase
 
         $this->assertMatchesRegularExpression('@^(https?|data):@', $thumbnailFullUrl);
         $this->assertStringContainsString($thumbnail->getPath(), $thumbnailFullUrl);
-
     }
 }

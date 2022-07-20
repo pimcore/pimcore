@@ -1845,7 +1845,7 @@ class Asset extends Element\AbstractElement
     public function getFrontendPath(): string
     {
         $path = $this->getFullPath();
-        if(!\preg_match('@^(https?|data):@', $path)) {
+        if (!\preg_match('@^(https?|data):@', $path)) {
             $path = \Pimcore\Tool::getHostUrl() . $path;
         }
 
