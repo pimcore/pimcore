@@ -15,8 +15,6 @@
 
 namespace Pimcore\Tests\Model\Asset;
 
-use Codeception\Test\Test;
-use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
