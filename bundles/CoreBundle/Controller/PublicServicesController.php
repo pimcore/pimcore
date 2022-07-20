@@ -77,7 +77,7 @@ class PublicServicesController extends Controller
                             if (!$thumbnailConfig instanceof Asset\Image\Thumbnail\Config) {
                                 throw new \Exception("Deferred thumbnail config file doesn't contain a valid \\Asset\\Image\\Thumbnail\\Config object");
                             }
-                        } elseif (\Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['status_cache']) {
+                        } elseif ($this->getParameter('pimcore.config')['assets']['image']['thumbnails']['status_cache']) {
                             // Delete Thumbnail Name from Cache so the next call can generate a new TmpStore entry
                             $asset->getDao()->deleteFromThumbnailCache($thumbnailName);
                         }
