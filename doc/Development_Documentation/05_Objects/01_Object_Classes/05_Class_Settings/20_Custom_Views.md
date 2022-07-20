@@ -10,7 +10,7 @@ Note that the ID is mandatory and must be unique!
 
 ![Custom Views](../../../img/classes-custom-views1.png)
 
-For a sample configuration file have a look at the [sample configuration file](https://github.com/pimcore/skeleton/blob/10.x/config/pimcore/customviews.example.php) 
+For a sample configuration file have a look at the [sample configuration file](https://github.com/pimcore/skeleton/blob/11.x/config/pimcore/customviews.example.php) 
 that ships with Pimcore and its comments. 
 
 ## Advanced Features / Configurations
