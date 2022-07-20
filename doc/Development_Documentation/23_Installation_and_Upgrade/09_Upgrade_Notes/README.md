@@ -1,6 +1,7 @@
 # Upgrade Notes
 
 ## 10.5.0
+- [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`
 - [Listings] `JsonListing` class is deprecated. Please use `CallableFilterListingInterface`, `FilterListingTrait` and `CallableOrderListingInterface`, `OrderListingTrait` instead.
   For examples please see existing classes, e.g. `Pimcore\Model\Document\DocType\Listing`.
 
