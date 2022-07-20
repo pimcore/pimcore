@@ -85,7 +85,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class GoogleTrackingCodeListener implements EventSubscriberInterface
 {
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             GoogleAnalyticsEvents::CODE_TRACKING_DATA => 'onTrackingData'

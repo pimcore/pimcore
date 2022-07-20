@@ -58,7 +58,7 @@ class RoutingListener implements EventSubscriberInterface
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             // run with high priority as we need to set the site early
