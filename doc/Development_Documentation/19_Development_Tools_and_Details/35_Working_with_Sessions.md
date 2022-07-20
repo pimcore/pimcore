@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  
 class SessionBagListener implements EventSubscriberInterface
 {
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             //run after Symfony\Component\HttpKernel\EventListener\SessionListener

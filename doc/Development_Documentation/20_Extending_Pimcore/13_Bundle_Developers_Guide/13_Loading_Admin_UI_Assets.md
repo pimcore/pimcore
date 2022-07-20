@@ -26,7 +26,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class AdminAssetsListener implements EventSubscriberInterface
 {
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             BundleManagerEvents::JS_PATHS => 'onJsPaths'
