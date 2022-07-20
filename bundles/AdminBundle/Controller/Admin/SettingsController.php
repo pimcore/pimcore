@@ -1818,6 +1818,10 @@ class SettingsController extends AdminController
                 'appendLog' => true,
                 'enableDebugMode' => true,
             ];
+        } elseif ($adapter instanceof \Pimcore\Web2Print\Processor\HeadlessChrome) {
+            $params = Config::getWeb2PrintConfig();
+            $params = $params->get('headlessChromeSettings');
+            $params = json_decode($params, true);
         }
 
         $responseOptions = [
