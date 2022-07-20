@@ -431,7 +431,7 @@ class Ffmpeg extends Adapter
      * @param int|null $start
      * @param int|null $duration
      */
-    public function cut(?int $start = 0, ?int $duration): void
+    public function cut(?int $start = 0, ?int $duration = null): void
     {
         $this->addArgument('-ss', (string) $start);
         if (!empty($duration)) {
