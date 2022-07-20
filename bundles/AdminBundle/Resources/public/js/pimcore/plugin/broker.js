@@ -77,14 +77,21 @@ pimcore.plugin.broker = {
 
 
 //TODO: delete in Pimcore11
-for (let oldKey in pimcore.events.eventMappings) {
-    document.addEventListener(pimcore.events.eventMappings[oldKey], (e) => {
-        let parameters = []
+/*
+ * Backwards compatibility
+ */
+function addEventListenerCompatibilityForPlugins(eventMappings) {
+    for (let oldKey in eventMappings) {
+        document.addEventListener(eventMappings[oldKey], (e) => {
+            let parameters = []
 
-        for (let key in e.detail) {
-            parameters.push(e.detail[key]);
-        }
+            for (let key in e.detail) {
+                parameters.push(e.detail[key]);
+            }
 
-        pimcore.plugin.broker.fireEvent(oldKey, ...parameters);
-    });
+            pimcore.plugin.broker.fireEvent(oldKey, ...parameters);
+        });
+    }
 }
+
+addEventListenerCompatibilityForPlugins(pimcore.events.eventMappings)
