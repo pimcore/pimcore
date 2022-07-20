@@ -160,7 +160,7 @@ pimcore.events.preCreateAssetMetadataEditor = "pimcore.assetMetadataEditor.preCr
  * before opening the grid config dialog
  * url returning the metadata definitions is passed as parameter
  */
-pimcore.events.prepareAssetMetadataGridConfigurator = "pimcore.gridConfigurator.prepareAssetMetadata";
+pimcore.events.prepareAssetMetadataGridConfigurator = "pimcore.gridConfigurator.assetMetadata.prepare";
 
 /**
  * before context menu is opened
