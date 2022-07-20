@@ -51,6 +51,7 @@ Please use [event listener](../../20_Extending_Pimcore/13_Bundle_Developers_Guid
   Please use `config/bundles.php` to register/manage bundles instead.
 - [Web2Print] Wkhtmltopdf Processor has been deprecated and will be removed in Pimcore 11. Please use HeadlessChrome or PDFreactor instead.
 - [Config] `Pimcore\Config\Config` has been deprecated and will be removed in Pimcore 11.
+- [Flysystem] Bumped the `League/Flysystem-bundle` to version 3, which introduces `has` and `directoryExists` methods. 
 - The recommended nginx config for static pages has been updated (the old one still works!) from
   ```nginx
   server {

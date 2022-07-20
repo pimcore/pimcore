@@ -133,9 +133,7 @@ class LogArchiveTask implements TaskInterface
                 $db->executeStatement('DROP TABLE IF EXISTS `' . ($this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase()) . '`.' . $applicationLogArchiveTable);
 
                 $folderName = $deleteArchiveLogDate->format('Y/m');
-
-                // TODO: change fileExists to directoryExists once bumped flysystem to 3.*
-                if ($storage->fileExists($folderName)) {
+                if ($storage->directoryExists($folderName)) {
                     $storage->deleteDirectory($folderName);
                 }else{
                     // Fallback, if is not found and deleted in the flysystem, tries to delete from local
