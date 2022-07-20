@@ -7,7 +7,7 @@ Pimcore applications can be tested with any PHP testing solution, but this page 
 
 In general it's recommended to start with the first approach as it is simpler to set up and to get started with testing. Note, however, that the PHPUnit setup does not include any out-of-the-box solution how to prepare your application for tests (e.g. how to make sure you are always testing with the same reproducible data set), so that's up to you. You could prepare test data in your bootstrap file or run some script before you start the test suite.
 
-In addition to Codeception's general features, Pimcore's Codeception modules provide a set of helpers to bootstrap a Pimcore installation from an empty installation. The `Pimcore` module is able to drop and re-create the database and addtional modules like the `ClassManager` provide helper code to create Pimcore classes from JSON exports. As the DB initialization is configurable, you should be able to use the module as you need it (e.g. by bootstrapping your application yourself or by just running tests without any DB/data initialization logic. You can find examples how to use those modules by looking through [Pimcore's test setup](https://github.com/pimcore/pimcore/tree/10.x/tests).
+In addition to Codeception's general features, Pimcore's Codeception modules provide a set of helpers to bootstrap a Pimcore installation from an empty installation. The `Pimcore` module is able to drop and re-create the database and addtional modules like the `ClassManager` provide helper code to create Pimcore classes from JSON exports. As the DB initialization is configurable, you should be able to use the module as you need it (e.g. by bootstrapping your application yourself or by just running tests without any DB/data initialization logic. You can find examples how to use those modules by looking through [Pimcore's test setup](https://github.com/pimcore/pimcore/tree/11.x/tests).
 
 ## PHPUnit
 
@@ -230,7 +230,7 @@ class ContentControllerTest extends WebTestCase
 
 If you would run the test suite now, it would fail with a list of errors as the test can't connect to the database. This 
 is because the tests run in the `test` environment and that environment is set up to use a different database connection
-which is defined as `PIMCORE_TEST_DB_DSN` environment variable by default (see [config/packages/test/config.yaml](https://github.com/pimcore/pimcore/blob/10.x/.github/ci/files/config/packages/test/config.yaml#L19)).
+which is defined as `PIMCORE_TEST_DB_DSN` environment variable by default (see [config/packages/test/config.yaml](https://github.com/pimcore/pimcore/blob/11.x/.github/ci/files/config/packages/test/config.yaml#L19)).
 
 You can either define the database DSN as environment variable on your shell, hardcode it into the PHPUnit config file (not
 recommended) or remove/alter the customized `doctrine` section from `config/packages/test/config.yaml` completely. What to use depends highly on your environment and your tests - if you have
