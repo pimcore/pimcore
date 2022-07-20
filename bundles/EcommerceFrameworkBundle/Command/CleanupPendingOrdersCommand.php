@@ -38,7 +38,7 @@ class CleanupPendingOrdersCommand extends AbstractCommand
      *
      * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $checkoutManager = Factory::getInstance()->getCheckoutManager(new Cart());
         $checkoutManager->cleanUpPendingOrders();

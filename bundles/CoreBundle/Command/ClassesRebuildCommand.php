@@ -65,7 +65,7 @@ class ClassesRebuildCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($input->getOption('delete-classes')) {
             $questionResult = true;

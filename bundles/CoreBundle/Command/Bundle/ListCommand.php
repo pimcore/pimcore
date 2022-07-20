@@ -42,7 +42,10 @@ class ListCommand extends AbstractBundleCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * {@inheritdoc}
+     */
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $returnData = [
             'headers' => [

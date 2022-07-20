@@ -32,7 +32,7 @@ class AwesomeCommand extends AbstractCommand
             ->setDescription('Awesome command');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         //create single object
         $object = new DataObject\Myclass();

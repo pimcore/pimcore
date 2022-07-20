@@ -37,7 +37,7 @@ class CleanupStatisticsCommand extends AbstractCommand
      *
      * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->output->writeln('<comment>*</comment> Cleaning up <info>statistics</info>');
         Factory::getInstance()->getVoucherService()->cleanUpStatistics();

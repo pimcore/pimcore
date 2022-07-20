@@ -40,7 +40,7 @@ class SearchBackendReindexCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // clear all data
         $db = \Pimcore\Db::get();

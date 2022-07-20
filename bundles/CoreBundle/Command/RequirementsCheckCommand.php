@@ -45,7 +45,7 @@ class RequirementsCheckCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         switch ($input->getOption('min-level')) {
             case 'warning':
