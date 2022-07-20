@@ -282,7 +282,6 @@ class LogController extends AdminController implements KernelControllerEventInte
                 $response->setContent('Path `'.$filePath.'` not found.');
                 $response->setStatusCode(404);
             }
-
         }
 
         return $response;
