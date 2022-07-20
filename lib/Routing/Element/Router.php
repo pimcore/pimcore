@@ -59,7 +59,8 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      *
      * @return array
      */
-    public function setContext(RequestContext $context)
+    #[\ReturnTypeWillChange]
+    public function setContext(RequestContext $context)//: array
     {
         $this->context = $context;
     }
