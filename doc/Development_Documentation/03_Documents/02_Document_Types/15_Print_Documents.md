@@ -64,8 +64,8 @@ For details of settings please see section below or renderer documentation.
 They can be activated by the printermarks rendering setting. Technically they are implemented by an additional CSS-file which needs to be included.
 For Details, check links below:
 
-* [view-script](https://github.com/pimcore/demo/blob/10.x/templates/layouts/print_catalog.html.twig#L18-L20)
-* [css-file](https://github.com/pimcore/pimcore/blob/10.x/bundles/AdminBundle/Resources/public/css/print/print-printermarks.css)
+* [view-script](https://github.com/pimcore/demo/blob/11.x/templates/layouts/print_catalog.html.twig#L18-L20)
+* [css-file](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/Resources/public/css/print/print-printermarks.css)
 
 ## Settings
 In the web-to-print settings, the used PDF renderer is specified. Depending on the renderer, there are additional settings to be made. 

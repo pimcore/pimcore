@@ -48,7 +48,7 @@ template will be used for auto-rendering when the controller does not return a r
 To make Pimcore's functions available in Twig templates, Pimcore implements a set of extensions. Please see our [Demo](https://github.com/pimcore/demo)
 as first reference how to use Pimcore with Twig. 
 
-You can take a look at the [implementations](https://github.com/pimcore/pimcore/tree/10.x/pimcore/lib/Pimcore/Twig)
+You can take a look at the [implementations](https://github.com/pimcore/pimcore/tree/11.x/pimcore/lib/Pimcore/Twig)
 for further details. Note that all of Pimcore's Twig extensions are prefixed with `pimcore` to avoid naming collisions.
 
 ### Pimcore Editables
@@ -100,7 +100,7 @@ or
 
 For documents, Pimcore also provides a function to handle hardlinks through the `pimcore_document_wrap_hardlink` method.
 
-See [PimcoreObjectExtension](https://github.com/pimcore/pimcore/blob/10.x/lib/Twig/Extension/PimcoreObjectExtension.php)
+See [PimcoreObjectExtension](https://github.com/pimcore/pimcore/blob/11.x/lib/Twig/Extension/PimcoreObjectExtension.php)
 for details.
 
 

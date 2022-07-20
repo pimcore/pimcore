@@ -117,7 +117,7 @@ pimcore_ecommerce_framework:
 ```
 
 The config has to be set up as container service. A sample implementation for a configuration with sub tenants is
-[DefaultMysqlSubTenantConfig](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/IndexService/Config/DefaultMysqlSubTenantConfig.php). 
+[DefaultMysqlSubTenantConfig](https://github.com/pimcore/pimcore/blob/11.x/bundles/EcommerceFrameworkBundle/IndexService/Config/DefaultMysqlSubTenantConfig.php). 
 
 
 

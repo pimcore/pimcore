@@ -68,7 +68,7 @@ document.addEventListener(pimcore.events.pimcoreReady, (e) => {
 
 ## JavaScript UI Events
 
-For registering events just add a listener with some of the events from [events.js](https://github.com/pimcore/pimcore/blob/10.x/bundles/AdminBundle/Resources/public/js/pimcore/events.js). 
+For registering events just add a listener with some of the events from [events.js](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/Resources/public/js/pimcore/events.js). 
 
 
 ## Validate Pimcore Object's Data in frontend before saving

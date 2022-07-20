@@ -9,7 +9,7 @@ Following steps are necessary to do so:
    This class needs to extend `Pimcore\Model\DataObject\ClassDefinition\Layout` and defines which settings your data type has and how it is read for the Pimcore Admin Ui.
    
    For examples have a look at the Pimcore core layout types at 
-   [github](https://github.com/pimcore/pimcore/tree/10.x/models/DataObject/ClassDefinition/Layout). 
+   [github](https://github.com/pimcore/pimcore/tree/11.x/models/DataObject/ClassDefinition/Layout). 
 
 2) Create JavaScript class for Class Definition editor: 
    This JavaScript class defines the config options in class editor. 
@@ -18,7 +18,7 @@ Following steps are necessary to do so:
    `$fieldtype` property of the corresponding PHP class.
      
    For examples have a look at the Pimcore core layout types at  
-   [github](https://github.com/pimcore/pimcore/tree/10.x/bundles/AdminBundle/Resources/public/js/pimcore/object/classes/layout)
+   [github](https://github.com/pimcore/pimcore/tree/11.x/bundles/AdminBundle/Resources/public/js/pimcore/object/classes/layout)
 
 3) Create JavaScript class for object editor:
    This JavaScript class defines the representation of the layout type in the *object editor*. You can use very simple ExtJS elements here.
@@ -27,7 +27,7 @@ Following steps are necessary to do so:
    `$fieldtype` property of the corresponding PHP class.
      
    For examples have a look at the Pimcore core layout types at  
-   [github](https://github.com/pimcore/pimcore/tree/10.x/bundles/AdminBundle/Resources/public/js/pimcore/object/layout)
+   [github](https://github.com/pimcore/pimcore/tree/11.x/bundles/AdminBundle/Resources/public/js/pimcore/object/layout)
     
 4) Register a layout type in Pimcore by extending the `pimcore.objects.class_definitions.data.layout` configuration. 
    This can be done in any config file which is loaded (e.g. `config/config.yaml`), but if you provide the layout type 

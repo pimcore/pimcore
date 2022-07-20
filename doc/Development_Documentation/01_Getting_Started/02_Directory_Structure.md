@@ -19,7 +19,7 @@ In general the directory structure follows the [best practice for Symfony projec
 
 The web root directory is the home of all public and static files like images, stylesheets and 
 JavaScript files. It is also the place where each front controller (the file that handles all requests 
-to your application) lives, such as the [production controller](https://github.com/pimcore/skeleton/blob/10.x/public/index.php)
+to your application) lives, such as the [production controller](https://github.com/pimcore/skeleton/blob/11.x/public/index.php)
 
 
 ### The `src/` Directory
