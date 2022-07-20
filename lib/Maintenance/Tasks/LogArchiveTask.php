@@ -137,7 +137,7 @@ class LogArchiveTask implements TaskInterface
                     $storage->deleteDirectory($folderName);
                 }else{
                     // Fallback, if is not found and deleted in the flysystem, tries to delete from local
-                    $folderRealPath = realpath(PIMCORE_LOG_FILEOBJECT_DIRECTORY.$folderName);
+                    $folderRealPath = realpath(PIMCORE_LOG_FILEOBJECT_DIRECTORY . DIRECTORY_SEPARATOR . $folderName);
                     if (str_starts_with(realpath($folderRealPath), PIMCORE_LOG_FILEOBJECT_DIRECTORY)) {
                         @unlink($folderRealPath);
                     }
