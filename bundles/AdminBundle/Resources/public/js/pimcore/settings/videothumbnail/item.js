@@ -559,7 +559,7 @@ pimcore.settings.videothumbnail.items = {
                 xtype: 'numberfield',
                 name: "fps",
                 fieldLabel: t("fps"),
-                minValue: 0,
+                minValue: 1,
                 maxValue: 60,
                 width: 250,
                 value: data.fps
