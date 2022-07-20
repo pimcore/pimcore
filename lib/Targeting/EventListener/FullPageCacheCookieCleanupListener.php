@@ -31,7 +31,6 @@ class FullPageCacheCookieCleanupListener implements EventSubscriberInterface
 {
     /**
      * @return string[]
-     * @return array
      */
     public static function getSubscribedEvents()//: array
     {
