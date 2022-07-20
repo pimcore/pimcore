@@ -772,12 +772,22 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function getDocTypesAction(Request $request)
     {
-        $list = new Document\DocType\Listing();
+        $list = new DocType\Listing();
+
+        // Sort doctypes by priority and fall back to name in case equals
+        $list->setOrder(static function (DocType $a, DocType $b) {
+            if ($a->getPriority() === $b->getPriority()) {
+                return \strcasecmp($a->getName(), $b->getName());
+            }
+
+            return $a->getPriority() <=> $b->getPriority();
+        });
+
         if ($type = $request->get('type')) {
             if (!Document\Service::isValidType($type)) {
                 throw new BadRequestHttpException('Invalid type: ' . $type);
             }
-            $list->setFilter(function (Document\DocType $docType) use ($type) {
+            $list->setFilter(static function (DocType $docType) use ($type) {
                 return $docType->getType() === $type;
             });
         }
