@@ -43,7 +43,7 @@ class MysqlToolsCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // display error message
         if (!$input->getOption('mode')) {

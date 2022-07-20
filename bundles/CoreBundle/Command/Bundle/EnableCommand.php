@@ -66,7 +66,10 @@ class EnableCommand extends AbstractBundleCommand
         PostStateChange::configureStateChangeCommandOptions($this);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * {@inheritdoc}
+     */
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $deprecation = 'Enabling bundle is deprecated and will not work in Pimcore 11. Use config/bundles.php to register/de-register bundles instead.';
         trigger_deprecation(

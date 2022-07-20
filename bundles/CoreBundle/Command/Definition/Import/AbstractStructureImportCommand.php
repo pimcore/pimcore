@@ -58,7 +58,7 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $path = $this->getPath();
         $type = $this->getType();

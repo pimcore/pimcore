@@ -82,7 +82,7 @@ class MaintenanceCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $validJobs = $this->getArrayOptionValue($input, 'job');
         $excludedJobs = $this->getArrayOptionValue($input, 'excludedJobs');

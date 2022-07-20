@@ -54,7 +54,7 @@ class MaintenanceModeCommand extends AbstractCommand
      *
      * @throws Exception
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         //Default behavior is 'enable'
         $disable = ($input->getOption('disable') ?? false);

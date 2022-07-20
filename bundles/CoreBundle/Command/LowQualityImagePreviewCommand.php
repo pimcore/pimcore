@@ -64,7 +64,7 @@ class LowQualityImagePreviewCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $conditionVariables = [];
 

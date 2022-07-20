@@ -50,7 +50,7 @@ class ClassesDefinitionsBuildCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $objectClassesFolder = PIMCORE_CLASS_DEFINITION_DIRECTORY;
         $files = glob($objectClassesFolder.'/*.php');

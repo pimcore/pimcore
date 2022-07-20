@@ -114,7 +114,7 @@ class CacheWarmingCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($input->getOption('maintenance-mode')) {
             // set the timeout between each iteration to 0 if maintenance mode is on, because

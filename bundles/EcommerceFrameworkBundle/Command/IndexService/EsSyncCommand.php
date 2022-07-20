@@ -53,7 +53,7 @@ class EsSyncCommand extends AbstractIndexServiceCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $mode = $input->getArgument('mode');
         $tenantName = $input->getOption('tenant');
