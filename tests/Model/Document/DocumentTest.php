@@ -260,6 +260,28 @@ class DocumentTest extends ModelTestCase
         $this->assertEquals($target->getId(), $newTarget->getId());
     }
 
+    public function testLinkItself()
+    {
+        /** @var Link $linkDocument */
+        $linkDocument = TestHelper::createEmptyDocument('', true, true, '\\Pimcore\\Model\\Document\\Link');
+        $linkDocument->setInternalType('document');
+        $linkDocument->setInternal(1);
+        $linkDocument->setLinktype('internal');
+        $linkDocument->save();
+
+        $this->assertEquals(1, $linkDocument->getInternal());
+
+        //Set the same internal target id as itself
+        codecept_debug('[WARNING] Testing document/link circular reference, if it is not progressing from here, please stop the tests and fix the code');
+        $linkDocument->setInternal($linkDocument->getId());
+        $linkDocument->save();
+
+        $linkDocument = Link::getById($linkDocument->getId());
+
+        // when trying to set the target id as itself, it silently logs and saves internal ID as NULL
+        $this->assertNull($linkDocument->getInternal());
+    }
+
     public function testSetGetChildren()
     {
         $parentDoc = TestHelper::createEmptyDocumentPage();

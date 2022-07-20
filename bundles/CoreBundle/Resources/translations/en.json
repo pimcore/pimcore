@@ -985,5 +985,6 @@
     "asset_upload_keep_both": "Keep both files",
     "asset_upload_overwrite_all": "Overwrite all",
     "could_not_open_zip_file": "The uploaded zip file could not be opened.",
-    "objects_sort_method": "Change data objects sort method"
+    "objects_sort_method": "Change data objects sort method",
+    "link_recursion_error": "The link is redirecting to itself, causing an infinite loop"
 }

@@ -854,7 +854,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
     /**
      * @param array $urls
-     * @param string|null $thumbnail
+     * @param Asset\Image\Thumbnail|Asset\Video\ImageThumbnail|null $thumbnail
      *
      * @return string
      */
@@ -910,9 +910,10 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
                 $jsonLd['contentUrl'] = Tool::getHostUrl() . $urls['mp4'];
             }
 
-            $jsonLd['thumbnailUrl'] = (string)$thumbnail;
-            if (!preg_match('@https?://@', (string)$thumbnail)) {
-                $jsonLd['thumbnailUrl'] = Tool::getHostUrl() . $thumbnail;
+            $thumbnailUrl = (string)$thumbnail;
+            $jsonLd['thumbnailUrl'] = $thumbnailUrl;
+            if (!preg_match('@https?://@', $thumbnailUrl)) {
+                $jsonLd['thumbnailUrl'] = Tool::getHostUrl() . $thumbnailUrl;
             }
 
             $code .= "\n\n<script type=\"application/ld+json\">\n" . json_encode($jsonLd) . "\n</script>\n\n";
@@ -922,7 +923,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
             $attributes = [
                 'width' => $this->getWidth(),
                 'height' => $this->getHeight(),
-                'poster' => $thumbnail,
+                'poster' => $thumbnailUrl,
                 'controls' => 'controls',
                 'class' => 'pimcore_video',
             ];
