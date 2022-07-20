@@ -816,7 +816,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
             ];
 
             if (!$thumbnail) {
-                $thumbnail = $video->getImageThumbnail([])->getPath();
+                $thumbnail = $video->getImageThumbnail([]);
             }
 
             $jsonLd['contentUrl'] = $urls['mp4'];
