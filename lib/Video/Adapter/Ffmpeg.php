@@ -428,10 +428,10 @@ class Ffmpeg extends Adapter
     }
 
     /**
-     * @param integer $start
-     * @param integer $duration
+     * @param int|null $start
+     * @param int|null $duration
      */
-    public function cut(int $start, ?int $duration): void
+    public function cut(?int $start = 0, ?int $duration): void
     {
         $this->addArgument('-ss', (string) $start);
         if (!empty($duration)) {
@@ -440,7 +440,7 @@ class Ffmpeg extends Adapter
     }
 
     /**
-     * @param integer $fps
+     * @param int $fps
      */
     public function setFramerate(int $fps): void
     {
