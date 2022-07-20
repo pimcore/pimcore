@@ -34,8 +34,9 @@ class TargetingSessionBagListener implements EventSubscriberInterface
 
     /**
      * {@inheritdoc}
+     * @return array
      */
-    public static function getSubscribedEvents(): array
+    public static function getSubscribedEvents()//: array
     {
         return [
             FullPageCacheEvents::IGNORED_SESSION_KEYS => 'configureIgnoredSessionKeys',
