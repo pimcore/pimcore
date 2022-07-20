@@ -9,6 +9,7 @@ framework:
         enabled: true
     router:
         strict_requirements: ~
+        utf8: true
     form: ~
     csrf_protection: ~
     validation: { enable_annotations: true }
@@ -50,6 +51,7 @@ framework:
         default_bus: messenger.bus.pimcore-core
         buses:
             messenger.bus.pimcore-core:
+        reset_on_message: true
 
 # Twig Configuration
 twig:

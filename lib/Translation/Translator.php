@@ -22,6 +22,7 @@ use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
 use Symfony\Component\Translation\MessageCatalogue;
+use Symfony\Component\Translation\MessageCatalogueInterface;
 use Symfony\Component\Translation\TranslatorBagInterface;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -76,8 +77,10 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
     /**
      * {@inheritdoc}
+     *
+     * @return string
      */
-    public function trans(string $id, array $parameters = [], string $domain = null, string $locale = null)
+    public function trans(string $id, array $parameters = [], string $domain = null, string $locale = null)//: string
     {
         $id = trim($id);
 
@@ -135,8 +138,10 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
     /**
      * {@inheritdoc}
+     *
+     * @return string
      */
-    public function getLocale()
+    public function getLocale()//: string
     {
         if ($this->translator instanceof LocaleAwareInterface) {
             return $this->translator->getLocale();
@@ -147,6 +152,8 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
     /**
      * {@inheritdoc}
+     *
+     * @return MessageCatalogueInterface
      */
     public function getCatalogue(string $locale = null)// : MessageCatalogueInterface
     {
