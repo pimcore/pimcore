@@ -160,7 +160,6 @@
     "knplabs/knp-paginator-bundle": "^5.4.2",
     "masterminds/html5" : "^2.7",
     "league/flysystem-bundle" : "^2.0",
-    "league/flysystem": "^3.0",
     "spatie/image-optimizer": "^1.6.2"
   },
   "conflict": {
