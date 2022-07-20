@@ -338,6 +338,19 @@ trait ImageThumbnailTrait
     }
 
     /**
+     * @return string
+     */
+    public function getFrontendPath(): string
+    {
+        $path = $this->getPath();
+        if(!\preg_match('@^(https?|data):@', $path)) {
+            $path = \Pimcore\Tool::getHostUrl() . $path;
+        }
+
+        return $path;
+    }
+
+    /**
      * @internal
      *
      * @return string|null
