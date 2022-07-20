@@ -8,7 +8,7 @@ We gladly accept community pull requests. This is the preferred way to contribut
 There are a few necessary steps before we can accept a pull request:
 
 * [Fork us!](https://help.github.com/articles/fork-a-repo/)
-* Select the right branch. `main`(`10.x`) for features and improvements or latest maintenance branch for bug fixes (`10.4`)
+* Select the right branch. `main`(`10.x`) for features and improvements or latest maintenance branch for bug fixes (`10.5`)
 * Code! Follow the coding standards defined [here](https://github.com/pimcore/pimcore/blob/10.x/.php-cs-fixer.dist.php) and [here](https://github.com/pimcore/pimcore/blob/10.x/doc/Development_Documentation/19_Development_Tools_and_Details/29_Testing/02_Core_Tests.md#perform-phpstan-analysis)
 * [Send a pull request](https://help.github.com/articles/using-pull-requests/) from your fork’s branch to our repo branch.
 * [Sign the CLA](https://cla-assistant.io/pimcore/pimcore) - see also below.
