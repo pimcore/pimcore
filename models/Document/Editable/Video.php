@@ -85,7 +85,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     /**
      * @internal
      *
-     * @var array
+     * @var array|null
      */
     protected $allowedTypes;
 
@@ -212,10 +212,14 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
     public function getAllowedTypes()
     {
+        if ($this->allowedTypes === null) {
+            $this->updateAllowedTypesFromConfig($this->getConfig());
+        }
+
         return $this->allowedTypes;
     }
 
@@ -229,14 +233,14 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
             $path = $video->getFullPath();
         }
 
-        $this->updateAllowedTypesFromConfig($this->getConfig());
+        $allowedTypes = $this->getAllowedTypes();
 
         if (
             empty($this->type) === true
-            || in_array($this->type, $this->allowedTypes, true) === false
+            || in_array($this->type, $allowedTypes, true) === false
         ) {
             // Set the first type in array as default selection for dropdown
-            $this->type = $this->allowedTypes[0];
+            $this->type = $allowedTypes[0];
 
             // Reset "id" and "path" to prevent invalid references
             $this->id   = '';
@@ -248,7 +252,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return [
             'id'           => $this->id,
             'type'         => $this->type,
-            'allowedTypes' => $this->allowedTypes,
+            'allowedTypes' => $allowedTypes,
             'title'        => $this->title,
             'description'  => $this->description,
             'path'         => $path,
@@ -264,7 +268,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return [
             'id'           => $this->id,
             'type'         => $this->type,
-            'allowedTypes' => $this->allowedTypes,
+            'allowedTypes' => $this->getAllowedTypes(),
             'title'        => $this->title,
             'description'  => $this->description,
             'poster'       => $this->poster,
@@ -282,12 +286,10 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
             $inAdmin = $args[0];
         }
 
-        $this->updateAllowedTypesFromConfig($this->getConfig());
-
         if (
             empty($this->id) === true
             || empty($this->type) === true
-            || in_array($this->type, $this->allowedTypes, true) === false
+            || in_array($this->type, $this->getAllowedTypes(), true) === false
         ) {
             return $this->getEmptyCode();
         } elseif ($this->type === self::TYPE_ASSET) {
@@ -668,7 +670,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
             'showinfo',
             'start',
             'theme',
-            ];
+        ];
         $additional_params = '';
 
         $clipConfig = [];
@@ -742,7 +744,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
                 'background',
                 'loop',
                 'muted',
-                ];
+            ];
 
             $additional_params = '';
 
@@ -1058,7 +1060,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     public function getVideoType()
     {
         if (empty($this->type) === true) {
-            $this->type = $this->allowedTypes[0];
+            $this->type = $this->getAllowedTypes()[0];
         }
 
         return $this->type;
