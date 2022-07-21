@@ -186,7 +186,13 @@ class LibreOffice extends Ghostscript
             // for per page extraction we have to convert the document to PDF and extract the text via ghostscript
             return parent::getText($page, $asset);
         }
-        if (self::isFileTypeSupported($asset->getFilename())) {
+
+        // if asset is pdf extract via ghostscript
+        if (parent::isFileTypeSupported($asset->getFilename())) {
+            return parent::getText(null, $asset);
+        }
+
+        if ($this->isFileTypeSupported($asset->getFilename())) {
             // if we want to get the text of the whole document, we can use libreoffices text export feature
             $cmd = [self::getLibreOfficeCli(), '--headless', '--nologo', '--nofirststartwizard', '--norestore', '--convert-to', 'txt:Text', '--outdir',  PIMCORE_SYSTEM_TEMP_DIRECTORY, $asset->getLocalFile()];
             Console::addLowProcessPriority($cmd);
