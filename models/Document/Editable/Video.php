@@ -160,7 +160,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
-     * @param int $id
+     * @param int|null $id
      *
      * @return $this
      */
@@ -434,7 +434,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
-     * @return string
+     * @return int|string
      */
     public function getWidth()
     {
@@ -442,7 +442,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
-     * @return int
+     * @return int|string
      */
     public function getHeight()
     {
@@ -579,7 +579,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
-     * @return mixed|string
+     * @return string
      */
     private function parseYoutubeId()
     {
@@ -1079,7 +1079,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
-     * @return Asset\Image
+     * @return Asset\Image|null
      */
     public function getPosterAsset()
     {
@@ -1089,7 +1089,9 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     /**
      * @param string|Asset\Video\Thumbnail\Config $config
      *
-     * @return string
+     * @return Asset\Image\Thumbnail|Asset\Video\ImageThumbnail|string
+     *
+     * TODO Pimcore 11: Change empty string return to null
      */
     public function getImageThumbnail($config)
     {
