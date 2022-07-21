@@ -470,8 +470,8 @@ pimcore.settings.videothumbnail.items = {
 
         if (typeof data == "undefined") {
             data = {
-                start: 0,
-                duration: 0
+                start: '00:00:00',
+                duration: '00:00:00'
             };
         }
         var myId = Ext.id();
@@ -483,19 +483,19 @@ pimcore.settings.videothumbnail.items = {
             bodyStyle: "padding: 10px;",
             tbar: this.getTopBar(niceName, myId, panel),
             items: [{
-                xtype: 'numberfield',
+                xtype: 'textfield',
                 name: "start",
                 fieldLabel: t("start"),
-                minValue: 0,
                 width: 250,
-                value: data.start
+                value: data.start,
+                regex: /^\d*:?\d{0,2}:?\d{0,2}\.?\d*$/
             }, {
-                xtype: 'numberfield',
+                xtype: 'textfield',
                 name: "duration",
                 fieldLabel: t("duration"),
-                minValue: 0,
                 width: 250,
-                value: data.duration
+                value: data.duration,
+                regex: /^\d*:?\d{0,2}:?\d{0,2}\.?\d*$/
             }, {
                 xtype: "hidden",
                 name: "type",
