@@ -90,7 +90,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     protected $allowedTypes;
 
     /**
-     * @param int|string $id
+     * @param int|string|null $id
      *
      * @return Video
      */
@@ -102,7 +102,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     }
 
     /**
-     * @return int|string
+     * @return int|string|null
      */
     public function getId()
     {
