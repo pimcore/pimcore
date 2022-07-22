@@ -46,9 +46,9 @@ class Ffmpeg extends Adapter
     protected $videoFilter = [];
 
     /**
-     * @var float
+     * @var float|null
      */
-    protected $inputSeeking;
+    protected $inputSeeking = null;
 
     /**
      * @return bool
@@ -457,7 +457,7 @@ class Ffmpeg extends Adapter
     {
         if (!empty($inputSeeking)) {
             $parts = explode(':', $inputSeeking);
-            $this->inputSeeking = (float) $parts[0] * 3600 + $parts[1] * 60 + (float) $parts[2];
+            $this->inputSeeking = (float) ((int) $parts[0] * 3600 + (int) $parts[1] * 60 + (float) $parts[2]);
         }
         if (!empty($targetDuration)) {
             $this->addArgument('-t', $targetDuration);
