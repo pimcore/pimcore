@@ -488,14 +488,16 @@ pimcore.settings.videothumbnail.items = {
                 fieldLabel: t("start"),
                 width: 250,
                 value: data.start,
-                regex: /^\d*:?\d{0,2}:?\d{0,2}\.?\d*$/
+                regex: /^\d*:?[0-5]\d:?[0-5]\d\.?\d*$/,
+                emptyText: 'HH:MM:SS.MS'
             }, {
                 xtype: 'textfield',
                 name: "duration",
                 fieldLabel: t("duration"),
                 width: 250,
                 value: data.duration,
-                regex: /^\d*:?\d{0,2}:?\d{0,2}\.?\d*$/
+                regex: /^\d*:?[0-5]\d:?[0-5]\d\.?\d*$/,
+                emptyText: 'HH:MM:SS.MS'
             }, {
                 xtype: "hidden",
                 name: "type",
