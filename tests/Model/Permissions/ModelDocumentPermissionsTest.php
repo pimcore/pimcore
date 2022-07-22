@@ -735,11 +735,11 @@ class ModelDocumentPermissionsTest extends ModelTestCase
 
         //search manyelement
         $this->doTestSearch('manyelement', $admin, array_merge(
-                array_map(function ($item) {
-                    return $item->getRealFullPath();
-                }, $manyElementList),
-                [ $manyElementX->getRealFullPath() ]
-            ), $elementCount + 1
+            array_map(function ($item) {
+                return $item->getRealFullPath();
+            }, $manyElementList),
+            [ $manyElementX->getRealFullPath() ]
+        ), $elementCount + 1
         );
         $this->doTestSearch('manyelement', $this->userPermissionTest1, [$manyElementX->getRealFullPath()], $elementCount + 1);
         $this->doTestSearch('manyelement', $this->userPermissionTest2, [$manyElementX->getRealFullPath()], $elementCount + 1);

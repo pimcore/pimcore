@@ -252,7 +252,7 @@ class IndexUpdateService
             $qb->andWhere(sprintf('tenant in(%s)', implode(',', array_map(function ($str) {
                 return sprintf("'%s'", $str);
             },
-                    $tenantNameFilterList))
+                $tenantNameFilterList))
             ));
         }
 
@@ -281,7 +281,7 @@ class IndexUpdateService
             $qb->andWhere(sprintf('tenant in(%s)', implode(',', array_map(function ($str) {
                 return sprintf("'%s'", $str);
             },
-                    $tenantNameFilterList))
+                $tenantNameFilterList))
             ));
         }
 

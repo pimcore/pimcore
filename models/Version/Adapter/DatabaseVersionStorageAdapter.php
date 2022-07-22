@@ -55,9 +55,9 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
      * @throws \Doctrine\DBAL\Exception
      */
     protected function loadData(int $id,
-                                int $cId,
-                                string $cType,
-                                bool $binaryData = false): mixed
+        int $cId,
+        string $cType,
+        bool $binaryData = false): mixed
     {
         $dataColumn = $binaryData ? 'binaryData' : 'metaData';
 
@@ -120,7 +120,7 @@ class DatabaseVersionStorageAdapter implements VersionStorageAdapterInterface
     }
 
     public function getStorageType(int $metaDataSize = null,
-                                   int $binaryDataSize = null): string
+        int $binaryDataSize = null): string
     {
         return 'db';
     }

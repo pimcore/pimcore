@@ -48,7 +48,7 @@ abstract class AbstractDefinitionHelper extends Module
             } else {
                 $this->debug(sprintf(
                     '[%s] Not initializing model definitions as DB is not connected',
-                        strtoupper((new \ReflectionClass($this))->getShortName())
+                    strtoupper((new \ReflectionClass($this))->getShortName())
                 ));
             }
         }

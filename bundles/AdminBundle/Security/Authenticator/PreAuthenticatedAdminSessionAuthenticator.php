@@ -42,7 +42,7 @@ class PreAuthenticatedAdminSessionAuthenticator implements InteractiveAuthentica
         private UserProviderInterface $userProvider,
         private TokenStorageInterface $tokenStorage,
         private string $firewallName
-        ) {
+    ) {
     }
 
     public function isInteractive(): bool

@@ -39,10 +39,10 @@ class InternalMigrationHelpersCommand extends AbstractCommand
             ->setName('internal:migration-helpers')
             ->setDescription('For internal use only')
             ->addOption(
-            'is-installed',
-            null,
-            InputOption::VALUE_NONE,
-            'Checks whether Pimcore is already installed or not'
+                'is-installed',
+                null,
+                InputOption::VALUE_NONE,
+                'Checks whether Pimcore is already installed or not'
             );
     }
 

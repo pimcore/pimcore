@@ -393,7 +393,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
 
         if (array_key_exists($groupId, $this->items) && array_key_exists($keyId, $this->items[$groupId])
                 && array_key_exists($language, $this->items[$groupId][$keyId])
-            ) {
+        ) {
             $data = $this->items[$groupId][$keyId][$language];
         }
 

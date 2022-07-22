@@ -25,8 +25,8 @@ class DelegateVersionStorageAdapter implements VersionStorageAdapterInterface
     private array $adapters = [];
 
     public function __construct(protected int $byteThreshold,
-                                protected VersionStorageAdapterInterface $defaultAdapter,
-                                protected VersionStorageAdapterInterface $fallbackAdapter)
+        protected VersionStorageAdapterInterface $defaultAdapter,
+        protected VersionStorageAdapterInterface $fallbackAdapter)
     {
         $this->adapters[$defaultAdapter->getStorageType(null, null)] = $defaultAdapter;
         $this->adapters[$fallbackAdapter->getStorageType(null, null)] = $fallbackAdapter;
@@ -57,7 +57,7 @@ class DelegateVersionStorageAdapter implements VersionStorageAdapterInterface
     }
 
     public function getStorageType(int $metaDataSize = null,
-                                   int $binaryDataSize = null): string
+        int $binaryDataSize = null): string
     {
         if (empty($this->fallbackAdapter) === false) {
             if ($metaDataSize > $this->byteThreshold ||

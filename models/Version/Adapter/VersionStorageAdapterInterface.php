@@ -26,7 +26,7 @@ interface VersionStorageAdapterInterface
      * @return string
      */
     public function getStorageType(int $metaDataSize = null,
-                                   int $binaryDataSize = null): string;
+        int $binaryDataSize = null): string;
 
     /**
      * @param Version $version

@@ -362,7 +362,7 @@ class Processor
 
                                             // high res calculations if enabled
                                             if (!in_array($transformation['method'], ['cropPercent']) && in_array($key,
-                                                    ['width', 'height', 'x', 'y'])) {
+                                                ['width', 'height', 'x', 'y'])) {
                                                 if ($highResFactor && $highResFactor > 1) {
                                                     $value *= $highResFactor;
                                                     $value = (int)ceil($value);
@@ -443,7 +443,7 @@ class Processor
                 $isImageOptimizersEnabled = PimcoreConfig::getSystemConfiguration('assets')['image']['thumbnails']['image_optimizers']['enabled'];
                 if ($optimizedFormat && $optimizeContent && $isImageOptimizersEnabled) {
                     \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
-                      new OptimizeImageMessage($storagePath)
+                        new OptimizeImageMessage($storagePath)
                     );
                 }
 

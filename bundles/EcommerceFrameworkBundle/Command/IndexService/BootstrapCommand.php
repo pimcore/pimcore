@@ -125,7 +125,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
         if ($output->isVerbose()) {
             $activeTenantNameList = $indexService->getTenants();
             $output->writeln(sprintf('Process product ID="%d" for %d tenants (%s).', $productId,
-                    count($activeTenantNameList), implode(',', $activeTenantNameList))
+                count($activeTenantNameList), implode(',', $activeTenantNameList))
             );
         }
 

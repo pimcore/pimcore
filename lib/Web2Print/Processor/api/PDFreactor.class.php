@@ -945,43 +945,43 @@ class PDFreactor
     public function _createServerException($errorId = null, $message = null, $result = null)
     {
         switch ($errorId) {
-        case 'asyncUnavailable':
-            return new AsyncUnavailableException($errorId, $message, $result);
-        case 'badRequest':
-            return new BadRequestException($errorId, $message, $result);
-        case 'commandRejected':
-            return new CommandRejectedException($errorId, $message, $result);
-        case 'conversionAborted':
-            return new ConversionAbortedException($errorId, $message, $result);
-        case 'conversionFailure':
-            return new ConversionFailureException($errorId, $message, $result);
-        case 'documentNotFound':
-            return new DocumentNotFoundException($errorId, $message, $result);
-        case 'resourceNotFound':
-            return new ResourceNotFoundException($errorId, $message, $result);
-        case 'invalidClient':
-            return new InvalidClientException($errorId, $message, $result);
-        case 'invalidConfiguration':
-            return new InvalidConfigurationException($errorId, $message, $result);
-        case 'noConfiguration':
-            return new NoConfigurationException($errorId, $message, $result);
-        case 'noInputDocument':
-            return new NoInputDocumentException($errorId, $message, $result);
-        case 'requestRejected':
-            return new RequestRejectedException($errorId, $message, $result);
-        case 'serviceUnavailable':
-            return new ServiceUnavailableException($errorId, $message, $result);
-        case 'unauthorized':
-            return new UnauthorizedException($errorId, $message, $result);
-        case 'unprocessableConfiguration':
-            return new UnprocessableConfigurationException($errorId, $message, $result);
-        case 'unprocessableInput':
-            return new UnprocessableInputException($errorId, $message, $result);
-        case 'notAcceptable':
-            return new NotAcceptableException($errorId, $message, $result);
-        default:
-            return new ServerException($errorId, $message, $result);
-    }
+            case 'asyncUnavailable':
+                return new AsyncUnavailableException($errorId, $message, $result);
+            case 'badRequest':
+                return new BadRequestException($errorId, $message, $result);
+            case 'commandRejected':
+                return new CommandRejectedException($errorId, $message, $result);
+            case 'conversionAborted':
+                return new ConversionAbortedException($errorId, $message, $result);
+            case 'conversionFailure':
+                return new ConversionFailureException($errorId, $message, $result);
+            case 'documentNotFound':
+                return new DocumentNotFoundException($errorId, $message, $result);
+            case 'resourceNotFound':
+                return new ResourceNotFoundException($errorId, $message, $result);
+            case 'invalidClient':
+                return new InvalidClientException($errorId, $message, $result);
+            case 'invalidConfiguration':
+                return new InvalidConfigurationException($errorId, $message, $result);
+            case 'noConfiguration':
+                return new NoConfigurationException($errorId, $message, $result);
+            case 'noInputDocument':
+                return new NoInputDocumentException($errorId, $message, $result);
+            case 'requestRejected':
+                return new RequestRejectedException($errorId, $message, $result);
+            case 'serviceUnavailable':
+                return new ServiceUnavailableException($errorId, $message, $result);
+            case 'unauthorized':
+                return new UnauthorizedException($errorId, $message, $result);
+            case 'unprocessableConfiguration':
+                return new UnprocessableConfigurationException($errorId, $message, $result);
+            case 'unprocessableInput':
+                return new UnprocessableInputException($errorId, $message, $result);
+            case 'notAcceptable':
+                return new NotAcceptableException($errorId, $message, $result);
+            default:
+                return new ServerException($errorId, $message, $result);
+        }
     }
 }
 class PDFreactorWebserviceException extends \Exception

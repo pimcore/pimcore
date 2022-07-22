@@ -205,8 +205,8 @@ abstract class AbstractRenderer implements RendererInterface
         if (null === $this->_prefixForId) {
             $prefix = get_class($this);
             $this->_prefixForId = str_replace('\\', '-', strtolower(
-                    trim(substr($prefix, strrpos($prefix, '_')), '_')
-                )) . '-';
+                trim(substr($prefix, strrpos($prefix, '_')), '_')
+            )) . '-';
         }
 
         return $this->_prefixForId;
@@ -264,7 +264,7 @@ abstract class AbstractRenderer implements RendererInterface
         $foundDepth = -1;
         $iterator = new \RecursiveIteratorIterator(
             $container,
-                \RecursiveIteratorIterator::CHILD_FIRST
+            \RecursiveIteratorIterator::CHILD_FIRST
         );
 
         foreach ($iterator as $page) {

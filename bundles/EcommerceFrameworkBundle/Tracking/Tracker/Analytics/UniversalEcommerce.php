@@ -91,7 +91,7 @@ class UniversalEcommerce extends AbstractAnalyticsTracker implements CheckoutCom
             'shipping' => round($transaction->getShipping(), 2),               // Shipping.
             'tax' => round($transaction->getTax(), 2),                     // Tax.
         ],
-                $transaction->getAdditionalAttributes())
+            $transaction->getAdditionalAttributes())
         );
     }
 
