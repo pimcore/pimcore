@@ -189,6 +189,27 @@ All dimensions are in percent and therefore independent from the image size, you
         {% endif %}
     </p>
 </div>
+
+
+{# Predefined Data Templates; use "hotspot" instead of the "marker" key to add templates for hotspots #}
+{{ pimcore_image("image", {
+    'thumbnail': 'my-thumbnail',
+    'predefinedDataTemplates': {
+        'marker': [
+            {
+                'menuName': 'Menu Name',
+                'name': 'Config Name',
+                'data': [
+                    {
+                        'name': 'my textfield',
+                        'type': 'textfield',
+                    }
+                ]
+            }
+        ]
+    }
+}) }}
+
 ```
 
 `getHotspots` output:
