@@ -34,11 +34,13 @@ final class SessionConfiguratorPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition('session')) {
+        // @phpstan-ignore-next-line
+        if (!$container->has('session')) {
             return;
         }
 
-        if (!$container->hasDefinition(SessionConfigurator::class)) {
+        // @phpstan-ignore-next-line
+        if (!$container->has(SessionConfigurator::class)) {
             return;
         }
 
