@@ -16,7 +16,9 @@
 namespace Pimcore\Model\Translation;
 
 use Pimcore\Db\Helper;
+use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\User;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 /**
@@ -81,9 +83,19 @@ class Dao extends Model\Dao\AbstractDao
         //Create Domain table if doesn't exist
         $this->createOrUpdateTable();
 
+        $this->updateModificationInfos();
+
+        $user = User::getById($this->model->getUserModification());
+        $editableLanguages = $user instanceof User ? $user->getAllowedLanguagesForEditingWebsiteTranslations() : [];
+
         if ($this->model->getKey() !== '') {
             if (is_array($this->model->getTranslations())) {
                 foreach ($this->model->getTranslations() as $language => $text) {
+                    if ($editableLanguages && !in_array($language, $editableLanguages)) {
+                        Logger::warning(sprintf('User %s not allowed to edit %e translation', $user->getUsername(), $language));
+                        continue;
+                    }
+
                     $data = [
                         'key' => $this->model->getKey(),
                         'type' => $this->model->getType(),
@@ -173,8 +185,32 @@ class Dao extends Model\Dao\AbstractDao
                           `text` text DEFAULT NULL,
                           `creationDate` int(11) unsigned DEFAULT NULL,
                           `modificationDate` int(11) unsigned DEFAULT NULL,
+                          `userOwner` int(11) unsigned DEFAULT NULL,
+                          `userModification` int(11) unsigned DEFAULT NULL,
                           PRIMARY KEY (`key`,`language`),
                           KEY `language` (`language`)
                         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+    }
+
+    protected function updateModificationInfos()
+    {
+        $updateTime = time();
+        $this->model->setModificationDate($updateTime);
+
+        if (!$this->model->getCreationDate()) {
+            $this->model->setCreationDate($updateTime);
+        }
+
+        // auto assign user if possible, if no user present, use ID=0 which represents the "system" user
+        $userId = 0;
+        $user = \Pimcore\Tool\Admin::getCurrentUser();
+        if ($user instanceof Model\User) {
+            $userId = $user->getId();
+        }
+        $this->model->setUserModification($userId);
+
+        if ($this->model->getUserOwner() === null) {
+            $this->model->setUserOwner($userId);
+        }
     }
 }

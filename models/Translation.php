@@ -68,6 +68,21 @@ final class Translation extends AbstractModel
      */
     protected $type = 'simple';
 
+
+    /**
+     * ID of the owner user
+     *
+     * @var int|null
+     */
+    protected ?int $userOwner = null;
+
+    /**
+     * ID of the user who make the latest changes
+     *
+     * @var int|null
+     */
+    protected $userModification;
+
     /**
      * @return string
      */
@@ -198,6 +213,38 @@ final class Translation extends AbstractModel
     public function setDomain(string $domain): void
     {
         $this->domain = !empty($domain) ? $domain : self::DOMAIN_DEFAULT;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getUserOwner(): ?int
+    {
+        return $this->userOwner;
+    }
+
+    /**
+     * @param int|null $userOwner
+     */
+    public function setUserOwner(?int $userOwner)
+    {
+        $this->userOwner = $userOwner;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getUserModification()
+    {
+        return $this->userModification;
+    }
+
+    /**
+     * @param int $userModification
+     */
+    public function setUserModification($userModification)
+    {
+        $this->userModification = $userModification;
     }
 
     /**
@@ -383,14 +430,6 @@ final class Translation extends AbstractModel
     public function save()
     {
         $this->dispatchEvent(new TranslationEvent($this), TranslationEvents::PRE_SAVE);
-
-        if (!$this->getCreationDate()) {
-            $this->setCreationDate(time());
-        }
-
-        if (!$this->getModificationDate()) {
-            $this->setModificationDate(time());
-        }
 
         $this->getDao()->save();
 

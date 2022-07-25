@@ -262,6 +262,7 @@ pimcore.settings.translation.domain = Class.create({
         for (var i = 0; i < languages.length; i++) {
             readerFields.push({name: "_" + languages[i], defaultValue: ''});
 
+            let editable = in_array(languages[i], this.editableLanguages);
             let columnConfig = {
                 cls: "x-column-header_" + languages[i].toLowerCase(),
                 text: pimcore.available_languages[languages[i]],
@@ -269,7 +270,7 @@ pimcore.settings.translation.domain = Class.create({
                 flex: 1,
                 dataIndex: "_" + languages[i],
                 filter: 'string',
-                editor: this.getCellEditor(),
+                editor: this.getCellEditor(editable),
                 renderer: function (text) {
                     if (text) {
                         return replace_html_event_attributes(strip_tags(text, 'div,span,b,strong,em,i,small,sup,sub,p'));
@@ -293,15 +294,16 @@ pimcore.settings.translation.domain = Class.create({
             var date = new Date(d * 1000);
             return Ext.Date.format(date, "Y-m-d H:i:s");
         };
+
         typesColumns.push({
             text: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false
             , renderer: dateRenderer, filter: 'date', hidden: true
         });
+
         typesColumns.push({
             text: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false
             , renderer: dateRenderer, filter: 'date', hidden: true
-        })
-        ;
+        });
 
         if (pimcore.globalmanager.get("user").admin || this.domain === 'admin' || pimcore.settings.websiteLanguages.length == this.editableLanguages.length) {
             typesColumns.push({
@@ -635,11 +637,11 @@ pimcore.settings.translation.domain = Class.create({
         this.currentEditorWindow = new pimcore.settings.translation.editor(this, field, field.recordReference.get('type'), editorType)
     },
 
-    getCellEditor: function() {
-
+    getCellEditor: function(editable) {
         return new Ext.form.field.TextArea({
             enableKeyEvents: true,
             fieldStyle: 'min-height:30px',
+            disabled: !editable,
             listeners: {
                 keyup: function (field, key) {
                     if (key.getKey() == key.ENTER) {

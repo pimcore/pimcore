@@ -593,6 +593,8 @@ CREATE TABLE `translations_admin` (
   `text` text,
   `creationDate` int(11) unsigned DEFAULT NULL,
   `modificationDate` int(11) unsigned DEFAULT NULL,
+  `userOwner` int(11) unsigned DEFAULT NULL,
+  `userModification` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`key`,`language`),
   KEY `language` (`language`)
 ) DEFAULT CHARSET=utf8mb4;
@@ -605,6 +607,8 @@ CREATE TABLE `translations_messages` (
   `text` text,
   `creationDate` int(11) unsigned DEFAULT NULL,
   `modificationDate` int(11) unsigned DEFAULT NULL,
+  `userOwner` int(11) unsigned DEFAULT NULL,
+  `userModification` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`key`,`language`),
   KEY `language` (`language`)
 ) DEFAULT CHARSET=utf8mb4;
