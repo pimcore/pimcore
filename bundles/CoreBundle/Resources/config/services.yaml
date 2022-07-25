@@ -12,16 +12,6 @@ services:
     Pimcore\Session\SessionConfigurator:
         public: false
 
-    session:
-        public: true
-        class: Symfony\Component\HttpFoundation\Session\Session
-        arguments:
-            $flashes: '@session.flash_bag'
-        deprecated:
-            message: 'The "%service_id%" service is deprecated, get session from Request instead.'
-            package: pimcore/pimcore
-            version: 10.5
-
     #
     # SECURITY
     #
