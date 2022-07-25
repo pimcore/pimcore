@@ -38,8 +38,7 @@ final class SessionConfiguratorPass implements CompilerPassInterface
             return;
         }
 
-        // @phpstan-ignore-next-line
-        if (!$container->has(SessionConfigurator::class)) {
+        if (!$container->hasDefinition(SessionConfigurator::class)) {
             return;
         }
 
