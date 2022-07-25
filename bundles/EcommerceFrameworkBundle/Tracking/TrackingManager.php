@@ -326,7 +326,6 @@ class TrackingManager implements TrackingManagerInterface
             }
         }
 
-        /** @var Session $session */
         try {
             $session = $this->requestStack->getSession();
         } catch (SessionNotFoundException $e) {
@@ -335,6 +334,7 @@ class TrackingManager implements TrackingManagerInterface
             $session = $this->session;
         }
 
+        // @phpstan-ignore-next-line
         $session->getFlashBag()->set(TrackingCodeFlashMessageListener::FLASH_MESSAGE_BAG_KEY, $trackedCodes);
 
         return $this;
