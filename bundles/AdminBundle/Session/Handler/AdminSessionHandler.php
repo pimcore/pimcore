@@ -91,7 +91,8 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
             $this->logger->debug('Error while getting the admin session: {exception}', ['exception' => $e->getMessage()]);
         }
 
-        //@TODO trigger deprecation, it will not work with Pimcore 11
+        trigger_deprecation('pimcore/pimcore', '10.5',
+            sprintf('Session used with non existing request stack in %s, that will not be possible in Pimcore 11.', __CLASS__));
 
         return \Pimcore::getContainer()->get('session');
     }
