@@ -187,8 +187,9 @@ class LibreOffice extends Ghostscript
             return parent::getText($page, $asset);
         }
         if (self::isFileTypeSupported($asset->getFilename())) {
+            $localAssetTmpPath = $asset->getLocalFile();
             // if we want to get the text of the whole document, we can use libreoffices text export feature
-            $cmd = [self::getLibreOfficeCli(), '--headless', '--nologo', '--nofirststartwizard', '--norestore', '--convert-to', 'txt:Text', '--outdir',  PIMCORE_SYSTEM_TEMP_DIRECTORY, $asset->getLocalFile()];
+            $cmd = [self::getLibreOfficeCli(), '--headless', '--nologo', '--nofirststartwizard', '--norestore', '--convert-to', 'txt:Text', '--outdir',  PIMCORE_SYSTEM_TEMP_DIRECTORY, $localAssetTmpPath];
             Console::addLowProcessPriority($cmd);
             $process = new Process($cmd);
             $process->setTimeout(240);
@@ -197,7 +198,7 @@ class LibreOffice extends Ghostscript
 
             Logger::debug('LibreOffice Output was: ' . $out);
 
-            $tmpName = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . preg_replace("/\." . File::getFileExtension($asset->getFilename()) . '$/', '.txt', $asset->getFilename());
+            $tmpName = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . preg_replace("/\." . File::getFileExtension($localAssetTmpPath) . '$/', '.txt', $localAssetTmpPath);
             if (file_exists($tmpName)) {
                 $text = file_get_contents($tmpName);
                 $text = \Pimcore\Tool\Text::convertToUTF8($text);
