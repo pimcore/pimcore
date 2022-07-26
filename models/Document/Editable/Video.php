@@ -591,7 +591,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
                     if (array_key_exists('query', $parts)) {
                         parse_str($parts['query'], $vars);
 
-                        if ($vars['v']) {
+                        if (isset($vars['v']) && $vars['v']) {
                             $youtubeId = $vars['v'];
                         }
                     }
