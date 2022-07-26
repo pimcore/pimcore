@@ -1022,11 +1022,21 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     /**
      * @return string
      */
-    private function getEmptyCode()
+    private function getEmptyCode(): string
     {
         $uid = 'video_' . uniqid();
+        $width = $this->getWidth();
+        $height = $this->getHeight();
 
-        return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video"><div class="pimcore_editable_video_empty" id="' . $uid . '" style="width: ' . $this->getWidth() . 'px; height: ' . $this->getHeight() . 'px;"></div></div>';
+        if (is_numeric($width)) {
+            $width .= 'px';
+        }
+
+        if (is_numeric($height)) {
+            $height .= 'px';
+        }
+
+        return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video"><div class="pimcore_editable_video_empty" id="' . $uid . '" style="width: ' . $width . '; height: ' . $height . ';"></div></div>';
     }
 
     private function updateAllowedTypesFromConfig(array $config): void
