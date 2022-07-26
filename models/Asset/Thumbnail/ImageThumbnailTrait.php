@@ -218,7 +218,7 @@ trait ImageThumbnailTrait
 
             if ($config) {
                 $thumbnail = $asset->getDao()->getCachedThumbnail($config->getName(), $this->getFilename());
-                if ($thumbnail && $thumbnail['width'] && $thumbnail['height']) {
+                if (isset($thumbnail['width'], $thumbnail['height'])) {
                     $dimensions['width'] = $thumbnail['width'];
                     $dimensions['height'] = $thumbnail['height'];
                 }
