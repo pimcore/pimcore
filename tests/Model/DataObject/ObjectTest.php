@@ -198,5 +198,8 @@ class ObjectTest extends ModelTestCase
         $object->setId(123);
 
         $this->assertEquals(null, $clone->getId(), 'Setting ID on original object should have no impact on the cloned object');
+
+        $otherClone = clone $object;
+        $this->assertEquals(123, $otherClone->getId(), 'Shallow clone should copy the o_* fields');
     }
 }
