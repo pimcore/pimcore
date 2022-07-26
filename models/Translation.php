@@ -242,7 +242,7 @@ final class Translation extends AbstractModel
     /**
      * @param int|null $userModification
      */
-    public function setUserModification($userModification)
+    public function setUserModification(?int $userModification)
     {
         $this->userModification = $userModification;
     }
