@@ -16,6 +16,7 @@
 namespace Pimcore\Tests\Model\DataObject;
 
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Element\Service;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 
@@ -184,5 +185,18 @@ class ObjectTest extends ModelTestCase
         $latestVersion = end($versions);
 
         $this->assertEquals('default', $latestVersion->getData()->getInputWithDefault(), 'Expected default value saved to version');
+    }
+
+    /**
+     * Verifies that when an object gets cloned, the o_* fields references get renewed
+     */
+    public function testCloning()
+    {
+        $object = TestHelper::createEmptyObject('', false);
+        $clone = Service::cloneMe($object);
+
+        $object->setId(123);
+
+        $this->assertEquals(null, $clone->getId(), 'Expected default value saved to version');
     }
 }
