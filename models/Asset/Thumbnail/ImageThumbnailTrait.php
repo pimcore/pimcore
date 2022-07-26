@@ -453,7 +453,7 @@ trait ImageThumbnailTrait
      *
      * @return static
      */
-    public function getAsFormat(string $format): self
+    public function getAsFormat(string $format): static
     {
         $thumb = clone $this;
 
@@ -463,6 +463,6 @@ trait ImageThumbnailTrait
         $thumb->config = $config;
         $thumb->reset();
 
-        return $thumb ;
+        return $thumb;
     }
 }
