@@ -197,6 +197,6 @@ class ObjectTest extends ModelTestCase
 
         $object->setId(123);
 
-        $this->assertEquals(null, $clone->getId(), 'Expected default value saved to version');
+        $this->assertEquals(null, $clone->getId(), 'Setting ID on original object should have no impact on the cloned object');
     }
 }
