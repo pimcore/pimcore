@@ -1331,38 +1331,12 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         parent::__clone();
 
         // renew references when cloning
-        unset($this->o_id);
-        $this->o_id = &$this->id;
-
-        unset($this->o_path);
-        $this->o_path = &$this->path;
-
-        unset($this->o_creationDate);
-        $this->o_creationDate = &$this->creationDate;
-
-        unset($this->o_userOwner);
-        $this->o_userOwner = &$this->userOwner;
-
-        unset($this->o_versionCount);
-        $this->o_versionCount = &$this->versionCount;
-
-        unset($this->o_modificationDate);
-        $this->o_modificationDate = &$this->modificationDate;
-
-        unset($this->o_locked);
-        $this->o_locked = &$this->locked;
-
-        unset($this->o_parent);
-        $this->o_parent = &$this->parent;
-
-        unset($this->o_properties);
-        $this->o_properties = &$this->properties;
-
-        unset($this->o_userModification);
-        $this->o_userModification = &$this->userModification;
-
-        unset($this->o_parentId);
-        $this->o_parentId = &$this->parentId;
+        foreach(['id', 'path', 'creationDate', 'userOwner', 'versionCount', 'modificationDate', 'locked', 'parent', 'properties', 'userModification', 'parentId'] as $referenceField) {
+            $oldValue = $this->$referenceField;
+            unset($this->$referenceField);
+            $this->$referenceField = $oldValue;
+            $this->{'o_'.$referenceField} = &$this->$referenceField;
+        }
 
         $this->o_parent = null;
         // note that o_children is currently needed for the recycle bin
