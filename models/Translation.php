@@ -81,7 +81,7 @@ final class Translation extends AbstractModel
      *
      * @var int|null
      */
-    protected $userModification;
+    protected ?int $userModification = null;
 
     /**
      * @return string
@@ -234,13 +234,13 @@ final class Translation extends AbstractModel
     /**
      * @return int|null
      */
-    public function getUserModification()
+    public function getUserModification(): ?int
     {
         return $this->userModification;
     }
 
     /**
-     * @param int $userModification
+     * @param int|null $userModification
      */
     public function setUserModification($userModification)
     {
