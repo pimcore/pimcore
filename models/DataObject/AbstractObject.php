@@ -1331,7 +1331,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         parent::__clone();
 
         // renew references when cloning
-        unset($this->id);
+        unset($this->o_id);
         $this->o_id = &$this->id;
 
         unset($this->o_path);
