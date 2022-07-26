@@ -203,9 +203,6 @@ class Dao extends Model\Dao\AbstractDao
 
         // auto assign user if possible, if no user present, use ID=0 which represents the "system" user
         $userId = \Pimcore\Tool\Admin::getCurrentUser()?->getId() ?? 0;
-        if ($user instanceof Model\User) {
-            $userId = $user->getId();
-        }
         $this->model->setUserModification($userId);
 
         if ($this->model->getUserOwner() === null) {
