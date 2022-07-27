@@ -71,6 +71,8 @@ For bundles, translations should be stored in the `Resources/translations/` dire
 (or `domain.locale.loader` if you want to handle a specific translation domain). For the most cases this will be something
 like `Resources/translations/en.yml`, which resolves to the default `messages` translation domain.
 
+Example: admin.en.yml or messages.en.yml
+
 
 ### Security / Authentication
 

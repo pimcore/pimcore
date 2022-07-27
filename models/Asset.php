@@ -1838,4 +1838,17 @@ class Asset extends Element\AbstractElement
             new AssetUpdateTasksMessage($this->getId())
         );
     }
+
+    /**
+     * @return string
+     */
+    public function getFrontendPath(): string
+    {
+        $path = $this->getFullPath();
+        if (!\preg_match('@^(https?|data):@', $path)) {
+            $path = \Pimcore\Tool::getHostUrl() . $path;
+        }
+
+        return $path;
+    }
 }

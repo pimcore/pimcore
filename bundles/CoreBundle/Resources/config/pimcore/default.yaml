@@ -9,6 +9,7 @@ framework:
         enabled: true
     router:
         strict_requirements: ~
+        utf8: true
     form: ~
     csrf_protection: ~
     validation: { enable_annotations: true }
@@ -21,6 +22,7 @@ framework:
         handler_id:  null
         cookie_samesite: 'strict'
         storage_factory_id: session.storage.factory.native
+        cookie_secure: auto
     php_errors:
         log: true
     assets: ~
@@ -50,6 +52,7 @@ framework:
         default_bus: messenger.bus.pimcore-core
         buses:
             messenger.bus.pimcore-core:
+        reset_on_message: true
 
 # Twig Configuration
 twig:

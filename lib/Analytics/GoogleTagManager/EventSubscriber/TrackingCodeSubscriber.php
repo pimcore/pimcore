@@ -50,8 +50,10 @@ class TrackingCodeSubscriber implements EventSubscriberInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @return array
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents()// : array
     {
         return [
             GoogleTagManagerEvents::CODE_HEAD => ['onCodeHead'],

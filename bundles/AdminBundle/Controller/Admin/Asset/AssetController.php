@@ -102,13 +102,15 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     public function getDataByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $assetId = (int)$request->get('id');
+        $type = (string)$request->get('type');
+
         $asset = Asset::getById($assetId);
         if (!$asset instanceof Asset) {
             return $this->adminJson(['success' => false, 'message' => "asset doesn't exist"]);
         }
 
-        // check for lock
-        if ($asset->isAllowed('publish') || $asset->isAllowed('delete')) {
+        // check for lock on non-folder items only.
+        if ($type !== 'folder' && ($asset->isAllowed('publish') || $asset->isAllowed('delete'))) {
             if (Element\Editlock::isLocked($assetId, 'asset')) {
                 return $this->getEditLockResponse($assetId, 'asset');
             }

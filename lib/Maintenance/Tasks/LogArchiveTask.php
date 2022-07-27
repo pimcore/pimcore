@@ -98,7 +98,19 @@ class LogArchiveTask implements TaskInterface
 
             $fileObjectPaths = $db->fetchAllAssociative(sprintf($sql, 'fileobject'));
             foreach ($fileObjectPaths as $objectPath) {
-                $storage->delete($objectPath['fileobject']);
+                $filePath = $objectPath['fileobject'];
+                if ($filePath !== null) {
+                    if ($storage->fileExists($filePath)) {
+                        $storage->delete($filePath);
+                    } else {
+
+                        // Fallback, if is not found and deleted in the flysystem, tries to delete from local
+                        $fileRealPath = realpath($filePath);
+                        if (str_starts_with(realpath($fileRealPath), PIMCORE_LOG_FILEOBJECT_DIRECTORY)) {
+                            @unlink($fileRealPath);
+                        }
+                    }
+                }
             }
 
             $db->executeQuery('DELETE FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY);');
@@ -118,7 +130,19 @@ class LogArchiveTask implements TaskInterface
 
             if ($archiveTableExists) {
                 $db->executeStatement('DROP TABLE IF EXISTS `' . ($this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase()) . '`.' . $applicationLogArchiveTable);
-                $storage->deleteDirectory($deleteArchiveLogDate->format('Y/m'));
+
+                $folderName = $deleteArchiveLogDate->format('Y/m');
+
+                // TODO: change fileExists to directoryExists once bumped flysystem to 3.*
+                if ($storage->fileExists($folderName)) {
+                    $storage->deleteDirectory($folderName);
+                } else {
+                    // Fallback, if is not found and deleted in the flysystem, tries to delete from local
+                    $folderRealPath = realpath(PIMCORE_LOG_FILEOBJECT_DIRECTORY . DIRECTORY_SEPARATOR . $folderName);
+                    if (str_starts_with(realpath($folderRealPath), PIMCORE_LOG_FILEOBJECT_DIRECTORY)) {
+                        @unlink($folderRealPath);
+                    }
+                }
             }
 
             $deleteArchiveLogDate = $deleteArchiveLogDate->sub(new DateInterval('P1M'));

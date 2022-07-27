@@ -1,10 +1,11 @@
 # Upgrade Notes
 
 ## 10.5.0
+- [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`
 - [Listings] `JsonListing` class is deprecated. Please use `CallableFilterListingInterface`, `FilterListingTrait` and `CallableOrderListingInterface`, `OrderListingTrait` instead.
   For examples please see existing classes, e.g. `Pimcore\Model\Document\DocType\Listing`.
 
-- [Security] It is recommended to use new [Authenticator based system](https://pimcore.com/docs/pimcore/current/Development_Documentation/19_Development_Tools_and_Details/10_Security_Authentication/05_Authenticator_Based_Security.md) for authentication/authorization.
+- [Security] It is recommended to use new [Authenticator based system](https://pimcore.com/docs/pimcore/current/Development_Documentation/Development_Tools_and_Details/Security_Authentication/Authenticator_Based_Security.html) for authentication/authorization.
   To use new authenticator, add following symfony config in `security.yaml`:
     ```yaml
     security:
@@ -12,13 +13,13 @@
     ```
 - [Elements] Calling the methods `Asset::getById()`, `Document::getById()` and `DataObject::getById()` with second boolean parameter `$force` is deprecated and will throw exception in Pimcore 11. Instead pass the second parameter as associative array with `$force` value.
   e.g. Before 
-   ```
+   ```php
     Asset::getById($id, true);
     Document::getById($id, true);
     DataObject::getById($id, true);
    ```
     After
-   ```
+   ```php
     Asset::getById($id, ['force' => true]);
     Document::getById($id, ['force' => true]);
     DataObject::getById($id, ['force' => true]);
@@ -47,8 +48,51 @@
 - [JS Events/Disabled] The plugin broker for fire events has been disabled. 
 The plugins are still supported, but they are deprecated and will be removed in Pimcore 11   
 Please use [event listener](../../20_Extending_Pimcore/13_Bundle_Developers_Guide/06_Event_Listener_UI.md) instead of plugins for JS events.
+- Extension Manager - Registering or managing bundles/areabricks through `Tools -> Bundles & Bricks` or manually through `var/config/extensions.php` is deprecated and will not work on Pimcore 11.
+  Please use `config/bundles.php` to register/manage bundles instead.
 - [Web2Print] Wkhtmltopdf Processor has been deprecated and will be removed in Pimcore 11. Please use HeadlessChrome or PDFreactor instead.
 - [Config] `Pimcore\Config\Config` has been deprecated and will be removed in Pimcore 11.
+- The recommended nginx config for static pages has been updated (the old one still works!) from
+  ```nginx
+  server {
+      ...
+
+      location @staticpage{
+          try_files /var/tmp/pages$uri.html $uri /index.php$is_args$args;
+      }
+
+      location / {
+          error_page 404 /meta/404;
+          error_page 418 = @staticpage;
+          if ($args ~* ^(?!pimcore_editmode=true|pimcore_preview|pimcore_version)(.*)$){
+              return 418;
+          }
+          try_files $uri /index.php$is_args$args;
+      }
+
+      ...
+  }
+  ```
+  to
+  ```nginx
+  map $args $static_page_root {
+      default                                 /var/tmp/pages;
+      "~*(^|&)pimcore_editmode=true(&|$)"     /var/nonexistent;
+      "~*(^|&)pimcore_preview=true(&|$)"      /var/nonexistent;
+      "~*(^|&)pimcore_version=[^&]+(&|$)"     /var/nonexistent;
+  }
+
+  server {
+      ... 
+
+      location / {
+          error_page 404 /meta/404;
+          try_files $static_page_root$uri.html $uri /index.php$is_args$args;
+      }
+
+      ...
+  }
+  ```
 
 ## 10.4.2
 - When maintenance mode is active, all commands are prevented from starting (not just commands inheriting from `AbstractCommand`).

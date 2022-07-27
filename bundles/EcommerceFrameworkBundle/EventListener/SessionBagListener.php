@@ -31,7 +31,10 @@ class SessionBagListener implements EventSubscriberInterface
 
     const ATTRIBUTE_BAG_PAYMENT_ENVIRONMENT = 'ecommerceframework_payment_environment';
 
-    public static function getSubscribedEvents()
+    /**
+     * @return array
+     */
+    public static function getSubscribedEvents()// : array
     {
         return [
             //run after Symfony\Component\HttpKernel\EventListener\SessionListener

@@ -43,10 +43,6 @@ class FolderController extends DocumentControllerBase
             throw $this->createNotFoundException('Folder not found');
         }
 
-        if (($lock = $this->checkForLock($folder)) instanceof JsonResponse) {
-            return $lock;
-        }
-
         $folder = clone $folder;
         $folder->setParent(null);
 

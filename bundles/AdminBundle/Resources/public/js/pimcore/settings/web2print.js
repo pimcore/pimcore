@@ -214,10 +214,11 @@ pimcore.settings.web2print = Class.create({
                         fieldLabel: t("web2print_headlesschrome_documentation"),
                         name: 'documentation',
                         width: 600,
-                        value: t('web2print_headlesschrome_puppeteer_documentation'),
+                        value: t('web2print_headlesschrome_options_documentation'),
                         autoEl:{
                             tag: 'a',
-                            href: "https://pptr.dev/#?product=Puppeteer&version=v5.2.1&show=api-pagepdfoptions",
+                            target: '_blank',
+                            href: "https://github.com/spiritix/php-chrome-html2pdf#options",
                         }
                     },{
                         xtype: "displayfield",
@@ -233,6 +234,7 @@ pimcore.settings.web2print = Class.create({
                         value: t('web2print_headlesschrome_json_converter_link'),
                         autoEl:{
                             tag: 'a',
+                            target: '_blank',
                             href: "https://jsonformatter.org/",
                         }
                     }

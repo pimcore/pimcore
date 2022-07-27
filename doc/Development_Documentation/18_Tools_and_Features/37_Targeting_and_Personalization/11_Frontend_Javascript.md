@@ -44,7 +44,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class TargetingCodeListener implements EventSubscriberInterface
 {
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             TargetingEvents::TARGETING_CODE => 'onTargetingCode',

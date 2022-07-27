@@ -962,7 +962,7 @@
     "by_key_reverse": "Key (Z to A)",
     "deprecated": "Deprecated",
     "version_currently_saved_in_database": "Currently saved in database (but not published)",
-    "deprecated_feature": "<p style='color: orange;'>Deprecated feature. Use %s<br>instead</p>",
+    "deprecated_feature": "<span style='color: orange;'>Deprecated feature. Use %s instead</span>",
     "edit_as_custom_text": "Edit as custom text",
     "symfony_translation_link": "Translation Format: https://symfony.com/doc/current/translation/message_format.html",
     "no_action_available": "No action available",
@@ -985,5 +985,6 @@
     "asset_upload_keep_both": "Keep both files",
     "asset_upload_overwrite_all": "Overwrite all",
     "could_not_open_zip_file": "The uploaded zip file could not be opened.",
-    "objects_sort_method": "Change data objects sort method"
+    "objects_sort_method": "Change data objects sort method",
+    "link_recursion_error": "The link is redirecting to itself, causing an infinite loop"
 }

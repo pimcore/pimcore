@@ -16,7 +16,6 @@
 namespace Pimcore\DataObject\ClassBuilder;
 
 use Pimcore\File;
-use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
 
 class PHPObjectBrickContainerClassDumper implements PHPObjectBrickContainerClassDumperInterface
@@ -47,7 +46,12 @@ class PHPObjectBrickContainerClassDumper implements PHPObjectBrickContainerClass
         }
 
         foreach ($containerDefinition as $classId => $cd) {
-            $class = ClassDefinition::getByName($classId);
+            $file = PIMCORE_CLASS_DEFINITION_DIRECTORY . '/definition_' . $classId . '.php';
+            if (!file_exists($file)) {
+                continue;
+            }
+
+            $class = include $file;
 
             if (!$class) {
                 continue;

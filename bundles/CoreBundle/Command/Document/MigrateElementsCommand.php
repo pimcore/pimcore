@@ -39,7 +39,10 @@ class MigrateElementsCommand extends AbstractCommand
             ->setDescription('Migrates document elements to editables. See issue https://github.com/pimcore/pimcore/issues/7384 first');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * @return int
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)// :int
     {
         if (!$this->runCommand) {
             return 0;

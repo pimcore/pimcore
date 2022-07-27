@@ -672,5 +672,7 @@
     "asset_type_changed": "Asset type was changed in the meantime. Please reload the admin interface to see the latest changes.",
     "success_generating_previews": "Generating page previews in the background. Please reload the admin interface after some time to take effect.",
     "error_generating_previews": "Error generating page previews.",
-    "regex_flags": "RegEx Flags"
+    "regex_flags": "RegEx Flags",
+    "web2print_headlesschrome_settings": "Headless Chrome settings",
+    "web2print_headlesschrome_json_converter": "Open JSON converter/validator"
 }
