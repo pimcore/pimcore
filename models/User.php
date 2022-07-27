@@ -1090,8 +1090,18 @@ final class User extends User\UserRole
         }
 
         foreach ($this->$workspaceGetter() as $workspace) {
-            if ($workspace->$permissionGetter() && $workspace->getCpath()) {
-                $allowedPaths[] = $workspace->getCpath();
+            if ($workspace->getCpath()) {
+                if($workspace->$permissionGetter()) {
+                    $allowedPaths[] = $workspace->getCpath();
+                } else {
+                    // remove role-based allowed path when it is not allowed for user
+                    foreach($allowedPaths as &$allowedPath) {
+                        if(strpos($allowedPath, $workspace->getCpath()) === 0) {
+                            unset($allowedPath);
+                        }
+                    }
+                    unset($allowedPath);
+                }
             }
         }
 

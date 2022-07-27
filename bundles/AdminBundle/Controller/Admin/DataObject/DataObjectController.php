@@ -231,7 +231,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $db = Db::get();
             $condition .= ' AND CAST(objects.o_key AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ' . $db->quote($filter);
         }
-var_dump($condition);
+
         return $condition;
     }
 
