@@ -16,10 +16,8 @@ The code for the admin user interface (mostly `AdminBundle` but also parts of `E
 - Run `COMPOSER_MEMORY_LIMIT=-1 composer update`
 - Clear the data cache `bin/console pimcore:cache:clear`
 
-Composer update runs Pimcore migrations automatically. 
-If you do not want to run Pimcore migrations automatically please remove `"Pimcore\\Composer::executeMigrationsUp"` from the `post-update-cmd` scripts in your `composer.json`.
 
-To run core migrations manually (e.g. when using composer install), 
+To run core migrations (e.g. when using composer install), 
 use: `bin/console doctrine:migrations:migrate --prefix=Pimcore\\Bundle\\CoreBundle`
 
 ## Upgrading from earlier Versions
