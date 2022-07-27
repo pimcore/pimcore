@@ -592,16 +592,36 @@ class GridHelperService
         }
 
         if (!$adminUser->isAdmin()) {
-            $allowedPaths = $adminUser->getAllowedPaths('object', 'list');
+            $elementPaths = Model\Element\Service::findForbiddenPaths('object', $this->getAdminUser());
 
-            if(count($allowedPaths) === 0) {
-                $conditionFilters[] = '(0)';
-            } else {
-                $workspaceFilters = array_map(static function ($allowedPath) use ($list) {
-                    return 'CONCAT(o_path,o_key) LIKE '.$list->quote($allowedPath.'%');
-                }, $allowedPaths);
+            $forbiddenPathSql = [];
+            $allowedPathSql = [];
+            foreach ($elementPaths['forbidden'] as $forbiddenPath => $allowedPaths) {
+                $exceptions = '';
+                $folderSuffix = '';
+                if ($allowedPaths) {
+                    $exceptionsConcat = implode("%' OR CONCAT(path,filename) LIKE '", $allowedPaths);
+                    $exceptions = " OR (CONCAT(path,filename) LIKE '".$exceptionsConcat."%')";
+                    $folderSuffix = '/'; //if allowed children are found, the current folder is listable but its content is still blocked, can easily done by adding a trailing slash
+                }
+                $forbiddenPathSql[] = ' (CONCAT(path,filename) NOT LIKE '.$list->quote($forbiddenPath.$folderSuffix.'%').$exceptions.') ';
+            }
+            foreach ($elementPaths['allowed'] as $allowedPaths) {
+                $allowedPathSql[] = ' CONCAT(path,filename) LIKE '.$list->quote($allowedPaths.'%');
+            }
 
-                $conditionFilters[] = '('.implode(' OR ', $workspaceFilters).')';
+            if ($allowedPathSql || $forbiddenPathSql) {
+                $forbiddenAndAllowedSql = ' AND (';
+                $forbiddenAndAllowedSql .= $allowedPathSql ? '( '.implode(' OR ', $allowedPathSql).' )' : '';
+
+                if ($forbiddenPathSql) {
+                    //if $allowedPathSql "implosion" is present, we need `AND` in between
+                    $forbiddenAndAllowedSql .= $allowedPathSql ? ' AND ' : '';
+                    $forbiddenAndAllowedSql .= implode(' AND ', $forbiddenPathSql);
+                }
+                $forbiddenAndAllowedSql .= ' )';
+
+                $conditionFilters[] = $forbiddenAndAllowedSql;
             }
         }
 
@@ -812,16 +832,36 @@ class GridHelperService
         }
 
         if (!$adminUser->isAdmin()) {
-            $allowedPaths = $adminUser->getAllowedPaths('asset','list');
+            $elementPaths = Model\Element\Service::findForbiddenPaths('asset', $this->getAdminUser());
 
-            if (count($allowedPaths) === 0) {
-                $conditionFilters[] = '(0)';
-            } else {
-                $workspaceFilters = array_map(static function ($allowedPath) use ($list) {
-                    return 'CONCAT(path,filename) LIKE '.$list->quote($allowedPath.'%');
-                }, $allowedPaths);
+            $forbiddenPathSql = [];
+            $allowedPathSql = [];
+            foreach ($elementPaths['forbidden'] as $forbiddenPath => $allowedPaths) {
+                $exceptions = '';
+                $folderSuffix = '';
+                if ($allowedPaths) {
+                    $exceptionsConcat = implode("%' OR CONCAT(path,filename) LIKE '", $allowedPaths);
+                    $exceptions = " OR (CONCAT(path,filename) LIKE '".$exceptionsConcat."%')";
+                    $folderSuffix = '/'; //if allowed children are found, the current folder is listable but its content is still blocked, can easily done by adding a trailing slash
+                }
+                $forbiddenPathSql[] = ' (CONCAT(path,filename) NOT LIKE '.$list->quote($forbiddenPath.$folderSuffix.'%').$exceptions.') ';
+            }
+            foreach ($elementPaths['allowed'] as $allowedPaths) {
+                $allowedPathSql[] = ' CONCAT(path,filename) LIKE '.$list->quote($allowedPaths.'%');
+            }
 
-                $conditionFilters[] = '('.implode(' OR ', $workspaceFilters).')';
+            if ($allowedPathSql || $forbiddenPathSql) {
+                $forbiddenAndAllowedSql = ' AND (';
+                $forbiddenAndAllowedSql .= $allowedPathSql ? '( '.implode(' OR ', $allowedPathSql).' )' : '';
+
+                if ($forbiddenPathSql) {
+                    //if $allowedPathSql "implosion" is present, we need `AND` in between
+                    $forbiddenAndAllowedSql .= $allowedPathSql ? ' AND ' : '';
+                    $forbiddenAndAllowedSql .= implode(' AND ', $forbiddenPathSql);
+                }
+                $forbiddenAndAllowedSql .= ' )';
+
+                $conditionFilters[] = $forbiddenAndAllowedSql;
             }
         }
 
