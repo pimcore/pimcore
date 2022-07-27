@@ -33,4 +33,6 @@
         }
     });
     ```
-    
+- Replace deprecated JS functions
+  - Use t() instead of ts()
+  - Don't use pimcore.helpers.addCsrfTokenToUrl()
