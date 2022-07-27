@@ -67,12 +67,6 @@ services:
         tags:
             - { name: console.command, command: 'pimcore:deployment:classes-rebuild' }
 
-    Pimcore\Bundle\CoreBundle\Command\CustomLayoutRebuildCommand:
-        calls:
-            - [setClassLayoutDefinitionManager, ['@Pimcore\Model\DataObject\ClassDefinition\ClassLayoutDefinitionManager']]
-        tags:
-            - { name: console.command, command: 'pimcore:deployment:custom-layouts-rebuild' }
-
     Pimcore\Bundle\CoreBundle\Command\Migrate\StorageCommand:
         arguments:
             $locator: !tagged_locator { tag: flysystem.storage }

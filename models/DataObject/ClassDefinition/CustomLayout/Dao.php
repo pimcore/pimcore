@@ -156,19 +156,16 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     {
         $id = null;
 
-        try {
-            $list = new Listing();
-            /** @var Model\DataObject\ClassDefinition\CustomLayout[] $definitions */
-            $definitions = array_values(array_filter($list->getLayoutDefinitions(), function ($item) use ($name, $classId) {
-                $return = false;
-                if ($item->getName() == $name && $item->getClassId() == $classId) {
-                    $return = true;
-                }
+        $list = new Listing();
+        /** @var Model\DataObject\ClassDefinition\CustomLayout[] $definitions */
+        $definitions = array_values(array_filter($list->getLayoutDefinitions(), function ($item) use ($name, $classId) {
+            $return = false;
+            if ($item->getName() == $name && $item->getClassId() == $classId) {
+                $return = true;
+            }
 
-                return $return;
-            }));
-        } catch (\Exception $e) {
-        }
+            return $return;
+        }));
 
         if (count($definitions) && $definitions[0] instanceof Model\DataObject\ClassDefinition\CustomLayout) {
             $id = $definitions[0]->getId();
