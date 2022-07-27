@@ -226,7 +226,7 @@ final class Translation extends AbstractModel
     /**
      * @param int|null $userOwner
      */
-    public function setUserOwner(?int $userOwner)
+    public function setUserOwner(?int $userOwner): void
     {
         $this->userOwner = $userOwner;
     }
@@ -242,7 +242,7 @@ final class Translation extends AbstractModel
     /**
      * @param int|null $userModification
      */
-    public function setUserModification(?int $userModification)
+    public function setUserModification(?int $userModification): void
     {
         $this->userModification = $userModification;
     }
