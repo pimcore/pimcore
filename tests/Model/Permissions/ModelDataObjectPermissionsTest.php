@@ -651,6 +651,8 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
 
                 return;
             }
+
+            throw $e;
         }
 
         $responsePaths = [];
