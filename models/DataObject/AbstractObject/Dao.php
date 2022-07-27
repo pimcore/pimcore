@@ -411,7 +411,7 @@ class Dao extends Model\Element\Dao
                 $forbiddenPathSql[] = ' (CONCAT(path,filename) NOT LIKE '.Db::get()->quote($forbiddenPath.$folderSuffix.'%').$exceptions.') ';
             }
             foreach ($elementPaths['allowed'] as $allowedPaths) {
-                $allowedPathSql[] = ' CONCAT(path,filename) LIKE '.$list->quote($allowedPaths.'%');
+                $allowedPathSql[] = ' CONCAT(path,filename) LIKE '.Db::get()->quote($allowedPaths.'%');
             }
 
             if ($allowedPathSql || $forbiddenPathSql) {
