@@ -93,19 +93,17 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
     }
 
     /**
-     * @return SessionInterface
+     * @return SessionInterface|null
      */
-    private function getSession()
+    private function getSession(): ?SessionInterface
     {
         try {
-            return $this->requestStack->getSession();
-        } catch (SessionNotFoundException $e) {
+            $session = $this->requestStack->getSession();
+        } catch (SessionNotFoundException) {
+            $session = null;
         }
 
-        trigger_deprecation('pimcore/pimcore', '10.5',
-            sprintf('Session used with non existing request stack in %s, that will not be possible in Pimcore 11.', __CLASS__));
-
-        return \Pimcore::getContainer()->get('session');
+        return $session;
     }
 
     /**
