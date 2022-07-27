@@ -1065,4 +1065,53 @@ final class User extends User\UserRole
     {
         return PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/avatar.png';
     }
+
+    /**
+     * @param string $elementType
+     * @param string $permission
+     * @return string[]
+     */
+    public function getAllowedPaths($elementType, $permission = 'list') {
+        if ($this->isAdmin()) {
+            return ['/'];
+        }
+
+        $permissionGetter = 'get'.ucfirst($permission);
+        $workspaceGetter = 'getWorkspaces'.ucfirst($elementType);
+
+        $allowedPaths = [];
+        foreach ($this->getRoles() as $roleId) {
+            $role = User\Role::getById($roleId);
+            foreach ($role->$workspaceGetter() as $workspace) {
+                if ($workspace->$permissionGetter() && $workspace->getCpath()) {
+                    $allowedPaths[] = $workspace->getCpath();
+                }
+            }
+        }
+
+        foreach ($this->$workspaceGetter() as $workspace) {
+            if ($workspace->$permissionGetter() && $workspace->getCpath()) {
+                $allowedPaths[] = $workspace->getCpath();
+            }
+        }
+
+        usort(
+            $allowedPaths,
+            static function ($a, $b) {
+                return mb_strlen($b) - mb_strlen($a);
+            }
+        );
+
+        $cntAllowedPaths = count($allowedPaths);
+        for ($i = 0; $i < $cntAllowedPaths; $i++) {
+            for ($j = $i + 1; $j < $cntAllowedPaths; $j++) {
+                if (strpos($allowedPaths[$i], $allowedPaths[$j]) === 0) {
+                    unset($allowedPaths[$i]);
+                    continue 2;
+                }
+            }
+        }
+
+        return $allowedPaths;
+    }
 }

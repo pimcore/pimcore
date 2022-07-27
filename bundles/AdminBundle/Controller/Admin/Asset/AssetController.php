@@ -1814,13 +1814,17 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote(Helper::escapeLike($folder->getRealFullPath()) . '/%')) . " AND type != 'folder'";
 
         if (!$this->getAdminUser()->isAdmin()) {
-            $userIds = $this->getAdminUser()->getRoles();
-            $userIds[] = $this->getAdminUser()->getId();
-            $conditionFilters[] = ' (
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                    OR
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                 )';
+            $allowedPaths = $this->getAdminUser()->getAllowedPaths('asset', 'list');
+
+            if (count($allowedPaths) === 0) {
+                $conditionFilters[] = '(0)';
+            } else {
+                $workspaceFilters = array_map(static function ($allowedPath) use ($list) {
+                    return 'CONCAT(path,filename) LIKE '.$list->quote($allowedPath.'%');
+                }, $allowedPaths);
+
+                $conditionFilters[] = '('.implode(' OR ', $workspaceFilters).')';
+            }
         }
 
         $condition = implode(' AND ', $conditionFilters);
@@ -2066,13 +2070,17 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             }
             $conditionFilters[] = 'path LIKE ' . $db->quote(Helper::escapeLike($parentPath) . '/%') . ' AND type != ' . $db->quote('folder');
             if (!$this->getAdminUser()->isAdmin()) {
-                $userIds = $this->getAdminUser()->getRoles();
-                $userIds[] = $this->getAdminUser()->getId();
-                $conditionFilters[] = ' (
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                    OR
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                 )';
+                $allowedPaths = $this->getAdminUser()->getAllowedPaths('asset', 'list');
+
+                if (count($allowedPaths) === 0) {
+                    $conditionFilters[] = '(0)';
+                } else {
+                    $workspaceFilters = array_map(static function ($allowedPath) use ($db) {
+                        return 'CONCAT(path,filename) LIKE '.$db->quote($allowedPath.'%');
+                    }, $allowedPaths);
+
+                    $conditionFilters[] = '('.implode(' OR ', $workspaceFilters).')';
+                }
             }
 
             $condition = implode(' AND ', $conditionFilters);
@@ -2147,13 +2155,17 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 }
                 $conditionFilters[] = "type != 'folder' AND path LIKE " . $db->quote(Helper::escapeLike($parentPath) . '/%');
                 if (!$this->getAdminUser()->isAdmin()) {
-                    $userIds = $this->getAdminUser()->getRoles();
-                    $userIds[] = $this->getAdminUser()->getId();
-                    $conditionFilters[] = ' (
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                    OR
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                 )';
+                    $allowedPaths = $this->getAdminUser()->getAllowedPaths('asset', 'list');
+
+                    if (count($allowedPaths) === 0) {
+                        $conditionFilters[] = '(0)';
+                    } else {
+                        $workspaceFilters = array_map(static function ($allowedPath) use ($db) {
+                            return 'CONCAT(path,filename) LIKE '.$db->quote($allowedPath.'%');
+                        }, $allowedPaths);
+
+                        $conditionFilters[] = '('.implode(' OR ', $workspaceFilters).')';
+                    }
                 }
 
                 $condition = implode(' AND ', $conditionFilters);

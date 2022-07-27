@@ -592,38 +592,7 @@ class GridHelperService
         }
 
         if (!$adminUser->isAdmin()) {
-            $allowedPaths = [];
-            foreach($adminUser->getRoles() as $roleId) {
-                $role = User\Role::getById($roleId);
-                foreach($role->getWorkspacesObject() as $workspace) {
-                    if($workspace->getList() && $workspace->getCpath()) {
-                        $allowedPaths[] = $workspace->getCpath();
-                    }
-                }
-            }
-
-            foreach ($adminUser->getWorkspacesObject() as $workspace) {
-                if ($workspace->getList() && $workspace->getCpath()) {
-                    $allowedPaths[] = $workspace->getCpath();
-                }
-            }
-
-            usort(
-                $allowedPaths,
-                static function ($a, $b) {
-                    return mb_strlen($b) - mb_strlen($a);
-                }
-            );
-
-            $cntAllowedPaths = count($allowedPaths);
-            for ($i = 0; $i < $cntAllowedPaths; $i++) {
-                for ($j = $i + 1; $j < $cntAllowedPaths; $j++) {
-                    if (strpos($allowedPaths[$i], $allowedPaths[$j]) === 0) {
-                        unset($allowedPaths[$i]);
-                        continue 2;
-                    }
-                }
-            }
+            $allowedPaths = $adminUser->getAllowedPaths('object', 'list');
 
             if(count($allowedPaths) === 0) {
                 $conditionFilters[] = '(0)';
@@ -722,6 +691,9 @@ class GridHelperService
         return $list;
     }
 
+    /**
+     * @param UserProxy|User|null $adminUser
+     */
     public function prepareAssetListingForGrid($allParams, $adminUser)
     {
         $db = \Pimcore\Db::get();
@@ -840,13 +812,17 @@ class GridHelperService
         }
 
         if (!$adminUser->isAdmin()) {
-            $userIds = $adminUser->getRoles();
-            $userIds[] = $adminUser->getId();
-            $conditionFilters[] = ' (
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                    OR
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                 )';
+            $allowedPaths = $adminUser->getAllowedPaths('asset','list');
+
+            if (count($allowedPaths) === 0) {
+                $conditionFilters[] = '(0)';
+            } else {
+                $workspaceFilters = array_map(static function ($allowedPath) use ($list) {
+                    return 'CONCAT(path,filename) LIKE '.$list->quote($allowedPath.'%');
+                }, $allowedPaths);
+
+                $conditionFilters[] = '('.implode(' OR ', $workspaceFilters).')';
+            }
         }
 
         //filtering for tags
