@@ -41,6 +41,13 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     private $openedSessions = 0;
 
+    /**
+     * @deprecated
+     *
+     * @var SessionInterface
+     */
+    protected $session;
+
     protected $readOnlySessionBagsCache = [];
 
     /**
@@ -63,14 +70,31 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     public function getSessionId()
     {
-        if (!$this->requestHelper->getSession()->isStarted()) {
+        if (!$this->getSession()->isStarted()) {
             // this is just to initialize the session :)
             $this->useSession(static function (SessionInterface $session) {
                 return $session->getId();
             });
         }
 
-        return $this->requestHelper->getSession()->getId();
+        return $this->getSession()->getId();
+    }
+
+    /**
+     * @return SessionInterface
+     */
+    private function getSession()
+    {
+        try {
+            return $this->requestHelper->getSession();
+        } catch (\LogicException $e) {
+            $this->logger->debug('Error while getting the admin session: {exception}', ['exception' => $e->getMessage()]);
+        }
+
+        trigger_deprecation('pimcore/pimcore', '10.5',
+            sprintf('Session used with non existing request stack in %s, that will not be possible in Pimcore 11.', __CLASS__));
+
+        return \Pimcore::getContainer()->get('session');
     }
 
     /**
@@ -78,7 +102,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     public function getSessionName()
     {
-        return $this->requestHelper->getRequest()->getSession()->getName();
+        return $this->getSession()->getName();
     }
 
     /**
@@ -136,7 +160,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     public function invalidate(int $lifetime = null): bool
     {
-        return $this->requestHelper->getRequest()->getSession()->invalidate($lifetime);
+        return $this->getSession()->invalidate($lifetime);
     }
 
     /**
@@ -229,8 +253,8 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
 
         $this->logger->debug('Opening admin session {name}', ['name' => $sessionName]);
 
-        if (!$this->requestHelper->getSession()->isStarted()) {
-            $this->requestHelper->getSession()->start();
+        if (!$this->getSession()->isStarted()) {
+            $this->getSession()->start();
         }
 
         $this->openedSessions++;
@@ -240,7 +264,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
             'count' => $this->openedSessions,
         ]);
 
-        return $this->requestHelper->getSession();
+        return $this->getSession();
     }
 
     /**
@@ -255,7 +279,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
         $this->openedSessions--;
 
         if (0 === $this->openedSessions) {
-            $this->requestHelper->getRequest()->getSession()->save();
+            $this->getSession()->save();
 
             $this->logger->debug('Admin session {name} was written and closed', [
                 'name' => $this->getSessionName(),

@@ -15,15 +15,16 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Targeting\Session;
+namespace Pimcore\Bundle\AdminBundle\Session;
 
+use Pimcore\Bundle\AdminBundle\EventListener\AdminSessionBagListener;
 use Pimcore\Session\SessionConfiguratorInterface;
-use Pimcore\Targeting\EventListener\TargetingSessionBagListener;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
- * @deprecated will be removed in Pimcore 11. Use TargetingSessionBagListener instead.
+ * @internal
+ *
+ * @deprecated remove in Pimcore 11
  */
-class SessionConfigurator extends TargetingSessionBagListener implements SessionConfiguratorInterface
+class AdminSessionBagConfigurator extends AdminSessionBagListener implements SessionConfiguratorInterface
 {
 }
