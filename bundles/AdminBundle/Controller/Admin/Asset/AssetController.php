@@ -2210,10 +2210,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                             $exceptions = " OR (CONCAT(path,filename) LIKE '".$exceptionsConcat."%')";
                             $folderSuffix = '/'; //if allowed children are found, the current folder is listable but its content is still blocked, can easily done by adding a trailing slash
                         }
-                        $forbiddenPathSql[] = ' (CONCAT(path,filename) NOT LIKE '.$list->quote($forbiddenPath.$folderSuffix.'%').$exceptions.') ';
+                        $forbiddenPathSql[] = ' (CONCAT(path,filename) NOT LIKE '.$db->quote($forbiddenPath.$folderSuffix.'%').$exceptions.') ';
                     }
                     foreach ($elementPaths['allowed'] as $allowedPaths) {
-                        $allowedPathSql[] = ' CONCAT(path,filename) LIKE '.$list->quote($allowedPaths.'%');
+                        $allowedPathSql[] = ' CONCAT(path,filename) LIKE '.$db->quote($allowedPaths.'%');
                     }
 
                     if ($allowedPathSql || $forbiddenPathSql) {

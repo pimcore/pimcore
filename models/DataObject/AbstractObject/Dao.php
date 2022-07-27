@@ -396,7 +396,7 @@ class Dao extends Model\Element\Dao
         }
 
         if ($user && !$user->isAdmin()) {
-            $elementPaths = Model\Element\Service::findForbiddenPaths('object', $this->getAdminUser());
+            $elementPaths = Model\Element\Service::findForbiddenPaths('object', $user);
 
             $forbiddenPathSql = [];
             $allowedPathSql = [];

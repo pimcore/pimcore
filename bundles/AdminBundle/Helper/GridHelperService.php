@@ -592,7 +592,7 @@ class GridHelperService
         }
 
         if (!$adminUser->isAdmin()) {
-            $elementPaths = Model\Element\Service::findForbiddenPaths('object', $this->getAdminUser());
+            $elementPaths = Model\Element\Service::findForbiddenPaths('object', $adminUser);
 
             $forbiddenPathSql = [];
             $allowedPathSql = [];
