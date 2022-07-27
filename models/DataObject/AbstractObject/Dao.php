@@ -396,17 +396,19 @@ class Dao extends Model\Element\Dao
         }
 
         if ($user && !$user->isAdmin()) {
-            $roleIds = $user->getRoles();
-            $currentUserId = $user->getId();
-            $permissionIds = array_merge($roleIds, [$currentUserId]);
+            $allowedPaths = $user->getAllowedPaths('object', 'list');
 
-            $inheritedPermission = $this->isInheritingPermission('list', $permissionIds);
+            if (count($allowedPaths) === 0) {
+                $permissionFilter = '0';
+            } else {
+                $workspaceFilters = array_map(static function ($allowedPath) {
+                    return 'CONCAT(o_path,o_key) LIKE '.Db::get()->quote($allowedPath.'%');
+                }, $allowedPaths);
 
-            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_object uwo WHERE userId IN (' . implode(',', $permissionIds) . ') AND list=1 AND LOCATE(CONCAT(o.o_path,o.o_key),cpath)=1 AND
-            NOT EXISTS(SELECT list FROM users_workspaces_object WHERE userId ='.$currentUserId.'  AND list=0 AND cpath = uwo.cpath))';
-            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_object uworow WHERE userId IN (' . implode(',', $permissionIds) . ')  AND cid = o_id AND list=0)';
+                $permissionFilter = '('.implode(' OR ', $workspaceFilters).')';
+            }
 
-            $query .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
+            $query .= ' AND '.$permissionFilter;
         }
 
         return (int) $this->db->fetchOne($query, [$this->model->getId()]);
