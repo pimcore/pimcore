@@ -31,10 +31,18 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
 {
     use FilterListingTrait;
 
+    /**
+     * @var Model\DataObject\ClassDefinition\CustomLayout[]|null
+     */
     protected ?array $layoutDefinitions = null;
 
     /**
-     * @return array|string|callable|null
+     * @var callable|null
+     */
+    protected $order;
+
+    /**
+     * @return callable|null
      */
     public function getOrder()
     {
@@ -42,7 +50,9 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
     }
 
     /**
-     * @param array|string|callable|null $order
+     * @param callable|null $order
+     *
+     * @return $this
      */
     public function setOrder($order)
     {
@@ -54,7 +64,7 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
     /**
      * @param Model\DataObject\ClassDefinition\CustomLayout[]|null $layoutDefinitions
      *
-     * @return self
+     * @return $this
      */
     public function setLayoutDefinitions($layoutDefinitions)
     {
