@@ -26,6 +26,7 @@ use Pimcore\Model\Listing\Traits\FilterListingTrait;
  *
  * @method \Pimcore\Model\DataObject\ClassDefinition\CustomLayout\Listing\Dao getDao()
  * @method Model\DataObject\ClassDefinition\CustomLayout|false current()
+ * @method Model\DataObject\ClassDefinition\CustomLayout[] load()
  */
 class Listing extends AbstractModel implements CallableFilterListingInterface, CallableOrderListingInterface
 {
