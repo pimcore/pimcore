@@ -1,3 +1,7 @@
+parameters:
+    # TODO: remove this BC layer in 11 or as soon as PIMCORE_LOG_FILEOBJECT_DIRECTORY is deprecated
+    log.fileobject: !php/const PIMCORE_LOG_FILEOBJECT_DIRECTORY
+
 flysystem:
     storages:
         # TODO: remove private permissions once https://github.com/thephpleague/flysystem-bundle/pull/69 got merged
@@ -74,4 +78,6 @@ flysystem:
             adapter: 'local'
             visibility: private
             options:
-                directory: '%kernel.project_dir%/var/application-logger'
+                # TODO: revert default to `var/application-logger` when PIMCORE_LOG_FILEOBJECT_DIRECTORY is deprecated
+                directory: "%kernel.project_dir%%log.fileobject%"
+
