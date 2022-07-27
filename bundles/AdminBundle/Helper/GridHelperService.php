@@ -18,12 +18,14 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Helper;
 
 use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
+use Pimcore\Bundle\AdminBundle\Security\User\User as UserProxy;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Objectbrick;
+use Pimcore\Model\User;
 
 /**
  * @internal
@@ -494,6 +496,9 @@ class GridHelperService
         }
     }
 
+    /**
+     * @param UserProxy|User|null $adminUser
+     */
     public function prepareListingForGrid(array $requestParams, string $requestedLanguage, $adminUser): DataObject\Listing\Concrete
     {
         $folder = Model\DataObject::getById((int) $requestParams['folderId']);
@@ -587,13 +592,48 @@ class GridHelperService
         }
 
         if (!$adminUser->isAdmin()) {
-            $userIds = $adminUser->getRoles();
-            $userIds[] = $adminUser->getId();
-            $conditionFilters[] = ' (
-                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(o_path,o_key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                    OR
-                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o_path,o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                 )';
+            $allowedPaths = [];
+            foreach($adminUser->getRoles() as $roleId) {
+                $role = User\Role::getById($roleId);
+                foreach($role->getWorkspacesObject() as $workspace) {
+                    if($workspace->getList() && $workspace->getCpath()) {
+                        $allowedPaths[] = $workspace->getCpath();
+                    }
+                }
+            }
+
+            foreach ($adminUser->getWorkspacesObject() as $workspace) {
+                if ($workspace->getList() && $workspace->getCpath()) {
+                    $allowedPaths[] = $workspace->getCpath();
+                }
+            }
+
+            usort(
+                $allowedPaths,
+                static function ($a, $b) {
+                    return mb_strlen($b) - mb_strlen($a);
+                }
+            );
+
+            $cntAllowedPaths = count($allowedPaths);
+            for ($i = 0; $i < $cntAllowedPaths; $i++) {
+                for ($j = $i + 1; $j < $cntAllowedPaths; $j++) {
+                    if (strpos($allowedPaths[$i], $allowedPaths[$j]) === 0) {
+                        unset($allowedPaths[$i]);
+                        continue 2;
+                    }
+                }
+            }
+
+            if(count($allowedPaths) === 0) {
+                $conditionFilters[] = '(0)';
+            } else {
+                $workspaceFilters = array_map(static function ($allowedPath) use ($list) {
+                    return 'CONCAT(o_path,o_key) LIKE '.$list->quote($allowedPath.'%');
+                }, $allowedPaths);
+
+                $conditionFilters[] = '('.implode(' OR ', $workspaceFilters).')';
+            }
         }
 
         $featureJoins = [];
