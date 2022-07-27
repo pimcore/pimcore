@@ -79,5 +79,5 @@ flysystem:
             visibility: private
             options:
                 # TODO: revert default to `var/application-logger` when PIMCORE_LOG_FILEOBJECT_DIRECTORY is deprecated
-                directory: "%kernel.project_dir%%log.fileobject%"
+                directory: "%log.fileobject%"
 
