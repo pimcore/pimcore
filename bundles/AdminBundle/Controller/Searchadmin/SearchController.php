@@ -363,7 +363,6 @@ class SearchController extends AdminController
     protected function getPermittedPaths($types = ['asset', 'document', 'object'])
     {
         $user = $this->getAdminUser();
-        $db = \Pimcore\Db::get();
 
         $allowedTypes = [];
 
@@ -375,7 +374,7 @@ class SearchController extends AdminController
                     $allowedPathSql = '0';
                 } else {
                     $workspaceFilters = array_map(static function ($allowedPath) {
-                        return 'fullpath LIKE '.$db->quote($allowedPath.'%');
+                        return 'fullpath LIKE '.Db::get()->quote($allowedPath.'%');
                     }, $allowedPaths);
 
                     $allowedPathSql = '('.implode(' OR ', $workspaceFilters).')';
