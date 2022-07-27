@@ -192,7 +192,7 @@ class Dao extends Model\Dao\AbstractDao
                         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
     }
 
-    protected function updateModificationInfos()
+    protected function updateModificationInfos(): void
     {
         $updateTime = time();
         $this->model->setModificationDate($updateTime);
