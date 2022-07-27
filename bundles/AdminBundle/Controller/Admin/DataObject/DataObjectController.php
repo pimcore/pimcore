@@ -213,17 +213,18 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         // custom views end
 
         if (!$this->getAdminUser()->isAdmin()) {
-            $userIds = $this->getAdminUser()->getRoles();
-            $currentUserId = $this->getAdminUser()->getId();
-            $userIds[] = $currentUserId;
+            $allowedPaths = $this->getAdminUser()->getAllowedPaths('object', 'list');
 
-            $inheritedPermission = $object->getDao()->isInheritingPermission('list', $userIds);
+            if (count($allowedPaths) === 0) {
+                $permissionFilter = '0';
+            } else {
+                $workspaceFilters = array_map(static function ($allowedPath) {
+                    return 'CONCAT(o_path,o_key) LIKE '.Db::get()->quote($allowedPath.'%');
+                }, $allowedPaths);
 
-            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_object uwo WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(objects.o_path,objects.o_key),cpath)=1 AND
-                NOT EXISTS(SELECT list FROM users_workspaces_object WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwo.cpath))';
-            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = objects.o_id AND list=0)';
-
-            $condition .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
+                $permissionFilter = '('.implode(' OR ', $workspaceFilters).')';
+            }
+            $condition .= ' AND '.$permissionFilter;
         }
 
         if (!is_null($filter)) {
