@@ -96,7 +96,8 @@ pimcore.element.metainfo = Class.create({
                         item.listeners = {
                             render: function(value, detailWindow, c){
                                 c.getEl().on('click', function(){
-                                    pimcore.helpers.showUser(value);
+                                    var inputId = c.getInputId();
+                                    pimcore.helpers.showUser(Ext.get(inputId).child('span').getAttribute('data-uid'));
                                     detailWindow.close();
                                 }, c);
                             }.bind(this, value, this.detailWindow)

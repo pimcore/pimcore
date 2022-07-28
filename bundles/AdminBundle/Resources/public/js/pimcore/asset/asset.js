@@ -494,45 +494,68 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
     showMetaInfo: function() {
         var metainfo = this.getMetaInfo();
-
-        new pimcore.element.metainfo([
-            {
-                name: "id",
-                value: metainfo.id
-            }, {
-                name: "path",
-                value: metainfo.path
-            }, {
-                name: "public_url",
-                value: metainfo.public_url
-            }, {
-                name: "type",
-                value: metainfo.type
-            }, {
-                name: "size",
-                value: metainfo.size
-            }, {
-                name: "modificationdate",
-                type: "date",
-                value: metainfo.modificationdate
-            }, {
-                name: "creationdate",
-                type: "date",
-                value: metainfo.creationdate
-            }, {
-                name: "usermodification",
-                type: "user",
-                value: metainfo.usermodification
-            }, {
-                name: "userowner",
-                type: "user",
-                value: metainfo.userowner
+        Ext.Ajax.request({
+            url: Routing.generate('pimcore_admin_user_getnames'),            
+            params: {
+                'id[]': [
+                    metainfo.userowner,
+                    metainfo.usermodification
+                ]
             },
-            {
-                name: "deeplink",
-                value: metainfo.deeplink
-            }
-        ], "asset");
+            success: function(response) {                
+                var data = Ext.decode(response.responseText);
+
+                var usermodificationName = data[metainfo.usermodification].firstname + ' ' + data[metainfo.usermodification].lastname;
+                if (usermodificationName.trim().length == 0) {
+                    usermodificationName = metainfo.usermodification;
+                }
+
+                var userownerName = data[metainfo.userowner].firstname + ' ' + data[metainfo.userowner].lastname;
+                if (userownerName.trim().length == 0) {
+                    userownerName = metainfo.userowner;
+                }
+
+                new pimcore.element.metainfo([
+                    {
+                        name: "id",
+                        value: metainfo.id
+                    }, {
+                        name: "path",
+                        value: metainfo.path
+                    }, {
+                        name: "public_url",
+                        value: metainfo.public_url
+                    }, {
+                        name: "type",
+                        value: metainfo.type
+                    }, {
+                        name: "size",
+                        value: metainfo.size
+                    }, {
+                        name: "modificationdate",
+                        type: "date",
+                        value: metainfo.modificationdate
+                    }, {
+                        name: "creationdate",
+                        type: "date",
+                        value: metainfo.creationdate
+                    }, {
+                        name: "usermodification",
+                        type: "user",
+                        value: '<span data-uid="' + metainfo.usermodification + '">' + usermodificationName + '</span>'
+                    }, {
+                        name: "userowner",
+                        type: "user",
+                        value: '<span data-uid="' + metainfo.userowner + '">' + userownerName + '</span>'
+                    },
+                    {
+                        name: "deeplink",
+                        value: metainfo.deeplink
+                    }
+                ], "asset");        
+            }.bind(this)
+        });
+
     },
 
     rename: function () {
