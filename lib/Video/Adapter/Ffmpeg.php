@@ -457,7 +457,7 @@ class Ffmpeg extends Adapter
     {
         if (!empty($inputSeeking)) {
             $parts = explode(':', $inputSeeking);
-            $this->inputSeeking = (float) ((int) $parts[0] * 3600 + (int) $parts[1] * 60 + (float) $parts[2]);
+            $this->inputSeeking = ((int)$parts[0] * 3600) + ((int)$parts[1] * 60) + (float)$parts[2];
         }
         if (!empty($targetDuration)) {
             $this->addArgument('-t', $targetDuration);
@@ -475,5 +475,15 @@ class Ffmpeg extends Adapter
     public function mute(): void
     {
         $this->addFlag('-an');
+    }
+
+    /**
+     * @param string|null $effect
+     */
+    public function colorChannelMixer(?string $effect = null): void
+    {
+        if (!empty($effect)) {
+            $this->videoFilter[] = 'colorchannelmixer='.$effect;
+        }
     }
 }

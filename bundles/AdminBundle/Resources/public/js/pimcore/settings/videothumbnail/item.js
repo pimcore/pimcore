@@ -508,6 +508,46 @@ pimcore.settings.videothumbnail.items = {
         return item;
     },
 
+    itemColorChannelMixer: function (panel, data, getName) {
+
+        var niceName = t("colorChannelMixer");
+        if (typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if (typeof data == "undefined") {
+            data = { effect: 'bw' };
+        }
+        var myId = Ext.id();
+
+        var item = new Ext.form.FormPanel({
+            id: myId,
+            style: "margin-top: 10px",
+            border: true,
+            bodyStyle: "padding: 10px;",
+            tbar: this.getTopBar(niceName, myId, panel),
+            items: [{
+                xtype: 'combobox',
+                name: "effect",
+                fieldLabel: t("effect"),
+                width: 450,
+                value: data.effect,
+                store: [
+                    ['.9:0:0:0:0:1.1:0:0:0:0:1:0:0:0:0:1', 'Cold'],
+                    ['.3:.4:.3:0:.3:.4:.3:0:.3:.4:.3', 'Grayscale'],
+                    ['.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131', 'Sepia'],
+                ],
+                required: true
+            }, {
+                xtype: "hidden",
+                name: "type",
+                value: "colorChannelMixer"
+            }]
+        });
+
+        return item;
+    },
+
     itemMute: function (panel, data, getName) {
 
         var niceName = t("mute");

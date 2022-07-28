@@ -146,6 +146,8 @@
   "width_and_height_must_be_an_even_number": "width and height must be an even number",
   "this_filter_has_no_settings": "this filter has no settings",
   "mute": "Mute",
+  "effect": "Effect",
+  "colorChannelMixer": "Color Channel Mixer",
   "setframerate": "Set Framerate",
   "source_site": "Source-Site",
   "target_site": "Target-Site",
