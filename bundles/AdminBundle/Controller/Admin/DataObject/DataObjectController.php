@@ -221,14 +221,14 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $exceptions = '';
                 $folderSuffix = '';
                 if ($allowedPaths) {
-                    $exceptionsConcat = implode("%' OR CONCAT(path,filename) LIKE '", $allowedPaths);
-                    $exceptions = " OR (CONCAT(path,filename) LIKE '".$exceptionsConcat."%')";
+                    $exceptionsConcat = implode("%' OR CONCAT(o_path,o_key) LIKE '", $allowedPaths);
+                    $exceptions = " OR (CONCAT(o_path,o_key) LIKE '".$exceptionsConcat."%')";
                     $folderSuffix = '/'; //if allowed children are found, the current folder is listable but its content is still blocked, can easily done by adding a trailing slash
                 }
-                $forbiddenPathSql[] = ' (CONCAT(path,filename) NOT LIKE '.Db::get()->quote($forbiddenPath.$folderSuffix.'%').$exceptions.') ';
+                $forbiddenPathSql[] = ' (CONCAT(o_path,o_key) NOT LIKE '.Db::get()->quote($forbiddenPath.$folderSuffix.'%').$exceptions.') ';
             }
             foreach ($elementPaths['allowed'] as $allowedPaths) {
-                $allowedPathSql[] = ' CONCAT(path,filename) LIKE '.Db::get()->quote($allowedPaths.'%');
+                $allowedPathSql[] = ' CONCAT(o_path,o_key) LIKE '.Db::get()->quote($allowedPaths.'%');
             }
 
             if ($allowedPathSql || $forbiddenPathSql) {
