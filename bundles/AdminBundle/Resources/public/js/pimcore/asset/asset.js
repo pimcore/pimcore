@@ -487,75 +487,58 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             modificationdate: this.data.modificationDate,
             creationdate: this.data.creationDate,
             usermodification: this.data.userModification,
+            usermodification_username: this.data.userModificationUsername,
+            usermodification_fullname: this.data.userModificationFullname,
             userowner: this.data.userOwner,
+            userowner_username: this.data.userOwnerUsername,
+            userowner_fullname: this.data.userOwnerFullname,
             deeplink: pimcore.helpers.getDeeplink("asset", this.data.id, this.data.type)
         };
     },
 
     showMetaInfo: function() {
         var metainfo = this.getMetaInfo();
-        Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_user_getnames'),            
-            params: {
-                'id[]': [
-                    metainfo.userowner,
-                    metainfo.usermodification
-                ]
-            },
-            success: function(response) {                
-                var data = Ext.decode(response.responseText);
 
-                var usermodificationName = data[metainfo.usermodification].firstname + ' ' + data[metainfo.usermodification].lastname;
-                if (usermodificationName.trim().length == 0) {
-                    usermodificationName = metainfo.usermodification;
-                }
+        var usermodification = (metainfo.usermodification_fullname.length > 0) ? metainfo.usermodification_fullname : metainfo.usermodification_username;
+        var userowner = (metainfo.userowner_fullname.length > 0) ? metainfo.userowner_fullname : metainfo.userowner_username;
 
-                var userownerName = data[metainfo.userowner].firstname + ' ' + data[metainfo.userowner].lastname;
-                if (userownerName.trim().length == 0) {
-                    userownerName = metainfo.userowner;
-                }
-
-                new pimcore.element.metainfo([
-                    {
-                        name: "id",
-                        value: metainfo.id
-                    }, {
-                        name: "path",
-                        value: metainfo.path
-                    }, {
-                        name: "public_url",
-                        value: metainfo.public_url
-                    }, {
-                        name: "type",
-                        value: metainfo.type
-                    }, {
-                        name: "size",
-                        value: metainfo.size
-                    }, {
-                        name: "modificationdate",
-                        type: "date",
-                        value: metainfo.modificationdate
-                    }, {
-                        name: "creationdate",
-                        type: "date",
-                        value: metainfo.creationdate
-                    }, {
-                        name: "usermodification",
-                        type: "user",
-                        value: '<span data-uid="' + metainfo.usermodification + '">' + usermodificationName + '</span>'
-                    }, {
-                        name: "userowner",
-                        type: "user",
-                        value: '<span data-uid="' + metainfo.userowner + '">' + userownerName + '</span>'
-                    },
-                    {
-                        name: "deeplink",
-                        value: metainfo.deeplink
-                    }
-                ], "asset");        
-            }.bind(this)
-        });
-
+        new pimcore.element.metainfo([
+            {
+                name: "id",
+                value: metainfo.id
+            }, {
+                name: "path",
+                value: metainfo.path
+            }, {
+                name: "public_url",
+                value: metainfo.public_url
+            }, {
+                name: "type",
+                value: metainfo.type
+            }, {
+                name: "size",
+                value: metainfo.size
+            }, {
+                name: "modificationdate",
+                type: "date",
+                value: metainfo.modificationdate
+            }, {
+                name: "creationdate",
+                type: "date",
+                value: metainfo.creationdate
+            }, {
+                name: "usermodification",
+                type: "user",
+                value: '<span data-uid="' + metainfo.usermodification + '">' + usermodification + '</span>'
+            }, {
+                name: "userowner",
+                type: "user",
+                value: '<span data-uid="' + metainfo.userowner + '">' + userowner + '</span>'
+            }, {
+                name: "deeplink",
+                value: metainfo.deeplink
+            }
+        ], "asset");          
     },
 
     rename: function () {
