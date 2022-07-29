@@ -1,4 +1,7 @@
 # Upgrade Notes
+## 11.0.0
+
+- [Image Optimizer] Removed all the custom image optimizers (like CjpegOptimizer, PngCrushOptimizer etc) as image optimization is done by the new package spatie/image-optimizer.
 
 ## 10.5.0
 - [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`
