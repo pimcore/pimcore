@@ -34,6 +34,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation;
 use Pimcore\Model\Element;
 use Pimcore\Model\Schedule\Task;
+use Pimcore\Model\User;
 use Pimcore\Model\Version;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -421,7 +422,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             $objectData['general'] = [];
 
-            $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_creationDate', 'o_classId', 'o_className', 'o_type', 'o_parentId', 'o_userOwner'];
+            $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_creationDate', 'o_classId', 'o_className', 'o_type', 'o_parentId', 'o_userOwner', 'o_userModification'];
             foreach ($objectFromDatabase->getObjectVars() as $key => $value) {
                 if (in_array($key, $allowedKeys)) {
                     $objectData['general'][$key] = $value;
@@ -478,6 +479,24 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             // and for adding the published icon to version overview
             $objectData['general']['versionDate'] = $objectFromDatabase->getModificationDate();
             $objectData['general']['versionCount'] = $objectFromDatabase->getVersionCount();
+
+            $userOwner = User::getById($objectData['general']['o_userOwner']);
+            if (empty($userOwner)) {
+                $objectData['general']['o_userOwnerUsername'] = '';
+                $objectData['general']['o_userOwnerFullname'] = 'Unknown User';
+            } else {
+                $objectData['general']['o_userOwnerUsername'] = $userOwner->getName();
+                $objectData['general']['o_userOwnerFullname'] = trim($userOwner->getFirstname() . ' ' . $userOwner->getLastname());
+            }
+
+            $userModification = ($objectData['general']['o_userOwner'] == $objectData['general']['o_userModification']) ? $userOwner : User::getById($objectData['general']['o_userModification']);
+            if (empty($userModification)) {
+                $objectData['general']['o_userModificationUsername'] = '';
+                $objectData['general']['o_userModificationFullname'] = 'Unknown User';
+            } else {
+                $objectData['general']['o_userModificationUsername'] = $userOwner->getName();
+                $objectData['general']['o_userModificationFullname'] = trim($userOwner->getFirstname() . ' ' . $userOwner->getLastname());
+            }
 
             $this->addAdminStyle($object, ElementAdminStyleEvent::CONTEXT_EDITOR, $objectData['general']);
 
@@ -721,6 +740,28 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $objectData['properties'] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
             $objectData['userPermissions'] = $object->getUserPermissions($this->getAdminUser());
             $objectData['classes'] = $this->prepareChildClasses($object->getDao()->getClasses());
+
+            if (!empty($objectData['general']['o_userOwner'])) {
+                $userOwner = User::getById($objectData['general']['o_userOwner']);
+                if (empty($userOwner)) {
+                    $objectData['general']['o_userOwnerUsername'] = '';
+                    $objectData['general']['o_userOwnerFullname'] = 'Unknown User';
+                }
+                else {
+                    $objectData['general']['o_userOwnerUsername'] = $userOwner->getName();
+                    $objectData['general']['o_userOwnerFullname'] = trim($userOwner->getFirstname() . ' ' . $userOwner->getLastname());
+                }
+
+                $userModification = ($objectData['general']['o_userOwner'] == $objectData['general']['o_userModification']) ? $userOwner : User::getById($objectData['general']['o_userModification']);
+                if (empty($userModification)) {
+                    $objectData['general']['o_userModificationUsername'] = '';
+                    $objectData['general']['o_userModificationFullname'] = 'Unknown User';
+                }
+                else {
+                    $objectData['general']['o_userModificationUsername'] = $userOwner->getName();
+                    $objectData['general']['o_userModificationFullname'] = trim($userOwner->getFirstname() . ' ' . $userOwner->getLastname());
+                }
+            }
 
             // grid-config
             $configFile = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $object->getId() . '-user_' . $this->getAdminUser()->getId() . '.psf';

@@ -24,9 +24,11 @@ use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
 use Pimcore\Model\Property;
+use Pimcore\Model\User;
 use Pimcore\Model\Version;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -464,5 +466,30 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         }
 
         return [$task, $document, $version];
+    }
+
+    /**
+     * @param Model\Document $document
+     * @param array $data
+     */
+    protected function populateUsersNames(Document $document, array &$data): void
+    {
+        $userOwner = User::getById($document->getUserOwner());
+        if (empty($userOwner)) {
+            $data['userOwnerUsername'] = '';
+            $data['userOwnerFullname'] = 'Unknown User';
+        } else {
+            $data['userOwnerUsername'] = $userOwner->getName();
+            $data['userOwnerFullname'] = trim($userOwner->getFirstname() . ' ' . $userOwner->getLastname());
+        }
+
+        $userModification = ($document->getUserOwner() == $document->getUserModification()) ? $userOwner : User::getById($document->getUserModification());
+        if (empty($userModification)) {
+            $data['userModificationUsername'] = '';
+            $data['userModificationFullname'] = 'Unknown User';
+        } else {
+            $data['userModificationUsername'] = $userModification->getName();
+            $data['userModificationFullname'] = trim($userModification->getFirstname() . ' ' . $userModification->getLastname());
+        }
     }
 }

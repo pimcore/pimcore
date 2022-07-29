@@ -35,6 +35,7 @@ use Pimcore\Model\Element\Service;
 use Pimcore\Model\Exception\ConfigWriteException;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Site;
+use Pimcore\Model\User;
 use Pimcore\Model\Version;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Tool;
@@ -108,6 +109,24 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $document = clone $document;
         $data = $document->getObjectVars();
         $data['versionDate'] = $document->getModificationDate();
+
+        $userOwner = User::getById($document->getUserOwner());
+        if (empty($userOwner)) {
+            $objectData['userOwnerUsername'] = '';
+            $objectData['userOwnerFullname'] = 'Unknown User';
+        } else {
+            $objectData['userOwnerUsername'] = $userOwner->getName();
+            $objectData['userOwnerFullname'] = trim($userOwner->getFirstname() . ' ' . $userOwner->getLastname());
+        }
+
+        $userModification = ($document->getUserOwner() == $document->getUserModification()) ? $userOwner : User::getById($document->getUserModification());
+        if (empty($userModification)) {
+            $objectData['userModificationUsername'] = '';
+            $objectData['userModificationFullname'] = 'Unknown User';
+        } else {
+            $objectData['userModificationUsername'] = $userModification->getName();
+            $objectData['userModificationFullname'] = trim($userModification->getFirstname() . ' ' . $userModification->getLastname());
+        }
 
         $data['php'] = [
             'classes' => array_merge([get_class($document)], array_values(class_parents($document))),

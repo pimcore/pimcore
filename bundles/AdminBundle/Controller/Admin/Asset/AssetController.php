@@ -218,12 +218,23 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $asset->getScheduledTasks()
         );
 
-        $userOwner = User::getById($data['userOwner']);
-        $userModification = ($data['userOwner'] == $data['userModification']) ? $userOwner : User::getById($data['userModification']);
-        $data['userOwnerUsername'] = $userOwner->getName();
-        $data['userModificationUsername'] = $userModification->getName();
-        $data['userOwnerFullname'] = trim($userOwner->getFirstname() . ' ' . $userOwner->getLastname());
-        $data['userModificationFullname'] = trim($userModification->getFirstname() . ' ' . $userModification->getLastname());
+        $userOwner = User::getById($asset->getUserOwner());
+        if (empty($userOwner)) {
+            $data['userOwnerUsername'] = '';
+            $data['userOwnerFullname'] = 'Unknown User';
+        } else {
+            $data['userOwnerUsername'] = $userOwner->getName();
+            $data['userOwnerFullname'] = trim($userOwner->getFirstname() . ' ' . $userOwner->getLastname());
+        }
+
+        $userModification = ($asset->getUserOwner() == $asset->getUserModification()) ? $userOwner : User::getById($asset->getUserModification());
+        if (empty($userModification)) {
+            $data['userModificationUsername'] = '';
+            $data['userModificationFullname'] = 'Unknown User';
+        } else {
+            $data['userModificationUsername'] = $userModification->getName();
+            $data['userModificationFullname'] = trim($userModification->getFirstname() . ' ' . $userModification->getLastname());
+        }
 
         $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 
