@@ -801,9 +801,9 @@ class Service extends Model\AbstractModel
                     $forbidden[$path] = [];
                     for ($findIndex = $index + 1; $findIndex < $totalPaths; $findIndex++) { //NB: the starting index is the last index we got
                         $findPath = $uniquePathsKeys[$findIndex];
-                        if (str_contains($findPath, $path)) { //it means that we found a children
+                        if (str_starts_with($findPath, $path)) { //it means that we found a children
                             if ($uniquePaths[$findPath] == 1) {
-                                array_push($forbidden[$path], $findPath); //adding list=1 children
+                                $forbidden[$path][] = $findPath; //adding list=1 children
                             }
                         } else {
                             break;
