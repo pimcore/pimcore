@@ -36,6 +36,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Model\Metadata;
 use Pimcore\Model\Schedule\Task;
+use Pimcore\Model\User;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -216,6 +217,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             },
             $asset->getScheduledTasks()
         );
+
+        $userOwner = User::getById($data['userOwner']);
+        $userModification = ($data['userOwner'] == $data['userModification']) ? $userOwner : User::getById($data['userModification']);
+        $data['userOwnerUsername'] = $userOwner->getName();
+        $data['userModificationUsername'] = $userModification->getName();
+        $data['userOwnerFullname'] = trim($userOwner->getFirstname() . ' ' . $userOwner->getLastname());
+        $data['userModificationFullname'] = trim($userModification->getFirstname() . ' ' . $userModification->getLastname());
 
         $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 
