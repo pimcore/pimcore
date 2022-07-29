@@ -79,9 +79,10 @@ pimcore.element.metainfo = Class.create({
                 if (type == "user") {
 
                     var htmlValue = value;
-
                     var user = pimcore.globalmanager.get("user");
-                    if (user.admin) {
+                    var userUnknown = (htmlValue.search(t('user_unknown')) == -1) ? false : true;
+
+                    if (user.admin && !userUnknown) {
                         htmlValue = value + " " + '<a href="#">' + t("click_to_open") +  '</a>';
                     }
 
@@ -92,7 +93,7 @@ pimcore.element.metainfo = Class.create({
                         value: htmlValue,
                         width: 730
                     };
-                    if (user.admin) {
+                    if (user.admin && !userUnknown) {
                         item.listeners = {
                             render: function(value, detailWindow, c){
                                 c.getEl().on('click', function(){
