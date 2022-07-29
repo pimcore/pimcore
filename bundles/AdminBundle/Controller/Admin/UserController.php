@@ -519,46 +519,6 @@ class UserController extends AdminController implements KernelControllerEventInt
     }
 
     /**
-     * @Route("/user/get-names", name="pimcore_admin_user_getnames", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function getNamesAction(Request $request)
-    {
-        $users = [];
-        $raw_input = $request->get('id');
-        $user_ids = [];
-        if (is_array($raw_input)) {
-            foreach ($raw_input as $uid) {
-                $user_ids[] = (int)$uid;
-            }
-        } else {
-            $user_ids[] = (int)$raw_input;
-        }
-
-        // get users by id.
-        $list = new User\Listing();
-        $list->setCondition('id IN (' . implode(', ', $user_ids) . ')');
-        $list->load();
-
-        if (is_array($list->getUsers())) {
-            foreach ($list->getUsers() as $user) {
-                if ($user instanceof User && $user->getId() && $user->getName() != 'system') {
-                    $users[$user->getId()] = [
-                        'id' => $user->getId(),
-                        'firstname' => $user->getFirstname(),
-                        'lastname' => $user->getLastname(),
-                    ];
-                }
-            }
-        }
-
-        return $this->adminJson($users);
-    }
-
-    /**
      * @Route("/user/upload-current-user-image", name="pimcore_admin_user_uploadcurrentuserimage", methods={"POST"})
      *
      * @param Request $request
@@ -1074,8 +1034,8 @@ class UserController extends AdminController implements KernelControllerEventInt
         // check permissions
         $unrestrictedActions = [
             'getCurrentUserAction', 'updateCurrentUserAction', 'getAvailablePermissionsAction', 'getMinimalAction',
-            'getNamesAction', 'getImageAction', 'uploadCurrentUserImageAction', 'disable2FaSecretAction',
-            'renew2FaSecretAction', 'getUsersForSharingAction', 'getRolesForSharingAction',
+            'getImageAction', 'uploadCurrentUserImageAction', 'disable2FaSecretAction', 'renew2FaSecretAction',
+            'getUsersForSharingAction', 'getRolesForSharingAction',
         ];
 
         $this->checkActionPermission($event, 'users', $unrestrictedActions);
