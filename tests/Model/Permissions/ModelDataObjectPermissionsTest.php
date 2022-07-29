@@ -707,7 +707,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->doTestTreeGetChildsById(
             $this->permissionfoo,
             $this->userPermissionTest3,
-            [$this->bars->getFullpath()]
+            []
         );
 
         $this->doTestTreeGetChildsById(
