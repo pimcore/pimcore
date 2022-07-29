@@ -483,7 +483,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $userOwner = User::getById($objectData['general']['o_userOwner']);
             if (empty($userOwner)) {
                 $objectData['general']['o_userOwnerUsername'] = '';
-                $objectData['general']['o_userOwnerFullname'] = 'Unknown User';
+                $objectData['general']['o_userOwnerFullname'] = $this->trans('user_unknown');
             } else {
                 $objectData['general']['o_userOwnerUsername'] = $userOwner->getName();
                 $objectData['general']['o_userOwnerFullname'] = trim($userOwner->getFirstname() . ' ' . $userOwner->getLastname());
@@ -492,7 +492,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $userModification = ($objectData['general']['o_userOwner'] == $objectData['general']['o_userModification']) ? $userOwner : User::getById($objectData['general']['o_userModification']);
             if (empty($userModification)) {
                 $objectData['general']['o_userModificationUsername'] = '';
-                $objectData['general']['o_userModificationFullname'] = 'Unknown User';
+                $objectData['general']['o_userModificationFullname'] = $this->trans('user_unknown');
             } else {
                 $objectData['general']['o_userModificationUsername'] = $userOwner->getName();
                 $objectData['general']['o_userModificationFullname'] = trim($userOwner->getFirstname() . ' ' . $userOwner->getLastname());
@@ -745,7 +745,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $userOwner = User::getById($objectData['general']['o_userOwner']);
                 if (empty($userOwner)) {
                     $objectData['general']['o_userOwnerUsername'] = '';
-                    $objectData['general']['o_userOwnerFullname'] = 'Unknown User';
+                    $objectData['general']['o_userOwnerFullname'] = $this->trans('user_unknown');
                 }
                 else {
                     $objectData['general']['o_userOwnerUsername'] = $userOwner->getName();
@@ -755,7 +755,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $userModification = ($objectData['general']['o_userOwner'] == $objectData['general']['o_userModification']) ? $userOwner : User::getById($objectData['general']['o_userModification']);
                 if (empty($userModification)) {
                     $objectData['general']['o_userModificationUsername'] = '';
-                    $objectData['general']['o_userModificationFullname'] = 'Unknown User';
+                    $objectData['general']['o_userModificationFullname'] = $this->trans('user_unknown');
                 }
                 else {
                     $objectData['general']['o_userModificationUsername'] = $userOwner->getName();

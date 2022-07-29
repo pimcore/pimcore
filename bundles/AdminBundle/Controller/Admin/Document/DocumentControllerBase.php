@@ -477,7 +477,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         $userOwner = User::getById($document->getUserOwner());
         if (empty($userOwner)) {
             $data['userOwnerUsername'] = '';
-            $data['userOwnerFullname'] = 'Unknown User';
+            $data['userOwnerFullname'] = $this->trans('user_unknown');
         } else {
             $data['userOwnerUsername'] = $userOwner->getName();
             $data['userOwnerFullname'] = trim($userOwner->getFirstname() . ' ' . $userOwner->getLastname());
@@ -486,7 +486,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         $userModification = ($document->getUserOwner() == $document->getUserModification()) ? $userOwner : User::getById($document->getUserModification());
         if (empty($userModification)) {
             $data['userModificationUsername'] = '';
-            $data['userModificationFullname'] = 'Unknown User';
+            $data['userModificationFullname'] = $this->trans('user_unknown');
         } else {
             $data['userModificationUsername'] = $userModification->getName();
             $data['userModificationFullname'] = trim($userModification->getFirstname() . ' ' . $userModification->getLastname());

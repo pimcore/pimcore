@@ -221,7 +221,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $userOwner = User::getById($asset->getUserOwner());
         if (empty($userOwner)) {
             $data['userOwnerUsername'] = '';
-            $data['userOwnerFullname'] = 'Unknown User';
+            $data['userOwnerFullname'] = $this->trans('user_unknown');
         } else {
             $data['userOwnerUsername'] = $userOwner->getName();
             $data['userOwnerFullname'] = trim($userOwner->getFirstname() . ' ' . $userOwner->getLastname());
@@ -230,7 +230,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $userModification = ($asset->getUserOwner() == $asset->getUserModification()) ? $userOwner : User::getById($asset->getUserModification());
         if (empty($userModification)) {
             $data['userModificationUsername'] = '';
-            $data['userModificationFullname'] = 'Unknown User';
+            $data['userModificationFullname'] = $this->trans('user_unknown');
         } else {
             $data['userModificationUsername'] = $userModification->getName();
             $data['userModificationFullname'] = trim($userModification->getFirstname() . ' ' . $userModification->getLastname());
