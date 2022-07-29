@@ -917,13 +917,20 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             modificationdate: this.data.general.o_modificationDate,
             creationdate: this.data.general.o_creationDate,
             usermodification: this.data.general.o_userModification,
+            usermodification_username: this.data.general.o_userModificationUsername,
+            usermodification_fullname: this.data.general.o_userModificationFullname,
             userowner: this.data.general.o_userOwner,
+            userowner_username: this.data.general.o_userOwnerUsername,
+            userowner_fullname: this.data.general.o_userOwnerFullname,
             deeplink: pimcore.helpers.getDeeplink("object", this.data.general.o_id, "object")
         };
     },
 
     showMetaInfo: function () {
         var metainfo = this.getMetaInfo();
+
+        var usermodification = (metainfo.usermodification_fullname.length > 0) ? metainfo.usermodification_fullname : metainfo.usermodification_username;
+        var userowner = (metainfo.userowner_fullname.length > 0) ? metainfo.userowner_fullname : metainfo.userowner_username;
 
         new pimcore.element.metainfo([
             {
@@ -953,13 +960,12 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             }, {
                 name: "usermodification",
                 type: "user",
-                value: metainfo.usermodification
+                value: '<span data-uid="' + metainfo.usermodification + '">' + usermodification + '</span>'
             }, {
                 name: "userowner",
                 type: "user",
-                value: metainfo.userowner
-            },
-            {
+                value: '<span data-uid="' + metainfo.userowner + '">' + userowner + '</span>'
+            }, {
                 name: "deeplink",
                 value: metainfo.deeplink
             }

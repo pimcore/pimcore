@@ -271,13 +271,20 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
             modificationdate: this.data.modificationDate,
             creationdate: this.data.creationDate,
             usermodification: this.data.userModification,
+            usermodification_username: this.data.userModificationUsername,
+            usermodification_fullname: this.data.userModificationFullname,
             userowner: this.data.userOwner,
+            userowner_username: this.data.userOwnerUsername,
+            userowner_fullname: this.data.userOwnerFullname,
             deeplink: pimcore.helpers.getDeeplink("document", this.data.id, this.data.type)
         };
     },
 
     showMetaInfo: function() {
         var metainfo = this.getMetaInfo();
+
+        var usermodification = (metainfo.usermodification_fullname.length > 0) ? metainfo.usermodification_fullname : metainfo.usermodification_username;
+        var userowner = (metainfo.userowner_fullname.length > 0) ? metainfo.userowner_fullname : metainfo.userowner_username;
 
         new pimcore.element.metainfo([
             {
@@ -304,13 +311,12 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
             }, {
                 name: "usermodification",
                 type: "user",
-                value: metainfo.usermodification
+                value: '<span data-uid="' + metainfo.usermodification + '">' + usermodification + '</span>'
             }, {
                 name: "userowner",
                 type: "user",
-                value: metainfo.userowner
-            },
-            {
+                value: '<span data-uid="' + metainfo.userowner + '">' + userowner + '</span>'
+            }, {
                 name: "deeplink",
                 value: metainfo.deeplink
             }
@@ -329,4 +335,3 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
         }
     }
 });
-
