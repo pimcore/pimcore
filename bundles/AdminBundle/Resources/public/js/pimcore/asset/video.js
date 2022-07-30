@@ -153,7 +153,8 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
             });
 
             var thumbnailsStore = new Ext.data.JsonStore({
-                autoLoad: false,
+                autoLoad: true,
+                forceSelection: true,
                 autoDestroy: true,
                 proxy: {
                     type: 'ajax',
@@ -196,9 +197,10 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                         xtype: "combo",
                         name: "thumbnail",
                         fieldLabel: t("thumbnail"),
+                        width: "100%",
                         style: "margin-top: 5px",
                         store: thumbnailsStore,
-                        defaultValue: "pimcore-system-treepreview",
+                        value: "pimcore-system-treepreview",
                         editable: false,
                         valueField: "id",
                         displayField: "text",
