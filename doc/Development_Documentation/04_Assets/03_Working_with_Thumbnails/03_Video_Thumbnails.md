@@ -6,9 +6,22 @@ custom preview image out of the video.
 > To use all the following functionalities it is required to install FFMPEG on the server.  
 > For details, please have a look at [Additional Tools Installation](../../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md).
 
-### Using Video Thumbnails in your Code
+## Explanation of the Transformations
 
-##### Examples - Image Snapshots
+> The transfomations are adapters for the [FFMPEG Filters and Options](https://ffmpeg.org/documentation.html) and most of the configuration is equivalent.
+
+| Transformation | Description | FFMPEG-Filter |
+|----------------|-------------|---------------|
+| ORIGINAL VIDEO | This is the video which is used in the following transformations | NONE ;-) |
+| COLOR CHANEL MIXER | Adjust video input frames by re-mixing color channels | [`-fv colorchannelmixer`](https://ffmpeg.org/ffmpeg-filters.html#colorchannelmixer) |
+| SET FRAMERATE | Convert the video to specified constant frame rate by duplicating or dropping frames as necessary| [`-fv fps`](https://ffmpeg.org/ffmpeg-filters.html#fps-1) |
+| CUT | Set video starging and endig position | [`-ss` and `-t`](https://ffmpeg.org/ffmpeg.html#Main-options) |
+| MUTE | Remove the audio stream | [`-an`](https://ffmpeg.org/ffmpeg.html#Audio-Options) |
+
+
+## Using Video Thumbnails in your Code
+
+### Examples - Image Snapshots
 ```php
 $asset = Asset::getById(123);
 if($asset instanceof Asset\Video) {
@@ -21,7 +34,7 @@ if($asset instanceof Asset\Video) {
 }
 ```
 
-##### Examples - Video Transcoding
+### Examples - Video Transcoding
 ```php
 $asset = Asset::getById(123);
 if($asset instanceof Asset\Video) {
@@ -44,7 +57,7 @@ if($asset instanceof Asset\Video) {
 }
 ```
 
-#### Adaptive bitrate video-streaming
+### Adaptive bitrate video-streaming
 This feature allows you to generate a MPEG-DASH (.mpd) file for Adaptive  bitrate video-streaming.
 
 As soon as you define transformations based on the bitrates in thumbnail config, the `.mpd` file will be generated with bitrate streams. 
@@ -66,5 +79,5 @@ generates frontend:
 </video>
 ```
 
-### Using with the Video Editable
+## Using with the Video Editable
 Please have a look at [Video Editable](../../03_Documents/01_Editables/38_Video.md). 

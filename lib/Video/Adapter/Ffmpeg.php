@@ -456,8 +456,11 @@ class Ffmpeg extends Adapter
     public function cut(?string $inputSeeking = null, ?string $targetDuration = null): void
     {
         if (!empty($inputSeeking)) {
-            $parts = explode(':', $inputSeeking);
-            $this->inputSeeking = ((int)$parts[0] * 3600) + ((int)$parts[1] * 60) + (float)$parts[2];
+            $result = preg_match("/^(\d\d):(\d\d):(\d\d\.?\d*)$/", $inputSeeking, $matches);
+
+            if ($result) {
+                $this->inputSeeking = ((int)$matches[1] * 3600) + ((int)$matches[2] * 60) + (float)$matches[3];
+            }
         }
         if (!empty($targetDuration)) {
             $this->addArgument('-t', $targetDuration);
