@@ -680,28 +680,26 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             }.bind(this)
         };
 
-        if (this.predefinedDataTemplates[type] && this.predefinedDataTemplates[type].length > 0) {
+        if (this.predefinedDataTemplates[type] && Object.keys(this.predefinedDataTemplates[type]).length > 0) {
             buttonConfig.xtype = "splitbutton";
             var menu = [];
-            for (var i = 0; i < this.predefinedDataTemplates[type].length; i++) {
-                var templateConfig = this.predefinedDataTemplates[type][i];
+
+            Object.values(this.predefinedDataTemplates[type]).forEach(templateConfig => {
                 var templateConfigName = templateConfig.name;
-                var templateMenuName = templateConfig.menuName ? templateConfig.menuName : templateConfigName;
-                if (!templateConfigName) {
-                    templateConfigName = "&nbsp";
-                }
+                var templateMenuName = templateConfig.menuName ?? templateConfigName;
+
                 menu.push(
                     {
                         text: t(templateMenuName),
                         iconCls: "pimcore_icon_hotspotmarker_template",
                         handler: function (templateConfig) {
                             var elId = callbackFunction(templateConfig);
-                            var copiedData = templateConfig.data ? templateConfig.data.slice() : [];
-                            this.hotspotMetaData[elId] = copiedData;
+                            this.hotspotMetaData[elId] = templateConfig.data ? templateConfig.data.slice() : [];
                         }.bind(this, templateConfig)
                     }
                 );
-            }
+            });
+
             buttonConfig.menu = menu;
         }
 

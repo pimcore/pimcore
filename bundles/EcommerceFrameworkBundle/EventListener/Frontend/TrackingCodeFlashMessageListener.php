@@ -21,8 +21,10 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -74,7 +76,7 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
 
         // Check FlashBag cookie exists to avoid autostart session by accessing the FlashBag.
         $flashBagCookie = (bool)$request->cookies->get(self::FLASH_MESSAGE_BAG_KEY);
-        $session = $this->requestStack->getSession();
+        $session = $this->getSession();
         if ($flashBagCookie && $session instanceof Session) {
             $trackedCodes = $session->getFlashBag()->get(self::FLASH_MESSAGE_BAG_KEY);
 
@@ -91,13 +93,27 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
     }
 
     /**
+     * @return SessionInterface|null
+     */
+    private function getSession(): ?SessionInterface
+    {
+        try {
+            $session = $this->requestStack->getSession();
+        } catch (SessionNotFoundException) {
+            $session = null;
+        }
+
+        return $session;
+    }
+
+    /**
      * @param ResponseEvent $event
      */
     public function onKernelResponse(ResponseEvent $event)
     {
         $response = $event->getResponse();
         $request = $event->getRequest();
-        $session = $this->requestStack->getSession();
+        $session = $this->getSession();
 
         /**
          * If tracking codes are forwarded as FlashMessage, then set a cookie which is checked in subsequent request for successful handshake

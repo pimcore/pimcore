@@ -5,6 +5,8 @@ services:
         public: false
 
     Pimcore\Targeting\Session\SessionConfigurator:
+        tags:
+            - { name: pimcore.session.configurator, type: internal } #do not use this tag anymore, it is there for BC reasons
         deprecated:
             message: 'The "%service_id%" service is deprecated, use TargetingSessionBagListener instead.'
             package: pimcore/pimcore

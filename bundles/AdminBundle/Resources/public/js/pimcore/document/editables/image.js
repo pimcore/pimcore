@@ -18,7 +18,6 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
         this.id = id;
         this.name = name;
         this.datax = {};
-        this.inherited = inherited;
         this.config = this.parseConfig(config);
 
         this.originalDimensions = {

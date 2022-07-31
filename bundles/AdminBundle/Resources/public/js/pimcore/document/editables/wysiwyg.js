@@ -28,7 +28,6 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
         }
         this.data = data;
         this.config = config;
-        this.inherited = inherited;
 
         if(config["required"]) {
             this.required = config["required"];
