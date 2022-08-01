@@ -819,7 +819,9 @@ class Service extends Model\AbstractModel
         // when user is allowed to `list` /a/b/c, he implicitly is also allowed to `list` /a and /a/b
         foreach ($allowed as $allowedPath) {
             $pathParts = explode('/', $allowedPath);
-            $allowed[] = '/'.$pathParts[1];
+            for($pathPartIndex = 1; $pathPartIndex<count(array_keys($pathParts))-1;$pathPartIndex++) {
+                $allowed[] = array_slice($pathParts, 0, $pathPartIndex);
+            }
         }
         $allowed = array_unique($allowed);
 
