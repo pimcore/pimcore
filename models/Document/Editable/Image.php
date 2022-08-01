@@ -172,6 +172,10 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
                 foreach ($data as &$element) {
                     if (array_key_exists('data', $element) && is_array($element['data']) && count($element['data']) > 0) {
                         foreach ($element['data'] as &$metaData) {
+                            if ($metaData instanceof Element\Data\MarkerHotspotItem) {
+                                $metaData = get_object_vars($metaData);
+                            }
+
                             if ($metaData['value'] instanceof Element\ElementInterface) {
                                 $metaData['value'] = $metaData['value']->getRealFullPath();
                             }
@@ -563,6 +567,10 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
             foreach ($data as $element) {
                 if (array_key_exists('data', $element) && is_array($element['data']) && count($element['data']) > 0) {
                     foreach ($element['data'] as $metaData) {
+                        if ($metaData instanceof Element\Data\MarkerHotspotItem) {
+                            $metaData = get_object_vars($metaData);
+                        }
+
                         if ($metaData['value'] instanceof Element\ElementInterface) {
                             if (!array_key_exists($metaData['value']->getCacheTag(), $tags)) {
                                 $tags = $metaData['value']->getCacheTags($tags);
@@ -606,6 +614,10 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
             foreach ($data as $element) {
                 if (array_key_exists('data', $element) && is_array($element['data']) && count($element['data']) > 0) {
                     foreach ($element['data'] as $metaData) {
+                        if ($metaData instanceof Element\Data\MarkerHotspotItem) {
+                            $metaData = get_object_vars($metaData);
+                        }
+
                         if ($metaData['value'] instanceof Element\ElementInterface) {
                             $dependencies[$metaData['type'] . '_' . $metaData['value']->getId()] = [
                                 'id' => $metaData['value']->getId(),
