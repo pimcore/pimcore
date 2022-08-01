@@ -15,11 +15,9 @@
 
 namespace Pimcore\Tests\Model\DataObject;
 
-use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
 
 /**
  * Class ObjectTest
@@ -35,9 +33,9 @@ class ClassDefinitionTest extends ModelTestCase
     public function testRename()
     {
         $class = ClassDefinition::getByName('unittest');
-        $class->rename("unittest_renamed");
+        $class->rename('unittest_renamed');
 
         $renamedClass = ClassDefinition::getByName('unittest_renamed');
-        $renamedClass->rename("unittest");
+        $renamedClass->rename('unittest');
     }
 }
