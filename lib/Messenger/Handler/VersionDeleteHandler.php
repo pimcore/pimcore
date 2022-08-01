@@ -52,11 +52,11 @@ class VersionDeleteHandler implements BatchHandlerInterface
                         Logger::err(sprintf('Problem deleting the version with Id: %s, reason: %s', $version->getId(), $e->getMessage()));
                     }
                 }
-
-                $ack->ack($message);
             } catch (\Throwable $e) {
                 $ack->nack($e);
             }
         }
+        
+        $ack->ack($message);
     }
 }
