@@ -1331,7 +1331,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         parent::__clone();
 
         // renew references when cloning
-        foreach(['id', 'path', 'creationDate', 'userOwner', 'versionCount', 'modificationDate', 'locked', 'parent', 'properties', 'userModification', 'parentId'] as $referenceField) {
+        foreach (['id', 'path', 'creationDate', 'userOwner', 'versionCount', 'modificationDate', 'locked', 'parent', 'properties', 'userModification', 'parentId'] as $referenceField) {
             $oldValue = $this->$referenceField;
             unset($this->$referenceField);
             $this->$referenceField = $oldValue;
