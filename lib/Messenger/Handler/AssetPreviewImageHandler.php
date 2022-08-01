@@ -54,12 +54,13 @@ class AssetPreviewImageHandler implements BatchHandlerInterface
                 } elseif ($asset instanceof Asset\Folder) {
                     $asset->getPreviewImage(true);
                 }
-
-                $ack->ack($message);
             } catch (\Throwable $e) {
                 $ack->nack($e);
             }
         }
+        
+        
+        $ack->ack($message);
     }
 
     // @phpstan-ignore-next-line
