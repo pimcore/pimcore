@@ -795,8 +795,7 @@ class Service extends Model\AbstractModel
         $allowed = [];
         if ($totalPaths > 0) {
             $uniquePathsKeys = array_keys($uniquePaths);
-            for ($index = 0; $index < $totalPaths; $index++) {
-                $path = $uniquePathsKeys[$index];
+            foreach($uniquePathsKeys as $index => $path) {
                 if ($uniquePaths[$path] == 0) {
                     $forbidden[$path] = [];
                     for ($findIndex = $index + 1; $findIndex < $totalPaths; $findIndex++) { //NB: the starting index is the last index we got
@@ -816,6 +815,13 @@ class Service extends Model\AbstractModel
         } else {
             $forbidden['/'] = [];
         }
+
+        // when user is allowed to `list` /a/b/c, he implicitly is also allowed to `list` /a and /a/b
+        foreach ($allowed as $allowedPath) {
+            $pathParts = explode('/', $allowedPath);
+            $allowed[] = $pathParts[0];
+        }
+        $allowed = array_unique($allowed);
 
         return ['forbidden' => $forbidden, 'allowed' => $allowed];
     }
