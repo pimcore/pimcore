@@ -1192,29 +1192,32 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $list = new DataObject\Listing();
             $updatedObject->saveIndex($newIndex);
 
+            /*
+             * The cte and the limit are needed to order the data before the newIndex is set
+             */
             Db::get()->executeStatement(
                 'UPDATE '.$list->getDao()->getTableName().' o,
                     (
-                        SELECT newIndex, o_id FROM (SELECT @n := IF(@n = ? - 1,@n + 2,@n + 1) AS newIndex, o_id
-                        FROM '.$list->getDao()->getTableName().',
-                        (SELECT @n := -1) variable
-                        WHERE o_id != ? AND o_parentId = ? AND o_type IN (\''.implode(
-                    "','", [
-                        DataObject::OBJECT_TYPE_OBJECT,
-                        DataObject::OBJECT_TYPE_VARIANT,
-                        DataObject::OBJECT_TYPE_FOLDER,
-                    ]
-                ).'\')
-                            ORDER BY o_index, o_id=?
+                        SELECT newIndex, o_id
+                        FROM (
+                            With cte As (SELECT o_index, o_id FROM ' . $list->getDao()->getTableName() . ' WHERE o_parentId = ? AND o_id != ? AND o_type IN (\''.implode(
+                                "','", [
+                                    DataObject::OBJECT_TYPE_OBJECT,
+                                    DataObject::OBJECT_TYPE_VARIANT,
+                                    DataObject::OBJECT_TYPE_FOLDER,
+                                ]
+                            ).'\') ORDER BY o_index LIMIT '. $updatedObject->getParent()->getChildAmount() .')
+                            SELECT @n := IF(@n = ? - 1,@n + 2,@n + 1) AS newIndex, o_id
+                            FROM cte,
+                            (SELECT @n := -1) variable
                         ) tmp
                     ) order_table
                     SET o.o_index = order_table.newIndex
                     WHERE o.o_id=order_table.o_id',
                 [
-                    $newIndex,
-                    $updatedObject->getId(),
                     $updatedObject->getParentId(),
                     $updatedObject->getId(),
+                    $newIndex,
                 ]
             );
 
