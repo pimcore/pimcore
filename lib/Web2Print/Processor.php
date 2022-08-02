@@ -142,7 +142,7 @@ abstract class Processor
         $lock->release();
         Model\Tool\TmpStore::delete($document->getLockKey());
 
-        @unlink($this->getJobConfigFile($documentId));
+        @unlink(static::getJobConfigFile($documentId));
 
         return $pdf;
     }
@@ -164,7 +164,7 @@ abstract class Processor
      */
     protected function saveJobConfigObjectFile($jobConfig)
     {
-        file_put_contents($this->getJobConfigFile($jobConfig->documentId), json_encode($jobConfig));
+        file_put_contents(static::getJobConfigFile($jobConfig->documentId), json_encode($jobConfig));
 
         return true;
     }
@@ -176,7 +176,7 @@ abstract class Processor
      */
     protected function loadJobConfigObject($documentId)
     {
-        $file = self::getJobConfigFile($documentId);
+        $file = static::getJobConfigFile($documentId);
         if (file_exists($file)) {
             return json_decode(file_get_contents($file));
         }
