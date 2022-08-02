@@ -68,7 +68,6 @@ final class Translation extends AbstractModel
      */
     protected $type = 'simple';
 
-
     /**
      * ID of the owner user
      *
