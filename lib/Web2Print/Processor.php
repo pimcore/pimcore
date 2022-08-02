@@ -102,6 +102,9 @@ abstract class Processor
     public function startPdfGeneration($documentId)
     {
         $jobConfigFile = $this->loadJobConfigObject($documentId);
+        if (!$jobConfigFile) {
+            return null;
+        }
 
         $document = $this->getPrintDocument($documentId);
 
@@ -173,7 +176,12 @@ abstract class Processor
      */
     protected function loadJobConfigObject($documentId)
     {
-        return json_decode(file_get_contents($this->getJobConfigFile($documentId)));
+        $file = self::getJobConfigFile($documentId);
+        if (file_exists($file)) {
+            return json_decode(file_get_contents($file));
+        }
+
+        return null;
     }
 
     /**
@@ -216,6 +224,9 @@ abstract class Processor
     protected function updateStatus($documentId, $status, $statusUpdate)
     {
         $jobConfig = $this->loadJobConfigObject($documentId);
+        if (!$jobConfig) {
+            return;
+        }
         $jobConfig->status = $status;
         $jobConfig->statusUpdate = $statusUpdate;
         $this->saveJobConfigObjectFile($jobConfig);
