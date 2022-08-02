@@ -14,11 +14,8 @@
 pimcore.registerNS("pimcore.document.editables.scheduledblock");
 pimcore.document.editables.scheduledblock = Class.create(pimcore.document.editables.block, {
 
-    initialize: function(id, name, config, data, inherited) {
-        this.id = id;
-        this.name = name;
-        this.elements = [];
-        this.config = this.parseConfig(config);
+    initialize: function($super, id, name, config, data, inherited) {
+        $super(id, name, config, data, inherited);
 
         this.elements = Ext.get(id).query('.pimcore_block_entry[data-name="' + name + '"][key]');
 

@@ -22,6 +22,13 @@ pimcore.document.editable = Class.create({
     required: false,
     requiredError: false,
 
+    initialize: function(id, name, config, data, inherited) {
+        this.id = id;
+        this.name = name;
+        this.config = this.parseConfig(config);
+        this.inherited = inherited;
+    },
+
     setupWrapper: function (styleOptions) {
 
         if (!styleOptions) {

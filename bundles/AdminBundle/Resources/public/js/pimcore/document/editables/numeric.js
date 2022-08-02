@@ -14,25 +14,21 @@
 pimcore.registerNS("pimcore.document.editables.numeric");
 pimcore.document.editables.numeric = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, config, data, inherited) {
-        this.id = id;
-        this.name = name;
-        config = this.parseConfig(config);
+    initialize: function($super, id, name, config, data, inherited) {
+        $super(id, name, config, data, inherited);
 
         if ('number' !== typeof data && !data) {
             data = "";
         }
 
-        config.value = data;
-        config.name = id + "_editable";
-        config.decimalPrecision = 20;
-        config.mouseWheelEnabled = false;
+        this.config.value = data;
+        this.config.name = id + "_editable";
+        this.config.decimalPrecision = 20;
+        this.config.mouseWheelEnabled = false;
 
-        if(config["required"]) {
-            this.required = config["required"];
+        if(this.config["required"]) {
+            this.required = this.config["required"];
         }
-
-        this.config = config;
     },
 
     render: function () {
