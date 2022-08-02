@@ -820,10 +820,9 @@ class Service extends Model\AbstractModel
         foreach ($allowed as $allowedPath) {
             $pathParts = explode('/', $allowedPath);
             for($pathPartIndex = 1; $pathPartIndex<count(array_keys($pathParts))-1;$pathPartIndex++) {
-                $allowed[] = implode('/', array_slice($pathParts, 0, $pathPartIndex+1));
+                $forbidden[implode('/', array_slice($pathParts, 0, $pathPartIndex + 1))][] = $allowedPath;
             }
         }
-        $allowed = array_unique($allowed);
 
         return ['forbidden' => $forbidden, 'allowed' => $allowed];
     }
