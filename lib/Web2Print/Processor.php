@@ -106,7 +106,7 @@ abstract class Processor
     {
         $jobConfigFile = $this->loadJobConfigObject($documentId);
         if (!$jobConfigFile) {
-            throw new NotPreparedException('PDF Generation is not prepared.');
+            throw new NotPreparedException('PDF Generation for document ' . $documentId . ' is not prepared.');
         }
 
         $document = $this->getPrintDocument($documentId);
@@ -136,7 +136,8 @@ abstract class Processor
             $document->setLastGenerated((time() + 1));
             $document->setLastGenerateMessage('');
             $document->save();
-        } catch (CancelException) {
+        } catch (CancelException $e) {
+            Logger::debug($e->getMessage());
         } catch (\Exception $e) {
             Logger::err((string) $e);
             $document->setLastGenerateMessage($e->getMessage());
@@ -231,7 +232,7 @@ abstract class Processor
     {
         $jobConfig = $this->loadJobConfigObject($documentId);
         if (!$jobConfig) {
-            throw new CancelException('PDF Generation is canceled.');
+            throw new CancelException('PDF Generation for document ' . $documentId . ' is canceled.');
         }
         $jobConfig->status = $status;
         $jobConfig->statusUpdate = $statusUpdate;
