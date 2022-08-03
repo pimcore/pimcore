@@ -16,23 +16,19 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
 
     defaultHeight: 100,
 
-    initialize: function(id, name, config, data, inherited) {
-        this.id = id;
-        this.name = name;
-        this.config = this.parseConfig(config);
-        this.data = {};
-        if (data) {
-            this.data = data;
-        }
+    initialize: function($super, id, name, config, data, inherited) {
+        $super(id, name, config, data, inherited);
+
+        this.data = data ?? {};
 
         // height management
         if (this.config.defaultHeight) {
             this.defaultHeight = this.config.defaultHeight;
         }
-        if(this.config.height){
+
+        if (this.config.height){
             this.initalHeightSet = true;
-        }
-        else{
+        } else {
             this.initalHeightSet = false;
             this.config.height = this.data.path ? 'auto' : this.defaultHeight;
         }

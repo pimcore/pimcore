@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Data;
 
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition;
@@ -84,11 +85,6 @@ class UrlSlug implements OwnerAwareFieldInterface
      * @var null|string
      */
     protected $previousSlug;
-
-    /**
-     * @var array
-     */
-    protected static $cache = [];
 
     /**
      * UrlSlug constructor.
@@ -332,9 +328,13 @@ class UrlSlug implements OwnerAwareFieldInterface
      */
     public static function resolveSlug($path, $siteId = 0)
     {
-        $cacheKey = $path . '~~' . $siteId;
-        if (isset(self::$cache[$cacheKey])) {
-            return self::$cache[$cacheKey];
+        $cacheKey = self::getCacheKey($path, $siteId);
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            $slug = RuntimeCache::get($cacheKey);
+
+            if ($slug instanceof UrlSlug) {
+                return $slug;
+            }
         }
 
         $slug = null;
@@ -362,7 +362,7 @@ class UrlSlug implements OwnerAwareFieldInterface
             Logger::error((string) $e);
         }
 
-        self::$cache[$cacheKey] = $slug;
+        RuntimeCache::set($cacheKey, $slug);
 
         return $slug;
     }
@@ -486,10 +486,8 @@ class UrlSlug implements OwnerAwareFieldInterface
     {
         $db = Db::get();
         $db->delete(self::TABLE_NAME, ['slug' => $this->getSlug(), 'siteId' => $this->getSiteId()]);
-        $cacheKey = $this->getSlug() . '~~' . $this->getSiteId();
-        if (isset(self::$cache[$cacheKey])) {
-            unset(self::$cache[$cacheKey]);
-        }
+
+        RuntimeCache::set(self::getCacheKey($this->getSlug(), $this->getSiteId()), null);
     }
 
     /**
@@ -512,5 +510,18 @@ class UrlSlug implements OwnerAwareFieldInterface
     {
         $db = Db::get();
         $db->delete(self::TABLE_NAME, ['classId' => $classId]);
+    }
+
+    /**
+     * @internal
+     *
+     * @param string $path
+     * @param int $siteId
+     *
+     * @return string
+     */
+    protected static function getCacheKey($path, $siteId): string
+    {
+        return "UrlSlug~~{$path}~~{$siteId}";
     }
 }

@@ -814,7 +814,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                                     pimcore.helpers.updateTreeElementStyle('object', this.id, rdata.treeData);
                                     const postSaveObject = new CustomEvent(pimcore.events.postSaveObject, {
                                         detail: {
-                                            object: this
+                                            object: this,
+                                            task: task
                                         }
                                     });
 

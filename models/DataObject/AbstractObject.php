@@ -1329,6 +1329,15 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function __clone()
     {
         parent::__clone();
+
+        // renew references when cloning
+        foreach (['id', 'path', 'creationDate', 'userOwner', 'versionCount', 'modificationDate', 'locked', 'parent', 'properties', 'userModification', 'parentId'] as $referenceField) {
+            $oldValue = $this->$referenceField;
+            unset($this->$referenceField);
+            $this->$referenceField = $oldValue;
+            $this->{'o_'.$referenceField} = &$this->$referenceField;
+        }
+
         $this->o_parent = null;
         // note that o_children is currently needed for the recycle bin
         $this->o_hasSiblings = [];

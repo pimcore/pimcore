@@ -85,6 +85,8 @@ function t(key, defaultValue, placeholders) {
  * @deprecated
  */
 function ts(key) {
+    console.error('ts() function is deprecated, use t() instead. It will be removed in Pimcore 11.');
+
     return t(key);
 }
 

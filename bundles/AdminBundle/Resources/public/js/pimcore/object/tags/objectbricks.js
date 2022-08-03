@@ -110,7 +110,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                     continue;
                 }
 
-                if(this.fieldConfig.allowedTypes.length > 0 && this.fieldConfig.allowedTypes.indexOf(elementData.key) === -1) {
+                if (elementData.leaf === true && this.fieldConfig.allowedTypes.length > 0 && this.fieldConfig.allowedTypes.indexOf(elementData.key) === -1) {
                     continue;
                 }
 

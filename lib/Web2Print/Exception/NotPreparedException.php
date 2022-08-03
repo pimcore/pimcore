@@ -15,14 +15,8 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Targeting\Session;
+namespace Pimcore\Web2Print\Exception;
 
-use Pimcore\Session\SessionConfiguratorInterface;
-use Pimcore\Targeting\EventListener\TargetingSessionBagListener;
-
-/**
- * @deprecated will be removed in Pimcore 11. Use TargetingSessionBagListener instead.
- */
-class SessionConfigurator extends TargetingSessionBagListener implements SessionConfiguratorInterface
+class NotPreparedException extends \RuntimeException
 {
 }
