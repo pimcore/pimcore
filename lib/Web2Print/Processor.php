@@ -108,7 +108,7 @@ abstract class Processor
 
         $document = $this->getPrintDocument($documentId);
 
-        $lock = self::getLock($document);
+        $lock = $this->getLock($document);
         // check if there is already a generating process running, wait if so ...
         $lock->acquire(true);
 
@@ -262,8 +262,9 @@ abstract class Processor
             throw new \Exception('Document with id ' . $documentId . ' not found.');
         }
 
-        self::getLock($document)->release();
+        $this->getLock($document)->release();
         Model\Tool\TmpStore::delete($document->getLockKey());
+        @unlink(static::getJobConfigFile($documentId));
     }
 
     /**
