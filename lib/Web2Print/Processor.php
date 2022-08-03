@@ -23,6 +23,8 @@ use Pimcore\Logger;
 use Pimcore\Messenger\GenerateWeb2PrintPdfMessage;
 use Pimcore\Model;
 use Pimcore\Model\Document;
+use Pimcore\Web2Print\Exception\CancelException;
+use Pimcore\Web2Print\Exception\NotPreparedException;
 use Pimcore\Web2Print\Processor\HeadlessChrome;
 use Pimcore\Web2Print\Processor\PdfReactor;
 use Pimcore\Web2Print\Processor\WkHtmlToPdf;
@@ -98,12 +100,13 @@ abstract class Processor
      * @return string|null
      *
      * @throws Model\Element\ValidationException
+     * @throws NotPreparedException
      */
     public function startPdfGeneration($documentId)
     {
         $jobConfigFile = $this->loadJobConfigObject($documentId);
         if (!$jobConfigFile) {
-            return null;
+            throw new NotPreparedException('PDF Generation is not prepared.');
         }
 
         $document = $this->getPrintDocument($documentId);
@@ -133,6 +136,7 @@ abstract class Processor
             $document->setLastGenerated((time() + 1));
             $document->setLastGenerateMessage('');
             $document->save();
+        } catch (CancelException) {
         } catch (\Exception $e) {
             Logger::err((string) $e);
             $document->setLastGenerateMessage($e->getMessage());
@@ -220,12 +224,14 @@ abstract class Processor
      * @param int $documentId
      * @param int $status
      * @param string $statusUpdate
+     *
+     * @throws CancelException
      */
     protected function updateStatus($documentId, $status, $statusUpdate)
     {
         $jobConfig = $this->loadJobConfigObject($documentId);
         if (!$jobConfig) {
-            return;
+            throw new CancelException('PDF Generation is canceled.');
         }
         $jobConfig->status = $status;
         $jobConfig->statusUpdate = $statusUpdate;
