@@ -17,19 +17,15 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
 
     type: "wysiwyg",
 
-    initialize: function(id, name, config, data, inherited) {
-
-        this.id = id;
-        this.name = name;
-        config = this.parseConfig(config);
+    initialize: function($super, id, name, config, data, inherited) {
+        $super(id, name, config, data, inherited);
 
         if (!data) {
             data = "";
         }
-        this.data = data;
-        this.config = config;
+        this.data = data ?? "";
 
-        if(config["required"]) {
+        if (config["required"]) {
             this.required = config["required"];
         }
     },

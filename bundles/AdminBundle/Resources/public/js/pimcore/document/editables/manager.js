@@ -36,7 +36,6 @@ pimcore.document.editables.manager = Class.create({
             throw 'Editable of type `' + type + '` with name `' + name + '` does not support the use in the dialog box.';
         }
 
-        // TODO: Remove the inherited param in Pimcore 11 as it is not being used in editables
         let editable = new EditableClass(definition.id, name, definition.config, definition.data, inherited);
         editable.setRealName(definition.realName);
         editable.setInDialogBox(definition.inDialogBox);

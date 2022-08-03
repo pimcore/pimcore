@@ -14,20 +14,15 @@
 pimcore.registerNS("pimcore.document.editables.image");
 pimcore.document.editables.image = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, config, data, inherited) {
-        this.id = id;
-        this.name = name;
-        this.datax = {};
-        this.config = this.parseConfig(config);
+    initialize: function($super, id, name, config, data, inherited) {
+        $super(id, name, config, data, inherited);
+
+        this.datax = data ?? {};
 
         this.originalDimensions = {
             width: this.config.width,
             height: this.config.height
         };
-
-        if (data) {
-            this.datax = data;
-        }
     },
 
     render: function () {

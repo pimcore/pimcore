@@ -14,11 +14,8 @@
 pimcore.registerNS("pimcore.document.editables.table");
 pimcore.document.editables.table = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, config, data, inherited) {
-
-        this.id = id;
-        this.name = name;
-        config = this.parseConfig(config);
+    initialize: function($super, id, name, config, data, inherited) {
+        $super(id, name, config, data, inherited);
 
         if (!data) {
             data = [
