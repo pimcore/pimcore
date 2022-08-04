@@ -58,7 +58,7 @@ class TargetingSessionBagListener implements EventSubscriberInterface
 
         $session = $event->getRequest()->getSession();
 
-        //do not reigster bags, if session is already started
+        //do not register bags, if session is already started
         if ($session->isStarted()) {
             return;
         }
