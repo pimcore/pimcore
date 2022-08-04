@@ -55,7 +55,7 @@ class AdminSessionBagListener implements EventSubscriberInterface
 
         //do not register bags, if session is already started
         if ($session->isStarted()) {
-           return;
+            return;
         }
 
         $this->configure($session);
