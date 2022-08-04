@@ -26,7 +26,7 @@ Therefore `\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Abs
 `getFilterValues()` and `addCondition()` to be implemented. 
 
 Each Filter Type needs to be defined as service and registered on the `pimcore_ecommerce_framework.filter_service` configuration.
-The framework already defines a number of core filter types in [filter_service_filter_types.yaml](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/Resources/config/filter_service_filter_types.yaml).
+The framework already defines a number of core filter types in [filter_service_filter_types.yaml](https://github.com/pimcore/pimcore/blob/11.x/bundles/EcommerceFrameworkBundle/Resources/config/filter_service_filter_types.yaml).
 
 > FilterTypes are dependent of the used index backend. You need to use different FilterTypes when using MySQL or ElasticSearch etc. 
 > Pimcore ships with FilterTypes implementations for all supported index backends. For details see for example 
@@ -109,7 +109,7 @@ pimcore_ecommerce_framework:
   in filter definition objects (see next chapter). 
 - `class`: Backend implementation of the filter type. 
 - `script`: Default view script of the filter type, can be overwritten in the filter definition objects. 
-  You can find some script filter examples in the Demo [here](https://github.com/pimcore/demo/tree/10.x/templates/product/filters). 
+  You can find some script filter examples in the Demo [here](https://github.com/pimcore/demo/tree/11.x/templates/product/filters). 
 
 
 - `Helper`: Is a helper implementation that gets available values for pre select settings in the filter definition objects 
@@ -184,7 +184,7 @@ $templateParams['paginationVariables'] = $paginator->getPaginationData();
 return $this->render('Path/template.html.twig', $templateParams);
 ```
 
-For a sample of a controller see our demo [here](https://github.com/pimcore/demo/blob/10.x/src/Controller/ProductController.php#L118). 
+For a sample of a controller see our demo [here](https://github.com/pimcore/demo/blob/11.x/src/Controller/ProductController.php#L118). 
 
 ### View
 For putting all filters to the frontend use following sample. It is important that this sample is inside a form in order 

@@ -2016,7 +2016,7 @@ class Service extends Model\Element\Service
                             );
                         }
                     }
-                    //key value store - ignore for now
+                //key value store - ignore for now
                 } elseif (count($fieldParts) > 1) {
                     // brick
                     $brickType = $fieldParts[0];

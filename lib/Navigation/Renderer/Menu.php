@@ -620,16 +620,16 @@ class Menu extends AbstractRenderer
      */
     protected function _renderDeepestMenu(
         Container $container,
-                                          $ulClass,
-                                          $indent,
-                                          $innerIndent,
-                                          $minDepth,
-                                          $maxDepth,
-                                          $ulId,
-                                          $addPageClassToLi,
-                                          $activeClass,
-                                          $parentClass,
-                                          $renderParentClass
+        $ulClass,
+        $indent,
+        $innerIndent,
+        $minDepth,
+        $maxDepth,
+        $ulId,
+        $addPageClassToLi,
+        $activeClass,
+        $parentClass,
+        $renderParentClass
     ) {
         if (!$active = $this->findActive($container, $minDepth - 1, $maxDepth)) {
             return '';
