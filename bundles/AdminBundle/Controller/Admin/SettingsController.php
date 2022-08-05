@@ -1444,7 +1444,7 @@ class SettingsController extends AdminController
     public function videoThumbnailListAction(): JsonResponse
     {
         $thumbnails = [
-            ['id' => 'pimcore-system-treepreview', 'text' => 'original']
+            ['id' => 'pimcore-system-treepreview', 'text' => 'original'],
         ];
         $list = new Asset\Video\Thumbnail\Config\Listing();
 
