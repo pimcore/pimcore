@@ -38,11 +38,11 @@
 <body>
 
 {% set previewImage = '' %}
-{% if pimcore_video_is_available() %}
+{% if pimcore_video_is_available() and config == "pimcore-system-treepreview" %}
     {% set previewImage = path('pimcore_admin_asset_getvideothumbnail', {id: asset.getId(), treepreview: 'true'}) %}
 {% endif %}
 
-{% set serveVideoPreview = path('pimcore_admin_asset_servevideopreview', {id: asset.getId()}) %}
+{% set serveVideoPreview = path('pimcore_admin_asset_servevideopreview', {id: asset.getId(), config: config}) %}
 
 <div id="videoContainer">
     <video id="video" controls="controls" height="400" poster="{{ previewImage }}">

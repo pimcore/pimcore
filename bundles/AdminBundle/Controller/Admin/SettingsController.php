@@ -1437,6 +1437,28 @@ class SettingsController extends AdminController
     }
 
     /**
+     * @Route("/video-thumbnail-list", name="pimcore_admin_settings_videothumbnail_list", methods={"GET"})
+     *
+     * @return JsonResponse
+     */
+    public function videoThumbnailListAction(): JsonResponse
+    {
+        $thumbnails = [
+            ['id' => 'pimcore-system-treepreview', 'text' => 'original']
+        ];
+        $list = new Asset\Video\Thumbnail\Config\Listing();
+
+        foreach ($list->getThumbnails() as $item) {
+            $thumbnails[] = [
+                'id'   => $item->getName(),
+                'text' => $item->getName(),
+            ];
+        }
+
+        return $this->adminJson($thumbnails);
+    }
+
+    /**
      * @Route("/video-thumbnail-add", name="pimcore_admin_settings_videothumbnailadd", methods={"POST"})
      *
      * @param Request $request
