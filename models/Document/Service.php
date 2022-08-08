@@ -670,18 +670,16 @@ class Service extends Model\Element\Service
 
         $tool = Chromium::class;
 
-        if ($tool) {
-            /** @var Chromium $tool **/
-            if ($tool::convert($url, $tmpFile)) {
-                $im = \Pimcore\Image::getInstance();
-                $im->load($tmpFile);
-                $im->scaleByWidth(800);
-                $im->save($file, 'jpeg', 85);
+        /** @var Chromium $tool **/
+        if ($tool::convert($url, $tmpFile)) {
+            $im = \Pimcore\Image::getInstance();
+            $im->load($tmpFile);
+            $im->scaleByWidth(800);
+            $im->save($file, 'jpeg', 85);
 
-                unlink($tmpFile);
+            unlink($tmpFile);
 
-                $success = true;
-            }
+            $success = true;
         }
 
         return $success;
