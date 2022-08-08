@@ -149,11 +149,8 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function setAllowedTypes($allowedTypes)
     {
-        if (!empty($allowedTypes)){
-            $this->allowedTypes = $allowedTypes;
-        }else{
-            $this->allowedTypes = $this->videoTypes;
-        }
+        $this->allowedTypes = $allowedTypes;
+
         return $this;
     }
 
