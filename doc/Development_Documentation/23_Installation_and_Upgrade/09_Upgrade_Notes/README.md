@@ -1,7 +1,8 @@
 # Upgrade Notes
 ## 11.0.0
 
-- [Image Optimizer] Removed all the Image Optimizer services (e.g. PngCrushOptimizer, JpegoptimOptimizer etc.) as image optimization is done by the new package spatie/image-optimizer. 
+- [Image Optimizer] Removed all the Image Optimizer services (e.g. PngCrushOptimizer, JpegoptimOptimizer etc.) as image optimization is done by the new package spatie/image-optimizer.
+- [Web2Print] Deprecated WkHtmlToPdf Processor has been removed.
   
 ## 10.5.0
 - [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`
