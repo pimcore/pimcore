@@ -1165,7 +1165,6 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
         $viewParams = [];
 
-        $tool = Chromium::class;
 
         Chromium::convert($fromUrl, $fromFile);
         Chromium::convert($toUrl, $toFile);
