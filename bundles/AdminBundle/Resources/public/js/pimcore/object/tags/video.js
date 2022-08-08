@@ -135,6 +135,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
 
     openEdit: function () {
         this.data["path"] = this.data["data"];
+        this.data['allowedTypes'] = this.fieldConfig.allowedTypes;
         this.window = pimcore.helpers.editmode.openVideoEditPanel(this.data, {
             save: function () {
                 this.window.hide();

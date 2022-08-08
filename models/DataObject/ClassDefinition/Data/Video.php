@@ -27,6 +27,18 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
+    public const TYPE_ASSET = 'asset';
+    public const TYPE_YOUTUBE = 'youtube';
+    public const TYPE_VIMEO = 'vimeo';
+    public const TYPE_DAILYMOTION = 'dailymotion';
+
+    public const ALLOWED_TYPES = [
+        self::TYPE_ASSET,
+        self::TYPE_YOUTUBE,
+        self::TYPE_VIMEO,
+        self::TYPE_DAILYMOTION,
+    ];
+
     /**
      * Static type of this element
      *
@@ -69,6 +81,20 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @var string
      */
     public $columnType = 'text';
+
+    /**
+     * @internal
+     *
+     * @var array
+     */
+    public $allowedTypes;
+
+    /**
+     * @internal
+     *
+     * @var array
+     */
+    public $videoTypes = self::ALLOWED_TYPES;
 
     /**
      * @return string|int
@@ -114,6 +140,29 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $this->height = $height;
 
         return $this;
+    }
+
+    /**
+     * @param array $allowedTypes
+     *
+     * @return $this
+     */
+    public function setAllowedTypes($allowedTypes)
+    {
+        if (!empty($allowedTypes)){
+            $this->allowedTypes = $allowedTypes;
+        }else{
+            $this->allowedTypes = $this->videoTypes;
+        }
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAllowedTypes()
+    {
+        return $this->allowedTypes;
     }
 
     /**
