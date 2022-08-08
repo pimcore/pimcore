@@ -22,7 +22,6 @@ use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\File;
 use Pimcore\Image\Chromium;
-use Pimcore\Image\HtmlToImage;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable\IdRewriterInterface;
@@ -672,12 +671,10 @@ class Service extends Model\Element\Service
         $tool = false;
         if (Chromium::isSupported()) {
             $tool = Chromium::class;
-        } elseif (HtmlToImage::isSupported()) {
-            $tool = HtmlToImage::class;
         }
 
         if ($tool) {
-            /** @var Chromium|HtmlToImage $tool */
+            /** @var Chromium $tool **/
             if ($tool::convert($url, $tmpFile)) {
                 $im = \Pimcore\Image::getInstance();
                 $im->load($tmpFile);
