@@ -668,10 +668,7 @@ class Service extends Model\Element\Service
 
         File::mkdir(dirname($file));
 
-        $tool = false;
-        if (Chromium::isSupported()) {
-            $tool = Chromium::class;
-        }
+        $tool = Chromium::class;
 
         if ($tool) {
             /** @var Chromium $tool **/
