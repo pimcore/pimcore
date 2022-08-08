@@ -98,9 +98,15 @@ pimcore.asset.audio = Class.create(pimcore.asset.asset, {
 
     getEditPanel: function () {
         if (!this.editPanel) {
+            let html = t('preview_not_available');
+
+            if (document.createElement('audio').canPlayType(this.data.mimetype)) {
+                html = '<audio controls><source src="' + this.data.path + this.data.filename + '" type="' + this.data.mimetype + '"></audio>';
+            }
+
             this.editPanel = new Ext.Panel({
                 title: t("preview"),
-                html: '<audio controls><source src="' + this.data.path + this.data.filename + '" type="' + this.data.mimetype + '"></audio>',
+                html: html,
                 bodyCls: "pimcore_panel_body_centered",
                 iconCls: "pimcore_material_icon_devices pimcore_material_icon"
             });
