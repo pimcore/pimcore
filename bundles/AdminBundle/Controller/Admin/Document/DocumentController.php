@@ -1167,9 +1167,8 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
         $tool = Chromium::class;
 
-        /** @var Chromium $tool */
-        $tool::convert($fromUrl, $fromFile);
-        $tool::convert($toUrl, $toFile);
+        Chromium::convert($fromUrl, $fromFile);
+        Chromium::convert($toUrl, $toFile);
 
         $image1 = new Imagick($fromFile);
         $image2 = new Imagick($toFile);

@@ -668,10 +668,8 @@ class Service extends Model\Element\Service
 
         File::mkdir(dirname($file));
 
-        $tool = Chromium::class;
 
-        /** @var Chromium $tool **/
-        if ($tool::convert($url, $tmpFile)) {
+        if (Chromium::convert($url, $tmpFile)) {
             $im = \Pimcore\Image::getInstance();
             $im->load($tmpFile);
             $im->scaleByWidth(800);
