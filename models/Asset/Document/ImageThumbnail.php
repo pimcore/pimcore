@@ -105,20 +105,20 @@ final class ImageThumbnail
                 Logger::error("Couldn't create image-thumbnail of document " . $this->asset->getRealFullPath());
                 Logger::error($e->getMessage());
             }
-
-            if (empty($this->pathReference)) {
-                $this->pathReference = [
-                    'type' => 'error',
-                    'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',
-                ];
-            }
-
-            $event = new GenericEvent($this, [
-                'deferred' => $deferred,
-                'generated' => $generated,
-            ]);
-            \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::DOCUMENT_IMAGE_THUMBNAIL);
         }
+
+        if (empty($this->pathReference)) {
+            $this->pathReference = [
+                'type' => 'error',
+                'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',
+            ];
+        }
+
+        $event = new GenericEvent($this, [
+            'deferred' => $deferred,
+            'generated' => $generated,
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::DOCUMENT_IMAGE_THUMBNAIL);
     }
 
     /**
