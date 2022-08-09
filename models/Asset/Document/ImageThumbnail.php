@@ -81,13 +81,13 @@ final class ImageThumbnail
      */
     public function generate($deferredAllowed = true)
     {
+        $deferred = $deferredAllowed && $this->deferred;
         $generated = false;
 
         if ($this->asset && empty($this->pathReference)) {
             $config = $this->getConfig();
             $cacheFileStream = null;
             $config->setFilenameSuffix('page-' . $this->page);
-            $deferred = $deferredAllowed && $this->deferred;
 
             try {
                 if (!$deferred) {
