@@ -1,6 +1,7 @@
 # Upgrade Notes
 ## 11.0.0
 - [Image Optimizer] Removed all the Image Optimizer services (e.g. PngCrushOptimizer, JpegoptimOptimizer etc.) as image optimization is done by the new package spatie/image-optimizer. 
+- Removed deprecated JS functions (`ts()` and `pimcore.helpers.addCsrfTokenToUrl()`)
 - [DocType] staticGeneratorEnabled is now a boolean instead of an integer
 
 ## 10.5.0

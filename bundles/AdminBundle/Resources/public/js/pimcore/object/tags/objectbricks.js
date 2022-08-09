@@ -266,7 +266,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                         // this is especially for localized fields which get aggregated here into one field definition
                         // in the case that there are more than one localized fields in the class definition
                         // see also ClassDefinition::extractDataDefinitions();
-                        if(typeof dataFields[name]["addReferencedField"]){
+                        if (typeof dataFields[name]['addReferencedField'] === 'function') {
                             dataFields[name].addReferencedField(field);
                         }
                     } else {
