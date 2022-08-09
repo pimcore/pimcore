@@ -542,9 +542,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
         $code .= $this->getPreGetValueHookCode($key);
 
-        // TODO Pimcore 11: remove method_exists BC layer
         // TODO else part should not be needed at all as preGetData is always there
-        // if ($this instanceof PreGetDataInterface || method_exists($this, 'preGetData')) {
+        // if ($this instanceof PreGetDataInterface) {
         $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
 //        } else {
 //            $code .= "\t" . '$data = $this->' . $key . ";\n";
@@ -641,8 +640,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
                 if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                        //TODO Pimcore 11: remove method_exists BC layer
-                        if ($fd instanceof IdRewriterInterface || method_exists($fd, 'rewriteIds')) {
+                        if ($fd instanceof IdRewriterInterface) {
                             $d = $fd->rewriteIds($item, $idMapping, $params);
                             $setter = 'set' . ucfirst($fd->getName());
                             $item->$setter($d);
@@ -680,8 +678,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                     $fieldDefinition = $definition->getFieldDefinitions();
 
                     foreach ($fieldDefinition as $fd) {
-                        //TODO Pimcore 11 remove method_exists call
-                        if (!$fd instanceof DataContainerAwareInterface && method_exists($fd, 'classSaved')) {
+                        if (!$fd instanceof DataContainerAwareInterface) {
                             // defer creation
                             $fd->classSaved($class);
                         }
