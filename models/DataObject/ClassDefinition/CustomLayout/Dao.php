@@ -38,27 +38,11 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
 
-        // @deprecated legacy will be removed in Pimcore 11
-        $loadLegacyConfigCallback = function ($legacyRepo, &$dataSource) {
-            $file = PIMCORE_CUSTOMLAYOUT_DIRECTORY . '/custom_definition_'. $this->model->getId() .'.php';
-            if (is_file($file)) {
-                $content = @include $file;
-                if ($content instanceof Model\DataObject\ClassDefinition\CustomLayout) {
-                    $dataSource = LocationAwareConfigRepository::LOCATION_LEGACY;
-
-                    return $content;
-                }
-            }
-
-            return null;
-        };
-
         parent::configure([
             'containerConfig' => $config['objects']['custom_layout']['definitions'],
             'settingsStoreScope' => 'pimcore_object_custom_layout',
             'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_OBJECT_CUSTOM_LAYOUTS'] ?? PIMCORE_CONFIGURATION_DIRECTORY  . '/object-custom-layouts',
             'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_OBJECT_CUSTOM_LAYOUTS',
-            'loadLegacyConfigCallback' => $loadLegacyConfigCallback
         ]);
     }
 

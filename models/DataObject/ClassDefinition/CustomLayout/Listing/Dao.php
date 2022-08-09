@@ -73,36 +73,4 @@ class Dao extends Model\DataObject\ClassDefinition\CustomLayout\Dao
             return 0;
         }
     }
-
-    /**
-     * @deprecated
-     *
-     * @return array
-     */
-    protected function loadIdList(): array
-    {
-        $list = parent::loadIdList();
-
-        return array_merge($list, array_keys($this->loadLegacyConfigs()));
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return array
-     */
-    private function loadLegacyConfigs(): array
-    {
-        $files = glob(PIMCORE_CUSTOMLAYOUT_DIRECTORY . '/*.php');
-
-        $layouts = [];
-        foreach ($files as $file) {
-            $layout = @include $file;
-            if ($layout instanceof Model\DataObject\ClassDefinition\CustomLayout) {
-                $layouts[$layout->getId()] = $layout->getObjectVars();
-            }
-        }
-
-        return $layouts;
-    }
 }
