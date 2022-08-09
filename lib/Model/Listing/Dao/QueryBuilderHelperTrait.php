@@ -16,7 +16,6 @@
 namespace Pimcore\Model\Listing\Dao;
 
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\DBAL\Query\QueryBuilder as DoctrineQueryBuilder;
 use Pimcore\Model\DataObject;
 
 /**
@@ -29,19 +28,12 @@ trait QueryBuilderHelperTrait
      */
     protected $onCreateQueryBuilderCallback;
 
-    /**
-     * @param callable|null $callback
-     */
     public function onCreateQueryBuilder(?callable $callback): void
     {
         $this->onCreateQueryBuilderCallback = $callback;
     }
 
-    /**
-     * @param DoctrineQueryBuilder $queryBuilder
-     * @param bool $join
-     */
-    protected function applyListingParametersToQueryBuilder(QueryBuilder $queryBuilder, bool $join = false): void
+    protected function applyListingParametersToQueryBuilder(QueryBuilder $queryBuilder): void
     {
         $this->applyConditionsToQueryBuilder($queryBuilder);
         $this->applyGroupByToQueryBuilder($queryBuilder);
@@ -120,16 +112,13 @@ trait QueryBuilderHelperTrait
         }
     }
 
-    /**
-     * @param DoctrineQueryBuilder $queryBuilder
-     */
     private function applyLimitToQueryBuilder(QueryBuilder $queryBuilder): void
     {
         $queryBuilder->setFirstResult($this->model->getOffset());
         $queryBuilder->setMaxResults($this->model->getLimit());
     }
 
-    protected function prepareQueryBuilderForTotalCount(DoctrineQueryBuilder &$queryBuilder): void
+    protected function prepareQueryBuilderForTotalCount(QueryBuilder &$queryBuilder): void
     {
         $originalSelect = $queryBuilder->getQueryPart('select');
         $queryBuilder->select('COUNT(*)');
@@ -142,23 +131,17 @@ trait QueryBuilderHelperTrait
                 $queryBuilder->distinct();
             }
 
-            if ($this->isQueryBuilderPartinUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartinUse($queryBuilder, 'having')) {
+            if ($this->isQueryBuilderPartInUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartInUse($queryBuilder, 'having')) {
                 $queryBuilder->select(!empty($originalSelect) ? $originalSelect : '*');
                 $queryBuilder = 'SELECT COUNT(*) FROM (' . $queryBuilder . ') as XYZ';
-            } elseif ($this->isQueryBuilderPartinUse($queryBuilder, 'distinct')) {
+            } elseif ($this->isQueryBuilderPartInUse($queryBuilder, 'distinct')) {
                 $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';
                 $queryBuilder->select('COUNT(' . $countIdentifier . ') AS totalCount');
             }
         }
     }
 
-    /**
-     * @param DoctrineQueryBuilder $query
-     * @param string $part
-     *
-     * @return bool
-     */
-    protected function isQueryBuilderPartinUse($query, $part)
+    protected function isQueryBuilderPartInUse(QueryBuilder $query, string $part): bool
     {
         try {
             if ($query->getQueryPart($part)) {
