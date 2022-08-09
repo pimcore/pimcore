@@ -80,7 +80,7 @@ class ObjectBrickContainerClassBuilder implements ObjectBrickContainerClassBuild
             $cd .= '* @param \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickKey) . ' $' . $brickKey . "\n";
             $cd .= '* @return \\'.$namespace.'\\'.$className."\n";
             $cd .= '*/' . "\n";
-            $cd .= 'public function set' . ucfirst($brickKey) . '(' . '$' . $brickKey . ')' . "\n";
+            $cd .= 'public function set' . ucfirst($brickKey) . '(' . '$' . $brickKey . '): \\'.$namespace.'\\'.$className."\n";
             $cd .= '{' . "\n";
             $cd .= "\t" . '$this->' . $brickKey . ' = ' . '$' . $brickKey . ";\n";
             $cd .= "\t" . 'return $this' . ";\n";

@@ -686,7 +686,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . '(' . $typeDeclaration . '$' . $key . ')' . "\n";
+        $code .= 'public function set' . ucfirst($key) . '(' . $typeDeclaration . '$' . $key . '): \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
         $code .= '{' . "\n";
 
         if (
@@ -820,7 +820,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickClass->getKey()) . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . ')' . "\n";
+        $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . '): \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickClass->getKey()) . "\n";
         $code .= '{' . "\n";
 
         if (
@@ -948,7 +948,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($fieldcollectionDefinition->getKey()) . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . '(' . $typeDeclaration . '$' . $key . ')' . "\n";
+        $code .= 'public function set' . ucfirst($key) . '(' . $typeDeclaration . '$' . $key . '): \\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($fieldcollectionDefinition->getKey()) . "\n";
         $code .= '{' . "\n";
 
         if (
@@ -1075,7 +1075,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . ', $language = null)' . "\n";
+        $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . ', $language = null): \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
         $code .= '{' . "\n";
 
         if ($this->supportsDirtyDetection()) {
@@ -1155,7 +1155,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $code .= '* @return static'."\n";
         $code .= '*/' . "\n";
 
-        $code .= 'public function filterBy' . ucfirst($key) .' ($data, $operator = \'=\')' . "\n";
+        $code .= 'public function filterBy' . ucfirst($key) .' ($data, $operator = \'=\'): static' . "\n";
         $code .= '{' . "\n";
         $code .= "\t" . '$this->getClass()->getFieldDefinition("' . $key . '")->addListingFilter($this, $data, $operator);' . "\n";
         $code .= "\treturn " . '$this' . ";\n";
