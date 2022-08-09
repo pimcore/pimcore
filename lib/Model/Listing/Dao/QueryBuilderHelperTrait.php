@@ -118,7 +118,7 @@ trait QueryBuilderHelperTrait
         $queryBuilder->setMaxResults($this->model->getLimit());
     }
 
-    protected function prepareQueryBuilderForTotalCount(QueryBuilder &$queryBuilder): void
+    protected function prepareQueryBuilderForTotalCount(QueryBuilder $queryBuilder, string $identifierColumn): void
     {
         $originalSelect = $queryBuilder->getQueryPart('select');
         $queryBuilder->select('COUNT(*)');
@@ -126,18 +126,23 @@ trait QueryBuilderHelperTrait
         $queryBuilder->setMaxResults(null);
         $queryBuilder->setFirstResult(0);
 
-        if ($this instanceof DataObject\Listing\Dao) {
-            if (method_exists($this->model, 'addDistinct') && $this->model->addDistinct()) {
-                $queryBuilder->distinct();
-            }
+        if (method_exists($this->model, 'addDistinct') && $this->model->addDistinct()) {
+            $queryBuilder->distinct();
+        }
 
-            if ($this->isQueryBuilderPartInUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartInUse($queryBuilder, 'having')) {
-                $queryBuilder->select(!empty($originalSelect) ? $originalSelect : '*');
-                $queryBuilder = 'SELECT COUNT(*) FROM (' . $queryBuilder . ') as XYZ';
-            } elseif ($this->isQueryBuilderPartInUse($queryBuilder, 'distinct')) {
-                $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';
-                $queryBuilder->select('COUNT(' . $countIdentifier . ') AS totalCount');
-            }
+        if ($this->isQueryBuilderPartInUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartInUse($queryBuilder, 'having')) {
+            $queryBuilder->select(!empty($originalSelect) ? $originalSelect : '*');
+
+            // Rewrite to 'SELECT COUNT(*) FROM (' . $queryBuilder . ') XYZ'
+            $innerQuery = (string)$queryBuilder;
+            $queryBuilder
+                ->resetQueryParts()
+                ->select('COUNT(*)')
+                ->from('(' . $innerQuery . ')', 'XYZ')
+            ;
+        } elseif ($this->isQueryBuilderPartInUse($queryBuilder, 'distinct')) {
+            $countIdentifier = 'DISTINCT ' . $identifierColumn;
+            $queryBuilder->select('COUNT(' . $countIdentifier . ') AS totalCount');
         }
     }
 
