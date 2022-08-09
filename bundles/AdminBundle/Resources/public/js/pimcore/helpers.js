@@ -962,16 +962,6 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
     pimcore.helpers.uploadDialog(url, 'Filedata', success, failure);
 };
 
-/**
- * @deprecated
- */
-pimcore.helpers.addCsrfTokenToUrl = function (url) {
-    console.error('pimcore.helpers.addCsrfTokenToUrl() function is deprecated. It will be removed in Pimcore 11.');
-
-    // we don't use the CSRF token in the query string
-    return url;
-};
-
 pimcore.helpers.uploadDialog = function (url, filename, success, failure, description) {
 
     if (typeof success != "function") {

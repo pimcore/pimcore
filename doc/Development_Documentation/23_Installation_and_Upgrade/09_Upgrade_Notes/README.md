@@ -1,8 +1,8 @@
 # Upgrade Notes
 ## 11.0.0
-
 - [Image Optimizer] Removed all the Image Optimizer services (e.g. PngCrushOptimizer, JpegoptimOptimizer etc.) as image optimization is done by the new package spatie/image-optimizer. 
-  
+- Removed deprecated JS functions (`ts()` and `pimcore.helpers.addCsrfTokenToUrl()`)
+
 ## 10.5.0
 - [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`
 - [Listings] `JsonListing` class is deprecated. Please use `CallableFilterListingInterface`, `FilterListingTrait` and `CallableOrderListingInterface`, `OrderListingTrait` instead.
