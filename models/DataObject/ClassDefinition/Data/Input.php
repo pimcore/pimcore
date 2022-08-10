@@ -103,14 +103,14 @@ class Input extends Data implements
      *
      * @var bool
      */
-    public $unique;
+    public $unique = false;
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $showCharCount;
+    public $showCharCount = false;
 
     /**
      * @return string|int
@@ -286,7 +286,7 @@ class Input extends Data implements
      */
     public function setUnique($unique)
     {
-        $this->unique = $unique;
+        $this->unique = (bool) $unique;
     }
 
     /**
@@ -302,7 +302,7 @@ class Input extends Data implements
      */
     public function setShowCharCount($showCharCount)
     {
-        $this->showCharCount = $showCharCount;
+        $this->showCharCount = (bool) $showCharCount;
     }
 
     /**
