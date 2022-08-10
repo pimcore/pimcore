@@ -166,7 +166,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @param bool $excludeFromSearchIndex
      *
-     * @return self
+     * @return $this
      */
     public function setExcludeFromSearchIndex(bool $excludeFromSearchIndex)
     {

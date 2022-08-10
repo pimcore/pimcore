@@ -60,7 +60,7 @@ abstract class AbstractSearch implements OrderListFilterInterface
     /**
      * @param OrderListInterface $orderList
      *
-     * @return self
+     * @return $this
      */
     public function apply(OrderListInterface $orderList)
     {

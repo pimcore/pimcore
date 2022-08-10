@@ -39,7 +39,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\DataObject\Classificationstore\KeyGroupRelation[]|null $theList
      *
-     * @return static
+     * @return $this
      */
     public function setList($theList)
     {

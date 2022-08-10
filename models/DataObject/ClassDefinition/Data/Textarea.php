@@ -178,7 +178,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @param bool $excludeFromSearchIndex
      *
-     * @return self
+     * @return $this
      */
     public function setExcludeFromSearchIndex(bool $excludeFromSearchIndex)
     {

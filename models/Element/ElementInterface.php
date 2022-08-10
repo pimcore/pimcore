@@ -233,7 +233,7 @@ interface ElementInterface extends ModelInterface
     /**
      * @param int|null $versionCount
      *
-     * @return self
+     * @return $this
      */
     public function setVersionCount(?int $versionCount): self;
 

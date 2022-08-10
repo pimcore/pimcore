@@ -463,7 +463,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @param int|null $versionCount
      *
-     * @return ElementInterface
+     * @return $this
      */
     public function setVersionCount(?int $versionCount): ElementInterface
     {
