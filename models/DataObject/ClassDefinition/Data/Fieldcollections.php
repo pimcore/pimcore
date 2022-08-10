@@ -678,6 +678,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                     $fieldDefinition = $definition->getFieldDefinitions();
 
                     foreach ($fieldDefinition as $fd) {
+                        //TODO Pimcore 11 remove method_exists call
                         if (!$fd instanceof DataContainerAwareInterface && method_exists($fd, 'classSaved')) {
                             // defer creation
                             $fd->classSaved($class);
