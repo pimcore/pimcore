@@ -1290,9 +1290,11 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param mixed $definition
+     * @template T
      *
-     * @return mixed
+     * @param T $definition
+     *
+     * @return T
      */
     public static function cloneDefinition($definition)
     {
