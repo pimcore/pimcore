@@ -827,6 +827,12 @@ final class Configuration implements ConfigurationInterface
                                     ->integerNode('creationDate')->end()
                                     ->integerNode('modificationDate')->end()
                                     ->booleanNode('staticGeneratorEnabled')
+                                        ->beforeNormalization()
+                                            ->always()
+                                            ->then(function ($v) {
+                                                return (bool)$v;
+                                            })
+                                        ->end()
                                         ->defaultFalse()
                                     ->end()
                                 ->end()
