@@ -87,7 +87,7 @@ class Definition extends Model\AbstractModel
     /**
      * @param string $permission
      *
-     * @return Definition|null
+     * @return static|null
      *
      * @throws \Exception
      */
