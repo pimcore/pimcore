@@ -288,7 +288,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     /**
      * @internal
      *
-     * @param $fieldDefinition
+     * @param Data $fieldDefinition
      * @param array $context
      *
      * @return mixed
