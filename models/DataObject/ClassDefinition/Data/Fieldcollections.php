@@ -678,7 +678,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                     $fieldDefinition = $definition->getFieldDefinitions();
 
                     foreach ($fieldDefinition as $fd) {
-                        if (!$fd instanceof DataContainerAwareInterface) {
+                        if (!$fd instanceof DataContainerAwareInterface && method_exists($fd, 'classSaved')) {
                             // defer creation
                             $fd->classSaved($class);
                         }
