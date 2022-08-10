@@ -113,7 +113,7 @@ interface ElementInterface extends ModelInterface
     public function setUserOwner($userOwner);
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getUserModification();
 

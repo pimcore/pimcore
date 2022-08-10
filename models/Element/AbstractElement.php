@@ -167,7 +167,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getUserModification()
     {
