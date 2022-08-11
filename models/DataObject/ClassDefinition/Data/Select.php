@@ -134,7 +134,7 @@ class Select extends Data implements
     }
 
     /**
-     * @param int|null $columnLength
+     * @param int $columnLength
      *
      * @return $this
      */
@@ -241,11 +241,11 @@ class Select extends Data implements
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param string $data
+     * @param string|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -257,11 +257,11 @@ class Select extends Data implements
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param string $data
+     * @param string|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {

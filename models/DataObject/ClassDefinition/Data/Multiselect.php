@@ -82,7 +82,7 @@ class Multiselect extends Data implements
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $renderType;
 
@@ -91,7 +91,7 @@ class Multiselect extends Data implements
      *
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $optionsProviderClass;
 
@@ -100,7 +100,7 @@ class Multiselect extends Data implements
      *
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $optionsProviderData;
 
@@ -228,7 +228,7 @@ class Multiselect extends Data implements
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getRenderType()
     {
@@ -522,7 +522,7 @@ class Multiselect extends Data implements
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getOptionsProviderClass()
     {
@@ -530,7 +530,7 @@ class Multiselect extends Data implements
     }
 
     /**
-     * @param string $optionsProviderClass
+     * @param string|null $optionsProviderClass
      */
     public function setOptionsProviderClass($optionsProviderClass)
     {
@@ -538,7 +538,7 @@ class Multiselect extends Data implements
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getOptionsProviderData()
     {
@@ -546,7 +546,7 @@ class Multiselect extends Data implements
     }
 
     /**
-     * @param string $optionsProviderData
+     * @param string|null $optionsProviderData
      */
     public function setOptionsProviderData($optionsProviderData)
     {
