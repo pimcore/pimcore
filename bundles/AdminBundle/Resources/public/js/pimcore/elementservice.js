@@ -304,7 +304,7 @@ pimcore.elementservice.updateObject = function (id, values, callback) {
         url: Routing.generate('pimcore_admin_dataobject_dataobject_update'),
         method: "PUT",
         params: {
-            id: id,
+            id: Ext.encode(id),
             values: Ext.encode(values)
         },
         success: callback

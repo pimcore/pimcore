@@ -104,9 +104,9 @@ class DocType extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var null|int
+     * @var bool
      */
-    protected $staticGeneratorEnabled;
+    protected bool $staticGeneratorEnabled = false;
 
     /**
      * Static helper to retrieve an instance of Document\DocType by the given ID
@@ -325,17 +325,17 @@ class DocType extends Model\AbstractModel
     }
 
     /**
-     * @return null|int
+     * @return bool
      */
-    public function getStaticGeneratorEnabled(): ?int
+    public function getStaticGeneratorEnabled(): bool
     {
         return $this->staticGeneratorEnabled;
     }
 
     /**
-     * @param null|int $staticGeneratorEnabled
+     * @param bool $staticGeneratorEnabled
      */
-    public function setStaticGeneratorEnabled(?int $staticGeneratorEnabled): void
+    public function setStaticGeneratorEnabled(bool $staticGeneratorEnabled): void
     {
         $this->staticGeneratorEnabled = $staticGeneratorEnabled;
     }
