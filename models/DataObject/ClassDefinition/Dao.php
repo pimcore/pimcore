@@ -61,9 +61,9 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param string $name
      *
-     * @return string|null
+     * @return string
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getIdByName($name)
     {
