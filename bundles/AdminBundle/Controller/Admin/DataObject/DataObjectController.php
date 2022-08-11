@@ -999,15 +999,14 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function updateAction(Request $request)
     {
-
         $values = $this->decodeJson($request->get('values'));
 
         $ids = $this->decodeJson($request->get('id'));
 
-        if(is_array($ids)) {
+        if (is_array($ids)) {
             foreach ($ids as $id) {
                 $object = DataObject::getById((int)$id);
-                if(!$this->executeUpdateAction($object, $values)) {
+                if (!$this->executeUpdateAction($object, $values)) {
                     return $this->adminJson(['success' => false]);
                 }
             }
@@ -1214,9 +1213,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $list = new DataObject\Listing();
             $updatedObject->saveIndex($newIndex);
 
-            /*
-             * The cte and the limit are needed to order the data before the newIndex is set
-             */
+            // The cte and the limit are needed to order the data before the newIndex is set
             $db = Db::get();
             $db->executeStatement(
                 'UPDATE '.$list->getDao()->getTableName().' o,
@@ -1224,12 +1221,12 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                         SELECT newIndex, o_id
                         FROM (
                             With cte As (SELECT o_index, o_id FROM ' . $list->getDao()->getTableName() . ' WHERE o_parentId = ? AND o_id != ? AND o_type IN (\''.implode(
-                                "','", [
-                                    DataObject::OBJECT_TYPE_OBJECT,
-                                    DataObject::OBJECT_TYPE_VARIANT,
-                                    DataObject::OBJECT_TYPE_FOLDER,
-                                ]
-                            ).'\') ORDER BY o_index LIMIT '. $updatedObject->getParent()->getChildAmount() .')
+                    "','", [
+                        DataObject::OBJECT_TYPE_OBJECT,
+                        DataObject::OBJECT_TYPE_VARIANT,
+                        DataObject::OBJECT_TYPE_FOLDER,
+                    ]
+                ).'\') ORDER BY o_index LIMIT '. $updatedObject->getParent()->getChildAmount() .')
                             SELECT @n := IF(@n = ? - 1,@n + 2,@n + 1) AS newIndex, o_id
                             FROM cte,
                             (SELECT @n := -1) variable
