@@ -33,6 +33,17 @@
         }
     });
     ```
+- [Security] Enable New Security Authenticator and adapt your security.yaml as per changes [here](https://github.com/pimcore/demo/blob/11.x/config/packages/security.yaml) :
+```
+security:
+    enable_authenticator_manager: true
+```
+ - Points to consider when moving to new Authenticator:
+   - New authentication system works with password hasher factory instead of encoder factory.
+   - BruteforceProtectionHandler will be replaced with Login Throttling.
+   - Custom Guard Authenticator will be replaced with Http\Authenticator.
+
+
 - Replace deprecated JS functions
   - Use t() instead of ts()
   - Don't use pimcore.helpers.addCsrfTokenToUrl()
