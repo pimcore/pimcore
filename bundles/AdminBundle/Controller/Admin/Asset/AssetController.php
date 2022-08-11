@@ -833,7 +833,9 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             return $this->generateUrl('pimcore_admin_asset_getdocumentthumbnail', $params);
         }
 
-        return null;
+        if ($asset instanceof Asset) {
+            return $asset->getFallbackThumbnailUrl();
+        }
     }
 
     /**
@@ -1845,25 +1847,22 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $assets = [];
 
         foreach ($list as $asset) {
-            $thumbnailMethod = Asset\Service::getPreviewThumbnail($asset, [], true);
 
-            if (!empty($thumbnailMethod)) {
-                $filenameDisplay = $asset->getFilename();
-                if (strlen($filenameDisplay) > 32) {
-                    $filenameDisplay = substr($filenameDisplay, 0, 25) . '...' . \Pimcore\File::getFileExtension($filenameDisplay);
-                }
+            $filenameDisplay = $asset->getFilename();
+            if (strlen($filenameDisplay) > 32) {
+                $filenameDisplay = substr($filenameDisplay, 0, 25) . '...' . \Pimcore\File::getFileExtension($filenameDisplay);
+            }
 
-                // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
-                if ($asset->isAllowed('list')) {
-                    $assets[] = [
-                        'id' => $asset->getId(),
-                        'type' => $asset->getType(),
-                        'filename' => $asset->getFilename(),
-                        'filenameDisplay' => htmlspecialchars($filenameDisplay),
-                        'url' => $this->getThumbnailUrl($asset),
-                        'idPath' => $data['idPath'] = Element\Service::getIdPath($asset),
-                    ];
-                }
+            // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
+            if ($asset->isAllowed('list')) {
+                $assets[] = [
+                    'id' => $asset->getId(),
+                    'type' => $asset->getType(),
+                    'filename' => $asset->getFilename(),
+                    'filenameDisplay' => htmlspecialchars($filenameDisplay),
+                    'url' => $this->getThumbnailUrl($asset),
+                    'idPath' => $data['idPath'] = Element\Service::getIdPath($asset),
+                ];
             }
         }
 

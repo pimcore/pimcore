@@ -153,6 +153,9 @@ class Asset extends Element\AbstractElement
      */
     protected $dataChanged = false;
 
+    protected string $fallbackThumbnail = '/bundles/pimcoreadmin/img/filetype-not-supported.svg';
+
+
     /**
      * {@inheritdoc}
      */
@@ -879,6 +882,16 @@ class Asset extends Element\AbstractElement
         }
 
         return $path;
+    }
+
+    /**
+     * Returns the path of a fallback thumbnail
+     *
+     * @return string
+     *
+     */
+    public function getFallbackThumbnailUrl(){
+        return $this->fallbackThumbnail;
     }
 
     /**
