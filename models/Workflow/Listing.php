@@ -15,9 +15,9 @@
 
 namespace Pimcore\Model\Workflow;
 
+use Pimcore\Model\AbstractModel;
 use Pimcore\Model\Listing\CallableFilterListingInterface;
 use Pimcore\Model\Listing\CallableOrderListingInterface;
-use Pimcore\Model\Listing\JsonListing;
 use Pimcore\Model\Listing\Traits\FilterListingTrait;
 use Pimcore\Model\Listing\Traits\OrderListingTrait;
 use Pimcore\Model\Workflow;
@@ -25,7 +25,7 @@ use Pimcore\Model\Workflow;
 /**
  * @method Workflow\Listing\Dao getDao()
  */
-class Listing extends JsonListing implements CallableFilterListingInterface, CallableOrderListingInterface
+class Listing extends AbstractModel implements CallableFilterListingInterface, CallableOrderListingInterface
 {
     use FilterListingTrait;
     use OrderListingTrait;
