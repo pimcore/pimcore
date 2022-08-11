@@ -1407,16 +1407,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     {
         $key = $this->getName();
 
-        $typeDeclaration = '';
-        if ($class->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
-            $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
-        }
-
         $code = '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . '()' . $typeDeclaration . "\n";
+        $code .= 'public function get' . ucfirst($key) . '()' . "\n";
         $code .= '{' . "\n";
 
         $code .= $this->getPreGetValueHookCode($key);
