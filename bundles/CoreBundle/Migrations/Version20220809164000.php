@@ -37,7 +37,7 @@ final class Version20220809164000 extends AbstractMigration
             $dataArray = json_decode($docType['data'], true);
             $dataArray['staticGeneratorEnabled'] = (bool) $dataArray['staticGeneratorEnabled'];
             $docType['data'] = json_encode($dataArray);
-            $this->addSql('UPDATE `settings_store` SET data = :data WHERE id = :id', $docType);
+            $this->addSql("UPDATE `settings_store` SET data = :data WHERE id = :id AND scope = 'pimcore_document_types'", $docType);
         }
     }
 
@@ -50,7 +50,7 @@ final class Version20220809164000 extends AbstractMigration
             $dataArray = json_decode($docType['data'], true);
             $dataArray['staticGeneratorEnabled'] = (int) $dataArray['staticGeneratorEnabled'];
             $docType['data'] = json_encode($dataArray);
-            $this->addSql('UPDATE `settings_store` SET data = :data WHERE id = :id', $docType);
+            $this->addSql("UPDATE `settings_store` SET data = :data WHERE id = :id AND scope = 'pimcore_document_types'", $docType);
         }
     }
 }
