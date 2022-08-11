@@ -257,6 +257,10 @@ pimcore.object.tree = Class.create({
 
     onTreeNodesDrop: function (node, data, overModel, dropPosition, eOpts) {
 
+        if (typeof this.treeNodeMoveParameter.oldParent.getOwnerTree !== "function") {
+            return;
+        }
+
         let tree = this.treeNodeMoveParameter.oldParent.getOwnerTree();
 
         let pageOffset = 0;
