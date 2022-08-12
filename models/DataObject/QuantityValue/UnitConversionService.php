@@ -26,8 +26,6 @@ class UnitConversionService implements ServiceSubscriberInterface
 {
     use ServiceSubscriberTrait;
 
-    private static array $services = [];
-
     public function __construct(ContainerInterface $container)
     {
         $this->setContainer($container);
