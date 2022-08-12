@@ -20,17 +20,17 @@ use Pimcore\Model\DataObject\Data\QuantityValue;
 use Pimcore\Model\Exception\UnsupportedException;
 use Psr\Container\ContainerInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
+use Symfony\Contracts\Service\ServiceSubscriberTrait;
 
 class UnitConversionService implements ServiceSubscriberInterface
 {
-    /** @var ContainerInterface */
-    private $container;
+    use ServiceSubscriberTrait;
+
     private static array $services = [];
 
-    public function __construct(ContainerInterface $container, $services = [])
+    public function __construct(ContainerInterface $container)
     {
-        $this->container = $container;
-        self::$services = $services;
+        $this->setContainer($container);
     }
 
     /**
@@ -56,6 +56,7 @@ class UnitConversionService implements ServiceSubscriberInterface
         }
         $converterServiceName = $baseUnit->getConverter();
 
+        dd($this->container);
         if ($converterServiceName) {
             $converterService = $this->container->get($converterServiceName);
         } else {
@@ -69,11 +70,10 @@ class UnitConversionService implements ServiceSubscriberInterface
         return $converterService->convert($quantityValue, $toUnit);
     }
 
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
-        return array_merge(self::$services, [
-            \Pimcore\Model\DataObject\QuantityValue\QuantityValueConverterInterface::class,
-            \Pimcore\Model\DataObject\QuantityValue\DefaultConverter::class
-        ]);
+        return [
+
+        ];
     }
 }
