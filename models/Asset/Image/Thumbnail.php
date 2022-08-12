@@ -54,7 +54,7 @@ final class Thumbnail
      *
      * @return string
      */
-    public function getPath($deferredAllowed = true, $cacheBuster = false)
+    public function getPath($deferredAllowed = true, $cacheBuster = false, $forceFrontend = false)
     {
         $pathReference = null;
         if ($this->getConfig()) {
@@ -72,7 +72,7 @@ final class Thumbnail
             $pathReference = $this->getPathReference($deferredAllowed);
         }
 
-        $path = $this->convertToWebPath($pathReference);
+        $path = $this->convertToWebPath($pathReference, $forceFrontend);
 
         if ($cacheBuster) {
             $path = $this->addCacheBuster($path, ['cacheBuster' => true], $this->getAsset());

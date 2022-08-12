@@ -320,12 +320,12 @@ trait ImageThumbnailTrait
      *
      * @return string|null
      */
-    protected function convertToWebPath(array $pathReference): ?string
+    protected function convertToWebPath(array $pathReference, $forceFrontend = false): ?string
     {
         $type = $pathReference['type'] ?? null;
         $path = $pathReference['src'] ?? null;
 
-        if (Tool::isFrontend()) {
+        if (Tool::isFrontend() || $forceFrontend) {
             if ($type === 'data-uri') {
                 return $path;
             } elseif ($type === 'deferred') {
