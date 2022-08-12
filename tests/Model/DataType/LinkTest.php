@@ -88,12 +88,11 @@ class LinkTest extends ModelTestCase
      */
     public function testCheckValidity()
     {
+        $this->expectError();
+
         $linkObject = $this->createLinkObject();
         $linkObject->setTestlink('https://pimcore.com/');
         $linkObject->setLtestlink('https://pimcore.com/');
-
-        $this->expectException(ValidationException::class);
-        $this->expectExceptionMessage('Expected DataObject\\Data\\Link or null');
 
         $linkObject->save();
     }
