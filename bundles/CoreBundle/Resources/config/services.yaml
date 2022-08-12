@@ -209,8 +209,13 @@ services:
     Pimcore\Translation\TranslationEntriesDumper: ~
 
     Pimcore\Model\DataObject\QuantityValue\UnitConversionService:
+        arguments:
+            - '@Psr\Container\ContainerInterface'
+            -
+                - Pimcore\Model\DataObject\QuantityValue\QuantityValueConverterInterface
+    Pimcore\Model\DataObject\QuantityValue\DefaultConverter:
         public: true
-
+        autowire: true
     Pimcore\Model\DataObject\QuantityValue\QuantityValueConverterInterface:
         public: true
         class: Pimcore\Model\DataObject\QuantityValue\DefaultConverter

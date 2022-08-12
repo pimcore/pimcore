@@ -19,15 +19,18 @@ use Pimcore\Model\DataObject\Data\AbstractQuantityValue;
 use Pimcore\Model\DataObject\Data\QuantityValue;
 use Pimcore\Model\Exception\UnsupportedException;
 use Psr\Container\ContainerInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 
-class UnitConversionService
+class UnitConversionService implements ServiceSubscriberInterface
 {
     /** @var ContainerInterface */
     private $container;
+    private static array $services = [];
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, $services = [])
     {
         $this->container = $container;
+        self::$services = $services;
     }
 
     /**
@@ -64,5 +67,13 @@ class UnitConversionService
         }
 
         return $converterService->convert($quantityValue, $toUnit);
+    }
+
+    public static function getSubscribedServices()
+    {
+        return array_merge(self::$services, [
+            \Pimcore\Model\DataObject\QuantityValue\QuantityValueConverterInterface::class,
+            \Pimcore\Model\DataObject\QuantityValue\DefaultConverter::class
+        ]);
     }
 }
