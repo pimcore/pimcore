@@ -26,6 +26,4 @@ class Audio extends Model\Asset
      * {@inheritdoc}
      */
     protected $type = 'audio';
-
-    protected string $fallbackThumbnail = '/bundles/pimcoreadmin/img/flat-color-icons/speaker.svg';
 }

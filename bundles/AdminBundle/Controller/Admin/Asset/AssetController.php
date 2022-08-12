@@ -833,8 +833,12 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             return $this->generateUrl('pimcore_admin_asset_getdocumentthumbnail', $params);
         }
 
+        if ($asset instanceof Asset\Folder) {
+            return '/bundles/pimcoreadmin/img/flat-color-icons/speaker.svg';
+        }
+
         if ($asset instanceof Asset) {
-            return $asset->getFallbackThumbnailUrl();
+            return '/bundles/pimcoreadmin/img/filetype-not-supported.svg';
         }
     }
 
