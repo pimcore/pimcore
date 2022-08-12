@@ -56,7 +56,6 @@ class UnitConversionService implements ServiceSubscriberInterface
         }
         $converterServiceName = $baseUnit->getConverter();
 
-        dd($this->container);
         if ($converterServiceName) {
             $converterService = $this->container->get($converterServiceName);
         } else {
