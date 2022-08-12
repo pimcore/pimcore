@@ -25,5 +25,5 @@ Please read this [page](./01_Dynamic_Text_Labels.md) for further details.
 Please read this [page](./02_Preview_Iframe.md) for further details.
 
 Pimcore uses Ext JS layout components for all object layout elements. For a deeper understanding of the layout elements, 
-please have a look at the [Ext JS documentation pages](http://docs.sencha.com/extjs/6.0/6.0.1-classic/) and 
+please have a look at the [Ext JS documentation pages](https://docs.sencha.com/extjs/7.0.0/classic/Ext.html) and 
 [examples](http://www.sencha.com/products/js/).

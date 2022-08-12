@@ -15,6 +15,12 @@ pimcore.registerNS("pimcore.object.tree");
 pimcore.object.tree = Class.create({
 
     treeDataUrl: null,
+    treeNodeMoveParameter: {
+        nodes: [],
+        oldParent: {},
+        newParent: {},
+        indices: []
+    },
 
     initialize: function (config, perspectiveCfg) {
         this.treeDataUrl = Routing.generate('pimcore_admin_dataobject_dataobject_treegetchildsbyid');
@@ -187,7 +193,8 @@ pimcore.object.tree = Class.create({
                 // add the parent path as an additional diagnostic parameter
                 // can be used by bundles that work with dynamic children nodes
                 store.proxy.setExtraParam('parentPath', operation.node.data.path)
-            }
+            },
+            "drop": this.onTreeNodesDrop.bind(this)
         };
 
         return treeNodeListeners;
@@ -242,32 +249,62 @@ pimcore.object.tree = Class.create({
     },
 
     onTreeNodeMove: function (node, oldParent, newParent, index, eOpts ) {
-        var tree = oldParent.getOwnerTree();
+        this.treeNodeMoveParameter.nodes.push(node);
+        this.treeNodeMoveParameter.oldParent = oldParent;
+        this.treeNodeMoveParameter.newParent = newParent;
+        this.treeNodeMoveParameter.indices.push(index);
+    },
 
-        var pageOffset = 0;
-        if (node.parentNode.pagingData) {
-            pageOffset = node.parentNode.pagingData.offset;
+    onTreeNodesDrop: function (node, data, overModel, dropPosition, eOpts) {
+
+        if (typeof this.treeNodeMoveParameter.oldParent.getOwnerTree !== "function") {
+            return;
         }
 
-        pimcore.elementservice.updateObject(node.data.id, {
-            parentId: newParent.data.id,
-            index: index + pageOffset,
-        }, function (newParent, oldParent, tree, response) {
-            try{
-                var rdata = Ext.decode(response.responseText);
+        let tree = this.treeNodeMoveParameter.oldParent.getOwnerTree();
+
+        let pageOffset = 0;
+        let ids = [];
+        let indices = {};
+
+        for (let i = 0; i < this.treeNodeMoveParameter.nodes.length; i++) {
+            pageOffset = 0
+
+            if (this.treeNodeMoveParameter.nodes[i].parentNode.pagingData) {
+                pageOffset = this.treeNodeMoveParameter.nodes[i].parentNode.pagingData.offset;
+            }
+
+            ids.push(this.treeNodeMoveParameter.nodes[i].data.id);
+
+            indices[ids[i]] = this.treeNodeMoveParameter.indices[i] + pageOffset;
+        }
+
+        if(ids.length === 1) {
+            ids = ids[0];
+            indices = indices[ids];
+        }
+
+        pimcore.elementservice.updateObject(ids, {
+            parentId: this.treeNodeMoveParameter.newParent.data.id,
+            indices: indices,
+        }, function (nodes, newParent, oldParent, tree, response) {
+            try {
+                const rdata = Ext.decode(response.responseText);
                 if (rdata && rdata.success) {
                     // set new pathes
-                    var newBasePath = newParent.data.path;
+                    let newBasePath = newParent.data.path;
                     if (newBasePath == "/") {
                         newBasePath = "";
                     }
-                    node.data.basePath = newBasePath;
-                    node.data.path = node.data.basePath + "/" + node.data.text;
+                    nodes.map(node => {
+                        node.data.basePath = newBasePath;
+                        node.data.path = node.data.basePath + "/" + node.data.text;
+                    });
                     pimcore.elementservice.nodeMoved("object", oldParent, newParent);
-                }  else {
+                } else {
                     tree.loadMask.hide();
                     pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"),
-                        "error",t(rdata.message));
+                        "error", t(rdata.message));
                     // we have to delay refresh between two nodes,
                     // as there could be parent child relationship leading to race condition
                     window.setTimeout(function () {
@@ -275,7 +312,7 @@ pimcore.object.tree = Class.create({
                     }, 500);
                     pimcore.elementservice.refreshNode(newParent);
                 }
-            } catch(e){
+            } catch (e) {
                 tree.loadMask.hide();
                 pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"), "error");
                 // we have to delay refresh between two nodes,
@@ -287,7 +324,14 @@ pimcore.object.tree = Class.create({
             }
             tree.loadMask.hide();
 
-        }.bind(this, newParent, oldParent, tree));
+            this.treeNodeMoveParameter =  {
+                nodes: [],
+                oldParent: {},
+                newParent: {},
+                indices: []
+            };
+
+        }.bind(this, this.treeNodeMoveParameter.nodes, this.treeNodeMoveParameter.newParent, this.treeNodeMoveParameter.oldParent, tree));
     },
 
     onTreeNodeBeforeMove: function (node, oldParent, newParent, index, eOpts ) {
