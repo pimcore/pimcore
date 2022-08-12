@@ -72,7 +72,8 @@ class UnitConversionService implements ServiceSubscriberInterface
     public static function getSubscribedServices(): array
     {
         return [
-
+            QuantityValueConverterInterface::class,
+            DefaultConverter::class
         ];
     }
 }
