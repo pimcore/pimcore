@@ -3,6 +3,7 @@
 - [Image Optimizer] Removed all the Image Optimizer services (e.g. PngCrushOptimizer, JpegoptimOptimizer etc.) as image optimization is done by the new package spatie/image-optimizer. 
 - Removed deprecated JS functions (`ts()` and `pimcore.helpers.addCsrfTokenToUrl()`)
 - [DocType] staticGeneratorEnabled is now a boolean instead of an integer
+- [Listings] Removed `JsonListing`, please see [#12877](https://github.com/pimcore/pimcore/pull/12877) for details.
 
 ## 10.5.0
 - [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`
