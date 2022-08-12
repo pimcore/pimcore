@@ -194,7 +194,8 @@
     "psr-4": {
       "Pimcore\\Model\\": "models",
       "Pimcore\\": "lib",
-      "Pimcore\\Bundle\\": "bundles"
+      "Pimcore\\Bundle\\": "bundles",
+      "Pimcore\\Bundle\\AdminBundle\\": "bundles/AdminBundle/src/"
     },
     "classmap": [
       "lib/Pimcore.php"

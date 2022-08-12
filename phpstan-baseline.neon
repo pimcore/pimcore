@@ -3,17 +3,17 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$target of method Pimcore\\\\Model\\\\DataObject\\\\Service\\:\\:copyContents\\(\\) expects Pimcore\\\\Model\\\\DataObject\\\\Concrete, Pimcore\\\\Model\\\\DataObject\\|null given\\.$#"
 			count: 1
-			path: bundles/AdminBundle/Controller/Admin/DataObject/DataObjectController.php
+			path: bundles/AdminBundle/src/Controller/Admin/DataObject/DataObjectController.php
 
 		-
 			message: "#^Offset 'image' on array\\{\\} in empty\\(\\) does not exist\\.$#"
 			count: 1
-			path: bundles/AdminBundle/GDPR/DataProvider/DataObjects.php
+			path: bundles/AdminBundle/src/GDPR/DataProvider/DataObjects.php
 
 		-
 			message: "#^Offset 'object' on array\\{\\} in empty\\(\\) does not exist\\.$#"
 			count: 1
-			path: bundles/AdminBundle/GDPR/DataProvider/DataObjects.php
+			path: bundles/AdminBundle/src/GDPR/DataProvider/DataObjects.php
 
 		-
 			message: "#^Negated boolean expression is always false\\.$#"
