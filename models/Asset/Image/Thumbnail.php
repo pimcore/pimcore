@@ -72,7 +72,8 @@ final class Thumbnail
             $pathReference = $this->getPathReference($deferredAllowed);
         }
 
-        $path = $this->convertToWebPath($pathReference, $forceFrontend);
+        $frontend = Tool::isFrontend() || $forceFrontend;
+        $path = $this->convertToWebPath($pathReference, $frontend);
 
         if ($cacheBuster) {
             $path = $this->addCacheBuster($path, ['cacheBuster' => true], $this->getAsset());

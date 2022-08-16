@@ -320,12 +320,12 @@ trait ImageThumbnailTrait
      *
      * @return string|null
      */
-    protected function convertToWebPath(array $pathReference, $forceFrontend = false): ?string
+    protected function convertToWebPath(array $pathReference, bool $frontend): ?string
     {
         $type = $pathReference['type'] ?? null;
         $path = $pathReference['src'] ?? null;
 
-        if (Tool::isFrontend() || $forceFrontend) {
+        if ($frontend) {
             if ($type === 'data-uri') {
                 return $path;
             } elseif ($type === 'deferred') {
@@ -350,7 +350,7 @@ trait ImageThumbnailTrait
      */
     public function getFrontendPath(): string
     {
-        $path = $this->getPath();
+        $path = $this->getPath(true, false, true);
         if (!\preg_match('@^(https?|data):@', $path)) {
             $path = \Pimcore\Tool::getHostUrl() . $path;
         }

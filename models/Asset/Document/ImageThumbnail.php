@@ -61,10 +61,12 @@ final class ImageThumbnail
      *
      * @return string
      */
-    public function getPath($deferredAllowed = true)
+    public function getPath($deferredAllowed = true, $forceFrontend = false)
     {
         $pathReference = $this->getPathReference($deferredAllowed);
-        $path = $this->convertToWebPath($pathReference);
+
+        $frontend = Tool::isFrontend() || $forceFrontend;
+        $path = $this->convertToWebPath($pathReference, $frontend);
 
         $event = new GenericEvent($this, [
             'pathReference' => $pathReference,
