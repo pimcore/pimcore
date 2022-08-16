@@ -23,7 +23,7 @@ pimcore.object.classes.data.quantityValueRange = Class.create(pimcore.object.cla
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true,
-        classificationstore: true,
+        classificationstore: false,
         block: true,
     },
 

@@ -24,7 +24,7 @@ pimcore.object.classes.data.numericRange = Class.create(pimcore.object.classes.d
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true,
-        classificationstore : true,
+        classificationstore : false,
         block: true,
         encryptedField: true,
     },

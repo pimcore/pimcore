@@ -24,7 +24,7 @@ pimcore.object.classes.data.dateRange = Class.create(pimcore.object.classes.data
         objectbrick: true,
         fieldcollection: true,
         localizedfield: true,
-        classificationstore : true,
+        classificationstore : false,
         block: true,
         encryptedField: true,
     },
