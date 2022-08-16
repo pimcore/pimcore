@@ -65,7 +65,7 @@ final class ImageThumbnail
     {
         $pathReference = $this->getPathReference($deferredAllowed);
 
-        $frontend = Tool::isFrontend() || $forceFrontend;
+        $frontend = \Pimcore\Tool::isFrontend() || $forceFrontend;
         $path = $this->convertToWebPath($pathReference, $frontend);
 
         $event = new GenericEvent($this, [

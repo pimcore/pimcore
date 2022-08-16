@@ -72,7 +72,7 @@ final class Thumbnail
             $pathReference = $this->getPathReference($deferredAllowed);
         }
 
-        $frontend = Tool::isFrontend() || $forceFrontend;
+        $frontend = \Pimcore\Tool::isFrontend() || $forceFrontend;
         $path = $this->convertToWebPath($pathReference, $frontend);
 
         if ($cacheBuster) {
