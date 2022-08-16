@@ -42,11 +42,6 @@ final class Tool
     protected static $validLanguages = [];
 
     /**
-     * @var null
-     */
-    protected static $isFrontend = null;
-
-    /**
      * Sets the current request to operate on
      *
      * @param Request|null $request
