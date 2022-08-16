@@ -57,7 +57,7 @@ final class Property extends AbstractModel
     /**
      * @var bool
      */
-    protected $inheritable;
+    protected $inheritable = false;
 
     /**
      * @var bool
