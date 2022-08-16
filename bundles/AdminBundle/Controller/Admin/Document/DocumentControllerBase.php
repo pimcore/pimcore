@@ -351,7 +351,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         $doc = Model\Document\PageSnippet::getById((int) $request->get('id'));
         if ($doc instanceof Model\Document\PageSnippet) {
             $doc->setEditables([]);
-            $doc->setContentMasterDocumentId($request->get('contentMasterDocumentPath'),true);
+            $doc->setContentMasterDocumentId($request->get('contentMasterDocumentPath'), true);
             $doc->saveVersion();
         }
 
