@@ -594,8 +594,7 @@ class SettingsController extends AdminController
     {
         $this->checkPermission('web2print_settings');
 
-        $values = Config::getWeb2PrintConfig();
-        $valueArray = $values->toArray();
+        $valueArray = Config::getWeb2PrintConfig();
 
         $optionsString = [];
         if ($valueArray['wkhtml2pdfOptions'] ?? false) {
@@ -1842,7 +1841,7 @@ class SettingsController extends AdminController
             ];
         } elseif ($adapter instanceof \Pimcore\Web2Print\Processor\HeadlessChrome) {
             $params = Config::getWeb2PrintConfig();
-            $params = $params->get('headlessChromeSettings');
+            $params = $params['headlessChromeSettings'];
             $params = json_decode($params, true);
         }
 

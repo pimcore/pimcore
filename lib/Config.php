@@ -430,7 +430,7 @@ final class Config implements ArrayAccess
     /**
      * @static
      *
-     * @return PimcoreConfig
+     * @return array
      *
      * @internal
      */
@@ -449,11 +449,11 @@ final class Config implements ArrayAccess
     /**
      * @static
      *
-     * @param PimcoreConfig $config
+     * @param array
      *
      * @internal
      */
-    public static function setWeb2PrintConfig(PimcoreConfig $config)
+    public static function setWeb2PrintConfig(array $config)
     {
         RuntimeCache::set('pimcore_config_web2print', $config);
     }
