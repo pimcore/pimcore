@@ -603,7 +603,7 @@ final class User extends User\UserRole
     }
 
     /**
-     * @return null|string
+     * @return string
      */
     public function getActivePerspective()
     {
