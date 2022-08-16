@@ -49,7 +49,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public $noteditable;
 
     /**
-     * @var int
+     * @var int|null
      */
     public $index;
 
@@ -353,7 +353,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getIndex()
     {
@@ -361,7 +361,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @param int $index
+     * @param int|null $index
      *
      * @return $this
      */
