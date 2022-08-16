@@ -211,11 +211,11 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param float $data
+     * @param string $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return float
+     * @return string
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
