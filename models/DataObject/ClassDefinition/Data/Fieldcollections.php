@@ -74,14 +74,14 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      *
      * @var bool
      */
-    public $collapsed;
+    public $collapsed = false;
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $collapsible;
+    public $collapsible = false;
 
     /**
      * @internal
@@ -757,7 +757,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function setCollapsed($collapsed)
     {
-        $this->collapsed = $collapsed;
+        $this->collapsed = (bool) $collapsed;
     }
 
     /**
@@ -773,7 +773,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function setCollapsible($collapsible)
     {
-        $this->collapsible = $collapsible;
+        $this->collapsible = (bool) $collapsible;
     }
 
     /**
