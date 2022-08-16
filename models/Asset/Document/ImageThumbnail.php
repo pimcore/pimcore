@@ -61,8 +61,11 @@ final class ImageThumbnail
      *
      * @return string
      */
-    public function getPath($deferredAllowed = true, $forceFrontend = false)
+    public function getPath($deferredAllowed = true, $cacheBuster = false, $forceFrontend = false)
     {
+        // $cacheBuster is currently unused, its just here to keep the function-signature of
+        // getPath() the same in Document\ImageThumbnail, Video\ImageThumbnail and Image\Thumbnail
+
         $pathReference = $this->getPathReference($deferredAllowed);
 
         $frontend = \Pimcore\Tool::isFrontend() || $forceFrontend;
