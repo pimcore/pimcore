@@ -46,7 +46,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      *
      * @var bool
      */
-    public $lazyLoading;
+    public $lazyLoading = false;
 
     /**
      * @internal
@@ -99,13 +99,13 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param  int|bool|null $lazyLoading
+     * @param bool $lazyLoading
      *
      * @return $this
      */
     public function setLazyLoading($lazyLoading)
     {
-        $this->lazyLoading = $lazyLoading;
+        $this->lazyLoading = (bool) $lazyLoading;
 
         return $this;
     }
