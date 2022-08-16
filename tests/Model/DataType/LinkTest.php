@@ -80,20 +80,4 @@ class LinkTest extends ModelTestCase
         $this->assertEquals($link->getDirect(), $linkObjectReloaded->getTestlink()->getDirect());
         $this->assertEquals($link->getDirect(), $linkObjectReloaded->getLtestlink()->getDirect());
     }
-
-    /**
-     * Verifies that Link data throws correct exceptions if invalid data is given
-     *
-     * @throws \Exception
-     */
-    public function testCheckValidity()
-    {
-        $this->expectError();
-
-        $linkObject = $this->createLinkObject();
-        $linkObject->setTestlink('https://pimcore.com/');
-        $linkObject->setLtestlink('https://pimcore.com/');
-
-        $linkObject->save();
-    }
 }
