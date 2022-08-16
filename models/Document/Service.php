@@ -244,7 +244,7 @@ class Service extends Model\Element\Service
 
         if ($enableInheritance && ($new instanceof Document\PageSnippet) && $new->supportsContentMaster()) {
             $new->setEditables([]);
-            $new->setContentMasterDocumentId($source->getId());
+            $new->setContentMasterDocumentId($source->getId(),true);
         }
 
         if ($language) {
