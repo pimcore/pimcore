@@ -21,7 +21,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Pimcore\Model\DataObject\ClassDefinition\Listing;
 
-final class Version20220816120101 extends AbstractMigration
+final class Version220816120101 extends AbstractMigration
 {
     /**
      * {@inheritDoc}
