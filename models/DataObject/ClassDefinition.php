@@ -552,7 +552,10 @@ final class ClassDefinition extends Model\AbstractModel
         $cd = '/**' . "\n";
         $cd .= ' * Inheritance: '.($this->getAllowInherit() ? 'yes' : 'no')."\n";
         $cd .= ' * Variants: '.($this->getAllowVariants() ? 'yes' : 'no')."\n";
-        $cd .= ' * Title: ' . $this->getTitle()."\n";
+
+        if ($title = $this->getTitle()) {
+            $cd .= ' * Title: ' . $title."\n";
+        }
 
         if ($description = $this->getDescription()) {
             $description = str_replace(['/**', '*/', '//'], '', $description);
