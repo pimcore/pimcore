@@ -1855,7 +1855,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $assets = [];
 
         foreach ($list as $asset) {
-
             $filenameDisplay = $asset->getFilename();
             if (strlen($filenameDisplay) > 32) {
                 $filenameDisplay = substr($filenameDisplay, 0, 25) . '...' . \Pimcore\File::getFileExtension($filenameDisplay);
