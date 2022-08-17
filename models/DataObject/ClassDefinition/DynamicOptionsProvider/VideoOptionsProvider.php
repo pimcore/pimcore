@@ -15,7 +15,9 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider;
 
-class VideoOptionsProvider implements SelectOptionsProviderInterface
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+
+class VideoOptionsProvider implements MultiSelectOptionsProviderInterface
 {
 
     public const TYPE_ASSET = 'asset';
@@ -44,4 +46,8 @@ class VideoOptionsProvider implements SelectOptionsProviderInterface
         return true;
     }
 
+    public function getDefaultValue($context, $fieldDefinition)
+    {
+        // TODO: Implement getDefaultValue() method.
+    }
 }

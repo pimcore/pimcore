@@ -439,6 +439,12 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return '@' . VideoOptionsProvider::class;
     }
 
+    public function setOptions($data){
+        if ($data) {
+            $this->setSupportedTypes($data);
+        }
+    }
+
     /**
      * { @inheritdoc }
      */
