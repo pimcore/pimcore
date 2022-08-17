@@ -235,13 +235,24 @@ class DocumentTest extends ModelTestCase
         $this->assertNull($childEditable);
 
         // set master document
-        $child->setContentMasterDocumentId($this->testPage->getId());
+        $child->setContentMasterDocumentId($this->testPage->getId(), true);
         $child->save();
         $child = Page::getById($child->getId(), ['force' => true]);
 
         // now the value should get inherited
         $childEditable = $child->getEditable('headline');
         $this->assertEquals('test', $childEditable->getValue());
+
+        // Don't set the master document if the document is already a part of the master document chain
+        $testFirstPage = TestHelper::createEmptyDocumentPage();
+        $testSecondPage = TestHelper::createEmptyDocumentPage();
+        $testFirstPage->setContentMasterDocumentId($testSecondPage->getId(), true);
+        $testFirstPage->setPublished(true);
+        $testFirstPage->save();
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('This document is already part of the master document chain, please choose a different one.');
+        $testSecondPage->setContentMasterDocumentId($testFirstPage->getId(), true);
     }
 
     public function testLink()

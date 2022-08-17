@@ -833,7 +833,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             return $this->generateUrl('pimcore_admin_asset_getdocumentthumbnail', $params);
         }
 
-        return null;
+        if ($asset instanceof Asset\Audio) {
+            return '/bundles/pimcoreadmin/img/flat-color-icons/speaker.svg';
+        }
+
+        if ($asset instanceof Asset) {
+            return '/bundles/pimcoreadmin/img/filetype-not-supported.svg';
+        }
     }
 
     /**
@@ -1502,6 +1508,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $stream = $thumb->getStream();
+        if (!$stream) {
+            throw $this->createNotFoundException('Unable to get video thumbnail for video ' . $video->getId());
+        }
+
         $response = new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
         }, 200, [
@@ -1859,25 +1869,21 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $assets = [];
 
         foreach ($list as $asset) {
-            $thumbnailMethod = Asset\Service::getPreviewThumbnail($asset, [], true);
+            $filenameDisplay = $asset->getFilename();
+            if (strlen($filenameDisplay) > 32) {
+                $filenameDisplay = substr($filenameDisplay, 0, 25) . '...' . \Pimcore\File::getFileExtension($filenameDisplay);
+            }
 
-            if (!empty($thumbnailMethod)) {
-                $filenameDisplay = $asset->getFilename();
-                if (strlen($filenameDisplay) > 32) {
-                    $filenameDisplay = substr($filenameDisplay, 0, 25) . '...' . \Pimcore\File::getFileExtension($filenameDisplay);
-                }
-
-                // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
-                if ($asset->isAllowed('list')) {
-                    $assets[] = [
-                        'id' => $asset->getId(),
-                        'type' => $asset->getType(),
-                        'filename' => $asset->getFilename(),
-                        'filenameDisplay' => htmlspecialchars($filenameDisplay),
-                        'url' => $this->getThumbnailUrl($asset),
-                        'idPath' => $data['idPath'] = Element\Service::getIdPath($asset),
-                    ];
-                }
+            // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
+            if ($asset->isAllowed('list')) {
+                $assets[] = [
+                    'id' => $asset->getId(),
+                    'type' => $asset->getType(),
+                    'filename' => $asset->getFilename(),
+                    'filenameDisplay' => htmlspecialchars($filenameDisplay),
+                    'url' => $this->getThumbnailUrl($asset),
+                    'idPath' => $data['idPath'] = Element\Service::getIdPath($asset),
+                ];
             }
         }
 
