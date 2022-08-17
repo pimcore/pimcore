@@ -61,7 +61,7 @@ class Geopolyline extends AbstractGeo implements
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param string $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -79,7 +79,7 @@ class Geopolyline extends AbstractGeo implements
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string|null
+     * @return array|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
