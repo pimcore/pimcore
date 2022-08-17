@@ -61,10 +61,15 @@ final class ImageThumbnail
      *
      * @return string
      */
-    public function getPath($deferredAllowed = true, $cacheBuster = false, $forceFrontend = false)
+    public function getPath(...$args)
     {
-        // $cacheBuster is currently unused, its just here to keep the function-signature of
-        // getPath() the same in Document\ImageThumbnail, Video\ImageThumbnail and Image\Thumbnail
+        if (is_array($args[0])) {
+            $args = $args[0];
+            $deferredAllowed = array_key_exists('deferredAllowed', $args) ? $args['deferredAllowed'] : true;
+            $forceFrontend = array_key_exists('forceFrontend', $args) ? $args['forceFrontend'] : false;
+        } else {
+            [$deferredAllowed] = $args;
+        }
 
         $pathReference = $this->getPathReference($deferredAllowed);
 

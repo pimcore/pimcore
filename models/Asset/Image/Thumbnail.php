@@ -54,8 +54,17 @@ final class Thumbnail
      *
      * @return string
      */
-    public function getPath($deferredAllowed = true, $cacheBuster = false, $forceFrontend = false)
+    public function getPath(...$args)
     {
+        if (is_array($args[0])) {
+            $args = $args[0];
+            $deferredAllowed = array_key_exists('deferredAllowed', $args) ? $args['deferredAllowed'] : true;
+            $cacheBuster = array_key_exists('cacheBuster', $args) ? $args['cacheBuster'] : false;
+            $forceFrontend = array_key_exists('forceFrontend', $args) ? $args['forceFrontend'] : false;
+        } else {
+            [$deferredAllowed, $cacheBuster] = $args;
+        }
+
         $pathReference = null;
         if ($this->getConfig()) {
             if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
