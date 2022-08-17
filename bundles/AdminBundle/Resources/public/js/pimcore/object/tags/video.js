@@ -135,7 +135,8 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
 
     openEdit: function () {
         this.data["path"] = this.data["data"];
-        this.data['allowedTypes'] = !empty(this.fieldConfig.allowedTypes) ? this.fieldConfig.allowedTypes : this.fieldConfig.videoTypes;
+        console.log(this);
+        this.data['allowedTypes'] = !empty(this.fieldConfig.allowedTypes) ? this.fieldConfig.allowedTypes : this.fieldConfig.supportedTypes;
         this.window = pimcore.helpers.editmode.openVideoEditPanel(this.data, {
             save: function () {
                 this.window.hide();

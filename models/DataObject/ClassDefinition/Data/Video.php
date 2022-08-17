@@ -22,22 +22,11 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
+class Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, FieldDefinitionEnrichmentInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-
-    public const TYPE_ASSET = 'asset';
-    public const TYPE_YOUTUBE = 'youtube';
-    public const TYPE_VIMEO = 'vimeo';
-    public const TYPE_DAILYMOTION = 'dailymotion';
-
-    public const ALLOWED_TYPES = [
-        self::TYPE_ASSET,
-        self::TYPE_YOUTUBE,
-        self::TYPE_VIMEO,
-        self::TYPE_DAILYMOTION,
-    ];
+    use DataObject\ClassDefinition\DynamicOptionsProvider\SelectionProviderTrait;
 
     /**
      * Static type of this element
@@ -94,7 +83,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @var array
      */
-    public $videoTypes = self::ALLOWED_TYPES;
+    public $supportedTypes;
 
     /**
      * @return string|int
@@ -155,11 +144,29 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
     public function getAllowedTypes()
     {
         return $this->allowedTypes;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getSupportedTypes(){
+        return $this->supportedTypes;
+    }
+
+    /**
+     * @param array $supportedTypes
+     *
+     * @return $this
+     */
+    public function setSupportedTypes(array $supportedTypes){
+        $this->supportedTypes = $supportedTypes;
+        return $this;
     }
 
     /**
@@ -421,6 +428,26 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
 
         return $tags;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getOptionsProviderClass()
+    {
+        return '@' . VideoOptionsProvider::class;
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function enrichFieldDefinition($context = [])
+    {
+        $this->doEnrichDefinitionDefinition(null, 'supportedTypes',
+            'fielddefinition', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT, $context);
+
+        return $this;
     }
 
     /**

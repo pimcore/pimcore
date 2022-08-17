@@ -80,7 +80,7 @@ pimcore.object.classes.data.video = Class.create(pimcore.object.classes.data.dat
                 fieldLabel: t("allowed_video_types") + '<br />' + t('allowed_types_hint'),
                 name: "allowedTypes",
                 id: 'allowedTypes',
-                store: this.datax.videoTypes,
+                store: this.datax.supportedTypes,
                 value: this.datax.allowedTypes,
                 displayField: "text",
                 valueField: "text",
