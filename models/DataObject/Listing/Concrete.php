@@ -36,7 +36,7 @@ abstract class Concrete extends Model\DataObject\Listing
     protected $className;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $locale;
 
@@ -111,7 +111,7 @@ abstract class Concrete extends Model\DataObject\Listing
     }
 
     /**
-     * @param string $locale
+     * @param string|null $locale
      *
      * @return $this
      */
@@ -125,7 +125,7 @@ abstract class Concrete extends Model\DataObject\Listing
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getLocale()
     {
