@@ -26,7 +26,11 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\DynamicOptionsProvider\SelectionProviderTrait;
+
+    public const TYPE_ASSET = 'asset';
+    public const TYPE_YOUTUBE = 'youtube';
+    public const TYPE_VIMEO = 'vimeo';
+    public const TYPE_DAILYMOTION = 'dailymotion';
 
     /**
      * Static type of this element
@@ -74,7 +78,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @internal
      *
-     * @var array
+     * @var array|null
      */
     public $allowedTypes;
 
@@ -83,7 +87,12 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @var array
      */
-    public $supportedTypes;
+    public $supportedTypes = [
+        self::TYPE_ASSET,
+        self::TYPE_YOUTUBE,
+        self::TYPE_VIMEO,
+        self::TYPE_DAILYMOTION,
+    ];
 
     /**
      * @return string|int
@@ -132,11 +141,11 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param array $allowedTypes
+     * @param array|null $allowedTypes
      *
      * @return $this
      */
-    public function setAllowedTypes($allowedTypes)
+    public function setAllowedTypes($allowedTypes): static
     {
         $this->allowedTypes = $allowedTypes;
 
@@ -144,29 +153,19 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @return array
+     * @return array|null
      */
-    public function getAllowedTypes()
+    public function getAllowedTypes(): ?array
     {
         return $this->allowedTypes;
     }
 
-
     /**
      * @return array
      */
-    public function getSupportedTypes(){
+    public function getSupportedTypes(): array
+    {
         return $this->supportedTypes;
-    }
-
-    /**
-     * @param array $supportedTypes
-     *
-     * @return $this
-     */
-    public function setSupportedTypes(array $supportedTypes){
-        $this->supportedTypes = $supportedTypes;
-        return $this;
     }
 
     /**
@@ -430,28 +429,14 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $tags;
     }
 
-
-    /**
-     * @return string
-     */
-    public function getOptionsProviderClass()
-    {
-        return '@' . VideoOptionsProvider::class;
-    }
-
-    public function setOptions($data){
-        if ($data) {
-            $this->setSupportedTypes($data);
-        }
-    }
-
     /**
      * { @inheritdoc }
      */
     public function enrichFieldDefinition($context = [])
     {
-        $this->doEnrichDefinitionDefinition(null, 'supportedTypes',
-            'fielddefinition', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT, $context);
+        if (empty($this->getAllowedTypes())) {
+            $this->setAllowedTypes($this->getSupportedTypes());
+        }
 
         return $this;
     }
