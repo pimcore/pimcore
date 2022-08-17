@@ -854,7 +854,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 throw new \Exception('invalid key for object with id [ '.$this->getId().' ] key is: [' . $this->getKey() . ']');
             }
 
-            if ($this->getParentId() == $this->getId()) {
+            if ($this->getId() !== null && $this->getParentId() == $this->getId()) {
                 throw new \Exception("ParentID and ID is identical, an element can't be the parent of itself.");
             }
 
