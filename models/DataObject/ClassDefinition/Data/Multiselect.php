@@ -673,7 +673,7 @@ class Multiselect extends Data implements
      */
     public function preSave($containerDefinition, $params = [])
     {
-        /** @var ?DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface $optionsProvider */
+        /** @var DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface|null $optionsProvider */
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
             $this->getOptionsProviderClass(),
             DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT
