@@ -28,8 +28,11 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     use Extension\QueryColumnType;
 
     public const TYPE_ASSET = 'asset';
+
     public const TYPE_YOUTUBE = 'youtube';
+
     public const TYPE_VIMEO = 'vimeo';
+
     public const TYPE_DAILYMOTION = 'dailymotion';
 
     /**
