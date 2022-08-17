@@ -630,7 +630,7 @@ class Asset extends Element\AbstractElement
                 throw new Exception("invalid filename '" . $this->getKey() . "' for asset with id [ " . $this->getId() . ' ]');
             }
 
-            if ($this->getId() !== null && $this->getParentId() == $this->getId()) {
+            if (($this->getId() !== null || $this->getParentId() !== null) && $this->getParentId() == $this->getId()) {
                 throw new Exception("ParentID and ID is identical, an element can't be the parent of itself.");
             }
 
