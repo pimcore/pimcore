@@ -16,7 +16,7 @@ The code for the admin user interface (mostly `AdminBundle` but also parts of `E
 - Run `COMPOSER_MEMORY_LIMIT=-1 composer update`
 - Clear the data cache `bin/console pimcore:cache:clear`
 - Run core migrations: `bin/console doctrine:migrations:migrate --prefix=Pimcore\\Bundle\\CoreBundle`
-- (optional) Run migrations of your app or bundles
+- (optional) Run [migrations of your app or bundles](../../19_Development_Tools_and_Details/37_Migrations.md)
 
 ## Upgrading from earlier Versions
 - [Upgrade from Version 6 to Version X](./10_V6_to_V10.md)
