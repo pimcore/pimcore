@@ -26,7 +26,7 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /** @var bool */
-    protected $includeDisabled;
+    protected $includeDisabled = false;
 
     /**
      * @return Model\DataObject\Classificationstore\KeyConfig[]
@@ -59,6 +59,6 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function setIncludeDisabled($includeDisabled)
     {
-        $this->includeDisabled = $includeDisabled;
+        $this->includeDisabled = (bool) $includeDisabled;
     }
 }
