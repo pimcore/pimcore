@@ -317,6 +317,7 @@ trait ImageThumbnailTrait
      * @internal
      *
      * @param array $pathReference
+     * @param bool $frontend
      *
      * @return string|null
      */

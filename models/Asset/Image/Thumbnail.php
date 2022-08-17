@@ -49,8 +49,7 @@ final class Thumbnail
     }
 
     /**
-     * @param bool $deferredAllowed
-     * @param bool $cacheBuster
+     * @param mixed $args,...
      *
      * @return string
      */

@@ -57,7 +57,7 @@ final class ImageThumbnail
     }
 
     /**
-     * @param bool $deferredAllowed
+     * @param mixed $args,...
      *
      * @return string
      */
