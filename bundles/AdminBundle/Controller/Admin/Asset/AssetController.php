@@ -1502,6 +1502,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $stream = $thumb->getStream();
+        if (!$stream) {
+            throw $this->createNotFoundException('Unable to get video thumbnail for video ' . $video->getId());
+        }
+
         $response = new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
         }, 200, [
