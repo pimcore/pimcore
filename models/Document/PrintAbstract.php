@@ -27,14 +27,14 @@ abstract class PrintAbstract extends Document\PageSnippet
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $lastGenerated;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $lastGenerateMessage;
 
@@ -85,7 +85,7 @@ abstract class PrintAbstract extends Document\PageSnippet
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getLastGenerated()
     {
@@ -101,7 +101,7 @@ abstract class PrintAbstract extends Document\PageSnippet
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getLastGenerateMessage()
     {
