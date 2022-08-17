@@ -56,6 +56,13 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @var string
      */
+    public $title = '';
+
+    /**
+     * @internal
+     *
+     * @var string
+     */
     public $description = '';
 
     /**
@@ -545,6 +552,7 @@ final class ClassDefinition extends Model\AbstractModel
         $cd = '/**' . "\n";
         $cd .= ' * Inheritance: '.($this->getAllowInherit() ? 'yes' : 'no')."\n";
         $cd .= ' * Variants: '.($this->getAllowVariants() ? 'yes' : 'no')."\n";
+        $cd .= ' * Title: ' . $this->getTitle()."\n";
 
         if ($description = $this->getDescription()) {
             $description = str_replace(['/**', '*/', '//'], '', $description);
@@ -1253,6 +1261,26 @@ final class ClassDefinition extends Model\AbstractModel
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * @param string $description
+     *
+     * @return $this
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
     }
 
     /**
