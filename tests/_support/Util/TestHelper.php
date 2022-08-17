@@ -18,12 +18,13 @@ namespace Pimcore\Tests\Util;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject as ObjectModel;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\Tag;
 use Pimcore\Model\Property;
 use Pimcore\Tests\Helper\DataType\TestDataHelper;
 use Pimcore\Tool;
@@ -757,6 +758,28 @@ class TestHelper
         return $folder;
     }
 
+    public static function createTag(string $name, int $parentId = 0, bool $save = true): Tag
+    {
+        $tag = new Tag();
+        $tag->setName($name);
+        $tag->setParentId($parentId);
+
+        if ($save) {
+            $tag->save();
+        }
+
+        return $tag;
+    }
+
+    public static function assignTag(Tag $tag, ElementInterface $element): void
+    {
+        Tag::addTagToElement(match (true) {
+            $element instanceof Asset => 'asset',
+            $element instanceof Document => 'document',
+            $element instanceof DataObject => 'object',
+        }, $element->getId(), $tag);
+    }
+
     /**
      * Clean up directory, deleting files one by one
      *
@@ -779,13 +802,12 @@ class TestHelper
         $filesystem->remove($files);
     }
 
-    /**
-     * @param bool $cleanAssets
-     * @param bool $cleanDocuments
-     * @param bool $cleanObjects
-     */
-    public static function cleanUp($cleanObjects = true, $cleanDocuments = true, $cleanAssets = true)
-    {
+    public static function cleanUp(
+        bool $cleanObjects = true,
+        bool $cleanDocuments = true,
+        bool $cleanAssets = true,
+        bool $cleanTags = true
+    ): void {
         \Pimcore::collectGarbage();
 
         if (!static::supportsDbTests()) {
@@ -805,6 +827,10 @@ class TestHelper
         if ($cleanDocuments) {
             static::cleanUpTree(Document::getById(1), 'document');
             codecept_debug(sprintf('Number of documents is: %d', static::getDocumentCount()));
+        }
+
+        if ($cleanTags) {
+            static::cleanUpTags();
         }
 
         \Pimcore::collectGarbage();
@@ -832,6 +858,14 @@ class TestHelper
         foreach ($children as $child) {
             codecept_debug(sprintf('Deleting %s %s (%d)', $type, $child->getFullPath(), $child->getId()));
             $child->delete();
+        }
+    }
+
+    public static function cleanUpTags(): void
+    {
+        foreach ((new Tag\Listing()) as $tag) {
+            codecept_debug(sprintf('Deleting tag %s (%d)', $tag->getNamePath(true), $tag->getId()));
+            $tag->delete();
         }
     }
 

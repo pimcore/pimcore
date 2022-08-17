@@ -506,7 +506,7 @@ class Dao extends Listing\Dao\AbstractDao
     public function getTotalCount()
     {
         $queryBuilder = $this->getQueryBuilder();
-        $this->prepareQueryBuilderForTotalCount($queryBuilder);
+        $this->prepareQueryBuilderForTotalCount($queryBuilder, $this->getTableName() . '.id');
 
         $totalCount = $this->db->fetchOne((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
