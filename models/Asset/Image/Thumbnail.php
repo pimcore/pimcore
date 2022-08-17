@@ -55,13 +55,21 @@ final class Thumbnail
      */
     public function getPath(...$args)
     {
+        $deferredAllowed = true;
+        $cacheBuster = false;
+        $forceFrontend = false;
+
         if (is_array($args[0])) {
             $args = $args[0];
             $deferredAllowed = array_key_exists('deferredAllowed', $args) ? $args['deferredAllowed'] : true;
             $cacheBuster = array_key_exists('cacheBuster', $args) ? $args['cacheBuster'] : false;
             $forceFrontend = array_key_exists('forceFrontend', $args) ? $args['forceFrontend'] : false;
         } else {
-            [$deferredAllowed, $cacheBuster] = $args;
+            if (count($args) == 1) {
+                [$deferredAllowed] = $args;
+            } elseif (count($args) == 2) {
+                [$deferredAllowed, $cacheBuster] = $args;
+            }
         }
 
         $pathReference = null;

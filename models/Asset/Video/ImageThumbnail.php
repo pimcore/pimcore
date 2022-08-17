@@ -69,12 +69,17 @@ final class ImageThumbnail
      */
     public function getPath(...$args)
     {
+        $deferredAllowed = true;
+        $forceFrontend = false;
+
         if (is_array($args[0])) {
             $args = $args[0];
             $deferredAllowed = array_key_exists('deferredAllowed', $args) ? $args['deferredAllowed'] : true;
             $forceFrontend = array_key_exists('forceFrontend', $args) ? $args['forceFrontend'] : false;
         } else {
-            [$deferredAllowed] = $args;
+            if (count($args) == 1) {
+                [$deferredAllowed] = $args;
+            }
         }
 
         $pathReference = $this->getPathReference($deferredAllowed);
