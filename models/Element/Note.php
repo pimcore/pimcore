@@ -62,7 +62,7 @@ final class Note extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $user;
 
@@ -333,7 +333,7 @@ final class Note extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getUser()
     {
