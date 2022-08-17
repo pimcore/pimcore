@@ -62,7 +62,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @var bool
      */
-    public $showCharCount;
+    public $showCharCount = false;
 
     /**
      * @internal
@@ -164,7 +164,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function setShowCharCount($showCharCount)
     {
-        $this->showCharCount = $showCharCount;
+        $this->showCharCount = (bool) $showCharCount;
     }
 
     /**
