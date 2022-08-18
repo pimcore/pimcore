@@ -719,13 +719,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
     private function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
-        //TODO Pimcore 11: remove method_exists BC layer
-        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface || method_exists($fieldDefinition, 'enrichFieldDefinition')) {
-            if (!$fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
-                trigger_deprecation('pimcore/pimcore', '10.1',
-                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                    'Implement the %s interface instead.', FieldDefinitionEnrichmentInterface::class));
-            }
+        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
             $context['class'] = $this;
             $fieldDefinition = $fieldDefinition->enrichFieldDefinition($context);
         }
@@ -1189,14 +1183,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
         foreach ($validLanguages as $language) {
             foreach ($this->getFieldDefinitions() as $fd) {
-                //TODO Pimcore 11: remove method_exists BC layer
-                if ($fd instanceof IdRewriterInterface || method_exists($fd, 'rewriteIds')) {
-                    if (!$fd instanceof IdRewriterInterface) {
-                        trigger_deprecation('pimcore/pimcore', '10.1',
-                            sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                            'Implement the %s interface instead.', IdRewriterInterface::class));
-                    }
-
+                if ($fd instanceof IdRewriterInterface) {
                     $d = $fd->rewriteIds($data, $idMapping, ['language' => $language]);
                     $data->setLocalizedValue($fd->getName(), $d, $language);
                 }
