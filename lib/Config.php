@@ -437,7 +437,7 @@ final class Config implements ArrayAccess
     /**
      * @static
      *
-     * @param array
+     * @param array $config
      *
      * @internal
      */

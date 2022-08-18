@@ -44,7 +44,7 @@ class SiteConfigProvider
     /**
      * @param Site|null $site
      *
-     * @return \Pimcore\Config\Config|null
+     * @return array|null
      */
     public function getSiteConfig(Site $site = null)
     {
