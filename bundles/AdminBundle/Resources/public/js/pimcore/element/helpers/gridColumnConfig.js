@@ -820,7 +820,7 @@ pimcore.element.helpers.gridColumnConfig = {
         var condition = "";
         var searchQuery = this.searchField ? this.searchField.getValue() : "";
 
-        if (this.sqlButton && this.sqlButton.pressed) {
+        if (this.sqlFilter) {
             condition = this.sqlEditor.getValue();
         } else {
             var filterData = this.store.getFilters().items;

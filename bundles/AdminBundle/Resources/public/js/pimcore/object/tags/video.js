@@ -24,6 +24,8 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
             this.data = {};
         }
 
+        this.data.allowedTypes = fieldConfig.allowedTypes;
+
         this.fieldConfig = fieldConfig;
     },
 
