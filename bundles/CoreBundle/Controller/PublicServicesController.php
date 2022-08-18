@@ -193,7 +193,7 @@ class PublicServicesController extends Controller
         $domain = \Pimcore\Tool::getHostname();
         $site = Site::getByDomain($domain);
 
-        $config = Config::getRobotsConfig()->toArray();
+        $config = Config::getRobotsConfig();
 
         $siteId = 'default';
         if ($site instanceof Site) {

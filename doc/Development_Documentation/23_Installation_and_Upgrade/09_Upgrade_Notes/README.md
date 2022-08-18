@@ -3,6 +3,11 @@
 - [Image Optimizer] Removed all the Image Optimizer services (e.g. PngCrushOptimizer, JpegoptimOptimizer etc.) as image optimization is done by the new package spatie/image-optimizer. 
 - Removed deprecated JS functions (`ts()` and `pimcore.helpers.addCsrfTokenToUrl()`)
 - [DocType] staticGeneratorEnabled is now a boolean instead of an integer
+- [Config] `Pimcore\Config\Config` has been removed, see [#12477](https://github.com/pimcore/pimcore/issues/12477). Please use the returned array instead, e.g.
+    ```php
+    $web2printConfig = Config::getWeb2PrintConfig();
+    $web2printConfig = $web2printConfig['headlessChromeSettings'];
+    - ```
 
 ## 10.5.0
 - [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`

@@ -446,11 +446,9 @@ class SettingsController extends AdminController
 
         $values = $this->decodeJson($request->get('data'));
 
-        $existingValues = [];
-
         try {
             $file = Config::locateConfigFile('system.yml');
-            $existingValues = Config::getConfigInstance($file, true);
+            Config::getConfigInstance($file);
         } catch (\Exception $e) {
             // nothing to do
         }
@@ -460,7 +458,6 @@ class SettingsController extends AdminController
 
         // fallback languages
         $fallbackLanguages = [];
-        $existingValues['pimcore']['general']['fallback_languages'] = [];
         $languages = explode(',', $values['general.validLanguages']);
         $filteredLanguages = [];
 
@@ -1594,7 +1591,6 @@ class SettingsController extends AdminController
         $this->checkPermission('robots.txt');
 
         $config = Config::getRobotsConfig();
-        $config = $config->toArray();
 
         return $this->adminJson([
             'success' => true,
