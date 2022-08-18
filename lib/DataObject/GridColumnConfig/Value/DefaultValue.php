@@ -194,7 +194,7 @@ final class DefaultValue extends AbstractValue
             return $this->getClassificationStoreValueForObject($element, $this->attribute);
         }
         if ($element instanceof Concrete && count($attributeParts) > 1) {
-            $brickType = $attributeParts[0];
+            $brickType = json_decode(trim($attributeParts[0],'?'))->containerKey;
             $brickKey = $attributeParts[1];
 
             $getter = 'get' . Service::getFieldForBrickType($element->getClass(), $brickType);
