@@ -56,7 +56,7 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @var string
      */
-    public $title = '';
+    public string $title = '';
 
     /**
      * @internal
@@ -1271,7 +1271,7 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setTitle($title)
+    public function setTitle(string $title): static
     {
         $this->title = $title;
 
@@ -1281,7 +1281,7 @@ final class ClassDefinition extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title;
     }
