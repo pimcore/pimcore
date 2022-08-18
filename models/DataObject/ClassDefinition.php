@@ -1267,7 +1267,7 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param string $description
+     * @param string $title
      *
      * @return $this
      */
