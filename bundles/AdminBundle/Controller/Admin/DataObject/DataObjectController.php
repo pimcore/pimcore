@@ -427,6 +427,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     $objectData['general'][$key] = $value;
                 }
             }
+            $objectData['general']['o_title'] = $objectFromDatabase->getClass()->getTitle() ?: $objectFromDatabase->getClassName();
             $objectData['general']['fullpath'] = $objectFromDatabase->getRealFullPath();
             $objectData['general']['o_locked'] = $objectFromDatabase->isLocked();
             $objectData['general']['php'] = [
