@@ -21,6 +21,8 @@ use Composer\InstalledVersions;
 use Pimcore\Composer\PackageInfo;
 
 /**
+ * @internal
+ *
  * Exposes a simple getVersion() and getComposerPackageName() implementation by looking up the installed versions
  * via composer's version info which is generated on composer install.
  */
