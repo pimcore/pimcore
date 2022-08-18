@@ -11,8 +11,10 @@
   - New authentication system works with password hasher factory instead of encoder factory.
   - BruteforceProtectionHandler will be replaced with Login Throttling.
   - Custom Guard Authenticator will be replaced with Http\Authenticator.
-- [Type hints] Check and add **return type hints** for classes extending Pimcore classes or implementing interfaces povided by Pimcore, based on the source phpdoc or comments on the methods.
+- [Type hints] Check and add **return type hints** for classes extending Pimcore classes or implementing interfaces provided by Pimcore, based on the source phpdoc or comments on the methods.
   The return types will be added to Pimcore classes, so you `must` add return types to your classes extending Pimcore.
+  You could use the patch-type-declarations tool, provided by symfony, to check for affected methods. For details please have a look [here](https://symfony.com/doc/5.4/setup/upgrade_major.html#4-update-your-code-to-work-with-the-new-version).
+
 
 - [Javascript] Replace plugins with [event listener](../../20_Extending_Pimcore/13_Bundle_Developers_Guide/06_Event_Listener_UI.md) as follows:
     ```javascript
