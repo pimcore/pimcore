@@ -167,7 +167,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     /**
      * @Route("/login/lostpassword", name="pimcore_admin_login_lostpassword")
      */
-    public function lostpasswordAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler, CsrfProtectionHandler $csrfProtection, Config $config, EventDispatcherInterface $eventDispatcher)
+    public function lostpasswordAction(Request $request, ?BruteforceProtectionHandler $bruteforceProtectionHandler, CsrfProtectionHandler $csrfProtection, Config $config, EventDispatcherInterface $eventDispatcher)
     {
         $params = $this->buildLoginPageViewParams($config);
         $error = null;
@@ -223,7 +223,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
             if ($error) {
                 Logger::error('Lost password service: ' . $error);
-                $bruteforceProtectionHandler->addEntry($request->get('username'), $request);
+                $bruteforceProtectionHandler?->addEntry($request->get('username'), $request);
             }
         }
 
@@ -281,14 +281,14 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     /**
      * @Route("/login/2fa", name="pimcore_admin_2fa")
      */
-    public function twoFactorAuthenticationAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler, Config $config)
+    public function twoFactorAuthenticationAction(Request $request, ?BruteforceProtectionHandler $bruteforceProtectionHandler, Config $config)
     {
         $params = $this->buildLoginPageViewParams($config);
 
         if ($request->hasSession()) {
 
             // we have to call the check here manually, because BruteforceProtectionListener uses the 'username' from the request
-            $bruteforceProtectionHandler->checkProtection($this->getAdminUser()->getName(), $request);
+            $bruteforceProtectionHandler?->checkProtection($this->getAdminUser()->getName(), $request);
 
             $session = $request->getSession();
             $authException = $session->get(Security::AUTHENTICATION_ERROR);
@@ -297,7 +297,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
                 $params['error'] = $authException->getMessage();
 
-                $bruteforceProtectionHandler->addEntry($this->getAdminUser()->getName(), $request);
+                $bruteforceProtectionHandler?->addEntry($this->getAdminUser()->getName(), $request);
             }
         } else {
             $params['error'] = 'No session available, it either timed out or cookies are not enabled.';
