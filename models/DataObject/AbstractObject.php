@@ -865,6 +865,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 // that is currently in the parent object (in memory), because this might have changed but wasn't not saved
                 $this->setPath(str_replace('//', '/', $parent->getCurrentFullPath().'/'));
             } else {
+                trigger_deprecation(
+                    'pimcore/pimcore',
+                    '10.5',
+                    'Fallback for parentId will be removed in Pimcore 11.',
+                );
                 // parent document doesn't exist anymore, set the parent to to root
                 $this->setParentId(1);
                 $this->setPath('/');

@@ -341,6 +341,7 @@
   "allowed_types_hint": "(empty = allow all)",
   "allowed_document_types": "Allowed Document Types",
   "allowed_asset_types": "Allowed Asset Types",
+  "allowed_video_types": "Allowed Video Types",
   "website": "Website",
   "user_creation_error": "Could not create user",
   "email_debug_addresses": "Debug Email Addresses",
