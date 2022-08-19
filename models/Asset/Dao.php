@@ -49,9 +49,9 @@ class Dao extends Model\Element\Dao
      */
     public function getById($id)
     {
-        $data = $this->db->fetchRow("SELECT assets.*, tree_locks.locked FROM assets
+        $data = $this->db->fetchAssociative("SELECT assets.*, tree_locks.locked FROM assets
             LEFT JOIN tree_locks ON assets.id = tree_locks.id AND tree_locks.type = 'asset'
-                WHERE assets.id = ?", $id);
+                WHERE assets.id = ?", [$id]);
 
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
@@ -94,7 +94,7 @@ class Dao extends Model\Element\Dao
     public function getByPath($path)
     {
         $params = $this->extractKeyAndPath($path);
-        $data = $this->db->fetchRow('SELECT id FROM assets WHERE path = :path AND `filename` = :key', $params);
+        $data = $this->db->fetchAssociative('SELECT id FROM assets WHERE path = :path AND `filename` = :key', $params);
 
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
@@ -203,7 +203,7 @@ class Dao extends Model\Element\Dao
     public function updateChildPaths($oldPath)
     {
         //get assets to empty their cache
-        $assets = $this->db->fetchCol('SELECT id FROM assets WHERE path LIKE ' . $this->db->quote(Helper::escapeLike($oldPath) . '%'));
+        $assets = $this->db->executeQuery('SELECT id FROM assets WHERE path LIKE ' . $this->db->quote(Helper::escapeLike($oldPath) . '%'))->fetchFirstColumn();
 
         $userId = '0';
         if ($user = \Pimcore\Tool\Admin::getCurrentUser()) {

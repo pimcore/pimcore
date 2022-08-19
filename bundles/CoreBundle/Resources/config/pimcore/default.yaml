@@ -73,7 +73,6 @@ doctrine:
         default_connection: default
         connections:
             default:
-                wrapper_class: '\Pimcore\Db\Connection'
                 driver: pdo_mysql
                 charset: UTF8MB4
                 logging: false
