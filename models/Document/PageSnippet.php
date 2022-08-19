@@ -427,16 +427,12 @@ abstract class PageSnippet extends Model\Document
             }
         }
 
-        if (empty($contentMasterDocumentId)) {
-            $contentMasterDocument = null;
-        }
-
         // Don't set the content master document if the document is already part of the master document chain
         if ($contentMasterDocumentId) {
-            $validate = \func_get_args()[1] ?? false;
-            $maxDepth = 20;
             $currentContentMasterDocument = Document::getById($contentMasterDocumentId);
-            if ($currentContentMasterDocument) {
+            if ($currentContentMasterDocument instanceof self) {
+                $validate = \func_get_args()[1] ?? false;
+                $maxDepth = 20;
                 do {
                     if ($currentContentMasterDocument->getId() === $this->getId()) {
                         throw new \Exception('This document is already part of the master document chain, please choose a different one.');
