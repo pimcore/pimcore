@@ -26,6 +26,7 @@ use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
 use Pimcore\Config;
 use Pimcore\Console\Style\PimcoreStyle;
+use Pimcore\Db\Helper;
 use Pimcore\Model\User;
 use Pimcore\Tool\AssetsInstaller;
 use Pimcore\Tool\Console;
@@ -710,57 +711,57 @@ class Installer
     protected function insertDatabaseContents()
     {
         $db = \Pimcore\Db::get();
-        $db->insert('assets', [
-            $db->quoteIdentifier('id') => 1,
-            $db->quoteIdentifier('parentId') => 0,
-            $db->quoteIdentifier('type') => 'folder',
-            $db->quoteIdentifier('filename') => '',
-            $db->quoteIdentifier('path') => '/',
-            $db->quoteIdentifier('creationDate') => time(),
-            $db->quoteIdentifier('modificationDate') => time(),
-            $db->quoteIdentifier('userOwner') => 1,
-            $db->quoteIdentifier('userModification') => 1,
-        ]);
-        $db->insert('documents', [
-            $db->quoteIdentifier('id') => 1,
-            $db->quoteIdentifier('parentId') => 0,
-            $db->quoteIdentifier('type') => 'page',
-            $db->quoteIdentifier('key') => '',
-            $db->quoteIdentifier('path') => '/',
-            $db->quoteIdentifier('index') => 999999,
-            $db->quoteIdentifier('published') => 1,
-            $db->quoteIdentifier('creationDate') => time(),
-            $db->quoteIdentifier('modificationDate') => time(),
-            $db->quoteIdentifier('userOwner') => 1,
-            $db->quoteIdentifier('userModification') => 1,
-        ]);
-        $db->insert('documents_page', [
-            $db->quoteIdentifier('id') => 1,
-            $db->quoteIdentifier('controller') => 'App\\Controller\\DefaultController::defaultAction',
-            $db->quoteIdentifier('template') => '',
-            $db->quoteIdentifier('title') => '',
-            $db->quoteIdentifier('description') => '',
-        ]);
-        $db->insert('objects', [
-            $db->quoteIdentifier('o_id') => 1,
-            $db->quoteIdentifier('o_parentId') => 0,
-            $db->quoteIdentifier('o_type') => 'folder',
-            $db->quoteIdentifier('o_key') => '',
-            $db->quoteIdentifier('o_path') => '/',
-            $db->quoteIdentifier('o_index') => 999999,
-            $db->quoteIdentifier('o_published') => 1,
-            $db->quoteIdentifier('o_creationDate') => time(),
-            $db->quoteIdentifier('o_modificationDate') => time(),
-            $db->quoteIdentifier('o_userOwner') => 1,
-            $db->quoteIdentifier('o_userModification') => 1,
-        ]);
+        $db->insert('assets', Helper::quoteDataIdentifiers($db, [
+            'id' => 1,
+            'parentId' => 0,
+            'type' => 'folder',
+            'filename' => '',
+            'path' => '/',
+            'creationDate' => time(),
+            'modificationDate' => time(),
+            'userOwner' => 1,
+            'userModification' => 1,
+        ]));
+        $db->insert('documents', Helper::quoteDataIdentifiers($db, [
+            'id' => 1,
+            'parentId' => 0,
+            'type' => 'page',
+            'key' => '',
+            'path' => '/',
+            'index' => 999999,
+            'published' => 1,
+            'creationDate' => time(),
+            'modificationDate' => time(),
+            'userOwner' => 1,
+            'userModification' => 1,
+        ]));
+        $db->insert('documents_page', Helper::quoteDataIdentifiers($db, [
+            'id' => 1,
+            'controller' => 'App\\Controller\\DefaultController::defaultAction',
+            'template' => '',
+            'title' => '',
+            'description' => '',
+        ]));
+        $db->insert('objects', Helper::quoteDataIdentifiers($db, [
+            'o_id' => 1,
+            'o_parentId' => 0,
+            'o_type' => 'folder',
+            'o_key' => '',
+            'o_path' => '/',
+            'o_index' => 999999,
+            'o_published' => 1,
+            'o_creationDate' => time(),
+            'o_modificationDate' => time(),
+            'o_userOwner' => 1,
+            'o_userModification' => 1,
+        ]));
 
-        $db->insert('users', [
-            $db->quoteIdentifier('parentId') => 0,
-            $db->quoteIdentifier('name') => 'system',
-            $db->quoteIdentifier('admin') => 1,
-            $db->quoteIdentifier('active') => 1,
-        ]);
+        $db->insert('users', Helper::quoteDataIdentifiers($db, [
+            'parentId' => 0,
+            'name' => 'system',
+            'admin' => 1,
+            'active' => 1,
+        ]));
         $db->update('users', ['id' => 0], ['name' => 'system']);
 
         $userPermissions = [

@@ -130,4 +130,14 @@ class Helper
     {
         return str_replace(['_', '%'], ['\\_', '\\%'], $like);
     }
+
+    public static function quoteDataIdentifiers(Connection $db, array $data): array
+    {
+        $newData = [];
+        foreach ($data as $key => $value) {
+            $newData[$db->quoteIdentifier($key)] = $value;
+        }
+
+        return $newData;
+    }
 }
