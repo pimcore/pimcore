@@ -236,7 +236,7 @@ abstract class AbstractModel implements ModelInterface
     {
 
         // protected / private methods shouldn't be delegated to the dao -> this can have dangerous effects
-            if (!is_callable([$this, $method])) {
+        if (!is_callable([$this, $method])) {
             throw new \Exception("Unable to call private/protected method '" . $method . "' on object " . get_class($this));
         }
 
