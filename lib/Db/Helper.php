@@ -56,7 +56,6 @@ class Helper
 
     public static function fetchPairs(Connection $db, $sql, array $params = [], $types = [])
     {
-        $params = static::prepareParams($params);
         $stmt = $db->executeQuery($sql, $params, $types);
         $data = [];
         if ($stmt instanceof Result) {
@@ -66,20 +65,6 @@ class Helper
         }
 
         return $data;
-    }
-
-    /**
-     * @param array|scalar $params
-     *
-     * @return array
-     */
-    protected static function prepareParams($params)
-    {
-        if (!is_array($params)) {
-            $params = [$params];
-        }
-
-        return $params;
     }
 
     public static function selectAndDeleteWhere(Connection $db, $table, $idColumn = 'id', $where = '')
