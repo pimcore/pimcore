@@ -50,7 +50,7 @@ trait Text
     /**
      * @see Data::getVersionPreview
      *
-     * @param string $data
+     * @param string|null $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param array $params
      *
@@ -58,6 +58,6 @@ trait Text
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+        return htmlspecialchars((string)$data, ENT_QUOTES, 'UTF-8');
     }
 }

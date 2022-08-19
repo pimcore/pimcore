@@ -961,13 +961,7 @@ class Service extends Model\Element\Service
             $fields = $object->getClass()->getFieldDefinitions();
 
             foreach ($fields as $field) {
-                //TODO Pimcore 11: remove method_exists BC layer
-                if ($field instanceof IdRewriterInterface || method_exists($field, 'rewriteIds')) {
-                    if (!$field instanceof IdRewriterInterface) {
-                        trigger_deprecation('pimcore/pimcore', '10.1',
-                            sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                            'Implement the %s interface instead.', IdRewriterInterface::class));
-                    }
+                if ($field instanceof IdRewriterInterface) {
                     $setter = 'set' . ucfirst($field->getName());
                     if (method_exists($object, $setter)) { // check for non-owner-objects
                         $object->$setter($field->rewriteIds($object, $rewriteConfig));
@@ -1469,13 +1463,7 @@ class Service extends Model\Element\Service
 
         $context['object'] = $object;
 
-        //TODO Pimcore 11: remove method_exists BC layer
-        if ($layout instanceof LayoutDefinitionEnrichmentInterface || method_exists($layout, 'enrichLayoutDefinition')) {
-            if (!$layout instanceof LayoutDefinitionEnrichmentInterface) {
-                trigger_deprecation('pimcore/pimcore', '10.1',
-                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                    'Implement the %s interface instead.', LayoutDefinitionEnrichmentInterface::class));
-            }
+        if ($layout instanceof LayoutDefinitionEnrichmentInterface) {
             $layout->enrichLayoutDefinition($object, $context);
         }
 
