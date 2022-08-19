@@ -35,7 +35,7 @@ class ClassLayoutDefinitionManager
         $db = \Pimcore\Db::get();
 
         try {
-            $layouts = $db->fetchAll('SELECT * FROM custom_layouts');
+            $layouts = $db->fetchAllAssociative('SELECT * FROM custom_layouts');
         } catch (\Exception $e) {
             $layouts = [];
         }
