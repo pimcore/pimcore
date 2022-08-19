@@ -436,12 +436,17 @@ abstract class PageSnippet extends Model\Document
             $validate = \func_get_args()[1] ?? false;
             $maxDepth = 20;
             $currentContentMasterDocument = Document::getById($contentMasterDocumentId);
-            do {
-                if ($currentContentMasterDocument->getId() === $this->getId()) {
-                    throw new \Exception('This document is already part of the master document chain, please choose a different one.');
-                }
-                $currentContentMasterDocument = $currentContentMasterDocument->getContentMasterDocument();
-            } while ($currentContentMasterDocument && $maxDepth-- > 0 && $validate);
+            if ($currentContentMasterDocument) {
+                do {
+                    if ($currentContentMasterDocument->getId() === $this->getId()) {
+                        throw new \Exception('This document is already part of the master document chain, please choose a different one.');
+                    }
+                    $currentContentMasterDocument = $currentContentMasterDocument->getContentMasterDocument();
+                } while ($currentContentMasterDocument && $maxDepth-- > 0 && $validate);
+            } else {
+                // Content master document was deleted or don't exist
+                $contentMasterDocumentId = null;
+            }
         }
 
         $this->contentMasterDocumentId = $contentMasterDocumentId;
