@@ -631,6 +631,11 @@ trait PimcoreExtensionsTrait
     protected function prepareParams($params)
     {
         if (!is_array($params)) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '10.5.0',
+                'DB query params must be an array in Pimcore 11.'
+            );
             $params = [$params];
         }
 
