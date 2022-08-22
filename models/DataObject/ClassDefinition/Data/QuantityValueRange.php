@@ -17,7 +17,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Exception;
 use Pimcore\Cache;
-use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -401,15 +401,15 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
         $table = null;
 
         try {
-            if (Runtime::isRegistered(DataObject\QuantityValue\Unit::CACHE_KEY)) {
-                $table = Runtime::get(DataObject\QuantityValue\Unit::CACHE_KEY);
+            if (RuntimeCache::isRegistered(DataObject\QuantityValue\Unit::CACHE_KEY)) {
+                $table = RuntimeCache::get(DataObject\QuantityValue\Unit::CACHE_KEY);
             }
 
             if (!\is_array($table)) {
                 $table = Cache::load(DataObject\QuantityValue\Unit::CACHE_KEY);
 
                 if (\is_array($table)) {
-                    Runtime::set(DataObject\QuantityValue\Unit::CACHE_KEY, $table);
+                    RuntimeCache::set(DataObject\QuantityValue\Unit::CACHE_KEY, $table);
                 }
             }
 
@@ -424,7 +424,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
                 }
 
                 Cache::save($table, DataObject\QuantityValue\Unit::CACHE_KEY, [], null, 995, true);
-                Runtime::set(DataObject\QuantityValue\Unit::CACHE_KEY, $table);
+                RuntimeCache::set(DataObject\QuantityValue\Unit::CACHE_KEY, $table);
             }
         } catch (Exception $e) {
             Logger::error((string) $e);
