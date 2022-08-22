@@ -114,8 +114,12 @@ trait QueryBuilderHelperTrait
 
     private function applyLimitToQueryBuilder(QueryBuilder $queryBuilder): void
     {
-        $queryBuilder->setFirstResult($this->model->getOffset());
-        $queryBuilder->setMaxResults($this->model->getLimit());
+        if ($this->model->getOffset()) {
+            $queryBuilder->setFirstResult($this->model->getOffset());
+        }
+        if ($this->model->getLimit()) {
+            $queryBuilder->setMaxResults($this->model->getLimit());
+        }
     }
 
     protected function prepareQueryBuilderForTotalCount(QueryBuilder $queryBuilder, string $identifierColumn): void

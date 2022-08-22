@@ -146,7 +146,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @param int $limit
+     * @param int|null $limit
      *
      * @return $this
      */
@@ -154,15 +154,17 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     {
         $this->setData(null);
 
-        if ((int)$limit > 0) {
+        if ($limit) {
             $this->limit = (int)$limit;
+        } else {
+            $this->limit = null;
         }
 
         return $this;
     }
 
     /**
-     * @param int $offset
+     * @param int|null $offset
      *
      * @return $this
      */
@@ -170,8 +172,10 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     {
         $this->setData(null);
 
-        if ((int)$offset >= 0) {
+        if ($offset) {
             $this->offset = (int)$offset;
+        } else {
+            $this->offset = null;
         }
 
         return $this;

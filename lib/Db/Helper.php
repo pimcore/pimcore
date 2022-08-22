@@ -30,7 +30,7 @@ class Helper
         $vals = [];
         foreach ($data as $col => $val) {
             $cols[] = $connection->quoteIdentifier($col);
-            $bind[':col' . $i] = $val;
+            $bind['col' . $i] = $val;
             $vals[] = ':col' . $i;
             $i++;
         }
