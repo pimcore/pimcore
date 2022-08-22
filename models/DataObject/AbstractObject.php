@@ -852,7 +852,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 throw new \Exception('invalid key for object with id [ '.$this->getId().' ] key is: [' . $this->getKey() . ']');
             }
 
-            if($this->getParentId() === null || $this->getParentId() === 0) {
+            if(!$this->getParentId()) {
                 throw new \Exception("ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.");
             }
 
