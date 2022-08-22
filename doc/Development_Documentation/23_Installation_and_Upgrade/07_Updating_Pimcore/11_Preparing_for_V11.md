@@ -34,5 +34,21 @@
     });
     ```
 - Replace deprecated JS functions
-  - Use t() instead of ts()
-  - Don't use pimcore.helpers.addCsrfTokenToUrl()
+  - Use `t()` instead of `ts()`
+  - Don't use `pimcore.helpers.addCsrfTokenToUrl()`
+- Don't use deprecated `Pimcore\Db\ConnectionInterface` interface, `Pimcore\Db\Connection` class and `Pimcore\Db\PimcoreExtensionsTrait` trait
+  Use `Doctrine\DBAL\Driver\Connection` interface and `Doctrine\DBAL\Connection` class instead.
+  Some methods must be replaced:
+  - Use `executeQuery()` instead of `query()`
+  - Use `executeStatement()` instead of `executeUpdate()`, `deleteWhere()`, `updateWhere()`
+  - Use `fetchAssociative()` instead of `fetchRow()`
+  - Use `fetchFirstColumn()` instead of `fetchCol()`
+  - Use `Pimcore\Db\Helper::fetchPairs()` instead of `fetchPairs()`
+  - Use `Pimcore\Db\Helper::insertOrUpdate()` instead of `insertOrUpdate()`
+  - Use `Pimcore\Db\Helper::quoteInto()` instead of `quoteInto()`
+  - Use `quoteIdentifier()` instead of `quoteColumnAs()`
+  - Don't use `quoteTableAs()`
+  - Don't use `limit()`
+  - Use `Pimcore\Db\Helper::queryIgnoreError()` instead of `queryIgnoreError()`
+  - Use `Pimcore\Db\Helper::selectAndDeleteWhere()` instead of `selectAndDeleteWhere()`
+  - Use `Pimcore\Db\Helper::escapeLike()` instead of `escapeLike()`
