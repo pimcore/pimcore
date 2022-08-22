@@ -87,7 +87,7 @@ class LogController extends AdminController implements KernelControllerEventInte
             }
 
             $qb->andWhere($qb->expr()->in('priority', ':priority'));
-            $qb->setParameter('priority', $levels, Db\Connection::PARAM_STR_ARRAY);
+            $qb->setParameter('priority', $levels, Connection::PARAM_STR_ARRAY);
         }
 
         if ($fromDate = $this->parseDateObject($request->get('fromDate'), $request->get('fromTime'))) {
