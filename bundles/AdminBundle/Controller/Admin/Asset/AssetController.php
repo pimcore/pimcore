@@ -2710,7 +2710,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
             $assets = [];
             foreach ($list->getAssets() as $index => $asset) {
-
                 // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
                 if ($asset->isAllowed('list')) {
                     $a = Asset\Service::gridAssetData($asset, $allParams['fields'], $allParams['language'] ?? '');

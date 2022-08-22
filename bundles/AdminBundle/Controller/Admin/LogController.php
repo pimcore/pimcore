@@ -20,7 +20,6 @@ use Doctrine\DBAL\Types\Types;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Controller\KernelControllerEventInterface;
-use Pimcore\Db;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Tool\Storage;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -250,7 +249,6 @@ class LogController extends AdminController implements KernelControllerEventInte
             );
             $response->headers->set('Content-Type', 'text/plain');
         } else {
-
             // Fallback to local path when file is not found in flysystem that might still be using the constant
 
             if (!filter_var($filePath, FILTER_VALIDATE_URL)) {

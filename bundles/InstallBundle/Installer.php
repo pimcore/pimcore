@@ -683,7 +683,6 @@ class Installer
         if (strpos($file, 'atomic') !== false) {
             $db->executeStatement($dumpFile);
         } else {
-
             // get every command as single part - ; at end of line
             $singleQueries = explode(";\n", $dumpFile);
 

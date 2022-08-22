@@ -426,7 +426,6 @@ final class Site extends AbstractModel
      */
     public function clearDependentCache()
     {
-
         // this is mostly called in Site\Dao not here
         try {
             \Pimcore\Cache::clearTag('site');

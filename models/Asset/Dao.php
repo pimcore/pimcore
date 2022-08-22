@@ -470,7 +470,6 @@ class Dao extends Model\Element\Dao
      */
     public function isAllowed($type, $user)
     {
-
         // collect properties via parent - ids
         $parentIds = [1];
 
