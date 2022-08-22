@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model\DataObject\Data;
 
-use Pimcore;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
@@ -24,6 +23,7 @@ class NumericRange implements OwnerAwareFieldInterface
     use OwnerAwareFieldTrait;
 
     protected int|null|float $minimum;
+
     protected int|null|float $maximum;
 
     public function __construct(float|int|null $minimum, float|int|null $maximum)
