@@ -38,7 +38,7 @@ final class Version20220809154926 extends AbstractMigration
      */
     private function loadLegacyCustomLayoutConfigs(): array
     {
-        $files = glob(PIMCORE_CUSTOMLAYOUT_DIRECTORY . '/*.php');
+        $files = glob(PIMCORE_CLASS_DEFINITION_DIRECTORY . '/customlayouts/*.php');
 
         $layouts = [];
         foreach ($files as $file) {
