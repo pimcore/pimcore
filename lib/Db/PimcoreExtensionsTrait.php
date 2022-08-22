@@ -471,6 +471,7 @@ trait PimcoreExtensionsTrait
             '10.5.0',
             sprintf('%s is deprecated and will be removed in Pimcore 11. Use Doctrine\DBAL\Connection::quoteIdentifier() instead.', __METHOD__)
         );
+
         return $this->_quoteIdentifierAs($ident, $alias);
     }
 
@@ -491,6 +492,7 @@ trait PimcoreExtensionsTrait
             '10.5.0',
             sprintf('%s is deprecated and will be removed in Pimcore 11.', __METHOD__)
         );
+
         return $this->_quoteIdentifierAs($ident, $alias);
     }
 
@@ -607,6 +609,7 @@ trait PimcoreExtensionsTrait
             '10.5.0',
             sprintf('%s is deprecated and will be removed in Pimcore 11. Use Pimcore\Db\Helper::queryIgnoreError() instead.', __METHOD__)
         );
+
         try {
             return $this->executeQuery($sql);
         } catch (\Exception $e) {
@@ -718,6 +721,7 @@ trait PimcoreExtensionsTrait
             '10.5.0',
             sprintf('%s is deprecated and will be removed in Pimcore 11. Use Pimcore\Db\Helper::escapeLike() instead.', __METHOD__)
         );
+
         return str_replace(['_', '%'], ['\\_', '\\%'], $like);
     }
 

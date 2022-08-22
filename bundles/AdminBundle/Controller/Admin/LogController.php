@@ -20,7 +20,6 @@ use Doctrine\DBAL\Types\Types;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Controller\KernelControllerEventInterface;
-use Pimcore\Db;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Tool\Storage;
 use Symfony\Component\HttpFoundation\JsonResponse;
