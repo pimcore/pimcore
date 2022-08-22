@@ -53,7 +53,6 @@ class EncryptedField implements MarshallerInterface
             $encryptedValue2 = null;
 
             if (is_array($value)) {
-
                 /** @var \Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField $fd */
                 $fd = $params['fieldDefinition'];
                 $delegateFd = $fd->getDelegate();
@@ -88,7 +87,6 @@ class EncryptedField implements MarshallerInterface
     public function unmarshal($value, $params = [])
     {
         if (is_array($value)) {
-
             /** @var \Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField $fd */
             $fd = $params['fieldDefinition'];
             $delegateFd = $fd->getDelegate();

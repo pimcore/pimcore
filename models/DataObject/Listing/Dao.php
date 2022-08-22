@@ -64,7 +64,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-
         // load id's
         $list = $this->loadIdList();
 

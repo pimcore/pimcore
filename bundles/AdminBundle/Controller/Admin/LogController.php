@@ -250,7 +250,6 @@ class LogController extends AdminController implements KernelControllerEventInte
             );
             $response->headers->set('Content-Type', 'text/plain');
         } else {
-
             // Fallback to local path when file is not found in flysystem that might still be using the constant
 
             if (!filter_var($filePath, FILTER_VALIDATE_URL)) {
