@@ -378,12 +378,16 @@ class Select extends Data implements
     }
 
     /**
-     * @param string|null $data
+     * @param array|string|null $data
      *
      * @return bool
      */
     public function isEmpty($data)
     {
+        if (is_array($data)) {
+            return count($data) < 1;
+        }
+
         return strlen((string) $data) < 1;
     }
 
