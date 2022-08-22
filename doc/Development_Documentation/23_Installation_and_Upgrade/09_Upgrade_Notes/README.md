@@ -5,6 +5,7 @@
 - Removed deprecated JS functions (`ts()` and `pimcore.helpers.addCsrfTokenToUrl()`)
 - Removed Plugin Broker BC layer for JS events
 - [DocType] staticGeneratorEnabled is now a boolean instead of an integer
+- [Data Objects] Remove "generate type declarations" in class definitions
 - [DataObjects] Removed method_exists bc layer, please use the corresponding interfaces instead. For details please see [#9571](https://github.com/pimcore/pimcore/issues/9571)
 - [Listings] Removed `JsonListing`, please see [#12877](https://github.com/pimcore/pimcore/pull/12877) for details.
 - [Traits] The traits PackageVersionTrait and StateHelperTrait in lib/Extension/Bundle/Traits have been marked as

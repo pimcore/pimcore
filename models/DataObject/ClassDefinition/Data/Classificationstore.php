@@ -1402,7 +1402,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $key = $this->getName();
 
         $typeDeclaration = '';
-        if ($class->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
+        if ($this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         }
 
