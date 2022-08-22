@@ -207,10 +207,9 @@ pimcore.settings.system = Class.create({
                             autoHeight: true,
                             items: [{
                                 fieldLabel: t("url_to_custom_image_on_login_screen"),
-                                xtype: "displayfield",
+                                xtype: "textfield",
                                 name: "branding.login_screen_custom_image",
-                                cls: 'pimcore_droptarget_display_edit',
-                                fieldBodyCls: 'pimcore_droptarget_display',
+                                fieldCls: "input_drop_target",
                                 width: '95%',
                                 value: this.getValue("branding.login_screen_custom_image"),
                                 listeners: {
