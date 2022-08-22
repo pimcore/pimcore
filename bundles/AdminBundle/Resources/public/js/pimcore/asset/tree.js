@@ -446,7 +446,6 @@ pimcore.asset.tree = Class.create({
                     }
                     node.data.basePath = newBasePath;
                     node.data.path = node.data.basePath + "/" + node.data.text;
-                    pimcore.elementservice.nodeMoved("asset", oldParent, newParent);
                 }
                 else {
                     this.tree.loadMask.hide();
