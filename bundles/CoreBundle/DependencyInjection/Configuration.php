@@ -782,7 +782,12 @@ final class Configuration implements ConfigurationInterface
                                             ->integerNode('creationDate')->end()
                                             ->integerNode('modificationDate')->end()
                                             ->integerNode('userOwner')->end()
-                                            ->integerNode('userModification')->defaultNull()->end()
+                                            ->integerNode('userModification')
+                                                ->beforeNormalization()
+                                                    ->ifNull()->then(function () {
+                                                        return 0;
+                                                    })->end()
+                                                ->end()
                                             ->scalarNode('classId')->end()
                                             ->integerNode('default')->end()
                                             ->scalarNode('layoutDefinitions')->end()
