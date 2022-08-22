@@ -51,7 +51,7 @@ abstract class FrontendController extends Controller
      *
      * @return mixed
      */
-    public function __get($name): mixed
+    public function __get($name)
     {
         if ('document' === $name) {
             return $this->container->get(DocumentResolver::class)->getDocument();
@@ -113,7 +113,7 @@ abstract class FrontendController extends Controller
      *
      * @throws \Exception
      */
-    public function getDocumentEditable($type, $inputName, array $options = [], Document\PageSnippet $document = null): Document\Editable\EditableInterface
+    public function getDocumentEditable($type, $inputName, array $options = [], Document\PageSnippet $document = null)
     {
         if (null === $document) {
             $document = $this->document;
@@ -129,7 +129,7 @@ abstract class FrontendController extends Controller
      *
      * @return Response
      */
-    public function renderTemplate($view, array $parameters = [], Response $response = null): Response
+    public function renderTemplate($view, array $parameters = [], Response $response = null)
     {
         return $this->render($view, $parameters, $response);
     }
