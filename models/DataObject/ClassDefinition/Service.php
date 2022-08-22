@@ -152,7 +152,6 @@ class Service
             'linkGeneratorReference',
             'previewGeneratorReference',
             'compositeIndices',
-            'generateTypeDeclarations',
             'showFieldLookup',
             'enableGridLocking',
             'showAppLoggerTab',
@@ -204,7 +203,6 @@ class Service
             'implementsInterfaces',
             'title',
             'group',
-            'generateTypeDeclarations',
         ];
 
         foreach ($importPropertyNames as $importPropertyName) {
@@ -289,7 +287,6 @@ class Service
             'implementsInterfaces',
             'title',
             'group',
-            'generateTypeDeclarations',
         ];
 
         foreach ($importPropertyNames as $importPropertyName) {

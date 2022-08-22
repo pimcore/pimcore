@@ -228,13 +228,6 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @var bool
      */
-    public $generateTypeDeclarations = true;
-
-    /**
-     * @internal
-     *
-     * @var bool
-     */
     public $showFieldLookup = false;
 
     /**
@@ -1413,26 +1406,6 @@ final class ClassDefinition extends Model\AbstractModel
     public function setCompositeIndices($compositeIndices)
     {
         $this->compositeIndices = $compositeIndices ?? [];
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getGenerateTypeDeclarations()
-    {
-        return (bool) $this->generateTypeDeclarations;
-    }
-
-    /**
-     * @param bool $generateTypeDeclarations
-     *
-     * @return $this
-     */
-    public function setGenerateTypeDeclarations($generateTypeDeclarations)
-    {
-        $this->generateTypeDeclarations = (bool) $generateTypeDeclarations;
 
         return $this;
     }

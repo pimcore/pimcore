@@ -413,7 +413,7 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($link);
             $panel->addChild($lFields);
             $root->addChild($rootPanel);
-            $class = $this->createClass($name, $root, $filename, true, null, false);
+            $class = $this->createClass($name, $root, $filename, true);
         }
 
         return $class;
@@ -688,11 +688,10 @@ class Model extends AbstractDefinitionHelper
      * @param string $filename
      * @param bool $inheritanceAllowed
      * @param string|null $id
-     * @param bool $generateTypeDeclarations
      *
      * @return ClassDefinition
      */
-    protected function createClass($name, $layout, $filename, $inheritanceAllowed = false, $id = null, $generateTypeDeclarations = true)
+    protected function createClass($name, $layout, $filename, $inheritanceAllowed = false, $id = null)
     {
         $cm = $this->getClassManager();
         $def = new ClassDefinition();
@@ -703,7 +702,6 @@ class Model extends AbstractDefinitionHelper
         $def->setName($name);
         $def->setLayoutDefinitions($layout);
         $def->setAllowInherit($inheritanceAllowed);
-        $def->setGenerateTypeDeclarations($generateTypeDeclarations);
         $json = ClassDefinition\Service::generateClassDefinitionJson($def);
         $cm->saveJson($filename, $json);
 
@@ -1049,7 +1047,6 @@ class Model extends AbstractDefinitionHelper
         $def = new Definition();
         $def->setKey($name);
         $def->setLayoutDefinitions($layout);
-        $def->setGenerateTypeDeclarations(true);
         $json = ClassDefinition\Service::generateFieldCollectionJson($def);
         $cm->saveJson($filename, $json);
 
@@ -1071,7 +1068,6 @@ class Model extends AbstractDefinitionHelper
         $def->setKey($name);
         $def->setLayoutDefinitions($layout);
         $def->setClassDefinitions($classDefinitions);
-        $def->setGenerateTypeDeclarations(true);
         $json = ClassDefinition\Service::generateObjectBrickJson($def);
         $cm->saveJson($filename, $json);
 
