@@ -171,7 +171,6 @@ class ElementController extends AdminController
                 return $this->processNoteTypesFromParameters(PimcoreAdminExtension::PARAM_DATAOBJECTS_NOTES_EVENTS_TYPES);
             default:
                 return $this->adminJson(['noteTypes' => []]);
-
         }
     }
 

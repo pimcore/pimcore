@@ -41,7 +41,6 @@ class Model extends AbstractDefinitionHelper
      */
     public function setupPimcoreClass_Csstore($params = [], $name = 'csstore', $filename = 'classificationstore.json')
     {
-
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
 
@@ -74,7 +73,6 @@ class Model extends AbstractDefinitionHelper
      */
     public function setupPimcoreClass_LazyLoading($name = 'LazyLoading', $filename = 'lazyloading/class_LazyLoading_export.json')
     {
-
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
 
@@ -230,7 +228,6 @@ class Model extends AbstractDefinitionHelper
      */
     public function setupPimcoreClass_RelationTest($name = 'RelationTest', $filename = 'relations/class_RelationTest_export.json')
     {
-
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
 
@@ -274,7 +271,6 @@ class Model extends AbstractDefinitionHelper
      */
     public function setupPimcoreClass_MultipleAssignments($name = 'MultipleAssignments', $filename = 'relations/class_MultipleAssignments_export.json')
     {
-
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
 
@@ -435,7 +431,6 @@ class Model extends AbstractDefinitionHelper
      */
     public function setupPimcoreClass_Unittest($name = 'unittest', $filename = 'class-import.json')
     {
-
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
 
@@ -647,7 +642,6 @@ class Model extends AbstractDefinitionHelper
      */
     public function setupPimcoreClass_Inheritance($name = 'inheritance', $filename = 'inheritance.json')
     {
-
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
 

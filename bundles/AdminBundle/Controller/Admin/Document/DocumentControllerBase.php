@@ -109,7 +109,6 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      */
     protected function addPropertiesToDocument(Request $request, Model\Document $document)
     {
-
         // properties
         if ($request->get('properties')) {
             $properties = [];

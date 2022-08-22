@@ -64,7 +64,6 @@ class ResetQueueCommand extends AbstractIndexServiceCommand
         }
 
         foreach ($tenants as $tenant) {
-
             /** @var ProductCentricBatchProcessingWorker $worker */
             $worker = $updater->getTenantWorker($tenant);
 

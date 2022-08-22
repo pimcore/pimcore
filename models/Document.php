@@ -485,7 +485,6 @@ class Document extends Element\AbstractElement
     {
         // set path
         if ($this->getId() != 1) { // not for the root node
-
             // check for a valid key, home has no key, so omit the check
             if (!Element\Service::isValidKey($this->getKey(), 'document')) {
                 throw new \Exception('invalid key for document with id [ ' . $this->getId() . ' ] key is: [' . $this->getKey() . ']');

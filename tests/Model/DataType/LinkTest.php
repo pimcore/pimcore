@@ -18,7 +18,6 @@ namespace Pimcore\Tests\Model\DataType;
 use Pimcore\Model\DataObject\Data\Link;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\DataObject\unittestLink;
-use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 
