@@ -117,6 +117,21 @@ class AssetTest extends ModelTestCase
     }
 
     /**
+     * Parent ID must resolve to an existing element
+     * @group notfound
+     */
+    public function testParentNotFound()
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage("ParentID not found.");
+        $savedObject = TestHelper::createImageAsset('', null, false);
+        $this->assertTrue($savedObject->getId() == 0);
+
+        $savedObject->setParentId(999999);
+        $savedObject->save();
+    }
+
+    /**
      * Verifies that asset PHP API version note is saved
      */
     public function testSavingVersionNotes()
