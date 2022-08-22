@@ -690,7 +690,6 @@ class Dao extends Model\Dao\AbstractDao
 
     public function createLocalizedViews()
     {
-
         // init
         $languages = Tool::getValidLanguages();
         $defaultTable = 'object_query_'.$this->model->getClass()->getId();
@@ -706,7 +705,6 @@ class Dao extends Model\Dao\AbstractDao
          * @return string
          */
         $getFallbackValue = function ($field, array $languages) use (&$getFallbackValue, $db) {
-
             // init
             $lang = array_shift($languages);
 

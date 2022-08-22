@@ -526,7 +526,6 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                             ['o_id' => $response[$operation]['_id'], 'tenant' => $this->name]
                         );
                     } else {
-
                         //update crc sums in store table to mark element as indexed
                         $this->db->executeQuery(
                             'UPDATE ' . $this->getStoreTableName() . ' SET crc_index = crc_current, update_status = ?, update_error = ?, metadata = ? WHERE o_id = ? and tenant = ?',

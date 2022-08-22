@@ -223,7 +223,6 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         //search for part match in order to consider sub field names like name.analyzed
         $fieldNamePart = $fullFieldName;
         while (!empty($fieldNamePart)) {
-
             // cut off part after last .
             $fieldNamePart = substr($fieldNamePart, 0, strripos($fieldNamePart, '.'));
 
