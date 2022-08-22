@@ -388,7 +388,7 @@ class Select extends Data implements
             return count($data) < 1;
         }
 
-        return strlen((string) $data) < 1;
+        return (string) $data === '';
     }
 
     /**
