@@ -39,6 +39,7 @@ class NumericRange extends Data implements
     }
 
     public const DECIMAL_SIZE_DEFAULT = 64;
+
     public const DECIMAL_PRECISION_DEFAULT = 0;
 
     /**
