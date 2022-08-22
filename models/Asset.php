@@ -627,7 +627,7 @@ class Asset extends Element\AbstractElement
                 throw new Exception("invalid filename '" . $this->getKey() . "' for asset with id [ " . $this->getId() . ' ]');
             }
 
-            if($this->getParentId() === null || $this->getParentId() === 0) {
+            if(!$this->getParentId()) {
                 throw new Exception("ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.");
             }
 
