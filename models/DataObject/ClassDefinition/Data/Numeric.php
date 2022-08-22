@@ -27,10 +27,10 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     use Model\DataObject\Traits\SimpleNormalizerTrait;
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType {
-        ColumnType::getColumnType as public genericGetColumnType;
+        getColumnType as public genericGetColumnType;
     }
     use Extension\QueryColumnType {
-        QueryColumnType::getQueryColumnType as public genericGetQueryColumnType;
+        getQueryColumnType as public genericGetQueryColumnType;
     }
 
     const DECIMAL_SIZE_DEFAULT = 64;
