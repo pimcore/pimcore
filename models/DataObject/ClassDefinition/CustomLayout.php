@@ -215,13 +215,12 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @param bool $saveDefinitionFile
      *
      * @throws DataObject\Exception\DefinitionWriteException
      */
-    public function save($saveDefinitionFile = true)
+    public function save()
     {
-        if ($saveDefinitionFile && !$this->isWriteable()) {
+        if (!$this->isWriteable()) {
             throw new DataObject\Exception\DefinitionWriteException();
         }
 
