@@ -179,7 +179,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $db = Db::get();
         $select = 'SELECT calculatedValue from object_query_' . $this->testObject->getClassId()
                         . ' WHERE oo_id = ' . $this->testObject->getId();
-        $row = $db->fetchRow($select);
+        $row = $db->fetchAssociative($select);
 
         $this->assertEquals($value, $row['calculatedValue'], 'value should have been written to query table');
     }
@@ -212,7 +212,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $db = Db::get();
         $select = 'SELECT calculatedValueExpression from object_query_' . $this->testObject->getClassId()
             . ' WHERE oo_id = ' . $this->testObject->getId();
-        $row = $db->fetchRow($select);
+        $row = $db->fetchAssociative($select);
 
         $this->assertEquals('Jane some calc', $row['calculatedValueExpression'], 'value should have been written to query table');
     }
