@@ -17,6 +17,8 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Extension\ColumnType;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Extension\QueryColumnType;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, PreSetDataInterface
