@@ -97,12 +97,10 @@ pimcore.asset.audio = Class.create(pimcore.asset.asset, {
     },
 
     getEditPanel: function () {
-
         if (!this.editPanel) {
+            let html = t('preview_not_available');
 
-            var html = t("preview_not_available");
-
-            if(this.data.filename.match(/\.mp3$/) || this.data.filename.match(/\.wav$/)) {
+            if (document.createElement('audio').canPlayType(this.data.mimetype)) {
                 html = '<audio controls><source src="' + this.data.path + this.data.filename + '" type="' + this.data.mimetype + '"></audio>';
             }
 

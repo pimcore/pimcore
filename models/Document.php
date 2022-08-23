@@ -485,7 +485,6 @@ class Document extends Element\AbstractElement
     {
         // set path
         if ($this->getId() != 1) { // not for the root node
-
             // check for a valid key, home has no key, so omit the check
             if (!Element\Service::isValidKey($this->getKey(), 'document')) {
                 throw new \Exception('invalid key for document with id [ ' . $this->getId() . ' ] key is: [' . $this->getKey() . ']');
@@ -501,6 +500,11 @@ class Document extends Element\AbstractElement
                 // that is currently in the parent object (in memory), because this might have changed but wasn't not saved
                 $this->setPath(str_replace('//', '/', $parent->getCurrentFullPath() . '/'));
             } else {
+                trigger_deprecation(
+                    'pimcore/pimcore',
+                    '10.5',
+                    'Fallback for parentId will be removed in Pimcore 11.',
+                );
                 // parent document doesn't exist anymore, set the parent to to root
                 $this->setParentId(1);
                 $this->setPath('/');

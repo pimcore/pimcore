@@ -288,8 +288,11 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             }
         }
 
-        $method = $isUpdate ? 'insertOrUpdate' : 'insert';
-        $this->db->$method('object_store_' . $this->model->getClassId(), $data);
+        if ($isUpdate) {
+            Helper::insertOrUpdate($this->db, 'object_store_' . $this->model->getClassId(), $data);
+        } else {
+            $this->db->insert('object_store_' . $this->model->getClassId(), $data);
+        }
 
         // get data for query table
         $data = [];
