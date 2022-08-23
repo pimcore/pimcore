@@ -45,7 +45,7 @@ var Class = (function() {
 
         for (let i = 0; i < properties.length; i++) {
             if(!properties[i]){
-                console.error("Cannot create class with null properties!");
+                console.error("Cannot create class with null properties! A possible case for this error is using the class pimcore.plugin.admin");
                 return function() {};
             }
             klass.addMethods(properties[i]);
