@@ -43,9 +43,13 @@ var Class = (function() {
             parent.subclasses.push(klass);
         }
 
-        for ( var i = 0; i < properties.length; i++)
+        for (let i = 0; i < properties.length; i++) {
+            if(!properties[i]){
+                console.error("Cannot create class with null properties!");
+                return function() {};
+            }
             klass.addMethods(properties[i]);
-
+        }
         if (!klass.prototype.initialize)
             klass.prototype.initialize = function() {};
 
