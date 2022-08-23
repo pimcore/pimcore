@@ -113,22 +113,6 @@ interface EnvironmentInterface
     public function getCategories();
 
     /**
-     * @deprecated will be removed in Pimcore 11
-     *
-     * @param AttributeBagInterface $namespace
-     *
-     * @return EnvironmentInterface
-     */
-    public function setSession(AttributeBagInterface $namespace);
-
-    /**
-     * @deprecated will be removed in Pimcore 11
-     *
-     * @return AttributeBagInterface|null
-     */
-    public function getSession();
-
-    /**
      * sets execution mode of system - either product or cart
      *
      * @param string $executionMode
