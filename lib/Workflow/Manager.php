@@ -153,6 +153,9 @@ class Manager
         return $placeConfigs;
     }
 
+    /**
+     * @return array|PlaceConfig[]
+     */
     public function getPlaceConfigsByWorkflowName(string $workflowName)
     {
         return $this->placeConfigs[$workflowName] ?? [];
@@ -206,6 +209,11 @@ class Manager
         return $workflows;
     }
 
+    /**
+     * @param object $subject
+     *
+     * @return Workflow|null
+     */
     public function getWorkflowIfExists($subject, string $workflowName): ?Workflow
     {
         try {

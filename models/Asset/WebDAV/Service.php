@@ -59,7 +59,6 @@ class Service
      */
     public static function saveDeleteLog($log)
     {
-
         // cleanup old entries
         $tmpLog = [];
         foreach ($log as $path => $data) {

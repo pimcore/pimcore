@@ -41,11 +41,13 @@ final class Predefined extends Model\AbstractModel
     protected $name;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $description;
 
     /**
+     * @TODO if required?
+     *
      * @var string
      */
     protected $key;
@@ -56,7 +58,7 @@ final class Predefined extends Model\AbstractModel
     protected $type;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $targetSubtype;
 
@@ -66,22 +68,24 @@ final class Predefined extends Model\AbstractModel
     protected $data;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $config;
 
     /**
+     * @TODO if required?
+     *
      * @var string
      */
     protected $ctype;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $language;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $group;
 
@@ -225,7 +229,7 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @param string $description
+     * @param string|null $description
      *
      * @return $this
      */
@@ -237,7 +241,7 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getDescription()
     {
@@ -285,7 +289,7 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @param string $language
+     * @param string|null $language
      */
     public function setLanguage($language)
     {
@@ -293,7 +297,7 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getLanguage()
     {
@@ -301,7 +305,7 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @param string $group
+     * @param string|null $group
      */
     public function setGroup($group)
     {
@@ -309,7 +313,7 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getGroup()
     {
@@ -317,7 +321,7 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @param string $targetSubtype
+     * @param string|null $targetSubtype
      */
     public function setTargetSubtype($targetSubtype)
     {
@@ -325,7 +329,7 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getTargetSubtype()
     {
@@ -333,7 +337,7 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getConfig()
     {
@@ -341,7 +345,7 @@ final class Predefined extends Model\AbstractModel
     }
 
     /**
-     * @param string $config
+     * @param string|null $config
      */
     public function setConfig($config)
     {

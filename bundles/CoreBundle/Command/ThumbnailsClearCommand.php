@@ -48,7 +48,7 @@ class ThumbnailsClearCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $possibleOptions = ['image', 'video'];
         if (!in_array($input->getOption('type'), $possibleOptions)) {

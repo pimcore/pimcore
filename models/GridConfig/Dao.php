@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\GridConfig;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
 
@@ -32,7 +33,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getById($id)
     {
-        $data = $this->db->fetchRow('SELECT * FROM gridconfigs WHERE id = ?', $id);
+        $data = $this->db->fetchAssociative('SELECT * FROM gridconfigs WHERE id = ?', [$id]);
 
         if (!$data) {
             throw new NotFoundException('gridconfig with id ' . $id . ' not found');
@@ -61,7 +62,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate('gridconfigs', $data);
+        Helper::insertOrUpdate($this->db, 'gridconfigs', $data);
 
         $lastInsertId = $this->db->lastInsertId();
         if (!$this->model->getId() && $lastInsertId) {

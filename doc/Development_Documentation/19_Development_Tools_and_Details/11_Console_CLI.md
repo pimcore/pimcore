@@ -52,7 +52,7 @@ class AwesomeCommand extends AbstractCommand
             ->setDescription('Awesome command');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // dump
         $this->dump("Isn't that awesome?");

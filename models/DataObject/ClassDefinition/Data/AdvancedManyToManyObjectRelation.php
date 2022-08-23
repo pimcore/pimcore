@@ -139,7 +139,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                 $targets[] = $targetId;
             }
 
-            $existingTargets = $db->fetchCol(
+            $existingTargets = $db->fetchFirstColumn(
                 'SELECT o_id FROM objects WHERE o_id IN ('.implode(',', $targets).')'
             );
 
@@ -526,28 +526,28 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                 $ownerName = '/' . $context['containerType'] . '~' . $containerName . '/%';
             }
 
-            $sql = $db->quoteInto('o_id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
-                . $db->quoteInto('ownername LIKE ?', $ownerName)
-                . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
-                . ' AND ' . $db->quoteInto('position = ?', $position);
+            $sql = Db\Helper::quoteInto($db, 'o_id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
+                . Db\Helper::quoteInto($db, 'ownername LIKE ?', $ownerName)
+                . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
+                . ' AND ' . Db\Helper::quoteInto($db, 'position = ?', $position);
         } else {
-            $sql = $db->quoteInto('o_id = ?', $objectId) . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
-                . ' AND ' . $db->quoteInto('position = ?', $position);
+            $sql = Db\Helper::quoteInto($db, 'o_id = ?', $objectId) . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
+                . ' AND ' . Db\Helper::quoteInto($db, 'position = ?', $position);
 
             if ($context) {
                 if (!empty($context['fieldname'])) {
-                    $sql .= ' AND '.$db->quoteInto('ownername = ?', $context['fieldname']);
+                    $sql .= ' AND '.Db\Helper::quoteInto($db, 'ownername = ?', $context['fieldname']);
                 }
 
                 if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
                     if ($context['containerType']) {
-                        $sql .= ' AND '.$db->quoteInto('ownertype = ?', $context['containerType']);
+                        $sql .= ' AND '.Db\Helper::quoteInto($db, 'ownertype = ?', $context['containerType']);
                     }
                 }
             }
         }
 
-        $db->deleteWhere($table, $sql);
+        $db->executeStatement('DELETE FROM ' . $table . ' WHERE ' . $sql);
 
         if (!empty($objectsMetadata)) {
             if ($object instanceof DataObject\Localizedfield || $object instanceof DataObject\Objectbrick\Data\AbstractData
@@ -613,11 +613,11 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
             }
             $containerName = $context['fieldname'] ?? null;
             $index = $context['index'];
-            $db->deleteWhere(
-                'object_metadata_' . $object->getClassId(),
-                $db->quoteInto('o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                . $db->quoteInto('ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/' . "$index . /%")
-                . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
+            $db->executeStatement(
+                'DELETE FROM object_metadata_' . $object->getClassId()
+                . ' WHERE ' . Db\Helper::quoteInto($db, 'o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
+                . Db\Helper::quoteInto($db, 'ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/' . "$index . /%")
+                . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
             );
         } else {
             $deleteConditions = [
@@ -890,7 +890,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                 $type = $elementData['type'];
                 $id = $elementData['id'];
                 $target = Element\Service::getElementById($type, $id);
-                if ($target) {
+                if ($target instanceof DataObject\Concrete) {
                     $columns = $elementMetadata['columns'];
                     $fieldname = $elementMetadata['fieldname'];
                     $data = $elementMetadata['data'];

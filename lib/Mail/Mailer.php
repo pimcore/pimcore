@@ -35,6 +35,7 @@ class Mailer implements MailerInterface
 
     /**
      * @param MailerInterface $mailer
+     * @param RedirectingPlugin $redirectPlugin
      */
     public function __construct(MailerInterface $mailer, RedirectingPlugin $redirectPlugin)
     {

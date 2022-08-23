@@ -25,6 +25,9 @@ final class Config
 {
     private const CONFIG_ID = 'web_to_print';
 
+    /**
+     * @var LocationAwareConfigRepository|null
+     */
     private static ?LocationAwareConfigRepository $locationAwareConfigRepository = null;
 
     /**
@@ -77,6 +80,8 @@ final class Config
 
     /**
      * @return bool
+     *
+     * @throws \Exception
      */
     public static function isWriteable(): bool
     {
@@ -90,10 +95,9 @@ final class Config
     {
         $repository = self::getRepository();
 
-        list($config, $dataSource) = $repository->loadConfigByKey(self::CONFIG_ID);
-        $config = new \Pimcore\Config\Config($config ?? []);
+        list($config) = $repository->loadConfigByKey(self::CONFIG_ID);
 
-        return $config;
+        return new \Pimcore\Config\Config($config ?? []);
     }
 
     /**

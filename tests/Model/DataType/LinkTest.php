@@ -18,7 +18,6 @@ namespace Pimcore\Tests\Model\DataType;
 use Pimcore\Model\DataObject\Data\Link;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\DataObject\unittestLink;
-use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 
@@ -75,7 +74,7 @@ class LinkTest extends ModelTestCase
         $linkObject->setLtestlink($link);
         $linkObject->save();
 
-        $linkObjectReloaded = unittestLink::getById($linkObject->getId(), true);
+        $linkObjectReloaded = unittestLink::getById($linkObject->getId(), ['force' => true]);
 
         $this->assertEquals($link->getDirect(), $linkObjectReloaded->getTestlink()->getDirect());
         $this->assertEquals($link->getDirect(), $linkObjectReloaded->getLtestlink()->getDirect());
@@ -88,13 +87,13 @@ class LinkTest extends ModelTestCase
      */
     public function testCheckValidity()
     {
-        $linkObject = $this->createLinkObject();
-        $linkObject->setTestlink('https://pimcore.com/');
-        $linkObject->setLtestlink('https://pimcore.com/');
-
-        $this->expectException(ValidationException::class);
-        $this->expectExceptionMessage('Expected DataObject\\Data\\Link or null');
-
-        $linkObject->save();
+        try {
+            $linkObject = $this->createLinkObject();
+            $linkObject->setTestlink('https://pimcore.com/');
+            $linkObject->setLtestlink('https://pimcore.com/');
+            $this->fail('Expected a TypeError');
+        } catch (\Throwable $e) {
+            $this->assertInstanceOf(\TypeError::class, $e);
+        }
     }
 }

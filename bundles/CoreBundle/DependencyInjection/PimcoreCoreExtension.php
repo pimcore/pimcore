@@ -78,7 +78,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
             $container->setParameter('pimcore.encryption.secret', $config['encryption']['secret']);
         }
 
-        $container->setParameter('pimcore.admin.session.attribute_bags', $config['admin']['session']['attribute_bags']);
+        $container->setParameter('pimcore.admin.session.attribute_bags', $config['admin']['session']['attribute_bags']); //@TODO Remove in Pimcore 11
         $container->setParameter('pimcore.admin.translations.path', $config['admin']['translations']['path']);
 
         $container->setParameter('pimcore.translations.admin_translation_mapping', $config['translations']['admin_translation_mapping']);
@@ -147,6 +147,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $this->configureAdapterFactories($container, $config['custom_report']['adapters'], 'pimcore.custom_report.adapter.factories');
         $this->configureGoogleAnalyticsFallbackServiceLocator($container);
         $this->configureSitemaps($container, $config['sitemaps']);
+        $this->configureGlossary($container, $config['glossary']);
 
         $container->setParameter('pimcore.workflow', $config['workflows']);
 
@@ -469,5 +470,10 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         }
 
         $serviceLocator->setArgument(0, $arguments);
+    }
+
+    private function configureGlossary(ContainerBuilder $container, array $config)
+    {
+        $container->setParameter('pimcore.glossary.blocked_tags', $config['blocked_tags']);
     }
 }

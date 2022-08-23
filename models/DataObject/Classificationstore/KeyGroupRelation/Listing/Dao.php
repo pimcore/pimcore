@@ -42,7 +42,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
 
         $sql .= $this->getFrom() . $this->getWhere() . $this->getOrder() . $this->getOffsetLimit();
-        $data = $this->db->fetchAll($sql, $this->model->getConditionVariables());
+        $data = $this->db->fetchAllAssociative($sql, $this->model->getConditionVariables());
 
         $configData = [];
         foreach ($data as $dataItem) {
@@ -63,7 +63,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getDataArray()
     {
-        return $this->db->fetchAll('SELECT *' . $this->getFrom() . $this->getWhere() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        return $this->db->fetchAllAssociative('SELECT *' . $this->getFrom() . $this->getWhere() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
     }
 
     /**

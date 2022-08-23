@@ -42,7 +42,7 @@ class RunScriptCommand extends AbstractCommand
         $this->configureDryRunOption();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $script = $input->getArgument('script');
 

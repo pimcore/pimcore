@@ -203,21 +203,18 @@ final class AreabrickPass implements CompilerPassInterface
      */
     protected function findBundleBricks(ContainerBuilder $container, string $name, array $metadata, array $excludedClasses = []): array
     {
-        $directory = implode(DIRECTORY_SEPARATOR, [
-            $metadata['path'],
-            'Document',
-            'Areabrick',
-        ]);
+        $sourcePath = is_dir($metadata['path'].'/src') ? $metadata['path'].'/src' : $metadata['path'];
+        $directory = $sourcePath.'/Document/Areabrick';
 
         // update cache when directory is added/removed
         $container->addResource(new FileExistenceResource($directory));
 
-        if (!file_exists($directory) || !is_dir($directory)) {
+        if (!is_dir($directory)) {
             return [];
-        } else {
-            // update container cache when areabricks are added/changed
-            $container->addResource(new DirectoryResource($directory, '/\.php$/'));
         }
+
+        // update container cache when areabricks are added/changed
+        $container->addResource(new DirectoryResource($directory, '/\.php$/'));
 
         $finder = new Finder();
         $finder
@@ -230,7 +227,7 @@ final class AreabrickPass implements CompilerPassInterface
             $shortClassName = $classPath->getBasename('.php');
 
             // relative path in bundle path
-            $relativePath = str_replace($metadata['path'], '', $classPath->getPathInfo());
+            $relativePath = str_replace($sourcePath, '', $classPath->getPathInfo());
             $relativePath = trim($relativePath, DIRECTORY_SEPARATOR);
 
             // namespace starting from bundle path
@@ -257,8 +254,6 @@ final class AreabrickPass implements CompilerPassInterface
                     $areas[] = [
                         'brickId' => $brickId,
                         'serviceId' => $serviceId,
-                        'bundleName' => $name,
-                        'bundleMetadata' => $metadata,
                         'reflector' => $reflector,
                     ];
                 }

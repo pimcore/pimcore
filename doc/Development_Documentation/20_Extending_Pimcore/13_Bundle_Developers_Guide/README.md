@@ -71,6 +71,8 @@ For bundles, translations should be stored in the `Resources/translations/` dire
 (or `domain.locale.loader` if you want to handle a specific translation domain). For the most cases this will be something
 like `Resources/translations/en.yml`, which resolves to the default `messages` translation domain.
 
+Example: admin.en.yml or messages.en.yml
+
 
 ### Security / Authentication
 
@@ -105,7 +107,7 @@ If you need persistent storage, create a unique directory in `PIMCORE_PRIVATE_VA
 ### Extending the Admin UI
 
 The following section explains how to design and structure bundles and how to register for and utilize the events provided
-in the PHP backend and the Ext JS frontend: [Plugin_Backend_UI](./06_Plugin_Backend_UI.md)
+in the PHP backend and the Ext JS frontend: [Event_Listener_UI](./06_Event_Listener_UI.md)
 
 ### Adding Document Editables
 

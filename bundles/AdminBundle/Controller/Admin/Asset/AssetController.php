@@ -23,6 +23,7 @@ use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
+use Pimcore\Db\Helper;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\AssetEvents;
@@ -101,13 +102,15 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     public function getDataByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $assetId = (int)$request->get('id');
+        $type = (string)$request->get('type');
+
         $asset = Asset::getById($assetId);
         if (!$asset instanceof Asset) {
             return $this->adminJson(['success' => false, 'message' => "asset doesn't exist"]);
         }
 
-        // check for lock
-        if ($asset->isAllowed('publish') || $asset->isAllowed('delete')) {
+        // check for lock on non-folder items only.
+        if ($type !== 'folder' && ($asset->isAllowed('publish') || $asset->isAllowed('delete'))) {
             if (Element\Editlock::isLocked($assetId, 'asset')) {
                 return $this->getEditLockResponse($assetId, 'asset');
             }
@@ -674,7 +677,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $parentAsset = Asset::getById((int) $request->get('id'));
 
             $list = new Asset\Listing();
-            $list->setCondition('path LIKE ?', [$list->escapeLike($parentAsset->getRealFullPath()) . '/%']);
+            $list->setCondition('path LIKE ?', [Helper::escapeLike($parentAsset->getRealFullPath()) . '/%']);
             $list->setLimit((int)$request->get('amount'));
             $list->setOrderKey('LENGTH(path)', false);
             $list->setOrder('DESC');
@@ -830,7 +833,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             return $this->generateUrl('pimcore_admin_asset_getdocumentthumbnail', $params);
         }
 
-        return null;
+        if ($asset instanceof Asset\Audio) {
+            return '/bundles/pimcoreadmin/img/flat-color-icons/speaker.svg';
+        }
+
+        if ($asset instanceof Asset) {
+            return '/bundles/pimcoreadmin/img/filetype-not-supported.svg';
+        }
     }
 
     /**
@@ -1499,6 +1508,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $stream = $thumb->getStream();
+        if (!$stream) {
+            throw $this->createNotFoundException('Unable to get video thumbnail for video ' . $video->getId());
+        }
+
         $response = new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
         }, 200, [
@@ -1652,6 +1665,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     public function getPreviewVideoAction(Request $request)
     {
         $asset = Asset\Video::getById((int) $request->get('id'));
+        $configName = $request->get('config');
 
         if (!$asset) {
             throw $this->createNotFoundException('could not load video asset');
@@ -1662,12 +1676,19 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $previewData = ['asset' => $asset];
-        $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
+
+        $config = Asset\Video\Thumbnail\Config::getByName($configName);
+
+        if (!$config instanceof Asset\Video\Thumbnail\Config) {
+            $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
+        }
+
         $thumbnail = $asset->getThumbnail($config, ['mp4']);
 
         if ($thumbnail) {
             $previewData['asset'] = $asset;
             $previewData['thumbnail'] = $thumbnail;
+            $previewData['config'] = $config->getName();
 
             if ($thumbnail['status'] == 'finished') {
                 return $this->render(
@@ -1698,6 +1719,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     public function serveVideoPreviewAction(Request $request)
     {
         $asset = Asset\Video::getById((int) $request->get('id'));
+        $configName = $request->get('config');
 
         if (!$asset) {
             throw $this->createNotFoundException('could not load video asset');
@@ -1707,7 +1729,12 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             throw $this->createAccessDeniedException('not allowed to preview');
         }
 
-        $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
+        $config = Asset\Video\Thumbnail\Config::getByName($configName);
+
+        if (!$config instanceof Asset\Video\Thumbnail\Config) {
+            $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
+        }
+
         $thumbnail = $asset->getThumbnail($config, ['mp4']);
         $storagePath = $asset->getRealPath() . '/' . preg_replace('@^' . preg_quote($asset->getPath(), '@') . '@', '', urldecode($thumbnail['formats']['mp4']));
 
@@ -1810,7 +1837,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $conditionFilters = [];
         $list = new Asset\Listing();
-        $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($list->escapeLike($folder->getRealFullPath()) . '/%')) . " AND type != 'folder'";
+        $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote(Helper::escapeLike($folder->getRealFullPath()) . '/%')) . " AND type != 'folder'";
 
         if (!$this->getAdminUser()->isAdmin()) {
             $userIds = $this->getAdminUser()->getRoles();
@@ -1842,25 +1869,21 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $assets = [];
 
         foreach ($list as $asset) {
-            $thumbnailMethod = Asset\Service::getPreviewThumbnail($asset, [], true);
+            $filenameDisplay = $asset->getFilename();
+            if (strlen($filenameDisplay) > 32) {
+                $filenameDisplay = substr($filenameDisplay, 0, 25) . '...' . \Pimcore\File::getFileExtension($filenameDisplay);
+            }
 
-            if (!empty($thumbnailMethod)) {
-                $filenameDisplay = $asset->getFilename();
-                if (strlen($filenameDisplay) > 32) {
-                    $filenameDisplay = substr($filenameDisplay, 0, 25) . '...' . \Pimcore\File::getFileExtension($filenameDisplay);
-                }
-
-                // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
-                if ($asset->isAllowed('list')) {
-                    $assets[] = [
-                        'id' => $asset->getId(),
-                        'type' => $asset->getType(),
-                        'filename' => $asset->getFilename(),
-                        'filenameDisplay' => htmlspecialchars($filenameDisplay),
-                        'url' => $this->getThumbnailUrl($asset),
-                        'idPath' => $data['idPath'] = Element\Service::getIdPath($asset),
-                    ];
-                }
+            // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
+            if ($asset->isAllowed('list')) {
+                $assets[] = [
+                    'id' => $asset->getId(),
+                    'type' => $asset->getType(),
+                    'filename' => $asset->getFilename(),
+                    'filenameDisplay' => htmlspecialchars($filenameDisplay),
+                    'url' => $this->getThumbnailUrl($asset),
+                    'idPath' => $data['idPath'] = Element\Service::getIdPath($asset),
+                ];
             }
         }
 
@@ -2063,7 +2086,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 //add a condition if id numbers are specified
                 $conditionFilters[] = 'id IN (' . implode(',', $quotedSelectedIds) . ')';
             }
-            $conditionFilters[] = 'path LIKE ' . $db->quote($db->escapeLike($parentPath) . '/%') . ' AND type != ' . $db->quote('folder');
+            $conditionFilters[] = 'path LIKE ' . $db->quote(Helper::escapeLike($parentPath) . '/%') . ' AND type != ' . $db->quote('folder');
             if (!$this->getAdminUser()->isAdmin()) {
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
@@ -2144,7 +2167,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                     //add a condition if id numbers are specified
                     $conditionFilters[] = 'id IN (' . implode(',', $selectedIds) . ')';
                 }
-                $conditionFilters[] = "type != 'folder' AND path LIKE " . $db->quote($db->escapeLike($parentPath) . '/%');
+                $conditionFilters[] = "type != 'folder' AND path LIKE " . $db->quote(Helper::escapeLike($parentPath) . '/%');
                 if (!$this->getAdminUser()->isAdmin()) {
                     $userIds = $this->getAdminUser()->getRoles();
                     $userIds[] = $this->getAdminUser()->getId();
@@ -2687,7 +2710,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
             $assets = [];
             foreach ($list->getAssets() as $index => $asset) {
-
                 // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
                 if ($asset->isAllowed('list')) {
                     $a = Asset\Service::gridAssetData($asset, $allParams['fields'], $allParams['language'] ?? '');

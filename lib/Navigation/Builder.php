@@ -23,10 +23,8 @@ use Pimcore\Model\Site;
 use Pimcore\Navigation\Iterator\PrefixRecursiveFilterIterator;
 use Pimcore\Navigation\Page\Document as DocumentPage;
 use Pimcore\Navigation\Page\Url;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * @internal
- */
 class Builder
 {
     /**
@@ -35,11 +33,15 @@ class Builder
     private $requestHelper;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $htmlMenuIdPrefix;
 
     /**
+     * @internal
+     *
      * @var string
      */
     protected $pageClass = DocumentPage::class;
@@ -55,20 +57,64 @@ class Builder
     private $navCacheTags = [];
 
     /**
+     * @var OptionsResolver
+     */
+    private $optionsResolver;
+
+    /**
      * @param RequestHelper $requestHelper
      * @param string|null $pageClass
      */
-    public function __construct(RequestHelper $requestHelper, string $pageClass = null)
+    public function __construct(RequestHelper $requestHelper, ?string $pageClass = null)
     {
         $this->requestHelper = $requestHelper;
 
         if (null !== $pageClass) {
             $this->pageClass = $pageClass;
         }
+
+        $this->optionsResolver = new OptionsResolver();
+        $this->configureOptions($this->optionsResolver);
     }
 
     /**
-     * @param Document|null $activeDocument
+     * @param OptionsResolver $options
+     */
+    protected function configureOptions(OptionsResolver $options)
+    {
+        $options->setDefaults([
+            'root' => null,
+            'htmlMenuPrefix' => null,
+            'pageCallback' => null,
+            'cache' => true,
+            'cacheLifetime' => null,
+            'maxDepth' => null,
+            'active' => null,
+            'markActiveTrail' => true,
+        ]);
+
+        $options->setAllowedTypes('root', [Document::class, 'null']);
+        $options->setAllowedTypes('htmlMenuPrefix', ['string', 'null']);
+        $options->setAllowedTypes('pageCallback', ['callable', 'null']);
+        $options->setAllowedTypes('cache', ['string', 'bool']);
+        $options->setAllowedTypes('cacheLifetime', ['int', 'null']);
+        $options->setAllowedTypes('maxDepth', ['int', 'null']);
+        $options->setAllowedTypes('active', [Document::class, 'null']);
+        $options->setAllowedTypes('markActiveTrail', ['bool']);
+    }
+
+    /**
+     * @param array $options
+     *
+     * @return array
+     */
+    protected function resolveOptions(array $options): array
+    {
+        return $this->optionsResolver->resolve($options);
+    }
+
+    /**
+     * @param array|Document|null $activeDocument
      * @param Document|null $navigationRootDocument
      * @param string|null $htmlMenuIdPrefix
      * @param \Closure|null $pageCallback
@@ -82,6 +128,24 @@ class Builder
      */
     public function getNavigation($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true, ?int $maxDepth = null, ?int $cacheLifetime = null)
     {
+        //TODO Pimcore 11: remove the `if (func_num_args() > 1)` block to remove the BC layer
+        if (func_num_args() > 1) {
+            trigger_deprecation('pimcore/pimcore', '10.5', 'Calling Pimcore\Navigation\Builder::getNavigation() using extra arguments is deprecated and will be removed in Pimcore 11.' .
+            'Instead, specify the arguments as an array');
+        } else {
+            [
+                'root' => $navigationRootDocument,
+                'htmlMenuPrefix' => $htmlMenuIdPrefix,
+                'pageCallback' => $pageCallback,
+                'cache' => $cache,
+                'cacheLifetime' => $cacheLifetime,
+                'maxDepth' => $maxDepth,
+                'active' => $activeDocument,
+                'markActiveTrail' => $markActiveTrail,
+            ] = $this->resolveOptions($activeDocument);
+        }
+
+        $markActiveTrail ??= true; //TODO Pimcore 11: remove with the BC layer
         $cacheEnabled = $cache !== false;
 
         $this->htmlMenuIdPrefix = $htmlMenuIdPrefix;
@@ -131,7 +195,23 @@ class Builder
             }
         }
 
-        // set active path
+        if ($markActiveTrail) {
+            $this->markActiveTrail($navigation, $activeDocument);
+        }
+
+        return $navigation;
+    }
+
+    /**
+     * @internal
+     *
+     * @param Container $navigation
+     * @param Document|null $activeDocument
+     *
+     * @return void
+     */
+    protected function markActiveTrail(Container $navigation, ?Document $activeDocument): void
+    {
         $activePages = [];
 
         if ($this->requestHelper->hasMainRequest()) {
@@ -146,7 +226,7 @@ class Builder
             }
         }
 
-        if ($activeDocument instanceof Document) {
+        if ($activeDocument) {
             if (empty($activePages)) {
                 // use the provided pimcore document
                 $activePages = $this->findActivePages($navigation, 'realFullPath', $activeDocument->getRealFullPath());
@@ -158,53 +238,47 @@ class Builder
             }
         }
 
+        $isLink = static fn ($page): bool => $page instanceof DocumentPage && $page->getDocumentType() === 'link';
+
         // cleanup active pages from links
         // pages have priority, if we don't find any active page, we use all we found
-        $tmpPages = [];
-        foreach ($activePages as $page) {
-            if ($page instanceof DocumentPage && $page->getDocumentType() !== 'link') {
-                $tmpPages[] = $page;
-            }
-        }
-        if (count($tmpPages)) {
-            $activePages = $tmpPages;
+        if ($nonLinkPages = array_filter($activePages, static fn ($page): bool => !$isLink($page))) {
+            $activePages = $nonLinkPages;
         }
 
-        if (!empty($activePages)) {
+        if ($activePages) {
             // we found an active document, so we can build the active trail by getting respectively the parent
             foreach ($activePages as $activePage) {
                 $this->addActiveCssClasses($activePage, true);
             }
-        } elseif ($activeDocument instanceof Document) {
+
+            return;
+        }
+
+        if ($activeDocument) {
             // we didn't find the active document, so we try to build the trail on our own
             $allPages = new \RecursiveIteratorIterator($navigation, \RecursiveIteratorIterator::SELF_FIRST);
 
             foreach ($allPages as $page) {
-                $activeTrail = false;
-
-                if ($page instanceof Url && $page->getUri()) {
-                    if (str_starts_with($activeDocument->getRealFullPath(), $page->getUri() . '/')) {
-                        $activeTrail = true;
-                    } elseif (
-                        $page instanceof DocumentPage &&
-                        $page->getDocumentType() === 'link' &&
-                        str_starts_with($activeDocument->getFullPath(), $page->getUri() . '/')
-                    ) {
-                        $activeTrail = true;
-                    }
+                if (!$page instanceof Url || !$page->getUri()) {
+                    continue;
                 }
 
-                if ($activeTrail) {
+                $uri = $page->getUri() . '/';
+                $isActive = str_starts_with($activeDocument->getRealFullPath(), $uri)
+                    || ($isLink($page) && str_starts_with($activeDocument->getFullPath(), $uri));
+
+                if ($isActive) {
                     $page->setActive(true);
                     $page->setClass($page->getClass() . ' active active-trail');
                 }
             }
         }
-
-        return $navigation;
     }
 
     /**
+     * @internal
+     *
      * @param Container $navigation navigation container to iterate
      * @param string $property name of property to match against
      * @param string $value value to match property against
@@ -221,6 +295,8 @@ class Builder
     }
 
     /**
+     * @internal
+     *
      * @param Page $page
      * @param bool $isActive
      *
@@ -288,6 +364,8 @@ class Builder
     }
 
     /**
+     * @internal
+     *
      * @param Document $parentDocument
      * @param bool $isRoot
      * @param callable $pageCallback

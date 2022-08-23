@@ -141,16 +141,20 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
                         var colId = data.data.colId;
                         var groupId = data.data.groupId;
 
-                        Ext.Ajax.request({
-                            url: Routing.generate('pimcore_admin_dataobject_classificationstore_deletecollectionrelation'),
-                            method: 'DELETE',
-                            params: {
-                                colId: colId,
-                                groupId: groupId
-                            },
-                            success: function (response) {
-                                this.relationsStore.reload();
-                            }.bind(this)});
+                        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('classificationstore_collection_relation'), data.data.groupName), function(btn) {
+                            if (btn == 'yes') {
+                                Ext.Ajax.request({
+                                    url: Routing.generate('pimcore_admin_dataobject_classificationstore_deletecollectionrelation'),
+                                    method: 'DELETE',
+                                    params: {
+                                        colId: colId,
+                                        groupId: groupId
+                                    },
+                                    success: function (response) {
+                                        this.relationsStore.reload();
+                                    }.bind(this)});
+                            }
+                        }.bind(this));
                     }.bind(this)
                 }
             ]
@@ -311,15 +315,19 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
                         this.relationsGrid.hide();
                         this.relationsPanel.disable();
 
-                        Ext.Ajax.request({
-                            url: Routing.generate('pimcore_admin_dataobject_classificationstore_deletecollection'),
-                            method: 'DELETE',
-                            params: {
-                                id: id
-                            },
-                            success: function (response) {
-                                this.collectionsStore.reload();
-                            }.bind(this)});
+                        Ext.Msg.confirm(t('delete'), sprintf(t('delete_message_advanced'), t('classificationstore_collection'), data.data.name), function(btn) {
+                            if (btn == 'yes') {
+                                Ext.Ajax.request({
+                                    url: Routing.generate('pimcore_admin_dataobject_classificationstore_deletecollection'),
+                                    method: 'DELETE',
+                                    params: {
+                                        id: id
+                                    },
+                                    success: function (response) {
+                                        this.collectionsStore.reload();
+                                    }.bind(this)});
+                            }
+                        }.bind(this));
                     }.bind(this)
                 }
             ]

@@ -61,3 +61,9 @@ flysystem:
             options:
                 client: 'minio_client'
                 bucket: 'temp'
+        pimcore.application_log.storage:
+            adapter: 'aws'
+            visibility: public
+            options:
+                client: 'minio_client'
+                bucket: 'applicationlog'

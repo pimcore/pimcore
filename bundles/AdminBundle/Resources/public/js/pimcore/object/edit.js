@@ -63,7 +63,7 @@ pimcore.object.edit = Class.create({
             // this is especially for localized fields which get aggregated here into one field definition
             // in the case that there are more than one localized fields in the class definition
             // see also ClassDefinition::extractDataDefinitions();
-            if(typeof this.dataFields[name]["addReferencedField"]){
+            if (typeof this.dataFields[name]['addReferencedField'] === 'function') {
                 this.dataFields[name].addReferencedField(field);
             }
         } else {

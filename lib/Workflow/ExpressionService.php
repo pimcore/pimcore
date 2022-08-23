@@ -17,7 +17,7 @@ namespace Pimcore\Workflow;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\AuthenticationTrustResolverInterface;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
+use Symfony\Component\Security\Core\Authentication\Token\NullToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
@@ -48,12 +48,12 @@ class ExpressionService
     private $trustResolver;
 
     /**
-     * @var RoleHierarchyInterface
+     * @var RoleHierarchyInterface|null
      */
     private $roleHierarchy;
 
     /**
-     * @var ValidatorInterface
+     * @var ValidatorInterface|null
      */
     private $validator;
 
@@ -67,15 +67,25 @@ class ExpressionService
         $this->validator = $validator;
     }
 
+    /**
+     * @param object $subject
+     *
+     * @return mixed
+     */
     public function evaluateExpression(WorkflowInterface $workflow, $subject, string $expression)
     {
         return $this->expressionLanguage->evaluate($expression, $this->getVariables($subject));
     }
 
+    /**
+     * @param object $subject
+     *
+     * @return array
+     */
     // code should be sync with Symfony\Component\Security\Core\Authorization\Voter\ExpressionVoter
     private function getVariables($subject)
     {
-        $token = $this->tokenStorage->getToken() ?: new AnonymousToken('', 'anonymous', []);
+        $token = $this->tokenStorage->getToken() ?: new NullToken;
 
         $roleNames = $token->getRoleNames();
         if (null !== $this->roleHierarchy) {
@@ -84,7 +94,7 @@ class ExpressionService
 
         $variables = [
             'token' => $token,
-            'user' => $token->getUser(),
+            'user' => $token->getUser() ?: 'anonymous',
             'object' => $subject,
             'subject' => $subject,
             'role_names' => $roleNames,

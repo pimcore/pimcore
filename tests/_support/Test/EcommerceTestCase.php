@@ -19,8 +19,9 @@ namespace Pimcore\Tests\Test;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Environment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\SessionBagListener;
 use Pimcore\Localization\LocaleService;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
@@ -51,10 +52,18 @@ abstract class EcommerceTestCase extends TestCase
         if (null === $this->session) {
             $this->session = new Session(new MockArraySessionStorage());
 
-            $configurator = new SessionConfigurator();
+            $configurator = new SessionBagListener();
             $configurator->configure($this->session);
 
-            $this->session->getBag(SessionConfigurator::ATTRIBUTE_BAG_CART)->set('carts', []);
+            $this->session->getBag(SessionBagListener::ATTRIBUTE_BAG_CART)->set('carts', []);
+
+            $requestStack = \Pimcore::getContainer()->get('request_stack');
+            if (!$request = $requestStack->getCurrentRequest()) {
+                $request = new Request();
+                $requestStack->push($request);
+            }
+
+            $request->setSession($this->session);
         }
 
         return $this->session;

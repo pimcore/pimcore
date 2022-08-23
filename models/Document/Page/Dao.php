@@ -40,7 +40,7 @@ class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDao
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow("SELECT documents.*, documents_page.*, tree_locks.locked FROM documents
+        $data = $this->db->fetchAssociative("SELECT documents.*, documents_page.*, tree_locks.locked FROM documents
             LEFT JOIN documents_page ON documents.id = documents_page.id
             LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
                 WHERE documents.id = ?", [$this->model->getId()]);

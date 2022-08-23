@@ -337,7 +337,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      * Convert content and attributes into valid style tag
      *
      * @param  \stdClass $item Item to render
-     * @param  string $indent Indentation to use
+     * @param  null|string $indent Indentation to use
      *
      * @return string
      */
@@ -398,7 +398,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Create string representation of placeholder
      *
-     * @param  string|int $indent
+     * @param  null|string|int $indent
      *
      * @return string
      */

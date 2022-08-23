@@ -55,7 +55,7 @@ class NormalizerTest extends ModelTestCase
 
     protected function doCompare(int $assetId, string $metaDataName, $originalData)
     {
-        $asset = Asset::getById($assetId, true);
+        $asset = Asset::getById($assetId, ['force' => true]);
         $metaDataArray = $asset->getMetadata($metaDataName, null, false, true);
 
         /** @var Data $instance */

@@ -21,7 +21,14 @@ pimcore.asset.text = Class.create(pimcore.asset.asset, {
         this.setType("text");
         this.addLoadingPanel();
 
-        pimcore.plugin.broker.fireEvent("preOpenAsset", this, "text");
+        const preOpenAssetText = new CustomEvent(pimcore.events.preOpenAsset, {
+            detail: {
+                object: this,
+                type: "text"
+            }
+        });
+
+        document.dispatchEvent(preOpenAssetText);
 
         var user = pimcore.globalmanager.get("user");
 

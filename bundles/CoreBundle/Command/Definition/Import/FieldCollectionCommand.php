@@ -88,6 +88,10 @@ class FieldCollectionCommand extends AbstractStructureImportCommand
      */
     protected function import(AbstractModel $definition, $json)
     {
+        if (!$definition instanceof Definition) {
+            return false;
+        }
+
         return Service::importFieldCollectionFromJson($definition, $json);
     }
 }

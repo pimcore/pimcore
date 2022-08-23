@@ -564,7 +564,7 @@ class MiscController extends AdminController
             $condition = ' WHERE ' . implode(' OR ', $conditionParts);
         }
 
-        $logs = $db->fetchAll('SELECT code,uri,`count`,date FROM http_error_log ' . $condition . ' ORDER BY ' . $sort . ' ' . $dir . ' LIMIT ' . $offset . ',' . $limit);
+        $logs = $db->fetchAllAssociative('SELECT code,uri,`count`,date FROM http_error_log ' . $condition . ' ORDER BY ' . $sort . ' ' . $dir . ' LIMIT ' . $offset . ',' . $limit);
         $total = $db->fetchOne('SELECT count(*) FROM http_error_log ' . $condition);
 
         return $this->adminJson([
@@ -586,7 +586,7 @@ class MiscController extends AdminController
         $this->checkPermission('http_errors');
 
         $db = Db::get();
-        $db->query('TRUNCATE TABLE http_error_log');
+        $db->executeQuery('TRUNCATE TABLE http_error_log');
 
         return $this->adminJson([
             'success' => true,
@@ -610,7 +610,7 @@ class MiscController extends AdminController
         }
 
         $db = Db::get();
-        $data = $db->fetchRow('SELECT * FROM http_error_log WHERE uri = ?', [$request->get('uri')]);
+        $data = $db->fetchAssociative('SELECT * FROM http_error_log WHERE uri = ?', [$request->get('uri')]);
 
         foreach ($data as $key => &$value) {
             if (in_array($key, ['parametersGet', 'parametersPost', 'serverVars', 'cookies'])) {

@@ -255,7 +255,6 @@ class Processor
 
             // after we got the lock, check again if the image exists in the meantime - if not - generate it
             if (!$storage->fileExists($storagePath)) {
-
                 // all checks on the file system should be below the deferred part for performance reasons (remote file systems)
                 if (!$fileSystemPath) {
                     $fileSystemPath = $asset->getLocalFile();
@@ -359,10 +358,9 @@ class Processor
                                     foreach ($transformation['arguments'] as $key => $value) {
                                         $position = array_search($key, $mapping);
                                         if ($position !== false) {
-
                                             // high res calculations if enabled
                                             if (!in_array($transformation['method'], ['cropPercent']) && in_array($key,
-                                                    ['width', 'height', 'x', 'y'])) {
+                                                ['width', 'height', 'x', 'y'])) {
                                                 if ($highResFactor && $highResFactor > 1) {
                                                     $value *= $highResFactor;
                                                     $value = (int)ceil($value);
@@ -429,6 +427,13 @@ class Processor
                 if (is_resource($stream)) {
                     fclose($stream);
                 }
+
+                if ($statusCacheEnabled) {
+                    if ($imageInfo = @getimagesize($tmpFsPath)) {
+                        $asset->getDao()->addToThumbnailCache($config->getName(), $filename, filesize($tmpFsPath), $imageInfo[0], $imageInfo[1]);
+                    }
+                }
+
                 unlink($tmpFsPath);
 
                 $generated = true;
@@ -436,7 +441,7 @@ class Processor
                 $isImageOptimizersEnabled = PimcoreConfig::getSystemConfiguration('assets')['image']['thumbnails']['image_optimizers']['enabled'];
                 if ($optimizedFormat && $optimizeContent && $isImageOptimizersEnabled) {
                     \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
-                      new OptimizeImageMessage($storagePath)
+                        new OptimizeImageMessage($storagePath)
                     );
                 }
 
@@ -452,15 +457,12 @@ class Processor
         // if the file is corrupted the file will be created on the fly when requested by the browser (because it's deleted here)
         if ($storage->fileExists($storagePath) && $storage->fileSize($storagePath) < 50) {
             $storage->delete($storagePath);
+            $asset->getDao()->deleteFromThumbnailCache($config->getName(), $filename);
 
             return [
                 'src' => $storagePath,
                 'type' => 'deferred',
             ];
-        }
-
-        if ($statusCacheEnabled) {
-            $asset->getDao()->addToThumbnailCache($config->getName(), $filename);
         }
 
         return [

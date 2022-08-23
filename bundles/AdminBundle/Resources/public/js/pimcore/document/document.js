@@ -96,7 +96,17 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             }
 
             try {
-                pimcore.plugin.broker.fireEvent("preSaveDocument", this, this.getType(), task, only);
+                const preSaveDocument = new CustomEvent(pimcore.events.preSaveDocument, {
+                    detail: {
+                        object: this,
+                        type: this.getType(),
+                        task: task,
+                        only: only
+                    }
+                });
+
+                document.dispatchEvent(preSaveDocument);
+
             } catch (e) {
                 if (e instanceof pimcore.error.ValidationException) {
                     this.tab.unmask();
@@ -143,7 +153,17 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                                 this.data['draft'] = rdata['draft'];
                             }
 
-                            pimcore.plugin.broker.fireEvent("postSaveDocument", this, this.getType(), task, only);
+                            const postSaveDocument = new CustomEvent(pimcore.events.postSaveDocument, {
+                                detail: {
+                                    object: this,
+                                    type: this.getType(),
+                                    task: task,
+                                    only: only
+                                }
+                            });
+
+                            document.dispatchEvent(postSaveDocument);
+
                             pimcore.helpers.updateTreeElementStyle('document', this.id, rdata.treeData);
                         }
                     } catch (e) {

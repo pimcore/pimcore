@@ -22,6 +22,11 @@ use Pimcore\Model\DataObject\ClassDefinition\CalculatorClassInterface;
  */
 final class CalculatorClassResolver extends ClassResolver
 {
+    /**
+     * @param string $calculatorClass
+     *
+     * @return mixed|null
+     */
     public static function resolveCalculatorClass($calculatorClass)
     {
         return self::resolve($calculatorClass, static function ($generator) {

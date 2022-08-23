@@ -44,11 +44,10 @@ services:
     workflow.support_strategy.authorization_checker:
         class: Symfony\Component\Security\Core\Authorization\AuthorizationChecker
         arguments:
-            - '@security.token_storage'
-            - '@security.authentication.manager'
-            - '@security.access.decision_manager'
-            - '%security.access.always_authenticate_before_granting%'
-            - false
+            $tokenStorage: '@security.token_storage'
+            $accessDecisionManager: '@security.access.decision_manager'
+            $alwaysAuthenticate: '%security.access.always_authenticate_before_granting%'
+            $exceptionOnNoToken: false
 
     Pimcore\Workflow\ExpressionService:
         class: Pimcore\Workflow\ExpressionService

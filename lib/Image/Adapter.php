@@ -413,10 +413,10 @@ abstract class Adapter
         $originalWidth = $this->getWidth();
         $originalHeight = $this->getHeight();
 
-        $widthPixel = ceil($originalWidth * ($width / 100));
-        $heightPixel = ceil($originalHeight * ($height / 100));
-        $xPixel = ceil($originalWidth * ($x / 100));
-        $yPixel = ceil($originalHeight * ($y / 100));
+        $widthPixel = (int) ceil($originalWidth * ($width / 100));
+        $heightPixel = (int) ceil($originalHeight * ($height / 100));
+        $xPixel = (int) ceil($originalWidth * ($x / 100));
+        $yPixel = (int) ceil($originalHeight * ($y / 100));
 
         return $this->crop($xPixel, $yPixel, $widthPixel, $heightPixel);
     }

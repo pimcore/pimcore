@@ -118,7 +118,6 @@ class Admin
      */
     public static function determineCsvDialect($file)
     {
-
         // minimum 10 lines, to be sure take more
         $sample = '';
         for ($i = 0; $i < 10; $i++) {
@@ -154,6 +153,9 @@ class Admin
         return PIMCORE_CONFIGURATION_DIRECTORY . '/maintenance.php';
     }
 
+    /**
+     * @return string
+     */
     public static function getMaintenanceModeScheduleLoginFile()
     {
         return PIMCORE_CONFIGURATION_DIRECTORY . '/maintenance-schedule-login.php';

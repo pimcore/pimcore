@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\InstallBundle;
 
 use Doctrine\DBAL\Configuration;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\ServerInfoAwareConnection;
 use Doctrine\DBAL\DriverManager;
 use PDO;
@@ -25,15 +26,13 @@ use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
 use Pimcore\Config;
 use Pimcore\Console\Style\PimcoreStyle;
-use Pimcore\Db\Connection;
-use Pimcore\Db\ConnectionInterface;
 use Pimcore\Model\User;
 use Pimcore\Tool\AssetsInstaller;
 use Pimcore\Tool\Console;
 use Pimcore\Tool\Requirements;
 use Pimcore\Tool\Requirements\Check;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Cache\Adapter\PdoAdapter;
+use Symfony\Component\Cache\Adapter\DoctrineDbalAdapter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
@@ -171,7 +170,7 @@ class Installer
         return empty($this->dbCredentials);
     }
 
-    public function checkPrerequisites(ConnectionInterface $db = null): array
+    public function checkPrerequisites(Connection $db = null): array
     {
         $checks = array_merge(
             Requirements::checkFilesystem(),
@@ -301,7 +300,6 @@ class Installer
             'host' => 'localhost',
             'port' => 3306,
             'driver' => 'pdo_mysql',
-            'wrapperClass' => Connection::class,
         ];
 
         // do not handle parameters if db credentials are set via config
@@ -579,8 +577,11 @@ class Installer
 
     public function setupDatabase(array $userCredentials, array $errors = []): array
     {
+        /**
+         * @var \Doctrine\DBAL\Connection $db
+         */
         $db = \Pimcore\Db::get();
-        $db->query('SET FOREIGN_KEY_CHECKS=0;');
+        $db->executeQuery('SET FOREIGN_KEY_CHECKS=0;');
 
         if ($this->createDatabaseStructure) {
             $mysqlInstallScript = file_get_contents(__DIR__ . '/Resources/install.sql');
@@ -596,12 +597,12 @@ class Installer
                 $sql = trim($m);
                 if (strlen($sql) > 0) {
                     $sql .= ';';
-                    $db->query($sql);
+                    $db->executeQuery($sql);
                 }
             }
 
-            $pdoCacheAdapter = new PdoAdapter($db);
-            $pdoCacheAdapter->createTable();
+            $cacheAdapter = new DoctrineDbalAdapter($db);
+            $cacheAdapter->createTable();
 
             $doctrineTransportConn = new \Symfony\Component\Messenger\Bridge\Doctrine\Transport\Connection([], $db);
             $doctrineTransportConn->setup();
@@ -629,7 +630,7 @@ class Installer
             }
         }
 
-        $db->query('SET FOREIGN_KEY_CHECKS=1;');
+        $db->executeQuery('SET FOREIGN_KEY_CHECKS=1;');
 
         return $errors;
     }
@@ -682,9 +683,8 @@ class Installer
         $dumpFile = preg_replace("/\s*(?!<\")\/\*[^\*]+\*\/(?!\")\s*/", '', $dumpFile);
 
         if (strpos($file, 'atomic') !== false) {
-            $db->exec($dumpFile);
+            $db->executeStatement($dumpFile);
         } else {
-
             // get every command as single part - ; at end of line
             $singleQueries = explode(";\n", $dumpFile);
 
@@ -697,12 +697,12 @@ class Installer
                 }
 
                 if (count($batchQueries) > 500) {
-                    $db->exec(implode("\n", $batchQueries));
+                    $db->executeStatement(implode("\n", $batchQueries));
                     $batchQueries = [];
                 }
             }
 
-            $db->exec(implode("\n", $batchQueries));
+            $db->executeStatement(implode("\n", $batchQueries));
         }
 
         // set the id of the system user to 0
@@ -781,7 +781,7 @@ class Installer
             ['key' => 'http_errors'],
             ['key' => 'notes_events'],
             ['key' => 'objects'],
-            ['key' => 'plugins'],
+            ['key' => 'plugins'], // TODO: to be removed in Pimcore 11
             ['key' => 'predefined_properties'],
             ['key' => 'asset_metadata'],
             ['key' => 'recyclebin'],

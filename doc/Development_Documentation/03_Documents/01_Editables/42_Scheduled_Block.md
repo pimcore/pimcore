@@ -53,7 +53,7 @@ And in the frontend of the application:
 ![Scheduled Block in the frontend](../../img/scheduledblock_preview.jpg)
 
 
-In document preview, Pimore provides a time slider to get the preview for a certain time as soon as 
+In document preview, Pimcore provides a time slider to get the preview for a certain time as soon as 
 the document has at least one scheduled block editable. 
 
 For details on how to create custom functionality using the time slider see 

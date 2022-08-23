@@ -39,6 +39,9 @@ class DocumentUrlGenerator implements DocumentUrlGeneratorInterface
         $this->urlGenerator = $urlGenerator;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function generateUrl(string $path, array $options = [])
     {
         return $this->urlGenerator->generateUrl($path, $options);

@@ -21,7 +21,15 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
         this.setType("hardlink");
         this.addLoadingPanel();
 
-        pimcore.plugin.broker.fireEvent("preOpenDocument", this, "link");
+        const preOpenDocumentLink = new CustomEvent(pimcore.events.preOpenDocument, {
+            detail: {
+                object: this,
+                type: "link"
+            }
+        });
+
+        document.dispatchEvent(preOpenDocumentLink);
+
         this.getData();
     },
 
@@ -134,7 +142,15 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
 
         this.tab.on("afterrender", function (tabId) {
             this.tabPanel.setActiveItem(tabId);
-            pimcore.plugin.broker.fireEvent("postOpenDocument", this, "link");
+
+            const postOpenDocumentLink = new CustomEvent(pimcore.events.postOpenDocument, {
+                detail: {
+                    object: this,
+                    type: "link"
+                }
+            });
+
+            document.dispatchEvent(postOpenDocumentLink);
         }.bind(this, tabId));
 
         this.removeLoadingPanel();

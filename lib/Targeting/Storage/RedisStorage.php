@@ -38,6 +38,9 @@ class RedisStorage implements TargetingStorageInterface
         $this->redis = $redis;
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function all(VisitorInfo $visitorInfo, string $scope): array
     {
         if (!$visitorInfo->hasVisitorId()) {
@@ -66,6 +69,9 @@ class RedisStorage implements TargetingStorageInterface
         return $data;
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function has(VisitorInfo $visitorInfo, string $scope, string $name): bool
     {
         if (!$visitorInfo->hasVisitorId()) {
@@ -78,6 +84,9 @@ class RedisStorage implements TargetingStorageInterface
         return (bool)$result;
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function set(VisitorInfo $visitorInfo, string $scope, string $name, $value)
     {
         if (!$visitorInfo->hasVisitorId()) {
@@ -99,6 +108,9 @@ class RedisStorage implements TargetingStorageInterface
         $multi->exec();
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null)
     {
         if (!$visitorInfo->hasVisitorId()) {
@@ -120,6 +132,9 @@ class RedisStorage implements TargetingStorageInterface
         return $decoded;
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function clear(VisitorInfo $visitorInfo, string $scope = null)
     {
         $scopes = [];
@@ -135,6 +150,9 @@ class RedisStorage implements TargetingStorageInterface
         }
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope)
     {
         // only allow migration if a visitor ID is available as otherwise the fallback
@@ -181,11 +199,17 @@ class RedisStorage implements TargetingStorageInterface
         $multi->exec();
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function getCreatedAt(VisitorInfo $visitorInfo, string $scope)
     {
         return $this->loadDate($visitorInfo, $scope, self::STORAGE_KEY_CREATED_AT);
     }
 
+    /**
+     * {@inheritdoc }
+     */
     public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope)
     {
         return $this->loadDate($visitorInfo, $scope, self::STORAGE_KEY_UPDATED_AT);

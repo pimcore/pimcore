@@ -142,7 +142,8 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
             $this->html = $result;
         }
 
-        $twig = \Pimcore::getContainer()->get('twig');
+        $templatingEngine = \Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
+        $twig = $templatingEngine->getTwigEnvironment();
         $template = $twig->createTemplate($this->html);
         $this->html = $template->render(array_merge($context,
             [

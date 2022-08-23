@@ -29,13 +29,11 @@ class Api
      */
     public static function getPrivateKeyPath()
     {
-        $path = \Pimcore\Config::locateConfigFile('google-api-private-key.json');
-
-        return $path;
+        return \Pimcore\Config::locateConfigFile('google-api-private-key.json');
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public static function getConfig()
     {
@@ -87,7 +85,7 @@ class Api
     /**
      * @param string $type
      *
-     * @return Client
+     * @return Client|false returns false, if client not configured
      */
     public static function getClient($type = 'service')
     {
@@ -101,7 +99,7 @@ class Api
     /**
      * @param array|null $scope
      *
-     * @return bool|Client
+     * @return Client|false
      */
     public static function getServiceClient($scope = null)
     {
@@ -177,6 +175,8 @@ class Api
 
     /**
      * @return array
+     *
+     * @throws \Exception
      */
     public static function getAnalyticsDimensions()
     {
@@ -185,6 +185,8 @@ class Api
 
     /**
      * @return array
+     *
+     * @throws \Exception
      */
     public static function getAnalyticsMetrics()
     {
@@ -222,13 +224,14 @@ class Api
             if ($item['attributes']['type'] == $type) {
                 if (strpos($item['id'], 'XX') !== false) {
                     for ($i = 1; $i <= 5; $i++) {
-                        $name = str_replace('1', $i, str_replace('01', $i, $translator->trans($item['attributes']['uiName'], [], 'admin')));
+                        $replace = (string) $i;
+                        $name = str_replace('1', $replace, str_replace('01', $replace, $translator->trans($item['attributes']['uiName'], [], 'admin')));
 
                         if (in_array($item['id'], ['ga:dimensionXX', 'ga:metricXX'])) {
-                            $name .= ' '.$i;
+                            $name .= ' '.$replace;
                         }
                         $result[] = [
-                            'id' => str_replace('XX', $i, $item['id']),
+                            'id' => str_replace('XX', $replace, $item['id']),
                             'name' => $name,
                         ];
                     }

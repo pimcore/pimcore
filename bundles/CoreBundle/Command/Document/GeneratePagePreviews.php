@@ -102,7 +102,7 @@ class GeneratePagePreviews extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $hostUrl = $input->getOption('urlPrefix');
         if (!$hostUrl) {

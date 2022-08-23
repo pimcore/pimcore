@@ -9,3 +9,4 @@ services:
             - { name: monolog.logger, channel: pimcore_ecommerce_indexupdater }
 
     Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\Frontend\TrackingCodeFlashMessageListener: ~
+    Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\SessionBagListener: ~

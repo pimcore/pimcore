@@ -48,7 +48,12 @@ class TrackingCodeSubscriber implements EventSubscriberInterface
         $this->twig = $twig;
     }
 
-    public static function getSubscribedEvents()
+    /**
+     * {@inheritdoc}
+     *
+     * @return array
+     */
+    public static function getSubscribedEvents()// : array
     {
         return [
             GoogleTagManagerEvents::CODE_HEAD => ['onCodeHead'],

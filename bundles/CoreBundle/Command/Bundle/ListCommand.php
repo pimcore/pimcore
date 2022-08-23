@@ -42,7 +42,10 @@ class ListCommand extends AbstractBundleCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * {@inheritdoc}
+     */
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $returnData = [
             'headers' => [
@@ -53,6 +56,7 @@ class ListCommand extends AbstractBundleCommand
                 $input->hasOption('json') ? 'Uninstallable' : 'UI?',
                 'Priority',
             ],
+            'rows' => [],
         ];
 
         foreach ($this->bundleManager->getAvailableBundles() as $bundleClass) {

@@ -96,9 +96,7 @@ class LocaleService implements LocaleServiceInterface
      */
     public function getLocaleList()
     {
-        $locales = \ResourceBundle::getLocales('');
-
-        return $locales;
+        return \ResourceBundle::getLocales('');
     }
 
     /**

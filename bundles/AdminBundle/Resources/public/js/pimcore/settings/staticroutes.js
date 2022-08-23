@@ -185,7 +185,10 @@ pimcore.settings.staticroutes = Class.create({
                         if (!data.data.writeable) {
                             return;
                         }
-                        grid.getStore().removeAt(rowIndex);
+
+                        pimcore.helpers.deleteConfirm(t('staticroute'), data.data.name, function () {
+                            grid.getStore().removeAt(rowIndex);
+                        }.bind(this));
                     }.bind(this)
                 }]
             }

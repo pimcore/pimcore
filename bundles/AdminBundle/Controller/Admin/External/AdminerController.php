@@ -14,7 +14,6 @@
  */
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
-
     use Pimcore\Bundle\AdminBundle\Controller\AdminController;
     use Pimcore\Controller\KernelControllerEventInterface;
     use Pimcore\Tool\Session;
@@ -163,7 +162,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
 }
 
 namespace {
-
     use Pimcore\Cache;
     use Pimcore\Tool\Session;
 
@@ -281,7 +279,7 @@ namespace {
 
                     if (!$return = Cache::load($cacheKey)) {
                         $db = Pimcore\Db::get();
-                        $return = $db->fetchAll('SELECT SCHEMA_NAME FROM information_schema.SCHEMATA');
+                        $return = $db->fetchAllAssociative('SELECT SCHEMA_NAME FROM information_schema.SCHEMATA');
 
                         foreach ($return as &$ret) {
                             $ret = $ret['SCHEMA_NAME'];

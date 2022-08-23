@@ -160,7 +160,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         // create a random number and hand it over to the calculator via the runtime and then make sure it will be returned
         $value = uniqid();
-        Cache\Runtime::set('modeltest.testCalculatedValue.value', $value);
+        Cache\RuntimeCache::set('modeltest.testCalculatedValue.value', $value);
 
         $valueFromCalculator = $this->testObject->getCalculatedValue();
         $this->assertEquals($value, $valueFromCalculator, 'calculated value does not match');
@@ -179,7 +179,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $db = Db::get();
         $select = 'SELECT calculatedValue from object_query_' . $this->testObject->getClassId()
                         . ' WHERE oo_id = ' . $this->testObject->getId();
-        $row = $db->fetchRow($select);
+        $row = $db->fetchAssociative($select);
 
         $this->assertEquals($value, $row['calculatedValue'], 'value should have been written to query table');
     }
@@ -212,7 +212,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $db = Db::get();
         $select = 'SELECT calculatedValueExpression from object_query_' . $this->testObject->getClassId()
             . ' WHERE oo_id = ' . $this->testObject->getId();
-        $row = $db->fetchRow($select);
+        $row = $db->fetchAssociative($select);
 
         $this->assertEquals('Jane some calc', $row['calculatedValueExpression'], 'value should have been written to query table');
     }
@@ -573,7 +573,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertObjects($this->testObject, 'lmultihrefLazy', $this->seed, 'de');
 
         Cache::clearAll();
-        Cache\Runtime::clear();
+        Cache\RuntimeCache::clear();
 
         $this->testObject = DataObject::getById($this->testObject->getId());
 
@@ -648,7 +648,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         $this->refreshObject();
 
-        $this->testObject = Concrete::getById($this->testObject->getId(), true);
+        $this->testObject = Concrete::getById($this->testObject->getId(), ['force' => true]);
         $this->testDataHelper->assertUrlSlug($this->testObject, 'lurlSlug', $this->seed, 'en');
         $this->testDataHelper->assertUrlSlug($this->testObject, 'lurlSlug', $this->seed, 'de');
     }

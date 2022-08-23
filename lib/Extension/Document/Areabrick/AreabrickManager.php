@@ -28,6 +28,8 @@ use Psr\Container\ContainerInterface;
 class AreabrickManager implements AreabrickManagerInterface
 {
     /**
+     * @deprecated
+     *
      * @var Extension\Config
      */
     protected $config;
@@ -207,6 +209,8 @@ class AreabrickManager implements AreabrickManagerInterface
     }
 
     /**
+     * @deprecated will be removed in Pimcore 11
+     *
      * {@inheritdoc}
      */
     public function enable(string $id)
@@ -215,6 +219,8 @@ class AreabrickManager implements AreabrickManagerInterface
     }
 
     /**
+     * @deprecated will be removed in Pimcore 11
+     *
      * {@inheritdoc}
      */
     public function disable(string $id)
@@ -223,6 +229,8 @@ class AreabrickManager implements AreabrickManagerInterface
     }
 
     /**
+     * @deprecated will be removed in Pimcore 11
+     *
      * {@inheritdoc}
      */
     public function setState(string $id, bool $state)
@@ -243,6 +251,8 @@ class AreabrickManager implements AreabrickManagerInterface
     }
 
     /**
+     * @deprecated will be removed in Pimcore 11
+     *
      * {@inheritdoc}
      */
     public function isEnabled(string $id): bool
@@ -258,6 +268,8 @@ class AreabrickManager implements AreabrickManagerInterface
     }
 
     /**
+     * @deprecated
+     *
      * @return array
      */
     private function getBrickConfig()
@@ -271,6 +283,8 @@ class AreabrickManager implements AreabrickManagerInterface
     }
 
     /**
+     * @deprecated
+     *
      * @param array $config
      */
     private function setBrickConfig(array $config)

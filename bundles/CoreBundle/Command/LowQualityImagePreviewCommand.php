@@ -16,7 +16,7 @@
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Db;
+use Pimcore\Db\Helper;
 use Pimcore\Model\Asset;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
@@ -64,7 +64,7 @@ class LowQualityImagePreviewCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $conditionVariables = [];
 
@@ -74,7 +74,7 @@ class LowQualityImagePreviewCommand extends AbstractCommand
         if ($input->getOption('parent')) {
             $parent = Asset::getById((int) $input->getOption('parent'));
             if ($parent instanceof Asset\Folder) {
-                $conditions[] = "path LIKE '" . Db::get()->escapeLike($parent->getRealFullPath()) . "/%'";
+                $conditions[] = "path LIKE '" . Helper::escapeLike($parent->getRealFullPath()) . "/%'";
             } else {
                 $this->writeError($input->getOption('parent') . ' is not a valid asset folder ID!');
                 exit;

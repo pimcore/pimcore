@@ -48,7 +48,7 @@ class TranslationItemCollection
 
     public function addPimcoreElement(ElementInterface $element): TranslationItemCollection
     {
-        $this->items[] = new TranslationItem(Element\Service::getElementType($element), $element->getId(), $element);
+        $this->items[] = new TranslationItem(Element\Service::getElementType($element), (string) $element->getId(), $element);
 
         return $this;
     }

@@ -77,6 +77,11 @@ class GeoIp implements DataProviderInterface
         );
     }
 
+    /**
+     * @param VisitorInfo $visitorInfo
+     *
+     * @return array|null
+     */
     public function loadData(VisitorInfo $visitorInfo)
     {
         $result = null;

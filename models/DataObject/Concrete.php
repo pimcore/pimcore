@@ -46,6 +46,15 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @internal
      *
+     * Necessary for assigning object reference to corresponding fields while wakeup
+     *
+     * @var array
+     */
+    public $__objectAwareFields = [];
+
+    /**
+     * @internal
+     *
      * @var array
      */
     public const SYSTEM_COLUMN_NAMES = ['id', 'fullpath', 'key', 'published', 'creationDate', 'modificationDate', 'filename', 'classname', 'index'];
@@ -531,7 +540,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @return self|null
      */
-    private function getClosestParentOfClass(string $classId): ?self
+    public function getClosestParentOfClass(string $classId): ?self
     {
         $parent = $this->getParent();
         if ($parent instanceof AbstractObject) {
@@ -788,6 +797,13 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         if (property_exists($this, 'localizedfields') && $this->localizedfields instanceof Localizedfield) {
             $this->localizedfields->setObject($this, false);
         }
+
+        // renew object reference to other object aware fields
+        foreach ($this->__objectAwareFields as $objectAwareField => $exists) {
+            if (isset($this->$objectAwareField) && $this->$objectAwareField instanceof ObjectAwareFieldInterface) {
+                $this->$objectAwareField->setObject($this);
+            }
+        }
     }
 
     /**
@@ -815,7 +831,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         $conditionParts = Service::buildConditionPartsFromDescriptor($descriptor);
 
         $query = 'SELECT * FROM ' . $table . ' WHERE ' . implode(' AND ', $conditionParts);
-        $result = $db->fetchAll($query);
+        $result = $db->fetchAllAssociative($query);
 
         return $result;
     }
@@ -887,8 +903,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     {
         if ($this->__rawRelationData === null) {
             $db = Db::get();
-            $relations = $db->fetchAll('SELECT * FROM object_relations_' . $this->getClassId() . ' WHERE src_id = ?', [$this->getId()]);
-            $this->__rawRelationData = $relations ?? [];
+            $this->__rawRelationData = $db->fetchAllAssociative('SELECT * FROM object_relations_' . $this->getClassId() . ' WHERE src_id = ?', [$this->getId()]);
         }
 
         return $this->__rawRelationData;

@@ -21,7 +21,15 @@ pimcore.asset.document = Class.create(pimcore.asset.asset, {
         this.setType("document");
         this.addLoadingPanel();
 
-        pimcore.plugin.broker.fireEvent("preOpenAsset", this, "document");
+        const preOpenAssetDocument = new CustomEvent(pimcore.events.preOpenAsset, {
+            detail: {
+                object: this,
+                type: "document"
+            }
+        });
+
+        document.dispatchEvent(preOpenAssetDocument);
+
 
         var user = pimcore.globalmanager.get("user");
 

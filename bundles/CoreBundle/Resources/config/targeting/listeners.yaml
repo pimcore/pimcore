@@ -9,3 +9,4 @@ services:
     Pimcore\Targeting\EventListener\FullPageCacheCookieCleanupListener: ~
     Pimcore\Targeting\EventListener\VisitedPagesCountListener: ~
     Pimcore\Targeting\EventListener\ToolbarListener: ~
+    Pimcore\Targeting\EventListener\TargetingSessionBagListener: ~

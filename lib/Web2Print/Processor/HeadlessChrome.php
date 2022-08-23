@@ -91,7 +91,6 @@ class HeadlessChrome extends Processor
     public function getPdfFromString($html, $params = [], $returnFilePath = false)
     {
         $params = $params ?: $this->getDefaultOptions();
-        $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . uniqid('web2print_') . '.pdf';
         $input = new StringInput();
         $input->setHtml($html);
 
@@ -105,6 +104,7 @@ class HeadlessChrome extends Processor
         $output = $converter->convert();
 
         if ($returnFilePath) {
+            $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . uniqid('web2print_') . '.pdf';
             /** @var FileOutput $output */
             $output->store($path);
 

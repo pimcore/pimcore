@@ -33,7 +33,7 @@ namespace App\EventSubscriber;
 
 class AdminAssetsSubscriber implements \Symfony\Component\EventDispatcher\EventSubscriberInterface
 {
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             \Pimcore\Event\BundleManagerEvents::CSS_PATHS => 'onCssPaths',

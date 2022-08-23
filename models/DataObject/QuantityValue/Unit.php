@@ -118,14 +118,14 @@ class Unit extends Model\AbstractModel
     {
         try {
             $table = null;
-            if (Cache\Runtime::isRegistered(self::CACHE_KEY)) {
-                $table = Cache\Runtime::get(self::CACHE_KEY);
+            if (Cache\RuntimeCache::isRegistered(self::CACHE_KEY)) {
+                $table = Cache\RuntimeCache::get(self::CACHE_KEY);
             }
 
             if (!is_array($table)) {
                 $table = Cache::load(self::CACHE_KEY);
                 if (is_array($table)) {
-                    Cache\Runtime::set(self::CACHE_KEY, $table);
+                    Cache\RuntimeCache::set(self::CACHE_KEY, $table);
                 }
             }
 
@@ -138,7 +138,7 @@ class Unit extends Model\AbstractModel
                 }
 
                 Cache::save($table, self::CACHE_KEY, [], null, 995, true);
-                Cache\Runtime::set(self::CACHE_KEY, $table);
+                Cache\RuntimeCache::set(self::CACHE_KEY, $table);
             }
         } catch (\Exception $e) {
             return null;
@@ -175,7 +175,7 @@ class Unit extends Model\AbstractModel
         }
 
         $this->getDao()->save();
-        Cache\Runtime::set(self::CACHE_KEY, null);
+        Cache\RuntimeCache::set(self::CACHE_KEY, null);
         Cache::remove(self::CACHE_KEY);
 
         if ($isUpdate) {
@@ -189,7 +189,7 @@ class Unit extends Model\AbstractModel
     {
         $this->dispatchEvent(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_PRE_DELETE);
         $this->getDao()->delete();
-        Cache\Runtime::set(self::CACHE_KEY, null);
+        Cache\RuntimeCache::set(self::CACHE_KEY, null);
         Cache::remove(self::CACHE_KEY);
         $this->dispatchEvent(new QuantityValueUnitEvent($this), DataObjectQuantityValueEvents::UNIT_POST_DELETE);
     }

@@ -67,7 +67,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             \Pimcore::collectGarbage();
 
             //reload data object from database
-            $object = LazyLoading::getById($id, true);
+            $object = LazyLoading::getById($id, ['force' => true]);
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix);
@@ -81,6 +81,16 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix);
+
+            //check if data also loaded correctly when loaded from cache
+            $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($relationObjects, $messagePrefix) {
+                //load relation and check if relation loads correctly
+                $relationObjects = $objectCache->getAdvancedObjects();
+                $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
+
+                //check if relation meta data is there
+                $this->assertEquals('some-metadata', $relationObjects[2]->getMetaDATAUpper(), $messagePrefix . 'relations metadata not loaded properly');
+            });
         }
     }
 
@@ -94,7 +104,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         $object->save();
         $this->assertFalse($object->isFieldDirty('advancedObjects'), 'Advanced relation must not be dirty after saving');
 
-        Cache\Runtime::clear();
+        Cache\RuntimeCache::clear();
         $object = LazyLoading::getByPath('/lazy1');
         $this->assertFalse($object->isFieldDirty('advancedObjects'), 'Advanced relation must not be dirty directly after loading');
 
@@ -119,7 +129,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             \Pimcore::collectGarbage();
 
             //reload data object from database
-            $object = LazyLoading::getById($id, true);
+            $object = LazyLoading::getById($id, ['force' => true]);
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix);
@@ -133,6 +143,16 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix);
+
+            //check if data also loaded correctly when loaded from cache
+            $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($relationObjects, $messagePrefix) {
+                //load relation and check if relation loads correctly
+                $relationObjects = $objectCache->getLadvancedObjects();
+                $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
+
+                //check if relation meta data is there
+                $this->assertEquals('some-metadata', $relationObjects[2]->getMetaData(), $messagePrefix . 'relations metadata not loaded properly');
+            });
         }
     }
 
@@ -156,7 +176,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             \Pimcore::collectGarbage();
 
             //reload data object from database
-            $object = LazyLoading::getById($id, true);
+            $object = LazyLoading::getById($id, ['force' => true]);
 
             $contentShouldBeIncluded = ($objectType === 'inherited') ? false : true;
 
@@ -173,6 +193,17 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, $contentShouldBeIncluded);
+
+            //check if data also loaded correctly when loaded from cache
+            $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($relationObjects, $messagePrefix) {
+                //load relation and check if relation loads correctly
+                $blockItems = $objectCache->getTestBlock();
+                $relationObjects = $blockItems[0]['blockadvancedObjects']->getData();
+                $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
+
+                //check if relation meta data is there
+                $this->assertEquals('some-metadata', $relationObjects[2]->getMetaData(), $messagePrefix . 'relations metadata not loaded properly');
+            });
         }
     }
 
@@ -196,7 +227,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             \Pimcore::collectGarbage();
 
             //reload data object from database
-            $object = LazyLoading::getById($id, true);
+            $object = LazyLoading::getById($id, ['force' => true]);
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix);
@@ -211,6 +242,17 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix);
+
+            //check if data also loaded correctly when loaded from cache
+            $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($relationObjects, $messagePrefix) {
+                //load relation and check if relation loads correctly
+                $blockItems = $objectCache->getTestBlockLazyloaded();
+                $relationObjects = $blockItems[0]['blockadvancedObjectsLazyLoaded']->getData();
+                $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
+
+                //check if relation meta data is there
+                $this->assertEquals('some-metadata', $relationObjects[2]->getMetaData(), $messagePrefix . 'relations metadata not loaded properly');
+            });
         }
     }
 
@@ -236,7 +278,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             \Pimcore::collectGarbage();
 
             //reload data object from database
-            $object = LazyLoading::getById($id, true);
+            $object = LazyLoading::getById($id, ['force' => true]);
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);
@@ -254,6 +296,20 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);
+
+            //check if data also loaded correctly when loaded from cache
+            $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($objectType, $relationObjects, $messagePrefix) {
+                //load relation and check if relation loads correctly
+                $collection = $objectCache->getFieldcollection();
+                if ($objectType == 'parent') {
+                    $item = $collection->get(0);
+                    $relationObjects = $item->getAdvancedObjects();
+                    $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
+
+                    //check if relation meta data is there
+                    $this->assertEquals('some-metadata', $relationObjects[2]->getMetaDATAUpper(), $messagePrefix . 'relations metadata not loaded properly');
+                }
+            });
         }
     }
 
@@ -279,7 +335,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             \Pimcore::collectGarbage();
 
             //reload data object from database
-            $object = LazyLoading::getById($id, true);
+            $object = LazyLoading::getById($id, ['force' => true]);
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);
@@ -297,6 +353,20 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);
+
+            //check if data also loaded correctly when loaded from cache
+            $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($objectType, $relationObjects, $messagePrefix) {
+                //load relation and check if relation loads correctly
+                $collection = $objectCache->getFieldcollection();
+                if ($objectType == 'parent') {
+                    $item = $collection->get(0);
+                    $relationObjects = $item->getLAdvancedObjects();
+                    $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
+
+                    //check if relation meta data is there
+                    $this->assertEquals('some-metadata', $relationObjects[2]->getMetaData(), $messagePrefix . 'relations metadata not loaded properly');
+                }
+            });
         }
     }
 
@@ -319,7 +389,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             \Pimcore::collectGarbage();
 
             //reload data object from database
-            $object = LazyLoading::getById($id, true);
+            $object = LazyLoading::getById($id, ['force' => true]);
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);
@@ -334,6 +404,17 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);
+
+            //check if data also loaded correctly when loaded from cache
+            $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($relationObjects, $messagePrefix) {
+                //load relation and check if relation loads correctly
+                $brick = $objectCache->getBricks()->getLazyLoadingTest();
+                $relationObjects = $brick->getAdvancedObjects();
+                $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
+
+                //check if relation meta data is there
+                $this->assertEquals('some-metadata', $relationObjects[2]->getMetaDATAUpper(), $messagePrefix . 'relations metadata not loaded properly');
+            });
         }
     }
 
@@ -350,11 +431,11 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         $object->getBricks()->setLazyLoadingLocalizedTest($brick);
         $object->save();
 
-        $object = Concrete::getById($object->getId(), true);
+        $object = Concrete::getById($object->getId(), ['force' => true]);
         $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLadvancedObjects('en')) > 0);
         $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLadvancedObjects('de')) > 0);
 
-        $object = Concrete::getById($object->getId(), true);
+        $object = Concrete::getById($object->getId(), ['force' => true]);
         array_pop($relations);
 
         $brick = $object->getBricks()->getLazyLoadingLocalizedTest();
@@ -363,7 +444,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         $lFields->setLocalizedValue('ladvancedObjects', $relations, 'de');
         $object->save();
 
-        $object = Concrete::getById($object->getId(), true);
+        $object = Concrete::getById($object->getId(), ['force' => true]);
         $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLadvancedObjects('en')) > 0);
         $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLadvancedObjects('de')) > 0);
 
@@ -378,7 +459,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             \Pimcore::collectGarbage();
 
             //reload data object from database
-            $object = LazyLoading::getById($id, true);
+            $object = LazyLoading::getById($id, ['force' => true]);
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);
@@ -393,6 +474,17 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);
+
+            //check if data also loaded correctly when loaded from cache
+            $this->forceSavingAndLoadingFromCache($object, function ($objectCache) use ($relationObjects, $messagePrefix) {
+                //load relation and check if relation loads correctly
+                $brick = $objectCache->getBricks()->getLazyLoadingLocalizedTest();
+                $relationObjects = $brick->getLocalizedFields()->getLocalizedValue('ladvancedObjects');
+                $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
+
+                //check if relation meta data is there
+                $this->assertEquals('some-metadata', $relationObjects[2]->getMetaData(), $messagePrefix . 'relations metadata not loaded properly');
+            });
         }
     }
 }

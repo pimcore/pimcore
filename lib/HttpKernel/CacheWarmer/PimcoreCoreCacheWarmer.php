@@ -15,7 +15,6 @@
 
 namespace Pimcore\HttpKernel\CacheWarmer;
 
-use Doctrine\DBAL\Exception\DriverException;
 use Pimcore\Bootstrap;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -43,18 +42,7 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
 
         $this->libraryClasses($classes);
         $this->modelClasses($classes);
-
-        if (\Pimcore::isInstalled()) {
-            try {
-                $this->dataObjectClasses($classes);
-            } catch (\Exception $exception) {
-                if (!$exception instanceof DriverException) {
-                    throw $exception;
-                }
-
-                //Ignore. Database might not be setup yet
-            }
-        }
+        $this->dataObjectClasses($classes);
 
         return $classes;
     }
@@ -99,13 +87,11 @@ class PimcoreCoreCacheWarmer implements CacheWarmerInterface
 
     private function dataObjectClasses(array &$classes): void
     {
+        $objectClassesFolder = PIMCORE_CLASS_DEFINITION_DIRECTORY;
+        $files = glob($objectClassesFolder.'/*.php');
 
-        // load all data object classes
-        $list = new DataObject\ClassDefinition\Listing();
-        $list = $list->load();
-
-        foreach ($list as $classDefinition) {
-            $className = DataObject::class . '\\' . ucfirst($classDefinition->getName());
+        foreach ($files as $file) {
+            $className = DataObject::class . '\\' . \preg_replace('/^definition_(.*)\.php$/', '$1', basename($file));
             $listingClass = $className . '\\Listing';
 
             $classes[] = $className;

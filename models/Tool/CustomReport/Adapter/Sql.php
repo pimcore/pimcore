@@ -56,7 +56,7 @@ class Sql extends AbstractAdapter
                 $sql .= " LIMIT $offset,$limit";
             }
 
-            $data = $db->fetchAll($sql);
+            $data = $db->fetchAllAssociative($sql);
         }
 
         return ['data' => $data, 'total' => $total];
@@ -75,7 +75,7 @@ class Sql extends AbstractAdapter
         if (!preg_match('/(ALTER|CREATE|DROP|RENAME|TRUNCATE|UPDATE|DELETE) /i', $sql, $matches)) {
             $sql .= ' LIMIT 0,1';
             $db = Db::get();
-            $res = $db->fetchRow($sql);
+            $res = $db->fetchAssociative($sql);
             if ($res) {
                 return array_keys($res);
             }
@@ -252,7 +252,7 @@ class Sql extends AbstractAdapter
         $data = [];
         if ($baseQuery) {
             $sql = $baseQuery['data'] . ' GROUP BY ' . $db->quoteIdentifier($field);
-            $data = $db->fetchAll($sql);
+            $data = $db->fetchAllAssociative($sql);
         }
 
         $filteredData = [];

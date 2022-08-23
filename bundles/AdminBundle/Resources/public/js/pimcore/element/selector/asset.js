@@ -151,7 +151,7 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                                 + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                         }
                     },
-                    {text: t("filename"), flex: 1, sortable: false, dataIndex: 'filename'}
+                    {text: t("filename"), flex: 1, sortable: true, dataIndex: 'filename'}
                 ],
                 viewConfig: {
                     forceFit: true
@@ -212,7 +212,7 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                 },
                 {text: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: true},
                 {text: t("path"), flex: 200, sortable: true, dataIndex: 'fullpath', renderer: Ext.util.Format.htmlEncode},
-                {text: t("filename"), width: 200, sortable: false, dataIndex: 'filename', hidden: true, renderer: Ext.util.Format.htmlEncode},
+                {text: t("filename"), width: 200, sortable: true, dataIndex: 'filename', hidden: true, renderer: Ext.util.Format.htmlEncode},
                 {text: t("preview"), width: 150, sortable: false, dataIndex: 'subtype',
                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                         var routes = {

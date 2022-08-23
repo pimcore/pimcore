@@ -212,26 +212,6 @@ class Environment implements EnvironmentInterface
     }
 
     /**
-     * @return AttributeBagInterface|null
-     */
-    public function getSession()
-    {
-        return $this->session;
-    }
-
-    /**
-     * @param AttributeBagInterface $session
-     *
-     * @return EnvironmentInterface
-     */
-    public function setSession(AttributeBagInterface $session)
-    {
-        $this->session = $session;
-
-        return $this;
-    }
-
-    /**
      * @param string $executionMode
      */
     public function setExecutionMode($executionMode)

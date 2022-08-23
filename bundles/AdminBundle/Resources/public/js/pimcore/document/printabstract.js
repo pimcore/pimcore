@@ -19,7 +19,14 @@ pimcore.document.printabstract = Class.create(pimcore.document.page_snippet, {
         this.id = intval(id);
         this.options = options;
 
-        pimcore.plugin.broker.fireEvent("preOpenDocument", this, this.getType());
+        const preOpenDocument = new CustomEvent(pimcore.events.preOpenDocument, {
+            detail: {
+                object: this,
+                type: this.getType()
+            }
+        });
+
+        document.dispatchEvent(preOpenDocument);
 
         this.addLoadingPanel();
         this.getData();

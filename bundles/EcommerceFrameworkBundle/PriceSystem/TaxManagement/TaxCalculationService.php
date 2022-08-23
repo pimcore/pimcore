@@ -156,7 +156,6 @@ class TaxCalculationService
 
             default:
                 throw new UnsupportedException('Combination Mode [' . $price->getTaxEntryCombinationMode() . '] cannot be recalculated.');
-
         }
 
         $price->setNetAmount($netAmount);

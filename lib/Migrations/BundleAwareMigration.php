@@ -21,8 +21,14 @@ use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 
 abstract class BundleAwareMigration extends AbstractMigration
 {
+    /**
+     * @return string
+     */
     abstract protected function getBundleName(): string;
 
+    /**
+     * @return bool
+     */
     protected function checkBundleInstalled()
     {
         $bundle = \Pimcore::getKernel()->getBundle($this->getBundleName());

@@ -21,6 +21,8 @@ use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 
 /**
  * @internal
+ *
+ * @deprecated will be removed in Pimcore 11
  */
 class PreAuthenticatedAdminToken extends PreAuthenticatedToken
 {

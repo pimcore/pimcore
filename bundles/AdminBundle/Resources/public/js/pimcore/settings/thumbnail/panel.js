@@ -233,16 +233,18 @@ pimcore.settings.thumbnail.panel = Class.create({
     },
 
     deleteField: function (tree, record) {
-        Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_settings_thumbnaildelete'),
-            method: 'DELETE',
-            params: {
-                name: record.data.id
-            }
-        });
+        pimcore.helpers.deleteConfirm(t('thumbnail'), record.data.text, function () {
+            Ext.Ajax.request({
+                url: Routing.generate('pimcore_admin_settings_thumbnaildelete'),
+                method: 'DELETE',
+                params: {
+                    name: record.data.id
+                }
+            });
 
-        this.getEditPanel().removeAll();
-        record.remove();
+            this.getEditPanel().removeAll();
+            record.remove();
+        }.bind(this));
     }
 });
 

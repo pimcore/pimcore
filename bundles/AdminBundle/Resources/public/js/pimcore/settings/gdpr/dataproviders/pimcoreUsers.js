@@ -107,8 +107,8 @@ pimcore.settings.gdpr.dataproviders.pimcoreUsers = Class.create({
                             var data = grid.getStore().getAt(rowIndex);
 
                             Ext.MessageBox.show({
-                                title:t('delete'),
-                                msg: t("are_you_sure"),
+                                title: t('delete'),
+                                msg: sprintf(t('delete_message_advanced'), t('user'), data.data.text),
                                 buttons: Ext.Msg.YESNO ,
                                 icon: Ext.MessageBox.QUESTION,
                                 fn: function (button) {

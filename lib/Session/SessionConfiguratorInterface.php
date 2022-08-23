@@ -17,6 +17,9 @@ namespace Pimcore\Session;
 
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
+/**
+ * @deprecated and will be removed in Pimcore 11. Use EventListener on kernel.request to register session bags
+ */
 interface SessionConfiguratorInterface
 {
     /**

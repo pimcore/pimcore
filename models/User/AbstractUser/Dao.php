@@ -35,9 +35,9 @@ class Dao extends Model\Dao\AbstractDao
     public function getById($id)
     {
         if ($this->model->getType()) {
-            $data = $this->db->fetchRow('SELECT * FROM users WHERE `type` = ? AND id = ?', [$this->model->getType(), $id]);
+            $data = $this->db->fetchAssociative('SELECT * FROM users WHERE `type` = ? AND id = ?', [$this->model->getType(), $id]);
         } else {
-            $data = $this->db->fetchRow('SELECT * FROM users WHERE `id` = ?', $id);
+            $data = $this->db->fetchAssociative('SELECT * FROM users WHERE `id` = ?', [$id]);
         }
 
         if ($data) {
@@ -54,7 +54,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getByName($name)
     {
-        $data = $this->db->fetchRow('SELECT * FROM users WHERE `type` = ? AND `name` = ?', [$this->model->getType(), $name]);
+        $data = $this->db->fetchAssociative('SELECT * FROM users WHERE `type` = ? AND `name` = ?', [$this->model->getType(), $name]);
 
         if ($data) {
             $this->assignVariablesToModel($data);

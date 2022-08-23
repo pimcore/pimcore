@@ -38,7 +38,7 @@ class ResponseHelper
             }
 
             foreach (['max-stale', 'post-check', 'pre-check', 'max-age'] as $directive) {
-                $response->headers->addCacheControlDirective($directive, 0);
+                $response->headers->addCacheControlDirective($directive, '0');
             }
 
             // this is for mod_pagespeed

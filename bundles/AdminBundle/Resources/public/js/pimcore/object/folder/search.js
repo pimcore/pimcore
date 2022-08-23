@@ -224,7 +224,14 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         });
 
         var eventData =  {requestParams: {classId: this.classId, folderId: this.object.id}};
-        pimcore.plugin.broker.fireEvent("preCreateObjectGrid", eventData);
+
+        const preCreateObjectGrid = new CustomEvent(pimcore.events.preCreateObjectGrid, {
+            detail: {
+                eventData: eventData
+            }
+        });
+
+        document.dispatchEvent(preCreateObjectGrid);
 
         var gridHelper = new pimcore.object.helpers.grid(
             klass.data.text,
@@ -480,7 +487,15 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             }));
         }
 
-        pimcore.plugin.broker.fireEvent("prepareOnRowContextmenu", menu, this, selectedRows);
+        const prepareOnRowContextmenu = new CustomEvent(pimcore.events.prepareOnRowContextmenu, {
+            detail: {
+                menu: menu,
+                object: this,
+                selectedRows: selectedRows
+            }
+        });
+
+        document.dispatchEvent(prepareOnRowContextmenu);
 
         e.stopEvent();
         menu.showAt(e.pageX, e.pageY);

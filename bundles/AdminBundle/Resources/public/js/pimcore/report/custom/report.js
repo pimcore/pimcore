@@ -531,7 +531,13 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                     this.panel.add(subPanel);
                     this.panel.updateLayout();
 
-                    pimcore.plugin.broker.fireEvent("postOpenReport", this.grid);
+                    const postOpenReport = new CustomEvent(pimcore.events.postOpenReport, {
+                        detail: {
+                            grid: this.grid
+                        }
+                    });
+
+                    document.dispatchEvent(postOpenReport);
                 }.bind(this)
             });
         }

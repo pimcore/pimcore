@@ -15,6 +15,12 @@ pimcore.registerNS("pimcore.object.tree");
 pimcore.object.tree = Class.create({
 
     treeDataUrl: null,
+    treeNodeMoveParameter: {
+        nodes: [],
+        oldParent: {},
+        newParent: {},
+        indices: []
+    },
 
     initialize: function (config, perspectiveCfg) {
         this.treeDataUrl = Routing.generate('pimcore_admin_dataobject_dataobject_treegetchildsbyid');
@@ -187,7 +193,8 @@ pimcore.object.tree = Class.create({
                 // add the parent path as an additional diagnostic parameter
                 // can be used by bundles that work with dynamic children nodes
                 store.proxy.setExtraParam('parentPath', operation.node.data.path)
-            }
+            },
+            "drop": this.onTreeNodesDrop.bind(this)
         };
 
         return treeNodeListeners;
@@ -198,7 +205,15 @@ pimcore.object.tree = Class.create({
             try {
 
                 var eventData =  {record: record, preventDefault: false};
-                pimcore.plugin.broker.fireEvent("prepareOnObjectTreeNodeClick", eventData);
+
+                const prepareOnObjectTreeNodeClick = new CustomEvent(pimcore.events.prepareOnObjectTreeNodeClick, {
+                    detail: {
+                        eventData: eventData
+                    }
+                });
+
+                document.dispatchEvent(prepareOnObjectTreeNodeClick);
+
                 if (eventData.preventDefault) {
                     return;
                 }
@@ -234,32 +249,62 @@ pimcore.object.tree = Class.create({
     },
 
     onTreeNodeMove: function (node, oldParent, newParent, index, eOpts ) {
-        var tree = oldParent.getOwnerTree();
+        this.treeNodeMoveParameter.nodes.push(node);
+        this.treeNodeMoveParameter.oldParent = oldParent;
+        this.treeNodeMoveParameter.newParent = newParent;
+        this.treeNodeMoveParameter.indices.push(index);
+    },
 
-        var pageOffset = 0;
-        if (node.parentNode.pagingData) {
-            pageOffset = node.parentNode.pagingData.offset;
+    onTreeNodesDrop: function (node, data, overModel, dropPosition, eOpts) {
+
+        if (typeof this.treeNodeMoveParameter.oldParent.getOwnerTree !== "function") {
+            return;
         }
 
-        pimcore.elementservice.updateObject(node.data.id, {
-            parentId: newParent.data.id,
-            index: index + pageOffset,
-        }, function (newParent, oldParent, tree, response) {
-            try{
-                var rdata = Ext.decode(response.responseText);
+        let tree = this.treeNodeMoveParameter.oldParent.getOwnerTree();
+
+        let pageOffset = 0;
+        let ids = [];
+        let indices = {};
+
+        for (let i = 0; i < this.treeNodeMoveParameter.nodes.length; i++) {
+            pageOffset = 0
+
+            if (this.treeNodeMoveParameter.nodes[i].parentNode.pagingData) {
+                pageOffset = this.treeNodeMoveParameter.nodes[i].parentNode.pagingData.offset;
+            }
+
+            ids.push(this.treeNodeMoveParameter.nodes[i].data.id);
+
+            indices[ids[i]] = this.treeNodeMoveParameter.indices[i] + pageOffset;
+        }
+
+        if(ids.length === 1) {
+            ids = ids[0];
+            indices = indices[ids];
+        }
+
+        pimcore.elementservice.updateObject(ids, {
+            parentId: this.treeNodeMoveParameter.newParent.data.id,
+            indices: indices,
+        }, function (nodes, newParent, oldParent, tree, response) {
+            try {
+                const rdata = Ext.decode(response.responseText);
                 if (rdata && rdata.success) {
                     // set new pathes
-                    var newBasePath = newParent.data.path;
+                    let newBasePath = newParent.data.path;
                     if (newBasePath == "/") {
                         newBasePath = "";
                     }
-                    node.data.basePath = newBasePath;
-                    node.data.path = node.data.basePath + "/" + node.data.text;
-                    pimcore.elementservice.nodeMoved("object", oldParent, newParent);
-                }  else {
+                    nodes.map(node => {
+                        node.data.basePath = newBasePath;
+                        node.data.path = node.data.basePath + "/" + node.data.text;
+                    });
+
+                } else {
                     tree.loadMask.hide();
                     pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"),
-                        "error",t(rdata.message));
+                        "error", t(rdata.message));
                     // we have to delay refresh between two nodes,
                     // as there could be parent child relationship leading to race condition
                     window.setTimeout(function () {
@@ -267,7 +312,7 @@ pimcore.object.tree = Class.create({
                     }, 500);
                     pimcore.elementservice.refreshNode(newParent);
                 }
-            } catch(e){
+            } catch (e) {
                 tree.loadMask.hide();
                 pimcore.helpers.showNotification(t("error"), t("cant_move_node_to_target"), "error");
                 // we have to delay refresh between two nodes,
@@ -279,7 +324,14 @@ pimcore.object.tree = Class.create({
             }
             tree.loadMask.hide();
 
-        }.bind(this, newParent, oldParent, tree));
+            this.treeNodeMoveParameter =  {
+                nodes: [],
+                oldParent: {},
+                newParent: {},
+                indices: []
+            };
+
+        }.bind(this, this.treeNodeMoveParameter.nodes, this.treeNodeMoveParameter.newParent, this.treeNodeMoveParameter.oldParent, tree));
     },
 
     onTreeNodeBeforeMove: function (node, oldParent, newParent, index, eOpts ) {
@@ -291,8 +343,8 @@ pimcore.object.tree = Class.create({
             return false;
         }
 
-        // dropping objects not allowed on the paginated tree
-        if((newParent.needsPaging) || (newParent.childNodes.length > pimcore.settings['object_tree_paging_limit'])){
+        // dropping objects not allowed if the tree/folder is paginated and sort by index (manual indexes) is enabled
+        if(((newParent.needsPaging) || (newParent.childNodes.length > pimcore.settings['object_tree_paging_limit'])) && (newParent.data.sortBy == "index")){
             pimcore.helpers.showNotification(t("error"), t("element_cannot_be_moved_because_target_is_paginated"), "error");
             return false;
         }
@@ -377,16 +429,17 @@ pimcore.object.tree = Class.create({
             ]);
 
             object_types.each(function (classRecord) {
-
-                if ($this.config.allowedClasses && !in_array(classRecord.get("id"), Object.keys($this.config.allowedClasses))) {
-                    return;
-                }
-                
-                if ($this.config.allowedClasses && $this.config.allowedClasses[classRecord.get("id")] !== null) {
-                    if(record.data.depth >= $this.config.allowedClasses[classRecord.get("id")]) {
+                if($this.config.allowedClasses && Object.keys($this.config.allowedClasses).length > 0) {
+                    if (!in_array(classRecord.get("id"), Object.keys($this.config.allowedClasses))) {
                         return;
                     }
-                };
+
+                    if ($this.config.allowedClasses[classRecord.get("id")] !== null) {
+                        if (record.data.depth >= $this.config.allowedClasses[classRecord.get("id")]) {
+                            return;
+                        }
+                    }
+                }
 
                 tmpMenuEntry = {
                     text: classRecord.get("translatedText"),
@@ -759,7 +812,16 @@ pimcore.object.tree = Class.create({
 
         pimcore.helpers.hideRedundantSeparators(menu);
 
-        pimcore.plugin.broker.fireEvent("prepareObjectTreeContextMenu", menu, this, record);
+        const prepareObjectTreeContextMenu = new CustomEvent(pimcore.events.prepareObjectTreeContextMenu, {
+            detail: {
+                menu: menu,
+                object: this,
+                record: record
+            }
+        });
+
+        document.dispatchEvent(prepareObjectTreeContextMenu);
+
 
         menu.showAt(e.pageX+1, e.pageY+1);
     },
@@ -1134,12 +1196,21 @@ pimcore.object.tree = Class.create({
         let currentSortMethod = record.data.sortBy;
 
         if (currentSortMethod != sortBy && sortBy == "index") {
-            Ext.MessageBox.confirm(t("warning"), t("reindex_warning"),
-                function (tree, record, sortBy, childrenSortOrder, buttonValue) {
-                    if (buttonValue == "yes") {
-                        this.doChangeObjectChildrenSortBy(tree, record, sortBy, childrenSortOrder);
-                    }
-                }.bind(this, tree, record, sortBy, childrenSortOrder));
+
+            // Do not allow sort by index(Manual Indexes) for a paginated tree/folder
+            if(record.needsPaging) {
+                Ext.MessageBox.alert(
+                    t("error"),
+                    t("error_object_change_children_sort_to_index"));
+            }
+            else {
+                Ext.MessageBox.confirm(t("warning"), t("reindex_warning"),
+                    function (tree, record, sortBy, childrenSortOrder, buttonValue) {
+                        if (buttonValue == "yes") {
+                            this.doChangeObjectChildrenSortBy(tree, record, sortBy, childrenSortOrder);
+                        }
+                    }.bind(this, tree, record, sortBy, childrenSortOrder));
+            }
         } else {
             this.doChangeObjectChildrenSortBy(tree, record, sortBy, childrenSortOrder);
         }

@@ -327,8 +327,11 @@ pimcore.settings.redirects = Class.create({
                     tooltip: t('delete'),
                     icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                     handler: function (grid, rowIndex) {
-                        grid.getStore().removeAt(rowIndex);
-                        this.updateRows();
+                        let data = grid.getStore().getAt(rowIndex);
+                        pimcore.helpers.deleteConfirm(t('redirect'), data.data.id, function () {
+                            grid.getStore().removeAt(rowIndex);
+                            this.updateRows();
+                        }.bind(this));
                     }.bind(this)
                 }]
             }

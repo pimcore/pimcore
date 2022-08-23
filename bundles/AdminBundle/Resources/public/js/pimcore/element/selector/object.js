@@ -236,7 +236,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                 store: this.selectionStore,
                 columns: [
                     {text: t("type"), width: 40, sortable: true, dataIndex: 'subtype'},
-                    {text: t("filename"), flex: 1, sortable: false, dataIndex: 'filename'}
+                    {text: t("key"), flex: 1, sortable: true, dataIndex: 'filename'}
                 ],
                 viewConfig: {
                     forceFit: true
@@ -388,7 +388,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             {text: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: true},
             {text: t("published"), width: 40, sortable: true, dataIndex: 'published', hidden: true},
             {text: t("path"), flex: 200, sortable: true, dataIndex: 'fullpath', renderer: Ext.util.Format.htmlEncode},
-            {text: t("filename"), width: 200, sortable: false, dataIndex: 'filename', hidden: true, renderer: Ext.util.Format.htmlEncode},
+            {text: t("key"), width: 200, sortable: true, dataIndex: 'filename', hidden: true, renderer: Ext.util.Format.htmlEncode},
             {text: t("class"), width: 200, sortable: true, dataIndex: 'classname'}
         ];
 

@@ -541,7 +541,7 @@ class CoreCacheHandler implements LoggerAwareInterface
         if ($data instanceof ElementInterface) {
             // fetch a fresh copy
             $type = Service::getElementType($data);
-            $data = Service::getElementById($type, $data->getId(), true);
+            $data = Service::getElementById($type, $data->getId(), ['force' => true]);
 
             if (!$data->__isBasedOnLatestData()) {
                 $this->logger->warning('Not saving {key} to cache as element is not based on latest data', [
@@ -849,6 +849,22 @@ class CoreCacheHandler implements LoggerAwareInterface
         $this->tagsIgnoredOnClear = array_filter($this->tagsIgnoredOnClear, function ($t) use ($tag) {
             return $t !== $tag;
         });
+
+        return $this;
+    }
+
+    /**
+     * @internal
+     *
+     * @param array $tags
+     *
+     * @return $this
+     */
+    public function removeClearedTags(array $tags)
+    {
+        foreach ($tags as $tag) {
+            unset($this->clearedTags[$tag]);
+        }
 
         return $this;
     }

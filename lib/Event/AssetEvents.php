@@ -118,6 +118,16 @@ final class AssetEvents
 
     /**
      * Arguments:
+     *  - params | array | contains the values that were passed to getById() as the second parameter
+     *
+     * @Event("Pimcore\Event\Model\AssetEvent")
+     *
+     * @var string
+     */
+    const POST_LOAD = 'pimcore.asset.postLoad';
+
+    /**
+     * Arguments:
      *  - target_element | Pimcore\Model\Asset | contains the target asset used in copying process
      *
      * @Event("Pimcore\Event\Model\AssetEvent")

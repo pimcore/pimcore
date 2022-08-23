@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Fieldcollection;
 
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface;
 use Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumperInterface;
 use Pimcore\Model;
@@ -38,13 +39,7 @@ class Definition extends Model\AbstractModel
      */
     protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
-        //TODO Pimcore 11: remove method_exists BC layer
-        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface || method_exists($fieldDefinition, 'enrichFieldDefinition')) {
-            if (!$fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
-                trigger_deprecation('pimcore/pimcore', '10.1',
-                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                    'Implement the %s interface instead.', FieldDefinitionEnrichmentInterface::class));
-            }
+        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
             $context['containerType'] = 'fieldcollection';
             $context['containerKey'] = $this->getKey();
             $fieldDefinition = $fieldDefinition->enrichFieldDefinition($context);
@@ -95,7 +90,7 @@ class Definition extends Model\AbstractModel
         $cacheKey = 'fieldcollection_' . $key;
 
         try {
-            $fc = \Pimcore\Cache\Runtime::get($cacheKey);
+            $fc = RuntimeCache::get($cacheKey);
             if (!$fc) {
                 throw new \Exception('FieldCollection in registry is not valid');
             }
@@ -106,7 +101,7 @@ class Definition extends Model\AbstractModel
 
             if (is_file($fieldFile)) {
                 $fc = include $fieldFile;
-                \Pimcore\Cache\Runtime::set($cacheKey, $fc);
+                RuntimeCache::set($cacheKey, $fc);
             }
         }
 
@@ -243,11 +238,7 @@ class Definition extends Model\AbstractModel
      */
     public function isWritable(): bool
     {
-        if ($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? false) {
-            return true;
-        }
-
-        return !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
+        return $_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
     }
 
     /**
@@ -263,7 +254,6 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @internal
      * @internal
      *
      * @return string

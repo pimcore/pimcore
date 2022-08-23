@@ -20,12 +20,16 @@ namespace Pimcore\Extension\Bundle\Traits;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 
 /**
+ * @internal
+ *
  * Helper trait exposing static isEnabled() and isInstalled() methods for bundles which can be used
  * to check bundle state from non-service definitions (e.g. class definitions).
  */
 trait StateHelperTrait
 {
     /**
+     * @deprecated will be removed in Pimcore 11
+     *
      * Helper method to check enabled state from class definitions/non-service instances
      *
      * @return bool

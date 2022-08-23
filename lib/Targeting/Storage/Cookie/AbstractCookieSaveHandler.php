@@ -74,11 +74,7 @@ abstract class AbstractCookieSaveHandler implements CookieSaveHandlerInterface
         $response->headers->setCookie(new Cookie(
             $name,
             $value,
-            $expire,
-            '/',
-            null,
-            false,
-            true
+            $expire
         ));
     }
 

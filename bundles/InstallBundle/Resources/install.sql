@@ -63,6 +63,9 @@ CREATE TABLE `assets_image_thumbnail_cache` (
     `name` varchar(190) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
     `filename` varchar(190) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
     `modificationDate` INT(11) UNSIGNED DEFAULT NULL,
+    `filesize` INT(11) UNSIGNED DEFAULT NULL,
+    `width` SMALLINT UNSIGNED DEFAULT NULL,
+    `height` SMALLINT UNSIGNED DEFAULT NULL,
     PRIMARY KEY (`cid`, `name`, `filename`),
     CONSTRAINT `FK_assets_image_thumbnail_cache_assets` FOREIGN KEY (`cid`) REFERENCES `assets` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
@@ -283,7 +286,7 @@ CREATE TABLE `email_log` (
   `bcc` longtext,
   `sentDate` int(11) UNSIGNED DEFAULT NULL,
   `subject` varchar(500) DEFAULT NULL,
-  `error` text DEFAULT NULL, 
+  `error` text DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `sentDate` (`sentDate`, `id`),
   FULLTEXT KEY `fulltext` (`from`,`to`,`cc`,`bcc`,`subject`,`params`),
@@ -459,6 +462,8 @@ CREATE TABLE `schedule_tasks` (
 DROP TABLE IF EXISTS `search_backend_data`;
 CREATE TABLE `search_backend_data` (
   `id` int(11) NOT NULL,
+  `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin default '',
+  `index` int(11) unsigned DEFAULT '0',
   `fullpath` varchar(765) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
   `maintype` varchar(8) NOT NULL DEFAULT '',
   `type` varchar(20) DEFAULT NULL,
@@ -471,6 +476,8 @@ CREATE TABLE `search_backend_data` (
   `data` longtext,
   `properties` text,
   PRIMARY KEY (`id`,`maintype`),
+  KEY `key` (`key`),
+  KEY `index` (`index`),
   KEY `fullpath` (`fullpath`),
   KEY `maintype` (`maintype`),
   KEY `type` (`type`),
@@ -586,6 +593,8 @@ CREATE TABLE `translations_admin` (
   `text` text,
   `creationDate` int(11) unsigned DEFAULT NULL,
   `modificationDate` int(11) unsigned DEFAULT NULL,
+  `userOwner` int(11) unsigned DEFAULT NULL,
+  `userModification` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`key`,`language`),
   KEY `language` (`language`)
 ) DEFAULT CHARSET=utf8mb4;
@@ -598,6 +607,8 @@ CREATE TABLE `translations_messages` (
   `text` text,
   `creationDate` int(11) unsigned DEFAULT NULL,
   `modificationDate` int(11) unsigned DEFAULT NULL,
+  `userOwner` int(11) unsigned DEFAULT NULL,
+  `userModification` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`key`,`language`),
   KEY `language` (`language`)
 ) DEFAULT CHARSET=utf8mb4;
@@ -996,6 +1007,7 @@ CREATE TABLE `object_url_slugs` (
       INDEX `ownername` (`ownername`),
       INDEX `slug` (`slug`),
       INDEX `siteId` (`siteId`),
+      INDEX `fieldname_ownertype_position_objectId` (`fieldname`,`ownertype`,`position`,`objectId`),
       CONSTRAINT `fk_object_url_slugs__objectId` FOREIGN KEY (`objectId`) REFERENCES objects (`o_id`) ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 

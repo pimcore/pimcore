@@ -25,6 +25,8 @@ use Pimcore\Model\Element\ValidationException;
 
 /**
  * @property \Doctrine\DBAL\Driver\Connection $_conn
+ *
+ * @deprecated will be removed in Pimcore 11
  */
 trait PimcoreExtensionsTrait
 {
@@ -37,24 +39,10 @@ trait PimcoreExtensionsTrait
      */
     protected $autoQuoteIdentifiers = true;
 
-    private static array $tablePrimaryKeyCache = [];
-
     /**
-     *@return bool
-     *
-     *@see \Doctrine\DBAL\Connection::connect
+     * @var array
      */
-    public function connect()// : bool
-    {
-        $returnValue = parent::connect();
-
-        if ($returnValue) {
-            $this->_conn->query('SET default_storage_engine=InnoDB;');
-            $this->_conn->query("SET sql_mode = '';");
-        }
-
-        return $returnValue;
-    }
+    private static array $tablePrimaryKeyCache = [];
 
     /**
      * @see \Doctrine\DBAL\Connection::executeQuery
@@ -65,6 +53,11 @@ trait PimcoreExtensionsTrait
      */
     public function query(...$params)
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use Doctrine\DBAL\Connection::executeQuery() instead.', __METHOD__)
+        );
         // compatibility layer for additional parameters in the 2nd argument
         // eg. $db->query("UPDATE myTest SET date = ? WHERE uri = ?", [time(), $uri]);
         if (func_num_args() === 2) {
@@ -100,6 +93,7 @@ trait PimcoreExtensionsTrait
     }
 
     /**
+     * @deprecated
      * @see \Doctrine\DBAL\Connection::executeUpdate
      *
      * @param string $query The SQL query.
@@ -112,6 +106,11 @@ trait PimcoreExtensionsTrait
      */
     public function executeUpdate($query, array $params = [], array $types = [])
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use Doctrine\DBAL\Connection::executeStatement() instead.', __METHOD__)
+        );
         list($query, $params) = $this->normalizeQuery($query, $params);
 
         return parent::executeStatement($query, $params, $types);
@@ -193,8 +192,10 @@ trait PimcoreExtensionsTrait
     /**
      * Deletes table rows based on a custom WHERE clause.
      *
-     * @param  mixed        $table The table to update.
-     * @param  mixed        $where DELETE WHERE clause(s).
+     * @deprecated
+     *
+     * @param  string        $table The table to update.
+     * @param  string        $where DELETE WHERE clause(s).
      *
      * @return int          The number of affected rows.
      *
@@ -202,20 +203,27 @@ trait PimcoreExtensionsTrait
      */
     public function deleteWhere($table, $where = '')
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use Doctrine\DBAL\Connection::executeStatement() instead.', __METHOD__)
+        );
         $sql = 'DELETE FROM ' . $table;
         if ($where) {
             $sql .= ' WHERE ' . $where;
         }
 
-        return $this->executeUpdate($sql);
+        return $this->executeStatement($sql);
     }
 
     /**
      * Updates table rows with specified data based on a custom WHERE clause.
      *
-     * @param  mixed        $table The table to update.
+     * @deprecated
+     *
+     * @param  string        $table The table to update.
      * @param  array        $data  Column-value pairs.
-     * @param  mixed        $where UPDATE WHERE clause(s).
+     * @param  string        $where UPDATE WHERE clause(s).
      *
      * @return int          The number of affected rows.
      *
@@ -223,6 +231,11 @@ trait PimcoreExtensionsTrait
      */
     public function updateWhere($table, array $data, $where = '')
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use Doctrine\DBAL\Connection::executeStatement() instead.', __METHOD__)
+        );
         $set = [];
         $paramValues = [];
 
@@ -237,11 +250,13 @@ trait PimcoreExtensionsTrait
             $sql .= ' WHERE ' . $where;
         }
 
-        return $this->executeUpdate($sql, $paramValues);
+        return $this->executeStatement($sql, $paramValues);
     }
 
     /**
      * Fetches the first row of the SQL result.
+     *
+     * @deprecated
      *
      * @param string $sql
      * @param array|scalar $params
@@ -253,6 +268,11 @@ trait PimcoreExtensionsTrait
      */
     public function fetchRow($sql, $params = [], $types = [])
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use Doctrine\DBAL\Connection::fetchAssociative() instead.', __METHOD__)
+        );
         $params = $this->prepareParams($params);
 
         return $this->fetchAssociative($sql, $params, $types);
@@ -260,6 +280,8 @@ trait PimcoreExtensionsTrait
 
     /**
      * Fetches the first column of all SQL result rows as an array.
+     *
+     * @deprecated
      *
      * @param string $sql
      * @param array|scalar $params
@@ -272,6 +294,11 @@ trait PimcoreExtensionsTrait
      */
     public function fetchCol($sql, $params = [], $types = [])
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use Doctrine\DBAL\Connection::fetchFirstColumn() instead.', __METHOD__)
+        );
         $params = $this->prepareParams($params);
 
         // unfortunately Mysqli driver doesn't support \PDO::FETCH_COLUMN, so we have to do it manually
@@ -313,6 +340,8 @@ trait PimcoreExtensionsTrait
      * The first column is the key, the second column is the
      * value.
      *
+     * @deprecated
+     *
      * @param string $sql
      * @param array $params
      * @param array $types
@@ -324,6 +353,11 @@ trait PimcoreExtensionsTrait
      */
     public function fetchPairs($sql, array $params = [], $types = [])
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use Pimcore\Db\Helper::fetchPairs() instead.', __METHOD__)
+        );
         $params = $this->prepareParams($params);
         $stmt = $this->executeQuery($sql, $params, $types);
         $data = [];
@@ -337,6 +371,8 @@ trait PimcoreExtensionsTrait
     }
 
     /**
+     * @deprecated
+     *
      * @param string $table
      * @param array $data
      *
@@ -346,6 +382,11 @@ trait PimcoreExtensionsTrait
      */
     public function insertOrUpdate($table, array $data)
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use Pimcore\Db\Helper::insertOrUpdate() instead.', __METHOD__)
+        );
         // get the field name of the primary key
         $fieldsPrimaryKey = self::$tablePrimaryKeyCache[$table] ??= $this->getPrimaryKeyColumns($table);
 
@@ -374,7 +415,7 @@ trait PimcoreExtensionsTrait
             implode(', ', $set)
         );
 
-        return $this->executeUpdate($sql, $bind);
+        return $this->executeStatement($sql, $bind);
     }
 
     /**
@@ -390,6 +431,8 @@ trait PimcoreExtensionsTrait
      * // $safe = "WHERE date < '2005-01-02'"
      * </code>
      *
+     * @deprecated
+     *
      * @param string $text The text with a placeholder.
      * @param mixed $value The value to quote.
      * @param string|null $type OPTIONAL SQL datatype
@@ -399,6 +442,11 @@ trait PimcoreExtensionsTrait
      */
     public function quoteInto($text, $value, $type = null, $count = null)
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use Pimcore\Db\Helper::quoteInto() instead.', __METHOD__)
+        );
         if ($count === null) {
             return str_replace('?', $this->quote($value, $type), $text);
         }
@@ -409,6 +457,8 @@ trait PimcoreExtensionsTrait
     /**
      * Quote a column identifier and alias.
      *
+     * @deprecated
+     *
      * @param string|array $ident The identifier or expression.
      * @param string|null $alias An alias for the column.
      *
@@ -416,11 +466,19 @@ trait PimcoreExtensionsTrait
      */
     public function quoteColumnAs($ident, $alias = null)
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use Doctrine\DBAL\Connection::quoteIdentifier() instead.', __METHOD__)
+        );
+
         return $this->_quoteIdentifierAs($ident, $alias);
     }
 
     /**
      * Quote a table identifier and alias.
+     *
+     * @deprecated
      *
      * @param string|array $ident The identifier or expression.
      * @param string|null $alias An alias for the table.
@@ -429,11 +487,19 @@ trait PimcoreExtensionsTrait
      */
     public function quoteTableAs($ident, $alias = null)
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11.', __METHOD__)
+        );
+
         return $this->_quoteIdentifierAs($ident, $alias);
     }
 
     /**
      * Quote an identifier and an optional alias.
+     *
+     * @deprecated
      *
      * @param string|array $ident The identifier or expression.
      * @param string|null $alias An optional alias.
@@ -470,6 +536,8 @@ trait PimcoreExtensionsTrait
     /**
      * Quote an identifier.
      *
+     * @deprecated
+     *
      * @param string $value The identifier or expression.
      * @param bool $auto If true, heed the AUTO_QUOTE_IDENTIFIERS config option.
      *
@@ -489,6 +557,8 @@ trait PimcoreExtensionsTrait
     /**
      * Adds an adapter-specific LIMIT clause to the SELECT statement.
      *
+     * @deprecated
+     *
      * @param string $sql
      * @param int $count
      * @param int $offset OPTIONAL
@@ -499,6 +569,11 @@ trait PimcoreExtensionsTrait
      */
     public function limit($sql, $count, $offset = 0)
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11.', __METHOD__)
+        );
         $count = (int) $count;
         if ($count <= 0) {
             throw new \Exception("LIMIT argument count=$count is not valid");
@@ -518,6 +593,8 @@ trait PimcoreExtensionsTrait
     }
 
     /**
+     * @deprecated
+     *
      * @param string $sql
      * @param array $exclusions
      *
@@ -527,8 +604,14 @@ trait PimcoreExtensionsTrait
      */
     public function queryIgnoreError($sql, $exclusions = [])
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use Pimcore\Db\Helper::queryIgnoreError() instead.', __METHOD__)
+        );
+
         try {
-            return $this->query($sql);
+            return $this->executeQuery($sql);
         } catch (\Exception $e) {
             foreach ($exclusions as $exclusion) {
                 if ($e instanceof $exclusion) {
@@ -542,6 +625,8 @@ trait PimcoreExtensionsTrait
     }
 
     /**
+     * @deprecated
+     *
      * @param array|scalar $params
      *
      * @return array
@@ -549,6 +634,11 @@ trait PimcoreExtensionsTrait
     protected function prepareParams($params)
     {
         if (!is_array($params)) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '10.5.0',
+                'DB query params must be an array in Pimcore 11.'
+            );
             $params = [$params];
         }
 
@@ -556,6 +646,8 @@ trait PimcoreExtensionsTrait
     }
 
     /**
+     * @deprecated
+     *
      * @param array $data
      *
      * @return array
@@ -575,6 +667,8 @@ trait PimcoreExtensionsTrait
     }
 
     /**
+     * @deprecated
+     *
      * @param bool $autoQuoteIdentifiers
      */
     public function setAutoQuoteIdentifiers($autoQuoteIdentifiers)
@@ -583,19 +677,26 @@ trait PimcoreExtensionsTrait
     }
 
     /**
+     * @deprecated
+     *
      * @param string $table
      * @param string $idColumn
      * @param string $where
      */
     public function selectAndDeleteWhere($table, $idColumn = 'id', $where = '')
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use Pimcore\Db\Helper::selectAndDeleteWhere() instead.', __METHOD__)
+        );
         $sql = 'SELECT ' . $this->quoteIdentifier($idColumn) . '  FROM ' . $table;
 
         if ($where) {
             $sql .= ' WHERE ' . $where;
         }
 
-        $idsForDeletion = $this->fetchCol($sql);
+        $idsForDeletion = $this->fetchFirstColumn($sql);
 
         if (!empty($idsForDeletion)) {
             $chunks = array_chunk($idsForDeletion, 1000);
@@ -607,12 +708,20 @@ trait PimcoreExtensionsTrait
     }
 
     /**
+     * @deprecated
+     *
      * @param string $like
      *
      * @return string
      */
     public function escapeLike(string $like): string
     {
+        trigger_deprecation(
+            'pimcore/pimcore',
+            '10.5.0',
+            sprintf('%s is deprecated and will be removed in Pimcore 11. Use Pimcore\Db\Helper::escapeLike() instead.', __METHOD__)
+        );
+
         return str_replace(['_', '%'], ['\\_', '\\%'], $like);
     }
 

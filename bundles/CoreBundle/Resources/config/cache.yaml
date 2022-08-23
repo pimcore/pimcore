@@ -19,16 +19,35 @@ services:
         class: Symfony\Component\Cache\Adapter\TagAwareAdapter
         arguments: ['@pimcore.cache.adapter.null', null]
 
+    pimcore.cache.adapter.doctrine_dbal:
+        class: Symfony\Component\Cache\Adapter\DoctrineDbalAdapter
+        arguments:
+            - '@doctrine.dbal.default_connection'
+            - ''
+            - 31536000  # 1 year
+
+    pimcore.cache.adapter.doctrine_dbal_tag_aware:
+        class: Symfony\Component\Cache\Adapter\TagAwareAdapter
+        arguments: [ '@pimcore.cache.adapter.doctrine_dbal', null ]
+
     pimcore.cache.adapter.pdo:
         class: Symfony\Component\Cache\Adapter\PdoAdapter
         arguments:
             - '@doctrine.dbal.default_connection'
             - ''
             - 31536000  # 1 year
+        deprecated:
+            message: 'The "%service_id%" service is deprecated. Use "pimcore.cache.adapter.doctrine_dbal" instead'
+            package: pimcore/pimcore
+            version: 10.5
 
     pimcore.cache.adapter.pdo_tag_aware:
         class: Symfony\Component\Cache\Adapter\TagAwareAdapter
         arguments: [ '@pimcore.cache.adapter.pdo', null ]
+        deprecated:
+            message: 'The "%service_id%" service is deprecated. Use "pimcore.cache.adapter.doctrine_dbal_tag_aware" instead'
+            package: pimcore/pimcore
+            version: 10.5
 
     pimcore.cache.adapter.redis_tag_aware:
         class: Symfony\Component\Cache\Adapter\RedisTagAwareAdapter

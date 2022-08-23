@@ -87,6 +87,11 @@ class PlaceConfig
         return $this->placeConfigArray['visibleInHeader'];
     }
 
+    /**
+     * @param object $subject
+     *
+     * @return string|null
+     */
     public function getObjectLayout(Workflow $workflow, $subject): ?string
     {
         return $this->getPermissions($workflow, $subject)['objectLayout'] ?? null;
@@ -110,6 +115,9 @@ class PlaceConfig
         return $this->placeConfigArray;
     }
 
+    /**
+     * @param object $subject
+     */
     public function getPermissions(Workflow $workflow, $subject): array
     {
         foreach ($this->placeConfigArray['permissions'] ?? [] as $permission) {
@@ -124,6 +132,9 @@ class PlaceConfig
         return [];
     }
 
+    /**
+     * @param object $subject
+     */
     public function getUserPermissions(Workflow $workflow, $subject): array
     {
         $result = [];

@@ -8,11 +8,17 @@ on:
         branches:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"
+        paths-ignore:
+            - 'docs/**'
+            - 'bundles/**/Resources/public/**'
     push:
         branches:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"
             - "*_actions"
+        paths-ignore:
+            - 'docs/**'
+            - 'bundles/**/Resources/public/**'
 
 env:
     PIMCORE_PROJECT_ROOT: ${{ github.workspace }}
@@ -22,6 +28,9 @@ env:
     PIMCORE_TEST_REDIS_DSN: "redis://127.0.0.1:63379"
     MINIO_ACCESS_KEY: "PIMCORE_OBJECT_STORAGE_ACCESS_KEY"
     MINIO_SECRET_KEY: "PIMCORE_OBJECT_STORAGE_SECRET_KEY"
+
+permissions:
+  contents: read
 
 jobs:
     codeception-tests:
@@ -49,7 +58,7 @@ jobs:
                     MINIO_ROOT_PASSWORD: "${{ env.MINIO_SECRET_KEY }}"
                     MINIO_SERVER_ACCESS_KEY: "${{ env.MINIO_ACCESS_KEY }}"
                     MINIO_SERVER_SECRET_KEY: "${{ env.MINIO_SECRET_KEY }}"
-                    MINIO_DEFAULT_BUCKETS: "asset,assetcache,thumbnail,version,recyclebin,admin,emaillog,temp"
+                    MINIO_DEFAULT_BUCKETS: "asset,assetcache,thumbnail,version,recyclebin,admin,emaillog,temp,applicationlog"
                 options: --name minio-server
             redis:
                 image: redis
@@ -101,7 +110,7 @@ jobs:
                   fi
 
             - name: "Install dependencies with Composer"
-              uses: "ramsey/composer-install@v1"
+              uses: "ramsey/composer-install@v2"
               with:
                   dependency-versions: "${{ matrix.dependencies }}"
                   composer-options: "${{ matrix.composer-options }}"

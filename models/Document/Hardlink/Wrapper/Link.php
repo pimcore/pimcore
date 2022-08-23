@@ -31,8 +31,12 @@ class Link extends Model\Document\Link implements Model\Document\Hardlink\Wrappe
     {
         if ($this->getLinktype() === 'internal' && $this->getInternalType() === 'document') {
             $element = $this->getElement();
-            if (strpos($element->getRealFullPath(), $this->getHardLinkSource()->getSourceDocument()->getRealFullPath() . '/') === 0
-                || $this->getHardLinkSource()->getSourceDocument()->getRealFullPath() === $element->getRealFullPath()
+            if (
+                $element instanceof Model\Document &&
+                (
+                    str_starts_with($element->getRealFullPath(), $this->getHardLinkSource()->getSourceDocument()->getRealFullPath() . '/') ||
+                    $this->getHardLinkSource()->getSourceDocument()->getRealFullPath() === $element->getRealFullPath()
+                )
             ) {
                 // link target is child of hardlink source
                 $c = Model\Document\Hardlink\Service::wrap($element);

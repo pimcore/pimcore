@@ -111,7 +111,7 @@ class AssetHelperController extends AdminController
                     where (c1.searchType = ' . $db->quote($searchType) . ' and ((c1.id = s.gridConfigId and s.sharedWithUserId IN (' . $userIds . '))) and c1.classId = ' . $db->quote($classId) . ')
                             UNION distinct select c2.id from gridconfigs c2 where shareGlobally = 1 and c2.classId = '. $db->quote($classId) . '  and c2.ownerId != ' . $db->quote($user->getId());
 
-        $ids = $db->fetchCol($query);
+        $ids = $db->fetchFirstColumn($query);
 
         if ($ids) {
             $ids = implode(',', $ids);
@@ -477,7 +477,7 @@ class AssetHelperController extends AdminController
         ];
 
         $db = Db::get();
-        $allShares = $db->fetchAll('select s.sharedWithUserId, u.type from gridconfig_shares s, users u
+        $allShares = $db->fetchAllAssociative('select s.sharedWithUserId, u.type from gridconfig_shares s, users u
                       where s.sharedWithUserId = u.id and s.gridConfigId = ' . $gridConfigId);
 
         if ($allShares) {
@@ -926,18 +926,11 @@ class AssetHelperController extends AdminController
         $csvFile = $this->getCsvFile($fileHandle);
 
         try {
-            $csvStream= $storage->readStream($csvFile);
-
             $csvReader = new Csv();
             $csvReader->setDelimiter(';');
             $csvReader->setSheetIndex(0);
 
-            $temp = tmpfile();
-            stream_copy_to_stream($csvStream, $temp, null, 0);
-            $tempMetaData = stream_get_meta_data($temp);
-            //TODO: use this method and storage->read() to avoid the extra temp file, is not available in the current version. See: https://github.com/PHPOffice/PhpSpreadsheet/pull/2792
-            //$spreadsheet = $csvReader->loadSpreadsheetFromString($csvData);
-            $spreadsheet = $csvReader->load($tempMetaData['uri']);
+            $spreadsheet = $csvReader->loadSpreadsheetFromString($storage->read($csvFile));
             $writer = new Xlsx($spreadsheet);
             $xlsxFilename = PIMCORE_SYSTEM_TEMP_DIRECTORY. '/' .$fileHandle. '.xlsx';
             $writer->save($xlsxFilename);

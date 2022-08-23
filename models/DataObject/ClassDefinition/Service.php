@@ -150,7 +150,6 @@ class Service
             'linkGeneratorReference',
             'previewGeneratorReference',
             'compositeIndices',
-            'generateTypeDeclarations',
             'showFieldLookup',
             'enableGridLocking',
             'showAppLoggerTab',
@@ -202,7 +201,6 @@ class Service
             'implementsInterfaces',
             'title',
             'group',
-            'generateTypeDeclarations',
         ];
 
         foreach ($importPropertyNames as $importPropertyName) {
@@ -287,7 +285,6 @@ class Service
             'implementsInterfaces',
             'title',
             'group',
-            'generateTypeDeclarations',
         ];
 
         foreach ($importPropertyNames as $importPropertyName) {
@@ -405,7 +402,7 @@ class Service
         $db = \Pimcore\Db::get();
         $tmp = [];
         foreach ($tableNames as $tableName) {
-            $tmp[$tableName] = $db->fetchAll('show columns from ' . $tableName);
+            $tmp[$tableName] = $db->fetchAllAssociative('show columns from ' . $tableName);
         }
 
         foreach ($tmp as $tableName => $columns) {

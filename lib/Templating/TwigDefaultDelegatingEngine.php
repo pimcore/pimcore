@@ -101,6 +101,14 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     }
 
     /**
+     * @return Environment
+     */
+    public function getTwigEnvironment(): Environment
+    {
+        return $this->twig;
+    }
+
+    /**
      * @param string $view
      * @param array $parameters
      * @param Response|null $response

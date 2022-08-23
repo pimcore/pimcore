@@ -17,7 +17,7 @@ namespace Pimcore\Model\DataObject;
 
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
-use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\DataObject\GridColumnConfig\ConfigElementInterface;
 use Pimcore\DataObject\GridColumnConfig\Operator\AbstractOperator;
 use Pimcore\DataObject\GridColumnConfig\Service as GridColumnConfigService;
@@ -520,8 +520,8 @@ class Service extends Model\Element\Service
         if (isset($context['language'])) {
             $cacheKey .= '_' . $context['language'];
         }
-        if (Runtime::isRegistered($cacheKey)) {
-            $config = Runtime::get($cacheKey);
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            $config = RuntimeCache::get($cacheKey);
         } else {
             $definition = $helperDefinitions[$key];
             $attributes = json_decode(json_encode($definition->attributes));
@@ -534,7 +534,7 @@ class Service extends Model\Element\Service
                 return null;
             }
             $config = $config[0];
-            Runtime::save($config, $cacheKey);
+            RuntimeCache::save($config, $cacheKey);
         }
 
         return $config;
@@ -961,13 +961,7 @@ class Service extends Model\Element\Service
             $fields = $object->getClass()->getFieldDefinitions();
 
             foreach ($fields as $field) {
-                //TODO Pimcore 11: remove method_exists BC layer
-                if ($field instanceof IdRewriterInterface || method_exists($field, 'rewriteIds')) {
-                    if (!$field instanceof IdRewriterInterface) {
-                        trigger_deprecation('pimcore/pimcore', '10.1',
-                            sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                            'Implement the %s interface instead.', IdRewriterInterface::class));
-                    }
+                if ($field instanceof IdRewriterInterface) {
                     $setter = 'set' . ucfirst($field->getName());
                     if (method_exists($object, $setter)) { // check for non-owner-objects
                         $object->$setter($field->rewriteIds($object, $rewriteConfig));
@@ -993,6 +987,7 @@ class Service extends Model\Element\Service
      */
     public static function getValidLayouts(Concrete $object)
     {
+        $layoutIds = null;
         $user = AdminTool::getCurrentUser();
 
         $resultList = [];
@@ -1020,13 +1015,22 @@ class Service extends Model\Element\Service
 
         $classId = $object->getClassId();
         $list = new ClassDefinition\CustomLayout\Listing();
-        $list->setOrderKey('name');
-        $condition = 'classId = ' . $list->quote($classId);
+        $list->setOrder(function (ClassDefinition\CustomLayout $a, ClassDefinition\CustomLayout $b) {
+            return strcmp($a->getName(), $b->getName());
+        });
         if (is_array($layoutPermissions) && count($layoutPermissions)) {
             $layoutIds = array_values($layoutPermissions);
-            $condition .= ' AND id IN (' . implode(',', array_map([$list, 'quote'], $layoutIds)) . ')';
         }
-        $list->setCondition($condition);
+        $list->setFilter(function (DataObject\ClassDefinition\CustomLayout $layout) use ($classId, $layoutIds) {
+            $currentLayoutClassId = $layout->getClassId();
+            $currentLayoutId = $layout->getId();
+            $keep = $currentLayoutClassId === $classId && !str_contains($currentLayoutId, '.brick.');
+            if ($keep && $layoutIds !== null) {
+                $keep = in_array($currentLayoutId, $layoutIds);
+            }
+
+            return $keep;
+        });
         $list = $list->load();
 
         if ((!count($resultList) && !count($list)) || (count($resultList) == 1 && !count($list))) {
@@ -1060,7 +1064,7 @@ class Service extends Model\Element\Service
 
         if (method_exists($layout, 'getChildren')) {
             $children = $layout->getChildren();
-            $insideDataType |= is_a($layout, $targetClass);
+            $insideDataType = $insideDataType || is_a($layout, $targetClass);
             if (is_array($children)) {
                 foreach ($children as $child) {
                     $targetList = self::extractFieldDefinitions($child, $targetClass, $targetList, $insideDataType);
@@ -1200,7 +1204,7 @@ class Service extends Model\Element\Service
 
         $permissionList = [];
 
-        $parentPermissionSet = $object->getPermissions(null, $user, true);
+        $parentPermissionSet = $object->getPermissions(null, $user);
         if ($parentPermissionSet) {
             $permissionList[] = $parentPermissionSet;
         }
@@ -1337,7 +1341,7 @@ class Service extends Model\Element\Service
                 return false;
             }
 
-            $layout->setNoteditable($layout->getNoteditable() | $fieldDefinitions[$name]->getNoteditable());
+            $layout->setNoteditable($layout->getNoteditable() || $fieldDefinitions[$name]->getNoteditable());
         }
 
         if (method_exists($layout, 'getChildren')) {
@@ -1459,13 +1463,7 @@ class Service extends Model\Element\Service
 
         $context['object'] = $object;
 
-        //TODO Pimcore 11: remove method_exists BC layer
-        if ($layout instanceof LayoutDefinitionEnrichmentInterface || method_exists($layout, 'enrichLayoutDefinition')) {
-            if (!$layout instanceof LayoutDefinitionEnrichmentInterface) {
-                trigger_deprecation('pimcore/pimcore', '10.1',
-                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                    'Implement the %s interface instead.', LayoutDefinitionEnrichmentInterface::class));
-            }
+        if ($layout instanceof LayoutDefinitionEnrichmentInterface) {
             $layout->enrichLayoutDefinition($object, $context);
         }
 
@@ -1630,7 +1628,6 @@ class Service extends Model\Element\Service
 
             default:
                 return null;
-
         }
 
         Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
@@ -1702,7 +1699,6 @@ class Service extends Model\Element\Service
 
             default:
                 return null;
-
         }
 
         Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
@@ -1719,7 +1715,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param Concrete $container
+     * @param Model\AbstractModel $container
      * @param ClassDefinition|ClassDefinition\Data $fd
      */
     public static function doResetDirtyMap($container, $fd)
@@ -1738,7 +1734,7 @@ class Service extends Model\Element\Service
                     $value->resetLanguageDirtyMap();
                 }
 
-                if ($value instanceof DirtyIndicatorInterface) {
+                if ($value instanceof Model\AbstractModel && $value instanceof DirtyIndicatorInterface) {
                     $value->resetDirtyMap();
                     self::doResetDirtyMap($value, $fieldDefinitions[$fieldDefinition->getName()]);
                 }
@@ -1784,7 +1780,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param AbstractObject $object
+     * @param Concrete $object
      * @param string $requestedLanguage
      * @param array $fields
      * @param array $helperDefinitions
@@ -1796,7 +1792,7 @@ class Service extends Model\Element\Service
      *
      * @internal
      */
-    public static function getCsvDataForObject(AbstractObject $object, $requestedLanguage, $fields, $helperDefinitions, LocaleServiceInterface $localeService, $returnMappedFieldNames = false, $context = [])
+    public static function getCsvDataForObject(Concrete $object, $requestedLanguage, $fields, $helperDefinitions, LocaleServiceInterface $localeService, $returnMappedFieldNames = false, $context = [])
     {
         $objectData = [];
         $mappedFieldnames = [];
@@ -1863,8 +1859,6 @@ class Service extends Model\Element\Service
      */
     public static function getCsvData($requestedLanguage, LocaleServiceInterface $localeService, $list, $fields, $addTitles = true, $context = [])
     {
-        $mappedFieldnames = [];
-
         $data = [];
         Logger::debug('objects in list:' . count($list->getObjects()));
 
@@ -2008,7 +2002,7 @@ class Service extends Model\Element\Service
                             );
                         }
                     }
-                    //key value store - ignore for now
+                //key value store - ignore for now
                 } elseif (count($fieldParts) > 1) {
                     // brick
                     $brickType = $fieldParts[0];

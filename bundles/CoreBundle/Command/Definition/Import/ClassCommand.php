@@ -88,6 +88,10 @@ class ClassCommand extends AbstractStructureImportCommand
      */
     protected function import(AbstractModel $definition, $json)
     {
+        if (!$definition instanceof ClassDefinition) {
+            return false;
+        }
+
         return Service::importClassDefinitionFromJson($definition, $json);
     }
 }

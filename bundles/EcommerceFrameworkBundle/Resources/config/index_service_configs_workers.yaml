@@ -34,7 +34,7 @@ services:
         parent: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig
         arguments:
             $environment: '@pimcore_ecommerce.environment'
-            $db: '@database_connection'
+            $db: '@doctrine.dbal.default_connection'
 
     Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\OptimizedMysql:
         parent: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig
@@ -57,7 +57,7 @@ services:
         autowire: true
         arguments:
             $tenantConfig: ~ # will be injected from configuration
-            $db: '@database_connection'
+            $db: '@doctrine.dbal.default_connection'
 
     Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultMysql:
         parent: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractWorker

@@ -137,8 +137,6 @@ class ConditionMatcher implements ConditionMatcherInterface
             $condition->preMatch($visitorInfo, $this->eventDispatcher);
         }
 
-        $result = false;
-
         try {
             $result = $condition->match($visitorInfo);
         } catch (\Throwable $e) {

@@ -417,24 +417,30 @@ pimcore.settings.email.log = Class.create({
                     tooltip: t('delete'),
                     icon: '/bundles/pimcoreadmin/img/flat-color-icons/delete.svg',
                     handler: function (grid, rowIndex) {
-                        var rec = grid.getStore().getAt(rowIndex);
-                        Ext.Ajax.request({
-                            url: Routing.generate('pimcore_admin_email_deleteemaillog'),
-                            method: 'DELETE',
-                            success: function(response){
-                                var data = Ext.decode( response.responseText );
-                                if(!data.success){
+                        let data = grid.getStore().getAt(rowIndex);
+                        pimcore.helpers.deleteConfirm(t('email_log'), data.id, function () {
+                            var rec = grid.getStore().getAt(rowIndex);
+                            Ext.Ajax.request({
+                                url: Routing.generate('pimcore_admin_email_deleteemaillog'),
+                                method: 'DELETE',
+                                success: function(response){
+                                    var data = Ext.decode( response.responseText );
+                                    if(!data.success){
+                                        Ext.Msg.alert(t('error'),
+                                            t('error_deleting_item'));
+                                    }
+
+                                    grid.getStore().reload();
+                                },
+                                failure: function () {
                                     Ext.Msg.alert(t('error'),
                                         t('error_deleting_item'));
-                                }
-                            },
-                            failure: function () {
-                                Ext.Msg.alert(t('error'),
-                                    t('error_deleting_item'));
-                            },
-                            params: { id : rec.get('id') }
-                        });
-                        grid.getStore().reload();
+                                },
+                                params: { id : rec.get('id') }
+                            });
+                        }.bind(this));
+
+
                     }.bind(this)
                 }]
             }

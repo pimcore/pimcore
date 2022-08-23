@@ -94,7 +94,7 @@ on the Symfony docs.
 
 
 ## Password hashing (Former called Password encoding)
-The standard approach of hashing and verifying a user's password in Symfony is to delegate the logic to to a `PasswordHasherInterface` (former. `PasswordEncodingInterface`)
+The standard approach of hashing and verifying a user's password in Symfony is to delegate the logic to a `PasswordHasherInterface` (former. `PasswordEncodingInterface`)
 which is responsible for calculating and verifying password hashes. As Pimcore's `Password` field definition already provides
 this logic, the password encoder needs to be configured to delegate the logic to the user object.
 
@@ -123,12 +123,12 @@ To achieve this, we define a factory service which builds `PasswordFieldhasher` 
 
 old way (deprecated):
 ```yaml
-# The password hasher factory is responsible for verifying the password hash for a given user. As we need some special
-# handling to be able to work with the password field, we use the UserAwareHasherFactory to build a dedicated
-# hasher per user. This service is configured in pimcore.security.password_hasher_factories to handle our user model.
+# The encoder factory is responsible for verifying the password hash for a given user. As we need some special
+# handling to be able to work with the password field, we use the UserAwareEncoderFactory to buiild a dedicated
+# encoder per user. This service is configured in pimcore.security.encoder_factories to handle our user model.
 services:
-    website_demo.security.password_hasher_factory:
-        class: Pimcore\Security\Hasher\Factory\UserAwarePasswordHasherFactory
+    website_demo.security.password_encoder_factory:
+        class: Pimcore\Security\Encoder\Factory\UserAwarePasswordEncoderFactory
         arguments:
             - Pimcore\Security\Encoder\PasswordFieldEncoder
             - ['password']

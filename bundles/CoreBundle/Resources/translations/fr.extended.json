@@ -672,5 +672,7 @@
     "asset_type_changed": "Le type d'asset a été modifié entre-temps. Veuillez recharger l'interface d'administration pour voir les dernières modifications.",
     "success_generating_previews": "Génération d'aperçus de page en arrière-plan. Veuillez recharger l'interface d'administration après un certain temps pour qu'elle prenne effet.",
     "error_generating_previews": "Erreur lors de la génération des aperçus de page.",
-    "regex_flags": "RegEx Flags"
+    "regex_flags": "RegEx Flags",
+    "web2print_headlesschrome_settings": "Headless Chrome settings",
+    "web2print_headlesschrome_json_converter": "Open JSON converter/validator"
 }

@@ -30,7 +30,7 @@ final class CacheFallbackPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition('pimcore.cache.pool')) {
-            $alias = new Alias('pimcore.cache.adapter.pdo_tag_aware', true);
+            $alias = new Alias('pimcore.cache.adapter.doctrine_dbal_tag_aware', true);
             $container->setAlias('pimcore.cache.pool', $alias);
         }
 

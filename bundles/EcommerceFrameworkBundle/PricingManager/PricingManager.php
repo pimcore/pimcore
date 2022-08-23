@@ -20,10 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Dis
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface as PriceSystemPriceInfoInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PricingManager implements PricingManagerInterface
@@ -48,11 +45,6 @@ class PricingManager implements PricingManagerInterface
     protected $actionMapping = [];
 
     /**
-     * @var SessionInterface
-     */
-    protected $session;
-
-    /**
      * @var array
      */
     protected $options;
@@ -70,13 +62,11 @@ class PricingManager implements PricingManagerInterface
     public function __construct(
         array $conditionMapping,
         array $actionMapping,
-        SessionInterface $session,
         array $options = [],
         VisitorInfoStorageInterface $visitorInfoStorage = null
     ) {
         $this->conditionMapping = $conditionMapping;
         $this->actionMapping = $actionMapping;
-        $this->session = $session;
 
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
@@ -227,14 +217,10 @@ class PricingManager implements PricingManagerInterface
      */
     public function getEnvironment()
     {
-        /** @var AttributeBagInterface $sessionBag */
-        $sessionBag = $this->session->getBag(SessionConfigurator::ATTRIBUTE_BAG_PRICING_ENVIRONMENT);
-
         $class = $this->options['environment_class'];
 
         /** @var EnvironmentInterface $environment */
         $environment = new $class();
-        $environment->setSession($sessionBag);
 
         return $environment;
     }

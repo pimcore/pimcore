@@ -178,6 +178,7 @@ final class Configuration implements ConfigurationInterface
         $this->addStaticRoutesNode($rootNode);
         $this->addPerspectivesNode($rootNode);
         $this->addCustomViewsNode($rootNode);
+        $this->addGlossaryNode($rootNode);
         $this->buildRedirectsStatusCodes($rootNode);
 
         return $treeBuilder;
@@ -825,7 +826,15 @@ final class Configuration implements ConfigurationInterface
                                     ->integerNode('priority')->end()
                                     ->integerNode('creationDate')->end()
                                     ->integerNode('modificationDate')->end()
-                                    ->scalarNode('staticGeneratorEnabled')->end()
+                                    ->booleanNode('staticGeneratorEnabled')
+                                        ->beforeNormalization()
+                                            ->always()
+                                            ->then(function ($v) {
+                                                return (bool)$v;
+                                            })
+                                        ->end()
+                                        ->defaultFalse()
+                                    ->end()
                                 ->end()
                             ->end()
                         ->end()
@@ -2259,5 +2268,20 @@ final class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end();
+    }
+
+    /**
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addGlossaryNode(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('glossary')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('blocked_tags')
+                            ->useAttributeAsKey('name')
+                            ->prototype('scalar');
     }
 }

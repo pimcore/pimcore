@@ -16,13 +16,11 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
 
     dialogBoxes: {},
 
-    initialize: function(id, name, config, data, inherited) {
+    initialize: function($super, id, name, config, data, inherited) {
+        $super(id, name, config, data, inherited);
 
         this.initalConfig = config;
-        this.id = id;
-        this.name = name;
         this.elements = [];
-        this.config = this.parseConfig(config);
         this.toolbarGlobalVar = this.getType() + "toolbar";
         this.applyFallbackIcons();
 
@@ -756,7 +754,16 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
             text: menuText,
             iconCls: "pimcore_icon_area",
             listeners: {
-                "click": this[addBLockFunction].bind(scope, element, brick.type)
+                click: this[addBLockFunction].bind(scope, element, brick.type),
+                render: function (c) {
+                    if(brick.previewHtml) {
+                        Ext.create('Ext.tip.ToolTip', {
+                            target: c.getEl(),
+                            showDelay: 500,
+                            html: brick.previewHtml
+                        });
+                    }
+                }
             }
         };
 
@@ -1105,6 +1112,15 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                 Ext.MessageBox.alert(t("info"), t("area_brick_assign_info_message"));
             },
             listeners: {
+                render: function () {
+                    if (brick.previewHtml) {
+                        Ext.create('Ext.tip.ToolTip', {
+                            target: this.getEl(),
+                            showDelay: 500,
+                            html: brick.previewHtml
+                        });
+                    }
+                },
                 "afterrender": function (brick, v) {
 
                     let menuLink = v.getEl().down('a', true);

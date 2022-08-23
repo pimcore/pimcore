@@ -1,8 +1,120 @@
 # Upgrade Notes
+## 11.0.0
+- [Image Optimizer] Removed all the Image Optimizer services (e.g. PngCrushOptimizer, JpegoptimOptimizer etc.) as image optimization is done by the new package spatie/image-optimizer. 
+- [Runtime Cache] Removed the `Pimcore\Cache\Runtime` cache helper and `Pimcore\Cache\RuntimeCacheTrait`. The runtime cache is now handled by `Pimcore\Cache\RuntimeCache`.  
+- Removed deprecated JS functions (`ts()` and `pimcore.helpers.addCsrfTokenToUrl()`)
+- Removed Plugin Broker BC layer for JS events
+- [DocType] staticGeneratorEnabled is now a boolean instead of an integer
+- [Ecommerce] Pricing Manager 
+  - Removed $session property
+  - Removed Token condition
+  - Removed methods `getSession()` & `setSession()` from `PricingManager\EnvironmentInterface`
+- [Data Objects] Remove "generate type declarations" in class definitions
+- [DataObjects] Removed method_exists bc layer, please use the corresponding interfaces instead. For details please see [#9571](https://github.com/pimcore/pimcore/issues/9571)
+- [Listings] Removed `JsonListing`, please see [#12877](https://github.com/pimcore/pimcore/pull/12877) for details.
+- [Traits] The traits PackageVersionTrait and StateHelperTrait in lib/Extension/Bundle/Traits have been marked as
+   internal, please see [#12757](https://github.com/pimcore/pimcore/pull/12757) for details.
+
+
+## 10.5.0
+- [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`
+- [Listings] `JsonListing` class is deprecated. Please use `CallableFilterListingInterface`, `FilterListingTrait` and `CallableOrderListingInterface`, `OrderListingTrait` instead.
+  For examples please see existing classes, e.g. `Pimcore\Model\Document\DocType\Listing`.
+
+- [Security] It is recommended to use new [Authenticator based system](https://pimcore.com/docs/pimcore/current/Development_Documentation/Development_Tools_and_Details/Security_Authentication/Authenticator_Based_Security.html) for authentication/authorization.
+  To use new authenticator, add following symfony config in `security.yaml`:
+    ```yaml
+    security:
+        enable_authenticator_manager: true
+    ```
+- [Elements] Calling the methods `Asset::getById()`, `Document::getById()` and `DataObject::getById()` with second boolean parameter `$force` is deprecated and will throw exception in Pimcore 11. Instead pass the second parameter as associative array with `$force` value.
+  e.g. Before 
+   ```php
+    Asset::getById($id, true);
+    Document::getById($id, true);
+    DataObject::getById($id, true);
+   ```
+    After
+   ```php
+    Asset::getById($id, ['force' => true]);
+    Document::getById($id, ['force' => true]);
+    DataObject::getById($id, ['force' => true]);
+   ```
+  
+- [Navigation Builder] Calling the method `Pimcore\Navigation\Builder::getNavigation()` using extra arguments is deprecated and will be removed in Pimcore 11. Instead of using the extra arguments, it is recommended to call the method using the params array. eg: Currently, the `getNavigation()` method can be called by passing the config params `activeDocument`, `navigationRootDocument`, `htmlMenuIdPrefix`, `pageCallback`, `cache`, `maxDepth` and `cacheLifetime` as the arguments i.e `getNavigation($activeDocument, $navigationRootDocument, $htmlMenuIdPrefix, $pageCallback, $cache,$maxDepth, $cacheLifetime)`. According to the new implementation you should call the method like `getNavigation($params)` where `$params` should be an associative array with the keys `active`, `root`, `htmlMenuPrefix`, `pageCallback`, `cache`, `maxDepth` and `cacheLifetime`.
+  
+- [Runtime Cache] The trait `\Pimcore\Cache\RuntimeCacheTrait` has been deprecated because of its ambiguous naming and usage of persisted cache along with the runtime object cache.
+  It is recommended to use `\Pimcore\Cache\RuntimeCache` instead of this trait. For persisted cache, please use `\Pimcore\Cache` instead.
+- [Sitemap] Pimcore is now also supporting Presta/Sitemap `^3.2` (which supports Symfony 6 and uses max level of PHPStan).
+  Please note, if the routing import config is in use, it is recommended to correct the config path (by removing `/Resources`) to follow the [new folder tree structure](https://github.com/prestaconcept/PrestaSitemapBundle/releases/tag/v3.0.0),
+  eg. "@PrestaSitemapBundle/~~Resources/~~config/routing.yaml", to ensure a smoother upgrade to upcoming major release.
+- [Backend search] `key` and `index` columns have been added to the search index. Run `./bin/console pimcore:search-backend-reindex` to reindex.
+- [Cache] Pimcore use DoctrineDbalAdapter instead of PdoAdapter by default now.
+- Removed `ocramius/package-versions` dependency. If you rely on it, please add it to your own `composer.json`.
+- [Permissions] Added an extra check about [system permission](https://pimcore.com/docs/pimcore/current/Development_Documentation/Administration_of_Pimcore/Users_and_Roles.html#page_System-Permissions) in element `isAllowed()` method, please make sure your custom implementations are not affected by this change. 
+  Listing, grid, tree view are not severely affected as the main permission is checked on a Kernel event level that prevents the page to be shown and prevents any process that iterate isAllowed() calls. 
+  The only cases could be affected are those where the workspace are set but master permissions are disallowed, before this change, it could lead to (not intended) false positive.
+- [Security/User] `UsernameNotFoundException` (deprecated since Symfony 5.3) occurences have been replaced with `UserNotFoundException`.
+- [Deprecated] Generate type declarations option in class definition is deprecated, because type declarations will always be added with Pimcore 11
+- [Application Logger] File Objects are now stored in the flysystem. Due some incompatibilities of checking files by modification date (cloud storages) and for perfomance issues (scan folders/file), the cleanup task now do not run in time range from [midnight and 4 a.m.](https://github.com/pimcore/pimcore/pull/7164) anymore, but it deletes the file matching the column in the database as soon as the database entries are archived.
+- [Session] Implementing Session Configurator with tag `pimcore.session.configurator` to register session bags, is deprecated and will be removed in Pimcore 11.
+  Implement an [EventListener](https://github.com/pimcore/pimcore/blob/11.x/bundles/EcommerceFrameworkBundle/EventListener/SessionBagListener.php) to register a session bag before the session is started.
+- [Ecommerce][PricingManager] Token condition is deprecated and will be removed in Pimcore 11.
+- Parameter `pimcore.admin.session.attribute_bags` is deprecated and will be removed in Pimcore 11.
+- [JS Events/Disabled] The plugin broker for fire events has been disabled. 
+The plugins are still supported, but they are deprecated and will be removed in Pimcore 11   
+Please use [event listener](../../20_Extending_Pimcore/13_Bundle_Developers_Guide/06_Event_Listener_UI.md) instead of plugins for JS events.
+- Extension Manager - Registering or managing bundles/areabricks through `Tools -> Bundles & Bricks` or manually through `var/config/extensions.php` is deprecated and will not work on Pimcore 11.
+  Please use `config/bundles.php` to register/manage bundles instead.
+- [Web2Print] Wkhtmltopdf Processor has been deprecated and will be removed in Pimcore 11. Please use HeadlessChrome or PDFreactor instead.
+- [Config] `Pimcore\Config\Config` has been deprecated and will be removed in Pimcore 11.
+- The recommended nginx config for static pages has been updated (the old one still works!) from
+  ```nginx
+  server {
+      ...
+
+      location @staticpage{
+          try_files /var/tmp/pages$uri.html $uri /index.php$is_args$args;
+      }
+
+      location / {
+          error_page 404 /meta/404;
+          error_page 418 = @staticpage;
+          if ($args ~* ^(?!pimcore_editmode=true|pimcore_preview|pimcore_version)(.*)$){
+              return 418;
+          }
+          try_files $uri /index.php$is_args$args;
+      }
+
+      ...
+  }
+  ```
+  to
+  ```nginx
+  map $args $static_page_root {
+      default                                 /var/tmp/pages;
+      "~*(^|&)pimcore_editmode=true(&|$)"     /var/nonexistent;
+      "~*(^|&)pimcore_preview=true(&|$)"      /var/nonexistent;
+      "~*(^|&)pimcore_version=[^&]+(&|$)"     /var/nonexistent;
+  }
+
+  server {
+      ... 
+
+      location / {
+          error_page 404 /meta/404;
+          try_files $static_page_root$uri.html $uri /index.php$is_args$args;
+      }
+
+      ...
+  }
+  ```
+- [Elements] Deprecated setting the parent id to 1 (root node), when an element with a non-existing parent id gets created.
+
 ## 10.4.2
 - When maintenance mode is active, all commands are prevented from starting (not just commands inheriting from `AbstractCommand`).
-  Until now, some commands (e.g. `messenger:consume`) could be executed even if the system was in maintenance mode. 
-  To circumvent, use `--ignore-maintenance-mode` option, which is available to all commands.  
+  Until now, some commands (e.g. `messenger:consume`) could be executed even if the system was in maintenance mode.
+  To circumvent, use `--ignore-maintenance-mode` option, which is available to all commands.
 
 ## 10.4.0
 - **Important**: The folder structure for storing thumbnails changed, please run `bin/console pimcore:migrate:thumbnails-folder-structure` after the update to copy existing thumbnails to new folder structure. If you're dealing with a huge amount of thumbnails you should consider that this change might increase the load on your system as well as page-loading times during the migration command is executed, as non-existing thumbnails are then generated on demand. 

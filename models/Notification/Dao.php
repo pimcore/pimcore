@@ -17,9 +17,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Notification;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\Element;
 use Pimcore\Model\Exception\NotFoundException;
+
 use Pimcore\Model\Notification;
 use Pimcore\Model\User;
 
@@ -40,7 +42,7 @@ class Dao extends AbstractDao
     public function getById(int $id): void
     {
         $sql = sprintf('SELECT * FROM `%s` WHERE id = ?', static::DB_TABLE_NAME);
-        $data = $this->db->fetchRow($sql, $id);
+        $data = $this->db->fetchAssociative($sql, [$id]);
 
         if ($data === false) {
             $message = sprintf('Notification with id %d not found', $id);
@@ -63,7 +65,7 @@ class Dao extends AbstractDao
             $model->setCreationDate($model->getModificationDate());
         }
 
-        $this->db->insertOrUpdate(static::DB_TABLE_NAME, $this->getData($model));
+        Helper::insertOrUpdate($this->db, static::DB_TABLE_NAME, $this->getData($model));
 
         if ($model->getId() === null) {
             $model->setId((int) $this->db->lastInsertId());
@@ -104,6 +106,18 @@ class Dao extends AbstractDao
             }
         }
 
+        if (!$recipient instanceof User) {
+            throw new \UnexpectedValueException(sprintf('No user found with the ID %d', $data['recipient']));
+        }
+
+        if (empty($data['title'])) {
+            throw new \UnexpectedValueException('Title of the Notification cannot be empty');
+        }
+
+        if (empty($data['message'])) {
+            throw new \UnexpectedValueException('Message text of the Notification cannot be empty');
+        }
+
         $linkedElement = null;
 
         if ($data['linkedElement']) {
@@ -134,7 +148,7 @@ class Dao extends AbstractDao
             'creationDate' => $model->getCreationDate(),
             'modificationDate' => $model->getModificationDate(),
             'sender' => $model->getSender() ? $model->getSender()->getId() : null,
-            'recipient' => $model->getRecipient() ? $model->getRecipient()->getId() : null,
+            'recipient' => $model->getRecipient()->getId(),
             'title' => $model->getTitle(),
             'message' => $model->getMessage(),
             'linkedElement' => $model->getLinkedElement() ? $model->getLinkedElement()->getId() : null,

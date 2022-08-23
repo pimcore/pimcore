@@ -15,7 +15,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
-use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Logger;
 use Pimcore\Model\Exception\NotFoundException;
 
@@ -63,7 +63,7 @@ class Cart extends AbstractCart implements CartInterface
     public function delete()
     {
         $cacheKey = Cart\Dao::TABLE_NAME . '_' . $this->getId();
-        Runtime::set($cacheKey, null);
+        RuntimeCache::set($cacheKey, null);
 
         CartItem::removeAllFromCart($this->getId());
         CartCheckoutData::removeAllFromCart($this->getId());
@@ -104,7 +104,7 @@ class Cart extends AbstractCart implements CartInterface
         $cacheKey = Cart\Dao::TABLE_NAME . '_' . $id;
 
         try {
-            $cart = Runtime::get($cacheKey);
+            $cart = RuntimeCache::get($cacheKey);
         } catch (\Exception $e) {
             try {
                 $cartClass = get_called_class();
@@ -122,7 +122,7 @@ class Cart extends AbstractCart implements CartInterface
                     $cart->setCheckoutData($data->getKey(), $data->getData());
                 }
 
-                Runtime::set($cacheKey, $cart);
+                RuntimeCache::set($cacheKey, $cart);
             } catch (NotFoundException $ex) {
                 Logger::debug($ex->getMessage());
 

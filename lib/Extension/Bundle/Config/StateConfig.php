@@ -24,6 +24,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * @internal
+ *
+ * @deprecated
  */
 final class StateConfig
 {

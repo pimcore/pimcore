@@ -46,20 +46,20 @@ class Service
                 $dateTime->setTimestamp($value);
             }
             $data['value'] = $dateTime;
-        /**
-        } elseif (false) { //TODO
+            /**
+            } elseif (false) { //TODO
 
-            $data['type'] = 'document';
-            $data['value'] = $value;
-        } elseif (false) { //TODO
+                $data['type'] = 'document';
+                $data['value'] = $value;
+            } elseif (false) { //TODO
 
-            $data['type'] = 'asset';
-            $data['value'] = $value;
-        } elseif (false) { //TODO
+                $data['type'] = 'asset';
+                $data['value'] = $value;
+            } elseif (false) { //TODO
 
-            $data['type'] = 'object';
-            $data['value'] = $value;
-        */
+                $data['type'] = 'object';
+                $data['value'] = $value;
+            */
         } else {
             $data['type'] = 'text';
             $data['value'] = $value;

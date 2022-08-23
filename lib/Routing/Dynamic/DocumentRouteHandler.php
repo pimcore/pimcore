@@ -75,6 +75,7 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
      * @param SiteResolver $siteResolver
      * @param RequestHelper $requestHelper
      * @param Config $config
+     * @param StaticPageResolver $staticPageResolver
      */
     public function __construct(
         Document\Service $documentService,

@@ -16,6 +16,7 @@
 namespace Pimcore\Model\Dependency;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Pimcore\Db\Helper;
 use Pimcore\Logger;
 use Pimcore\Messenger\SanityCheckMessage;
 use Pimcore\Model;
@@ -45,9 +46,9 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         // requires
-        $data = $this->db->fetchAll('SELECT dependencies.targetid,dependencies.targettype
+        $data = $this->db->fetchAllAssociative('SELECT dependencies.targetid,dependencies.targettype
             FROM dependencies
-            LEFT JOIN objects ON dependencies.targettype="object" AND dependencies.targetid=objects.o_id 
+            LEFT JOIN objects ON dependencies.targettype="object" AND dependencies.targetid=objects.o_id
             LEFT JOIN assets ON dependencies.targettype="asset" AND dependencies.targetid=assets.id
             LEFT JOIN documents ON dependencies.targettype="document" AND dependencies.targetid=documents.id
             WHERE dependencies.sourceid = ? AND dependencies.sourcetype = ?
@@ -75,7 +76,7 @@ class Dao extends Model\Dao\AbstractDao
             $type = Element\Service::getElementType($element);
 
             //schedule for sanity check
-            $data = $this->db->fetchAll('SELECT `sourceid`, `sourcetype` FROM dependencies WHERE targettype = ? AND targetid = ?', [$type, $id]);
+            $data = $this->db->fetchAllAssociative('SELECT `sourceid`, `sourcetype` FROM dependencies WHERE targettype = ? AND targetid = ?', [$type, $id]);
             if (is_array($data)) {
                 foreach ($data as $row) {
                     \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
@@ -84,7 +85,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            $this->db->selectAndDeleteWhere('dependencies', 'id', $this->db->quoteInto('sourceid = ?', $id) . ' AND  ' . $this->db->quoteInto('sourcetype = ?', $type));
+            Helper::selectAndDeleteWhere($this->db, 'dependencies', 'id', Helper::quoteInto($this->db, 'sourceid = ?', $id) . ' AND  ' . Helper::quoteInto($this->db, 'sourcetype = ?', $type));
         } catch (\Exception $e) {
             Logger::error((string) $e);
         }
@@ -98,7 +99,7 @@ class Dao extends Model\Dao\AbstractDao
     public function clear()
     {
         try {
-            $this->db->selectAndDeleteWhere('dependencies', 'id', $this->db->quoteInto('sourceid = ?', $this->model->getSourceId()) . ' AND  ' . $this->db->quoteInto('sourcetype = ?', $this->model->getSourceType()));
+            Helper::selectAndDeleteWhere($this->db, 'dependencies', 'id', Helper::quoteInto($this->db, 'sourceid = ?', $this->model->getSourceId()) . ' AND  ' . Helper::quoteInto($this->db, 'sourcetype = ?', $this->model->getSourceType()));
         } catch (\Exception $e) {
             Logger::error((string) $e);
         }
@@ -112,7 +113,7 @@ class Dao extends Model\Dao\AbstractDao
     public function save()
     {
         // get existing dependencies
-        $existingDependenciesRaw = $this->db->fetchAll('SELECT id, targetType, targetId FROM dependencies WHERE sourceType= ? AND sourceId = ?',
+        $existingDependenciesRaw = $this->db->fetchAllAssociative('SELECT id, targetType, targetId FROM dependencies WHERE sourceType= ? AND sourceId = ?',
             [$this->model->getSourceType(), $this->model->getSourceId()]);
 
         $existingDepencies = [];
@@ -154,7 +155,7 @@ class Dao extends Model\Dao\AbstractDao
 
         if ($idsForDeletion) {
             $idString = implode(',', $idsForDeletion);
-            $this->db->deleteWhere('dependencies', 'id IN (' . $idString . ')');
+            $this->db->executeStatement('DELETE FROM dependencies WHERE id IN (' . $idString . ')');
         }
 
         if ($newData) {
@@ -195,7 +196,7 @@ class Dao extends Model\Dao\AbstractDao
             $query = sprintf($query . ' LIMIT %d,%d', $offset, $limit);
         }
 
-        $data = $this->db->fetchAll($query, [$this->model->getSourceType(), $this->model->getSourceId()]);
+        $data = $this->db->fetchAllAssociative($query, [$this->model->getSourceType(), $this->model->getSourceId()]);
 
         $requiredBy = [];
 
@@ -261,7 +262,7 @@ class Dao extends Model\Dao\AbstractDao
             $query .= ' LIMIT ' . $offset . ', ' . $limit;
         }
 
-        $requiredBy = $this->db->fetchAll($query);
+        $requiredBy = $this->db->fetchAllAssociative($query);
 
         if (is_array($requiredBy) && count($requiredBy) > 0) {
             return $requiredBy;

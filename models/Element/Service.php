@@ -44,6 +44,7 @@ use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -172,11 +173,14 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param Dependency $d
+     * @param int|null $offset
+     * @param int|null $limit
      *
      * @return array
+     *
+     * @internal
+     *
      */
     public static function getRequiredByDependenciesForFrontend(Dependency $d, $offset, $limit)
     {
@@ -198,11 +202,14 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param Dependency $d
+     * @param int|null $offset
+     * @param int|null $limit
      *
      * @return array
+     *
+     * @internal
+     *
      */
     public static function getRequiresDependenciesForFrontend(Dependency $d, $offset, $limit)
     {
@@ -350,7 +357,7 @@ class Service extends Model\AbstractModel
                         throw new \Exception('unknown type');
                 }
                 $query = 'SELECT ' . $idColumn . ' FROM ' . $elementType . 's WHERE ' . $publishedColumn . '=1 AND ' . $idColumn . ' IN (' . implode(',', $idList) . ');';
-                $publishedIds = $db->fetchCol($query);
+                $publishedIds = $db->fetchFirstColumn($query);
                 $publishedMapping[$elementType] = $publishedIds;
             }
 
@@ -498,22 +505,49 @@ class Service extends Model\AbstractModel
     /**
      * @param  string $type
      * @param  int $id
-     * @param  bool $force
+     * @param  array|bool $force
      *
      * @return Asset|AbstractObject|Document|null
      */
     public static function getElementById($type, $id, $force = false)
     {
         $element = null;
+        $params = self::prepareGetByIdParams($force, __METHOD__, func_num_args() > 2);
         if ($type === 'asset') {
-            $element = Asset::getById($id, $force);
+            $element = Asset::getById($id, $params);
         } elseif ($type === 'object') {
-            $element = DataObject::getById($id, $force);
+            $element = DataObject::getById($id, $params);
         } elseif ($type === 'document') {
-            $element = Document::getById($id, $force);
+            $element = Document::getById($id, $params);
         }
 
         return $element;
+    }
+
+    /**
+     * @internal
+     *
+     * @param bool|array $params
+     *
+     * @return array
+     */
+    public static function prepareGetByIdParams(/*array */$params, string $method, bool $paramsGiven): array
+    {
+        if (is_bool($params) && $paramsGiven) {
+            trigger_deprecation('pimcore/pimcore', '10.5', 'Using $force=%s on %s is deprecated, please use array-syntax [force=>true] instead.', $params ? 'true' : 'false', $method);
+            $params = ['force' => $params];
+        } elseif ($params === false) {
+            $params = [];
+        }
+
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults([
+            'force' => false,
+        ]);
+
+        $resolver->setAllowedTypes('force', 'bool');
+
+        return $resolver->resolve($params);
     }
 
     /**
@@ -611,7 +645,6 @@ class Service extends Model\AbstractModel
     {
         $properties = [];
         foreach ($props as $key => $p) {
-
             //$p = object2array($p);
             $allowedProperties = [
                 'key',
@@ -729,7 +762,7 @@ class Service extends Model\AbstractModel
         }
 
         $workspaceCids = [];
-        $userWorkspaces = $db->fetchAll('SELECT cpath, cid, list FROM users_workspaces_' . $type . ' WHERE userId = ?', [$user->getId()]);
+        $userWorkspaces = $db->fetchAllAssociative('SELECT cpath, cid, list FROM users_workspaces_' . $type . ' WHERE userId = ?', [$user->getId()]);
         if ($userWorkspaces) {
             // this collects the array that are on user-level, which have top priority
             foreach ($userWorkspaces as $userWorkspace) {
@@ -744,7 +777,7 @@ class Service extends Model\AbstractModel
             }
             $roleWorkspacesSql .= ' GROUP BY cpath';
 
-            $roleWorkspaces = $db->fetchAll($roleWorkspacesSql);
+            $roleWorkspaces = $db->fetchAllAssociative($roleWorkspacesSql);
         }
 
         $uniquePaths = [];
@@ -1502,10 +1535,8 @@ class Service extends Model\AbstractModel
         $tmpStoreKey = self::getSessionKey($elementType, $element->getId(), $postfix);
         $tag = $elementType . '-session' . $postfix;
 
-        if ($element instanceof ElementDumpStateInterface) {
-            self::loadAllFields($element);
-            $element->setInDumpState(true);
-        }
+        self::loadAllFields($element);
+        $element->setInDumpState(true);
         $serializedData = Serialize::serialize($element);
 
         TmpStore::set($tmpStoreKey, $serializedData, $tag);

@@ -21,6 +21,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\Frontend\TrackingCodeFlashMessageListener;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
+use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -52,9 +54,17 @@ class TrackingManager implements TrackingManagerInterface
     protected $enviroment = null;
 
     /**
+     *
+     * @deprecated will be removed in Pimcore 11
+     *
      * @var Session
      */
     protected $session;
+
+    /**
+     * @var RequestStack
+     */
+    protected RequestStack $requestStack;
 
     /**
      * @param TrackerInterface[] $trackers
@@ -70,12 +80,28 @@ class TrackingManager implements TrackingManagerInterface
     }
 
     /**
+     * @deprecated
+     *
      * @param Session $session
      * @required
      */
     public function setSession(SessionInterface $session)
     {
         $this->session = $session;
+    }
+
+    /**
+     * @TODO move to constructor injection in Pimcore 11
+     *
+     * @required
+     *
+     * @internal
+     *
+     * @param RequestStack $requestStack
+     */
+    public function setRequestStack(RequestStack $requestStack): void
+    {
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -300,7 +326,16 @@ class TrackingManager implements TrackingManagerInterface
             }
         }
 
-        $this->session->getFlashBag()->set(TrackingCodeFlashMessageListener::FLASH_MESSAGE_BAG_KEY, $trackedCodes);
+        try {
+            $session = $this->requestStack->getSession();
+        } catch (SessionNotFoundException $e) {
+            trigger_deprecation('pimcore/pimcore', '10.5',
+                sprintf('Session used with non existing request stack in %s, that will not be possible in Pimcore 11.', __CLASS__));
+            $session = $this->session;
+        }
+
+        // @phpstan-ignore-next-line
+        $session->getFlashBag()->set(TrackingCodeFlashMessageListener::FLASH_MESSAGE_BAG_KEY, $trackedCodes);
 
         return $this;
     }

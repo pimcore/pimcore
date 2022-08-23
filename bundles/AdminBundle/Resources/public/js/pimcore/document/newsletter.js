@@ -21,7 +21,15 @@ pimcore.document.newsletter = Class.create(pimcore.document.page_snippet, {
         this.setType("newsletter");
         this.addLoadingPanel();
 
-        pimcore.plugin.broker.fireEvent("preOpenDocument", this, this.getType());
+        const preOpenDocument = new CustomEvent(pimcore.events.preOpenDocument, {
+            detail: {
+                object: this,
+                type: this.getType()
+            }
+        });
+
+        document.dispatchEvent(preOpenDocument);
+
         this.getData();
     },
 

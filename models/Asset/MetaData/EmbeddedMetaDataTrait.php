@@ -142,6 +142,13 @@ trait EmbeddedMetaDataTrait
         return $data;
     }
 
+    /**
+     * @param string|null $filePath
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
     public function getXMPData(?string $filePath = null)
     {
         if (!$filePath) {
@@ -183,7 +190,7 @@ trait EmbeddedMetaDataTrait
                 $tagLength = strlen($tag);
                 $offset = 0;
                 while (($position = strpos($buffer, $tag, $offset)) === false && ($chunk = fread($file_pointer,
-                        $chunkSize)) !== false && !empty($chunk)) {
+                    $chunkSize)) !== false && !empty($chunk)) {
                     $offset = strlen($buffer) - $tagLength; // subtract the tag size just in case it's split between chunks.
                     $buffer .= $chunk;
                 }

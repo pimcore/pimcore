@@ -16,20 +16,14 @@ pimcore.document.editables.renderlet = Class.create(pimcore.document.editable, {
 
     defaultHeight: 100,
 
-    initialize: function(id, name, config, data, inherited) {
-        this.id = id;
-        this.name = name;
-        this.config = this.parseConfig(config);
-
+    initialize: function($super, id, name, config, data, inherited) {
+        $super(id, name, config, data, inherited);
 
         //TODO maybe there is a nicer way, the Panel doesn't like this
         this.controller = config.controller;
         delete(config.controller);
 
-        this.data = {};
-        if (data) {
-            this.data = data;
-        }
+        this.data = data ?? {};
 
         // height management
         if (this.config.defaultHeight) {

@@ -34,8 +34,14 @@ class EditableUsageResolver
      */
     protected $subscriber;
 
+    /**
+     * @var EventDispatcherInterface
+     */
     protected $dispatcher;
 
+    /**
+     * @var DocumentRenderer
+     */
     protected $renderer;
 
     public function __construct(EventDispatcherInterface $eventDispatcher, DocumentRenderer $documentRenderer)

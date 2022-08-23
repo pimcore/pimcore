@@ -21,7 +21,14 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
         this.setType("folder");
         this.addLoadingPanel();
 
-        pimcore.plugin.broker.fireEvent("preOpenAsset", this, "folder");
+        const preOpenAssetFolder = new CustomEvent(pimcore.events.preOpenAsset, {
+            detail: {
+                object: this,
+                type: "folder"
+            }
+        });
+
+        document.dispatchEvent(preOpenAssetFolder);
 
         var user = pimcore.globalmanager.get("user");
 
@@ -87,7 +94,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
         var tpl = new Ext.XTemplate(
             '<tpl for=".">',
             '<div class="thumb-wrap" id="{type}_{id}" data-idpath="{idPath}">',
-            '<img class="thumb" src="{url}" loading="lazy">',
+            '<img class="thumb" src="{url}" loading="lazy" draggable="false">',
             '<span class="filename" title="{filename}">{filenameDisplay}</span></div>',
             '</tpl>',
             '<div class="x-clear"></div>'

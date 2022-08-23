@@ -15,10 +15,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\FindologicConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
-use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -50,7 +50,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
      */
     protected $batchData;
 
-    public function __construct(FindologicConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher)
+    public function __construct(FindologicConfigInterface $tenantConfig, Connection $db, EventDispatcherInterface $eventDispatcher)
     {
         parent::__construct($tenantConfig, $db, $eventDispatcher);
     }
@@ -260,7 +260,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
             $this->updateExportItem($objectId, $xml);
         } else {
             // delete from export
-            $this->db->query(sprintf('DELETE FROM %1$s WHERE id = %2$d', $this->getExportTableName(), $objectId));
+            $this->db->executeQuery(sprintf('DELETE FROM %1$s WHERE id = %2$d', $this->getExportTableName(), $objectId));
         }
 
         // create / update mockup cache
@@ -273,8 +273,8 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
      */
     protected function doDeleteFromIndex($objectId, IndexableInterface $object = null)
     {
-        $this->db->query(sprintf('DELETE FROM %1$s WHERE id = %2$d', $this->getExportTableName(), $objectId));
-        $this->db->query(sprintf('DELETE FROM %1$s WHERE o_id = %2$d', $this->getStoreTableName(), $objectId));
+        $this->db->executeQuery(sprintf('DELETE FROM %1$s WHERE id = %2$d', $this->getExportTableName(), $objectId));
+        $this->db->executeQuery(sprintf('DELETE FROM %1$s WHERE o_id = %2$d', $this->getStoreTableName(), $objectId));
     }
 
     /**
@@ -289,7 +289,7 @@ INSERT INTO {$this->getExportTableName()} (`id`, `shop_key`, `data`, `last_updat
 VALUES (:id, :shop_key, :data, now())
 ON DUPLICATE KEY UPDATE `data` = VALUES(`data`), `last_update` = VALUES(`last_update`)
 SQL;
-        $this->db->query($query, [
+        $this->db->executeQuery($query, [
             'id' => $objectId, 'shop_key' => $this->getTenantConfig()->getClientConfig('shopKey'), 'data' => str_replace('<?xml version="1.0"?>', '', $item->saveXML()),
         ]);
     }

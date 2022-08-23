@@ -31,7 +31,7 @@ class ClassLayoutDefinitionManager
     public function cleanUpDeletedLayoutDefinitions(): array
     {
         $db = \Pimcore\Db::get();
-        $layouts = $db->fetchAll('SELECT * FROM custom_layouts');
+        $layouts = $db->fetchAllAssociative('SELECT * FROM custom_layouts');
         $deleted = [];
 
         foreach ($layouts as $layout) {

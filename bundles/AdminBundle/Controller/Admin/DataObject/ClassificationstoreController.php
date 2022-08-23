@@ -248,7 +248,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
             if ($allowedGroupIds) {
                 $db = \Pimcore\Db::get();
                 $query = 'select * from classificationstore_collectionrelations where groupId in (' . implode(',', $allowedGroupIds) .')';
-                $relationList = $db->fetchAll($query);
+                $relationList = $db->fetchAllAssociative($query);
 
                 if (is_array($relationList)) {
                     foreach ($relationList as $item) {
@@ -975,7 +975,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
         if ($ids) {
             $db = \Pimcore\Db::get();
             $mappedData = [];
-            $groupsData = $db->fetchAll('select * from classificationstore_groups g, classificationstore_collectionrelations c where colId IN (:ids) and g.id = c.groupId', [
+            $groupsData = $db->fetchAllAssociative('select * from classificationstore_groups g, classificationstore_collectionrelations c where colId IN (:ids) and g.id = c.groupId', [
                 'ids' => implode(',', array_filter($ids, 'intval')),
             ]);
 
@@ -1049,13 +1049,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
                     $context['groupId'] = $groupId;
                     $context['keyDefinition'] = $definition;
 
-                    //TODO Pimcore 11: remove method_exists BC layer
-                    if ($definition instanceof LayoutDefinitionEnrichmentInterface || method_exists($definition, 'enrichLayoutDefinition')) {
-                        if (!$definition instanceof LayoutDefinitionEnrichmentInterface) {
-                            trigger_deprecation('pimcore/pimcore', '10.1',
-                                'Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                                'Implement the %s interface instead.', LayoutDefinitionEnrichmentInterface::class);
-                        }
+                    if ($definition instanceof LayoutDefinitionEnrichmentInterface) {
                         $definition = $definition->enrichLayoutDefinition($object, $context);
                     }
 
@@ -1138,13 +1132,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $context['groupId'] = $groupId;
             $context['keyDefinition'] = $definition;
 
-            //TODO Pimcore 11: remove method_exists BC layer
-            if ($definition instanceof LayoutDefinitionEnrichmentInterface || method_exists($definition, 'enrichLayoutDefinition')) {
-                if (!$definition instanceof LayoutDefinitionEnrichmentInterface) {
-                    trigger_deprecation('pimcore/pimcore', '10.1',
-                        sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                        'Implement the %s interface instead.', LayoutDefinitionEnrichmentInterface::class));
-                }
+            if ($definition instanceof LayoutDefinitionEnrichmentInterface) {
                 $definition = $definition->enrichLayoutDefinition($object, $context);
             }
 
@@ -1561,8 +1549,8 @@ class ClassificationstoreController extends AdminController implements KernelCon
                   ) all_rows) item where id = ' .  $id . ';';
         }
 
-        $db->query('select @rownum := 0;');
-        $result = $db->fetchAll($query);
+        $db->executeQuery('select @rownum := 0;');
+        $result = $db->fetchAllAssociative($query);
 
         $page = (int) $result[0]['page'] ;
 

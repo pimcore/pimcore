@@ -95,7 +95,7 @@ class DependenciesTest extends ModelTestCase
         $this->saveElementDependencies($source, $targets);
 
         //Reload source object
-        $source = DataObject::getById($source->getId(), true);
+        $source = DataObject::getById($source->getId(), ['force' => true]);
 
         //get dependencies
         $dependencies = $source->getDependencies();
@@ -121,7 +121,7 @@ class DependenciesTest extends ModelTestCase
         $this->saveElementDependencies($source, $targets);
 
         //Reload source document
-        $source = Document::getById($source->getId(), true);
+        $source = Document::getById($source->getId(), ['force' => true]);
 
         //get dependencies
         $dependencies = $source->getDependencies();
@@ -149,7 +149,7 @@ class DependenciesTest extends ModelTestCase
         $this->saveElementDependencies($source, $targets);
 
         //Reload source asset
-        $source = Asset::getById($source->getId(), true);
+        $source = Asset::getById($source->getId(), ['force' => true]);
 
         //get dependencies
         $dependencies = $source->getDependencies();

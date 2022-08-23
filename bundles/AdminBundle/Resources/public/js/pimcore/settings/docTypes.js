@@ -227,7 +227,10 @@ pimcore.settings.document.doctypes = Class.create({
                     },
                     tooltip: t('delete'),
                     handler: function (grid, rowIndex) {
-                        grid.getStore().removeAt(rowIndex);
+                        let data = grid.getStore().getAt(rowIndex);
+                        pimcore.helpers.deleteConfirm(t('glossary'), data.data.name, function () {
+                            grid.getStore().removeAt(rowIndex);
+                        }.bind(this));
                     }.bind(this)
                 }]
             }, {
@@ -301,7 +304,14 @@ pimcore.settings.document.doctypes = Class.create({
             }
         });
 
-        pimcore.plugin.broker.fireEvent("prepareDocumentTypesGrid", this.grid, this);
+        const prepareDocumentTypesGrid = new CustomEvent(pimcore.events.prepareDocumentTypesGrid, {
+            detail: {
+                grid: this.grid,
+                object: this
+            }
+        });
+
+        document.dispatchEvent(prepareDocumentTypesGrid);
 
         return this.grid;
     },

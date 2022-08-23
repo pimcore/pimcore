@@ -22,12 +22,30 @@ use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
 use Pimcore\Model;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Pimcore\Tool\HtmlUtils;
+use Pimcore\Tool\Serialize;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
  */
 class Area extends Model\Document\Editable
 {
+    /**
+     * The Type configured for the area
+     *
+     * @internal
+     *
+     * @var string|null
+     */
+    protected $type;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBrickType()
+    {
+        return $this->type;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -41,7 +59,29 @@ class Area extends Model\Document\Editable
      */
     public function getData()
     {
-        return null;
+        return [
+            'type' => $this->type,
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDataForResource()
+    {
+        return [
+            'type' => $this->type,
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDataEditmode() /** : mixed */
+    {
+        return [
+            'type' => $this->type,
+        ];
     }
 
     /**
@@ -190,6 +230,12 @@ class Area extends Model\Document\Editable
      */
     public function setDataFromResource($data)
     {
+        if (strlen($data) > 2) {
+            $data = Serialize::unserialize($data);
+        }
+
+        $this->type = $data['type'] ?? null;
+
         return $this;
     }
 
@@ -198,6 +244,10 @@ class Area extends Model\Document\Editable
      */
     public function setDataFromEditmode($data)
     {
+        if (is_array($data)) {
+            $this->type = $data['type'] ?? null;
+        }
+
         return $this;
     }
 

@@ -60,6 +60,9 @@ abstract class Data implements DataDefinitionInterface, NormalizerInterface
         return $this->denormalize($value, $params);
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return get_class($this);

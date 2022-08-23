@@ -133,7 +133,7 @@ class DataObjectHelperController extends AdminController
                     where (c1.searchType = ' . $db->quote($searchType) . ' and ((c1.id = s.gridConfigId and s.sharedWithUserId IN (' . $userIds . '))) and c1.classId = ' . $db->quote($classId) . ')
                             UNION distinct select c2.id from gridconfigs c2 where shareGlobally = 1 and c2.classId = '. $db->quote($classId) . '  and c2.ownerId != ' . $db->quote($user->getId());
 
-        $ids = $db->fetchCol($query);
+        $ids = $db->fetchFirstColumn($query);
 
         if ($ids) {
             $ids = implode(',', $ids);
@@ -193,11 +193,12 @@ class DataObjectHelperController extends AdminController
      * @Route("/grid-delete-column-config", name="griddeletecolumnconfig", methods={"DELETE"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      * @param Config $config
      *
      * @return JsonResponse
      */
-    public function gridDeleteColumnConfigAction(Request $request, Config $config)
+    public function gridDeleteColumnConfigAction(Request $request, EventDispatcherInterface $eventDispatcher, Config $config)
     {
         $gridConfigId = $request->get('gridConfigId');
         $gridConfig = GridConfig::getById($gridConfigId);
@@ -214,6 +215,16 @@ class DataObjectHelperController extends AdminController
         $newGridConfig = $this->doGetGridColumnConfig($request, $config, true);
         $newGridConfig['deleteSuccess'] = $success;
 
+        $event = new GenericEvent($this, [
+            'data' => $newGridConfig,
+            'request' => $request,
+            'config' => $config,
+            'context' => 'delete',
+        ]);
+
+        $eventDispatcher->dispatch($event, AdminEvents::OBJECT_GRID_GET_COLUMN_CONFIG_PRE_SEND_DATA);
+        $newGridConfig = $event->getArgument('data');
+
         return $this->adminJson($newGridConfig);
     }
 
@@ -221,13 +232,24 @@ class DataObjectHelperController extends AdminController
      * @Route("/grid-get-column-config", name="gridgetcolumnconfig", methods={"GET"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      * @param Config $config
      *
      * @return JsonResponse
      */
-    public function gridGetColumnConfigAction(Request $request, Config $config)
+    public function gridGetColumnConfigAction(Request $request, EventDispatcherInterface $eventDispatcher, Config $config)
     {
         $result = $this->doGetGridColumnConfig($request, $config);
+
+        $event = new GenericEvent($this, [
+            'data' => $result,
+            'request' => $request,
+            'config' => $config,
+            'context' => 'get',
+        ]);
+
+        $eventDispatcher->dispatch($event, AdminEvents::OBJECT_GRID_GET_COLUMN_CONFIG_PRE_SEND_DATA);
+        $result = $event->getArgument('data');
 
         return $this->adminJson($result);
     }
@@ -671,7 +693,6 @@ class DataObjectHelperController extends AdminController
     {
         try {
             $calculatedColumnConfig = Tool\Session::useSession(function (AttributeBagInterface $session) use ($config) {
-
                 //otherwise create a new one
 
                 $calculatedColumn = [];
@@ -764,7 +785,7 @@ class DataObjectHelperController extends AdminController
             $searchType = $request->get('searchType');
             $user = $this->getAdminUser();
             $db = Db::get();
-            $db->query('delete from gridconfig_favourites where '
+            $db->executeQuery('delete from gridconfig_favourites where '
                 . 'ownerId = ' . $user->getId()
                 . ' and classId = ' . $db->quote($classId) .
                 ' and searchType = ' . $db->quote($searchType)
@@ -850,7 +871,7 @@ class DataObjectHelperController extends AdminController
         ];
 
         $db = Db::get();
-        $allShares = $db->fetchAll('select s.sharedWithUserId, u.type from gridconfig_shares s, users u
+        $allShares = $db->fetchAllAssociative('select s.sharedWithUserId, u.type from gridconfig_shares s, users u
                       where s.sharedWithUserId = u.id and s.gridConfigId = ' . $gridConfigId);
 
         if ($allShares) {
@@ -1471,18 +1492,11 @@ class DataObjectHelperController extends AdminController
         $csvFile = $this->getCsvFile($fileHandle);
 
         try {
-            $csvStream= $storage->readStream($csvFile);
-
             $csvReader = new Csv();
             $csvReader->setDelimiter(';');
             $csvReader->setSheetIndex(0);
 
-            $temp = tmpfile();
-            stream_copy_to_stream($csvStream, $temp, null, 0);
-            $tempMetaData = stream_get_meta_data($temp);
-            //TODO: use this method and storage->read() to avoid the extra temp file, is not available in the current version. See: https://github.com/PHPOffice/PhpSpreadsheet/pull/2792
-            //$spreadsheet = $csvReader->loadSpreadsheetFromString($csvData);
-            $spreadsheet = $csvReader->load($tempMetaData['uri']);
+            $spreadsheet = $csvReader->loadSpreadsheetFromString($storage->read($csvFile));
             $writer = new Xlsx($spreadsheet);
             $xlsxFilename = PIMCORE_SYSTEM_TEMP_DIRECTORY. '/' .$fileHandle. '.xlsx';
             $writer->save($xlsxFilename);
@@ -1604,7 +1618,6 @@ class DataObjectHelperController extends AdminController
 
                             $getter = 'get' . ucfirst($field);
                             if (method_exists($object, $getter)) {
-
                                 /** @var DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
                                 $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
                                 $csLanguage = $requestedLanguage;

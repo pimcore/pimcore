@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Shipping;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ShippingInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\SessionBagListener;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
@@ -37,7 +38,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerInterfa
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\OnlineShopTaxClass;
 use Pimcore\Tests\Helper\Pimcore;
@@ -60,20 +60,17 @@ class AbstractRuleTest extends EcommerceTestCase
 
         $conditionMapping = $container->getParameter('pimcore_ecommerce.pricing_manager.condition_mapping');
         $actionMapping = $container->getParameter('pimcore_ecommerce.pricing_manager.action_mapping');
-        $session = $this->buildSession();
         $options = [
             'rule_class' => "Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule",
             'price_info_class' => "Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PriceInfo",
             'environment_class' => "Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Environment",
         ];
 
-        $pricingManager = Stub::construct(PricingManager::class, [$conditionMapping, $actionMapping, $session, $options], [
+        return Stub::construct(PricingManager::class, [$conditionMapping, $actionMapping, $options], [
             'getValidRules' => function () use ($rules) {
                 return $rules;
             },
         ]);
-
-        return $pricingManager;
     }
 
     /**
@@ -112,7 +109,7 @@ class AbstractRuleTest extends EcommerceTestCase
      */
     protected function setUpCart(PricingManagerInterface $pricingManager, $withModificators = false)
     {
-        $sessionBag = $this->buildSession()->getBag(SessionConfigurator::ATTRIBUTE_BAG_CART);
+        $sessionBag = $this->buildSession()->getBag(SessionBagListener::ATTRIBUTE_BAG_CART);
 
         /** @var SessionCart|\PHPUnit_Framework_MockObject_Stub $cart */
         $cart = Stub::construct(SessionCart::class, [], [

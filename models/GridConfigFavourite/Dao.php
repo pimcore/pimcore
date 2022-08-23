@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\GridConfigFavourite;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 
 /**
@@ -41,7 +42,7 @@ class Dao extends Model\Dao\AbstractDao
             $params[] = $objectId;
         }
 
-        $data = $this->db->fetchRow($query, $params);
+        $data = $this->db->fetchAssociative($query, $params);
 
         if (!$data) {
             throw new Model\Exception\NotFoundException('gridconfig favourite with ownerId ' . $ownerId . ' and class id ' . $classId . ' not found');
@@ -70,7 +71,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate('gridconfig_favourites', $data);
+        Helper::insertOrUpdate($this->db, 'gridconfig_favourites', $data);
 
         return $this->model;
     }

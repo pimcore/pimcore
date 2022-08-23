@@ -37,6 +37,8 @@ pimcore_admin:
     admin_csp_header:
         enabled: true
 ```
+> **IMPORTANT**
+> Please note enabling CSP headers for admin interface will make DataObject WYSIWYG editor menu unresponsive as CKeditor 4 does not completely support it. 
 
 And to allow external urls for each directive, you can provide a list in the configuration:
 ```yaml

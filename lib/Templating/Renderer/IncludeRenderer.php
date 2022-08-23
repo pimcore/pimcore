@@ -173,7 +173,7 @@ class IncludeRenderer
             foreach ($childs as $child) {
                 $child->setAttribute('class', $child->getAttribute('class') . $editmodeClass);
                 $child->setAttribute('pimcore_type', $include->getType());
-                $child->setAttribute('pimcore_id', $include->getId());
+                $child->setAttribute('pimcore_id', (string) $include->getId());
             }
             $content = $html->html();
 

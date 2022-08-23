@@ -16,6 +16,7 @@
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
 use Pimcore\Cache;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\DataObjectCustomLayoutEvents;
 use Pimcore\Event\Model\DataObject\CustomLayoutEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
@@ -91,7 +92,7 @@ class CustomLayout extends Model\AbstractModel
         $cacheKey = 'customlayout_' . $id;
 
         try {
-            $customLayout = \Pimcore\Cache\Runtime::get($cacheKey);
+            $customLayout = RuntimeCache::get($cacheKey);
             if (!$customLayout) {
                 throw new \Exception('Custom Layout in registry is null');
             }
@@ -99,7 +100,7 @@ class CustomLayout extends Model\AbstractModel
             try {
                 $customLayout = new self();
                 $customLayout->getDao()->getById($id);
-                \Pimcore\Cache\Runtime::set($cacheKey, $customLayout);
+                RuntimeCache::set($cacheKey, $customLayout);
             } catch (Model\Exception\NotFoundException $e) {
                 return null;
             }
@@ -261,11 +262,7 @@ class CustomLayout extends Model\AbstractModel
      */
     public function isWritable(): bool
     {
-        if ($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? false) {
-            return true;
-        }
-
-        return !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
+        return $_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
     }
 
     /**

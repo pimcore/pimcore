@@ -21,7 +21,15 @@ pimcore.document.snippet = Class.create(pimcore.document.page_snippet, {
         this.setType("snippet");
         this.addLoadingPanel();
 
-        pimcore.plugin.broker.fireEvent("preOpenDocument", this, "snippet");
+        const preOpenDocumentSnippet = new CustomEvent(pimcore.events.preOpenDocument, {
+            detail: {
+                object: this,
+                type: "snippet"
+            }
+        });
+
+        document.dispatchEvent(preOpenDocumentSnippet);
+
         this.getData();
     },
 

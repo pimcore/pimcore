@@ -13,9 +13,7 @@ Examples:
 
 ### Access the Settings
 
-In controllers and views, you can use view helpers or argument resolves to access the config. If you're not in a view or
-controller you can use `Pimcore\Tool\Frontend::getWebsiteConfig();` to retrieve the configuration.
-
+In controllers and views, you can use view helpers or argument resolves to access the config.
 The returned configuration is a `Pimcore\Config\Config` object containing your settings.
 
 

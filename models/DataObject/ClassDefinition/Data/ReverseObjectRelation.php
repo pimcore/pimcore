@@ -197,7 +197,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         }
 
         $db = Db::get();
-        $relations = $db->fetchAll('SELECT * FROM object_relations_'.$this->getOwnerClassId()." WHERE dest_id = ? AND fieldname = ? AND ownertype = 'object'", [$object->getId(), $this->getOwnerFieldName()]);
+        $relations = $db->fetchAllAssociative('SELECT * FROM object_relations_'.$this->getOwnerClassId()." WHERE dest_id = ? AND fieldname = ? AND ownertype = 'object'", [$object->getId(), $this->getOwnerFieldName()]);
 
         $relations = array_map(static function ($relation) {
             $relation['dest_id'] = $relation['src_id'];
@@ -240,11 +240,17 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function preGetData($container, $params = [])
     {
         return $this->load($container);
     }
 
+    /**
+     * @return false
+     */
     public function supportsInheritance()
     {
         return false;

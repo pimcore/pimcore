@@ -37,7 +37,7 @@ class WebPathResolver
      */
     public function getPrefix(BundleInterface $bundle)
     {
-        if (!is_dir($bundle->getPath() . '/Resources/public')) {
+        if (!is_dir($bundle->getPath() . '/Resources/public') && !is_dir($bundle->getPath() . '/public')) {
             throw new \InvalidArgumentException(sprintf(
                 'Bundle %s does not have Resources/public folder',
                 $bundle->getName()

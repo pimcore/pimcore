@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Tool\UUID;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 
 /**
@@ -30,7 +31,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $data = $this->getValidObjectVars();
 
-        $this->db->insertOrUpdate(self::TABLE_NAME, $data);
+        Helper::insertOrUpdate($this->db, self::TABLE_NAME, $data);
     }
 
     public function create()
@@ -65,7 +66,11 @@ class Dao extends Model\Dao\AbstractDao
         if (!$uuid) {
             throw new \Exception("Couldn't delete UUID - no UUID specified.");
         }
-        $this->db->delete(self::TABLE_NAME, ['uuid' => $uuid]);
+
+        $itemId = $this->model->getItemId();
+        $type = $this->model->getType();
+
+        $this->db->delete(self::TABLE_NAME, ['itemId' => $itemId, 'type' => $type, 'uuid' => $uuid]);
     }
 
     /**
@@ -75,7 +80,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getByUuid($uuid)
     {
-        $data = $this->db->fetchRow('SELECT * FROM ' . self::TABLE_NAME ." where uuid='" . $uuid . "'");
+        $data = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME ." where uuid='" . $uuid . "'");
         $model = new Model\Tool\UUID();
         $model->setValues($data);
 

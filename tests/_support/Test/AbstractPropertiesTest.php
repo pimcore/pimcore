@@ -115,7 +115,7 @@ abstract class AbstractPropertiesTest extends ModelTestCase
         $this->testElement->setProperty('textproperty3', 'input', $expectedData . '_3', false, true);
         $this->testElement->save();
 
-        $childElement = Service::getElementById(Service::getElementType($childElement), $childElement->getId(), true);
+        $childElement = Service::getElementById(Service::getElementType($childElement), $childElement->getId(), ['force' => true]);
         $this->assertEquals($expectedData . '_3', $childElement->getProperty('textproperty3'));
     }
 

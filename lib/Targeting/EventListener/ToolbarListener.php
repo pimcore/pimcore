@@ -95,7 +95,10 @@ class ToolbarListener implements EventSubscriberInterface
         $this->codeInjector = $codeInjector;
     }
 
-    public static function getSubscribedEvents()
+    /**
+     * @return array[]
+     */
+    public static function getSubscribedEvents(): array
     {
         return [
             TargetingEvents::PRE_RESOLVE => ['onPreResolve', -10],
@@ -159,7 +162,7 @@ class ToolbarListener implements EventSubscriberInterface
             return false;
         }
 
-        $cookieValue = (bool)$request->cookies->get('pimcore_targeting_debug', false);
+        $cookieValue = (bool)$request->cookies->get('pimcore_targeting_debug');
         if (!$cookieValue) {
             return false;
         }

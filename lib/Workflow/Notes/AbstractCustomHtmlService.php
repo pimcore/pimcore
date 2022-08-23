@@ -19,12 +19,24 @@ use Pimcore\Model\Element\ElementInterface;
 
 abstract class AbstractCustomHtmlService implements CustomHtmlServiceInterface
 {
+    /**
+     * @var string
+     */
     protected $transitionName = '';
 
+    /**
+     * @var string
+     */
     protected $actionName = '';
 
+    /**
+     * @var bool
+     */
     protected $isGlobalAction = false;
 
+    /**
+     * @var string
+     */
     protected $position;
 
     public function __construct(string $actionOrTransitionName, bool $isGlobalAction, string $position = '')

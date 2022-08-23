@@ -14,11 +14,8 @@
 pimcore.registerNS("pimcore.document.editables.link");
 pimcore.document.editables.link = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, config, data, inherited) {
-
-        if (!data) {
-            data = {};
-        }
+    initialize: function($super, id, name, config, data, inherited) {
+        $super(id, name, config, data, inherited);
 
         this.defaultData = {
             path: "",
@@ -32,11 +29,7 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
             attributes: ""
         };
 
-        this.data = mergeObject(this.defaultData, data);
-
-        this.id = id;
-        this.name = name;
-        this.config = this.parseConfig(config);
+        this.data = mergeObject(this.defaultData, data ?? {});
     },
 
     render: function() {

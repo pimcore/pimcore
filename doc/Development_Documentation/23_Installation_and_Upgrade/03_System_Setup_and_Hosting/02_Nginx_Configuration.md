@@ -30,6 +30,13 @@ upstream php-pimcore10 {
     server unix:/var/run/php/pimcore.sock;
 }
 
+map $args $static_page_root {
+    default                                 /var/tmp/pages;
+    "~*(^|&)pimcore_editmode=true(&|$)"     /var/nonexistent;
+    "~*(^|&)pimcore_preview=true(&|$)"      /var/nonexistent;
+    "~*(^|&)pimcore_version=[^&]+(&|$)"     /var/nonexistent;
+}
+
 server {
     listen 80;
     server_name YOUPROJECT.local;
@@ -109,7 +116,7 @@ server {
 
     # Assets
     # Still use a whitelist approach to prevent each and every missing asset to go through the PHP Engine.
-    location ~* ^(?!/admin)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {
+    location ~* ^(?!/admin)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|m4a|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {
         try_files /var/assets$uri $uri =404;
         expires 2w;
         access_log off;
@@ -119,7 +126,7 @@ server {
 
     location / {
         error_page 404 /meta/404;
-        try_files $uri /index.php$is_args$args;
+        try_files $static_page_root$uri.html $uri /index.php$is_args$args;
     }
 
     # Use this location when the installer has to be run
@@ -189,6 +196,13 @@ The following configuration provides an approperiate base for a secure applicati
 
 upstream php-pimcore10 {
     server unix:/var/run/php/pimcore.sock;
+}
+
+map $args $static_page_root {
+    default                                 /var/tmp/pages;
+    "~*(^|&)pimcore_editmode=true(&|$)"     /var/nonexistent;
+    "~*(^|&)pimcore_preview=true(&|$)"      /var/nonexistent;
+    "~*(^|&)pimcore_version=[^&]+(&|$)"     /var/nonexistent;
 }
 
 server {
@@ -385,7 +399,7 @@ server {
 
     # Assets
     # Still use a whitelist approach to prevent each and every missing asset to go through the PHP Engine.
-    location ~* ^(?!/admin)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {
+    location ~* ^(?!/admin)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|m4a|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {
         try_files /var/assets$uri $uri =404;
         expires 2w;
         access_log off;
@@ -395,7 +409,7 @@ server {
 
     location / {
         error_page 404 /meta/404;
-        try_files $uri /index.php$is_args$args;
+        try_files $static_page_root$uri.html $uri /index.php$is_args$args;
     }
 
     # Use this location when the installer has to be run

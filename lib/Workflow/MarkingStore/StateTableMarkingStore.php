@@ -36,6 +36,8 @@ class StateTableMarkingStore implements MarkingStoreInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @return Marking
      */
     public function getMarking($subject)// : Marking
     {

@@ -21,7 +21,15 @@ pimcore.asset.archive = Class.create(pimcore.asset.asset, {
         this.setType("archive");
         this.addLoadingPanel();
 
-        pimcore.plugin.broker.fireEvent("preOpenAsset", this, "archive");
+        const preOpenAssetArchive = new CustomEvent(pimcore.events.preOpenAsset, {
+            detail: {
+                object: this,
+                type: "archive"
+            }
+        });
+
+        document.dispatchEvent(preOpenAssetArchive);
+
 
         var user = pimcore.globalmanager.get("user");
 

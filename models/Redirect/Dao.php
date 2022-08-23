@@ -40,7 +40,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow('SELECT * FROM redirects WHERE id = ?', $this->model->getId());
+        $data = $this->db->fetchAssociative('SELECT * FROM redirects WHERE id = ?', [$this->model->getId()]);
         if (!$data) {
             throw new NotFoundException(sprintf('Redirect with ID %d doesn\'t exist', $this->model->getId()));
         }
@@ -79,7 +79,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $sql .= ' ORDER BY `priority` DESC';
 
-        $data = $this->db->fetchRow($sql, [
+        $data = $this->db->fetchAssociative($sql, [
             'sourcePath' => $partResolver->getRequestUriPart(Redirect::TYPE_PATH),
             'sourcePathQuery' => $partResolver->getRequestUriPart(Redirect::TYPE_PATH_QUERY),
             'sourceEntireUri' => $partResolver->getRequestUriPart(Redirect::TYPE_ENTIRE_URI),

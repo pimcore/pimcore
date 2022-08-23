@@ -142,7 +142,7 @@ final class Staticroute extends AbstractModel
         $cacheKey = 'staticroute_' . $id;
 
         try {
-            $route = \Pimcore\Cache\Runtime::get($cacheKey);
+            $route = \Pimcore\Cache\RuntimeCache::get($cacheKey);
             if (!$route) {
                 throw new \Exception('Route in registry is null');
             }
@@ -151,7 +151,7 @@ final class Staticroute extends AbstractModel
                 $route = new self();
                 $route->setId($id);
                 $route->getDao()->getById();
-                \Pimcore\Cache\Runtime::set($cacheKey, $route);
+                \Pimcore\Cache\RuntimeCache::set($cacheKey, $route);
             } catch (NotFoundException $e) {
                 return null;
             }
@@ -447,7 +447,7 @@ final class Staticroute extends AbstractModel
      * @param array $urlOptions
      * @param bool $encode
      *
-     * @return mixed|string
+     * @return string
      */
     public function assemble(array $urlOptions = [], $encode = true)
     {
@@ -552,7 +552,6 @@ final class Staticroute extends AbstractModel
     public function match($path, $params = [])
     {
         if (@preg_match($this->getPattern(), $path)) {
-
             // check for site
             if ($this->getSiteId()) {
                 if (!Site::isSiteRequest()) {

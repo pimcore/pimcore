@@ -67,7 +67,6 @@ class Service extends Model\Element\Service
      */
     public function copyRecursive($target, $source)
     {
-
         // avoid recursion
         if (!$this->_copyRecursiveIds) {
             $this->_copyRecursiveIds = [];

@@ -77,7 +77,9 @@ pimcore:
             # Thumbnails are usually generated on demand (if not configured differently), this 
             # prefix is used for thumbnails which were not yet generated and therefore are not 
             # available on the thumbnail storage yet. Usually it's not necessary to change this config.
-            thumbnail_deferred: /deferred-thumbnail
+            # However, a possible use case would be to point to a specific host that handles generating 
+            # the thumbnails and takes the load from the main application server(s)
+            # thumbnail_deferred: https://thumbnail-generator-node.example.com
 ```
 This will add the configured prefix to the path of assets and thumbnails in the frontend context 
 (e.g. your templates). 

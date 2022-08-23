@@ -34,7 +34,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @method \Pimcore\Model\Document\Service\Dao getDao()
- * @method array getTranslations(Document $document, string $task = 'open')
+ * @method int[] getTranslations(Document $document, string $task = 'open')
  * @method addTranslation(Document $document, Document $translation, $language = null)
  * @method removeTranslation(Document $document)
  * @method int getTranslationSourceId(Document $document)
@@ -137,7 +137,6 @@ class Service extends Model\Element\Service
      */
     public function copyRecursive($target, $source)
     {
-
         // avoid recursion
         if (!$this->_copyRecursiveIds) {
             $this->_copyRecursiveIds = [];
@@ -244,7 +243,7 @@ class Service extends Model\Element\Service
 
         if ($enableInheritance && ($new instanceof Document\PageSnippet) && $new->supportsContentMaster()) {
             $new->setEditables([]);
-            $new->setContentMasterDocumentId($source->getId());
+            $new->setContentMasterDocumentId($source->getId(), true);
         }
 
         if ($language) {
@@ -423,7 +422,6 @@ class Service extends Model\Element\Service
      */
     public static function rewriteIds($document, $rewriteConfig, $params = [])
     {
-
         // rewriting elements only for snippets and pages
         if ($document instanceof Document\PageSnippet) {
             if (array_key_exists('enableInheritance', $params) && $params['enableInheritance']) {

@@ -163,6 +163,8 @@ class Pimcore
      *
      * @internal
      *
+     * @deprecated this method just exists for legacy reasons and shouldn't be used in new code
+     *
      * @return ContainerInterface|null
      */
     public static function getContainer()

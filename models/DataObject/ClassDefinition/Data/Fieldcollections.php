@@ -321,7 +321,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function load($object, $params = [])
     {
-        $container = new DataObject\Fieldcollection(null, $this->getName());
+        $container = new DataObject\Fieldcollection([], $this->getName());
         $container->load($object);
 
         if ($container->isEmpty()) {
@@ -336,7 +336,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function delete($object, $params = [])
     {
-        $container = new DataObject\Fieldcollection(null, $this->getName());
+        $container = new DataObject\Fieldcollection([], $this->getName());
         $container->delete($object);
     }
 
@@ -542,9 +542,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
         $code .= $this->getPreGetValueHookCode($key);
 
-        // TODO Pimcore 11: remove method_exists BC layer
         // TODO else part should not be needed at all as preGetData is always there
-        // if ($this instanceof PreGetDataInterface || method_exists($this, 'preGetData')) {
+        // if ($this instanceof PreGetDataInterface) {
         $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
 //        } else {
 //            $code .= "\t" . '$data = $this->' . $key . ";\n";
@@ -641,8 +640,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
                 if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                        //TODO Pimcore 11: remove method_exists BC layer
-                        if ($fd instanceof IdRewriterInterface || method_exists($fd, 'rewriteIds')) {
+                        if ($fd instanceof IdRewriterInterface) {
                             $d = $fd->rewriteIds($item, $idMapping, $params);
                             $setter = 'set' . ucfirst($fd->getName());
                             $item->$setter($d);

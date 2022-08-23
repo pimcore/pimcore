@@ -20,7 +20,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 interface EnvironmentInterface
 {
@@ -111,18 +110,6 @@ interface EnvironmentInterface
      * @return AbstractCategory[]
      */
     public function getCategories();
-
-    /**
-     * @param AttributeBagInterface $namespace
-     *
-     * @return EnvironmentInterface
-     */
-    public function setSession(AttributeBagInterface $namespace);
-
-    /**
-     * @return AttributeBagInterface|null
-     */
-    public function getSession();
 
     /**
      * sets execution mode of system - either product or cart

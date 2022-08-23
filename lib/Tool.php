@@ -562,14 +562,17 @@ final class Tool
         }
 
         if (is_array($paramsGet) && count($paramsGet) > 0) {
-
-            //need to insert get params from url to $paramsGet because otherwise the would be ignored
+            //need to insert get params from url to $paramsGet because otherwise they would be ignored
             $urlParts = parse_url($url);
-            $urlParams = [];
-            parse_str($urlParts['query'], $urlParams);
 
-            if ($urlParams) {
-                $paramsGet = array_merge($urlParams, $paramsGet);
+            if (isset($urlParts['query'])) {
+                $urlParams = [];
+
+                parse_str($urlParts['query'], $urlParams);
+
+                if ($urlParams) {
+                    $paramsGet = array_merge($urlParams, $paramsGet);
+                }
             }
 
             $options[RequestOptions::QUERY] = $paramsGet;
@@ -655,8 +658,9 @@ final class Tool
         // Pimcore\Tool::ClassMapAutoloader(), but don't know what actual conditions causes this problem.
         // but to be save we log the errors into the debug.log, so if anything else happens we can see it there
         // the normal warning is e.g. Warning: include_once(Path/To/Class.php): failed to open stream: No such file or directory in ...
-        set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+        set_error_handler(function (int $errno, string $errstr, string $errfile, int $errline): bool {
             //Logger::debug(implode(" ", [$errno, $errstr, $errfile, $errline]));
+            return true;
         });
 
         $exists = $functionName($class);

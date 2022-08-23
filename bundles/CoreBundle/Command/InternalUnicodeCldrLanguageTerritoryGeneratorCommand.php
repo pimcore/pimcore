@@ -42,7 +42,7 @@ class InternalUnicodeCldrLanguageTerritoryGeneratorCommand extends AbstractComma
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $source = 'https://raw.githubusercontent.com/unicode-org/cldr/master/common/supplemental/supplementalData.xml';
         $data = file_get_contents($source);

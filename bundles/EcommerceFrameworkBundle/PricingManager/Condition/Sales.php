@@ -142,7 +142,7 @@ SQL;
             $query = sprintf($query, OnlineShopOrderItem::classId(), OnlineShopOrder::classId(), $rule->getId());
             $conn = \Pimcore\Db::getConnection();
 
-            $this->currentSalesAmount[$rule->getId()] = (int)$conn->fetchRow($query)['amount'];
+            $this->currentSalesAmount[$rule->getId()] = (int)$conn->fetchAssociative($query)['amount'];
         }
 
         return $this->currentSalesAmount[$rule->getId()];

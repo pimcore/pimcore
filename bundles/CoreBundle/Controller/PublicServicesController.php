@@ -46,7 +46,7 @@ class PublicServicesController extends Controller
      */
     public function thumbnailAction(Request $request)
     {
-        $assetId = $request->get('assetId');
+        $assetId = (int) $request->get('assetId');
         $thumbnailName = $request->get('thumbnailName');
         $filename = $request->get('filename');
         $requestedFileExtension = strtolower(File::getFileExtension($filename));
@@ -77,6 +77,9 @@ class PublicServicesController extends Controller
                             if (!$thumbnailConfig instanceof Asset\Image\Thumbnail\Config) {
                                 throw new \Exception("Deferred thumbnail config file doesn't contain a valid \\Asset\\Image\\Thumbnail\\Config object");
                             }
+                        } elseif ($this->getParameter('pimcore.config')['assets']['image']['thumbnails']['status_cache']) {
+                            // Delete Thumbnail Name from Cache so the next call can generate a new TmpStore entry
+                            $asset->getDao()->deleteFromThumbnailCache($thumbnailName);
                         }
                     }
 
@@ -245,7 +248,7 @@ class PublicServicesController extends Controller
 
         $customAdminPathIdentifier = $this->getParameter('pimcore_admin.custom_admin_path_identifier');
         if (!empty($customAdminPathIdentifier) && $request->cookies->get('pimcore_custom_admin') != $customAdminPathIdentifier) {
-            $redirect->headers->setCookie(new Cookie('pimcore_custom_admin', $customAdminPathIdentifier, strtotime('+1 year'), '/', null, false, true));
+            $redirect->headers->setCookie(new Cookie('pimcore_custom_admin', $customAdminPathIdentifier, strtotime('+1 year')));
         }
 
         return $redirect;

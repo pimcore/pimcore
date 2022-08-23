@@ -7,8 +7,13 @@ on:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"
 
+permissions:
+  contents: read
+
 jobs:
     php-cs-fixer:
+        permissions:
+          contents: write  # for stefanzweifel/git-auto-commit-action to push code in repo
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2

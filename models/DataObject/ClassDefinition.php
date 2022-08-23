@@ -16,6 +16,7 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Cache;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface;
 use Pimcore\DataObject\ClassBuilder\PHPClassDumperInterface;
 use Pimcore\Db;
@@ -227,13 +228,6 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @var bool
      */
-    public $generateTypeDeclarations = true;
-
-    /**
-     * @internal
-     *
-     * @var bool
-     */
     public $showFieldLookup = false;
 
     /**
@@ -288,7 +282,7 @@ final class ClassDefinition extends Model\AbstractModel
             if ($force) {
                 throw new \Exception('Forced load');
             }
-            $class = \Pimcore\Cache\Runtime::get($cacheKey);
+            $class = RuntimeCache::get($cacheKey);
             if (!$class) {
                 throw new \Exception('Class in registry is null');
             }
@@ -305,7 +299,7 @@ final class ClassDefinition extends Model\AbstractModel
 
                 $class->setId($id);
 
-                \Pimcore\Cache\Runtime::set($cacheKey, $class);
+                RuntimeCache::set($cacheKey, $class);
             } catch (\Exception $e) {
                 Logger::info($e->getMessage());
 
@@ -593,7 +587,10 @@ final class ClassDefinition extends Model\AbstractModel
         }
 
         $customLayouts = new ClassDefinition\CustomLayout\Listing();
-        $customLayouts->setCondition('classId = ?', $this->getId());
+        $id = $this->getId();
+        $customLayouts->setFilter(function (DataObject\ClassDefinition\CustomLayout $layout) use ($id) {
+            return $layout->getClassId() === $id;
+        });
         $customLayouts = $customLayouts->load();
 
         foreach ($customLayouts as $customLayout) {
@@ -637,15 +634,15 @@ final class ClassDefinition extends Model\AbstractModel
     /**
      * @internal
      *
+     * with PIMCORE_CLASS_DEFINITION_WRITABLE set, it globally allow/disallow creation and change in classes
+     * when the ENV is not set, it allows modification and creation of new in classes in /var/classes but disables modification of classes in config/pimcore/classes
+     * more details in 05_Deployment_Tools.md
+     *
      * @return bool
      */
     public function isWritable(): bool
     {
-        if ($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? false) {
-            return true;
-        }
-
-        return !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
+        return $_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] ?? !str_starts_with($this->getDefinitionFile(), PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY);
     }
 
     /**
@@ -821,13 +818,7 @@ final class ClassDefinition extends Model\AbstractModel
      */
     protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
-        //TODO Pimcore 11: remove method_exists BC layer
-        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface || method_exists($fieldDefinition, 'enrichFieldDefinition')) {
-            if (!$fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
-                trigger_deprecation('pimcore/pimcore', '10.1',
-                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                    'Implement the %s interface instead.', FieldDefinitionEnrichmentInterface::class));
-            }
+        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
             $context['class'] = $this;
             $fieldDefinition = $fieldDefinition->enrichFieldDefinition($context);
         }
@@ -1420,26 +1411,6 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return bool
-     */
-    public function getGenerateTypeDeclarations()
-    {
-        return (bool) $this->generateTypeDeclarations;
-    }
-
-    /**
-     * @param bool $generateTypeDeclarations
-     *
-     * @return $this
-     */
-    public function setGenerateTypeDeclarations($generateTypeDeclarations)
-    {
-        $this->generateTypeDeclarations = (bool) $generateTypeDeclarations;
-
-        return $this;
-    }
-
-    /**
      * @return ClassDefinition\Data[]
      */
     public function getDeletedDataComponents()
@@ -1465,7 +1436,10 @@ final class ClassDefinition extends Model\AbstractModel
             return;
         }
         $customLayouts = new ClassDefinition\CustomLayout\Listing();
-        $customLayouts->setCondition('classId = ?', $this->getId());
+        $id = $this->getId();
+        $customLayouts->setFilter(function (DataObject\ClassDefinition\CustomLayout $layout) use ($id) {
+            return $layout->getClassId() === $id;
+        });
         $customLayouts = $customLayouts->load();
 
         foreach ($customLayouts as $customLayout) {

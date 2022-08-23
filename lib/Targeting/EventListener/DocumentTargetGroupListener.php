@@ -61,7 +61,10 @@ class DocumentTargetGroupListener implements EventSubscriberInterface
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    public static function getSubscribedEvents()
+    /**
+     * @return string[]
+     */
+    public static function getSubscribedEvents()// : array
     {
         return [
             TargetingEvents::PRE_RESOLVE => 'onVisitorInfoResolve',

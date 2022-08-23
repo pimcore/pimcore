@@ -17,7 +17,7 @@ namespace Pimcore\Model;
 
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Pimcore\Cache;
-use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\Model\TranslationEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\TranslationEvents;
@@ -67,6 +67,20 @@ final class Translation extends AbstractModel
      * @var string
      */
     protected $type = 'simple';
+
+    /**
+     * ID of the owner user
+     *
+     * @var int|null
+     */
+    protected ?int $userOwner = null;
+
+    /**
+     * ID of the user who make the latest changes
+     *
+     * @var int|null
+     */
+    protected ?int $userModification = null;
 
     /**
      * @return string
@@ -201,6 +215,38 @@ final class Translation extends AbstractModel
     }
 
     /**
+     * @return int|null
+     */
+    public function getUserOwner(): ?int
+    {
+        return $this->userOwner;
+    }
+
+    /**
+     * @param int|null $userOwner
+     */
+    public function setUserOwner(?int $userOwner): void
+    {
+        $this->userOwner = $userOwner;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getUserModification(): ?int
+    {
+        return $this->userModification;
+    }
+
+    /**
+     * @param int|null $userModification
+     */
+    public function setUserModification(?int $userModification): void
+    {
+        $this->userModification = $userModification;
+    }
+
+    /**
      * @internal
      *
      * @param string $domain
@@ -258,25 +304,30 @@ final class Translation extends AbstractModel
      * @param string $domain
      * @param bool $create
      * @param bool $returnIdIfEmpty
+     * @param array|null $languages
      *
      * @return static|null
      *
      * @throws \Exception
      */
-    public static function getByKey(string $id, $domain = self::DOMAIN_DEFAULT, $create = false, $returnIdIfEmpty = false)
+    public static function getByKey(string $id, $domain = self::DOMAIN_DEFAULT, $create = false, $returnIdIfEmpty = false, $languages = null)
     {
         $cacheKey = 'translation_' . $id . '_' . $domain;
-        if (Runtime::isRegistered($cacheKey)) {
-            return Runtime::get($cacheKey);
+        if (is_array($languages)) {
+            $cacheKey .= '_' . implode('-', $languages);
+        }
+
+        if (RuntimeCache::isRegistered($cacheKey)) {
+            return RuntimeCache::get($cacheKey);
         }
 
         $translation = new static();
         $translation->setDomain($domain);
         $idOriginal = $id;
-        $languages = static::getValidLanguages($domain);
+        $languages = $languages ? array_intersect(static::getValidLanguages($domain), $languages) : static::getValidLanguages($domain);
 
         try {
-            $translation->getDao()->getByKey($id);
+            $translation->getDao()->getByKey($id, $languages);
         } catch (\Exception $e) {
             if (!$create && !$returnIdIfEmpty) {
                 return null;
@@ -307,7 +358,7 @@ final class Translation extends AbstractModel
         }
 
         // add to key cache
-        Runtime::set($cacheKey, $translation);
+        RuntimeCache::set($cacheKey, $translation);
 
         return $translation;
     }
@@ -378,14 +429,6 @@ final class Translation extends AbstractModel
     public function save()
     {
         $this->dispatchEvent(new TranslationEvent($this), TranslationEvents::PRE_SAVE);
-
-        if (!$this->getCreationDate()) {
-            $this->setCreationDate(time());
-        }
-
-        if (!$this->getModificationDate()) {
-            $this->setModificationDate(time());
-        }
 
         $this->getDao()->save();
 
@@ -507,11 +550,16 @@ final class Translation extends AbstractModel
 
                         if ($dirty) {
                             if (array_key_exists('creationDate', $keyValueArray) && $keyValueArray['creationDate']) {
-                                $t->setCreationDate($keyValueArray['creationDate']);
+                                $t->setCreationDate((int) $keyValueArray['creationDate']);
                             }
                             $t->setModificationDate(time()); //ignore modificationDate from file
                             $t->save();
                         }
+                    }
+
+                    // call the garbage collector if memory consumption is > 100MB
+                    if (memory_get_usage() > 100_000_000) {
+                        \Pimcore::collectGarbage();
                     }
                 }
                 static::clearDependentCache();

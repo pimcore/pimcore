@@ -15,10 +15,10 @@
 
 namespace Pimcore\Bundle\AdminBundle\Security\Guard;
 
-use Pimcore\Bundle\AdminBundle\Security\Authentication\Token\TwoFactorRequiredToken;
+use Pimcore\Bundle\AdminBundle\Security\Authentication\Token\LegacyTwoFactorRequiredToken;
 use Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler;
 use Pimcore\Bundle\AdminBundle\Security\User\User;
-use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\Admin\Login\LoginCredentialsEvent;
 use Pimcore\Event\Admin\Login\LoginFailedEvent;
 use Pimcore\Event\Admin\Login\LoginRedirectEvent;
@@ -47,6 +47,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @internal
+ *
+ * @deprecated will be removed in Pimcore 11
  */
 class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwareInterface
 {
@@ -304,7 +306,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
         $this->translator->setLocale($user->getLanguage());
 
         // set user on runtime cache for legacy compatibility
-        Runtime::set('pimcore_admin_user', $user);
+        RuntimeCache::set('pimcore_admin_user', $user);
 
         if ($user->isAdmin()) {
             if (Admin::isMaintenanceModeScheduledForLogin()) {
@@ -335,7 +337,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
 
         if ($url) {
             $response = new RedirectResponse($url);
-            $response->headers->setCookie(new Cookie('pimcore_admin_sid', true, 0, '/', null, false, true));
+            $response->headers->setCookie(new Cookie('pimcore_admin_sid', true));
 
             return $response;
         }
@@ -354,7 +356,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     public function createAuthenticatedToken(UserInterface $user, $providerKey)
     {
         if ($this->twoFactorRequired) {
-            return new TwoFactorRequiredToken(
+            return new LegacyTwoFactorRequiredToken(
                 $user,
                 $providerKey,
                 $user->getRoles()

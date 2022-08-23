@@ -80,7 +80,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         if (!empty($this->model->getConditionParams()) || !$translations = Cache::load($cacheKey)) {
             $translations = [];
             $queryBuilder->setMaxResults(null); //retrieve all results
-            $translationsData = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables());
+            $translationsData = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables());
 
             foreach ($translationsData as $t) {
                 if (!isset($translations[$t['key']])) {
@@ -115,7 +115,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function loadRaw()
     {
         $queryBuilder = $this->getQueryBuilder(['*']);
-        $translationsData = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables());
+        $translationsData = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables());
 
         return $translationsData;
     }
@@ -130,10 +130,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $this->model->setGroupBy($this->getDatabaseTableName() . '.key', false);
 
         $queryBuilder = $this->getQueryBuilder([$this->getDatabaseTableName() . '.key']);
-        $translationsData = $this->db->fetchAll((string) $queryBuilder, $this->model->getConditionVariables());
+        $translationsData = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables());
 
         foreach ($translationsData as $t) {
-            $transObj = Model\Translation::getByKey($t['key'], $this->model->getDomain());
+            $transObj = Model\Translation::getByKey(id: $t['key'], domain: $this->model->getDomain(), languages: $this->model->getLanguages());
+
             if ($transObj) {
                 $translations[] = $transObj;
             }
@@ -160,7 +161,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     public function cleanup()
     {
-        $keysToDelete = $this->db->fetchCol('SELECT `key` FROM ' . $this->getDatabaseTableName() . ' as tbl1 WHERE
+        $keysToDelete = $this->db->fetchFirstColumn('SELECT `key` FROM ' . $this->getDatabaseTableName() . ' as tbl1 WHERE
                (SELECT count(*) FROM ' . $this->getDatabaseTableName() . " WHERE `key` = tbl1.`key` AND (`text` IS NULL OR `text` = ''))
                = (SELECT count(*) FROM " . $this->getDatabaseTableName() . ' WHERE `key` = tbl1.`key`) GROUP BY `key`;');
 
@@ -170,7 +171,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
                 $preparedKeys[] = $this->db->quote($value);
             }
 
-            $this->db->deleteWhere($this->getDatabaseTableName(), '`key` IN (' . implode(',', $preparedKeys) . ')');
+            $this->db->executeStatement('DELETE FROM ' . $this->getDatabaseTableName() . ' WHERE ' . '`key` IN (' . implode(',', $preparedKeys) . ')');
         }
     }
 

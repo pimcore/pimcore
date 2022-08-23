@@ -528,7 +528,7 @@ class SettingsController extends AdminController
                     'color_login_screen' => $values['branding.color_login_screen'],
                     'color_admin_interface' => $values['branding.color_admin_interface'],
                     'color_admin_interface_background' => $values['branding.color_admin_interface_background'],
-                    'login_screen_custom_image' => $values['branding.login_screen_custom_image'],
+                    'login_screen_custom_image' => str_replace('%', '%%', $values['branding.login_screen_custom_image']),
                 ],
         ];
 
@@ -808,7 +808,7 @@ class SettingsController extends AdminController
 
         // public files
         Tool\Storage::get('thumbnail')->deleteDirectory('/');
-        Db::get()->query('TRUNCATE TABLE assets_image_thumbnail_cache');
+        Db::get()->executeQuery('TRUNCATE TABLE assets_image_thumbnail_cache');
 
         Tool\Storage::get('asset_cache')->deleteDirectory('/');
 
@@ -1437,6 +1437,28 @@ class SettingsController extends AdminController
     }
 
     /**
+     * @Route("/video-thumbnail-list", name="pimcore_admin_settings_videothumbnail_list", methods={"GET"})
+     *
+     * @return JsonResponse
+     */
+    public function videoThumbnailListAction(): JsonResponse
+    {
+        $thumbnails = [
+            ['id' => 'pimcore-system-treepreview', 'text' => 'original'],
+        ];
+        $list = new Asset\Video\Thumbnail\Config\Listing();
+
+        foreach ($list->getThumbnails() as $item) {
+            $thumbnails[] = [
+                'id'   => $item->getName(),
+                'text' => $item->getName(),
+            ];
+        }
+
+        return $this->adminJson($thumbnails);
+    }
+
+    /**
      * @Route("/video-thumbnail-add", name="pimcore_admin_settings_videothumbnailadd", methods={"POST"})
      *
      * @param Request $request
@@ -1782,12 +1804,12 @@ class SettingsController extends AdminController
     protected function deleteViews($language, $dbName)
     {
         $db = \Pimcore\Db::get();
-        $views = $db->fetchAll('SHOW FULL TABLES IN ' . $db->quoteIdentifier($dbName) . " WHERE TABLE_TYPE LIKE 'VIEW'");
+        $views = $db->fetchAllAssociative('SHOW FULL TABLES IN ' . $db->quoteIdentifier($dbName) . " WHERE TABLE_TYPE LIKE 'VIEW'");
 
         foreach ($views as $view) {
             if (preg_match('/^object_localized_[0-9]+_' . $language . '$/', $view['Tables_in_' . $dbName])) {
                 $sql = 'DROP VIEW ' . $db->quoteIdentifier($view['Tables_in_' . $dbName]);
-                $db->query($sql);
+                $db->executeQuery($sql);
             }
         }
     }
@@ -1818,6 +1840,10 @@ class SettingsController extends AdminController
                 'appendLog' => true,
                 'enableDebugMode' => true,
             ];
+        } elseif ($adapter instanceof \Pimcore\Web2Print\Processor\HeadlessChrome) {
+            $params = Config::getWeb2PrintConfig();
+            $params = $params->get('headlessChromeSettings');
+            $params = json_decode($params, true);
         }
 
         $responseOptions = [

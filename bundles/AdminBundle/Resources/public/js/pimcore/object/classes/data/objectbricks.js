@@ -68,12 +68,34 @@ pimcore.object.classes.data.objectbricks = Class.create(pimcore.object.classes.d
                 checked: this.datax.border,
             }
         ]);
+
+        if(this.inCustomLayoutEditor) {
+            this.specificPanel.add(new Ext.ux.form.MultiSelect({
+                fieldLabel: t("allowed_bricks"),
+                name: "allowedTypes",
+                value: this.datax.allowedTypes,
+                displayField: "title",
+                valueField: "key",
+                store: Ext.create('Ext.data.JsonStore', {
+                    fields: ['text'],
+                    proxy: {
+                        type: 'ajax',
+                        url: Routing.generate('pimcore_admin_dataobject_class_objectbricklist'),
+                        reader: {
+                            type: 'json',
+                            rootProperty: 'objectbricks'
+                        }
+                    },
+                    autoLoad: true
+                }),
+                width: 600
+            }));
+        }
         
         return this.layout;
     },
 
     isValid: function ($super) {
-
         if(!$super()) {
             return false;
         }
@@ -97,7 +119,8 @@ pimcore.object.classes.data.objectbricks = Class.create(pimcore.object.classes.d
             Ext.apply(this.datax,
                 {
                     maxItems: source.datax.maxItems,
-                    border: source.datax.border
+                    border: source.datax.border,
+                    allowedTypes: source.datax.allowedTypes
                 });
         }
     }

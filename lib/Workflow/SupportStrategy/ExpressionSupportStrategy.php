@@ -65,6 +65,11 @@ class ExpressionSupportStrategy implements WorkflowSupportStrategyInterface
         return $this->expressionService->evaluateExpression($workflow, $subject, $this->expression);
     }
 
+    /**
+     * @param object $subject
+     *
+     * @return bool
+     */
     private function supportsClass($subject)
     {
         if (is_string($this->className)) {

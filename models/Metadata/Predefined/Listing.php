@@ -15,14 +15,23 @@
 
 namespace Pimcore\Model\Metadata\Predefined;
 
+use Pimcore\Model\AbstractModel;
+use Pimcore\Model\Listing\CallableFilterListingInterface;
+use Pimcore\Model\Listing\CallableOrderListingInterface;
+use Pimcore\Model\Listing\Traits\FilterListingTrait;
+use Pimcore\Model\Listing\Traits\OrderListingTrait;
+
 /**
  * @internal
  *
  * @method \Pimcore\Model\Metadata\Predefined\Listing\Dao getDao()
  * @method int getTotalCount()
  */
-class Listing extends \Pimcore\Model\Listing\JsonListing
+class Listing extends AbstractModel implements CallableFilterListingInterface, CallableOrderListingInterface
 {
+    use FilterListingTrait;
+    use OrderListingTrait;
+
     /**
      * @var \Pimcore\Model\Metadata\Predefined[]|null
      */

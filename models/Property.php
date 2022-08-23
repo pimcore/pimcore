@@ -45,7 +45,7 @@ final class Property extends AbstractModel
     protected $ctype;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $cpath;
 
@@ -129,6 +129,8 @@ final class Property extends AbstractModel
     }
 
     /**
+     * enum('document','asset','object')
+     *
      * @return string
      */
     public function getCtype()
@@ -141,7 +143,6 @@ final class Property extends AbstractModel
      */
     public function getData()
     {
-
         // lazy-load data of type asset, document, object
         if (in_array($this->getType(), ['document', 'asset', 'object']) && !$this->data instanceof ElementInterface && is_numeric($this->data)) {
             return Element\Service::getElementById($this->getType(), $this->data);
@@ -159,6 +160,8 @@ final class Property extends AbstractModel
     }
 
     /**
+     * enum('text','document','asset','object','bool','select')
+     *
      * @return string
      */
     public function getType()
@@ -179,6 +182,8 @@ final class Property extends AbstractModel
     }
 
     /**
+     * enum('document','asset','object')
+     *
      * @param string $ctype
      *
      * @return static
@@ -220,6 +225,8 @@ final class Property extends AbstractModel
     }
 
     /**
+     * enum('text','document','asset','object','bool','select')
+     *
      * @param string $type
      *
      * @return static
@@ -232,7 +239,7 @@ final class Property extends AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getCpath()
     {
@@ -258,7 +265,7 @@ final class Property extends AbstractModel
     }
 
     /**
-     * @param string $cpath
+     * @param string|null $cpath
      *
      * @return static
      */

@@ -76,7 +76,7 @@ class LocalizedFieldTest extends ModelTestCase
         $object->save();
 
         //Reload object from db
-        $object = DataObject::getById($object->getId(), true);
+        $object = DataObject::getById($object->getId(), ['force' => true]);
         $loadedFieldcollectionItem = $object->getFieldcollection()->get(0);
 
         //save data for language "de" on same index
@@ -84,7 +84,7 @@ class LocalizedFieldTest extends ModelTestCase
         $object->save();
 
         //Reload object from db
-        $object = DataObject::getById($object->getId(), true);
+        $object = DataObject::getById($object->getId(), ['force' => true]);
         $loadedItem = $object->getFieldcollection()->get(0);
 
         //initial value (en): index 0
@@ -115,7 +115,7 @@ class LocalizedFieldTest extends ModelTestCase
         $object->save();
 
         //check values stored properly
-        $object = DataObject\Unittest::getById($object->getId(), true);
+        $object = DataObject\Unittest::getById($object->getId(), ['force' => true]);
         $this->assertEquals('TestDE', $object->getLinput('de'));
         $this->assertEquals(true, $object->getLcheckbox('de'));
         $this->assertEquals(456, $object->getLnumber('de'));
@@ -126,7 +126,7 @@ class LocalizedFieldTest extends ModelTestCase
         $object->setLnumber(null, 'de');
         $object->save();
 
-        $object = DataObject\Unittest::getById($object->getId(), true);
+        $object = DataObject\Unittest::getById($object->getId(), ['force' => true]);
 
         $this->assertEquals('TestEN', $object->getLinput('de'));
         $this->assertEquals(123, $object->getLnumber('de'));

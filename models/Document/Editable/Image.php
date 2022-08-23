@@ -102,6 +102,15 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     protected $marker = [];
 
     /**
+     * The Thumbnail config of the image
+     *
+     * @internal
+     *
+     * @var string
+     */
+    protected $thumbnail;
+
+    /**
      * {@inheritdoc}
      */
     public function getType()
@@ -124,6 +133,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
             'cropLeft' => $this->cropLeft,
             'hotspots' => $this->hotspots,
             'marker' => $this->marker,
+            'thumbnail' => $this->thumbnail,
         ];
     }
 
@@ -142,6 +152,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
             'cropLeft' => $this->cropLeft,
             'hotspots' => $this->hotspots,
             'marker' => $this->marker,
+            'thumbnail' => $this->thumbnail,
         ];
     }
 
@@ -161,6 +172,15 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
                 foreach ($data as &$element) {
                     if (array_key_exists('data', $element) && is_array($element['data']) && count($element['data']) > 0) {
                         foreach ($element['data'] as &$metaData) {
+                            if ($metaData instanceof Element\Data\MarkerHotspotItem) {
+                                $metaData = get_object_vars($metaData);
+                            }
+
+                            if (in_array($metaData['type'], ['object', 'asset', 'document'])
+                            && $el = Element\Service::getElementById($metaData['type'], $metaData['value'])) {
+                                $metaData['value'] = $el;
+                            }
+
                             if ($metaData['value'] instanceof Element\ElementInterface) {
                                 $metaData['value'] = $metaData['value']->getRealFullPath();
                             }
@@ -174,9 +194,6 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
             $marker = $rewritePath($this->marker);
             $hotspots = $rewritePath($this->hotspots);
 
-            $marker = object2array($marker);
-            $hotspots = object2array($hotspots);
-
             return [
                 'id' => $this->id,
                 'path' => $image->getRealFullPath(),
@@ -188,6 +205,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
                 'cropLeft' => $this->cropLeft,
                 'hotspots' => $hotspots,
                 'marker' => $marker,
+                'thumbnail' => $this->thumbnail,
                 'predefinedDataTemplates' => $this->getConfig()['predefinedDataTemplates'] ?? null,
             ];
         }
@@ -328,6 +346,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         $this->cropLeft = $data['cropLeft'] ?? null;
         $this->marker = $data['marker'] ?? null;
         $this->hotspots = $data['hotspots'] ?? null;
+        $this->thumbnail = $data['thumbnail'] ?? null;
 
         return $this;
     }
@@ -375,6 +394,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
             $this->cropLeft = $data['cropLeft'] ?? null;
             $this->marker = $data['marker'] ?? null;
             $this->hotspots = $data['hotspots'] ?? null;
+            $this->thumbnail = $data['thumbnail'] ?? null;
         }
 
         return $this;
@@ -402,6 +422,14 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     public function getAlt()
     {
         return $this->getText();
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getThumbnailConfig()
+    {
+        return $this->thumbnail;
     }
 
     /**
@@ -544,6 +572,10 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
             foreach ($data as $element) {
                 if (array_key_exists('data', $element) && is_array($element['data']) && count($element['data']) > 0) {
                     foreach ($element['data'] as $metaData) {
+                        if ($metaData instanceof Element\Data\MarkerHotspotItem) {
+                            $metaData = get_object_vars($metaData);
+                        }
+
                         if ($metaData['value'] instanceof Element\ElementInterface) {
                             if (!array_key_exists($metaData['value']->getCacheTag(), $tags)) {
                                 $tags = $metaData['value']->getCacheTags($tags);
@@ -587,6 +619,10 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
             foreach ($data as $element) {
                 if (array_key_exists('data', $element) && is_array($element['data']) && count($element['data']) > 0) {
                     foreach ($element['data'] as $metaData) {
+                        if ($metaData instanceof Element\Data\MarkerHotspotItem) {
+                            $metaData = get_object_vars($metaData);
+                        }
+
                         if ($metaData['value'] instanceof Element\ElementInterface) {
                             $dependencies[$metaData['type'] . '_' . $metaData['value']->getId()] = [
                                 'id' => $metaData['value']->getId(),

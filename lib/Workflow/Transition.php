@@ -25,6 +25,9 @@ class Transition extends \Symfony\Component\Workflow\Transition implements Notes
     use NotesAwareTrait;
     use NotificationTrait;
 
+    /**
+     * @var array
+     */
     private $options;
 
     /**
@@ -41,6 +44,9 @@ class Transition extends \Symfony\Component\Workflow\Transition implements Notes
         $this->options = $options;
     }
 
+    /**
+     * @return array
+     */
     public function getOptions()
     {
         return $this->options;

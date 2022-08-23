@@ -295,16 +295,19 @@ pimcore.bundle.EcommerceFramework.pricing.config.panel = Class.create({
      * delete existing rule
      */
     deleteRule: function (tree, record) {
-        Ext.Ajax.request({
-            url: Routing.generate('pimcore_ecommerceframework_pricing_delete'),
-            method: 'DELETE',
-            params: {
-                id: record.id
-            },
-            success: function () {
-                this.refresh(this.tree.getRootNode());
-            }.bind(this)
-        });
+        pimcore.helpers.deleteConfirm(t('bundle_ecommerce_pricing_rule'), record.data.text, function () {
+            Ext.Ajax.request({
+                url: Routing.generate('pimcore_ecommerceframework_pricing_delete'),
+                method: 'DELETE',
+                params: {
+                    id: record.id
+                },
+                success: function () {
+                    this.refresh(this.tree.getRootNode());
+                }.bind(this)
+            });
+        }.bind(this));
+
     },
 
     /**

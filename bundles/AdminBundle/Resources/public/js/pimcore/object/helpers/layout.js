@@ -35,7 +35,15 @@ pimcore.object.helpers.layout = {
             block: ["panel","tabpanel","accordion","fieldset", "fieldcontainer", "text","region","button","iframe"]
         };
 
-        pimcore.plugin.broker.fireEvent("prepareClassLayoutContextMenu", allowedTypes, source);
+        const prepareClassLayoutContextMenu = new CustomEvent(pimcore.events.prepareClassLayoutContextMenu, {
+            detail: {
+                allowedTypes: allowedTypes,
+                source: source
+            }
+        });
+
+        document.dispatchEvent(prepareClassLayoutContextMenu);
+
         return allowedTypes;
     }
 };

@@ -257,7 +257,6 @@ pimcore.document.tree = Class.create({
                     } else {
                         delete node.data.cls;
                     }
-                    pimcore.elementservice.nodeMoved("document", oldParent, newParent);
                     this.updateOpenDocumentPaths(node);
 
                 }
@@ -930,8 +929,16 @@ pimcore.document.tree = Class.create({
         }
 
         pimcore.helpers.hideRedundantSeparators(menu);
+        
+        const prepareDocumentTreeContextMenu = new CustomEvent(pimcore.events.prepareDocumentTreeContextMenu, {
+            detail: {
+                menu: menu,
+                object: this,
+                record: record
+            }
+        });
 
-        pimcore.plugin.broker.fireEvent("prepareDocumentTreeContextMenu", menu, this, record);
+        document.dispatchEvent(prepareDocumentTreeContextMenu);
 
         menu.showAt(e.pageX+1, e.pageY+1);
     },

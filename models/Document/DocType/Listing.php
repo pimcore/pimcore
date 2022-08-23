@@ -16,13 +16,21 @@
 namespace Pimcore\Model\Document\DocType;
 
 use Pimcore\Model;
+use Pimcore\Model\AbstractModel;
+use Pimcore\Model\Listing\CallableFilterListingInterface;
+use Pimcore\Model\Listing\CallableOrderListingInterface;
+use Pimcore\Model\Listing\Traits\FilterListingTrait;
+use Pimcore\Model\Listing\Traits\OrderListingTrait;
 
 /**
  * @method \Pimcore\Model\Document\DocType\Listing\Dao getDao()
  * @method int getTotalCount()
  */
-class Listing extends Model\Listing\JsonListing
+class Listing extends AbstractModel implements CallableFilterListingInterface, CallableOrderListingInterface
 {
+    use FilterListingTrait;
+    use OrderListingTrait;
+
     /**
      * @internal
      *

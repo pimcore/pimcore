@@ -187,13 +187,13 @@ class GeneralTest extends ModelTestCase
 
         // enable inheritance and set the target
         DataObject::setGetInheritedValues(true);
-        $two = Concrete::getById($two->getId(), true);
+        $two = Concrete::getById($two->getId(), ['force' => true]);
         $two->setRelation($target);
         $two->save();
 
         // disable inheritance and check that the relation has been set on "two"
         DataObject::setGetInheritedValues(false);
-        $two = Concrete::getById($two->getId(), true);
+        $two = Concrete::getById($two->getId(), ['force' => true]);
         $fetchedTarget = $two->getRelation();
         $this->assertTrue($fetchedTarget && $fetchedTarget->getId() == $target->getId(), 'expectected inherited target');
 

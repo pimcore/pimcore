@@ -29,6 +29,12 @@ class OptionsProviderResolver extends ClassResolver
 
     public static $providerCache = [];
 
+    /**
+     * @param string $providerClass
+     * @param int $mode
+     *
+     * @return mixed|null
+     */
     public static function resolveProvider($providerClass, $mode)
     {
         return self::resolve($providerClass, function ($provider) use ($mode) {

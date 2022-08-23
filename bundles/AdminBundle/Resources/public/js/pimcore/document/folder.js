@@ -21,7 +21,15 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
         this.setType("folder");
         this.addLoadingPanel();
 
-        pimcore.plugin.broker.fireEvent("preOpenDocument", this, "folder");
+        const preOpenDocumentFolder = new CustomEvent(pimcore.events.preOpenDocument, {
+            detail: {
+                object: this,
+                type: "folder"
+            }
+        });
+
+        document.dispatchEvent(preOpenDocumentFolder);
+
         this.getData();
     },
 
@@ -107,7 +115,15 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
 
         this.tab.on("afterrender", function (tabId) {
             this.tabPanel.setActiveItem(tabId);
-            pimcore.plugin.broker.fireEvent("postOpenDocument", this, "folder");
+
+            const postOpenDocumentFolder = new CustomEvent(pimcore.events.postOpenDocument, {
+                detail: {
+                    object: this,
+                    type: "folder"
+                }
+            });
+
+            document.dispatchEvent(postOpenDocumentFolder);
         }.bind(this, tabId));
 
         this.removeLoadingPanel();

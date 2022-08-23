@@ -109,7 +109,13 @@ pimcore.asset.helpers.gridTabAbstract = Class.create(pimcore.element.helpers.gri
             context: this
         };
 
-        pimcore.plugin.broker.fireEvent("prepareAssetMetadataGridConfigurator",  eventData);
+        const prepareAssetMetadataGridConfigurator = new CustomEvent(pimcore.events.prepareAssetMetadataGridConfigurator, {
+            detail: {
+                eventData: eventData
+            }
+        });
+
+        document.dispatchEvent(prepareAssetMetadataGridConfigurator);
 
         if (eventData.instance) {
             // everything is handled by the event handler, nothing else to do

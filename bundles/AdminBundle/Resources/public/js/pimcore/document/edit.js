@@ -167,7 +167,7 @@ pimcore.document.edit = Class.create({
         Object.values(this.getEditables()).forEach(editable => {
             let ed = this.frame.Ext.get(editable.getId());
 
-            if(!ed.hasCls("pimcore_editable_inc") && !ed.hasCls("pimcore_editable_areablock")
+            if(ed !== null && !ed.hasCls("pimcore_editable_inc") && !ed.hasCls("pimcore_editable_areablock")
                 && !ed.hasCls("pimcore_editable_block") && !ed.hasCls("pimcore_editable_area")) {
                 if(!this.tagHighlightingActive) {
                     let mask = ed.mask();

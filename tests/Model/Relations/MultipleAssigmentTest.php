@@ -184,7 +184,7 @@ class MultipleAssigmentTest extends ModelTestCase
         \Pimcore::collectGarbage();
 
         //reload data object from database
-        $object = MultipleAssignments::getById($id, true);
+        $object = MultipleAssignments::getById($id, ['force' => true]);
 
         $metaDataList = $object->getMultipleManyToMany();
         $this->checkMultipleAssignmentsOnMultipleManyToMany($metaDataList, 'after loading');
@@ -231,7 +231,7 @@ class MultipleAssigmentTest extends ModelTestCase
         \Pimcore::collectGarbage();
 
         //reload data object from database
-        $object = MultipleAssignments::getById($id, true);
+        $object = MultipleAssignments::getById($id, ['force' => true]);
 
         $metaDataList = $object->getMultipleManyToManyObject();
         $this->checkMultipleAssignmentsOnMultipleManyToMany($metaDataList, 'after loading');

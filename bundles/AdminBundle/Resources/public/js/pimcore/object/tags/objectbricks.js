@@ -87,7 +87,10 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         for (var i = 0; i < this.data.length; i++) {
             if (this.data[i] != null) {
                 this.preventDelete[this.data[i].type] = this.data[i].inherited;
-                this.addBlockElement(i, this.data[i].type, this.data[i], true, this.data[i].title, false);
+
+                if (this.fieldConfig.allowedTypes.length === 0 || this.fieldConfig.allowedTypes.indexOf(this.data[i].type) > -1) {
+                    this.addBlockElement(i, this.data[i].type, this.data[i], true, this.data[i].title, false);
+                }
             }
         }
 
@@ -104,6 +107,10 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
 
                 var elementData = data[i];
                 if (this.addedTypes[elementData.key]) {
+                    continue;
+                }
+
+                if (elementData.leaf === true && this.fieldConfig.allowedTypes.length > 0 && this.fieldConfig.allowedTypes.indexOf(elementData.key) === -1) {
                     continue;
                 }
 
@@ -259,7 +266,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                         // this is especially for localized fields which get aggregated here into one field definition
                         // in the case that there are more than one localized fields in the class definition
                         // see also ClassDefinition::extractDataDefinitions();
-                        if(typeof dataFields[name]["addReferencedField"]){
+                        if (typeof dataFields[name]['addReferencedField'] === 'function') {
                             dataFields[name].addReferencedField(field);
                         }
                     } else {

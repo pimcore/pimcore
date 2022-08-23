@@ -90,18 +90,6 @@ final class Thumbnail
         return $path;
     }
 
-    public function getFileSize(): ?int
-    {
-        $pathReference = $this->getPathReference(false);
-        if ($pathReference['type'] === 'asset') {
-            return $this->asset->getFileSize();
-        } elseif (isset($pathReference['storagePath'])) {
-            return Tool\Storage::get('thumbnail')->fileSize($pathReference['storagePath']);
-        }
-
-        return null;
-    }
-
     /**
      * @param string $eventName
      *

@@ -162,6 +162,5 @@
     "icon": null,
     "labelWidth": 100,
     "labelAlign": "left"
-  },
-  "generateTypeDeclarations": true
+  }
 }

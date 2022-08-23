@@ -210,7 +210,7 @@ class Document extends Url
     /**
      * @param string $name
      *
-     * @return mixed|null
+     * @return mixed
      */
     public function getCustomSetting($name)
     {

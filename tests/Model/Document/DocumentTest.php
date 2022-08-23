@@ -76,9 +76,20 @@ class DocumentTest extends ModelTestCase
         $this->assertFalse($newParent->hasChildren());
     }
 
+    /**
+     * Verifies that asset PHP API version note is saved
+     */
+    public function testSavingVersionNotes()
+    {
+        $versionNote = ['versionNote' => 'a new version of this document'];
+        $this->testPage = TestHelper::createEmptyDocumentPage();
+        $this->testPage->save($versionNote);
+        $this->assertEquals($this->testPage->getLatestVersion(null, true)->getNote(), $versionNote['versionNote']);
+    }
+
     public function reloadPage()
     {
-        $this->testPage = Page::getById($this->testPage->getId(), true);
+        $this->testPage = Page::getById($this->testPage->getId(), ['force' => true]);
     }
 
     public function testCacheChildren()
@@ -139,7 +150,7 @@ class DocumentTest extends ModelTestCase
 
         //auto generated modification date
         $currentTime = time();
-        $document = \Pimcore\Model\Document::getById($document->getId(), true);
+        $document = \Pimcore\Model\Document::getById($document->getId(), ['force' => true]);
         $document->save();
         $this->assertGreaterThanOrEqual($currentTime, $document->getModificationDate(), 'Expected auto assigned modification date');
     }
@@ -159,7 +170,7 @@ class DocumentTest extends ModelTestCase
         $this->assertEquals($userId, $document->getUserModification(), 'Expected custom user modification id');
 
         //auto generated user modification
-        $document = \Pimcore\Model\Document::getById($document->getId(), true);
+        $document = \Pimcore\Model\Document::getById($document->getId(), ['force' => true]);
         $document->save();
         $this->assertEquals(0, $document->getUserModification(), 'Expected auto assigned user modification id');
     }
@@ -183,7 +194,7 @@ class DocumentTest extends ModelTestCase
         $emailDocument->setReplyTo($replyTo);
 
         $emailDocument->save();
-        $emailDocument = Email::getById($emailDocument->getId(), true);
+        $emailDocument = Email::getById($emailDocument->getId(), ['force' => true]);
 
         $this->assertEquals($subject, $emailDocument->getSubject());
         $this->assertEquals($to, $emailDocument->getTo());
@@ -217,20 +228,31 @@ class DocumentTest extends ModelTestCase
         // transform to child
         $sibling->setParentId($this->testPage->getId());
         $sibling->save();
-        $child = Page::getById($sibling->getId(), true);
+        $child = Page::getById($sibling->getId(), ['force' => true]);
         // editable should still be null as no master document is set
 
         $childEditable = $child->getEditable('headline');
         $this->assertNull($childEditable);
 
         // set master document
-        $child->setContentMasterDocumentId($this->testPage->getId());
+        $child->setContentMasterDocumentId($this->testPage->getId(), true);
         $child->save();
-        $child = Page::getById($child->getId(), true);
+        $child = Page::getById($child->getId(), ['force' => true]);
 
         // now the value should get inherited
         $childEditable = $child->getEditable('headline');
         $this->assertEquals('test', $childEditable->getValue());
+
+        // Don't set the master document if the document is already a part of the master document chain
+        $testFirstPage = TestHelper::createEmptyDocumentPage();
+        $testSecondPage = TestHelper::createEmptyDocumentPage();
+        $testFirstPage->setContentMasterDocumentId($testSecondPage->getId(), true);
+        $testFirstPage->setPublished(true);
+        $testFirstPage->save();
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('This document is already part of the master document chain, please choose a different one.');
+        $testSecondPage->setContentMasterDocumentId($testFirstPage->getId(), true);
     }
 
     public function testLink()
@@ -247,6 +269,28 @@ class DocumentTest extends ModelTestCase
         $linkDocument = Link::getById($linkDocument->getId());
         $newTarget = $linkDocument->getElement();
         $this->assertEquals($target->getId(), $newTarget->getId());
+    }
+
+    public function testLinkItself()
+    {
+        /** @var Link $linkDocument */
+        $linkDocument = TestHelper::createEmptyDocument('', true, true, '\\Pimcore\\Model\\Document\\Link');
+        $linkDocument->setInternalType('document');
+        $linkDocument->setInternal(1);
+        $linkDocument->setLinktype('internal');
+        $linkDocument->save();
+
+        $this->assertEquals(1, $linkDocument->getInternal());
+
+        //Set the same internal target id as itself
+        codecept_debug('[WARNING] Testing document/link circular reference, if it is not progressing from here, please stop the tests and fix the code');
+        $linkDocument->setInternal($linkDocument->getId());
+        $linkDocument->save();
+
+        $linkDocument = Link::getById($linkDocument->getId());
+
+        // when trying to set the target id as itself, it silently logs and saves internal ID as NULL
+        $this->assertNull($linkDocument->getInternal());
     }
 
     public function testSetGetChildren()
@@ -269,6 +313,7 @@ class DocumentTest extends ModelTestCase
 
         $document->setEditable($input);
 
+        $this->buildSession();
         ElementService::saveElementToSession($document);
         $loadedDocument = Service::getElementFromSession('document', $document->getId());
 

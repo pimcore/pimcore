@@ -80,7 +80,7 @@ class IndexUpdateService
     {
         $qb = $this->createBasicStoreTableSelectQuery($storeTableName, $tenantNameFilterList);
         $qb->andWhere('in_preparation_queue = 1');
-        $rows = $qb->execute()->fetchAll();
+        $rows = $qb->execute()->fetchAllAssociative();
 
         $result = [];
 
@@ -135,7 +135,7 @@ class IndexUpdateService
     {
         $qb = $this->createBasicStoreTableSelectQuery($storeTableName, $tenantNameFilterList);
         $qb->andWhere('crc_current != crc_index OR ISNULL(crc_index)');
-        $rows = $qb->execute()->fetchAll();
+        $rows = $qb->execute()->fetchAllAssociative();
 
         $result = [];
         foreach ($rows as $row) {
@@ -252,7 +252,7 @@ class IndexUpdateService
             $qb->andWhere(sprintf('tenant in(%s)', implode(',', array_map(function ($str) {
                 return sprintf("'%s'", $str);
             },
-                    $tenantNameFilterList))
+                $tenantNameFilterList))
             ));
         }
 
@@ -281,7 +281,7 @@ class IndexUpdateService
             $qb->andWhere(sprintf('tenant in(%s)', implode(',', array_map(function ($str) {
                 return sprintf("'%s'", $str);
             },
-                    $tenantNameFilterList))
+                $tenantNameFilterList))
             ));
         }
 

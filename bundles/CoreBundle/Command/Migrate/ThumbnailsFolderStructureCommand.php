@@ -38,7 +38,7 @@ class ThumbnailsFolderStructureCommand extends AbstractCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $thumbnailStorage = Storage::get('thumbnail');
 

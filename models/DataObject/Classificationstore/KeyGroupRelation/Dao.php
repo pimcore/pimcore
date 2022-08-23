@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\Exception\NotFoundException;
@@ -40,7 +41,7 @@ class Dao extends AbstractDao
         $this->model->setKeyId($keyId);
         $this->model->setGroupId($groupId);
 
-        $data = $this->db->fetchRow(
+        $data = $this->db->fetchAssociative(
             sprintf(
                 'SELECT * FROM `%1$s` LEFT JOIN `%2$s` ON `%1$s`.`keyId` = `%2$s`.`id` WHERE `%1$s`.`keyId` = ? AND `%1$s`.`groupId` = ?',
                 self::TABLE_NAME_RELATIONS,
@@ -95,6 +96,6 @@ class Dao extends AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate(self::TABLE_NAME_RELATIONS, $data);
+        Helper::insertOrUpdate($this->db, self::TABLE_NAME_RELATIONS, $data);
     }
 }

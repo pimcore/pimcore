@@ -459,5 +459,159 @@ pimcore.settings.videothumbnail.items = {
         });
 
         return item;
+    },
+
+    itemCut: function (panel, data, getName) {
+
+        var niceName = t("cut");
+        if (typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if (typeof data == "undefined") {
+            data = {
+                start: '00:00:00',
+                duration: '00:00:00'
+            };
+        }
+        var myId = Ext.id();
+
+        var item = new Ext.form.FormPanel({
+            id: myId,
+            style: "margin-top: 10px",
+            border: true,
+            bodyStyle: "padding: 10px;",
+            tbar: this.getTopBar(niceName, myId, panel),
+            items: [{
+                xtype: 'textfield',
+                name: "start",
+                fieldLabel: t("start"),
+                width: 250,
+                value: data.start,
+                regex: /^\d*:?[0-5]\d:?[0-5]\d\.?\d*$/,
+                emptyText: 'HH:MM:SS.MS'
+            }, {
+                xtype: 'textfield',
+                name: "duration",
+                fieldLabel: t("duration"),
+                width: 250,
+                value: data.duration,
+                regex: /^\d*:?[0-5]\d:?[0-5]\d\.?\d*$/,
+                emptyText: 'HH:MM:SS.MS'
+            }, {
+                xtype: "hidden",
+                name: "type",
+                value: "cut"
+            }]
+        });
+
+        return item;
+    },
+
+    itemColorChannelMixer: function (panel, data, getName) {
+
+        var niceName = t("colorChannelMixer");
+        if (typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if (typeof data == "undefined") {
+            data = { effect: 'bw' };
+        }
+        var myId = Ext.id();
+
+        var item = new Ext.form.FormPanel({
+            id: myId,
+            style: "margin-top: 10px",
+            border: true,
+            bodyStyle: "padding: 10px;",
+            tbar: this.getTopBar(niceName, myId, panel),
+            items: [{
+                xtype: 'combobox',
+                name: "effect",
+                fieldLabel: t("effect"),
+                width: 450,
+                value: data.effect,
+                store: [
+                    ['.9:0:0:0:0:1.1:0:0:0:0:1:0:0:0:0:1', 'Cold'],
+                    ['.3:.4:.3:0:.3:.4:.3:0:.3:.4:.3', 'Grayscale'],
+                    ['.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131', 'Sepia'],
+                ],
+                required: true
+            }, {
+                xtype: "hidden",
+                name: "type",
+                value: "colorChannelMixer"
+            }]
+        });
+
+        return item;
+    },
+
+    itemMute: function (panel, data, getName) {
+
+        var niceName = t("mute");
+        if (typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if (typeof data == "undefined") {
+            data = {};
+        }
+        var myId = Ext.id();
+
+        var item = new Ext.form.FormPanel({
+            id: myId,
+            style: "margin-top: 10px",
+            border: true,
+            bodyStyle: "padding: 10px;",
+            tbar: this.getTopBar(niceName, myId, panel),
+            items: [{
+                xtype: 'container',
+                html: t('this_filter_has_no_settings')
+            }, {
+                xtype: "hidden",
+                name: "type",
+                value: "mute"
+            }]
+        });
+
+        return item;
+    },
+
+    itemSetFramerate: function (panel, data, getName) {
+
+        var niceName = t("setframerate");
+        if (typeof getName != "undefined" && getName) {
+            return niceName;
+        }
+
+        if (typeof data == "undefined") {
+            data = { fps: 1 };
+        }
+        var myId = Ext.id();
+
+        var item = new Ext.form.FormPanel({
+            id: myId,
+            style: "margin-top: 10px",
+            border: true,
+            bodyStyle: "padding: 10px;",
+            tbar: this.getTopBar(niceName, myId, panel),
+            items: [{
+                xtype: 'numberfield',
+                name: "fps",
+                fieldLabel: t("fps"),
+                minValue: 1,
+                maxValue: 60,
+                width: 250,
+                value: data.fps
+            }, {
+                xtype: "hidden",
+                name: "type",
+                value: "setFramerate"
+            }]
+        });
+
+        return item;
     }
-};
+}

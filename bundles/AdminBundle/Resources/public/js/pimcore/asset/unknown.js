@@ -21,7 +21,15 @@ pimcore.asset.unknown = Class.create(pimcore.asset.asset, {
         this.setType("unknown");
         this.addLoadingPanel();
 
-        pimcore.plugin.broker.fireEvent("preOpenAsset", this, "unknown");
+        const preOpenAssetUnknown = new CustomEvent(pimcore.events.preOpenAsset, {
+            detail: {
+                object: this,
+                type: "unknown"
+            }
+        });
+
+        document.dispatchEvent(preOpenAssetUnknown);
+
 
         var user = pimcore.globalmanager.get("user");
 

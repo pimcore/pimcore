@@ -24,7 +24,7 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Dao getDao()
  */
-class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
+class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface, ObjectAwareFieldInterface
 {
     use Model\Element\Traits\DirtyIndicatorTrait;
 

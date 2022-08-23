@@ -15,32 +15,21 @@
 
 namespace Pimcore;
 
-use PackageVersions\Versions;
+use Composer\InstalledVersions;
 
 /**
  * @internal
  */
 final class Version
 {
-    const PART_NUMBER = 0;
-
-    const PART_HASH = 1;
+    const PACKAGE_NAME = 'pimcore/pimcore';
 
     /**
      * @return string
      */
     public static function getVersion()
     {
-        $version = self::getVersionPart(self::PART_NUMBER);
-
-        return $version;
-    }
-
-    protected static function getVersionPart($part = self::PART_NUMBER)
-    {
-        $parts = explode('@', Versions::getVersion('pimcore/pimcore'));
-
-        return $parts[$part];
+        return InstalledVersions::getPrettyVersion(self::PACKAGE_NAME);
     }
 
     /**
@@ -48,8 +37,6 @@ final class Version
      */
     public static function getRevision()
     {
-        $hash = self::getVersionPart(self::PART_HASH);
-
-        return $hash;
+        return InstalledVersions::getReference(self::PACKAGE_NAME);
     }
 }

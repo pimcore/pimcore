@@ -39,7 +39,14 @@ pimcore.perspective = Class.create({
             key: key,
             context: context
         }
-        pimcore.plugin.broker.fireEvent("preCreateMenuOption", eventData);
+
+        const preCreateMenuOption = new CustomEvent(pimcore.events.preCreateMenuOption, {
+            detail: {
+                eventData: eventData
+            }
+        });
+
+        document.dispatchEvent(preCreateMenuOption);
 
         if (typeof eventData.isAllowed !== "undefined") {
             return eventData.isAllowed;

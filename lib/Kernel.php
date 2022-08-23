@@ -21,7 +21,7 @@ use FOS\JsRoutingBundle\FOSJsRoutingBundle;
 use League\FlysystemBundle\FlysystemBundle;
 use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
-use Pimcore\Cache\Runtime;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config\BundleConfigLocator;
 use Pimcore\Event\SystemEvents;
 use Pimcore\Extension\Bundle\Config\StateConfig;
@@ -59,6 +59,8 @@ abstract class Kernel extends SymfonyKernel
     }
 
     /**
+     * @deprecated will be removed in Pimcore 11
+     *
      * @var Extension\Config
      */
     protected $extensionConfig;
@@ -229,6 +231,13 @@ abstract class Kernel extends SymfonyKernel
         }
     }
 
+    /**
+     * @param ContainerBuilder $container
+     *
+     * @return void
+     *
+     * @deprecated Remove in Pimcore 11
+     */
     private function registerExtensionConfigFileResources(ContainerBuilder $container)
     {
         $filenames = [
@@ -296,7 +305,7 @@ abstract class Kernel extends SymfonyKernel
         parent::initializeContainer();
 
         // initialize runtime cache (defined as synthetic service)
-        Runtime::getInstance();
+        RuntimeCache::getInstance();
 
         // set the extension config on the container
         $this->getContainer()->set(Extension\Config::class, $this->extensionConfig);
@@ -418,6 +427,8 @@ abstract class Kernel extends SymfonyKernel
     /**
      * Registers bundles enabled via extension manager
      *
+     * @deprecated will be removed in Pimcore 11
+     *
      * @param BundleCollection $collection
      */
     protected function registerExtensionManagerBundles(BundleCollection $collection)
@@ -486,5 +497,25 @@ abstract class Kernel extends SymfonyKernel
         if (!$defaultTimezone) {
             date_default_timezone_set('UTC'); // UTC -> default timezone
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function locateResource(string $name)
+    {
+        // BC layer for supporting both presta/sitemap-bundle": "^2.1 || ^3.2
+        // @TODO to be removed in Pimcore 11
+        if ($name === '@PrestaSitemapBundle/Resources/config/routing.yml') {
+            try {
+                // try the new location of v3 first, as most probably this is used
+                return parent::locateResource('@PrestaSitemapBundle/config/routing.yml');
+            } catch (\InvalidArgumentException $e) {
+                // if the file doesnt exist in the new location, try the v2 location
+                return parent::locateResource($name);
+            }
+        }
+
+        return parent::locateResource($name);
     }
 }

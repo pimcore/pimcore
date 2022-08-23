@@ -86,6 +86,11 @@ class OrderManager implements OrderManagerInterface
     /**
      * @var string
      */
+    protected $customerClassName;
+
+    /**
+     * @var string
+     */
     protected $orderClassName;
 
     /**
@@ -121,6 +126,7 @@ class OrderManager implements OrderManagerInterface
 
     protected function processOptions(array $options)
     {
+        $this->customerClassName = $options['customer_class'];
         $this->orderClassName = $options['order_class'];
         $this->orderItemClassName = $options['order_item_class'];
         $this->options = $options;
@@ -128,11 +134,12 @@ class OrderManager implements OrderManagerInterface
 
     protected function configureOptions(OptionsResolver $resolver)
     {
-        $classProperties = ['order_class', 'order_item_class', 'list_class', 'list_item_class'];
+        $classProperties = ['customer_class', 'order_class', 'order_item_class', 'list_class', 'list_item_class'];
 
         $resolver->setRequired($classProperties);
 
         $resolver->setDefaults([
+            'customer_class' => '\\Pimcore\\Model\\DataObject\\Customer',
             'order_class' => '\\Pimcore\\Model\\DataObject\\OnlineShopOrder',
             'order_item_class' => '\\Pimcore\\Model\\DataObject\\OnlineShopOrderItem',
             'list_class' => Listing::class,
@@ -565,6 +572,22 @@ class OrderManager implements OrderManagerInterface
     /**
      * @param string $classname
      */
+    public function setCustomerClass($classname)
+    {
+        $this->customerClassName = $classname;
+    }
+
+    /**
+     * @return string $classname
+     */
+    protected function getCustomerClassName()
+    {
+        return $this->customerClassName;
+    }
+
+    /**
+     * @param string $classname
+     */
     public function setOrderClass($classname)
     {
         $this->orderClassName = $classname;
@@ -770,8 +793,9 @@ class OrderManager implements OrderManagerInterface
     protected function setCurrentCustomerToOrder(AbstractOrder $order)
     {
         // sets customer to order - if available
-        if (@Tool::classExists('\\Pimcore\\Model\\DataObject\\Customer')) {
-            $customer = \Pimcore\Model\DataObject\Customer::getById($this->environment->getCurrentUserId());
+        $customerClassName = $this->getCustomerClassName();
+        if (@Tool::classExists($customerClassName)) {
+            $customer = $customerClassName::getById($this->environment->getCurrentUserId());
             $order->setCustomer($customer);
         }
 

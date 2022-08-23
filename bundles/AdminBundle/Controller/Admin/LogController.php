@@ -15,12 +15,13 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Controller\KernelControllerEventInterface;
-use Pimcore\Db;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
+use Pimcore\Tool\Storage;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -51,7 +52,7 @@ class LogController extends AdminController implements KernelControllerEventInte
      *
      * @return JsonResponse
      */
-    public function showAction(Request $request, Db\ConnectionInterface $db)
+    public function showAction(Request $request, Connection $db)
     {
         $qb = $db->createQueryBuilder();
         $qb
@@ -85,7 +86,7 @@ class LogController extends AdminController implements KernelControllerEventInte
             }
 
             $qb->andWhere($qb->expr()->in('priority', ':priority'));
-            $qb->setParameter('priority', $levels, Db\Connection::PARAM_STR_ARRAY);
+            $qb->setParameter('priority', $levels, Connection::PARAM_STR_ARRAY);
         }
 
         if ($fromDate = $this->parseDateObject($request->get('fromDate'), $request->get('fromTime'))) {
@@ -122,7 +123,7 @@ class LogController extends AdminController implements KernelControllerEventInte
         $total = (int) $total['count'];
 
         $stmt = $qb->execute();
-        $result = $stmt->fetchAll();
+        $result = $stmt->fetchAllAssociative();
 
         $logEntries = [];
         foreach ($result as $row) {
@@ -237,35 +238,48 @@ class LogController extends AdminController implements KernelControllerEventInte
     public function showFileObjectAction(Request $request)
     {
         $filePath = $request->get('filePath');
+        $storage = Storage::get('application_log');
 
-        if (!filter_var($filePath, FILTER_VALIDATE_URL)) {
-            if (!file_exists($filePath)) {
-                $filePath = PIMCORE_PROJECT_ROOT.DIRECTORY_SEPARATOR.$filePath;
-            }
-            $filePath = realpath($filePath);
-            $fileObjectPath = realpath(PIMCORE_LOG_FILEOBJECT_DIRECTORY);
-        } else {
-            $fileObjectPath = PIMCORE_LOG_FILEOBJECT_DIRECTORY;
-        }
-
-        if (!str_starts_with($filePath, $fileObjectPath)) {
-            throw new AccessDeniedHttpException('Accessing file out of scope');
-        }
-
-        if (file_exists($filePath)) {
+        if ($storage->fileExists($filePath)) {
+            $fileData = $storage->readStream($filePath);
             $response = new StreamedResponse(
-                static function () use ($filePath) {
-                    $handle = fopen($filePath, 'rb');
-                    fpassthru($handle);
-                    fclose($handle);
+                static function () use ($fileData) {
+                    echo stream_get_contents($fileData);
                 }
             );
             $response->headers->set('Content-Type', 'text/plain');
         } else {
-            $response = new Response();
-            $response->headers->set('Content-Type', 'text/plain');
-            $response->setContent('Path `'.$filePath.'` not found.');
-            $response->setStatusCode(404);
+            // Fallback to local path when file is not found in flysystem that might still be using the constant
+
+            if (!filter_var($filePath, FILTER_VALIDATE_URL)) {
+                if (!file_exists($filePath)) {
+                    $filePath = PIMCORE_PROJECT_ROOT.DIRECTORY_SEPARATOR.$filePath;
+                }
+                $filePath = realpath($filePath);
+                $fileObjectPath = realpath(PIMCORE_LOG_FILEOBJECT_DIRECTORY);
+            } else {
+                $fileObjectPath = PIMCORE_LOG_FILEOBJECT_DIRECTORY;
+            }
+
+            if (!str_starts_with($filePath, $fileObjectPath)) {
+                throw new AccessDeniedHttpException('Accessing file out of scope');
+            }
+
+            if (file_exists($filePath)) {
+                $response = new StreamedResponse(
+                    static function () use ($filePath) {
+                        $handle = fopen($filePath, 'rb');
+                        fpassthru($handle);
+                        fclose($handle);
+                    }
+                );
+                $response->headers->set('Content-Type', 'text/plain');
+            } else {
+                $response = new Response();
+                $response->headers->set('Content-Type', 'text/plain');
+                $response->setContent('Path `'.$filePath.'` not found.');
+                $response->setStatusCode(404);
+            }
         }
 
         return $response;

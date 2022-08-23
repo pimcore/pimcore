@@ -182,6 +182,9 @@ class ThumbnailsImageCommand extends AbstractCommand
             $thumbnail = $image->getThumbnail($thumbnailConfig);
             $path = $thumbnail->getPath(false);
 
+            // triggers fetching the thumbnail info and updating the asset cache table if width or height are not in the cache
+            $thumbnail->getDimensions();
+
             if ($output->isVerbose()) {
                 $output->writeln(
                     sprintf(

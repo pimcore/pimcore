@@ -122,7 +122,6 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         $cacheKey = null;
         $cacheConfig = \Pimcore\Tool\Frontend::isOutputCacheEnabled();
         if ((isset($params['cache']) && $params['cache'] === true) || $cacheConfig) {
-
             // cleanup params to avoid serializing Element\ElementInterface objects
             $cacheParams = $params;
             array_walk($cacheParams, function (&$value, $key) {

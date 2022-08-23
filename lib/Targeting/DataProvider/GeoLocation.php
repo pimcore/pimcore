@@ -143,6 +143,8 @@ class GeoLocation implements DataProviderInterface
                 $this->logger->error((string) $e);
             }
         }
+
+        return null;
     }
 
     private function loadGeoIpData(VisitorInfo $visitorInfo)

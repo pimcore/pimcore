@@ -94,7 +94,7 @@ class Xliff12Escaper
             $els = $xml->filter('bpt, ept, ph');
             /** @var \DOMElement $el */
             foreach ($els as $el) {
-                $content = html_entity_decode($el->textContent, null, 'UTF-8');
+                $content = html_entity_decode($el->textContent, ENT_COMPAT, 'UTF-8');
                 $el->ownerDocument->textContent = $content;
             }
             $content = $xml->text();

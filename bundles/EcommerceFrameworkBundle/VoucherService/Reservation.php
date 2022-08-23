@@ -130,7 +130,7 @@ class Reservation extends AbstractModel
         }
 
         try {
-            $db->query($query, $params);
+            $db->executeQuery($query, $params);
 
             return true;
         } catch (\Exception $e) {
@@ -202,7 +202,7 @@ class Reservation extends AbstractModel
         $query = 'SELECT COUNT(*) FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation\Dao::TABLE_NAME . ' WHERE token = ? ';
 
         try {
-            $count = $db->fetchOne($query, $code);
+            $count = $db->fetchOne($query, [$code]);
 
             return (int)$count;
         } catch (\Exception $e) {

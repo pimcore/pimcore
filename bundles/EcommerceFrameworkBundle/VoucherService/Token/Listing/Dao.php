@@ -28,7 +28,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
     {
         $tokens = [];
 
-        $unitIds = $this->db->fetchAll('SELECT * FROM ' .
+        $unitIds = $this->db->fetchAllAssociative('SELECT * FROM ' .
             \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME .
             $this->getCondition() .
             $this->getOrder() .

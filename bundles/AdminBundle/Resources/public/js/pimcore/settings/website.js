@@ -197,7 +197,10 @@ pimcore.settings.website = Class.create({
                 tooltip:t('delete'),
                 icon:"/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                 handler:function (grid, rowIndex) {
-                    grid.getStore().removeAt(rowIndex);
+                    let data = grid.getStore().getAt(rowIndex);
+                    pimcore.helpers.deleteConfirm(t('website_settings'), data.data.name, function () {
+                        grid.getStore().removeAt(rowIndex);
+                    }.bind(this));
                 }.bind(this)
             }
         ];

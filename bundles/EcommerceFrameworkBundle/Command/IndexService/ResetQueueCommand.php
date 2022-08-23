@@ -44,7 +44,7 @@ class ResetQueueCommand extends AbstractIndexServiceCommand
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if (!($tenant = $input->getOption('tenant'))) {
             throw new \Exception('No tenant given');
@@ -64,7 +64,6 @@ class ResetQueueCommand extends AbstractIndexServiceCommand
         }
 
         foreach ($tenants as $tenant) {
-
             /** @var ProductCentricBatchProcessingWorker $worker */
             $worker = $updater->getTenantWorker($tenant);
 
