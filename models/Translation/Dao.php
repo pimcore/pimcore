@@ -96,7 +96,7 @@ class Dao extends Model\Dao\AbstractDao
             if (is_array($this->model->getTranslations())) {
                 foreach ($this->model->getTranslations() as $language => $text) {
                     if (count($editableLanguages) && !in_array($language, $editableLanguages)) {
-                        Logger::warning(sprintf('User %s not allowed to edit %e translation', $user->getUsername(), $language));
+                        Logger::warning(sprintf('User %s not allowed to edit %s translation', $user->getUsername(), $language)); // @phpstan-ignore-line
 
                         continue;
                     }
