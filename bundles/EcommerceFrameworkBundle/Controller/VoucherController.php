@@ -210,7 +210,6 @@ class VoucherController extends FrontendController implements KernelControllerEv
             throw $this->createNotFoundException('Could not get voucher series, probably you did not provide a correct id.');
         }
         if ($tokenManager = $onlineShopVoucherSeries->getTokenManager()) {
-
             // Prepare cleanUp parameter array.
             $params = ['id' => $request->get('id')]; // $request->query->all();
             $request->get('usage') ? $params['usage'] = $request->get('usage') : '';

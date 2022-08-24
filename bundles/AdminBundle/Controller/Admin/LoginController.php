@@ -286,7 +286,6 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         $params = $this->buildLoginPageViewParams($config);
 
         if ($request->hasSession()) {
-
             // we have to call the check here manually, because BruteforceProtectionListener uses the 'username' from the request
             $bruteforceProtectionHandler?->checkProtection($this->getAdminUser()->getName(), $request);
 

@@ -729,7 +729,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
             $maxRetries = 5;
             for ($retries = 0; $retries < $maxRetries; $retries++) {
-
                 // be sure that unpublished objects in relations are saved also in frontend mode, eg. in importers, ...
                 $hideUnpublishedBackup = self::getHideUnpublished();
                 self::setHideUnpublished(false);
@@ -849,7 +848,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     {
         // set path
         if ($this->getId() != 1) { // not for the root node
-
             if (!Element\Service::isValidKey($this->getKey(), 'object')) {
                 throw new \Exception('invalid key for object with id [ '.$this->getId().' ] key is: [' . $this->getKey() . ']');
             }
@@ -1186,7 +1184,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public function __call($method, $args)
     {
-
         // compatibility mode (they do not have any set_oXyz() methods anymore)
         if (preg_match('/^(get|set)o_/i', $method)) {
             $newMethod = preg_replace('/^(get|set)o_/i', '$1', $method);

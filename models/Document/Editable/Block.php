@@ -127,7 +127,6 @@ class Block extends Model\Document\Editable implements BlockInterface
         }
 
         if ($this->getEditmode() && !$this->isIgnoreEditmodeIndices()) {
-
             // yeah, I know the following is f******* crazy :D
             $this->current = 0;
             $indicesBackup = $this->indices;
