@@ -56,7 +56,9 @@ class Service
     public static function generateClassDefinitionJson($class)
     {
         $class = clone $class;
-        self::removeDynamicOptionsFromLayoutDefinition($class->layoutDefinitions);
+        if($class->layoutDefinitions) {
+            self::removeDynamicOptionsFromLayoutDefinition($class->layoutDefinitions);
+        }
 
         self::setDoRemoveDynamicOptions(true);
         $data = json_decode(json_encode($class));
