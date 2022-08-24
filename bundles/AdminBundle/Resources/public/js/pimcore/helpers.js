@@ -2001,7 +2001,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
 
 pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
 
-    const allowedTypes = data.allowedTypes;
+    const allowedTypes = data.allowedTypes || [];
     var window = null;
     var form = null;
     var fieldPath = new Ext.form.TextField({
