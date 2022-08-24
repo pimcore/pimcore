@@ -71,8 +71,9 @@ class ClassDefinitionManager
                     $changes[] = [$class->getName(), $class->getId(), self::SAVED];
                     $existingClass->save(false);
                 } else {
-                    $changes[] = [$class->getName(), $class->getId(), self::CREATED];
+                    $class->setId('');
                     $class->save(false);
+                    $changes[] = [$class->getName(), $class->getId(), self::CREATED];
                 }
             }
         }
