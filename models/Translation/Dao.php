@@ -85,8 +85,12 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->updateModificationInfos();
 
-        $user = User::getById($this->model->getUserModification());
-        $editableLanguages = $user instanceof User ? $user->getAllowedLanguagesForEditingWebsiteTranslations() : [];
+        $editableLanguages = [];
+        if ($this->model->getDomain() != Model\Translation::DOMAIN_ADMIN) {
+            if ($user = User::getById($this->model->getUserModification())) {
+                $editableLanguages = $user->getAllowedLanguagesForEditingWebsiteTranslations();
+            }
+        }
 
         if ($this->model->getKey() !== '') {
             if (is_array($this->model->getTranslations())) {
@@ -104,6 +108,8 @@ class Dao extends Model\Dao\AbstractDao
                         'text' => $text,
                         'modificationDate' => $this->model->getModificationDate(),
                         'creationDate' => $this->model->getCreationDate(),
+                        'userOwner' => $this->model->getUserOwner(),
+                        'userModification' => $this->model->getUserModification()
                     ];
                     Helper::insertOrUpdate($this->db, $this->getDatabaseTableName(), $data);
                 }
