@@ -34,7 +34,7 @@ final class WebsiteConfigValueResolver implements ArgumentValueResolverInterface
      */
     public function supports(Request $request, ArgumentMetadata $argument): bool
     {
-        return $argument->getType() === "array" && $argument->getName() === 'websiteConfig';
+        return $argument->getType() === 'array' && $argument->getName() === 'websiteConfig';
     }
 
     /**
