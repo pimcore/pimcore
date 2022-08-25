@@ -105,7 +105,7 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
         if ($request->get('task') !== self::TASK_SAVE) {
             //check, if to cleanup existing elements of document
             $config = Config::getWeb2PrintConfig();
-            if ($config->get('generalDocumentSaveMode') == 'cleanup') {
+            if ($config['generalDocumentSaveMode'] == 'cleanup') {
                 $page->setEditables([]);
             }
         }

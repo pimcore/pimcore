@@ -49,9 +49,9 @@ class Dao extends Model\Element\Dao
      */
     public function getById($id)
     {
-        $data = $this->db->fetchRow("SELECT assets.*, tree_locks.locked FROM assets
+        $data = $this->db->fetchAssociative("SELECT assets.*, tree_locks.locked FROM assets
             LEFT JOIN tree_locks ON assets.id = tree_locks.id AND tree_locks.type = 'asset'
-                WHERE assets.id = ?", $id);
+                WHERE assets.id = ?", [$id]);
 
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
@@ -94,7 +94,7 @@ class Dao extends Model\Element\Dao
     public function getByPath($path)
     {
         $params = $this->extractKeyAndPath($path);
-        $data = $this->db->fetchRow('SELECT id FROM assets WHERE path = :path AND `filename` = :key', $params);
+        $data = $this->db->fetchAssociative('SELECT id FROM assets WHERE path = :path AND `filename` = :key', $params);
 
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
@@ -203,7 +203,7 @@ class Dao extends Model\Element\Dao
     public function updateChildPaths($oldPath)
     {
         //get assets to empty their cache
-        $assets = $this->db->fetchCol('SELECT id FROM assets WHERE path LIKE ' . $this->db->quote(Helper::escapeLike($oldPath) . '%'));
+        $assets = $this->db->fetchFirstColumn('SELECT id FROM assets WHERE path LIKE ' . $this->db->quote(Helper::escapeLike($oldPath) . '%'));
 
         $userId = '0';
         if ($user = \Pimcore\Tool\Admin::getCurrentUser()) {
@@ -443,8 +443,8 @@ class Dao extends Model\Element\Dao
      */
     public function unlockPropagate()
     {
-        $lockIds = $this->db->fetchCol('SELECT id from assets WHERE path LIKE ' . $this->db->quote(Helper::escapeLike($this->model->getRealFullPath()) . '/%') . ' OR id = ' . $this->model->getId());
-        $this->db->deleteWhere('tree_locks', "type = 'asset' AND id IN (" . implode(',', $lockIds) . ')');
+        $lockIds = $this->db->fetchFirstColumn('SELECT id from assets WHERE path LIKE ' . $this->db->quote(Helper::escapeLike($this->model->getRealFullPath()) . '/%') . ' OR id = ' . $this->model->getId());
+        $this->db->executeQuery("DELETE FROM tree_locks WHERE type = 'asset' AND id IN (" . implode(',', $lockIds) . ')');
 
         return $lockIds;
     }
@@ -537,7 +537,7 @@ class Dao extends Model\Element\Dao
      */
     public function __isBasedOnLatestData()
     {
-        $data = $this->db->fetchRow('SELECT modificationDate, versionCount from assets WHERE id = ?', [$this->model->getId()]);
+        $data = $this->db->fetchAssociative('SELECT modificationDate, versionCount from assets WHERE id = ?', [$this->model->getId()]);
         if ($data['modificationDate'] == $this->model->__getDataVersionTimestamp() && $data['versionCount'] == $this->model->getVersionCount()) {
             return true;
         }

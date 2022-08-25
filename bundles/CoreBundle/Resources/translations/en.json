@@ -777,7 +777,6 @@
     "bundle_ecommerce_pricing_config_condition_cart_amount": "Cart amount",
     "bundle_ecommerce_pricing_config_condition_products": "Products",
     "category": "Category",
-    "bundle_ecommerce_pricing_config_condition_token": "Token",
     "bundle_ecommerce_pricing_config_condition_sales": "Sales",
     "bundle_ecommerce_pricing_config_condition_sold": "Sold",
     "bundle_ecommerce_pricing_config_condition_sold_count": "Count",

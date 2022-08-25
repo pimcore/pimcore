@@ -145,7 +145,7 @@ final class Config
                 'treeContextMenu' => [
                     'document' => [
                         'items' => [
-                            'addPrintPage' => \Pimcore\Config::getWeb2PrintConfig()->get('enableInDefaultView') ? true : false, // hide add print documents by default
+                            'addPrintPage' => \Pimcore\Config::getWeb2PrintConfig()['enableInDefaultView'] ? true : false, // hide add print documents by default
                         ],
                     ],
                 ],
