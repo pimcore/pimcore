@@ -490,8 +490,8 @@ class Document extends Element\AbstractElement
                 throw new \Exception('invalid key for document with id [ ' . $this->getId() . ' ] key is: [' . $this->getKey() . ']');
             }
 
-            if(!$this->getParentId()) {
-                throw new \Exception("ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.");
+            if (!$this->getParentId()) {
+                throw new \Exception('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
             }
 
             if ($this->getParentId() == $this->getId()) {
@@ -499,7 +499,7 @@ class Document extends Element\AbstractElement
             }
 
             $parent = Document::getById($this->getParentId());
-            if(!$parent) {
+            if (!$parent) {
                 throw new \Exception('ParentID not found.');
             }
 

@@ -94,7 +94,7 @@ class AssetTest extends ModelTestCase
     public function testParentIs0()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage("ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.");
+        $this->expectExceptionMessage('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
         $savedObject = TestHelper::createImageAsset('', null, false);
         $this->assertTrue($savedObject->getId() == 0);
 
@@ -118,12 +118,13 @@ class AssetTest extends ModelTestCase
 
     /**
      * Parent ID must resolve to an existing element
+     *
      * @group notfound
      */
     public function testParentNotFound()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage("ParentID not found.");
+        $this->expectExceptionMessage('ParentID not found.');
         $savedObject = TestHelper::createImageAsset('', null, false);
         $this->assertTrue($savedObject->getId() == 0);
 
