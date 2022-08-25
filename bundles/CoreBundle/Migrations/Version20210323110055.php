@@ -41,7 +41,6 @@ final class Version20210323110055 extends AbstractMigration
         }
 
         $config = Config::getConfigInstance($file);
-        $config = $config->toArray();
 
         foreach ($config as $siteId => $robotsContent) {
             SettingsStore::set('robots.txt-' . $siteId, $robotsContent, 'string', 'robots.txt');

@@ -168,6 +168,7 @@ pimcore:
                     reverseObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation
                     urlSlug: \Pimcore\Model\DataObject\ClassDefinition\Data\UrlSlug
                     numeric: \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric
+                    numericRange: \Pimcore\Model\DataObject\ClassDefinition\Data\NumericRange
                     objectbricks: \Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks
                     manyToManyObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation
                     advancedManyToManyObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation
@@ -176,6 +177,7 @@ pimcore:
                     targetGroup: \Pimcore\Model\DataObject\ClassDefinition\Data\TargetGroup
                     targetGroupMultiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\TargetGroupMultiselect
                     quantityValue: \Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue
+                    quantityValueRange: \Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValueRange
                     inputQuantityValue: \Pimcore\Model\DataObject\ClassDefinition\Data\InputQuantityValue
                     select: \Pimcore\Model\DataObject\ClassDefinition\Data\Select
                     slider: \Pimcore\Model\DataObject\ClassDefinition\Data\Slider

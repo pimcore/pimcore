@@ -62,7 +62,6 @@ class Dao extends Model\Dao\AbstractDao
     {
         $data = $this->db->fetchAssociative('SELECT * FROM sites WHERE mainDomain = ? OR domains LIKE ?', [$domain, '%"' . $domain . '"%']);
         if (empty($data['id'])) {
-
             // check for wildcards
             // @TODO: refactor this to be more clear
             $sitesRaw = $this->db->fetchAllAssociative('SELECT id,domains FROM sites');

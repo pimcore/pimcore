@@ -161,7 +161,6 @@ class Asset extends Element\AbstractElement
         $blockedVars = ['scheduledTasks', 'hasChildren', 'versions', 'parent', 'stream'];
 
         if (!$this->isInDumpState()) {
-
             // for caching asset
             $blockedVars = array_merge($blockedVars, ['children', 'properties']);
         }
@@ -294,7 +293,6 @@ class Asset extends Element\AbstractElement
      */
     public static function create($parentId, $data = [], $save = true)
     {
-
         // create already the real class for the asset type, this is especially for images, because a system-thumbnail
         // (tree) is generated immediately after creating an image
         $class = Asset::class;
@@ -625,7 +623,6 @@ class Asset extends Element\AbstractElement
     {
         // set path
         if ($this->getId() != 1) { // not for the root node
-
             if (!Element\Service::isValidKey($this->getKey(), 'asset')) {
                 throw new Exception("invalid filename '" . $this->getKey() . "' for asset with id [ " . $this->getId() . ' ]');
             }
@@ -644,6 +641,11 @@ class Asset extends Element\AbstractElement
                 // that is currently in the parent asset (in memory), because this might have changed but wasn't not saved
                 $this->setPath(str_replace('//', '/', $parent->getCurrentFullPath() . '/'));
             } else {
+                trigger_deprecation(
+                    'pimcore/pimcore',
+                    '10.5',
+                    'Fallback for parentId will be removed in Pimcore 11.',
+                );
                 // parent document doesn't exist anymore, set the parent to to root
                 $this->setParentId(1);
                 $this->setPath('/');
@@ -1775,11 +1777,9 @@ class Asset extends Element\AbstractElement
         }
 
         if ($oldThumbnailsPath === $newThumbnailsPath) {
-
             //path is equal, probably file name changed - so clear all thumbnails
             $this->clearThumbnails(true);
         } else {
-
             //remove source parent folder preview thumbnails
             $sourceFolder = Asset::getByPath(dirname($oldPath));
             if ($sourceFolder) {
