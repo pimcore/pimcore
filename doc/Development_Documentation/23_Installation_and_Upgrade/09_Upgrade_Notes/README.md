@@ -15,7 +15,11 @@
 - [Listings] Removed `JsonListing`, please see [#12877](https://github.com/pimcore/pimcore/pull/12877) for details.
 - [Traits] The traits PackageVersionTrait and StateHelperTrait in lib/Extension/Bundle/Traits have been marked as
    internal, please see [#12757](https://github.com/pimcore/pimcore/pull/12757) for details.
-
+- [Config] `Pimcore\Config\Config` has been removed, see [#12477](https://github.com/pimcore/pimcore/issues/12477). Please use the returned array instead, e.g.
+  ```php
+  $web2printConfig = Config::getWeb2PrintConfig();
+  $web2printConfig = $web2printConfig['headlessChromeSettings'];
+  - ```
 
 ## 10.5.0
 - [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`
