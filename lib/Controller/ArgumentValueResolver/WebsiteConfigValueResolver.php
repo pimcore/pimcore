@@ -21,7 +21,8 @@ use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 
 /**
- * @internal
+ * Adds support for type hinting controller actions and getting the current website config.
+ *
  */
 final class WebsiteConfigValueResolver implements ArgumentValueResolverInterface
 {
@@ -33,7 +34,7 @@ final class WebsiteConfigValueResolver implements ArgumentValueResolverInterface
      */
     public function supports(Request $request, ArgumentMetadata $argument): bool
     {
-        return $argument->getType() === Config\Config::class && $argument->getName() === 'websiteConfig';
+        return $argument->getType() === "array" && $argument->getName() === 'websiteConfig';
     }
 
     /**

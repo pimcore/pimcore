@@ -47,14 +47,14 @@ abstract class Processor
     {
         $config = Config::getWeb2PrintConfig();
 
-        if ($config->get('generalTool') === 'pdfreactor') {
+        if ($config['generalTool'] === 'pdfreactor') {
             return new PdfReactor();
-        } elseif ($config->get('generalTool') === 'wkhtmltopdf') {
+        } elseif ($config['generalTool'] === 'wkhtmltopdf') {
             return new WkHtmlToPdf();
-        } elseif ($config->get('generalTool') === 'headlesschrome') {
+        } elseif ($config['generalTool'] === 'headlesschrome') {
             return new HeadlessChrome();
         } else {
-            throw new \Exception('Invalid Configuration - ' . $config->get('generalTool'));
+            throw new \Exception('Invalid Configuration - ' . $config['generalTool']);
         }
     }
 
