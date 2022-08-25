@@ -852,8 +852,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 throw new \Exception('invalid key for object with id [ '.$this->getId().' ] key is: [' . $this->getKey() . ']');
             }
 
-            if(!$this->getParentId()) {
-                throw new \Exception("ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.");
+            if (!$this->getParentId()) {
+                throw new \Exception('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
             }
 
             if ($this->getParentId() == $this->getId()) {
@@ -861,7 +861,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
 
             $parent = DataObject::getById($this->getParentId());
-            if(!$parent) {
+            if (!$parent) {
                 throw new \Exception('ParentID not found.');
             }
 
