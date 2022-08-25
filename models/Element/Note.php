@@ -141,7 +141,6 @@ final class Note extends Model\AbstractModel
      */
     public function save()
     {
-
         // check if there's a valid user
         if (!$this->getUser()) {
             // try to use the logged in user

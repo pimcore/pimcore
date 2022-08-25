@@ -28,11 +28,9 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 {
     use Extension\ColumnType {
         getColumnType as public genericGetColumnType;
-
     }
     use Extension\QueryColumnType {
         getQueryColumnType as public genericGetQueryColumnType;
-
     }
     use Model\DataObject\Traits\DefaultValueTrait;
 

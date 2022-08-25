@@ -1642,7 +1642,6 @@ class Service extends Model\Element\Service
 
             default:
                 return null;
-
         }
 
         Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
@@ -1714,7 +1713,6 @@ class Service extends Model\Element\Service
 
             default:
                 return null;
-
         }
 
         Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);

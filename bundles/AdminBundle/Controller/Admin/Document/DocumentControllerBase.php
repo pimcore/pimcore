@@ -109,7 +109,6 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      */
     protected function addPropertiesToDocument(Request $request, Model\Document $document)
     {
-
         // properties
         if ($request->get('properties')) {
             $properties = [];
@@ -351,7 +350,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         $doc = Model\Document\PageSnippet::getById((int) $request->get('id'));
         if ($doc instanceof Model\Document\PageSnippet) {
             $doc->setEditables([]);
-            $doc->setContentMasterDocumentId($request->get('contentMasterDocumentPath'));
+            $doc->setContentMasterDocumentId($request->get('contentMasterDocumentPath'), true);
             $doc->saveVersion();
         }
 

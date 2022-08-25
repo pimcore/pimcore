@@ -693,7 +693,6 @@ class DataObjectHelperController extends AdminController
     {
         try {
             $calculatedColumnConfig = Tool\Session::useSession(function (AttributeBagInterface $session) use ($config) {
-
                 //otherwise create a new one
 
                 $calculatedColumn = [];
@@ -1626,7 +1625,6 @@ class DataObjectHelperController extends AdminController
 
                             $getter = 'get' . ucfirst($field);
                             if (method_exists($object, $getter)) {
-
                                 /** @var DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
                                 $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
                                 $csLanguage = $requestedLanguage;

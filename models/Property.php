@@ -143,7 +143,6 @@ final class Property extends AbstractModel
      */
     public function getData()
     {
-
         // lazy-load data of type asset, document, object
         if (in_array($this->getType(), ['document', 'asset', 'object']) && !$this->data instanceof ElementInterface && is_numeric($this->data)) {
             return Element\Service::getElementById($this->getType(), $this->data);

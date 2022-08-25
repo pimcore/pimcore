@@ -103,7 +103,6 @@ class LogArchiveTask implements TaskInterface
                     if ($storage->fileExists($filePath)) {
                         $storage->delete($filePath);
                     } else {
-
                         // Fallback, if is not found and deleted in the flysystem, tries to delete from local
                         $fileRealPath = realpath($filePath);
                         if (str_starts_with(realpath($fileRealPath), PIMCORE_LOG_FILEOBJECT_DIRECTORY)) {
