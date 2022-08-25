@@ -627,8 +627,12 @@ class Asset extends Element\AbstractElement
                 throw new Exception("invalid filename '" . $this->getKey() . "' for asset with id [ " . $this->getId() . ' ]');
             }
 
+            if(!$this->getParentId()) {
+                throw new Exception("ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.");
+            }
+
             if ($this->getParentId() == $this->getId()) {
-                throw new Exception("ParentID and ID is identical, an element can't be the parent of itself.");
+                throw new Exception("ParentID and ID are identical, an element can't be the parent of itself in the tree.");
             }
 
             if ($this->getFilename() === '..' || $this->getFilename() === '.') {
@@ -636,20 +640,14 @@ class Asset extends Element\AbstractElement
             }
 
             $parent = Asset::getById($this->getParentId());
-            if ($parent) {
-                // use the parent's path from the database here (getCurrentFullPath), to ensure the path really exists and does not rely on the path
-                // that is currently in the parent asset (in memory), because this might have changed but wasn't not saved
-                $this->setPath(str_replace('//', '/', $parent->getCurrentFullPath() . '/'));
-            } else {
-                trigger_deprecation(
-                    'pimcore/pimcore',
-                    '10.5',
-                    'Fallback for parentId will be removed in Pimcore 11.',
-                );
-                // parent document doesn't exist anymore, set the parent to to root
-                $this->setParentId(1);
-                $this->setPath('/');
+            if(!$parent) {
+                throw new Exception('ParentID not found.');
             }
+
+            // use the parent's path from the database here (getCurrentFullPath), to ensure the path really exists and does not rely on the path
+            // that is currently in the parent asset (in memory), because this might have changed but wasn't not saved
+            $this->setPath(str_replace('//', '/', $parent->getCurrentFullPath() . '/'));
+
         } elseif ($this->getId() == 1) {
             // some data in root node should always be the same
             $this->setParentId(0);
