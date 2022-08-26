@@ -69,9 +69,9 @@ final class Config
     }
 
     /**
-     * @return \Pimcore\Config\Config
+     * @return array
      */
-    public static function get(): \Pimcore\Config\Config
+    public static function get(): array
     {
         $config = [];
         $repository = self::getRepository();
@@ -89,7 +89,7 @@ final class Config
             $config['default']['writeable'] = $repository->isWriteable();
         }
 
-        return new \Pimcore\Config\Config($config);
+        return $config;
     }
 
     /**
@@ -230,7 +230,7 @@ final class Config
 
         $currentConfigName = $currentUser->getActivePerspective() ? $currentUser->getActivePerspective() : $currentUser->getFirstAllowedPerspective();
 
-        $config = self::get()->toArray();
+        $config = self::get();
         $result = [];
 
         if (isset($config[$currentConfigName])) {
@@ -271,7 +271,7 @@ final class Config
      */
     protected static function getRuntimeElementTreeConfig($name)
     {
-        $masterConfig = self::get()->toArray();
+        $masterConfig = self::get();
 
         $config = $masterConfig[$name] ?? [];
 
@@ -352,11 +352,11 @@ final class Config
     public static function getAvailablePerspectives($user)
     {
         $currentConfigName = null;
-        $masterConfig = self::get()->toArray();
+        $masterConfig = self::get();
 
         if ($user instanceof User) {
             if ($user->isAdmin()) {
-                $config = self::get()->toArray();
+                $config = self::get();
             } else {
                 $config = [];
                 $roleIds = $user->getRoles();
@@ -382,7 +382,7 @@ final class Config
                     }
                 }
                 if (!$config) {
-                    $config = self::get()->toArray();
+                    $config = self::get();
                 }
             }
 
@@ -405,7 +405,7 @@ final class Config
                 $currentConfigName = reset($configNames);
             }
         } else {
-            $config = self::get()->toArray();
+            $config = self::get();
         }
 
         $result = [];
