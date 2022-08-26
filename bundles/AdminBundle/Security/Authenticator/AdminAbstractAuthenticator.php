@@ -132,7 +132,7 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
     }
 
     /**
-     * @param User|null $user
+     * @param User $user
      */
     protected function saveUserToSession($user): void
     {
