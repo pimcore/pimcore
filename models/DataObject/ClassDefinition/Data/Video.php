@@ -435,7 +435,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * { @inheritdoc }
      */
-    public function enrichFieldDefinition($context = [])
+    public function enrichFieldDefinition(/** array */ $context = []) /** : static */
     {
         if (empty($this->getAllowedTypes()) && isset($context['object'])) {
             $this->setAllowedTypes($this->getSupportedTypes());
