@@ -19,9 +19,8 @@
   ```php
   $web2printConfig = Config::getWeb2PrintConfig();
   $web2printConfig = $web2printConfig['headlessChromeSettings'];
-  - ```
 - [Video Editable] Removed [deprecated and legacy `<iframe>` attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe): `frameborder`, `webkitAllowFullScreen`, `mozallowfullscreen`, and `allowfullscreen` for YouTube, Vimeo, and DailyMotion embeds.
-
+- [Elements] Removed fallback to parent id 1, when an element with a non-existing parent id gets created.
 
 ## 10.5.0
 - [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`
