@@ -259,7 +259,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             }
         }.bind(this),
         function (res) {
-            var response = Ext.decode(res.response.responseText);
+            const response = Ext.decode(res.response.responseText);
             if (response && response.success === false) {
                 pimcore.helpers.showNotification(t("error"), response.message, "error",
                     res.response.responseText);
