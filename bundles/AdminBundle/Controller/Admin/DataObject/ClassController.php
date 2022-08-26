@@ -2048,7 +2048,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         foreach ($videoDef->getSupportedTypes() as $type) {
             $res[] = [
                 'key' => $type,
-                'value' => $this->trans($type)
+                'value' => $this->trans($type),
             ];
         }
 
