@@ -453,7 +453,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
             new FileLocator(__DIR__ . '/../Resources/config')
         );
 
-        foreach($securityConfigs as $config) {
+        foreach ($securityConfigs as $config) {
             if ($config['enable_authenticator_manager'] ?? false) {
                 $loader->load('authenticator_security.yaml');
 
