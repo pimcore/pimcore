@@ -479,6 +479,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $parent = Asset::getByPath($parentPath);
             if ($parent instanceof Asset\Folder) {
                 $parentId = $parent->getId();
+            } else { //create defined parent folder, if doesn't exist.
+                $parentId = Asset\Service::createFolderByPath($parentPath)->getId();
             }
         }
 
