@@ -36,8 +36,7 @@ final class Config
                 $config,
                 'pimcore_custom_views',
                 $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_VIEWS'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/custom-views',
-                'PIMCORE_WRITE_TARGET_CUSTOM_VIEWS',
-                null
+                'PIMCORE_WRITE_TARGET_CUSTOM_VIEWS'
             );
         }
 

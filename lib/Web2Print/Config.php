@@ -48,8 +48,7 @@ final class Config
                 $config,
                 'pimcore_web_to_print',
                 $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_WEB_TO_PRINT'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/web-to-print',
-                'PIMCORE_WRITE_TARGET_WEB_TO_PRINT',
-                null
+                'PIMCORE_WRITE_TARGET_WEB_TO_PRINT'
             );
         }
 
