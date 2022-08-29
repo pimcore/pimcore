@@ -1078,10 +1078,10 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             try {
                 $isIndexUpdate = isset($values['indices']);
-                $indexUpdate = is_int($values['indices']) ? $values['indices'] : $values['indices'][$object->getId()];
 
                 if ($isIndexUpdate) {
                     // Ensure the update sort index is already available in the postUpdate eventListener
+                    $indexUpdate = is_int($values['indices']) ? $values['indices'] : $values['indices'][$object->getId()];
                     $object->setIndex($indexUpdate);
                 }
 
