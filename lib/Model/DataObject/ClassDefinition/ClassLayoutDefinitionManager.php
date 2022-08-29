@@ -17,6 +17,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 
 use Pimcore\Db;
 
+/**
+ * @deprecated Will be removed in Pimcore 11
+ */
 class ClassLayoutDefinitionManager
 {
     public const SAVED = 'saved';
