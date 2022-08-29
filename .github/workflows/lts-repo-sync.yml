@@ -5,7 +5,7 @@ on:
     workflow_dispatch:
     push:
         branches:
-            - 10.x
+            - 11.x
 
 jobs:
     lts-repo-sync:
@@ -16,7 +16,7 @@ jobs:
               uses: wei/git-sync@v3
               with:
                   source_repo: "pimcore/pimcore"
-                  source_branch: "10.x"
+                  source_branch: "11.x"
                   destination_repo: "pimcore/pimcore-lts"
-                  destination_branch: "10.x"
+                  destination_branch: "11.x"
                   destination_ssh_private_key: ${{ secrets.SSH_LTS_DEPLOY_PRIVATE_KEY }}

@@ -1101,7 +1101,6 @@ class TranslationController extends AdminController
                         ';
 
                         foreach ($definitions as $definition) {
-
                             // check allowed datatypes
                             if (!in_array($definition->getFieldtype(), ['input', 'textarea', 'wysiwyg'])) {
                                 continue;

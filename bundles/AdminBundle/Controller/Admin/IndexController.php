@@ -146,7 +146,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         try {
             $data = [
                 'instanceId' => $this->getInstanceId(),
-                'pimcore_major_version' => 10,
+                'pimcore_major_version' => 11,
                 'pimcore_version' => Version::getVersion(),
                 'pimcore_hash' => Version::getRevision(),
                 'php_version' => PHP_VERSION,

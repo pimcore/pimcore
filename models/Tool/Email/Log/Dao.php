@@ -62,7 +62,6 @@ class Dao extends Model\Dao\AbstractDao
 
         foreach ($emailLog as $key => $value) {
             if (in_array($key, $this->getValidTableColumns(self::$dbTable))) {
-
                 // check if the getter exists
                 $getter = 'get' . ucfirst($key);
                 if (!method_exists($this->model, $getter)) {

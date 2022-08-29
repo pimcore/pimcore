@@ -89,15 +89,15 @@ final class Config
     }
 
     /**
-     * @return \Pimcore\Config\Config
+     * @return array
      */
-    public static function get(): \Pimcore\Config\Config
+    public static function get(): array
     {
         $repository = self::getRepository();
 
-        list($config) = $repository->loadConfigByKey(self::CONFIG_ID);
+        $config = $repository->loadConfigByKey(self::CONFIG_ID);
 
-        return new \Pimcore\Config\Config($config ?? []);
+        return $config[0] ?? [];
     }
 
     /**

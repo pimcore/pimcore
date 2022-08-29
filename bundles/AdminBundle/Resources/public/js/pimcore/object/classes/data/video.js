@@ -74,6 +74,17 @@ pimcore.object.classes.data.video = Class.create(pimcore.object.classes.data.dat
                 xtype: "displayfield",
                 hideLabel: true,
                 value: t('height_explanation')
+            },
+            {
+                xtype: "multiselect",
+                fieldLabel: t("allowed_video_types") + '<br />' + t('allowed_types_hint'),
+                name: "allowedTypes",
+                id: 'allowedTypes',
+                store: this.datax.supportedTypes,
+                value: this.datax.allowedTypes,
+                displayField: "text",
+                valueField: "text",
+                width: 400
             }
         ]);
 

@@ -176,6 +176,11 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
                                 $metaData = get_object_vars($metaData);
                             }
 
+                            if (in_array($metaData['type'], ['object', 'asset', 'document'])
+                            && $el = Element\Service::getElementById($metaData['type'], $metaData['value'])) {
+                                $metaData['value'] = $el;
+                            }
+
                             if ($metaData['value'] instanceof Element\ElementInterface) {
                                 $metaData['value'] = $metaData['value']->getRealFullPath();
                             }

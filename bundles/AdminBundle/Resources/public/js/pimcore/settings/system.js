@@ -75,6 +75,7 @@ pimcore.settings.system = Class.create({
     },
 
     getTabPanel: function () {
+        let urlToCustomImageField = {};
 
         if (!this.panel) {
             this.panel = Ext.create('Ext.panel.Panel', {
@@ -202,12 +203,56 @@ pimcore.settings.system = Class.create({
                             title: t('custom_login_background_image'),
                             collapsible: false,
                             width: "100%",
+                            layout: 'hbox',
                             autoHeight: true,
                             items: [{
                                 fieldLabel: t("url_to_custom_image_on_login_screen"),
                                 xtype: "textfield",
                                 name: "branding.login_screen_custom_image",
-                                value: this.getValue("branding.login_screen_custom_image")
+                                fieldCls: "input_drop_target",
+                                width: '95%',
+                                value: this.getValue("branding.login_screen_custom_image"),
+                                listeners: {
+                                    "render": function (el) {
+                                        urlToCustomImageField = el;
+                                        new Ext.dd.DropZone(el.getEl(), {
+                                            reference: this,
+                                            ddGroup: "element",
+                                            getTargetFromEvent: function (e) {
+                                                return this.getEl();
+                                            },
+
+                                            onNodeOver: function (target, dd, e, data) {
+                                                if (data.records.length === 1 && data.records[0].data.elementType === "asset") {
+                                                    return Ext.dd.DropZone.prototype.dropAllowed;
+                                                }
+                                            },
+
+                                            onNodeDrop: function (target, dd, e, data) {
+
+                                                if (!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                                    return false;
+                                                }
+
+                                                data = data.records[0].data;
+                                                if (data.elementType === "asset") {
+                                                    this.setValue(data.path);
+                                                    return true;
+                                                }
+                                                return false;
+                                            }.bind(this)
+                                        });
+                                    }
+                                },
+                            }, {
+                                xtype: "button",
+                                tooltip: t("delete"),
+                                overflowText: t('delete'),
+                                iconCls: "pimcore_icon_delete",
+                                style: "margin-top: 5px; margin-left: 7px",
+                                handler: function () {
+                                    urlToCustomImageField.setValue('');
+                                }
                             }]
                         }]
                     }

@@ -1,9 +1,28 @@
 # Upgrade Notes
 ## 11.0.0
-
-- [Image Optimizer] Removed all the Image Optimizer services (e.g. PngCrushOptimizer, JpegoptimOptimizer etc.) as image optimization is done by the new package spatie/image-optimizer.
+- [Image Optimizer] Removed all the Image Optimizer services (e.g. PngCrushOptimizer, JpegoptimOptimizer etc.) as image optimization is done by the new package spatie/image-optimizer. 
+- [Runtime Cache] Removed the `Pimcore\Cache\Runtime` cache helper and `Pimcore\Cache\RuntimeCacheTrait`. The runtime cache is now handled by `Pimcore\Cache\RuntimeCache`.  
+- Removed deprecated JS functions (`ts()` and `pimcore.helpers.addCsrfTokenToUrl()`)
+- Removed Plugin Broker BC layer for JS events
+- [DocType] staticGeneratorEnabled is now a boolean instead of an integer
+- [Ecommerce] Pricing Manager 
+  - Removed $session property
+  - Removed Token condition
+  - Removed methods `getSession()` & `setSession()` from `PricingManager\EnvironmentInterface`
+- [Data Objects] Remove "generate type declarations" in class definitions
+- [Data Objects] Removed method_exists bc layer, please use the corresponding interfaces instead. For details please see [#9571](https://github.com/pimcore/pimcore/issues/9571)
+- [Data Objects] `isEqual()` for advanced relational field types does not check for type equality of meta fields anymore, see [#12595](https://github.com/pimcore/pimcore/pull/12595)
+- [Listings] Removed `JsonListing`, please see [#12877](https://github.com/pimcore/pimcore/pull/12877) for details.
+- [Traits] The traits PackageVersionTrait and StateHelperTrait in lib/Extension/Bundle/Traits have been marked as
+   internal, please see [#12757](https://github.com/pimcore/pimcore/pull/12757) for details.
+- [Config] `Pimcore\Config\Config` has been removed, see [#12477](https://github.com/pimcore/pimcore/issues/12477). Please use the returned array instead, e.g.
+  ```php
+  $web2printConfig = Config::getWeb2PrintConfig();
+  $web2printConfig = $web2printConfig['headlessChromeSettings'];
+  - ```
 - [Web2Print] Deprecated WkHtmlToPdf Processor has been removed.
 - [Documents] Deprecated WkHtmlToImage has been removed.
+- [Elements] Removed fallback to parent id 1, when an element with a non-existing parent id gets created.
   
 ## 10.5.0
 - [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`

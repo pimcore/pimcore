@@ -999,9 +999,29 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function updateAction(Request $request)
     {
+        $values = $this->decodeJson($request->get('values'));
+
+        $ids = $this->decodeJson($request->get('id'));
+
+        if (is_array($ids)) {
+            foreach ($ids as $id) {
+                $object = DataObject::getById((int)$id);
+                if (!$this->executeUpdateAction($object, $values)) {
+                    return $this->adminJson(['success' => false]);
+                }
+            }
+        } else {
+            $object = DataObject::getById((int)$ids);
+            $this->executeUpdateAction($object, $values);
+        }
+
+        return $this->adminJson(['success' => true]);
+    }
+
+    private function executeUpdateAction(DataObject $object, mixed $values)
+    {
         $success = false;
 
-        $object = DataObject::getById((int) $request->get('id'));
         if ($object instanceof DataObject\Concrete) {
             $object->setOmitMandatoryCheck(true);
         }
@@ -1015,7 +1035,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             }
         }
 
-        $values = $this->decodeJson($request->get('values'));
         $key = $values['key'] ?? null;
 
         if ($object->isAllowed('settings')) {
@@ -1058,17 +1077,18 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $object->setUserModification($this->getAdminUser()->getId());
 
             try {
-                $isIndexUpdate = isset($values['index']) && is_int($values['index']);
+                $isIndexUpdate = isset($values['indices']);
+                $indexUpdate = is_int($values['indices']) ? $values['indices'] : $values['indices'][$object->getId()];
 
                 if ($isIndexUpdate) {
                     // Ensure the update sort index is already available in the postUpdate eventListener
-                    $object->setIndex($values['index']);
+                    $object->setIndex($indexUpdate);
                 }
 
                 $object->save();
 
                 if ($isIndexUpdate) {
-                    $this->updateIndexesOfObjectSiblings($object, $values['index']);
+                    $this->updateIndexesOfObjectSiblings($object, $indexUpdate);
                 }
 
                 $success = true;
@@ -1083,7 +1103,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             Logger::debug('prevented update object because of missing permissions.');
         }
 
-        return $this->adminJson(['success' => $success]);
+        return $success;
     }
 
     private function executeInsideTransaction(callable $fn)
@@ -1127,7 +1147,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $fn = function () use ($parentObject, $currentSortOrder) {
             $list = new DataObject\Listing();
 
-            Db::get()->executeStatement(
+            $db = Db::get();
+            $result = $db->executeStatement(
                 'UPDATE '.$list->getDao()->getTableName().' o,
                     (
                     SELECT newIndex, o_id FROM (
@@ -1192,35 +1213,36 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $list = new DataObject\Listing();
             $updatedObject->saveIndex($newIndex);
 
-            Db::get()->executeStatement(
+            // The cte and the limit are needed to order the data before the newIndex is set
+            $db = Db::get();
+            $db->executeStatement(
                 'UPDATE '.$list->getDao()->getTableName().' o,
                     (
-                        SELECT newIndex, o_id FROM (SELECT @n := IF(@n = ? - 1,@n + 2,@n + 1) AS newIndex, o_id
-                        FROM '.$list->getDao()->getTableName().',
-                        (SELECT @n := -1) variable
-                        WHERE o_id != ? AND o_parentId = ? AND o_type IN (\''.implode(
+                        SELECT newIndex, o_id
+                        FROM (
+                            With cte As (SELECT o_index, o_id FROM ' . $list->getDao()->getTableName() . ' WHERE o_parentId = ? AND o_id != ? AND o_type IN (\''.implode(
                     "','", [
                         DataObject::OBJECT_TYPE_OBJECT,
                         DataObject::OBJECT_TYPE_VARIANT,
                         DataObject::OBJECT_TYPE_FOLDER,
                     ]
-                ).'\')
-                            ORDER BY o_index, o_id=?
+                ).'\') ORDER BY o_index LIMIT '. $updatedObject->getParent()->getChildAmount() .')
+                            SELECT @n := IF(@n = ? - 1,@n + 2,@n + 1) AS newIndex, o_id
+                            FROM cte,
+                            (SELECT @n := -1) variable
                         ) tmp
                     ) order_table
                     SET o.o_index = order_table.newIndex
                     WHERE o.o_id=order_table.o_id',
                 [
-                    $newIndex,
-                    $updatedObject->getId(),
                     $updatedObject->getParentId(),
                     $updatedObject->getId(),
+                    $newIndex,
                 ]
             );
 
-            $db = Db::get();
             $siblings = $db->fetchAllAssociative(
-                'SELECT o_id, o_modificationDate, o_versionCount FROM objects'
+                'SELECT o_id, o_modificationDate, o_versionCount, o_key, o_index FROM objects'
                 ." WHERE o_parentId = ? AND o_id != ? AND o_type IN ('object', 'variant','folder') ORDER BY o_index ASC",
                 [$updatedObject->getParentId(), $updatedObject->getId()]
             );

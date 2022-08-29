@@ -446,11 +446,9 @@ class SettingsController extends AdminController
 
         $values = $this->decodeJson($request->get('data'));
 
-        $existingValues = [];
-
         try {
             $file = Config::locateConfigFile('system.yml');
-            $existingValues = Config::getConfigInstance($file, true);
+            Config::getConfigInstance($file);
         } catch (\Exception $e) {
             // nothing to do
         }
@@ -460,7 +458,6 @@ class SettingsController extends AdminController
 
         // fallback languages
         $fallbackLanguages = [];
-        $existingValues['pimcore']['general']['fallback_languages'] = [];
         $languages = explode(',', $values['general.validLanguages']);
         $filteredLanguages = [];
 
@@ -594,8 +591,7 @@ class SettingsController extends AdminController
     {
         $this->checkPermission('web2print_settings');
 
-        $values = Config::getWeb2PrintConfig();
-        $valueArray = $values->toArray();
+        $valueArray = Config::getWeb2PrintConfig();
 
         $response = [
             'values' => $valueArray,
@@ -1411,6 +1407,28 @@ class SettingsController extends AdminController
     }
 
     /**
+     * @Route("/video-thumbnail-list", name="pimcore_admin_settings_videothumbnail_list", methods={"GET"})
+     *
+     * @return JsonResponse
+     */
+    public function videoThumbnailListAction(): JsonResponse
+    {
+        $thumbnails = [
+            ['id' => 'pimcore-system-treepreview', 'text' => 'original'],
+        ];
+        $list = new Asset\Video\Thumbnail\Config\Listing();
+
+        foreach ($list->getThumbnails() as $item) {
+            $thumbnails[] = [
+                'id'   => $item->getName(),
+                'text' => $item->getName(),
+            ];
+        }
+
+        return $this->adminJson($thumbnails);
+    }
+
+    /**
      * @Route("/video-thumbnail-add", name="pimcore_admin_settings_videothumbnailadd", methods={"POST"})
      *
      * @param Request $request
@@ -1547,7 +1565,6 @@ class SettingsController extends AdminController
         $this->checkPermission('robots.txt');
 
         $config = Config::getRobotsConfig();
-        $config = $config->toArray();
 
         return $this->adminJson([
             'success' => true,
@@ -1792,7 +1809,7 @@ class SettingsController extends AdminController
             ];
         } elseif ($adapter instanceof \Pimcore\Web2Print\Processor\HeadlessChrome) {
             $params = Config::getWeb2PrintConfig();
-            $params = $params->get('headlessChromeSettings');
+            $params = $params['headlessChromeSettings'];
             $params = json_decode($params, true);
         }
 

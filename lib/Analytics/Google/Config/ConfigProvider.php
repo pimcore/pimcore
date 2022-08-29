@@ -17,8 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Analytics\Google\Config;
 
-use Pimcore\Config\Config as ConfigObject;
-
 class ConfigProvider
 {
     /**
@@ -27,14 +25,14 @@ class ConfigProvider
     private $config;
 
     /**
-     * @var ConfigObject|null
+     * @var array|null
      */
     private $configObject;
 
     /**
-     * @param ConfigObject|null $configObject
+     * @param array|null $configObject
      */
-    public function __construct(ConfigObject $configObject = null)
+    public function __construct(array $configObject = null)
     {
         $this->configObject = $configObject;
     }
@@ -48,7 +46,7 @@ class ConfigProvider
         return $this->config;
     }
 
-    private function getConfigObject(): ConfigObject
+    private function getConfigObject(): array
     {
         if (null === $this->configObject) {
             $this->configObject = $this->loadDefaultConfigObject();
@@ -57,13 +55,13 @@ class ConfigProvider
         return $this->configObject;
     }
 
-    protected function loadDefaultConfigObject(): ConfigObject
+    protected function loadDefaultConfigObject(): array
     {
         $reportConfig = \Pimcore\Config::getReportConfig();
 
-        $config = $reportConfig->get('analytics');
-        if (!$config instanceof ConfigObject) {
-            $config = new ConfigObject([]);
+        $config = $reportConfig['analytics'];
+        if (!is_array($config)) {
+            $config = [];
         }
 
         return $config;
