@@ -367,7 +367,7 @@ final class Version extends AbstractModel
 
             $data = Serialize::unserialize($data);
             //clear runtime cache to avoid dealing with marshalled data
-            RuntimeCache::clear();
+            \Pimcore::collectGarbage();
             if ($data instanceof \__PHP_Incomplete_Class) {
                 Logger::err('Version: cannot read version data from file system because of incompatible class.');
 
