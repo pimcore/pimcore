@@ -77,7 +77,7 @@ final class FileObject
     {
         return $this->data;
     }
-    
+
     public function __toString(): string
     {
         return $this->getFilename();
