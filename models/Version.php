@@ -15,7 +15,6 @@
 
 namespace Pimcore\Model;
 
-use Pimcore\Cache\RuntimeCache;
 use Pimcore\Event\Model\VersionEvent;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Event\VersionEvents;
