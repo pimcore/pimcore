@@ -16,8 +16,6 @@
 namespace Pimcore\Bundle\CoreBundle\Controller;
 
 use function date;
-use function fstat;
-use function is_array;
 use Pimcore\Config;
 use Pimcore\Controller\Controller;
 use Pimcore\File;
