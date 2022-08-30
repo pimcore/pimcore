@@ -66,9 +66,8 @@ final class ConfigWriter
                     continue;
                 }
 
-                $configTemplate = new \Pimcore\Config\Config($configTemplateArray);
-                if ($configTemplate->get('pimcore')->general) { // check if the template contains a valid configuration
-                    $settings = $configTemplate->toArray();
+                if (isset($configTemplateArray['pimcore']['general'])) { // check if the template contains a valid configuration
+                    $settings = $configTemplateArray;
 
                     break;
                 }
