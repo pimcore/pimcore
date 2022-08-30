@@ -14,7 +14,7 @@
 pimcore.registerNS("pimcore.object.tags.reverseObjectRelation");
 pimcore.object.tags.reverseObjectRelation = Class.create(pimcore.object.tags.manyToManyObjectRelation, {
 
-    pathProperty: "path",
+    pathProperty: "fullpath",
 
     initialize: function (data, fieldConfig) {
         this.data = [];
@@ -145,8 +145,7 @@ pimcore.object.tags.reverseObjectRelation = Class.create(pimcore.object.tags.man
                 },
                 items: [
                     {text: 'ID', dataIndex: 'id', flex: 50},
-                    {text: t("reference"), dataIndex: 'path', flex: 200, renderer:this.fullPathRenderCheck.bind(this)
-                    },
+                    {text: t("reference"), dataIndex: 'fullpath', flex: 200, renderer: this.fullPathRenderCheck.bind(this)},
                     {text: t("class"), dataIndex: 'classname', flex: 100},
                     {
                         xtype: 'actioncolumn',

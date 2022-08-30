@@ -45,7 +45,7 @@ interface PriceSystemInterface
      * @param int $offset
      * @param int $limit
      *
-     * @return mixed
+     * @return array
      */
     public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit);
 
