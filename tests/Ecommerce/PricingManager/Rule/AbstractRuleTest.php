@@ -60,20 +60,17 @@ class AbstractRuleTest extends EcommerceTestCase
 
         $conditionMapping = $container->getParameter('pimcore_ecommerce.pricing_manager.condition_mapping');
         $actionMapping = $container->getParameter('pimcore_ecommerce.pricing_manager.action_mapping');
-        $session = $this->buildSession();
         $options = [
             'rule_class' => "Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule",
             'price_info_class' => "Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PriceInfo",
             'environment_class' => "Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Environment",
         ];
 
-        $pricingManager = Stub::construct(PricingManager::class, [$conditionMapping, $actionMapping, $session, $options], [
+        return Stub::construct(PricingManager::class, [$conditionMapping, $actionMapping, $options], [
             'getValidRules' => function () use ($rules) {
                 return $rules;
             },
         ]);
-
-        return $pricingManager;
     }
 
     /**

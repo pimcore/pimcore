@@ -39,7 +39,6 @@ final class Version20210630062445 extends AbstractMigration
         }
 
         $config = Config::getConfigInstance($file);
-        $config = $config->toArray();
 
         SettingsStore::set(
             ReportConfigWriter::REPORT_SETTING_ID,

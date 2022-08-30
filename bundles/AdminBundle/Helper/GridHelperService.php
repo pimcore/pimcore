@@ -227,7 +227,6 @@ class GridHelperService
                     $brickDescriptor = null;
                     $isLocalized = false;
                     if (!$field) {
-
                         // if the definition doesn't exist check for a localized field
                         $localized = $class->getFieldDefinition('localizedfields');
                         if ($localized instanceof ClassDefinition\Data\Localizedfields) {
