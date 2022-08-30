@@ -70,7 +70,7 @@ class Dao extends Model\Dao\AbstractDao
                 $this->model->setModificationDate($d['modificationDate']);
                 $this->model->setType($d['type']);
                 $this->model->setUserOwner($d['userOwner']);
-                $this->model->setUserModification ($d['userModification']);
+                $this->model->setUserModification($d['userModification']);
             }
         } else {
             throw new NotFoundResourceException("Translation-Key -->'" . $key . "'<-- not found");
