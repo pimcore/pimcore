@@ -1207,7 +1207,8 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/tag.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_quantityValue {
+.pimcore_icon_quantityValue,
+.pimcore_icon_quantityValueRange {
     background: url(/bundles/pimcoreadmin/img/twemoji/1f4c8.svg) center center no-repeat !important;
 }
 
@@ -1402,7 +1403,8 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/gallery.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_numeric {
+.pimcore_icon_numeric,
+.pimcore_icon_numericRange {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/numerical_sorting_12.svg) center center no-repeat !important;
 }
 
@@ -1419,7 +1421,8 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/manager.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_date {
+.pimcore_icon_date,
+.pimcore_icon_dateRange {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/planner.svg) center center no-repeat !important;
 }
 

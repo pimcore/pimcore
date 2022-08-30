@@ -24,7 +24,7 @@ use Pimcore\Config;
 abstract class ReportsControllerBase extends AdminController
 {
     /**
-     * @return \Pimcore\Config\Config
+     * @return array
      */
     public function getConfig()
     {

@@ -9,7 +9,7 @@ in the correct environment.
 This can be easily implemented since Pimcore 10.1.0
 ([#9794](https://github.com/pimcore/pimcore/pull/9794)) as the backend's body element contains a data attribute
 `data-app-env` with the current application environment (e.g.
-`<body class="pimcore_version_10" data-app-env="dev">`) and thus can be referenced with a CSS selector.
+`<body class="pimcore_version_11" data-app-env="dev">`) and thus can be referenced with a CSS selector.
 
 ![Backend UI style override](img/style-backend-depending-on-app-env.png)
 
