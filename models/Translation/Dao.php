@@ -69,6 +69,7 @@ class Dao extends Model\Dao\AbstractDao
                 $this->model->setCreationDate($d['creationDate']);
                 $this->model->setModificationDate($d['modificationDate']);
                 $this->model->setType($d['type']);
+                $this->model->setUserOwner ($d['userOwner']);
             }
         } else {
             throw new NotFoundResourceException("Translation-Key -->'" . $key . "'<-- not found");
@@ -85,14 +86,18 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->updateModificationInfos();
 
-        $user = User::getById($this->model->getUserModification());
-        $editableLanguages = $user instanceof User ? $user->getAllowedLanguagesForEditingWebsiteTranslations() : [];
+        $editableLanguages = [];
+        if ($this->model->getDomain() != Model\Translation::DOMAIN_ADMIN) {
+            if ($user = User::getById($this->model->getUserModification())) {
+                $editableLanguages = $user->getAllowedLanguagesForEditingWebsiteTranslations();
+            }
+        }
 
         if ($this->model->getKey() !== '') {
             if (is_array($this->model->getTranslations())) {
                 foreach ($this->model->getTranslations() as $language => $text) {
-                    if ($editableLanguages && !in_array($language, $editableLanguages)) {
-                        Logger::warning(sprintf('User %s not allowed to edit %e translation', $user->getUsername(), $language));
+                    if (count($editableLanguages) && !in_array($language, $editableLanguages)) {
+                        Logger::warning(sprintf('User %s not allowed to edit %s translation', $user->getUsername(), $language)); // @phpstan-ignore-line
 
                         continue;
                     }
@@ -104,6 +109,8 @@ class Dao extends Model\Dao\AbstractDao
                         'text' => $text,
                         'modificationDate' => $this->model->getModificationDate(),
                         'creationDate' => $this->model->getCreationDate(),
+                        'userOwner' => $this->model->getUserOwner(),
+                        'userModification' => $this->model->getUserModification()
                     ];
                     Helper::insertOrUpdate($this->db, $this->getDatabaseTableName(), $data);
                 }
