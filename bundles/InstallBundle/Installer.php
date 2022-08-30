@@ -810,7 +810,7 @@ class Installer
         }
     }
 
-    protected function insertSystemUser(Connection $db)
+    protected function insertSystemUser(Connection $db): void
     {
         $db->insert('users', [
             'parentId' => 0,
