@@ -26,7 +26,7 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /** @var bool */
-    protected $includeDisabled = false;
+    protected $includeDisabled;
 
     /**
      * @return Model\DataObject\Classificationstore\KeyConfig[]
