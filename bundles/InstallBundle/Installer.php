@@ -613,7 +613,7 @@ class Installer
 
             try {
                 //create a system user with id 0
-                $this->insertSystemUser();
+                $this->insertSystemUser($db);
 
                 if (empty($dataFiles) || !$this->importDatabaseDataDump) {
                     // empty installation
@@ -810,10 +810,8 @@ class Installer
         }
     }
 
-    protected function insertSystemUser()
+    protected function insertSystemUser(Connection $db)
     {
-        $db = \Pimcore\Db::get();
-
         $db->insert('users', [
             'parentId' => 0,
             'name' => 'system',

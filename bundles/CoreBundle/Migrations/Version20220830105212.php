@@ -22,6 +22,6 @@ final class Version20220830105212 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql("DELETE FROM users WHERE `id` = 0");
+        //no need to delete system user entry
     }
 }
