@@ -41,12 +41,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * @var bool
      */
-    public $mandatory;
+    public bool $mandatory = false;
 
     /**
      * @var bool
      */
-    public $noteditable;
+    public bool $noteditable = false;
 
     /**
      * @var int
@@ -56,7 +56,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * @var bool
      */
-    public $locked = false;
+    public bool $locked = false;
 
     /**
      * @var string
@@ -81,22 +81,22 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     /**
      * @var bool
      */
-    public $relationType = false;
+    public bool $relationType = false;
 
     /**
      * @var bool
      */
-    public $invisible = false;
+    public bool $invisible = false;
 
     /**
      * @var bool
      */
-    public $visibleGridView = true;
+    public bool $visibleGridView = true;
 
     /**
      * @var bool
      */
-    public $visibleSearch = true;
+    public bool $visibleSearch = true;
 
     /**
      * @var array

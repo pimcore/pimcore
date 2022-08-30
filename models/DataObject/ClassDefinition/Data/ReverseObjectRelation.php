@@ -59,7 +59,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
      *
      * @var bool
      */
-    public $lazyLoading = true;
+    public bool $lazyLoading = true;
 
     /**
      * @param array $classes

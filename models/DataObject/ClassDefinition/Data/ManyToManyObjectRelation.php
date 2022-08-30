@@ -76,7 +76,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      *
      * @var bool
      */
-    public $relationType = true;
+    public bool $relationType = true;
 
     /**
      * @internal
@@ -90,21 +90,21 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      *
      * @var bool
      */
-    public $allowToCreateNewObject = true;
+    public bool $allowToCreateNewObject = true;
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $optimizedAdminLoading = false;
+    public bool $optimizedAdminLoading = false;
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $enableTextSelection = false;
+    public bool $enableTextSelection = false;
 
     /**
      * @internal

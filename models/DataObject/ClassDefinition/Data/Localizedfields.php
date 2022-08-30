@@ -100,14 +100,14 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      *
      * @var bool
      */
-    public $border = false;
+    public bool $border = false;
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $provideSplitView;
+    public bool $provideSplitView = false;
 
     /**
      * @internal
@@ -1290,7 +1290,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      */
     public function setProvideSplitView($provideSplitView): void
     {
-        $this->provideSplitView = $provideSplitView;
+        $this->provideSplitView = (bool) $provideSplitView;
     }
 
     /**

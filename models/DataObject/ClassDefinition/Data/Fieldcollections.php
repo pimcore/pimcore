@@ -46,7 +46,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      *
      * @var bool
      */
-    public $lazyLoading;
+    public bool $lazyLoading = false;
 
     /**
      * @internal
@@ -60,35 +60,35 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      *
      * @var bool
      */
-    public $disallowAddRemove = false;
+    public bool $disallowAddRemove = false;
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $disallowReorder = false;
+    public bool $disallowReorder = false;
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $collapsed;
+    public bool $collapsed = false;
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $collapsible;
+    public bool $collapsible = false;
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $border = false;
+    public bool $border = false;
 
     /**
      * @return bool
@@ -105,7 +105,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function setLazyLoading($lazyLoading)
     {
-        $this->lazyLoading = $lazyLoading;
+        $this->lazyLoading = (bool) $lazyLoading;
 
         return $this;
     }
@@ -699,7 +699,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function setDisallowAddRemove($disallowAddRemove)
     {
-        $this->disallowAddRemove = $disallowAddRemove;
+        $this->disallowAddRemove = (bool) $disallowAddRemove;
     }
 
     /**
@@ -715,7 +715,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function setDisallowReorder($disallowReorder)
     {
-        $this->disallowReorder = $disallowReorder;
+        $this->disallowReorder = (bool) $disallowReorder;
     }
 
     /**
@@ -755,7 +755,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function setCollapsed($collapsed)
     {
-        $this->collapsed = $collapsed;
+        $this->collapsed = (bool) $collapsed;
     }
 
     /**
@@ -771,7 +771,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function setCollapsible($collapsible)
     {
-        $this->collapsible = $collapsible;
+        $this->collapsible = (bool) $collapsible;
     }
 
     /**

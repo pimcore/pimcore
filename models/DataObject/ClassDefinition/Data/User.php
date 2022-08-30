@@ -34,7 +34,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
      *
      * @var bool
      */
-    public $unique;
+    public bool $unique = false;
 
     /**
      * @internal
@@ -216,6 +216,6 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
      */
     public function setUnique($unique)
     {
-        $this->unique = $unique;
+        $this->unique = (bool) $unique;
     }
 }

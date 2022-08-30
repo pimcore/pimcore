@@ -127,7 +127,7 @@ class Multiselect extends Data implements
      *
      * @var bool
      */
-    public $dynamicOptions = false;
+    public bool $dynamicOptions = false;
 
     /**
      * @return array

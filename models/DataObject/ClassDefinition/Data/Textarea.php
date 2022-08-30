@@ -62,14 +62,14 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @var bool
      */
-    public $showCharCount;
+    public bool $showCharCount = false;
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $excludeFromSearchIndex = false;
+    public bool $excludeFromSearchIndex = false;
 
     /**
      * Type for the column to query
@@ -164,7 +164,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function setShowCharCount($showCharCount)
     {
-        $this->showCharCount = $showCharCount;
+        $this->showCharCount = (bool) $showCharCount;
     }
 
     /**

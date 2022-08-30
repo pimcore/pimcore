@@ -46,35 +46,35 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @var bool
      */
-    public $lazyLoading;
+    public bool $lazyLoading = false;
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $disallowAddRemove;
+    public bool $disallowAddRemove = false;
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $disallowReorder;
+    public bool $disallowReorder = false;
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $collapsible;
+    public bool $collapsible = false;
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $collapsed;
+    public bool $collapsed = false;
 
     /**
      * @internal
@@ -836,7 +836,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      */
     public function setCollapsed($collapsed)
     {
-        $this->collapsed = $collapsed;
+        $this->collapsed = (bool) $collapsed;
     }
 
     /**
@@ -852,7 +852,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      */
     public function setCollapsible($collapsible)
     {
-        $this->collapsible = $collapsible;
+        $this->collapsible = (bool) $collapsible;
     }
 
     /**
@@ -890,7 +890,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      */
     public function setLazyLoading($lazyLoading)
     {
-        $this->lazyLoading = $lazyLoading;
+        $this->lazyLoading = (bool) $lazyLoading;
 
         return $this;
     }
@@ -1055,7 +1055,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      */
     public function setDisallowAddRemove($disallowAddRemove)
     {
-        $this->disallowAddRemove = $disallowAddRemove;
+        $this->disallowAddRemove = (bool) $disallowAddRemove;
     }
 
     /**
@@ -1071,7 +1071,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      */
     public function setDisallowReorder($disallowReorder)
     {
-        $this->disallowReorder = $disallowReorder;
+        $this->disallowReorder = (bool) $disallowReorder;
     }
 
     /**

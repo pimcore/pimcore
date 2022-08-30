@@ -35,7 +35,7 @@ class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multisel
      *
      * @var bool
      */
-    public $onlySystemLanguages = false;
+    public bool $onlySystemLanguages = false;
 
     /**
      * @internal
