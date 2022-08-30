@@ -28,7 +28,7 @@
     "docs": "https://pimcore.com/docs/latest/"
   },
   "require": {
-    "php": "^8.0",
+    "php": "^8.1",
     "ext-SimpleXML": "*",
     "ext-dom": "*",
     "ext-exif": "*",
@@ -117,7 +117,7 @@
     "symfony/process": "^5.2.0",
     "symfony/property-access": "^5.3",
     "symfony/property-info": "^5.2.0",
-    "symfony/proxy-manager-bridge": "^5.2.0",
+    "symfony/proxy-manager-bridge": "^5.3.0",
     "symfony/rate-limiter": "^5.2.0",
     "symfony/routing": "^5.3",
     "symfony/security-bundle": "^5.4.0",
