@@ -102,7 +102,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * @var bool
      */
-    protected $inProductList;
+    protected bool $inProductList = false;
 
     /**
      * @var array
@@ -344,7 +344,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      */
     public function setInProductList($inProductList)
     {
-        $this->inProductList = $inProductList;
+        $this->inProductList = (bool) $inProductList;
         $this->preparedGroupByValuesLoaded = false;
         $this->products = null;
     }

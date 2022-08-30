@@ -23,7 +23,7 @@ final class IsEqual extends AbstractOperator
     /**
      * @var bool
      */
-    private $skipNull;
+    private bool $skipNull = false;
 
     /**
      * {@inheritdoc}

@@ -47,7 +47,7 @@ class Price implements PriceInterface
     /**
      * @var bool
      */
-    private $minPrice;
+    private bool $minPrice = false;
 
     /**
      * @var TaxEntry[]

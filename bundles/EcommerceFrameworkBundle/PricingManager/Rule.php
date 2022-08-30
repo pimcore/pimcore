@@ -97,7 +97,7 @@ class Rule extends AbstractModel implements RuleInterface
     /**
      * @var bool
      */
-    protected $active;
+    protected bool $active = false;
 
     /**
      * @var int
@@ -259,7 +259,7 @@ class Rule extends AbstractModel implements RuleInterface
      */
     public function setActive($active)
     {
-        $this->active = $active;
+        $this->active = (bool) $active;
 
         return $this;
     }

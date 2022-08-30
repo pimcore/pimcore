@@ -23,7 +23,7 @@ final class Arithmetic extends AbstractOperator
     /**
      * @var bool
      */
-    private $skipNull;
+    private bool $skipNull = false;
 
     /**
      * @var string

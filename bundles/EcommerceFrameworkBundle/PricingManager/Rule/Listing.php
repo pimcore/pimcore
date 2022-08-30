@@ -28,7 +28,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     /**
      * @var bool
      */
-    protected $validate;
+    protected bool $validate = false;
 
     /**
      * @param bool $state

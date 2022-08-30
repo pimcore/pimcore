@@ -23,7 +23,7 @@ final class Boolean extends AbstractOperator
     /**
      * @var bool
      */
-    private $skipNull;
+    private bool $skipNull = false;
 
     /**
      * @var string

@@ -31,7 +31,7 @@ final class RequiredBy extends AbstractOperator
     /**
      * @var bool
      */
-    private $onlyCount;
+    private bool $onlyCount = false;
 
     /**
      * {@inheritdoc}

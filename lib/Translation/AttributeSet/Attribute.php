@@ -58,7 +58,7 @@ class Attribute
     /**
      * @var bool
      */
-    private $isReadonly;
+    private bool $isReadonly = false;
 
     /**
      * DataExtractorResultAttribute constructor.

@@ -29,7 +29,7 @@ class Availability implements AvailabilityInterface
     /**
      * @var bool
      */
-    private $available;
+    private bool $available = false;
 
     /**
      * @param CheckoutableInterface $product

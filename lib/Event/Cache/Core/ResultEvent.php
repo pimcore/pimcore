@@ -22,7 +22,7 @@ class ResultEvent extends Event
     /**
      * @var bool
      */
-    protected $result;
+    protected bool $result = true;
 
     /**
      * @param bool $result

@@ -33,7 +33,7 @@ final class ResultContainer
     /**
      * @var bool
      */
-    public $isEmpty;
+    public bool $isEmpty = false;
 
     /**
      * @return string
@@ -80,6 +80,6 @@ final class ResultContainer
      */
     public function setIsEmpty($isEmpty)
     {
-        $this->isEmpty = $isEmpty;
+        $this->isEmpty = (bool) $isEmpty;
     }
 }

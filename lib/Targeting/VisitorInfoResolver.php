@@ -79,9 +79,9 @@ class VisitorInfoResolver
     private $targetingRules;
 
     /**
-     * @var bool
+     * @var bool|null
      */
-    private $targetingConfigured;
+    private ?bool $targetingConfigured = null;
 
     public function __construct(
         TargetingStorageInterface $targetingStorage,

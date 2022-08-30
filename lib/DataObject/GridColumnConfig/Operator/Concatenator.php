@@ -28,7 +28,7 @@ final class Concatenator extends AbstractOperator
     /**
      * @var bool
      */
-    private $forceValue;
+    private bool $forceValue = false;
 
     /**
      * {@inheritdoc}

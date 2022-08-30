@@ -71,12 +71,12 @@ class InheritanceHelper
     /**
      * @var bool
      */
-    protected static $useRuntimeCache = false;
+    protected static bool $useRuntimeCache = false;
 
     /**
      * @var bool
      */
-    protected $childFound;
+    protected bool $childFound = false;
 
     /**
      * @var array
@@ -159,7 +159,7 @@ class InheritanceHelper
      */
     public static function setUseRuntimeCache($value)
     {
-        self::$useRuntimeCache = $value;
+        self::$useRuntimeCache = (bool) $value;
     }
 
     /**
