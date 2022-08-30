@@ -69,7 +69,7 @@ class Dao extends Model\Dao\AbstractDao
                 $this->model->setCreationDate($d['creationDate']);
                 $this->model->setModificationDate($d['modificationDate']);
                 $this->model->setType($d['type']);
-                $this->model->setUserOwner ($d['userOwner']);
+                $this->model->setUserOwner($d['userOwner']);
             }
         } else {
             throw new NotFoundResourceException("Translation-Key -->'" . $key . "'<-- not found");
@@ -110,7 +110,7 @@ class Dao extends Model\Dao\AbstractDao
                         'modificationDate' => $this->model->getModificationDate(),
                         'creationDate' => $this->model->getCreationDate(),
                         'userOwner' => $this->model->getUserOwner(),
-                        'userModification' => $this->model->getUserModification()
+                        'userModification' => $this->model->getUserModification(),
                     ];
                     Helper::insertOrUpdate($this->db, $this->getDatabaseTableName(), $data);
                 }
