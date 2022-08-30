@@ -115,7 +115,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @var bool
      */
-    public $unique = false;
+    public $unique;
 
     /**
      * This is the x part in DECIMAL(x, y) and denotes the total amount of digits. In MySQL this is called precision

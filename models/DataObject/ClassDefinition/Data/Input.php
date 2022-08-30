@@ -103,14 +103,14 @@ class Input extends Data implements
      *
      * @var bool
      */
-    public $unique = false;
+    public $unique;
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $showCharCount = false;
+    public $showCharCount;
 
     /**
      * @return string|int

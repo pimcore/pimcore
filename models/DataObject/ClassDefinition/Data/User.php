@@ -34,7 +34,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
      *
      * @var bool
      */
-    public $unique = false;
+    public $unique;
 
     /**
      * @internal

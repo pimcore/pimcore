@@ -46,7 +46,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      *
      * @var bool
      */
-    public $lazyLoading = false;
+    public $lazyLoading;
 
     /**
      * @internal
@@ -74,14 +74,14 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      *
      * @var bool
      */
-    public $collapsed = false;
+    public $collapsed;
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $collapsible = false;
+    public $collapsible;
 
     /**
      * @internal
