@@ -538,7 +538,7 @@ final class Tool
         }
 
         if ($subject) {
-            $mail->setSubject($subject);
+            $mail->subject($subject);
         }
 
         return $mail;
