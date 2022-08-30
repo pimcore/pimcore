@@ -455,7 +455,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaObject) {
                 $o = $metaObject->getElement();
-                if(!$o) {
+                if (!$o) {
                     continue;
                 }
                 $item = Element\Service::getElementType($o) . ' ' . $o->getRealFullPath();
