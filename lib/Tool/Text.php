@@ -38,10 +38,10 @@ class Text
     }
 
     /**
-     * @param string $text
+     * @param string|null $text
      * @param array $params
      *
-     * @return string
+     * @return string|null
      */
     public static function wysiwygText($text, $params = [])
     {

@@ -1002,8 +1002,8 @@ class TestHelper
     /**
      * This function allows to call private and protected methods
      *
-     * @param $obj
-     * @param $name
+     * @param object|string $obj
+     * @param string $name
      * @param array $args
      *
      * @return mixed
