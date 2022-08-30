@@ -166,7 +166,7 @@ class Dao extends AbstractDao {
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow('SELECT * FROM '.$this->tableName.' WHERE id = ?', [$this->model->getId()]);
+        $data = $this->db->fetchAssociative('SELECT * FROM '.$this->tableName.' WHERE id = ?', [$this->model->getId()]);
 
         if(!$data["id"]) {
             throw new NotFoundException("Object with the ID " . $this->model->getId() . " doesn't exists");
@@ -469,7 +469,7 @@ class Dao extends Listing\Dao\AbstractDao
     {
         try {
             $query = $this->getQueryBuilder();
-            $objectIds = $this->db->fetchCol((string) $query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+            $objectIds = $this->db->fetchFirstColumn((string) $query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
             $this->totalCount = (int) $this->db->fetchOne('SELECT FOUND_ROWS()');
 
             return array_map('intval', $objectIds);
