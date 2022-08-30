@@ -29,7 +29,7 @@ interface BracketInterface extends ConditionInterface
      * @param ConditionInterface $condition
      * @param string $operator BracketInterface::OPERATOR_*
      *
-     * @return self
+     * @return $this
      */
     public function addCondition(ConditionInterface $condition, $operator);
 

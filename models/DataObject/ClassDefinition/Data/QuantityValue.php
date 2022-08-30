@@ -71,7 +71,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $defaultUnit;
 
@@ -248,7 +248,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getDefaultUnit()
     {
@@ -380,7 +380,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function setUnique($unique)
     {
-        $this->unique = $unique;
+        $this->unique = (bool) $unique;
     }
 
     /**

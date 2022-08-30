@@ -37,7 +37,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\GridConfig[]|null $gridConfigs
      *
-     * @return static
+     * @return $this
      */
     public function setGridConfigs($gridConfigs)
     {

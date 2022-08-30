@@ -36,14 +36,14 @@ abstract class PageSnippet extends Model\Document
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $controller;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $template;
 
@@ -282,7 +282,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getTemplate()
     {
@@ -290,7 +290,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param string $controller
+     * @param string|null $controller
      *
      * @return $this
      */
@@ -302,7 +302,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param string $template
+     * @param string|null $template
      *
      * @return $this
      */

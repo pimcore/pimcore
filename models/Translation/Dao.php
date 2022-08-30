@@ -43,7 +43,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param string $key
-     * @param ?array $languages
+     * @param array|null $languages
      *
      * @throws NotFoundResourceException
      * @throws \Doctrine\DBAL\Exception

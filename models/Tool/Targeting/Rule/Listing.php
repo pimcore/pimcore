@@ -30,7 +30,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Rule[] $targets
      *
-     * @return static
+     * @return $this
      */
     public function setTargets(array $targets)
     {

@@ -29,7 +29,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\Element\Note[]|null $notes
      *
-     * @return static
+     * @return $this
      */
     public function setNotes($notes)
     {
