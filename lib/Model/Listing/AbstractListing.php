@@ -44,9 +44,9 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     protected $limit;
 
     /**
-     * @var int|null
+     * @var int
      */
-    protected $offset;
+    protected $offset = 0;
 
     /**
      * @var string|null
@@ -130,7 +130,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @return int|null
+     * @return int
      */
     public function getOffset()
     {
@@ -154,7 +154,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     {
         $this->setData(null);
 
-        if ($limit) {
+        if (is_numeric($limit)) {
             $this->limit = (int)$limit;
         } else {
             $this->limit = null;
@@ -164,7 +164,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     }
 
     /**
-     * @param int|null $offset
+     * @param int $offset
      *
      * @return $this
      */
@@ -172,11 +172,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     {
         $this->setData(null);
 
-        if ($offset) {
-            $this->offset = (int)$offset;
-        } else {
-            $this->offset = null;
-        }
+        $this->offset = (int)$offset;
 
         return $this;
     }
