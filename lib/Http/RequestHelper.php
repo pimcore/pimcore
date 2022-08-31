@@ -80,22 +80,6 @@ class RequestHelper
     }
 
     /**
-     * @deprecated will be removed in Pimcore 11, use getMainRequest() instead
-     *
-     * @return bool
-     */
-    public function hasMasterRequest(): bool
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.2',
-            sprintf('%s is deprecated, please use RequestHelper::hasMainRequest() instead.', __METHOD__)
-        );
-
-        return $this->hasMainRequest();
-    }
-
-    /**
      * @return bool
      */
     public function hasMainRequest(): bool
@@ -103,33 +87,18 @@ class RequestHelper
         return null !== $this->requestStack->getMainRequest();
     }
 
-    /**
-     * @deprecated will be removed in Pimcore 11 - use getMainRequest() instead
-     *
-     * @return Request
-     */
-    public function getMasterRequest(): Request
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.2',
-            sprintf('%s is deprecated, please use RequestHelper::getMainRequest() instead.', __METHOD__)
-        );
-
-        return $this->getMainRequest();
-    }
 
     /**
      * @return Request
      */
     public function getMainRequest(): Request
     {
-        $masterRequest = $this->requestStack->getMainRequest();
-        if (null === $masterRequest) {
+        $mainRequest = $this->requestStack->getMainRequest();
+        if (null === $mainRequest) {
             throw new \LogicException('There is no main request available.');
         }
 
-        return $masterRequest;
+        return $mainRequest;
     }
 
     /**
