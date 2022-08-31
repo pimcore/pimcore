@@ -128,9 +128,7 @@ Following sample implementation does that by using a sql query:
         $sql = "SELECT o_id FROM object_12 a LEFT JOIN app_prices b" .
             " ON a.o_id = b.productId WHERE o_id IN ($idString) ORDER BY ISNULL(b.price), b.price $order, o_id $limit;";
 
-
-        $sortedIds = $db->fetchAll($sql);
-
+        $sortedIds = $db->fetchAllAssociative($sql);
 
         return $sortedIds;
     }

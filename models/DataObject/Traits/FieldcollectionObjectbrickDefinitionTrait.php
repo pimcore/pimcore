@@ -29,7 +29,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     public $key;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $parentClass;
 
@@ -81,7 +81,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getParentClass()
     {
@@ -89,7 +89,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     }
 
     /**
-     * @param string $parentClass
+     * @param string|null $parentClass
      *
      * @return $this
      */
@@ -263,7 +263,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     /**
      * @internal
      *
-     * @param $fieldDefinition
+     * @param Data $fieldDefinition
      * @param array $context
      *
      * @return mixed
