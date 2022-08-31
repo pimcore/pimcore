@@ -666,7 +666,6 @@ class Service extends Model\Element\Service
 
         File::mkdir(dirname($file));
 
-
         if (Chromium::convert($url, $tmpFile)) {
             $im = \Pimcore\Image::getInstance();
             $im->load($tmpFile);
