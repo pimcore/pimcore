@@ -61,7 +61,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     /**
      * @param CartItemInterface[] $cartItems
      *
-     * @return static
+     * @return $this
      */
     public function setCartItems($cartItems)
     {

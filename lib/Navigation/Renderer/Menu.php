@@ -127,7 +127,7 @@ class Menu extends AbstractRenderer
      *
      * @param  string $ulClass                   CSS class to set
      *
-     * @return self  fluent interface, returns self
+     * @return $this
      */
     public function setUlClass($ulClass)
     {
@@ -154,7 +154,7 @@ class Menu extends AbstractRenderer
      *
      * @param  string|null  $ulId                Unique identifier (id) to set
      *
-     * @return self  fluent interface, returns self
+     * @return $this
      */
     public function setUlId($ulId)
     {
@@ -181,7 +181,7 @@ class Menu extends AbstractRenderer
      *
      * @param string $activeClass               CSS class to set
      *
-     * @return self fluent interface, returns self
+     * @return $this
      */
     public function setActiveClass($activeClass)
     {
@@ -207,7 +207,7 @@ class Menu extends AbstractRenderer
      *
      * @param  string $parentClass              CSS class to set to parents
      *
-     * @return self fluent interface, returns self
+     * @return $this
      */
     public function setParentClass($parentClass)
     {
@@ -234,7 +234,7 @@ class Menu extends AbstractRenderer
      * @param bool $flag                        [optional] render with parent
      *                                          class. Default is true.
      *
-     * @return self fluent interface, returns self
+     * @return $this
      */
     public function setRenderParentClass($flag = true)
     {
@@ -260,7 +260,7 @@ class Menu extends AbstractRenderer
      * @param  bool $flag                        [optional] render only active
      *                                           branch. Default is true.
      *
-     * @return self  fluent interface, returns self
+     * @return $this
      */
     public function setOnlyActiveBranch($flag = true)
     {
@@ -288,7 +288,7 @@ class Menu extends AbstractRenderer
      * @param  bool $flag                        [optional] expand all siblings of
      *                                           nodes in the active branch. Default is true.
      *
-     * @return self  fluent interface, returns self
+     * @return $this
      */
     public function setExpandSiblingNodesOfActiveBranch($flag = true)
     {
@@ -319,7 +319,7 @@ class Menu extends AbstractRenderer
      *                                           rendering active branch.
      *                                           Default is true.
      *
-     * @return self  fluent interface, returns self
+     * @return $this
      */
     public function setRenderParents($flag = true)
     {
@@ -401,7 +401,7 @@ class Menu extends AbstractRenderer
      * @param bool $flag                        [optional] adds CSS class from
      *                                          page to li element
      *
-     * @return self fluent interface, returns self
+     * @return $this
      */
     public function addPageClassToLi($flag = true)
     {

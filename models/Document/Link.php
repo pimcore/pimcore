@@ -41,7 +41,7 @@ class Link extends Model\Document
      *
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $internalType;
 
@@ -280,7 +280,7 @@ class Link extends Model\Document
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getInternalType()
     {
@@ -288,7 +288,7 @@ class Link extends Model\Document
     }
 
     /**
-     * @param string $type
+     * @param string|null $type
      *
      * @return $this
      */

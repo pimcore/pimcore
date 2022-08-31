@@ -2030,4 +2030,26 @@ class ClassController extends AdminController implements KernelControllerEventIn
 
         return $response;
     }
+
+    /**
+     * @Route("/video-supported-types", name="videosupportedTypestypes")
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function videoAllowedTypesAction(Request $request)
+    {
+        $videoDef = new DataObject\ClassDefinition\Data\Video();
+        $res = [];
+
+        foreach ($videoDef->getSupportedTypes() as $type) {
+            $res[] = [
+                'key' => $type,
+                'value' => $this->trans($type),
+            ];
+        }
+
+        return $this->adminJson($res);
+    }
 }

@@ -450,6 +450,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
                 if ($document instanceof Model\Document\PageSnippet
                     || $document instanceof Model\Document\Hardlink
                     || $document instanceof Model\Document\Link) {
+                    $this->applySchedulerDataToElement($request, $document);
                     $document->saveScheduledTasks();
                 }
 

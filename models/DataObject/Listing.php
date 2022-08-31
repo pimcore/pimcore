@@ -50,7 +50,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
     /**
      * @param array $objects
      *
-     * @return static
+     * @return $this
      */
     public function setObjects($objects)
     {
@@ -162,7 +162,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      * @param string $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      * @param string|int|float|array $data comparison data, can be scalar or array (if operator is e.g. "IN (?)")
      *
-     * @return static
+     * @return $this
      */
     public function addFilterByField($field, $operator, $data)
     {

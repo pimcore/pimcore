@@ -80,13 +80,13 @@ class Dao extends Model\Element\Dao
 
     public function create()
     {
-        $this->db->insert('documents', [
+        $this->db->insert('documents', Helper::quoteDataIdentifiers($this->db, [
             'key' => $this->model->getKey(),
             'type' => $this->model->getType(),
             'path' => $this->model->getRealPath(),
             'parentId' => $this->model->getParentId(),
             'index' => 0,
-        ]);
+        ]));
 
         $this->model->setId((int) $this->db->lastInsertId());
 

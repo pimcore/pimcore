@@ -322,7 +322,7 @@ final class Config implements Countable, Iterator, ArrayAccess
      *
      * @param  Config $merge
      *
-     * @return self
+     * @return $this
      */
     public function merge(Config $merge)
     {
