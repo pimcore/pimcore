@@ -19,7 +19,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\Definition\Attri
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
-use Pimcore\Config\Config;
 use Pimcore\Model\DataObject;
 
 abstract class AbstractConfig implements ConfigInterface

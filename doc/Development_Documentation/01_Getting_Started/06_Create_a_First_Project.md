@@ -78,9 +78,7 @@ Then we can also put some HTML and template code into it:
 <head>
     <meta charset="UTF-8">
     <title>Example</title>
-</head>
-<body>
-    <style type="text/css">
+    <style>
         body {
             padding: 0;
             margin: 0;
@@ -171,6 +169,8 @@ Then we can also put some HTML and template code into it:
         }
     
     </style>
+</head>
+<body>
     <div id="site">
         <div id="logo">
             <a href="http://www.pimcore.com/"><img src="/bundles/pimcoreadmin/img/logo-claim-gray.svg"

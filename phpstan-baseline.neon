@@ -161,11 +161,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/VoucherService/DefaultService.php
 
 		-
-			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
-			count: 1
-			path: lib/Db/Connection.php
-
-		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
 			path: lib/Image/Adapter/Imagick.php

@@ -75,40 +75,6 @@ class Composer
 
     /**
      * @param Event $event
-     */
-    public static function executeMigrationsUp(Event $event)
-    {
-        $consoleDir = static::getConsoleDir($event, 'pimcore migrations');
-
-        if (null === $consoleDir) {
-            return;
-        }
-
-        // execute migrations
-        $isInstalled = null;
-
-        try {
-            $process = static::executeCommand($event, $consoleDir,
-                ['internal:migration-helpers', '--is-installed'], 30, false);
-
-            if ($process->getExitCode() === 0 && trim($process->getOutput()) === '1') {
-                $isInstalled = true;
-            }
-        } catch (\Throwable $e) {
-            // noting to do
-        }
-
-        if ($isInstalled) {
-            self::clearDataCache($event, $consoleDir);
-            static::executeCommand($event, $consoleDir, ['doctrine:migrations:migrate', '-n', '--prefix', 'Pimcore\\Bundle\\CoreBundle']);
-            self::clearDataCache($event, $consoleDir);
-        } else {
-            $event->getIO()->write('<comment>Skipping migrations ... (either Pimcore is not installed yet or current status of migrations is not available)</comment>', true);
-        }
-    }
-
-    /**
-     * @param Event $event
      * @param string $consoleDir
      */
     public static function clearDataCache($event, $consoleDir)

@@ -940,8 +940,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $server->setBaseUri($this->generateUrl('pimcore_admin_webdav', ['path' => '/']));
 
             // lock plugin
-            /** @var \Doctrine\DBAL\Driver\PDOConnection $pdo */
-            $pdo = \Pimcore\Db::get()->getWrappedConnection();
+            /** @var \PDO $pdo */
+            $pdo = \Pimcore\Db::get()->getNativeConnection();
             $lockBackend = new \Sabre\DAV\Locks\Backend\PDO($pdo);
             $lockBackend->tableName = 'webdav_locks';
 
@@ -1665,6 +1665,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     public function getPreviewVideoAction(Request $request)
     {
         $asset = Asset\Video::getById((int) $request->get('id'));
+        $configName = $request->get('config');
 
         if (!$asset) {
             throw $this->createNotFoundException('could not load video asset');
@@ -1675,12 +1676,19 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $previewData = ['asset' => $asset];
-        $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
+
+        $config = Asset\Video\Thumbnail\Config::getByName($configName);
+
+        if (!$config instanceof Asset\Video\Thumbnail\Config) {
+            $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
+        }
+
         $thumbnail = $asset->getThumbnail($config, ['mp4']);
 
         if ($thumbnail) {
             $previewData['asset'] = $asset;
             $previewData['thumbnail'] = $thumbnail;
+            $previewData['config'] = $config->getName();
 
             if ($thumbnail['status'] == 'finished') {
                 return $this->render(
@@ -1711,6 +1719,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     public function serveVideoPreviewAction(Request $request)
     {
         $asset = Asset\Video::getById((int) $request->get('id'));
+        $configName = $request->get('config');
 
         if (!$asset) {
             throw $this->createNotFoundException('could not load video asset');
@@ -1720,7 +1729,12 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             throw $this->createAccessDeniedException('not allowed to preview');
         }
 
-        $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
+        $config = Asset\Video\Thumbnail\Config::getByName($configName);
+
+        if (!$config instanceof Asset\Video\Thumbnail\Config) {
+            $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
+        }
+
         $thumbnail = $asset->getThumbnail($config, ['mp4']);
         $storagePath = $asset->getRealPath() . '/' . preg_replace('@^' . preg_quote($asset->getPath(), '@') . '@', '', urldecode($thumbnail['formats']['mp4']));
 

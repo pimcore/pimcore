@@ -15,7 +15,6 @@
 
 namespace Pimcore\Video\Adapter;
 
-use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Tool\Console;
 use Pimcore\Video\Adapter;
@@ -40,6 +39,16 @@ class Ffmpeg extends Adapter
      * @var array
      */
     protected $arguments = [];
+
+    /**
+     * @var array
+     */
+    protected $videoFilter = [];
+
+    /**
+     * @var float|null
+     */
+    protected $inputSeeking = null;
 
     /**
      * @return bool
@@ -98,6 +107,10 @@ class Ffmpeg extends Adapter
             }
             if (is_file($this->getDestinationFile())) {
                 @unlink($this->getDestinationFile());
+            }
+
+            if (count($this->videoFilter) > 0) {
+                $this->addArgument('-vf', implode(',', $this->videoFilter));
             }
 
             $command = $this->arguments;
@@ -167,7 +180,16 @@ class Ffmpeg extends Adapter
             // add some global arguments
             array_push($command, '-threads', '0');
             $command[] = str_replace('/', DIRECTORY_SEPARATOR, $this->getDestinationFile());
-            array_unshift($command, self::getFfmpegCli(), '-i', realpath($this->file));
+            array_unshift($command, '-i', realpath($this->file));
+            // prepend seeking before input file to use input seeking method
+            if (isset($this->inputSeeking)) {
+                $sourceDuration = $this->getDuration() * 100;
+                if ($this->inputSeeking >= $sourceDuration) {
+                    $this->inputSeeking = 0;
+                }
+                array_unshift($command, '-ss', $this->inputSeeking);
+            }
+            array_unshift($command, self::getFfmpegCli());
 
             Console::addLowProcessPriority($command);
             $process = new Process($command);
@@ -333,9 +355,17 @@ class Ffmpeg extends Adapter
      * @param string $key
      * @param string $value
      */
-    public function addArgument($key, $value)
+    public function addArgument(string $key, string $value): void
     {
         array_push($this->arguments, $key, $value);
+    }
+
+    /**
+     * @param string $flag
+     */
+    public function addFlag(string $flag): void
+    {
+        array_push($this->arguments, $flag);
     }
 
     /**
@@ -406,7 +436,7 @@ class Ffmpeg extends Adapter
     {
         // ensure $width is even (mp4 requires this)
         $width = ceil($width / 2) * 2;
-        $this->addArgument('-filter:v', 'scale='.$width.':trunc(ow/a/2)*2');
+        $this->videoFilter[] = 'scale='.$width.':trunc(ow/a/2)*2';
     }
 
     /**
@@ -416,6 +446,47 @@ class Ffmpeg extends Adapter
     {
         // ensure $height is even (mp4 requires this)
         $height = ceil($height / 2) * 2;
-        $this->addArgument('-filter:v', 'scale=trunc(oh/(ih/iw)/2)*2:'.$height);
+        $this->videoFilter[] = 'scale=trunc(oh/(ih/iw)/2)*2:'.$height;
+    }
+
+    /**
+     * @param string|null $inputSeeking
+     * @param string|null $targetDuration
+     */
+    public function cut(?string $inputSeeking = null, ?string $targetDuration = null): void
+    {
+        if (!empty($inputSeeking)) {
+            $result = preg_match("/^(\d\d):(\d\d):(\d\d\.?\d*)$/", $inputSeeking, $matches);
+
+            if ($result) {
+                $this->inputSeeking = ((int)$matches[1] * 3600) + ((int)$matches[2] * 60) + (float)$matches[3];
+            }
+        }
+        if (!empty($targetDuration)) {
+            $this->addArgument('-t', $targetDuration);
+        }
+    }
+
+    /**
+     * @param int $fps
+     */
+    public function setFramerate(int $fps): void
+    {
+        $this->videoFilter[] = 'fps='.$fps;
+    }
+
+    public function mute(): void
+    {
+        $this->addFlag('-an');
+    }
+
+    /**
+     * @param string|null $effect
+     */
+    public function colorChannelMixer(?string $effect = null): void
+    {
+        if (!empty($effect)) {
+            $this->videoFilter[] = 'colorchannelmixer='.$effect;
+        }
     }
 }
