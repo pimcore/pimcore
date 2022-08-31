@@ -1934,11 +1934,11 @@ final class Configuration implements ConfigurationInterface
                                                         ->defaultValue(ChangePublishedStateSubscriber::NO_CHANGE)
                                                         ->info('Change published state of element while transition (only available for documents and data objects).')
                                                     ->end()
-                                                    ->enumNode('saveBehavior')
-                                                        ->values([Transition::OPTIONS_SAVEBEHAVIOR_SAVE,
-                                                                  Transition::OPTIONS_SAVEBEHAVIOR_NOT_SAVE,
-                                                                  Transition::OPTIONS_SAVEBEHAVIOR_WARNING])
-                                                        ->defaultValue(Transition::OPTIONS_SAVEBEHAVIOR_WARNING)
+                                                    ->enumNode('unsavedChangesBehaviour')
+                                                        ->values([Transition::UNSAVED_CHANGES_BEHAVIOUR_SAVE,
+                                                                  Transition::UNSAVED_CHANGES_BEHAVIOUR_WARN,
+                                                                  Transition::UNSAVED_CHANGES_BEHAVIOUR_IGNORE])
+                                                        ->defaultValue(Transition::UNSAVED_CHANGES_BEHAVIOUR_WARN)
                                                         ->info('Set saving behavior for workflow transitions: save data before transition, do not save (standard behavior) or show warning popup.')
                                                     ->end()
                                                 ->end()

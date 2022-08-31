@@ -978,6 +978,31 @@ pimcore.elementservice.getWorkflowActionsButton = function(workflows, elementTyp
 
         var items = [];
 
+        var workflowTransitionHandler = function (workflow, transition, elementEditor, elementId, elementType) {
+            var applyWorkflow = function (workflow, transition, elementEditor, elementId, elementType) {
+                transition.isGlobalAction = false;
+                if (transition.notes) {
+                    new pimcore.workflow.transitionPanel(elementType, elementId, elementEditor, workflow.name, transition);
+                } else {
+                    pimcore.workflow.transitions.perform(elementType, elementId, elementEditor, workflow.name, transition);
+                }
+            };
+
+            if (elementEditor.isDirty()) {
+                if (transition.saveBehavior === 'warn') {
+                    pimcore.helpers.showNotification(t("error"), t("workflow_transition_unsaved_data"), "error");
+                } else if (transition.saveBehavior === 'save') {
+                    elementEditor.save(null, null, null, function () {
+                        applyWorkflow(workflow, transition, elementEditor, elementId, elementType);
+                    });
+                } else {
+                    applyWorkflow(workflow, transition, elementEditor, elementId, elementType);
+                }
+            } else {
+                applyWorkflow(workflow, transition, elementEditor, elementId, elementType);
+            }
+        };
+
         workflowsWithTransitions.forEach(function (workflow) {
             if (workflowsWithTransitions.length > 1) {
                 items.push({
@@ -993,9 +1018,7 @@ pimcore.elementservice.getWorkflowActionsButton = function(workflows, elementTyp
                     text: t(transition.label),
                     iconCls: transition.iconCls,
                     handler: function (workflow, transition) {
-
-                        pimcore.elementservice.workflowActionsButtonHandler(workflow, transition, elementEditor, elementId, elementType);
-
+                        workflowTransitionHandler(workflow, transition, elementEditor, elementId, elementType);
                     }.bind(this, workflow, transition)
                 });
             }
@@ -1008,9 +1031,7 @@ pimcore.elementservice.getWorkflowActionsButton = function(workflows, elementTyp
                     text: t(transition.label),
                     iconCls: transition.iconCls,
                     handler: function (workflow, transition) {
-
-                        pimcore.elementservice.workflowActionsButtonHandler(workflow, transition, elementEditor, elementId, elementType);
-
+                        workflowTransitionHandler(workflow, transition, elementEditor, elementId, elementType);
                     }.bind(this, workflow, transition)
                 });
             }
@@ -1030,36 +1051,6 @@ pimcore.elementservice.getWorkflowActionsButton = function(workflows, elementTyp
 
     return false;
 };
-
-pimcore.elementservice.workflowActionsButtonHandler = function (workflow, transition, elementEditor, elementId, elementType) {
-    if(elementEditor.isDirty()) {
-        if (transition.saveBehavior === 'warning') {
-
-            pimcore.helpers.showNotification(t("error"), t("workflow_transition_unsaved_data"), "error");
-
-        } else if(transition.saveBehavior === 'save') {
-
-            elementEditor.save(null, null, null, function() {
-                pimcore.elementservice.workflowTransitionSave(workflow, transition, elementEditor, elementId, elementType);
-            });
-
-        } else {
-            pimcore.elementservice.workflowTransitionSave(workflow, transition, elementEditor, elementId, elementType);
-        }
-    } else {
-        pimcore.elementservice.workflowTransitionSave(workflow, transition, elementEditor, elementId, elementType);
-    }
-};
-
-pimcore.elementservice.workflowTransitionSave = function (workflow, transition, elementEditor, elementId, elementType) {
-    transition.isGlobalAction = false;
-    if (transition.notes) {
-        new pimcore.workflow.transitionPanel(elementType, elementId, elementEditor, workflow.name, transition);
-    } else {
-        pimcore.workflow.transitions.perform(elementType, elementId, elementEditor, workflow.name, transition);
-    }
-}
-
 
 pimcore.elementservice.replaceAsset = function (id, callback) {
     pimcore.helpers.uploadDialog(Routing.generate('pimcore_admin_asset_replaceasset', {id: id}), "Filedata", function() {

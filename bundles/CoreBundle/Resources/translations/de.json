@@ -788,7 +788,6 @@
     "workflow_actions": "Aktionen",
     "workflow_notes_requred_field_message": "\"%s\" ist erforderlich.",
     "workflow_transition_applied_successfully": "Aktion erfolgreich angewendet",
-    "workflow_transition_unsaved_data": "Sie haben nicht gespeicherte Daten. Bitte speichern Sie die Änderungen, bevor Sie den Workflow-Übergang anwenden.",
     "workflow_change_email_notification_subject": "Workflow-Aktualisierung für %s in Workflow '%s'",
     "workflow_change_email_notification_text": "Für %s mit der ID %s wurde die Aktion \"%s\" im Ablauf '%s' ausgelöst.",
     "workflow_change_email_notification_deeplink": "Deep Link zum Element.",
