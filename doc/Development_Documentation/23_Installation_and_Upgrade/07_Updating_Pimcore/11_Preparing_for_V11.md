@@ -44,8 +44,8 @@
     document.addEventListener(pimcore.events.preSaveObject, (e) => {
         let userAnswer = confirm(`Are you sure you want to save ${e.detail.object.data.general.o_className}?`);
         if (!userAnswer) {
-           event.preventDefault();
-           event.stopPropagation();
+           e.preventDefault();
+           e.stopPropagation();
            pimcore.helpers.showNotification(t("Info"), t("saving_failed") + ' ' + 'placeholder', 'info');
         }
     });
