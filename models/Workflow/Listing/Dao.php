@@ -20,6 +20,7 @@ use Pimcore\Model\Workflow;
 
 /**
  * @internal
+ *
  * @deprecated
  *
  * @property \Pimcore\Model\Workflow\Listing $model
