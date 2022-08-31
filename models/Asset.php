@@ -1594,10 +1594,21 @@ class Asset extends Element\AbstractElement
         if (is_array($metaData)) {
             foreach ($metaData as $md) {
                 $md = (array)$md;
-                if (!$raw) {
-                    $md['data'] = $convert($md);
+                if (empty($md['language']) && !$strictMatch) {
+                    if (!$raw) {
+                        $md['data'] = $convert($md);
+                    } else {
+                        $result[] = $md;
+                    }
+                } else {
+                    if($md['language'] == $language) {
+                        if(!$raw) {
+                            $md['data'] = $convert($md);
+                        } else {
+                            $result[] = $md;
+                        }
+                    }
                 }
-                $result[] = $md;
             }
         }
 
