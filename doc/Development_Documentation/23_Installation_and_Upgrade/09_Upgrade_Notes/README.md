@@ -23,6 +23,7 @@
   $web2printConfig = $web2printConfig['headlessChromeSettings'];
   - ```
 - [Elements] Removed fallback to parent id 1, when an element with a non-existing parent id gets created.
+- [PhpArrayTable]: Removed PhpArrayTable class
 
 ## 10.5.0
 - [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`
