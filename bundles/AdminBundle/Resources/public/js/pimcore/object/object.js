@@ -758,7 +758,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             const preSaveObject = new CustomEvent(pimcore.events.preSaveObject, {
                 detail: {
                     object: this,
-                    type: "object"
+                    type: "object",
+                    task: task
                 },
                 cancelable: true
             });
