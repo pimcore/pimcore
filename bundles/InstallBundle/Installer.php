@@ -756,7 +756,7 @@ class Installer
             'o_modificationDate' => time(),
             'o_userOwner' => 1,
             'o_userModification' => 1,
-        ]);
+        ]));
         $userPermissions = [
             'application_logging',
             'assets',
