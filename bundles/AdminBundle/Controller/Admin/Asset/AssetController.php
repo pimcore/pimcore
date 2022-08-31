@@ -940,8 +940,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $server->setBaseUri($this->generateUrl('pimcore_admin_webdav', ['path' => '/']));
 
             // lock plugin
-            /** @var \Doctrine\DBAL\Driver\PDOConnection $pdo */
-            $pdo = \Pimcore\Db::get()->getWrappedConnection();
+            /** @var \PDO $pdo */
+            $pdo = \Pimcore\Db::get()->getNativeConnection();
             $lockBackend = new \Sabre\DAV\Locks\Backend\PDO($pdo);
             $lockBackend->tableName = 'webdav_locks';
 
