@@ -34,8 +34,6 @@ interface DirtyIndicatorInterface
      *
      * @param string $field
      * @param bool $dirty
-     *
-     * @return mixed
      */
     public function markFieldDirty($field, $dirty = true);
 

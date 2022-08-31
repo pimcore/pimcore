@@ -77,6 +77,50 @@ class DocumentTest extends ModelTestCase
     }
 
     /**
+     * Parent ID of a new object cannot be 0
+     */
+    public function testParentIs0()
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
+        $savedObject = TestHelper::createEmptyDocumentPage('', false);
+        $this->assertTrue($savedObject->getId() == 0);
+
+        $savedObject->setParentId(0);
+        $savedObject->save();
+    }
+
+    /**
+     * Verifies that an object with the same parent ID cannot be created.
+     */
+    public function testParentIdentical()
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage("ParentID and ID are identical, an element can't be the parent of itself in the tree.");
+        $savedObject = TestHelper::createEmptyDocumentPage();
+        $this->assertTrue($savedObject->getId() > 0);
+
+        $savedObject->setParentId($savedObject->getId());
+        $savedObject->save();
+    }
+
+    /**
+     * Parent ID must resolve to an existing element
+     *
+     * @group notfound
+     */
+    public function testParentNotFound()
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('ParentID not found.');
+        $savedObject = TestHelper::createEmptyDocumentPage('', false);
+        $this->assertTrue($savedObject->getId() == 0);
+
+        $savedObject->setParentId(999999);
+        $savedObject->save();
+    }
+
+    /**
      * Verifies that asset PHP API version note is saved
      */
     public function testSavingVersionNotes()
@@ -235,13 +279,24 @@ class DocumentTest extends ModelTestCase
         $this->assertNull($childEditable);
 
         // set master document
-        $child->setContentMasterDocumentId($this->testPage->getId());
+        $child->setContentMasterDocumentId($this->testPage->getId(), true);
         $child->save();
         $child = Page::getById($child->getId(), ['force' => true]);
 
         // now the value should get inherited
         $childEditable = $child->getEditable('headline');
         $this->assertEquals('test', $childEditable->getValue());
+
+        // Don't set the master document if the document is already a part of the master document chain
+        $testFirstPage = TestHelper::createEmptyDocumentPage();
+        $testSecondPage = TestHelper::createEmptyDocumentPage();
+        $testFirstPage->setContentMasterDocumentId($testSecondPage->getId(), true);
+        $testFirstPage->setPublished(true);
+        $testFirstPage->save();
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('This document is already part of the master document chain, please choose a different one.');
+        $testSecondPage->setContentMasterDocumentId($testFirstPage->getId(), true);
     }
 
     public function testLink()

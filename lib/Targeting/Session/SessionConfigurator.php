@@ -19,14 +19,10 @@ namespace Pimcore\Targeting\Session;
 
 use Pimcore\Session\SessionConfiguratorInterface;
 use Pimcore\Targeting\EventListener\TargetingSessionBagListener;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * @deprecated will be removed in Pimcore 11. Use TargetingSessionBagListener instead.
  */
 class SessionConfigurator extends TargetingSessionBagListener implements SessionConfiguratorInterface
 {
-    public function configure(SessionInterface $session)
-    {
-    }
 }

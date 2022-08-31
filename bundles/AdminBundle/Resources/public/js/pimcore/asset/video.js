@@ -106,6 +106,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
         if (!this.editPanel) {
             this.previewFrameId = 'asset_video_edit_' + this.id;
             this.previewMode = 'video';
+
             if (this.data['videoInfo'] && this.data['videoInfo']['isVrVideo']) {
                 this.previewMode = 'vr';
             }
@@ -124,15 +125,17 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
             }.bind(this));
 
             var date = new Date();
-
             var detailsData = [];
-            if(this.data.customSettings['videoWidth']) {
+
+            if (this.data.customSettings['videoWidth']) {
                 detailsData[t("width")] = this.data.customSettings.videoWidth;
             }
-            if(this.data.customSettings['videoHeight']) {
+
+            if (this.data.customSettings['videoHeight']) {
                 detailsData[t("height")] = this.data.customSettings.videoHeight;
             }
-            if(this.data.customSettings['duration']) {
+
+            if (this.data.customSettings['duration']) {
                 detailsData[t("duration")] = pimcore.helpers.formatTimeDuration(this.data.customSettings.duration);
             }
 
@@ -155,6 +158,17 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                 width: 265,
                 aspectratio: true,
                 '_dc': date.getTime()
+            });
+
+            var thumbnailsStore = new Ext.data.JsonStore({
+                autoLoad: true,
+                forceSelection: true,
+                autoDestroy: true,
+                proxy: {
+                    type: 'ajax',
+                    url: Routing.generate('pimcore_admin_settings_videothumbnail_list')
+                },
+                fields: ['id', 'text']
             });
 
             this.previewImagePanel = new Ext.Panel({
@@ -187,6 +201,23 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                         handler: function () {
                             this.initPreviewVr();
                         }.bind(this)
+                    }, {
+                        xtype: "combo",
+                        name: "thumbnail",
+                        fieldLabel: t("thumbnail"),
+                        width: "100%",
+                        style: "margin-top: 5px",
+                        store: thumbnailsStore,
+                        value: "pimcore-system-treepreview",
+                        editable: false,
+                        valueField: "id",
+                        displayField: "text",
+                        listeners: {
+                            select: function (el) {
+                                this.previewImagePanel.getComponent("inner").getComponent("set_video_poser_button").setDisabled((el.value !== "pimcore-system-treepreview"));
+                                this.initPreviewVideo(el.value);
+                            }.bind(this)
+                        }
                     }]
                 }, dimensionPanel, {
                     xtype: "panel",
@@ -205,6 +236,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                         xtype: "button",
                         text: t("use_current_player_position_as_preview"),
                         iconCls: "pimcore_icon_video pimcore_icon_overlay_edit",
+                        itemId: "set_video_poser_button",
                         width: "100%",
                         handler: function () {
                             try {
@@ -317,8 +349,8 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
         this.previewMode = 'vr';
     },
 
-    initPreviewVideo: function () {
-        var frameUrl = Routing.generate('pimcore_admin_asset_getpreviewvideo', {id: this.id});
+    initPreviewVideo: function (config = "pimcore-system-treepreview") {
+        var frameUrl = Routing.generate('pimcore_admin_asset_getpreviewvideo', {id: this.id, config: config});
         var html = '<iframe src="' + frameUrl + '" frameborder="0" id="' + this.previewFrameId + '" name="' + this.previewFrameId + '" style="width:100%;"></iframe>';
         this.previewPanel.update(html);
 

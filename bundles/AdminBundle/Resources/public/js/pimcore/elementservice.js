@@ -304,7 +304,7 @@ pimcore.elementservice.updateObject = function (id, values, callback) {
         url: Routing.generate('pimcore_admin_dataobject_dataobject_update'),
         method: "PUT",
         params: {
-            id: id,
+            id: Ext.encode(id),
             values: Ext.encode(values)
         },
         success: callback
@@ -689,33 +689,6 @@ pimcore.elementservice.isKeyExistingInLevel = function(parentNode, key, node) {
         }
     }
     return false;
-};
-
-pimcore.elementservice.nodeMoved = function(elementType, oldParent, newParent) {
-    // disabled for now
-    /*var oldParentId = oldParent.getId();
-    var newParentId = newParent.getId();
-    var newParentTreeId = newParent.getOwnerTree().getId();
-
-    var affectedNodes = pimcore.elementservice.getAffectedNodes(elementType, newParentId);
-    for (var index = 0; index < affectedNodes.length; index++) {
-        var node = affectedNodes[index];
-        var nodeTreeId = node.getOwnerTree().getId();
-        if (nodeTreeId != newParentTreeId) {
-            pimcore.elementservice.refreshNode(node);
-        }
-    }
-
-    if (oldParentId != newParentId) {
-        var affectedNodes = pimcore.elementservice.getAffectedNodes(elementType, oldParentId);
-        for (var index = 0; index < affectedNodes.length; index++) {
-            var node = affectedNodes[index];
-            var nodeTreeId = node.getOwnerTree().getId();
-            if (nodeTreeId != newParentTreeId) {
-                pimcore.elementservice.refreshNode(node);
-            }
-        }
-    }*/
 };
 
 pimcore.elementservice.addObject = function(options) {

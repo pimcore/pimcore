@@ -25,7 +25,7 @@ interface ModelInterface
     /**
      * @param Dao\AbstractDao $dao
      *
-     * @return self
+     * @return $this
      */
     public function setDao($dao);
 

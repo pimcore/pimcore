@@ -25,7 +25,7 @@ abstract class ClassResolver
     private static $cache;
 
     /**
-     * @param string $class
+     * @param string|null $class
      * @param callable|null $validationCallback
      *
      * @return mixed|null

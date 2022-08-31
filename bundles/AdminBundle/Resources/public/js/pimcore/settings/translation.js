@@ -132,6 +132,7 @@ pimcore.settings.translation.domain = Class.create({
     },
 
     getAvailableLanguages: function () {
+        this.editableLanguages = [];
         let route = 'pimcore_admin_translation_getwebsitetranslationlanguages';
         if (this.domain === 'admin') {
             route = 'pimcore_admin_settings_getavailableadminlanguages';
@@ -247,7 +248,10 @@ pimcore.settings.translation.domain = Class.create({
         ];
 
         var typesColumns = [
-            {text: t("key"), sortable: true, dataIndex: 'key', flex: 1, editable: false, filter: 'string'},
+            {text: t("key"), sortable: true, dataIndex: 'key', flex: 1, editable: false, filter: 'string',
+                editor: new Ext.form.DisplayField({
+                    htmlEncode: true
+                })},
             {text: t("type"), sortable: true, dataIndex: 'type', width: 100, editor: new Ext.form.ComboBox({
                     triggerAction: 'all',
                     editable: false,
@@ -262,6 +266,7 @@ pimcore.settings.translation.domain = Class.create({
         for (var i = 0; i < languages.length; i++) {
             readerFields.push({name: "_" + languages[i], defaultValue: ''});
 
+            let editable = empty(this.editableLanguages) || in_array(languages[i], this.editableLanguages);
             let columnConfig = {
                 cls: "x-column-header_" + languages[i].toLowerCase(),
                 text: pimcore.available_languages[languages[i]],
@@ -269,7 +274,7 @@ pimcore.settings.translation.domain = Class.create({
                 flex: 1,
                 dataIndex: "_" + languages[i],
                 filter: 'string',
-                editor: this.getCellEditor(),
+                editor: this.getCellEditor(editable),
                 renderer: function (text) {
                     if (text) {
                         return replace_html_event_attributes(strip_tags(text, 'div,span,b,strong,em,i,small,sup,sub,p'));
@@ -293,15 +298,16 @@ pimcore.settings.translation.domain = Class.create({
             var date = new Date(d * 1000);
             return Ext.Date.format(date, "Y-m-d H:i:s");
         };
+
         typesColumns.push({
             text: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false
             , renderer: dateRenderer, filter: 'date', hidden: true
         });
+
         typesColumns.push({
             text: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false
             , renderer: dateRenderer, filter: 'date', hidden: true
-        })
-        ;
+        });
 
         if (pimcore.globalmanager.get("user").admin || this.domain === 'admin' || pimcore.settings.websiteLanguages.length == this.editableLanguages.length) {
             typesColumns.push({
@@ -313,7 +319,7 @@ pimcore.settings.translation.domain = Class.create({
                     icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                     handler: function (grid, rowIndex) {
                         let data = grid.getStore().getAt(rowIndex);
-                        pimcore.helpers.deleteConfirm(t('translation'), data.data.key, function () {
+                        pimcore.helpers.deleteConfirm(t('translation'), Ext.util.Format.htmlEncode(data.data.key), function () {
                             grid.getStore().removeAt(rowIndex);
                         }.bind(this));
                     }.bind(this)
@@ -635,11 +641,11 @@ pimcore.settings.translation.domain = Class.create({
         this.currentEditorWindow = new pimcore.settings.translation.editor(this, field, field.recordReference.get('type'), editorType)
     },
 
-    getCellEditor: function() {
-
+    getCellEditor: function(editable) {
         return new Ext.form.field.TextArea({
             enableKeyEvents: true,
             fieldStyle: 'min-height:30px',
+            disabled: !editable,
             listeners: {
                 keyup: function (field, key) {
                     if (key.getKey() == key.ENTER) {

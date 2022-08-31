@@ -41,6 +41,9 @@ class JWTCookieSaveHandler extends AbstractCookieSaveHandler
      */
     private $logger;
 
+    /**
+     * @param non-empty-string $secret
+     */
     public function __construct(
         string $secret,
         array $options = [],

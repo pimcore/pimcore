@@ -42,11 +42,6 @@ final class Tool
     protected static $validLanguages = [];
 
     /**
-     * @var null
-     */
-    protected static $isFrontend = null;
-
-    /**
      * Sets the current request to operate on
      *
      * @param Request|null $request
@@ -562,7 +557,6 @@ final class Tool
         }
 
         if (is_array($paramsGet) && count($paramsGet) > 0) {
-
             //need to insert get params from url to $paramsGet because otherwise they would be ignored
             $urlParts = parse_url($url);
 

@@ -51,7 +51,7 @@ class Folder extends Model\Asset
      *
      * @param Asset[]|null $children
      *
-     * @return Folder
+     * @return $this
      */
     public function setChildren($children)
     {

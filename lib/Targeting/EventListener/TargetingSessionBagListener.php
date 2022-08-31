@@ -21,8 +21,8 @@ use Pimcore\Event\Cache\FullPage\IgnoredSessionKeysEvent;
 use Pimcore\Event\Cache\FullPage\PrepareResponseEvent;
 use Pimcore\Event\FullPageCacheEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -58,6 +58,20 @@ class TargetingSessionBagListener implements EventSubscriberInterface
 
         $session = $event->getRequest()->getSession();
 
+        //do not register bags, if session is already started
+        if ($session->isStarted()) {
+            return;
+        }
+
+        $this->configure($session);
+    }
+
+    /**
+     * @param SessionInterface $session
+     *
+     */
+    public function configure(SessionInterface $session)
+    {
         $sessionBag = new AttributeBag('_' . self::TARGETING_BAG_SESSION);
         $sessionBag->setName(self::TARGETING_BAG_SESSION);
 
