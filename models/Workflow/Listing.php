@@ -23,6 +23,7 @@ use Pimcore\Model\Listing\Traits\OrderListingTrait;
 use Pimcore\Model\Workflow;
 
 /**
+ * @deprecated
  * @method Workflow\Listing\Dao getDao()
  */
 class Listing extends JsonListing implements CallableFilterListingInterface, CallableOrderListingInterface
