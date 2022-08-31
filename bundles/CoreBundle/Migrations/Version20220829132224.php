@@ -42,11 +42,11 @@ final class Version20220829110624 extends AbstractMigration
         return $configs;
     }
 
-    private function migrateToSettingsStore(string $id, string $scope, array $configs): void
+    private function migrateToSettingsStore(string $id, string $scope, array $configs, bool $overwriteExistingConfig = false): void
     {
         if(count($configs) > 0) {
             $existingConfig = SettingsStore::get($id, $scope);
-            if(!$existingConfig) {
+            if(!$existingConfig || $overwriteExistingConfig) {
                 SettingsStore::set($id, json_encode($configs), "string", $scope);
             }
         }
@@ -83,7 +83,7 @@ final class Version20220829110624 extends AbstractMigration
                     $web2PrintConfigs[$key] = $config;
                 }
             }
-            Config::setWeb2PrintConfig($web2PrintConfigs);
+            $this->migrateToSettingsStore("web_to_print", "pimcore_web_to_print", $web2PrintConfigs, true);
         }
     }
 
@@ -100,7 +100,7 @@ final class Version20220829110624 extends AbstractMigration
         $this->migrateCustomViewsPerspectives("perspectives.php", "pimcore_perspectives");
         $this->migrateCustomViewsPerspectives("customviews.php", "pimcore_custom_views");
 
-        //$this->migrateWeb2PrintSettings();
+        $this->migrateWeb2PrintSettings();
     }
 
     public function down(Schema $schema): void
