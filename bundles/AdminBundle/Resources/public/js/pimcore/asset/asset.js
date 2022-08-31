@@ -365,7 +365,8 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
         const preSaveAsset = new CustomEvent(pimcore.events.preSaveAsset, {
             detail: {
-                id: this.id
+                id: this.id,
+                task: task
             },
             cancelable: true
         });
