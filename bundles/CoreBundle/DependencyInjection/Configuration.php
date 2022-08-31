@@ -21,6 +21,7 @@ use Pimcore\Targeting\Storage\TargetingStorageInterface;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Pimcore\Workflow\Notification\NotificationEmailService;
+use Pimcore\Workflow\Transition;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -1932,6 +1933,13 @@ final class Configuration implements ConfigurationInterface
                                                         ->values([ChangePublishedStateSubscriber::NO_CHANGE, ChangePublishedStateSubscriber::FORCE_UNPUBLISHED, ChangePublishedStateSubscriber::FORCE_PUBLISHED, ChangePublishedStateSubscriber::SAVE_VERSION])
                                                         ->defaultValue(ChangePublishedStateSubscriber::NO_CHANGE)
                                                         ->info('Change published state of element while transition (only available for documents and data objects).')
+                                                    ->end()
+                                                    ->enumNode('saveBehavior')
+                                                        ->values([Transition::OPTIONS_SAVEBEHAVIOR_SAVE,
+                                                                  Transition::OPTIONS_SAVEBEHAVIOR_NOT_SAVE,
+                                                                  Transition::OPTIONS_SAVEBEHAVIOR_WARNING])
+                                                        ->defaultValue(Transition::OPTIONS_SAVEBEHAVIOR_WARNING)
+                                                        ->info('Set saving behavior for workflow transitions: save data before transition, do not save (standard behavior) or show warning popup.')
                                                     ->end()
                                                 ->end()
                                             ->end()
