@@ -20,6 +20,7 @@ use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @internal
+ * @deprecated
  *
  * @property \Pimcore\Model\Workflow $model
  */
