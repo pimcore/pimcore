@@ -38,7 +38,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     /**
      * @param Data[]|null $entries
      *
-     * @return static
+     * @return $this
      */
     public function setEntries($entries)
     {

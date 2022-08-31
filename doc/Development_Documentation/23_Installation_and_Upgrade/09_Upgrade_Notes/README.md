@@ -118,6 +118,7 @@ Please use [event listener](../../20_Extending_Pimcore/13_Bundle_Developers_Guid
   }
   ```
 - [Elements] Deprecated setting the parent id to 1 (root node), when an element with a non-existing parent id gets created.
+- [Custom Layouts] Deprecated Class `ClassLayoutDefinitionManager` and constant `PIMCORE_CUSTOMLAYOUT_DIRECTORY`.
 
 ## 10.4.2
 - When maintenance mode is active, all commands are prevented from starting (not just commands inheriting from `AbstractCommand`).

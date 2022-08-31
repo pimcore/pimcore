@@ -128,7 +128,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
     /**
      * @param array $fields
-     * @param $params
+     * @param array $params
      *
      * @return Unittest
      */

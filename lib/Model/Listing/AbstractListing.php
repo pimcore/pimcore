@@ -534,7 +534,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     /**
      * @param array|null $data
      *
-     * @return static
+     * @return $this
      */
     public function setData(?array $data): self
     {

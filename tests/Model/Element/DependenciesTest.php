@@ -18,8 +18,10 @@ namespace Pimcore\Tests\Model\Element;
 use Pimcore\Db;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Property;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
@@ -162,9 +164,8 @@ class DependenciesTest extends ModelTestCase
     }
 
     /**
-     * @param $source
-     * @param $targets
-     *
+     * @param ElementInterface $source
+     * @param Concrete[] $targets
      */
     private function saveElementDependencies($source, $targets)
     {

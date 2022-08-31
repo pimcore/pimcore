@@ -1,7 +1,22 @@
 # Preparing Pimcore for Version 11
 
 ## Preparatory Work
-- Replace plugins with [event listener](../../20_Extending_Pimcore/13_Bundle_Developers_Guide/06_Event_Listener_UI.md) as follows:
+- Upgrade to version 10.5.x, if you are using a lower version.
+- [Security] Enable New Security Authenticator and adapt your security.yaml as per changes [here](https://github.com/pimcore/demo/blob/11.x/config/packages/security.yaml) :
+    ```
+    security:
+        enable_authenticator_manager: true
+    ```
+    Points to consider when moving to new Authenticator:
+  - New authentication system works with password hasher factory instead of encoder factory.
+  - BruteforceProtectionHandler will be replaced with Login Throttling.
+  - Custom Guard Authenticator will be replaced with Http\Authenticator.
+- [Type hints] Check and add **return type hints** for classes extending Pimcore classes or implementing interfaces provided by Pimcore, based on the source phpdoc or comments on the methods.
+  The return types will be added to Pimcore classes, so you `must` add return types to your classes extending Pimcore.
+  You could use the patch-type-declarations tool, provided by symfony, to check for affected methods. For details please have a look [here](https://symfony.com/doc/5.4/setup/upgrade_major.html#4-update-your-code-to-work-with-the-new-version).
+
+
+- [Javascript] Replace plugins with [event listener](../../20_Extending_Pimcore/13_Bundle_Developers_Guide/06_Event_Listener_UI.md) as follows:
     ```javascript
     pimcore.registerNS("pimcore.plugin.MyTestBundle");
 
@@ -33,9 +48,15 @@
         }
     });
     ```
-- Replace deprecated JS functions
-  - Use `t()` instead of `ts()`
-  - Don't use `pimcore.helpers.addCsrfTokenToUrl()`
+- [Javascript] Replace deprecated JS functions:
+   - Use t() instead of ts() for translations.
+   - Stop using `pimcore.helpers.addCsrfTokenToUrl`
+ 
+- [Deprecations] Fix deprecations defined in the [upgrade notes](../09_Upgrade_Notes/README.md), which is to be removed in Pimcore 11.
+  Tip: you can search for deprecations in Symfony Profiler(Debug mode) or can run linux command `tail -f var/log/dev.log | grep 'User Deprecated'` for checking deprecations on runtime.
+
+- [Extensions] Stop using `var/config/extensions.php` for registering bundles, use `config/bundle.php` instead.
+
 - Don't use deprecated `Pimcore\Db\ConnectionInterface` interface, `Pimcore\Db\Connection` class and `Pimcore\Db\PimcoreExtensionsTrait` trait
   Use `Doctrine\DBAL\Driver\Connection` interface and `Doctrine\DBAL\Connection` class instead.
   Some methods must be replaced:
