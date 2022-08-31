@@ -1562,28 +1562,15 @@ class Asset extends Element\AbstractElement
             $data = null;
             foreach ($this->metadata as $md) {
                 if ($md['name'] == $name) {
-                    if ($language == $md['language']) {
-                        if ($raw) {
-                            return $md;
-                        }
-
-                        return $convert($md);
-                    }
-                    if (empty($md['language']) && !$strictMatch) {
-                        if ($raw) {
-                            return $md;
-                        }
+                    if ($language == $md['language'] || (empty($md['language']) && !$strictMatch)) {
                         $data = $md;
+                        break;
                     }
                 }
             }
 
             if ($data) {
-                if ($raw) {
-                    return $data;
-                }
-
-                return $convert($data);
+                return $raw ? $data : $convert($data);
             }
 
             return null;
@@ -1594,20 +1581,8 @@ class Asset extends Element\AbstractElement
         if (is_array($metaData)) {
             foreach ($metaData as $md) {
                 $md = (array)$md;
-                if (empty($md['language']) && !$strictMatch) {
-                    if (!$raw) {
-                        $md['data'] = $convert($md);
-                    } else {
-                        $result[] = $md;
-                    }
-                } else {
-                    if($md['language'] == $language) {
-                        if(!$raw) {
-                            $md['data'] = $convert($md);
-                        } else {
-                            $result[] = $md;
-                        }
-                    }
+                if ((empty($md['language']) && !$strictMatch) || ($md['language'] == $language)) {
+                    $result[] = $raw ? $md : $convert($md);
                 }
             }
         }
