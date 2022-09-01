@@ -42,11 +42,6 @@ final class Tool
     protected static $validLanguages = [];
 
     /**
-     * @var null
-     */
-    protected static $isFrontend = null;
-
-    /**
      * Sets the current request to operate on
      *
      * @param Request|null $request
@@ -538,7 +533,7 @@ final class Tool
         }
 
         if ($subject) {
-            $mail->setSubject($subject);
+            $mail->subject($subject);
         }
 
         return $mail;

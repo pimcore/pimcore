@@ -21,14 +21,15 @@ interface DataDefinitionInterface
      * @param mixed $data
      * @param array $params
      *
-     * @return mixed
+     * @return bool
      */
     public function isEmpty($data, $params = []);
 
     /**
      * @param mixed $data
      * @param array $params
-     * throws \Exception
+     *
+     * @throws \Exception
      */
     public function checkValidity($data, $params = []);
 

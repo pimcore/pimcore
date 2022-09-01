@@ -10,8 +10,7 @@ In case  you need to add a custom session bag for your bundle or application, th
 <?php
  
 namespace TestBundle\EventListener;
- 
-use Pimcore\Session\SessionConfiguratorInterface;
+
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
  

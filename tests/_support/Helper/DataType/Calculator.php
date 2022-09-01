@@ -23,8 +23,8 @@ use Pimcore\Model\DataObject\Data\CalculatedValue;
 class Calculator implements CalculatorClassInterface
 {
     /**
-     * @param $object Concrete
-     * @param $context \Pimcore\Model\DataObject\Data\CalculatedValue
+     * @param Concrete $object
+     * @param \Pimcore\Model\DataObject\Data\CalculatedValue $context
      *
      * @return string
      */

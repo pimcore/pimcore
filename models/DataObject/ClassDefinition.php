@@ -177,21 +177,21 @@ final class ClassDefinition extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $icon;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $previewUrl;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $group;
 
@@ -1141,7 +1141,7 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getIcon()
     {
@@ -1149,7 +1149,7 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param string $icon
+     * @param string|null $icon
      *
      * @return $this
      */
@@ -1183,7 +1183,7 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param string $previewUrl
+     * @param string|null $previewUrl
      *
      * @return $this
      */
@@ -1195,7 +1195,7 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getPreviewUrl()
     {
@@ -1203,7 +1203,7 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getGroup()
     {
@@ -1211,7 +1211,7 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param string $group
+     * @param string|null $group
      *
      * @return $this
      */

@@ -24,7 +24,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     use DataObject\ClassDefinition\Helper\VarExport;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $name;
 
@@ -34,7 +34,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public $title;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $tooltip;
 
@@ -49,7 +49,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public $noteditable;
 
     /**
-     * @var int
+     * @var int|null
      */
     public $index;
 
@@ -205,7 +205,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -353,7 +353,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getIndex()
     {
@@ -361,7 +361,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @param int $index
+     * @param int|null $index
      *
      * @return $this
      */
@@ -416,7 +416,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     /**
      *
-     * @return string
+     * @return string|null
      */
     public function getTooltip()
     {

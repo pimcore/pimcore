@@ -46,7 +46,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\DataObject\QuantityValue\Unit[]|null $units
      *
-     * @return static
+     * @return $this
      */
     public function setUnits($units)
     {

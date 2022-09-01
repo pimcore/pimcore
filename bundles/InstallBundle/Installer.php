@@ -610,6 +610,9 @@ class Installer
             $dataFiles = $this->getDataFiles();
 
             try {
+                //create a system user with id 0
+                $this->insertSystemUser($db);
+
                 if (empty($dataFiles) || !$this->importDatabaseDataDump) {
                     // empty installation
                     $this->insertDatabaseContents();
@@ -754,15 +757,6 @@ class Installer
             'o_userOwner' => 1,
             'o_userModification' => 1,
         ]));
-
-        $db->insert('users', Helper::quoteDataIdentifiers($db, [
-            'parentId' => 0,
-            'name' => 'system',
-            'admin' => 1,
-            'active' => 1,
-        ]));
-        $db->update('users', ['id' => 0], ['name' => 'system']);
-
         $userPermissions = [
             'application_logging',
             'assets',
@@ -814,5 +808,16 @@ class Installer
                 $db->quoteIdentifier('key') => $permission,
             ]);
         }
+    }
+
+    protected function insertSystemUser(Connection $db): void
+    {
+        $db->insert('users', [
+            'parentId' => 0,
+            'name' => 'system',
+            'admin' => 1,
+            'active' => 1,
+        ]);
+        $db->update('users', ['id' => 0], ['name' => 'system']);
     }
 }

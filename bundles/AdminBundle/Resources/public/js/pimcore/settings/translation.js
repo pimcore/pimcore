@@ -132,6 +132,7 @@ pimcore.settings.translation.domain = Class.create({
     },
 
     getAvailableLanguages: function () {
+        this.editableLanguages = [];
         let route = 'pimcore_admin_translation_getwebsitetranslationlanguages';
         if (this.domain === 'admin') {
             route = 'pimcore_admin_settings_getavailableadminlanguages';
@@ -265,7 +266,7 @@ pimcore.settings.translation.domain = Class.create({
         for (var i = 0; i < languages.length; i++) {
             readerFields.push({name: "_" + languages[i], defaultValue: ''});
 
-            let editable = in_array(languages[i], this.editableLanguages);
+            let editable = empty(this.editableLanguages) || in_array(languages[i], this.editableLanguages);
             let columnConfig = {
                 cls: "x-column-header_" + languages[i].toLowerCase(),
                 text: pimcore.available_languages[languages[i]],

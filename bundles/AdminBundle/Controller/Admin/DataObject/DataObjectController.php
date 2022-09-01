@@ -1078,10 +1078,10 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             try {
                 $isIndexUpdate = isset($values['indices']);
-                $indexUpdate = is_int($values['indices']) ? $values['indices'] : $values['indices'][$object->getId()];
 
                 if ($isIndexUpdate) {
                     // Ensure the update sort index is already available in the postUpdate eventListener
+                    $indexUpdate = is_int($values['indices']) ? $values['indices'] : $values['indices'][$object->getId()];
                     $object->setIndex($indexUpdate);
                 }
 
@@ -1098,7 +1098,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
             }
         } elseif ($key && $object->isAllowed('rename')) {
-            $this->adminJson($this->renameObject($object, $key));
+            return $this->adminJson($this->renameObject($object, $key));
         } else {
             Logger::debug('prevented update object because of missing permissions.');
         }

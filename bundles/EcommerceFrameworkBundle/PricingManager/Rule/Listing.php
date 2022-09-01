@@ -59,7 +59,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     /**
      * @param RuleInterface[] $rules
      *
-     * @return self
+     * @return $this
      */
     public function setRules(array $rules)
     {

@@ -26,7 +26,7 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /** @var bool */
-    protected $resolveGroupName;
+    protected $resolveGroupName = false;
 
     /**
      * @return Model\DataObject\Classificationstore\KeyGroupRelation[]
@@ -39,7 +39,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\DataObject\Classificationstore\KeyGroupRelation[]|null $theList
      *
-     * @return static
+     * @return $this
      */
     public function setList($theList)
     {
@@ -59,6 +59,6 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function setResolveGroupName($resolveGroupName)
     {
-        $this->resolveGroupName = $resolveGroupName;
+        $this->resolveGroupName = (bool) $resolveGroupName;
     }
 }
