@@ -22,20 +22,8 @@ use Pimcore\Model;
  *
  * @property \Pimcore\Model\DataObject\ClassDefinition\CustomLayout\Listing $model
  */
-class Dao extends Model\Listing\Dao\AbstractDao
+class Dao extends Model\DataObject\ClassDefinition\CustomLayout\Dao
 {
-    protected function loadIdList()
-    {
-        $sql = 'SELECT id FROM custom_layouts' . $this->getCondition();
-        if (!is_callable($this->model->getOrder())) {
-            $sql .= $this->getOrder();
-        }
-
-        $sql .= $this->getOffsetLimit();
-
-        return $this->db->fetchFirstColumn($sql, $this->model->getConditionVariables());
-    }
-
     /**
      * Loads a list of custom layouts for the specified parameters, returns an array of DataObject\ClassDefinition\CustomLayout elements
      *
@@ -45,7 +33,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $layouts = [];
 
-        foreach ($this->loadIdList() as $id) {
+        foreach($this->loadIdList() as $id) {
             $customLayout = Model\DataObject\ClassDefinition\CustomLayout::getById($id);
             if ($customLayout) {
                 $layouts[] = $customLayout;
@@ -68,8 +56,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount()
     {
         try {
-            $layouts = $this->db->fetchFirstColumn('SELECT id FROM custom_layouts ' . $this->getCondition(), $this->model->getConditionVariables());
-            foreach ($layouts as $id) {
+            $layouts = [];
+            foreach ($this->loadIdList() as $id) {
                 $customLayout = Model\DataObject\ClassDefinition\CustomLayout::getById($id);
                 if ($customLayout) {
                     $layouts[] = $customLayout;
