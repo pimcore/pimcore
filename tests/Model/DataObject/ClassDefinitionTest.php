@@ -27,6 +27,18 @@ use Pimcore\Tests\Test\ModelTestCase;
  */
 class ClassDefinitionTest extends ModelTestCase
 {
+    private function testSetterCode(string $fieldName, string $expectedSetterCode, bool $localizedField = false) {
+        $class = ClassDefinition::getByName('unittest');
+        if($localizedField) {
+            $fd = $class->getFieldDefinition("localizedfields")->getFieldDefinition($fieldName);
+        }
+        else {
+            $fd = $class->getFieldDefinition($fieldName);
+        }
+        $setterCode = $fd->getSetterCode($class);
+        $this->assertEquals($expectedSetterCode, $setterCode);
+    }
+
     /**
      * Verifies that the class definition gets renamed properly
      */
@@ -37,5 +49,137 @@ class ClassDefinitionTest extends ModelTestCase
 
         $renamedClass = ClassDefinition::getByName('unittest_renamed');
         $renamedClass->rename('unittest');
+    }
+
+    /**
+     * Verifies that the setter code gets created properly
+     */
+    public function testInputSetterCode()
+    {
+        $expectedSetterCode =
+            '/**
+* Set input - input
+* @param string|null $input
+* @return $this
+*/
+public function setInput(?string $input): static
+{
+	$this->input = $input;
+
+	return $this;
+}
+
+';
+        $this->testSetterCode("input", $expectedSetterCode);
+    }
+
+    /**
+     * Verifies that the setter code gets created properly
+     */
+    public function testFieldCollectionSetterCode()
+    {
+        $expectedSetterCode =
+            '/**
+* Set fieldcollection - fieldcollection
+* @param \Pimcore\Model\DataObject\Fieldcollection|null $fieldcollection
+* @return $this
+*/
+public function setFieldcollection(?\Pimcore\Model\DataObject\Fieldcollection $fieldcollection): static
+{
+	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections $fd */
+	$fd = $this->getClass()->getFieldDefinition("fieldcollection");
+	$this->fieldcollection = $fd->preSetData($this, $fieldcollection);
+	return $this;
+}
+
+';
+        $this->testSetterCode("fieldcollection", $expectedSetterCode);
+    }
+
+    /**
+     * Verifies that the setter code gets created properly
+     */
+    public function testBricksSetterCode()
+    {
+        $expectedSetterCode =
+            '/**
+* Set mybricks - mybricks
+* @param \Pimcore\Model\DataObject\Objectbrick|null $mybricks
+* @return $this
+*/
+public function setMybricks(?\Pimcore\Model\DataObject\Objectbrick $mybricks): static
+{
+	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks $fd */
+	$fd = $this->getClass()->getFieldDefinition("mybricks");
+	$this->mybricks = $fd->preSetData($this, $mybricks);
+	return $this;
+}
+
+';
+        $this->testSetterCode("mybricks", $expectedSetterCode);
+    }
+
+    /**
+     * Verifies that the setter code gets created properly
+     */
+    public function testQuantityValueSetterCode()
+    {
+        $expectedSetterCode =
+            '/**
+* Set quantityValue - quantityValue
+* @param \Pimcore\Model\DataObject\Data\QuantityValue|null $quantityValue
+* @return $this
+*/
+public function setQuantityValue(?\Pimcore\Model\DataObject\Data\QuantityValue $quantityValue): static
+{
+	$this->quantityValue = $quantityValue;
+
+	return $this;
+}
+
+';
+        $this->testSetterCode("quantityValue", $expectedSetterCode);
+    }
+
+    /**
+     * Verifies that the setter code gets created properly
+     */
+    public function testCalculatedValueSetterCode()
+    {
+        $expectedSetterCode =
+            '/**
+* Set calculatedValue - calculatedValue
+* @param \Pimcore\Model\DataObject\Data\CalculatedValue|null $calculatedValue
+* @return $this
+*/
+public function setCalculatedValue($calculatedValue): static
+{
+	return $this;
+}
+
+';
+        $this->testSetterCode("calculatedValue", $expectedSetterCode);
+    }
+
+    /**
+     * Verifies that the setter code gets created properly
+     */
+    public function testLocalizedFieldSetterCode()
+    {
+        $expectedSetterCode =
+            '/**
+* Set linput - linput
+* @param string|null $linput
+* @return $this
+*/
+public function setLinput(?string $linput): static
+{
+	$this->linput = $linput;
+
+	return $this;
+}
+
+';
+        $this->testSetterCode("linput", $expectedSetterCode, true);
     }
 }
