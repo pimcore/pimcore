@@ -417,7 +417,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @throws \Exception
      */
-    public function setContentMasterDocumentId($contentMasterDocumentId/*, bool $validate*/)
+    public function setContentMasterDocumentId($contentMasterDocumentId, bool $validate = false)
     {
         // this is that the path is automatically converted to ID => when setting directly from admin UI
         if (!is_numeric($contentMasterDocumentId) && !empty($contentMasterDocumentId)) {
@@ -432,7 +432,7 @@ abstract class PageSnippet extends Model\Document
         // Don't set the content master document if the document is already part of the master document chain
         if ($contentMasterDocumentId) {
             if ($currentContentMasterDocument = Document\PageSnippet::getById($contentMasterDocumentId)) {
-                $validate = \func_get_args()[1] ?? false;
+
                 $maxDepth = 20;
                 do {
                     if ($currentContentMasterDocument->getId() === $this->getId()) {
