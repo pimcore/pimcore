@@ -46,24 +46,24 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getNameById($id)
     {
-        $name = null;
-
         try {
             if (!empty($id)) {
-                $name = $this->db->fetchOne('SELECT name FROM classes WHERE id = ?', [$id]);
+                if ($name = $this->db->fetchOne('SELECT name FROM classes WHERE id = ?', [$id])) {
+                    return $name;
+                }
             }
         } catch (\Exception $e) {
         }
 
-        return $name;
+        return null;
     }
 
     /**
      * @param string $name
      *
-     * @return string|null
+     * @return string
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getIdByName($name)
     {

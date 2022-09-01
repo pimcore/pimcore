@@ -89,3 +89,16 @@ pimcore:
 |----------------|---------------------------------------------------------------|
 | enabled        | Set it true to enable Static Page Router                      |
 | route_pattern  | Regular expression to match routes for static page rendering  |
+
+## Static Page Generation with Ajax Request
+The static pages with XMLHttpRequest fetches the data and displays it on the page, just like a standard document page. 
+However, if you are using the Fetch API to request the data, then must add the `XMLHttpRequest` header as shown below, 
+otherwise the sub-request will replace the content of the generated static page.
+
+```js
+fetch('/test/page', {
+    headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+    }
+})
+```

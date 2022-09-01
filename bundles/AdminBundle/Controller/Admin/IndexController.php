@@ -26,6 +26,7 @@ use Pimcore\Event\Admin\IndexActionSettingsEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Maintenance\Executor;
 use Pimcore\Maintenance\ExecutorInterface;
+use Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
 use Pimcore\Model\Document\DocType;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Staticroute;
@@ -229,7 +230,6 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'document_generatepreviews' => (bool)$config['documents']['generate_preview'],
             'asset_disable_tree_preview' => (bool)$config['assets']['disable_tree_preview'],
             'chromium' => \Pimcore\Image\Chromium::isSupported(),
-            'htmltoimage' => \Pimcore\Image\HtmlToImage::isSupported(),
             'videoconverter' => \Pimcore\Video::isAvailable(),
             'asset_hide_edit' => (bool)$config['assets']['hide_edit_image'],
             'main_domain' => $config['general']['domain'],
@@ -266,6 +266,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'perspectives-writeable' => \Pimcore\Perspective\Config::isWriteable(),
             'custom-views-writeable' => \Pimcore\CustomView\Config::isWriteable(),
             'class-definition-writeable' => isset($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE']) ? (bool)$_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] : true,
+            'object-custom-layout-writeable' => (new CustomLayout())->isWriteable(),
         ];
 
         $this

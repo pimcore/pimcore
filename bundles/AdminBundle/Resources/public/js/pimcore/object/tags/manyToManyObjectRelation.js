@@ -316,7 +316,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         if(visibleFields.length === 0) {
             columns.push(
                 {text: 'ID', dataIndex: 'id', width: 50},
-                {text: t("reference"), dataIndex: 'fullpath', flex: 200, renderer:this.fullPathRenderCheck.bind(this)},
+                {text: t("reference"), dataIndex: 'fullpath', flex: 200, renderer: this.fullPathRenderCheck.bind(this)},
                 {text: t("class"), dataIndex: 'classname', width: 100}
             );
         }
@@ -592,7 +592,8 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                     iconCls: "pimcore_icon_search",
                     handler: this.openSearchEditor.bind(this)
                 },
-                this.getCreateControl()]);
+                this.getCreateControl()
+            ]);
         }
 
         return toolbarItems;
