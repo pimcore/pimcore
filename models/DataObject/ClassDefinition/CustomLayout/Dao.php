@@ -68,6 +68,8 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
             if ($data && is_string($data['layoutDefinitions'] ?? null)) {
                 $data['layoutDefinitions'] = unserialize($data['layoutDefinitions']);
+            } else if (is_array($data['layoutDefinitions'] ?? null)) {
+                $data['layoutDefinitions'] = Model\DataObject\ClassDefinition\Service::generateLayoutTreeFromArray($data['layoutDefinitions'], true);
             }
 
             if (!empty($data['id'])) {
@@ -204,8 +206,8 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         $dataRaw = $this->model->getObjectVars();
         foreach ($dataRaw as $key => $value) {
             if (in_array($key, $allowedProperties)) {
-                if (is_array($value) || is_object($value)) {
-                    $value = Serialize::serialize($value);
+                if (is_object($value)) {
+                    $value = json_decode(json_encode ( $value ) , true);
                 } elseif (is_bool($value)) {
                     $value = (int)$value;
                 }

@@ -790,7 +790,7 @@ final class Configuration implements ConfigurationInterface
                                                 ->end()
                                             ->scalarNode('classId')->end()
                                             ->integerNode('default')->end()
-                                            ->scalarNode('layoutDefinitions')->end()
+                                            ->variableNode('layoutDefinitions')->end()
                                         ->end()
                                     ->end()
                                 ->end()
