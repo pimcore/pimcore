@@ -23,7 +23,6 @@ use Pimcore\Model\User\Role;
  */
 class Folder extends Model\User\AbstractUser
 {
-    use Model\Element\ChildsCompatibilityTrait;
 
     /**
      * @internal
