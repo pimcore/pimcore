@@ -64,12 +64,6 @@ class MaintenanceCommand extends AbstractCommand
                 'J',
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
                 'Exclude specific job(s) (see <comment>--help</comment> for a list of valid jobs)'
-            )
-            ->addOption(
-                'force',
-                'f',
-                InputOption::VALUE_NONE,
-                'Run the jobs, regardless if they\'re locked or not'
             );
     }
 
@@ -83,8 +77,7 @@ class MaintenanceCommand extends AbstractCommand
 
         $this->maintenanceExecutor->executeMaintenance(
             $validJobs,
-            $excludedJobs,
-            (bool)$input->getOption('force')
+            $excludedJobs
         );
 
         $this->logger->info('All maintenance-jobs finished!');

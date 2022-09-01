@@ -7,7 +7,6 @@ services:
         arguments:
             - 'maintenance.pid'
             - '@logger'
-            - '@Symfony\Component\Lock\LockFactory'
             - '@messenger.bus.pimcore-core'
 
     Pimcore\Maintenance\Tasks\ScheduledTasksTask:
