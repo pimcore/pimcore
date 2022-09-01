@@ -227,11 +227,7 @@ class Sql extends AbstractAdapter
 
             $total = 'SELECT COUNT(*) FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
 
-            if ($fields) {
-                $data = 'SELECT `' . implode('`, `', $fields) . '` FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
-            } else {
-                $data = 'SELECT * FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
-            }
+            $data = 'SELECT * FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
         } else {
             return null;
         }
