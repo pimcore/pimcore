@@ -11,8 +11,7 @@
     security:
         enable_authenticator_manager: true
     ```
-- [Elements] Calling the methods `Asset::getById()`, `Document::getById()`,`DataObject::getById()`, `Asset::getByPath()`
-  , `Document::getByPath()` and `DataObject::getByPath()` with second boolean parameter `$force` is deprecated and will throw exception in Pimcore 11. Instead pass the second parameter as associative array with `$force` value.
+- [Elements] Calling the methods `Asset::getById()`, `Document::getById()`,`DataObject::getById()`, `Asset::getByPath()`, `Document::getByPath()` and `DataObject::getByPath()` with second boolean parameter `$force` is deprecated and will throw exception in Pimcore 11. Instead pass the second parameter as associative array with `$force` value.
   e.g. Before 
    ```php
     Asset::getById($id, true);
