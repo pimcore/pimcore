@@ -280,6 +280,7 @@ final class Config implements ArrayAccess
                 }
 
                 //TODO resolve for all langs, current lang first, then no lang
+                $config = $settingsArray;
                 Cache::save($settingsArray, $cacheKey, $cacheTags, null, 998);
             } elseif (is_array($config)) {
                 foreach ($config as $key => $setting) {
