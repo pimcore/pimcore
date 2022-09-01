@@ -223,7 +223,6 @@ final class Config implements ArrayAccess
 
             $config = Cache::load($cacheKey);
             if (!$config) {
-                $settingsArray = [];
                 $cacheTags = ['website_config', 'system', 'config', 'output'];
 
                 $list = new Model\WebsiteSetting\Listing();
@@ -244,7 +243,7 @@ final class Config implements ArrayAccess
 
                     $key = $item->getName();
 
-                    if (!$itemLanguage && isset($settingsArray[$key])) {
+                    if (!$itemLanguage && isset($config[$key])) {
                         continue;
                     }
 
@@ -275,12 +274,12 @@ final class Config implements ArrayAccess
                     }
 
                     if (isset($s)) {
-                        $settingsArray[$key] = $s;
+                        $config[$key] = $s;
                     }
                 }
 
                 //TODO resolve for all langs, current lang first, then no lang
-                Cache::save($settingsArray, $cacheKey, $cacheTags, null, 998);
+                Cache::save($config, $cacheKey, $cacheTags, null, 998);
             } elseif (is_array($config)) {
                 foreach ($config as $key => $setting) {
                     if ($setting instanceof ElementInterface) {
