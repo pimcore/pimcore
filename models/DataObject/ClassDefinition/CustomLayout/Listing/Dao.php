@@ -33,7 +33,7 @@ class Dao extends Model\DataObject\ClassDefinition\CustomLayout\Dao
     {
         $layouts = [];
 
-        foreach($this->loadIdList() as $id) {
+        foreach ($this->loadIdList() as $id) {
             $customLayout = Model\DataObject\ClassDefinition\CustomLayout::getById($id);
             if ($customLayout) {
                 $layouts[] = $customLayout;
