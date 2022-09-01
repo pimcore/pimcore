@@ -276,16 +276,23 @@ class Ffmpeg extends Adapter
 
     /**
      * @return array
+     *
+     * @throws \Exception
      */
     public function getDimensions()
     {
         $output = $this->getVideoInfo();
 
-        preg_match('/ ([0-9]+x[0-9]+)[, ]/', $output, $matches);
-        $durationRaw = $matches[1];
-        list($width, $height) = explode('x', $durationRaw);
+        if (preg_match('/ ([0-9]+x[0-9]+)[, ]/', $output, $matches)) {
+            $durationRaw = $matches[1];
+            list($width, $height) = explode('x', $durationRaw);
 
-        return ['width' => $width, 'height' => $height];
+            return ['width' => $width, 'height' => $height];
+        }
+
+        throw new \Exception(
+            'Could not read dimensions from FFMPEG. Maybe not supported FFMPEG version. Output from FFMPEG: ' . $output
+        );
     }
 
     public function destroy()

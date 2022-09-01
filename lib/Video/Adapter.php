@@ -224,6 +224,8 @@ abstract class Adapter
 
     /**
      * @return array
+     *
+     * @throws \Exception
      */
     abstract public function getDimensions();
 }
