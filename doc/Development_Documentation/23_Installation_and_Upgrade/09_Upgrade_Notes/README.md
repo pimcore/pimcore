@@ -11,7 +11,7 @@
     security:
         enable_authenticator_manager: true
     ```
-- [Elements] Calling the methods `Asset::getById()`, `Document::getById()`,`DataObject::getById()`, `Asset::getByPath()`, `Document::getByPath()` and `DataObject::getByPath()` with second boolean parameter `$force` is deprecated and will throw exception in Pimcore 11. Instead pass the second parameter as associative array with `$force` value.
+- [Elements] Calling the methods `Asset::getById()`, `Document::getById()`, `DataObject::getById()`, `Asset::getByPath()`, `Document::getByPath()` and `DataObject::getByPath()` with second boolean parameter `$force` is deprecated and will throw exception in Pimcore 11. Calling the method `Element\Service::getElementById::getElementById()` with third boolean parameter `$force` is also deprecated and will throw exception in Pimcore 11. Instead pass this parameter as associative array with `$force` value.
   e.g. Before 
    ```php
     Asset::getById($id, true);
@@ -21,6 +21,8 @@
     Asset::getByPath($path, true);
     Document::getByPath($path, true);
     DataObject::getByPath($path, true);
+  
+    Element\Service::getElementById::getElementById($type, $id, $true);
    ```
     After
    ```php
@@ -31,8 +33,9 @@
     Asset::getByPath($path, ['force' => true]);
     Document::getByPath($path, ['force' => true]);
     DataObject::getByPath($path, ['force' => true]);
-   ```
   
+    Element\Service::getElementById::getElementById($type, $id, ['force' => true]);
+   ```
 - [Navigation Builder] Calling the method `Pimcore\Navigation\Builder::getNavigation()` using extra arguments is deprecated and will be removed in Pimcore 11. Instead of using the extra arguments, it is recommended to call the method using the params array. eg: Currently, the `getNavigation()` method can be called by passing the config params `activeDocument`, `navigationRootDocument`, `htmlMenuIdPrefix`, `pageCallback`, `cache`, `maxDepth` and `cacheLifetime` as the arguments i.e `getNavigation($activeDocument, $navigationRootDocument, $htmlMenuIdPrefix, $pageCallback, $cache,$maxDepth, $cacheLifetime)`. According to the new implementation you should call the method like `getNavigation($params)` where `$params` should be an associative array with the keys `active`, `root`, `htmlMenuPrefix`, `pageCallback`, `cache`, `maxDepth` and `cacheLifetime`.
   
 - [Runtime Cache] The trait `\Pimcore\Cache\RuntimeCacheTrait` has been deprecated because of its ambiguous naming and usage of persisted cache along with the runtime object cache.
