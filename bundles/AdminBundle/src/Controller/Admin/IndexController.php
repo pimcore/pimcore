@@ -257,6 +257,10 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'document_auto_save_interval' => $config['documents']['auto_save_interval'],
             'object_auto_save_interval'   => $config['objects']['auto_save_interval'],
 
+            // check new notification
+            'checknewnotification_active'    => (bool) $config['notifications']['check_new_notification']['active'],
+            'checknewnotification_interval'  => $config['notifications']['check_new_notification']['interval'],
+
             // perspective and portlets
             'perspective'           => $templateParams['runtimePerspective'],
             'availablePerspectives' => \Pimcore\Perspective\Config::getAvailablePerspectives($user),
