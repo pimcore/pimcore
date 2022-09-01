@@ -15,10 +15,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
 
-use Pimcore\Config\LocationAwareConfigRepository;
 use Pimcore\Model;
-use Pimcore\Model\Tool\SettingsStore;
-use Pimcore\Tool\Serialize;
 use Symfony\Component\Uid\Uuid as Uid;
 use Symfony\Component\Uid\UuidV4;
 
@@ -68,7 +65,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
             if ($data && is_string($data['layoutDefinitions'] ?? null)) {
                 $data['layoutDefinitions'] = unserialize($data['layoutDefinitions']);
-            } else if (is_array($data['layoutDefinitions'] ?? null)) {
+            } elseif (is_array($data['layoutDefinitions'] ?? null)) {
                 $data['layoutDefinitions'] = Model\DataObject\ClassDefinition\Service::generateLayoutTreeFromArray($data['layoutDefinitions'], true);
             }
 
@@ -202,12 +199,12 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
         $data = [];
         $allowedProperties = ['id', 'name', 'description', 'creationDate', 'modificationDate',
-            'userOwner', 'userModification', 'classId', 'default', 'layoutDefinitions'];
+            'userOwner', 'userModification', 'classId', 'default', 'layoutDefinitions', ];
         $dataRaw = $this->model->getObjectVars();
         foreach ($dataRaw as $key => $value) {
             if (in_array($key, $allowedProperties)) {
                 if (is_object($value)) {
-                    $value = json_decode(json_encode ( $value ) , true);
+                    $value = json_decode(json_encode($value), true);
                 } elseif (is_bool($value)) {
                     $value = (int)$value;
                 }
@@ -237,11 +234,11 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
                 'objects' => [
                     'custom_layouts' => [
                         'definitions' => [
-                            $id => $data
-                        ]
-                    ]
-                ]
-            ]
+                            $id => $data,
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 }
