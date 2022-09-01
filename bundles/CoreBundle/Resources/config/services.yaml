@@ -181,9 +181,6 @@ services:
     Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager:
         public: true
 
-    Pimcore\Model\DataObject\ClassDefinition\ClassLayoutDefinitionManager:
-        public: true
-
     Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\CountryOptionsProvider:
         public: true
 
