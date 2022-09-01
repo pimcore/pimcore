@@ -254,8 +254,6 @@ class Ffmpeg extends Adapter
 
     /**
      * @return float|null
-     *
-     * @throws \Exception
      */
     public function getDuration()
     {
@@ -271,28 +269,32 @@ class Ffmpeg extends Adapter
             return $duration;
         }
 
+        Logger::error(
+            'Could not read duration with FFMPEG Adapter. Maybe not supported FFMPEG version. Output from FFMPEG: ' . $output
+        );
+
         return null;
     }
 
     /**
-     * @return array
-     *
-     * @throws \Exception
+     * @return array|null
      */
     public function getDimensions()
     {
         $output = $this->getVideoInfo();
 
         if (preg_match('/ ([0-9]+x[0-9]+)[, ]/', $output, $matches)) {
-            $durationRaw = $matches[1];
-            list($width, $height) = explode('x', $durationRaw);
+            $dimensionRaw = $matches[1];
+            list($width, $height) = explode('x', $dimensionRaw);
 
             return ['width' => $width, 'height' => $height];
         }
 
-        throw new \Exception(
-            'Could not read dimensions from FFMPEG. Maybe not supported FFMPEG version. Output from FFMPEG: ' . $output
+        Logger::error(
+            'Could not read dimensions with FFMPEG Adapter. Maybe not supported FFMPEG version. Output from FFMPEG: ' . $output
         );
+
+        return null;
     }
 
     public function destroy()
