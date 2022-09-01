@@ -27,12 +27,12 @@ use Pimcore\Tests\Test\ModelTestCase;
  */
 class ClassDefinitionTest extends ModelTestCase
 {
-    private function testSetterCode(string $fieldName, string $expectedSetterCode, bool $localizedField = false) {
+    private function testSetterCode(string $fieldName, string $expectedSetterCode, bool $localizedField = false)
+    {
         $class = ClassDefinition::getByName('unittest');
-        if($localizedField) {
-            $fd = $class->getFieldDefinition("localizedfields")->getFieldDefinition($fieldName);
-        }
-        else {
+        if ($localizedField) {
+            $fd = $class->getFieldDefinition('localizedfields')->getFieldDefinition($fieldName);
+        } else {
             $fd = $class->getFieldDefinition($fieldName);
         }
         $setterCode = $fd->getSetterCode($class);
@@ -70,7 +70,7 @@ public function setInput(?string $input): static
 }
 
 ';
-        $this->testSetterCode("input", $expectedSetterCode);
+        $this->testSetterCode('input', $expectedSetterCode);
     }
 
     /**
@@ -93,7 +93,7 @@ public function setFieldcollection(?\Pimcore\Model\DataObject\Fieldcollection $f
 }
 
 ';
-        $this->testSetterCode("fieldcollection", $expectedSetterCode);
+        $this->testSetterCode('fieldcollection', $expectedSetterCode);
     }
 
     /**
@@ -116,7 +116,7 @@ public function setMybricks(?\Pimcore\Model\DataObject\Objectbrick $mybricks): s
 }
 
 ';
-        $this->testSetterCode("mybricks", $expectedSetterCode);
+        $this->testSetterCode('mybricks', $expectedSetterCode);
     }
 
     /**
@@ -138,7 +138,7 @@ public function setQuantityValue(?\Pimcore\Model\DataObject\Data\QuantityValue $
 }
 
 ';
-        $this->testSetterCode("quantityValue", $expectedSetterCode);
+        $this->testSetterCode('quantityValue', $expectedSetterCode);
     }
 
     /**
@@ -158,7 +158,7 @@ public function setCalculatedValue($calculatedValue): static
 }
 
 ';
-        $this->testSetterCode("calculatedValue", $expectedSetterCode);
+        $this->testSetterCode('calculatedValue', $expectedSetterCode);
     }
 
     /**
@@ -180,6 +180,6 @@ public function setLinput(?string $linput): static
 }
 
 ';
-        $this->testSetterCode("linput", $expectedSetterCode, true);
+        $this->testSetterCode('linput', $expectedSetterCode, true);
     }
 }
