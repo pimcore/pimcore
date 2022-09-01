@@ -459,7 +459,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
                     $checkTokenCount--;
                     unset($checkTokens[$token]);
                 // Check if the length of the checkTokens Array matches the defined step range
-                    // so the the checkTokens get matched against the database.
+                // so the the checkTokens get matched against the database.
                 } elseif ($checkTokenCount == $tokenCheckStep) {
                     // Check if any of the tokens in the temporary array checkTokens already exists,
                     // if not so, merge the checkTokens array with the array of tokens to insert and

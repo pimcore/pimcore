@@ -14,11 +14,8 @@
 pimcore.registerNS("pimcore.document.editables.relations");
 pimcore.document.editables.relations = Class.create(pimcore.document.editable, {
 
-    initialize: function (id, name, config, data, inherited) {
-        this.id = id;
-        this.name = name;
-
-        this.config = this.parseConfig(config);
+    initialize: function ($super, id, name, config, data, inherited) {
+        $super(id, name, config, data, inherited);
 
         var modelName = 'DocumentsMultihrefEntry';
         if (!Ext.ClassManager.isCreated(modelName)) {

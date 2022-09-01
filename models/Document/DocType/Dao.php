@@ -79,8 +79,8 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
         $dataRaw = $this->model->getObjectVars();
         $data = [];
-        $allowedProperties = ['name', 'group', 'module', 'controller',
-            'action', 'template', 'type', 'priority', 'creationDate', 'modificationDate', 'staticGeneratorEnabled', ];
+        $allowedProperties = ['name', 'group', 'controller',
+            'template', 'type', 'priority', 'creationDate', 'modificationDate', 'staticGeneratorEnabled', ];
 
         foreach ($dataRaw as $key => $value) {
             if (in_array($key, $allowedProperties)) {

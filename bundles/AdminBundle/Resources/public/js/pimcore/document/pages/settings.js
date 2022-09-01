@@ -121,6 +121,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
             var serpAbsoluteUrl = this.document.data.url;
 
             // create layout
+
             this.layout = new Ext.FormPanel({
                 title: t('SEO') + ' &amp; ' + t('settings'),
                 border: false,
@@ -259,7 +260,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                                 name: 'targetGroupIds',
                                 width: 700,
                                 //listWidth: 200,
-                                value: this.document.data["targetGroupIds"],
+                                value: this.document.data["targetGroupIds"].split(',').map(Number).filter(item => item),
                                 minHeight: 100
                             })
                         ]
@@ -269,6 +270,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                     this.getPathAndKeyFields(true),
                     this.getContentMasterFields(true)
                 ]
+
             });
         }
 

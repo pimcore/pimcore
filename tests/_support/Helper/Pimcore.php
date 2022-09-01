@@ -244,10 +244,14 @@ class Pimcore extends Module
 
         $installer = new Installer($this->getContainer()->get('monolog.logger.pimcore'), $this->getContainer()->get('event_dispatcher'));
         $installer->setImportDatabaseDataDump(false);
-        $installer->setupDatabase([
+        $errors = $installer->setupDatabase([
             'username' => 'admin',
             'password' => microtime(),
         ]);
+
+        if ($errors) {
+            throw new \Exception('Setup Database failed: ' . implode("\n", $errors));
+        }
 
         $this->debug(sprintf('[DB] Initialized the test DB %s', $dbName));
 

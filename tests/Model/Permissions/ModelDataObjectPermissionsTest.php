@@ -148,7 +148,6 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
 
     protected function prepareObjectTree()
     {
-
         //example based on https://github.com/pimcore/pimcore/issues/11540
         $this->permissioncpath = $this->createFolder('permission\'"cpath', 1);
         $this->a = $this->createFolder('a', $this->permissioncpath->getId());
@@ -391,14 +390,14 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
     }
 
     protected function doIsAllowedTest(
-       DataObject\AbstractObject $element,
-       string $type, bool $resultAdmin,
-       bool $resultPermissionTest1,
-       bool $resultPermissionTest2,
-       bool $resultPermissionTest3,
-       bool $resultPermissionTest4,
-       bool $resultPermissionTest5,
-       bool $resultPermissionTest6
+        DataObject\AbstractObject $element,
+        string $type, bool $resultAdmin,
+        bool $resultPermissionTest1,
+        bool $resultPermissionTest2,
+        bool $resultPermissionTest3,
+        bool $resultPermissionTest4,
+        bool $resultPermissionTest5,
+        bool $resultPermissionTest6
     ) {
         $admin = User::getByName('admin');
 

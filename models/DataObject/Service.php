@@ -961,13 +961,7 @@ class Service extends Model\Element\Service
             $fields = $object->getClass()->getFieldDefinitions();
 
             foreach ($fields as $field) {
-                //TODO Pimcore 11: remove method_exists BC layer
-                if ($field instanceof IdRewriterInterface || method_exists($field, 'rewriteIds')) {
-                    if (!$field instanceof IdRewriterInterface) {
-                        trigger_deprecation('pimcore/pimcore', '10.1',
-                            sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                            'Implement the %s interface instead.', IdRewriterInterface::class));
-                    }
+                if ($field instanceof IdRewriterInterface) {
                     $setter = 'set' . ucfirst($field->getName());
                     if (method_exists($object, $setter)) { // check for non-owner-objects
                         $object->$setter($field->rewriteIds($object, $rewriteConfig));
@@ -1240,18 +1234,18 @@ class Service extends Model\Element\Service
         $mergedFieldDefinition = self::cloneDefinition($masterFieldDefinition);
 
         if (count($layoutDefinitions)) {
-            foreach ($mergedFieldDefinition as $key => $def) {
+            foreach ($mergedFieldDefinition as $def) {
                 if ($def instanceof ClassDefinition\Data\Localizedfields) {
-                    $mergedLocalizedFieldDefinitions = $mergedFieldDefinition[$key]->getFieldDefinitions();
+                    $mergedLocalizedFieldDefinitions = $def->getFieldDefinitions();
 
-                    foreach ($mergedLocalizedFieldDefinitions as $locKey => $locValue) {
-                        $mergedLocalizedFieldDefinitions[$locKey]->setInvisible(false);
-                        $mergedLocalizedFieldDefinitions[$locKey]->setNotEditable(false);
+                    foreach ($mergedLocalizedFieldDefinitions as $locValue) {
+                        $locValue->setInvisible(false);
+                        $locValue->setNotEditable(false);
                     }
-                    $mergedFieldDefinition[$key]->setChildren($mergedLocalizedFieldDefinitions);
+                    $def->setChildren($mergedLocalizedFieldDefinitions);
                 } else {
-                    $mergedFieldDefinition[$key]->setInvisible(false);
-                    $mergedFieldDefinition[$key]->setNotEditable(false);
+                    $def->setInvisible(false);
+                    $def->setNotEditable(false);
                 }
             }
         }
@@ -1290,9 +1284,11 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param mixed $definition
+     * @template T
      *
-     * @return array
+     * @param T $definition
+     *
+     * @return T
      */
     public static function cloneDefinition($definition)
     {
@@ -1469,13 +1465,7 @@ class Service extends Model\Element\Service
 
         $context['object'] = $object;
 
-        //TODO Pimcore 11: remove method_exists BC layer
-        if ($layout instanceof LayoutDefinitionEnrichmentInterface || method_exists($layout, 'enrichLayoutDefinition')) {
-            if (!$layout instanceof LayoutDefinitionEnrichmentInterface) {
-                trigger_deprecation('pimcore/pimcore', '10.1',
-                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                    'Implement the %s interface instead.', LayoutDefinitionEnrichmentInterface::class));
-            }
+        if ($layout instanceof LayoutDefinitionEnrichmentInterface) {
             $layout->enrichLayoutDefinition($object, $context);
         }
 
@@ -1640,7 +1630,6 @@ class Service extends Model\Element\Service
 
             default:
                 return null;
-
         }
 
         Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
@@ -1712,7 +1701,6 @@ class Service extends Model\Element\Service
 
             default:
                 return null;
-
         }
 
         Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
@@ -2016,7 +2004,7 @@ class Service extends Model\Element\Service
                             );
                         }
                     }
-                    //key value store - ignore for now
+                //key value store - ignore for now
                 } elseif (count($fieldParts) > 1) {
                     // brick
                     $brickType = $fieldParts[0];

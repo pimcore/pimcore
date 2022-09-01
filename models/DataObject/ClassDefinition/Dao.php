@@ -46,24 +46,24 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getNameById($id)
     {
-        $name = null;
-
         try {
             if (!empty($id)) {
-                $name = $this->db->fetchOne('SELECT name FROM classes WHERE id = ?', [$id]);
+                if ($name = $this->db->fetchOne('SELECT name FROM classes WHERE id = ?', [$id])) {
+                    return $name;
+                }
             }
         } catch (\Exception $e) {
         }
 
-        return $name;
+        return null;
     }
 
     /**
      * @param string $name
      *
-     * @return string|null
+     * @return string
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getIdByName($name)
     {
@@ -307,9 +307,8 @@ class Dao extends Model\Dao\AbstractDao
     {
         $this->db->update('objects', ['o_className' => $newName], ['o_classId' => $this->model->getId()]);
 
-        $this->db->update('object_query_' . $this->model->getId(), [
-            'oo_className' => $newName,
-        ], []);
+        $this->db->executeStatement('update ' . $this->db->quoteIdentifier('object_query_' . $this->model->getId()) .
+        ' set oo_classname = :className', ['className' => $newName]);
     }
 
     public function getNameByIdIgnoreCase(string $id): string|null

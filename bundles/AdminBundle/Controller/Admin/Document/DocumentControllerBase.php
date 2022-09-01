@@ -109,7 +109,6 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      */
     protected function addPropertiesToDocument(Request $request, Model\Document $document)
     {
-
         // properties
         if ($request->get('properties')) {
             $properties = [];
@@ -351,7 +350,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         $doc = Model\Document\PageSnippet::getById((int) $request->get('id'));
         if ($doc instanceof Model\Document\PageSnippet) {
             $doc->setEditables([]);
-            $doc->setContentMasterDocumentId($request->get('contentMasterDocumentPath'));
+            $doc->setContentMasterDocumentId($request->get('contentMasterDocumentPath'), true);
             $doc->saveVersion();
         }
 
@@ -440,7 +439,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
 
                 break;
             case in_array($task, [self::TASK_SAVE, self::TASK_VERSION, self::TASK_AUTOSAVE])
-                && $document->isAllowed(self::TASK_SAVE):
+            && $document->isAllowed(self::TASK_SAVE):
                 if ($document instanceof Model\Document\PageSnippet) {
                     $this->setValuesToDocument($request, $document);
                     $version = $document->saveVersion(true, true, null, $task === self::TASK_AUTOSAVE);
@@ -451,6 +450,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
                 if ($document instanceof Model\Document\PageSnippet
                     || $document instanceof Model\Document\Hardlink
                     || $document instanceof Model\Document\Link) {
+                    $this->applySchedulerDataToElement($request, $document);
                     $document->saveScheduledTasks();
                 }
 

@@ -810,7 +810,6 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 $values = $this->decodeJson($request->get('values'));
                 $fcDef->setParentClass($values['parentClass']);
                 $fcDef->setImplementsInterfaces($values['implementsInterfaces']);
-                $fcDef->setGenerateTypeDeclarations($values['generateTypeDeclarations']);
             }
 
             if ($request->get('configuration')) {
@@ -1200,7 +1199,6 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 $brickDef->setParentClass($values['parentClass']);
                 $brickDef->setImplementsInterfaces($values['implementsInterfaces']);
                 $brickDef->setClassDefinitions($values['classDefinitions']);
-                $brickDef->setGenerateTypeDeclarations($values['generateTypeDeclarations']);
             }
 
             if ($request->get('configuration')) {
@@ -2044,5 +2042,27 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $response->headers->set('Content-Type', 'text/html');
 
         return $response;
+    }
+
+    /**
+     * @Route("/video-supported-types", name="videosupportedTypestypes")
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function videoAllowedTypesAction(Request $request)
+    {
+        $videoDef = new DataObject\ClassDefinition\Data\Video();
+        $res = [];
+
+        foreach ($videoDef->getSupportedTypes() as $type) {
+            $res[] = [
+                'key' => $type,
+                'value' => $this->trans($type),
+            ];
+        }
+
+        return $this->adminJson($res);
     }
 }

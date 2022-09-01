@@ -147,7 +147,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         try {
             $data = [
                 'instanceId' => $this->getInstanceId(),
-                'pimcore_major_version' => 10,
+                'pimcore_major_version' => 11,
                 'pimcore_version' => Version::getVersion(),
                 'pimcore_hash' => Version::getRevision(),
                 'php_version' => PHP_VERSION,
@@ -230,7 +230,6 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'document_generatepreviews' => (bool)$config['documents']['generate_preview'],
             'asset_disable_tree_preview' => (bool)$config['assets']['disable_tree_preview'],
             'chromium' => \Pimcore\Image\Chromium::isSupported(),
-            'htmltoimage' => \Pimcore\Image\HtmlToImage::isSupported(),
             'videoconverter' => \Pimcore\Video::isAvailable(),
             'asset_hide_edit' => (bool)$config['assets']['hide_edit_image'],
             'main_domain' => $config['general']['domain'],

@@ -28,11 +28,9 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 {
     use Extension\ColumnType {
         getColumnType as public genericGetColumnType;
-
     }
     use Extension\QueryColumnType {
         getQueryColumnType as public genericGetQueryColumnType;
-
     }
     use Model\DataObject\Traits\DefaultValueTrait;
 
@@ -73,7 +71,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $defaultUnit;
 
@@ -250,7 +248,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getDefaultUnit()
     {
@@ -382,7 +380,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function setUnique($unique)
     {
-        $this->unique = $unique;
+        $this->unique = (bool) $unique;
     }
 
     /**

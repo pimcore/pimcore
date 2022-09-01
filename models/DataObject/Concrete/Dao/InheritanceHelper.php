@@ -16,7 +16,6 @@
 namespace Pimcore\Model\DataObject\Concrete\Dao;
 
 use Doctrine\DBAL\Connection;
-use Pimcore\Db\ConnectionInterface;
 use Pimcore\Model\DataObject;
 
 /**
@@ -35,7 +34,7 @@ class InheritanceHelper
     const DEFAULT_QUERY_ID_COLUMN = 'ooo_id';
 
     /**
-     * @var ConnectionInterface|Connection
+     * @var Connection
      */
     protected $db;
 

@@ -1105,7 +1105,6 @@ abstract class AbstractElasticSearch implements ProductListInterface
         }
 
         foreach ($this->preparedGroupByValues as $fieldname => $config) {
-
             //exclude all attributes that are already filtered
             $shortFieldname = $this->getTenantConfig()->getReverseMappedFieldName($fieldname);
 

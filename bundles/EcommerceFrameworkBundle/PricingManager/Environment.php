@@ -212,36 +212,6 @@ class Environment implements EnvironmentInterface
     }
 
     /**
-     * @deprecated
-     *
-     * @return AttributeBagInterface|null
-     */
-    public function getSession()
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.5',
-            sprintf('Calling setSession and getSession on Environment is deprecated. It will be removed in Pimcore 11.')
-        );
-
-        return $this->session;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param AttributeBagInterface $session
-     *
-     * @return EnvironmentInterface
-     */
-    public function setSession(AttributeBagInterface $session)
-    {
-        $this->session = $session;
-
-        return $this;
-    }
-
-    /**
      * @param string $executionMode
      */
     public function setExecutionMode($executionMode)

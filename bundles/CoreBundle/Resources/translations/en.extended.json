@@ -144,6 +144,11 @@
   "debug_admin_translations": "Debug Admin-Translations (wrapped in +)",
   "short_url": "Short URL",
   "width_and_height_must_be_an_even_number": "width and height must be an even number",
+  "this_filter_has_no_settings": "this filter has no settings",
+  "mute": "Mute",
+  "effect": "Effect",
+  "colorChannelMixer": "Color Channel Mixer",
+  "setframerate": "Set Framerate",
   "source_site": "Source-Site",
   "target_site": "Target-Site",
   "source_entire_url": "Entire URL as Source",
@@ -336,6 +341,7 @@
   "allowed_types_hint": "(empty = allow all)",
   "allowed_document_types": "Allowed Document Types",
   "allowed_asset_types": "Allowed Asset Types",
+  "allowed_video_types": "Allowed Video Types",
   "website": "Website",
   "user_creation_error": "Could not create user",
   "email_debug_addresses": "Debug Email Addresses",
@@ -675,5 +681,8 @@
   "max_characters": "Maximum Characters",
   "sites": "Sites",
   "show_hide_areablock": "Show or Hide on frontend",
-  "asset_type_changed": "Asset type was changed in the meantime. Please reload the admin interface to see the latest changes."
+  "asset_type_changed": "Asset type was changed in the meantime. Please reload the admin interface to see the latest changes.",
+  "numeric_range": "Numeric Range",
+  "date_range": "Date Range",
+  "quantityValueRange_field": "Quantity Value Range"
 }

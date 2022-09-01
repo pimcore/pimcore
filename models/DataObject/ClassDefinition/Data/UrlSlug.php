@@ -261,7 +261,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 } catch (\Exception $e) {
                     Logger::error((string) $e);
                     if ($e instanceof UniqueConstraintViolationException) {
-
                         // check if the slug action can be resolved.
 
                         $existingSlug = Model\DataObject\Data\UrlSlug::resolveSlug($slug['slug'], $slug['siteId']);

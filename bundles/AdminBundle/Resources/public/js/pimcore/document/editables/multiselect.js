@@ -14,32 +14,29 @@
 pimcore.registerNS("pimcore.document.editables.multiselect");
 pimcore.document.editables.multiselect = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, config, data, inherited) {
-        this.id = id;
-        this.name = name;
+    initialize: function($super, id, name, config, data, inherited) {
+        $super(id, name, config, data, inherited);
+
         this.data = data;
 
-        config = this.parseConfig(config);
-        config.name = id + "_editable";
+        this.config.name = id + "_editable";
         if(data) {
-            config.value = data;
+            this.config.value = data;
         }
-        config.valueField = "id";
+        this.config.valueField = "id";
 
-        config.listeners = {};
+        this.config.listeners = {};
 
-        if (config["reload"]) {
-            config.listeners.change = this.reloadDocument;
+        if (this.config["reload"]) {
+            this.config.listeners.change = this.reloadDocument;
         }
 
-        if (typeof config.store !== "undefined") {
-            config.store = Ext.create('Ext.data.ArrayStore', {
+        if (typeof this.config.store !== "undefined") {
+            this.config.store = Ext.create('Ext.data.ArrayStore', {
                 fields: ['id', 'text'],
-                data: config.store
+                data: this.config.store
             });
         }
-
-        this.config = config;
     },
 
     render: function () {

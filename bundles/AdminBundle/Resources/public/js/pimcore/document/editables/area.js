@@ -14,16 +14,10 @@
 pimcore.registerNS("pimcore.document.editables.area");
 pimcore.document.editables.area = Class.create(pimcore.document.area_abstract, {
 
-    initialize: function(id, name, config, data, inherited) {
+    initialize: function($super, id, name, config, data, inherited) {
+        $super(id, name, config, data, inherited);
 
-        this.id = id;
-        this.name = name;
-        this.datax = {};
-        this.config = this.parseConfig(config);
-
-        if (data) {
-            this.datax = data;
-        }
+        this.datax = data ?? {};
 
         //editable dialog box button
         try {

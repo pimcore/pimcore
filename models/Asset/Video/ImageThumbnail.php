@@ -168,20 +168,20 @@ final class ImageThumbnail
                     }
                 }
             }
-
-            if (empty($this->pathReference)) {
-                $this->pathReference = [
-                    'type' => 'error',
-                    'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',
-                ];
-            }
-
-            $event = new GenericEvent($this, [
-                'deferred' => $deferred,
-                'generated' => $generated,
-            ]);
-            \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::VIDEO_IMAGE_THUMBNAIL);
         }
+
+        if (empty($this->pathReference)) {
+            $this->pathReference = [
+                'type' => 'error',
+                'src' => '/bundles/pimcoreadmin/img/filetype-not-supported.svg',
+            ];
+        }
+
+        $event = new GenericEvent($this, [
+            'deferred' => $deferred,
+            'generated' => $generated,
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::VIDEO_IMAGE_THUMBNAIL);
     }
 
     /**

@@ -79,4 +79,4 @@ FilteSelectClsStoreAttributes:
 ### 3) Template
 
 The template for the filter has to render not only one filter, but the whole list of possible filters for the classification
-store attributes. For a sample template see our [demo](https://github.com/pimcore/demo/blob/10.x/templates/product/filters/nested_attributes.html.twig). 
+store attributes. For a sample template see our [demo](https://github.com/pimcore/demo/blob/11.x/templates/product/filters/nested_attributes.html.twig). 

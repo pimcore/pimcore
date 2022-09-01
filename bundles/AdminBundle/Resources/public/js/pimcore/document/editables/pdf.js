@@ -14,22 +14,16 @@
 pimcore.registerNS("pimcore.document.editables.pdf");
 pimcore.document.editables.pdf = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, config, data, inherited) {
-        this.id = id;
-        this.name = name;
-        this.data = {};
+    initialize: function($super, id, name, config, data, inherited) {
+        $super(id, name, config, data, inherited);
 
-        this.config = this.parseConfig(config);
+        this.data = data ?? {};
 
         if (!this.config["height"]) {
             this.config.height = 100;
         }
 
         this.config.name = id + "_editable";
-
-        if (data) {
-            this.data = data;
-        }
     },
 
     render: function () {
