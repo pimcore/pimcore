@@ -173,6 +173,7 @@ final class Configuration implements ConfigurationInterface
         $this->addPerspectivesNode($rootNode);
         $this->addCustomViewsNode($rootNode);
         $this->addGlossaryNode($rootNode);
+        $this->addNotificationsNode($rootNode);
         $this->buildRedirectsStatusCodes($rootNode);
         $this->addTemplatingEngineNode($rootNode);
 
@@ -2119,7 +2120,7 @@ final class Configuration implements ConfigurationInterface
                 ->addDefaultsIfNotSet()
                 ->children()
                     ->arrayNode('sandbox_security_policy')
-                        ->info('Whitelist tags, filters & functions for evaluating twig 
+                        ->info('Whitelist tags, filters & functions for evaluating twig
                         templates in a sandbox environment e.g. used by Mailer & Text layout component.')
                         ->children()
                             ->arrayNode('tags')
@@ -2136,5 +2137,37 @@ final class Configuration implements ConfigurationInterface
                 ->end()
             ->end()
         ->end();
+    }
+
+    /**
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addNotificationsNode(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('notifications')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('check_new_notification')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->booleanNode('active')
+                                    ->defaultTrue()
+                                    ->beforeNormalization()
+                                        ->ifString()
+                                        ->then(function ($v) {
+                                            return (bool)$v;
+                                        })
+                                    ->end()
+                                ->end()
+                                ->integerNode('interval')
+                                    ->defaultValue(30000)
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
     }
 }
