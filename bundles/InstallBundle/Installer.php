@@ -818,6 +818,6 @@ class Installer
             'admin' => 1,
             'active' => 1,
         ]);
-        $db->update('users', ['id' => 0], ['name' => 'system']);
+        $db->update('users', ['id' => 0], ['name' => 'system', 'type' => 'user' ]);
     }
 }
