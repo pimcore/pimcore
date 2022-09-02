@@ -29,7 +29,20 @@
 - [Documents] Deprecated WkHtmlToImage has been removed.
 - [Elements] Removed fallback to parent id 1, when an element with a non-existing parent id gets created.
 - [DataObjects] Added return types to setter methods. For details see [#12185](https://github.com/pimcore/pimcore/issues/12185)
-
+- [Elements] Calling the methods `Asset::getById()`, `Document::getById()`, `DataObject::getById()`, `Asset::getByPath()`, `Document::getByPath()` and `DataObject::getByPath()` with second boolean parameter `$force` is removed and will throw an exception. And calling the method `Element\Service::getElementById::getElementById()` with third boolean parameter `$force` is also removed. Instead, please pass this parameter as an associative array with `$force` value.
+  e.g. 
+   ```php
+    Asset::getById($id, ['force' => true]);
+    Document::getById($id, ['force' => true]);
+    DataObject::getById($id, ['force' => true]);
+  
+    Asset::getByPath($id, ['force' => true]);
+    Document::getByPath($id, ['force' => true]);
+    DataObject::getByPath($id, ['force' => true]);
+  
+    Element\Service::getElementById::getElementById($type, $id, ['force' => true]);
+   ```
+   For details, please see [#12789](https://github.com/pimcore/pimcore/issues/12789)
 ## 11.0.0
 - [CustomLayouts] Removed command `pimcore:deployment:custom-layouts-rebuild` as CustomLayouts are migrated to LocationAwareConfigRepository.
 
