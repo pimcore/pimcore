@@ -509,7 +509,7 @@ class Service extends Model\AbstractModel
      *
      * @return Asset|AbstractObject|Document|null
      */
-    public static function getElementById($type, $id, $params = [])
+    public static function getElementById($type, $id, array $params = [])
     {
         $element = null;
         $params = self::prepareGetByIdParams($params);
