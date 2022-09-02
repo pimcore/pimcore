@@ -211,9 +211,11 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
     },
 
     empty: function () {
+        let allowedTypes = this.data.allowedTypes;
         this.data = {
             type: "asset",
-            data: ""
+            data: "",
+            allowedTypes: allowedTypes,
         };
 
         this.component.setHtml("");
