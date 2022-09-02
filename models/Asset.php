@@ -185,7 +185,7 @@ class Asset extends Element\AbstractElement
      *
      * @return static|null
      */
-    public static function getByPath($path, $params = [])
+    public static function getByPath($path, array $params = [])
     {
         if (!$path) {
             return null;
