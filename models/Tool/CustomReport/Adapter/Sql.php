@@ -29,16 +29,6 @@ class Sql extends AbstractAdapter
     {
         $db = Db::get();
 
-        if ($fields === null) {
-            $columns = $this->fullConfig->getColumnConfiguration();
-            $fields = [];
-            foreach ($columns as $column) {
-                if ($column['export'] || $column['display'] || $column['order'] || ($column['columnAction'] ?? null)) {
-                    $fields[] = $column['name'];
-                }
-            }
-        }
-
         $baseQuery = $this->getBaseQuery($filters, $fields, false, $drillDownFilters);
         $data = [];
         $total = 0;
@@ -227,7 +217,11 @@ class Sql extends AbstractAdapter
 
             $total = 'SELECT COUNT(*) FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
 
-            $data = 'SELECT * FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
+            if ($fields) {
+                $data = 'SELECT `' . implode('`,`', $fields) . '` FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
+            } else {
+                $data = 'SELECT * FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
+            }
         } else {
             return null;
         }
