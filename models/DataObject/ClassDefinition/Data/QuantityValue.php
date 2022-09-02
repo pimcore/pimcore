@@ -610,7 +610,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if (strlen($data['value']) > 0 || $data['unit']) {
-            if ($data['unit'] == -1 || $data['unit'] == null || empty($data['unit'])) {
+            if (empty($data['unit']) || $data['unit'] == -1) {
                 return new Model\DataObject\Data\QuantityValue($data['value'], null);
             }
 
