@@ -707,9 +707,6 @@ class Installer
 
             $db->executeStatement(implode("\n", $batchQueries));
         }
-
-        // set the id of the system user to 0
-        $db->update('users', ['id' => 0], ['name' => 'system']);
     }
 
     protected function insertDatabaseContents()
@@ -818,6 +815,8 @@ class Installer
             'admin' => 1,
             'active' => 1,
         ]);
-        $db->update('users', ['id' => 0], ['name' => 'system']);
+        
+        // set the id of the system user to 0
+        $db->update('users', ['id' => 0], ['name' => 'system', 'type' => 'user' ]);
     }
 }
