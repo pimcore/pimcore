@@ -531,7 +531,7 @@ class Service extends Model\AbstractModel
      *
      * @return array
      */
-    public static function prepareGetByIdParams($params): array
+    public static function prepareGetByIdParams(array $params): array
     {
 
         $resolver = new OptionsResolver();
