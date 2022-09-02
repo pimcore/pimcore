@@ -96,7 +96,7 @@ class InputQuantityValue extends QuantityValue
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if ($data['value'] || $data['unit']) {
-            if ($data['unit'] == -1 || empty($data['unit'])) {
+            if (empty($data['unit']) || $data['unit'] == -1) {
                 return $this->getNewDataObject($data['value'], null);
             }
 
