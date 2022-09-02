@@ -458,7 +458,7 @@ class Video extends Data implements
      */
     public function enrichLayoutDefinition($object, $context = [])
     {
-        $this->enrichFieldDefinition($context);
+        return $this->enrichFieldDefinition($context);
     }
 
     /**
