@@ -297,6 +297,10 @@ final class ClassDefinition extends Model\AbstractModel
             try {
                 $class = new self();
                 $name = $class->getDao()->getNameById($id);
+                if(!$name) {
+                    throw new \Exception('Class definition with name ' . $name . ' or ID ' . $id . ' does not exist');
+                }
+
                 $definitionFile = $class->getDefinitionFile($name);
                 $class = @include $definitionFile;
 
