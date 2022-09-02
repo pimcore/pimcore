@@ -228,7 +228,7 @@ class Asset extends Element\AbstractElement
      *
      * @return static|null
      */
-    public static function getById($id, $params = [])
+    public static function getById($id, array $params = [])
     {
         if (!is_numeric($id) || $id < 1) {
             return null;
