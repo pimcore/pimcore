@@ -26,11 +26,9 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType {
         getColumnType as public genericGetColumnType;
-
     }
     use Extension\QueryColumnType {
         getQueryColumnType as public genericGetQueryColumnType;
-
     }
 
     const DECIMAL_SIZE_DEFAULT = 64;
@@ -316,7 +314,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function setUnique($unique)
     {
-        $this->unique = $unique;
+        $this->unique = (bool) $unique;
     }
 
     /**

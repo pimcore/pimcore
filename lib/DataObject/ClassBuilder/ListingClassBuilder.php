@@ -39,6 +39,8 @@ class ListingClassBuilder implements ListingClassBuilderInterface
         $cd .= "\n\n";
         $cd .= 'namespace Pimcore\\Model\\DataObject\\'.ucfirst($classDefinition->getName()).';';
         $cd .= "\n\n";
+        $cd .= 'use Pimcore\\Model;';
+        $cd .= "\n";
         $cd .= 'use Pimcore\\Model\\DataObject;';
         $cd .= "\n\n";
         $cd .= "/**\n";

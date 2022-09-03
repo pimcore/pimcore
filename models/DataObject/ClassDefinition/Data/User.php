@@ -77,7 +77,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param string $data
+     * @param string|null $data
      * @param Model\DataObject\Concrete|null $object
      * @param mixed $params
      *
@@ -216,6 +216,6 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
      */
     public function setUnique($unique)
     {
-        $this->unique = $unique;
+        $this->unique = (bool) $unique;
     }
 }

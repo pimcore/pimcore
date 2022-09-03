@@ -27,7 +27,7 @@ final class Note extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $id;
 
@@ -62,7 +62,7 @@ final class Note extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $user;
 
@@ -141,7 +141,6 @@ final class Note extends Model\AbstractModel
      */
     public function save()
     {
-
         // check if there's a valid user
         if (!$this->getUser()) {
             // try to use the logged in user
@@ -273,7 +272,7 @@ final class Note extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
@@ -333,7 +332,7 @@ final class Note extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getUser()
     {

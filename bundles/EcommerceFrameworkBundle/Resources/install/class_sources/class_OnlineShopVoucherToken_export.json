@@ -167,7 +167,6 @@
     "showAppLoggerTab": false,
     "linkGeneratorReference": "",
     "compositeIndices": [],
-    "generateTypeDeclarations": true,
     "showFieldLookup": false,
     "propertyVisibility": {
         "grid": {

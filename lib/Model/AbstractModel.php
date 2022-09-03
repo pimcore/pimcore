@@ -60,7 +60,7 @@ abstract class AbstractModel implements ModelInterface
     /**
      * @param \Pimcore\Model\Dao\AbstractDao|null $dao
      *
-     * @return self
+     * @return $this
      */
     public function setDao($dao)
     {
@@ -234,7 +234,6 @@ abstract class AbstractModel implements ModelInterface
      */
     public function __call($method, $args)
     {
-
         // protected / private methods shouldn't be delegated to the dao -> this can have dangerous effects
         if (!is_callable([$this, $method])) {
             throw new \Exception("Unable to call private/protected method '" . $method . "' on object " . get_class($this));

@@ -148,7 +148,6 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
 
     protected function prepareObjectTree()
     {
-
         //example based on https://github.com/pimcore/pimcore/issues/11540
         $this->permissioncpath = $this->createFolder('permission\'"cpath', 1);
         $this->a = $this->createFolder('a', $this->permissioncpath->getId());

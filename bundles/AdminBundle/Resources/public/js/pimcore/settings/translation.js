@@ -132,6 +132,7 @@ pimcore.settings.translation.domain = Class.create({
     },
 
     getAvailableLanguages: function () {
+        this.editableLanguages = [];
         let route = 'pimcore_admin_translation_getwebsitetranslationlanguages';
         if (this.domain === 'admin') {
             route = 'pimcore_admin_settings_getavailableadminlanguages';
@@ -247,7 +248,10 @@ pimcore.settings.translation.domain = Class.create({
         ];
 
         var typesColumns = [
-            {text: t("key"), sortable: true, dataIndex: 'key', flex: 1, editable: false, filter: 'string'},
+            {text: t("key"), sortable: true, dataIndex: 'key', flex: 1, editable: false, filter: 'string',
+                editor: new Ext.form.DisplayField({
+                    htmlEncode: true
+                })},
             {text: t("type"), sortable: true, dataIndex: 'type', width: 100, editor: new Ext.form.ComboBox({
                     triggerAction: 'all',
                     editable: false,
@@ -262,7 +266,7 @@ pimcore.settings.translation.domain = Class.create({
         for (var i = 0; i < languages.length; i++) {
             readerFields.push({name: "_" + languages[i], defaultValue: ''});
 
-            let editable = in_array(languages[i], this.editableLanguages);
+            let editable = empty(this.editableLanguages) || in_array(languages[i], this.editableLanguages);
             let columnConfig = {
                 cls: "x-column-header_" + languages[i].toLowerCase(),
                 text: pimcore.available_languages[languages[i]],
@@ -315,7 +319,7 @@ pimcore.settings.translation.domain = Class.create({
                     icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                     handler: function (grid, rowIndex) {
                         let data = grid.getStore().getAt(rowIndex);
-                        pimcore.helpers.deleteConfirm(t('translation'), data.data.key, function () {
+                        pimcore.helpers.deleteConfirm(t('translation'), Ext.util.Format.htmlEncode(data.data.key), function () {
                             grid.getStore().removeAt(rowIndex);
                         }.bind(this));
                     }.bind(this)

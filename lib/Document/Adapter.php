@@ -52,7 +52,7 @@ abstract class Adapter
     /**
      * @param Asset\Document $asset
      *
-     * @return self
+     * @return $this
      */
     abstract public function load(Asset\Document $asset);
 

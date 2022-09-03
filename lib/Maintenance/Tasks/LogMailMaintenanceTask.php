@@ -90,7 +90,7 @@ class LogMailMaintenanceTask implements TaskInterface
                     foreach ($receivers as $receiver) {
                         $mail->addTo(new Address($receiver, $receiver));
                     }
-                    $mail->setSubject('Error Log '.\Pimcore\Tool::getHostUrl());
+                    $mail->subject('Error Log '.\Pimcore\Tool::getHostUrl());
                     $mail->send();
                 }
             }

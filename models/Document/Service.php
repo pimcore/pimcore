@@ -22,7 +22,6 @@ use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\File;
 use Pimcore\Image\Chromium;
-use Pimcore\Image\HtmlToImage;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable\IdRewriterInterface;
@@ -137,7 +136,6 @@ class Service extends Model\Element\Service
      */
     public function copyRecursive($target, $source)
     {
-
         // avoid recursion
         if (!$this->_copyRecursiveIds) {
             $this->_copyRecursiveIds = [];
@@ -244,7 +242,7 @@ class Service extends Model\Element\Service
 
         if ($enableInheritance && ($new instanceof Document\PageSnippet) && $new->supportsContentMaster()) {
             $new->setEditables([]);
-            $new->setContentMasterDocumentId($source->getId());
+            $new->setContentMasterDocumentId($source->getId(), true);
         }
 
         if ($language) {
@@ -423,7 +421,6 @@ class Service extends Model\Element\Service
      */
     public static function rewriteIds($document, $rewriteConfig, $params = [])
     {
-
         // rewriting elements only for snippets and pages
         if ($document instanceof Document\PageSnippet) {
             if (array_key_exists('enableInheritance', $params) && $params['enableInheritance']) {
@@ -669,25 +666,15 @@ class Service extends Model\Element\Service
 
         File::mkdir(dirname($file));
 
-        $tool = false;
-        if (Chromium::isSupported()) {
-            $tool = Chromium::class;
-        } elseif (HtmlToImage::isSupported()) {
-            $tool = HtmlToImage::class;
-        }
+        if (Chromium::convert($url, $tmpFile)) {
+            $im = \Pimcore\Image::getInstance();
+            $im->load($tmpFile);
+            $im->scaleByWidth(800);
+            $im->save($file, 'jpeg', 85);
 
-        if ($tool) {
-            /** @var Chromium|HtmlToImage $tool */
-            if ($tool::convert($url, $tmpFile)) {
-                $im = \Pimcore\Image::getInstance();
-                $im->load($tmpFile);
-                $im->scaleByWidth(800);
-                $im->save($file, 'jpeg', 85);
+            unlink($tmpFile);
 
-                unlink($tmpFile);
-
-                $success = true;
-            }
+            $success = true;
         }
 
         return $success;

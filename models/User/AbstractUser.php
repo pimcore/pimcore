@@ -29,17 +29,17 @@ class AbstractUser extends Model\AbstractModel
     use RecursionBlockingEventDispatchHelperTrait;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $id;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $parentId;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $name;
 
@@ -116,7 +116,7 @@ class AbstractUser extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
@@ -136,7 +136,7 @@ class AbstractUser extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getParentId()
     {
@@ -156,7 +156,7 @@ class AbstractUser extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getName()
     {

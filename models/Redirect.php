@@ -321,7 +321,6 @@ final class Redirect extends AbstractModel
 
     public function clearDependentCache()
     {
-
         // this is mostly called in Redirect\Dao not here
         try {
             \Pimcore\Cache::clearTag('redirect');

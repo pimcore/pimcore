@@ -19,7 +19,6 @@ use ArrayAccess;
 use Exception;
 use Pimcore;
 use Pimcore\Cache\RuntimeCache;
-use Pimcore\Config\Config as PimcoreConfig;
 use Pimcore\Config\ReportConfigWriter;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Tool\SettingsStore;
@@ -191,7 +190,7 @@ final class Config implements ArrayAccess
      *
      * @param string|null $language
      *
-     * @return PimcoreConfig
+     * @return array
      */
     public static function getWebsiteConfig($language = null)
     {
@@ -222,10 +221,8 @@ final class Config implements ArrayAccess
                 $cacheKey = $cacheKey . '_site_' . $siteId;
             }
 
-            /** @var PimcoreConfig|null $config */
             $config = Cache::load($cacheKey);
             if (!$config) {
-                $settingsArray = [];
                 $cacheTags = ['website_config', 'system', 'config', 'output'];
 
                 $list = new Model\WebsiteSetting\Listing();
@@ -246,7 +243,7 @@ final class Config implements ArrayAccess
 
                     $key = $item->getName();
 
-                    if (!$itemLanguage && isset($settingsArray[$key])) {
+                    if (!$itemLanguage && isset($config[$key])) {
                         continue;
                     }
 
@@ -277,17 +274,14 @@ final class Config implements ArrayAccess
                     }
 
                     if (isset($s)) {
-                        $settingsArray[$key] = $s;
+                        $config[$key] = $s;
                     }
                 }
 
                 //TODO resolve for all langs, current lang first, then no lang
-                $config = new PimcoreConfig($settingsArray, true);
-
                 Cache::save($config, $cacheKey, $cacheTags, null, 998);
-            } elseif ($config instanceof PimcoreConfig) {
-                $data = $config->toArray();
-                foreach ($data as $key => $setting) {
+            } elseif (is_array($config)) {
+                foreach ($config as $key => $setting) {
                     if ($setting instanceof ElementInterface) {
                         $elementCacheKey = $setting->getCacheTag();
                         if (!RuntimeCache::isRegistered($elementCacheKey)) {
@@ -306,10 +300,10 @@ final class Config implements ArrayAccess
     /**
      * @internal
      *
-     * @param Config\Config|null $config
+     * @param array|null $config
      * @param string|null $language
      */
-    public static function setWebsiteConfig(?PimcoreConfig $config, $language = null)
+    public static function setWebsiteConfig(?array $config, $language = null)
     {
         RuntimeCache::set(self::getWebsiteConfigRuntimeCacheKey($language), $config);
     }
@@ -327,23 +321,23 @@ final class Config implements ArrayAccess
     {
         $config = self::getWebsiteConfig($language);
         if (null !== $key) {
-            return $config->get($key, $default);
+            return $config[$key] ?? $default;
         }
 
         return $config;
     }
 
     /**
-     * @return PimcoreConfig
+     * @return array
      *
      * @throws Exception
      *
      * @internal
      * @static
      */
-    public static function getReportConfig(): PimcoreConfig
+    public static function getReportConfig(): array
     {
-        $config = null;
+        $config = [];
         if (RuntimeCache::isRegistered('pimcore_config_report')) {
             $config = RuntimeCache::get('pimcore_config_report');
         } else {
@@ -353,16 +347,11 @@ final class Config implements ArrayAccess
                 );
 
                 if ($configJson) {
-                    $configArray = json_decode($configJson->getData(), true);
-                    $config = new PimcoreConfig($configArray);
+                    $config = json_decode($configJson->getData(), true);
                 }
             } catch (Exception $e) {
                 // nothing to do
             }
-        }
-
-        if (!$config) {
-            $config = new PimcoreConfig([]);
         }
 
         self::setReportConfig($config);
@@ -373,11 +362,11 @@ final class Config implements ArrayAccess
     /**
      * @static
      *
-     * @param PimcoreConfig $config
+     * @param array $config
      *
      * @internal
      */
-    public static function setReportConfig(PimcoreConfig $config)
+    public static function setReportConfig(array $config)
     {
         RuntimeCache::set('pimcore_config_report', $config);
     }
@@ -385,12 +374,13 @@ final class Config implements ArrayAccess
     /**
      * @static
      *
-     * @return PimcoreConfig
+     * @return array
      *
      * @internal
      */
     public static function getRobotsConfig()
     {
+        $config = [];
         if (RuntimeCache::isRegistered('pimcore_config_robots')) {
             $config = RuntimeCache::get('pimcore_config_robots');
         } else {
@@ -401,12 +391,9 @@ final class Config implements ArrayAccess
                 foreach ($robotsSettingsIds as $id) {
                     $robots = SettingsStore::get($id, $settingsStoreScope);
                     $siteId = preg_replace('/^robots\.txt\-/', '', $robots->getId());
-                    $configData[$siteId] = $robots->getData();
+                    $config[$siteId] = $robots->getData();
                 }
-
-                $config = new PimcoreConfig($configData);
             } catch (Exception $e) {
-                $config = new PimcoreConfig([]);
             }
 
             self::setRobotsConfig($config);
@@ -418,11 +405,11 @@ final class Config implements ArrayAccess
     /**
      * @static
      *
-     * @param PimcoreConfig $config
+     * @param array $config
      *
      * @internal
      */
-    public static function setRobotsConfig(PimcoreConfig $config)
+    public static function setRobotsConfig(array $config)
     {
         RuntimeCache::set('pimcore_config_robots', $config);
     }
@@ -430,7 +417,7 @@ final class Config implements ArrayAccess
     /**
      * @static
      *
-     * @return PimcoreConfig
+     * @return array
      *
      * @internal
      */
@@ -449,11 +436,11 @@ final class Config implements ArrayAccess
     /**
      * @static
      *
-     * @param PimcoreConfig $config
+     * @param array $config
      *
      * @internal
      */
-    public static function setWeb2PrintConfig(PimcoreConfig $config)
+    public static function setWeb2PrintConfig(array $config)
     {
         RuntimeCache::set('pimcore_config_web2print', $config);
     }
@@ -461,7 +448,7 @@ final class Config implements ArrayAccess
     /**
      * @static
      *
-     * @param PimcoreConfig $config
+     * @param array $config
      *
      * @internal
      */
@@ -524,13 +511,12 @@ final class Config implements ArrayAccess
      * @internal
      *
      * @param string $file
-     * @param bool $asArray
      *
-     * @return Config\Config|array
+     * @return array
      *
      * @throws Exception
      */
-    public static function getConfigInstance($file, bool $asArray = false)
+    public static function getConfigInstance($file)
     {
         $fileType = pathinfo($file, PATHINFO_EXTENSION);
         if (file_exists($file)) {
@@ -541,11 +527,7 @@ final class Config implements ArrayAccess
             }
 
             if (is_array($content)) {
-                if ($asArray) {
-                    return $content;
-                }
-
-                return new PimcoreConfig($content);
+                return $content;
             }
         } else {
             throw new Exception($file . " doesn't exist");

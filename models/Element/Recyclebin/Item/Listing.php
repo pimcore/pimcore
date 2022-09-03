@@ -38,7 +38,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param array $items
      *
-     * @return static
+     * @return $this
      */
     public function setItems($items)
     {

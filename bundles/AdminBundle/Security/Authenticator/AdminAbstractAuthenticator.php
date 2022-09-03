@@ -16,6 +16,7 @@
 namespace Pimcore\Bundle\AdminBundle\Security\Authenticator;
 
 use Pimcore\Bundle\AdminBundle\Security\Authentication\Token\TwoFactorRequiredToken;
+use Pimcore\Bundle\AdminBundle\Security\User\User;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\User as UserModel;
 use Pimcore\Tool\Admin;
@@ -131,7 +132,7 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
     }
 
     /**
-     * @param $user
+     * @param User $user
      */
     protected function saveUserToSession($user): void
     {
