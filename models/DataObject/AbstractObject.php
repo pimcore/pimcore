@@ -1399,14 +1399,12 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param  array  $listConfig
-     * @param  mixed $objectTypes
-     *
+     * @param array $listConfig
+     * @param array $objectTypes
      * @return Listing
-     *
      * @throws \Exception
      */
-    protected static function makeList(array $listConfig, mixed $objectTypes): Listing
+    protected static function makeList(array $listConfig, array $objectTypes): Listing
     {
         $list = static::getList($listConfig);
         if(empty($objectTypes)) {
