@@ -391,23 +391,6 @@ class EmailController extends AdminController
 
         $mail = new Mail();
 
-        if ($from = $request->get('from')) {
-            $addressArray = \Pimcore\Helper\Mail::parseEmailAddressField($from);
-            if ($addressArray) {
-                //use the first address only
-                list($cleanedFromAddress) = $addressArray;
-                $mail->from(new Address($cleanedFromAddress['email'], $cleanedFromAddress['name'] ?? ''));
-            }
-        }
-
-        $toAddresses = \Pimcore\Helper\Mail::parseEmailAddressField($request->get('to'));
-        foreach ($toAddresses as $cleanedToAddress) {
-            $mail->addTo($cleanedToAddress['email'], $cleanedToAddress['name'] ?? '');
-        }
-
-        $mail->subject($request->get('subject'));
-        $mail->setIgnoreDebugMode(true);
-
         if ($request->get('emailType') == 'text') {
             $mail->text($request->get('content'));
         } elseif ($request->get('emailType') == 'html') {
@@ -431,6 +414,23 @@ class EmailController extends AdminController
                 throw new \Exception('Email document not found!');
             }
         }
+
+        if ($from = $request->get('from')) {
+            $addressArray = \Pimcore\Helper\Mail::parseEmailAddressField($from);
+            if ($addressArray) {
+                //use the first address only
+                list($cleanedFromAddress) = $addressArray;
+                $mail->from(new Address($cleanedFromAddress['email'], $cleanedFromAddress['name'] ?? ''));
+            }
+        }
+
+        $toAddresses = \Pimcore\Helper\Mail::parseEmailAddressField($request->get('to'));
+        foreach ($toAddresses as $cleanedToAddress) {
+            $mail->addTo($cleanedToAddress['email'], $cleanedToAddress['name'] ?? '');
+        }
+
+        $mail->subject($request->get('subject'));
+        $mail->setIgnoreDebugMode(true);
 
         $mail->send();
 
