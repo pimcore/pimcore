@@ -22,7 +22,16 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, FieldDefinitionEnrichmentInterface
+class Video extends Data implements
+    ResourcePersistenceAwareInterface,
+    QueryResourcePersistenceAwareInterface,
+    TypeDeclarationSupportInterface,
+    EqualComparisonInterface,
+    VarExporterInterface,
+    NormalizerInterface,
+    IdRewriterInterface,
+    FieldDefinitionEnrichmentInterface,
+    LayoutDefinitionEnrichmentInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -437,11 +446,19 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function enrichFieldDefinition(/** array */ $context = []) /** : static */
     {
-        if (empty($this->getAllowedTypes()) && isset($context['object'])) {
+        if (empty($this->getAllowedTypes()) && (isset($context['object']) || isset($context['containerType']))) {
             $this->setAllowedTypes($this->getSupportedTypes());
         }
 
         return $this;
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function enrichLayoutDefinition($object, $context = [])
+    {
+        return $this->enrichFieldDefinition($context);
     }
 
     /**
