@@ -25,6 +25,7 @@ use Pimcore\Tests\Util\TestHelper;
  * Class ElementTest
  *
  * @package Pimcore\Tests\Model\Document
+ *
  * @group model.document.document
  */
 class EditableTest extends ModelTestCase
