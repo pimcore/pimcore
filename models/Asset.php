@@ -1562,13 +1562,14 @@ class Asset extends Element\AbstractElement
             $data = null;
             foreach ($this->metadata as $md) {
                 if ($md['name'] == $name) {
-                    // if name and language match, exit the loop and return metadata
-                    // if name matches but not the language, store metadata temporarily and keep looking
-                    if ($language == $md['language']) {
+                    if (empty($md['language']) && !$strictMatch) {
+                        if ($raw) {
+                            return $md;
+                        }
+                        $data = $md;
+                    } else if ($language == $md['language']) {
                         $data = $md;
                         break;
-                    } else if ((empty($md['language']) && !$strictMatch)) {
-                        $data = $md;
                     }
                 }
             }
@@ -1582,19 +1583,20 @@ class Asset extends Element\AbstractElement
 
         $metaData = $this->getObjectVar('metadata');
         $result = [];
-        $strictResult = [];
         if (is_array($metaData)) {
             foreach ($metaData as $md) {
                 $md = (array)$md;
-                if(empty($md['language']) && !$strictMatch) {
-                    $result[] = $raw ? $md : $convert($md);
-                } else if ($md['language'] == $language ) {
-                    $strictResult[] = $raw ? $md : $convert($md);
+
+                if ((empty($language) && !$strictMatch) || ($language == $md['language'])) {
+                    if (!$raw) {
+                        $md['data'] = $convert($md);
+                    }
+                    $result[] = $md;
                 }
             }
         }
 
-        return $strictMatch ?  $strictResult : $result ;
+        return $result;
     }
 
     /**
