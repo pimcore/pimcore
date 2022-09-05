@@ -108,7 +108,7 @@ class Sql extends AbstractAdapter
 
         if (!empty($config['where'])) {
             $whereParts = [];
-            if (strpos(strtoupper(trim($config['where'])), 'WHERE') === 0) {
+            if (str_starts_with(strtoupper(trim($config['where'])), 'WHERE')) {
                 $config['where'] = preg_replace('/^\s*WHERE\s*/', '', $config['where']);
             }
             $whereParts[] = '(' . str_replace("\n", ' ', $config['where']) . ')';
