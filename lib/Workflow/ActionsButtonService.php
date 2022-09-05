@@ -55,7 +55,7 @@ class ActionsButtonService
                 'iconCls' => $transition->getIconClass(),
                 'objectLayout' => $transition->getObjectLayout(),
                 'notes' => $notes,
-                'saveBehavior' => $transition->getOptions()['saveBehavior']
+                'saveBehavior' => $transition->getOptions()['unsavedChangesBehaviour']
             ];
         }
 
