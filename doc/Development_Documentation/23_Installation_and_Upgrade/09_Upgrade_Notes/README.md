@@ -29,11 +29,30 @@
 - [Documents] Deprecated WkHtmlToImage has been removed.
 - [Elements] Removed fallback to parent id 1, when an element with a non-existing parent id gets created.
 - [DataObjects] Added return types to setter methods. For details see [#12185](https://github.com/pimcore/pimcore/issues/12185)
-
-## 11.0.0
 - [CustomLayouts] Removed command `pimcore:deployment:custom-layouts-rebuild` as CustomLayouts are migrated to LocationAwareConfigRepository.
+- [Email]
+    - Removed the deprecated methods setBodyHtml(), setBodyText(), createAttachment() and setSubject(). Use html(),
+      text(), attach() and subject() instead.
 
-
+  Before:
+    ```php
+        $mail = new \Pimcore\Mail($subject = null, $body = null, $contentType = null, $charset = null);
+        $mail->setBodyHtml("<b>some</b> rich text: {{ myParam }}");
+        $mail->setBodyText("This is just plain text");
+        $mail->createAttachment($asset->getData(), $asset->getFilename(), $asset->getMimeType());
+        $mail->setSubject('Test Mail');
+        ...
+    ```
+  After:
+    ```php
+        $mail= new \Pimcore\Mail($headers = null, $body = null, $contentType = null);
+        $mail->html("<b>some</b> rich text: {{ myParam }}");
+        $mail->text("This is just plain text");
+        $mail->attach($asset->getData(), $asset->getFilename(), $asset->getMimeType());
+        $mail->subject('Test Mail');
+        ...
+    ```
+  For details, please see [#12924] (https://github.com/pimcore/pimcore/issues/12924)
 ## 10.5.0
 - [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`
 - [Listings] `JsonListing` class is deprecated. Please use `CallableFilterListingInterface`, `FilterListingTrait` and `CallableOrderListingInterface`, `OrderListingTrait` instead.
