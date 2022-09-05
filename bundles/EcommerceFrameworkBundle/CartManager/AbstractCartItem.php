@@ -102,7 +102,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      */
     public function setProduct(CheckoutableInterface $product, bool $fireModified = true)
     {
-        if ($this->productId !== $product->getId() && $this->getCart() && !$this->isLoading && $fireModified) {
+        if ($this->productId !== $product->getId() && !$this->isLoading && $this->getCart() && $fireModified) {
             $this->getCart()->modified();
         }
         $this->product = $product;
@@ -179,7 +179,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      */
     public function setProductId($productId)
     {
-        if ($this->productId !== $productId && $this->getCart() && !$this->isLoading) {
+        if ($this->productId !== $productId && !$this->isLoading && $this->getCart()) {
             $this->getCart()->modified();
         }
         $this->productId = $productId;
