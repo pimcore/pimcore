@@ -1939,7 +1939,7 @@ final class Configuration implements ConfigurationInterface
                                                                   Transition::UNSAVED_CHANGES_BEHAVIOUR_WARN,
                                                                   Transition::UNSAVED_CHANGES_BEHAVIOUR_IGNORE])
                                                         ->defaultValue(Transition::UNSAVED_CHANGES_BEHAVIOUR_WARN)
-                                                        ->info('Set saving behavior for workflow transitions: save data before transition, do not save (standard behavior) or show warning popup.')
+                                                        ->info('Behaviour when workflow transition gets applied but there are unsaved changes')
                                                     ->end()
                                                 ->end()
                                             ->end()

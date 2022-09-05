@@ -989,9 +989,9 @@ pimcore.elementservice.getWorkflowActionsButton = function(workflows, elementTyp
             };
 
             if (elementEditor.isDirty()) {
-                if (transition.saveBehavior === 'warn') {
+                if (transition.unsavedChangesBehaviour === 'warn') {
                     pimcore.helpers.showNotification(t("error"), t("workflow_transition_unsaved_data"), "error");
-                } else if (transition.saveBehavior === 'save') {
+                } else if (transition.unsavedChangesBehaviour === 'save') {
                     elementEditor.save(null, null, null, function () {
                         applyWorkflow(workflow, transition, elementEditor, elementId, elementType);
                     });
