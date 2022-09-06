@@ -86,7 +86,9 @@ class AssetUpdateTasksHandler
         $asset->handleEmbeddedMetaData(true);
         $this->saveAsset($asset);
 
-        $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
+        if ($asset->getCustomSetting('videoWidth') && $asset->getCustomSetting('videoHeight')) {
+            $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
+        }
     }
 
     private function processImage(Asset\Image $image): void
