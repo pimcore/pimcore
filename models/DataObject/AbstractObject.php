@@ -1400,15 +1400,21 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @param array $listConfig
-     * @param array $objectTypes
+     * @param mixed $objectTypes
      * @return Listing
      * @throws \Exception
      */
-    protected static function makeList(array $listConfig, array $objectTypes): Listing
+    protected static function makeList(array $listConfig, mixed $objectTypes): Listing
     {
         $list = static::getList($listConfig);
         if(empty($objectTypes)) {
             $objectTypes = [static::OBJECT_TYPE_VARIANT, static::OBJECT_TYPE_OBJECT];
+        }
+
+        if(!is_array($objectTypes)) {
+            Logger::error('Class: DataObject\\AbstractObject => Unsupported argument type ' . gettype($objectTypes)  . ' in function ' . __FUNCTION__);
+
+            throw new \Exception('Argument $objectTypes must be of type array, ' .  gettype($objectTypes) . ' given.');
         }
 
         if (\array_diff($objectTypes, [static::OBJECT_TYPE_VARIANT, static::OBJECT_TYPE_OBJECT])) {
