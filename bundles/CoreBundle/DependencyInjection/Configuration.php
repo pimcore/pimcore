@@ -1961,7 +1961,7 @@ final class Configuration implements ConfigurationInterface
                                                     ->enumNode('unsavedChangesBehaviour')
                                                         ->values([Transition::UNSAVED_CHANGES_BEHAVIOUR_SAVE,
                                                                   Transition::UNSAVED_CHANGES_BEHAVIOUR_WARN,
-                                                                  Transition::UNSAVED_CHANGES_BEHAVIOUR_IGNORE])
+                                                                  Transition::UNSAVED_CHANGES_BEHAVIOUR_IGNORE, ])
                                                         ->defaultValue(Transition::UNSAVED_CHANGES_BEHAVIOUR_WARN)
                                                         ->info('Behaviour when workflow transition gets applied but there are unsaved changes')
                                                     ->end()
