@@ -269,6 +269,7 @@ class Ffmpeg extends Adapter
 
                 return $duration;
             }
+
             throw new \Exception(
                 'Could not read duration with FFMPEG Adapter. File: ' . $this->file . '. Output: ' . $output
             );
