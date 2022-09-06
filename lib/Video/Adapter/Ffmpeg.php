@@ -269,9 +269,7 @@ class Ffmpeg extends Adapter
             return $duration;
         }
 
-        Logger::error(
-            'Could not read duration with FFMPEG Adapter. Maybe not supported FFMPEG version. Output from FFMPEG: ' . $output
-        );
+        Logger::error('Could not read duration with FFMPEG Adapter. File: ' . $this->file . '. Output: ' . $output);
 
         return null;
     }
@@ -290,9 +288,7 @@ class Ffmpeg extends Adapter
             return ['width' => $width, 'height' => $height];
         }
 
-        Logger::error(
-            'Could not read dimensions with FFMPEG Adapter. Maybe not supported FFMPEG version. Output from FFMPEG: ' . $output
-        );
+        Logger::error('Could not read dimensions with FFMPEG Adapter. File: ' . $this->file . '. Output: ' . $output);
 
         return null;
     }
