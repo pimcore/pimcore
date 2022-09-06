@@ -31,11 +31,6 @@ final class Config
     private static ?LocationAwareConfigRepository $locationAwareConfigRepository = null;
 
     /**
-     * @deprecated Will be removed in Pimcore 11
-     */
-    private const LEGACY_FILE = 'web2print.php';
-
-    /**
      * @return LocationAwareConfigRepository
      */
     private static function getRepository()
@@ -49,29 +44,11 @@ final class Config
                 ];
             }
 
-            // @deprecated legacy will be removed in Pimcore 11
-            $loadLegacyConfigCallback = function ($legacyRepo, &$dataSource) {
-                $file = \Pimcore\Config::locateConfigFile(self::LEGACY_FILE);
-                if (is_file($file)) {
-                    $content = include($file);
-                    if (is_array($content)) {
-                        $dataSource = LocationAwareConfigRepository::LOCATION_LEGACY;
-
-                        return $content;
-                    }
-                }
-
-                return null;
-            };
-
             self::$locationAwareConfigRepository = new LocationAwareConfigRepository(
                 $config,
                 'pimcore_web_to_print',
                 $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_WEB_TO_PRINT'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/web-to-print',
-                'PIMCORE_WRITE_TARGET_WEB_TO_PRINT',
-                null,
-                self::LEGACY_FILE,
-                $loadLegacyConfigCallback
+                'PIMCORE_WRITE_TARGET_WEB_TO_PRINT'
             );
         }
 
