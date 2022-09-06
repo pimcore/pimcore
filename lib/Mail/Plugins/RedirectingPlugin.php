@@ -148,7 +148,7 @@ final class RedirectingPlugin
             $subject = $message->getSubject();
 
             $originalData['subject'] = $subject;
-            $message->setSubject('Debug email: ' . $subject);
+            $message->subject('Debug email: ' . $subject);
 
             // Set receiver & sender data.
             $originalData['From'] = $message->getFrom();
@@ -193,7 +193,7 @@ final class RedirectingPlugin
             $message->text($originalData['text']);
         }
         if (isset($originalData['subject']) && $originalData['subject']) {
-            $message->setSubject($originalData['subject']);
+            $message->subject($originalData['subject']);
         }
 
         $message->setOriginalData(null);
