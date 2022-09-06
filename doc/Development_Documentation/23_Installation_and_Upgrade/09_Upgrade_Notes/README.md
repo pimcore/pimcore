@@ -23,6 +23,7 @@
   $web2printConfig = $web2printConfig['headlessChromeSettings'];
   - ```
 - [Elements] Removed fallback to parent id 1, when an element with a non-existing parent id gets created.
+- [Request] Removed deprecated getMasterRequest() in favor of getMainRequest().
 
 ## 10.5.0
 - [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`
@@ -119,7 +120,6 @@ Please use [event listener](../../20_Extending_Pimcore/13_Bundle_Developers_Guid
   ```
 - [Elements] Deprecated setting the parent id to 1 (root node), when an element with a non-existing parent id gets created.
 - [Custom Layouts] Deprecated Class `ClassLayoutDefinitionManager` and constant `PIMCORE_CUSTOMLAYOUT_DIRECTORY`.
-- [Request] Removed deprecated getMasterRequest() in favor of getMainRequest().
 
 ## 10.4.2
 - When maintenance mode is active, all commands are prevented from starting (not just commands inheriting from `AbstractCommand`).
