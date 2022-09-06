@@ -153,6 +153,7 @@ pimcore.events.preCreateMenuOption = "pimcore.menuOption.preCreate";
  * @internal
  *
  * fired when asset metadata editor tab is created
+ * editor and eventParams are passed as parameter
  */
 pimcore.events.preCreateAssetMetadataEditor = "pimcore.assetMetadataEditor.preCreate";
 

@@ -30,8 +30,8 @@ pimcore.asset.metadata.editor = Class.create({
 
         const preCreateAssetMetadataEditor = new CustomEvent(pimcore.events.preCreateAssetMetadataEditor, {
             detail: {
-                object: this,
-                eventData: eventData
+                editor: this,
+                eventParams: eventData
             }
         });
 
