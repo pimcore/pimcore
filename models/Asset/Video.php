@@ -187,8 +187,6 @@ class Video extends Model\Asset
      * @param string|null $filePath
      *
      * @return float|null
-     *
-     * @throws \Exception
      */
     public function getDurationFromBackend(?string $filePath = null)
     {
@@ -210,8 +208,6 @@ class Video extends Model\Asset
      * @internal
      *
      * @return array|null
-     *
-     * @throws \Exception
      */
     public function getDimensionsFromBackend()
     {
