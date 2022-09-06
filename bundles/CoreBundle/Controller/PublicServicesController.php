@@ -16,8 +16,6 @@
 namespace Pimcore\Bundle\CoreBundle\Controller;
 
 use function date;
-use function fstat;
-use function is_array;
 use Pimcore\Config;
 use Pimcore\Controller\Controller;
 use Pimcore\File;
@@ -46,7 +44,7 @@ class PublicServicesController extends Controller
      */
     public function thumbnailAction(Request $request)
     {
-        $assetId = $request->get('assetId');
+        $assetId = (int) $request->get('assetId');
         $thumbnailName = $request->get('thumbnailName');
         $filename = $request->get('filename');
         $requestedFileExtension = strtolower(File::getFileExtension($filename));
@@ -77,6 +75,9 @@ class PublicServicesController extends Controller
                             if (!$thumbnailConfig instanceof Asset\Image\Thumbnail\Config) {
                                 throw new \Exception("Deferred thumbnail config file doesn't contain a valid \\Asset\\Image\\Thumbnail\\Config object");
                             }
+                        } elseif ($this->getParameter('pimcore.config')['assets']['image']['thumbnails']['status_cache']) {
+                            // Delete Thumbnail Name from Cache so the next call can generate a new TmpStore entry
+                            $asset->getDao()->deleteFromThumbnailCache($thumbnailName);
                         }
                     }
 
@@ -153,12 +154,8 @@ class PublicServicesController extends Controller
                             'Cache-Control' => 'public, max-age=' . $lifetime,
                             'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
                             'Content-Type' => $imageThumbnail->getMimeType(),
+                            'Content-Length' => $imageThumbnail->getFileSize(),
                         ];
-
-                        $stats = fstat($thumbnailStream);
-                        if (is_array($stats)) {
-                            $headers['Content-Length'] = $stats['size'];
-                        }
 
                         $headers[AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER] = true;
 
@@ -190,7 +187,7 @@ class PublicServicesController extends Controller
         $domain = \Pimcore\Tool::getHostname();
         $site = Site::getByDomain($domain);
 
-        $config = Config::getRobotsConfig()->toArray();
+        $config = Config::getRobotsConfig();
 
         $siteId = 'default';
         if ($site instanceof Site) {

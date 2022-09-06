@@ -54,7 +54,7 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             DocumentEvents::POST_ADD => 'onPostAddUpdateDeleteDocument',
@@ -130,6 +130,10 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
     public function onKernelResponse(ResponseEvent $event)
     {
         $request = $event->getRequest();
+
+        if ($request->isXmlHttpRequest()) {
+            return;
+        }
 
         if (!$event->isMainRequest()) {
             return;

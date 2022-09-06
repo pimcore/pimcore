@@ -24,6 +24,7 @@ use Pimcore\Tests\Util\TestHelper;
  * Class ObjectbrickTest
  *
  * @package Pimcore\Tests\Model\Inheritance
+ *
  * @group model.inheritance.objectbrick
  */
 class ObjectbrickTest extends ModelTestCase

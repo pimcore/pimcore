@@ -61,6 +61,8 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
     /**
      * {@inheritdoc}
      *
+     * @return Marking
+     *
      * @throws LogicException
      */
     public function getMarking($subject)// : Marking

@@ -33,7 +33,7 @@ class InternalWysiwygHtmlAttributeFilterListener implements EventSubscriberInter
     use PimcoreContextAwareTrait;
     use StaticPageContextAwareTrait;
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::RESPONSE => 'onKernelResponse',

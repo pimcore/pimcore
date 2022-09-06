@@ -972,8 +972,8 @@ class TranslationController extends AdminController
 
                 if ($element instanceof Element\ElementInterface) {
                     $output .= '<h1 class="element-headline">' . ucfirst(
-                            $element->getType()
-                        ) . ' - ' . $element->getRealFullPath() . ' (ID: ' . $element->getId() . ')</h1>';
+                        $element->getType()
+                    ) . ' - ' . $element->getRealFullPath() . ' (ID: ' . $element->getId() . ')</h1>';
                 }
 
                 if ($element instanceof Document\PageSnippet) {
@@ -1101,7 +1101,6 @@ class TranslationController extends AdminController
                         ';
 
                         foreach ($definitions as $definition) {
-
                             // check allowed datatypes
                             if (!in_array($definition->getFieldtype(), ['input', 'textarea', 'wysiwyg'])) {
                                 continue;

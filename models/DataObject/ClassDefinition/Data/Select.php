@@ -78,7 +78,7 @@ class Select extends Data implements
      *
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $optionsProviderClass;
 
@@ -87,7 +87,7 @@ class Select extends Data implements
      *
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $optionsProviderData;
 
@@ -134,7 +134,7 @@ class Select extends Data implements
     }
 
     /**
-     * @param int|null $columnLength
+     * @param int $columnLength
      *
      * @return $this
      */
@@ -241,11 +241,11 @@ class Select extends Data implements
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param string $data
+     * @param string|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -257,11 +257,11 @@ class Select extends Data implements
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param string $data
+     * @param string|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -271,11 +271,11 @@ class Select extends Data implements
     /**
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param string $data
+     * @param string|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
@@ -378,13 +378,17 @@ class Select extends Data implements
     }
 
     /**
-     * @param string|null $data
+     * @param array|string|null $data
      *
      * @return bool
      */
     public function isEmpty($data)
     {
-        return strlen((string) $data) < 1;
+        if (is_array($data)) {
+            return count($data) < 1;
+        }
+
+        return (string) $data === '';
     }
 
     /**
@@ -416,7 +420,7 @@ class Select extends Data implements
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getOptionsProviderClass()
     {
@@ -424,7 +428,7 @@ class Select extends Data implements
     }
 
     /**
-     * @param string $optionsProviderClass
+     * @param string|null $optionsProviderClass
      */
     public function setOptionsProviderClass($optionsProviderClass)
     {
@@ -432,7 +436,7 @@ class Select extends Data implements
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getOptionsProviderData()
     {
@@ -440,7 +444,7 @@ class Select extends Data implements
     }
 
     /**
-     * @param string $optionsProviderData
+     * @param string|null $optionsProviderData
      */
     public function setOptionsProviderData($optionsProviderData)
     {
@@ -450,7 +454,7 @@ class Select extends Data implements
     /**
      * { @inheritdoc }
      */
-    public function enrichFieldDefinition(/** array */ $context = []) /** : Data */
+    public function enrichFieldDefinition(/** array */ $context = []) /** : static */
     {
         $this->doEnrichDefinitionDefinition(null, $this->getName(),
             'fielddefinition', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT, $context);

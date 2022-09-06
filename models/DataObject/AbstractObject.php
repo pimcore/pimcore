@@ -729,7 +729,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
             $maxRetries = 5;
             for ($retries = 0; $retries < $maxRetries; $retries++) {
-
                 // be sure that unpublished objects in relations are saved also in frontend mode, eg. in importers, ...
                 $hideUnpublishedBackup = self::getHideUnpublished();
                 self::setHideUnpublished(false);
@@ -849,26 +848,26 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     {
         // set path
         if ($this->getId() != 1) { // not for the root node
-
             if (!Element\Service::isValidKey($this->getKey(), 'object')) {
                 throw new \Exception('invalid key for object with id [ '.$this->getId().' ] key is: [' . $this->getKey() . ']');
             }
 
+            if (!$this->getParentId()) {
+                throw new \Exception('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
+            }
+
             if ($this->getParentId() == $this->getId()) {
-                throw new \Exception("ParentID and ID is identical, an element can't be the parent of itself.");
+                throw new \Exception("ParentID and ID are identical, an element can't be the parent of itself in the tree.");
             }
 
             $parent = DataObject::getById($this->getParentId());
-
-            if ($parent) {
-                // use the parent's path from the database here (getCurrentFullPath), to ensure the path really exists and does not rely on the path
-                // that is currently in the parent object (in memory), because this might have changed but wasn't not saved
-                $this->setPath(str_replace('//', '/', $parent->getCurrentFullPath().'/'));
-            } else {
-                // parent document doesn't exist anymore, set the parent to to root
-                $this->setParentId(1);
-                $this->setPath('/');
+            if (!$parent) {
+                throw new \Exception('ParentID not found.');
             }
+
+            // use the parent's path from the database here (getCurrentFullPath), to ensure the path really exists and does not rely on the path
+            // that is currently in the parent object (in memory), because this might have changed but wasn't not saved
+            $this->setPath(str_replace('//', '/', $parent->getCurrentFullPath().'/'));
 
             if (strlen($this->getKey()) < 1) {
                 throw new \Exception('DataObject requires key');
@@ -1181,7 +1180,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public function __call($method, $args)
     {
-
         // compatibility mode (they do not have any set_oXyz() methods anymore)
         if (preg_match('/^(get|set)o_/i', $method)) {
             $newMethod = preg_replace('/^(get|set)o_/i', '$1', $method);
@@ -1329,6 +1327,15 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function __clone()
     {
         parent::__clone();
+
+        // renew references when cloning
+        foreach (['id', 'path', 'creationDate', 'userOwner', 'versionCount', 'modificationDate', 'locked', 'parent', 'properties', 'userModification', 'parentId'] as $referenceField) {
+            $oldValue = $this->$referenceField;
+            unset($this->$referenceField);
+            $this->$referenceField = $oldValue;
+            $this->{'o_'.$referenceField} = &$this->$referenceField;
+        }
+
         $this->o_parent = null;
         // note that o_children is currently needed for the recycle bin
         $this->o_hasSiblings = [];

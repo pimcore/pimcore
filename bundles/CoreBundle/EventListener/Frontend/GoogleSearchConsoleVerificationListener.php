@@ -29,7 +29,7 @@ class GoogleSearchConsoleVerificationListener implements EventSubscriberInterfac
 {
     use PimcoreContextAwareTrait;
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::REQUEST => ['onKernelRequest', 64],
@@ -52,8 +52,8 @@ class GoogleSearchConsoleVerificationListener implements EventSubscriberInterfac
 
         $conf = \Pimcore\Config::getReportConfig();
 
-        if (!is_null($conf->get('webmastertools')) && isset($conf->get('webmastertools')->sites)) {
-            $sites = $conf->get('webmastertools')->sites->toArray();
+        if (isset($conf['webmastertools']) && isset($conf['webmastertools']['sites'])) {
+            $sites = $conf['webmastertools']['sites'];
 
             if (is_array($sites)) {
                 foreach ($sites as $site) {

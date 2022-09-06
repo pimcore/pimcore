@@ -84,6 +84,8 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
     /**
      * {@inheritdoc}
+     *
+     * @return string
      */
     public function getRouteDebugMessage($name, array $parameters = [])// : string
     {
@@ -97,6 +99,8 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
     /**
      * {@inheritdoc}
+     *
+     * @return string
      */
     public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH)// : string
     {
@@ -184,16 +188,20 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
     /**
      * {@inheritdoc}
+     *
+     * @return array
      */
-    public function matchRequest(Request $request)
+    public function matchRequest(Request $request)// : array
     {
         throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $request->getPathInfo()));
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @return array
      */
-    public function match($pathinfo)
+    public function match($pathinfo)// : array
     {
         throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $pathinfo));
     }

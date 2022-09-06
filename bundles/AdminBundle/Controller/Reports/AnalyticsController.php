@@ -51,7 +51,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
         $config = $siteConfigProvider->getSiteConfig();
 
         $url = $request->get('url');
-        $url = str_replace(['{accountId}', '{internalWebPropertyId}', '{id}'], [$config->accountid, $config->internalid, $config->profile], $url);
+        $url = str_replace(['{accountId}', '{internalWebPropertyId}', '{id}'], [$config['accountid'], $config['internalid'], $config['profile']], $url);
         $url = 'https://www.google.com/analytics/web/' . $url;
 
         return $this->redirect($url);
@@ -207,7 +207,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
         }
 
         $result = $this->service->data_ga->get(
-            'ga:' . $config->profile,
+            'ga:' . $config['profile'],
             $startDate,
             $endDate,
             implode(',', $metrics),
@@ -271,7 +271,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
         }
 
         $result = $this->service->data_ga->get(
-            'ga:' . $config->profile,
+            'ga:' . $config['profile'],
             $startDate,
             $endDate,
             'ga:uniquePageviews,ga:pageviews,ga:exits,ga:bounces,ga:entrances',
@@ -351,7 +351,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
         }
 
         $result = $this->service->data_ga->get(
-            'ga:' . $config->profile,
+            'ga:' . $config['profile'],
             $startDate,
             $endDate,
             'ga:pageviews',
@@ -423,7 +423,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
         }
 
         $result = $this->service->data_ga->get(
-            'ga:' . $config->profile,
+            'ga:' . $config['profile'],
             $startDate,
             $endDate,
             $metric,

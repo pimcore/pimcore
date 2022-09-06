@@ -31,8 +31,8 @@ For details, please have a look at our [contributing guide](CONTRIBUTING.md).
 | `<= 4.x` |     ❌     |   ❌   |  `2017-09-28`    |
 | `5.x`    |     ❌     |   ✅   |   `2019-12-09`    |
 | `6.x`    |     ❌     |   ✅   |   `2021-06-23`    |
-| `10.4`   |     ✅     |   ☑   |                   |
-| `10.x`   |     ✅     |   ☑   |                   |
+| `10.5`   |     ✅     |   ☑   |                   |
+| `11.x`   |     ✅     |   ☑   |                   |
 
 ** [Long-term support](https://pimcore.com/en/services/lts) is only available as part of our [enterprise subscription](https://pimcore.com/en/platform/subscription).   
 *** Community Edition end of life date, this doesn't affect the commercial LTS offering. 
@@ -76,7 +76,7 @@ The DXP/CMS part of Pimcore for managing unstructured content such as the pages 
 
 #### Demo (Community Edition)
 _Admin-URL_ (stable): [https://demo.pimcore.fun/admin/](https://demo.pimcore.fun/admin/)  
-_Admin-URL_ (dev): [https://10.x-dev.pimcore.fun/admin/](https://10.x-dev.pimcore.fun/admin/)  
+_Admin-URL_ (dev): [https://11.x-dev.pimcore.fun/admin/](https://11.x-dev.pimcore.fun/admin/)  
 _Username_: `admin`  
 _Password_: `demo`
 

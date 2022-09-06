@@ -227,7 +227,6 @@ class GridHelperService
                     $brickDescriptor = null;
                     $isLocalized = false;
                     if (!$field) {
-
                         // if the definition doesn't exist check for a localized field
                         $localized = $class->getFieldDefinition('localizedfields');
                         if ($localized instanceof ClassDefinition\Data\Localizedfields) {
@@ -296,8 +295,8 @@ class GridHelperService
                             $fieldConditions = [];
                             foreach ($filter['value'] as $filterValue) {
                                 $brickCondition = '(' . $brickField->getFilterCondition($filterValue, $operator,
-                                        ['brickPrefix' => $brickPrefix]
-                                    ) . ' AND ' . $brickType . '.fieldname = ' . $db->quote($brickFilterField) . ')';
+                                    ['brickPrefix' => $brickPrefix]
+                                ) . ' AND ' . $brickType . '.fieldname = ' . $db->quote($brickFilterField) . ')';
                                 $fieldConditions[] = $brickCondition;
                             }
 
@@ -306,7 +305,7 @@ class GridHelperService
                             }
                         } else {
                             $brickCondition = '(' . $brickField->getFilterCondition($filter['value'], $operator,
-                                    ['brickPrefix' => $brickPrefix]) . ' AND ' . $brickType . '.fieldname = ' . $db->quote($brickFilterField) . ')';
+                                ['brickPrefix' => $brickPrefix]) . ' AND ' . $brickType . '.fieldname = ' . $db->quote($brickFilterField) . ')';
                             $conditionPartsFilters[] = $brickCondition;
                         }
                     } elseif ($field instanceof ClassDefinition\Data\UrlSlug) {

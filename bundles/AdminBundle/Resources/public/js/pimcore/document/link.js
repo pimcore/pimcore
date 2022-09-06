@@ -355,7 +355,8 @@ pimcore.document.link = Class.create(pimcore.document.document, {
             });
 
             pathField.on("render", function (el) {
-                var dd = new Ext.dd.DropZone(el.getEl().dom.parentNode.parentNode, {
+                let currentId = this.data.id;
+                let dd = new Ext.dd.DropZone(el.getEl().dom.parentNode.parentNode, {
                     ddGroup: "element",
 
                     getTargetFromEvent: function (e) {
@@ -363,6 +364,10 @@ pimcore.document.link = Class.create(pimcore.document.document, {
                     },
 
                     onNodeOver: function (target, dd, e, data) {
+                        if (data.records[0].data.id == currentId){
+                            return false;
+                        }
+
                         if (data.records.length === 1 && (
                             data.records[0].data.elementType === "document" ||
                             data.records[0].data.elementType === "asset" ||
@@ -374,7 +379,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
 
                     onNodeDrop: function (target, dd, e, data) {
 
-                        if(!pimcore.helpers.dragAndDropValidateSingleItem(data) || !isChangeAllowed) {
+                        if(!pimcore.helpers.dragAndDropValidateSingleItem(data) || !isChangeAllowed || data.records[0].data.id == currentId) {
                             return false;
                         }
 
@@ -475,6 +480,10 @@ pimcore.document.link = Class.create(pimcore.document.document, {
                     hidden: !isChangeAllowed,
                     handler: function () {
                         pimcore.helpers.itemselector(false, function (data) {
+                            if (this.data.id == data.id){
+                                Ext.Msg.alert(t('error'),t('link_recursion_error'));
+                                return false;
+                            }
                             pathField.setValue(data.fullpath);
                             linkTypeField.setValue('internal');
                             internalTypeField.setValue(data.type);

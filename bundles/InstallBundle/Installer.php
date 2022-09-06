@@ -26,6 +26,7 @@ use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
 use Pimcore\Config;
 use Pimcore\Console\Style\PimcoreStyle;
+use Pimcore\Db\Helper;
 use Pimcore\Model\User;
 use Pimcore\Tool\AssetsInstaller;
 use Pimcore\Tool\Console;
@@ -118,7 +119,6 @@ class Installer
         'setup_database' => 'Running database setup...',
         'install_assets' => 'Installing assets...',
         'install_classes' => 'Installing classes ...',
-        'install_custom_layouts' => 'Installing custom layouts ...',
         'migrations' => 'Marking all migrations as done ...',
         'complete' => 'Install complete!',
     ];
@@ -412,9 +412,6 @@ class Installer
         $this->dispatchStepEvent('install_classes');
         $this->installClasses();
 
-        $this->dispatchStepEvent('install_custom_layouts');
-        $this->installCustomLayouts();
-
         $this->dispatchStepEvent('migrations');
         $this->markMigrationsAsDone();
 
@@ -490,14 +487,6 @@ class Installer
         ], 'Installing class definitions');
     }
 
-    private function installCustomLayouts()
-    {
-        $this->runCommand([
-            'pimcore:deployment:custom-layouts-rebuild',
-            '-c',
-        ], 'Installing custom layout definitions');
-    }
-
     private function installAssets(KernelInterface $kernel)
     {
         $this->logger->info('Running {command} command', ['command' => 'assets:install']);
@@ -558,7 +547,7 @@ class Installer
         }
 
         // see Symfony's cache:clear command
-        $oldCacheDir = substr($cacheDir, 0, -1) . ('~' === substr($cacheDir, -1) ? '+' : '~');
+        $oldCacheDir = substr($cacheDir, 0, -1) . '~';
 
         $filesystem = new Filesystem();
         if ($filesystem->exists($oldCacheDir)) {
@@ -577,9 +566,6 @@ class Installer
 
     public function setupDatabase(array $userCredentials, array $errors = []): array
     {
-        /**
-         * @var \Doctrine\DBAL\Connection $db
-         */
         $db = \Pimcore\Db::get();
         $db->executeQuery('SET FOREIGN_KEY_CHECKS=0;');
 
@@ -612,6 +598,9 @@ class Installer
             $dataFiles = $this->getDataFiles();
 
             try {
+                //create a system user with id 0
+                $this->insertSystemUser($db);
+
                 if (empty($dataFiles) || !$this->importDatabaseDataDump) {
                     // empty installation
                     $this->insertDatabaseContents();
@@ -685,7 +674,6 @@ class Installer
         if (strpos($file, 'atomic') !== false) {
             $db->executeStatement($dumpFile);
         } else {
-
             // get every command as single part - ; at end of line
             $singleQueries = explode(";\n", $dumpFile);
 
@@ -705,15 +693,12 @@ class Installer
 
             $db->executeStatement(implode("\n", $batchQueries));
         }
-
-        // set the id of the system user to 0
-        $db->update('users', ['id' => 0], ['name' => 'system']);
     }
 
     protected function insertDatabaseContents()
     {
         $db = \Pimcore\Db::get();
-        $db->insert('assets', [
+        $db->insert('assets', Helper::quoteDataIdentifiers($db, [
             'id' => 1,
             'parentId' => 0,
             'type' => 'folder',
@@ -723,8 +708,8 @@ class Installer
             'modificationDate' => time(),
             'userOwner' => 1,
             'userModification' => 1,
-        ]);
-        $db->insert('documents', [
+        ]));
+        $db->insert('documents', Helper::quoteDataIdentifiers($db, [
             'id' => 1,
             'parentId' => 0,
             'type' => 'page',
@@ -736,15 +721,15 @@ class Installer
             'modificationDate' => time(),
             'userOwner' => 1,
             'userModification' => 1,
-        ]);
-        $db->insert('documents_page', [
+        ]));
+        $db->insert('documents_page', Helper::quoteDataIdentifiers($db, [
             'id' => 1,
             'controller' => 'App\\Controller\\DefaultController::defaultAction',
             'template' => '',
             'title' => '',
             'description' => '',
-        ]);
-        $db->insert('objects', [
+        ]));
+        $db->insert('objects', Helper::quoteDataIdentifiers($db, [
             'o_id' => 1,
             'o_parentId' => 0,
             'o_type' => 'folder',
@@ -756,64 +741,70 @@ class Installer
             'o_modificationDate' => time(),
             'o_userOwner' => 1,
             'o_userModification' => 1,
-        ]);
+        ]));
+        $userPermissions = [
+            'application_logging',
+            'assets',
+            'classes',
+            'clear_cache',
+            'clear_fullpage_cache',
+            'clear_temp_files',
+            'dashboards',
+            'document_types',
+            'documents',
+            'emails',
+            'gdpr_data_extractor',
+            'glossary',
+            'http_errors',
+            'notes_events',
+            'objects',
+            'plugins', // TODO: to be removed in Pimcore 11
+            'predefined_properties',
+            'asset_metadata',
+            'recyclebin',
+            'redirects',
+            'reports',
+            'reports_config',
+            'robots.txt',
+            'routes',
+            'seemode',
+            'seo_document_editor',
+            'share_configurations',
+            'system_settings',
+            'tags_configuration',
+            'tags_assignment',
+            'tags_search',
+            'targeting',
+            'thumbnails',
+            'translations',
+            'users',
+            'website_settings',
+            'admin_translations',
+            'web2print_settings',
+            'workflow_details',
+            'notifications',
+            'notifications_send',
+            'sites',
+            'objects_sort_method',
+        ];
 
+        foreach ($userPermissions as $permission) {
+            $db->insert('users_permission_definitions', [
+                $db->quoteIdentifier('key') => $permission,
+            ]);
+        }
+    }
+
+    protected function insertSystemUser(Connection $db): void
+    {
         $db->insert('users', [
             'parentId' => 0,
             'name' => 'system',
             'admin' => 1,
             'active' => 1,
         ]);
-        $db->update('users', ['id' => 0], ['name' => 'system']);
 
-        $userPermissions = [
-            ['key' => 'application_logging'],
-            ['key' => 'assets'],
-            ['key' => 'classes'],
-            ['key' => 'clear_cache'],
-            ['key' => 'clear_fullpage_cache'],
-            ['key' => 'clear_temp_files'],
-            ['key' => 'dashboards'],
-            ['key' => 'document_types'],
-            ['key' => 'documents'],
-            ['key' => 'emails'],
-            ['key' => 'gdpr_data_extractor'],
-            ['key' => 'glossary'],
-            ['key' => 'http_errors'],
-            ['key' => 'notes_events'],
-            ['key' => 'objects'],
-            ['key' => 'plugins'], // TODO: to be removed in Pimcore 11
-            ['key' => 'predefined_properties'],
-            ['key' => 'asset_metadata'],
-            ['key' => 'recyclebin'],
-            ['key' => 'redirects'],
-            ['key' => 'reports'],
-            ['key' => 'reports_config'],
-            ['key' => 'robots.txt'],
-            ['key' => 'routes'],
-            ['key' => 'seemode'],
-            ['key' => 'seo_document_editor'],
-            ['key' => 'share_configurations'],
-            ['key' => 'system_settings'],
-            ['key' => 'tags_configuration'],
-            ['key' => 'tags_assignment'],
-            ['key' => 'tags_search'],
-            ['key' => 'targeting'],
-            ['key' => 'thumbnails'],
-            ['key' => 'translations'],
-            ['key' => 'users'],
-            ['key' => 'website_settings'],
-            ['key' => 'admin_translations'],
-            ['key' => 'web2print_settings'],
-            ['key' => 'workflow_details'],
-            ['key' => 'notifications'],
-            ['key' => 'notifications_send'],
-            ['key' => 'sites'],
-            ['key' => 'objects_sort_method'],
-        ];
-
-        foreach ($userPermissions as $up) {
-            $db->insert('users_permission_definitions', $up);
-        }
+        // set the id of the system user to 0
+        $db->update('users', ['id' => 0], ['name' => 'system', 'type' => 'user' ]);
     }
 }

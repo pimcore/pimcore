@@ -30,6 +30,7 @@ use Pimcore\Tests\Util\TestHelper;
  * Class DocumentTest
  *
  * @package Pimcore\Tests\Model\Document
+ *
  * @group model.document.document
  */
 class DocumentTest extends ModelTestCase
@@ -74,6 +75,50 @@ class DocumentTest extends ModelTestCase
         $this->assertNull($this->testPage);
 
         $this->assertFalse($newParent->hasChildren());
+    }
+
+    /**
+     * Parent ID of a new object cannot be 0
+     */
+    public function testParentIs0()
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
+        $savedObject = TestHelper::createEmptyDocumentPage('', false);
+        $this->assertTrue($savedObject->getId() == 0);
+
+        $savedObject->setParentId(0);
+        $savedObject->save();
+    }
+
+    /**
+     * Verifies that an object with the same parent ID cannot be created.
+     */
+    public function testParentIdentical()
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage("ParentID and ID are identical, an element can't be the parent of itself in the tree.");
+        $savedObject = TestHelper::createEmptyDocumentPage();
+        $this->assertTrue($savedObject->getId() > 0);
+
+        $savedObject->setParentId($savedObject->getId());
+        $savedObject->save();
+    }
+
+    /**
+     * Parent ID must resolve to an existing element
+     *
+     * @group notfound
+     */
+    public function testParentNotFound()
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('ParentID not found.');
+        $savedObject = TestHelper::createEmptyDocumentPage('', false);
+        $this->assertTrue($savedObject->getId() == 0);
+
+        $savedObject->setParentId(999999);
+        $savedObject->save();
     }
 
     /**
@@ -235,13 +280,24 @@ class DocumentTest extends ModelTestCase
         $this->assertNull($childEditable);
 
         // set master document
-        $child->setContentMasterDocumentId($this->testPage->getId());
+        $child->setContentMasterDocumentId($this->testPage->getId(), true);
         $child->save();
         $child = Page::getById($child->getId(), ['force' => true]);
 
         // now the value should get inherited
         $childEditable = $child->getEditable('headline');
         $this->assertEquals('test', $childEditable->getValue());
+
+        // Don't set the master document if the document is already a part of the master document chain
+        $testFirstPage = TestHelper::createEmptyDocumentPage();
+        $testSecondPage = TestHelper::createEmptyDocumentPage();
+        $testFirstPage->setContentMasterDocumentId($testSecondPage->getId(), true);
+        $testFirstPage->setPublished(true);
+        $testFirstPage->save();
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('This document is already part of the master document chain, please choose a different one.');
+        $testSecondPage->setContentMasterDocumentId($testFirstPage->getId(), true);
     }
 
     public function testLink()
@@ -258,6 +314,28 @@ class DocumentTest extends ModelTestCase
         $linkDocument = Link::getById($linkDocument->getId());
         $newTarget = $linkDocument->getElement();
         $this->assertEquals($target->getId(), $newTarget->getId());
+    }
+
+    public function testLinkItself()
+    {
+        /** @var Link $linkDocument */
+        $linkDocument = TestHelper::createEmptyDocument('', true, true, '\\Pimcore\\Model\\Document\\Link');
+        $linkDocument->setInternalType('document');
+        $linkDocument->setInternal(1);
+        $linkDocument->setLinktype('internal');
+        $linkDocument->save();
+
+        $this->assertEquals(1, $linkDocument->getInternal());
+
+        //Set the same internal target id as itself
+        codecept_debug('[WARNING] Testing document/link circular reference, if it is not progressing from here, please stop the tests and fix the code');
+        $linkDocument->setInternal($linkDocument->getId());
+        $linkDocument->save();
+
+        $linkDocument = Link::getById($linkDocument->getId());
+
+        // when trying to set the target id as itself, it silently logs and saves internal ID as NULL
+        $this->assertNull($linkDocument->getInternal());
     }
 
     public function testSetGetChildren()

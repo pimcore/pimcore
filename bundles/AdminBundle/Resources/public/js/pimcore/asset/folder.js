@@ -94,7 +94,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
         var tpl = new Ext.XTemplate(
             '<tpl for=".">',
             '<div class="thumb-wrap" id="{type}_{id}" data-idpath="{idPath}">',
-            '<img class="thumb" src="{url}" loading="lazy">',
+            '<img class="thumb" src="{url}" loading="lazy" draggable="false">',
             '<span class="filename" title="{filename}">{filenameDisplay}</span></div>',
             '</tpl>',
             '<div class="x-clear"></div>'

@@ -693,7 +693,6 @@ class DataObjectHelperController extends AdminController
     {
         try {
             $calculatedColumnConfig = Tool\Session::useSession(function (AttributeBagInterface $session) use ($config) {
-
                 //otherwise create a new one
 
                 $calculatedColumn = [];
@@ -1493,18 +1492,11 @@ class DataObjectHelperController extends AdminController
         $csvFile = $this->getCsvFile($fileHandle);
 
         try {
-            $csvStream= $storage->readStream($csvFile);
-
             $csvReader = new Csv();
             $csvReader->setDelimiter(';');
             $csvReader->setSheetIndex(0);
 
-            $temp = tmpfile();
-            stream_copy_to_stream($csvStream, $temp, null, 0);
-            $tempMetaData = stream_get_meta_data($temp);
-            //TODO: use this method and storage->read() to avoid the extra temp file, is not available in the current version. See: https://github.com/PHPOffice/PhpSpreadsheet/pull/2792
-            //$spreadsheet = $csvReader->loadSpreadsheetFromString($csvData);
-            $spreadsheet = $csvReader->load($tempMetaData['uri']);
+            $spreadsheet = $csvReader->loadSpreadsheetFromString($storage->read($csvFile));
             $writer = new Xlsx($spreadsheet);
             $xlsxFilename = PIMCORE_SYSTEM_TEMP_DIRECTORY. '/' .$fileHandle. '.xlsx';
             $writer->save($xlsxFilename);
@@ -1626,7 +1618,6 @@ class DataObjectHelperController extends AdminController
 
                             $getter = 'get' . ucfirst($field);
                             if (method_exists($object, $getter)) {
-
                                 /** @var DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
                                 $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
                                 $csLanguage = $requestedLanguage;

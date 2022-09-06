@@ -271,7 +271,7 @@ class NotesSubscriber implements EventSubscriberInterface
         return $this->additionalData[self::ADDITIONAL_DATA_NOTES_ADDITIONAL_FIELDS] ?? [];
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             'workflow.completed' => ['onWorkflowCompleted', 1],

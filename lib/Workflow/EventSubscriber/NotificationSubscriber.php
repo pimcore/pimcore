@@ -199,7 +199,7 @@ class NotificationSubscriber implements EventSubscriberInterface
         $this->enabled = $enabled;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             'workflow.completed' => ['onWorkflowCompleted', 0],

@@ -50,7 +50,7 @@ class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareIn
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::REQUEST => 'onKernelRequest',
@@ -85,7 +85,7 @@ class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareIn
 
         if ($requestedPerspective) {
             if ($requestedPerspective !== $user->getActivePerspective()) {
-                $existingPerspectives = array_keys(\Pimcore\Perspective\Config::get()->toArray());
+                $existingPerspectives = array_keys(\Pimcore\Perspective\Config::get());
                 if (!in_array($requestedPerspective, $existingPerspectives)) {
                     $this->logger->warning('Requested perspective {perspective} for {user} does not exist.', [
                         'user' => $user->getName(),

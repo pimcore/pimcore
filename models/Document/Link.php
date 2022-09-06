@@ -41,7 +41,7 @@ class Link extends Model\Document
      *
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $internalType;
 
@@ -280,7 +280,7 @@ class Link extends Model\Document
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getInternalType()
     {
@@ -288,7 +288,7 @@ class Link extends Model\Document
     }
 
     /**
-     * @param string $type
+     * @param string|null $type
      *
      * @return $this
      */
@@ -368,6 +368,9 @@ class Link extends Model\Document
         try {
             if ($this->internal) {
                 if ($this->internalType == 'document') {
+                    if ($this->getId() == $this->internal) {
+                        throw new \Exception('Prevented infinite redirection loop: attempted to linking "' . $this->getKey() . '" to itself. ');
+                    }
                     $this->object = Document::getById($this->internal);
                 } elseif ($this->internalType == 'asset') {
                     $this->object = Asset::getById($this->internal);

@@ -127,7 +127,6 @@ final class Editlock extends Model\AbstractModel
      */
     public static function lock($cid, $ctype)
     {
-
         // try to get user
         if (!$user = \Pimcore\Tool\Admin::getCurrentUser()) {
             return false;

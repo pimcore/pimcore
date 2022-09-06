@@ -172,7 +172,7 @@
     "opacity": "Durchsichtigkeit",
     "applymask": "Maskieren",
     "addoverlay": "Overlay hinzufügen",
-    "important_use_imagick_pecl_extensions_for_best_results_gd_is_just_a_fallback_with_less_quality": "Wichtig: Bitte nutzen Sie die Imagick PECL Erweiterung um gute Ergebnisse zu erreichen, GDlib ist nur ein Fallback mit wendiger Funktionalität und schlechterer Qualität!",
+    "important_use_imagick_pecl_extensions_for_best_results_gd_is_just_a_fallback_with_less_quality": "Wichtig: Bitte nutzen Sie die Imagick PECL Erweiterung um gute Ergebnisse zu erreichen, GDlib ist nur ein Fallback mit weniger Funktionalität und schlechterer Qualität!",
     "transformations": "Transformationen",
     "frame": "Frame",
     "setbackgroundcolor": "Hintergrundfarbe setzen",
@@ -672,5 +672,7 @@
     "asset_type_changed": "Asset Typ wurde in der Zwischenzeit geändert. Bitte laden Sie das Admin Interface neu, um die letzten Änderungen zu sehen.",
     "success_generating_previews": "Seitenvorschau wird im Hintergrund generiert. Bitte laden Sie das Admin Interface nach einer Weile neu, um die Änderungen sehen zu können.",
     "error_generating_previews": "Fehler beim generieren der Seitenvorschau",
-    "regex_flags": "RegEx Flags"
+    "regex_flags": "RegEx Flags",
+    "web2print_headlesschrome_settings": "Headless Chrome settings",
+    "web2print_headlesschrome_json_converter": "Open JSON converter/validator"
 }

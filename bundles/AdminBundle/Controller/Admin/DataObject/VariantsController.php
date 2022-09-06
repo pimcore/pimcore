@@ -81,7 +81,6 @@ class VariantsController extends AdminController
 
         $allParams = array_merge($request->request->all(), $request->query->all());
         $allParams['folderId'] = $parentObject->getId();
-        $allParams['only_direct_children'] = 'true';
         $allParams['classId'] = $parentObject->getClassId();
 
         $csrfProtection->checkCsrfToken($request);

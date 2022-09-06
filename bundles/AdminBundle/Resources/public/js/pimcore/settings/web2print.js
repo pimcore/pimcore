@@ -155,43 +155,6 @@ pimcore.settings.web2print = Class.create({
                     }
                 ]
             });
-            this.wkhtmlToPdfSettings = Ext.create("Ext.form.FieldSet", {
-                title: t('web2print_wkhtmltopdf_settings'),
-                collapsible: true,
-                collapsed: false,
-                autoHeight: true,
-                hidden: this.getValue("generalTool") != 'wkhtmltopdf',
-                defaultType: 'textfield',
-                defaults: {width: 450},
-                items: [
-                    {
-                        xtype: 'textfield',
-                        width: 650,
-                        fieldLabel: t("web2print_wkhtmltopdf_binary"),
-                        name: 'wkhtmltopdfBin',
-                        value: this.getValue("wkhtmltopdfBin")
-                    }, {
-                        xtype: 'textarea',
-                        width: 650,
-                        height: 200,
-                        fieldLabel: t("web2print_wkhtmltopdf_options"),
-                        name: 'wkhtml2pdfOptions',
-                        value: this.getValue("wkhtml2pdfOptions")
-                    },{
-                        xtype: "displayfield",
-                        hideLabel: true,
-                        width: 600,
-                        value: t('web2print_wkhtmltopdf_options_txt'),
-                        cls: "pimcore_extra_label_bottom"
-                    },{
-                        xtype: 'textfield',
-                        width: 650,
-                        fieldLabel: t("web2print_hostname"),
-                        name: 'wkhtml2pdfHostname',
-                        value: this.getValue("wkhtml2pdfHostname")
-                    }
-                ]
-            });
 
             this.headlessChromeSettings = Ext.create("Ext.form.FieldSet", {
                 title: t('web2print_headlesschrome_settings'),
@@ -214,10 +177,11 @@ pimcore.settings.web2print = Class.create({
                         fieldLabel: t("web2print_headlesschrome_documentation"),
                         name: 'documentation',
                         width: 600,
-                        value: t('web2print_headlesschrome_puppeteer_documentation'),
+                        value: t('web2print_headlesschrome_options_documentation'),
                         autoEl:{
                             tag: 'a',
-                            href: "https://pptr.dev/#?product=Puppeteer&version=v5.2.1&show=api-pagepdfoptions",
+                            target: '_blank',
+                            href: "https://github.com/spiritix/php-chrome-html2pdf#options",
                         }
                     },{
                         xtype: "displayfield",
@@ -233,6 +197,7 @@ pimcore.settings.web2print = Class.create({
                         value: t('web2print_headlesschrome_json_converter_link'),
                         autoEl:{
                             tag: 'a',
+                            target: '_blank',
                             href: "https://jsonformatter.org/",
                         }
                     }
@@ -292,7 +257,6 @@ pimcore.settings.web2print = Class.create({
                                 value: this.getValue("generalTool"),
                                 store: [
                                     ["pdfreactor", "PDFreactor"],
-                                    ["wkhtmltopdf", "WkHtmlToPdf (Deprecated)"],
                                     ["headlesschrome", "Headless Chrome"],
                                 ],
                                 mode: "local",
@@ -302,15 +266,9 @@ pimcore.settings.web2print = Class.create({
 
                                         if(combo.getValue() == "pdfreactor") {
                                             this.pdfReactorSettings.show();
-                                            this.wkhtmlToPdfSettings.hide();
                                             this.headlessChromeSettings.hide();
-                                        } else if(combo.getValue() == "wkhtmltopdf") {
+                                        } else if(combo.getValue() == "headlesschrome") {
                                             this.pdfReactorSettings.hide();
-                                            this.wkhtmlToPdfSettings.show();
-                                            this.headlessChromeSettings.hide();
-                                        }else{
-                                            this.pdfReactorSettings.hide();
-                                            this.wkhtmlToPdfSettings.hide();
                                             this.headlessChromeSettings.show();
                                         }
 
@@ -338,7 +296,7 @@ pimcore.settings.web2print = Class.create({
                             }
                         ]
                     }
-                    , this.pdfReactorSettings, this.wkhtmlToPdfSettings, this.headlessChromeSettings
+                    , this.pdfReactorSettings, this.headlessChromeSettings
                 ]
             });
 

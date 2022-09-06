@@ -777,7 +777,6 @@
     "bundle_ecommerce_pricing_config_condition_cart_amount": "Cart amount",
     "bundle_ecommerce_pricing_config_condition_products": "Products",
     "category": "Category",
-    "bundle_ecommerce_pricing_config_condition_token": "Token",
     "bundle_ecommerce_pricing_config_condition_sales": "Sales",
     "bundle_ecommerce_pricing_config_condition_sold": "Sold",
     "bundle_ecommerce_pricing_config_condition_sold_count": "Count",
@@ -956,7 +955,6 @@
     "show_fieldlookup": "Show Field Lookup",
     "different_number_of_columns": "Different number of columns",
     "brick_limit_reached": "Limit ({bricklimit}) reached for brick: {brickname}",
-    "generate_type_declarations": "Generate Type Declarations",
     "batch_change_language": "Batch update language",
     "preview_item": "Preview Item",
     "by_key_reverse": "Key (Z to A)",
@@ -985,5 +983,6 @@
     "asset_upload_keep_both": "Keep both files",
     "asset_upload_overwrite_all": "Overwrite all",
     "could_not_open_zip_file": "The uploaded zip file could not be opened.",
-    "objects_sort_method": "Change data objects sort method"
+    "objects_sort_method": "Change data objects sort method",
+    "link_recursion_error": "The link is redirecting to itself, causing an infinite loop"
 }

@@ -146,7 +146,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class EditmodeListener implements EventSubscriberInterface
 {
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             BundleManagerEvents::EDITMODE_JS_PATHS => 'onEditmodeJsPaths'

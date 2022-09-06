@@ -90,7 +90,7 @@ class TargetingListener implements EventSubscriberInterface
     /**
      * @return array
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents()//: array
     {
         return [
             // needs to run before ElementListener to make sure there's a

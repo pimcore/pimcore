@@ -10,14 +10,13 @@ In case  you need to add a custom session bag for your bundle or application, th
 <?php
  
 namespace TestBundle\EventListener;
- 
-use Pimcore\Session\SessionConfiguratorInterface;
+
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
  
 class SessionBagListener implements EventSubscriberInterface
 {
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             //run after Symfony\Component\HttpKernel\EventListener\SessionListener

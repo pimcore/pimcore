@@ -552,7 +552,6 @@ final class Staticroute extends AbstractModel
     public function match($path, $params = [])
     {
         if (@preg_match($this->getPattern(), $path)) {
-
             // check for site
             if ($this->getSiteId()) {
                 if (!Site::isSiteRequest()) {

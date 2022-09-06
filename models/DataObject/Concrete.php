@@ -389,7 +389,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @param ClassDefinition|null $o_class
      *
-     * @return self
+     * @return $this
      */
     public function setClass(?ClassDefinition $o_class)
     {
@@ -481,7 +481,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @param bool $omitMandatoryCheck
      *
-     * @return self
+     * @return $this
      */
     public function setOmitMandatoryCheck($omitMandatoryCheck)
     {

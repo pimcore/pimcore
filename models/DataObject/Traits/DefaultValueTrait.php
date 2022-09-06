@@ -34,7 +34,7 @@ trait DefaultValueTrait
      * @param \Pimcore\Model\DataObject\Concrete $object
      * @param array $context
      *
-     * @return null|string
+     * @return mixed
      */
     abstract protected function doGetDefaultValue($object, $context = []);
 

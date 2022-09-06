@@ -68,7 +68,7 @@ class ChangePublishedStateSubscriber implements EventSubscriberInterface
             && ($event->getSubject() instanceof Concrete || $event->getSubject() instanceof Document);
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             'workflow.completed' => 'onWorkflowCompleted',

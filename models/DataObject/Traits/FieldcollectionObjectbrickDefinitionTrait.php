@@ -29,7 +29,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     public $key;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $parentClass;
 
@@ -54,11 +54,6 @@ trait FieldcollectionObjectbrickDefinitionTrait
      * @var Layout|null
      */
     public $layoutDefinitions;
-
-    /**
-     * @var bool
-     */
-    public $generateTypeDeclarations = true;
 
     /**
      * @var Data[]
@@ -86,7 +81,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getParentClass()
     {
@@ -94,7 +89,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     }
 
     /**
-     * @param string $parentClass
+     * @param string|null $parentClass
      *
      * @return $this
      */
@@ -266,29 +261,9 @@ trait FieldcollectionObjectbrickDefinitionTrait
     }
 
     /**
-     * @return bool
-     */
-    public function getGenerateTypeDeclarations()
-    {
-        return (bool) $this->generateTypeDeclarations;
-    }
-
-    /**
-     * @param bool $generateTypeDeclarations
-     *
-     * @return $this
-     */
-    public function setGenerateTypeDeclarations($generateTypeDeclarations)
-    {
-        $this->generateTypeDeclarations = (bool) $generateTypeDeclarations;
-
-        return $this;
-    }
-
-    /**
      * @internal
      *
-     * @param $fieldDefinition
+     * @param Data $fieldDefinition
      * @param array $context
      *
      * @return mixed

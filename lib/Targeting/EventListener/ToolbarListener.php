@@ -98,7 +98,7 @@ class ToolbarListener implements EventSubscriberInterface
     /**
      * @return array[]
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             TargetingEvents::PRE_RESOLVE => ['onPreResolve', -10],
