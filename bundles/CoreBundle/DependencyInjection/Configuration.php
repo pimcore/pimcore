@@ -21,6 +21,7 @@ use Pimcore\Targeting\Storage\TargetingStorageInterface;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Pimcore\Workflow\Notification\NotificationEmailService;
+use Pimcore\Workflow\Transition;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -1956,6 +1957,13 @@ final class Configuration implements ConfigurationInterface
                                                         ->values([ChangePublishedStateSubscriber::NO_CHANGE, ChangePublishedStateSubscriber::FORCE_UNPUBLISHED, ChangePublishedStateSubscriber::FORCE_PUBLISHED, ChangePublishedStateSubscriber::SAVE_VERSION])
                                                         ->defaultValue(ChangePublishedStateSubscriber::NO_CHANGE)
                                                         ->info('Change published state of element while transition (only available for documents and data objects).')
+                                                    ->end()
+                                                    ->enumNode('unsavedChangesBehaviour')
+                                                        ->values([Transition::UNSAVED_CHANGES_BEHAVIOUR_SAVE,
+                                                                  Transition::UNSAVED_CHANGES_BEHAVIOUR_WARN,
+                                                                  Transition::UNSAVED_CHANGES_BEHAVIOUR_IGNORE])
+                                                        ->defaultValue(Transition::UNSAVED_CHANGES_BEHAVIOUR_WARN)
+                                                        ->info('Behaviour when workflow transition gets applied but there are unsaved changes')
                                                     ->end()
                                                 ->end()
                                             ->end()
