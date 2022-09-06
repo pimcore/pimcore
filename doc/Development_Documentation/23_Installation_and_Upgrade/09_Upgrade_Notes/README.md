@@ -98,6 +98,7 @@ Please use [event listener](../../20_Extending_Pimcore/13_Bundle_Developers_Guid
 - [Workflows] Deprecated classes Pimcore\Model\Workflow, Pimcore\Model\Workflow\Dao, Pimcore\Model\Workflow\Listing\Dao and Pimcore\Model\Workflow\Listing. 
 Please check the documentation on how to work with workflows: [Workflow Management](../../07_Workflow_Management/README.md).
 - [Maintenance] Deprecated passing `--force` option to maintenance command.
+- [Exception] `MissingDependencyException` has been deprecated and will be removed in Pimcore 11.
 
 ## 10.4.2
 - When maintenance mode is active, all commands are prevented from starting (not just commands inheriting from `AbstractCommand`).
