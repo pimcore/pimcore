@@ -3,7 +3,7 @@
 Pimcore offers some static helpers:
 
 ## Pimcore Tool
-The `Pimcore\Tool` class is a collection of general service methods. Their names should be self-explaining, just have a look at the [class source file](https://github.com/pimcore/pimcore/blob/10.x/lib/Tool.php).
+The `Pimcore\Tool` class is a collection of general service methods. Their names should be self-explaining, just have a look at the [class source file](https://github.com/pimcore/pimcore/blob/11.x/lib/Tool.php).
 
 Particular useful can be following methods:
 * `isValidPath()`
@@ -26,7 +26,7 @@ $mail = Pimcore\Tool::getMail($recipients, $subject);
 
 ## Element Service
 The `Pimcore\Model\Element\Service` class is a collection of service methods for elements (documents, assets, objects). 
-Their names should be self-explaining, just have a look at the [class source file](https://github.com/pimcore/pimcore/blob/10.x/models/Element/Service.php). 
+Their names should be self-explaining, just have a look at the [class source file](https://github.com/pimcore/pimcore/blob/11.x/models/Element/Service.php). 
 
 Particular useful can be following methods:
 * `getElementByPath()`
