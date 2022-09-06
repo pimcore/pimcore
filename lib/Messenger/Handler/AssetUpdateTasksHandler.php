@@ -69,33 +69,26 @@ class AssetUpdateTasksHandler
 
     private function processVideo(Asset\Video $asset): void
     {
-        try {
-            $asset->setCustomSetting('duration', $asset->getDurationFromBackend());
-        } catch (\Exception $e) {
-            Logger::err('Unable to get duration of video: ' . $asset->getId());
-
-            throw new UnrecoverableMessageHandlingException($e->getMessage(), 0, $e);
+        if ($duration = $asset->getDurationFromBackend()) {
+            $asset->setCustomSetting('duration', $duration);
+        } else {
+            $asset->removeCustomSetting('duration');
         }
 
-        try {
-            $dimensions = $asset->getDimensionsFromBackend();
-            if ($dimensions) {
-                $asset->setCustomSetting('videoWidth', $dimensions['width']);
-                $asset->setCustomSetting('videoHeight', $dimensions['height']);
-            } else {
-                $asset->removeCustomSetting('videoWidth');
-                $asset->removeCustomSetting('videoHeight');
-            }
-        } catch (\Exception $e) {
-            Logger::err('Unable to get dimensions of video: ' . $asset->getId());
-
-            throw new UnrecoverableMessageHandlingException($e->getMessage(), 0, $e);
+        if ($dimensions = $asset->getDimensionsFromBackend()) {
+            $asset->setCustomSetting('videoWidth', $dimensions['width']);
+            $asset->setCustomSetting('videoHeight', $dimensions['height']);
+        } else {
+            $asset->removeCustomSetting('videoWidth');
+            $asset->removeCustomSetting('videoHeight');
         }
 
         $asset->handleEmbeddedMetaData(true);
         $this->saveAsset($asset);
 
-        $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
+        if ($asset->getCustomSetting('videoWidth') && $asset->getCustomSetting('videoHeight')) {
+            $asset->getImageThumbnail(Asset\Image\Thumbnail\Config::getPreviewConfig())->generate(false);
+        }
     }
 
     private function processImage(Asset\Image $image): void
