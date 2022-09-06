@@ -16,7 +16,6 @@
 namespace Pimcore\Config;
 
 use Pimcore\Config;
-use Pimcore\Db\PhpArrayFileTable;
 use Pimcore\File;
 use Pimcore\Helper\StopMessengerWorkersTrait;
 use Pimcore\Model\Tool\SettingsStore;
