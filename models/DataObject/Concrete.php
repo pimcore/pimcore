@@ -622,9 +622,12 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             $db = Db::get();
 
             if ($field instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
-                $arguments = array_pad($arguments, 6, 0);
-
-                [$localizedPropertyName, $value, $locale, $limit, $offset, $objectTypes] = $arguments;
+                $localizedPropertyName = $arguments[0] ?? null;
+                $value = $arguments[1] ?? null;
+                $locale = $arguments[2] ?? null;
+                $limit = $arguments[3] ?? null;
+                $offset = $arguments[4] ?? 0;
+                $objectTypes = $arguments[5] ?? null;
 
                 $localizedField = $field->getFieldDefinition($localizedPropertyName);
 
@@ -643,12 +646,12 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
                     'condition' => $defaultCondition,
                 ];
 
-                if ($locale) {
-                    $listConfig['locale'] = $locale;
-                }
+                $listConfig['locale'] = $locale;
             } else {
-                $arguments = array_pad($arguments, 4, 0);
-                [$value, $limit, $offset, $objectTypes] = $arguments;
+                $value = $arguments[0] ?? null;
+                $limit = $arguments[1] ?? null;
+                $offset = $arguments[2] ?? 0;
+                $objectTypes = $arguments[3] ?? null;
 
                 if (!$field instanceof AbstractRelations) {
                     $defaultCondition = $db->quoteIdentifier($realPropertyName) . ' = ' . $db->quote($value) . ' ';
@@ -659,12 +662,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             }
 
             if (!is_array($limit)) {
-                if ($limit) {
-                    $listConfig['limit'] = $limit;
-                }
-                if ($offset) {
-                    $listConfig['offset'] = $offset;
-                }
+                $listConfig['limit'] = $limit;
+                $listConfig['offset'] = $offset;
             } else {
                 $listConfig = array_merge($listConfig, $limit);
                 $limitCondition = $limit['condition'] ?? '';

@@ -1359,8 +1359,10 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $db = \Pimcore\Db::get();
 
         if (in_array(strtolower($realPropertyName), self::$objectColumns)) {
-            $arguments = array_pad($arguments, 4, 0);
-            [$value, $limit, $offset, $objectTypes] = $arguments;
+            $value = $arguments[0] ?? null;
+            $limit = $arguments[1] ?? null;
+            $offset = $arguments[2] ?? 0;
+            $objectTypes = $arguments[3] ?? null;
 
             $defaultCondition = $realPropertyName.' = '.Db::get()->quote($value).' ';
 
@@ -1369,12 +1371,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             ];
 
             if (!is_array($limit)) {
-                if ($limit) {
-                    $listConfig['limit'] = $limit;
-                }
-                if ($offset) {
-                    $listConfig['offset'] = $offset;
-                }
+                $listConfig['limit'] = $limit;
+                $listConfig['offset'] = $offset;
             } else {
                 $listConfig = array_merge($listConfig, $limit);
                 $limitCondition = $limit['condition'] ?? '';
@@ -1400,21 +1398,15 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @param array $listConfig
-     * @param mixed $objectTypes
+     * @param array|null $objectTypes
      * @return Listing
      * @throws \Exception
      */
-    protected static function makeList(array $listConfig, mixed $objectTypes): Listing
+    protected static function makeList(array $listConfig, ?array $objectTypes): Listing
     {
         $list = static::getList($listConfig);
         if(empty($objectTypes)) {
             $objectTypes = [static::OBJECT_TYPE_VARIANT, static::OBJECT_TYPE_OBJECT];
-        }
-
-        if(!is_array($objectTypes)) {
-            Logger::error('Class: DataObject\\AbstractObject => Unsupported argument type ' . gettype($objectTypes)  . ' in function ' . __FUNCTION__);
-
-            throw new \Exception('Argument $objectTypes must be of type array, ' .  gettype($objectTypes) . ' given.');
         }
 
         if (\array_diff($objectTypes, [static::OBJECT_TYPE_VARIANT, static::OBJECT_TYPE_OBJECT])) {
