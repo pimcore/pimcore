@@ -27,7 +27,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\Element\WorkflowState[]|null $workflowStates
      *
-     * @return static
+     * @return $this
      */
     public function setWorkflowStates($workflowStates)
     {

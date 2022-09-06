@@ -38,17 +38,17 @@ final class User extends User\UserRole
     protected $password;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $firstname;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $lastname;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $email;
 
@@ -157,7 +157,7 @@ final class User extends User\UserRole
     /**
      * Alias for getName()
      *
-     * @return string
+     * @return string|null
      */
     public function getUsername()
     {
@@ -165,7 +165,7 @@ final class User extends User\UserRole
     }
 
     /**
-     * @param string $username
+     * @param string|null $username
      *
      * @return $this
      */
@@ -177,8 +177,7 @@ final class User extends User\UserRole
     }
 
     /**
-     *
-     * @return string
+     * @return string|null
      */
     public function getFirstname()
     {
@@ -186,7 +185,7 @@ final class User extends User\UserRole
     }
 
     /**
-     * @param string $firstname
+     * @param string|null $firstname
      *
      * @return $this
      */
@@ -198,8 +197,7 @@ final class User extends User\UserRole
     }
 
     /**
-     *
-     * @return string
+     * @return string|null
      */
     public function getLastname()
     {
@@ -207,7 +205,7 @@ final class User extends User\UserRole
     }
 
     /**
-     * @param string $lastname
+     * @param string|null $lastname
      *
      * @return $this
      */
@@ -219,8 +217,7 @@ final class User extends User\UserRole
     }
 
     /**
-     *
-     * @return string
+     * @return string|null
      */
     public function getEmail()
     {
@@ -228,7 +225,7 @@ final class User extends User\UserRole
     }
 
     /**
-     * @param string $email
+     * @param string|null $email
      *
      * @return $this
      */
@@ -606,7 +603,7 @@ final class User extends User\UserRole
     }
 
     /**
-     * @return null|string
+     * @return string
      */
     public function getActivePerspective()
     {

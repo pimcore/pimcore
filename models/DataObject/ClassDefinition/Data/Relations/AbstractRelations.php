@@ -118,7 +118,7 @@ abstract class AbstractRelations extends Data implements
 
                 // relation needs to be an array with src_id, dest_id, type, fieldname
                 try {
-                    $db->insert('object_relations_' . $classId, $relation);
+                    $db->insert('object_relations_' . $classId, Db\Helper::quoteDataIdentifiers($db, $relation));
                 } catch (\Exception $e) {
                     Logger::error('It seems that the relation ' . $relation['src_id'] . ' => ' . $relation['dest_id']
                         . ' (fieldname: ' . $this->getName() . ') already exist -> please check immediately!');

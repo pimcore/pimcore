@@ -836,7 +836,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      */
     public function setCollapsed($collapsed)
     {
-        $this->collapsed = $collapsed;
+        $this->collapsed = (bool) $collapsed;
     }
 
     /**
@@ -852,7 +852,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      */
     public function setCollapsible($collapsible)
     {
-        $this->collapsible = $collapsible;
+        $this->collapsible = (bool) $collapsible;
     }
 
     /**
@@ -884,13 +884,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param int|bool|null $lazyLoading
+     * @param bool $lazyLoading
      *
      * @return $this
      */
     public function setLazyLoading($lazyLoading)
     {
-        $this->lazyLoading = $lazyLoading;
+        $this->lazyLoading = (bool) $lazyLoading;
 
         return $this;
     }
@@ -1055,7 +1055,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      */
     public function setDisallowAddRemove($disallowAddRemove)
     {
-        $this->disallowAddRemove = $disallowAddRemove;
+        $this->disallowAddRemove = (bool) $disallowAddRemove;
     }
 
     /**
@@ -1071,7 +1071,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      */
     public function setDisallowReorder($disallowReorder)
     {
-        $this->disallowReorder = $disallowReorder;
+        $this->disallowReorder = (bool) $disallowReorder;
     }
 
     /**

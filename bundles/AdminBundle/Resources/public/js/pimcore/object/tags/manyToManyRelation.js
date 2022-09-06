@@ -467,7 +467,17 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             } catch (e) {
                 console.log(e);
             }
-        }.bind(this), null, this.context);
+        }.bind(this), 
+        function (res) {
+            const response = Ext.decode(res.response.responseText);
+            if (response && response.success === false) {
+                pimcore.helpers.showNotification(t("error"), response.message, "error",
+                    res.response.responseText);
+            } else {
+                pimcore.helpers.showNotification(t("error"), res, "error",
+                    res.response.responseText);
+            }
+        }.bind(this), this.context);
     },
 
     onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts) {

@@ -40,13 +40,11 @@ jobs:
         strategy:
             matrix:
                 include:
-                    - { php-version: 8.0, database: "mariadb:10.6", dependencies: highest, experimental: true, storage: local, symfony: "5.4.x-dev", composer-options: "" }
-                    - { php-version: 8.1, database: "mariadb:10.7", dependencies: highest, experimental: true, storage: local, symfony: "", composer-options: "" }
-                    - { php-version: 8.0, database: "mariadb:10.5", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
-                    - { php-version: 8.0, database: "mariadb:10.4", dependencies: lowest, experimental: false, storage: local, symfony: "", composer-options: "" }
-                    - { php-version: 8.0, database: "mariadb:10.3", dependencies: lowest, experimental: false, storage: local, symfony: "", composer-options: "" }
-                    - { php-version: 8.0, database: "mysql:8.0", dependencies: lowest, experimental: false, storage: local, symfony: "", composer-options: "" }
-                    - { php-version: 8.0, database: "percona:8.0", dependencies: lowest, experimental: false, storage: minio, symfony: "", composer-options: "" }
+                    - { php-version: 8.1, database: "mariadb:10.6", dependencies: highest, experimental: true, storage: local, symfony: "5.4.x-dev", composer-options: "" }
+                    - { php-version: 8.1, database: "mariadb:10.7", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
+                    - { php-version: 8.1, database: "mariadb:10.3", dependencies: lowest, experimental: false, storage: local, symfony: "", composer-options: "" }
+                    - { php-version: 8.1, database: "mysql:8.0", dependencies: lowest, experimental: false, storage: local, symfony: "", composer-options: "" }
+                    - { php-version: 8.1, database: "percona:8.0", dependencies: lowest, experimental: false, storage: minio, symfony: "", composer-options: "" }
 
         services:
             minio:

@@ -1234,18 +1234,18 @@ class Service extends Model\Element\Service
         $mergedFieldDefinition = self::cloneDefinition($masterFieldDefinition);
 
         if (count($layoutDefinitions)) {
-            foreach ($mergedFieldDefinition as $key => $def) {
+            foreach ($mergedFieldDefinition as $def) {
                 if ($def instanceof ClassDefinition\Data\Localizedfields) {
-                    $mergedLocalizedFieldDefinitions = $mergedFieldDefinition[$key]->getFieldDefinitions();
+                    $mergedLocalizedFieldDefinitions = $def->getFieldDefinitions();
 
-                    foreach ($mergedLocalizedFieldDefinitions as $locKey => $locValue) {
-                        $mergedLocalizedFieldDefinitions[$locKey]->setInvisible(false);
-                        $mergedLocalizedFieldDefinitions[$locKey]->setNotEditable(false);
+                    foreach ($mergedLocalizedFieldDefinitions as $locValue) {
+                        $locValue->setInvisible(false);
+                        $locValue->setNotEditable(false);
                     }
-                    $mergedFieldDefinition[$key]->setChildren($mergedLocalizedFieldDefinitions);
+                    $def->setChildren($mergedLocalizedFieldDefinitions);
                 } else {
-                    $mergedFieldDefinition[$key]->setInvisible(false);
-                    $mergedFieldDefinition[$key]->setNotEditable(false);
+                    $def->setInvisible(false);
+                    $def->setNotEditable(false);
                 }
             }
         }
@@ -1284,9 +1284,11 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param mixed $definition
+     * @template T
      *
-     * @return array
+     * @param T $definition
+     *
+     * @return T
      */
     public static function cloneDefinition($definition)
     {
