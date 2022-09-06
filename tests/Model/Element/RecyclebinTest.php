@@ -26,6 +26,7 @@ use Pimcore\Tool\Storage;
  * Class RecyclebinTest
  *
  * @package Pimcore\Tests\Model\Element
+ *
  * @group model.element.recyclebin
  */
 class RecyclebinTest extends ModelTestCase

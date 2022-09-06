@@ -28,6 +28,9 @@
 - [Web2Print] Deprecated WkHtmlToPdf Processor has been removed.
 - [Documents] Deprecated WkHtmlToImage has been removed.
 - [Elements] Removed fallback to parent id 1, when an element with a non-existing parent id gets created.
+- [DataObjects] Added return types to setter methods. For details see [#12185](https://github.com/pimcore/pimcore/issues/12185)
+- [Exception] Deprecated MissingDependencyException has been removed.
+- [CustomLayouts] Removed command `pimcore:deployment:custom-layouts-rebuild` as CustomLayouts are migrated to LocationAwareConfigRepository.
 - [Data Objects] Alias `ReverseManyToManyObjectRelation` removed, please use `ReverseObjectRelation` instead.
   
 ## 10.5.0
