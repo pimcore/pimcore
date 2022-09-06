@@ -861,7 +861,7 @@ pimcore.asset.tree = Class.create({
             detail: {
                 menu: menu,
                 tree: this,
-                record: record
+                asset: record
             }
         });
 

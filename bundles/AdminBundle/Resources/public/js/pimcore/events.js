@@ -164,19 +164,19 @@ pimcore.events.prepareAssetMetadataGridConfigurator = "pimcore.gridConfigurator.
 
 /**
  * before context menu is opened
- * menu, tree and record are passed as parameters
+ * menu, tree and asset are passed as parameters
  */
 pimcore.events.prepareAssetTreeContextMenu = "pimcore.assetTreeContextMenu.prepare";
 
 /**
  * before context menu is opened
- * menu, tree class and object record are passed as parameters
+ * menu, tree class and object are passed as parameters
  */
 pimcore.events.prepareObjectTreeContextMenu = "pimcore.objectTreeContextMenu.prepare";
 
 /**
  * before context menu is opened
- * menu, tree and document record are passed as parameters
+ * menu, tree and document are passed as parameters
  */
 pimcore.events.prepareDocumentTreeContextMenu = "pimcore.documentTreeContextMenu.prepare";
 
