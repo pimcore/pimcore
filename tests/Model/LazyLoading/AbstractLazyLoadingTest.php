@@ -139,7 +139,6 @@ class AbstractLazyLoadingTest extends ModelTestCase
 
     protected function forceSavingAndLoadingFromCache(Concrete $object, $callback)
     {
-
         //enable cache
         $cacheEnabled = Cache::isEnabled();
         if (!$cacheEnabled) {

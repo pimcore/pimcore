@@ -122,7 +122,6 @@ class Dao extends Model\DataObject\Listing\Dao
     public function getTableName()
     {
         if (empty($this->tableName)) {
-
             // default
             $this->tableName = 'object_' . $this->model->getClassId();
 
@@ -174,7 +173,6 @@ class Dao extends Model\DataObject\Listing\Dao
         $fieldCollections = $this->model->getFieldCollections();
         if (!empty($fieldCollections)) {
             foreach ($fieldCollections as $fc) {
-
                 // join info
                 $table = 'object_collection_' . $fc['type'] . '_' . $this->model->getClassId();
                 $name = $fc['type'];

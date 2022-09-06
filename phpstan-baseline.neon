@@ -161,11 +161,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/VoucherService/DefaultService.php
 
 		-
-			message: "#^Else branch is unreachable because previous condition is always true\\.$#"
-			count: 1
-			path: lib/Db/Connection.php
-
-		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
 			path: lib/Image/Adapter/Imagick.php
@@ -256,7 +251,7 @@ parameters:
 			path: models/Document/Hardlink/Wrapper/Snippet.php
 
 		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\DataObject\\>\\|null, array\\<Pimcore\\\\Model\\\\Element\\\\ElementInterface\\> given\\.$#"
+			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Asset\\|Pimcore\\\\Model\\\\DataObject\\|Pimcore\\\\Model\\\\Document\\>\\|null, array\\<Pimcore\\\\Model\\\\Element\\\\ElementInterface\\> given\\.$#"
 			count: 1
 			path: models/Element/Service.php
 

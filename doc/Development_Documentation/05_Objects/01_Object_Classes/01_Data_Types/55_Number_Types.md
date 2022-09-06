@@ -14,6 +14,14 @@ The numeric data field can be configured with a default value. In the GUI it is 
 ![Numeric Configuration](../../../img/classes-datatypes-number1.jpg)
 
 
+## Numeric Range
+
+![Numeric Range Field](../../../img/classes-datatypes-number7.jpg)
+
+The `numericRange` object field consists of two `numeric` fields (minimum and maximum) and so can be configured
+the same way. Programmatically the values are represented by a [NumericRange](https://github.com/pimcore/pimcore/tree/10.x/models/DataObject/Data/NumericRange.php) Object.
+
+
 ## Slider
 
 In the GUI a slider can be used as a horizontal or vertical widget. It needs to be configured with a min and max value,
@@ -62,6 +70,16 @@ $object->setParent($parent);
 $object->setHeight(new DataObject\Data\QuantityValue(27, $unit->getId()));
 $object->save();
 ```
+
+
+## Quantity Value Range
+
+![Quantity Value Range Field](../../../img/classes-datatypes-number8.jpg)
+
+The `quantityValueRange` object field is basically the same as the `quantityValue` field,
+except that is has two input fields (minimum and maximum). Programmatically the values are
+represented by a [QuantityValueRange](https://github.com/pimcore/pimcore/tree/10.x/models/DataObject/Data/QuantityValueRange.php) Object.
+
 
 ### Quantity Value Unit Conversion
 

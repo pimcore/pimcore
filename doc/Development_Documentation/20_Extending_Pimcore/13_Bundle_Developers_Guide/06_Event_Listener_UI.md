@@ -75,23 +75,7 @@ For registering events just add a listener with some of the events from [events.
 
 It is possible to validate Pimcore Object's Data in frontend and cancel the saving if needed.
 
-This can be done by throwing any of the following two exceptions and passing in the message to be displayed for the user:
-
-```
-pimcore.error.ActionCancelledException
-pimcore.error.ValidationException
-```
-
-
-The only difference between above exceptions is in how the error message is displayed:
-
-- ValidationException displays error alert (the same as ValidationException coming from the backend)
-
-  ![Validation Exception](../../img/object-validation-exception.png)
-
-- ActionCancelledException displays instead just a non intrusive notification in the bottom right corner.
-
-  ![Action Cancelled Exception](../../img/object-action-cancelled-exception.png)
+This can be done by using preventDefault() and stopPropagation():
 
 Code example in startup.js:
 
@@ -99,7 +83,10 @@ Code example in startup.js:
 document.addEventListener(pimcore.events.preSaveObject, (e) => {
     let userAnswer = confirm(`Are you sure you want to save ${e.detail.object.data.general.o_className}?`);
     if (!userAnswer) {
-        throw new pimcore.error.ActionCancelledException('Cancelled by user');
+        e.preventDefault();
+        e.stopPropagation();
+        pimcore.helpers.showNotification(t("Info"), t("saving_failed") + ' ' + 'placeholder', 'info');
+
     }
 });
 ```

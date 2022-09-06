@@ -55,7 +55,7 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param string $data
+     * @param string|null $data
      * @param Model\DataObject\Concrete|null $object
      * @param mixed $params
      *

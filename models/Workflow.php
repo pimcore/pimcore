@@ -18,6 +18,8 @@ namespace Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
 
 /**
+ * @deprecated
+ *
  * @method Workflow\Dao getDao()
  * @method void save()
  */
@@ -480,7 +482,6 @@ class Workflow extends AbstractModel
         }
 
         if ($statusName && !$this->isGlobalAction($actionName)) {
-
             //check the status has this action
             if (!array_key_exists($actionName, $this->transitionDefinitions[$statusName]['validActions'])) {
                 throw new \Exception("Cannot merge action configuration [{$actionName}] for status [{$statusName}], action name is not valid in status");

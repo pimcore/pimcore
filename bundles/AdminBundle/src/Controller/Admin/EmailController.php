@@ -330,7 +330,7 @@ class EmailController extends AdminController
                 }
             }
 
-            $mail->setSubject($emailLog->getSubject());
+            $mail->subject($emailLog->getSubject());
 
             // add document
             if ($emailLog->getDocumentId()) {
@@ -405,7 +405,7 @@ class EmailController extends AdminController
             $mail->addTo($cleanedToAddress['email'], $cleanedToAddress['name'] ?? '');
         }
 
-        $mail->setSubject($request->get('subject'));
+        $mail->subject($request->get('subject'));
         $mail->setIgnoreDebugMode(true);
 
         if ($request->get('emailType') == 'text') {

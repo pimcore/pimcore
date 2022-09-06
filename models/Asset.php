@@ -161,7 +161,6 @@ class Asset extends Element\AbstractElement
         $blockedVars = ['scheduledTasks', 'hasChildren', 'versions', 'parent', 'stream'];
 
         if (!$this->isInDumpState()) {
-
             // for caching asset
             $blockedVars = array_merge($blockedVars, ['children', 'properties']);
         }
@@ -294,7 +293,6 @@ class Asset extends Element\AbstractElement
      */
     public static function create($parentId, $data = [], $save = true)
     {
-
         // create already the real class for the asset type, this is especially for images, because a system-thumbnail
         // (tree) is generated immediately after creating an image
         $class = Asset::class;
@@ -625,13 +623,16 @@ class Asset extends Element\AbstractElement
     {
         // set path
         if ($this->getId() != 1) { // not for the root node
-
             if (!Element\Service::isValidKey($this->getKey(), 'asset')) {
                 throw new Exception("invalid filename '" . $this->getKey() . "' for asset with id [ " . $this->getId() . ' ]');
             }
 
+            if (!$this->getParentId()) {
+                throw new Exception('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
+            }
+
             if ($this->getParentId() == $this->getId()) {
-                throw new Exception("ParentID and ID is identical, an element can't be the parent of itself.");
+                throw new Exception("ParentID and ID are identical, an element can't be the parent of itself in the tree.");
             }
 
             if ($this->getFilename() === '..' || $this->getFilename() === '.') {
@@ -639,15 +640,13 @@ class Asset extends Element\AbstractElement
             }
 
             $parent = Asset::getById($this->getParentId());
-            if ($parent) {
-                // use the parent's path from the database here (getCurrentFullPath), to ensure the path really exists and does not rely on the path
-                // that is currently in the parent asset (in memory), because this might have changed but wasn't not saved
-                $this->setPath(str_replace('//', '/', $parent->getCurrentFullPath() . '/'));
-            } else {
-                // parent document doesn't exist anymore, set the parent to to root
-                $this->setParentId(1);
-                $this->setPath('/');
+            if (!$parent) {
+                throw new Exception('ParentID not found.');
             }
+
+            // use the parent's path from the database here (getCurrentFullPath), to ensure the path really exists and does not rely on the path
+            // that is currently in the parent asset (in memory), because this might have changed but wasn't not saved
+            $this->setPath(str_replace('//', '/', $parent->getCurrentFullPath() . '/'));
         } elseif ($this->getId() == 1) {
             // some data in root node should always be the same
             $this->setParentId(0);
@@ -1394,7 +1393,7 @@ class Asset extends Element\AbstractElement
     /**
      * @param array $metadata for each array item: mandatory keys: name, type - optional keys: data, language
      *
-     * @return self
+     * @return $this
      *
      * @internal
      *
@@ -1412,7 +1411,7 @@ class Asset extends Element\AbstractElement
     /**
      * @param array[]|stdClass[] $metadata for each array item: mandatory keys: name, type - optional keys: data, language
      *
-     * @return self
+     * @return $this
      */
     public function setMetadata($metadata)
     {
@@ -1439,7 +1438,7 @@ class Asset extends Element\AbstractElement
     /**
      * @param bool $hasMetaData
      *
-     * @return self
+     * @return $this
      */
     public function setHasMetaData($hasMetaData)
     {
@@ -1454,7 +1453,7 @@ class Asset extends Element\AbstractElement
      * @param mixed $data
      * @param string|null $language
      *
-     * @return self
+     * @return $this
      */
     public function addMetadata($name, $type, $data = null, $language = null)
     {
@@ -1501,7 +1500,7 @@ class Asset extends Element\AbstractElement
      * @param string $name
      * @param string|null $language
      *
-     * @return self
+     * @return $this
      */
     public function removeMetadata(string $name, ?string $language = null)
     {
@@ -1775,11 +1774,9 @@ class Asset extends Element\AbstractElement
         }
 
         if ($oldThumbnailsPath === $newThumbnailsPath) {
-
             //path is equal, probably file name changed - so clear all thumbnails
             $this->clearThumbnails(true);
         } else {
-
             //remove source parent folder preview thumbnails
             $sourceFolder = Asset::getByPath(dirname($oldPath));
             if ($sourceFolder) {

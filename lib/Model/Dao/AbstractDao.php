@@ -19,7 +19,6 @@ use Doctrine\DBAL\Connection;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
-use Pimcore\Db\ConnectionInterface;
 
 abstract class AbstractDao implements DaoInterface
 {
@@ -28,7 +27,7 @@ abstract class AbstractDao implements DaoInterface
     const CACHEKEY = 'system_resource_columns_';
 
     /**
-     * @var ConnectionInterface|Connection
+     * @var Connection
      */
     public $db;
 

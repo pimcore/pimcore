@@ -82,9 +82,6 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/camera.svg) center center no-repeat;
     background-size: cover;
 }
-.bundle_ecommerce_pricing_icon_conditionToken {
-    background: url("/bundles/pimcoreadmin/img/flat-color-icons/sms.svg") no-repeat center center !important;
-}
 .bundle_ecommerce_pricing_icon_conditionSold,
 .bundle_ecommerce_pricing_icon_conditionSales {
     background: url("/bundles/pimcoreadmin/img/flat-color-icons/sales_performance.svg") no-repeat center center !important;

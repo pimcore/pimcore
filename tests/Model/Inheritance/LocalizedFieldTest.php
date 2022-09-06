@@ -68,15 +68,15 @@ class LocalizedFieldTest extends ModelTestCase
         $db = Db::get();
 
         $query = 'SELECT * FROM object_localized_query_' . $two->getClassId() . '_de where ooo_id = ' . $two->getId();
-        $result = $db->fetchRow($query);
+        $result = $db->fetchAssociative($query);
         $this->assertEquals($result['input'], 'abc');
 
         $query = 'SELECT * FROM object_localized_query_' . $two->getClassId() . '_en where ooo_id = ' . $two->getId();
-        $result = $db->fetchRow($query);
+        $result = $db->fetchAssociative($query);
         $this->assertEquals($result['input'], 'abc');
 
         $query = 'SELECT * FROM object_localized_query_' . $two->getClassId() . '_fr where ooo_id = ' . $two->getId();
-        $result = $db->fetchRow($query);
+        $result = $db->fetchAssociative($query);
         $this->assertNull($result['input']);
     }
 

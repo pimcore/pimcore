@@ -2,7 +2,7 @@
 
 > **DEPRECATED FEATURE**  
 >
-> **Please use [link generators](./30_Link_Generator.md) instead, which are more powerful and flexibel and 
+> **Please use [preview generators](./56_Preview_Generator.md) instead, which are more powerful and flexible and 
 offer the same functionality. The preview tab is automatically displayed when a link generator is defined 
 on the data object class.**
 

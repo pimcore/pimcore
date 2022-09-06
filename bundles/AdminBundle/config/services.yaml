@@ -4,10 +4,6 @@ services:
         autoconfigure: true
         public: false
 
-    Pimcore\Bundle\AdminBundle\Session\AdminSessionBagConfigurator:
-        tags:
-            - { name: pimcore.session.configurator, type: internal } #do not use this tag anymore, it is there for BC reasons
-
     Pimcore\Bundle\AdminBundle\Session\Handler\AdminSessionHandler:
         public: true
         calls:

@@ -36,14 +36,14 @@ abstract class PageSnippet extends Model\Document
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $controller;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $template;
 
@@ -282,7 +282,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getTemplate()
     {
@@ -290,7 +290,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param string $controller
+     * @param string|null $controller
      *
      * @return $this
      */
@@ -302,7 +302,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param string $template
+     * @param string|null $template
      *
      * @return $this
      */
@@ -417,22 +417,33 @@ abstract class PageSnippet extends Model\Document
      *
      * @throws \Exception
      */
-    public function setContentMasterDocumentId($contentMasterDocumentId)
+    public function setContentMasterDocumentId($contentMasterDocumentId/*, bool $validate*/)
     {
         // this is that the path is automatically converted to ID => when setting directly from admin UI
         if (!is_numeric($contentMasterDocumentId) && !empty($contentMasterDocumentId)) {
-            $contentMasterDocument = Document::getByPath($contentMasterDocumentId);
-            if ($contentMasterDocument instanceof self) {
+            if ($contentMasterDocument = Document\PageSnippet::getByPath($contentMasterDocumentId)) {
                 $contentMasterDocumentId = $contentMasterDocument->getId();
+            } else {
+                // Content master document was deleted or don't exist
+                $contentMasterDocumentId = null;
             }
         }
 
-        if (empty($contentMasterDocumentId)) {
-            $contentMasterDocument = null;
-        }
-
-        if ($contentMasterDocumentId && $contentMasterDocumentId == $this->getId()) {
-            throw new \Exception('You cannot use the current document as a master document, please choose a different one.');
+        // Don't set the content master document if the document is already part of the master document chain
+        if ($contentMasterDocumentId) {
+            if ($currentContentMasterDocument = Document\PageSnippet::getById($contentMasterDocumentId)) {
+                $validate = \func_get_args()[1] ?? false;
+                $maxDepth = 20;
+                do {
+                    if ($currentContentMasterDocument->getId() === $this->getId()) {
+                        throw new \Exception('This document is already part of the master document chain, please choose a different one.');
+                    }
+                    $currentContentMasterDocument = $currentContentMasterDocument->getContentMasterDocument();
+                } while ($currentContentMasterDocument && $maxDepth-- > 0 && $validate);
+            } else {
+                // Content master document was deleted or don't exist
+                $contentMasterDocumentId = null;
+            }
         }
 
         $this->contentMasterDocumentId = $contentMasterDocumentId;
@@ -449,26 +460,26 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @return Document|null
+     * @return Document\PageSnippet|null
      */
     public function getContentMasterDocument()
     {
         if ($masterDocumentId = $this->getContentMasterDocumentId()) {
-            return Document::getById($masterDocumentId);
+            return Document\PageSnippet::getById($masterDocumentId);
         }
 
         return null;
     }
 
     /**
-     * @param Document $document
+     * @param Document\PageSnippet|null $document
      *
      * @return $this
      */
     public function setContentMasterDocument($document)
     {
         if ($document instanceof self) {
-            $this->setContentMasterDocumentId($document->getId());
+            $this->setContentMasterDocumentId($document->getId(), true);
         } else {
             $this->setContentMasterDocumentId(null);
         }
