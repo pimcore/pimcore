@@ -123,7 +123,7 @@ class Newsletter
         $mail->html($contentHTML);
         // Adds the plain text part to the message, that it becomes a multipart email
         $mail->text($contentText);
-        $mail->setSubject($mail->getSubjectRendered());
+        $mail->subject($mail->getSubjectRendered());
 
         return $mail;
     }

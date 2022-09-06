@@ -24,6 +24,7 @@ use Pimcore\Tests\Util\TestHelper;
  * Class ListingTest
  *
  * @package Pimcore\Tests\Model\Document
+ *
  * @group model.document.document
  */
 class ListingTest extends ModelTestCase

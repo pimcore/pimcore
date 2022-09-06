@@ -119,7 +119,6 @@ class Installer
         'setup_database' => 'Running database setup...',
         'install_assets' => 'Installing assets...',
         'install_classes' => 'Installing classes ...',
-        'install_custom_layouts' => 'Installing custom layouts ...',
         'migrations' => 'Marking all migrations as done ...',
         'complete' => 'Install complete!',
     ];
@@ -413,9 +412,6 @@ class Installer
         $this->dispatchStepEvent('install_classes');
         $this->installClasses();
 
-        $this->dispatchStepEvent('install_custom_layouts');
-        $this->installCustomLayouts();
-
         $this->dispatchStepEvent('migrations');
         $this->markMigrationsAsDone();
 
@@ -491,14 +487,6 @@ class Installer
         ], 'Installing class definitions');
     }
 
-    private function installCustomLayouts()
-    {
-        $this->runCommand([
-            'pimcore:deployment:custom-layouts-rebuild',
-            '-c',
-        ], 'Installing custom layout definitions');
-    }
-
     private function installAssets(KernelInterface $kernel)
     {
         $this->logger->info('Running {command} command', ['command' => 'assets:install']);
@@ -559,7 +547,7 @@ class Installer
         }
 
         // see Symfony's cache:clear command
-        $oldCacheDir = substr($cacheDir, 0, -1) . ('~' === substr($cacheDir, -1) ? '+' : '~');
+        $oldCacheDir = substr($cacheDir, 0, -1) . '~';
 
         $filesystem = new Filesystem();
         if ($filesystem->exists($oldCacheDir)) {
@@ -610,6 +598,9 @@ class Installer
             $dataFiles = $this->getDataFiles();
 
             try {
+                //create a system user with id 0
+                $this->insertSystemUser($db);
+
                 if (empty($dataFiles) || !$this->importDatabaseDataDump) {
                     // empty installation
                     $this->insertDatabaseContents();
@@ -702,9 +693,6 @@ class Installer
 
             $db->executeStatement(implode("\n", $batchQueries));
         }
-
-        // set the id of the system user to 0
-        $db->update('users', ['id' => 0], ['name' => 'system']);
     }
 
     protected function insertDatabaseContents()
@@ -754,15 +742,6 @@ class Installer
             'o_userOwner' => 1,
             'o_userModification' => 1,
         ]));
-
-        $db->insert('users', Helper::quoteDataIdentifiers($db, [
-            'parentId' => 0,
-            'name' => 'system',
-            'admin' => 1,
-            'active' => 1,
-        ]));
-        $db->update('users', ['id' => 0], ['name' => 'system']);
-
         $userPermissions = [
             'application_logging',
             'assets',
@@ -814,5 +793,18 @@ class Installer
                 $db->quoteIdentifier('key') => $permission,
             ]);
         }
+    }
+
+    protected function insertSystemUser(Connection $db): void
+    {
+        $db->insert('users', [
+            'parentId' => 0,
+            'name' => 'system',
+            'admin' => 1,
+            'active' => 1,
+        ]);
+
+        // set the id of the system user to 0
+        $db->update('users', ['id' => 0], ['name' => 'system', 'type' => 'user' ]);
     }
 }

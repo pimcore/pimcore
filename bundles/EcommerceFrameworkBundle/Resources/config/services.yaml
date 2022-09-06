@@ -5,15 +5,6 @@ services:
         autoconfigure: true
 
     #
-    # SESSION
-    #
-
-    Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator:
-        public: false
-        tags:
-            - { name: pimcore.session.configurator, type: internal } #do not use this tag anymore, it is there for BC reasons
-
-    #
     # INSTALLER
     #
 
