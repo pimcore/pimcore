@@ -30,7 +30,7 @@
 - [Elements] Removed fallback to parent id 1, when an element with a non-existing parent id gets created.
 - [DataObjects] Added return types to setter methods. For details see [#12185](https://github.com/pimcore/pimcore/issues/12185)
 - [Exception] Deprecated MissingDependencyException has been removed.
-- [CustomLayouts] Removed command `pimcore:deployment:custom-layouts-rebuild` as CustomLayouts are migrated to LocationAwareConfigRepository.<<<<<<< remove_deprecated_mail_methods
+- [CustomLayouts] Removed command `pimcore:deployment:custom-layouts-rebuild` as CustomLayouts are migrated to LocationAwareConfigRepository.
 - [Data Objects] Alias `ReverseManyToManyObjectRelation` removed, please use `ReverseObjectRelation` instead.
 - [Email] Removed the deprecated methods setBodyHtml(), setBodyText(), createAttachment() and setSubject(). Use html(),
   text(), attach() and subject() instead.
