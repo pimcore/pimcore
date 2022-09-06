@@ -593,18 +593,6 @@ class SettingsController extends AdminController
 
         $valueArray = Config::getWeb2PrintConfig();
 
-        $optionsString = [];
-        if ($valueArray['wkhtml2pdfOptions'] ?? false) {
-            foreach ($valueArray['wkhtml2pdfOptions'] as $key => $value) {
-                $tmpStr = '--'.$key;
-                if ($value !== null && $value !== '') {
-                    $tmpStr .= ' '.$value;
-                }
-                $optionsString[] = $tmpStr;
-            }
-        }
-        $valueArray['wkhtml2pdfOptions'] = implode("\n", $optionsString);
-
         $response = [
             'values' => $valueArray,
         ];
@@ -628,20 +616,6 @@ class SettingsController extends AdminController
         unset($values['documentation']);
         unset($values['additions']);
         unset($values['json_converter']);
-
-        if ($values['wkhtml2pdfOptions']) {
-            $optionArray = [];
-            $lines = explode("\n", $values['wkhtml2pdfOptions']);
-            foreach ($lines as $line) {
-                $parts = explode(' ', substr($line, 2));
-                $key = trim($parts[0]);
-                if ($key) {
-                    $value = trim($parts[1] ?? '');
-                    $optionArray[$key] = $value;
-                }
-            }
-            $values['wkhtml2pdfOptions'] = $optionArray;
-        }
 
         \Pimcore\Web2Print\Config::save($values);
 
@@ -1826,9 +1800,7 @@ class SettingsController extends AdminController
         $adapter = \Pimcore\Web2Print\Processor::getInstance();
         $params = [];
 
-        if ($adapter instanceof \Pimcore\Web2Print\Processor\WkHtmlToPdf) {
-            $params['adapterConfig'] = '-O landscape';
-        } elseif ($adapter instanceof \Pimcore\Web2Print\Processor\PdfReactor) {
+        if ($adapter instanceof \Pimcore\Web2Print\Processor\PdfReactor) {
             $params['adapterConfig'] = [
                 'javaScriptMode' => 0,
                 'addLinks' => true,

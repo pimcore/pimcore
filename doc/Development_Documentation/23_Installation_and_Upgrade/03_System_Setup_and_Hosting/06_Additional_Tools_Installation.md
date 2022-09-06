@@ -30,10 +30,6 @@ apt-get install libreoffice libreoffice-script-provider-python libreoffice-math 
 ## Chromium (Chrome Headless)
 Please visit: [https://www.chromium.org/getting-involved/download-chromium](https://www.chromium.org/getting-involved/download-chromium)
 
-## Wkhtmltopdf (Deprecated)
-Please visit: [http://wkhtmltopdf.org/downloads.html](http://wkhtmltopdf.org/downloads.html)
-
-
 ## Image Optimizers
 
 ### JPEGOptim

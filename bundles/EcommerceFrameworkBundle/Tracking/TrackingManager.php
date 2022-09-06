@@ -83,6 +83,7 @@ class TrackingManager implements TrackingManagerInterface
      * @deprecated
      *
      * @param Session $session
+     *
      * @required
      */
     public function setSession(SessionInterface $session)

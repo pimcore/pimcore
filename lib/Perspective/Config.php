@@ -34,11 +34,6 @@ final class Config
     private static ?LocationAwareConfigRepository $locationAwareConfigRepository = null;
 
     /**
-     * @deprecated Will be removed in Pimcore 11
-     */
-    private const LEGACY_FILE = 'perspectives.php';
-
-    /**
      * @return LocationAwareConfigRepository
      */
     private static function getRepository()
@@ -51,9 +46,8 @@ final class Config
                 $config,
                 'pimcore_perspectives',
                 $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_PERSPECTIVES'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/perspectives',
-                'PIMCORE_WRITE_TARGET_PERSPECTIVES',
-                null,
-                self::LEGACY_FILE,
+                'PIMCORE_WRITE_TARGET_PERSPECTIVES'
+
             );
         }
 
