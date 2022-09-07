@@ -1359,7 +1359,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $db = \Pimcore\Db::get();
 
         if (in_array(strtolower($realPropertyName), self::$objectColumns)) {
-            $value = empty($arguments[0]) ? throw new \InvalidArgumentException('Mandatory argument $value not set.') : $arguments[0];
+            $value = array_key_exists(0, $arguments) ? $arguments[0] : throw new \InvalidArgumentException('Mandatory argument $value not set.');
             $limit = $arguments[1] ?? null;
             $offset = $arguments[2] ?? 0;
             $objectTypes = $arguments[3] ?? null;

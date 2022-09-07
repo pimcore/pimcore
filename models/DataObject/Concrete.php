@@ -623,7 +623,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
             if ($field instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
                 $localizedPropertyName = empty($arguments[0]) ? throw new \InvalidArgumentException('Mandatory argument $field not set.')  : $arguments[0];
-                $value = empty($arguments[1]) ? throw new \InvalidArgumentException('Mandatory argument $value not set.') : $arguments[1];
+                $value = array_key_exists(1, $arguments) ? $arguments[1] : throw new \InvalidArgumentException('Mandatory argument $value not set.');
                 $locale = $arguments[2] ?? null;
                 $limit = $arguments[3] ?? null;
                 $offset = $arguments[4] ?? 0;
@@ -648,7 +648,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
                 $listConfig['locale'] = $locale;
             } else {
-                $value = empty($arguments[0]) ? throw new \InvalidArgumentException('Mandatory argument $value not set.') : $arguments[0];
+                $value = array_key_exists(0, $arguments) ? $arguments[0] : throw new \InvalidArgumentException('Mandatory argument $value not set.');
                 $limit = $arguments[1] ?? null;
                 $offset = $arguments[2] ?? 0;
                 $objectTypes = $arguments[3] ?? null;
