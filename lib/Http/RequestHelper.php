@@ -87,7 +87,6 @@ class RequestHelper
         return null !== $this->requestStack->getMainRequest();
     }
 
-
     /**
      * @return Request
      */
