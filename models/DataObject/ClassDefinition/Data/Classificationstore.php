@@ -887,8 +887,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return [
             'fieldDefinitionsCache',
             'referencedFields',
-            'blockedVarsForExport',
-            'childs',
+            'blockedVarsForExport'
         ];
     }
 
@@ -1426,8 +1425,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     {
         $obj = new static();
         $obj->setValues($data);
-
-        $obj->childs = $obj->children;  // @phpstan-ignore-line
 
         return $obj;
     }
