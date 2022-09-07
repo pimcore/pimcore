@@ -31,6 +31,7 @@ use Pimcore\Logger;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Tool\Authentication;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -90,7 +91,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      * @Route("/login", name="pimcore_admin_login")
      * @Route("/login/", name="pimcore_admin_login_fallback")
      */
-    public function loginAction(Request $request, CsrfProtectionHandler $csrfProtection, Config $config)
+    public function loginAction(Request $request, CsrfProtectionHandler $csrfProtection, Config $config, EventDispatcherInterface $eventDispatcher)
     {
         if ($request->get('_route') === 'pimcore_admin_login_fallback') {
             return $this->redirectToRoute('pimcore_admin_login', $request->query->all(), Response::HTTP_MOVED_PERMANENTLY);
@@ -124,6 +125,15 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
         $params['browserSupported'] = $this->detectBrowser();
         $params['debug'] = \Pimcore::inDebugMode();
+
+        $params['includeTemplates'] = [];
+        $event = new GenericEvent($this, [
+            'parameters' => $params,
+            'config' => $config,
+            'request' => $request,
+        ]);
+        $eventDispatcher->dispatch($event, AdminEvents::LOGIN_BEFORE_RENDER);
+        $params = $event->getArgument('parameters');
 
         return $this->render('@PimcoreAdmin/admin/login/login.html.twig', $params);
     }
