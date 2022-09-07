@@ -35,6 +35,7 @@
 - [Config] Removed legacy callback from LocationAwareConfigRepository. Therefore, configurations in the old php file format are not supported anymore.
 Any existing configurations will be migrated to either the yaml file format or the settings store, depending on your configuration.
 Please make sure to set your preferred storage location ***before*** migration. For details on configuration please check the [documentation](../../21_Deployment/03_Configuration_Environments.md). 
+- [Request] Removed deprecated getMasterRequest() in favor of getMainRequest().
 
 ## 10.5.0
 - [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`
@@ -133,7 +134,6 @@ Please use [event listener](../../20_Extending_Pimcore/13_Bundle_Developers_Guid
 - [Custom Layouts] Deprecated Class `ClassLayoutDefinitionManager` and constant `PIMCORE_CUSTOMLAYOUT_DIRECTORY`.
 - [Workflows] Deprecated classes Pimcore\Model\Workflow, Pimcore\Model\Workflow\Dao, Pimcore\Model\Workflow\Listing\Dao and Pimcore\Model\Workflow\Listing. 
 Please check the documentation on how to work with workflows: [Workflow Management](../../07_Workflow_Management/README.md).
-
 
 ## 10.4.2
 - When maintenance mode is active, all commands are prevented from starting (not just commands inheriting from `AbstractCommand`).
