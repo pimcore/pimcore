@@ -1404,12 +1404,13 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     protected static function makeList(array $listConfig, ?array $objectTypes): Listing
     {
+        $allowedObjectTypes = [static::OBJECT_TYPE_VARIANT, static::OBJECT_TYPE_OBJECT];
         $list = static::getList($listConfig);
-        if(empty($objectTypes)) {
-            $objectTypes = [static::OBJECT_TYPE_VARIANT, static::OBJECT_TYPE_OBJECT];
-        }
 
-        if (\array_diff($objectTypes, [static::OBJECT_TYPE_VARIANT, static::OBJECT_TYPE_OBJECT])) {
+        if(empty($objectTypes)) {
+            $objectTypes = $allowedObjectTypes;
+        }
+        else if (\array_diff($objectTypes, $allowedObjectTypes)) {
             Logger::error('Class: DataObject\\AbstractObject => Unsupported object type in array ' . implode(',', $objectTypes));
 
             throw new \Exception('Unsupported object type in array [' . implode(',', $objectTypes) . '] in class DataObject\\AbstractObject');
