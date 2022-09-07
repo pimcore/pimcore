@@ -369,8 +369,8 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof DataObject\Data\Hotspotimage) {
-            return base64_encode(Serialize::serialize($data));
+        if ($data instanceof DataObject\Data\Hotspotimage && $data->getImage() instanceof Asset\Image) {
+            return $data->getImage()->getFrontendFullPath();
         }
 
         return '';
