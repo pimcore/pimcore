@@ -33,7 +33,7 @@ class OptionsProviderResolver extends ClassResolver
      * @param string|null $providerClass
      * @param int $mode
      *
-     * @return mixed|null
+     * @return SelectOptionsProviderInterface|MultiSelectOptionsProviderInterface|null
      */
     public static function resolveProvider($providerClass, $mode)
     {
