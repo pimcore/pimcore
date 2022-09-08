@@ -339,6 +339,7 @@ final class Config implements ArrayAccess
      * @throws Exception
      *
      * @internal
+     *
      * @static
      */
     public static function getReportConfig(): PimcoreConfig

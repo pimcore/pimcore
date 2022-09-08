@@ -56,17 +56,21 @@ pimcore.plugin.broker = {
         var size = this.pluginsAvailable();
         var args = Array.from(arguments);
         args.splice(0, 1);
+        const event = args.pop();
 
         for (var i = 0; i < size; i++) {
             plugin = this.plugins[i];
             try {
                 this.executePlugin(plugin, e, args);
             } catch (e) {
+                event.preventDefault();
+                event.stopPropagation();
                 if (
                     e instanceof pimcore.error.ValidationException
-                    || e instanceof pimcore.error.ActionCancelledException
                 ) {
-                    throw e;
+                    pimcore.helpers.showPrettyError('object', t("error"), t("saving_failed"), e.message);
+                } else if (e instanceof pimcore.error.ActionCancelledException) {
+                    pimcore.helpers.showNotification(t("Info"), t("saving_failed") + ' ' + e.message, 'info');
                 }
                 console.error(e);
             }
@@ -89,7 +93,7 @@ function addEventListenerCompatibilityForPlugins(eventMappings) {
                 parameters.push(e.detail[key]);
             }
 
-            pimcore.plugin.broker.fireEvent(oldKey, ...parameters);
+            pimcore.plugin.broker.fireEvent(oldKey, ...parameters, e);
         });
     }
 }

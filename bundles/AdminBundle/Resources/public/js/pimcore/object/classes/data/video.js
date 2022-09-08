@@ -90,7 +90,6 @@ pimcore.object.classes.data.video = Class.create(pimcore.object.classes.data.dat
         this.allowedTypes = new Ext.ux.form.MultiSelect({
             fieldLabel: t("allowed_video_types") + '<br />' + t('allowed_types_hint'),
             name: "allowedTypes",
-            id: 'allowedTypes',
             store: this.supportedTypesStore,
             value: this.datax.allowedTypes,
             displayField: "value",

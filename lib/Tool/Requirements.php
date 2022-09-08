@@ -91,7 +91,7 @@ final class Requirements
         ]);
 
         // check database charset =>  utf-8 encoding
-        $result = $db->fetchAssociative('SHOW VARIABLES LIKE "character\_set\_database"');
+        $result = $db->fetchAssociative("SHOW VARIABLES LIKE 'character\_set\_database'");
         $checks[] = new Check([
             'name' => 'Database Charset utf8mb4',
             'state' => ($result && (strtolower($result['Value']) == 'utf8mb4')) ? Check::STATE_OK : Check::STATE_ERROR,

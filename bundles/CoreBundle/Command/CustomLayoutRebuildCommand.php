@@ -53,6 +53,7 @@ class CustomLayoutRebuildCommand extends AbstractCommand
 
     /**
      * @param ClassLayoutDefinitionManager $classLayoutDefinitionManager
+     *
      * @required
      */
     public function setClassLayoutDefinitionManager(ClassLayoutDefinitionManager $classLayoutDefinitionManager)

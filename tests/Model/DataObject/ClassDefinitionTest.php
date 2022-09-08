@@ -23,6 +23,7 @@ use Pimcore\Tests\Test\ModelTestCase;
  * Class ObjectTest
  *
  * @package Pimcore\Tests\Model\DataObject
+ *
  * @group model.dataobject.object
  */
 class ClassDefinitionTest extends ModelTestCase
