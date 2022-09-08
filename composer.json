@@ -108,6 +108,7 @@
     "symfony/password-hasher": "^5.3",
     "symfony/process": "^5.2.0",
     "symfony/property-access": "^5.3",
+    "symfony/rate-limiter": "^5.2.0",
     "symfony/routing": "^5.3",
     "symfony/security-bundle": "^5.4.0",
     "symfony/security-core": "^5.4.0",
