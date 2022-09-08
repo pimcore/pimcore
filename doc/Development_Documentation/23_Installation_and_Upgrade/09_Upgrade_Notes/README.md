@@ -32,6 +32,7 @@
 - [Exception] Deprecated MissingDependencyException has been removed.
 - [CustomLayouts] Removed command `pimcore:deployment:custom-layouts-rebuild` as CustomLayouts are migrated to LocationAwareConfigRepository.
 - [Data Objects] Alias `ReverseManyToManyObjectRelation` removed, please use `ReverseObjectRelation` instead.
+- [Documents] Added a second boolean parameter `$validate` to the setContentMasterDocumentId() method. This will restrict the option to set pages as content master documents to each other. For details, please see [#12891](https://github.com/pimcore/pimcore/issues/12891)
 - [Config] Removed legacy callback from LocationAwareConfigRepository. Therefore, configurations in the old php file format are not supported anymore.
 Any existing configurations will be migrated to either the yaml file format or the settings store, depending on your configuration.
 Please make sure to set your preferred storage location ***before*** migration. For details on configuration please check the [documentation](../../21_Deployment/03_Configuration_Environments.md). 
