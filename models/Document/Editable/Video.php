@@ -718,7 +718,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
         $config = $this->getConfig();
         $code = '';
-        $uid = 'video_' . uniqid();
+        $uid = $this->getUniqId();
 
         // get vimeo id
         if (preg_match("@vimeo.*/([\d]+)@i", $this->id, $matches)) {
@@ -797,7 +797,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
         $config = $this->getConfig();
         $code = '';
-        $uid = 'video_' . uniqid();
+        $uid = $this->getUniqId();
 
         // get dailymotion id
         if (preg_match('@dailymotion.*/video/([^_]+)@i', $this->id, $matches)) {
@@ -990,7 +990,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      */
     private function getProgressCode($thumbnail = null)
     {
-        $uid = 'video_' . uniqid();
+        $uid = $this->getUniqId();
         $code = '
         <div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video">
             <style type="text/css">
@@ -1036,7 +1036,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
             $height .= 'px';
         }
 
-        return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video"><div class="pimcore_editable_video_empty" id="' . $uid . '" style="width: ' . $width . '; height: ' . $height . ';" data-type="pimcore_video_editable"></div></div>';
+        return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video"><div class="pimcore_editable_video_empty" id="' . $uid . '" style="width: ' . $width . '; height: ' . $height . ';"></div></div>';
     }
 
     private function updateAllowedTypesFromConfig(array $config): void
@@ -1050,6 +1050,14 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         ) {
             $this->allowedTypes = $config['allowedTypes'];
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getUniqId(): string
+    {
+        return 'video_' . uniqid();
     }
 
     /**
