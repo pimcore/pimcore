@@ -522,11 +522,16 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @param array $objectTypes
      * @param bool $includingUnpublished
+     * @param bool $resetCache
      *
      * @return DataObject[]
      */
-    public function getChildren(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = false)
+    public function getChildren(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = false, bool $resetCache = false)
     {
+        if ($resetCache) {
+            $this->resetChildCache();
+        }
+
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
         if (!isset($this->o_children[$cacheKey])) {
@@ -1452,5 +1457,13 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         }
 
         parent::__wakeup();
+    }
+
+    /**
+     * @return void
+     */
+    private function resetChildCache(): void
+    {
+        $this->o_children = [];
     }
 }
