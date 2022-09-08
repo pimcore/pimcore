@@ -863,44 +863,6 @@ class Mail extends Email
     }
 
     /**
-     * @deprecated use text() instead. Will be removed in Pimcore 11
-     *
-     * @param string $bodyText
-     * @param string $charset
-     *
-     * @return $this
-     */
-    public function setBodyText($bodyText, string $charset = 'utf-8')
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.0',
-            sprintf('%s is deprecated, please use text() instead. Will be removed in Pimcore 11', __METHOD__)
-        );
-
-        return $this->text($bodyText, $charset);
-    }
-
-    /**
-     * @deprecated use html() instead. Will be removed in Pimcore 11
-     *
-     * @param string $body
-     * @param string $charset
-     *
-     * @return $this
-     */
-    public function setBodyHtml($body, string $charset = 'utf-8')
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.0',
-            sprintf('%s is deprecated, please use html() instead. Will be removed in Pimcore 11', __METHOD__)
-        );
-
-        return $this->html($body, $charset);
-    }
-
-    /**
      * @internal
      *
      * @return array|null
@@ -918,26 +880,6 @@ class Mail extends Email
     public function setOriginalData($originalData)
     {
         $this->originalData = $originalData;
-    }
-
-    /**
-     * @deprecated use attach() instead. Will be removed in Pimcore 11
-     *
-     * @param string $data
-     * @param string|null $mimeType
-     * @param string|null $filename
-     *
-     * @return $this
-     */
-    public function createAttachment($data, $mimeType = null, $filename = null)
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.0',
-            sprintf('%s is deprecated, please use attach() instead. Will be removed in Pimcore 11', __METHOD__)
-        );
-
-        return $this->attach($data, $filename, $mimeType);
     }
 
     /**
@@ -960,24 +902,6 @@ class Mail extends Email
         $this->getHeaders()->addTextHeader('Content-Type', $type);
 
         return $this;
-    }
-
-    /**
-     * @deprecated use subject() instead. Will be removed in Pimcore 11
-     *
-     * @param string $subject
-     *
-     * @return $this
-     */
-    public function setSubject($subject)
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.5.4',
-            sprintf('%s is deprecated, please use subject() instead. Will be removed in Pimcore 11', __METHOD__)
-        );
-
-        return $this->subject($subject);
     }
 
     /**
