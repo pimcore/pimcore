@@ -433,7 +433,6 @@ abstract class PageSnippet extends Model\Document
         // Don't set the content master document if the document is already part of the master document chain
         if ($contentMasterDocumentId) {
             if ($currentContentMasterDocument = Document\PageSnippet::getById($contentMasterDocumentId)) {
-
                 $maxDepth = 20;
                 do {
                     if ($currentContentMasterDocument->getId() === $this->getId()) {
