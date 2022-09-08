@@ -26,6 +26,7 @@ use Pimcore\Tests\Util\TestHelper;
  * Class ClassificationstoreTest
  *
  * @package Pimcore\Tests\Model\Inheritance
+ *
  * @group model.inheritance.classificationstore
  */
 class ClassificationstoreTest extends ModelTestCase

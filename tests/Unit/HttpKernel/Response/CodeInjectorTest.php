@@ -80,6 +80,7 @@ class CodeInjectorTest extends TestCase
 
     /**
      * @group dom
+     *
      * @dataProvider injectDOMProvider
      */
     public function testInjectDOM(string $selector, string $position, string $source, string $expected)

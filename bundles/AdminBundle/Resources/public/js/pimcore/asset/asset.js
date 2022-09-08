@@ -363,27 +363,20 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
         this.tab.mask();
 
-        try {
-            const preSaveAsset = new CustomEvent(pimcore.events.preSaveAsset, {
-                detail: {
-                    id: this.id
-                }
-            });
+        const preSaveAsset = new CustomEvent(pimcore.events.preSaveAsset, {
+            detail: {
+                id: this.id,
+                task: task
+            },
+            cancelable: true
+        });
 
-            document.dispatchEvent(preSaveAsset);
-        } catch (e) {
-            if (e instanceof pimcore.error.ValidationException) {
-                this.tab.unmask();
-                pimcore.helpers.showPrettyError('asset', t("error"), t("saving_failed"), e.message);
-                return false;
-            }
-
-            if (e instanceof pimcore.error.ActionCancelledException) {
-                this.tab.unmask();
-                pimcore.helpers.showNotification(t("Info"), 'Asset not saved: ' + e.message, 'info');
-                return false;
-            }
+        const isAllowed = document.dispatchEvent(preSaveAsset);
+        if (!isAllowed) {
+            this.tab.unmask();
+            return false;
         }
+
 
         let params = this.getSaveData(only);
         if (task) {

@@ -479,6 +479,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $parent = Asset::getByPath($parentPath);
             if ($parent instanceof Asset\Folder) {
                 $parentId = $parent->getId();
+            } else { //create defined parent folder, if doesn't exist.
+                $parentId = Asset\Service::createFolderByPath($parentPath)->getId();
             }
         }
 
@@ -940,8 +942,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $server->setBaseUri($this->generateUrl('pimcore_admin_webdav', ['path' => '/']));
 
             // lock plugin
-            /** @var \Doctrine\DBAL\Driver\PDOConnection $pdo */
-            $pdo = \Pimcore\Db::get()->getWrappedConnection();
+            /** @var \PDO $pdo */
+            $pdo = \Pimcore\Db::get()->getNativeConnection();
             $lockBackend = new \Sabre\DAV\Locks\Backend\PDO($pdo);
             $lockBackend->tableName = 'webdav_locks';
 
