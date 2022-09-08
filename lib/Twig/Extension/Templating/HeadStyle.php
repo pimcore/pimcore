@@ -385,7 +385,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
             . $escapeStart . $indent . $item->content . PHP_EOL . $escapeEnd
             . '</style>';
 
-        if (null == $escapeStart && null == $escapeEnd) {
+        if (null === $escapeStart) {
             if (str_replace(' ', '', $item->attributes['conditional']) === '!IE') {
                 $html = '<!-->' . $html . '<!--';
             }

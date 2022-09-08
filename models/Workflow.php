@@ -18,6 +18,8 @@ namespace Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
 
 /**
+ * @deprecated
+ *
  * @method Workflow\Dao getDao()
  * @method void save()
  */
