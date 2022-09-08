@@ -120,31 +120,7 @@ services:
                    secret: '%env(S3_STORAGE_SECRET)%'
 ```
 
-Note: The required IAM permissions are:
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "Stmt1420044805001",
-            "Effect": "Allow",
-            "Action": [
-                "s3:ListBucket",
-                "s3:GetObject",
-                "s3:GetObjectAcl",
-                "s3:PutObject",
-                "s3:PutObjectAcl",
-                "s3:ReplicateObject",
-                "s3:DeleteObject"
-            ],
-            "Resource": [
-                "arn:aws:s3:::your-bucket-name",
-                "arn:aws:s3:::your-bucket-name/*"
-            ]
-        }
-    ]
-}
-```
+For more information on required IAM permissions, please have a look at the [Flysystem documentation](https://flysystem.thephpleague.com/v1/docs/adapter/aws-s3-v3/#streamed-reads).
 
 And then override core flysystem configuration to use remote storage instead of local. For that, change the adapter from 'local' to 'aws'.
 Also update following options:

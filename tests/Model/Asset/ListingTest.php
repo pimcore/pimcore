@@ -26,6 +26,7 @@ use Pimcore\Tests\Util\TestHelper;
  * Class ListingTest
  *
  * @package Pimcore\Tests\Model\Document
+ *
  * @group model.asset.asset
  */
 class ListingTest extends ModelTestCase
