@@ -36,6 +36,8 @@
 Any existing configurations will be migrated to either the yaml file format or the settings store, depending on your configuration.
 Please make sure to set your preferred storage location ***before*** migration. For details on configuration please check the [documentation](../../21_Deployment/03_Configuration_Environments.md). 
 - [Request] Removed deprecated getMasterRequest() in favor of getMainRequest().
+- [Email] Removed the deprecated methods setBodyHtml(), setBodyText(), createAttachment() and setSubject(). Use html(),
+  text(), attach() and subject() instead.
 
 ## 10.5.0
 - [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`
