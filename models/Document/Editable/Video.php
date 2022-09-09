@@ -1052,9 +1052,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         }
     }
 
-    /**
-     * @return string
-     */
     public function getUniqId(): string
     {
         return 'video_' . uniqid();
