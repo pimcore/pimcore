@@ -135,14 +135,12 @@ class Area extends Model\Document\Editable
         $info->setIndex(0);
 
         $params = [];
-        if (isset($config['params']) && is_array($config['params']) && array_key_exists($config['type'], $config['params'])) {
-            if (is_array($config['params'][$config['type']])) {
-                $params = $config['params'][$config['type']];
-            }
+        if (is_array($config['params'][$config['type']] ?? null)) {
+            $params = $config['params'][$config['type']];
         }
 
-        if (isset($config['globalParams'])) {
-            $params = array_merge($config['globalParams'], (array)$params);
+        if (is_array($config['globalParams'] ?? null)) {
+            $params = array_merge($config['globalParams'], $params);
         }
 
         $info->setParams($params);

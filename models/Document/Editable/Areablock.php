@@ -216,6 +216,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      */
     public function buildInfoObject(): Area\Info
     {
+        $config = $this->getConfig();
         // create info object and assign it to the view
         $info = new Area\Info();
         $info->setId($this->currentIndex ? $this->currentIndex['type'] : null);
@@ -223,16 +224,12 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         $info->setIndex($this->current);
 
         $params = [];
-
-        $config = $this->getConfig();
-        if (isset($config['params']) && is_array($config['params']) && array_key_exists($this->currentIndex['type'], $config['params'])) {
-            if (is_array($config['params'][$this->currentIndex['type']])) {
-                $params = $config['params'][$this->currentIndex['type']];
-            }
+        if (is_array($config['params'][$this->currentIndex['type']] ?? null)) {
+            $params = $config['params'][$this->currentIndex['type']];
         }
 
-        if (isset($config['globalParams'])) {
-            $params = array_merge($config['globalParams'], (array)$params);
+        if (is_array($config['globalParams'] ?? null)) {
+            $params = array_merge($config['globalParams'], $params);
         }
 
         $info->setParams($params);
