@@ -44,13 +44,13 @@ class BruteforceProtectionHandler implements LoggerAwareInterface
     /**
      * @var bool
      */
-    protected bool $disabled = false;
+    protected bool $disabled;
 
     /**
      * @param RequestHelper $requestHelper
      * @param string|null $logFile
      */
-    public function __construct(RequestHelper $requestHelper, $logFile = null, $disabled = false)
+    public function __construct(RequestHelper $requestHelper, $logFile = null, bool $disabled = false)
     {
         $this->requestHelper = $requestHelper;
 

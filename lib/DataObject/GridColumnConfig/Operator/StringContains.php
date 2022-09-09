@@ -28,7 +28,7 @@ final class StringContains extends AbstractOperator
     /**
      * @var bool
      */
-    private bool $insensitive = false;
+    private bool $insensitive;
 
     /**
      * {@inheritdoc}

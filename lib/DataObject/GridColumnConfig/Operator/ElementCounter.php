@@ -23,7 +23,7 @@ final class ElementCounter extends AbstractOperator
     /**
      * @var bool
      */
-    private bool $countEmpty = false;
+    private bool $countEmpty;
 
     /**
      * {@inheritdoc}

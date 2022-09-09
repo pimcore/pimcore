@@ -36,7 +36,7 @@ final class AnyGetter extends AbstractOperator
     /**
      * @var bool
      */
-    private bool $isArrayType = false;
+    private bool $isArrayType;
 
     /**
      * @var string
@@ -51,7 +51,7 @@ final class AnyGetter extends AbstractOperator
     /**
      * @var bool
      */
-    private bool $returnLastResult = false;
+    private bool $returnLastResult;
 
     /**
      * {@inheritdoc}

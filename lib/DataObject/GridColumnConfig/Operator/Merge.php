@@ -23,12 +23,12 @@ final class Merge extends AbstractOperator
     /**
      * @var bool
      */
-    private bool $flatten = false;
+    private bool $flatten;
 
     /**
      * @var bool
      */
-    private bool $unique = false;
+    private bool $unique;
 
     /**
      * {@inheritdoc}

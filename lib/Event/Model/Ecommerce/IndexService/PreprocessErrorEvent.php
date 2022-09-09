@@ -27,7 +27,7 @@ class PreprocessErrorEvent extends Event
     /**
      * @var bool
      */
-    protected bool $throwException = true;
+    protected bool $throwException;
 
     /**
      * @var int

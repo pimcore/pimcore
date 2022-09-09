@@ -33,7 +33,7 @@ final class StringReplace extends AbstractOperator
     /**
      * @var bool
      */
-    private bool $insensitive = false;
+    private bool $insensitive;
 
     /**
      * {@inheritdoc}
