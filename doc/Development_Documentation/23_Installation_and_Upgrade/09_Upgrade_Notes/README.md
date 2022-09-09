@@ -71,6 +71,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Email] Bumped `league/html-to-markdown` to ^5.1.
 - [DataObjects] Changed `$objectTypes` default value to include variants in certain scenarios.
 - [Elements]: Removed deprecated `getTotalCount()` method
+- [Areabricks] The default template location of `AbstractTemplateAreabrick` is now `TEMPLATE_LOCATION_GLOBAL`.
 
 ## 10.5.0
 - [Class Definitions] Resolving classes or services will no longer catch exceptions in Pimcore 11. Remove invalid references from class definitions.
