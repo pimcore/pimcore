@@ -49,8 +49,7 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
             $this->settingsStoreScope,
             $params['storageDirectory'] ?? null,
             $params['writeTargetEnvVariableName'] ?? null,
-            $params['defaultWriteLocation'] ?? null,
-            $params['legacyConfigFile'] ?? null
+            $params['defaultWriteLocation'] ?? null
         );
     }
 
