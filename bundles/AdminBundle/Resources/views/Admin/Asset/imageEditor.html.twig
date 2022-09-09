@@ -71,7 +71,7 @@
 {% set imageFileExtension = pimcore_file_extension(asset.getFilename()) %}
 {% set imageUrl = path('pimcore_admin_asset_getasset', {id: asset.getId()}) %}
 
-{% if not imageFileExtension in ['png', 'jpg', 'jpeg'] %}
+{% if imageFileExtension not in ['png', 'jpg', 'jpeg'] %}
     {% set imageUrl = path('pimcore_admin_asset_getimagethumbnail', {id: asset.getId(), format: 'png' }) %}
 {% endif %}
 
