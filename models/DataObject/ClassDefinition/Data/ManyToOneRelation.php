@@ -58,8 +58,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $relationType = true;
 
@@ -77,15 +75,11 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $objectsAllowed = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $assetsAllowed = false;
 
@@ -100,8 +94,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $documentsAllowed = false;
 

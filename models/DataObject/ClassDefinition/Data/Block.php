@@ -43,36 +43,26 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $lazyLoading = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $disallowAddRemove = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $disallowReorder = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $collapsible = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $collapsed = false;
 

@@ -120,9 +120,6 @@ final class Version extends AbstractModel
      */
     public static $disabled = false;
 
-    /**
-     * @var bool
-     */
     protected bool $autoSave = false;
 
     /**

@@ -22,9 +22,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractPayment implements PaymentInterface
 {
-    /**
-     * @var bool
-     */
     protected bool $recurringPaymentEnabled = false;
 
     /**

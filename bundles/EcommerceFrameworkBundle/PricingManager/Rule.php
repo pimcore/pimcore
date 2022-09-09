@@ -65,9 +65,6 @@ class Rule extends AbstractModel implements RuleInterface
      */
     protected $behavior;
 
-    /**
-     * @var bool
-     */
     protected bool $active = false;
 
     /**

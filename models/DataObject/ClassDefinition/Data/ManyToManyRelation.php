@@ -83,22 +83,16 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $relationType = true;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $objectsAllowed = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $assetsAllowed = false;
 
@@ -113,8 +107,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $documentsAllowed = false;
 
@@ -129,8 +121,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $enableTextSelection = false;
 

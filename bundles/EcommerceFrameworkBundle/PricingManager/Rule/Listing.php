@@ -25,9 +25,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
  */
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
-    /**
-     * @var bool
-     */
     protected bool $validate = false;
 
     /**

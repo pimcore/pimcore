@@ -73,9 +73,6 @@ class InheritanceHelper
      */
     protected static bool $useRuntimeCache = false;
 
-    /**
-     * @var bool
-     */
     protected bool $childFound = false;
 
     /**

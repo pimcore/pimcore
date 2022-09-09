@@ -69,14 +69,8 @@ class GridConfig extends AbstractModel
      */
     protected $modificationDate;
 
-    /**
-     * @var bool
-     */
     protected bool $shareGlobally = false;
 
-    /**
-     * @var bool
-     */
     protected bool $setAsFavourite = false;
 
     /**

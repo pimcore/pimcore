@@ -74,15 +74,11 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     /**
      * @internal
-     *
-     * @var string
      */
     public string $toolbarConfig = '';
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $excludeFromSearchIndex = false;
 

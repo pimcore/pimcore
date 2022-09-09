@@ -108,8 +108,6 @@ final class Localizedfield extends Model\AbstractModel implements
 
     /**
      * @internal
-     *
-     * @var bool
      */
     protected bool $_loadedAllLazyData = false;
 

@@ -59,15 +59,11 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $showCharCount = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $excludeFromSearchIndex = false;
 

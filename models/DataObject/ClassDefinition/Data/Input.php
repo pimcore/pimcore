@@ -100,15 +100,11 @@ class Input extends Data implements
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $unique = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $showCharCount = false;
 

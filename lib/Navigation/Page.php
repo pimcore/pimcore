@@ -130,15 +130,11 @@ abstract class Page extends Container
 
     /**
      * Whether this page should be considered active
-     *
-     * @var bool
      */
     protected bool $_active = false;
 
     /**
      * Whether this page should be considered visible
-     *
-     * @var bool
      */
     protected bool $_visible = true;
 

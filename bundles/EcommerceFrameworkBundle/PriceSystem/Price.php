@@ -44,9 +44,6 @@ class Price implements PriceInterface
      */
     private $taxEntryCombinationMode = TaxEntry::CALCULATION_MODE_COMBINE;
 
-    /**
-     * @var bool
-     */
     private bool $minPrice;
 
     /**

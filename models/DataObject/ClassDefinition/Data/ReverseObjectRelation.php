@@ -56,8 +56,6 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
      * ReverseObjectRelation must be lazy loading!
      *
      * @internal
-     *
-     * @var bool
      */
     public bool $lazyLoading = true;
 

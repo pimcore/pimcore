@@ -43,8 +43,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $lazyLoading = false;
 
@@ -57,36 +55,26 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $disallowAddRemove = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $disallowReorder = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $collapsed = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $collapsible = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $border = false;
 

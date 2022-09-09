@@ -38,14 +38,8 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      */
     public $tooltip;
 
-    /**
-     * @var bool
-     */
     public bool $mandatory = false;
 
-    /**
-     * @var bool
-     */
     public bool $noteditable = false;
 
     /**
@@ -53,9 +47,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      */
     public $index;
 
-    /**
-     * @var bool
-     */
     public bool $locked = false;
 
     /**
@@ -78,24 +69,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      */
     public $fieldtype;
 
-    /**
-     * @var bool
-     */
     public bool $relationType = false;
 
-    /**
-     * @var bool
-     */
     public bool $invisible = false;
 
-    /**
-     * @var bool
-     */
     public bool $visibleGridView = true;
 
-    /**
-     * @var bool
-     */
     public bool $visibleSearch = true;
 
     /**

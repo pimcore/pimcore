@@ -102,8 +102,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $localized = false;
 
@@ -116,15 +114,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $hideEmptyData = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $disallowAddRemove = false;
 

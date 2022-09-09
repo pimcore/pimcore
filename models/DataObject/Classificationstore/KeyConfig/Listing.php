@@ -25,7 +25,6 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\AbstractListing
 {
-    /** @var bool */
     protected bool $includeDisabled = false;
 
     /**

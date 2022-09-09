@@ -75,8 +75,6 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @internal
-     *
-     * @var bool
      */
     protected bool $supportsContentMaster = true;
 

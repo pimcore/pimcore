@@ -60,8 +60,6 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $colsFixed = false;
 
@@ -74,8 +72,6 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $rowsFixed = false;
 
@@ -90,8 +86,6 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $columnConfigActivated = false;
 

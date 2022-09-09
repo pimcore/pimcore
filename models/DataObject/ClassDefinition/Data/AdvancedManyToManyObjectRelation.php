@@ -69,15 +69,11 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $enableBatchEdit = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $allowMultipleAssignments = false;
 

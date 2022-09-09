@@ -99,9 +99,6 @@ abstract class AbstractElasticSearch implements ProductListInterface
      */
     protected $category;
 
-    /**
-     * @var bool
-     */
     protected bool $inProductList = false;
 
     /**

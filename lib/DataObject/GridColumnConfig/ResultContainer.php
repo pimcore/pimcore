@@ -30,9 +30,6 @@ final class ResultContainer
      */
     public $value;
 
-    /**
-     * @var bool
-     */
     public bool $isEmpty = false;
 
     /**

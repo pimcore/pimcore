@@ -91,8 +91,6 @@ class Document extends Element\AbstractElement
 
     /**
      * @internal
-     *
-     * @var bool
      */
     protected bool $published = true;
 

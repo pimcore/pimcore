@@ -30,9 +30,6 @@ final class StringReplace extends AbstractOperator
      */
     private $replace;
 
-    /**
-     * @var bool
-     */
     private bool $insensitive;
 
     /**

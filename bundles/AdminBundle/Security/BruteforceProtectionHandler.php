@@ -41,9 +41,6 @@ class BruteforceProtectionHandler implements LoggerAwareInterface
      */
     protected $logFile;
 
-    /**
-     * @var bool
-     */
     protected bool $disabled;
 
     /**

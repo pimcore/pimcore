@@ -33,9 +33,6 @@ final class AnyGetter extends AbstractOperator
      */
     private $param1;
 
-    /**
-     * @var bool
-     */
     private bool $isArrayType;
 
     /**
@@ -48,9 +45,6 @@ final class AnyGetter extends AbstractOperator
      */
     private $forwardParam1;
 
-    /**
-     * @var bool
-     */
     private bool $returnLastResult;
 
     /**

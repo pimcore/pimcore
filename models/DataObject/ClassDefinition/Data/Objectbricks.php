@@ -52,8 +52,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $border = false;
 

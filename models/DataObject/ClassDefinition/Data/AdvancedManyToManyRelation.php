@@ -62,22 +62,16 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $optimizedAdminLoading = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $enableBatchEdit = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $allowMultipleAssignments = false;
 

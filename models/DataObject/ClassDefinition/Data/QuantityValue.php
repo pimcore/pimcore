@@ -112,8 +112,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $unique = false;
 
@@ -140,8 +138,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $autoConvert = false;
 

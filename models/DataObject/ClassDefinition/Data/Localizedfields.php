@@ -97,15 +97,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $border = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $provideSplitView = false;
 

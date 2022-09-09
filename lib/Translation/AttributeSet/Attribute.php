@@ -55,9 +55,6 @@ class Attribute
      */
     private $targetContent;
 
-    /**
-     * @var bool
-     */
     private bool $isReadonly;
 
     /**

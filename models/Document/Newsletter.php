@@ -58,8 +58,6 @@ class Newsletter extends Model\Document\PageSnippet
      * enables adding tracking parameters to all links
      *
      * @internal
-     *
-     * @var bool
      */
     protected bool $enableTrackingParameters = false;
 

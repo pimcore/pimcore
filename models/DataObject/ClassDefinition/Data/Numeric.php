@@ -78,15 +78,11 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $integer = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $unsigned = false;
 
@@ -106,8 +102,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $unique = false;
 
