@@ -1135,8 +1135,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     {
         if ($children === null) {
             // unset all cached children
-            $this->o_children = [];
-            $this->o_hasChildren = [];
+            $this->resetChildCache();
         } elseif (is_array($children)) {
             //default cache key
             $cacheKey = $this->getListingCacheKey([$objectTypes, $includingUnpublished]);
@@ -1465,5 +1464,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     private function resetChildCache(): void
     {
         $this->o_children = [];
+        $this->o_hasChildren = [];
     }
 }
