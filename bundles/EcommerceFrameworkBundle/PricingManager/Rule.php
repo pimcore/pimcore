@@ -31,35 +31,6 @@ use Pimcore\Model\Exception\NotFoundException;
 class Rule extends AbstractModel implements RuleInterface
 {
     /**
-     * @param int $id
-     *
-     * @return RuleInterface|null
-     */
-    public static function getById($id)
-    {
-        $cacheKey = Dao::TABLE_NAME . '_' . $id;
-
-        try {
-            $rule = RuntimeCache::get($cacheKey);
-        } catch (\Exception $e) {
-            try {
-                $ruleClass = get_called_class();
-                /** @var Rule $rule */
-                $rule = new $ruleClass();
-                $rule->getDao()->getById($id);
-
-                RuntimeCache::set($cacheKey, $rule);
-            } catch (NotFoundException $ex) {
-                Logger::debug($ex->getMessage());
-
-                return null;
-            }
-        }
-
-        return $rule;
-    }
-
-    /**
      * @var int|null
      */
     protected $id;
@@ -102,7 +73,36 @@ class Rule extends AbstractModel implements RuleInterface
     /**
      * @var int
      */
-    protected $prio;
+    protected $prio = 0;
+
+    /**
+     * @param int $id
+     *
+     * @return RuleInterface|null
+     */
+    public static function getById($id)
+    {
+        $cacheKey = Dao::TABLE_NAME . '_' . $id;
+
+        try {
+            $rule = RuntimeCache::get($cacheKey);
+        } catch (\Exception $e) {
+            try {
+                $ruleClass = get_called_class();
+                /** @var Rule $rule */
+                $rule = new $ruleClass();
+                $rule->getDao()->getById($id);
+
+                RuntimeCache::set($cacheKey, $rule);
+            } catch (NotFoundException $ex) {
+                Logger::debug($ex->getMessage());
+
+                return null;
+            }
+        }
+
+        return $rule;
+    }
 
     /**
      * load model with serializes data from db
