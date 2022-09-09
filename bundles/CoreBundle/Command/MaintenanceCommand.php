@@ -64,18 +64,6 @@ class MaintenanceCommand extends AbstractCommand
                 'J',
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
                 'Exclude specific job(s) (see <comment>--help</comment> for a list of valid jobs)'
-            )
-            ->addOption(
-                'force',
-                'f',
-                InputOption::VALUE_NONE,
-                'Run the jobs, regardless if they\'re locked or not'
-            )
-            ->addOption(
-                'async',
-                'a',
-                InputOption::VALUE_NONE,
-                'Run the Jobs async using Symfony Messenger'
             );
     }
 
@@ -86,43 +74,11 @@ class MaintenanceCommand extends AbstractCommand
     {
         $validJobs = $this->getArrayOptionValue($input, 'job');
         $excludedJobs = $this->getArrayOptionValue($input, 'excludedJobs');
-        $async = (bool)$input->getOption('async');
 
         $this->maintenanceExecutor->executeMaintenance(
             $validJobs,
-            $excludedJobs,
-            (bool)$input->getOption('force')
+            $excludedJobs
         );
-
-        if (!$async) {
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '10.2',
-                'Running Maintenance Command without --async and not having the messenger consume message yourself is deprecated and will be removed from Pimcore in 11.',
-                __CLASS__
-            );
-
-            $command = $this->getApplication()->find('messenger:consume');
-
-            $arguments = [
-                'receivers' => ['pimcore_core', 'pimcore_maintenance', 'pimcore_image_optimize'],
-                '--time-limit' => 5 * 60,
-            ];
-
-            if ($this->output->isVerbose()) {
-                // delegate verbosity to messenger:consume
-                $verbosityMapping = [
-                    OutputInterface::VERBOSITY_DEBUG => 3,
-                    OutputInterface::VERBOSITY_VERY_VERBOSE => 2,
-                    OutputInterface::VERBOSITY_VERBOSE => 1,
-                ];
-
-                $arguments['--verbose'] = $verbosityMapping[$output->getVerbosity()];
-            }
-
-            $input = new ArrayInput($arguments);
-            $command->run($input, $output);
-        }
 
         $this->logger->info('All maintenance-jobs finished!');
 
