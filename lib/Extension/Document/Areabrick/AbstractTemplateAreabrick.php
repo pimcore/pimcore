@@ -23,7 +23,7 @@ namespace Pimcore\Extension\Document\Areabrick;
  * - <currentBundle>:Areas/<brickId>/(view|edit).<suffix>
  * - Areas/<brickId>/(view|edit).<suffix> -> resolves to app/Resources
  */
-abstract class AbstractTemplateAreabrick extends AbstractAreabrick implements TemplateAreabrickInterface
+abstract class AbstractTemplateAreabrick extends AbstractAreabrick
 {
     /**
      * {@inheritdoc}
