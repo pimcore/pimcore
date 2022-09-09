@@ -129,14 +129,10 @@ class Area extends Model\Document\Editable
     {
         $config = $this->getConfig();
         // create info object and assign it to the view
-        try {
-            $info = new Area\Info();
-            $info->setId($config['type']);
-            $info->setEditable($this);
-            $info->setIndex(0);
-        } catch (\Exception $e) {
-            $info = null;
-        }
+        $info = new Area\Info();
+        $info->setId($config['type']);
+        $info->setEditable($this);
+        $info->setIndex(0);
 
         $params = [];
         if (isset($config['params']) && is_array($config['params']) && array_key_exists($config['type'], $config['params'])) {
