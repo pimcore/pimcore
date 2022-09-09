@@ -65,9 +65,6 @@ class Installer
      */
     private $dbCredentials;
 
-    /**
-     * @var PimcoreStyle|null
-     */
     private ?PimcoreStyle $commandLineOutput = null;
 
     /**

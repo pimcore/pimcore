@@ -58,19 +58,10 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     use ApplySchedulerDataTrait;
     use DataObjectActionsTrait;
 
-    /**
-     * @var DataObject\Service
-     */
     protected DataObject\Service $_objectService;
 
-    /**
-     * @var array
-     */
     private array $objectData = [];
 
-    /**
-     * @var array
-     */
     private array $metaData = [];
 
     /**

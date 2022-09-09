@@ -78,9 +78,6 @@ class VisitorInfoResolver
      */
     private $targetingRules;
 
-    /**
-     * @var bool|null
-     */
     private ?bool $targetingConfigured = null;
 
     public function __construct(
