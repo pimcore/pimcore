@@ -53,6 +53,7 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
 
     /**
      * @param FilteredMigrationsRepository $migrationRepository
+     *
      * @required
      */
     public function setMigrationRepository(FilteredMigrationsRepository $migrationRepository): void
@@ -62,6 +63,7 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
 
     /**
      * @param FilteredTableMetadataStorage $tableMetadataStorage
+     *
      * @required
      */
     public function setTableMetadataStorage(FilteredTableMetadataStorage $tableMetadataStorage): void
@@ -71,6 +73,7 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
 
     /**
      * @param DependencyFactory $dependencyFactory
+     *
      * @required
      */
     public function setDependencyFactory(DependencyFactory $dependencyFactory): void

@@ -31,7 +31,7 @@ class BundleCollection
      *
      * @param ItemInterface $item
      *
-     * @return self
+     * @return $this
      */
     public function add(ItemInterface $item): self
     {
@@ -143,7 +143,7 @@ class BundleCollection
      *
      * @throws \InvalidArgumentException
      *
-     * @return self
+     * @return $this
      */
     public function addBundle($bundle, int $priority = 0, array $environments = []): self
     {

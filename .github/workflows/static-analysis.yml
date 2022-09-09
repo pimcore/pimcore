@@ -38,10 +38,9 @@ jobs:
         strategy:
             matrix:
                 include:
-                    - { php-version: "8.0", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
-                    - { php-version: "8.0", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
-                    - { php-version: "8.1", dependencies: "highest", experimental: true, symfony: "", composer-options: "" }
-                    - { php-version: "8.0", dependencies: "highest", experimental: true, symfony: "5.4.x-dev", composer-options: "" }
+                    - { php-version: "8.1", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
+                    - { php-version: "8.1", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
+                    - { php-version: "8.1", dependencies: "highest", experimental: true, symfony: "5.4.x-dev", composer-options: "" }
 
         steps:
             - name: "Checkout code"

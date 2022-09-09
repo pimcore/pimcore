@@ -862,7 +862,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     /**
      * @param string $name
      *
-     * @return $this|Data
+     * @return $this
      *
      * @throws \Exception
      */

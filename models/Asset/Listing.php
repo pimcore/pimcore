@@ -40,7 +40,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
     /**
      * @param Model\Asset[] $assets
      *
-     * @return static
+     * @return $this
      */
     public function setAssets($assets)
     {
@@ -82,7 +82,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      * @param Model\Asset $asset
 
      *
-     * @return static
+     * @return $this
      */
     public function filterAccessibleByUser(Model\User $user, Model\Asset $asset)
     {

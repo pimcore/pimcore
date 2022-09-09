@@ -119,7 +119,7 @@ class DocumentFallbackListener implements EventSubscriberInterface
             // if we're in a sub request and no explicit document is set - try to load document from
             // parent and/or master request and set it on our sub-request
             $parentRequest = $this->requestStack->getParentRequest();
-            $masterRequest = $this->requestStack->getMainRequest();
+            $mainRequest = $this->requestStack->getMainRequest();
 
             $eligibleRequests = [];
 
@@ -127,8 +127,8 @@ class DocumentFallbackListener implements EventSubscriberInterface
                 $eligibleRequests[] = $parentRequest;
             }
 
-            if ($masterRequest !== $parentRequest) {
-                $eligibleRequests[] = $masterRequest;
+            if ($mainRequest !== $parentRequest) {
+                $eligibleRequests[] = $mainRequest;
             }
 
             foreach ($eligibleRequests as $eligibleRequest) {

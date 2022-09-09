@@ -74,7 +74,7 @@ class VisitorInfoResolver
     private $eventDispatcher;
 
     /**
-     * @var Rule[]
+     * @var Rule[]|null
      */
     private $targetingRules;
 

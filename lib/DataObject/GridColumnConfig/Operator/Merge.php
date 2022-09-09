@@ -77,7 +77,7 @@ final class Merge extends AbstractOperator
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function getFlatten()
     {
@@ -85,7 +85,7 @@ final class Merge extends AbstractOperator
     }
 
     /**
-     * @param mixed $flatten
+     * @param bool $flatten
      */
     public function setFlatten($flatten)
     {
@@ -93,7 +93,7 @@ final class Merge extends AbstractOperator
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function getUnique()
     {
@@ -101,7 +101,7 @@ final class Merge extends AbstractOperator
     }
 
     /**
-     * @param mixed $unique
+     * @param bool $unique
      */
     public function setUnique($unique)
     {

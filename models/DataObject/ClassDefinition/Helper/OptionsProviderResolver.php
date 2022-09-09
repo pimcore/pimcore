@@ -30,7 +30,7 @@ class OptionsProviderResolver extends ClassResolver
     public static $providerCache = [];
 
     /**
-     * @param string $providerClass
+     * @param string|null $providerClass
      * @param int $mode
      *
      * @return mixed|null

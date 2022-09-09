@@ -14,7 +14,7 @@ For production, we highly recommend a *nix based system.
 - Nginx
 
 
-### PHP >= 8.0
+### PHP >= 8.1
 Both **mod_php** and **FCGI (FPM)** are supported.  
 
 #### Required Settings and Modules & Extensions
@@ -99,7 +99,6 @@ On Debian based systems, you can use the following command to install all requir
 - FFMPEG (>= 3)
 - Ghostscript (>= 9.16)
 - LibreOffice (>= 4.3)
-- wkhtmltopdf (>= 0.12) (deprecated)
 - Chromium/Chrome
 - xvfb
 - timeout (GNU core utils)

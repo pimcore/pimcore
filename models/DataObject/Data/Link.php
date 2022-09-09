@@ -499,7 +499,7 @@ class Link implements OwnerAwareFieldInterface
     /**
      * @param ElementInterface $object
      *
-     * @return self
+     * @return $this
      */
     public function setElement($object)
     {

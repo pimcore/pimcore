@@ -650,7 +650,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function getPhpdocInputType(): ?string
     {
-        return '?array';
+        return 'array|null';
     }
 
     /**

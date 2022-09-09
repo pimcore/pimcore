@@ -37,7 +37,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\Schedule\Task[]|null $tasks
      *
-     * @return static
+     * @return $this
      */
     public function setTasks($tasks)
     {

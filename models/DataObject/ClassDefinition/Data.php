@@ -24,7 +24,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     use DataObject\ClassDefinition\Helper\VarExport;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $name;
 
@@ -34,7 +34,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public $title;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $tooltip;
 
@@ -43,7 +43,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public bool $noteditable = false;
 
     /**
-     * @var int
+     * @var int|null
      */
     public $index;
 
@@ -184,7 +184,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -332,7 +332,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getIndex()
     {
@@ -340,7 +340,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @param int $index
+     * @param int|null $index
      *
      * @return $this
      */
@@ -395,7 +395,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     /**
      *
-     * @return string
+     * @return string|null
      */
     public function getTooltip()
     {
@@ -662,9 +662,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $code = '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
-        $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
+        $code .= '* @return $this' . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . '(' . $typeDeclaration . '$' . $key . ')' . "\n";
+        $code .= 'public function set' . ucfirst($key) . '(' . $typeDeclaration . '$' . $key . '): static' . "\n";
         $code .= '{' . "\n";
 
         if (
@@ -794,9 +794,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $code = '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
-        $code .= '* @return \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickClass->getKey()) . "\n";
+        $code .= '* @return $this' . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . ')' . "\n";
+        $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . '): static' . "\n";
         $code .= '{' . "\n";
 
         if (
@@ -920,9 +920,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $code = '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
-        $code .= '* @return \\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($fieldcollectionDefinition->getKey()) . "\n";
+        $code .= '* @return $this' . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . '(' . $typeDeclaration . '$' . $key . ')' . "\n";
+        $code .= 'public function set' . ucfirst($key) . '(' . $typeDeclaration . '$' . $key . '): static' . "\n";
         $code .= '{' . "\n";
 
         if (
@@ -1046,9 +1046,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $code = '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
-        $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
+        $code .= '* @return $this' . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . ', $language = null)' . "\n";
+        $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . ', $language = null): static' . "\n";
         $code .= '{' . "\n";
 
         if ($this->supportsDirtyDetection()) {
@@ -1125,10 +1125,10 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
         $code .= '* @param '.$dataParamDoc."\n";
         $code .= '* @param '.$operatorParamDoc."\n";
-        $code .= '* @return static'."\n";
+        $code .= '* @return $this'."\n";
         $code .= '*/' . "\n";
 
-        $code .= 'public function filterBy' . ucfirst($key) .' ($data, $operator = \'=\')' . "\n";
+        $code .= 'public function filterBy' . ucfirst($key) .' ($data, $operator = \'=\'): static' . "\n";
         $code .= '{' . "\n";
         $code .= "\t" . '$this->getClass()->getFieldDefinition("' . $key . '")->addListingFilter($this, $data, $operator);' . "\n";
         $code .= "\treturn " . '$this' . ";\n";

@@ -106,7 +106,7 @@ abstract class AbstractRenderer implements RendererInterface
      *
      * @param int|null $minDepth
      *
-     * @return self  fluent interface
+     * @return $this
      */
     public function setMinDepth($minDepth = null)
     {

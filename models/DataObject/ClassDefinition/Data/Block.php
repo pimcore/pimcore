@@ -874,7 +874,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param int|bool|null $lazyLoading
+     * @param bool $lazyLoading
      *
      * @return $this
      */

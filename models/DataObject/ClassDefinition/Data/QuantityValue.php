@@ -71,7 +71,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $defaultUnit;
 
@@ -244,7 +244,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getDefaultUnit()
     {
@@ -606,7 +606,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if (strlen($data['value']) > 0 || $data['unit']) {
-            if ($data['unit'] == -1 || $data['unit'] == null || empty($data['unit'])) {
+            if (empty($data['unit']) || $data['unit'] == -1) {
                 return new Model\DataObject\Data\QuantityValue($data['value'], null);
             }
 

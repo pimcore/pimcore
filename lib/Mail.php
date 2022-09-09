@@ -861,32 +861,6 @@ class Mail extends Email
     }
 
     /**
-     * @deprecated use text() instead. Will be removed in Pimcore 11
-     *
-     * @param string $bodyText
-     * @param string $charset
-     *
-     * @return $this
-     */
-    public function setBodyText($bodyText, string $charset = 'utf-8')
-    {
-        return $this->text($bodyText, $charset);
-    }
-
-    /**
-     * @deprecated use html() instead. Will be removed in Pimcore 11
-     *
-     * @param string $body
-     * @param string $charset
-     *
-     * @return $this
-     */
-    public function setBodyHtml($body, string $charset = 'utf-8')
-    {
-        return $this->html($body, $charset);
-    }
-
-    /**
      * @internal
      *
      * @return array|null
@@ -904,20 +878,6 @@ class Mail extends Email
     public function setOriginalData($originalData)
     {
         $this->originalData = $originalData;
-    }
-
-    /**
-     * @deprecated use attach() instead. Will be removed in Pimcore 11
-     *
-     * @param string $data
-     * @param string|null $mimeType
-     * @param string|null $filename
-     *
-     * @return $this
-     */
-    public function createAttachment($data, $mimeType = null, $filename = null)
-    {
-        return $this->attach($data, $filename, $mimeType);
     }
 
     /**
@@ -940,18 +900,6 @@ class Mail extends Email
         $this->getHeaders()->addTextHeader('Content-Type', $type);
 
         return $this;
-    }
-
-    /**
-     * Set the subject of this message.
-     *
-     * @param string $subject
-     *
-     * @return $this
-     */
-    public function setSubject($subject)
-    {
-        return $this->subject($subject);
     }
 
     /**

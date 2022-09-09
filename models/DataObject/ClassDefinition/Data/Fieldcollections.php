@@ -87,7 +87,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param  int|bool|null $lazyLoading
+     * @param bool $lazyLoading
      *
      * @return $this
      */
