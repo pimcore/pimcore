@@ -505,14 +505,14 @@ class Service extends Model\AbstractModel
     /**
      * @param  string $type
      * @param  int $id
-     * @param  array|bool $force
+     * @param  array $params
      *
      * @return Asset|AbstractObject|Document|null
      */
-    public static function getElementById($type, $id, $force = false)
+    public static function getElementById($type, $id, array $params = [])
     {
         $element = null;
-        $params = self::prepareGetByIdParams($force, __METHOD__, func_num_args() > 2);
+        $params = self::prepareGetByIdParams($params);
         if ($type === 'asset') {
             $element = Asset::getById($id, $params);
         } elseif ($type === 'object') {
@@ -527,18 +527,12 @@ class Service extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param bool|array $params
+     * @param array $params
      *
      * @return array
      */
-    public static function prepareGetByIdParams(/*array */$params, string $method, bool $paramsGiven): array
+    public static function prepareGetByIdParams(array $params): array
     {
-        if (is_bool($params) && $paramsGiven) {
-            trigger_deprecation('pimcore/pimcore', '10.5', 'Using $force=%s on %s is deprecated, please use array-syntax [force=>true] instead.', $params ? 'true' : 'false', $method);
-            $params = ['force' => $params];
-        } elseif ($params === false) {
-            $params = [];
-        }
 
         $resolver = new OptionsResolver();
         $resolver->setDefaults([

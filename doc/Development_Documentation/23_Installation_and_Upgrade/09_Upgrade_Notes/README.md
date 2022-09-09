@@ -43,7 +43,9 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Email] Removed the deprecated methods setBodyHtml(), setBodyText(), createAttachment() and setSubject(). Use html(),
   text(), attach() and subject() instead.
 - [Glossary] `pimcoreglossary()` tag has been removed, please use the `pimcore_glossary` Twig filter.
-
+- [Elements] Passing $force parameter as boolean is not valid anymore in `getById`, `getByPath`, `getElementById` methods. Instead, please pass it as an associative array ( eg.`['force' => true]`).
+   For details, please see [#12789](https://github.com/pimcore/pimcore/issues/12789)
+   
 ## 10.5.0
 - [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`
 - [Listings] `JsonListing` class is deprecated. Please use `CallableFilterListingInterface`, `FilterListingTrait` and `CallableOrderListingInterface`, `OrderListingTrait` instead.
