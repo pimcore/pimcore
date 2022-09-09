@@ -230,7 +230,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     {
         $path = $this->id;
         if ($this->type === self::TYPE_ASSET && ($video = Asset::getById($this->id))) {
-            $path = $video->getFullPath();
+            $path = $video->getRealFullPath();
         }
 
         $allowedTypes = $this->getAllowedTypes();
