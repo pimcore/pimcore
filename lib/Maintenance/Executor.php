@@ -18,7 +18,6 @@ namespace Pimcore\Maintenance;
 use Pimcore\Messenger\MaintenanceTaskMessage;
 use Pimcore\Model\Tool\TmpStore;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
