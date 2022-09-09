@@ -1118,8 +1118,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     public function setChildrenSortBy($childrenSortBy)
     {
         if ($this->o_childrenSortBy !== $childrenSortBy) {
-            $this->o_children = [];
-            $this->o_hasChildren = [];
+            $this->resetChildCache();
         }
         $this->o_childrenSortBy = $childrenSortBy;
     }
