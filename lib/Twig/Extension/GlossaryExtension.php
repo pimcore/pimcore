@@ -18,9 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Twig\Extension;
 
 use Pimcore\Tool\Glossary\Processor;
-use Pimcore\Twig\TokenParser\GlossaryTokenParser;
 use Twig\Extension\AbstractExtension;
-use Twig\TokenParser\TokenParserInterface;
 use Twig\TwigFilter;
 
 /**
@@ -66,5 +64,4 @@ class GlossaryExtension extends AbstractExtension
 
         return $this->glossaryProcessor->process($string, $options);
     }
-
 }
