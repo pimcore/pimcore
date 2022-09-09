@@ -32,7 +32,7 @@
 - [Exception] Deprecated MissingDependencyException has been removed.
 - [CustomLayouts] Removed command `pimcore:deployment:custom-layouts-rebuild` as CustomLayouts are migrated to LocationAwareConfigRepository.
 - [Data Objects] Alias `ReverseManyToManyObjectRelation` removed, please use `ReverseObjectRelation` instead.
-- [Elements] Calling the methods `Asset::getById()`, `Document::getById()`, `DataObject::getById()`, `Asset::getByPath()`, `Document::getByPath()` and `DataObject::getByPath()` with second boolean parameter `$force` is removed and will throw an exception. And calling the method `Element\Service::getElementById::getElementById()` with third boolean parameter `$force` is also removed. Instead, please pass this parameter as an associative array with `$force` value.
+- [Elements] Passing $force parameter as boolean is not valid anymore in `getById`, `getByPath`, `getElementById` methods. Instead, please pass it as an associative array ( eg.`['force' => true]`).
    For details, please see [#12789](https://github.com/pimcore/pimcore/issues/12789)
   
 ## 10.5.0
