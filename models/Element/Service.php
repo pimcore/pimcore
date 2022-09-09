@@ -533,7 +533,6 @@ class Service extends Model\AbstractModel
      */
     public static function prepareGetByIdParams(array $params): array
     {
-
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
             'force' => false,
