@@ -41,6 +41,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Request] Removed deprecated getMasterRequest() in favor of getMainRequest().
 - [Email] Removed the deprecated methods setBodyHtml(), setBodyText(), createAttachment() and setSubject(). Use html(),
   text(), attach() and subject() instead.
+- [Glossary] `pimcoreglossary()` tag has been removed, please use the `pimcore_glossary` Twig filter.
 
 ## 10.5.0
 - [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`
