@@ -70,15 +70,11 @@ final class Translation extends AbstractModel
 
     /**
      * ID of the owner user
-     *
-     * @var int|null
      */
     protected ?int $userOwner = null;
 
     /**
      * ID of the user who make the latest changes
-     *
-     * @var int|null
      */
     protected ?int $userModification = null;
 

@@ -158,8 +158,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @internal
      *
      * @deprecated
-     *
-     * @var int|null
      */
     protected ?int $o_userOwner = null;
 
@@ -167,8 +165,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @internal
      *
      * @deprecated
-     *
-     * @var int|null
      */
     protected ?int $o_userModification = null;
 
@@ -1206,7 +1202,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public static function setDoNotRestoreKeyAndPath($doNotRestoreKeyAndPath)
     {
-        self::$doNotRestoreKeyAndPath = $doNotRestoreKeyAndPath;
+        self::$doNotRestoreKeyAndPath = (bool) $doNotRestoreKeyAndPath;
     }
 
     /**

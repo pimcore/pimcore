@@ -50,9 +50,6 @@ class Rule extends AbstractModel implements RuleInterface
      */
     protected $description = [];
 
-    /**
-     * @var ConditionInterface|null
-     */
     protected ?ConditionInterface $condition = null;
 
     /**

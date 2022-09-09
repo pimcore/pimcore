@@ -59,9 +59,6 @@ final class Version extends AbstractModel
      */
     protected $userId;
 
-    /**
-     * @var User|null
-     */
     protected ?User $user = null;
 
     /**
@@ -121,9 +118,6 @@ final class Version extends AbstractModel
 
     protected bool $autoSave = false;
 
-    /**
-     * @var string|null
-     */
     protected ?string $storageType = null;
 
     protected VersionStorageAdapterInterface $storageAdapter;

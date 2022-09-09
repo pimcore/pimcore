@@ -87,8 +87,6 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @internal
-     *
-     * @var null|bool
      */
     protected ?bool $staticGeneratorEnabled = null;
 
