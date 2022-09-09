@@ -382,7 +382,8 @@ class DataObjectHelperController extends AdminController
                 $fields,
                 $context,
                 $objectId,
-                $types);
+                $types,
+                $request->get('language'));
         } else {
             $savedColumns = $gridConfig['columns'];
             foreach ($savedColumns as $key => $sc) {
@@ -572,7 +573,7 @@ class DataObjectHelperController extends AdminController
      *
      * @return array
      */
-    public function getDefaultGridFields($noSystemColumns, $class, $gridType, $noBrickColumns, $fields, $context, $objectId, $types = [])
+    public function getDefaultGridFields($noSystemColumns, $class, $gridType, $noBrickColumns, $fields, $context, $objectId, $types = [], ?string $language = null)
     {
         $count = 0;
         $availableFields = [];
@@ -630,7 +631,7 @@ class DataObjectHelperController extends AdminController
                     }
                 } else {
                     if (empty($types) || in_array($field->getFieldType(), $types)) {
-                        $fieldConfig = $this->getFieldGridConfig($field, $gridType, $count, !empty($types), null, $class, $objectId);
+                        $fieldConfig = $this->getFieldGridConfig($field, $gridType, $count, !empty($types), null, $class, $objectId, $language);
                         if (!empty($fieldConfig)) {
                             $availableFields[] = $fieldConfig;
                             $count++;
@@ -1138,7 +1139,7 @@ class DataObjectHelperController extends AdminController
      *
      * @return array|null
      */
-    protected function getFieldGridConfig($field, $gridType, $position, $force = false, $keyPrefix = null, $class = null, $objectId = null)
+    protected function getFieldGridConfig($field, $gridType, $position, $force = false, $keyPrefix = null, $class = null, $objectId = null, ?string $language = null)
     {
         $key = $keyPrefix . $field->getName();
         $config = null;
@@ -1182,6 +1183,14 @@ class DataObjectHelperController extends AdminController
                 $context['object'] = $object;
             }
             DataObject\Service::enrichLayoutDefinition($field, null, $context);
+
+            if ($field->getFieldtype() === "select" || $field->getFieldtype() === "multiselect") {
+                $options = $field->getOptions();
+                foreach($options as &$option) {
+                    $option['key'] = $this->trans($option['key'], locale:$language);
+                }
+                $field->setOptions($options);
+            }
 
             $result = [
                 'key' => $key,

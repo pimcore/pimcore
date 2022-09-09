@@ -768,4 +768,29 @@ class MiscController extends AdminController
     {
         return new Response('done');
     }
+
+    /**
+     * @Route("/translate", name="pimcore_admin_misc_translate")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function translate(Request $request)
+    {
+        $values = explode(',', $request->get('values'));
+        $language = $request->get('language') ?? null;
+        if($language === 'default') {
+            $language = null;
+        }
+        $translatedValues = [];
+        foreach ($values as $value) {
+            $translatedValues[$value] = $this->trans($value, locale:$language);
+        }
+
+        return new JsonResponse([
+            'success' => true,
+            'data' => $translatedValues
+        ]);
+    }
 }

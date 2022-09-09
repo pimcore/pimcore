@@ -83,7 +83,47 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig, function (data, settings, save, context) {
                 this.gridLanguage = data.language;
                 this.gridPageSize = data.pageSize;
-                this.createGrid(true, data.columns, settings, save, context);
+                let includeSelect = false;
+                data.columns.forEach(function (field) {
+                    if(field.type.toLowerCase().includes('select')){
+                        includeSelect = true;
+                    }
+                });
+
+                if(!includeSelect) {
+                    this.createGrid(true, data.columns, settings, save, context);
+                    return;
+                }
+
+                let fields = data.columns;
+
+                Ext.Ajax.request({
+                    url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig'),
+                    params: {
+                        id: this.classId,
+                        objectId:
+                        this.object.id,
+                        gridtype: "grid",
+                        gridConfigId: this.settings ? this.settings.gridConfigId : null,
+                        searchType: this.searchType,
+                        language: data.language
+                    },
+                    success: function (response) {
+                        response = Ext.decode(response.responseText);
+                        if (response) {
+                            response.availableFields.forEach(function (availableField) {
+                                if(availableField.type.toLowerCase().includes('select')){
+                                    for(let i in fields) {
+                                        if(fields[i].key === availableField.key) {
+                                            fields[i] = availableField;
+                                        }
+                                    }
+                                }
+                            });
+                            this.createGrid(true, fields, settings, save, context);
+                        }
+                    }.bind(this)
+                });
             }.bind(this),
             function () {
                 Ext.Ajax.request({

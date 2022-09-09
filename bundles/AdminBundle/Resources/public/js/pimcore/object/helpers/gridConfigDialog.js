@@ -59,40 +59,78 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
             this.data.pageSize = this.itemsPerPage.getValue();
         }
 
-        var operatorFound = false;
+        let operatorFound = false;
 
         if (this.selectionPanel) {
+            let selectValuesToTranslate = [];
             this.data.columns = [];
             this.selectionPanel.getRootNode().eachChild(function (child) {
-                var obj = {};
-
-                if (child.data.isOperator) {
-                    var attributes = child.data.configAttributes;
-                    var operatorChilds = this.doGetRecursiveData(child);
-                    attributes.childs = operatorChilds;
-                    operatorFound = true;
-
-                    obj.isOperator = true;
-                    obj.attributes = attributes;
-
-                } else {
-                    obj.key = child.data.key;
-                    obj.label = child.data.layout ? child.data.layout.title : child.data.text;
-                    obj.type = child.data.dataType;
-                    obj.layout = child.data.layout;
-                    if (child.data.width) {
-                        obj.width = child.data.width;
+                if (!child.data.isOperator) {
+                    if (child.data.dataType.includes('select')) {
+                        child.data.layout.options.forEach(option => {
+                            selectValuesToTranslate.push(option.value);
+                        });
                     }
                 }
+            })
 
-                if (child.data.locked) {
-                    obj.locked = child.data.locked;
-                }
+            Ext.Ajax.request({
+                url: Routing.generate('pimcore_admin_misc_translate'),
+                params: {
+                    values: selectValuesToTranslate.join(','),
+                    language: this.data.language
+                },
+                success: function (response) {
+                    response = Ext.decode(response.responseText);
+                    let translatedPreviewOptionsForSelect = response.data;
+                    this.selectionPanel.getRootNode().eachChild(function (child) {
+                        let obj = {};
 
-                this.data.columns.push(obj);
-            }.bind(this));
+                        if (child.data.isOperator) {
+                            let attributes = child.data.configAttributes;
+                            const operatorChilds = this.doGetRecursiveData(child);
+                            attributes.childs = operatorChilds;
+                            operatorFound = true;
+
+                            obj.isOperator = true;
+                            obj.attributes = attributes;
+
+                        } else {
+                            obj.key = child.data.key;
+                            obj.label = child.data.layout ? child.data.layout.title : child.data.text;
+                            obj.type = child.data.dataType;
+                            if (child.data.dataType.includes('select')) {
+                                child.data.layout.options = child.data.layout.options.map(option => {
+                                    option.key = translatedPreviewOptionsForSelect[option.value];
+                                    return option;
+                                });
+                            }
+                            obj.layout = child.data.layout;
+                            if (child.data.width) {
+                                obj.width = child.data.width;
+                            }
+                        }
+
+                        if (child.data.locked) {
+                            obj.locked = child.data.locked;
+                        }
+
+                        this.data.columns.push(obj);
+                    }.bind(this));
+
+
+                    this.sendCommitData(save,preview, operatorFound);
+
+                }.bind(this)
+            });
+
+            return;
         }
 
+        this.sendCommitData(save,preview, operatorFound);
+    },
+
+    sendCommitData: function(save, preview, operatorFound) {
         var user = pimcore.globalmanager.get("user");
 
         if (this.showSaveAndShareTab) {
