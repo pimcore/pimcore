@@ -39,7 +39,7 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick implements Te
      */
     public function getTemplateLocation()
     {
-        return static::TEMPLATE_LOCATION_BUNDLE;
+        return static::TEMPLATE_LOCATION_GLOBAL;
     }
 
     /**
