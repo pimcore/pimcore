@@ -410,6 +410,9 @@ Ext.onReady(function () {
             url: Routing.generate('pimcore_admin_dataobject_class_gettree'),
             reader: {
                 type: 'json'
+            },
+            extraParams: {
+                useTitle: 1
             }
         }
     });
@@ -432,6 +435,9 @@ Ext.onReady(function () {
             url: Routing.generate('pimcore_admin_dataobject_class_gettree', {createAllowed: true}),
             reader: {
                 type: 'json'
+            },
+            extraParams: {
+                useTitle: 1
             }
         }
     });
