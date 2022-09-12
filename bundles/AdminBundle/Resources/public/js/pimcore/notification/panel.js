@@ -79,6 +79,7 @@ pimcore.notification.panel = Class.create({
                 dataIndex: 'title',
                 renderer: function (val, metaData, record, rowIndex, colIndex, store) {
                     var read = parseInt(store.getAt(rowIndex).get("read"));
+                    val = Ext.util.Format.htmlEncode(val);
                     if (read == 0) {
                         return '<strong style="font-weight: bold;">' + val + '</strong>'; // css style need to be added
                     }
