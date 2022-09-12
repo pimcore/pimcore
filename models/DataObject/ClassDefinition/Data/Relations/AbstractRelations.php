@@ -52,6 +52,15 @@ abstract class AbstractRelations extends Data implements
     public $pathFormatterClass;
 
     /**
+     * Optional sql condition
+     *
+     * @internal
+     *
+     * @var null|string
+     */
+    public $sqlCondition;
+
+    /**
      * @return array[
      *  'classes' => string,
      * ]
@@ -69,6 +78,23 @@ abstract class AbstractRelations extends Data implements
     public function setClasses($classes)
     {
         $this->classes = Element\Service::fixAllowedTypes($classes, 'classes');
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSqlCondition(): ?string {
+        return $this->sqlCondition;
+    }
+
+    /**
+     * @param string|null $sqlCondition
+     * @return AbstractRelations
+     */
+    public function setSqlCondition(?string $sqlCondition): AbstractRelations {
+        $this->sqlCondition = $sqlCondition;
 
         return $this;
     }

@@ -20,6 +20,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
     pathProperty: "fullpath",
     allowBatchAppend: true,
     allowBatchRemove: true,
+    cache: {},
 
     initialize: function (data, fieldConfig) {
         this.data = [];
@@ -489,6 +490,8 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                             }
                         }.bind(this));
 
+                        this.cache = {};
+
                         if(toBeRequested.length) {
                             this.requestNicePathData(toBeRequested);
                             return true;
@@ -496,7 +499,11 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
                         return false;
 
-                    }.bind(this)
+                    }.bind(this),
+
+                    onNodeOut: function () {
+                        this.cache = {};
+                    }
                 });
 
                 if (this.fieldConfig.enableBatchEdit) {
@@ -555,6 +562,10 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
     },
 
     dndAllowed: function (data, fromTree) {
+        if (this.cache.hasOwnProperty(data.id)) {
+            return this.cache[data.id];
+        }
+
         // check if data is a treenode, if not allow drop because of the reordering
         if (!fromTree) {
             if (data["grid"] && data["grid"] == this.component) {
@@ -576,7 +587,25 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
         if (classRecord) {
             if (this.fieldConfig.allowedClassId == classRecord.data.text) {
-                isAllowedClass = true;
+                if (this.fieldConfig.sqlCondition) {
+                    Ext.Ajax.request({
+                        url: Routing.generate('pimcore_admin_dataobject_dataobject_isallowrelation'),
+                        params: {
+                            id: data.id,
+                            currentObjectId: this.context.objectId,
+                            changedData: this.object.getSaveData().data,
+                            sqlCondition: this.fieldConfig.sqlCondition
+                        },
+                        async: false,
+                        success: function (response) {
+                            var rdata = Ext.decode(response.responseText);
+                            if (rdata.success) {
+                                isAllowedClass = rdata.allow;
+                                this.cache[data.id] = isAllowedClass;
+                            }
+                        }.bind(this)
+                    });
+                }
             }
         }
         return isAllowedClass;

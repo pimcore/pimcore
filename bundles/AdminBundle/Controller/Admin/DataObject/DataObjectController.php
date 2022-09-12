@@ -361,6 +361,72 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     }
 
     /**
+     * @Route("/is-allow-relation", name="isallowrelation", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function isAllowRelationAction(Request $request)
+    {
+        $object = DataObject::getById((int) $request->get('id'));
+        $result = ['success' => true, 'allow' => false];
+        if ($object) {
+            $sqlCondition = $request->get('sqlCondition', null);
+            if ($sqlCondition) {
+                $currentObject = DataObject::getById($request->get('currentObjectId'));
+                if ($request->get('changedData')) {
+                    $data = $this->decodeJson($request->get('changedData'));
+                    foreach ($data as $key => $value) {
+                        $fd = $currentObject->getClass()->getFieldDefinition($key);
+                        if ($fd) {
+                            if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                                $user = Tool\Admin::getCurrentUser();
+                                if (!$user->getAdmin()) {
+                                    $allowedLanguages = DataObject\Service::getLanguagePermissions($currentObject, $user, 'lEdit');
+                                    if (!is_null($allowedLanguages)) {
+                                        $allowedLanguages = array_keys($allowedLanguages);
+                                        $submittedLanguages = array_keys($data[$key]);
+                                        foreach ($submittedLanguages as $submittedLanguage) {
+                                            if (!in_array($submittedLanguage, $allowedLanguages)) {
+                                                unset($value[$submittedLanguage]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if ($fd instanceof ReverseObjectRelation) {
+                                $remoteClass = DataObject\ClassDefinition::getByName($fd->getOwnerClassName());
+                                $relations = $currentObject->getRelationData($fd->getOwnerFieldName(), false, $remoteClass->getId());
+                                $toAdd = $this->detectAddedRemoteOwnerRelations($relations, $value);
+                                $toDelete = $this->detectDeletedRemoteOwnerRelations($relations, $value);
+                                if (count($toAdd) > 0 || count($toDelete) > 0) {
+                                    $this->processRemoteOwnerRelations($currentObject, $toDelete, $toAdd, $fd->getOwnerFieldName());
+                                }
+                            } else {
+                                $currentObject->setValue($key, $fd->getDataFromEditmode($value, $currentObject));
+                            }
+                        }
+                    }
+                }
+
+
+                $sqlCondition = \Pimcore::getContainer()->get('twig')->createTemplate($sqlCondition)->render(['object' => $currentObject]);
+
+                $listing = $object->getList();
+                $listing->addConditionParam('o_id = ?', [$object->getId()]);
+                $listing->addConditionParam($sqlCondition);
+                if ( count($listing) ) {
+                    $result['allow'] = true;
+                }
+            }
+        }
+
+        return $this->adminJson($result);
+    }
+
+    /**
      * @Route("/get", name="get", methods={"GET"})
      *
      * @param Request $request

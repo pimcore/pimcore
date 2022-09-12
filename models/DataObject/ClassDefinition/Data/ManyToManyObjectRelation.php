@@ -378,7 +378,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                     continue;
                 }
 
-                $allowClass = $this->allowObjectRelation($o);
+                $allowClass = $this->allowObjectRelation($o, $params);
                 if (!$allowClass || !($o instanceof DataObject\Concrete)) {
                     if (!$allowClass && $o instanceof DataObject\Concrete) {
                         $id = $o->getId();

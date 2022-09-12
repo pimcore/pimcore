@@ -150,6 +150,16 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
             }
         }));
 
+        this.specificPanel.add(
+            {
+                xtype: "textfield",
+                name: "sqlCondition",
+                width: 600,
+                value: this.datax.sqlCondition,
+                fieldLabel: t("Condition")
+            }
+        );
+
         this.fieldStore = new Ext.data.Store({
             proxy: {
                 type: 'ajax',

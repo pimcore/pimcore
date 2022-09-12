@@ -26,13 +26,16 @@ trait AllowObjectRelationTrait
     /**
      * Checks if an object is an allowed relation
      *
+     * @param DataObject\AbstractObject $object
+     * @param array $params
+     * @return bool
+     * @throws \Exception
      * @internal
      *
-     * @param DataObject\AbstractObject $object
+     * @internal
      *
-     * @return bool
      */
-    protected function allowObjectRelation($object)
+    protected function allowObjectRelation($object, $params = [])
     {
         if (!$object instanceof DataObject\AbstractObject || $object->getId() <= 0) {
             return false;
@@ -65,6 +68,20 @@ trait AllowObjectRelationTrait
         }
 
         Logger::debug('checked object relation to target object [' . $object->getId() . '] in field [' . $this->getName() . '], allowed:' . $allowed);
+
+        $sqlCondition = $this->getSqlCondition();
+        if ($allowed && $sqlCondition) {
+            $sqlCondition = \Pimcore::getContainer()->get('twig')
+                ->createTemplate($sqlCondition)
+                ->render(['object' => $params['object']]);
+
+            $listing = $object->getList();
+            $listing->addConditionParam('o_id = ?', [$object->getId()]);
+            $listing->addConditionParam($sqlCondition);
+            if ( !count($listing) ) {
+                return false;
+            }
+        }
 
         return $allowed;
     }
