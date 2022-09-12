@@ -24,11 +24,14 @@
   ```php
   $web2printConfig = Config::getWeb2PrintConfig();
   $web2printConfig = $web2printConfig['headlessChromeSettings'];
-  - ```
+  ```
+- [Video Editable] Removed [deprecated and legacy `<iframe>` attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe): `frameborder`, `webkitAllowFullScreen`, `mozallowfullscreen`, and `allowfullscreen` for YouTube, Vimeo, and DailyMotion embeds.
 - [Web2Print] Deprecated WkHtmlToPdf Processor has been removed.
 - [Documents] Deprecated WkHtmlToImage has been removed.
 - [Elements] Removed fallback to parent id 1, when an element with a non-existing parent id gets created.
 - [DataObjects] Added return types to setter methods. For details see [#12185](https://github.com/pimcore/pimcore/issues/12185)
+- [Maintenance] Removed `--async` & `--force` option from `pimcore:maintenance` command. Please make sure to setup to `messenger:consume pimcore_maintenance` independent
+    worker that process the maintenance queues.
 - [Exception] Deprecated MissingDependencyException has been removed.
 - [CustomLayouts] Removed command `pimcore:deployment:custom-layouts-rebuild` as CustomLayouts are migrated to LocationAwareConfigRepository.
 - [Data Objects] Alias `ReverseManyToManyObjectRelation` removed, please use `ReverseObjectRelation` instead.
@@ -39,6 +42,13 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Request] Removed deprecated getMasterRequest() in favor of getMainRequest().
 - [Email] Removed the deprecated methods setBodyHtml(), setBodyText(), createAttachment() and setSubject(). Use html(),
   text(), attach() and subject() instead.
+- [Glossary] `pimcoreglossary()` tag has been removed, please use the `pimcore_glossary` Twig filter.
+- [Elements] Passing $force parameter as boolean is not valid anymore in `getById`, `getByPath`, `getElementById` methods. Instead, please pass it as an associative array ( eg.`['force' => true]`).
+   For details, please see [#12789](https://github.com/pimcore/pimcore/issues/12789)
+- [DataObjects] Changed default behaviour: getByXXX methods on `Concrete` class now returns objects and variants if nothing else is specified.
+  Changed default value for parameter `$limit` from `0` to `null`.     
+- [Workflows] Removed classes Pimcore\Model\Workflow, Pimcore\Model\Workflow\Dao, Pimcore\Model\Workflow\Listing\Dao and Pimcore\Model\Workflow\Listing.
+    Please check the documentation on how to work with workflows: [Workflow Management](../../07_Workflow_Management/README.md).
 
 ## 10.5.0
 - [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`
