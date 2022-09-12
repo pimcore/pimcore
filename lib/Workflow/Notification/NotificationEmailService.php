@@ -80,7 +80,6 @@ class NotificationEmailService extends AbstractNotificationService
             $deeplink = '';
             $hostUrl = Tool::getHostUrl();
             if ($hostUrl !== '') {
-
                 // Decide what kind of link to create
                 $objectType = $type = 'object';
                 if ($subject instanceof \Pimcore\Model\Document) {
@@ -174,7 +173,7 @@ class NotificationEmailService extends AbstractNotificationService
             $mail->addTo($user->getEmail(), $user->getName());
         }
 
-        $mail->setSubject(
+        $mail->subject(
             $this->translator->trans('workflow_change_email_notification_subject', [$subjectType . ' ' . $subject->getFullPath(), $workflow->getName()], 'admin', $language)
         );
 

@@ -351,7 +351,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
     /**
      * @param array $tokens
      *
-     * @return static
+     * @return $this
      */
     public function setTokens($tokens)
     {

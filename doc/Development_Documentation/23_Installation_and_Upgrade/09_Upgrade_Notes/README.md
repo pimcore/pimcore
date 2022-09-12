@@ -1,8 +1,54 @@
 # Upgrade Notes
 ## 11.0.0
 - [Image Optimizer] Removed all the Image Optimizer services (e.g. PngCrushOptimizer, JpegoptimOptimizer etc.) as image optimization is done by the new package spatie/image-optimizer. 
+- [Runtime Cache] Removed the `Pimcore\Cache\Runtime` cache helper and `Pimcore\Cache\RuntimeCacheTrait`. The runtime cache is now handled by `Pimcore\Cache\RuntimeCache`.  
 - Removed deprecated JS functions (`ts()` and `pimcore.helpers.addCsrfTokenToUrl()`)
+- Removed Plugin Broker BC layer for JS events
 - [DocType] staticGeneratorEnabled is now a boolean instead of an integer
+- [Ecommerce] Pricing Manager 
+  - Removed $session property
+  - Removed Token condition
+  - Removed methods `getSession()` & `setSession()` from `PricingManager\EnvironmentInterface`
+- [Data Objects] Remove "generate type declarations" in class definitions
+- [Data Objects] Removed method_exists bc layer, please use the corresponding interfaces instead. For details please see [#9571](https://github.com/pimcore/pimcore/issues/9571)
+- [Data Objects] `isEqual()` for advanced relational field types does not check for type equality of meta fields anymore, see [#12595](https://github.com/pimcore/pimcore/pull/12595)
+- [Listings] Removed `JsonListing`, please see [#12877](https://github.com/pimcore/pimcore/pull/12877) for details.
+- [Traits] The traits PackageVersionTrait and StateHelperTrait in lib/Extension/Bundle/Traits have been marked as
+   internal, please see [#12757](https://github.com/pimcore/pimcore/pull/12757) for details.
+- Removed `SessionConfiguratorInterface` & `SessionConfigurator` so services with tag `pimcore.session.configurator` will not register session bags anymore.
+- Removed parameter `pimcore.admin.session.attribute_bags`
+- TargetingSessionBagListener - changed the signature of `__construct`.
+- Removed deprecated `Pimcore\Db\ConnectionInterface` interface, `Pimcore\Db\Connection` class and `Pimcore\Db\PimcoreExtensionsTrait` trait.
+  Column identifiers for the `insert()` and `update()` method data must be self quoted now. You can use the `Pimcore\Db\Helper::quoteDataIdentifiers()` method for that.
+- [Config] `Pimcore\Config\Config` has been removed, see [#12477](https://github.com/pimcore/pimcore/issues/12477). Please use the returned array instead, e.g.
+  ```php
+  $web2printConfig = Config::getWeb2PrintConfig();
+  $web2printConfig = $web2printConfig['headlessChromeSettings'];
+  ```
+- [Video Editable] Removed [deprecated and legacy `<iframe>` attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe): `frameborder`, `webkitAllowFullScreen`, `mozallowfullscreen`, and `allowfullscreen` for YouTube, Vimeo, and DailyMotion embeds.
+- [Web2Print] Deprecated WkHtmlToPdf Processor has been removed.
+- [Documents] Deprecated WkHtmlToImage has been removed.
+- [Elements] Removed fallback to parent id 1, when an element with a non-existing parent id gets created.
+- [DataObjects] Added return types to setter methods. For details see [#12185](https://github.com/pimcore/pimcore/issues/12185)
+- [Maintenance] Removed `--async` & `--force` option from `pimcore:maintenance` command. Please make sure to setup to `messenger:consume pimcore_maintenance` independent
+    worker that process the maintenance queues.
+- [Exception] Deprecated MissingDependencyException has been removed.
+- [CustomLayouts] Removed command `pimcore:deployment:custom-layouts-rebuild` as CustomLayouts are migrated to LocationAwareConfigRepository.
+- [Data Objects] Alias `ReverseManyToManyObjectRelation` removed, please use `ReverseObjectRelation` instead.
+- [Documents] Added a second boolean parameter `$validate` to the setContentMasterDocumentId() method. This will restrict the option to set pages as content master documents to each other. For details, please see [#12891](https://github.com/pimcore/pimcore/issues/12891)
+- [Config] Removed legacy callback from LocationAwareConfigRepository. Therefore, configurations in the old php file format are not supported anymore.
+Any existing configurations will be migrated to either the yaml file format or the settings store, depending on your configuration.
+Please make sure to set your preferred storage location ***before*** migration. For details on configuration please check the [documentation](../../21_Deployment/03_Configuration_Environments.md). 
+- [Request] Removed deprecated getMasterRequest() in favor of getMainRequest().
+- [Email] Removed the deprecated methods setBodyHtml(), setBodyText(), createAttachment() and setSubject(). Use html(),
+  text(), attach() and subject() instead.
+- [Glossary] `pimcoreglossary()` tag has been removed, please use the `pimcore_glossary` Twig filter.
+- [Elements] Passing $force parameter as boolean is not valid anymore in `getById`, `getByPath`, `getElementById` methods. Instead, please pass it as an associative array ( eg.`['force' => true]`).
+   For details, please see [#12789](https://github.com/pimcore/pimcore/issues/12789)
+- [DataObjects] Changed default behaviour: getByXXX methods on `Concrete` class now returns objects and variants if nothing else is specified.
+  Changed default value for parameter `$limit` from `0` to `null`.     
+- [Workflows] Removed classes Pimcore\Model\Workflow, Pimcore\Model\Workflow\Dao, Pimcore\Model\Workflow\Listing\Dao and Pimcore\Model\Workflow\Listing.
+    Please check the documentation on how to work with workflows: [Workflow Management](../../07_Workflow_Management/README.md).
 
 ## 10.5.0
 - [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`
@@ -97,6 +143,10 @@ Please use [event listener](../../20_Extending_Pimcore/13_Bundle_Developers_Guid
       ...
   }
   ```
+- [Elements] Deprecated setting the parent id to 1 (root node), when an element with a non-existing parent id gets created.
+- [Custom Layouts] Deprecated Class `ClassLayoutDefinitionManager` and constant `PIMCORE_CUSTOMLAYOUT_DIRECTORY`.
+- [Workflows] Deprecated classes Pimcore\Model\Workflow, Pimcore\Model\Workflow\Dao, Pimcore\Model\Workflow\Listing\Dao and Pimcore\Model\Workflow\Listing. 
+Please check the documentation on how to work with workflows: [Workflow Management](../../07_Workflow_Management/README.md).
 
 ## 10.4.2
 - When maintenance mode is active, all commands are prevented from starting (not just commands inheriting from `AbstractCommand`).

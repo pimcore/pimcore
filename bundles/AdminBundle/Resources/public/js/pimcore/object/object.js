@@ -754,27 +754,20 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         var saveData = this.getSaveData(only, omitMandatoryCheck);
 
         if (saveData && saveData.data != false && saveData.data != "false") {
-            try {
-                const preSaveObject = new CustomEvent(pimcore.events.preSaveObject, {
-                    detail: {
-                        object: this,
-                        type: "object"
-                    }
-                });
 
-                document.dispatchEvent(preSaveObject);
-            } catch (e) {
-                if (e instanceof pimcore.error.ValidationException) {
-                    this.tab.unmask();
-                    pimcore.helpers.showPrettyError('object', t("error"), t("saving_failed"), e.message);
-                    return false;
-                }
+            const preSaveObject = new CustomEvent(pimcore.events.preSaveObject, {
+                detail: {
+                    object: this,
+                    type: "object",
+                    task: task
+                },
+                cancelable: true
+            });
 
-                if (e instanceof pimcore.error.ActionCancelledException) {
-                    this.tab.unmask();
-                    pimcore.helpers.showNotification(t("Info"), t("saving_failed") + ' ' + e.message, 'info');
-                    return false;
-                }
+            const isAllowed = document.dispatchEvent(preSaveObject);
+            if (!isAllowed) {
+                this.tab.unmask();
+                return false;
             }
 
             Ext.Ajax.request({
@@ -848,7 +841,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                         callback();
                     }
 
-                    if (this.willClose){
+                    if (this.willClose) {
                         this.close();
                     }
 

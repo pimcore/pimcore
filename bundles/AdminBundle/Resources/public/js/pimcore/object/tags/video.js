@@ -24,6 +24,8 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
             this.data = {};
         }
 
+        this.data.allowedTypes = fieldConfig.allowedTypes;
+
         this.fieldConfig = fieldConfig;
     },
 
@@ -209,9 +211,11 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
     },
 
     empty: function () {
+        let allowedTypes = this.fieldConfig.allowedTypes;
         this.data = {
-            type: "asset",
-            data: ""
+            type: "",
+            data: "",
+            allowedTypes: allowedTypes,
         };
 
         this.component.setHtml("");

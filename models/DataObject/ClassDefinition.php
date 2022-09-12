@@ -184,21 +184,21 @@ final class ClassDefinition extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $icon;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $previewUrl;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $group;
 
@@ -229,13 +229,6 @@ final class ClassDefinition extends Model\AbstractModel
      * @var array
      */
     public $compositeIndices = [];
-
-    /**
-     * @internal
-     *
-     * @var bool
-     */
-    public $generateTypeDeclarations = true;
 
     /**
      * @internal
@@ -304,6 +297,10 @@ final class ClassDefinition extends Model\AbstractModel
             try {
                 $class = new self();
                 $name = $class->getDao()->getNameById($id);
+                if (!$name) {
+                    throw new \Exception('Class definition with name ' . $name . ' or ID ' . $id . ' does not exist');
+                }
+
                 $definitionFile = $class->getDefinitionFile($name);
                 $class = @include $definitionFile;
 
@@ -836,13 +833,7 @@ final class ClassDefinition extends Model\AbstractModel
      */
     protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
-        //TODO Pimcore 11: remove method_exists BC layer
-        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface || method_exists($fieldDefinition, 'enrichFieldDefinition')) {
-            if (!$fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
-                trigger_deprecation('pimcore/pimcore', '10.1',
-                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                    'Implement the %s interface instead.', FieldDefinitionEnrichmentInterface::class));
-            }
+        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
             $context['class'] = $this;
             $fieldDefinition = $fieldDefinition->enrichFieldDefinition($context);
         }
@@ -1165,7 +1156,7 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getIcon()
     {
@@ -1173,7 +1164,7 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param string $icon
+     * @param string|null $icon
      *
      * @return $this
      */
@@ -1207,7 +1198,7 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param string $previewUrl
+     * @param string|null $previewUrl
      *
      * @return $this
      */
@@ -1219,7 +1210,7 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getPreviewUrl()
     {
@@ -1227,7 +1218,7 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getGroup()
     {
@@ -1235,7 +1226,7 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param string $group
+     * @param string|null $group
      *
      * @return $this
      */
@@ -1450,26 +1441,6 @@ final class ClassDefinition extends Model\AbstractModel
     public function setCompositeIndices($compositeIndices)
     {
         $this->compositeIndices = $compositeIndices ?? [];
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getGenerateTypeDeclarations()
-    {
-        return (bool) $this->generateTypeDeclarations;
-    }
-
-    /**
-     * @param bool $generateTypeDeclarations
-     *
-     * @return $this
-     */
-    public function setGenerateTypeDeclarations($generateTypeDeclarations)
-    {
-        $this->generateTypeDeclarations = (bool) $generateTypeDeclarations;
 
         return $this;
     }

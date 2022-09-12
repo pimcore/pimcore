@@ -336,7 +336,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     }
 
     /**
-     * @param Asset|Document|Object|null $o
+     * @param Asset|Document|DataObject|null $o
      *
      * @return Document\Editable\Renderlet
      */
@@ -348,7 +348,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     }
 
     /**
-     * @return Asset|Document|Object|null
+     * @return Asset|Document|DataObject|null
      */
     public function getO()
     {

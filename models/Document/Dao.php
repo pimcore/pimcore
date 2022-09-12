@@ -80,13 +80,13 @@ class Dao extends Model\Element\Dao
 
     public function create()
     {
-        $this->db->insert('documents', [
+        $this->db->insert('documents', Helper::quoteDataIdentifiers($this->db, [
             'key' => $this->model->getKey(),
             'type' => $this->model->getType(),
             'path' => $this->model->getRealPath(),
             'parentId' => $this->model->getParentId(),
             'index' => 0,
-        ]);
+        ]));
 
         $this->model->setId((int) $this->db->lastInsertId());
 
@@ -115,7 +115,6 @@ class Dao extends Model\Element\Dao
         $dataTypeSpecific = [];
 
         foreach ($document as $key => $value) {
-
             // check if the getter exists
             $getter = 'get' . ucfirst($key);
             if (!method_exists($this->model, $getter)) {
@@ -432,7 +431,6 @@ class Dao extends Model\Element\Dao
      */
     public function isLocked()
     {
-
         // check for an locked element below this element
         $belowLocks = $this->db->fetchOne("SELECT tree_locks.id FROM tree_locks
             INNER JOIN documents ON tree_locks.id = documents.id

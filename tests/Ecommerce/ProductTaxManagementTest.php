@@ -57,7 +57,7 @@ class ProductTaxManagementTest extends EcommerceTestCase
 
         $pricingManagers = Stub::make(PricingManagerLocator::class, [
             'getPricingManager' => function () {
-                return new PricingManager([], [], $this->buildSession());
+                return new PricingManager([], []);
             },
         ]);
 

@@ -22,10 +22,27 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
-class Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
+class Video extends Data implements
+    ResourcePersistenceAwareInterface,
+    QueryResourcePersistenceAwareInterface,
+    TypeDeclarationSupportInterface,
+    EqualComparisonInterface,
+    VarExporterInterface,
+    NormalizerInterface,
+    IdRewriterInterface,
+    FieldDefinitionEnrichmentInterface,
+    LayoutDefinitionEnrichmentInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
+
+    public const TYPE_ASSET = 'asset';
+
+    public const TYPE_YOUTUBE = 'youtube';
+
+    public const TYPE_VIMEO = 'vimeo';
+
+    public const TYPE_DAILYMOTION = 'dailymotion';
 
     /**
      * Static type of this element
@@ -71,6 +88,25 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public $columnType = 'text';
 
     /**
+     * @internal
+     *
+     * @var array|null
+     */
+    public $allowedTypes;
+
+    /**
+     * @internal
+     *
+     * @var array
+     */
+    public $supportedTypes = [
+        self::TYPE_ASSET,
+        self::TYPE_YOUTUBE,
+        self::TYPE_VIMEO,
+        self::TYPE_DAILYMOTION,
+    ];
+
+    /**
      * @return string|int
      */
     public function getWidth()
@@ -114,6 +150,34 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $this->height = $height;
 
         return $this;
+    }
+
+    /**
+     * @param array|null $allowedTypes
+     *
+     * @return $this
+     */
+    public function setAllowedTypes($allowedTypes): static
+    {
+        $this->allowedTypes = $allowedTypes;
+
+        return $this;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getAllowedTypes(): ?array
+    {
+        return $this->allowedTypes;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSupportedTypes(): array
+    {
+        return $this->supportedTypes;
     }
 
     /**
@@ -375,6 +439,26 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
 
         return $tags;
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function enrichFieldDefinition(/** array */ $context = []) /** : static */
+    {
+        if (empty($this->getAllowedTypes()) && (isset($context['object']) || isset($context['containerType']))) {
+            $this->setAllowedTypes($this->getSupportedTypes());
+        }
+
+        return $this;
+    }
+
+    /**
+     * { @inheritdoc }
+     */
+    public function enrichLayoutDefinition($object, $context = [])
+    {
+        return $this->enrichFieldDefinition($context);
     }
 
     /**

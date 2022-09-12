@@ -172,11 +172,11 @@ class Document extends Element\AbstractElement
 
     /**
      * @param string $path
-     * @param array|bool $force
+     * @param array $params
      *
      * @return static|null
      */
-    public static function getByPath($path, $force = false)
+    public static function getByPath($path, array $params = [])
     {
         if (!$path) {
             return null;
@@ -185,7 +185,7 @@ class Document extends Element\AbstractElement
         $path = Element\Service::correctPath($path);
 
         $cacheKey = self::getPathCacheKey($path);
-        $params = Element\Service::prepareGetByIdParams($force, __METHOD__, func_num_args() > 1);
+        $params = Element\Service::prepareGetByIdParams($params);
 
         if (!$params['force'] && RuntimeCache::isRegistered($cacheKey)) {
             $document = RuntimeCache::get($cacheKey);
@@ -227,11 +227,11 @@ class Document extends Element\AbstractElement
 
     /**
      * @param int $id
-     * @param array|bool $force
+     * @param array $params
      *
      * @return static|null
      */
-    public static function getById($id, $force = false)
+    public static function getById($id, array $params = [])
     {
         if (!is_numeric($id) || $id < 1) {
             return null;
@@ -239,7 +239,7 @@ class Document extends Element\AbstractElement
 
         $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
-        $params = Element\Service::prepareGetByIdParams($force, __METHOD__, func_num_args() > 1);
+        $params = Element\Service::prepareGetByIdParams($params);
 
         if (!$params['force'] && RuntimeCache::isRegistered($cacheKey)) {
             $document = RuntimeCache::get($cacheKey);
@@ -485,26 +485,27 @@ class Document extends Element\AbstractElement
     {
         // set path
         if ($this->getId() != 1) { // not for the root node
-
             // check for a valid key, home has no key, so omit the check
             if (!Element\Service::isValidKey($this->getKey(), 'document')) {
                 throw new \Exception('invalid key for document with id [ ' . $this->getId() . ' ] key is: [' . $this->getKey() . ']');
             }
 
+            if (!$this->getParentId()) {
+                throw new \Exception('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
+            }
+
             if ($this->getParentId() == $this->getId()) {
-                throw new \Exception("ParentID and ID is identical, an element can't be the parent of itself.");
+                throw new \Exception("ParentID and ID are identical, an element can't be the parent of itself in the tree.");
             }
 
             $parent = Document::getById($this->getParentId());
-            if ($parent) {
-                // use the parent's path from the database here (getCurrentFullPath), to ensure the path really exists and does not rely on the path
-                // that is currently in the parent object (in memory), because this might have changed but wasn't not saved
-                $this->setPath(str_replace('//', '/', $parent->getCurrentFullPath() . '/'));
-            } else {
-                // parent document doesn't exist anymore, set the parent to to root
-                $this->setParentId(1);
-                $this->setPath('/');
+            if (!$parent) {
+                throw new \Exception('ParentID not found.');
             }
+
+            // use the parent's path from the database here (getCurrentFullPath), to ensure the path really exists and does not rely on the path
+            // that is currently in the parent object (in memory), because this might have changed but wasn't not saved
+            $this->setPath(str_replace('//', '/', $parent->getCurrentFullPath() . '/'));
 
             if (strlen($this->getKey()) < 1) {
                 throw new \Exception('Document requires key, generated key automatically');
@@ -831,7 +832,7 @@ class Document extends Element\AbstractElement
         }
 
         $requestStack = \Pimcore::getContainer()->get('request_stack');
-        $masterRequest = $requestStack->getMainRequest();
+        $mainRequest = $requestStack->getMainRequest();
 
         // @TODO please forgive me, this is the dirtiest hack I've ever made :(
         // if you got confused by this functionality drop me a line and I'll buy you some beers :)
@@ -843,7 +844,7 @@ class Document extends Element\AbstractElement
         // inside the hardlink scope, but this is an ID link, so we cannot rewrite the link the usual way because in the
         // snippet / link we don't know anymore that whe a inside a hardlink wrapped document
         if (!$link && \Pimcore\Tool::isFrontend() && Site::isSiteRequest() && !FrontendTool::isDocumentInCurrentSite($this)) {
-            if ($masterRequest && ($masterDocument = $masterRequest->get(DynamicRouter::CONTENT_KEY))) {
+            if ($mainRequest && ($masterDocument = $mainRequest->get(DynamicRouter::CONTENT_KEY))) {
                 if ($masterDocument instanceof WrapperInterface) {
                     $hardlinkPath = '';
                     $hardlink = $masterDocument->getHardLinkSource();
@@ -893,7 +894,7 @@ class Document extends Element\AbstractElement
             $link = $this->getPath() . $this->getKey();
         }
 
-        if ($masterRequest) {
+        if ($mainRequest) {
             // caching should only be done when master request is available as it is done for performance reasons
             // of the web frontend, without a request object there's no need to cache anything
             // for details also see https://github.com/pimcore/pimcore/issues/5707

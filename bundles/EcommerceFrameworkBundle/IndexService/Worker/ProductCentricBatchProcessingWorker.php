@@ -108,7 +108,6 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
                 $this->db->update($this->getStoreTableName(), $data, ['o_id' => (string)$subObjectId, 'tenant' => $this->name]);
             });
         } elseif ($currentEntry['in_preparation_queue']) {
-
             //since no data has changed, just update flags, not data
             $this->executeTransactionalQuery(function () use ($subObjectId) {
                 $this->db->executeQuery('UPDATE ' . $this->getStoreTableName() . ' SET in_preparation_queue = 0 WHERE o_id = ? AND tenant = ?', [$subObjectId, $this->name]);

@@ -27,7 +27,6 @@ use Pimcore\Web2Print\Exception\CancelException;
 use Pimcore\Web2Print\Exception\NotPreparedException;
 use Pimcore\Web2Print\Processor\HeadlessChrome;
 use Pimcore\Web2Print\Processor\PdfReactor;
-use Pimcore\Web2Print\Processor\WkHtmlToPdf;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 
@@ -47,14 +46,12 @@ abstract class Processor
     {
         $config = Config::getWeb2PrintConfig();
 
-        if ($config->get('generalTool') === 'pdfreactor') {
+        if ($config['generalTool'] === 'pdfreactor') {
             return new PdfReactor();
-        } elseif ($config->get('generalTool') === 'wkhtmltopdf') {
-            return new WkHtmlToPdf();
-        } elseif ($config->get('generalTool') === 'headlesschrome') {
+        } elseif ($config['generalTool'] === 'headlesschrome') {
             return new HeadlessChrome();
         } else {
-            throw new \Exception('Invalid Configuration - ' . $config->get('generalTool'));
+            throw new \Exception('Invalid Configuration - ' . $config['generalTool']);
         }
     }
 

@@ -28,21 +28,21 @@ final class StoreConfig extends Model\AbstractModel
     use RecursionBlockingEventDispatchHelperTrait;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $id;
 
     /**
      * The store name.
      *
-     * @var string
+     * @var string|null
      */
     protected $name;
 
     /**
      * The store description.
      *
-     * @var string
+     * @var string|null
      */
     protected $description;
 
@@ -104,7 +104,7 @@ final class StoreConfig extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -114,7 +114,7 @@ final class StoreConfig extends Model\AbstractModel
     /**
      * Returns the description.
      *
-     * @return string
+     * @return string|null
      */
     public function getDescription()
     {
@@ -171,7 +171,7 @@ final class StoreConfig extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getId()
     {

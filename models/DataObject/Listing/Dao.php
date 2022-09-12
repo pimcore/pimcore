@@ -64,7 +64,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-
         // load id's
         $list = $this->loadIdList();
 
@@ -86,7 +85,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount()
     {
         $queryBuilder = $this->getQueryBuilder();
-        $this->prepareQueryBuilderForTotalCount($queryBuilder);
+        $this->prepareQueryBuilderForTotalCount($queryBuilder, $this->getTableName() . '.o_id');
 
         $totalCount = $this->db->fetchOne((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 

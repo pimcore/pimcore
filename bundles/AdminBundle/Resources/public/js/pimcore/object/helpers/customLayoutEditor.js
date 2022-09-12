@@ -285,7 +285,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                     iconCls: "pimcore_icon_add",
                     handler: this.suggestIdentifier.bind(this),
                     hidden: typeof this.klass.id === 'undefined',
-                    disabled: !pimcore.settings['class-definition-writeable']
+                    disabled: !pimcore.settings['object-custom-layout-writeable']
                 },
                 {
                     xtype: "button",
@@ -844,7 +844,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         var identifierField = new Ext.form.field.Text({
             fieldLabel: t('unique_identifier'),
             labelWidth: 200,
-            maxLength: 20,
             value: suggestedIdentifier
         });
 
@@ -860,10 +859,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             buttonAlign: 'center',
             items: [
                 nameField,
-                identifierField, {
-                    xtype: 'panel',
-                    html: t('identifier_warning')
-                }
+                identifierField
             ],
             buttons: [
                 {
@@ -893,7 +889,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
     addLayoutComplete: function (layoutName, layoutIdentifier, layouts) {
 
-        var layoutNameRegresult = layoutName.match(/[a-zA-Z ][a-zA-Z0-9 ]+/);
+        var layoutNameRegresult = layoutName.match(/[a-zA-Z\-][a-zA-Z0-9\-]+/);
 
         if (layoutName.length <= 2 || layoutNameRegresult != layoutName) {
             Ext.Msg.alert(' ', t('invalid_name'));
@@ -905,7 +901,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             return false;
         }
 
-        var layoutIdentifierRegresult = layoutIdentifier.match(/[a-zA-Z0-9]+/);
+        var layoutIdentifierRegresult = layoutIdentifier.match(/[a-zA-Z0-9\-]+/);
 
         if (layoutIdentifier.length < 1 || layoutIdentifierRegresult != layoutIdentifier) {
             Ext.Msg.alert(' ', t('invalid_identifier'));
