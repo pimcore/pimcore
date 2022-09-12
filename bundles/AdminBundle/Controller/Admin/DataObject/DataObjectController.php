@@ -750,6 +750,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 else {
                     $objectData['general']['o_userOwnerUsername'] = $userOwner->getName();
                     $objectData['general']['o_userOwnerFullname'] = $userOwner->getFullName();
+                }
 
                 $userModification = ($objectData['general']['o_userOwner'] == $objectData['general']['o_userModification']) ? $userOwner : User::getById($objectData['general']['o_userModification']);
                 if (empty($userModification)) {
