@@ -46,8 +46,10 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Elements] Passing $force parameter as boolean is not valid anymore in `getById`, `getByPath`, `getElementById` methods. Instead, please pass it as an associative array ( eg.`['force' => true]`).
    For details, please see [#12789](https://github.com/pimcore/pimcore/issues/12789)
 - [DataObjects] Changed default behaviour: getByXXX methods on `Concrete` class now returns objects and variants if nothing else is specified.
-  Changed default value for parameter `$limit` from `0` to `null`.
-   
+  Changed default value for parameter `$limit` from `0` to `null`.     
+- [Workflows] Removed classes Pimcore\Model\Workflow, Pimcore\Model\Workflow\Dao, Pimcore\Model\Workflow\Listing\Dao and Pimcore\Model\Workflow\Listing.
+    Please check the documentation on how to work with workflows: [Workflow Management](../../07_Workflow_Management/README.md).
+
 ## 10.5.0
 - [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`
 - [Listings] `JsonListing` class is deprecated. Please use `CallableFilterListingInterface`, `FilterListingTrait` and `CallableOrderListingInterface`, `OrderListingTrait` instead.
