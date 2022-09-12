@@ -622,7 +622,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
             $db = Db::get();
 
             if ($field instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
-                $localizedPropertyName = empty($arguments[0]) ? throw new \InvalidArgumentException('Mandatory argument $field not set.')  : $arguments[0];
+                $localizedPropertyName = empty($arguments[0]) ? throw new \InvalidArgumentException('Mandatory argument $field not set.') : $arguments[0];
                 $value = array_key_exists(1, $arguments) ? $arguments[1] : throw new \InvalidArgumentException('Mandatory argument $value not set.');
                 $locale = $arguments[2] ?? null;
                 $limit = $arguments[3] ?? null;
