@@ -749,8 +749,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 }
                 else {
                     $objectData['general']['o_userOwnerUsername'] = $userOwner->getName();
-                    $objectData['general']['o_userOwnerFullname'] = trim($userOwner->getFirstname() . ' ' . $userOwner->getLastname());
-                }
+                    $objectData['general']['o_userOwnerFullname'] = $userOwner->getFullName();
 
                 $userModification = ($objectData['general']['o_userOwner'] == $objectData['general']['o_userModification']) ? $userOwner : User::getById($objectData['general']['o_userModification']);
                 if (empty($userModification)) {
@@ -759,7 +758,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 }
                 else {
                     $objectData['general']['o_userModificationUsername'] = $userOwner->getName();
-                    $objectData['general']['o_userModificationFullname'] = trim($userOwner->getFirstname() . ' ' . $userOwner->getLastname());
+                    $objectData['general']['o_userModificationFullname'] = $userOwner->getFullName();
                 }
             }
 

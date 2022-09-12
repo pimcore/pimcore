@@ -224,7 +224,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $data['userOwnerFullname'] = $this->trans('user_unknown');
         } else {
             $data['userOwnerUsername'] = $userOwner->getName();
-            $data['userOwnerFullname'] = trim($userOwner->getFirstname() . ' ' . $userOwner->getLastname());
+            $data['userOwnerFullname'] = $userOwner->getFullName();
         }
 
         $userModification = ($asset->getUserOwner() == $asset->getUserModification()) ? $userOwner : User::getById($asset->getUserModification());
@@ -233,7 +233,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $data['userModificationFullname'] = $this->trans('user_unknown');
         } else {
             $data['userModificationUsername'] = $userModification->getName();
-            $data['userModificationFullname'] = trim($userModification->getFirstname() . ' ' . $userModification->getLastname());
+            $data['userModificationFullname'] = $userModification->getFullName();
         }
 
         $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);

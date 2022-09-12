@@ -480,7 +480,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
             $data['userOwnerFullname'] = $this->trans('user_unknown');
         } else {
             $data['userOwnerUsername'] = $userOwner->getName();
-            $data['userOwnerFullname'] = trim($userOwner->getFirstname() . ' ' . $userOwner->getLastname());
+            $data['userOwnerFullname'] = $userOwner->getFullName();
         }
 
         $userModification = ($document->getUserOwner() == $document->getUserModification()) ? $userOwner : User::getById($document->getUserModification());
@@ -489,7 +489,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
             $data['userModificationFullname'] = $this->trans('user_unknown');
         } else {
             $data['userModificationUsername'] = $userModification->getName();
-            $data['userModificationFullname'] = trim($userModification->getFirstname() . ' ' . $userModification->getLastname());
+            $data['userModificationFullname'] = $userModification->getFullName();
         }
     }
 }

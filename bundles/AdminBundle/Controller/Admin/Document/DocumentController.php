@@ -115,7 +115,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
             $objectData['userOwnerFullname'] = $this->trans('user_unknown');
         } else {
             $objectData['userOwnerUsername'] = $userOwner->getName();
-            $objectData['userOwnerFullname'] = trim($userOwner->getFirstname() . ' ' . $userOwner->getLastname());
+            $objectData['userOwnerFullname'] = $userOwner->getFullName();
         }
 
         $userModification = ($document->getUserOwner() == $document->getUserModification()) ? $userOwner : User::getById($document->getUserModification());
@@ -124,7 +124,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
             $objectData['userModificationFullname'] = $this->trans('user_unknown');
         } else {
             $objectData['userModificationUsername'] = $userModification->getName();
-            $objectData['userModificationFullname'] = trim($userModification->getFirstname() . ' ' . $userModification->getLastname());
+            $objectData['userModificationFullname'] = $userModification->getFullName();
         }
 
         $data['php'] = [
