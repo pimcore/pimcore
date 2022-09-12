@@ -1314,7 +1314,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         }
 
         foreach ($list as $item) {
-            if($forObjectEditor) {
+            if ($forObjectEditor) {
                 $context = [
                     'containerType' => 'objectbrick',
                     'containerKey' => $item->getKey(),
