@@ -111,7 +111,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
 
         $withId = $request->get('withId');
         $getClassConfig = function ($class) use ($defaultIcon, $withId) {
-            $text = $class->getname();
+            $text = $class->getTitle() ?: $class->getName();
             if ($withId) {
                 $text .= ' (' . $class->getId() . ')';
             }
