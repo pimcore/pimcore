@@ -251,7 +251,7 @@ parameters:
 			path: models/Document/Hardlink/Wrapper/Snippet.php
 
 		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\DataObject\\>\\|null, array\\<Pimcore\\\\Model\\\\Element\\\\ElementInterface\\> given\\.$#"
+			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Asset\\|Pimcore\\\\Model\\\\DataObject\\|Pimcore\\\\Model\\\\Document\\>\\|null, array\\<Pimcore\\\\Model\\\\Element\\\\ElementInterface\\> given\\.$#"
 			count: 1
 			path: models/Element/Service.php
 

@@ -173,7 +173,7 @@ class NotificationEmailService extends AbstractNotificationService
             $mail->addTo($user->getEmail(), $user->getName());
         }
 
-        $mail->setSubject(
+        $mail->subject(
             $this->translator->trans('workflow_change_email_notification_subject', [$subjectType . ' ' . $subject->getFullPath(), $workflow->getName()], 'admin', $language)
         );
 
