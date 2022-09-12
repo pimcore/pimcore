@@ -41,8 +41,8 @@ $object = DataObject::getById(235);
 // or obtain an object by path
 $object = DataObject::getByPath("/path/to/the/object");
 
-// or get variants matching a value (default is to only fetch objects)
-$city = DataObject\Product::getByColor('purple', 1, 0, [Product::OBJECT_TYPE_VARIANT]);
+// or get data objects matching a defined set of object types (default is to fetch data objects and variants)
+$product = DataObject\Product::getByColor('purple', 1, 0, [Product::OBJECT_TYPE_VARIANT]);
 
 //updating and saving objects
 $myObject->setName("My Name");
