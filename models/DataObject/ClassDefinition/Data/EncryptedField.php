@@ -479,13 +479,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     {
         $delegate = $this->getDelegate();
 
-        //TODO Pimcore 11: remove method_exists BC layer
-        if ($delegate instanceof LayoutDefinitionEnrichmentInterface || method_exists($delegate, 'enrichLayoutDefinition')) {
-            if (!$delegate instanceof LayoutDefinitionEnrichmentInterface) {
-                trigger_deprecation('pimcore/pimcore', '10.1',
-                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                        'Implement the %s interface instead.', LayoutDefinitionEnrichmentInterface::class));
-            }
+        if ($delegate instanceof LayoutDefinitionEnrichmentInterface) {
             $delegate->enrichLayoutDefinition($object, $context);
         }
 

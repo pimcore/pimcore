@@ -346,7 +346,7 @@ public function getTaxInfo(): array
 
 /**
 * Set taxInfo - Tax Information
-* @param ?array $taxInfo
+* @param array|null $taxInfo
 * @return \Pimcore\Model\DataObject\OnlineShopOrderItem
 */
 public function setTaxInfo(?array $taxInfo)

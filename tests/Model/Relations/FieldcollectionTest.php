@@ -26,6 +26,7 @@ use Pimcore\Tests\Util\TestHelper;
  * Class FieldcollectionTest
  *
  * @package Pimcore\Tests\Model\Relations
+ *
  * @group model.relations.fieldcollection
  */
 class FieldcollectionTest extends ModelTestCase

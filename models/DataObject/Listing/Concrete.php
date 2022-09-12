@@ -36,7 +36,7 @@ abstract class Concrete extends Model\DataObject\Listing
     protected $className;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $locale;
 
@@ -111,7 +111,7 @@ abstract class Concrete extends Model\DataObject\Listing
     }
 
     /**
-     * @param string $locale
+     * @param string|null $locale
      *
      * @return $this
      */
@@ -125,7 +125,7 @@ abstract class Concrete extends Model\DataObject\Listing
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getLocale()
     {
@@ -280,7 +280,7 @@ abstract class Concrete extends Model\DataObject\Listing
      * @param string|int|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
      * @param string $operator  SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      *
-     * @return static
+     * @return $this
      */
     public function filterByPath($data, $operator = '=')
     {
@@ -295,7 +295,7 @@ abstract class Concrete extends Model\DataObject\Listing
      * @param string|int|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
      * @param string $operator  SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      *
-     * @return static
+     * @return $this
      */
     public function filterByKey($data, $operator = '=')
     {
@@ -310,7 +310,7 @@ abstract class Concrete extends Model\DataObject\Listing
      * @param string|int|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
      * @param string $operator  SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      *
-     * @return static
+     * @return $this
      */
     public function filterById($data, $operator = '=')
     {
@@ -325,7 +325,7 @@ abstract class Concrete extends Model\DataObject\Listing
      * @param string|int|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
      * @param string $operator  SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      *
-     * @return static
+     * @return $this
      */
     public function filterByPublished($data, $operator = '=')
     {
@@ -340,7 +340,7 @@ abstract class Concrete extends Model\DataObject\Listing
      * @param string|int|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
      * @param string $operator  SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      *
-     * @return static
+     * @return $this
      */
     public function filterByCreationDate($data, $operator = '=')
     {
@@ -355,7 +355,7 @@ abstract class Concrete extends Model\DataObject\Listing
      * @param string|int|float|array $data  comparison data, can be scalar or array (if operator is e.g. "IN (?)")
      * @param string $operator  SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      *
-     * @return static
+     * @return $this
      */
     public function filterByModificationDate($data, $operator = '=')
     {

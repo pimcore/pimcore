@@ -31,7 +31,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\Tool\Email\Blacklist[]|null $items
      *
-     * @return static
+     * @return $this
      */
     public function setItems($items)
     {

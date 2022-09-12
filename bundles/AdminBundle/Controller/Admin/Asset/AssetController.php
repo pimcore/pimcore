@@ -498,6 +498,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $parent = Asset::getByPath($parentPath);
             if ($parent instanceof Asset\Folder) {
                 $parentId = $parent->getId();
+            } else { //create defined parent folder, if doesn't exist.
+                $parentId = Asset\Service::createFolderByPath($parentPath)->getId();
             }
         }
 
@@ -852,7 +854,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             return $this->generateUrl('pimcore_admin_asset_getdocumentthumbnail', $params);
         }
 
-        return null;
+        if ($asset instanceof Asset\Audio) {
+            return '/bundles/pimcoreadmin/img/flat-color-icons/speaker.svg';
+        }
+
+        if ($asset instanceof Asset) {
+            return '/bundles/pimcoreadmin/img/filetype-not-supported.svg';
+        }
     }
 
     /**
@@ -953,8 +961,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $server->setBaseUri($this->generateUrl('pimcore_admin_webdav', ['path' => '/']));
 
             // lock plugin
-            /** @var \Doctrine\DBAL\Driver\PDOConnection $pdo */
-            $pdo = \Pimcore\Db::get()->getWrappedConnection();
+            /** @var \PDO $pdo */
+            $pdo = \Pimcore\Db::get()->getNativeConnection();
             $lockBackend = new \Sabre\DAV\Locks\Backend\PDO($pdo);
             $lockBackend->tableName = 'webdav_locks';
 
@@ -1521,6 +1529,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $stream = $thumb->getStream();
+        if (!$stream) {
+            throw $this->createNotFoundException('Unable to get video thumbnail for video ' . $video->getId());
+        }
+
         $response = new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
         }, 200, [
@@ -1674,6 +1686,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     public function getPreviewVideoAction(Request $request)
     {
         $asset = Asset\Video::getById((int) $request->get('id'));
+        $configName = $request->get('config');
 
         if (!$asset) {
             throw $this->createNotFoundException('could not load video asset');
@@ -1684,12 +1697,19 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $previewData = ['asset' => $asset];
-        $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
+
+        $config = Asset\Video\Thumbnail\Config::getByName($configName);
+
+        if (!$config instanceof Asset\Video\Thumbnail\Config) {
+            $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
+        }
+
         $thumbnail = $asset->getThumbnail($config, ['mp4']);
 
         if ($thumbnail) {
             $previewData['asset'] = $asset;
             $previewData['thumbnail'] = $thumbnail;
+            $previewData['config'] = $config->getName();
 
             if ($thumbnail['status'] == 'finished') {
                 return $this->render(
@@ -1720,6 +1740,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     public function serveVideoPreviewAction(Request $request)
     {
         $asset = Asset\Video::getById((int) $request->get('id'));
+        $configName = $request->get('config');
 
         if (!$asset) {
             throw $this->createNotFoundException('could not load video asset');
@@ -1729,7 +1750,12 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             throw $this->createAccessDeniedException('not allowed to preview');
         }
 
-        $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
+        $config = Asset\Video\Thumbnail\Config::getByName($configName);
+
+        if (!$config instanceof Asset\Video\Thumbnail\Config) {
+            $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
+        }
+
         $thumbnail = $asset->getThumbnail($config, ['mp4']);
         $storagePath = $asset->getRealPath() . '/' . preg_replace('@^' . preg_quote($asset->getPath(), '@') . '@', '', urldecode($thumbnail['formats']['mp4']));
 
@@ -1864,25 +1890,21 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $assets = [];
 
         foreach ($list as $asset) {
-            $thumbnailMethod = Asset\Service::getPreviewThumbnail($asset, [], true);
+            $filenameDisplay = $asset->getFilename();
+            if (strlen($filenameDisplay) > 32) {
+                $filenameDisplay = substr($filenameDisplay, 0, 25) . '...' . \Pimcore\File::getFileExtension($filenameDisplay);
+            }
 
-            if (!empty($thumbnailMethod)) {
-                $filenameDisplay = $asset->getFilename();
-                if (strlen($filenameDisplay) > 32) {
-                    $filenameDisplay = substr($filenameDisplay, 0, 25) . '...' . \Pimcore\File::getFileExtension($filenameDisplay);
-                }
-
-                // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
-                if ($asset->isAllowed('list')) {
-                    $assets[] = [
-                        'id' => $asset->getId(),
-                        'type' => $asset->getType(),
-                        'filename' => $asset->getFilename(),
-                        'filenameDisplay' => htmlspecialchars($filenameDisplay),
-                        'url' => $this->getThumbnailUrl($asset),
-                        'idPath' => $data['idPath'] = Element\Service::getIdPath($asset),
-                    ];
-                }
+            // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
+            if ($asset->isAllowed('list')) {
+                $assets[] = [
+                    'id' => $asset->getId(),
+                    'type' => $asset->getType(),
+                    'filename' => $asset->getFilename(),
+                    'filenameDisplay' => htmlspecialchars($filenameDisplay),
+                    'url' => $this->getThumbnailUrl($asset),
+                    'idPath' => $data['idPath'] = Element\Service::getIdPath($asset),
+                ];
             }
         }
 
@@ -2709,7 +2731,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
             $assets = [];
             foreach ($list->getAssets() as $index => $asset) {
-
                 // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
                 if ($asset->isAllowed('list')) {
                     $a = Asset\Service::gridAssetData($asset, $allParams['fields'], $allParams['language'] ?? '');

@@ -32,7 +32,6 @@ class ClassUtilsTest extends TestCase
 
     public function testFindNamespaceClassName()
     {
-
         //find classname for DummyNamespace/ClassX
         $file = new \SplFileInfo(__DIR__ . '/../../_support/Resources/dummyfiles/ClassX.php');
         $className = ClassUtils::findClassName($file);

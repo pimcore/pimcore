@@ -321,7 +321,7 @@ final class Predefined extends Model\AbstractModel
     /**
      * @param int $creationDate
      *
-     * @return self
+     * @return $this
      */
     public function setCreationDate($creationDate)
     {
@@ -341,7 +341,7 @@ final class Predefined extends Model\AbstractModel
     /**
      * @param int $modificationDate
      *
-     * @return self
+     * @return $this
      */
     public function setModificationDate($modificationDate)
     {

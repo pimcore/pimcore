@@ -16,6 +16,7 @@
 namespace Pimcore\Tests\Model\DataObject;
 
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Element\Service;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 
@@ -23,6 +24,7 @@ use Pimcore\Tests\Util\TestHelper;
  * Class ObjectTest
  *
  * @package Pimcore\Tests\Model\DataObject
+ *
  * @group model.dataobject.object
  */
 class ObjectTest extends ModelTestCase
@@ -33,7 +35,7 @@ class ObjectTest extends ModelTestCase
     public function testParentIdentical()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage("ParentID and ID is identical, an element can't be the parent of itself.");
+        $this->expectExceptionMessage("ParentID and ID are identical, an element can't be the parent of itself in the tree.");
         $savedObject = TestHelper::createEmptyObject();
         $this->assertTrue($savedObject->getId() > 0);
 
@@ -58,11 +60,27 @@ class ObjectTest extends ModelTestCase
     public function testParentIs0()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage("ParentID and ID is identical, an element can't be the parent of itself.");
+        $this->expectExceptionMessage('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
         $savedObject = TestHelper::createEmptyObject('', false);
         $this->assertTrue($savedObject->getId() == 0);
 
         $savedObject->setParentId(0);
+        $savedObject->save();
+    }
+
+    /**
+     * Parent ID must resolve to an existing element
+     *
+     * @group notfound
+     */
+    public function testParentNotFound()
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('ParentID not found.');
+        $savedObject = TestHelper::createEmptyObject('', false);
+        $this->assertTrue($savedObject->getId() == 0);
+
+        $savedObject->setParentId(999999);
         $savedObject->save();
     }
 
@@ -184,5 +202,21 @@ class ObjectTest extends ModelTestCase
         $latestVersion = end($versions);
 
         $this->assertEquals('default', $latestVersion->getData()->getInputWithDefault(), 'Expected default value saved to version');
+    }
+
+    /**
+     * Verifies that when an object gets cloned, the o_* fields references get renewed
+     */
+    public function testCloning()
+    {
+        $object = TestHelper::createEmptyObject('', false);
+        $clone = Service::cloneMe($object);
+
+        $object->setId(123);
+
+        $this->assertEquals(null, $clone->getId(), 'Setting ID on original object should have no impact on the cloned object');
+
+        $otherClone = clone $object;
+        $this->assertEquals(123, $otherClone->getId(), 'Shallow clone should copy the o_* fields');
     }
 }

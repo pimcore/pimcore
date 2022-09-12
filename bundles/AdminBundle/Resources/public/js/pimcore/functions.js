@@ -81,13 +81,6 @@ function t(key, defaultValue, placeholders) {
     }
 }
 
-/**
- * @deprecated
- */
-function ts(key) {
-    return t(key);
-}
-
 Math.sec = function(x) {
     return 1 / Math.cos(x);
 };

@@ -910,18 +910,6 @@ pimcore.object.classes.klass = Class.create({
                 this.allowVariants,
                 this.showVariants,
                 {
-                    xtype: "label",
-                    text: t("generate_type_declarations"),
-                    cls: 'pimcore_deprecated'
-                },
-                {
-                    xtype: "checkbox",
-                    fieldLabel: `(${t("deprecated")})`,
-                    name: "generateTypeDeclarations",
-                    checked: this.data.generateTypeDeclarations,
-                    cls: 'pimcore_cb_middle_two_lines'
-                },
-                {
                     xtype: "checkbox",
                     fieldLabel: t("show_applogger_tab"),
                     name: "showAppLoggerTab",

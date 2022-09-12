@@ -64,22 +64,13 @@ final class ReportConfigWriter
         );
     }
 
-    public function mergeConfig(Config $values)
+    public function mergeConfig(array $values)
     {
         // the config returned from getReportConfig is readonly
         // so we create a new writable one here
-        $config = new Config(
-            \Pimcore\Config::getReportConfig()->toArray(),
-            true
-        );
+        $config = \Pimcore\Config::getReportConfig();
+        $config = array_merge($config, $values);
 
-        $config->merge($values);
-
-        $this->write($config->toArray());
-    }
-
-    public function mergeArray(array $values)
-    {
-        $this->mergeConfig(new Config($values));
+        $this->write($config);
     }
 }

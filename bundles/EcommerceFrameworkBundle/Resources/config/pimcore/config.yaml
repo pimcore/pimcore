@@ -30,7 +30,6 @@ pimcore_ecommerce_framework:
             CartAmount: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\CartAmount
             CatalogProduct: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\CatalogProduct
             CatalogCategory: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\CatalogCategory
-            Token: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Token
             Sold: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Sold
             Sales: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Sales
             ClientIp: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\ClientIp

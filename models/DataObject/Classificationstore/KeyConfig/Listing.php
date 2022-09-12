@@ -39,7 +39,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\DataObject\Classificationstore\KeyConfig[]|null $theList
      *
-     * @return static
+     * @return $this
      */
     public function setList($theList)
     {
@@ -59,6 +59,6 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function setIncludeDisabled($includeDisabled)
     {
-        $this->includeDisabled = $includeDisabled;
+        $this->includeDisabled = (bool) $includeDisabled;
     }
 }

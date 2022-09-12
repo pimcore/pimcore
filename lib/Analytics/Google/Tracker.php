@@ -25,7 +25,6 @@ use Pimcore\Analytics\Google\Config\ConfigProvider;
 use Pimcore\Analytics\Google\Event\TrackingDataEvent;
 use Pimcore\Analytics\SiteId\SiteId;
 use Pimcore\Analytics\SiteId\SiteIdProvider;
-use Pimcore\Config\Config as ConfigObject;
 use Pimcore\Event\Analytics\GoogleAnalyticsEvents;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -142,12 +141,12 @@ class Tracker extends AbstractTracker
      * This method exists for BC with the existing Pimcore\Google\Analytics implementation which supports to pass a config
      * object without a Site ID. Should be removed at a later point.
      *
-     * @param ConfigObject $siteConfig
+     * @param array $siteConfig
      * @param SiteId|null $siteId
      *
      * @return string
      */
-    public function generateCodeForSiteConfig(ConfigObject $siteConfig, SiteId $siteId = null)
+    public function generateCodeForSiteConfig(array $siteConfig, SiteId $siteId = null)
     {
         if (null === $siteId) {
             $siteId = $this->siteIdProvider->getForRequest();
@@ -161,29 +160,29 @@ class Tracker extends AbstractTracker
     /**
      * @param SiteId $siteId
      * @param Config $config
-     * @param ConfigObject $siteConfig
+     * @param array $siteConfig
      *
      * @return string
      */
-    private function doBuildCode(SiteId $siteId, Config $config, ConfigObject $siteConfig)
+    private function doBuildCode(SiteId $siteId, Config $config, array $siteConfig)
     {
         $data = [
             'siteId' => $siteId,
             'config' => $config,
             'siteConfig' => $siteConfig,
-            'trackId' => $siteConfig->get('trackid'),
+            'trackId' => $siteConfig['trackid'],
             'defaultPath' => $this->getDefaultPath(),
-            'universalConfiguration' => $siteConfig->get('universal_configuration') ?? null,
-            'retargeting' => $siteConfig->get('retargetingcode') ?? false,
+            'universalConfiguration' => $siteConfig['universal_configuration'] ?? null,
+            'retargeting' => $siteConfig['retargetingcode'] ?? false,
         ];
 
-        if ($siteConfig->get('gtagcode')) {
+        if ($siteConfig['gtagcode']) {
             $template = '@PimcoreCore/Analytics/Tracking/Google/Analytics/gtagTrackingCode.html.twig';
 
-            $data['gtagConfig'] = $this->getTrackerConfigurationFromJson($siteConfig->get('universal_configuration') ?? null, [
+            $data['gtagConfig'] = $this->getTrackerConfigurationFromJson($siteConfig['universal_configuration'] ?? null, [
                 'anonymize_ip' => true,
             ]);
-        } elseif ($siteConfig->get('asynchronouscode') || $siteConfig->get('retargetingcode')) {
+        } elseif (isset($siteConfig['asynchronouscode']) || isset($siteConfig['retargetingcode'])) {
             $template = '@PimcoreCore/Analytics/Tracking/Google/Analytics/asynchronousTrackingCode.html.twig';
         } else {
             $template = '@PimcoreCore/Analytics/Tracking/Google/Analytics/universalTrackingCode.html.twig';
@@ -214,7 +213,7 @@ class Tracker extends AbstractTracker
         return array_merge($defaultConfig, $config);
     }
 
-    private function buildCodeBlocks(SiteId $siteId, ConfigObject $siteConfig): array
+    private function buildCodeBlocks(SiteId $siteId, array $siteConfig): array
     {
         $blockData = $this->buildBlockData($siteConfig);
 
@@ -234,20 +233,20 @@ class Tracker extends AbstractTracker
         return $blocks;
     }
 
-    private function buildBlockData(ConfigObject $siteConfig): array
+    private function buildBlockData(array $siteConfig): array
     {
         $blockData = [];
 
-        if (!empty($siteConfig->get('additionalcodebeforeinit'))) {
-            $blockData[self::BLOCK_BEFORE_INIT] = $siteConfig->get('additionalcodebeforeinit');
+        if (!empty($siteConfig['additionalcodebeforeinit'])) {
+            $blockData[self::BLOCK_BEFORE_INIT] = $siteConfig['additionalcodebeforeinit'];
         }
 
-        if (!empty($siteConfig->get('additionalcodebeforepageview'))) {
-            $blockData[self::BLOCK_BEFORE_TRACK] = $siteConfig->get('additionalcodebeforepageview');
+        if (!empty($siteConfig['additionalcodebeforepageview'])) {
+            $blockData[self::BLOCK_BEFORE_TRACK] = $siteConfig['additionalcodebeforepageview'];
         }
 
-        if (!empty($siteConfig->get('additionalcode'))) {
-            $blockData[self::BLOCK_AFTER_TRACK] = $siteConfig->get('additionalcode');
+        if (!empty($siteConfig['additionalcode'])) {
+            $blockData[self::BLOCK_AFTER_TRACK] = $siteConfig['additionalcode'];
         }
 
         return $blockData;
