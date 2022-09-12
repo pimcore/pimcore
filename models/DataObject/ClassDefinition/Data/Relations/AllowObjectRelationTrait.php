@@ -32,8 +32,6 @@ trait AllowObjectRelationTrait
      * @throws \Exception
      * @internal
      *
-     * @internal
-     *
      */
     protected function allowObjectRelation($object, $params = [])
     {
