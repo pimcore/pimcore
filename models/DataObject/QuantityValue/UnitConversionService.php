@@ -15,19 +15,15 @@
 
 namespace Pimcore\Model\DataObject\QuantityValue;
 
+use Pimcore\Model\DataObject\ClassDefinition\Helper\UnitConverterResolver;
 use Pimcore\Model\DataObject\Data\AbstractQuantityValue;
 use Pimcore\Model\DataObject\Data\QuantityValue;
 use Pimcore\Model\Exception\UnsupportedException;
-use Psr\Container\ContainerInterface;
 
 class UnitConversionService
 {
-    /** @var ContainerInterface */
-    private $container;
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(protected QuantityValueConverterInterface $defaultConverter)
     {
-        $this->container = $container;
     }
 
     /**
@@ -51,16 +47,12 @@ class UnitConversionService
         if ($baseUnit === null) {
             $baseUnit = $toUnit;
         }
-        $converterServiceName = $baseUnit->getConverter();
 
-        if ($converterServiceName) {
-            $converterService = $this->container->get($converterServiceName);
-        } else {
-            $converterService = $this->container->get(QuantityValueConverterInterface::class);
-        }
+        $converterServiceName = $baseUnit->getConverter();
+        $converterService = UnitConverterResolver::resolveUnitConverter($converterServiceName);
 
         if (!$converterService instanceof QuantityValueConverterInterface) {
-            throw new \Exception('Converter class needs to implement '.QuantityValueConverterInterface::class);
+            $converterService = $this->defaultConverter;
         }
 
         return $converterService->convert($quantityValue, $toUnit);
