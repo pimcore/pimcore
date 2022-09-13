@@ -326,7 +326,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
             $points = [];
             $fd = new Geopoint();
             foreach ($value as $p) {
-                $points[] = $fd->normalize($p);
+                $points[] = $fd->normalize($p, $params);
             }
 
             return $points;
@@ -342,8 +342,9 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     {
         if (is_array($value)) {
             $result = [];
+            $fd = new Geopoint();
             foreach ($value as $point) {
-                $result[] = new DataObject\Data\GeoCoordinates($point['latitude'], $point['longitude']);
+                $result[] = $fd->denormalize($point, $params);
             }
 
             return $result;
