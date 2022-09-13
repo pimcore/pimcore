@@ -66,7 +66,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
             this.data.columns = [];
             this.selectionPanel.getRootNode().eachChild(function (child) {
                 if (!child.data.isOperator) {
-                    if (child.data.dataType.includes('select')) {
+                    if (child.data.dataType && child.data.dataType.includes('select')) {
                         child.data.layout.options.forEach(option => {
                             selectValuesToTranslate.push(option.value);
                         });
@@ -88,8 +88,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
 
                         if (child.data.isOperator) {
                             let attributes = child.data.configAttributes;
-                            const operatorChilds = this.doGetRecursiveData(child);
-                            attributes.childs = operatorChilds;
+                            attributes.childs = this.doGetRecursiveData(child);
                             operatorFound = true;
 
                             obj.isOperator = true;
@@ -99,7 +98,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                             obj.key = child.data.key;
                             obj.label = child.data.layout ? child.data.layout.title : child.data.text;
                             obj.type = child.data.dataType;
-                            if (child.data.dataType.includes('select')) {
+                            if (child.data.dataType && child.data.dataType.includes('select')) {
                                 child.data.layout.options = child.data.layout.options.map(option => {
                                     option.key = translatedPreviewOptionsForSelect[option.value];
                                     return option;

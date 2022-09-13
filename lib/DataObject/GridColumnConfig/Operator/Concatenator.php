@@ -15,6 +15,9 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
+use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
 /**
  * @internal
  */
@@ -30,21 +33,24 @@ final class Concatenator extends AbstractOperator
      */
     private $forceValue;
 
+    private TranslatorInterface $translator;
+
     /**
      * {@inheritdoc}
      */
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, $context = null, TranslatorInterface $translator)
     {
         parent::__construct($config, $context);
 
         $this->glue = $config->glue ?? '';
         $this->forceValue = $config->forceValue ?? false;
+        $this->translator = $translator;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue($element, ?string $requestedLanguage = null)
     {
         $result = new \stdClass();
         $result->label = $this->label;
@@ -60,6 +66,10 @@ final class Concatenator extends AbstractOperator
         foreach ($childs as $c) {
             $childResult = $c->getLabeledValue($element);
             $childValues = (array)($childResult->value ?? []);
+
+            if($childResult->def instanceof Select) {
+                $childValues[0] = $this->translator->trans($childValues[0], [], 'admin', $requestedLanguage);
+            }
 
             foreach ($childValues as $value) {
                 if (!$hasValue) {

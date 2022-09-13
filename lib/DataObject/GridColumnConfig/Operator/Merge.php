@@ -15,6 +15,9 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
+use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
 /**
  * @internal
  */
@@ -30,21 +33,24 @@ final class Merge extends AbstractOperator
      */
     private $unique;
 
+    private TranslatorInterface $translator;
+
     /**
      * {@inheritdoc}
      */
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, $context = null, TranslatorInterface $translator)
     {
         parent::__construct($config, $context);
 
         $this->flatten = $config->flatten ?? false;
         $this->unique = $config->unique ?? false;
+        $this->translator = $translator;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue($element, ?string $requestedLanguage = null)
     {
         $result = new \stdClass();
         $result->label = $this->label;
@@ -56,6 +62,10 @@ final class Merge extends AbstractOperator
         foreach ($childs as $c) {
             $childResult = $c->getLabeledValue($element);
             $childValues = $childResult->value ?? null;
+
+            if($childResult->def instanceof Select) {
+                $childValues = $this->translator->trans($childValues, [], 'admin', $requestedLanguage);
+            }
 
             if ($this->flatten) {
                 if (is_array($childValues)) {

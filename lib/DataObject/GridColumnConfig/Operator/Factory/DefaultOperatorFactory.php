@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\DataObject\GridColumnConfig\Operator\Factory;
 
 use Pimcore\Logger;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DefaultOperatorFactory implements OperatorFactoryInterface
 {
@@ -26,12 +27,15 @@ class DefaultOperatorFactory implements OperatorFactoryInterface
      */
     private $className;
 
+    private TranslatorInterface $translator;
+
     /**
      * @param string $className
      */
-    public function __construct(string $className)
+    public function __construct(string $className, TranslatorInterface $translator)
     {
         $this->className = $className;
+        $this->translator = $translator;
     }
 
     /**
@@ -40,7 +44,7 @@ class DefaultOperatorFactory implements OperatorFactoryInterface
     public function build(\stdClass $configElement, array $context = [])
     {
         if (class_exists($this->className)) {
-            return new $this->className($configElement, $context);
+            return new $this->className($configElement, $context, $this->translator);
         }
 
         Logger::warn('operator ' . $this->className . ' does not exist');

@@ -15,15 +15,30 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
+use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
 /**
  * @internal
  */
 final class Alias extends AbstractOperator
 {
+    private TranslatorInterface $translator;
+
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function __construct(\stdClass $config, $context = null, TranslatorInterface $translator)
+    {
+        parent::__construct($config, $context);
+
+        $this->translator = $translator;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLabeledValue($element, ?string $requestedLanguage = null)
     {
         $result = new \stdClass();
         $result->label = $this->label;
@@ -40,6 +55,11 @@ final class Alias extends AbstractOperator
             $childResult = $c->getLabeledValue($element);
             $isArrayType = $childResult->isArrayType ?? null;
             $childValues = $childResult->value;
+
+            if($childResult->def instanceof Select) {
+                $childValues = $this->translator->trans($childValues, [], 'admin', $requestedLanguage);
+            }
+
             if ($childValues && !$isArrayType) {
                 $childValues = [$childValues];
             }

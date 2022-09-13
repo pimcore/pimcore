@@ -557,7 +557,7 @@ class Service extends Model\Element\Service
 
         $inheritanceEnabled = AbstractObject::getGetInheritedValues();
         AbstractObject::setGetInheritedValues(true);
-        $result = $config->getLabeledValue($object);
+        $result = $config->getLabeledValue($object, $context['language']);
         if (isset($result->value)) {
             $result = $result->value;
 

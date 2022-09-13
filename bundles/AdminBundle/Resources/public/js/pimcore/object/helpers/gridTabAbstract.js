@@ -85,7 +85,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 this.gridPageSize = data.pageSize;
                 let includeSelect = false;
                 data.columns.forEach(function (field) {
-                    if(field.type.toLowerCase().includes('select')){
+                    if(!field.isOperator && field.type.toLowerCase().includes('select')){
                         includeSelect = true;
                     }
                 });
@@ -112,7 +112,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                         response = Ext.decode(response.responseText);
                         if (response) {
                             response.availableFields.forEach(function (availableField) {
-                                if(availableField.type.toLowerCase().includes('select')){
+                                if(availableField.type && availableField.type.toLowerCase().includes('select')){
                                     for(let i in fields) {
                                         if(fields[i].key === availableField.key) {
                                             fields[i] = availableField;
