@@ -16,16 +16,20 @@
 namespace Pimcore\Model;
 
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Event\Model\SiteEvent;
+use Pimcore\Event\SiteEvents;
+use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @method \Pimcore\Model\Site\Dao getDao()
  * @method void delete()
- * @method void save()
  */
 final class Site extends AbstractModel
 {
+    use RecursionBlockingEventDispatchHelperTrait;
+
     /**
      * @var Site|null
      */
@@ -472,5 +476,24 @@ final class Site extends AbstractModel
     public function getCreationDate()
     {
         return $this->creationDate;
+    }
+
+    /**
+     * @return void
+     */
+    public function save()
+    {
+        // additional parameters (e.g. "versionNote" for the version note)
+        $params = [];
+        if (func_num_args() && is_array(func_get_arg(0))) {
+            $params = func_get_arg(0);
+        }
+        $preSaveEvent = new SiteEvent($this, $params);
+        $this->dispatchEvent($preSaveEvent, SiteEvents::PRE_SAVE);
+
+        $this->__call(__FUNCTION__, []);
+
+        $postSaveEvent = new SiteEvent($this, $params);
+        $this->dispatchEvent($postSaveEvent, SiteEvents::POST_SAVE);
     }
 }
