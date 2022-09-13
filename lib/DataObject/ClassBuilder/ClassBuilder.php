@@ -77,7 +77,7 @@ class ClassBuilder implements ClassBuilderInterface
                     $classDefinition->getName()
                 ).'|null getBy'.ucfirst(
                     $fieldDefinition->getName()
-                ).'($field, $value, $locale = null, $limit = 0, $offset = 0, $objectTypes = null)'."\n";
+                ).'(string $field, mixed $value, ?string $locale = null, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)'."\n";
 
                 foreach ($fieldDefinition->getFieldDefinitions() as $localizedFieldDefinition) {
                     $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
@@ -86,14 +86,14 @@ class ClassBuilder implements ClassBuilderInterface
                         $classDefinition->getName()
                     ).'|null getBy'.ucfirst(
                         $localizedFieldDefinition->getName()
-                    ).'($value, $locale = null, $limit = 0, $offset = 0, $objectTypes = null)'."\n";
+                    ).'(mixed $value, ?string $locale = null, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)'."\n";
                 }
             } elseif ($fieldDefinition->isFilterable()) {
                 $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
                     $classDefinition->getName()
                 ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
                     $classDefinition->getName()
-                ).'|null getBy'.ucfirst($fieldDefinition->getName()).'($value, $limit = 0, $offset = 0, $objectTypes = null)'."\n";
+                ).'|null getBy'.ucfirst($fieldDefinition->getName()).'(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)'."\n";
             }
         }
 
