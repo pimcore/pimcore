@@ -172,11 +172,11 @@ class Document extends Element\AbstractElement
 
     /**
      * @param string $path
-     * @param array|bool $force
+     * @param array $params
      *
      * @return static|null
      */
-    public static function getByPath($path, $force = false)
+    public static function getByPath($path, array $params = [])
     {
         if (!$path) {
             return null;
@@ -185,7 +185,7 @@ class Document extends Element\AbstractElement
         $path = Element\Service::correctPath($path);
 
         $cacheKey = self::getPathCacheKey($path);
-        $params = Element\Service::prepareGetByIdParams($force, __METHOD__, func_num_args() > 1);
+        $params = Element\Service::prepareGetByIdParams($params);
 
         if (!$params['force'] && RuntimeCache::isRegistered($cacheKey)) {
             $document = RuntimeCache::get($cacheKey);
@@ -227,11 +227,11 @@ class Document extends Element\AbstractElement
 
     /**
      * @param int $id
-     * @param array|bool $force
+     * @param array $params
      *
      * @return static|null
      */
-    public static function getById($id, $force = false)
+    public static function getById($id, array $params = [])
     {
         if (!is_numeric($id) || $id < 1) {
             return null;
@@ -239,7 +239,7 @@ class Document extends Element\AbstractElement
 
         $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
-        $params = Element\Service::prepareGetByIdParams($force, __METHOD__, func_num_args() > 1);
+        $params = Element\Service::prepareGetByIdParams($params);
 
         if (!$params['force'] && RuntimeCache::isRegistered($cacheKey)) {
             $document = RuntimeCache::get($cacheKey);
