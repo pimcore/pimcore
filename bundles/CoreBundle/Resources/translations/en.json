@@ -818,6 +818,7 @@
     "workflow_actions": "Actions",
     "workflow_notes_requred_field_message": "\"%s\" is a required field.",
     "workflow_transition_applied_successfully": "Action applied successfully",
+    "workflow_transition_unsaved_data": "Your data changes have not been saved yet. Please, save changes before applying workflow transition.",
     "workflow_change_email_notification_subject": "Workflow update for %s in workflow '%s'",
     "workflow_change_email_notification_text": "For %s with ID %s the action \"%s\" was triggered in workflow '%s'.",
     "workflow_change_email_notification_deeplink": "Deeplink to the element.",
