@@ -211,9 +211,6 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    /**
-     * @group geo
-     */
     public function testGeopolygon()
     {
         $ownerInfo = $this->getDummyOwnerInfo();
@@ -241,9 +238,6 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    /**
-     * @group geo
-     */
     public function testGeopolyline()
     {
         $ownerInfo = $this->getDummyOwnerInfo();
