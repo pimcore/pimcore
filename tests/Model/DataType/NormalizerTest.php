@@ -181,6 +181,10 @@ class NormalizerTest extends ModelTestCase
     {
         $ownerInfo = $this->getDummyOwnerInfo();
         $originalValue = new DataObject\Data\Geobounds(new DataObject\Data\GeoCoordinates(123, -120), new DataObject\Data\GeoCoordinates(456, +130));
+        $originalValue->_setOwner($ownerInfo['owner']);
+        $originalValue->_setOwnerFieldname($ownerInfo['fieldname']);
+        $originalValue->_setOwnerLanguage($ownerInfo['language']);
+
         $fd = new DataObject\ClassDefinition\Data\Geobounds();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
@@ -188,16 +192,16 @@ class NormalizerTest extends ModelTestCase
         $denormalizedValue = $fd->denormalize($normalizedValue, $ownerInfo);
 
         $this->assertEquals($originalValue, $denormalizedValue);
-        // assert owner info
-        $this->assertEquals($ownerInfo['owner'], $originalValue->_getOwner());
-        $this->assertEquals($ownerInfo['fieldname'], $originalValue->_getOwnerFieldname());
-        $this->assertEquals($ownerInfo['language'], $originalValue->_getOwnerLanguage());
     }
 
     public function testGeopoint()
     {
         $ownerInfo = $this->getDummyOwnerInfo();
         $originalValue = new DataObject\Data\GeoCoordinates(123, 56);
+        $originalValue->_setOwner($ownerInfo['owner']);
+        $originalValue->_setOwnerFieldname($ownerInfo['fieldname']);
+        $originalValue->_setOwnerLanguage($ownerInfo['language']);
+
         $fd = new DataObject\ClassDefinition\Data\Geopoint();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
@@ -205,10 +209,6 @@ class NormalizerTest extends ModelTestCase
         $denormalizedValue = $fd->denormalize($normalizedValue, $ownerInfo);
 
         $this->assertEquals($originalValue, $denormalizedValue);
-        // assert owner info
-        $this->assertEquals($ownerInfo['owner'], $originalValue->_getOwner());
-        $this->assertEquals($ownerInfo['fieldname'], $originalValue->_getOwnerFieldname());
-        $this->assertEquals($ownerInfo['language'], $originalValue->_getOwnerLanguage());
     }
 
     public function testGeopolygon()
