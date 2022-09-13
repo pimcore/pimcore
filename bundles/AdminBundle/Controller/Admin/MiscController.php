@@ -778,7 +778,7 @@ class MiscController extends AdminController
      */
     public function translate(Request $request)
     {
-        $values = explode(',', $request->get('values'));
+        $values = $this->decodeJson(rawurldecode($request->get('values')));
         $language = $request->get('language') ?? null;
         if($language === 'default') {
             $language = null;

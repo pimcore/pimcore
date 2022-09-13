@@ -77,7 +77,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
             Ext.Ajax.request({
                 url: Routing.generate('pimcore_admin_misc_translate'),
                 params: {
-                    values: selectValuesToTranslate.join(','),
+                    values: encodeURIComponent(JSON.stringify(selectValuesToTranslate)),
                     language: this.data.language
                 },
                 success: function (response) {
