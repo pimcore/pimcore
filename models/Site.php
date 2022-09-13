@@ -24,7 +24,6 @@ use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @method \Pimcore\Model\Site\Dao getDao()
- * @method void delete()
  */
 final class Site extends AbstractModel
 {
@@ -483,17 +482,26 @@ final class Site extends AbstractModel
      */
     public function save()
     {
-        // additional parameters (e.g. "versionNote" for the version note)
-        $params = [];
-        if (func_num_args() && is_array(func_get_arg(0))) {
-            $params = func_get_arg(0);
-        }
-        $preSaveEvent = new SiteEvent($this, $params);
+        $preSaveEvent = new SiteEvent($this);
         $this->dispatchEvent($preSaveEvent, SiteEvents::PRE_SAVE);
 
         $this->__call(__FUNCTION__, []);
 
-        $postSaveEvent = new SiteEvent($this, $params);
+        $postSaveEvent = new SiteEvent($this);
         $this->dispatchEvent($postSaveEvent, SiteEvents::POST_SAVE);
+    }
+
+    /**
+     * @return void
+     */
+    public function delete()
+    {
+        $preDeleteEvent = new SiteEvent($this);
+        $this->dispatchEvent($preDeleteEvent, SiteEvents::PRE_DELETE);
+
+        $this->__call(__FUNCTION__, []);
+
+        $postDeleteEvent = new SiteEvent($this);
+        $this->dispatchEvent($postDeleteEvent, SiteEvents::POST_DELETE);
     }
 }

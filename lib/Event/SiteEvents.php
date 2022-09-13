@@ -31,11 +31,4 @@ final class SiteEvents
      * @var string
      */
     const POST_DELETE = 'pimcore.site.postDelete';
-
-    /**
-     * @Event("Pimcore\Event\Model\SiteEvent")
-     *
-     * @var string
-     */
-    const PRE_BUILD = 'pimcore.site.preBuild';
 }
