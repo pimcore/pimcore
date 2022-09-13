@@ -86,7 +86,7 @@ pimcore.notification.panel = Class.create({
                     return val;
                 }
             },
-            {header: t("sender"), flex: 2, sortable: false, dataIndex: 'sender'},
+            {header: t("sender"), flex: 2, sortable: false, dataIndex: 'sender', renderer: Ext.util.Format.htmlEncode},
             {header: t("date"), flex: 3, sortable: true, filter: 'date', dataIndex: 'date'},
             {
                 header: t("attachment"),
