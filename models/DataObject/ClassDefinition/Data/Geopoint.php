@@ -248,9 +248,9 @@ class Geopoint extends AbstractGeo implements
         if (is_array($data)) {
             $coordinates = new DataObject\Data\GeoCoordinates($data['latitude'], $data['longitude']);
 
-            $coordinates->_setOwnerFieldname($params["fieldname"] ?? null);
-            $coordinates->_setOwner($params["owner"] ?? null);
-            $coordinates->_setOwnerLanguage($params["language"] ?? null);
+            $coordinates->_setOwnerFieldname($params['fieldname'] ?? null);
+            $coordinates->_setOwner($params['owner'] ?? null);
+            $coordinates->_setOwnerLanguage($params['language'] ?? null);
 
             return $coordinates;
         }

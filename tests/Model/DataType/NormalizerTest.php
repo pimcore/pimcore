@@ -270,7 +270,7 @@ class NormalizerTest extends ModelTestCase
         return [
             'owner' => 'dummy owner',
             'fieldname' => 'dummy field',
-            'language' => 'en'
+            'language' => 'en',
         ];
     }
 
