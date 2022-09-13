@@ -20,9 +20,9 @@ namespace Pimcore\Extension\Document\Areabrick;
  * Depending on the result of getTemplateLocation() and getTemplateSuffix() the tag handler builds the
  * following references:
  *
- * - @<bundle>/[A|a]reas/<brickId>/view.<suffix>
- *      -> resolves to <bundle>/templates/[A|a]reas/<brickId>/view.<suffix> (Symfony >= 5 structure)
- *         or <bundle>/Resources/views/[A|a]reas/<brickId>/view.<suffix> (Symfony <= 4 structure)
+ * - @<bundle>/areas/<brickId>/view.<suffix>
+ *      -> resolves to <bundle>/templates/areas/<brickId>/view.<suffix> (Symfony >= 5 structure)
+ *         or <bundle>/Resources/views/areas/<brickId>/view.<suffix> (Symfony <= 4 structure)
  * - areas/<brickId>/view.<suffix>
  *      -> resolves to <project>/templates/areas/<brickId>/view.<suffix>
  */
