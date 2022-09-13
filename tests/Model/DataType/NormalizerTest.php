@@ -179,23 +179,35 @@ class NormalizerTest extends ModelTestCase
 
     public function testGeobounds()
     {
+        $ownerInfo = $this->getDummyOwnerInfo();
         $originalValue = new DataObject\Data\Geobounds(new DataObject\Data\GeoCoordinates(123, -120), new DataObject\Data\GeoCoordinates(456, +130));
+        $originalValue->_setOwner($ownerInfo['owner']);
+        $originalValue->_setOwnerFieldname($ownerInfo['fieldname']);
+        $originalValue->_setOwnerLanguage($ownerInfo['language']);
+
         $fd = new DataObject\ClassDefinition\Data\Geobounds();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertTrue(is_array($normalizedValue));
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($normalizedValue, $ownerInfo);
+
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
     public function testGeopoint()
     {
+        $ownerInfo = $this->getDummyOwnerInfo();
         $originalValue = new DataObject\Data\GeoCoordinates(123, 56);
+        $originalValue->_setOwner($ownerInfo['owner']);
+        $originalValue->_setOwnerFieldname($ownerInfo['fieldname']);
+        $originalValue->_setOwnerLanguage($ownerInfo['language']);
+
         $fd = new DataObject\ClassDefinition\Data\Geopoint();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertTrue(is_array($normalizedValue));
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($normalizedValue, $ownerInfo);
+
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
@@ -214,6 +226,15 @@ class NormalizerTest extends ModelTestCase
         $this->assertTrue(is_array($normalizedValue));
         $denormalizedValue = $fd->denormalize($normalizedValue);
         $this->assertEquals($originalValue, $denormalizedValue);
+    }
+
+    private function getDummyOwnerInfo()
+    {
+        return [
+            'owner' => 'dummy owner',
+            'fieldname' => 'dummy field',
+            'language' => 'en'
+        ];
     }
 
     public function testHotspotimage()
