@@ -156,7 +156,7 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
                 name: "sqlCondition",
                 width: 600,
                 value: this.datax.sqlCondition,
-                fieldLabel: t("Condition")
+                fieldLabel: t("filter_condition")+' (SQL)'
             }
         );
 

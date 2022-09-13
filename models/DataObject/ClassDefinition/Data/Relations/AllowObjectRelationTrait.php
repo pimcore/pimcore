@@ -65,8 +65,6 @@ trait AllowObjectRelationTrait
             //don't check if no allowed classes set
         }
 
-        Logger::debug('checked object relation to target object [' . $object->getId() . '] in field [' . $this->getName() . '], allowed:' . $allowed);
-
         $sqlCondition = $this->getSqlCondition();
         if ($allowed && $sqlCondition) {
             $sqlCondition = \Pimcore::getContainer()->get('twig')
@@ -77,9 +75,11 @@ trait AllowObjectRelationTrait
             $listing->addConditionParam('o_id = ?', [$object->getId()]);
             $listing->addConditionParam($sqlCondition);
             if ( !count($listing) ) {
-                return false;
+                $allowed = false;
             }
         }
+
+        Logger::debug('checked object relation to target object ['.$object->getId().'] in field ['.$this->getName().'], allowed:'.$allowed);
 
         return $allowed;
     }

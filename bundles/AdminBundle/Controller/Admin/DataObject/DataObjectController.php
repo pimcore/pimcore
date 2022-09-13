@@ -361,69 +361,70 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     }
 
     /**
-     * @Route("/is-allow-relation", name="isallowrelation", methods={"GET"})
+     * @Route("/check-validity", name="check_validity", methods={"GET"})
      *
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function isAllowRelationAction(Request $request)
+    public function checkValidityAction(Request $request)
     {
-        $object = DataObject::getById((int) $request->get('id'));
-        $result = ['success' => true, 'allow' => false];
-        if ($object) {
-            $sqlCondition = $request->get('sqlCondition', null);
-            if ($sqlCondition) {
-                $currentObject = DataObject::getById($request->get('currentObjectId'));
-                if ($request->get('changedData')) {
-                    $data = $this->decodeJson($request->get('changedData'));
-                    foreach ($data as $key => $value) {
-                        $fd = $currentObject->getClass()->getFieldDefinition($key);
-                        if ($fd) {
-                            if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                                $user = Tool\Admin::getCurrentUser();
-                                if (!$user->getAdmin()) {
-                                    $allowedLanguages = DataObject\Service::getLanguagePermissions($currentObject, $user, 'lEdit');
-                                    if (!is_null($allowedLanguages)) {
-                                        $allowedLanguages = array_keys($allowedLanguages);
-                                        $submittedLanguages = array_keys($data[$key]);
-                                        foreach ($submittedLanguages as $submittedLanguage) {
-                                            if (!in_array($submittedLanguage, $allowedLanguages)) {
-                                                unset($value[$submittedLanguage]);
-                                            }
-                                        }
+        $currentObject = DataObject\Concrete::getById($request->get('currentObjectId'));
+        if (!$currentObject instanceof DataObject\Concrete) {
+            return new JsonResponse(['valid' => false]);
+        }
+
+        if ($request->get('unsavedChanges')) {
+            $unsavedChanges = $this->decodeJson($request->get('unsavedChanges'));
+            foreach ($unsavedChanges as $key => $value) {
+                $fd = $currentObject->getClass()->getFieldDefinition($key);
+                if ($fd) {
+                    if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                        $user = Tool\Admin::getCurrentUser();
+                        if (!$user->getAdmin()) {
+                            $allowedLanguages = DataObject\Service::getLanguagePermissions($currentObject, $user, 'lEdit');
+                            if (!is_null($allowedLanguages)) {
+                                $allowedLanguages = array_keys($allowedLanguages);
+                                $submittedLanguages = array_keys($unsavedChanges[$key]);
+                                foreach ($submittedLanguages as $submittedLanguage) {
+                                    if (!in_array($submittedLanguage, $allowedLanguages)) {
+                                        unset($value[$submittedLanguage]);
                                     }
                                 }
                             }
-
-                            if ($fd instanceof ReverseObjectRelation) {
-                                $remoteClass = DataObject\ClassDefinition::getByName($fd->getOwnerClassName());
-                                $relations = $currentObject->getRelationData($fd->getOwnerFieldName(), false, $remoteClass->getId());
-                                $toAdd = $this->detectAddedRemoteOwnerRelations($relations, $value);
-                                $toDelete = $this->detectDeletedRemoteOwnerRelations($relations, $value);
-                                if (count($toAdd) > 0 || count($toDelete) > 0) {
-                                    $this->processRemoteOwnerRelations($currentObject, $toDelete, $toAdd, $fd->getOwnerFieldName());
-                                }
-                            } else {
-                                $currentObject->setValue($key, $fd->getDataFromEditmode($value, $currentObject));
-                            }
                         }
                     }
-                }
 
-
-                $sqlCondition = \Pimcore::getContainer()->get('twig')->createTemplate($sqlCondition)->render(['object' => $currentObject]);
-
-                $listing = $object->getList();
-                $listing->addConditionParam('o_id = ?', [$object->getId()]);
-                $listing->addConditionParam($sqlCondition);
-                if ( count($listing) ) {
-                    $result['allow'] = true;
+                    if ($fd instanceof ReverseObjectRelation) {
+                        $remoteClass = DataObject\ClassDefinition::getByName($fd->getOwnerClassName());
+                        $relations = $currentObject->getRelationData($fd->getOwnerFieldName(), false, $remoteClass->getId());
+                        $toAdd = $this->detectAddedRemoteOwnerRelations($relations, $value);
+                        $toDelete = $this->detectDeletedRemoteOwnerRelations($relations, $value);
+                        if (count($toAdd) > 0 || count($toDelete) > 0) {
+                            $this->processRemoteOwnerRelations($currentObject, $toDelete, $toAdd, $fd->getOwnerFieldName());
+                        }
+                    } else {
+                        $currentObject->setValue($key, $fd->getDataFromEditmode($value, $currentObject));
+                    }
                 }
             }
         }
 
-        return $this->adminJson($result);
+        $fieldDefinitionConfig = json_decode($request->get('fieldDefinition'));
+        /**
+         * @var DataObject\ClassDefinition\Data\Select|DataObject\ClassDefinition\Data\Multiselect $fieldDefinition
+         */
+        $fieldDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(
+            $fieldDefinitionConfig,
+            $fieldDefinitionConfig->fieldtype
+        );
+
+        $checkValue = $fieldDefinition->getDataFromEditmode($value, $currentObject);
+        try {
+            return new JsonResponse(['valid' => $fieldDefinition->checkValidity($checkValue)]);
+        } catch(Element\ValidationException $e) {
+            return new JsonResponse(['valid' => false]);
+        }
     }
 
     /**

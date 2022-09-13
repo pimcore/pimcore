@@ -589,17 +589,17 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             if (this.fieldConfig.allowedClassId == classRecord.data.text) {
                 if (this.fieldConfig.sqlCondition) {
                     Ext.Ajax.request({
-                        url: Routing.generate('pimcore_admin_dataobject_dataobject_isallowrelation'),
+                        url: Routing.generate('pimcore_admin_dataobject_dataobject_check_validity'),
                         params: {
-                            id: data.id,
+                            data: { id: data.id },
                             currentObjectId: this.context.objectId,
-                            changedData: this.object.getSaveData().data,
-                            sqlCondition: this.fieldConfig.sqlCondition
+                            unsavedChanges: this.object.getSaveData().data,
+                            fieldDefinition: JSON.stringify(this.fieldConfig)
                         },
                         async: false,
                         success: function (response) {
                             var rdata = Ext.decode(response.responseText);
-                            if (rdata.success) {
+                            if (rdata.allow) {
                                 isAllowedClass = rdata.allow;
                                 this.cache[data.id] = isAllowedClass;
                             }

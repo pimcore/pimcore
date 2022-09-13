@@ -52,7 +52,7 @@ abstract class AbstractRelations extends Data implements
     public $pathFormatterClass;
 
     /**
-     * Optional sql condition
+     * Optional SQL condition
      *
      * @internal
      *
