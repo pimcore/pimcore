@@ -16,7 +16,6 @@
 namespace Pimcore\Model;
 
 use Pimcore\Cache\RuntimeCache;
-use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\SiteEvent;
 use Pimcore\Event\SiteEvents;
 use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
