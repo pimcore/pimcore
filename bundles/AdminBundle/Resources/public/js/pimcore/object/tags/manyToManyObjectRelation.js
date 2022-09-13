@@ -433,7 +433,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                     icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                     handler: function (grid, rowIndex) {
                         let data = grid.getStore().getAt(rowIndex);
-                        pimcore.helpers.deleteConfirm(t('many_to_many_relation'), data.data.path, function () {
+                        pimcore.helpers.deleteConfirm(t('relation'), data.data.path, function () {
                             grid.getStore().removeAt(rowIndex);
                         }.bind(this));
                     }.bind(this)
