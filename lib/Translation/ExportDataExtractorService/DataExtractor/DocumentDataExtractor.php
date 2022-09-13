@@ -145,8 +145,8 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
                     $targetDocument = Document::getById($translations[$targetLanguage]);
 
                     if ($targetDocument instanceof  Document\PageSnippet) {
-                        $targetData['title'][$targetLanguage] = $document->getTitle();
-                        $targetData['description'][$targetLanguage] = $document->getDescription();
+                        $targetData['title'][$targetLanguage] = $targetDocument->getTitle();
+                        $targetData['description'][$targetLanguage] = $targetDocument->getDescription();
                     }
                 }
             }
