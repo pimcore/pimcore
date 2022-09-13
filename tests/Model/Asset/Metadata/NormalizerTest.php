@@ -159,4 +159,54 @@ class NormalizerTest extends ModelTestCase
 
         $this->doCompare($this->testAsset->getId(), $metaDataName, $originalData);
     }
+
+    public function testLocalizedMetaData() {
+        $metaDataName = 'localized-metadata';
+        $originalData = 'some-value';
+        $localizedData = 'some-localized-value';
+        $language = 'en';
+
+        $notLocalizedMetadataName = 'not-localized-metadata';
+        $notLocalizedMetadata = 'different-not-localized-value';
+
+        $this->testAsset->addMetadata($metaDataName, 'input', $originalData);
+        $this->testAsset->addMetadata($metaDataName, 'input', $localizedData, $language);
+        $this->testAsset->addMetadata($notLocalizedMetadataName, 'input', $notLocalizedMetadata);
+        $this->testAsset->save();
+
+        $asset = Asset::getById($this->testAsset->getId());
+
+        // When language not specified and strict match is disabled, metadata without locale should be returned
+        $savedMetaData = $asset->getMetadata($metaDataName, null, false, true);
+        $this->assertEquals($originalData, $savedMetaData['data']);
+
+        // When only name is given, localized value should be returned if found, else value with no locale shall be returned
+        $savedMetaData = $asset->getMetadata($metaDataName);
+        $this->assertEquals($savedMetaData, $localizedData);
+
+        $savedMetaData = $asset->getMetadata($notLocalizedMetadataName);
+        $this->assertEquals($savedMetaData, $notLocalizedMetadata);
+
+        // When strict locale is passed to metadata without locale, result must be null
+        $savedMetaData = $asset->getMetadata($notLocalizedMetadataName, 'en', true, true);
+        $this->assertEquals($savedMetaData, null);
+
+        // When name is given and language is strictly matched, the metadata should contain specified value and language
+        $savedMetaData = $asset->getMetadata($metaDataName, $language, true, true);
+        $this->assertEquals($savedMetaData['language'], $language);
+        $this->assertEquals($savedMetaData['data'], $localizedData);
+
+        // When name is not given and language is strictly matched, only metadata with specified locale should be returned
+        $savedMetaData = $asset->getMetadata(null, $language, true, true);
+        $this->assertCount(1, $savedMetaData);
+
+        // When no name given and language is not strictly matched, all metadata should be returned
+        $savedMetaData = $asset->getMetadata(null, $language, false, true);
+        $this->assertCount(3, $savedMetaData);
+
+        // When no parameters are passed, metadata with locale should get priority over the ones that don't
+        $savedMetaData = $asset->getMetadata();
+        $this->assertCount(2, $savedMetaData);
+
+    }
 }
