@@ -421,7 +421,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         $checkValue = $fieldDefinition->getDataFromEditmode($request->get('data'), $currentObject);
         try {
-            return new JsonResponse(['valid' => $fieldDefinition->checkValidity($checkValue)]);
+            $fieldDefinition->checkValidity($checkValue);
+            return new JsonResponse(['valid' => true]);
         } catch(Element\ValidationException $e) {
             return new JsonResponse(['valid' => false]);
         }
