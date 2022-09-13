@@ -612,6 +612,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
 
     /**
      * @dataProvider tagsEntriesProvider
+     *
      * @skipped
      *
      * @param array $tags

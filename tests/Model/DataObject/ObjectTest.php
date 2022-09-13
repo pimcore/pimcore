@@ -24,6 +24,7 @@ use Pimcore\Tests\Util\TestHelper;
  * Class ObjectTest
  *
  * @package Pimcore\Tests\Model\DataObject
+ *
  * @group model.dataobject.object
  */
 class ObjectTest extends ModelTestCase

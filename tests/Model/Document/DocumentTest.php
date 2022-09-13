@@ -30,6 +30,7 @@ use Pimcore\Tests\Util\TestHelper;
  * Class DocumentTest
  *
  * @package Pimcore\Tests\Model\Document
+ *
  * @group model.document.document
  */
 class DocumentTest extends ModelTestCase
