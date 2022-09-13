@@ -211,20 +211,63 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
+    /**
+     * @group geo
+     */
     public function testGeopolygon()
     {
-        $originalValue = [
-            new DataObject\Data\GeoCoordinates(123, -120),
-            new DataObject\Data\GeoCoordinates(50, 70),
-            new DataObject\Data\GeoCoordinates(56, 130),
-        ];
+        $ownerInfo = $this->getDummyOwnerInfo();
+        $c1 = new DataObject\Data\GeoCoordinates(123, -120);
+        $c1->_setOwner($ownerInfo['owner']);
+        $c1->_setOwnerFieldname($ownerInfo['fieldname']);
+        $c1->_setOwnerLanguage($ownerInfo['language']);
+        $c2 = new DataObject\Data\GeoCoordinates(50, 70);
+        $c2->_setOwner($ownerInfo['owner']);
+        $c2->_setOwnerFieldname($ownerInfo['fieldname']);
+        $c2->_setOwnerLanguage($ownerInfo['language']);
+        $c3 = new DataObject\Data\GeoCoordinates(56, 130);
+        $c3->_setOwner($ownerInfo['owner']);
+        $c3->_setOwnerFieldname($ownerInfo['fieldname']);
+        $c3->_setOwnerLanguage($ownerInfo['language']);
+        $originalValue = [$c1, $c2, $c3];
+
         $fd = new DataObject\ClassDefinition\Data\Geopolygon();
         $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
         $normalizedValue = $fd->normalize($originalValue);
         $this->assertNotEquals($normalizedValue, $originalValue);
 
         $this->assertTrue(is_array($normalizedValue));
-        $denormalizedValue = $fd->denormalize($normalizedValue);
+        $denormalizedValue = $fd->denormalize($normalizedValue, $ownerInfo);
+        $this->assertEquals($originalValue, $denormalizedValue);
+    }
+
+    /**
+     * @group geo
+     */
+    public function testGeopolyline()
+    {
+        $ownerInfo = $this->getDummyOwnerInfo();
+        $c1 = new DataObject\Data\GeoCoordinates(123, -120);
+        $c1->_setOwner($ownerInfo['owner']);
+        $c1->_setOwnerFieldname($ownerInfo['fieldname']);
+        $c1->_setOwnerLanguage($ownerInfo['language']);
+        $c2 = new DataObject\Data\GeoCoordinates(50, 70);
+        $c2->_setOwner($ownerInfo['owner']);
+        $c2->_setOwnerFieldname($ownerInfo['fieldname']);
+        $c2->_setOwnerLanguage($ownerInfo['language']);
+        $c3 = new DataObject\Data\GeoCoordinates(56, 130);
+        $c3->_setOwner($ownerInfo['owner']);
+        $c3->_setOwnerFieldname($ownerInfo['fieldname']);
+        $c3->_setOwnerLanguage($ownerInfo['language']);
+        $originalValue = [$c1, $c2, $c3];
+
+        $fd = new DataObject\ClassDefinition\Data\Geopolyline();
+        $this->assertTrue($fd instanceof NormalizerInterface, 'expected NormalizerInterface');
+        $normalizedValue = $fd->normalize($originalValue);
+        $this->assertNotEquals($normalizedValue, $originalValue);
+
+        $this->assertTrue(is_array($normalizedValue));
+        $denormalizedValue = $fd->denormalize($normalizedValue, $ownerInfo);
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
