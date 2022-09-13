@@ -290,7 +290,12 @@ class Geobounds extends AbstractGeo implements
             $ne = new DataObject\Data\GeoCoordinates($value['northEast']['latitude'], $value['northEast']['longitude']);
             $sw = new DataObject\Data\GeoCoordinates($value['southWest']['latitude'], $value['southWest']['longitude']);
 
-            return new DataObject\Data\Geobounds($ne, $sw);
+            $geoBounds = new DataObject\Data\Geobounds($ne, $sw);
+            $geoBounds->_setOwnerFieldname($params["fieldname"] ?? null);
+            $geoBounds->_setOwner($params["owner"] ?? null);
+            $geoBounds->_setOwnerLanguage($params["language"] ?? null);
+
+            return $geoBounds;
         }
 
         return null;

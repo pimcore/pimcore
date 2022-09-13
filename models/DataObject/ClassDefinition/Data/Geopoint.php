@@ -246,7 +246,13 @@ class Geopoint extends AbstractGeo implements
     public function denormalize($data, $params = [])
     {
         if (is_array($data)) {
-            return new DataObject\Data\GeoCoordinates($data['latitude'], $data['longitude']);
+            $coordinates = new DataObject\Data\GeoCoordinates($data['latitude'], $data['longitude']);
+
+            $coordinates->_setOwnerFieldname($params["fieldname"] ?? null);
+            $coordinates->_setOwner($params["owner"] ?? null);
+            $coordinates->_setOwnerLanguage($params["language"] ?? null);
+
+            return $coordinates;
         }
 
         return null;
