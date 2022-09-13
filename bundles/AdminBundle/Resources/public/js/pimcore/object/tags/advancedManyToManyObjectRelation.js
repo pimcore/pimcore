@@ -599,8 +599,8 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                         async: false,
                         success: function (response) {
                             var rdata = Ext.decode(response.responseText);
-                            if (rdata.allow) {
-                                isAllowedClass = rdata.allow;
+                            if (rdata.valid) {
+                                isAllowedClass = rdata.valid;
                                 this.cache[data.id] = isAllowedClass;
                             }
                         }.bind(this)
