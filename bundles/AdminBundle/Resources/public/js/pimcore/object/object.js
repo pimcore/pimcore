@@ -568,7 +568,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
-                text: t(this.data.general.o_className),
+                text: t(this.data.general.o_title),
                 scale: "medium"
             });
 
