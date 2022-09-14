@@ -79,13 +79,14 @@ pimcore.notification.panel = Class.create({
                 dataIndex: 'title',
                 renderer: function (val, metaData, record, rowIndex, colIndex, store) {
                     var read = parseInt(store.getAt(rowIndex).get("read"));
+                    val = Ext.util.Format.htmlEncode(val);
                     if (read == 0) {
                         return '<strong style="font-weight: bold;">' + val + '</strong>'; // css style need to be added
                     }
                     return val;
                 }
             },
-            {header: t("sender"), flex: 2, sortable: false, dataIndex: 'sender'},
+            {header: t("sender"), flex: 2, sortable: false, dataIndex: 'sender', renderer: Ext.util.Format.htmlEncode},
             {header: t("date"), flex: 3, sortable: true, filter: 'date', dataIndex: 'date'},
             {
                 header: t("attachment"),
