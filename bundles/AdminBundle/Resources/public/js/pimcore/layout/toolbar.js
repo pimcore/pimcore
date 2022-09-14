@@ -1336,7 +1336,7 @@ pimcore.layout.toolbar = Class.create({
     editTranslations: function (domain) {
         const preEditTranslations = new CustomEvent(pimcore.events.preEditTranslations, {
             detail: {
-                object: this,
+                translation: this,
                 domain: domain ?? "website"
             }
         });

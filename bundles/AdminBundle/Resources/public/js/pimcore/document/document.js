@@ -97,10 +97,10 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
             const preSaveDocument = new CustomEvent(pimcore.events.preSaveDocument, {
                 detail: {
-                    object: this,
+                    document: this,
                     type: this.getType(),
                     task: task,
-                    only: only
+                    onlySaveVersion: only
                 },
                 cancelable: true
             });
@@ -145,10 +145,10 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
                             const postSaveDocument = new CustomEvent(pimcore.events.postSaveDocument, {
                                 detail: {
-                                    object: this,
+                                    document: this,
                                     type: this.getType(),
                                     task: task,
-                                    only: only
+                                    onlySaveVersion: only
                                 }
                             });
 

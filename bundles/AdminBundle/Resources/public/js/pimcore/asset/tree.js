@@ -860,8 +860,8 @@ pimcore.asset.tree = Class.create({
         const prepareAssetTreeContextMenu = new CustomEvent(pimcore.events.prepareAssetTreeContextMenu, {
             detail: {
                 menu: menu,
-                object: this,
-                record: record
+                tree: this,
+                asset: record
             }
         });
 

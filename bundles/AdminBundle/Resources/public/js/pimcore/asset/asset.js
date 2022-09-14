@@ -110,7 +110,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
             const postOpenAsset = new CustomEvent(pimcore.events.postOpenAsset, {
                 detail: {
-                    object: this,
+                    asset: this,
                     type: this.getType()
                 }
             });

@@ -23,7 +23,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
 
         const preOpenAssetImage = new CustomEvent(pimcore.events.preOpenAsset, {
             detail: {
-                object: this,
+                asset: this,
                 type: "image"
             }
         });
