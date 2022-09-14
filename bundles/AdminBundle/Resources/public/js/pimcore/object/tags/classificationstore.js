@@ -444,7 +444,8 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         var config = {
             title: groupTitle,
             items: groupedChildItems,
-            collapsible: true
+            collapsible: true,
+            layout: "vbox"
         };
 
         var tools = [];
