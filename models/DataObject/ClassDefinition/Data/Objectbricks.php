@@ -52,10 +52,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $border = false;
+    public bool $border = false;
 
     /**
      * @param int|null $maxItems

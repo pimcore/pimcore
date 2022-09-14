@@ -31,9 +31,6 @@ use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPasspor
  */
 class AdminSessionAuthenticator extends AdminAbstractAuthenticator
 {
-    /**
-     * @var User|null
-     */
     protected ?User $user;
 
     /**

@@ -102,10 +102,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $localized;
+    public bool $localized = false;
 
     /**
      * @internal
@@ -116,17 +114,13 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $hideEmptyData;
+    public bool $hideEmptyData = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $disallowAddRemove;
+    public bool $disallowAddRemove = false;
 
     /**
      * contains further localized field definitions if there are more than one localized fields in on class
@@ -968,7 +962,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      */
     public function setLocalized($localized)
     {
-        $this->localized = $localized;
+        $this->localized = (bool) $localized;
     }
 
     /**
@@ -1272,7 +1266,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      */
     public function setDisallowAddRemove($disallowAddRemove)
     {
-        $this->disallowAddRemove = $disallowAddRemove;
+        $this->disallowAddRemove = (bool) $disallowAddRemove;
 
         return $this;
     }

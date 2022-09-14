@@ -27,7 +27,6 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /** @var String|null */
     private ?string $nonce = null;
 
     public const DEFAULT_OPT = 'default-src';
@@ -46,9 +45,6 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
 
     public const FRAME_OPT = 'frame-src';
 
-    /**
-     * @var array
-     */
     private array $allowedUrls = [
         self::CONNECT_OPT => [
             'https://liveupdate.pimcore.org/', // AdminBundle statistics & update-check service
