@@ -21,7 +21,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @internal
  */
-final class Concatenator extends AbstractOperator
+final class Concatenator extends AbstractOperator implements TranslatorOperatorInterface
 {
     /**
      * @var string
@@ -38,13 +38,12 @@ final class Concatenator extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function __construct(\stdClass $config, $context = null, TranslatorInterface $translator)
+    public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 
         $this->glue = $config->glue ?? '';
         $this->forceValue = $config->forceValue ?? false;
-        $this->translator = $translator;
     }
 
     /**
@@ -93,5 +92,10 @@ final class Concatenator extends AbstractOperator
         $result->empty = true;
 
         return $result;
+    }
+
+    public function setTranslator(TranslatorInterface $translator): void
+    {
+        $this->translator = $translator;
     }
 }

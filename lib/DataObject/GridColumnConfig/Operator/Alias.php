@@ -21,18 +21,16 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @internal
  */
-final class Alias extends AbstractOperator
+final class Alias extends AbstractOperator implements TranslatorOperatorInterface
 {
     private TranslatorInterface $translator;
 
     /**
      * {@inheritdoc}
      */
-    public function __construct(\stdClass $config, $context = null, TranslatorInterface $translator)
+    public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
-
-        $this->translator = $translator;
     }
 
     /**
@@ -80,5 +78,10 @@ final class Alias extends AbstractOperator
         }
 
         return $result;
+    }
+
+    public function setTranslator(TranslatorInterface $translator): void
+    {
+        $this->translator = $translator;
     }
 }

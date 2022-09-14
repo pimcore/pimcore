@@ -21,7 +21,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @internal
  */
-final class Merge extends AbstractOperator
+final class Merge extends AbstractOperator implements TranslatorOperatorInterface
 {
     /**
      * @var bool
@@ -38,13 +38,12 @@ final class Merge extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function __construct(\stdClass $config, $context = null, TranslatorInterface $translator)
+    public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 
         $this->flatten = $config->flatten ?? false;
         $this->unique = $config->unique ?? false;
-        $this->translator = $translator;
     }
 
     /**
@@ -122,5 +121,10 @@ final class Merge extends AbstractOperator
     public function setUnique($unique)
     {
         $this->unique = $unique;
+    }
+
+    public function setTranslator(TranslatorInterface $translator): void
+    {
+        $this->translator = $translator;
     }
 }
