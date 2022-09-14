@@ -1312,6 +1312,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
 
         $forObjectEditor = $request->get('forObjectEditor');
 
+        $context = null;
         $layoutDefinitions = [];
         $groups = [];
         $definitions = [];
@@ -1328,6 +1329,13 @@ class ClassController extends AdminController implements KernelControllerEventIn
         }
 
         foreach ($list as $item) {
+            if ($forObjectEditor) {
+                $context = [
+                    'containerType' => 'objectbrick',
+                    'containerKey' => $item->getKey(),
+                    'outerFieldname' => $fieldname,
+                ];
+            }
             if ($request->query->has('class_id') && $request->query->has('field_name')) {
                 $keep = false;
                 $clsDefs = $item->getClassDefinitions();
@@ -1372,7 +1380,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
                         $itemLayoutDefinitions = $item->getLayoutDefinitions();
                     }
 
-                    DataObject\Service::enrichLayoutDefinition($itemLayoutDefinitions, $object);
+                    DataObject\Service::enrichLayoutDefinition($itemLayoutDefinitions, $object, $context);
 
                     $layoutDefinitions[$item->getKey()] = $itemLayoutDefinitions;
                 }
@@ -1400,12 +1408,6 @@ class ClassController extends AdminController implements KernelControllerEventIn
                             $layout = $customLayout->getLayoutDefinitions();
                         }
                     }
-
-                    $context = [
-                        'containerType' => 'objectbrick',
-                        'containerKey' => $item->getKey(),
-                        'outerFieldname' => $request->get('field_name'),
-                    ];
 
                     DataObject\Service::enrichLayoutDefinition($layout, $object, $context);
 

@@ -302,7 +302,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
             }
         } else {
             $hash = $this->calculateHash($password);
-            $result = $hash === $objectHash;
+            $result = hash_equals($objectHash, $hash);
         }
 
         return $result;
