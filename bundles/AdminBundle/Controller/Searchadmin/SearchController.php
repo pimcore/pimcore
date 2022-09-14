@@ -209,6 +209,46 @@ class SearchController extends AdminController
             $conditionParts[] = '( subtype IN (' . implode(',', $conditionClassnameParts) . ') )';
         }
 
+        $sqlCondition = $allParams['sqlCondition'];
+        if($sqlCondition) {
+            $context = json_decode($allParams['context'], true);
+            if($context['objectId']) {
+                $object = DataObject\Concrete::getById($context['objectId']);
+                $sqlCondition = \Pimcore::getContainer()->get('twig')->createTemplate($sqlCondition)->render(['object' => $object]);
+            }
+            if(empty($classnames)) {
+                $classList = new DataObject\ClassDefinition\Listing();
+                $classnames = [];
+                foreach($classList as $classDefinition) {
+                    $classnames[] = $classDefinition->getName();
+                }
+            }
+            $objectConditions = [];
+            foreach($classnames as $classname) {
+                $classDefinition = DataObject\ClassDefinition::getByName($classname);
+                if ($classDefinition instanceof DataObject\ClassDefinition) {
+                    $modelFactory = \Pimcore::getContainer()->get('pimcore.model.factory');
+                    /**
+                     * @var DataObject\Listing\Concrete $listing
+                     */
+                    $listing = $modelFactory->build('Pimcore\\Model\\DataObject\\'.$classname.'\\Listing');
+                    $listing->setCondition($sqlCondition);
+                    try {
+                        $objectIds = $listing->loadIdList();
+                        if($objectIds) {
+                            $objectConditions[] = 'id IN (' . implode(',', $objectIds) . ')';
+                        } else {
+                            $objectConditions[] = '0=1';
+                        }
+                    } catch (\Exception $e) {
+                    }
+                }
+            }
+            if($objectConditions) {
+                $conditionParts[] = '(' . implode(' OR ', $objectConditions) . ')';
+            }
+        }
+
         //filtering for tags
         if (!empty($allParams['tagIds'])) {
             $tagIds = $allParams['tagIds'];
