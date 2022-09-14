@@ -68,7 +68,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
 
             const postOpenDocument = new CustomEvent(pimcore.events.postOpenDocument, {
                 detail: {
-                    object: this,
+                    document: this,
                     type: this.data.type
                 }
             });

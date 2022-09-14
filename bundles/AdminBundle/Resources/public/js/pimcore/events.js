@@ -38,7 +38,7 @@ pimcore.events.postOpenAsset = "pimcore.asset.postOpen";
 
 /**
  * before asset is saved
- * asset id is passed as parameter
+ * asset id and task is passed as parameter
  */
 pimcore.events.preSaveAsset = "pimcore.asset.preSave";
 
@@ -171,7 +171,7 @@ pimcore.events.prepareAssetTreeContextMenu = "pimcore.assetTreeContextMenu.prepa
 
 /**
  * before context menu is opened
- * menu, tree class and object are passed as parameters
+ * menu, tree and object are passed as parameters
  */
 pimcore.events.prepareObjectTreeContextMenu = "pimcore.objectTreeContextMenu.prepare";
 
