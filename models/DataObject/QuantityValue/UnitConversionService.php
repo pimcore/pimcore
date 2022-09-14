@@ -49,10 +49,14 @@ class UnitConversionService
         }
 
         $converterServiceName = $baseUnit->getConverter();
-        $converterService = UnitConverterResolver::resolveUnitConverter($converterServiceName);
+        if ($converterServiceName) {
+            $converterService = UnitConverterResolver::resolveUnitConverter($converterServiceName);
+        } else {
+            $converterService = $this->defaultConverter;
+        }
 
         if (!$converterService instanceof QuantityValueConverterInterface) {
-            $converterService = $this->defaultConverter;
+            throw new \Exception('Converter class needs to implement '.QuantityValueConverterInterface::class);
         }
 
         return $converterService->convert($quantityValue, $toUnit);
