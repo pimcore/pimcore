@@ -716,7 +716,8 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                     object: ["object", "variant"]
                 },
                 specific: {
-                    classes: allowedClasses
+                    classes: allowedClasses,
+                    sqlCondition: this.fieldConfig.sqlCondition
                 }
             },
             {
@@ -820,7 +821,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
             for (var i = 0; i < this.fieldConfig.classes.length; i++) {
                 if (this.fieldConfig.classes[i].classes == classname) {
-                    if (this.fieldConfig.sqlCondition) {
+                    if (this.fieldConfig.sqlCondition && data.id) {
                         Ext.Ajax.request({
                             url: Routing.generate('pimcore_admin_dataobject_dataobject_check_validity'),
                             params: {

@@ -587,7 +587,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
         if (classRecord) {
             if (this.fieldConfig.allowedClassId == classRecord.data.text) {
-                if (this.fieldConfig.sqlCondition) {
+                if (this.fieldConfig.sqlCondition && data.id) {
                     Ext.Ajax.request({
                         url: Routing.generate('pimcore_admin_dataobject_dataobject_check_validity'),
                         params: {
