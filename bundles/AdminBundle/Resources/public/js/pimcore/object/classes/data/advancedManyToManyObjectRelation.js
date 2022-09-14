@@ -128,7 +128,7 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
                 xtype: "textfield",
                 name: "sqlCondition",
                 value: this.datax.sqlCondition,
-                fieldLabel: t("filter_condition") + ' (SQL)'
+                fieldLabel: t("filter_condition") + ' (SQL)',
                 width: 600,
             }
         );

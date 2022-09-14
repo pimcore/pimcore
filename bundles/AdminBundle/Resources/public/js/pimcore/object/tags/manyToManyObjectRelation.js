@@ -824,7 +824,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                         Ext.Ajax.request({
                             url: Routing.generate('pimcore_admin_dataobject_dataobject_check_validity'),
                             params: {
-                                data: {id: data.id},
+                                data: [{id: data.id}],
                                 currentObjectId: this.context.objectId,
                                 unsavedChanges: this.object.getSaveData().data,
                                 fieldDefinition: JSON.stringify(this.fieldConfig)
@@ -832,8 +832,8 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                             async: false,
                             success: function (response) {
                                 var rdata = Ext.decode(response.responseText);
-                                if (rdata.allow) {
-                                    isAllowedClass = rdata.allow;
+                                if (rdata.valid) {
+                                    isAllowedClass = rdata.valid;
                                     this.cache[data.id] = isAllowedClass;
                                 }
                             }.bind(this)
