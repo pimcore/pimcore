@@ -79,6 +79,13 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      *
      * @var bool
      */
+    public $allowEditingColumnsWhenNotEditable = false;
+
+    /**
+     * @internal
+     *
+     * @var bool
+     */
     public $allowMultipleAssignments;
 
     /**
@@ -1060,6 +1067,22 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     public function setEnableBatchEdit($enableBatchEdit)
     {
         $this->enableBatchEdit = $enableBatchEdit;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getAllowEditingColumnsWhenNotEditable()
+    {
+        return $this->allowEditingColumnsWhenNotEditable;
+    }
+
+    /**
+     * @param bool $allowEditingColumnsWhenNotEditable
+     */
+    public function setAllowEditingColumnsWhenNotEditable(bool $allowEditingColumnsWhenNotEditable)
+    {
+        $this->allowEditingColumnsWhenNotEditable = $allowEditingColumnsWhenNotEditable;
     }
 
     /**

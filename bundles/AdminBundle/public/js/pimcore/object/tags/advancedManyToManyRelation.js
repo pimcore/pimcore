@@ -103,6 +103,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
 
         var visibleFieldsCount = columns.length;
 
+        var allowEditingColumns = !readOnly || this.fieldConfig.allowEditingColumnsWhenNotEditable;
         for (i = 0; i < this.fieldConfig.columns.length; i++) {
             var width = 100;
             if (this.fieldConfig.columns[i].width) {
@@ -113,16 +114,20 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             var renderer = null;
             var listeners = null;
 
-            if (this.fieldConfig.columns[i].type == "number" && !readOnly) {
-                cellEditor = function () {
-                    return new Ext.form.NumberField({});
-                };
-            } else if (this.fieldConfig.columns[i].type == "text" && !readOnly) {
-                cellEditor = function () {
-                    return new Ext.form.TextField({});
-                };
+            if (this.fieldConfig.columns[i].type == "number") {
+                if (allowEditingColumns) {
+                    cellEditor = function () {
+                        return new Ext.form.NumberField({});
+                    };
+                }
+            } else if (this.fieldConfig.columns[i].type == "text") {
+                if (allowEditingColumns) {
+                    cellEditor = function () {
+                        return new Ext.form.TextField({});
+                    };
+                }
             } else if (this.fieldConfig.columns[i].type == "select") {
-                if(!readOnly) {
+                if (allowEditingColumns) {
                     var selectData = [];
                     if (this.fieldConfig.columns[i].value) {
                         var selectDataRaw = this.fieldConfig.columns[i].value.split(";");
@@ -158,7 +163,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                     return t(value);
                 }
             } else if (this.fieldConfig.columns[i].type == "multiselect") {
-                if(!readOnly) {
+                if (allowEditingColumns) {
                     cellEditor = function (fieldInfo) {
                         return new pimcore.object.helpers.metadataMultiselectEditor({
                             fieldInfo: fieldInfo
@@ -181,7 +186,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 }
             } else if (this.fieldConfig.columns[i].type === "bool" || this.fieldConfig.columns[i].type === "columnbool") {
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
-                    if (this.fieldConfig.noteditable) {
+                    if (this.fieldConfig.noteditable && !this.fieldConfig.allowEditingColumnsWhenNotEditable) {
                         metaData.tdCls += ' grid_cbx_noteditable';
                     }
 
@@ -192,7 +197,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                     "mousedown": this.cellMousedown.bind(this, this.fieldConfig.columns[i].key, this.fieldConfig.columns[i].type, readOnly)
                 };
 
-                if (readOnly) {
+                if (!allowEditingColumns) {
                     columns.push(Ext.create('Ext.grid.column.Check', {
                         text: t(this.fieldConfig.columns[i].label),
                         dataIndex: this.fieldConfig.columns[i].key,
@@ -371,7 +376,10 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                     // probably a ExtJS 6.0 bug. withou this, dropdowns not working anymore if plugin is enabled
                     // TODO: investigate if there this is already fixed 6.2
                     cellmousedown: function (element, td, cellIndex, record, tr, rowIndex, e, eOpts) {
-                        if (this.fieldConfig.noteditable == true || cellIndex >= visibleFieldsCount) {
+                        if (
+                            (this.fieldConfig.noteditable == true && !this.fieldConfig.allowEditingColumnsWhenNotEditable)
+                            || cellIndex >= visibleFieldsCount
+                        ) {
                             return false;
                         } else {
                             return true;

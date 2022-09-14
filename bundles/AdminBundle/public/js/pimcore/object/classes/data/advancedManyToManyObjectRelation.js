@@ -184,6 +184,13 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
 
         this.specificPanel.add({
             xtype: "checkbox",
+            boxLabel: t("allow_editing_columns_when_not_editable"),
+            name: "allowEditingColumnsWhenNotEditable",
+            value: this.datax.allowEditingColumnsWhenNotEditable
+        });
+
+        this.specificPanel.add({
+            xtype: "checkbox",
             boxLabel: t("allow_multiple_assignments"),
             name: "allowMultipleAssignments",
             value: this.datax.allowMultipleAssignments
@@ -408,6 +415,7 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
                     remoteOwner: source.datax.remoteOwner,
                     classes: source.datax.classes,
                     enableBatchEdit: source.datax.enableBatchEdit,
+                    allowEditingColumnsWhenNotEditable: source.datax.allowEditingColumnsWhenNotEditable,
                     allowMultipleAssignments: source.datax.allowMultipleAssignments,
                     allowToCreateNewObject: source.datax.allowToCreateNewObject,
                     optimizedAdminLoading: source.datax.optimizedAdminLoading,

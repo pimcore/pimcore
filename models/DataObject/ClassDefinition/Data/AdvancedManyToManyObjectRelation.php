@@ -79,6 +79,13 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      *
      * @var bool
      */
+    public $allowEditingColumnsWhenNotEditable =  false;
+
+    /**
+     * @internal
+     *
+     * @var bool
+     */
     public $allowMultipleAssignments = false;
 
     /**
@@ -747,6 +754,22 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     public function setEnableBatchEdit($enableBatchEdit)
     {
         $this->enableBatchEdit = $enableBatchEdit;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getAllowEditingColumnsWhenNotEditable()
+    {
+        return $this->allowEditingColumnsWhenNotEditable;
+    }
+
+    /**
+     * @param bool $allowEditingColumnsWhenNotEditable
+     */
+    public function setAllowEditingColumnsWhenNotEditable(bool $allowEditingColumnsWhenNotEditable)
+    {
+        $this->allowEditingColumnsWhenNotEditable = $allowEditingColumnsWhenNotEditable;
     }
 
     /**

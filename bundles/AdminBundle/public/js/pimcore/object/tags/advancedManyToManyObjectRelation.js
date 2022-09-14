@@ -143,6 +143,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             }
         }
 
+        var allowEditingColumns = !readOnly || this.fieldConfig.allowEditingColumnsWhenNotEditable;
         for (i = 0; i < this.fieldConfig.columns.length; i++) {
             var width = 100;
             if (this.fieldConfig.columns[i].width) {
@@ -153,16 +154,20 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             var renderer = null;
             var listeners = null;
 
-            if (this.fieldConfig.columns[i].type == "number" && !readOnly) {
-                cellEditor = function() {
-                    return new Ext.form.NumberField({});
-                }.bind();
-            } else if (this.fieldConfig.columns[i].type == "text" && !readOnly) {
-                cellEditor = function() {
-                    return new Ext.form.TextField({});
-                };
+            if (this.fieldConfig.columns[i].type == "number") {
+                if (allowEditingColumns) {
+                    cellEditor = function () {
+                        return new Ext.form.NumberField({});
+                    }.bind();
+                }
+            } else if (this.fieldConfig.columns[i].type == "text") {
+                if (allowEditingColumns) {
+                    cellEditor = function () {
+                        return new Ext.form.TextField({});
+                    };
+                }
             } else if (this.fieldConfig.columns[i].type == "select") {
-                if(!readOnly) {
+                if (allowEditingColumns) {
                     var selectData = [];
 
                     if (this.fieldConfig.columns[i].value) {
@@ -200,7 +205,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                     return t(value);
                 }
             } else if(this.fieldConfig.columns[i].type == "multiselect") {
-                if(!readOnly) {
+                if (allowEditingColumns) {
                     cellEditor =  function(fieldInfo) {
                         return new pimcore.object.helpers.metadataMultiselectEditor({
                             fieldInfo: fieldInfo
@@ -223,7 +228,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 }
             } else if (this.fieldConfig.columns[i].type == "bool") {
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
-                    if (this.fieldConfig.noteditable) {
+                    if (this.fieldConfig.noteditable && !this.fieldConfig.allowEditingColumnsWhenNotEditable) {
                         metaData.tdCls += ' grid_cbx_noteditable';
                     }
 
@@ -233,8 +238,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 listeners = {
                     "mousedown": this.cellMousedown.bind(this, this.fieldConfig.columns[i].key, this.fieldConfig.columns[i].type)
                 };
-
-                if (readOnly) {
+                if (!allowEditingColumns) {
                     columns.push(Ext.create('Ext.grid.column.Check', {
                         text: t(this.fieldConfig.columns[i].label),
                         dataIndex: this.fieldConfig.columns[i].key,
@@ -404,7 +408,10 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                     // probably a ExtJS 6.0 bug. without this, dropdowns not working anymore if plugin is enabled
                     // TODO: investigate if there this is already fixed 6.2
                     cellmousedown: function (element, td, cellIndex, record, tr, rowIndex, e, eOpts) {
-                        if (this.fieldConfig.noteditable == true || cellIndex >= visibleFields.length) {
+                        if (
+                            (this.fieldConfig.noteditable == true && !this.fieldConfig.allowEditingColumnsWhenNotEditable)
+                            || cellIndex >= visibleFields.length
+                        ) {
                             return false;
                         } else {
                             return true;
