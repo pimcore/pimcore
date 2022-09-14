@@ -422,7 +422,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public function getVersionPreview($data, $object = null, $params = [])
     {
         // this is handled directly in the template
-        // /bundles/AdminBundle/Resources/views/Admin/DataObject/DataObject/previewVersion.html.twig
+        // /bundles/AdminBundle/templates/admin/data_object/data_object/preview_version.html.twig
         return 'CLASSIFICATIONSTORE';
     }
 
@@ -1108,7 +1108,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 }
                 $definition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyGroupRelation);
 
-                // changes here also have an effect here: "bundles/AdminBundle/Resources/public/js/pimcore/object/tags/classificationstore.js"
+                // changes here also have an effect here: "bundles/AdminBundle/public/js/pimcore/object/tags/classificationstore.js"
                 $fallbackTooltip = $definition->getName();
                 if (!empty($keyGroupRelation->getDescription())) {
                     $fallbackTooltip .= ' - ' . $keyGroupRelation->getDescription();

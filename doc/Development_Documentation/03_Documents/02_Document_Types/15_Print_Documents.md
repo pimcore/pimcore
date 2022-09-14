@@ -66,7 +66,7 @@ They can be activated by the printermarks rendering setting. Technically they ar
 For Details, check links below:
 
 * [view-script](https://github.com/pimcore/demo/blob/11.x/templates/layouts/print_catalog.html.twig#L18-L20)
-* [css-file](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/Resources/public/css/print/print-printermarks.css)
+* [css-file](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/public/css/print/print-printermarks.css)
 
 ## Settings
 In the web-to-print settings, the used PDF renderer is specified. Depending on the renderer, there are additional settings to be made. 
