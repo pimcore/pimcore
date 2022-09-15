@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator\Factory;
 
-use Pimcore\DataObject\GridColumnConfig\Operator\TranslatorOperatorInterface;
+use Pimcore\DataObject\GridColumnConfig\Operator\TranslatorAwareOperatorInterface;
 use Pimcore\Logger;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -53,7 +53,7 @@ class DefaultOperatorFactory implements OperatorFactoryInterface
     {
         if (class_exists($this->className)) {
             $newClass = new $this->className($configElement, $context);
-            if($newClass instanceof TranslatorOperatorInterface){
+            if($newClass instanceof TranslatorAwareOperatorInterface){
                 $newClass->setTranslator($this->translator);
             }
             return $newClass;

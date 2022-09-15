@@ -21,7 +21,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @internal
  */
-final class Concatenator extends AbstractOperator implements TranslatorOperatorInterface
+final class Concatenator extends AbstractOperator implements TranslatorAwareOperatorInterface
 {
     /**
      * @var string

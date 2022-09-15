@@ -21,7 +21,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @internal
  */
-final class Alias extends AbstractOperator implements TranslatorOperatorInterface
+final class Alias extends AbstractOperator implements TranslatorAwareOperatorInterface
 {
     private TranslatorInterface $translator;
 

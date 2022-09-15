@@ -21,7 +21,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @internal
  */
-final class Merge extends AbstractOperator implements TranslatorOperatorInterface
+final class Merge extends AbstractOperator implements TranslatorAwareOperatorInterface
 {
     /**
      * @var bool

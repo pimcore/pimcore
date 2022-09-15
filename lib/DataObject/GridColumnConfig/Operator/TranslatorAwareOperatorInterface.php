@@ -19,7 +19,7 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-interface TranslatorOperatorInterface
+interface TranslatorAwareOperatorInterface
 {
     public function setTranslator(TranslatorInterface $translator): void;
 }
