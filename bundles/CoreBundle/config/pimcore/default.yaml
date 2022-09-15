@@ -272,7 +272,7 @@ pimcore:
             - { route: pimcore_admin_webdav }
 
         translations:
-            path: "@PimcoreCoreBundle/Resources/translations"
+            path: "@PimcoreCoreBundle/translations"
 
     sitemaps:
         generators:
