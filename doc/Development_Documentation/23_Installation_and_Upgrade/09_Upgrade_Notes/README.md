@@ -52,6 +52,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Workflows] Removed classes Pimcore\Model\Workflow, Pimcore\Model\Workflow\Dao, Pimcore\Model\Workflow\Listing\Dao and Pimcore\Model\Workflow\Listing.
     Please check the documentation on how to work with workflows: [Workflow Management](../../07_Workflow_Management/README.md).
 - [Core] Removed the deprecated method `Kernel::getRootDir()`, use `Kernel::getProjectDir()` instead.
+- [CoreBundle] Please update CoreBundle config resource path from `@PimcoreCoreBundle/Resources/config/...` to `@PimcoreCoreBundle/config/..` in your project configurations.
 
 ## 10.5.0
 - [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`
