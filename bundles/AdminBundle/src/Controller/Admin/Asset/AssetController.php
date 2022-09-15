@@ -23,6 +23,7 @@ use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
+use Pimcore\Db;
 use Pimcore\Db\Helper;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
