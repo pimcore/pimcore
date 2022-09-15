@@ -26,11 +26,14 @@ trait AllowObjectRelationTrait
     /**
      * Checks if an object is an allowed relation
      *
+     * @internal
+     *
      * @param DataObject\AbstractObject $object
      * @param array $params
+     *
      * @return bool
+     *
      * @throws \Exception
-     * @internal
      *
      */
     protected function allowObjectRelation($object, $params = [])
@@ -74,7 +77,7 @@ trait AllowObjectRelationTrait
             $listing = $object->getList();
             $listing->addConditionParam('o_id = ?', [$object->getId()]);
             $listing->addConditionParam($sqlCondition);
-            if ( !count($listing) ) {
+            if ( count($listing) === 0 ) {
                 $allowed = false;
             }
         }
