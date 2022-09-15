@@ -71,8 +71,8 @@ It's possible to pass a custom CKEditor config object to the wysiwyg editor.
 
 ```
 {
-  "toolbarGroups": [{ "name": "links" }],
-  "enterMode": 2
+  toolbarGroups: [{ "name": "links" }],
+  enterMode: CKEDITOR.ENTER_BR
 }
 ```
 
