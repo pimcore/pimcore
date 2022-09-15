@@ -490,7 +490,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         const prepareOnRowContextmenu = new CustomEvent(pimcore.events.prepareOnRowContextmenu, {
             detail: {
                 menu: menu,
-                object: this,
+                grid: this,
                 selectedRows: selectedRows
             }
         });

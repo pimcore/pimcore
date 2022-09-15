@@ -23,7 +23,7 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
 
         const preOpenDocumentPage = new CustomEvent(pimcore.events.preOpenDocument, {
             detail: {
-                object: this,
+                document: this,
                 type: "page"
             }
         });
