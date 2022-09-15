@@ -1805,7 +1805,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, config, callback) {
         width: 520
     });
 
-    var fieldPath = new Ext.form.TextField({
+    var pathField = new Ext.form.TextField({
         fieldLabel: t('path'),
         value: data.path,
         name: "path",
@@ -1825,13 +1825,13 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, config, callback) {
         }
     });
 
-    fieldPath.on("render", function (el) {
+    pathField.on("render", function (el) {
         // add drop zone
         new Ext.dd.DropZone(el.getEl(), {
             reference: this,
             ddGroup: "element",
             getTargetFromEvent: function (e) {
-                return fieldPath.getEl();
+                return pathField.getEl();
             },
 
             onNodeOver: function (target, dd, e, data) {
@@ -1854,7 +1854,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, config, callback) {
                 if (data.type !== "folder" && allowedTypes.includes(data.elementType)) {
                     internalTypeField.setValue(data.elementType);
                     linkTypeField.setValue('internal');
-                    fieldPath.setValue(data.path);
+                    pathField.setValue(data.path);
                     return true;
                 }
                 return false;
@@ -1863,7 +1863,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, config, callback) {
     }.bind(this));
 
     const fcItems = [
-        fieldPath
+        pathField,
     ];
 
     if (pimcore.helpers.hasSearchImplementation()) {
@@ -1876,7 +1876,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, config, callback) {
                     if (item) {
                         internalTypeField.setValue(item.type);
                         linkTypeField.setValue('internal');
-                        fieldPath.setValue(item.fullpath);
+                        pathField.setValue(item.fullpath);
                         return true;
                     }
                 }, {
