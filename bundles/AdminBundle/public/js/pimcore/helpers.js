@@ -1787,6 +1787,7 @@ pimcore.helpers.editmode = {};
 
 pimcore.helpers.editmode.openLinkEditPanel = function (data, config, callback) {
     const allowedTargets = config.allowedTargets || [];
+    const allowedTypes = config.allowedTypes || [];
 
     var internalTypeField = new Ext.form.Hidden({
         fieldLabel: 'internalType',
@@ -1834,7 +1835,12 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, config, callback) {
             },
 
             onNodeOver: function (target, dd, e, data) {
-                if (data.records.length === 1 && data.records[0].data.type !== "folder") {
+                if (data.records.length !== 1) {
+                    return;
+                }
+
+                data = data.records[0].data;
+                if (data.type !== "folder" && allowedTypes.includes(data.elementType)) {
                     return Ext.dd.DropZone.prototype.dropAllowed;
                 }
             }.bind(this),
@@ -1845,7 +1851,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, config, callback) {
                 }
 
                 data = data.records[0].data;
-                if (data.type !== "folder") {
+                if (data.type !== "folder" && allowedTypes.includes(data.elementType)) {
                     internalTypeField.setValue(data.elementType);
                     linkTypeField.setValue('internal');
                     fieldPath.setValue(data.path);
@@ -1860,7 +1866,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, config, callback) {
         fieldPath
     ];
 
-    if(pimcore.helpers.hasSearchImplementation()) {
+    if (pimcore.helpers.hasSearchImplementation()) {
         fcItems.push({
             xtype: "button",
             iconCls: "pimcore_icon_search",
@@ -1874,7 +1880,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, config, callback) {
                         return true;
                     }
                 }, {
-                    type: ["asset", "document", "object"]
+                    type: Ext.Array.intersect(["asset", "document", "object"], allowedTypes)
                 });
             }
         });
