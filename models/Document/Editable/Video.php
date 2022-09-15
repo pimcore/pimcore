@@ -449,12 +449,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->getConfig()['height'] ?? 300;
     }
 
-    /**
-     * @param bool $inAdmin
-     *
-     * @return string
-     */
-    private function getAssetCode($inAdmin = false)
+    private function getAssetCode(bool $inAdmin = false): string
     {
         $asset = Asset::getById($this->id);
         $config = $this->getConfig();
@@ -612,10 +607,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $youtubeId;
     }
 
-    /**
-     * @return string
-     */
-    private function getYoutubeCode($inAdmin = false)
+    private function getYoutubeCode(bool $inAdmin = false): string
     {
         if (!$this->id) {
             return $this->getEmptyCode();
@@ -713,10 +705,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $code;
     }
 
-    /**
-     * @return string
-     */
-    private function getVimeoCode($inAdmin = false)
+    private function getVimeoCode(bool $inAdmin = false): string
     {
         if (!$this->id) {
             return $this->getEmptyCode();
@@ -798,10 +787,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->getEmptyCode();
     }
 
-    /**
-     * @return string
-     */
-    private function getDailymotionCode($inAdmin = false)
+    private function getDailymotionCode(bool $inAdmin = false): string
     {
         if (!$this->id) {
             return $this->getEmptyCode();
