@@ -86,8 +86,8 @@ While most configuration parameters define which features shall be available whe
 * `CKEDITOR.ENTER_DIV`
   * same as `CKEDITOR.ENTER_P` but paragraphs get wrapped in `<div>` tags
 
-More examples and config options for the toolbar and toolbarGroups can be found at 
-[http://docs.ckeditor.com/#!/guide/dev_toolbar](http://docs.ckeditor.com/#!/guide/dev_toolbar). 
+More examples and config options for the toolbar and toolbarGroups can be found in
+[CKeditor toolbar documentation](http://docs.ckeditor.com/#!/guide/dev_toolbar) or you can use the [CKeditor configurator](https://ckeditor.com/latest/samples/toolbarconfigurator) to create a custom toolbar configuration. 
 
 Please refer to the [CKeditor 4.0 Documentation](http://docs.ckeditor.com/).
 
