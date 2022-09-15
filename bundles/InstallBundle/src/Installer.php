@@ -567,7 +567,7 @@ class Installer
         $db->executeQuery('SET FOREIGN_KEY_CHECKS=0;');
 
         if ($this->createDatabaseStructure) {
-            $mysqlInstallScript = file_get_contents(__DIR__ . '/Resources/install.sql');
+            $mysqlInstallScript = file_get_contents(__DIR__ . '/../dump/install.sql');
 
             // remove comments in SQL script
             $mysqlInstallScript = preg_replace("/\s*(?!<\")\/\*[^\*]+\*\/(?!\")\s*/", '', $mysqlInstallScript);
