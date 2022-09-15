@@ -1842,13 +1842,37 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote(Helper::escapeLike($folder->getRealFullPath()) . '/%')) . " AND type != 'folder'";
 
         if (!$this->getAdminUser()->isAdmin()) {
-            $userIds = $this->getAdminUser()->getRoles();
-            $userIds[] = $this->getAdminUser()->getId();
-            $conditionFilters[] = ' (
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                    OR
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                 )';
+            $elementPaths = Element\Service::findForbiddenPaths('asset', $this->getAdminUser());
+
+            $forbiddenPathSql = [];
+            $allowedPathSql = [];
+            foreach ($elementPaths['forbidden'] as $forbiddenPath => $allowedPaths) {
+                $exceptions = '';
+                $folderSuffix = '';
+                if ($allowedPaths) {
+                    $exceptionsConcat = implode("%' OR CONCAT(path,filename) LIKE '", $allowedPaths);
+                    $exceptions = " OR (CONCAT(path,filename) LIKE '".$exceptionsConcat."%')";
+                    $folderSuffix = '/'; //if allowed children are found, the current folder is listable but its content is still blocked, can easily done by adding a trailing slash
+                }
+                $forbiddenPathSql[] = ' (CONCAT(path,filename) NOT LIKE '.$list->quote($forbiddenPath.$folderSuffix.'%').$exceptions.') ';
+            }
+            foreach ($elementPaths['allowed'] as $allowedPaths) {
+                $allowedPathSql[] = ' CONCAT(path,filename) LIKE '.$list->quote($allowedPaths.'%');
+            }
+
+            if ($allowedPathSql || $forbiddenPathSql) {
+                $forbiddenAndAllowedSql = ' AND (';
+                $forbiddenAndAllowedSql .= $allowedPathSql ? '( '.implode(' OR ', $allowedPathSql).' )' : '';
+
+                if ($forbiddenPathSql) {
+                    //if $allowedPathSql "implosion" is present, we need `AND` in between
+                    $forbiddenAndAllowedSql .= $allowedPathSql ? ' AND ' : '';
+                    $forbiddenAndAllowedSql .= implode(' AND ', $forbiddenPathSql);
+                }
+                $forbiddenAndAllowedSql .= ' )';
+
+                $conditionFilters[] = $forbiddenAndAllowedSql;
+            }
         }
 
         $condition = implode(' AND ', $conditionFilters);
@@ -2090,13 +2114,37 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             }
             $conditionFilters[] = 'path LIKE ' . $db->quote(Helper::escapeLike($parentPath) . '/%') . ' AND type != ' . $db->quote('folder');
             if (!$this->getAdminUser()->isAdmin()) {
-                $userIds = $this->getAdminUser()->getRoles();
-                $userIds[] = $this->getAdminUser()->getId();
-                $conditionFilters[] = ' (
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                    OR
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                 )';
+                $elementPaths = Element\Service::findForbiddenPaths('asset', $this->getAdminUser());
+
+                $forbiddenPathSql = [];
+                $allowedPathSql = [];
+                foreach ($elementPaths['forbidden'] as $forbiddenPath => $allowedPaths) {
+                    $exceptions = '';
+                    $folderSuffix = '';
+                    if ($allowedPaths) {
+                        $exceptionsConcat = implode("%' OR CONCAT(path,filename) LIKE '", $allowedPaths);
+                        $exceptions = " OR (CONCAT(path,filename) LIKE '".$exceptionsConcat."%')";
+                        $folderSuffix = '/'; //if allowed children are found, the current folder is listable but its content is still blocked, can easily done by adding a trailing slash
+                    }
+                    $forbiddenPathSql[] = ' (CONCAT(path,filename) NOT LIKE '.Db::get()->quote($forbiddenPath.$folderSuffix.'%').$exceptions.') ';
+                }
+                foreach ($elementPaths['allowed'] as $allowedPaths) {
+                    $allowedPathSql[] = ' CONCAT(path,filename) LIKE '.Db::get()->quote($allowedPaths.'%');
+                }
+
+                if ($allowedPathSql || $forbiddenPathSql) {
+                    $forbiddenAndAllowedSql = ' AND (';
+                    $forbiddenAndAllowedSql .= $allowedPathSql ? '( '.implode(' OR ', $allowedPathSql).' )' : '';
+
+                    if ($forbiddenPathSql) {
+                        //if $allowedPathSql "implosion" is present, we need `AND` in between
+                        $forbiddenAndAllowedSql .= $allowedPathSql ? ' AND ' : '';
+                        $forbiddenAndAllowedSql .= implode(' AND ', $forbiddenPathSql);
+                    }
+                    $forbiddenAndAllowedSql .= ' )';
+
+                    $conditionFilters[] = $forbiddenAndAllowedSql;
+                }
             }
 
             $condition = implode(' AND ', $conditionFilters);
@@ -2171,13 +2219,37 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 }
                 $conditionFilters[] = "type != 'folder' AND path LIKE " . $db->quote(Helper::escapeLike($parentPath) . '/%');
                 if (!$this->getAdminUser()->isAdmin()) {
-                    $userIds = $this->getAdminUser()->getRoles();
-                    $userIds[] = $this->getAdminUser()->getId();
-                    $conditionFilters[] = ' (
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                    OR
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                 )';
+                    $elementPaths = Element\Service::findForbiddenPaths('asset', $this->getAdminUser());
+
+                    $forbiddenPathSql = [];
+                    $allowedPathSql = [];
+                    foreach ($elementPaths['forbidden'] as $forbiddenPath => $allowedPaths) {
+                        $exceptions = '';
+                        $folderSuffix = '';
+                        if ($allowedPaths) {
+                            $exceptionsConcat = implode("%' OR CONCAT(path,filename) LIKE '", $allowedPaths);
+                            $exceptions = " OR (CONCAT(path,filename) LIKE '".$exceptionsConcat."%')";
+                            $folderSuffix = '/'; //if allowed children are found, the current folder is listable but its content is still blocked, can easily done by adding a trailing slash
+                        }
+                        $forbiddenPathSql[] = ' (CONCAT(path,filename) NOT LIKE '.$db->quote($forbiddenPath.$folderSuffix.'%').$exceptions.') ';
+                    }
+                    foreach ($elementPaths['allowed'] as $allowedPaths) {
+                        $allowedPathSql[] = ' CONCAT(path,filename) LIKE '.$db->quote($allowedPaths.'%');
+                    }
+
+                    if ($allowedPathSql || $forbiddenPathSql) {
+                        $forbiddenAndAllowedSql = ' AND (';
+                        $forbiddenAndAllowedSql .= $allowedPathSql ? '( '.implode(' OR ', $allowedPathSql).' )' : '';
+
+                        if ($forbiddenPathSql) {
+                            //if $allowedPathSql "implosion" is present, we need `AND` in between
+                            $forbiddenAndAllowedSql .= $allowedPathSql ? ' AND ' : '';
+                            $forbiddenAndAllowedSql .= implode(' AND ', $forbiddenPathSql);
+                        }
+                        $forbiddenAndAllowedSql .= ' )';
+
+                        $conditionFilters[] = $forbiddenAndAllowedSql;
+                    }
                 }
 
                 $condition = implode(' AND ', $conditionFilters);

@@ -586,13 +586,37 @@ class GridHelperService
         }
 
         if (!$adminUser->isAdmin()) {
-            $userIds = $adminUser->getRoles();
-            $userIds[] = $adminUser->getId();
-            $conditionFilters[] = ' (
-                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(o_path,o_key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                    OR
-                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o_path,o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                 )';
+            $elementPaths = Model\Element\Service::findForbiddenPaths('object', $adminUser);
+
+            $forbiddenPathSql = [];
+            $allowedPathSql = [];
+            foreach ($elementPaths['forbidden'] as $forbiddenPath => $allowedPaths) {
+                $exceptions = '';
+                $folderSuffix = '';
+                if ($allowedPaths) {
+                    $exceptionsConcat = implode("%' OR CONCAT(path,filename) LIKE '", $allowedPaths);
+                    $exceptions = " OR (CONCAT(path,filename) LIKE '".$exceptionsConcat."%')";
+                    $folderSuffix = '/'; //if allowed children are found, the current folder is listable but its content is still blocked, can easily done by adding a trailing slash
+                }
+                $forbiddenPathSql[] = ' (CONCAT(path,filename) NOT LIKE '.$list->quote($forbiddenPath.$folderSuffix.'%').$exceptions.') ';
+            }
+            foreach ($elementPaths['allowed'] as $allowedPaths) {
+                $allowedPathSql[] = ' CONCAT(path,filename) LIKE '.$list->quote($allowedPaths.'%');
+            }
+
+            if ($allowedPathSql || $forbiddenPathSql) {
+                $forbiddenAndAllowedSql = ' AND (';
+                $forbiddenAndAllowedSql .= $allowedPathSql ? '( '.implode(' OR ', $allowedPathSql).' )' : '';
+
+                if ($forbiddenPathSql) {
+                    //if $allowedPathSql "implosion" is present, we need `AND` in between
+                    $forbiddenAndAllowedSql .= $allowedPathSql ? ' AND ' : '';
+                    $forbiddenAndAllowedSql .= implode(' AND ', $forbiddenPathSql);
+                }
+                $forbiddenAndAllowedSql .= ' )';
+
+                $conditionFilters[] = $forbiddenAndAllowedSql;
+            }
         }
 
         $featureJoins = [];
@@ -799,13 +823,37 @@ class GridHelperService
         }
 
         if (!$adminUser->isAdmin()) {
-            $userIds = $adminUser->getRoles();
-            $userIds[] = $adminUser->getId();
-            $conditionFilters[] = ' (
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                    OR
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                 )';
+            $elementPaths = Model\Element\Service::findForbiddenPaths('asset', $adminUser);
+
+            $forbiddenPathSql = [];
+            $allowedPathSql = [];
+            foreach ($elementPaths['forbidden'] as $forbiddenPath => $allowedPaths) {
+                $exceptions = '';
+                $folderSuffix = '';
+                if ($allowedPaths) {
+                    $exceptionsConcat = implode("%' OR CONCAT(path,filename) LIKE '", $allowedPaths);
+                    $exceptions = " OR (CONCAT(path,filename) LIKE '".$exceptionsConcat."%')";
+                    $folderSuffix = '/'; //if allowed children are found, the current folder is listable but its content is still blocked, can easily done by adding a trailing slash
+                }
+                $forbiddenPathSql[] = ' (CONCAT(path,filename) NOT LIKE '.$list->quote($forbiddenPath.$folderSuffix.'%').$exceptions.') ';
+            }
+            foreach ($elementPaths['allowed'] as $allowedPaths) {
+                $allowedPathSql[] = ' CONCAT(path,filename) LIKE '.$list->quote($allowedPaths.'%');
+            }
+
+            if ($allowedPathSql || $forbiddenPathSql) {
+                $forbiddenAndAllowedSql = ' AND (';
+                $forbiddenAndAllowedSql .= $allowedPathSql ? '( '.implode(' OR ', $allowedPathSql).' )' : '';
+
+                if ($forbiddenPathSql) {
+                    //if $allowedPathSql "implosion" is present, we need `AND` in between
+                    $forbiddenAndAllowedSql .= $allowedPathSql ? ' AND ' : '';
+                    $forbiddenAndAllowedSql .= implode(' AND ', $forbiddenPathSql);
+                }
+                $forbiddenAndAllowedSql .= ' )';
+
+                $conditionFilters[] = $forbiddenAndAllowedSql;
+            }
         }
 
         //filtering for tags

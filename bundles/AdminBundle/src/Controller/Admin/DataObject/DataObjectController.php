@@ -204,17 +204,37 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         // custom views end
 
         if (!$this->getAdminUser()->isAdmin()) {
-            $userIds = $this->getAdminUser()->getRoles();
-            $currentUserId = $this->getAdminUser()->getId();
-            $userIds[] = $currentUserId;
+            $elementPaths = Element\Service::findForbiddenPaths('object', $this->getAdminUser());
 
-            $inheritedPermission = $object->getDao()->isInheritingPermission('list', $userIds);
+            $forbiddenPathSql = [];
+            $allowedPathSql = [];
+            foreach ($elementPaths['forbidden'] as $forbiddenPath => $allowedPaths) {
+                $exceptions = '';
+                $folderSuffix = '';
+                if ($allowedPaths) {
+                    $exceptionsConcat = implode("%' OR CONCAT(o_path,o_key) LIKE '", $allowedPaths);
+                    $exceptions = " OR (CONCAT(o_path,o_key) LIKE '".$exceptionsConcat."%')";
+                    $folderSuffix = '/'; //if allowed children are found, the current folder is listable but its content is still blocked, can easily done by adding a trailing slash
+                }
+                $forbiddenPathSql[] = ' (CONCAT(o_path,o_key) NOT LIKE '.Db::get()->quote($forbiddenPath.$folderSuffix.'%').$exceptions.') ';
+            }
+            foreach ($elementPaths['allowed'] as $allowedPaths) {
+                $allowedPathSql[] = ' CONCAT(o_path,o_key) LIKE '.Db::get()->quote($allowedPaths.'%');
+            }
 
-            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_object uwo WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(objects.o_path,objects.o_key),cpath)=1 AND
-                NOT EXISTS(SELECT list FROM users_workspaces_object WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwo.cpath))';
-            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = objects.o_id AND list=0)';
+            if ($allowedPathSql || $forbiddenPathSql) {
+                $forbiddenAndAllowedSql = ' AND (';
+                $forbiddenAndAllowedSql .= $allowedPathSql ? '( '.implode(' OR ', $allowedPathSql).' )' : '';
 
-            $condition .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
+                if ($forbiddenPathSql) {
+                    //if $allowedPathSql "implosion" is present, we need `AND` in between
+                    $forbiddenAndAllowedSql .= $allowedPathSql ? ' AND ' : '';
+                    $forbiddenAndAllowedSql .= implode(' AND ', $forbiddenPathSql);
+                }
+                $forbiddenAndAllowedSql .= ' )';
+
+                $condition .= $forbiddenAndAllowedSql;
+            }
         }
 
         if (!is_null($filter)) {
