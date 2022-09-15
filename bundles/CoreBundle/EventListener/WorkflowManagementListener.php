@@ -40,9 +40,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class WorkflowManagementListener implements EventSubscriberInterface
 {
-    /**
-     * @var bool
-     */
     protected bool $enabled = true;
 
     public function __construct(
@@ -175,9 +172,9 @@ class WorkflowManagementListener implements EventSubscriberInterface
                     if ($element instanceof ConcreteObject) {
                         $workflowLayoutId = $placeConfig->getObjectLayout($workflow, $element);
                         $hasSelectedCustomLayout = $this->requestStack->getMainRequest(
-                            ) && $this->requestStack->getMainRequest()->query->has(
-                                'layoutId'
-                            ) && $this->requestStack->getMainRequest()->query->get('layoutId') !== '';
+                        ) && $this->requestStack->getMainRequest()->query->has(
+                            'layoutId'
+                        ) && $this->requestStack->getMainRequest()->query->get('layoutId') !== '';
 
                         if (!is_null($workflowLayoutId) && !$hasSelectedCustomLayout) {
                             //load the new layout into the object container

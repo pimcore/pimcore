@@ -52,10 +52,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $border = false;
+    public bool $border = false;
 
     /**
      * @param int|null $maxItems
@@ -355,7 +353,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     public function getVersionPreview($data, $object = null, $params = [])
     {
         // this is handled directly in the template
-        // /bundles/AdminBundle/Resources/views/Admin/DataObject/DataObject/previewVersion.html.twig
+        // /bundles/AdminBundle/templates/admin/data_object/data_object/preview_version.html.twig
         return 'BRICKS';
     }
 
@@ -539,7 +537,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     {
         // getter
 
-        if ($class->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+        if ($this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         } else {
             $typeDeclaration = '';
@@ -566,8 +564,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         $code .= "\t\t" . '}' . "\n";
         $code .= "\t" . '}' . "\n";
 
-        //TODO Pimcore 11: remove method_exists BC layer
-        if ($this instanceof PreGetDataInterface || method_exists($this, 'preGetData')) {
+        if ($this instanceof PreGetDataInterface) {
             $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
         }
 
@@ -859,13 +856,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                 }
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    //TODO Pimcore 11: remove method_exists BC layer
-                    if ($fd instanceof IdRewriterInterface || method_exists($fd, 'rewriteIds')) {
-                        if (!$fd instanceof IdRewriterInterface) {
-                            trigger_deprecation('pimcore/pimcore', '10.1',
-                                sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                                'Implement the %s interface instead.', IdRewriterInterface::class));
-                        }
+                    if ($fd instanceof IdRewriterInterface) {
                         $d = $fd->rewriteIds($item, $idMapping, $params);
                         $setter = 'set' . ucfirst($fd->getName());
                         $item->$setter($d);

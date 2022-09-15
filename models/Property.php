@@ -54,15 +54,9 @@ final class Property extends AbstractModel
      */
     protected $cid;
 
-    /**
-     * @var bool
-     */
-    protected $inheritable;
+    protected bool $inheritable = false;
 
-    /**
-     * @var bool
-     */
-    protected $inherited = false;
+    protected bool $inherited = false;
 
     /**
      * @internal
@@ -99,7 +93,7 @@ final class Property extends AbstractModel
      *
      * @param mixed $data
      *
-     * @return static
+     * @return $this
      */
     public function setDataFromResource($data)
     {
@@ -143,7 +137,6 @@ final class Property extends AbstractModel
      */
     public function getData()
     {
-
         // lazy-load data of type asset, document, object
         if (in_array($this->getType(), ['document', 'asset', 'object']) && !$this->data instanceof ElementInterface && is_numeric($this->data)) {
             return Element\Service::getElementById($this->getType(), $this->data);
@@ -173,7 +166,7 @@ final class Property extends AbstractModel
     /**
      * @param int $cid
      *
-     * @return static
+     * @return $this
      */
     public function setCid($cid)
     {
@@ -187,7 +180,7 @@ final class Property extends AbstractModel
      *
      * @param string $ctype
      *
-     * @return static
+     * @return $this
      */
     public function setCtype($ctype)
     {
@@ -199,7 +192,7 @@ final class Property extends AbstractModel
     /**
      * @param mixed $data
      *
-     * @return static
+     * @return $this
      */
     public function setData($data)
     {
@@ -216,7 +209,7 @@ final class Property extends AbstractModel
     /**
      * @param string $name
      *
-     * @return static
+     * @return $this
      */
     public function setName($name)
     {
@@ -230,7 +223,7 @@ final class Property extends AbstractModel
      *
      * @param string $type
      *
-     * @return static
+     * @return $this
      */
     public function setType($type)
     {
@@ -268,7 +261,7 @@ final class Property extends AbstractModel
     /**
      * @param string|null $cpath
      *
-     * @return static
+     * @return $this
      */
     public function setCpath($cpath)
     {
@@ -280,7 +273,7 @@ final class Property extends AbstractModel
     /**
      * @param bool $inherited
      *
-     * @return static
+     * @return $this
      */
     public function setInherited($inherited)
     {
@@ -300,7 +293,7 @@ final class Property extends AbstractModel
     /**
      * @param bool $inheritable
      *
-     * @return static
+     * @return $this
      */
     public function setInheritable($inheritable)
     {

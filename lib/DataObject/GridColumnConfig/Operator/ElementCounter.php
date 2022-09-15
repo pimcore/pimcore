@@ -20,10 +20,7 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
  */
 final class ElementCounter extends AbstractOperator
 {
-    /**
-     * @var bool
-     */
-    private $countEmpty;
+    private bool $countEmpty;
 
     /**
      * {@inheritdoc}

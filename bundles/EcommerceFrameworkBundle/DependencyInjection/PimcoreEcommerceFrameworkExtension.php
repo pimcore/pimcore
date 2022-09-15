@@ -481,8 +481,8 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
      * @param ContainerBuilder $container
      */
     private function registerIndexServiceElasticSearchSynonymProviders(array $tenantConfigOptions,
-                                                                       Definition $config,
-                                                                       ContainerBuilder $container)
+        Definition $config,
+        ContainerBuilder $container)
     {
         if (!isset($tenantConfigOptions['synonym_providers'])) {
             return;
@@ -563,7 +563,7 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
         $container
             ->setAlias(
-            self::SERVICE_ID_TOKEN_MANAGER_FACTORY,
+                self::SERVICE_ID_TOKEN_MANAGER_FACTORY,
                 $config['token_managers']['factory_id']
             )
             ->setPublic(true);

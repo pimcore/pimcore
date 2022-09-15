@@ -47,8 +47,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
 
     /**
      * @internal
-     *
-     * @var ClassDefinition|null
      */
     protected ?ClassDefinition $class = null;
 
@@ -393,7 +391,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
 
         if (array_key_exists($groupId, $this->items) && array_key_exists($keyId, $this->items[$groupId])
                 && array_key_exists($language, $this->items[$groupId][$keyId])
-            ) {
+        ) {
             $data = $this->items[$groupId][$keyId][$language];
         }
 
@@ -436,14 +434,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             }
         }
 
-        //TODO Pimcore 11: remove method_exists BC layer
-        if ($fieldDefinition instanceof PreGetDataInterface || method_exists($fieldDefinition, 'preGetData')) {
-            if (!$fieldDefinition instanceof PreGetDataInterface) {
-                trigger_deprecation('pimcore/pimcore', '10.1',
-                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                    'Implement the %s interface instead.', PreGetDataInterface::class));
-            }
-
+        if ($fieldDefinition instanceof PreGetDataInterface) {
             $data = $fieldDefinition->preGetData($this, [
                 'data' => $data,
                 'language' => $language,

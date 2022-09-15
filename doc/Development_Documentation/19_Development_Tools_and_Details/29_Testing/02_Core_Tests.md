@@ -127,7 +127,7 @@ See [Codeception Commands](https://codeception.com/docs/reference/Commands) for 
 In general, contributions in form extending and improving tests is highly appreciated.
 Please follow the structure and principles described above.
 
-If you have the extend the data model then please have a look at [Model.php](https://github.com/pimcore/pimcore/blob/10.x/tests/_support/Helper/Model.php).
+If you have the extend the data model then please have a look at [Model.php](https://github.com/pimcore/pimcore/blob/11.x/tests/_support/Helper/Model.php).
 There you will find all class definitions used for testing.
 
 ### Perform PHPStan Analysis

@@ -371,7 +371,7 @@ function rscandir($base = '', &$data = [])
  *
  * @phpstan-param non-empty-string $delimiter
  */
-function explode_and_trim($delimiter, $string = '', $limit = 0, $useArrayFilter = true)
+function explode_and_trim($delimiter, $string, $limit = PHP_INT_MAX, $useArrayFilter = true)
 {
     $exploded = explode($delimiter, $string, $limit);
     foreach ($exploded as $key => $value) {

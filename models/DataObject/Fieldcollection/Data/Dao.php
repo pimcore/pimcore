@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
@@ -92,6 +93,6 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insert($tableName, $data);
+        $this->db->insert($tableName, Helper::quoteDataIdentifiers($this->db, $data));
     }
 }

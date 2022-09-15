@@ -136,9 +136,9 @@ Following elements are configured:
      * `strict` (default value, deprecated, will be removed in Pimcore 10): Cart is read only as soon as payment is pending.  
 * **Price calculator factory service ID + options and modificators**: The price calculator is a framework for calculation
   and modification (shipping costs, discounts, ...) of prices on cart level. Each modification is implemented in a 
-  [`CartPriceModificatorInterface` class](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/CartManager/CartPriceModificator/CartPriceModificatorInterface.php). 
-  See [Shipping](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/CartManager/CartPriceModificator/Shipping.php)
-  or [Discount](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/CartManager/CartPriceModificator/Discount.php)
+  [`CartPriceModificatorInterface` class](https://github.com/pimcore/pimcore/blob/11.x/bundles/EcommerceFrameworkBundle/CartManager/CartPriceModificator/CartPriceModificatorInterface.php). 
+  See [Shipping](https://github.com/pimcore/pimcore/blob/11.x/bundles/EcommerceFrameworkBundle/CartManager/CartPriceModificator/Shipping.php)
+  or [Discount](https://github.com/pimcore/pimcore/blob/11.x/bundles/EcommerceFrameworkBundle/CartManager/CartPriceModificator/Discount.php)
   for examples.
 
 
@@ -155,7 +155,7 @@ Use this implementation when no user login is available and storing carts in the
 
 * **Database-Cart** (class name `Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart`): This cart implementation
 stores all cart information in the **database**. In this case, it is important that the currently logged in user is set 
-to the [E-Commerce Framework Environment](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/EnvironmentInterface.php)
+to the [E-Commerce Framework Environment](https://github.com/pimcore/pimcore/blob/11.x/bundles/EcommerceFrameworkBundle/EnvironmentInterface.php)
 with the code snippet in the box below. 
 Use this implementation when user logins are available and the carts should be persisted beyond session lifetime. 
 
@@ -181,4 +181,4 @@ $environment->save();
 Once set, the cart manager uses all specific settings of the currently active checkout tenant which are configured
 in the configuration (identified by tenant name).
 
-See also [Demo](https://github.com/pimcore/demo/blob/10.x/config/ecommerce/base-ecommerce.yaml#L197) for some examples.  
+See also [Demo](https://github.com/pimcore/demo/blob/11.x/config/ecommerce/base-ecommerce.yaml#L197) for some examples.  

@@ -189,13 +189,19 @@ trait ImageThumbnailTrait
                 $localFile = $this->getLocalFile();
                 if (null !== $localFile) {
                     if ($imageInfo = @getimagesize($localFile)) {
-                        $this->getAsset()->getDao()->addToThumbnailCache(
-                            $this->getConfig()->getName(),
-                            basename($pathReference['storagePath']),
-                            filesize($localFile),
-                            $imageInfo[0],
-                            $imageInfo[1]
-                        );
+                        $dimensions = [
+                            'width' => $imageInfo[0],
+                            'height' => $imageInfo[1],
+                        ];
+                        if ($config = $this->getConfig()) {
+                            $this->getAsset()->getDao()->addToThumbnailCache(
+                                $config->getName(),
+                                basename($pathReference['storagePath']),
+                                filesize($localFile),
+                                $dimensions['width'],
+                                $dimensions['height']
+                            );
+                        }
                     }
                 }
             } catch (\Exception $e) {
@@ -216,10 +222,12 @@ trait ImageThumbnailTrait
             $asset = $this->getAsset();
             $dimensions = [];
 
-            $thumbnail = $asset->getDao()->getCachedThumbnail($config->getName(), $this->getFilename());
-            if ($thumbnail && $thumbnail['width'] && $thumbnail['height']) {
-                $dimensions['width'] = $thumbnail['width'];
-                $dimensions['height'] = $thumbnail['height'];
+            if ($config) {
+                $thumbnail = $asset->getDao()->getCachedThumbnail($config->getName(), $this->getFilename());
+                if (isset($thumbnail['width'], $thumbnail['height'])) {
+                    $dimensions['width'] = $thumbnail['width'];
+                    $dimensions['height'] = $thumbnail['height'];
+                }
             }
 
             if (empty($dimensions) && $this->exists()) {
@@ -451,7 +459,7 @@ trait ImageThumbnailTrait
      *
      * @return static
      */
-    public function getAsFormat(string $format): self
+    public function getAsFormat(string $format): static
     {
         $thumb = clone $this;
 
@@ -461,6 +469,6 @@ trait ImageThumbnailTrait
         $thumb->config = $config;
         $thumb->reset();
 
-        return $thumb ;
+        return $thumb;
     }
 }

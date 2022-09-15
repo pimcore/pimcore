@@ -187,8 +187,6 @@ class Video extends Model\Asset
      * @param string|null $filePath
      *
      * @return float|null
-     *
-     * @throws \Exception
      */
     public function getDurationFromBackend(?string $filePath = null)
     {
@@ -210,8 +208,6 @@ class Video extends Model\Asset
      * @internal
      *
      * @return array|null
-     *
-     * @throws \Exception
      */
     public function getDimensionsFromBackend()
     {
@@ -338,7 +334,7 @@ class Video extends Model\Asset
                 $tagLength = strlen($tag);
                 $offset = 0;
                 while (($position = strpos($buffer, $tag, $offset)) === false && ($chunk = fread($file_pointer,
-                        $chunkSize)) !== false && !empty($chunk)) {
+                    $chunkSize)) !== false && !empty($chunk)) {
                     $offset = strlen($buffer) - $tagLength; // subtract the tag size just in case it's split between chunks.
                     $buffer .= $chunk;
                 }

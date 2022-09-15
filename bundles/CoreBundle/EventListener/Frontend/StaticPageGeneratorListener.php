@@ -131,6 +131,10 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
+        if ($request->isXmlHttpRequest()) {
+            return;
+        }
+
         if (!$event->isMainRequest()) {
             return;
         }

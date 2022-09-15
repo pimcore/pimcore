@@ -144,13 +144,13 @@ abstract class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concre
      * @static
      *
      * @param int $id
-     * @param bool $force
+     * @param array $params
      *
      * @return AbstractOfferToolProduct|null
      */
-    public static function getById($id, $force = false)
+    public static function getById($id, array $params = [])
     {
-        $object = DataObject::getById($id, $force);
+        $object = DataObject::getById($id, $params);
 
         if ($object instanceof AbstractOfferToolProduct) {
             return $object;

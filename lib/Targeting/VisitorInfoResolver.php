@@ -74,14 +74,11 @@ class VisitorInfoResolver
     private $eventDispatcher;
 
     /**
-     * @var Rule[]
+     * @var Rule[]|null
      */
     private $targetingRules;
 
-    /**
-     * @var bool
-     */
-    private $targetingConfigured;
+    private ?bool $targetingConfigured = null;
 
     public function __construct(
         TargetingStorageInterface $targetingStorage,

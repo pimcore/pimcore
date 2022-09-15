@@ -24,6 +24,7 @@ use Pimcore\Tool\Storage;
  * Class AssetTest
  *
  * @package Pimcore\Tests\Model\Asset
+ *
  * @group model.asset.asset
  */
 class AssetTest extends ModelTestCase
@@ -86,6 +87,50 @@ class AssetTest extends ModelTestCase
         // delete
         $this->testAsset->delete();
         $this->assertFalse($newParent->hasChildren());
+    }
+
+    /**
+     * Parent ID of a new object cannot be 0
+     */
+    public function testParentIs0()
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
+        $savedObject = TestHelper::createImageAsset('', null, false);
+        $this->assertTrue($savedObject->getId() == 0);
+
+        $savedObject->setParentId(0);
+        $savedObject->save();
+    }
+
+    /**
+     * Verifies that an object with the same parent ID cannot be created.
+     */
+    public function testParentIdentical()
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage("ParentID and ID are identical, an element can't be the parent of itself in the tree.");
+        $savedObject = TestHelper::createImageAsset();
+        $this->assertTrue($savedObject->getId() > 0);
+
+        $savedObject->setParentId($savedObject->getId());
+        $savedObject->save();
+    }
+
+    /**
+     * Parent ID must resolve to an existing element
+     *
+     * @group notfound
+     */
+    public function testParentNotFound()
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('ParentID not found.');
+        $savedObject = TestHelper::createImageAsset('', null, false);
+        $this->assertTrue($savedObject->getId() == 0);
+
+        $savedObject->setParentId(999999);
+        $savedObject->save();
     }
 
     /**

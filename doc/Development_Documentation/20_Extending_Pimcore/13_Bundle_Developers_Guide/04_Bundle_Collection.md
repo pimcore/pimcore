@@ -57,7 +57,7 @@ class Kernel extends PimcoreKernel
 
 If a bundle depends on other bundles, e.g. because it uses features provided by a third-party bundle you need to
 make sure that third-party bundle is loaded together with your bundle. You can either instruct your users to manually
-load the bundles your bundle depends on in their `App\Kernel` or you can implement the [`DependentBundleInterface`](https://github.com/pimcore/pimcore/blob/10.x/lib/HttpKernel/Bundle/DependentBundleInterface.php)
+load the bundles your bundle depends on in their `App\Kernel` or you can implement the [`DependentBundleInterface`](https://github.com/pimcore/pimcore/blob/11.x/lib/HttpKernel/Bundle/DependentBundleInterface.php)
 and define a list of bundles which should be loaded together with your bundle:
 
 ```php

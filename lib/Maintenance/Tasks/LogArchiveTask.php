@@ -65,7 +65,7 @@ class LogArchiveTask implements TaskInterface
         $storage = Storage::get('application_log');
 
         $date = new \DateTime('now');
-        $tablename = ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX.'_'.$date->format('m').'_'.$date->format('Y');
+        $tablename = ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX.'_'.$date->format('Y').'_'.$date->format('m');
 
         if (!empty($this->config['applicationlog']['archive_alternative_database'])) {
             $tablename = $db->quoteIdentifier($this->config['applicationlog']['archive_alternative_database']).'.'.$tablename;
@@ -103,7 +103,6 @@ class LogArchiveTask implements TaskInterface
                     if ($storage->fileExists($filePath)) {
                         $storage->delete($filePath);
                     } else {
-
                         // Fallback, if is not found and deleted in the flysystem, tries to delete from local
                         $fileRealPath = realpath($filePath);
                         if (str_starts_with(realpath($fileRealPath), PIMCORE_LOG_FILEOBJECT_DIRECTORY)) {

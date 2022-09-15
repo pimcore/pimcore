@@ -25,9 +25,6 @@ abstract class AbstractOperator implements OperatorInterface
      */
     protected $label;
 
-    /**
-     * @var array
-     */
     protected array $context = [];
 
     /**

@@ -60,15 +60,11 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
 
     /**
      * @internal
-     *
-     * @var string
      */
     public string $calculatorType = self::CALCULATOR_TYPE_CLASS;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     public ?string $calculatorExpression = null;
 
@@ -211,11 +207,11 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param float $data
+     * @param string|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return float
+     * @return string|null
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
@@ -443,9 +439,9 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code = '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
-        $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($class->getName()) . "\n";
+        $code .= '* @return $this' . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . '(' . '$' . $key . ')' . "\n";
+        $code .= 'public function set' . ucfirst($key) . '(' . '$' . $key . '): static' . "\n";
         $code .= '{' . "\n";
 
         $code .= "\t" . 'return $this;' . "\n";
@@ -465,9 +461,9 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
-        $code .= '* @return \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickClass->getKey()) . "\n";
+        $code .= '* @return $this' . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . '(' . '$' . $key . ')' . "\n";
+        $code .= 'public function set' . ucfirst($key) . '(' . '$' . $key . '): static' . "\n";
         $code .= '{' . "\n";
         $code .= "\t" . 'return $this;' . "\n";
         $code .= "}\n\n";
@@ -485,9 +481,9 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code = '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
-        $code .= '* @return \\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($fieldcollectionDefinition->getKey()) . "\n";
+        $code .= '* @return $this' . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . '(' . '$' . $key . ')' . "\n";
+        $code .= 'public function set' . ucfirst($key) . '(' . '$' . $key . '): static' . "\n";
         $code .= '{' . "\n";
         $code .= "\t" . 'return $this;' . "\n";
         $code .= "}\n\n";
@@ -512,9 +508,9 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code = '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
-        $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
+        $code .= '* @return $this' . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . '(' . '$' . $key . ', $language = null)' . "\n";
+        $code .= 'public function set' . ucfirst($key) . '(' . '$' . $key . ', $language = null): static' . "\n";
         $code .= '{' . "\n";
         $code .= "\t" . 'return $this;' . "\n";
         $code .= "}\n\n";

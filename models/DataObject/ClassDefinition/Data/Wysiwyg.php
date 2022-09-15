@@ -74,17 +74,13 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     /**
      * @internal
-     *
-     * @var string
      */
     public string $toolbarConfig = '';
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $excludeFromSearchIndex = false;
+    public bool $excludeFromSearchIndex = false;
 
     /**
      * @internal
@@ -166,7 +162,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @param bool $excludeFromSearchIndex
      *
-     * @return self
+     * @return $this
      */
     public function setExcludeFromSearchIndex(bool $excludeFromSearchIndex)
     {
@@ -194,11 +190,11 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param string $data
+     * @param string|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -208,11 +204,11 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param string $data
+     * @param string|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -222,11 +218,11 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param string $data
+     * @param string|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {

@@ -48,9 +48,6 @@ final class Site extends AbstractModel
      */
     protected $rootId;
 
-    /**
-     * @var Document\Page|null
-     */
     protected ?Document\Page $rootDocument = null;
 
     /**
@@ -426,7 +423,6 @@ final class Site extends AbstractModel
      */
     public function clearDependentCache()
     {
-
         // this is mostly called in Site\Dao not here
         try {
             \Pimcore\Cache::clearTag('site');

@@ -43,7 +43,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     protected $__dataVersionTimestamp = null;
 
@@ -56,24 +56,57 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * @internal
-     *
-     * @var array|null
      */
     protected ?array $properties = null;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public static $doNotRestoreKeyAndPath = false;
+    public static bool $doNotRestoreKeyAndPath = false;
+
+    /**
+     * @internal
+     */
+    protected ?int $id = null;
+
+    /**
+     * @internal
+     */
+    protected ?int $creationDate = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected ?int $id = null;
+    protected $modificationDate;
+
+    /**
+     * @internal
+     *
+     * @var int
+     */
+    protected $versionCount = 0;
+
+    /**
+     * @internal
+     */
+    protected ?int $userOwner = null;
+
+    /**
+     * @internal
+     */
+    protected ?string $locked = null;
+
+    /**
+     * @internal
+     */
+    protected ?int $userModification = null;
+
+    /**
+     * @internal
+     */
+    protected ?int $parentId = null;
 
     /**
      * @return string|null
@@ -94,55 +127,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         return $this;
     }
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
-    protected ?int $creationDate = null;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
-    protected $modificationDate;
-
-    /**
-     * @internal
-     *
-     * @var int
-     */
-    protected $versionCount = 0;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
-    protected ?int $userOwner = null;
-
-    /**
-     * @internal
-     *
-     * @var string|null
-     */
-    protected ?string $locked = null;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
-    protected ?int $userModification = null;
-
-    /**
-     * @internal
-     *
-     * @var int|null
-     */
-    protected ?int $parentId = null;
 
     /**
      * @return int|null
@@ -167,7 +151,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getUserModification()
     {
@@ -463,7 +447,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @param int|null $versionCount
      *
-     * @return ElementInterface
+     * @return $this
      */
     public function setVersionCount(?int $versionCount): ElementInterface
     {

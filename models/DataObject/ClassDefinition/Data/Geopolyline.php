@@ -61,7 +61,7 @@ class Geopolyline extends AbstractGeo implements
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param string $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -75,11 +75,11 @@ class Geopolyline extends AbstractGeo implements
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param string $data
+     * @param string|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return array|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -89,7 +89,7 @@ class Geopolyline extends AbstractGeo implements
     /**
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param string $data
+     * @param array|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -331,7 +331,7 @@ class Geopolyline extends AbstractGeo implements
             $points = [];
             $fd = new Geopoint();
             foreach ($value as $p) {
-                $points[] = $fd->normalize($p);
+                $points[] = $fd->normalize($p, $params);
             }
 
             return $points;
@@ -347,8 +347,9 @@ class Geopolyline extends AbstractGeo implements
     {
         if (is_array($value)) {
             $result = [];
+            $fd = new Geopoint();
             foreach ($value as $point) {
-                $result[] = new DataObject\Data\GeoCoordinates($point['latitude'], $point['longitude']);
+                $result[] = $fd->denormalize($point, $params);
             }
 
             return $result;

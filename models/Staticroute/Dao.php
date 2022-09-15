@@ -34,7 +34,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             'containerConfig' => $config['staticroutes']['definitions'],
             'settingsStoreScope' => 'pimcore_staticroutes',
             'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_STATICROUTES'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/staticroutes',
-            'legacyConfigFile' => 'staticroutes.php',
             'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_STATICROUTES',
         ]);
     }
@@ -167,8 +166,8 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
         $dataRaw = $this->model->getObjectVars();
         $data = [];
-        $allowedProperties = ['name', 'pattern', 'reverse', 'module', 'controller',
-            'action', 'variables', 'defaults', 'siteId', 'priority', 'methods', 'creationDate', 'modificationDate', ];
+        $allowedProperties = ['name', 'pattern', 'reverse', 'controller',
+            'variables', 'defaults', 'siteId', 'priority', 'methods', 'creationDate', 'modificationDate', ];
 
         foreach ($dataRaw as $key => $value) {
             if (in_array($key, $allowedProperties)) {
