@@ -1785,10 +1785,11 @@ pimcore.helpers.openImageHotspotMarkerEditor = function (imageId, data, saveCall
 
 pimcore.helpers.editmode = {};
 
-pimcore.helpers.editmode.openLinkEditPanel = function (data, config, callback) {
+pimcore.helpers.editmode.openLinkEditPanel = function (data, callback, config) {
     const TARGETS = ["", "_blank", "_self", "_top", "_parent"];
     const TYPES = ["asset", "document", "object"];
 
+    config = config || {};
     const disabledFields = config.disabledFields || [];
     const allowedTargets = Ext.Array.intersect(TARGETS, config.allowedTargets || TARGETS);
     const allowedTypes = Ext.Array.intersect(TYPES, config.allowedTypes || TYPES);
