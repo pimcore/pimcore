@@ -216,7 +216,7 @@ class SearchController extends AdminController
                 $object = DataObject\Concrete::getById($context['objectId']);
                 $sqlCondition = \Pimcore::getContainer()->get('twig')->createTemplate($sqlCondition)->render(['object' => $object]);
             }
-            if(empty($classnames)) {
+            if (is_array($classnames) && empty($classnames[0])) {
                 $classList = new DataObject\ClassDefinition\Listing();
                 $classnames = [];
                 foreach($classList as $classDefinition) {
