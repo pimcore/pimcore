@@ -1793,7 +1793,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, config, callback) {
     const allowedTargets = Ext.Array.intersect(TARGETS, config.allowedTargets || TARGETS);
     const allowedTypes = Ext.Array.intersect(TYPES, config.allowedTypes || TYPES);
 
-    var internalTypeField = new Ext.form.Hidden({
+    const internalTypeField = new Ext.form.Hidden({
         fieldLabel: 'internalType',
         value: data.internalType,
         name: 'internalType',
@@ -1801,7 +1801,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, config, callback) {
         width: 520
     });
 
-    var linkTypeField = new Ext.form.Hidden({
+    const linkTypeField = new Ext.form.Hidden({
         fieldLabel: 'linktype',
         value: data.linktype,
         name: 'linktype',
@@ -1809,7 +1809,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, config, callback) {
         width: 520
     });
 
-    var pathField = new Ext.form.TextField({
+    const pathField = new Ext.form.TextField({
         fieldLabel: t('path'),
         value: data.path,
         name: "path",
@@ -1998,7 +1998,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, config, callback) {
         items: advancedFields
     };
 
-    var form = new Ext.FormPanel({
+    const form = new Ext.FormPanel({
         itemId: "form",
         items: [
             {
@@ -2073,7 +2073,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, config, callback) {
     });
 
 
-    var window = new Ext.Window({
+    const window = new Ext.Window({
         modal: false,
         width: 600,
         height: 470,
