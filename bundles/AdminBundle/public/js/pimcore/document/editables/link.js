@@ -84,7 +84,7 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
         // disable the global dnd handler in this editmode/frame
         window.dndManager.disable();
 
-        this.window = pimcore.helpers.editmode.openLinkEditPanel(this.data, {
+        this.window = pimcore.helpers.editmode.openLinkEditPanel(this.data, this.config, {
             empty: this.empty.bind(this),
             cancel: this.cancel.bind(this),
             save: this.save.bind(this)

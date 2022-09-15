@@ -1785,8 +1785,8 @@ pimcore.helpers.openImageHotspotMarkerEditor = function (imageId, data, saveCall
 
 pimcore.helpers.editmode = {};
 
-pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
-
+pimcore.helpers.editmode.openLinkEditPanel = function (data, config, callback) {
+    const allowedTargets = config.allowedTargets || [];
 
     var internalTypeField = new Ext.form.Hidden({
         fieldLabel: 'internalType',
@@ -1824,7 +1824,6 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
         }
     });
 
-
     fieldPath.on("render", function (el) {
         // add drop zone
         new Ext.dd.DropZone(el.getEl(), {
@@ -1841,7 +1840,6 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
             }.bind(this),
 
             onNodeDrop: function (target, dd, e, data) {
-
                 if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
                     return false;
                 }
@@ -1930,7 +1928,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                                         triggerAction: 'all',
                                         editable: true,
                                         mode: "local",
-                                        store: ["", "_blank", "_self", "_top", "_parent"],
+                                        store: Ext.Array.intersect(["", "_blank", "_self", "_top", "_parent"], allowedTargets),
                                         value: data.target,
                                         width: 300
                                     },
