@@ -22,7 +22,6 @@ pimcore.object.tags.calculatedValue = Class.create(pimcore.object.tags.abstract,
 
     },
 
-
     getLayoutEdit: function () {
 
         var input = {
