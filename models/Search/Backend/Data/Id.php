@@ -22,14 +22,8 @@ use Pimcore\Model\Element;
  */
 class Id
 {
-    /**
-     * @var int
-     */
     protected int $id;
 
-    /**
-     * @var string
-     */
     protected string $type;
 
     /**

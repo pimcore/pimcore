@@ -27,14 +27,8 @@ use Pimcore\File;
  */
 class Config
 {
-    /**
-     * @var PimcoreConfig\Config|null
-     */
     private ?PimcoreConfig\Config $config = null;
 
-    /**
-     * @var string|null
-     */
     private ?string $file = null;
 
     /**

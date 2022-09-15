@@ -28,8 +28,6 @@ class Listing extends Model\Listing\AbstractListing
 {
     /**
      * @internal
-     *
-     * @var bool
      */
     protected bool $loadAutoSave = false;
 

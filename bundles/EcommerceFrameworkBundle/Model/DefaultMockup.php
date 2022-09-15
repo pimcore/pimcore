@@ -31,8 +31,6 @@ class DefaultMockup implements ProductInterface, LinkGeneratorAwareInterface
 
     /**
      * contains link generators by class type (just for caching)
-     *
-     * @var array
      */
     protected static array $linkGenerators = [];
 

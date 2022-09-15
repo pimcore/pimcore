@@ -25,10 +25,7 @@ final class Concatenator extends AbstractOperator
      */
     private $glue;
 
-    /**
-     * @var bool
-     */
-    private $forceValue;
+    private bool $forceValue;
 
     /**
      * {@inheritdoc}

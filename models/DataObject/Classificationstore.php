@@ -47,8 +47,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
 
     /**
      * @internal
-     *
-     * @var ClassDefinition|null
      */
     protected ?ClassDefinition $class = null;
 
