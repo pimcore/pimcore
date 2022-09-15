@@ -9,13 +9,16 @@ The link editable is used for dynamic link creation in documents.
 You can pass every valid attribute an `<a>`-tag can have ([w3.org - Link](https://www.w3.org/TR/html52/textlevel-semantics.html#the-a-element)), 
 such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title`, `data-*`, `aria-*` and additionally the following: 
 
-| Name     | Type     | Description                                                             |
-|----------|----------|-------------------------------------------------------------------------|
-| `reload` | boolean  | Set to true to reload the page in editmode after changing the state.    |
-| `textPrefix` | string  | Add an icon or something else before Text    |
-| `textSuffix` | string  | Add an icon or something else after Text    |
-| `noText` | boolean  | If you need only the `<a>` tag without text (or only with an textSuffix/TextPrefix)    |
-| `required` | boolean/string  | (default: false) set to true to make link and text required for publish, set to "linkonly" to make only the link required for publish    |
+| Name             | Type           | Description                                                                                                                                                                                                                                                                     |
+|------------------|----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `reload`         | boolean        | Set to `true` to reload the page in editmode after changing the state.                                                                                                                                                                                                          |
+| `textPrefix`     | string         | Add an icon or something else before Text.                                                                                                                                                                                                                                      |
+| `textSuffix`     | string         | Add an icon or something else after Text.                                                                                                                                                                                                                                       |
+| `noText`         | boolean        | If you need only the `<a>` tag without text (or only with an `textSuffix`/`textPrefix`).                                                                                                                                                                                        |
+| `required`       | boolean/string | (default: `false`) set to true to make link and text required for publish, set to `linkonly` to make only the link required for publish.                                                                                                                                        |
+| `allowedTypes`   | array          | You can limit the available types for this editable by passing the allowed types explicitly. If this option is not used, all types are available. Valid types are: `asset`, `document`, `object`                                                                                |
+| `allowedTargets` | array          | You can limit the available targets for this editable by passing the allowed targets explicitly. If this option is not used, all targets are available. Valid targets are: ` ` (empty string), `_blank`, `_self`, `_top`, `_parent`                                             |
+| `disabledFields` | array          | You can limit the available fields for this editable by passing the allowed fields explicitly. If this option is not used, all fields are available. Valid Fields are: `text`, `target`, `parameters`, `anchor`, `title`, `accesskey`, `rel`, `tabindex`, `class`, `attributes` |
 
 ## Methods
 
