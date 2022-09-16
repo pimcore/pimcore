@@ -15,8 +15,6 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
-use Pimcore\Logger;
-
 /**
  * @internal
  */
