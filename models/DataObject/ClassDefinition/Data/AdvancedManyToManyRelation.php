@@ -62,24 +62,18 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $optimizedAdminLoading = false;
+    public bool $optimizedAdminLoading = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $enableBatchEdit;
+    public bool $enableBatchEdit = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $allowMultipleAssignments;
+    public bool $allowMultipleAssignments = false;
 
     /**
      * {@inheritdoc}
@@ -1015,7 +1009,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      */
     public function isOptimizedAdminLoading(): bool
     {
-        return (bool) $this->optimizedAdminLoading;
+        return $this->optimizedAdminLoading;
     }
 
     /**
@@ -1023,7 +1017,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      */
     public function setOptimizedAdminLoading($optimizedAdminLoading)
     {
-        $this->optimizedAdminLoading = $optimizedAdminLoading;
+        $this->optimizedAdminLoading = (bool) $optimizedAdminLoading;
     }
 
     /**
@@ -1041,7 +1035,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      */
     public function setAllowMultipleAssignments($allowMultipleAssignments)
     {
-        $this->allowMultipleAssignments = $allowMultipleAssignments;
+        $this->allowMultipleAssignments = (bool) $allowMultipleAssignments;
 
         return $this;
     }
@@ -1059,7 +1053,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      */
     public function setEnableBatchEdit($enableBatchEdit)
     {
-        $this->enableBatchEdit = $enableBatchEdit;
+        $this->enableBatchEdit = (bool) $enableBatchEdit;
     }
 
     /**

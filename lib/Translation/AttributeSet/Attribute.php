@@ -53,12 +53,9 @@ class Attribute
     /**
      * @var string[]
      */
-    private $targetContent = [];
+    private $targetContent;
 
-    /**
-     * @var bool
-     */
-    private $isReadonly;
+    private bool $isReadonly;
 
     /**
      * DataExtractorResultAttribute constructor.

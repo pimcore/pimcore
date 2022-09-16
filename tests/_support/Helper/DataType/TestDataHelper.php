@@ -342,8 +342,8 @@ class TestDataHelper extends AbstractTestDataHelper
     protected function getGeoboundsFixture()
     {
         return new DataObject\Data\Geobounds(
-            new DataObject\Data\GeoCoordinates(-33.704920213014425, 150.60333251953125),
-            new DataObject\Data\GeoCoordinates(-33.893217379440884, 150.60333251953125)
+            new DataObject\Data\GeoCoordinates(-33.704920213014, 150.60333251953),
+            new DataObject\Data\GeoCoordinates(-33.893217379440, 150.60333251953)
         );
     }
 

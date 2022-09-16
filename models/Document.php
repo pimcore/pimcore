@@ -52,8 +52,6 @@ class Document extends Element\AbstractElement
 
     /**
      * @internal
-     *
-     * @var string
      */
     protected string $type = '';
 
@@ -73,22 +71,16 @@ class Document extends Element\AbstractElement
 
     /**
      * @internal
-     *
-     * @var int|null
      */
     protected ?int $index = null;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     protected bool $published = true;
 
     /**
      * @internal
-     *
-     * @var int|null
      */
     protected ?int $userModification = null;
 

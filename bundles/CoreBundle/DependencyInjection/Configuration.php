@@ -31,14 +31,8 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 final class Configuration implements ConfigurationInterface
 {
-    /**
-     * @var PlaceholderProcessor
-     */
     private PlaceholderProcessor $placeholderProcessor;
 
-    /**
-     * @var array
-     */
     private array $placeholders = [];
 
     public function __construct()
