@@ -50,6 +50,12 @@ abstract class ClassResolver
                 return self::$cache[$class];
             } catch (\Throwable $e) {
                 Logger::error((string) $e);
+
+                trigger_deprecation(
+                    'pimcore/pimcore',
+                    '10.5',
+                    'Resolving classes will no longer catch exceptions in Pimcore 11. Remove any invalid services from class definitions.'
+                );
             }
         }
 
