@@ -1404,7 +1404,7 @@ class DataObjectHelperController extends AdminController
             $context = array_merge($context, $contextFromRequest);
         }
 
-        $csv = DataObject\Service::getCsvData($requestedLanguage, $localeService, $list, $fields, $addTitles, $context);
+        $csv = DataObject\Service::getCsvData($requestedLanguage, $localeService, $list, $fields, $addTitles, $context, $this->getTranslator());
 
         $storage = Storage::get('temp');
         $csvFile = $this->getCsvFile($fileHandle);

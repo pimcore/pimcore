@@ -38,6 +38,8 @@ use Pimcore\Tool\Session;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
 
 /**
  * @method \Pimcore\Model\Element\Dao getDao()
@@ -1871,7 +1873,7 @@ class Service extends Model\Element\Service
      *
      * @internal
      */
-    public static function getCsvData($requestedLanguage, LocaleServiceInterface $localeService, $list, $fields, $addTitles = true, $context = [])
+    public static function getCsvData($requestedLanguage, LocaleServiceInterface $localeService, $list, $fields, $addTitles = true, $context = [], TranslatorInterface $translator = null)
     {
         $data = [];
         Logger::debug('objects in list:' . count($list->getObjects()));
@@ -1890,6 +1892,11 @@ class Service extends Model\Element\Service
                 }
 
                 $rowData = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, false, $context);
+                foreach ($rowData as &$fieldData) {
+                    if($translator !== null) {
+                        $fieldData = $translator->trans($fieldData, [], 'admin', $requestedLanguage);
+                    }
+                }
                 $rowData = self::escapeCsvRecord($rowData);
                 $data[] = $rowData;
             }
