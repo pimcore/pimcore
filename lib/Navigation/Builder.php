@@ -132,9 +132,7 @@ class Builder
             'active' => $activeDocument,
             'markActiveTrail' => $markActiveTrail,
         ] = $this->resolveOptions($params);
-
-
-        $markActiveTrail ??= true; //TODO Pimcore 11: remove with the BC layer
+        
         $cacheEnabled = $cache !== false;
 
         $this->htmlMenuIdPrefix = $htmlMenuIdPrefix;
