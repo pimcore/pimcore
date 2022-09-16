@@ -1,5 +1,6 @@
 # Upgrade Notes
 ## 11.0.0
+- [Documents] Removed `$types` property from `Pimcore\Model\Document`. Use `getTypes` method instead.
 - [Class Definitions] Class Resolver does not catch exceptions anymore.
 - [Image Optimizer] Removed all the Image Optimizer services (e.g. PngCrushOptimizer, JpegoptimOptimizer etc.) as image optimization is done by the new package spatie/image-optimizer. 
 - [Runtime Cache] Removed the `Pimcore\Cache\Runtime` cache helper and `Pimcore\Cache\RuntimeCacheTrait`. The runtime cache is now handled by `Pimcore\Cache\RuntimeCache`.  
