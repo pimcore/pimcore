@@ -2077,7 +2077,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback, config) {
     const window = new Ext.Window({
         modal: false,
         width: 600,
-        height: 470,
+        maxHeight: 470,
         title: t("edit_link"),
         items: [form],
         layout: "fit"
