@@ -54,7 +54,7 @@ abstract class ClassResolver
                 trigger_deprecation(
                     'pimcore/pimcore',
                     '10.5',
-                    'Resolving classes will no longer catch exceptions in Pimcore 11. Remove any invalid services from class definitions.'
+                    sprintf('Resolving classes or services will no longer catch exceptions in Pimcore 11. Remove invalid reference %s from class definitions.', $class)
                 );
             }
         }
