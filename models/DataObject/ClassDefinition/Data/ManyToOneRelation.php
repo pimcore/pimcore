@@ -51,6 +51,11 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
     /**
      * @internal
+     */
+    public bool $assetInlineDownloadAllowed;
+
+    /**
+     * @internal
      *
      * @var string
      */
@@ -486,6 +491,18 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         $this->markLazyloadedFieldAsLoaded($container);
 
         return $data;
+    }
+
+    public function setAssetInlineDownloadAllowed(bool $assetInlineDownloadAllowed): self
+    {
+        $this->assetInlineDownloadAllowed = $assetInlineDownloadAllowed;
+
+        return $this;
+    }
+
+    public function getAssetInlineDownloadAllowed(): bool
+    {
+        return $this->assetInlineDownloadAllowed;
     }
 
     /**

@@ -155,6 +155,9 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                 style: "margin-left: 5px",
                 handler: this.uploadDialog.bind(this)
             });
+        }
+
+        if (this.fieldConfig.assetInlineDownloadAllowed) {
             items.push({
                 xtype: "button",
                 iconCls: "pimcore_icon_download",

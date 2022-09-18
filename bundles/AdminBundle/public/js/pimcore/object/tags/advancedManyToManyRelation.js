@@ -286,7 +286,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             ]
         });
 
-        if (this.fieldConfig.assetsAllowed && this.fieldConfig.assetInlineDownloadAllowed) {
+        if (this.fieldConfig.assetInlineDownloadAllowed) {
             columns.push({
                 xtype: 'actioncolumn',
                 menuText: t('download'),

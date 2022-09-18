@@ -187,7 +187,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             }]
         });
 
-        if (this.fieldConfig.assetsAllowed) {
+        if (this.fieldConfig.assetInlineDownloadAllowed) {
             columns.push({
                 xtype: 'actioncolumn',
                 menuText: t('download'),
