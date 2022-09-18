@@ -68,7 +68,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * @internal
      */
-    public bool $assetInlineDownloadAllowed;
+    public bool $assetInlineDownloadAllowed = false;
 
     /**
      * @internal
@@ -658,7 +658,10 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this->maxItems;
     }
 
-    public function setAssetInlineDownloadAllowed(bool $assetInlineDownloadAllowed): self
+    /**
+     * @return $this
+     */
+    public function setAssetInlineDownloadAllowed(bool $assetInlineDownloadAllowed): static
     {
         $this->assetInlineDownloadAllowed = $assetInlineDownloadAllowed;
 

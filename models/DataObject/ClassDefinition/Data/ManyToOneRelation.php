@@ -52,7 +52,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * @internal
      */
-    public bool $assetInlineDownloadAllowed;
+    public bool $assetInlineDownloadAllowed = false;
 
     /**
      * @internal
@@ -493,7 +493,10 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $data;
     }
 
-    public function setAssetInlineDownloadAllowed(bool $assetInlineDownloadAllowed): self
+    /**
+     * @return $this
+     */
+    public function setAssetInlineDownloadAllowed(bool $assetInlineDownloadAllowed): static
     {
         $this->assetInlineDownloadAllowed = $assetInlineDownloadAllowed;
 
