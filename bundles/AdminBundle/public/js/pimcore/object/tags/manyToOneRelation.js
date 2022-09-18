@@ -138,7 +138,11 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             xtype: "button",
             iconCls: "pimcore_icon_delete",
             style: "margin-left: 5px",
-            handler: this.empty.bind(this)
+            handler: function () {
+                pimcore.helpers.deleteConfirm(t('relation'), '', function () {
+                    this.empty.bind(this);
+                }.bind(this));
+            }.bind(this)
         }, {
             xtype: "button",
             iconCls: "pimcore_icon_search",
