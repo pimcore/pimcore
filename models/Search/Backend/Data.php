@@ -39,9 +39,6 @@ class Data extends \Pimcore\Model\AbstractModel
     // if a word occures more often than this number it will get stripped to keep the search_backend_data table from getting too big
     const MAX_WORD_OCCURENCES = 3;
 
-    /**
-     * @var Data\Id|null
-     */
     protected ?Data\Id $id = null;
 
     protected ?string $key = null;

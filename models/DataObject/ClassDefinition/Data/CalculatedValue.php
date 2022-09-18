@@ -60,15 +60,11 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
 
     /**
      * @internal
-     *
-     * @var string
      */
     public string $calculatorType = self::CALCULATOR_TYPE_CLASS;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     public ?string $calculatorExpression = null;
 

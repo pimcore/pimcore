@@ -40,9 +40,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class WorkflowManagementListener implements EventSubscriberInterface
 {
-    /**
-     * @var bool
-     */
     protected bool $enabled = true;
 
     public function __construct(

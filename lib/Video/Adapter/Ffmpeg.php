@@ -215,8 +215,10 @@ class Ffmpeg extends Adapter
             } else {
                 // create an error log file
                 if (file_exists($this->getConversionLogFile()) && filesize($this->getConversionLogFile())) {
-                    copy($this->getConversionLogFile(),
-                        str_replace('.log', '.error.log', $this->getConversionLogFile()));
+                    copy(
+                        $this->getConversionLogFile(),
+                        str_replace('.log', '.error.log', $this->getConversionLogFile())
+                    );
                 }
             }
         } else {
@@ -236,13 +238,12 @@ class Ffmpeg extends Adapter
             $timeOffset = 5;
         }
 
-        $realTargetPath = null;
-
         $cmd = [
             self::getFfmpegCli(),
             '-ss', $timeOffset, '-i', realpath($this->file),
             '-vcodec', 'png', '-vframes', 1, '-vf', 'scale=iw*sar:ih',
-            str_replace('/', DIRECTORY_SEPARATOR, $file), ];
+            str_replace('/', DIRECTORY_SEPARATOR, $file),
+        ];
         Console::addLowProcessPriority($cmd);
         $process = new Process($cmd);
         $process->run();
@@ -276,38 +277,55 @@ class Ffmpeg extends Adapter
 
     /**
      * @return float|null
-     *
-     * @throws \Exception
      */
     public function getDuration()
     {
-        $output = $this->getVideoInfo();
+        try {
+            $output = $this->getVideoInfo();
 
-        // get total video duration
-        $result = preg_match("/Duration: (\d\d):(\d\d):(\d\d\.\d+),/", $output, $matches);
+            // get total video duration
+            $result = preg_match('/Duration: (\d\d):(\d\d):(\d\d\.\d+),/', $output, $matches);
 
-        if ($result) {
-            // calculate duration in seconds
-            $duration = ((int)$matches[1] * 3600) + ((int)$matches[2] * 60) + (float)$matches[3];
+            if ($result) {
+                // calculate duration in seconds
+                $duration = ((int)$matches[1] * 3600) + ((int)$matches[2] * 60) + (float)$matches[3];
 
-            return $duration;
+                return $duration;
+            }
+
+            throw new \Exception(
+                'Could not read duration with FFMPEG Adapter. File: ' . $this->file . '. Output: ' . $output
+            );
+        } catch (\Exception $e) {
+            Logger::error($e->getMessage());
         }
 
         return null;
     }
 
     /**
-     * @return array
+     * @return array|null
      */
     public function getDimensions()
     {
-        $output = $this->getVideoInfo();
+        try {
+            $output = $this->getVideoInfo();
 
-        preg_match('/ ([0-9]+x[0-9]+)[, ]/', $output, $matches);
-        $durationRaw = $matches[1];
-        list($width, $height) = explode('x', $durationRaw);
+            if (preg_match('/ ([0-9]+x[0-9]+)[, ]/', $output, $matches)) {
+                $dimensionRaw = $matches[1];
+                list($width, $height) = explode('x', $dimensionRaw);
 
-        return ['width' => $width, 'height' => $height];
+                return ['width' => $width, 'height' => $height];
+            }
+
+            throw new \Exception(
+                'Could not read dimensions with FFMPEG Adapter. File: ' . $this->file . '. Output: ' . $output
+            );
+        } catch (\Exception $e) {
+            Logger::error($e->getMessage());
+        }
+
+        return null;
     }
 
     public function destroy()
