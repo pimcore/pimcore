@@ -91,9 +91,9 @@ abstract class AbstractRelations extends Data implements
 
     /**
      * @param string|null $sqlCondition
-     * @return AbstractRelations
+     * @return $this
      */
-    public function setSqlCondition(?string $sqlCondition): AbstractRelations {
+    public function setSqlCondition(?string $sqlCondition): static {
         $this->sqlCondition = $sqlCondition;
 
         return $this;
