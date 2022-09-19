@@ -581,8 +581,8 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         toolbarItems = toolbarItems.concat(this.getFilterEditToolbarItems());
 
         if (!readOnly) {
-            toolbarItems = toolbarItems.concat([
-                {
+            if (this.fieldConfig.allowToClearRelation) {
+                toolbarItems.push({
                     xtype: "button",
                     iconCls: "pimcore_icon_delete",
                     handler: function () {
@@ -590,7 +590,9 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                             this.empty.bind(this);
                         }.bind(this));
                     }.bind(this)
-                },
+                });
+            }
+            toolbarItems = toolbarItems.concat([
                 {
                     xtype: "button",
                     iconCls: "pimcore_icon_search",
