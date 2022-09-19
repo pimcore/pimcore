@@ -122,7 +122,7 @@ class Builder
      * @param int|null $maxDepth
      * @param int|null $cacheLifetime
      *
-     * @return \Pimcore\Navigation\Container
+     * @return Container
      *
      * @throws \Exception
      */
@@ -180,8 +180,8 @@ class Builder
             $cacheKey = 'nav_' . md5(serialize($cacheKeys));
             $navigation = CacheManager::load($cacheKey);
         }
-        if (!$navigation instanceof \Pimcore\Navigation\Container) {
-            $navigation = new \Pimcore\Navigation\Container();
+        if (!$navigation instanceof Container) {
+            $navigation = new Container();
 
             $this->navCacheTags = ['output', 'navigation'];
 
