@@ -35,7 +35,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation;
 use Pimcore\Model\Element;
 use Pimcore\Model\Schedule\Task;
-use Pimcore\Model\User;
 use Pimcore\Model\Version;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -724,27 +723,12 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $objectData['userPermissions'] = $object->getUserPermissions($this->getAdminUser());
             $objectData['classes'] = $this->prepareChildClasses($object->getDao()->getClasses());
 
-            if (!empty($objectData['general']['o_userOwner'])) {
-                $userOwner = User::getById($objectData['general']['o_userOwner']);
-                if (empty($userOwner)) {
-                    $objectData['general']['o_userOwnerUsername'] = '';
-                    $objectData['general']['o_userOwnerFullname'] = $this->trans('user_unknown');
-                }
-                else {
-                    $objectData['general']['o_userOwnerUsername'] = $userOwner->getName();
-                    $objectData['general']['o_userOwnerFullname'] = $userOwner->getFullName();
-                }
-
-                $userModification = ($objectData['general']['o_userOwner'] == $objectData['general']['o_userModification']) ? $userOwner : User::getById($objectData['general']['o_userModification']);
-                if (empty($userModification)) {
-                    $objectData['general']['o_userModificationUsername'] = '';
-                    $objectData['general']['o_userModificationFullname'] = $this->trans('user_unknown');
-                }
-                else {
-                    $objectData['general']['o_userModificationUsername'] = $userOwner->getName();
-                    $objectData['general']['o_userModificationFullname'] = $userOwner->getFullName();
-                }
-            }
+            $userOwnerName = $this->getUserName($objectData['general']['o_userOwner']);
+            $userModificationName = ($objectData['general']['o_userOwner'] == $objectData['general']['o_userModification']) ? $userOwnerName : $this->getUserName($objectData['general']['o_userModification']);
+            $objectData['general']['o_userOwnerUsername'] = $userOwnerName['username'];
+            $objectData['general']['o_userOwnerFullname'] = $userOwnerName['fullname'];
+            $objectData['general']['o_userModificationUsername'] = $userModificationName['username'];
+            $objectData['general']['o_userModificationFullname'] = $userModificationName['fullname'];
 
             // grid-config
             $configFile = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $object->getId() . '-user_' . $this->getAdminUser()->getId() . '.psf';
