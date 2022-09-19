@@ -115,7 +115,7 @@ class Builder
 
     /**
      * @param array $params
-     * @return mixed|\Pimcore\Navigation\Container
+     * @return Container
      *
      * @throws \Exception
      */
@@ -132,7 +132,7 @@ class Builder
             'active' => $activeDocument,
             'markActiveTrail' => $markActiveTrail,
         ] = $this->resolveOptions($params);
-        
+
         $cacheEnabled = $cache !== false;
 
         $this->htmlMenuIdPrefix = $htmlMenuIdPrefix;
