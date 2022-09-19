@@ -27,6 +27,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Search\Backend\Data;
+use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -214,6 +215,33 @@ class SearchController extends AdminController
             $context = json_decode($allParams['context'], true);
             if($context['objectId']) {
                 $object = DataObject\Concrete::getById($context['objectId']);
+
+                if ($object instanceof DataObject\Concrete && $allParams['unsavedChanges']) {
+                    $unsavedChanges = $this->decodeJson($allParams['unsavedChanges']);
+                    foreach ($unsavedChanges as $key => $value) {
+                        $fd = $object->getClass()->getFieldDefinition($key);
+                        if ($fd) {
+                            if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                                $user = Tool\Admin::getCurrentUser();
+                                if (!$user->getAdmin()) {
+                                    $allowedLanguages = DataObject\Service::getLanguagePermissions($object, $user, 'lEdit');
+                                    if (!is_null($allowedLanguages)) {
+                                        $allowedLanguages = array_keys($allowedLanguages);
+                                        $submittedLanguages = array_keys($unsavedChanges[$key]);
+                                        foreach ($submittedLanguages as $submittedLanguage) {
+                                            if (!in_array($submittedLanguage, $allowedLanguages)) {
+                                                unset($value[$submittedLanguage]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            $object->setValue($key, $fd->getDataFromEditmode($value, $object));
+                        }
+                    }
+                }
+
                 $sqlCondition = \Pimcore::getContainer()->get('twig')->createTemplate($sqlCondition)->render(['object' => $object]);
             }
             if (is_array($classnames) && empty($classnames[0])) {

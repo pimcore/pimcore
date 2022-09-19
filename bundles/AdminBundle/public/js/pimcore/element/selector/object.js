@@ -586,6 +586,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         proxy.setExtraParam("subtype", formValues.subtype);
         proxy.setExtraParam("class", formValues.class);
         proxy.setExtraParam("sqlCondition", this.parent.restrictions.specific.sqlCondition);
+        proxy.setExtraParam("unsavedData", this.parent.restrictions.specific.unsavedChanges);
 
         if (this.gridLanguage) {
             proxy.setExtraParam("language", this.gridLanguage);
