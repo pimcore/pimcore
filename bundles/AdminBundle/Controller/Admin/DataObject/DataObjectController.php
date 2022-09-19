@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\UserNameTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Controller\KernelControllerEventInterface;
@@ -58,6 +59,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     use ElementEditLockHelperTrait;
     use ApplySchedulerDataTrait;
     use DataObjectActionsTrait;
+    use UserNameTrait;
 
     /**
      * @var DataObject\Service
@@ -480,23 +482,12 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $objectData['general']['versionDate'] = $objectFromDatabase->getModificationDate();
             $objectData['general']['versionCount'] = $objectFromDatabase->getVersionCount();
 
-            $userOwner = User::getById($objectData['general']['o_userOwner']);
-            if (empty($userOwner)) {
-                $objectData['general']['o_userOwnerUsername'] = '';
-                $objectData['general']['o_userOwnerFullname'] = $this->trans('user_unknown');
-            } else {
-                $objectData['general']['o_userOwnerUsername'] = $userOwner->getName();
-                $objectData['general']['o_userOwnerFullname'] = trim($userOwner->getFirstname() . ' ' . $userOwner->getLastname());
-            }
-
-            $userModification = ($objectData['general']['o_userOwner'] == $objectData['general']['o_userModification']) ? $userOwner : User::getById($objectData['general']['o_userModification']);
-            if (empty($userModification)) {
-                $objectData['general']['o_userModificationUsername'] = '';
-                $objectData['general']['o_userModificationFullname'] = $this->trans('user_unknown');
-            } else {
-                $objectData['general']['o_userModificationUsername'] = $userOwner->getName();
-                $objectData['general']['o_userModificationFullname'] = trim($userOwner->getFirstname() . ' ' . $userOwner->getLastname());
-            }
+            $userOwnerName = $this->getUserName($objectData['general']['o_userOwner']);
+            $userModificationName = ($objectData['general']['o_userOwner'] == $objectData['general']['o_userModification']) ? $userOwnerName : $this->getUserName($objectData['general']['o_userModification']);
+            $objectData['general']['o_userOwnerUsername'] = $userOwnerName['username'];
+            $objectData['general']['o_userOwnerFullname'] = $userOwnerName['fullname'];
+            $objectData['general']['o_userModificationUsername'] = $userModificationName['username'];
+            $objectData['general']['o_userModificationFullname'] = $userModificationName['fullname'];
 
             $this->addAdminStyle($object, ElementAdminStyleEvent::CONTEXT_EDITOR, $objectData['general']);
 

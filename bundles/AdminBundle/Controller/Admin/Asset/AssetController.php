@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Asset;
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\UserNameTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
@@ -62,6 +63,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     use AdminStyleTrait;
     use ElementEditLockHelperTrait;
     use ApplySchedulerDataTrait;
+    use UserNameTrait;
 
     /**
      * @var Asset\Service
@@ -218,23 +220,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $asset->getScheduledTasks()
         );
 
-        $userOwner = User::getById($asset->getUserOwner());
-        if (empty($userOwner)) {
-            $data['userOwnerUsername'] = '';
-            $data['userOwnerFullname'] = $this->trans('user_unknown');
-        } else {
-            $data['userOwnerUsername'] = $userOwner->getName();
-            $data['userOwnerFullname'] = $userOwner->getFullName();
-        }
 
-        $userModification = ($asset->getUserOwner() == $asset->getUserModification()) ? $userOwner : User::getById($asset->getUserModification());
-        if (empty($userModification)) {
-            $data['userModificationUsername'] = '';
-            $data['userModificationFullname'] = $this->trans('user_unknown');
-        } else {
-            $data['userModificationUsername'] = $userModification->getName();
-            $data['userModificationFullname'] = $userModification->getFullName();
-        }
+        $userOwnerName = $this->getUserName($asset->getUserOwner());
+        $userModificationName = ($asset->getUserOwner() == $asset->getUserModification()) ? $userOwnerName : $this->getUserName($asset->getUserModification());
+        $data['userOwnerUsername'] = $userOwnerName['username'];
+        $data['userOwnerFullname'] = $userOwnerName['fullname'];
+        $data['userModificationUsername'] = $userModificationName['username'];
+        $data['userModificationFullname'] = $userModificationName['fullname'];
 
         $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 

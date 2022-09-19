@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\UserNameTrait;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
@@ -44,6 +45,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
     use ApplySchedulerDataTrait;
     use DocumentTreeConfigTrait;
     use ElementEditLockHelperTrait;
+    use UserNameTrait;
 
     const TASK_PUBLISH = 'publish';
 
@@ -474,22 +476,11 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
      */
     protected function populateUsersNames(Document $document, array &$data): void
     {
-        $userOwner = User::getById($document->getUserOwner());
-        if (empty($userOwner)) {
-            $data['userOwnerUsername'] = '';
-            $data['userOwnerFullname'] = $this->trans('user_unknown');
-        } else {
-            $data['userOwnerUsername'] = $userOwner->getName();
-            $data['userOwnerFullname'] = $userOwner->getFullName();
-        }
-
-        $userModification = ($document->getUserOwner() == $document->getUserModification()) ? $userOwner : User::getById($document->getUserModification());
-        if (empty($userModification)) {
-            $data['userModificationUsername'] = '';
-            $data['userModificationFullname'] = $this->trans('user_unknown');
-        } else {
-            $data['userModificationUsername'] = $userModification->getName();
-            $data['userModificationFullname'] = $userModification->getFullName();
-        }
+        $userOwnerName = $this->getUserName($document->getUserOwner());
+        $userModificationName = ($document->getUserOwner() == $document->getUserModification()) ? $userOwnerName : $this->getUserName($document->getUserModification());
+        $data['userOwnerUsername'] = $userOwnerName['username'];
+        $data['userOwnerFullname'] = $userOwnerName['fullname'];
+        $data['userModificationUsername'] = $userModificationName['username'];
+        $data['userModificationFullname'] = $userModificationName['fullname'];
     }
 }

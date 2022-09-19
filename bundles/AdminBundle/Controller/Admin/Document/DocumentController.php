@@ -20,6 +20,7 @@ use Imagick;
 use Pimcore;
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\UserNameTrait;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config;
 use Pimcore\Controller\KernelControllerEventInterface;
@@ -59,6 +60,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class DocumentController extends ElementControllerBase implements KernelControllerEventInterface
 {
     use DocumentTreeConfigTrait;
+    use UserNameTrait;
 
     /**
      * @var Document\Service
@@ -109,23 +111,12 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $data = $document->getObjectVars();
         $data['versionDate'] = $document->getModificationDate();
 
-        $userOwner = User::getById($document->getUserOwner());
-        if (empty($userOwner)) {
-            $objectData['userOwnerUsername'] = '';
-            $objectData['userOwnerFullname'] = $this->trans('user_unknown');
-        } else {
-            $objectData['userOwnerUsername'] = $userOwner->getName();
-            $objectData['userOwnerFullname'] = $userOwner->getFullName();
-        }
-
-        $userModification = ($document->getUserOwner() == $document->getUserModification()) ? $userOwner : User::getById($document->getUserModification());
-        if (empty($userModification)) {
-            $objectData['userModificationUsername'] = '';
-            $objectData['userModificationFullname'] = $this->trans('user_unknown');
-        } else {
-            $objectData['userModificationUsername'] = $userModification->getName();
-            $objectData['userModificationFullname'] = $userModification->getFullName();
-        }
+        $userOwnerName = $this->getUserName($document->getUserOwner());
+        $userModificationName = ($document->getUserOwner() == $document->getUserModification()) ? $userOwnerName : $this->getUserName($document->getUserModification());
+        $data['userOwnerUsername'] = $userOwnerName['username'];
+        $data['userOwnerFullname'] = $userOwnerName['fullname'];
+        $data['userModificationUsername'] = $userModificationName['username'];
+        $data['userModificationFullname'] = $userModificationName['fullname'];
 
         $data['php'] = [
             'classes' => array_merge([get_class($document)], array_values(class_parents($document))),
