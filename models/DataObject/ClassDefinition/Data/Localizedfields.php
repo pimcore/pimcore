@@ -97,17 +97,13 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $border = false;
+    public bool $border = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $provideSplitView;
+    public bool $provideSplitView = false;
 
     /**
      * @internal
@@ -393,7 +389,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function getVersionPreview($data, $object = null, $params = [])
     {
         // this is handled directly in the template
-        // /bundles/AdminBundle/Resources/views/Admin/DataObject/DataObject/previewVersion.html.twig
+        // /bundles/AdminBundle/templates/admin/data_object/data_object/preview_version.html.twig
         return 'LOCALIZED FIELDS';
     }
 
@@ -1290,7 +1286,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      */
     public function setProvideSplitView($provideSplitView): void
     {
-        $this->provideSplitView = $provideSplitView;
+        $this->provideSplitView = (bool) $provideSplitView;
     }
 
     /**

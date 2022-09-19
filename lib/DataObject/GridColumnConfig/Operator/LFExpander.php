@@ -34,10 +34,7 @@ final class LFExpander extends AbstractOperator
      */
     private $locales;
 
-    /**
-     * @var bool
-     */
-    private $asArray;
+    private bool $asArray;
 
     /**
      * {@inheritdoc}

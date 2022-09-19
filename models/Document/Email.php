@@ -31,8 +31,6 @@ class Email extends Model\Document\PageSnippet
      * Contains the email subject
      *
      * @internal
-     *
-     * @var string
      */
     protected string $subject = '';
 
@@ -40,8 +38,6 @@ class Email extends Model\Document\PageSnippet
      * Contains the from email address
      *
      * @internal
-     *
-     * @var string
      */
     protected string $from = '';
 
@@ -49,8 +45,6 @@ class Email extends Model\Document\PageSnippet
      * Contains the reply to email addresses
      *
      * @internal
-     *
-     * @var string
      */
     protected string $replyTo = '';
 
@@ -58,8 +52,6 @@ class Email extends Model\Document\PageSnippet
      * Contains the email addresses of the recipients
      *
      * @internal
-     *
-     * @var string
      */
     protected string $to = '';
 
@@ -67,8 +59,6 @@ class Email extends Model\Document\PageSnippet
      * Contains the carbon copy recipients
      *
      * @internal
-     *
-     * @var string
      */
     protected string $cc = '';
 
@@ -76,8 +66,6 @@ class Email extends Model\Document\PageSnippet
      * Contains the blind carbon copy recipients
      *
      * @internal
-     *
-     * @var string
      */
     protected string $bcc = '';
 

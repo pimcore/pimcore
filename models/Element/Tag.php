@@ -29,8 +29,6 @@ final class Tag extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     * @var int|null
      */
     protected ?int $id = null;
 
@@ -43,8 +41,6 @@ final class Tag extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     * @var int
      */
     protected int $parentId = 0;
 

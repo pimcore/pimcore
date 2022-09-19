@@ -52,15 +52,10 @@ final class Localizedfield extends Model\AbstractModel implements
      */
     const STRICT_ENABLED = 1;
 
-    /**
-     * @var bool
-     */
     private static bool $getFallbackValues = false;
 
     /**
      * @internal
-     *
-     * @var array
      */
     protected array $items = [];
 
@@ -73,43 +68,30 @@ final class Localizedfield extends Model\AbstractModel implements
 
     /**
      * @internal
-     *
-     * @var ClassDefinition|null
      */
     protected ?ClassDefinition $class = null;
 
     /**
      * @internal
-     *
-     * @var array|null
      */
     protected ?array $context = [];
 
     /**
      * @internal
-     *
-     * @var int|null
      */
     protected ?int $objectId = null;
 
-    /**
-     * @var bool
-     */
     private static bool $strictMode = false;
 
     /**
      * list of dirty languages. if null then no language is dirty. if empty array then all languages are dirty
      *
      * @internal
-     *
-     * @var array|null
      */
     protected ?array $o_dirtyLanguages = null;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     protected bool $_loadedAllLazyData = false;
 
