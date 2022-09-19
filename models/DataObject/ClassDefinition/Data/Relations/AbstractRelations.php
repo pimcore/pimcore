@@ -43,6 +43,15 @@ abstract class AbstractRelations extends Data implements
     public $classes = [];
 
     /**
+     * Optional display mode
+     *
+     * @internal
+     *
+     * @var null|string
+     */
+    public $displayMode;
+
+    /**
      * Optional path formatter class
      *
      * @internal
@@ -69,6 +78,23 @@ abstract class AbstractRelations extends Data implements
     public function setClasses($classes)
     {
         $this->classes = Element\Service::fixAllowedTypes($classes, 'classes');
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDisplayMode(): ?string {
+        return $this->displayMode;
+    }
+
+    /**
+     * @param string|null $sqlCondition
+     * @return AbstractRelations
+     */
+    public function setDisplayMode(?string $displayMode): AbstractRelations {
+        $this->displayMode = $displayMode;
 
         return $this;
     }

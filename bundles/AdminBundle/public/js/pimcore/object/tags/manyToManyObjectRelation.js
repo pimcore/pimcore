@@ -362,203 +362,243 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             this.fieldConfig.height = null;
         }
 
-        var columns = this.getVisibleColumns();
-        var toolbarItems = this.getEditToolbarItems();
-
-        columns.push({
-            xtype: 'actioncolumn',
-            menuText: t('up'),
-            width: 40,
-            hideable: false,
-            items: [
-                {
-                    tooltip: t('up'),
-                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/up.svg",
-                    handler: function (grid, rowIndex) {
-                        if (rowIndex > 0) {
-                            var rec = grid.getStore().getAt(rowIndex);
-                            grid.getStore().removeAt(rowIndex);
-                            grid.getStore().insert(rowIndex - 1, [rec]);
-                        }
-                    }.bind(this)
-                }
-            ]
-        });
-
-        columns.push({
-            xtype: 'actioncolumn',
-            menuText: t('down'),
-            width: 40,
-            hideable: false,
-            items: [
-                {
-                    tooltip: t('down'),
-                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/down.svg",
-                    handler: function (grid, rowIndex) {
-                        if (rowIndex < (grid.getStore().getCount() - 1)) {
-                            var rec = grid.getStore().getAt(rowIndex);
-                            grid.getStore().removeAt(rowIndex);
-                            grid.getStore().insert(rowIndex + 1, [rec]);
-                        }
-                    }.bind(this)
-                }
-            ]
-        });
-
-        columns.push({
-            xtype: 'actioncolumn',
-            menuText: t('open'),
-            width: 40,
-            hideable: false,
-            items: [
-                {
-                    tooltip: t('open'),
-                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
-                    handler: function (grid, rowIndex) {
-                        var data = grid.getStore().getAt(rowIndex);
-                        pimcore.helpers.openObject(data.data.id, "object");
-                    }.bind(this)
-                }
-            ]
-        });
-
-        columns.push({
-            xtype: 'actioncolumn',
-            menuText: t('remove'),
-            width: 40,
-            hideable: false,
-            items: [
-                {
-                    tooltip: t('remove'),
-                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
-                    handler: function (grid, rowIndex) {
-                        grid.getStore().removeAt(rowIndex);
-                    }.bind(this)
-                }
-            ]
-        });
-
-        this.component = Ext.create('Ext.grid.Panel', {
-            store: this.store,
-            border: true,
-            style: "margin-bottom: 10px",
-            viewConfig: {
-                markDirty: false,
-                enableTextSelection: this.fieldConfig.enableTextSelection,
-                plugins: {
-                    ptype: 'gridviewdragdrop',
-                    draggroup: 'element'
+        if (this.fieldConfig.displayMode == 'combo') {
+            var store = new Ext.data.JsonStore({
+                proxy: {
+                    type: 'ajax',
+                    url: Routing.generate('pimcore_admin_dataobject_dataobject_relation_objects_list', {type: 'tomany'}),
+                    extraParams: {data: JSON.stringify(this.fieldConfig)},
+                    reader: {
+                        type: 'json',
+                        rootProperty: 'options',
+                        successProperty: 'success',
+                        messageProperty: 'message'
+                    }
                 },
+                fields: ["key", "value"],
                 listeners: {
-                    drop: function (node, data, dropRec, dropPosition) {
-                        this.dataChanged = true;
+                    load: function(store, records, success, operation) {
+                        if (!success) {
+                            pimcore.helpers.showNotification(t("error"), t("error_loading_options"), "error", operation.getError());
+                        }
+                    }.bind(this)
+                },
+                autoLoad: true
+            });
 
-                        // this is necessary to avoid endless recursion when long lists are sorted via d&d
-                        // TODO: investigate if there this is already fixed 6.2
-                        if (this.object.toolbar && this.object.toolbar.items && this.object.toolbar.items.items) {
-                            this.object.toolbar.items.items[0].focus();
+            this.component = Ext.create('Ext.form.field.Tag', {
+                store: store,
+                autoLoadOnValue: true,
+                height: 'auto',
+                width: '100%',
+                triggerAction: "all",
+                displayField: "display",
+                valueField: "id",
+                fieldLabel: this.fieldConfig.title,
+                tpl: new Ext.XTemplate(
+                    '<tpl for="."><li role="option" unselectable="on" class="x-boundlist-item" data-recordid="{value}" style="display:flex;">',
+                    '  {key}<div class="combo-texture" style="margin-left:auto;font-style:italic;font-size:80%;">{type}</div>',
+                    '</li></tpl>'
+                )
+            });
+        } else {
+            var columns = this.getVisibleColumns();
+            var toolbarItems = this.getEditToolbarItems();
+
+            columns.push({
+                xtype: 'actioncolumn',
+                menuText: t('up'),
+                width: 40,
+                hideable: false,
+                items: [
+                    {
+                        tooltip: t('up'),
+                        icon: "/bundles/pimcoreadmin/img/flat-color-icons/up.svg",
+                        handler: function (grid, rowIndex) {
+                            if (rowIndex > 0) {
+                                var rec = grid.getStore().getAt(rowIndex);
+                                grid.getStore().removeAt(rowIndex);
+                                grid.getStore().insert(rowIndex - 1, [rec]);
+                            }
+                        }.bind(this)
+                    }
+                ]
+            });
+
+            columns.push({
+                xtype: 'actioncolumn',
+                menuText: t('down'),
+                width: 40,
+                hideable: false,
+                items: [
+                    {
+                        tooltip: t('down'),
+                        icon: "/bundles/pimcoreadmin/img/flat-color-icons/down.svg",
+                        handler: function (grid, rowIndex) {
+                            if (rowIndex < (grid.getStore().getCount() - 1)) {
+                                var rec = grid.getStore().getAt(rowIndex);
+                                grid.getStore().removeAt(rowIndex);
+                                grid.getStore().insert(rowIndex + 1, [rec]);
+                            }
+                        }.bind(this)
+                    }
+                ]
+            });
+
+            columns.push({
+                xtype: 'actioncolumn',
+                menuText: t('open'),
+                width: 40,
+                hideable: false,
+                items: [
+                    {
+                        tooltip: t('open'),
+                        icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
+                        handler: function (grid, rowIndex) {
+                            var data = grid.getStore().getAt(rowIndex);
+                            pimcore.helpers.openObject(data.data.id, "object");
+                        }.bind(this)
+                    }
+                ]
+            });
+
+            columns.push({
+                xtype: 'actioncolumn',
+                menuText: t('remove'),
+                width: 40,
+                hideable: false,
+                items: [
+                    {
+                        tooltip: t('remove'),
+                        icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
+                        handler: function (grid, rowIndex) {
+                            grid.getStore().removeAt(rowIndex);
+                        }.bind(this)
+                    }
+                ]
+            });
+
+            this.component = Ext.create('Ext.grid.Panel', {
+                store: this.store,
+                border: true,
+                style: "margin-bottom: 10px",
+                viewConfig: {
+                    markDirty: false,
+                    enableTextSelection: this.fieldConfig.enableTextSelection,
+                    plugins: {
+                        ptype: 'gridviewdragdrop',
+                        draggroup: 'element'
+                    },
+                    listeners: {
+                        drop: function (node, data, dropRec, dropPosition) {
+                            this.dataChanged = true;
+
+                            // this is necessary to avoid endless recursion when long lists are sorted via d&d
+                            // TODO: investigate if there this is already fixed 6.2
+                            if (this.object.toolbar && this.object.toolbar.items && this.object.toolbar.items.items) {
+                                this.object.toolbar.items.items[0].focus();
+                            }
+                        }.bind(this),
+                        afterrender: function (gridview) {
+                            this.requestNicePathData(this.store.data, true);
+                        }.bind(this)
+                    }
+                },
+                multiSelect: true,
+                columns: {
+                    defaults: {
+                        sortable: false
+                    },
+                    items: columns
+                },
+                componentCls: this.getWrapperClassNames(),
+                autoExpandColumn: 'path',
+                width: this.fieldConfig.width,
+                height: this.fieldConfig.height,
+                tbar: {
+                    items: toolbarItems,
+                    ctCls: "pimcore_force_auto_width",
+                    cls: "pimcore_force_auto_width"
+                },
+                bodyCssClass: "pimcore_object_tag_objects",
+                listeners: {
+                    rowdblclick: this.gridRowDblClickHandler
+                }
+            });
+
+            this.component.on("rowcontextmenu", this.onRowContextmenu);
+            this.component.reference = this;
+
+            this.component.on("afterrender", function () {
+
+                var dropTargetEl = this.component.getEl();
+                var gridDropTarget = new Ext.dd.DropZone(dropTargetEl, {
+                    ddGroup: 'element',
+                    getTargetFromEvent: function (e) {
+                        return this.component.getEl().dom;
+                        //return e.getTarget(this.grid.getView().rowSelector);
+                    }.bind(this),
+
+                    onNodeOver: function (overHtmlNode, ddSource, e, data) {
+                        try {
+                            var returnValue = Ext.dd.DropZone.prototype.dropAllowed;
+                            data.records.forEach(function (record) {
+                                var fromTree = this.isFromTree(ddSource);
+                                if (!this.dndAllowed(record.data, fromTree)) {
+                                    returnValue = Ext.dd.DropZone.prototype.dropNotAllowed;
+                                }
+                            }.bind(this));
+
+                            return returnValue;
+                        } catch (e) {
+                            console.log(e);
+                            return Ext.dd.DropZone.prototype.dropNotAllowed;
                         }
                     }.bind(this),
-                    afterrender: function (gridview) {
-                        this.requestNicePathData(this.store.data, true);
-                    }.bind(this)
-                }
-            },
-            multiSelect: true,
-            columns: {
-                defaults: {
-                    sortable: false
-                },
-                items: columns
-            },
-            componentCls: this.getWrapperClassNames(),
-            autoExpandColumn: 'path',
-            width: this.fieldConfig.width,
-            height: this.fieldConfig.height,
-            tbar: {
-                items: toolbarItems,
-                ctCls: "pimcore_force_auto_width",
-                cls: "pimcore_force_auto_width"
-            },
-            bodyCssClass: "pimcore_object_tag_objects",
-            listeners: {
-                rowdblclick: this.gridRowDblClickHandler
-            }
-        });
 
-        this.component.on("rowcontextmenu", this.onRowContextmenu);
-        this.component.reference = this;
+                    onNodeDrop: function (target, dd, e, data) {
 
-        this.component.on("afterrender", function () {
+                        this.nodeElement = data;
+                        var fromTree = this.isFromTree(dd);
+                        var toBeRequested = new Ext.util.Collection();
 
-            var dropTargetEl = this.component.getEl();
-            var gridDropTarget = new Ext.dd.DropZone(dropTargetEl, {
-                ddGroup: 'element',
-                getTargetFromEvent: function (e) {
-                    return this.component.getEl().dom;
-                    //return e.getTarget(this.grid.getView().rowSelector);
-                }.bind(this),
-
-                onNodeOver: function (overHtmlNode, ddSource, e, data) {
-                    try {
-                        var returnValue = Ext.dd.DropZone.prototype.dropAllowed;
                         data.records.forEach(function (record) {
-                            var fromTree = this.isFromTree(ddSource);
-                            if (!this.dndAllowed(record.data, fromTree)) {
-                                returnValue = Ext.dd.DropZone.prototype.dropNotAllowed;
+                            var data = record.data;
+                            if (this.dndAllowed(data, fromTree)) {
+                                if (data["grid"] && data["grid"] == this.component) {
+                                    var rowIndex = this.component.getView().findRowIndex(e.target);
+                                    if (rowIndex !== false) {
+                                        var rec = this.store.getAt(data.rowIndex);
+                                        this.store.removeAt(data.rowIndex);
+                                        toBeRequested.add(this.store.insert(rowIndex, [rec]));
+                                        this.requestNicePathData(toBeRequested);
+                                    }
+                                } else {
+                                    var initData = {
+                                        id: data.id,
+                                        metadata: '',
+                                        inheritedFields: {},
+                                        fullpath: data.path
+                                    };
+
+                                    if (!this.objectAlreadyExists(initData.id)) {
+                                        toBeRequested.add(this.loadObjectData(initData, this.visibleFields));
+                                    }
+                                }
                             }
                         }.bind(this));
 
-                        return returnValue;
-                    } catch (e) {
-                        console.log(e);
-                        return Ext.dd.DropZone.prototype.dropNotAllowed;
-                    }
-                }.bind(this),
-
-                onNodeDrop: function (target, dd, e, data) {
-
-                    this.nodeElement = data;
-                    var fromTree = this.isFromTree(dd);
-                    var toBeRequested = new Ext.util.Collection();
-
-                    data.records.forEach(function (record) {
-                        var data = record.data;
-                        if (this.dndAllowed(data, fromTree)) {
-                            if (data["grid"] && data["grid"] == this.component) {
-                                var rowIndex = this.component.getView().findRowIndex(e.target);
-                                if (rowIndex !== false) {
-                                    var rec = this.store.getAt(data.rowIndex);
-                                    this.store.removeAt(data.rowIndex);
-                                    toBeRequested.add(this.store.insert(rowIndex, [rec]));
-                                    this.requestNicePathData(toBeRequested);
-                                }
-                            } else {
-                                var initData = {
-                                    id: data.id,
-                                    metadata: '',
-                                    inheritedFields: {},
-                                    fullpath: data.path
-                                };
-
-                                if (!this.objectAlreadyExists(initData.id)) {
-                                    toBeRequested.add(this.loadObjectData(initData, this.visibleFields));
-                                }
-                            }
+                        if (toBeRequested.length) {
+                            this.requestNicePathData(toBeRequested);
+                            return true;
                         }
-                    }.bind(this));
 
-                    if(toBeRequested.length) {
-                        this.requestNicePathData(toBeRequested);
-                        return true;
-                    }
+                        return false;
 
-                    return false;
-
-                }.bind(this)
-            });
-        }.bind(this));
-
+                    }.bind(this)
+                });
+            }.bind(this));
+        }
 
         return this.component;
     },

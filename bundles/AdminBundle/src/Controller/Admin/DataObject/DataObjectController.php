@@ -547,6 +547,87 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     }
 
     /**
+     * @Route("/relation-objects-list", name="relation_objects_list", methods={"GET"})
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function optionsAction(Request $request) {
+        $requestParams = json_decode($request->get('data'), true);
+        $displayFieldName = $requestParams['displayFieldName'] ?? '';
+        $options = [];
+        if ($request->get("insertEmpty", "0") === "1") {
+            $option = [
+                "value"     => "",
+                "key"       => "-- Choose --",
+                "display"   => "-- Choose --",
+                "id"        => "",
+                "published" => 1,
+                "index"     => 0,
+                "type"      => "",
+                "subtype"   => "",
+            ];
+            $options[] = $option;
+        }
+
+        $conditions = [];
+        $classes = [];
+        $conditionParams = [];
+
+        if (count($requestParams['classes']) > 0) {
+            foreach ($requestParams['classes'] as $classData) {
+                $classes[] = $classData['classes'];
+            }
+        }
+
+        if (count($classes) > 0) {
+            $conditions[] = "o_className IN ('".join("', '", $classes)."')";
+        }
+        if (!empty($request->get("query"))) {
+            $conditions[] = "(o_key LIKE :query OR o_id IN (SELECT id FROM search_backend_data WHERE maintype = 'object' AND data LIKE :query))";
+            $conditionParams["query"] = "%".$request->get("query")."%";
+        }
+
+        $objects = new DataObject\Listing();
+        $objects->setCondition(join(" AND ", $conditions), $conditionParams);
+        $objects->load();
+
+        foreach ($objects as $object) {
+            if (!$object instanceof DataObject\Concrete) {
+                continue;
+            }
+
+            /** @var DataObject\Concrete $object */
+            $option = [
+                "value"     => $object->getId(),
+                "key"       => $object->getKey(),
+                "display"   => $object->getKey(),
+                "id"        => $object->getId(),
+                "published" => $object->getPublished(),
+                "index"     => 0,
+                "type"      => "object",
+                "subtype"   => "object",
+            ];
+            if (!empty($displayFieldName) && method_exists($object, "get".ucfirst($displayFieldName))) {
+                $option["key"] = $object->{"get".ucfirst($displayFieldName)}();
+                $option["display"] = $object->{"get".ucfirst($displayFieldName)}();
+            }
+            if (count($classes) > 1) {
+                $option["key"] .= " (".$object->getClassName().")";
+                $option["display"] .= " (".$object->getClassName().")";
+            }
+            if ($request->get("type") === "tomany") {
+                $option["fullpath"] = $object->getFullPath();
+            } else {
+                $option["path"] = $object->getFullPath();
+            }
+
+            $options[] = $option;
+        }
+
+        return new JsonResponse($options);
+    }
+
+    /**
      * @param DataObject\Concrete $object
      * @param bool $objectFromVersion
      */
