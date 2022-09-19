@@ -558,7 +558,11 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 {
                     xtype: "button",
                     iconCls: "pimcore_icon_delete",
-                    handler: this.empty.bind(this)
+                    handler: function () {
+                        pimcore.helpers.deleteConfirm(t('relations'), t('all'), function () {
+                            this.empty.bind(this);
+                        }.bind(this));
+                    }.bind(this)
                 },
                 {
                     xtype: "button",
