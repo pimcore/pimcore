@@ -6,6 +6,9 @@ on:
     schedule:
         - cron: '0 2 * * *'
 
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
 jobs:
     to_github:
         runs-on: ubuntu-18.04
