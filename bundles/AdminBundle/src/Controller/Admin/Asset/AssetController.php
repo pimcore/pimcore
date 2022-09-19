@@ -37,7 +37,6 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Model\Metadata;
 use Pimcore\Model\Schedule\Task;
-use Pimcore\Model\User;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -219,7 +218,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             },
             $asset->getScheduledTasks()
         );
-
 
         $userOwnerName = $this->getUserName($asset->getUserOwner());
         $userModificationName = ($asset->getUserOwner() == $asset->getUserModification()) ? $userOwnerName : $this->getUserName($asset->getUserModification());
