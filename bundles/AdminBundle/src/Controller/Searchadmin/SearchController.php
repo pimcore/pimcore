@@ -210,7 +210,7 @@ class SearchController extends AdminController
             $conditionParts[] = '( subtype IN (' . implode(',', $conditionClassnameParts) . ') )';
         }
 
-        $sqlCondition = $allParams['sqlCondition'];
+        $sqlCondition = $allParams['sqlCondition'] ?? '';
         if($sqlCondition) {
             $context = json_decode($allParams['context'], true);
             if($context['objectId']) {
