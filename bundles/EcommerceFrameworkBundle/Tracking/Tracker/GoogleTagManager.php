@@ -292,21 +292,11 @@ class GoogleTagManager extends Tracker implements
         }, $items);
     }
 
-    /**
-     * @param int|float|string $price
-     *
-     * @return string
-     */
-    private function formatPrice($price = null)
+    private function formatPrice(mixed $price): string
     {
         return is_scalar($price) ? Decimal::fromNumeric($price)->asString() : '';
     }
 
-    /**
-     * @param array|null $call
-     *
-     * @return string
-     */
     private function renderCall(?array $call): string
     {
         return $this->renderTemplate('call', [

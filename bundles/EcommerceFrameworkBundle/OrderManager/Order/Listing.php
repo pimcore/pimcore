@@ -354,10 +354,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    private function getOrderItemsSubQuery()
+    private function getOrderItemsSubQuery(): string
     {
         // join items and sub items
         $orderClassId = OnlineShopOrder::classId();

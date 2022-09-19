@@ -306,12 +306,7 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
         return $this->adminJson(['options' => $returnValue]);
     }
 
-    /**
-     * @param int $documentId
-     *
-     * @return array|mixed
-     */
-    private function getStoredProcessingOptions($documentId): mixed
+    private function getStoredProcessingOptions(int $documentId): mixed
     {
         $filename = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-processingoptions-' . $documentId . '_' . $this->getAdminUser()->getId() . '.psf';
         if (file_exists($filename)) {
@@ -321,11 +316,7 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
         }
     }
 
-    /**
-     * @param int $documentId
-     * @param array $options
-     */
-    private function saveProcessingOptions(int $documentId, array $options)
+    private function saveProcessingOptions(int $documentId, array $options): void
     {
         file_put_contents(PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-processingoptions-' . $documentId . '_' . $this->getAdminUser()->getId() . '.psf', \Pimcore\Tool\Serialize::serialize($options));
     }

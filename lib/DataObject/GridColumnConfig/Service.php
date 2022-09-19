@@ -59,8 +59,6 @@ final class Service
 
     /**
      * @param \stdClass[] $jsonConfigs
-     * @param array $config
-     * @param array $context
      *
      * @return ConfigElementInterface[]
      */
@@ -88,14 +86,7 @@ final class Service
         return $config;
     }
 
-    /**
-     * @param string $name
-     * @param \stdClass $configElement
-     * @param array $context
-     *
-     * @return OperatorInterface|null
-     */
-    private function buildOperator(string $name, \stdClass $configElement, array $context = [])
+    private function buildOperator(string $name, \stdClass $configElement, array $context = []): ?OperatorInterface
     {
         if (!$this->operatorFactories->has($name)) {
             throw new \InvalidArgumentException(sprintf('Operator "%s" is not supported', $name));
@@ -107,7 +98,7 @@ final class Service
         return $factory->build($configElement, $context);
     }
 
-    private function buildValue(string $name, \stdClass $configElement, $context = null): ValueInterface
+    private function buildValue(string $name, \stdClass $configElement, mixed $context = null): ValueInterface
     {
         if (!$this->valueFactories->has($name)) {
             throw new \InvalidArgumentException(sprintf('Value "%s" is not supported', $name));

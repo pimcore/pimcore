@@ -141,12 +141,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      */
     abstract public function frontend();
 
-    /**
-     * @param string $id
-     * @param string $code
-     *
-     * @return string
-     */
     private function wrapEditmodeContainerCodeForDialogBox(string $id, string $code): string
     {
         $code = '<template id="template__' . $id . '">' . $code . '</template>';
@@ -666,14 +660,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $editableName;
     }
 
-    /**
-     * @param string $name
-     * @param string $type
-     * @param BlockState $blockState
-     * @param string|null $targetGroupElementName
-     *
-     * @return string
-     */
     private static function doBuildName(string $name, string $type, BlockState $blockState, string $targetGroupElementName = null): string
     {
         if (!$blockState->hasBlocks()) {
@@ -708,11 +694,8 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
-     * @param string $name
      * @param BlockName[] $blocks
      * @param int[] $indexes
-     *
-     * @return string
      */
     private static function buildHierarchicalName(string $name, array $blocks, array $indexes): string
     {

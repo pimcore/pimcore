@@ -239,13 +239,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
         return $this->handleInstallation($request, false);
     }
 
-    /**
-     * @param Request $request
-     * @param bool $install
-     *
-     * @return JsonResponse
-     */
-    private function handleInstallation(Request $request, $install = true)
+    private function handleInstallation(Request $request, bool $install = true): JsonResponse
     {
         try {
             $bundle = $this->getBundleManager()->getActiveBundle($request->get('id'), false);
@@ -279,12 +273,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
         }
     }
 
-    /**
-     * @param array $filter
-     *
-     * @return array
-     */
-    private function getBundleList(array $filter = [])
+    private function getBundleList(array $filter = []): array
     {
         $bm = $this->getBundleManager();
 
@@ -343,12 +332,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
         return $results;
     }
 
-    /**
-     * @param string $bundleName
-     *
-     * @return PimcoreBundleInterface|null
-     */
-    private function buildBundleInstance($bundleName)
+    private function buildBundleInstance(string $bundleName): ?PimcoreBundleInterface
     {
         try {
             /** @var PimcoreBundleInterface $bundle */
@@ -366,14 +350,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
         return null;
     }
 
-    /**
-     * @param PimcoreBundleInterface $bundle
-     * @param bool $enabled
-     * @param bool $installed
-     *
-     * @return array
-     */
-    private function buildBundleInfo(PimcoreBundleInterface $bundle, $enabled = false, $installed = false)
+    private function buildBundleInfo(PimcoreBundleInterface $bundle, bool $enabled = false, bool $installed = false): array
     {
         $bm = $this->getBundleManager();
 
@@ -417,12 +394,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
         return $info;
     }
 
-    /**
-     * @param PimcoreBundleInterface $bundle
-     *
-     * @return string|null
-     */
-    private function getIframePath(PimcoreBundleInterface $bundle)
+    private function getIframePath(PimcoreBundleInterface $bundle): ?string
     {
         if ($iframePath = $bundle->getAdminIframePath()) {
             if ($iframePath instanceof RouteReferenceInterface) {
@@ -439,10 +411,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
         return null;
     }
 
-    /**
-     * @return array
-     */
-    private function getBrickList()
+    private function getBrickList(): array
     {
         $results = [];
         foreach ($this->areabrickManager->getBricks() as $brick) {
@@ -452,12 +421,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
         return $results;
     }
 
-    /**
-     * @param AreabrickInterface $brick
-     *
-     * @return array
-     */
-    private function buildBrickInfo(AreabrickInterface $brick)
+    private function buildBrickInfo(AreabrickInterface $brick): array
     {
         return [
             'id' => $brick->getId(),
@@ -472,7 +436,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
         ];
     }
 
-    private function getInstallerOutput(PimcoreBundleInterface $bundle, bool $decorated = false)
+    private function getInstallerOutput(PimcoreBundleInterface $bundle, bool $decorated = false): ?string
     {
         if (!$this->getBundleManager()->isEnabled($bundle)) {
             return null;

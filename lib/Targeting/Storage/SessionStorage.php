@@ -170,15 +170,9 @@ class SessionStorage implements TargetingStorageInterface
     /**
      * Loads a session bag
      *
-     * @param VisitorInfo $visitorInfo
-     * @param string $scope
-     * @param bool $checkPreviousSession
-     *
      * @throws \Exception
-     *
-     * @return null|AttributeBag
      */
-    private function getSessionBag(VisitorInfo $visitorInfo, string $scope, bool $checkPreviousSession = false)
+    private function getSessionBag(VisitorInfo $visitorInfo, string $scope, bool $checkPreviousSession = false): ?AttributeBag
     {
         $request = $visitorInfo->getRequest();
 
@@ -221,7 +215,7 @@ class SessionStorage implements TargetingStorageInterface
         AttributeBag $bag,
         \DateTimeInterface $createdAt = null,
         \DateTimeInterface $updatedAt = null
-    ) {
+    ): void {
         $timestamps = $this->normalizeTimestamps($createdAt, $updatedAt);
 
         if (!$bag->has(self::STORAGE_KEY_CREATED_AT)) {

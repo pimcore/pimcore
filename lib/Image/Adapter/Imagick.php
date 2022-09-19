@@ -296,14 +296,7 @@ class Imagick extends Adapter
         return $this;
     }
 
-    /**
-     * @param string $format
-     * @param \Imagick|null $i
-     * @param bool $checkNumberOfImages
-     *
-     * @return bool
-     */
-    private function checkPreserveAnimation(string $format = '', \Imagick $i = null, bool $checkNumberOfImages = true)
+    private function checkPreserveAnimation(string $format = '', \Imagick $i = null, bool $checkNumberOfImages = true): bool
     {
         if (!$this->isPreserveAnimation()) {
             return false;
@@ -336,10 +329,7 @@ class Imagick extends Adapter
         }
     }
 
-    /**
-     * @return bool
-     */
-    private function hasAlphaChannel()
+    private function hasAlphaChannel(): bool
     {
         if ($this->isAlphaPossible) {
             $width = $this->resource->getImageWidth(); // Get the width of the image
@@ -364,7 +354,7 @@ class Imagick extends Adapter
     /**
      * @return $this
      */
-    private function setColorspaceToRGB()
+    private function setColorspaceToRGB(): static
     {
         $imageColorspace = $this->resource->getImageColorspace();
 
@@ -643,14 +633,7 @@ class Imagick extends Adapter
         return $this;
     }
 
-    /**
-     * @param int $width
-     * @param int $height
-     * @param string $color
-     *
-     * @return \Imagick
-     */
-    private function createImage($width, $height, $color = 'transparent')
+    private function createImage(int $width, int $height, string $color = 'transparent'): \Imagick
     {
         $newImage = new \Imagick();
         $newImage->newimage($width, $height, $color);
@@ -659,17 +642,7 @@ class Imagick extends Adapter
         return $newImage;
     }
 
-    /**
-     * @param int $width
-     * @param int $height
-     * @param int $x
-     * @param int $y
-     * @param string $color
-     * @param int $composite
-     *
-     * @return \Imagick
-     */
-    private function createCompositeImageFromResource($width, $height, $x, $y, $color = 'transparent', $composite = \Imagick::COMPOSITE_DEFAULT)
+    private function createCompositeImageFromResource(int $width, int $height, int $x, int $y, string $color = 'transparent', int $composite = \Imagick::COMPOSITE_DEFAULT): \Imagick
     {
         $newImage = null;
         if ($this->checkPreserveAnimation()) {
@@ -726,11 +699,8 @@ class Imagick extends Adapter
 
     /**
      * Workaround for Imagick PHP extension v3.4.4 which removed Imagick::roundCorners
-     *
-     * @param int $width
-     * @param int $height
      */
-    private function internalRoundCorners($width, $height)
+    private function internalRoundCorners(int $width, int $height)
     {
         $imageWidth = $this->resource->getImageWidth();
         $imageHeight = $this->resource->getImageHeight();
@@ -1028,9 +998,9 @@ class Imagick extends Adapter
     }
 
     /**
-     * @return array
+     * @return array{width: int, height: int}
      */
-    private function getDimensions()
+    private function getDimensions(): array
     {
         if ($vectorDimensions = $this->getVectorFormatEmbeddedRasterDimensions()) {
             return $vectorDimensions;
@@ -1043,9 +1013,9 @@ class Imagick extends Adapter
     }
 
     /**
-     * @return array|null
+     * @return array{width: int, height: int}|null
      */
-    private function getVectorFormatEmbeddedRasterDimensions()
+    private function getVectorFormatEmbeddedRasterDimensions(): ?array
     {
         if (in_array($this->resource->getimageformat(), ['EPT', 'EPDF', 'EPI', 'EPS', 'EPS2', 'EPS3', 'EPSF', 'EPSI', 'EPT', 'PDF', 'PFA', 'PFB', 'PFM', 'PS', 'PS2', 'PS3'])) {
             // we need a special handling for PhotoShop EPS
@@ -1104,11 +1074,6 @@ class Imagick extends Adapter
         return self::$supportedFormatsCache[$format];
     }
 
-    /**
-     * @param string $format
-     *
-     * @return bool
-     */
     private function checkFormatSupport(string $format): bool
     {
         try {

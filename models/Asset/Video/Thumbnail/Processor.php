@@ -21,6 +21,7 @@ use Pimcore\Messenger\VideoConvertMessage;
 use Pimcore\Model;
 use Pimcore\Model\Tool\TmpStore;
 use Pimcore\Tool\Storage;
+use Pimcore\Video\Adapter;
 use Symfony\Component\Lock\LockFactory;
 
 /**
@@ -131,29 +132,31 @@ class Processor
             $storagePath = $thumbDir . '/' . $filename;
             $tmpPath = File::getLocalTempFilePath($format);
 
-            $converter = \Pimcore\Video::getInstance();
-            $converter->setAudioBitrate($config->getAudioBitrate());
-            $converter->setVideoBitrate($config->getVideoBitrate());
-            $converter->setFormat($format);
-            $converter->setDestinationFile($tmpPath);
-            $converter->setStorageFile($storagePath);
+            if ($converter = \Pimcore\Video::getInstance()) {
+                $converter->setAudioBitrate($config->getAudioBitrate());
+                $converter->setVideoBitrate($config->getVideoBitrate());
+                $converter->setFormat($format);
+                $converter->setDestinationFile($tmpPath);
+                $converter->setStorageFile($storagePath);
 
-            //add media queries for mpd file generation
-            if ($format == 'mpd') {
-                $medias = $config->getMedias();
-                foreach ($medias as $media => $transformations) {
-                    //used just to generate arguments for medias
-                    $subConverter = \Pimcore\Video::getInstance();
-                    self::applyTransformations($subConverter, $transformations);
-                    $medias[$media]['converter'] = $subConverter;
+                //add media queries for mpd file generation
+                if ($format == 'mpd') {
+                    $medias = $config->getMedias();
+                    foreach ($medias as $media => $transformations) {
+                        //used just to generate arguments for medias
+                        if ($subConverter = \Pimcore\Video::getInstance()) {
+                            self::applyTransformations($subConverter, $transformations);
+                            $medias[$media]['converter'] = $subConverter;
+                        }
+                    }
+                    $converter->setMedias($medias);
                 }
-                $converter->setMedias($medias);
+
+                $transformations = $config->getItems();
+                self::applyTransformations($converter, $transformations);
+
+                $instance->queue[] = $converter;
             }
-
-            $transformations = $config->getItems();
-            self::applyTransformations($converter, $transformations);
-
-            $instance->queue[] = $converter;
         }
 
         $customSetting = $asset->getCustomSetting('thumbnails');
@@ -178,30 +181,28 @@ class Processor
         return $instance;
     }
 
-    private static function applyTransformations($converter, $transformations)
+    private static function applyTransformations(Adapter $converter, array $transformations): void
     {
-        if (is_array($transformations) && count($transformations) > 0) {
-            foreach ($transformations as $transformation) {
-                if (!empty($transformation)) {
-                    $arguments = [];
-                    $mapping = self::$argumentMapping[$transformation['method']];
+        foreach ($transformations as $transformation) {
+            if (!empty($transformation)) {
+                $arguments = [];
+                $mapping = self::$argumentMapping[$transformation['method']];
 
-                    if (is_array($transformation['arguments'])) {
-                        foreach ($transformation['arguments'] as $key => $value) {
-                            $position = array_search($key, $mapping);
-                            if ($position !== false) {
-                                $arguments[$position] = $value;
-                            }
+                if (is_array($transformation['arguments'])) {
+                    foreach ($transformation['arguments'] as $key => $value) {
+                        $position = array_search($key, $mapping);
+                        if ($position !== false) {
+                            $arguments[$position] = $value;
                         }
                     }
+                }
 
-                    ksort($arguments);
-                    if (count($mapping) == count($arguments)) {
-                        call_user_func_array([$converter, $transformation['method']], $arguments);
-                    } else {
-                        $message = 'Video Transform failed: cannot call method `' . $transformation['method'] . '´ with arguments `' . implode(',', $arguments) . '´ because there are too few arguments';
-                        Logger::error($message);
-                    }
+                ksort($arguments);
+                if (count($mapping) == count($arguments)) {
+                    call_user_func_array([$converter, $transformation['method']], $arguments);
+                } else {
+                    $message = 'Video Transform failed: cannot call method `' . $transformation['method'] . '´ with arguments `' . implode(',', $arguments) . '´ because there are too few arguments';
+                    Logger::error($message);
                 }
             }
         }

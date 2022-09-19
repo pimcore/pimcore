@@ -165,10 +165,9 @@ class DependenciesTest extends ModelTestCase
     }
 
     /**
-     * @param ElementInterface $source
      * @param Concrete[] $targets
      */
-    private function saveElementDependencies($source, $targets)
+    private function saveElementDependencies(ElementInterface $source, array $targets): void
     {
         $properties = [];
         foreach ($targets as $idx => $target) {

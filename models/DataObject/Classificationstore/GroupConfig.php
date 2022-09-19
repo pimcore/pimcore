@@ -347,11 +347,6 @@ final class GroupConfig extends Model\AbstractModel
 
     /**
      * Calculate cache key
-     *
-     * @param int $id
-     * @param string|null $name
-     *
-     * @return string
      */
     private static function getCacheKey(int $id, string $name = null): string
     {

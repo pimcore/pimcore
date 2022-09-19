@@ -92,9 +92,6 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @return SessionInterface|null
-     */
     private function getSession(): ?SessionInterface
     {
         try {

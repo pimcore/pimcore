@@ -81,7 +81,7 @@ class TranslatorTest extends TestCase
         parent::tearDown();
     }
 
-    private function addTranslations()
+    private function addTranslations(): void
     {
         foreach ($this->locales as $locale => $fallback) {
             foreach ($this->translations[$locale] as $transKey => $trans) {
@@ -92,7 +92,7 @@ class TranslatorTest extends TestCase
         }
     }
 
-    private function removeTranslations()
+    private function removeTranslations(): void
     {
         foreach ($this->locales as $locale => $fallback) {
             foreach ($this->translations[$locale] as $transKey => $trans) {

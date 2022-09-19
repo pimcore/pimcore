@@ -175,13 +175,10 @@ final class DefinitionModifier
     /**
      * appends/prepends $fieldsToAdd to a $layoutDefinition element at a given index
      *
-     * @param array $args
      * @param bool $append if set the element gets appended. Otherwise it will be prepended
      * @param Data|Data[]|Layout|Layout[] $fieldsToAdd
-     *
-     * @return bool
      */
-    private function add($fieldsToAdd, bool $append, array $args): bool
+    private function add(array|Data|Layout $fieldsToAdd, bool $append, array $args): bool
     {
         $fieldsToAdd = is_array($fieldsToAdd) ? $fieldsToAdd : [$fieldsToAdd];
         $layoutDefinition = $args[0];
@@ -196,13 +193,10 @@ final class DefinitionModifier
     /**
      * inserts valid $fieldsToAdd into a $layoutDefinition element at a given index
      *
-     * @param array $args
      * @param bool $append if set the element gets appended. Otherwise it will be prepended
      * @param Data|Data[]|Layout|Layout[] $fieldsToInsert
-     *
-     * @return bool
      */
-    private function insert($fieldsToInsert, bool $append, array $args): bool
+    private function insert(array|Data|Layout $fieldsToInsert, bool $append, array $args): bool
     {
         $fieldsToInsert = is_array($fieldsToInsert) ? $fieldsToInsert : [$fieldsToInsert];
         $child = $args[1];
@@ -221,12 +215,9 @@ final class DefinitionModifier
     /**
      * replaces a $layoutDefinition element at a given index with valid $fieldsToAdd
      *
-     * @param array $args
      * @param Data|Data[]|Layout|Layout[] $fieldReplacements
-     *
-     * @return bool
      */
-    private function replace($fieldReplacements, array $args): bool
+    private function replace(array|Data|Layout $fieldReplacements, array $args): bool
     {
         $fieldReplacements = is_array($fieldReplacements) ? $fieldReplacements : [$fieldReplacements];
         $layoutDefinition = $args[0];
@@ -239,10 +230,6 @@ final class DefinitionModifier
 
     /**
      * removes a given field
-     *
-     * @param array $args
-     *
-     * @return bool
      */
     private function remove(array $args): bool
     {

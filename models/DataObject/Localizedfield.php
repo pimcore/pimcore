@@ -415,13 +415,6 @@ final class Localizedfield extends Model\AbstractModel implements
         return $container->getFieldDefinitions($params);
     }
 
-    /**
-     * @param ClassDefinition\Data $fieldDefinition
-     * @param string $name
-     * @param string $language
-     *
-     * @internal
-     */
     private function loadLazyField(Model\DataObject\ClassDefinition\Data $fieldDefinition, string $name, string $language): void
     {
         $lazyKey = $this->buildLazyKey($name, $language);

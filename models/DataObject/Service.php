@@ -680,19 +680,9 @@ class Service extends Model\Element\Service
     /**
      * gets value for given object and getter, including inherited values
      *
-     * @static
-     *
-     * @param Concrete $object
-     * @param string $key
-     * @param string|null $brickType
-     * @param string|null $brickKey
-     * @param ClassDefinition\Data|null $fieldDefinition
-     * @param array $context
-     * @param array|null $brickDescriptor
-     *
-     * @return \stdClass, value and objectid where the value comes from
+     * @return \stdClass value and objectid where the value comes from
      */
-    private static function getValueForObject($object, $key, $brickType = null, $brickKey = null, $fieldDefinition = null, $context = [], $brickDescriptor = null)
+    private static function getValueForObject(Concrete $object, string $key, string $brickType = null, string $brickKey = null, ClassDefinition\Data $fieldDefinition = null, array $context = [], array $brickDescriptor = null): \stdClass
     {
         $getter = 'get' . ucfirst($key);
         $value = $object->$getter();
@@ -741,16 +731,8 @@ class Service extends Model\Element\Service
 
     /**
      * gets store value for given object and key
-     *
-     * @static
-     *
-     * @param Concrete $object
-     * @param string $key
-     * @param string|null $requestedLanguage
-     *
-     * @return string|null
      */
-    private static function getStoreValueForObject($object, $key, $requestedLanguage)
+    private static function getStoreValueForObject(Concrete $object, string $key, ?string $requestedLanguage): ?string
     {
         $keyParts = explode('~', $key);
 
@@ -1115,13 +1097,7 @@ class Service extends Model\Element\Service
         }
     }
 
-    /**
-     * @param ClassDefinition\Data[] $masterDefinition
-     * @param ClassDefinition\Data|ClassDefinition\Layout|null $layout
-     *
-     * @return bool
-     */
-    private static function synchronizeCustomLayoutFieldWithMaster($masterDefinition, &$layout)
+    private static function synchronizeCustomLayoutFieldWithMaster(array $masterDefinition, ClassDefinition\Data|ClassDefinition\Layout|null &$layout): bool
     {
         if (is_null($layout)) {
             return true;
@@ -1299,12 +1275,7 @@ class Service extends Model\Element\Service
         return $theCopy;
     }
 
-    /**
-     * @param array $mergedFieldDefinition
-     * @param array $customFieldDefinitions
-     * @param string $key
-     */
-    private static function mergeFieldDefinition(&$mergedFieldDefinition, &$customFieldDefinitions, $key)
+    private static function mergeFieldDefinition(array &$mergedFieldDefinition, array &$customFieldDefinitions, string $key): void
     {
         if (empty($customFieldDefinitions[$key])) {
             unset($mergedFieldDefinition[$key]);
@@ -1329,13 +1300,7 @@ class Service extends Model\Element\Service
         }
     }
 
-    /**
-     * @param ClassDefinition\Data|ClassDefinition\Layout $layout
-     * @param ClassDefinition\Data[] $fieldDefinitions
-     *
-     * @return bool
-     */
-    private static function doFilterCustomGridFieldDefinitions(&$layout, $fieldDefinitions)
+    private static function doFilterCustomGridFieldDefinitions(ClassDefinition\Data|ClassDefinition\Layout &$layout, array $fieldDefinitions): bool
     {
         if ($layout instanceof ClassDefinition\Data) {
             $name = $layout->getName();
@@ -1556,7 +1521,7 @@ class Service extends Model\Element\Service
         }
     }
 
-    private static function evaluateExpression(Model\DataObject\ClassDefinition\Data\CalculatedValue $fd, Concrete $object, ?DataObject\Data\CalculatedValue $data)
+    private static function evaluateExpression(Model\DataObject\ClassDefinition\Data\CalculatedValue $fd, Concrete $object, ?DataObject\Data\CalculatedValue $data): mixed
     {
         $expressionLanguage = new ExpressionLanguage();
         //overwrite constant function to aviod exposing internal information

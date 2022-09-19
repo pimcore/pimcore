@@ -40,7 +40,7 @@ abstract class ClassResolver
         );
     }
 
-    private static function returnValidServiceOrNull($service, callable $validationCallback = null)
+    private static function returnValidServiceOrNull(object $service, callable $validationCallback = null): ?object
     {
         if ($validationCallback && !$validationCallback($service)) {
             return null;

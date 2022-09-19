@@ -250,11 +250,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $url;
     }
 
-    /**
-     * @param bool $realPath
-     * @param bool $editmode
-     */
-    private function updatePathFromInternal($realPath = false, $editmode = false)
+    private function updatePathFromInternal(bool $realPath = false, bool $editmode = false): void
     {
         $method = 'getFullPath';
         if ($realPath) {

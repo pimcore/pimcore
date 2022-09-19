@@ -112,10 +112,6 @@ class EnableCommand extends AbstractBundleCommand
      * as argument.
      *
      * e.g. PimcoreEcommerceFrameworkBundle => Pimcore\Bundle\EcommerceFrameworkBundle\PimcoreEcommerceFrameworkBundle
-     *
-     * @param PimcoreBundleManager $bundleManager
-     *
-     * @return array
      */
     private function getAvailableBundleShortNameMapping(PimcoreBundleManager $bundleManager): array
     {

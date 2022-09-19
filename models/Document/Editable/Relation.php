@@ -158,7 +158,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
      *
      * @return $this
      */
-    private function setElement()
+    private function setElement(): static
     {
         if (!$this->element) {
             $this->element = Element\Service::getElementById($this->type, $this->id);

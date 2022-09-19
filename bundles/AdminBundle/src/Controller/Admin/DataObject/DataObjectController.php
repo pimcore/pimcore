@@ -175,13 +175,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         return $this->adminJson($objects);
     }
 
-    /**
-     * @param DataObject\AbstractObject $object
-     * @param string|null $filter
-     * @param string|null $view
-     *
-     * @return string
-     */
     private function buildChildrenCondition(DataObject\AbstractObject $object, ?string $filter, ?string $view): string
     {
         $condition = "objects.o_parentId = '" . $object->getId() . "'";
@@ -546,11 +539,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         throw $this->createAccessDeniedHttpException();
     }
 
-    /**
-     * @param DataObject\Concrete $object
-     * @param bool $objectFromVersion
-     */
-    private function getDataForObject(DataObject\Concrete $object, $objectFromVersion = false)
+    private function getDataForObject(DataObject\Concrete $object, bool $objectFromVersion = false): void
     {
         foreach ($object->getClass()->getFieldDefinitions(['object' => $object]) as $key => $def) {
             $this->getDataForField($object, $key, $def, $objectFromVersion);
@@ -558,15 +547,9 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     }
 
     /**
-     * gets recursively attribute data from parent and fills objectData and metaData
-     *
-     * @param DataObject\Concrete $object
-     * @param string $key
-     * @param DataObject\ClassDefinition\Data $fielddefinition
-     * @param bool $objectFromVersion
-     * @param int $level
+     * Gets recursively attribute data from parent and fills objectData and metaData
      */
-    private function getDataForField($object, $key, $fielddefinition, $objectFromVersion, $level = 0)
+    private function getDataForField(DataObject\Concrete $object, string $key, DataObject\ClassDefinition\Data $fielddefinition, bool $objectFromVersion, int $level = 0): void
     {
         $parent = DataObject\Service::hasInheritableParentObject($object);
         $getter = 'get' . ucfirst($key);
@@ -996,21 +979,28 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $ids = $this->decodeJson($request->get('id'));
 
         if (is_array($ids)) {
+            $return = ['success' => true];
             foreach ($ids as $id) {
                 $object = DataObject::getById((int)$id);
-                if (!$this->executeUpdateAction($object, $values)) {
-                    return $this->adminJson(['success' => false]);
+                $return = $this->executeUpdateAction($object, $values);
+                if (!$return['success']) {
+                    return $this->adminJson($return);
                 }
             }
         } else {
             $object = DataObject::getById((int)$ids);
-            $this->executeUpdateAction($object, $values);
+            $return = $this->executeUpdateAction($object, $values);
         }
 
-        return $this->adminJson(['success' => true]);
+        return $this->adminJson($return);
     }
 
-    private function executeUpdateAction(DataObject $object, mixed $values)
+    /**
+     * @return array{success: bool, message?: string}
+     *
+     * @throws \Exception
+     */
+    private function executeUpdateAction(DataObject $object, mixed $values): array
     {
         $success = false;
 
@@ -1023,7 +1013,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         if ($object instanceof DataObject\Concrete) {
             $latestVersion = $object->getLatestVersion();
             if ($latestVersion && $latestVersion->getData()->getModificationDate() != $object->getModificationDate()) {
-                return $this->adminJson(['success' => false, 'message' => "You can't rename or relocate if there's a newer not published version"]);
+                return ['success' => false, 'message' => "You can't rename or relocate if there's a newer not published version"];
             }
         }
 
@@ -1050,11 +1040,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     $objectWithSamePath = DataObject::getByPath($parent->getRealFullPath() . '/' . $object->getKey());
 
                     if ($objectWithSamePath != null) {
-                        return $this->adminJson(['success' => false, 'message' => 'prevented creating object because object with same path+key already exists']);
+                        return ['success' => false, 'message' => 'prevented creating object because object with same path+key already exists'];
                     }
 
                     if ($object->isLocked()) {
-                        return $this->adminJson(['success' => false, 'message' => 'prevented moving object, because it is locked: ID: ' . $object->getId()]);
+                        return ['success' => false, 'message' => 'prevented moving object, because it is locked: ID: ' . $object->getId()];
                     }
 
                     $object->setParentId($values['parentId']);
@@ -1087,18 +1077,18 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             } catch (\Exception $e) {
                 Logger::error((string) $e);
 
-                return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
+                return ['success' => false, 'message' => $e->getMessage()];
             }
         } elseif ($key && $object->isAllowed('rename')) {
-            return $this->adminJson($this->renameObject($object, $key));
+            return $this->renameObject($object, $key);
         } else {
             Logger::debug('prevented update object because of missing permissions.');
         }
 
-        return $success;
+        return ['success' => $success];
     }
 
-    private function executeInsideTransaction(callable $fn)
+    private function executeInsideTransaction(callable $fn): void
     {
         $maxRetries = 5;
         for ($retries = 0; $retries < $maxRetries; $retries++) {
@@ -1176,7 +1166,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $this->executeInsideTransaction($fn);
     }
 
-    private function updateLatestVersionIndex($objectId, $newIndex)
+    private function updateLatestVersionIndex(int $objectId, int $newIndex): void
     {
         $object = DataObject\Concrete::getById($objectId);
 

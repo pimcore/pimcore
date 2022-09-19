@@ -81,7 +81,7 @@ class DocumentTargetGroupListener implements EventSubscriberInterface
         }
     }
 
-    private function assignDocumentTargetGroups(Document $document, VisitorInfo $visitorInfo)
+    private function assignDocumentTargetGroups(Document $document, VisitorInfo $visitorInfo): void
     {
         if (!$document instanceof Document\Page || null !== Staticroute::getCurrentRoute()) {
             return;

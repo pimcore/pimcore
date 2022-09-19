@@ -68,7 +68,7 @@ class InstallCommand extends Command
         parent::__construct();
     }
 
-    private function getOptions()
+    private function getOptions(): array
     {
         if (null !== $this->options) {
             return $this->options;
@@ -407,7 +407,7 @@ class InstallCommand extends Command
         return 0;
     }
 
-    private function writeInstallerOutputResults(BufferedOutput $output, BufferedOutput $errorOutput)
+    private function writeInstallerOutputResults(BufferedOutput $output, BufferedOutput $errorOutput): void
     {
         $outputResults = $output->fetch();
         if (!empty($outputResults)) {
