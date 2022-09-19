@@ -531,7 +531,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 name: "deeplink",
                 value: metainfo.deeplink
             }
-        ], "asset");          
+        ], "asset");
     },
 
     rename: function () {
