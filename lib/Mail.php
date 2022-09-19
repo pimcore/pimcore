@@ -52,8 +52,6 @@ class Mail extends Email
 
     /**
      * Contains the email document Id
-     *
-     * @var int|null
      */
     private ?int $documentId = null;
 

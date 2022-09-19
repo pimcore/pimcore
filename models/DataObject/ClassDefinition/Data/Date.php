@@ -64,10 +64,8 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $useCurrentDate;
+    public bool $useCurrentDate = false;
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource

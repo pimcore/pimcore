@@ -69,15 +69,9 @@ class GridConfig extends AbstractModel
      */
     protected $modificationDate;
 
-    /**
-     * @var bool
-     */
-    protected $shareGlobally;
+    protected bool $shareGlobally = false;
 
-    /**
-     * @var bool
-     */
-    protected $setAsFavourite;
+    protected bool $setAsFavourite = false;
 
     /**
      * @var string
@@ -284,7 +278,7 @@ class GridConfig extends AbstractModel
      */
     public function setShareGlobally($shareGlobally)
     {
-        $this->shareGlobally = $shareGlobally;
+        $this->shareGlobally = (bool) $shareGlobally;
     }
 
     /**
@@ -300,7 +294,7 @@ class GridConfig extends AbstractModel
      */
     public function setSetAsFavourite($setAsFavourite)
     {
-        $this->setAsFavourite = $setAsFavourite;
+        $this->setAsFavourite = (bool) $setAsFavourite;
     }
 
     /**

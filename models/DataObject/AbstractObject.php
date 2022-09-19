@@ -158,8 +158,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @internal
      *
      * @deprecated
-     *
-     * @var int|null
      */
     protected ?int $o_userOwner = null;
 
@@ -167,8 +165,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @internal
      *
      * @deprecated
-     *
-     * @var int|null
      */
     protected ?int $o_userModification = null;
 
@@ -1206,7 +1202,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public static function setDoNotRestoreKeyAndPath($doNotRestoreKeyAndPath)
     {
-        self::$doNotRestoreKeyAndPath = $doNotRestoreKeyAndPath;
+        self::$doNotRestoreKeyAndPath = (bool) $doNotRestoreKeyAndPath;
     }
 
     /**
@@ -1359,8 +1355,10 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $db = \Pimcore\Db::get();
 
         if (in_array(strtolower($realPropertyName), self::$objectColumns)) {
-            $arguments = array_pad($arguments, 4, 0);
-            [$value, $limit, $offset, $objectTypes] = $arguments;
+            $value = array_key_exists(0, $arguments) ? $arguments[0] : throw new \InvalidArgumentException('Mandatory argument $value not set.');
+            $limit = $arguments[1] ?? null;
+            $offset = $arguments[2] ?? 0;
+            $objectTypes = $arguments[3] ?? null;
 
             $defaultCondition = $realPropertyName.' = '.Db::get()->quote($value).' ';
 
@@ -1369,12 +1367,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             ];
 
             if (!is_array($limit)) {
-                if ($limit) {
-                    $listConfig['limit'] = $limit;
-                }
-                if ($offset) {
-                    $listConfig['offset'] = $offset;
-                }
+                $listConfig['limit'] = $limit;
+                $listConfig['offset'] = $offset;
             } else {
                 $listConfig = array_merge($listConfig, $limit);
                 $limitCondition = $limit['condition'] ?? '';
@@ -1399,27 +1393,27 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param  array  $listConfig
-     * @param  mixed $objectTypes
+     * @param array $listConfig
+     * @param array|null $objectTypes
      *
      * @return Listing
      *
      * @throws \Exception
      */
-    protected static function makeList(array $listConfig, mixed $objectTypes): Listing
+    protected static function makeList(array $listConfig, ?array $objectTypes): Listing
     {
+        $allowedObjectTypes = [static::OBJECT_TYPE_VARIANT, static::OBJECT_TYPE_OBJECT];
         $list = static::getList($listConfig);
 
-        // Check if variants, in addition to objects, to be fetched
-        if (!empty($objectTypes)) {
-            if (\array_diff($objectTypes, [static::OBJECT_TYPE_VARIANT, static::OBJECT_TYPE_OBJECT])) {
-                Logger::error('Class: DataObject\\AbstractObject => Unsupported object type in array ' . implode(',', $objectTypes));
+        if (empty($objectTypes)) {
+            $objectTypes = $allowedObjectTypes;
+        } elseif (\array_diff($objectTypes, $allowedObjectTypes)) {
+            Logger::error('Class: DataObject\\AbstractObject => Unsupported object type in array ' . implode(',', $objectTypes));
 
-                throw new \Exception('Unsupported object type in array [' . implode(',', $objectTypes) . '] in class DataObject\\AbstractObject');
-            }
-
-            $list->setObjectTypes($objectTypes);
+            throw new \Exception('Unsupported object type in array [' . implode(',', $objectTypes) . '] in class DataObject\\AbstractObject');
         }
+
+        $list->setObjectTypes($objectTypes);
 
         return $list;
     }

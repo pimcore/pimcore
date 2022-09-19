@@ -44,8 +44,6 @@ abstract class Page extends Container
 {
     /**
      * Page label
-     *
-     * @var string|null
      */
     protected ?string $_label = null;
 
@@ -58,36 +56,26 @@ abstract class Page extends Container
      * Example: http://www.example.org/foo.html#bar ("bar" is the fragment identifier)
      *
      * @link http://www.w3.org/TR/html401/intro/intro.html#fragment-uri
-     *
-     * @var string|null
      */
     protected ?string $_fragment = null;
 
     /**
      * Page id
-     *
-     * @var string|null
      */
     protected ?string $_id = null;
 
     /**
      * Style class for this page (CSS)
-     *
-     * @var string|null
      */
     protected ?string $_class = null;
 
     /**
      * A more descriptive title for this page
-     *
-     * @var string|null
      */
     protected ?string $_title = null;
 
     /**
      * This page's target
-     *
-     * @var string|null
      */
     protected ?string $_target = null;
 
@@ -98,8 +86,6 @@ abstract class Page extends Container
      * single character from the document character set.
      *
      * @link http://www.w3.org/TR/html401/interact/forms.html#access-keys
-     *
-     * @var string|null
      */
     protected ?string $_accesskey = null;
 
@@ -123,43 +109,31 @@ abstract class Page extends Container
 
     /**
      * Page order used by parent container
-     *
-     * @var int|null
      */
     protected ?int $_order = null;
 
     /**
      * Whether this page should be considered active
-     *
-     * @var bool
      */
     protected bool $_active = false;
 
     /**
      * Whether this page should be considered visible
-     *
-     * @var bool
      */
     protected bool $_visible = true;
 
     /**
      * Parent container
-     *
-     * @var Container|null
      */
     protected ?Container $_parent = null;
 
     /**
      * Custom page properties, used by __set(), __get() and __isset()
-     *
-     * @var array
      */
     protected array $_properties = [];
 
     /**
      * Custom HTML attributes
-     *
-     * @var array
      */
     protected array $_customHtmlAttribs = [];
 

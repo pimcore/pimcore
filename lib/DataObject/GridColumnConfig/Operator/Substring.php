@@ -30,10 +30,7 @@ final class Substring extends AbstractOperator
      */
     private $length;
 
-    /**
-     * @var bool
-     */
-    private $ellipses;
+    private bool $ellipses;
 
     /**
      * {@inheritdoc}

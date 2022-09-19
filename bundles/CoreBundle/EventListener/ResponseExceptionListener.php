@@ -192,8 +192,8 @@ class ResponseExceptionListener implements EventSubscriberInterface
             $localizedErrorDocumentsPaths = $site->getLocalizedErrorDocuments() ?: [];
             $defaultErrorDocumentPath = $site->getErrorDocument();
         } else {
-            $localizedErrorDocumentsPaths = $this->config['documents']['error_pages']['localized'] ?: [];
-            $defaultErrorDocumentPath = $this->config['documents']['error_pages']['default'] ?: '';
+            $localizedErrorDocumentsPaths = $this->config['documents']['error_pages']['localized'] ?? [];
+            $defaultErrorDocumentPath = $this->config['documents']['error_pages']['default'] ?? '';
         }
 
         if (!empty($locale) && array_key_exists($locale, $localizedErrorDocumentsPaths)) {
