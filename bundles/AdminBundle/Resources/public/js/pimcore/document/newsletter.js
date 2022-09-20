@@ -23,7 +23,7 @@ pimcore.document.newsletter = Class.create(pimcore.document.page_snippet, {
 
         const preOpenDocument = new CustomEvent(pimcore.events.preOpenDocument, {
             detail: {
-                object: this,
+                document: this,
                 type: this.getType()
             }
         });

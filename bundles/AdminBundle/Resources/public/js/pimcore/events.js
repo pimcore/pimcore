@@ -38,7 +38,7 @@ pimcore.events.postOpenAsset = "pimcore.asset.postOpen";
 
 /**
  * before asset is saved
- * asset id is passed as parameter
+ * asset id and task is passed as parameter
  */
 pimcore.events.preSaveAsset = "pimcore.asset.preSave";
 
@@ -153,6 +153,7 @@ pimcore.events.preCreateMenuOption = "pimcore.menuOption.preCreate";
  * @internal
  *
  * fired when asset metadata editor tab is created
+ * editor and eventParams are passed as parameter
  */
 pimcore.events.preCreateAssetMetadataEditor = "pimcore.assetMetadataEditor.preCreate";
 
@@ -164,30 +165,31 @@ pimcore.events.prepareAssetMetadataGridConfigurator = "pimcore.gridConfigurator.
 
 /**
  * before context menu is opened
- * menu, tree class and asset record are passed as parameters
+ * menu, tree and asset are passed as parameters
  */
 pimcore.events.prepareAssetTreeContextMenu = "pimcore.assetTreeContextMenu.prepare";
 
 /**
  * before context menu is opened
- * menu, tree class and object record are passed as parameters
+ * menu, tree and object are passed as parameters
  */
 pimcore.events.prepareObjectTreeContextMenu = "pimcore.objectTreeContextMenu.prepare";
 
 /**
  * before context menu is opened
- * menu, tree and document record are passed as parameters
+ * menu, tree and document are passed as parameters
  */
 pimcore.events.prepareDocumentTreeContextMenu = "pimcore.documentTreeContextMenu.prepare";
 
 /**
  * before context menu is opened
- * allowedTypes array is passed as parameters
+ * allowedTypes array and source is passed as parameters
  */
 pimcore.events.prepareClassLayoutContextMenu = "pimcore.classLayoutContextMenu.prepare";
 
 /**
- * before context menu is opened object folder grid, menu, folder class and object record are passed as parameters
+ * before context menu is opened on object folder
+ * menu, grid and selectedRows are passed as parameters
  */
 pimcore.events.prepareOnRowContextmenu = "pimcore.onRowContextMenu.prepare";
 
