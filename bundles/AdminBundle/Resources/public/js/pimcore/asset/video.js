@@ -338,7 +338,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
         var previewContainerId = 'pimcore_video_preview_vr_' + this.id;
         this.previewPanel.update('<div id="' + previewContainerId + '" class="pimcore_asset_image_preview"></div>');
         var vrView = new VRView.Player('#' + previewContainerId, {
-            video: '/admin/asset/serve-video-preview?id=' + this.data.id,
+            video: Routing.generate('pimcore_admin_asset_servevideopreview', {id: this.data.id}),
             is_stereo: (this.data['videoInfo']['width'] === this.data['videoInfo']['height']),
             width: 640,
             height: 480,
