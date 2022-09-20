@@ -95,11 +95,13 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     private ?EditmodeEditableDefinitionCollector $editableDefinitionCollector;
 
     /**
+     * @return string|void
+     *
      * @throws \Exception
      *
      * @internal
      */
-    public function admin(): string
+    public function admin()
     {
         $attributes = $this->getEditmodeElementAttributes();
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
