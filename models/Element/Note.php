@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Element\Note\Dao getDao()
+ * @method void delete()
  */
 final class Note extends Model\AbstractModel
 {

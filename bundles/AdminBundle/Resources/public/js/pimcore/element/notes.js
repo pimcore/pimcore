@@ -160,18 +160,32 @@ pimcore.element.notes = Class.create({
                 );
             }
 
-            columns.push({
-                xtype: 'actioncolumn',
-                menuText: t('details'),
-                width: 30,
-                items: [{
-                    tooltip: t('details'),
-                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/info.svg",
-                    handler: function (grid, rowIndex, event) {
-                        this.showDetailedData(grid, rowIndex, event);
-                    }.bind(this)
-                }]
-            });
+            columns.push(
+                {
+                    xtype: 'actioncolumn',
+                    menuText: t('details'),
+                    width: 30,
+                    items: [{
+                        tooltip: t('details'),
+                        icon: "/bundles/pimcoreadmin/img/flat-color-icons/info.svg",
+                        handler: function (grid, rowIndex, event) {
+                            this.showDetailedData(grid, rowIndex, event);
+                        }.bind(this)
+                    }]
+                },
+                {
+                    xtype: 'actioncolumn',
+                    menuText: t('delete'),
+                    width: 30,
+                    items: [{
+                        tooltip: t('delete'),
+                        icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
+                        handler: function (grid, rowIndex) {
+                            grid.getStore().removeAt(rowIndex);
+                        }.bind(this)
+                    }]
+                }
+            );
 
             var plugins = ['pimcore.gridfilters'];
 

@@ -185,6 +185,17 @@ class ElementController extends AdminController
     {
         $this->checkPermission('notes_events');
 
+        if ($request->query->get('xaction') === 'destroy') {
+            $data = $this->decodeJson($request->request->get('data'));
+            $success = false;
+            if ($note = Element\Note::getById($data['id'])) {
+                $note->delete();
+                $success = true;
+            }
+
+            return $this->adminJson(['success' => $success]);
+        }
+
         $list = new Element\Note\Listing();
 
         $list->setLimit($request->get('limit'));
