@@ -102,10 +102,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $localized;
+    public bool $localized = false;
 
     /**
      * @internal
@@ -116,17 +114,13 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $hideEmptyData;
+    public bool $hideEmptyData = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $disallowAddRemove;
+    public bool $disallowAddRemove = false;
 
     /**
      * contains further localized field definitions if there are more than one localized fields in on class
@@ -428,7 +422,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public function getVersionPreview($data, $object = null, $params = [])
     {
         // this is handled directly in the template
-        // /bundles/AdminBundle/Resources/views/Admin/DataObject/DataObject/previewVersion.html.twig
+        // /bundles/AdminBundle/templates/admin/data_object/data_object/preview_version.html.twig
         return 'CLASSIFICATIONSTORE';
     }
 
@@ -968,7 +962,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      */
     public function setLocalized($localized)
     {
-        $this->localized = $localized;
+        $this->localized = (bool) $localized;
     }
 
     /**
@@ -1114,7 +1108,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 }
                 $definition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyGroupRelation);
 
-                // changes here also have an effect here: "bundles/AdminBundle/Resources/public/js/pimcore/object/tags/classificationstore.js"
+                // changes here also have an effect here: "bundles/AdminBundle/public/js/pimcore/object/tags/classificationstore.js"
                 $fallbackTooltip = $definition->getName();
                 if (!empty($keyGroupRelation->getDescription())) {
                     $fallbackTooltip .= ' - ' . $keyGroupRelation->getDescription();
@@ -1128,13 +1122,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
                 $definition->setMandatory($definition->getMandatory() || $keyGroupRelation->isMandatory());
 
-                //TODO Pimcore 11: remove method_exists BC layer
-                if ($definition instanceof LayoutDefinitionEnrichmentInterface || method_exists($definition, 'enrichLayoutDefinition')) {
-                    if (!$definition instanceof LayoutDefinitionEnrichmentInterface) {
-                        trigger_deprecation('pimcore/pimcore', '10.1',
-                            sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                            'Implement the %s interface instead.', LayoutDefinitionEnrichmentInterface::class));
-                    }
+                if ($definition instanceof LayoutDefinitionEnrichmentInterface) {
                     $context['object'] = $object;
                     $context['class'] = $object->getClass();
                     $context['ownerType'] = 'classificationstore';
@@ -1278,7 +1266,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      */
     public function setDisallowAddRemove($disallowAddRemove)
     {
-        $this->disallowAddRemove = $disallowAddRemove;
+        $this->disallowAddRemove = (bool) $disallowAddRemove;
 
         return $this;
     }
@@ -1408,7 +1396,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $key = $this->getName();
 
         $typeDeclaration = '';
-        if ($class->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
+        if ($this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         }
 

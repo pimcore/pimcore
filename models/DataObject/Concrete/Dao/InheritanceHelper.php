@@ -16,7 +16,6 @@
 namespace Pimcore\Model\DataObject\Concrete\Dao;
 
 use Doctrine\DBAL\Connection;
-use Pimcore\Db\ConnectionInterface;
 use Pimcore\Model\DataObject;
 
 /**
@@ -35,7 +34,7 @@ class InheritanceHelper
     const DEFAULT_QUERY_ID_COLUMN = 'ooo_id';
 
     /**
-     * @var ConnectionInterface|Connection
+     * @var Connection
      */
     protected $db;
 
@@ -69,15 +68,9 @@ class InheritanceHelper
      */
     protected $classId;
 
-    /**
-     * @var bool
-     */
-    protected static $useRuntimeCache = false;
+    protected static bool $useRuntimeCache = false;
 
-    /**
-     * @var bool
-     */
-    protected $childFound;
+    protected bool $childFound = false;
 
     /**
      * @var array
@@ -160,7 +153,7 @@ class InheritanceHelper
      */
     public static function setUseRuntimeCache($value)
     {
-        self::$useRuntimeCache = $value;
+        self::$useRuntimeCache = (bool) $value;
     }
 
     /**

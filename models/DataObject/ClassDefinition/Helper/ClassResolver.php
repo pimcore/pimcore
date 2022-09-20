@@ -15,8 +15,6 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
-use Pimcore\Logger;
-
 /**
  * @internal
  */
@@ -25,35 +23,21 @@ abstract class ClassResolver
     private static $cache;
 
     /**
-     * @param string $class
+     * @param string|null $class
      * @param callable|null $validationCallback
      *
      * @return mixed|null
      */
     protected static function resolve($class, callable $validationCallback = null)
     {
-        if ($class) {
-            if (isset(self::$cache[$class])) {
-                return self::$cache[$class];
-            }
-
-            try {
-                if (strpos($class, '@') === 0) {
-                    $serviceName = substr($class, 1);
-                    $service = \Pimcore::getKernel()->getContainer()->get($serviceName);
-                } else {
-                    $service = new $class;
-                }
-
-                self::$cache[$class] = self::returnValidServiceOrNull($service, $validationCallback);
-
-                return self::$cache[$class];
-            } catch (\Throwable $e) {
-                Logger::error((string) $e);
-            }
+        if (!$class) {
+            return null;
         }
 
-        return null;
+        return self::$cache[$class] ??= self::returnValidServiceOrNull(
+            str_starts_with($class, '@') ? \Pimcore::getContainer()->get(substr($class, 1)) : new $class,
+            $validationCallback
+        );
     }
 
     private static function returnValidServiceOrNull($service, callable $validationCallback = null)

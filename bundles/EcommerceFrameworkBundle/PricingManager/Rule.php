@@ -31,6 +31,45 @@ use Pimcore\Model\Exception\NotFoundException;
 class Rule extends AbstractModel implements RuleInterface
 {
     /**
+     * @var int|null
+     */
+    protected $id;
+
+    /**
+     * @var string
+     */
+    protected $name;
+
+    /**
+     * @var string[]
+     */
+    protected $label = [];
+
+    /**
+     * @var string[]
+     */
+    protected $description = [];
+
+    protected ?ConditionInterface $condition = null;
+
+    /**
+     * @var ActionInterface[]
+     */
+    protected $action = [];
+
+    /**
+     * @var string
+     */
+    protected $behavior;
+
+    protected bool $active = false;
+
+    /**
+     * @var int
+     */
+    protected $prio = 0;
+
+    /**
      * @param int $id
      *
      * @return RuleInterface|null
@@ -58,51 +97,6 @@ class Rule extends AbstractModel implements RuleInterface
 
         return $rule;
     }
-
-    /**
-     * @var int|null
-     */
-    protected $id;
-
-    /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var string[]
-     */
-    protected $label = [];
-
-    /**
-     * @var string[]
-     */
-    protected $description = [];
-
-    /**
-     * @var ConditionInterface|null
-     */
-    protected ?ConditionInterface $condition = null;
-
-    /**
-     * @var ActionInterface[]
-     */
-    protected $action = [];
-
-    /**
-     * @var string
-     */
-    protected $behavior;
-
-    /**
-     * @var bool
-     */
-    protected $active;
-
-    /**
-     * @var int
-     */
-    protected $prio;
 
     /**
      * load model with serializes data from db
@@ -259,7 +253,7 @@ class Rule extends AbstractModel implements RuleInterface
      */
     public function setActive($active)
     {
-        $this->active = $active;
+        $this->active = (bool) $active;
 
         return $this;
     }

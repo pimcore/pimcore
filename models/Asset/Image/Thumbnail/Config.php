@@ -399,7 +399,7 @@ final class Config extends Model\AbstractModel
     /**
      * @param string $description
      *
-     * @return self
+     * @return $this
      */
     public function setDescription($description)
     {
@@ -419,7 +419,7 @@ final class Config extends Model\AbstractModel
     /**
      * @param array $items
      *
-     * @return self
+     * @return $this
      */
     public function setItems($items)
     {
@@ -439,7 +439,7 @@ final class Config extends Model\AbstractModel
     /**
      * @param string $name
      *
-     * @return self
+     * @return $this
      */
     public function setName($name)
     {
@@ -459,7 +459,7 @@ final class Config extends Model\AbstractModel
     /**
      * @param string $format
      *
-     * @return self
+     * @return $this
      */
     public function setFormat($format)
     {
@@ -479,7 +479,7 @@ final class Config extends Model\AbstractModel
     /**
      * @param int $quality
      *
-     * @return self
+     * @return $this
      */
     public function setQuality($quality)
     {

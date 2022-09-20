@@ -41,7 +41,7 @@ class Link extends Model\Document
      *
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $internalType;
 
@@ -58,8 +58,6 @@ class Link extends Model\Document
      * Contains the direct link as plain text
      *
      * @internal
-     *
-     * @var string
      */
     protected string $direct = '';
 
@@ -67,8 +65,6 @@ class Link extends Model\Document
      * Type of the link (internal/direct)
      *
      * @internal
-     *
-     * @var string
      */
     protected string $linktype = 'internal';
 
@@ -81,8 +77,6 @@ class Link extends Model\Document
      * path of the link
      *
      * @internal
-     *
-     * @var string
      */
     protected string $href = '';
 
@@ -280,7 +274,7 @@ class Link extends Model\Document
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getInternalType()
     {
@@ -288,7 +282,7 @@ class Link extends Model\Document
     }
 
     /**
-     * @param string $type
+     * @param string|null $type
      *
      * @return $this
      */

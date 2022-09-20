@@ -7,7 +7,7 @@ However, Pimcore includes several third-party Open-Source libraries,
 which are licensed under their own respective Open-Source licenses.
 
 The specific verions of a library are documented in
-[PIMCORE_MODIFICATIONS.md](bundles/AdminBundle/Resources/public/js/lib/PIMCORE_MODIFICATIONS.md).
+[PIMCORE_MODIFICATIONS.md](bundles/AdminBundle/public/js/lib/PIMCORE_MODIFICATIONS.md).
 
 ## Libraries directly included in Pimcore
 

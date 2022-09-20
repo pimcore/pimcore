@@ -19,7 +19,6 @@ use Doctrine\DBAL\Connection;
 use Monolog\Logger;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
-use Pimcore\Db\ConnectionInterface;
 
 /**
  * @internal
@@ -27,7 +26,7 @@ use Pimcore\Db\ConnectionInterface;
 class Dao
 {
     /**
-     * @var ConnectionInterface|Connection
+     * @var Connection
      */
     private $db;
 

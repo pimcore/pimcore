@@ -20,16 +20,15 @@ namespace Pimcore\Maintenance;
  */
 interface ExecutorInterface
 {
-    public function executeTask(string $name, bool $force = false);
+    public function executeTask(string $name);
 
     /**
      * Execute the Maintenance Task
      *
      * @param array $validJobs
      * @param array $excludedJobs
-     * @param bool $force
      */
-    public function executeMaintenance(array $validJobs = [], array $excludedJobs = [], bool $force = false);
+    public function executeMaintenance(array $validJobs = [], array $excludedJobs = []);
 
     /**
      * @param string $name

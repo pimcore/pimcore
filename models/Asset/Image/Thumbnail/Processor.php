@@ -255,7 +255,6 @@ class Processor
 
             // after we got the lock, check again if the image exists in the meantime - if not - generate it
             if (!$storage->fileExists($storagePath)) {
-
                 // all checks on the file system should be below the deferred part for performance reasons (remote file systems)
                 if (!$fileSystemPath) {
                     $fileSystemPath = $asset->getLocalFile();
@@ -359,7 +358,6 @@ class Processor
                                     foreach ($transformation['arguments'] as $key => $value) {
                                         $position = array_search($key, $mapping);
                                         if ($position !== false) {
-
                                             // high res calculations if enabled
                                             if (!in_array($transformation['method'], ['cropPercent']) && in_array($key,
                                                 ['width', 'height', 'x', 'y'])) {

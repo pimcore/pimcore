@@ -117,8 +117,6 @@ final class Redirect extends AbstractModel
 
     /**
      * ID of the owner user
-     *
-     * @var int|null
      */
     protected ?int $userOwner = null;
 
@@ -321,7 +319,6 @@ final class Redirect extends AbstractModel
 
     public function clearDependentCache()
     {
-
         // this is mostly called in Redirect\Dao not here
         try {
             \Pimcore\Cache::clearTag('redirect');

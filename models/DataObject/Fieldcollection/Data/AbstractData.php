@@ -34,7 +34,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     protected $index;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $fieldname;
 
@@ -43,9 +43,6 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      */
     protected $object;
 
-    /**
-     * @var int|null
-     */
     protected ?int $objectId = null;
 
     /**
@@ -74,7 +71,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getFieldname()
     {
@@ -82,7 +79,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @param string $fieldname
+     * @param string|null $fieldname
      *
      * @return $this
      */

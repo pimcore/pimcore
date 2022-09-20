@@ -35,7 +35,7 @@ class Bracket implements BracketInterface
      * @param ConditionInterface $condition
      * @param string $operator BracketInterface::OPERATOR_*
      *
-     * @return BracketInterface
+     * @return $this
      */
     public function addCondition(ConditionInterface $condition, $operator)
     {

@@ -22,16 +22,12 @@ class RgbaColor implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    /** @var int */
     protected int $r;
 
-    /** @var int */
     protected int $g;
 
-    /** @var int */
     protected int $b;
 
-    /** @var int */
     protected int $a;
 
     /**

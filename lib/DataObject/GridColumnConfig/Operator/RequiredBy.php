@@ -28,10 +28,7 @@ final class RequiredBy extends AbstractOperator
      */
     private $elementType;
 
-    /**
-     * @var bool
-     */
-    private $onlyCount;
+    private bool $onlyCount;
 
     /**
      * {@inheritdoc}
