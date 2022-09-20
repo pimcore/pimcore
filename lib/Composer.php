@@ -34,7 +34,7 @@ class Composer
     ];
 
     /**
-     * @param Event $event
+     * @param Event|PackageEvent $event
      *
      * @return string
      */
@@ -161,7 +161,7 @@ class Composer
      *
      * @internal
      */
-    protected static function executeCommand(Event $event, $consoleDir, array $cmd, $timeout = 900, $writeBuffer = true)
+    protected static function executeCommand(Event|PackageEvent $event, $consoleDir, array $cmd, $timeout = 900, $writeBuffer = true)
     {
         $command = [static::getPhp(false)];
         $command = array_merge($command, static::getPhpArguments());
@@ -230,7 +230,7 @@ class Composer
         return $arguments;
     }
 
-    protected static function getOptions(Event $event)
+    protected static function getOptions(Event|PackageEvent $event)
     {
         $options = array_merge(static::$options, $event->getComposer()->getPackage()->getExtra());
 
@@ -243,7 +243,7 @@ class Composer
         return $options;
     }
 
-    protected static function getConsoleDir(Event $event, $actionName)
+    protected static function getConsoleDir(Event|PackageEvent $event, $actionName)
     {
         $options = static::getOptions($event);
         if (!static::hasDirectory($event, 'bin-dir', $options['bin-dir'], $actionName)) {
@@ -253,7 +253,7 @@ class Composer
         return $options['bin-dir'];
     }
 
-    protected static function hasDirectory(Event $event, $configName, $path, $actionName)
+    protected static function hasDirectory(Event|PackageEvent $event, $configName, $path, $actionName)
     {
         if (!is_dir($path)) {
             $event->getIO()->write(sprintf('The %s (%s) specified in composer.json was not found in %s, can not %s.', $configName, $path, getcwd(), $actionName));
