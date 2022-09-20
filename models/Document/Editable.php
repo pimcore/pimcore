@@ -45,7 +45,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      * @internal
      *
      */
-    protected string $name;
+    protected string $name = '';
 
     /**
      * Contains the real name of the editable without the prefixes and suffixes
@@ -53,7 +53,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @internal
      */
-    protected string $realName;
+    protected string $realName = '';
 
     /**
      * Contains parent hierarchy names (used when building elements inside a block/areablock hierarchy)
