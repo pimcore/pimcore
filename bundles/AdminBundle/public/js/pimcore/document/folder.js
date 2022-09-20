@@ -23,7 +23,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
 
         const preOpenDocumentFolder = new CustomEvent(pimcore.events.preOpenDocument, {
             detail: {
-                object: this,
+                document: this,
                 type: "folder"
             }
         });
@@ -118,7 +118,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
 
             const postOpenDocumentFolder = new CustomEvent(pimcore.events.postOpenDocument, {
                 detail: {
-                    object: this,
+                    document: this,
                     type: "folder"
                 }
             });

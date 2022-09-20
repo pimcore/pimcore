@@ -1149,7 +1149,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
             'blockedVarsForExport',
             'permissionView',
             'permissionEdit',
-            'childs',
         ];
     }
 
@@ -1432,8 +1431,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     {
         $obj = new static();
         $obj->setValues($data);
-
-        $obj->childs = $obj->children;  // @phpstan-ignore-line
 
         return $obj;
     }
