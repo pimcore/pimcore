@@ -1786,12 +1786,13 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
         name: "path",
         width: 520,
         fieldCls: "pimcore_droptarget_input",
+        enableKeyEvents: true,
         listeners: {
-            blur: function (el) {
+            keyup: function (el) {
                 const value = el.getValue();
 
                 // if it doesn't start with a single "/", we assume it's an external link
-                if (!value.match(/^\/[^/]+/)) {
+                if (value && !value.startsWith('/') && !'http://'.startsWith(value) && !'https://'.startsWith(value)) {
                     if (!value.match(/^https?:\/\//)) {
                         el.setValue("http://" + value.replace(/^\/+/, ''));
                     }
