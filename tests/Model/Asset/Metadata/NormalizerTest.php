@@ -206,7 +206,7 @@ class NormalizerTest extends ModelTestCase
 
         // When no parameters are passed, metadata with locale should get priority over the ones that don't
         $savedMetaData = $asset->getMetadata();
-        $this->assertCount(2, $savedMetaData);
+        $this->assertCount(3, $savedMetaData);
 
     }
 }

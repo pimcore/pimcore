@@ -1587,7 +1587,7 @@ class Asset extends Element\AbstractElement
             foreach ($metaData as $md) {
                 $md = (array)$md;
 
-                if ((empty($md['language']) && !$strictMatch) || ($language == $md['language'])) {
+                if ((empty($md['language']) && !$strictMatch) || ($language == $md['language']) || !$language) {
                     if (!$raw) {
                         $md['data'] = $convert($md);
                     }
