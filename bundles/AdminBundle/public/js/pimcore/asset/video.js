@@ -341,7 +341,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
             video: Routing.generate('pimcore_admin_asset_servevideopreview', {id: this.data.id}),
             is_stereo: (this.data['videoInfo']['width'] === this.data['videoInfo']['height']),
             width: 640,
-            height: 480,
+            height: 360,
             hide_fullscreen_button: true
         });
 
