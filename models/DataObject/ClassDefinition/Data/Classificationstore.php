@@ -881,7 +881,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return [
             'fieldDefinitionsCache',
             'referencedFields',
-            'blockedVarsForExport'
+            'blockedVarsForExport',
         ];
     }
 
