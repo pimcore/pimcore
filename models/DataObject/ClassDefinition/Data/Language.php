@@ -32,10 +32,8 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $onlySystemLanguages = false;
+    public bool $onlySystemLanguages = false;
 
     /**
      * @internal

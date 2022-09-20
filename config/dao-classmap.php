@@ -175,6 +175,4 @@ return [
     'Pimcore\\Model\\Version\\Listing' => 'Pimcore\\Model\\Version\\Listing\\Dao',
     'Pimcore\\Model\\WebsiteSetting' => 'Pimcore\\Model\\WebsiteSetting\\Dao',
     'Pimcore\\Model\\WebsiteSetting\\Listing' => 'Pimcore\\Model\\WebsiteSetting\\Listing\\Dao',
-    'Pimcore\\Model\\Workflow' => 'Pimcore\\Model\\Workflow\\Dao',
-    'Pimcore\\Model\\Workflow\\Listing' => 'Pimcore\\Model\\Workflow\\Listing\\Dao',
 ];

@@ -26,19 +26,10 @@ use Symfony\Component\Routing\Route;
  */
 final class DataObjectRoute extends Route implements RouteObjectInterface
 {
-    /**
-     * @var Concrete|null
-     */
     protected ?Concrete $object;
 
-    /**
-     * @var UrlSlug|null
-     */
     protected ?UrlSlug $slug;
 
-    /**
-     * @var Site|null
-     */
     protected ?Site $site;
 
     /**

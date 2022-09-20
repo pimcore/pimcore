@@ -29,9 +29,6 @@ trait Wrapper
      */
     protected $hardLinkSource;
 
-    /**
-     * @var Document|null
-     */
     protected ?Document $sourceDocument = null;
 
     /**

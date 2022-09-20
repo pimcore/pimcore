@@ -30,10 +30,7 @@ class CacheResponseEvent extends Event
      */
     private $response;
 
-    /**
-     * @var bool
-     */
-    private $cache;
+    private bool $cache;
 
     public function __construct(Response $response, bool $cache)
     {

@@ -103,8 +103,6 @@ class DocType extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     * @var bool
      */
     protected bool $staticGeneratorEnabled = false;
 
