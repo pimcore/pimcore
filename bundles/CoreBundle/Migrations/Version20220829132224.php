@@ -22,7 +22,7 @@ use Doctrine\Migrations\AbstractMigration;
 use Pimcore\Config;
 use Pimcore\Model\Tool\SettingsStore;
 
-final class Version20220829110624 extends AbstractMigration
+final class Version20220829132224 extends AbstractMigration
 {
     public function getDescription(): string
     {
