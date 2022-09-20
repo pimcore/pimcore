@@ -63,10 +63,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $useCurrentDate;
+    public bool $useCurrentDate = false;
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource

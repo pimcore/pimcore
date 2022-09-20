@@ -55,10 +55,7 @@ class Task extends Model\AbstractModel
      */
     protected $version;
 
-    /**
-     * @var bool
-     */
-    protected $active;
+    protected bool $active = false;
 
     /**
      * @var int|null

@@ -32,8 +32,6 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
      * Contains the ID of the linked snippet
      *
      * @internal
-     *
-     * @var int|null
      */
     protected ?int $id = null;
 
