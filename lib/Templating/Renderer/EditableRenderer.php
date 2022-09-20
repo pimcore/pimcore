@@ -38,8 +38,12 @@ class EditableRenderer implements LoggerAwareInterface
     {
     }
 
-
-    public function editableExists(string $type): bool
+    /**
+     * @param string $type
+     *
+     * @return bool
+     */
+    public function editableExists($type)
     {
         return $this->editableLoader->supports($type);
     }

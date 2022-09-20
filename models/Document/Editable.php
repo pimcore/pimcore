@@ -39,7 +39,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @internal
      */
-    protected ?array $config;
+    protected array $config = [];
 
     /**
      * @internal
@@ -73,7 +73,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @internal
      */
-    protected ?Document\PageSnippet $document;
+    protected ?Document\PageSnippet $document = null;
 
     /**
      * In Editmode or not
@@ -328,7 +328,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      */
     public function getConfig()
     {
-        return is_array($this->config) ? $this->config : [];
+        return $this->config;
     }
 
     /**
