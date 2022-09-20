@@ -22,7 +22,6 @@ use Pimcore\Model\DataObject\QuantityValue\QuantityValueConverterInterface;
  */
 class UnitConverterResolver extends ClassResolver
 {
-
     /**
      * @param string $converterServiceName
      *
