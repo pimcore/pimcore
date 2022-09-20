@@ -122,7 +122,7 @@ class Builder
      * @param int|null $maxDepth
      * @param int|null $cacheLifetime
      *
-     * @return mixed|\Pimcore\Navigation\Container
+     * @return Container
      *
      * @throws \Exception
      */
@@ -154,31 +154,34 @@ class Builder
             $navigationRootDocument = Document::getById(1);
         }
 
-        // the cache key consists out of the ID and the class name (eg. for hardlinks) of the root document and the optional html prefix
-        $cacheKeys = ['root_id__' . $navigationRootDocument->getId(), $htmlMenuIdPrefix, get_class($navigationRootDocument)];
+        $navigation = null;
+        $cacheKey = null;
+        if ($cacheEnabled) {
+            // the cache key consists out of the ID and the class name (eg. for hardlinks) of the root document and the optional html prefix
+            $cacheKeys = ['root_id__' . $navigationRootDocument->getId(), $htmlMenuIdPrefix, get_class($navigationRootDocument)];
 
-        if (Site::isSiteRequest()) {
-            $site = Site::getCurrentSite();
-            $cacheKeys[] = 'site__' . $site->getId();
+            if (Site::isSiteRequest()) {
+                $site = Site::getCurrentSite();
+                $cacheKeys[] = 'site__' . $site->getId();
+            }
+
+            if (is_string($cache)) {
+                $cacheKeys[] = 'custom__' . $cache;
+            }
+
+            if ($pageCallback instanceof \Closure) {
+                $cacheKeys[] = 'pageCallback_' . closureHash($pageCallback);
+            }
+
+            if ($maxDepth) {
+                $cacheKeys[] = 'maxDepth_' . $maxDepth;
+            }
+
+            $cacheKey = 'nav_' . md5(serialize($cacheKeys));
+            $navigation = CacheManager::load($cacheKey);
         }
-
-        if (is_string($cache)) {
-            $cacheKeys[] = 'custom__' . $cache;
-        }
-
-        if ($pageCallback instanceof \Closure) {
-            $cacheKeys[] = 'pageCallback_' . closureHash($pageCallback);
-        }
-
-        if ($maxDepth) {
-            $cacheKeys[] = 'maxDepth_' . $maxDepth;
-        }
-
-        $cacheKey = 'nav_' . md5(serialize($cacheKeys));
-        $navigation = CacheManager::load($cacheKey);
-
-        if (!$navigation || !$cacheEnabled) {
-            $navigation = new \Pimcore\Navigation\Container();
+        if (!$navigation instanceof Container) {
+            $navigation = new Container();
 
             $this->navCacheTags = ['output', 'navigation'];
 
