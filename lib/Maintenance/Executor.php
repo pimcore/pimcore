@@ -18,7 +18,6 @@ namespace Pimcore\Maintenance;
 use Pimcore\Messenger\MaintenanceTaskMessage;
 use Pimcore\Model\Tool\TmpStore;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
@@ -41,38 +40,22 @@ final class Executor implements ExecutorInterface
      */
     private $logger;
 
-    /**
-     * @var LockFactory|null
-     */
-    private $lockFactory = null;
-
     public function __construct(
         string $pidFileName,
         LoggerInterface $logger,
-        LockFactory $lockFactory,
         private MessageBusInterface $messengerBusPimcoreCore
     ) {
         $this->pidFileName = $pidFileName;
         $this->logger = $logger;
-        $this->lockFactory = $lockFactory;
     }
 
-    public function executeTask(string $name, bool $force = false)
+    public function executeTask(string $name)
     {
         if (!in_array($name, $this->getTaskNames(), true)) {
             throw new \Exception(sprintf('Task with name "%s" not found', $name));
         }
 
         $task = $this->tasks[$name];
-        $lock = $this->lockFactory->createLock('maintenance-' . $name, 86400);
-
-        if (!$lock->acquire() && !$force) {
-            $this->logger->info('Skipped job with ID {id} because it already being executed', [
-                'id' => $name,
-            ]);
-
-            return;
-        }
 
         try {
             $this->logger->info('Starting job with ID {id}', [
@@ -89,14 +72,12 @@ final class Executor implements ExecutorInterface
                 'exception' => $e,
             ]);
         }
-
-        $lock->release();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function executeMaintenance(array $validJobs = [], array $excludedJobs = [], bool $force = false)
+    public function executeMaintenance(array $validJobs = [], array $excludedJobs = [])
     {
         $this->setLastExecution();
 
@@ -118,7 +99,7 @@ final class Executor implements ExecutorInterface
             }
 
             $this->messengerBusPimcoreCore->dispatch(
-                new MaintenanceTaskMessage($name, $force)
+                new MaintenanceTaskMessage($name)
             );
         }
     }

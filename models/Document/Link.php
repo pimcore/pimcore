@@ -58,8 +58,6 @@ class Link extends Model\Document
      * Contains the direct link as plain text
      *
      * @internal
-     *
-     * @var string
      */
     protected string $direct = '';
 
@@ -67,8 +65,6 @@ class Link extends Model\Document
      * Type of the link (internal/direct)
      *
      * @internal
-     *
-     * @var string
      */
     protected string $linktype = 'internal';
 
@@ -81,8 +77,6 @@ class Link extends Model\Document
      * path of the link
      *
      * @internal
-     *
-     * @var string
      */
     protected string $href = '';
 

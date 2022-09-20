@@ -56,10 +56,8 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
      * ReverseObjectRelation must be lazy loading!
      *
      * @internal
-     *
-     * @var bool
      */
-    public $lazyLoading = true;
+    public bool $lazyLoading = true;
 
     /**
      * @param array $classes
@@ -256,6 +254,3 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return false;
     }
 }
-
-//TODO remove in Pimcore 11
-class_alias(ReverseObjectRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation');

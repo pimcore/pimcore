@@ -44,8 +44,6 @@ class Url extends Page
 {
     /**
      * Page URI
-     *
-     * @var string|null
      */
     protected ?string $_uri = null;
 

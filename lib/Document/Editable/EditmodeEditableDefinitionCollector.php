@@ -26,14 +26,8 @@ final class EditmodeEditableDefinitionCollector
 {
     private bool $stopped = false;
 
-    /**
-     * @var array
-     */
     private array $editableDefinitions = [];
 
-    /**
-     * @var array
-     */
     private array $stash = [];
 
     /**

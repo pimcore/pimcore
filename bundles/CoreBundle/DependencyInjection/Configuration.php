@@ -21,6 +21,7 @@ use Pimcore\Targeting\Storage\TargetingStorageInterface;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Pimcore\Workflow\Notification\NotificationEmailService;
+use Pimcore\Workflow\Transition;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -30,14 +31,8 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 final class Configuration implements ConfigurationInterface
 {
-    /**
-     * @var PlaceholderProcessor
-     */
     private PlaceholderProcessor $placeholderProcessor;
 
-    /**
-     * @var array
-     */
     private array $placeholders = [];
 
     public function __construct()
@@ -769,6 +764,33 @@ final class Configuration implements ConfigurationInterface
                                 ->end()
                             ->end()
                         ->end()
+                        ->arrayNode('custom_layouts')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->arrayNode('definitions')
+                                    ->normalizeKeys(false)
+                                    ->prototype('array')
+                                        ->children()
+                                            ->scalarNode('id')->end()
+                                            ->scalarNode('name')->end()
+                                            ->scalarNode('description')->defaultNull()->end()
+                                            ->integerNode('creationDate')->end()
+                                            ->integerNode('modificationDate')->end()
+                                            ->integerNode('userOwner')->end()
+                                            ->integerNode('userModification')
+                                                ->beforeNormalization()
+                                                    ->ifNull()->then(function () {
+                                                        return 0;
+                                                    })->end()
+                                                ->end()
+                                            ->scalarNode('classId')->end()
+                                            ->integerNode('default')->end()
+                                            ->variableNode('layoutDefinitions')->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
                     ->end();
         $classDefinitionsNode = $objectsNode
             ->children()
@@ -968,9 +990,6 @@ final class Configuration implements ConfigurationInterface
                             ->scalarNode('pdfreactorLicence')->end()
                             ->booleanNode('pdfreactorEnableLenientHttpsMode')->end()
                             ->booleanNode('pdfreactorEnableDebugMode')->end()
-                            ->scalarNode('wkhtmltopdfBin')->end()
-                            ->variableNode('wkhtml2pdfOptions')->end()
-                            ->scalarNode('wkhtml2pdfHostname')->end()
                             ->scalarNode('headlessChromeSettings')->end()
                         ->end()
                 ->end()
@@ -1932,6 +1951,13 @@ final class Configuration implements ConfigurationInterface
                                                         ->values([ChangePublishedStateSubscriber::NO_CHANGE, ChangePublishedStateSubscriber::FORCE_UNPUBLISHED, ChangePublishedStateSubscriber::FORCE_PUBLISHED, ChangePublishedStateSubscriber::SAVE_VERSION])
                                                         ->defaultValue(ChangePublishedStateSubscriber::NO_CHANGE)
                                                         ->info('Change published state of element while transition (only available for documents and data objects).')
+                                                    ->end()
+                                                    ->enumNode('unsavedChangesBehaviour')
+                                                        ->values([Transition::UNSAVED_CHANGES_BEHAVIOUR_SAVE,
+                                                                  Transition::UNSAVED_CHANGES_BEHAVIOUR_WARN,
+                                                                  Transition::UNSAVED_CHANGES_BEHAVIOUR_IGNORE, ])
+                                                        ->defaultValue(Transition::UNSAVED_CHANGES_BEHAVIOUR_WARN)
+                                                        ->info('Behaviour when workflow transition gets applied but there are unsaved changes')
                                                     ->end()
                                                 ->end()
                                             ->end()

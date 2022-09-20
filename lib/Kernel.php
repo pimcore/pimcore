@@ -71,20 +71,6 @@ abstract class Kernel extends SymfonyKernel
     private $bundleCollection;
 
     /**
-     * @deprecated
-     */
-    public function getRootDir()
-    {
-        trigger_deprecation(
-            'pimcore/pimcore',
-            '10.3',
-            'Kernel::getRootDir() is deprecated and will be removed in Pimcore 11. Use Kernel::getProjectDir() instead.',
-        );
-
-        return PIMCORE_PROJECT_ROOT;
-    }
-
-    /**
      * {@inheritdoc}
      *
      * @return string
@@ -218,6 +204,10 @@ abstract class Kernel extends SymfonyKernel
             [
                 'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_CUSTOM_VIEWS',
                 'defaultStorageDirectoryName' => 'custom-views',
+            ],
+            [
+                'storageDirectoryEnvVariableName' => 'PIMCORE_CONFIG_STORAGE_DIR_OBJECT_CUSTOM_LAYOUTS',
+                'defaultStorageDirectoryName' => 'custom-layouts',
             ],
         ];
 

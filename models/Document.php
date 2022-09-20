@@ -39,17 +39,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 class Document extends Element\AbstractElement
 {
     /**
-     * all possible types of documents
-     *
-     * @internal
-     *
-     * @deprecated will be removed in Pimcore 11. Use getTypes() method.
-     *
-     * @var array
-     */
-    public static $types = ['folder', 'page', 'snippet', 'link', 'hardlink', 'email', 'newsletter', 'printpage', 'printcontainer'];
-
-    /**
      * @var bool
      */
     private static $hideUnpublished = false;
@@ -63,8 +52,6 @@ class Document extends Element\AbstractElement
 
     /**
      * @internal
-     *
-     * @var string
      */
     protected string $type = '';
 
@@ -84,22 +71,16 @@ class Document extends Element\AbstractElement
 
     /**
      * @internal
-     *
-     * @var int|null
      */
     protected ?int $index = null;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     protected bool $published = true;
 
     /**
      * @internal
-     *
-     * @var int|null
      */
     protected ?int $userModification = null;
 
@@ -172,11 +153,11 @@ class Document extends Element\AbstractElement
 
     /**
      * @param string $path
-     * @param array|bool $force
+     * @param array $params
      *
      * @return static|null
      */
-    public static function getByPath($path, $force = false)
+    public static function getByPath($path, array $params = [])
     {
         if (!$path) {
             return null;
@@ -185,7 +166,7 @@ class Document extends Element\AbstractElement
         $path = Element\Service::correctPath($path);
 
         $cacheKey = self::getPathCacheKey($path);
-        $params = Element\Service::prepareGetByIdParams($force, __METHOD__, func_num_args() > 1);
+        $params = Element\Service::prepareGetByIdParams($params);
 
         if (!$params['force'] && RuntimeCache::isRegistered($cacheKey)) {
             $document = RuntimeCache::get($cacheKey);
@@ -227,11 +208,11 @@ class Document extends Element\AbstractElement
 
     /**
      * @param int $id
-     * @param array|bool $force
+     * @param array $params
      *
      * @return static|null
      */
-    public static function getById($id, $force = false)
+    public static function getById($id, array $params = [])
     {
         if (!is_numeric($id) || $id < 1) {
             return null;
@@ -239,7 +220,7 @@ class Document extends Element\AbstractElement
 
         $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
-        $params = Element\Service::prepareGetByIdParams($force, __METHOD__, func_num_args() > 1);
+        $params = Element\Service::prepareGetByIdParams($params);
 
         if (!$params['force'] && RuntimeCache::isRegistered($cacheKey)) {
             $document = RuntimeCache::get($cacheKey);
@@ -832,7 +813,7 @@ class Document extends Element\AbstractElement
         }
 
         $requestStack = \Pimcore::getContainer()->get('request_stack');
-        $masterRequest = $requestStack->getMainRequest();
+        $mainRequest = $requestStack->getMainRequest();
 
         // @TODO please forgive me, this is the dirtiest hack I've ever made :(
         // if you got confused by this functionality drop me a line and I'll buy you some beers :)
@@ -844,7 +825,7 @@ class Document extends Element\AbstractElement
         // inside the hardlink scope, but this is an ID link, so we cannot rewrite the link the usual way because in the
         // snippet / link we don't know anymore that whe a inside a hardlink wrapped document
         if (!$link && \Pimcore\Tool::isFrontend() && Site::isSiteRequest() && !FrontendTool::isDocumentInCurrentSite($this)) {
-            if ($masterRequest && ($masterDocument = $masterRequest->get(DynamicRouter::CONTENT_KEY))) {
+            if ($mainRequest && ($masterDocument = $mainRequest->get(DynamicRouter::CONTENT_KEY))) {
                 if ($masterDocument instanceof WrapperInterface) {
                     $hardlinkPath = '';
                     $hardlink = $masterDocument->getHardLinkSource();
@@ -894,7 +875,7 @@ class Document extends Element\AbstractElement
             $link = $this->getPath() . $this->getKey();
         }
 
-        if ($masterRequest) {
+        if ($mainRequest) {
             // caching should only be done when master request is available as it is done for performance reasons
             // of the web frontend, without a request object there's no need to cache anything
             // for details also see https://github.com/pimcore/pimcore/issues/5707

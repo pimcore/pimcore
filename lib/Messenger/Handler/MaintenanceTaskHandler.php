@@ -30,6 +30,6 @@ class MaintenanceTaskHandler
 
     public function __invoke(MaintenanceTaskMessage $message)
     {
-        $this->maintenanceExecutor->executeTask($message->getName(), $message->getForce());
+        $this->maintenanceExecutor->executeTask($message->getName());
     }
 }

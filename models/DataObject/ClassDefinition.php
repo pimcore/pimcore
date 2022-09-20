@@ -56,6 +56,13 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @var string
      */
+    public string $title = '';
+
+    /**
+     * @internal
+     *
+     * @var string
+     */
     public $description = '';
 
     /**
@@ -290,6 +297,10 @@ final class ClassDefinition extends Model\AbstractModel
             try {
                 $class = new self();
                 $name = $class->getDao()->getNameById($id);
+                if (!$name) {
+                    throw new \Exception('Class definition with name ' . $name . ' or ID ' . $id . ' does not exist');
+                }
+
                 $definitionFile = $class->getDefinitionFile($name);
                 $class = @include $definitionFile;
 
@@ -538,6 +549,10 @@ final class ClassDefinition extends Model\AbstractModel
         $cd = '/**' . "\n";
         $cd .= ' * Inheritance: '.($this->getAllowInherit() ? 'yes' : 'no')."\n";
         $cd .= ' * Variants: '.($this->getAllowVariants() ? 'yes' : 'no')."\n";
+
+        if ($title = $this->getTitle()) {
+            $cd .= ' * Title: ' . $title."\n";
+        }
 
         if ($description = $this->getDescription()) {
             $description = str_replace(['/**', '*/', '//'], '', $description);
@@ -1240,6 +1255,26 @@ final class ClassDefinition extends Model\AbstractModel
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * @param string $title
+     *
+     * @return $this
+     */
+    public function setTitle(string $title): static
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle(): string
+    {
+        return $this->title;
     }
 
     /**
