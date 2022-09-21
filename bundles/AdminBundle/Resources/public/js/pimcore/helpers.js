@@ -1794,7 +1794,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                 // if it doesn't start with a single "/", we assume it's an external link
                 if (value && !value.startsWith('/') && !'http://'.startsWith(value) && !'https://'.startsWith(value)) {
                     if (!value.match(/^https?:\/\//)) {
-                        el.setValue("http://" + value.replace(/^\/+/, ''));
+                        el.setValue("https://" + value.replace(/^\/+/, ''));
                     }
                     internalTypeField.setValue(null);
                     linkTypeField.setValue("direct");
