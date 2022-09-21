@@ -718,13 +718,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
             $customLayout = DataObject\ClassDefinition\CustomLayout::getById($id);
             if ($customLayout) {
                 $name = $customLayout->getName();
-                $customLayoutData = [
-                    'description' => $customLayout->getDescription(),
-                    'layoutDefinitions' => $customLayout->getLayoutDefinitions(),
-                    'default' => $customLayout->getDefault() ?: 0,
-                ];
-
-                $json = json_encode($customLayoutData, JSON_PRETTY_PRINT);
+                $json = DataObject\ClassDefinition\Service::generateCustomLayoutJson($customLayout);
 
                 $response = new Response($json);
                 $response->headers->set('Content-type', 'application/json');
@@ -1794,9 +1788,10 @@ class ClassController extends AdminController implements KernelControllerEventIn
                 $customLayout = DataObject\ClassDefinition\CustomLayout::getById($item['name']);
                 $classId = $customLayout->getClassId();
                 $class = DataObject\ClassDefinition::getById($classId);
-                $customLayout = $customLayout->getObjectVars();
-                $customLayout['className'] = $class->getName();
-                $result['customlayout'][] = $customLayout;
+                $customLayoutJson = json_decode(DataObject\ClassDefinition\Service::generateCustomLayoutJson($customLayout));
+                $customLayoutJson->name = $customLayout->getName();
+                $customLayoutJson->className = $class->getName();
+                $result['customlayout'][] = $customLayoutJson;
             }
         }
 

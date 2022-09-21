@@ -256,6 +256,22 @@ class Service
         return json_encode($data, JSON_PRETTY_PRINT);
     }
 
+    public static function generateCustomLayoutJson(CustomLayout $customLayout): string
+    {
+        if ($layoutDefinitions = $customLayout->getLayoutDefinitions()) {
+            self::removeDynamicOptionsFromLayoutDefinition($layoutDefinitions);
+        }
+        self::setDoRemoveDynamicOptions(true);
+        $data = [
+            'description' => $customLayout->getDescription(),
+            'layoutDefinitions' => json_decode(json_encode($layoutDefinitions)),
+            'default' => $customLayout->getDefault() ?: 0,
+        ];
+        self::setDoRemoveDynamicOptions(false);
+
+        return json_encode($data, JSON_PRETTY_PRINT);
+    }
+
     /**
      * @param DataObject\Objectbrick\Definition $objectBrick
      * @param string $json
