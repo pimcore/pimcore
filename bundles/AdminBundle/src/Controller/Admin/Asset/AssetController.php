@@ -667,14 +667,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     {
         $type = $request->get('type');
 
-        if ($type === 'childs') {
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '10.4',
-                'Type childs is deprecated. Use children instead'
-            );
-            $type = 'children';
-        }
         if ($type === 'children') {
             $parentAsset = Asset::getById((int) $request->get('id'));
 

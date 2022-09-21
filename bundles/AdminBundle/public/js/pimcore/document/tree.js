@@ -11,7 +11,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-Ext.define('documentreemodel', {
+ Ext.define('documentreemodel', {
     extend: 'Ext.data.TreeModel',
     idProperty: 'id',
     fields: [{
@@ -257,6 +257,7 @@ pimcore.document.tree = Class.create({
                     } else {
                         delete node.data.cls;
                     }
+                    pimcore.elementservice.nodeMoved("document", oldParent, newParent);
                     this.updateOpenDocumentPaths(node);
 
                 }
@@ -933,8 +934,8 @@ pimcore.document.tree = Class.create({
         const prepareDocumentTreeContextMenu = new CustomEvent(pimcore.events.prepareDocumentTreeContextMenu, {
             detail: {
                 menu: menu,
-                object: this,
-                record: record
+                tree: this,
+                document: record
             }
         });
 
