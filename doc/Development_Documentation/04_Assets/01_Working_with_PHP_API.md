@@ -64,7 +64,7 @@ therefore used on all output channels.
 
 ### Examples
 ##### Getting Data
-Metadata for an asset can be fetched using `getMetadata` method of Asset class. It takes 4 parameters: 
+Metadata for an asset can be fetched using `getMetadata` method of Asset class. It can take the following optional parameters: 
 1. `$name` (string) when passed it returns the metadata with the given name, otherwise it lists all.
 2. `$language` (string) with this parameter you can filter out the metadata of a specific language.
 3. `$strictMatch` (boolean) if true tries to get only the metadata which exactly matches the requested language without considering the fallback.
