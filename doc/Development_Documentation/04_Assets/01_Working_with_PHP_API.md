@@ -88,7 +88,7 @@ $asset->getMetadata();
 // get all available metadata for a specific language along with metadata which have no language assigned
 $asset->getMetadata(null, 'en');
 
-// get all available metadata for a specific language discarding any that does not have language set
+// get exclusively all the metadata that have a specific language
 $asset->getMetadata(null, 'en', true);
 
 // get metadata in raw format. ie: including metadata input type, language, value and name
