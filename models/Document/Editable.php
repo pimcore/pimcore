@@ -66,7 +66,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @internal
      */
-    protected int $documentId = 0;
+    protected ?int $documentId = null;
 
     /**
      * Element belongs to the document
