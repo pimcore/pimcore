@@ -64,7 +64,15 @@ therefore used on all output channels.
 
 ### Examples
 ##### Getting Data
- ```php
+Metadata for an asset can be fetched using `getMetadata` method of Asset class. It takes 4 parameters: 
+1. `$name` can be a nullable string which corresponds to the name of metadata. If null is passed, it tries to get all the metadata. The actual contents may be manipulated by other parameters.
+2. `$language` is a nullable string which corresponds to language of the metadata. If language is passed, it tries to fetch metadata in a specific language.
+3. `$strictMatch` is a boolean value which, if true tries to get only the metadata which exactly matches the requested language.
+4. `$raw` is a boolean value which, if true gets extra information like name, data, language and input type of the metadata.
+
+To know the expected return values, you can look into the tests inside `tests/Model/Asset/Metadata/NormalizerTest::testLocalizedMetaData`
+
+```php
 $asset = Asset::getById(123);
 
 // get the title for the current language (request attribute `_locale`)
@@ -73,6 +81,18 @@ $asset->getMetadata("title");
 // get the English title
 $asset->getMetadata("title", "en");
 // if there's no title for "en" but one without a language this will be returned (fallback mechanism).
+
+// get all available metadata
+$asset->getMetadata();
+
+// get all available metadata for a specific language along with metadata which have no language assigned
+$asset->getMetadata(null, 'en');
+
+// get all available metadata for a specific language discarding any that does not have language set
+$asset->getMetadata(null, 'en', true);
+
+// get metadata in raw format. ie: including metadata input type, language, value and name
+$asset->getMetadata('title', null, true, true);
  ```
 
 ##### Setting Data
