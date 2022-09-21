@@ -195,7 +195,10 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                 tooltip: t('remove'),
                 icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                 handler: function (grid, rowIndex) {
-                    grid.getStore().removeAt(rowIndex);
+                    let data = grid.getStore().getAt(rowIndex);
+                    pimcore.helpers.deleteConfirm(t('relation'), data.data.path, function () {
+                        grid.getStore().removeAt(rowIndex);
+                    }.bind(this));
                 }.bind(this)
             }]
         });
