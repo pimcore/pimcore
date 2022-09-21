@@ -1564,8 +1564,8 @@ class Asset extends Element\AbstractElement
             }
         }
 
-        foreach($result as $key => &$item) {
-            if ($language && !$strictMatch) {
+        if ($language && !$strictMatch) {
+            foreach($result as $key => &$item) {
                 $lang = $item['language'];
 
                 if (!$lang && isset($metaDataWithLanguage[$language]) && isset($metaDataWithLanguage[$language][$item['name']])) {
