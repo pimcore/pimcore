@@ -1583,7 +1583,7 @@ class Asset extends Element\AbstractElement
         return $result;
     }
 
-    protected function transformMetadata(array $metaData) {
+    private function transformMetadata(array $metaData) {
         $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
         $transformedData = $metaData['data'];
 
