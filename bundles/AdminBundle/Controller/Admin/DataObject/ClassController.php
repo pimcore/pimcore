@@ -1776,20 +1776,18 @@ class ClassController extends AdminController implements KernelControllerEventIn
         foreach ($list as $item) {
             if ($item['type'] == 'fieldcollection') {
                 $fieldCollection = DataObject\Fieldcollection\Definition::getByKey($item['name']);
-                $key = $fieldCollection->getKey();
                 $fieldCollectionJson = json_decode(DataObject\ClassDefinition\Service::generateFieldCollectionJson($fieldCollection));
-                $fieldCollectionJson->key = $key;
+                $fieldCollectionJson->key = $item['name'];
                 $result['fieldcollection'][] = $fieldCollectionJson;
             } elseif ($item['type'] == 'class') {
                 $class = DataObject\ClassDefinition::getByName($item['name']);
-                $data = json_decode(json_encode($class));
-                unset($data->fieldDefinitions);
+                $data = json_decode(DataObject\ClassDefinition\Service::generateClassDefinitionJson($class));
+                $data->name = $item['name'];
                 $result['class'][] = $data;
             } elseif ($item['type'] == 'objectbrick') {
                 $objectBrick = DataObject\Objectbrick\Definition::getByKey($item['name']);
-                $key = $objectBrick->getKey();
                 $objectBrickJson = json_decode(DataObject\ClassDefinition\Service::generateObjectBrickJson($objectBrick));
-                $objectBrickJson->key = $key;
+                $objectBrickJson->key = $item['name'];
                 $result['objectbrick'][] = $objectBrickJson;
             } elseif ($item['type'] == 'customlayout') {
                 /** @var DataObject\ClassDefinition\CustomLayout $customLayout */
