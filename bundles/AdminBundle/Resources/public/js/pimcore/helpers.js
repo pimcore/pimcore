@@ -1799,6 +1799,11 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                     internalTypeField.setValue(null);
                     linkTypeField.setValue("direct");
                 }
+                // if it starts with "//", we assume it is a protocol-relative URL
+                else if (value.startsWith('//')) {
+                    internalTypeField.setValue(null);
+                    linkTypeField.setValue("direct");
+                }
             }
         }
     });
