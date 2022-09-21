@@ -65,7 +65,7 @@ therefore used on all output channels.
 ### Examples
 ##### Getting Data
 Metadata for an asset can be fetched using `getMetadata` method of Asset class. It takes 4 parameters: 
-1. `$name` can be a nullable string which corresponds to the name of metadata. If null is passed, it tries to get all the metadata. The actual contents may be manipulated by other parameters.
+1. `$name` (string) when passed it returns the metadata with the given name, otherwise it lists all.
 2. `$language` is a nullable string which corresponds to language of the metadata. If language is passed, it tries to fetch metadata in a specific language.
 3. `$strictMatch` is a boolean value which, if true tries to get only the metadata which exactly matches the requested language.
 4. `$raw` is a boolean value which, if true gets extra information like name, data, language and input type of the metadata.
