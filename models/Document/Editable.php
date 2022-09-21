@@ -641,6 +641,10 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return self::buildHierarchicalName($name, $blocks, $indexes);
     }
 
+    /**
+     * @param BlockName[] $blocks
+     * @param int[] $indexes
+     */
     private static function buildHierarchicalName(string $name, array $blocks, array $indexes): string
     {
         if (count($indexes) > count($blocks)) {
@@ -711,7 +715,10 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this->inDialogBox;
     }
 
-    public function setInDialogBox(?string $inDialogBox): self
+    /**
+     * @return $this
+     */
+    public function setInDialogBox(?string $inDialogBox): static
     {
         $this->inDialogBox = $inDialogBox;
 
@@ -723,7 +730,10 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this->editableDefinitionCollector;
     }
 
-    public function setEditableDefinitionCollector(?EditmodeEditableDefinitionCollector $editableDefinitionCollector): self
+    /**
+     * @return $this
+     */
+    public function setEditableDefinitionCollector(?EditmodeEditableDefinitionCollector $editableDefinitionCollector): static
     {
         $this->editableDefinitionCollector = $editableDefinitionCollector;
 
