@@ -92,7 +92,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      */
     protected ?string $inDialogBox = null;
 
-    private ?EditmodeEditableDefinitionCollector $editableDefinitionCollector;
+    private ?EditmodeEditableDefinitionCollector $editableDefinitionCollector = null;
 
     /**
      * @return string|void
