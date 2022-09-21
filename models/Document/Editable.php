@@ -66,7 +66,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @internal
      */
-    protected int $documentId;
+    protected int $documentId = 0;
 
     /**
      * Element belongs to the document
@@ -80,7 +80,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @internal
      */
-    protected bool $editmode;
+    protected bool $editmode = false;
 
     /**
      * @internal
