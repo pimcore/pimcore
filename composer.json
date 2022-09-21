@@ -139,7 +139,6 @@
     "phpoffice/phpspreadsheet": "^1.24",
     "league/html-to-markdown": "^4.10.0",
     "matthiasmullie/minify": "^1.3",
-    "webmozarts/console-parallelization": "^1.2.0",
     "onnov/detect-encoding": "^2.0",
     "knplabs/knp-paginator-bundle": "^5.4.2",
     "masterminds/html5" : "^2.7",
@@ -169,7 +168,8 @@
     "ext-redis": "*",
     "spiritix/php-chrome-html2pdf": "Required for the Headless Chrome Web2Print Extension",
     "elasticsearch/elasticsearch": "Required for Elastic Search service",
-    "chrome-php/chrome": "Required for Documents Page Previews"
+    "chrome-php/chrome": "Required for Documents Page Previews",
+    "webmozarts/console-parallelization": "Required for parallelization of console commands"
   },
   "autoload": {
     "files": [

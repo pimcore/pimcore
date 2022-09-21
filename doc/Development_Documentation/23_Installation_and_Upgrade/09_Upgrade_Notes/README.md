@@ -55,7 +55,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
     Please check the documentation on how to work with workflows: [Workflow Management](../../07_Workflow_Management/README.md).
 - [Core] Removed the deprecated method `Kernel::getRootDir()`, use `Kernel::getProjectDir()` instead.
 - [PhpArrayTable]: Removed PhpArrayTable class
-
+- [Parallelization] Removed `webmozarts/console-parallelization` dependency due to maintainability reasons. If you still want to use parallelization for console commands, please add the dependency to your own `composer.json`.
 ## 10.5.0
 - [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`
 - [Listings] `JsonListing` class is deprecated. Please use `CallableFilterListingInterface`, `FilterListingTrait` and `CallableOrderListingInterface`, `OrderListingTrait` instead.
