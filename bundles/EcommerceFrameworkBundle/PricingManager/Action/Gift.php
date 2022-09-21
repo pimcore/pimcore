@@ -21,14 +21,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 
 class Gift implements GiftInterface
 {
-    /**
-     * @var AbstractProduct|null
-     */
     protected ?AbstractProduct $product = null;
 
-    /**
-     * @var string
-     */
     protected string $productPath = '';
 
     /**

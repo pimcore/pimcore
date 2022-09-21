@@ -123,7 +123,7 @@ class IntlFormatter
     /**
      * @param string $format
      *
-     * @return \IntlDateFormatter|\Symfony\Polyfill\Intl\Icu\IntlDateFormatter
+     * @return \IntlDateFormatter
      *
      * @throws \RuntimeException
      */

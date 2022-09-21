@@ -52,10 +52,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $border = false;
+    public bool $border = false;
 
     /**
      * @param int|null $maxItems
@@ -355,7 +353,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     public function getVersionPreview($data, $object = null, $params = [])
     {
         // this is handled directly in the template
-        // /bundles/AdminBundle/Resources/views/Admin/DataObject/DataObject/previewVersion.html.twig
+        // /bundles/AdminBundle/templates/admin/data_object/data_object/preview_version.html.twig
         return 'BRICKS';
     }
 

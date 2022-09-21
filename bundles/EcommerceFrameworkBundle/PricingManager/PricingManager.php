@@ -49,9 +49,6 @@ class PricingManager implements PricingManagerInterface
      */
     protected $options;
 
-    /**
-     * @var VisitorInfoStorageInterface|null
-     */
     protected ?VisitorInfoStorageInterface $visitorInfoStorage = null;
 
     /**

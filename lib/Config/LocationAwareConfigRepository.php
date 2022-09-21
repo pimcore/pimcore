@@ -31,29 +31,14 @@ class LocationAwareConfigRepository
 
     public const LOCATION_DISABLED = 'disabled';
 
-    /**
-     * @var array
-     */
     protected array $containerConfig = [];
 
-    /**
-     * @var string|null
-     */
     protected ?string $settingsStoreScope = null;
 
-    /**
-     * @var string|null
-     */
     protected ?string $storageDirectory = null;
 
-    /**
-     * @var string|null
-     */
     protected ?string $writeTargetEnvVariableName = null;
 
-    /**
-     * @var string|null
-     */
     protected ?string $defaultWriteLocation = self::LOCATION_SYMFONY_CONFIG;
 
     /**
