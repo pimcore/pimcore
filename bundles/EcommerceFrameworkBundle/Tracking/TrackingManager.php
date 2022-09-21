@@ -315,7 +315,10 @@ class TrackingManager implements TrackingManagerInterface
         return $result;
     }
 
-    public function forwardTrackedCodesAsFlashMessage(): TrackingManagerInterface
+    /**
+     * @return $this
+     */
+    public function forwardTrackedCodesAsFlashMessage(): static
     {
         $trackedCodes = [];
 

@@ -39,5 +39,5 @@ interface TrackingManagerInterface extends
      *
      * @return $this
      */
-    public function forwardTrackedCodesAsFlashMessage(): self;
+    public function forwardTrackedCodesAsFlashMessage(): static;
 }

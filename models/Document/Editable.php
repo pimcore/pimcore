@@ -386,12 +386,9 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
-     * @param string $name
-     * @param mixed $value
-     *
      * @return $this
      */
-    public function addConfig(string $name, $value): self
+    public function addConfig(string $name, mixed $value): static
     {
         if (!is_array($this->config)) {
             $this->config = [];
@@ -803,11 +800,9 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
-     * @param string|null $inDialogBox
-     *
      * @return $this
      */
-    public function setInDialogBox(?string $inDialogBox): self
+    public function setInDialogBox(?string $inDialogBox): static
     {
         $this->inDialogBox = $inDialogBox;
 
@@ -823,11 +818,9 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
-     * @param EditmodeEditableDefinitionCollector|null $editableDefinitionCollector
-     *
      * @return $this
      */
-    public function setEditableDefinitionCollector(?EditmodeEditableDefinitionCollector $editableDefinitionCollector): self
+    public function setEditableDefinitionCollector(?EditmodeEditableDefinitionCollector $editableDefinitionCollector): static
     {
         $this->editableDefinitionCollector = $editableDefinitionCollector;
 
