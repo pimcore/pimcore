@@ -129,7 +129,6 @@ class Builder
      */
     public function getNavigation(array $params): Container
     {
-
         [
             'root' => $navigationRootDocument,
             'htmlMenuPrefix' => $htmlMenuIdPrefix,
