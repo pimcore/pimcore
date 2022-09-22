@@ -60,11 +60,11 @@ class Listing extends AbstractListing
     }
 
     /**
-     * @param array $notifications
+     * @param Model\Notification[]|null $notifications
      *
      * @return $this
      */
-    public function setNotifications(array $notifications): static
+    public function setNotifications(?array $notifications): static
     {
         return $this->setData($notifications);
     }
