@@ -1,5 +1,6 @@
 # Upgrade Notes
 ## 11.0.0
+- [Installer] Changed the return type of `Pimcore\Extension\Bundle\Installer\InstallerInterface::getOutput` to `BufferedOutput | NullOutput`.
 - [Documents] Removed `$types` property from `Pimcore\Model\Document`. Use `getTypes` method instead.
 - [Class Definitions] Class Resolver does not catch exceptions anymore.
 - [Image Optimizer] Removed all the Image Optimizer services (e.g. PngCrushOptimizer, JpegoptimOptimizer etc.) as image optimization is done by the new package spatie/image-optimizer. 
