@@ -19,10 +19,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class ResultEvent extends Event
 {
-    /**
-     * @var bool
-     */
-    protected $result;
+    protected bool $result;
 
     /**
      * @param bool $result

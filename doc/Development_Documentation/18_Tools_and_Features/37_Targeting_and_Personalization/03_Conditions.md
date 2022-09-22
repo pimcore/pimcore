@@ -8,7 +8,7 @@ To implement a condition, you need to implement 2 parts:
 * A PHP class implementing the [`ConditionInterface`](https://github.com/pimcore/pimcore/blob/11.x/lib/Targeting/Condition/ConditionInterface.php).
   Have a look at [existing implementations](https://github.com/pimcore/pimcore/tree/11.x/lib/Targeting/Condition)
   to get an idea how to implement your own conditions.
-* A frontend JS class defining the admin UI for your condition. You can have a look at [Pimcore's core conditions](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/Resources/public/js/pimcore/settings/targeting/conditions.js)
+* A frontend JS class defining the admin UI for your condition. You can have a look at [Pimcore's core conditions](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/public/js/pimcore/settings/targeting/conditions.js)
   for UI examples and at the [Customer Management Framework](https://github.com/pimcore/customer-data-framework/blob/master/src/Resources/public/js/pimcore/targeting/conditions.js)
   as example for a third-party integration.
 
@@ -159,7 +159,7 @@ To make your condition configurable, you need to create a JS class defining the 
 so, create a class extending `pimcore.settings.targeting.condition.abstract` and register it to the system by calling
 `pimcore.settings.targeting.conditions.register()`. 
 
-Have a look at [Pimcore's core conditions](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/Resources/public/js/pimcore/settings/targeting/conditions.js)
+Have a look at [Pimcore's core conditions](https://github.com/pimcore/pimcore/blob/11.x/bundles/AdminBundle/public/js/pimcore/settings/targeting/conditions.js)
 and the [Customer Management Framework](https://github.com/pimcore/customer-data-framework/blob/master/src/Resources/public/js/pimcore/targeting/conditions.js)
 for examples.
 

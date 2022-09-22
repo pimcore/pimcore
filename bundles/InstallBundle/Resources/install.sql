@@ -400,7 +400,8 @@ CREATE TABLE `recyclebin` (
   `amount` int(3) default NULL,
   `date` int(11) unsigned default NULL,
   `deletedby` varchar(50) DEFAULT NULL,
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  INDEX `recyclebin_date` (`date`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `redirects`;

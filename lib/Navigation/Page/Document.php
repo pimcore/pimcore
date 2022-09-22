@@ -19,19 +19,10 @@ use Pimcore\Model;
 
 class Document extends Url
 {
-    /**
-     * @var string|null
-     */
     protected ?string $_accesskey = null;
 
-    /**
-     * @var string|null
-     */
     protected ?string $_tabindex = null;
 
-    /**
-     * @var string|null
-     */
     protected ?string $_relation = null;
 
     /**

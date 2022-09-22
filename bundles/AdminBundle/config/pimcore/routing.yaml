@@ -1,0 +1,38 @@
+_pimcore_admin:
+    resource: "../../src/Controller/Admin/"
+    type:     annotation
+    prefix:   /admin
+    options:
+        expose: true
+
+_pimcore_extensionmanager:
+    resource: "../../src/Controller/ExtensionManager/"
+    type:     annotation
+    prefix:   /admin/extensionmanager
+    options:
+        expose: true
+
+_pimcore_reports:
+    resource: "../../src/Controller/Reports/"
+    type:     annotation
+    prefix:   /admin/reports
+    options:
+        expose: true
+
+_pimcore_search:
+    resource: "../../src/Controller/Searchadmin/"
+    type:     annotation
+    prefix:   /admin/search
+    options:
+        expose: true
+
+_pimcore_gdpr:
+    resource: "../../src/Controller/GDPR/"
+    type:     annotation
+    prefix:   /admin/gdpr
+    options:
+        expose: true
+
+pimcore_admin_page_display_preview_image:
+    path: /admin/page/display-preview-image
+    defaults: { _controller: Pimcore\Bundle\AdminBundle\Controller\Admin\Document\PageController::displayPreviewImageAction }
