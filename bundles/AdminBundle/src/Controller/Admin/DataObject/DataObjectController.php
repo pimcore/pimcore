@@ -550,10 +550,9 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
     /**
      * @Route("/relation-objects-list", name="relation_objects_list", methods={"GET"})
-     * @param Request $request
-     * @return JsonResponse
      */
-    public function optionsAction(Request $request) {
+    public function optionsAction(Request $request): JsonResponse
+    {
         $fieldConfig = json_decode($request->get('fieldConfig'), true);
 
         $options = [];
