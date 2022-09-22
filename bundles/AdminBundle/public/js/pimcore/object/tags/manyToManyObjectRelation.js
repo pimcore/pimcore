@@ -462,21 +462,24 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 ]
             });
 
-            columns.push({
-                xtype: 'actioncolumn',
-                menuText: t('remove'),
-                width: 40,
-                hideable: false,
-                items: [
-                    {
-                        tooltip: t('remove'),
-                        icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
-                        handler: function (grid, rowIndex) {
+        columns.push({
+            xtype: 'actioncolumn',
+            menuText: t('remove'),
+            width: 40,
+            hideable: false,
+            items: [
+                {
+                    tooltip: t('remove'),
+                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
+                    handler: function (grid, rowIndex) {
+                        let data = grid.getStore().getAt(rowIndex);
+                        pimcore.helpers.deleteConfirm(t('relation'), data.data.path, function () {
                             grid.getStore().removeAt(rowIndex);
-                        }.bind(this)
-                    }
-                ]
-            });
+                        }.bind(this));
+                    }.bind(this)
+                }
+            ]
+        });
 
             this.component = Ext.create('Ext.grid.Panel', {
                 store: this.store,

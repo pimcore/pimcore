@@ -364,23 +364,26 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 ]
             });
 
-            if (!readOnly) {
-                columns.push({
-                    xtype: 'actioncolumn',
-                    menuText: t('remove'),
-                    width: 40,
-                    hideable: false,
-                    items: [
-                        {
-                            tooltip: t('remove'),
-                            icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
-                            handler: function (grid, rowIndex) {
+        if (!readOnly) {
+            columns.push({
+                xtype: 'actioncolumn',
+                menuText: t('remove'),
+                width: 40,
+                hideable: false,
+                items: [
+                    {
+                        tooltip: t('remove'),
+                        icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
+                        handler: function (grid, rowIndex) {
+                            let data = grid.getStore().getAt(rowIndex);
+                            pimcore.helpers.deleteConfirm(t('relation'), data.data.path, function () {
                                 grid.getStore().removeAt(rowIndex);
-                            }.bind(this)
-                        }
-                    ]
-                });
-            }
+                            }.bind(this));
+                        }.bind(this)
+                    }
+                ]
+            });
+        }
 
             var toolbarItems = this.getEditToolbarItems(readOnly);
 
