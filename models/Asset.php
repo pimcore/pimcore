@@ -1558,7 +1558,6 @@ class Asset extends Element\AbstractElement
 
         if ($language && !$strictMatchLanguage) {
             foreach($result as $key => &$item) {
-                $lang = $item['language'];
 
                 if (!$item['language'] && isset($metaDataWithLanguage[$language][$item['name']])) {
                     $itemWithLanguage = $metaDataWithLanguage[$language][$item['name']];
