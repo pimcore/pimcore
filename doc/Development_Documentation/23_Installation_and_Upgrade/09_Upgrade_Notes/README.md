@@ -1,5 +1,6 @@
 # Upgrade Notes
 ## 11.0.0
+- [Assets] Refactored and added tests for `Pimcore\Model\Asset::getMetadata` method to include the parameters even when `$name` parameter is not provided. Added native type hints for this method.
 - [Documents] Removed `$types` property from `Pimcore\Model\Document`. Use `getTypes` method instead.
 - [Class Definitions] Class Resolver does not catch exceptions anymore.
 - [Image Optimizer] Removed all the Image Optimizer services (e.g. PngCrushOptimizer, JpegoptimOptimizer etc.) as image optimization is done by the new package spatie/image-optimizer. 
