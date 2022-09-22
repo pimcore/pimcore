@@ -553,9 +553,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      * @param Request $request
      *
      * @return JsonResponse
+     *
      * @throws \Exception
      */
-    public function getSelectOptions(Request $request) {
+    public function getSelectOptions(Request $request)
+    {
         $objectId = $request->get('objectId');
         $object = DataObject\Concrete::getById($objectId);
         if (!$object instanceof DataObject\Concrete) {
@@ -618,7 +620,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             [
                 'object' => $object,
                 'fieldname' => $fieldDefinition->getName(),
-                'class' => $object->getClass()
+                'class' => $object->getClass(),
             ],
             $fieldDefinition
         );
