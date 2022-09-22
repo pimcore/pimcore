@@ -190,7 +190,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         }
 
         if(this.fieldConfig.toolbarConfig) {
-            var useNativeJson = Ext.USE_NATIVE_JSON;
+            const useNativeJson = Ext.USE_NATIVE_JSON;
             Ext.USE_NATIVE_JSON = false;
             var elementCustomConfig = Ext.decode(this.fieldConfig.toolbarConfig);
             Ext.USE_NATIVE_JSON = useNativeJson;
