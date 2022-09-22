@@ -46,10 +46,8 @@ abstract class AbstractRelations extends Data implements
      * Optional display mode
      *
      * @internal
-     *
-     * @var null|string
      */
-    public $displayMode;
+    public ?string $displayMode = null;
 
     /**
      * Optional path formatter class
