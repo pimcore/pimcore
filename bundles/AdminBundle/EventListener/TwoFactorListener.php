@@ -70,11 +70,10 @@ class TwoFactorListener
         }
 
         $twoFactorToken->setTwoFactorProviderPrepared($providerName);
-        $twoFactorAuthenticatedToken = $twoFactorToken->getAuthenticatedToken();
-        if ($twoFactorAuthenticatedToken instanceof TwoFactorRequiredToken) {
-            $firewallName = $twoFactorAuthenticatedToken->getFirewallName();
+        if (method_exists($twoFactorToken, 'getFirewallName')) {
+            $firewallName = $twoFactorToken->getFirewallName();
         } else {
-            $firewallName = $twoFactorAuthenticatedToken->getProviderKey();
+            $firewallName = $twoFactorToken->getProviderKey();
         }
 
         if ($this->preparationRecorder->isTwoFactorProviderPrepared($firewallName, $providerName)) {
