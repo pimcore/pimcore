@@ -114,12 +114,20 @@ class Builder
     }
 
     /**
-     * @param array $params
-     * @return Container
+     * @param array{
+     *     root?: ?Document,
+     *     htmlMenuPrefix?: ?string,
+     *     pageCallback?: ?callable,
+     *     cache?: string|bool,
+     *     cacheLifetime?: ?int,
+     *     maxDepth?: ?int,
+     *     active?: ?Document,
+     *     markActiveTrail?: bool
+     * } $params
      *
      * @throws \Exception
      */
-    public function getNavigation(array $params)
+    public function getNavigation(array $params): Container
     {
 
         [
