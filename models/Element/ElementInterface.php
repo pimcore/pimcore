@@ -243,9 +243,13 @@ interface ElementInterface extends ModelInterface
     public function getVersionCount(): int;
 
     /**
-     * @return $this
+     * @param array $parameters{
+     *      versionNote: string, # Used to set a note on the version
+     * } Associative array with optional parameters that are also available to Events
+     *
+     * @return static
      */
-    public function save();
+    public function save(array $parameters = []): static;
 
     public function delete();
 

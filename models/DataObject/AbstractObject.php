@@ -690,24 +690,16 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return $this
-     *
-     * @throws \Exception
+     * @inheritDoc
      */
-    public function save()
+    public function save(array $parameters = []): static
     {
-        // additional parameters (e.g. "versionNote" for the version note)
-        $params = [];
-        if (func_num_args() && is_array(func_get_arg(0))) {
-            $params = func_get_arg(0);
-        }
-
         $isUpdate = false;
         $differentOldPath = null;
 
         try {
             $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
-            $preEvent = new DataObjectEvent($this, $params);
+            $preEvent = new DataObjectEvent($this, $parameters);
             if ($this->getId()) {
                 $isUpdate = true;
                 $this->dispatchEvent($preEvent, DataObjectEvents::PRE_UPDATE);
@@ -716,7 +708,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 $this->dispatchEvent($preEvent, DataObjectEvents::PRE_ADD);
             }
 
-            $params = $preEvent->getArguments();
+            $parameters = $preEvent->getArguments();
 
             $this->correctPath();
 
@@ -756,7 +748,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                         $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
                     }
 
-                    $this->update($isUpdate, $params);
+                    $this->update($isUpdate, $parameters);
 
                     self::setHideUnpublished($hideUnpublishedBackup);
 
@@ -810,7 +802,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
-            $postEvent = new DataObjectEvent($this, $params);
+            $postEvent = new DataObjectEvent($this, $parameters);
             if ($isUpdate) {
                 if ($differentOldPath) {
                     $postEvent->setArgument('oldPath', $differentOldPath);
@@ -823,7 +815,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
             return $this;
         } catch (\Exception $e) {
-            $failureEvent = new DataObjectEvent($this, $params);
+            $failureEvent = new DataObjectEvent($this, $parameters);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
                 $this->dispatchEvent($failureEvent, DataObjectEvents::POST_UPDATE_FAILURE);

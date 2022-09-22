@@ -336,18 +336,12 @@ class Document extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function save()
+    public function save(array $parameters = []): static
     {
         $isUpdate = false;
 
         try {
-            // additional parameters (e.g. "versionNote" for the version note)
-            $params = [];
-            if (func_num_args() && is_array(func_get_arg(0))) {
-                $params = func_get_arg(0);
-            }
-
-            $preEvent = new DocumentEvent($this, $params);
+            $preEvent = new DocumentEvent($this, $parameters);
             if ($this->getId()) {
                 $isUpdate = true;
                 $this->dispatchEvent($preEvent, DocumentEvents::PRE_UPDATE);
@@ -355,7 +349,7 @@ class Document extends Element\AbstractElement
                 $this->dispatchEvent($preEvent, DocumentEvents::PRE_ADD);
             }
 
-            $params = $preEvent->getArguments();
+            $parameters = $preEvent->getArguments();
 
             $this->correctPath();
             $differentOldPath = null;
@@ -380,7 +374,7 @@ class Document extends Element\AbstractElement
                         $oldPath = $this->getDao()->getCurrentFullPath();
                     }
 
-                    $this->update($params);
+                    $this->update($parameters);
 
                     // if the old path is different from the new path, update all children
                     $updatedChildren = [];
@@ -435,7 +429,7 @@ class Document extends Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
-            $postEvent = new DocumentEvent($this, $params);
+            $postEvent = new DocumentEvent($this, $parameters);
             if ($isUpdate) {
                 if ($differentOldPath) {
                     $postEvent->setArgument('oldPath', $differentOldPath);
@@ -447,7 +441,7 @@ class Document extends Element\AbstractElement
 
             return $this;
         } catch (\Exception $e) {
-            $failureEvent = new DocumentEvent($this, $params);
+            $failureEvent = new DocumentEvent($this, $parameters);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
                 $this->dispatchEvent($failureEvent, DocumentEvents::POST_UPDATE_FAILURE);
