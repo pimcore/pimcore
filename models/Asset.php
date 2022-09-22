@@ -1525,15 +1525,7 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @param string|null $name
-     * @param string|null $language
-     * @param bool $strictMatch
-     * @param bool $raw
-     *
-     * @return array|string|null
-     */
-    public function getMetadata($name = null, $language = null, $strictMatch = false, $raw = false)
+    public function getMetadata(?string $name = null, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): array|string|null
     {
         $preEvent = new AssetEvent($this);
         $preEvent->setArgument('metadata', $this->metadata);
@@ -1541,7 +1533,7 @@ class Asset extends Element\AbstractElement
         $this->metadata = $preEvent->getArgument('metadata');
 
         if ($name) {
-            return $this->getMetadataByName($name, $language, $strictMatch, $raw);
+            return $this->getMetadataByName($name, $language, $strictMatchLanguage, $raw);
         }
 
         $metaData = $this->getObjectVar('metadata');
@@ -1551,7 +1543,7 @@ class Asset extends Element\AbstractElement
             foreach ($metaData as $md) {
                 $md = (array)$md;
 
-                if ((empty($md['language']) && !$strictMatch) || ($language == $md['language']) || !$language) {
+                if ((empty($md['language']) && !$strictMatchLanguage) || ($language == $md['language']) || !$language) {
                     if (!$raw) {
                         $md['data'] = $this->transformMetadata($md);
                     }
@@ -1564,7 +1556,7 @@ class Asset extends Element\AbstractElement
             }
         }
 
-        if ($language && !$strictMatch) {
+        if ($language && !$strictMatchLanguage) {
             foreach($result as $key => &$item) {
                 $lang = $item['language'];
 
@@ -1597,7 +1589,7 @@ class Asset extends Element\AbstractElement
         return $transformedData;
     }
 
-    protected function getMetadataByName(string $name, ?string $language = null, bool $strictMatch = false, bool $raw = false) {
+    protected function getMetadataByName(string $name, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false) {
         if ($language === null) {
             $language = Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
         }
@@ -1605,7 +1597,7 @@ class Asset extends Element\AbstractElement
         $data = null;
         foreach ($this->metadata as $md) {
             if ($md['name'] == $name) {
-                if (empty($md['language']) && !$strictMatch) {
+                if (empty($md['language']) && !$strictMatchLanguage) {
                     if ($raw) {
                         return $md;
                     }

@@ -67,7 +67,7 @@ therefore used on all output channels.
 Metadata for an asset can be fetched using `getMetadata` method of Asset class. It can take the following optional parameters: 
 1. `$name` (string) when passed it returns the metadata with the given name, otherwise it lists all.
 2. `$language` (string) with this parameter you can filter out the metadata of a specific language.
-3. `$strictMatch` (boolean) if true tries to get only the metadata which exactly matches the requested language without considering the fallback.
+3. `$strictMatchLanguage` (boolean) if true tries to get only the metadata which exactly matches the requested language without considering the fallback.
 4. `$raw`  (boolean) if true, it will also return extra information like name, data, language and input type of the metadata.
 
 To know the expected return values, you can look into the tests inside `tests/Model/Asset/Metadata/NormalizerTest::testLocalizedMetaData`
