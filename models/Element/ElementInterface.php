@@ -247,7 +247,7 @@ interface ElementInterface extends ModelInterface
      *      versionNote: string, # Used to set a note on the version
      * } Associative array with optional parameters that are also available to Events
      *
-     * @return static
+     * @return $this
      */
     public function save(array $parameters = []): static;
 
