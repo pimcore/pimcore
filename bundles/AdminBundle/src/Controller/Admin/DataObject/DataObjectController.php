@@ -32,6 +32,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ReverseObjectRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\OptionsProviderResolver;
 use Pimcore\Model\Element;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Model\Version;
@@ -544,6 +545,85 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
 
         throw $this->createAccessDeniedHttpException();
+    }
+
+    /**
+     * @Route("/get-select-options", name="getSelectOptions", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function getSelectOptions(Request $request) {
+        $objectId = $request->get('objectId');
+        $object = DataObject\Concrete::getById($objectId);
+        if (!$object instanceof DataObject\Concrete) {
+            return new JsonResponse(['success'=> false, 'message' => 'Object not found.']);
+        }
+
+        if ($request->get('changedData')) {
+            $data = $this->decodeJson($request->get('changedData'));
+            foreach ($data as $key => $value) {
+                $fd = $object->getClass()->getFieldDefinition($key);
+                if ($fd) {
+                    if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                        $user = Tool\Admin::getCurrentUser();
+                        if (!$user->getAdmin()) {
+                            $allowedLanguages = DataObject\Service::getLanguagePermissions($object, $user, 'lEdit');
+                            if (!is_null($allowedLanguages)) {
+                                $allowedLanguages = array_keys($allowedLanguages);
+                                $submittedLanguages = array_keys($data[$key]);
+                                foreach ($submittedLanguages as $submittedLanguage) {
+                                    if (!in_array($submittedLanguage, $allowedLanguages)) {
+                                        unset($value[$submittedLanguage]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if ($fd instanceof ReverseObjectRelation) {
+                        $remoteClass = DataObject\ClassDefinition::getByName($fd->getOwnerClassName());
+                        $relations = $object->getRelationData($fd->getOwnerFieldName(), false, $remoteClass->getId());
+                        $toAdd = $this->detectAddedRemoteOwnerRelations($relations, $value);
+                        $toDelete = $this->detectDeletedRemoteOwnerRelations($relations, $value);
+                        if (count($toAdd) > 0 || count($toDelete) > 0) {
+                            $this->processRemoteOwnerRelations($object, $toDelete, $toAdd, $fd->getOwnerFieldName());
+                        }
+                    } else {
+                        $object->setValue($key, $fd->getDataFromEditmode($value, $object));
+                    }
+                }
+            }
+        }
+
+        $fieldDefinitionConfig = json_decode($request->get('fieldDefinition'));
+        /**
+         * @var DataObject\ClassDefinition\Data\Select|DataObject\ClassDefinition\Data\Multiselect $fieldDefinition
+         */
+        $fieldDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(
+            $fieldDefinitionConfig,
+            $fieldDefinitionConfig->fieldtype
+        );
+
+        $optionsProvider = OptionsProviderResolver::resolveProvider(
+            $fieldDefinition->getOptionsProviderClass(),
+            $fieldDefinition instanceof DataObject\ClassDefinition\Data\Multiselect
+                ? OptionsProviderResolver::MODE_MULTISELECT
+                : OptionsProviderResolver::MODE_SELECT
+        );
+
+        $options = $optionsProvider->getOptions(
+            [
+                'object' => $object,
+                'fieldname' => $fieldDefinition->getName(),
+                'class' => $object->getClass()
+            ],
+            $fieldDefinition
+        );
+
+        return new JsonResponse(['success' => true, 'options' => $options]);
     }
 
     /**
