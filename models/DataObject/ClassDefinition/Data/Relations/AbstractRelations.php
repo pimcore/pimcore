@@ -80,18 +80,16 @@ abstract class AbstractRelations extends Data implements
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getDisplayMode(): ?string {
+    public function getDisplayMode(): ?string
+    {
         return $this->displayMode;
     }
 
     /**
-     * @param string|null $sqlCondition
-     * @return AbstractRelations
+     * @return $this
      */
-    public function setDisplayMode(?string $displayMode): AbstractRelations {
+    public function setDisplayMode(?string $displayMode): static
+    {
         $this->displayMode = $displayMode;
 
         return $this;
