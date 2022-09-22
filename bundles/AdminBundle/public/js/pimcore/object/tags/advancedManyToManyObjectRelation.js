@@ -69,7 +69,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             });
         }
 
-        this.store = new Ext.data.JsonStore({
+        var storeConfig = {
             data: this.data,
             listeners: {
                 add: function () {
@@ -89,7 +89,36 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 }.bind(this)
             },
             model: modelName
-        });
+        };
+
+        if (this.fieldConfig.displayMode == 'combo') {
+            storeConfig.proxy = {
+                type: 'ajax',
+                url: Routing.generate('pimcore_admin_dataobject_dataobject_relation_objects_list'),
+                extraParams: {
+                    fieldConfig: JSON.stringify(this.fieldConfig),
+                    data: this.data.map(function(element) {
+                        return element.id;
+                    }).join(','),
+                },
+                reader: {
+                    type: 'json',
+                    rootProperty: 'options',
+                    successProperty: 'success',
+                    messageProperty: 'message'
+                }
+            };
+            storeConfig.fields = ['id', 'label'];
+            storeConfig.autoLoad = true;
+            storeConfig.listeners = {
+                beforeload: function(store) {
+                    store.getProxy().setExtraParam('unsavedChanges', this.object ? this.object.getSaveData().data : {});
+                    store.getProxy().setExtraParam('context', JSON.stringify(this.getContext()));
+                }.bind(this)
+            };
+        }
+
+        this.store = new Ext.data.JsonStore(storeConfig);
     },
 
     createLayout: function (readOnly) {
@@ -99,43 +128,34 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         }
 
         if (this.fieldConfig.displayMode == 'combo') {
-            var store = new Ext.data.JsonStore({
-                proxy: {
-                    type: 'ajax',
-                    url: Routing.generate('pimcore_admin_dataobject_dataobject_relation_objects_list', {type: 'tomany'}),
-                    extraParams: {data: JSON.stringify(this.fieldConfig)},
-                    reader: {
-                        type: 'json',
-                        rootProperty: 'options',
-                        successProperty: 'success',
-                        messageProperty: 'message'
-                    }
-                },
-                fields: ["key", "value"],
-                listeners: {
-                    load: function(store, records, success, operation) {
-                        if (!success) {
-                            pimcore.helpers.showNotification(t("error"), t("error_loading_options"), "error", operation.getError());
-                        }
-                    }.bind(this)
-                },
-                autoLoad: true
-            });
-
             this.component = Ext.create('Ext.form.field.Tag', {
-                store: store,
+                store: this.store,
                 autoLoadOnValue: true,
                 height: 'auto',
                 width: '100%',
+                value: this.data.map(function(item) {
+                    return item.id;
+                }),
+                typeAhead: true,
+                minChars: 3,
+                filterPickList: true,
                 triggerAction: "all",
-                displayField: "display",
+                displayField: "label",
                 valueField: "id",
                 fieldLabel: this.fieldConfig.title,
                 tpl: new Ext.XTemplate(
-                    '<tpl for="."><li role="option" unselectable="on" class="x-boundlist-item" data-recordid="{value}" style="display:flex;">',
-                    '  {key}<div class="combo-texture" style="margin-left:auto;font-style:italic;font-size:80%;">{type}</div>',
+                    '<tpl for="."><li role="option" unselectable="on" class="x-boundlist-item" data-recordid="{id}" style="display:flex;">',
+                    '  {label}',
                     '</li></tpl>'
-                )
+                ),
+                listeners: {
+                    change: function() {
+                        this.dataChanged = true;
+                    }.bind(this),
+                    focus: function() {
+                        this.store.getProxy().setExtraParam('data', '');
+                    }.bind(this)
+                }
             });
         } else {
             var i;

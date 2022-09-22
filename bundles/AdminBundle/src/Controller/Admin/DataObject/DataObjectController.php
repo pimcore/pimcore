@@ -16,6 +16,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
+use Pimcore\Bundle\AdminBundle\Controller\Searchadmin\SearchController;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
@@ -552,74 +553,69 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      * @return JsonResponse
      */
     public function optionsAction(Request $request) {
-        $requestParams = json_decode($request->get('data'), true);
-        $displayFieldName = $requestParams['displayFieldName'] ?? '';
+        $fieldConfig = json_decode($request->get('fieldConfig'), true);
+
         $options = [];
-        if ($request->get("insertEmpty", "0") === "1") {
-            $option = [
-                "value"     => "",
-                "key"       => "-- Choose --",
-                "display"   => "-- Choose --",
-                "id"        => "",
-                "published" => 1,
-                "index"     => 0,
-                "type"      => "",
-                "subtype"   => "",
-            ];
-            $options[] = $option;
-        }
-
-        $conditions = [];
         $classes = [];
-        $conditionParams = [];
-
-        if (count($requestParams['classes']) > 0) {
-            foreach ($requestParams['classes'] as $classData) {
+        if (count($fieldConfig['classes']) > 0) {
+            foreach ($fieldConfig['classes'] as $classData) {
                 $classes[] = $classData['classes'];
             }
         }
 
-        if (count($classes) > 0) {
-            $conditions[] = "o_className IN ('".join("', '", $classes)."')";
-        }
-        if (!empty($request->get("query"))) {
-            $conditions[] = "(o_key LIKE :query OR o_id IN (SELECT id FROM search_backend_data WHERE maintype = 'object' AND data LIKE :query))";
-            $conditionParams["query"] = "%".$request->get("query")."%";
-        }
+        $visibleFields =explode(',', $fieldConfig['visibleFields']);
 
-        $objects = new DataObject\Listing();
-        $objects->setCondition(join(" AND ", $conditions), $conditionParams);
-        $objects->load();
+        $searchRequest = $request;
+        $searchRequest->request->set('type', 'object');
+        $searchRequest->request->set('subtype', 'object,variant');
+        $searchRequest->request->set('class', implode(',', $classes));
+        $searchRequest->request->set('sqlCondition', $fieldConfig['sqlCondition']);
+        $searchRequest->request->set('fields', $visibleFields);
+        $searchRequest->attributes->set('unsavedChanges', $request->get('unsavedChanges', ''));
+        $res = $this->forward(SearchController::class.'::findAction', ['request' => $searchRequest]);
+        $objects = json_decode($res->getContent(), true)['data'];
 
-        foreach ($objects as $object) {
-            if (!$object instanceof DataObject\Concrete) {
-                continue;
+        if($request->get('data')) {
+            foreach(explode(',', $request->get('data')) as $preSelectedElementId) {
+                $objects[] = ['id' => $preSelectedElementId];
             }
+        }
 
-            /** @var DataObject\Concrete $object */
+        foreach ($objects as $objectData) {
+
             $option = [
-                "value"     => $object->getId(),
-                "key"       => $object->getKey(),
-                "display"   => $object->getKey(),
-                "id"        => $object->getId(),
-                "published" => $object->getPublished(),
-                "index"     => 0,
-                "type"      => "object",
-                "subtype"   => "object",
+                'id' => $objectData['id'],
             ];
-            if (!empty($displayFieldName) && method_exists($object, "get".ucfirst($displayFieldName))) {
-                $option["key"] = $object->{"get".ucfirst($displayFieldName)}();
-                $option["display"] = $object->{"get".ucfirst($displayFieldName)}();
+
+            $visibleFieldValues = [];
+            foreach($visibleFields as $visibleField) {
+                if (isset($objectData[$visibleField])) {
+                    $visibleFieldValues[] = $objectData[$visibleField];
+                } else {
+                    $inheritValues = DataObject\Concrete::getGetInheritedValues();
+                    $fallbackValues = DataObject\Localizedfield::getGetFallbackValues();
+
+                    DataObject\Concrete::setGetInheritedValues(true);
+                    DataObject\Localizedfield::setGetFallbackValues(true);
+
+                    $object = DataObject\Concrete::getById($objectData['id']);
+                    if (!$object instanceof DataObject\Concrete) {
+                        continue;
+                    }
+
+                    $getter = 'get'.ucfirst($visibleField);
+                    $visibleFieldValue = $object->$getter();
+                    if (count($classes) > 1 && $visibleField == 'key') {
+                        $visibleFieldValue .= " (".$object->getClassName().")";
+                    }
+                    $visibleFieldValues[] = $visibleFieldValue;
+
+                    DataObject\Concrete::setGetInheritedValues($inheritValues);
+                    DataObject\Localizedfield::setGetFallbackValues($fallbackValues);
+                }
             }
-            if (count($classes) > 1) {
-                $option["key"] .= " (".$object->getClassName().")";
-                $option["display"] .= " (".$object->getClassName().")";
-            }
-            if ($request->get("type") === "tomany") {
-                $option["fullpath"] = $object->getFullPath();
-            } else {
-                $option["path"] = $object->getFullPath();
-            }
+
+            $option['label'] = implode(', ', $visibleFieldValues);
 
             $options[] = $option;
         }

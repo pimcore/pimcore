@@ -44,7 +44,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             }
         }
 
-        this.store = new Ext.data.JsonStore({
+        var storeConfig = {
             data: this.data,
             listeners: {
                 add: function () {
@@ -58,7 +58,37 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 }.bind(this)
             },
             fields: fields
-        });
+
+        };
+
+        if (this.fieldConfig.displayMode == 'combo') {
+            storeConfig.proxy = {
+                type: 'ajax',
+                url: Routing.generate('pimcore_admin_dataobject_dataobject_relation_objects_list'),
+                extraParams: {
+                    fieldConfig: JSON.stringify(this.fieldConfig),
+                    data: this.data.map(function(element) {
+                        return element.id;
+                    }).join(','),
+                },
+                reader: {
+                    type: 'json',
+                    rootProperty: 'options',
+                    successProperty: 'success',
+                    messageProperty: 'message'
+                }
+            };
+            storeConfig.fields = ['id', 'label'];
+            storeConfig.autoLoad = true;
+            storeConfig.listeners = {
+                beforeload: function(store) {
+                    store.getProxy().setExtraParam('unsavedChanges', this.object ? this.object.getSaveData().data : {});
+                    store.getProxy().setExtraParam('context', JSON.stringify(this.getContext()));
+                }.bind(this)
+            };
+        }
+
+        this.store = new Ext.data.JsonStore(storeConfig);
     },
 
     getGridColumnConfig: function (field) {
@@ -363,43 +393,34 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         }
 
         if (this.fieldConfig.displayMode == 'combo') {
-            var store = new Ext.data.JsonStore({
-                proxy: {
-                    type: 'ajax',
-                    url: Routing.generate('pimcore_admin_dataobject_dataobject_relation_objects_list', {type: 'tomany'}),
-                    extraParams: {data: JSON.stringify(this.fieldConfig)},
-                    reader: {
-                        type: 'json',
-                        rootProperty: 'options',
-                        successProperty: 'success',
-                        messageProperty: 'message'
-                    }
-                },
-                fields: ["key", "value"],
-                listeners: {
-                    load: function(store, records, success, operation) {
-                        if (!success) {
-                            pimcore.helpers.showNotification(t("error"), t("error_loading_options"), "error", operation.getError());
-                        }
-                    }.bind(this)
-                },
-                autoLoad: true
-            });
-
             this.component = Ext.create('Ext.form.field.Tag', {
-                store: store,
+                store: this.store,
                 autoLoadOnValue: true,
                 height: 'auto',
                 width: '100%',
+                value: this.data.map(function(item) {
+                    return item.id;
+                }),
+                typeAhead: true,
+                minChars: 3,
+                filterPickList: true,
                 triggerAction: "all",
-                displayField: "display",
+                displayField: "label",
                 valueField: "id",
                 fieldLabel: this.fieldConfig.title,
                 tpl: new Ext.XTemplate(
-                    '<tpl for="."><li role="option" unselectable="on" class="x-boundlist-item" data-recordid="{value}" style="display:flex;">',
-                    '  {key}<div class="combo-texture" style="margin-left:auto;font-style:italic;font-size:80%;">{type}</div>',
+                    '<tpl for="."><li role="option" unselectable="on" class="x-boundlist-item" data-recordid="{id}" style="display:flex;">',
+                    '  {label}',
                     '</li></tpl>'
-                )
+                ),
+                listeners: {
+                    change: function() {
+                        this.dataChanged = true;
+                    }.bind(this),
+                    focus: function() {
+                        this.store.getProxy().setExtraParam('data', '');
+                    }.bind(this)
+                }
             });
         } else {
             var columns = this.getVisibleColumns();
@@ -814,6 +835,12 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
     getValue: function () {
 
         var tmData = [];
+
+        if (this.fieldConfig.displayMode == 'combo') {
+            return this.component.getValue().map(function(value) {
+                return {id: value}
+            });
+        }
 
         var data = this.store.queryBy(function (record, id) {
             return true;
