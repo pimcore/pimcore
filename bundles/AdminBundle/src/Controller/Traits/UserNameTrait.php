@@ -23,7 +23,7 @@ use Pimcore\Model\User;
 trait UserNameTrait
 {
     /**
-     * @param int $user_id The User ID.
+     * @param int $userId The User ID.
      *
      * @return array{username: string, fullname: string}
      */
