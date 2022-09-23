@@ -31,6 +31,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  *
@@ -853,6 +854,39 @@ class ElementController extends AdminController
             [
                 'data' => $result,
                 'success' => true,
+            ]
+        );
+    }
+
+    /**
+     * @Route("/element/get-deeplink", name="pimcore_admin_element_getdeeplink", methods={"POST"})
+     */
+    public function getDeepLink(Request $request): Response
+    {
+        $adminEntryPointRoute = $this->getParameter('pimcore_admin.custom_admin_route_name');
+
+        try {
+            // try to generate deep link for custom admin point
+            $url         = $this->generateUrl($adminEntryPointRoute, [], UrlGeneratorInterface::ABSOLUTE_URL);
+            $deepLinkUrl = sprintf(
+                '%s?deeplink=%s',
+                $url,
+                $request->get('target')
+            );
+        } catch (\Exception) {
+            // use default deep link route as fallback
+            $url         = $this->generateUrl('pimcore_admin_login_deeplink',[], UrlGeneratorInterface::ABSOLUTE_URL);
+            $deepLinkUrl = sprintf(
+                '%s?%s',
+                $url,
+                $request->get('target')
+            );
+        }
+
+        return $this->adminJson(
+            [
+                'success' => true,
+                'url' => $deepLinkUrl,
             ]
         );
     }
