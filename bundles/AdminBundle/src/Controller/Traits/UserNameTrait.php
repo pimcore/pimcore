@@ -27,7 +27,7 @@ trait UserNameTrait
      *
      * @return array{username: string, fullname: string}
      */
-    protected function getUserName(int $user_id): array
+    protected function getUserName(int $userId): array
     {
         $user = User::getById($userId);
 
