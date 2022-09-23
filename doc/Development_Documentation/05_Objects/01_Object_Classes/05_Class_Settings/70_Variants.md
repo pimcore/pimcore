@@ -53,7 +53,7 @@ If only variants should be returned use following line.
 $objectX->getChildren([DataObject::OBJECT_TYPE_VARIANT]);
 ```
 
-By default, `getChildren` delivers objects, variants and folders but no variants.
+By default, `getChildren` delivers objects, variants, and folders.
 
 
 #### Object Variants in Object Lists
