@@ -469,10 +469,6 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         return [$task, $document, $version];
     }
 
-    /**
-     * @param Model\Document $document
-     * @param array $data
-     */
     protected function populateUsersNames(Document $document, array &$data): void
     {
         $userOwnerName = $this->getUserName($document->getUserOwner());
