@@ -35,8 +35,6 @@ class Dao extends Model\Element\Dao
 
     /**
      * @internal
-     *
-     * @var array
      */
     public static array $thumbnailStatusCache = [];
 

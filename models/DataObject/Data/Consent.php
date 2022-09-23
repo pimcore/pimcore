@@ -23,19 +23,10 @@ class Consent implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    /**
-     * @var bool
-     */
     protected bool $consent = false;
 
-    /**
-     * @var int|null
-     */
     protected ?int $noteId = null;
 
-    /**
-     * @var Note|null
-     */
     protected ?Note $note = null;
 
     /**

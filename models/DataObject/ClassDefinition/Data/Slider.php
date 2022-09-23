@@ -66,10 +66,8 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $vertical = false;
+    public bool $vertical = false;
 
     /**
      * @internal

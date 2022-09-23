@@ -20,9 +20,6 @@ namespace Pimcore\Event\Traits;
  */
 trait RecursionBlockingEventDispatchHelperTrait
 {
-    /**
-     * @var array
-     */
     private array $activeDispatchingEvents = [];
 
     /**

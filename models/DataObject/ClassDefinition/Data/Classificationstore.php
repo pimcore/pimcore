@@ -101,10 +101,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $localized;
+    public bool $localized = false;
 
     /**
      * @internal
@@ -115,17 +113,13 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $hideEmptyData;
+    public bool $hideEmptyData = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $disallowAddRemove;
+    public bool $disallowAddRemove = false;
 
     /**
      * contains further localized field definitions if there are more than one localized fields in on class
@@ -427,7 +421,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public function getVersionPreview($data, $object = null, $params = [])
     {
         // this is handled directly in the template
-        // /bundles/AdminBundle/Resources/views/Admin/DataObject/DataObject/previewVersion.html.twig
+        // /bundles/AdminBundle/templates/admin/data_object/data_object/preview_version.html.twig
         return 'CLASSIFICATIONSTORE';
     }
 
@@ -887,7 +881,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             'fieldDefinitionsCache',
             'referencedFields',
             'blockedVarsForExport',
-            'childs',
         ];
     }
 
@@ -967,7 +960,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      */
     public function setLocalized($localized)
     {
-        $this->localized = $localized;
+        $this->localized = (bool) $localized;
     }
 
     /**
@@ -1113,7 +1106,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 }
                 $definition = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyGroupRelation);
 
-                // changes here also have an effect here: "bundles/AdminBundle/Resources/public/js/pimcore/object/tags/classificationstore.js"
+                // changes here also have an effect here: "bundles/AdminBundle/public/js/pimcore/object/tags/classificationstore.js"
                 $fallbackTooltip = $definition->getName();
                 if (!empty($keyGroupRelation->getDescription())) {
                     $fallbackTooltip .= ' - ' . $keyGroupRelation->getDescription();
@@ -1271,7 +1264,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      */
     public function setDisallowAddRemove($disallowAddRemove)
     {
-        $this->disallowAddRemove = $disallowAddRemove;
+        $this->disallowAddRemove = (bool) $disallowAddRemove;
 
         return $this;
     }
@@ -1425,8 +1418,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     {
         $obj = new static();
         $obj->setValues($data);
-
-        $obj->childs = $obj->children;  // @phpstan-ignore-line
 
         return $obj;
     }

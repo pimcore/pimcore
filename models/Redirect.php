@@ -117,8 +117,6 @@ final class Redirect extends AbstractModel
 
     /**
      * ID of the owner user
-     *
-     * @var int|null
      */
     protected ?int $userOwner = null;
 

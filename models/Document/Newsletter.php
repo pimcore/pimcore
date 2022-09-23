@@ -31,8 +31,6 @@ class Newsletter extends Model\Document\PageSnippet
      * Contains the email subject
      *
      * @internal
-     *
-     * @var string
      */
     protected string $subject = '';
 
@@ -40,8 +38,6 @@ class Newsletter extends Model\Document\PageSnippet
      * Contains the plain text part of the email
      *
      * @internal
-     *
-     * @var string
      */
     protected string $plaintext = '';
 
@@ -49,8 +45,6 @@ class Newsletter extends Model\Document\PageSnippet
      * Contains the from email address
      *
      * @internal
-     *
-     * @var string
      */
     protected string $from = '';
 
@@ -58,36 +52,26 @@ class Newsletter extends Model\Document\PageSnippet
      * enables adding tracking parameters to all links
      *
      * @internal
-     *
-     * @var bool
      */
     protected bool $enableTrackingParameters = false;
 
     /**
      * @internal
-     *
-     * @var string
      */
     protected string $trackingParameterSource = 'newsletter';
 
     /**
      * @internal
-     *
-     * @var string
      */
     protected string $trackingParameterMedium = 'email';
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     protected ?string $trackingParameterName = null;
 
     /**
      * @internal
-     *
-     * @var string
      */
     protected string $sendingMode = \Pimcore\Tool\Newsletter::SENDING_MODE_SINGLE;
 

@@ -41,14 +41,8 @@ class DocumentFallbackListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
-    /**
-     * @var array
-     */
     protected array $options;
 
-    /**
-     * @var Document|null
-     */
     private ?Document $fallbackDocument = null;
 
     public function __construct(

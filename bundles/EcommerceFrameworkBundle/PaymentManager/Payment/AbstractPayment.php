@@ -22,10 +22,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractPayment implements PaymentInterface
 {
-    /**
-     * @var bool
-     */
-    protected $recurringPaymentEnabled;
+    protected bool $recurringPaymentEnabled = false;
 
     /**
      * @var string
@@ -38,7 +35,7 @@ abstract class AbstractPayment implements PaymentInterface
     protected function processOptions(array $options)
     {
         if (isset($options['recurring_payment_enabled'])) {
-            $this->recurringPaymentEnabled = $options['recurring_payment_enabled'];
+            $this->recurringPaymentEnabled = (bool) $options['recurring_payment_enabled'];
         }
     }
 
