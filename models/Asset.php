@@ -1525,83 +1525,94 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @param string|null $name
-     * @param string|null $language
-     * @param bool $strictMatch
-     * @param bool $raw
-     *
-     * @return array|string|null
-     */
-    public function getMetadata($name = null, $language = null, $strictMatch = false, $raw = false)
+    public function getMetadata(?string $name = null, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): array|string|null
     {
         $preEvent = new AssetEvent($this);
         $preEvent->setArgument('metadata', $this->metadata);
         $this->dispatchEvent($preEvent, AssetEvents::PRE_GET_METADATA);
         $this->metadata = $preEvent->getArgument('metadata');
 
-        $convert = function ($metaData) {
-            $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
-            $transformedData = $metaData['data'];
-
-            try {
-                /** @var Data $instance */
-                $instance = $loader->build($metaData['type']);
-                $transformedData = $instance->transformGetterData($metaData['data'], $metaData);
-            } catch (UnsupportedException $e) {
-            }
-
-            return $transformedData;
-        };
-
         if ($name) {
-            if ($language === null) {
-                $language = Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
-            }
-
-            $data = null;
-            foreach ($this->metadata as $md) {
-                if ($md['name'] == $name) {
-                    if ($language == $md['language']) {
-                        if ($raw) {
-                            return $md;
-                        }
-
-                        return $convert($md);
-                    }
-                    if (empty($md['language']) && !$strictMatch) {
-                        if ($raw) {
-                            return $md;
-                        }
-                        $data = $md;
-                    }
-                }
-            }
-
-            if ($data) {
-                if ($raw) {
-                    return $data;
-                }
-
-                return $convert($data);
-            }
-
-            return null;
+            return $this->getMetadataByName($name, $language, $strictMatchLanguage, $raw);
         }
 
         $metaData = $this->getObjectVar('metadata');
         $result = [];
+        $metaDataWithLanguage = [];
         if (is_array($metaData)) {
             foreach ($metaData as $md) {
                 $md = (array)$md;
-                if (!$raw) {
-                    $md['data'] = $convert($md);
+
+                if ((empty($md['language']) && !$strictMatchLanguage) || ($language == $md['language']) || !$language) {
+                    if (!$raw) {
+                        $md['data'] = $this->transformMetadata($md);
+                    }
+                    $result[] = $md;
                 }
-                $result[] = $md;
+
+                if(!empty($md['language'])) {
+                    $metaDataWithLanguage[$md['language']][$md['name']] = $md;
+                }
+            }
+        }
+
+        if ($language && !$strictMatchLanguage) {
+            foreach($result as $key => &$item) {
+
+                if (!$item['language'] && isset($metaDataWithLanguage[$language][$item['name']])) {
+                    $itemWithLanguage = $metaDataWithLanguage[$language][$item['name']];
+                    if(!in_array($itemWithLanguage, $result)) {
+                        $item = $itemWithLanguage;
+                    } else {
+                        unset($result[$key]);
+                    }
+
+                }
             }
         }
 
         return $result;
+    }
+
+    private function transformMetadata(array $metaData) {
+        $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+        $transformedData = $metaData['data'];
+
+        try {
+            /** @var Data $instance */
+            $instance = $loader->build($metaData['type']);
+            $transformedData = $instance->transformGetterData($metaData['data'], $metaData);
+        } catch (UnsupportedException $e) {
+        }
+
+        return $transformedData;
+    }
+
+    protected function getMetadataByName(string $name, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): array|string|null {
+        if ($language === null) {
+            $language = Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
+        }
+
+        $data = null;
+        foreach ($this->metadata as $md) {
+            if ($md['name'] == $name) {
+                if (empty($md['language']) && !$strictMatchLanguage) {
+                    if ($raw) {
+                        return $md;
+                    }
+                    $data = $md;
+                } else if ($language == $md['language']) {
+                    $data = $md;
+                    break;
+                }
+            }
+        }
+
+        if ($data) {
+            return $raw ? $data : $this->transformMetadata($data);
+        }
+
+        return null;
     }
 
     /**
