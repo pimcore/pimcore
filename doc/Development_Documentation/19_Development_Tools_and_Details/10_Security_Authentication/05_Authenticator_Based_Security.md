@@ -26,16 +26,5 @@ and refactor `security.yaml` to adapt new changes. See demo changes [here](https
 - `Custom Guard Authenticator` will be replaced with `Http\Authenticator`.
 - Anonymous user no longer exist.
 
-## Two Factor Authentication
-As `scheb/2fa-bundle` version 6 works with new authenticator. please add it to your own `composer.json`:
-```json
-  "require": {
-      ...
-    "scheb/2fa-bundle": "^6.0",
-    "scheb/2fa-google-authenticator": "^6.0",
-  }
-```
-
-
 For more information on new Authenticator Based Security, please read the
 [Symfony Security Component documentation](https://symfony.com/doc/5.3/security.html).
