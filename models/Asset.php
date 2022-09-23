@@ -1550,23 +1550,21 @@ class Asset extends Element\AbstractElement
                     $result[] = $md;
                 }
 
-                if(!empty($md['language'])) {
+                if (!empty($md['language'])) {
                     $metaDataWithLanguage[$md['language']][$md['name']] = $md;
                 }
             }
         }
 
         if ($language && !$strictMatchLanguage) {
-            foreach($result as $key => &$item) {
-
+            foreach ($result as $key => &$item) {
                 if (!$item['language'] && isset($metaDataWithLanguage[$language][$item['name']])) {
                     $itemWithLanguage = $metaDataWithLanguage[$language][$item['name']];
-                    if(!in_array($itemWithLanguage, $result)) {
+                    if (!in_array($itemWithLanguage, $result)) {
                         $item = $itemWithLanguage;
                     } else {
                         unset($result[$key]);
                     }
-
                 }
             }
         }
@@ -1574,7 +1572,8 @@ class Asset extends Element\AbstractElement
         return $result;
     }
 
-    private function transformMetadata(array $metaData) {
+    private function transformMetadata(array $metaData)
+    {
         $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
         $transformedData = $metaData['data'];
 
@@ -1588,7 +1587,8 @@ class Asset extends Element\AbstractElement
         return $transformedData;
     }
 
-    protected function getMetadataByName(string $name, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): array|string|null {
+    protected function getMetadataByName(string $name, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): array|string|null
+    {
         if ($language === null) {
             $language = Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
         }
@@ -1601,8 +1601,9 @@ class Asset extends Element\AbstractElement
                         return $md;
                     }
                     $data = $md;
-                } else if ($language == $md['language']) {
+                } elseif ($language == $md['language']) {
                     $data = $md;
+
                     break;
                 }
             }

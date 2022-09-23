@@ -70,7 +70,8 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalData, $denormalizedData);
     }
 
-    protected function compareRawMetaData(array $metaData, string $expectedName, string|int|float|null $expectedData, ?string $expectedLanguage, string $expectedType) {
+    protected function compareRawMetaData(array $metaData, string $expectedName, string|int|float|null $expectedData, ?string $expectedLanguage, string $expectedType)
+    {
         $this->assertIsArray($metaData);
         $this->assertArrayHasKey('name', $metaData);
         $this->assertArrayHasKey('data', $metaData);
@@ -82,19 +83,20 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($metaData['language'], $expectedLanguage);
     }
 
-    public function testLocalizedMetaData() {
+    public function testLocalizedMetaData()
+    {
         $languages = [
-            'en', 'de', null
+            'en', 'de', null,
         ];
 
         $metaDataNames = [
             'metadata-one',
             'metadata-two',
-            'metadata-three'
+            'metadata-three',
         ];
 
         foreach ($languages as $lang) {
-            foreach($metaDataNames as $name) {
+            foreach ($metaDataNames as $name) {
                 $this->testAsset->addMetadata($name, 'input', $lang ? $name . '-' . $lang : $name, $lang);
             }
         }
@@ -142,7 +144,7 @@ class NormalizerTest extends ModelTestCase
         $metaData = $asset->getMetadata(null, 'en', true, true);
         $this->assertIsArray($metaData);
         $this->assertCount(3, $metaData);
-        foreach($metaData as $md) {
+        foreach ($metaData as $md) {
             $this->assertArrayHasKey('language', $md);
             $this->assertEquals($md['language'], 'en');
         }
@@ -151,12 +153,10 @@ class NormalizerTest extends ModelTestCase
         $metaData = $asset->getMetadata(null, 'de', false, true);
         $this->assertIsArray($metaData);
         $this->assertCount(4, $metaData);
-        foreach($metaData as $md) {
+        foreach ($metaData as $md) {
             $this->assertArrayHasKey('language', $md);
             $this->assertTrue(in_array($md['language'], ['de', null]));
         }
-
-
     }
 
     public function testAssetMetadata()
@@ -248,5 +248,4 @@ class NormalizerTest extends ModelTestCase
 
         $this->doCompare($this->testAsset->getId(), $metaDataName, $originalData);
     }
-
 }
