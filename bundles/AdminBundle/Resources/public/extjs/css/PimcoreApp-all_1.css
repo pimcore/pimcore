@@ -2131,10 +2131,6 @@ td.x-frame-mc {
     height: 1px;
 }
 
-.x-form-item-label-top > .x-form-item-label-inner {
-    display: table-cell;
-}
-
 .x-form-item-label-top-side-error:after {
     display: table-cell;
     content: '';
