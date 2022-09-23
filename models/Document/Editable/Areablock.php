@@ -19,7 +19,6 @@ use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Document\Editable\EditableHandler;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
 use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
-use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Templating\Renderer\EditableRenderer;
