@@ -596,7 +596,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         return new JsonResponse(['success' => true, 'options' => $options]);
     }
 
-    private function applyChanges(DataObject\Concrete $object, array $changes) {
+    private function applyChanges(DataObject\Concrete $object, array $changes): void
+    {
         foreach ($changes as $key => $value) {
             $fd = $object->getClass()->getFieldDefinition($key);
             if ($fd) {
