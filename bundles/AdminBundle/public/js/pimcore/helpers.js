@@ -1991,7 +1991,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback, config) {
             value: data["attributes"]
         });
     }
-    const advancedTab = propertyFields.length === 0 ? null : {
+    const advancedTab = advancedFields.length === 0 ? null : {
         title: t('advanced'),
         layout: 'form',
         defaultType: 'textfield',
