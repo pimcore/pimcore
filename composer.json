@@ -180,6 +180,7 @@
       "Pimcore\\": "lib",
       "Pimcore\\Bundle\\": "bundles",
       "Pimcore\\Bundle\\AdminBundle\\": "bundles/AdminBundle/src/",
+      "Pimcore\\Bundle\\InstallBundle\\": "bundles/InstallBundle/src/",
       "Pimcore\\Bundle\\CoreBundle\\": "bundles/CoreBundle/src/"
     },
     "classmap": [
