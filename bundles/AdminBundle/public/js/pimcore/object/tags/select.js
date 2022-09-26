@@ -269,6 +269,31 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             selectOnFocus: true,
             fieldLabel: this.fieldConfig.title,
             store: store,
+            listeners: {
+                focusenter: function(selectField, e) {
+                    if (this.fieldConfig.dynamicOptions) {
+                        Ext.Ajax.request({
+                            url: Routing.generate('pimcore_admin_dataobject_dataobject_getSelectOptions'),
+                            params: {
+                                objectId: this.object.id,
+                                changedData: this.object.getSaveData().data,
+                                fieldDefinition: JSON.stringify(this.fieldConfig)
+                            },
+                            success: function (response) {
+                                response = Ext.decode(response.responseText);
+                                if (!(response && response.success)) {
+                                    pimcore.helpers.showNotification(t("error"), t(response.message), "error", t(response.message));
+                                } else {
+                                    if (!this.fieldConfig.mandatory) {
+                                        response.options.unshift({'value': '', 'key': "(" + t("empty") + ")"});
+                                    }
+                                    store.setData(response.options);
+                                }
+                            }.bind(this)
+                        });
+                    }
+                }.bind(this)
+            },
             componentCls: this.getWrapperClassNames(),
             width: 250,
             tpl: Ext.create('Ext.XTemplate',
@@ -307,6 +332,13 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
                 options.value = this.data;
             } else {
                 options.value = "";
+                if (this.data != "") {
+                    pimcore.helpers.showNotification(
+                        t("error"),
+                        t("invalid_option", '', {option: this.data, field: this.getName()}),
+                        "error"
+                    );
+                }
             }
         } else {
             options.value = "";

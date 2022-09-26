@@ -179,7 +179,8 @@
       "Pimcore\\Model\\": "models",
       "Pimcore\\": "lib",
       "Pimcore\\Bundle\\": "bundles",
-      "Pimcore\\Bundle\\AdminBundle\\": "bundles/AdminBundle/src/"
+      "Pimcore\\Bundle\\AdminBundle\\": "bundles/AdminBundle/src/",
+      "Pimcore\\Bundle\\InstallBundle\\": "bundles/InstallBundle/src/"
     },
     "classmap": [
       "lib/Pimcore.php"
