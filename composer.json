@@ -160,7 +160,8 @@
     "spiritix/php-chrome-html2pdf": "^1.6",
     "elasticsearch/elasticsearch": "^7.11",
     "composer/composer": "*",
-    "chrome-php/chrome": "^1.4.0"
+    "chrome-php/chrome": "^1.4.0",
+    "webmozarts/console-parallelization": "^1.2.0"
   },
   "suggest": {
     "ext-sockets": "*",

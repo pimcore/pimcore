@@ -18,7 +18,6 @@ parameters:
         - '**/PDFreactor.class.php'
         - '**/bundles/AdminBundle/src/Security/Guard/AdminAuthenticator.php'
         - '**/bundles/AdminBundle/src/Security/Authenticator/AdminAbstractAuthenticator.php'
-        - '**/ParallelizationBase.php'
 
     ignoreErrors:
         - '~^Unsafe usage of new static\(\)~'
