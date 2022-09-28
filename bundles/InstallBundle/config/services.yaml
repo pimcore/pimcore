@@ -5,7 +5,7 @@ services:
         public: false
 
     Pimcore\Bundle\InstallBundle\Command\:
-        resource: '../../Command'
+        resource: '../src/Command'
         public: true
         tags: ['console.command']
 
