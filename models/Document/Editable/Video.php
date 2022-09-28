@@ -620,7 +620,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         if (!$youtubeId) {
             return $this->getEmptyCode();
         }
-        
+
         if ($inAdmin && isset($config['editmodeImagePreview']) && $config['editmodeImagePreview'] === true) {
             return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video '. ($config['class'] ?? '') .'">
                 <img src="https://img.youtube.com/vi/' . $youtubeId . '/0.jpg">
