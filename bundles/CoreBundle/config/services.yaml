@@ -77,7 +77,7 @@ services:
 
     # auto-register all controllers as services
     Pimcore\Bundle\CoreBundle\Controller\:
-        resource: '../../Controller'
+        resource: '../src/Controller'
         public: true
         tags: ['controller.service_arguments']
 

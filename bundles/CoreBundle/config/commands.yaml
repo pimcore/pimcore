@@ -9,8 +9,8 @@ services:
 
     # auto-register all commands as services
     Pimcore\Bundle\CoreBundle\Command\:
-        resource: '../../Command'
-        exclude: '../../Command/Bundle/Helper'
+        resource: '../src/Command'
+        exclude: '../src/Command/Bundle/Helper'
         tags: ['console.command']
 
     Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange:

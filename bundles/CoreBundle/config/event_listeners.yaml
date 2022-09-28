@@ -134,7 +134,7 @@ services:
 
     Pimcore\Bundle\CoreBundle\EventListener\MaintenancePageListener:
         calls:
-            - [loadTemplateFromResource, ['@@PimcoreCoreBundle/Resources/misc/maintenance.html']]
+            - [loadTemplateFromResource, ['@@PimcoreCoreBundle/public/misc/maintenance.html']]
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 620 }
 
