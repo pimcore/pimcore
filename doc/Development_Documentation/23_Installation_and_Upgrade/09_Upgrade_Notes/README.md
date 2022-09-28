@@ -61,6 +61,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [CoreBundle] Please update CoreBundle config resource path from `@PimcoreCoreBundle/Resources/config/...` to `@PimcoreCoreBundle/config/..` in your project configurations.
 
 ## 10.5.0
+- [Class Definitions] Resolving classes or services will no longer catch exceptions in Pimcore 11. Remove invalid references from class definitions.
 - [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`
 - [Listings] `JsonListing` class is deprecated. Please use `CallableFilterListingInterface`, `FilterListingTrait` and `CallableOrderListingInterface`, `OrderListingTrait` instead.
   For examples please see existing classes, e.g. `Pimcore\Model\Document\DocType\Listing`.
@@ -96,7 +97,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
   
     Element\Service::getElementById::getElementById($type, $id, ['force' => true]);
    ```
-- [Navigation Builder] Calling the method `Pimcore\Navigation\Builder::getNavigation()` using extra arguments is deprecated and will be removed in Pimcore 11. Instead of using the extra arguments, it is recommended to call the method using the params array. eg: Currently, the `getNavigation()` method can be called by passing the config params `activeDocument`, `navigationRootDocument`, `htmlMenuIdPrefix`, `pageCallback`, `cache`, `maxDepth` and `cacheLifetime` as the arguments i.e `getNavigation($activeDocument, $navigationRootDocument, $htmlMenuIdPrefix, $pageCallback, $cache,$maxDepth, $cacheLifetime)`. According to the new implementation you should call the method like `getNavigation($params)` where `$params` should be an associative array with the keys `active`, `root`, `htmlMenuPrefix`, `pageCallback`, `cache`, `maxDepth` and `cacheLifetime`.
+- [Navigation Builder] Calling the method `Pimcore\Navigation\Builder::getNavigation()` using extra arguments is deprecated and will be removed in Pimcore 11. Instead of using the extra arguments, it is recommended to call the method using the params array. eg: Currently, the `getNavigation()` method can be called by passing the config params `activeDocument`, `navigationRootDocument`, `htmlMenuIdPrefix`, `pageCallback`, `cache`, `maxDepth`, `cacheLifetime` and `markActiveTrail` as the arguments i.e `getNavigation($activeDocument, $navigationRootDocument, $htmlMenuIdPrefix, $pageCallback, $cache, $maxDepth, $cacheLifetime, $markActiveTrail)`. According to the new implementation you should call the method like `getNavigation($params)` where `$params` should be an associative array with the keys `active`, `root`, `htmlMenuPrefix`, `pageCallback`, `cache`, `maxDepth`, `cacheLifetime` and `markActiveTrail`.
   
 - [Runtime Cache] The trait `\Pimcore\Cache\RuntimeCacheTrait` has been deprecated because of its ambiguous naming and usage of persisted cache along with the runtime object cache.
   It is recommended to use `\Pimcore\Cache\RuntimeCache` instead of this trait. For persisted cache, please use `\Pimcore\Cache` instead.

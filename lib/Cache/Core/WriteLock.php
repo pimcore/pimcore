@@ -154,11 +154,9 @@ class WriteLock implements LoggerAwareInterface
      */
     public function hasLock()
     {
-        if (!$this->enabled) {
+        if (!$this->enabled || !$this->lockInitialized) {
             return false;
         }
-
-        $this->initializeLock();
 
         if ($this->timestamp && $this->timestamp > 0) {
             return true;
@@ -198,11 +196,9 @@ class WriteLock implements LoggerAwareInterface
      */
     public function removeLock()
     {
-        if (!$this->enabled) {
+        if (!$this->enabled || !$this->lockInitialized) {
             return true;
         }
-
-        $this->initializeLock();
 
         if ($this->timestamp) {
             $item = $this->itemPool->getItem($this->cacheKey);
