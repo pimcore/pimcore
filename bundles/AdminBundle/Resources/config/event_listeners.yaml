@@ -51,4 +51,3 @@ services:
     Pimcore\Bundle\AdminBundle\EventListener\UsageStatisticsListener: ~
 
     Pimcore\Bundle\AdminBundle\EventListener\EnablePreviewTimeSliderListener: ~
-    Pimcore\Bundle\AdminBundle\EventListener\AssetFulltextSearchUpdateListener: ~
