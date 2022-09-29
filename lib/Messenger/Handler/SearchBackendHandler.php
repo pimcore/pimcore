@@ -49,12 +49,13 @@ class SearchBackendHandler implements BatchHandlerInterface
         $searchEntry->save();
 
         if ($updateChildren) {
-            foreach ($element->getChildren() as $child) {
-                if ($child instanceof Asset || $child instanceof AbstractObject || $child instanceof Document) {
+            if ($element instanceof Asset || $element instanceof AbstractObject || $element instanceof Document) {
+                foreach ($element->getChildren() as $child) {
                     $data = Data::getForElement($child);
 
                     $shouldChildrenBeUpdated = $child->getRealFullPath() == $data->getFullPath();
                     $this->processElement($child, $shouldChildrenBeUpdated);
+
                 }
             }
         }
