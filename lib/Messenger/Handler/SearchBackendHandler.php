@@ -16,6 +16,9 @@
 namespace Pimcore\Messenger\Handler;
 
 use Pimcore\Messenger\SearchBackendMessage;
+use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Search\Backend\Data;
 use Symfony\Component\Messenger\Handler\Acknowledger;
@@ -35,6 +38,28 @@ class SearchBackendHandler implements BatchHandlerInterface
         return $this->handle($message, $ack);
     }
 
+    private function processElement(Element\ElementInterface $element, bool $updateChildren) {
+
+        $searchEntry = Data::getForElement($element);
+        if ($searchEntry->getId() instanceof Data\Id) {
+            $searchEntry->setDataFromElement($element);
+        } else {
+            $searchEntry = new Data($element);
+        }
+        $searchEntry->save();
+
+        if ($updateChildren) {
+            foreach ($element->getChildren() as $child) {
+                if ($child instanceof Asset || $child instanceof AbstractObject || $child instanceof Document) {
+                    $data = Data::getForElement($child);
+
+                    $shouldChildrenBeUpdated = $child->getRealFullPath() == $data->getFullPath();
+                    $this->processElement($child, $shouldChildrenBeUpdated);
+                }
+            }
+        }
+    }
+
     private function process(array $jobs): void
     {
         $jobs = $this->filterUnique($jobs, static function (SearchBackendMessage $message) {
@@ -50,14 +75,7 @@ class SearchBackendHandler implements BatchHandlerInterface
                     continue;
                 }
 
-                $searchEntry = Data::getForElement($element);
-                if ($searchEntry->getId() instanceof Data\Id) {
-                    $searchEntry->setDataFromElement($element);
-                } else {
-                    $searchEntry = new Data($element);
-                }
-                $searchEntry->save();
-
+                $this->processElement($element, $message->shouldChildrenBeUpdated());
                 $ack->ack($message);
             } catch (\Throwable $e) {
                 $ack->nack($e);
