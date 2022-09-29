@@ -83,7 +83,12 @@ class SearchBackendListener implements EventSubscriberInterface
         if ($element->hasChildren()) {
             foreach ($element->getChildren() as $child) {
                 if($child instanceof ElementInterface) {
-                    $this->dispatchSearchBackendMessage($child);
+
+                    $data = Data::getForElement($child);
+                    
+                    if ($child->getRealFullPath() !== $data->getFullPath()) {
+                        $this->dispatchSearchBackendMessage($child);
+                    }
                 }
             }
         }
