@@ -21,6 +21,7 @@ use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Event\Model\ElementEventInterface;
 use Pimcore\Messenger\SearchBackendMessage;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Search\Backend\Data;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -81,7 +82,9 @@ class SearchBackendListener implements EventSubscriberInterface
 
         if (count($element->getChildren()) > 0) {
             foreach ($element->getChildren() as $child) {
-                $this->dispatchSearchBackendMessage($child);
+                if($child instanceof ElementInterface) {
+                    $this->dispatchSearchBackendMessage($child);
+                }
             }
         }
     }
