@@ -74,7 +74,7 @@ class SearchBackendListener implements EventSubscriberInterface
         $element = $e->getElement();
         $data = Data::getForElement($element);
 
-        $shouldChildrenBeUpdated = $element->getRealFullPath() == $data->getFullPath();
+        $shouldChildrenBeUpdated = $element->getRealFullPath() != $data->getFullPath();
         $this->messengerBusPimcoreCore->dispatch(
             new SearchBackendMessage(Service::getElementType($element), $element->getId(), $shouldChildrenBeUpdated)
         );
