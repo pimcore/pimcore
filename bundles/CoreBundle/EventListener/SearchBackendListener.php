@@ -71,9 +71,19 @@ class SearchBackendListener implements EventSubscriberInterface
         }
 
         $element = $e->getElement();
+        $this->dispatchSearchBackendMessage($element);
+    }
+
+    protected function dispatchSearchBackendMessage(ElementInterface $element) {
         $this->messengerBusPimcoreCore->dispatch(
             new SearchBackendMessage(Service::getElementType($element), $element->getId())
         );
+
+        if (count($element->getChildren()) > 0) {
+            foreach ($element->getChildren() as $child) {
+                $this->dispatchSearchBackendMessage($child);
+            }
+        }
     }
 
     /**

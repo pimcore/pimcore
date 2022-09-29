@@ -51,13 +51,12 @@ class SearchBackendHandler implements BatchHandlerInterface
                 }
 
                 $searchEntry = Data::getForElement($element);
-                if ($searchEntry instanceof Data && $searchEntry->getId() instanceof Data\Id) {
+                if ($searchEntry->getId() instanceof Data\Id) {
                     $searchEntry->setDataFromElement($element);
-                    $searchEntry->save();
                 } else {
                     $searchEntry = new Data($element);
-                    $searchEntry->save();
                 }
+                $searchEntry->save();
 
                 $ack->ack($message);
             } catch (\Throwable $e) {
