@@ -27,6 +27,7 @@ pimcore.object.helpers.grid = Class.create({
     showSubtype: true,
     showKey: true,
     enableEditor: false,
+    maxRenderItems: 10,
 
     initialize: function(selectedClass, fields, url, baseParams, isSearch) {
         this.selectedClass = selectedClass;
@@ -540,7 +541,7 @@ pimcore.object.helpers.grid = Class.create({
                 result += '</tr>';
 
 
-                for (let i = 0; i < value.length && i < 10; i++) {
+                for (let i = 0; i < value.length && i < this.maxRenderItems; i++) {
                     result += '<tr>';
 
                     result += '<td style="padding: 0 5px 0 5px; border-bottom: 1px solid #d0d0d0;  border-top: 1px solid #d0d0d0; border-left: 1px solid #d0d0d0;">';
@@ -580,7 +581,7 @@ pimcore.object.helpers.grid = Class.create({
                 result += '</table>';
             } else {
                 result = [];
-                for (let i = 0; i < value.length && i < 10; i++) {
+                for (let i = 0; i < value.length && i < this.maxRenderItems; i++) {
                     var item = value[i];
                     result.push(item[pathProperty]);
                 }
