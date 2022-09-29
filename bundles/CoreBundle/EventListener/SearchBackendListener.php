@@ -80,7 +80,7 @@ class SearchBackendListener implements EventSubscriberInterface
             new SearchBackendMessage(Service::getElementType($element), $element->getId())
         );
 
-        if (count($element->getChildren()) > 0) {
+        if ($element->hasChildren()) {
             foreach ($element->getChildren() as $child) {
                 if($child instanceof ElementInterface) {
                     $this->dispatchSearchBackendMessage($child);
