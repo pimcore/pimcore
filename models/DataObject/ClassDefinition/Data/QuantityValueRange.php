@@ -46,27 +46,27 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     /**
      * @internal
      */
-    public string|int $unitWidth;
+    public string|int $unitWidth = 0;
 
     /**
      * @internal
      */
-    public ?string $defaultUnit;
+    public ?string $defaultUnit = null;
 
     /**
      * @internal
      */
-    public array $validUnits;
+    public array $validUnits = [];
 
     /**
      * @internal
      */
-    public ?int $decimalPrecision;
+    public ?int $decimalPrecision = null;
 
     /**
      * @internal
      */
-    public bool $autoConvert;
+    public bool $autoConvert = false;
 
     /**
      * Type for the column to query

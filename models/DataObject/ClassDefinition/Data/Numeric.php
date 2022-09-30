@@ -78,17 +78,13 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $integer = false;
+    public bool $integer = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $unsigned = false;
+    public bool $unsigned = false;
 
     /**
      * @internal
@@ -106,10 +102,8 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $unique;
+    public bool $unique = false;
 
     /**
      * This is the x part in DECIMAL(x, y) and denotes the total amount of digits. In MySQL this is called precision

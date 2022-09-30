@@ -39,17 +39,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 class Document extends Element\AbstractElement
 {
     /**
-     * all possible types of documents
-     *
-     * @internal
-     *
-     * @deprecated will be removed in Pimcore 11. Use getTypes() method.
-     *
-     * @var array
-     */
-    public static $types = ['folder', 'page', 'snippet', 'link', 'hardlink', 'email', 'newsletter', 'printpage', 'printcontainer'];
-
-    /**
      * @var bool
      */
     private static $hideUnpublished = false;
@@ -63,8 +52,6 @@ class Document extends Element\AbstractElement
 
     /**
      * @internal
-     *
-     * @var string
      */
     protected string $type = '';
 
@@ -84,22 +71,16 @@ class Document extends Element\AbstractElement
 
     /**
      * @internal
-     *
-     * @var int|null
      */
     protected ?int $index = null;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     protected bool $published = true;
 
     /**
      * @internal
-     *
-     * @var int|null
      */
     protected ?int $userModification = null;
 

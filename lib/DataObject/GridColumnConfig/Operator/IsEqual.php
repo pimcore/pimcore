@@ -20,10 +20,7 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
  */
 final class IsEqual extends AbstractOperator
 {
-    /**
-     * @var bool
-     */
-    private $skipNull;
+    private bool $skipNull;
 
     /**
      * {@inheritdoc}

@@ -43,10 +43,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $lazyLoading;
+    public bool $lazyLoading = false;
 
     /**
      * @internal
@@ -57,38 +55,28 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $disallowAddRemove = false;
+    public bool $disallowAddRemove = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $disallowReorder = false;
+    public bool $disallowReorder = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $collapsed;
+    public bool $collapsed = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $collapsible;
+    public bool $collapsible = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $border = false;
+    public bool $border = false;
 
     /**
      * @return bool
@@ -699,7 +687,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function setDisallowAddRemove($disallowAddRemove)
     {
-        $this->disallowAddRemove = $disallowAddRemove;
+        $this->disallowAddRemove = (bool) $disallowAddRemove;
     }
 
     /**
@@ -715,7 +703,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function setDisallowReorder($disallowReorder)
     {
-        $this->disallowReorder = $disallowReorder;
+        $this->disallowReorder = (bool) $disallowReorder;
     }
 
     /**

@@ -51,9 +51,6 @@ final class Site extends AbstractModel
      */
     protected $rootId;
 
-    /**
-     * @var Document\Page|null
-     */
     protected ?Document\Page $rootDocument = null;
 
     /**

@@ -30,10 +30,7 @@ final class ResultContainer
      */
     public $value;
 
-    /**
-     * @var bool
-     */
-    public $isEmpty;
+    public bool $isEmpty = false;
 
     /**
      * @return string
@@ -80,6 +77,6 @@ final class ResultContainer
      */
     public function setIsEmpty($isEmpty)
     {
-        $this->isEmpty = $isEmpty;
+        $this->isEmpty = (bool) $isEmpty;
     }
 }

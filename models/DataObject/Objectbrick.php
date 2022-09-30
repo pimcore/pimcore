@@ -30,8 +30,6 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 
     /**
      * @internal
-     *
-     * @var array
      */
     protected array $items = [];
 
@@ -51,8 +49,6 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 
     /**
      * @internal
-     *
-     * @var int|null
      */
     protected ?int $objectId = null;
 
