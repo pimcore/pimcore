@@ -22,9 +22,7 @@ use Pimcore\Model\Schedule\Task;
 use Pimcore\Model\User;
 use Pimcore\Model\Version;
 
-/**
- * @method static setParent(?ElementInterface $parent)
- */
+
 interface ElementInterface extends ModelInterface
 {
     /**
@@ -209,9 +207,21 @@ interface ElementInterface extends ModelInterface
     public function getParentId();
 
     /**
+     * @param int|null $id
+     * @return static
+     */
+    public function setParentId($id);
+
+    /**
      * @return self|null
      */
     public function getParent();
+
+    /**
+     * @param ElementInterface|null $parent
+     * @return static
+     */
+    public function setParent($parent);
 
     /**
      * @return string
