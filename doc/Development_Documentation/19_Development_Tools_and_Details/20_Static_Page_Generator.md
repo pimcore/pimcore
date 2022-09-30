@@ -69,7 +69,6 @@ flysystem:
             # which are then delivered directly by the web-server
             adapter: 'local'
             visibility: public
-            directory_visibility: public
             options:
                 directory: '%kernel.project_dir%/public/var/tmp/pages'
 ```
