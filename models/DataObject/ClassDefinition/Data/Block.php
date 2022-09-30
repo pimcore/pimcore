@@ -1286,8 +1286,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $obj = new static();
         $obj->setValues($data);
 
-        $obj->childs = $obj->children;  // @phpstan-ignore-line
-
         return $obj;
     }
 }

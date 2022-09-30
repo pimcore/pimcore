@@ -38,7 +38,7 @@ pimcore:
             label: 'Product Workflow'
             type: 'state_machine'
             supports:
-            - 'Pimcore\Model\DataObject\SimpleProduct'
+            - 'Pimcore\Model\DataObject\Product'
             places:
                 #TODO
             transitions:
@@ -46,7 +46,7 @@ pimcore:
 ```
 
 As you can see, the workflow is called **Product workflow**, we haven't added any places and transitions yet. 
-The workflow is available only for instances of `Pimcore\Model\DataObject\SimpleProduct` objects. We use the workflow 
+The workflow is available only for instances of `Pimcore\Model\DataObject\Product` objects. We use the workflow 
 type `state_machine`, so one transition can start from multiple places.  
 
 ### Specify places
@@ -233,7 +233,7 @@ And, the transition with a *"timeWorked"* field.
         publish:
             from: content_prepared
             to: accepted
-            guard: "is_fully_authenticated() and is_granted('ROLE_PIMCORE_SUPERUSER')"
+            guard: "is_fully_authenticated() and is_granted('ROLE_PIMCORE_ADMIN')"
             options:
                 label: 'Publish the product'
                 notes:

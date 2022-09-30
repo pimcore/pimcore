@@ -1779,8 +1779,18 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
         enableKeyEvents: true,
         listeners: {
             keyup: function (el) {
-                if (el.getValue().match(/^www\./)) {
-                    el.setValue("http://" + el.getValue());
+                const value = el.getValue();
+
+                // if it doesn't start with a single "/", we assume it's an external link
+                if (value && !value.startsWith('/') && !'http://'.startsWith(value) && !'https://'.startsWith(value)) {
+                    if (!value.match(/^https?:\/\//)) {
+                        el.setValue("https://" + value.replace(/^\/+/, ''));
+                    }
+                    internalTypeField.setValue(null);
+                    linkTypeField.setValue("direct");
+                }
+                // if it starts with "//", we assume it is a protocol-relative URL
+                else if (value.startsWith('//')) {
                     internalTypeField.setValue(null);
                     linkTypeField.setValue("direct");
                 }

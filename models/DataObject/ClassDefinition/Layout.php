@@ -453,7 +453,7 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
      */
     public function getBlockedVarsForExport(): array
     {
-        return ['blockedVarsForExport', 'childs'];
+        return ['blockedVarsForExport'];
     }
 
     public function __sleep(): array
@@ -473,8 +473,6 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     {
         $obj = new static();
         $obj->setValues($data);
-
-        $obj->childs = $obj->children;  // @phpstan-ignore-line
 
         return $obj;
     }
