@@ -23,6 +23,7 @@ use Pimcore\Model\Element\Service;
 use Pimcore\Model\Search;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Input\InputOption;
 
 /**
  * @internal
@@ -34,6 +35,13 @@ class SearchBackendReindexCommand extends AbstractCommand
         $this
             ->setName('pimcore:search-backend-reindex')
             ->setAliases(['search-backend-reindex'])
+            ->addOption(
+                'full',
+                'f',
+                InputOption::VALUE_OPTIONAL,
+                'If the option value is 1, then Pimcore will truncate the search backend data table and reindex the whole data.',
+                null
+            )
             ->setDescription('Re-indexes the backend search of pimcore');
     }
 
@@ -44,7 +52,10 @@ class SearchBackendReindexCommand extends AbstractCommand
     {
         // clear all data
         $db = \Pimcore\Db::get();
-        $db->executeQuery('TRUNCATE `search_backend_data`;');
+        $isFull = $input->getOption('full');
+        if ($isFull) {
+            $db->executeQuery('TRUNCATE `search_backend_data`;');
+        }
 
         $elementsPerLoop = 100;
         $types = ['asset', 'document', 'object'];
@@ -63,6 +74,10 @@ class SearchBackendReindexCommand extends AbstractCommand
                     DataObject::OBJECT_TYPE_FOLDER,
                     DataObject::OBJECT_TYPE_VARIANT,
                 ]);
+            }
+            // Load the data that has already been processed
+            if (!$isFull && $ids = $db->fetchFirstColumn("SELECT id FROM search_backend_data WHERE maintype = '". $type ."' ")) {
+                $list->setCondition($type === 'object' ? 'o_id' : 'id' .' NOT IN (:oids)', ['oids' => $ids]);
             }
 
             $elementsTotal = $list->getTotalCount();
@@ -97,7 +112,9 @@ class SearchBackendReindexCommand extends AbstractCommand
             }
         }
 
-        $db->executeQuery('OPTIMIZE TABLE search_backend_data;');
+        if ($isFull) {
+            $db->executeQuery('OPTIMIZE TABLE search_backend_data;');
+        }
 
         return 0;
     }
