@@ -154,7 +154,7 @@ class Sql extends AbstractAdapter
         $sql = $this->buildQueryString($this->config, $ignoreSelectAndGroupBy, $drillDownFilters, $selectField);
 
         $data = '';
-
+        $extractAllFields = empty($fields);
         if ($filters) {
             if (is_array($filters)) {
                 foreach ($filters as $filter) {
@@ -210,7 +210,7 @@ class Sql extends AbstractAdapter
 
             $total = 'SELECT COUNT(*) FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
 
-            if ($fields) {
+            if ($fields && !$extractAllFields) {
                 $data = 'SELECT `' . implode('`,`', $fields) . '` FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
             } else {
                 $data = 'SELECT * FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
