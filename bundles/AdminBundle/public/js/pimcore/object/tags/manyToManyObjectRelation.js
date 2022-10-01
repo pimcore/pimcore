@@ -590,7 +590,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                     iconCls: "pimcore_icon_delete",
                     handler: function () {
                         pimcore.helpers.deleteConfirm(t('relations'), t('all'), function () {
-                            this.empty.bind(this);
+                            this.empty();
                         }.bind(this));
                     }.bind(this)
                 });
