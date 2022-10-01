@@ -360,19 +360,22 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
         toolbarItems = toolbarItems.concat([
             {
                 xtype: "button",
-                iconCls: "pimcore_icon_delete",
-                handler: function () {
-                    pimcore.helpers.deleteConfirm(t('relations'), t('all'), function () {
-                        this.empty.bind(this);
-                    }.bind(this));
-                }.bind(this)
-            },
-            {
-                xtype: "button",
                 iconCls: "pimcore_icon_search",
                 handler: this.openSearchEditor.bind(this)
             }
         ]);
+
+        if (this.fieldConfig.allowToClearRelation) {
+            toolbarItems.push({
+                xtype: "button",
+                iconCls: "pimcore_icon_delete",
+                handler: function () {
+                    pimcore.helpers.deleteConfirm(t('relations'), t('all'), function () {
+                        this.empty();
+                    }.bind(this));
+                }.bind(this)
+            });
+        }
 
         if (this.fieldConfig.assetsAllowed) {
             toolbarItems.push({
