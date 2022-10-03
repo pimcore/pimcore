@@ -112,10 +112,10 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
         $userOwnerName = $this->getUserName($document->getUserOwner());
         $userModificationName = ($document->getUserOwner() == $document->getUserModification()) ? $userOwnerName : $this->getUserName($document->getUserModification());
-        $data['userOwnerUsername'] = $userOwnerName['username'];
-        $data['userOwnerFullname'] = $userOwnerName['fullname'];
-        $data['userModificationUsername'] = $userModificationName['username'];
-        $data['userModificationFullname'] = $userModificationName['fullname'];
+        $data['userOwnerUsername'] = $userOwnerName['userName'];
+        $data['userOwnerFullname'] = $userOwnerName['fullName'];
+        $data['userModificationUsername'] = $userModificationName['userName'];
+        $data['userModificationFullname'] = $userModificationName['fullName'];
 
         $data['php'] = [
             'classes' => array_merge([get_class($document)], array_values(class_parents($document))),

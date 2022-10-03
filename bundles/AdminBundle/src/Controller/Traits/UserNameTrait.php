@@ -33,13 +33,13 @@ trait UserNameTrait
 
         if (empty($user)) {
             $data = [
-                'username' => '',
-                'fullname' => $this->trans('user_unknown'),
+                'userName' => '',
+                'fullName' => $this->trans('user_unknown'),
             ];
         } else {
             $data = [
-                'username' => $user->getName(),
-                'fullname' => $user->getFullName(),
+                'userName' => $user->getName(),
+                'fullName' => $user->getFullName(),
             ];
         }
 

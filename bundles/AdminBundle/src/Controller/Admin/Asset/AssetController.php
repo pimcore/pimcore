@@ -221,10 +221,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $userOwnerName = $this->getUserName($asset->getUserOwner());
         $userModificationName = ($asset->getUserOwner() == $asset->getUserModification()) ? $userOwnerName : $this->getUserName($asset->getUserModification());
-        $data['userOwnerUsername'] = $userOwnerName['username'];
-        $data['userOwnerFullname'] = $userOwnerName['fullname'];
-        $data['userModificationUsername'] = $userModificationName['username'];
-        $data['userModificationFullname'] = $userModificationName['fullname'];
+        $data['userOwnerUsername'] = $userOwnerName['userName'];
+        $data['userOwnerFullname'] = $userOwnerName['fullName'];
+        $data['userModificationUsername'] = $userModificationName['userName'];
+        $data['userModificationFullname'] = $userModificationName['fullName'];
 
         $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 

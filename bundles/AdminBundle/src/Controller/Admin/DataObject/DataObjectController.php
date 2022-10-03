@@ -475,10 +475,10 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             $userOwnerName = $this->getUserName($objectData['general']['o_userOwner']);
             $userModificationName = ($objectData['general']['o_userOwner'] == $objectData['general']['o_userModification']) ? $userOwnerName : $this->getUserName($objectData['general']['o_userModification']);
-            $objectData['general']['o_userOwnerUsername'] = $userOwnerName['username'];
-            $objectData['general']['o_userOwnerFullname'] = $userOwnerName['fullname'];
-            $objectData['general']['o_userModificationUsername'] = $userModificationName['username'];
-            $objectData['general']['o_userModificationFullname'] = $userModificationName['fullname'];
+            $objectData['general']['o_userOwnerUsername'] = $userOwnerName['userName'];
+            $objectData['general']['o_userOwnerFullname'] = $userOwnerName['fullName'];
+            $objectData['general']['o_userModificationUsername'] = $userModificationName['userName'];
+            $objectData['general']['o_userModificationFullname'] = $userModificationName['fullName'];
 
             $this->addAdminStyle($object, ElementAdminStyleEvent::CONTEXT_EDITOR, $objectData['general']);
 
@@ -725,10 +725,10 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             $userOwnerName = $this->getUserName($objectData['general']['o_userOwner']);
             $userModificationName = ($objectData['general']['o_userOwner'] == $objectData['general']['o_userModification']) ? $userOwnerName : $this->getUserName($objectData['general']['o_userModification']);
-            $objectData['general']['o_userOwnerUsername'] = $userOwnerName['username'];
-            $objectData['general']['o_userOwnerFullname'] = $userOwnerName['fullname'];
-            $objectData['general']['o_userModificationUsername'] = $userModificationName['username'];
-            $objectData['general']['o_userModificationFullname'] = $userModificationName['fullname'];
+            $objectData['general']['o_userOwnerUsername'] = $userOwnerName['userName'];
+            $objectData['general']['o_userOwnerFullname'] = $userOwnerName['fullName'];
+            $objectData['general']['o_userModificationUsername'] = $userModificationName['userName'];
+            $objectData['general']['o_userModificationFullname'] = $userModificationName['fullName'];
 
             // grid-config
             $configFile = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $object->getId() . '-user_' . $this->getAdminUser()->getId() . '.psf';
