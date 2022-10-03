@@ -137,7 +137,7 @@ BEGIN
 
 
         foreach($schema->getTables() as $table) {
-            if($table->hasColumn("o_id")) {
+            if($table->hasColumn("id")) {
                 $tableName = $table->getName();
                 if (str_starts_with($tableName, "object_brick_") ||
                     str_starts_with($tableName, "object_metadata_") ||
