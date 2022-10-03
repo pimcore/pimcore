@@ -278,9 +278,13 @@ pimcore.asset.metadata.grid = Class.create({
                     xtype: "tbspacer",
                     width: 20
                 });
-                let predefinedMetadataGroups = Ext.Array.map (this.asset.data.predefinedMetaDataGroups, function(predefinedMetadataGroup){
-                    return {text: t(predefinedMetadataGroup), handler: function(){ this.handleAddPredefinedDefinitions(predefinedMetadataGroup); }.bind(this)};
-                }.bind(this));
+
+                let predefinedMetadataGroups = [];
+                if (this.asset.data && this.asset.data.predefinedMetaDataGroups) {
+                    predefinedMetadataGroups = Ext.Array.map (this.asset.data.predefinedMetaDataGroups, function(predefinedMetadataGroup){
+                        return {text: t(predefinedMetadataGroup), handler: function(){ this.handleAddPredefinedDefinitions(predefinedMetadataGroup); }.bind(this)};
+                    }.bind(this));
+                }
 
                 if(predefinedMetadataGroups.length > 0) {
                     predefinedMetadataGroups.unshift('-');
