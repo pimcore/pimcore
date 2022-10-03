@@ -329,7 +329,7 @@ class Dao extends Model\Element\Dao
         }
 
         if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
-            $sql .= ' AND o_published = 1';
+            $sql .= ' AND published = 1';
         }
 
         if (!empty($objectTypes)) {
@@ -365,7 +365,7 @@ class Dao extends Model\Element\Dao
         }
 
         if ((isset($includingUnpublished) && !$includingUnpublished) || (!isset($includingUnpublished) && Model\Document::doHideUnpublished())) {
-            $sql .= ' AND o_published = 1';
+            $sql .= ' AND published = 1';
         }
 
         $sql .= " AND type IN ('" . implode("','", $objectTypes) . "') LIMIT 1";
@@ -694,6 +694,6 @@ class Dao extends Model\Element\Dao
 
         return $data
             && $data['modificationDate'] == $this->model->__getDataVersionTimestamp()
-            && $data['o_versionCount'] == $this->model->getVersionCount();
+            && $data['versionCount'] == $this->model->getVersionCount();
     }
 }

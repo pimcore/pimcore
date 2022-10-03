@@ -64,12 +64,12 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @var bool
      */
-    protected $o_published;
+    protected $published;
 
     /**
      * @internal
      */
-    protected ?ClassDefinition $o_class = null;
+    protected ?ClassDefinition $class = null;
 
     /**
      * @internal
@@ -90,7 +90,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @var array|null
      */
-    protected $o_versions = null;
+    protected $versions = null;
 
     /**
      * @internal
@@ -306,21 +306,21 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      */
     public function getVersions()
     {
-        if ($this->o_versions === null) {
+        if ($this->versions === null) {
             $this->setVersions($this->getDao()->getVersions());
         }
 
-        return $this->o_versions;
+        return $this->versions;
     }
 
     /**
-     * @param Model\Version[] $o_versions
+     * @param Model\Version[] $versions
      *
      * @return $this
      */
-    public function setVersions($o_versions)
+    public function setVersions($versions)
     {
-        $this->o_versions = $o_versions;
+        $this->versions = $versions;
 
         return $this;
     }
@@ -385,13 +385,13 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @param ClassDefinition|null $o_class
+     * @param ClassDefinition|null $class
      *
      * @return $this
      */
-    public function setClass(?ClassDefinition $o_class)
+    public function setClass(?ClassDefinition $class)
     {
-        $this->o_class = $o_class;
+        $this->class = $class;
 
         return $this;
     }
@@ -401,11 +401,11 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      */
     public function getClass(): ?ClassDefinition
     {
-        if (!$this->o_class) {
+        if (!$this->class) {
             $this->setClass(ClassDefinition::getById($this->getClassId()));
         }
 
-        return $this->o_class;
+        return $this->class;
     }
 
     /**
@@ -453,7 +453,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      */
     public function getPublished()
     {
-        return (bool) $this->o_published;
+        return (bool) $this->published;
     }
 
     /**
@@ -465,13 +465,13 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @param bool $o_published
+     * @param bool $published
      *
      * @return $this
      */
-    public function setPublished($o_published)
+    public function setPublished($published)
     {
-        $this->o_published = (bool) $o_published;
+        $this->published = (bool) $published;
 
         return $this;
     }
@@ -809,8 +809,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     public function __clone()
     {
         parent::__clone();
-        $this->o_class = null;
-        $this->o_versions = null;
+        $this->class = null;
+        $this->versions = null;
         $this->scheduledTasks = null;
     }
 

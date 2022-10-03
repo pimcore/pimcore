@@ -329,7 +329,7 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     public function filterByPublished($data, $operator = '=')
     {
-        $this->addFilterByField('o_published', $operator, $data);
+        $this->addFilterByField('published', $operator, $data);
 
         return $this;
     }
