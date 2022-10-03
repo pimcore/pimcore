@@ -25,7 +25,7 @@ trait UserNameTrait
     /**
      * @param int $userId The User ID.
      *
-     * @return array{username: string, fullname: string}
+     * @return array{userName: string, fullName: string}
      */
     protected function getUserName(int $userId): array
     {
