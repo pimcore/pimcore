@@ -53,7 +53,6 @@ class SearchBackendHandler implements BatchHandlerInterface
                 foreach ($element->getChildren() as $child) {
                     $data = Data::getForElement($child);
 
-                    $shouldChildrenBeUpdated = $child->getRealFullPath() == $data->getFullPath();
                     $this->processElement($child, $shouldChildrenBeUpdated);
 
                 }
