@@ -25,8 +25,8 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class OnlineShopVoucherToken extends Concrete
 {
-protected $o_classId = "EF_OSVT";
-protected $o_className = "OnlineShopVoucherToken";
+protected $classId = "EF_OSVT";
+protected $className = "OnlineShopVoucherToken";
 protected $tokenId;
 protected $token;
 protected $voucherSeries;

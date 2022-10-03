@@ -76,14 +76,14 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @var string
      */
-    protected $o_classId;
+    protected $classId;
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $o_className;
+    protected $className;
 
     /**
      * @internal
@@ -115,7 +115,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     {
         $v = get_class_vars(get_called_class());
 
-        return $v['o_classId'];
+        return $v['classId'];
     }
 
     /**
@@ -199,7 +199,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
             $newVersionCount = $this->getVersionCount();
 
-            if (($newVersionCount != $oldVersionCount + 1) || ($this instanceof DirtyIndicatorInterface && $this->isFieldDirty('o_parentId'))) {
+            if (($newVersionCount != $oldVersionCount + 1) || ($this instanceof DirtyIndicatorInterface && $this->isFieldDirty('parentId'))) {
                 self::disableDirtyDetection();
             }
 
@@ -413,17 +413,17 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      */
     public function getClassId()
     {
-        return $this->o_classId;
+        return $this->classId;
     }
 
     /**
-     * @param string $o_classId
+     * @param string $classId
      *
      * @return $this
      */
-    public function setClassId($o_classId)
+    public function setClassId($classId)
     {
-        $this->o_classId = $o_classId;
+        $this->classId = $classId;
 
         return $this;
     }
@@ -433,17 +433,17 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      */
     public function getClassName()
     {
-        return $this->o_className;
+        return $this->className;
     }
 
     /**
-     * @param string $o_className
+     * @param string $className
      *
      * @return $this
      */
-    public function setClassName($o_className)
+    public function setClassName($className)
     {
-        $this->o_className = $o_className;
+        $this->className = $className;
 
         return $this;
     }

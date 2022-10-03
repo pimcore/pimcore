@@ -22,8 +22,8 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class OnlineShopTaxClass extends Concrete
 {
-protected $o_classId = "EF_OSTC";
-protected $o_className = "OnlineShopTaxClass";
+protected $classId = "EF_OSTC";
+protected $className = "OnlineShopTaxClass";
 protected $taxEntryCombinationType;
 protected $taxEntries;
 

@@ -23,14 +23,14 @@ trait DirtyIndicatorTrait
     /**
      * @var array|null
      */
-    protected $o_dirtyFields;
+    protected $dirtyFields;
 
     /**
      * @return bool
      */
     public function hasDirtyFields()
     {
-        return is_array($this->o_dirtyFields) && count($this->o_dirtyFields);
+        return is_array($this->dirtyFields) && count($this->dirtyFields);
     }
 
     /**
@@ -40,7 +40,7 @@ trait DirtyIndicatorTrait
      */
     public function isFieldDirty($key)
     {
-        if (is_array($this->o_dirtyFields) && array_key_exists($key, $this->o_dirtyFields)) {
+        if (is_array($this->dirtyFields) && array_key_exists($key, $this->dirtyFields)) {
             return true;
         }
 
@@ -55,19 +55,19 @@ trait DirtyIndicatorTrait
      */
     public function markFieldDirty($field, $dirty = true)
     {
-        if ($dirty && !is_array($this->o_dirtyFields)) {
-            $this->o_dirtyFields = [];
+        if ($dirty && !is_array($this->dirtyFields)) {
+            $this->dirtyFields = [];
         }
 
         if ($dirty) {
-            $this->o_dirtyFields[$field] = true;
+            $this->dirtyFields[$field] = true;
         } else {
-            unset($this->o_dirtyFields[$field]);
+            unset($this->dirtyFields[$field]);
         }
     }
 
     public function resetDirtyMap()
     {
-        $this->o_dirtyFields = null;
+        $this->dirtyFields = null;
     }
 }

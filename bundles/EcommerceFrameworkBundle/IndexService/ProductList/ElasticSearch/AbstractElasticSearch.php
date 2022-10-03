@@ -671,7 +671,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
         $raws = [];
 
         foreach ($objectRaws as $raw) {
-            $raws[] = $raw['o_id'];
+            $raws[] = $raw['id'];
         }
 
         return $raws;
@@ -757,7 +757,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected function buildSystemConditions(array $boolFilters)
     {
         $boolFilters[] = ['term' => ['system.active' => true]];
-        $boolFilters[] = ['term' => ['system.o_virtualProductActive' => true]];
+        $boolFilters[] = ['term' => ['system.virtualProductActive' => true]];
         if ($this->inProductList) {
             $boolFilters[] = ['term' => ['system.inProductList' => true]];
         }
@@ -1134,7 +1134,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
                 //necessary to calculate correct counts of search results for filter values
                 if ($this->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
                     $aggregations[$fieldname]['aggs'][$fieldname]['aggs'] = [
-                        'objectCount' => ['cardinality' => ['field' => 'system.o_virtualProductId']],
+                        'objectCount' => ['cardinality' => ['field' => 'system.virtualProductId']],
                     ];
                 }
             } else {
@@ -1143,7 +1143,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
                 //necessary to calculate correct counts of search results for filter values
                 if ($this->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
                     $aggregations[$fieldname]['aggs'] = [
-                        'objectCount' => ['cardinality' => ['field' => 'system.o_virtualProductId']],
+                        'objectCount' => ['cardinality' => ['field' => 'system.virtualProductId']],
                     ];
                 }
             }

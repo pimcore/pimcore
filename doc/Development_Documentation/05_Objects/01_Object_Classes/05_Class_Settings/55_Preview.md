@@ -15,7 +15,7 @@ This URL can be a normal detail-page of your object, for example reachable via a
 
 You can define placeholders in your preview URL, for example the object ID or some custom properties of the class. 
 You can use every property defined in the class even the properties which are added automatically by Pimcore, for 
-example `o_id`, `o_key`, ...
+example `id`, `key`, ...
 
 Placeholders have the same syntax as you already know from the custom routes, just put a `%` in front of the property 
 name. 
@@ -29,7 +29,7 @@ URL is opened in the tab. Only if you configure a preview URL in the class confi
 
 ![Object Preview](../../../img/classes-preview1.png)
 
-The above configuration (`/shop/product~p%o_id`)  will result in the URL `/shop/product~p247` 
+The above configuration (`/shop/product~p%id`)  will result in the URL `/shop/product~p247` 
 (or whatever the object id is).
 
 ![Object Preview](../../../img/classes-preview2.png)

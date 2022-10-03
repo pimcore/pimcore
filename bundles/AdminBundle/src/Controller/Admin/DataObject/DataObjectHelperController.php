@@ -1374,8 +1374,8 @@ class DataObjectHelperController extends AdminController
         }
 
         $list->setObjectTypes(DataObject::$types);
-        $list->setCondition('o_id IN (' . implode(',', $quotedIds) . ')');
-        $list->setOrderKey(' FIELD(o_id, ' . implode(',', $quotedIds) . ')', false);
+        $list->setCondition('id IN (' . implode(',', $quotedIds) . ')');
+        $list->setOrderKey(' FIELD(id, ' . implode(',', $quotedIds) . ')', false);
 
         $beforeListExportEvent = new GenericEvent($this, [
             'list' => $list,

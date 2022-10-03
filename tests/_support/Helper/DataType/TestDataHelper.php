@@ -754,7 +754,7 @@ class TestDataHelper extends AbstractTestDataHelper
     {
         $getter = 'get' . ucfirst($field);
 
-        $objects = $this->getObjectList("o_type = 'object'");
+        $objects = $this->getObjectList("type = 'object'");
 
         if ($language) {
             if ($language === 'de') {
@@ -833,7 +833,7 @@ class TestDataHelper extends AbstractTestDataHelper
      */
     public function getObjectsWithMetadataFixture($field, $seed)
     {
-        $objects = $this->getObjectList("o_type = 'object' AND o_className = 'unittest'");
+        $objects = $this->getObjectList("type = 'object' AND className = 'unittest'");
         $objects = array_slice($objects, 0, 4);
 
         $metaobjects = [];
@@ -1763,7 +1763,7 @@ class TestDataHelper extends AbstractTestDataHelper
     public function fillObjects($object, $field, $seed = 1, $language = null)
     {
         $setter = 'set' . ucfirst($field);
-        $objects = $this->getObjectList("o_type = 'object'");
+        $objects = $this->getObjectList("type = 'object'");
 
         if ($language) {
             if ($language == 'de') {

@@ -45,8 +45,8 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class FilterDefinition extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinition
 {
-protected $o_classId = "EF_FD";
-protected $o_className = "FilterDefinition";
+protected $classId = "EF_FD";
+protected $className = "FilterDefinition";
 protected $pageLimit;
 protected $defaultOrderByInheritance;
 protected $defaultOrderBy;

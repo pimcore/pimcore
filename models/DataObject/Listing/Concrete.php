@@ -284,7 +284,7 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     public function filterByPath($data, $operator = '=')
     {
-        $this->addFilterByField('o_path', $operator, $data);
+        $this->addFilterByField('path', $operator, $data);
 
         return $this;
     }
@@ -299,7 +299,7 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     public function filterByKey($data, $operator = '=')
     {
-        $this->addFilterByField('o_key', $operator, $data);
+        $this->addFilterByField('key', $operator, $data);
 
         return $this;
     }
@@ -314,7 +314,7 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     public function filterById($data, $operator = '=')
     {
-        $this->addFilterByField('o_id', $operator, $data);
+        $this->addFilterByField('id', $operator, $data);
 
         return $this;
     }
@@ -359,7 +359,7 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     public function filterByModificationDate($data, $operator = '=')
     {
-        $this->addFilterByField('o_modificationDate', $operator, $data);
+        $this->addFilterByField('modificationDate', $operator, $data);
 
         return $this;
     }

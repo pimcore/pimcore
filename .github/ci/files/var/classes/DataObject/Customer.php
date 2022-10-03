@@ -19,8 +19,8 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class Customer extends Concrete
 {
-protected $o_classId = "CU";
-protected $o_className = "Customer";
+protected $classId = "CU";
+protected $className = "Customer";
 
 /**
 * @param array $values

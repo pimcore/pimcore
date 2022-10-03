@@ -45,7 +45,7 @@ class Dao extends DataObject\Data\ObjectMetadata\Dao
         }
 
         $dataRaw = $this->db->fetchAllAssociative('SELECT * FROM ' .
-            $this->getTablename($source) . ' WHERE ' . $this->getTablename($source) .'.o_id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? and `index` = ? ' . $typeQuery, [$source->getId(), $destinationId, $fieldname, $ownertype, $ownername, $position, $index]);
+            $this->getTablename($source) . ' WHERE ' . $this->getTablename($source) .'.id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? and `index` = ? ' . $typeQuery, [$source->getId(), $destinationId, $fieldname, $ownertype, $ownername, $position, $index]);
         if (!empty($dataRaw)) {
             $this->model->setElementTypeAndId($destinationType, $destinationId);
             $this->model->setFieldname($fieldname);

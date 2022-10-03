@@ -59,7 +59,7 @@ class Service extends Model\Element\Service
      *
      * @var array
      */
-    protected static $systemFields = ['o_path', 'o_key', 'o_id', 'o_published', 'o_creationDate', 'o_modificationDate', 'o_fullpath'];
+    protected static $systemFields = ['path', 'key', 'id', 'published', 'creationDate', 'modificationDate', 'fullpath'];
 
     /**
      * @param Model\User $user
@@ -1435,9 +1435,9 @@ class Service extends Model\Element\Service
         }
 
         if (!$item->getId()) {
-            $list->setCondition('o_parentId = ? AND `o_key` = ? ', [$parent->getId(), $key]);
+            $list->setCondition('parentId = ? AND `key` = ? ', [$parent->getId(), $key]);
         } else {
-            $list->setCondition('o_parentId = ? AND `o_key` = ? AND o_id != ? ', [$parent->getId(), $key, $item->getId()]);
+            $list->setCondition('parentId = ? AND `key` = ? AND id != ? ', [$parent->getId(), $key, $item->getId()]);
         }
         $check = $list->loadIdList();
         if (!empty($check)) {

@@ -111,11 +111,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $childrenList->setOffset($offset);
 
             if ($object->getChildrenSortBy() === 'index') {
-                $childrenList->setOrderKey('objects.o_index ASC', false);
+                $childrenList->setOrderKey('objects.index ASC', false);
             } else {
                 $childrenList->setOrderKey(
                     sprintf(
-                        'CAST(objects.o_%s AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci %s',
+                        'CAST(objects.%s AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci %s',
                         $object->getChildrenSortBy(), $object->getChildrenSortOrder()
                     ),
                     false
@@ -185,7 +185,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     private function buildChildrenCondition(DataObject\AbstractObject $object, ?string $filter, ?string $view): string
     {
-        $condition = "objects.o_parentId = '" . $object->getId() . "'";
+        $condition = "objects.parentId = '" . $object->getId() . "'";
 
         // custom views start
         if ($view) {
@@ -195,10 +195,10 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 $cvConditions = [];
                 $cvClasses = $cv['classes'];
                 foreach ($cvClasses as $key => $cvClass) {
-                    $cvConditions[] = "objects.o_classId = '" . $key . "'";
+                    $cvConditions[] = "objects.classId = '" . $key . "'";
                 }
 
-                $cvConditions[] = "objects.o_type = 'folder'";
+                $cvConditions[] = "objects.type = 'folder'";
                 $condition .= ' AND (' . implode(' OR ', $cvConditions) . ')';
             }
         }
@@ -211,16 +211,16 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             $inheritedPermission = $object->getDao()->isInheritingPermission('list', $userIds);
 
-            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_object uwo WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(objects.o_path,objects.o_key),cpath)=1 AND
+            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_object uwo WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(objects.path,objects.key),cpath)=1 AND
                 NOT EXISTS(SELECT list FROM users_workspaces_object WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwo.cpath))';
-            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = objects.o_id AND list=0)';
+            $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = objects.id AND list=0)';
 
             $condition .= ' AND IF(' . $anyAllowedRowOrChildren . ',1,IF(' . $inheritedPermission . ', ' . $isDisallowedCurrentRow . ' = 0, 0)) = 1';
         }
 
         if (!is_null($filter)) {
             $db = Db::get();
-            $condition .= ' AND CAST(objects.o_key AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ' . $db->quote($filter);
+            $condition .= ' AND CAST(objects.key AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ' . $db->quote($filter);
         }
 
         return $condition;
@@ -329,7 +329,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         while ($parent = $object->getParent()) {
             $list = new DataObject\Listing();
-            $list->setCondition('o_parentId = ?', $parent->getId());
+            $list->setCondition('parentId = ?', $parent->getId());
             $list->setUnpublished(true);
             $total = $list->getTotalCount();
 
@@ -413,15 +413,15 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             $objectData['general'] = [];
 
-            $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_creationDate', 'o_classId', 'o_className', 'o_type', 'o_parentId', 'o_userOwner'];
+            $allowedKeys = ['published', 'key', 'id', 'creationDate', 'classId', 'className', 'type', 'parentId', 'userOwner'];
             foreach ($objectFromDatabase->getObjectVars() as $key => $value) {
                 if (in_array($key, $allowedKeys)) {
                     $objectData['general'][$key] = $value;
                 }
             }
-            $objectData['general']['o_title'] = $objectFromDatabase->getClass()->getTitle() ?: $objectFromDatabase->getClassName();
+            $objectData['general']['title'] = $objectFromDatabase->getClass()->getTitle() ?: $objectFromDatabase->getClassName();
             $objectData['general']['fullpath'] = $objectFromDatabase->getRealFullPath();
-            $objectData['general']['o_locked'] = $objectFromDatabase->isLocked();
+            $objectData['general']['locked'] = $objectFromDatabase->isLocked();
             $objectData['general']['php'] = [
                 'classes' => array_merge([get_class($objectFromDatabase)], array_values(class_parents($objectFromDatabase))),
                 'interfaces' => array_values(class_implements($objectFromDatabase)),
@@ -455,7 +455,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             /** -------------------------------------------------------------
              *   Load remaining general data from latest version
              *  ------------------------------------------------------------- */
-            $allowedKeys = ['o_modificationDate', 'o_userModification'];
+            $allowedKeys = ['modificationDate', 'userModification'];
             foreach ($object->getObjectVars() as $key => $value) {
                 if (in_array($key, $allowedKeys)) {
                     $objectData['general'][$key] = $value;
@@ -782,15 +782,15 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $objectData['general'] = [];
             $objectData['idPath'] = Element\Service::getIdPath($object);
             $objectData['type'] = $object->getType();
-            $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_type', 'o_path', 'o_modificationDate', 'o_creationDate', 'o_userOwner', 'o_userModification'];
+            $allowedKeys = ['published', 'key', 'id', 'type', 'path', 'modificationDate', 'creationDate', 'userOwner', 'userModification'];
             foreach ($object->getObjectVars() as $key => $value) {
-                if (strstr($key, 'o_') && in_array($key, $allowedKeys)) {
+                if (in_array($key, $allowedKeys)) {
                     $objectData['general'][$key] = $value;
                 }
             }
             $objectData['general']['fullpath'] = $object->getRealFullPath();
 
-            $objectData['general']['o_locked'] = $object->isLocked();
+            $objectData['general']['locked'] = $object->isLocked();
 
             $objectData['properties'] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
             $objectData['userPermissions'] = $object->getUserPermissions($this->getAdminUser());
@@ -937,12 +937,12 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         if ($parent->isAllowed('create')) {
             if (!DataObject\Service::pathExists($parent->getRealFullPath() . '/' . $request->get('key'))) {
                 $folder = DataObject\Folder::create([
-                    'o_parentId' => $request->get('parentId'),
-                    'o_creationDate' => time(),
-                    'o_userOwner' => $this->getAdminUser()->getId(),
-                    'o_userModification' => $this->getAdminUser()->getId(),
-                    'o_key' => $request->get('key'),
-                    'o_published' => true,
+                    'parentId' => $request->get('parentId'),
+                    'creationDate' => time(),
+                    'userOwner' => $this->getAdminUser()->getId(),
+                    'userModification' => $this->getAdminUser()->getId(),
+                    'key' => $request->get('key'),
+                    'published' => true,
                 ]);
 
                 try {
@@ -976,9 +976,9 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $parentObject = DataObject::getById((int) $request->get('id'));
 
             $list = new DataObject\Listing();
-            $list->setCondition('o_path LIKE ' . $list->quote($list->escapeLike($parentObject->getRealFullPath()) . '/%'));
+            $list->setCondition('path LIKE ' . $list->quote($list->escapeLike($parentObject->getRealFullPath()) . '/%'));
             $list->setLimit((int)$request->get('amount'));
-            $list->setOrderKey('LENGTH(o_path)', false);
+            $list->setOrderKey('LENGTH(path)', false);
             $list->setOrder('DESC');
 
             $deletedItems = [];
@@ -1217,15 +1217,15 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $result = $db->executeStatement(
                 'UPDATE '.$list->getDao()->getTableName().' o,
                     (
-                    SELECT newIndex, o_id FROM (
-                        SELECT @n := @n +1 AS newIndex, o_id
+                    SELECT newIndex, id FROM (
+                        SELECT @n := @n +1 AS newIndex, id
                         FROM '.$list->getDao()->getTableName().',
                                 (SELECT @n := -1) variable
-                                 WHERE o_parentId = ? ORDER BY o_key ' . $currentSortOrder
+                                 WHERE parentId = ? ORDER BY key ' . $currentSortOrder
                                .') tmp
                     ) order_table
-                    SET o.o_index = order_table.newIndex
-                    WHERE o.o_id=order_table.o_id',
+                    SET o.index = order_table.newIndex
+                    WHERE o.id=order_table.id',
                 [
                     $parentObject->getId(),
                 ]
@@ -1233,17 +1233,17 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             $db = Db::get();
             $children = $db->fetchAllAssociative(
-                'SELECT o_id, o_modificationDate, o_versionCount FROM objects'
-                .' WHERE o_parentId = ? ORDER BY o_index ASC',
+                'SELECT id, modificationDate, versionCount FROM objects'
+                .' WHERE parentId = ? ORDER BY index ASC',
                 [$parentObject->getId()]
             );
             $index = 0;
 
             foreach ($children as $child) {
-                $this->updateLatestVersionIndex($child['o_id'], $child['o_modificationDate']);
+                $this->updateLatestVersionIndex($child['id'], $child['modificationDate']);
                 $index++;
 
-                DataObject::clearDependentCacheByObjectId($child['o_id']);
+                DataObject::clearDependentCacheByObjectId($child['id']);
             }
         };
 
@@ -1284,22 +1284,22 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $db->executeStatement(
                 'UPDATE '.$list->getDao()->getTableName().' o,
                     (
-                        SELECT newIndex, o_id
+                        SELECT newIndex, id
                         FROM (
-                            With cte As (SELECT o_index, o_id FROM ' . $list->getDao()->getTableName() . ' WHERE o_parentId = ? AND o_id != ? AND o_type IN (\''.implode(
+                            With cte As (SELECT index, id FROM ' . $list->getDao()->getTableName() . ' WHERE parentId = ? AND id != ? AND type IN (\''.implode(
                     "','", [
                         DataObject::OBJECT_TYPE_OBJECT,
                         DataObject::OBJECT_TYPE_VARIANT,
                         DataObject::OBJECT_TYPE_FOLDER,
                     ]
-                ).'\') ORDER BY o_index LIMIT '. $updatedObject->getParent()->getChildAmount() .')
-                            SELECT @n := IF(@n = ? - 1,@n + 2,@n + 1) AS newIndex, o_id
+                ).'\') ORDER BY indexLIMIT '. $updatedObject->getParent()->getChildAmount() .')
+                            SELECT @n := IF(@n = ? - 1,@n + 2,@n + 1) AS newIndex, id
                             FROM cte,
                             (SELECT @n := -1) variable
                         ) tmp
                     ) order_table
-                    SET o.o_index = order_table.newIndex
-                    WHERE o.o_id=order_table.o_id',
+                    SET o.index = order_table.newIndex
+                    WHERE o.id=order_table.id',
                 [
                     $updatedObject->getParentId(),
                     $updatedObject->getId(),
@@ -1308,8 +1308,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             );
 
             $siblings = $db->fetchAllAssociative(
-                'SELECT o_id, o_modificationDate, o_versionCount, o_key, o_index FROM objects'
-                ." WHERE o_parentId = ? AND o_id != ? AND o_type IN ('object', 'variant','folder') ORDER BY o_index ASC",
+                'SELECT id, modificationDate, o_versionCount, key, indexFROM objects'
+                ." WHERE parentId = ? AND id != ? AND type IN ('object', 'variant','folder') ORDER BY indexASC",
                 [$updatedObject->getParentId(), $updatedObject->getId()]
             );
             $index = 0;
@@ -1319,10 +1319,10 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     $index++;
                 }
 
-                $this->updateLatestVersionIndex($sibling['o_id'], $index);
+                $this->updateLatestVersionIndex($sibling['id'], $index);
                 $index++;
 
-                DataObject::clearDependentCacheByObjectId($sibling['o_id']);
+                DataObject::clearDependentCacheByObjectId($sibling['id']);
             }
         };
 
@@ -1402,7 +1402,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             // do not allow all values to be set, will cause problems (eg. icon)
             if (is_array($general) && count($general) > 0) {
                 foreach ($general as $key => $value) {
-                    if (!in_array($key, ['o_id', 'o_classId', 'o_className', 'o_type', 'icon', 'o_userOwner', 'o_userModification', 'o_modificationDate'])) {
+                    if (!in_array($key, ['id', 'classId', 'className', 'type', 'icon', 'o_userOwner', 'o_userModification', 'modificationDate'])) {
                         $object->setValue($key, $value);
                     }
                 }
@@ -1449,7 +1449,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             return $this->adminJson([
                 'success' => true,
-                'general' => ['o_modificationDate' => $object->getModificationDate(),
+                'general' => ['modificationDate' => $object->getModificationDate(),
                     'versionDate' => $newObject->getModificationDate(),
                     'versionCount' => $newObject->getVersionCount(),
                 ],
@@ -1491,7 +1491,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             return $this->adminJson([
                 'success' => true,
-                'general' => ['o_modificationDate' => $object->getModificationDate(),
+                'general' => ['modificationDate' => $object->getModificationDate(),
                     'versionDate' => $newObject->getModificationDate(),
                     'versionCount' => $newObject->getVersionCount(),
                 ],
@@ -1642,7 +1642,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 return $this->adminJson(
                     [
                         'success' => true,
-                        'general' => ['o_modificationDate' => $object->getModificationDate() ],
+                        'general' => ['modificationDate' => $object->getModificationDate() ],
                         'treeData' => $treeData, ]
                 );
             } catch (\Exception $e) {
@@ -1831,8 +1831,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             if ($object->hasChildren(DataObject::$types)) {
                 // get amount of children
                 $list = new DataObject\Listing();
-                $list->setCondition('o_path LIKE ' . $list->quote($list->escapeLike($object->getRealFullPath()) . '/%'));
-                $list->setOrderKey('LENGTH(o_path)', false);
+                $list->setCondition('path LIKE ' . $list->quote($list->escapeLike($object->getRealFullPath()) . '/%'));
+                $list->setOrderKey('LENGTH(path)', false);
                 $list->setOrder('ASC');
                 $list->setObjectTypes(DataObject::$types);
                 $childIds = $list->loadIdList();

@@ -349,7 +349,7 @@ class Service extends Model\AbstractModel
 
                         break;
                     case 'object':
-                        $idColumn = 'o_id';
+                        $idColumn = 'id';
                         $publishedColumn = 'o_published';
 
                         break;
@@ -641,13 +641,13 @@ class Service extends Model\AbstractModel
             //$p = object2array($p);
             $allowedProperties = [
                 'key',
-                'o_key',
+                'key',
                 'filename',
                 'path',
-                'o_path',
+                'path',
                 'id',
-                'o_id',
-                'o_type',
+                'id',
+                'type',
                 'type',
             ];
 

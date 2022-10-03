@@ -90,8 +90,8 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class OnlineShopOrder extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder
 {
-protected $o_classId = "EF_OSO";
-protected $o_className = "OnlineShopOrder";
+protected $classId = "EF_OSO";
+protected $className = "OnlineShopOrder";
 protected $ordernumber;
 protected $orderState;
 protected $orderdate;

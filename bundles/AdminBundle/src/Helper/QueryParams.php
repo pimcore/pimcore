@@ -83,7 +83,7 @@ class QueryParams
      *
      * @throws \Exception
      */
-    public static function getFilterCondition($filterString, $matchExact = ['id', 'o_id'], $returnString = true, $callbacks = [])
+    public static function getFilterCondition($filterString, $matchExact = ['id', 'id'], $returnString = true, $callbacks = [])
     {
         if (!$filterString) {
             return '';

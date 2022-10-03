@@ -68,11 +68,11 @@ class Warming
 
         $classesCondition = '';
         if (!empty($classes)) {
-            $classesCondition .= " AND o_className IN ('" . implode("','", $classes) . "')";
+            $classesCondition .= " AND className IN ('" . implode("','", $classes) . "')";
         }
 
         $list = new DataObject\Listing();
-        $list->setCondition("o_type IN ('" . implode("','", $types) . "')" . $classesCondition);
+        $list->setCondition("type IN ('" . implode("','", $types) . "')" . $classesCondition);
 
         self::loadToCache($list);
     }

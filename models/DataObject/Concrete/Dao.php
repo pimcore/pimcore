@@ -54,11 +54,11 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      */
     public function getById($id)
     {
-        $data = $this->db->fetchAssociative("SELECT objects.*, tree_locks.locked as o_locked FROM objects
-            LEFT JOIN tree_locks ON objects.o_id = tree_locks.id AND tree_locks.type = 'object'
-                WHERE o_id = ?", [$id]);
+        $data = $this->db->fetchAssociative("SELECT objects.*, tree_locks.locked as locked FROM objects
+            LEFT JOIN tree_locks ON objects.id = tree_locks.id AND tree_locks.type = 'object'
+                WHERE objects.id = ?", [$id]);
 
-        if (!empty($data['o_id'])) {
+        if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
             $this->getData();
         } else {
@@ -107,12 +107,12 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             $src = 'dest_id';
         }
 
-        $relations = $this->db->fetchAllAssociative('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.o_className as subtype, o.o_published as published, concat(o.o_path ,o.o_key) as path , r.index
+        $relations = $this->db->fetchAllAssociative('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.className as subtype, o.o_published as published, concat(o.path ,o.key) as path , r.index
             FROM objects o, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'object'
             AND r." . $src . ' = ?
-            AND o.o_id = r.' . $dest . "
+            AND o.id = r.' . $dest . "
             AND r.type='object'
 
             UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type,  a.type as subtype, "null" as published, concat(a.path,a.filename) as path, r.index
@@ -258,7 +258,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                 ]
                 ;
                 if ($this->model instanceof Model\Element\DirtyIndicatorInterface) {
-                    $saveParams['newParent'] = $this->model->isFieldDirty('o_parentId');
+                    $saveParams['newParent'] = $this->model->isFieldDirty('parentId');
                 }
                 $fd->save($this->model, $saveParams);
             }

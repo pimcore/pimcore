@@ -76,10 +76,10 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
     {
         try {
             $this->db->beginTransaction();
-            $this->db->delete($this->tenantConfig->getTablename(), ['o_id' => $objectId]);
+            $this->db->delete($this->tenantConfig->getTablename(), ['id' => $objectId]);
             $this->db->delete($this->tenantConfig->getRelationTablename(), ['src' => $objectId]);
             if ($this->tenantConfig->getTenantRelationTablename()) {
-                $this->db->delete($this->tenantConfig->getTenantRelationTablename(), ['o_id' => $objectId]);
+                $this->db->delete($this->tenantConfig->getTenantRelationTablename(), ['id' => $objectId]);
             }
 
             $this->deleteFromMockupCache($objectId);
@@ -121,7 +121,7 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
     public function doUpdateIndex($objectId, $data = null, $metadata = null)
     {
         if (empty($data)) {
-            $data = $this->db->fetchOne('SELECT data FROM ' . self::STORE_TABLE_NAME . ' WHERE o_id = ? AND tenant = ?', [$objectId, $this->name]);
+            $data = $this->db->fetchOne('SELECT data FROM ' . self::STORE_TABLE_NAME . ' WHERE id = ? AND tenant = ?', [$objectId, $this->name]);
             $data = json_decode($data, true);
         }
 
@@ -138,7 +138,7 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
                 }
 
                 //insert sub tenant data
-                $this->tenantConfig->updateSubTenantEntries($objectId, $data['subtenants'], $data['data']['o_id']);
+                $this->tenantConfig->updateSubTenantEntries($objectId, $data['subtenants'], $data['data']['id']);
 
                 //save new indexed element to mockup cache
                 $this->saveToMockupCache($objectId, $data);

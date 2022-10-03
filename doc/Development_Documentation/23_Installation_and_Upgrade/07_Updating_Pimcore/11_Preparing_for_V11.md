@@ -30,7 +30,7 @@
         },
     
         preSaveObject: function (object, type) {
-            var userAnswer = confirm("Are you sure you want to save " + object.data.general.o_className + "?");
+            var userAnswer = confirm("Are you sure you want to save " + object.data.general.className + "?");
             if (!userAnswer) {
                 throw new pimcore.error.ActionCancelledException('Cancelled by user');
             }
@@ -42,7 +42,7 @@
     
     ```javascript
     document.addEventListener(pimcore.events.preSaveObject, (e) => {
-        let userAnswer = confirm(`Are you sure you want to save ${e.detail.object.data.general.o_className}?`);
+        let userAnswer = confirm(`Are you sure you want to save ${e.detail.object.data.general.className}?`);
         if (!userAnswer) {
            e.preventDefault();
            e.stopPropagation();

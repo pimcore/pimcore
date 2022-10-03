@@ -250,7 +250,7 @@ class Dao extends Model\Dao\AbstractDao
         $map = [
             'document' => ['documents', 'id', 'type', '\Pimcore\Model\Document'],
             'asset' => ['assets', 'id', 'type', '\Pimcore\Model\Asset'],
-            'object' => ['objects', 'o_id', 'o_type', '\Pimcore\Model\DataObject\AbstractObject'],
+            'object' => ['objects', 'id', 'type', '\Pimcore\Model\DataObject\AbstractObject'],
         ];
 
         $select = $this->db->createQueryBuilder()->select(['*'])
@@ -282,7 +282,7 @@ class Dao extends Model\Dao\AbstractDao
             foreach ($classNames as $cName) {
                 $quotedClassNames[] = $this->db->quote($cName);
             }
-            $select->andWhere('o_className IN ( ' .  implode(',', $quotedClassNames) . ' )');
+            $select->andWhere('className IN ( ' .  implode(',', $quotedClassNames) . ' )');
         }
 
         $res = $this->db->executeQuery((string) $select, $select->getParameters());

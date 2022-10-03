@@ -40,7 +40,7 @@ class ProductType implements OrderListFilterInterface
             $types[] = $db->quote($type);
         }
         $queryBuilder = $orderList->getQueryBuilder();
-        $condition = 'orderItemObjects.o_className IN (' . implode(',', $types) . ')';
+        $condition = 'orderItemObjects.className IN (' . implode(',', $types) . ')';
         $queryBuilder->andWhere($condition);
 
         return $this;

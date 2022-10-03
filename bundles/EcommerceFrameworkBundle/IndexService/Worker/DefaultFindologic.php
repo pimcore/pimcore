@@ -274,7 +274,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
     protected function doDeleteFromIndex($objectId, IndexableInterface $object = null)
     {
         $this->db->executeQuery(sprintf('DELETE FROM %1$s WHERE id = %2$d', $this->getExportTableName(), $objectId));
-        $this->db->executeQuery(sprintf('DELETE FROM %1$s WHERE o_id = %2$d', $this->getStoreTableName(), $objectId));
+        $this->db->executeQuery(sprintf('DELETE FROM %1$s WHERE id = %2$d', $this->getStoreTableName(), $objectId));
     }
 
     /**

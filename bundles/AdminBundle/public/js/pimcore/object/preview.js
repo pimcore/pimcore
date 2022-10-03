@@ -67,7 +67,7 @@ Ext.define('pimcore.object.preview', {
         }
 
         var date = new Date();
-        params['id'] = this.element.data.general.o_id;
+        params['id'] = this.element.data.general.id;
         params['_dc'] = date.getTime();
 
         var url = Routing.generate('pimcore_admin_dataobject_dataobject_preview', params);

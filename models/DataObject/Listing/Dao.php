@@ -68,8 +68,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $list = $this->loadIdList();
 
         $objects = [];
-        foreach ($list as $o_id) {
-            if ($object = DataObject::getById($o_id)) {
+        foreach ($list as $id) {
+            if ($object = DataObject::getById($id)) {
                 $objects[] = $object;
             }
         }
@@ -85,7 +85,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount()
     {
         $queryBuilder = $this->getQueryBuilder();
-        $this->prepareQueryBuilderForTotalCount($queryBuilder, $this->getTableName() . '.o_id');
+        $this->prepareQueryBuilderForTotalCount($queryBuilder, $this->getTableName() . '.id');
 
         $totalCount = $this->db->fetchOne((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
@@ -113,7 +113,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList()
     {
-        $queryBuilder = $this->getQueryBuilder([sprintf('%s as o_id', $this->getTableName() . '.o_id'), sprintf('%s as o_type', $this->getTableName() . '.o_type')]);
+        $queryBuilder = $this->getQueryBuilder([sprintf('%s as id', $this->getTableName() . '.id'), sprintf('%s as type', $this->getTableName() . '.type')]);
         $objectIds = $this->db->fetchFirstColumn((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return array_map('intval', $objectIds);

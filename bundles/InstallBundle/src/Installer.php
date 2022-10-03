@@ -727,15 +727,15 @@ class Installer
             'description' => '',
         ]));
         $db->insert('objects', Helper::quoteDataIdentifiers($db, [
-            'o_id' => 1,
-            'o_parentId' => 0,
-            'o_type' => 'folder',
-            'o_key' => '',
-            'o_path' => '/',
+            'id' => 1,
+            'parentId' => 0,
+            'type' => 'folder',
+            'key' => '',
+            'path' => '/',
             'o_index' => 999999,
             'o_published' => 1,
             'o_creationDate' => time(),
-            'o_modificationDate' => time(),
+            'modificationDate' => time(),
             'o_userOwner' => 1,
             'o_userModification' => 1,
         ]));

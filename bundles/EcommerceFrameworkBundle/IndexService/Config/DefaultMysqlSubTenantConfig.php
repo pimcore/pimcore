@@ -113,7 +113,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
     {
         $currentSubTenant = $this->environment->getCurrentAssortmentSubTenant();
         if ($currentSubTenant) {
-            return ' INNER JOIN ' . $this->getTenantRelationTablename() . ' b ON a.o_id = b.o_id ';
+            return ' INNER JOIN ' . $this->getTenantRelationTablename() . ' b ON a.id = b.id ';
         } else {
             return '';
         }
@@ -158,7 +158,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
             }
 
             foreach ($tenants as $tenant) {
-                $subTenantData[] = ['o_id' => $object->getId(), 'subtenant_id' => $tenant->getId()];
+                $subTenantData[] = ['id' => $object->getId(), 'subtenant_id' => $tenant->getId()];
             }
         }
 
@@ -178,7 +178,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
      */
     public function updateSubTenantEntries($objectId, $subTenantData, $subObjectId = null)
     {
-        $this->db->delete($this->getTenantRelationTablename(), ['o_id' => $subObjectId ?: $objectId]);
+        $this->db->delete($this->getTenantRelationTablename(), ['id' => $subObjectId ?: $objectId]);
 
         if ($subTenantData) {
             //implementation specific tenant get logic

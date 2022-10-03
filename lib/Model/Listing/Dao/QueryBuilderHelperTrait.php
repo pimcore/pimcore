@@ -59,7 +59,7 @@ trait QueryBuilderHelperTrait
                 if (!empty($condition)) {
                     $condition .= ' AND ';
                 }
-                $condition .= ' ' . $tableName . ".o_type IN ('" . implode("','", $objectTypes) . "')";
+                $condition .= ' ' . $tableName . ".type IN ('" . implode("','", $objectTypes) . "')";
             }
 
             if ($condition) {
