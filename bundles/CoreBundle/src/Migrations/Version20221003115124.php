@@ -45,12 +45,6 @@ final class Version20221003115124 extends AbstractMigration
         $this->addSql("ALTER TABLE pimcore.objects CHANGE o_childrenSortBy childrenSortBy enum('key','index') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
         $this->addSql("ALTER TABLE pimcore.objects CHANGE o_childrenSortOrder childrenSortOrder enum('ASC','DESC') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
         $this->addSql("ALTER TABLE pimcore.objects CHANGE o_versionCount versionCount int(10) unsigned DEFAULT 0 NOT NULL;");
-        $this->addSql("ALTER TABLE pimcore.shop_productindex CHANGE o_id id int(11) DEFAULT 0 NOT NULL;");
-        $this->addSql("ALTER TABLE pimcore.shop_productindex CHANGE o_virtualProductId virtualProductId int(11) NOT NULL;");
-        $this->addSql("ALTER TABLE pimcore.shop_productindex CHANGE o_virtualProductActive virtualProductActive tinyint(1) NOT NULL;");
-        $this->addSql("ALTER TABLE pimcore.shop_productindex CHANGE o_classId classId int(11) NOT NULL;");
-        $this->addSql("ALTER TABLE pimcore.shop_productindex CHANGE o_parentId parentId int(11) NOT NULL;");
-        $this->addSql("ALTER TABLE pimcore.shop_productindex CHANGE o_type `type` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL;");
 
         foreach($schema->getTables() as $table) {
             if($table->hasColumn("o_id")) {
@@ -84,12 +78,6 @@ final class Version20221003115124 extends AbstractMigration
         $this->addSql("ALTER TABLE pimcore.objects CHANGE childrenSortBy o_childrenSortBy enum('key','index') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
         $this->addSql("ALTER TABLE pimcore.objects CHANGE childrenSortOrder o_childrenSortOrder enum('ASC','DESC') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
         $this->addSql("ALTER TABLE pimcore.objects CHANGE versionCount o_versionCount int(10) unsigned DEFAULT 0 NOT NULL;");
-        $this->addSql("ALTER TABLE pimcore.shop_productindex CHANGE id o_id int(11) DEFAULT 0 NOT NULL;");
-        $this->addSql("ALTER TABLE pimcore.shop_productindex CHANGE virtualProductId o_virtualProductId int(11) NOT NULL;");
-        $this->addSql("ALTER TABLE pimcore.shop_productindex CHANGE virtualProductActive o_virtualProductActive tinyint(1) NOT NULL;");
-        $this->addSql("ALTER TABLE pimcore.shop_productindex CHANGE classId o_classId int(11) NOT NULL;");
-        $this->addSql("ALTER TABLE pimcore.shop_productindex CHANGE parentId o_parentId int(11) NOT NULL;");
-        $this->addSql("ALTER TABLE pimcore.shop_productindex CHANGE `type` `o_type` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL;");
 
         foreach($schema->getTables() as $table) {
             if($table->hasColumn("id")) {
