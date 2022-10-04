@@ -66,8 +66,8 @@ class PublicServicesController extends Controller
                     try {
                         $storage = Storage::get('thumbnail');
 
-                        $videoThumbnail = $asset->getThumbnail('content', ['mp4']);
-                        $storagePath = urldecode($videoThumbnail['formats']['mp4']);
+                        $videoThumbnail = $asset->getThumbnail($thumbnailName, [$requestedFileExtension]);
+                        $storagePath = urldecode($videoThumbnail['formats'][$requestedFileExtension]);
 
                         if ($storage->fileExists($storagePath)) {
                             $thumbnailStream = $storage->readStream($storagePath);
