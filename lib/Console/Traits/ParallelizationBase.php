@@ -33,7 +33,8 @@ if (trait_exists('\Webmozarts\Console\Parallelization\Parallelization')) {
         /**
          * {@inheritdoc}
          */
-        public function execute(InputInterface $input, OutputInterface $output): void
+        public function execute(InputInterface $input, OutputInterface $output): int
+
         {
             $this->runBeforeFirstCommand($input, $output);
 
