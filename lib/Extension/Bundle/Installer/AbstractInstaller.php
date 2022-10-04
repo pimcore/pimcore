@@ -18,7 +18,6 @@ namespace Pimcore\Extension\Bundle\Installer;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\Output;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class AbstractInstaller implements InstallerInterface
 {
