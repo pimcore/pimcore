@@ -44,6 +44,11 @@ class PublicServicesController extends Controller
      */
     public function thumbnailAction(Request $request)
     {
+        // set appropriate caching headers
+        // see also: https://github.com/pimcore/pimcore/blob/1931860f0aea27de57e79313b2eb212dcf69ef13/.htaccess#L86-L86
+        $lifetime = 86400 * 7; // 1 week lifetime, same as direct delivery in .htaccess
+
+
         $assetId = (int) $request->get('assetId');
         $thumbnailName = $request->get('thumbnailName');
         $filename = $request->get('filename');
@@ -56,6 +61,37 @@ class PublicServicesController extends Controller
             if ($asset->getPath() === ('/' . $prefix)) {
                 // we need to check the path as well, this is important in the case you have restricted the public access to
                 // assets via rewrite rules
+
+                if ($asset instanceof Asset\Video && $request->get('type') == 'video') {
+                    try {
+                        $storage = Storage::get('thumbnail');
+
+                        $videoThumbnail = $asset->getThumbnail('content', ['mp4']);
+                        $storagePath = urldecode($videoThumbnail['formats']['mp4']);
+
+                        if ($storage->fileExists($storagePath)) {
+                            $thumbnailStream = $storage->readStream($storagePath);
+                            $headers = [
+                                'Cache-Control' => 'public, max-age=' . $lifetime,
+                                'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
+                                'Content-Type' => $storage->mimeType($storagePath),
+                                'Content-Length' => $storage->fileSize($storagePath)
+                            ];
+
+                            $headers[AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER] = true;
+
+                            return new StreamedResponse(function () use ($thumbnailStream) {
+                                fpassthru($thumbnailStream);
+                            }, 200, $headers);
+                        }
+                        throw new \Exception('Unable to generate video thumbnail, see logs for details.');
+                    } catch (\Exception $e) {
+                        Logger::error($e->getMessage());
+
+                        return new RedirectResponse('/bundles/pimcoreadmin/img/filetype-not-supported.svg');
+                    }
+                }
+
                 try {
                     $imageThumbnail = null;
                     $thumbnailStream = null;
@@ -145,10 +181,6 @@ class PublicServicesController extends Controller
                             $requestedFile = preg_replace('/\.' . $actualFileExtension . '$/', '.' . $requestedFileExtension, $pathReference['src']);
                             Storage::get('thumbnail')->writeStream($requestedFile, $thumbnailStream);
                         }
-
-                        // set appropriate caching headers
-                        // see also: https://github.com/pimcore/pimcore/blob/1931860f0aea27de57e79313b2eb212dcf69ef13/.htaccess#L86-L86
-                        $lifetime = 86400 * 7; // 1 week lifetime, same as direct delivery in .htaccess
 
                         $headers = [
                             'Cache-Control' => 'public, max-age=' . $lifetime,
