@@ -15,6 +15,8 @@
 
 namespace Pimcore\Messenger\Handler;
 
+use Pimcore\Db;
+use Pimcore\Logger;
 use Pimcore\Messenger\SearchBackendMessage;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -41,6 +43,7 @@ class SearchBackendHandler implements BatchHandlerInterface
     private function processElement(Element\ElementInterface $element, bool $updateChildren) {
 
         $searchEntry = Data::getForElement($element);
+        $originalFullPath = $searchEntry->getFullPath();
         if ($searchEntry->getId() instanceof Data\Id) {
             $searchEntry->setDataFromElement($element);
         } else {
@@ -49,13 +52,11 @@ class SearchBackendHandler implements BatchHandlerInterface
         $searchEntry->save();
 
         if ($updateChildren) {
-            if ($element instanceof Asset || $element instanceof AbstractObject || $element instanceof Document) {
-                foreach ($element->getChildren() as $child) {
-                    $data = Data::getForElement($child);
-
-                    $this->processElement($child, $shouldChildrenBeUpdated);
-
-                }
+            try {
+                $db = Db::getConnection();
+                $db->exec(sprintf("update search_backend_data set fullpath=replace(fullpath, '%s', '%s') where fullpath like '%s%%'", $originalFullPath, $searchEntry->getFullPath(), $originalFullPath));
+            } catch (\Throwable $exception) {
+                Logger::error('Could not update the search indices for children: ' . $exception->getMessage());
             }
         }
     }
