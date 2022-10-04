@@ -425,15 +425,11 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
 
     remove: function () {
-        const options = {
+        var options = {
             "elementType" : "object",
             "id": this.id
         };
-        Ext.MessageBox.confirm(t('delete_folder'), `${t('delete_entire_folder_question')} ${this.data.general.o_key}?`, function(btn){
-            if (btn === 'yes') {
-                pimcore.elementservice.deleteElement(options);
-            }
-        });
+        pimcore.elementservice.deleteElement(options);
     },
 
     isAllowed : function (key) {

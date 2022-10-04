@@ -74,7 +74,7 @@ pimcore.elementservice.deleteElementsComplete = function(options, response) {
 pimcore.elementservice.deleteElementCheckDependencyComplete = function (window, res, options) {
 
     try {
-        var message = res.batchDelete ? t('delete_message_batch') : t('delete_message');
+        let message = res.batchDelete ? t('delete_message_batch') : t('delete_message');
         if (res.elementKey) {
             message += "<br /><b style='display: block; text-align: center; padding: 10px 0;'>\"" + htmlspecialchars(res.elementKey) + "\"</b>";
         }
@@ -84,6 +84,10 @@ pimcore.elementservice.deleteElementCheckDependencyComplete = function (window, 
 
         if (res['children'] > 100) {
             message += "<br /><br /><b>" + t("too_many_children_for_recyclebin") + "</b>";
+        }
+
+        if(res.itemResults[0].type === "folder") {
+            message += `<br /><br /><b> ${t('delete_entire_folder_question')} </b>`;
         }
 
         Ext.MessageBox.show({

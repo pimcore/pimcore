@@ -986,5 +986,5 @@
     "could_not_open_zip_file": "The uploaded zip file could not be opened.",
     "objects_sort_method": "Change data objects sort method",
     "link_recursion_error": "The link is redirecting to itself, causing an infinite loop",
-    "delete_entire_folder_question": "This operation will delete the entire parent/folder. Are you sure that you want to delete"
+    "delete_entire_folder_question": "This operation will delete the entire parent/folder. Are you sure that you want to delete the folder?"
 }
