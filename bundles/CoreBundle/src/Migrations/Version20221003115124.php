@@ -51,28 +51,6 @@ final class Version20221003115124 extends AbstractMigration
         $this->addSql("ALTER TABLE pimcore.shop_productindex CHANGE o_classId classId int(11) NOT NULL;");
         $this->addSql("ALTER TABLE pimcore.shop_productindex CHANGE o_parentId parentId int(11) NOT NULL;");
         $this->addSql("ALTER TABLE pimcore.shop_productindex CHANGE o_type `type` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL;");
-        $this->addSql("DROP FUNCTION `pimcore`.`PLUGIN_CMF_COLLECT_OBJECT_SEGMENT_ASSIGNMENTS`");
-        $this->addSql("CREATE DEFINER=`pimcore`@`%` FUNCTION `pimcore`.`PLUGIN_CMF_COLLECT_OBJECT_SEGMENT_ASSIGNMENTS`(elementIdent INT) RETURNS text CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci
-    READS SQL DATA
-BEGIN
-    DECLARE segmentIds TEXT;
-    DECLARE elementExists TINYINT;
-    DECLARE breaks TINYINT;
-
-    SELECT `segments` FROM `plugin_cmf_segment_assignment` WHERE `elementId` = elementIdent AND `elementType` = 'object' INTO segmentIds;
-    SELECT COUNT(*) FROM `plugin_cmf_segment_assignment` WHERE `elementId` = elementIdent AND `elementType` = 'object' INTO elementExists;
-    SELECT `breaksInheritance` FROM `plugin_cmf_segment_assignment` WHERE `elementId` = elementIdent AND `elementType` = 'object' INTO breaks;
-
-    WHILE (elementExists = 0 OR breaks IS NULL OR breaks <> 1) AND elementIdent > 1 DO
-      SELECT `parentId`  FROM `objects` WHERE `id` = elementIdent INTO elementIdent;
-      SELECT CONCAT_WS(',', segmentIds, (SELECT `segments` FROM `plugin_cmf_segment_assignment` WHERE `elementId` = elementIdent AND `elementType` = 'object')) INTO segmentIds;
-      SELECT COUNT(*) FROM `plugin_cmf_segment_assignment` WHERE `elementId` = elementIdent AND `elementType` = 'object' INTO elementExists;
-      SELECT `breaksInheritance` INTO breaks FROM `plugin_cmf_segment_assignment` WHERE `elementId` = elementIdent AND `elementType` = 'object';
-    END WHILE;
-
-    RETURN segmentIds;
-  END;
-");
 
         foreach($schema->getTables() as $table) {
             if($table->hasColumn("o_id")) {
@@ -112,29 +90,6 @@ BEGIN
         $this->addSql("ALTER TABLE pimcore.shop_productindex CHANGE classId o_classId int(11) NOT NULL;");
         $this->addSql("ALTER TABLE pimcore.shop_productindex CHANGE parentId o_parentId int(11) NOT NULL;");
         $this->addSql("ALTER TABLE pimcore.shop_productindex CHANGE `type` `o_type` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL;");
-        $this->addSql("DROP FUNCTION `pimcore`.`PLUGIN_CMF_COLLECT_OBJECT_SEGMENT_ASSIGNMENTS`");
-        $this->addSql("CREATE DEFINER=`pimcore`@`%` FUNCTION `pimcore`.`PLUGIN_CMF_COLLECT_OBJECT_SEGMENT_ASSIGNMENTS`(elementIdent INT) RETURNS text CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci
-    READS SQL DATA
-BEGIN
-    DECLARE segmentIds TEXT;
-    DECLARE elementExists TINYINT;
-    DECLARE breaks TINYINT;
-
-    SELECT `segments` FROM `plugin_cmf_segment_assignment` WHERE `elementId` = elementIdent AND `elementType` = 'object' INTO segmentIds;
-    SELECT COUNT(*) FROM `plugin_cmf_segment_assignment` WHERE `elementId` = elementIdent AND `elementType` = 'object' INTO elementExists;
-    SELECT `breaksInheritance` FROM `plugin_cmf_segment_assignment` WHERE `elementId` = elementIdent AND `elementType` = 'object' INTO breaks;
-
-    WHILE (elementExists = 0 OR breaks IS NULL OR breaks <> 1) AND elementIdent > 1 DO
-      SELECT `o_parentId`  FROM `objects` WHERE `o_id` = elementIdent INTO elementIdent;
-      SELECT CONCAT_WS(',', segmentIds, (SELECT `segments` FROM `plugin_cmf_segment_assignment` WHERE `elementId` = elementIdent AND `elementType` = 'object')) INTO segmentIds;
-      SELECT COUNT(*) FROM `plugin_cmf_segment_assignment` WHERE `elementId` = elementIdent AND `elementType` = 'object' INTO elementExists;
-      SELECT `breaksInheritance` INTO breaks FROM `plugin_cmf_segment_assignment` WHERE `elementId` = elementIdent AND `elementType` = 'object';
-    END WHILE;
-
-    RETURN segmentIds;
-  END;
-");
-
 
         foreach($schema->getTables() as $table) {
             if($table->hasColumn("id")) {
