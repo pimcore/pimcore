@@ -858,7 +858,7 @@ class OrderManager implements OrderManagerInterface
         $paymentProvider->applyRecurringPaymentCondition($orders, ['paymentMethod' => $paymentMethod]);
 
         if (empty($orders->getOrderKey())) {
-            $orders->setOrderKey('o_creationDate');
+            $orders->setOrderKey('creationDate');
             $orders->setOrder('DESC');
         }
 

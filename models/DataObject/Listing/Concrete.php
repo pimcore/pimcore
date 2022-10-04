@@ -344,7 +344,7 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     public function filterByCreationDate($data, $operator = '=')
     {
-        $this->addFilterByField('o_creationDate', $operator, $data);
+        $this->addFilterByField('creationDate', $operator, $data);
 
         return $this;
     }

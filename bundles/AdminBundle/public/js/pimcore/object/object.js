@@ -95,7 +95,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             pimcore.elementservice.setElementPublishedState({
                 elementType: "object",
                 id: this.id,
-                published: this.data.general.o_published
+                published: this.data.general.published
             });
 
         }
@@ -390,7 +390,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                         text: t('save_only_scheduled_tasks'),
                         iconCls: "pimcore_icon_save",
                         handler: this.save.bind(this, "scheduler", "scheduler"),
-                        hidden: !this.isAllowed("settings") || this.data.general.o_published
+                        hidden: !this.isAllowed("settings") || this.data.general.published
                     }
                 ]
             });
@@ -411,13 +411,13 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                         text: t('save_draft'),
                         iconCls: "pimcore_icon_save",
                         handler: this.save.bind(this, "version"),
-                        hidden: !this.isAllowed("save") || !this.data.general.o_published
+                        hidden: !this.isAllowed("save") || !this.data.general.published
                     },
                     {
                         text: t('save_only_scheduled_tasks'),
                         iconCls: "pimcore_icon_save",
                         handler: this.save.bind(this, "scheduler", "scheduler"),
-                        hidden: !this.isAllowed("settings") || !this.data.general.o_published
+                        hidden: !this.isAllowed("settings") || !this.data.general.published
                     }
                 ]
             });
@@ -598,7 +598,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 overflowHandler: 'scroller'
             });
 
-            if (!this.data.general.o_published) {
+            if (!this.data.general.published) {
                 this.toolbarButtons.unpublish.hide();
             } else if (this.isAllowed("publish")) {
                 this.toolbarButtons.save.hide();
@@ -693,7 +693,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         return this.save("publish", only, callback, function (rdata) {
             if (rdata && rdata.success) {
                 //set the object as published only if in the response error doesn't exist
-                this.data.general.o_published = true;
+                this.data.general.published = true;
                 // toggle buttons
                 this.toolbarButtons.unpublish.show();
                 this.toolbarButtons.save.hide();
@@ -710,7 +710,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     unpublish: function (only, callback) {
         this.save("unpublish", only, callback, function (rdata) {
             if (rdata && rdata.success) {
-                this.data.general.o_published = false;
+                this.data.general.published = false;
 
                 // toggle buttons
                 this.toolbarButtons.unpublish.hide();
@@ -1014,7 +1014,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             var elementData = {
                 id:this.id,
                 type:'object',
-                published:this.data.general.o_published,
+                published:this.data.general.published,
                 path:this.data.general.fullpath
             };
             if (pimcore.globalmanager.get("new_notifications")) {

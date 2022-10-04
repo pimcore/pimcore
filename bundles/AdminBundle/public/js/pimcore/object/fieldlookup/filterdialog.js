@@ -194,8 +194,8 @@ pimcore.object.fieldlookup.filterdialog = Class.create({
             var mapping = {
                 id: "id",
                 key: "key",
-                published: "o_published",
-                creationDate: "o_creationDate",
+                published: "published",
+                creationDate: "creationDate",
                 modificationDate: "modificationDate",
                 classname: "className",
                 filename: "key"

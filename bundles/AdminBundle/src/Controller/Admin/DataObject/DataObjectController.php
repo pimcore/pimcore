@@ -1402,7 +1402,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             // do not allow all values to be set, will cause problems (eg. icon)
             if (is_array($general) && count($general) > 0) {
                 foreach ($general as $key => $value) {
-                    if (!in_array($key, ['id', 'classId', 'className', 'type', 'icon', 'o_userOwner', 'o_userModification', 'modificationDate'])) {
+                    if (!in_array($key, ['id', 'classId', 'className', 'type', 'icon', 'userOwner', 'userModification', 'modificationDate'])) {
                         $object->setValue($key, $value);
                     }
                 }

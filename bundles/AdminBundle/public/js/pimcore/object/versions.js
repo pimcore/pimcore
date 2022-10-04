@@ -88,7 +88,7 @@ pimcore.object.versions = Class.create({
                             var versionCount = cellValues.get('versionCount');
                             var index = cellValues.get('index');
                             if (index === 0 && d == this.object.data.general.versionDate && versionCount == this.object.data.general.versionCount) {
-                                if(this.object.data.general.o_published) {
+                                if(this.object.data.general.published) {
                                     metaData.tdCls = "pimcore_icon_publish";
                                 } else {
                                     metaData.tdCls = "pimcore_icon_sql";
