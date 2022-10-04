@@ -1308,7 +1308,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             );
 
             $siblings = $db->fetchAllAssociative(
-                'SELECT id, modificationDate, o_versionCount, key, indexFROM objects'
+                'SELECT id, modificationDate, versionCount, key, index FROM objects'
                 ." WHERE parentId = ? AND id != ? AND type IN ('object', 'variant','folder') ORDER BY indexASC",
                 [$updatedObject->getParentId(), $updatedObject->getId()]
             );

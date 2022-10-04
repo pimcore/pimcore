@@ -366,7 +366,7 @@ CREATE TABLE `objects` (
   `className` varchar(255) DEFAULT NULL,
   `childrenSortBy` ENUM('key','index') NULL DEFAULT NULL,
   `childrenSortOrder` ENUM('ASC','DESC') NULL DEFAULT NULL,
-  `o_versionCount` INT UNSIGNED NOT NULL DEFAULT '0',
+  `versionCount` INT UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `fullpath` (`path`,`key`),
   KEY `key` (`key`),
