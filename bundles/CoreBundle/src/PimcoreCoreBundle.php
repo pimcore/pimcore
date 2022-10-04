@@ -85,4 +85,9 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new PasswordFactoryDecoratorPass());
         $container->addCompilerPass(new MessageBusPublicPass());
     }
+
+    public function getPath(): string
+    {
+        return \dirname(__DIR__);
+    }
 }
