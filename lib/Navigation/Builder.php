@@ -114,38 +114,32 @@ class Builder
     }
 
     /**
-     * @param array|Document|null $activeDocument
-     * @param Document|null $navigationRootDocument
-     * @param string|null $htmlMenuIdPrefix
-     * @param \Closure|null $pageCallback
-     * @param bool|string $cache
-     * @param int|null $maxDepth
-     * @param int|null $cacheLifetime
-     *
-     * @return mixed|\Pimcore\Navigation\Container
+     * @param array{
+     *     root?: ?Document,
+     *     htmlMenuPrefix?: ?string,
+     *     pageCallback?: ?callable,
+     *     cache?: string|bool,
+     *     cacheLifetime?: ?int,
+     *     maxDepth?: ?int,
+     *     active?: ?Document,
+     *     markActiveTrail?: bool
+     * } $params
      *
      * @throws \Exception
      */
-    public function getNavigation($activeDocument = null, $navigationRootDocument = null, $htmlMenuIdPrefix = null, $pageCallback = null, $cache = true, ?int $maxDepth = null, ?int $cacheLifetime = null)
+    public function getNavigation(array $params): Container
     {
-        //TODO Pimcore 11: remove the `if (func_num_args() > 1)` block to remove the BC layer
-        if (func_num_args() > 1) {
-            trigger_deprecation('pimcore/pimcore', '10.5', 'Calling Pimcore\Navigation\Builder::getNavigation() using extra arguments is deprecated and will be removed in Pimcore 11.' .
-            'Instead, specify the arguments as an array');
-        } else {
-            [
-                'root' => $navigationRootDocument,
-                'htmlMenuPrefix' => $htmlMenuIdPrefix,
-                'pageCallback' => $pageCallback,
-                'cache' => $cache,
-                'cacheLifetime' => $cacheLifetime,
-                'maxDepth' => $maxDepth,
-                'active' => $activeDocument,
-                'markActiveTrail' => $markActiveTrail,
-            ] = $this->resolveOptions($activeDocument);
-        }
+        [
+            'root' => $navigationRootDocument,
+            'htmlMenuPrefix' => $htmlMenuIdPrefix,
+            'pageCallback' => $pageCallback,
+            'cache' => $cache,
+            'cacheLifetime' => $cacheLifetime,
+            'maxDepth' => $maxDepth,
+            'active' => $activeDocument,
+            'markActiveTrail' => $markActiveTrail,
+        ] = $this->resolveOptions($params);
 
-        $markActiveTrail ??= true; //TODO Pimcore 11: remove with the BC layer
         $cacheEnabled = $cache !== false;
 
         $this->htmlMenuIdPrefix = $htmlMenuIdPrefix;
@@ -154,31 +148,34 @@ class Builder
             $navigationRootDocument = Document::getById(1);
         }
 
-        // the cache key consists out of the ID and the class name (eg. for hardlinks) of the root document and the optional html prefix
-        $cacheKeys = ['root_id__' . $navigationRootDocument->getId(), $htmlMenuIdPrefix, get_class($navigationRootDocument)];
+        $navigation = null;
+        $cacheKey = null;
+        if ($cacheEnabled) {
+            // the cache key consists out of the ID and the class name (eg. for hardlinks) of the root document and the optional html prefix
+            $cacheKeys = ['root_id__' . $navigationRootDocument->getId(), $htmlMenuIdPrefix, get_class($navigationRootDocument)];
 
-        if (Site::isSiteRequest()) {
-            $site = Site::getCurrentSite();
-            $cacheKeys[] = 'site__' . $site->getId();
+            if (Site::isSiteRequest()) {
+                $site = Site::getCurrentSite();
+                $cacheKeys[] = 'site__' . $site->getId();
+            }
+
+            if (is_string($cache)) {
+                $cacheKeys[] = 'custom__' . $cache;
+            }
+
+            if ($pageCallback instanceof \Closure) {
+                $cacheKeys[] = 'pageCallback_' . closureHash($pageCallback);
+            }
+
+            if ($maxDepth) {
+                $cacheKeys[] = 'maxDepth_' . $maxDepth;
+            }
+
+            $cacheKey = 'nav_' . md5(serialize($cacheKeys));
+            $navigation = CacheManager::load($cacheKey);
         }
-
-        if (is_string($cache)) {
-            $cacheKeys[] = 'custom__' . $cache;
-        }
-
-        if ($pageCallback instanceof \Closure) {
-            $cacheKeys[] = 'pageCallback_' . closureHash($pageCallback);
-        }
-
-        if ($maxDepth) {
-            $cacheKeys[] = 'maxDepth_' . $maxDepth;
-        }
-
-        $cacheKey = 'nav_' . md5(serialize($cacheKeys));
-        $navigation = CacheManager::load($cacheKey);
-
-        if (!$navigation || !$cacheEnabled) {
-            $navigation = new \Pimcore\Navigation\Container();
+        if (!$navigation instanceof Container) {
+            $navigation = new Container();
 
             $this->navCacheTags = ['output', 'navigation'];
 

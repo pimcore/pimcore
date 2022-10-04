@@ -42,7 +42,7 @@ final class WorkflowPass implements CompilerPassInterface
     {
         $loader = new YamlFileLoader(
             $container,
-            new FileLocator(__DIR__.'/../../Resources/config')
+            new FileLocator(__DIR__.'/../../../config')
         );
 
         $workflowManagerDefinition = $container->getDefinition(Manager::class);

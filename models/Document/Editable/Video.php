@@ -295,11 +295,11 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         } elseif ($this->type === self::TYPE_ASSET) {
             return $this->getAssetCode($inAdmin);
         } elseif ($this->type === self::TYPE_YOUTUBE) {
-            return $this->getYoutubeCode();
+            return $this->getYoutubeCode($inAdmin);
         } elseif ($this->type === self::TYPE_VIMEO) {
-            return $this->getVimeoCode();
+            return $this->getVimeoCode($inAdmin);
         } elseif ($this->type === self::TYPE_DAILYMOTION) {
-            return $this->getDailymotionCode();
+            return $this->getDailymotionCode($inAdmin);
         } elseif ($this->type === 'url') {
             return $this->getUrlCode();
         }
@@ -594,7 +594,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $youtubeId;
     }
 
-    private function getYoutubeCode(): string
+    private function getYoutubeCode(bool $inAdmin = false): string
     {
         if (!$this->id) {
             return $this->getEmptyCode();
@@ -606,6 +606,12 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         $youtubeId = $this->parseYoutubeId();
         if (!$youtubeId) {
             return $this->getEmptyCode();
+        }
+
+        if ($inAdmin && isset($config['editmodeImagePreview']) && $config['editmodeImagePreview'] === true) {
+            return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video '. ($config['class'] ?? '') .'">
+                <img src="https://img.youtube.com/vi/' . $youtubeId . '/0.jpg">
+            </div>';
         }
 
         $width = '100%';
@@ -686,7 +692,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $code;
     }
 
-    private function getVimeoCode(): string
+    private function getVimeoCode(bool $inAdmin = false): string
     {
         if (!$this->id) {
             return $this->getEmptyCode();
@@ -705,6 +711,12 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         }
 
         if (ctype_digit($vimeoId)) {
+            if ($inAdmin && isset($config['editmodeImagePreview']) && $config['editmodeImagePreview'] === true) {
+                return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video '. ($config['class'] ?? '') .'">
+                    <img src="https://vumbnail.com/' . $vimeoId . '.jpg">
+                </div>';
+            }
+
             $width = '100%';
             if (array_key_exists('width', $config)) {
                 $width = $config['width'];
@@ -762,7 +774,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->getEmptyCode();
     }
 
-    private function getDailymotionCode(): string
+    private function getDailymotionCode(bool $inAdmin = false): string
     {
         if (!$this->id) {
             return $this->getEmptyCode();
@@ -781,6 +793,11 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         }
 
         if ($dailymotionId) {
+            if ($inAdmin && isset($config['editmodeImagePreview']) && $config['editmodeImagePreview'] === true) {
+                return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video '. ($config['class'] ?? '') .'">
+                    <img src="https://www.dailymotion.com/thumbnail/video/' . $dailymotionId . '">
+                </div>';
+            }
             $width = $config['width'] ?? '100%';
 
             $height = $config['height'] ?? '300';
