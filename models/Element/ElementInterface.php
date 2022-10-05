@@ -75,6 +75,12 @@ interface ElementInterface extends ModelInterface
     public function getType();
 
     /**
+     * @param string $type
+     * @return $this
+     */
+    public function setType($type);
+
+    /**
      * @return int|null
      */
     public function getCreationDate();

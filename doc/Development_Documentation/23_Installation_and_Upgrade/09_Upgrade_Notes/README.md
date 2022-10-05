@@ -1,5 +1,6 @@
 # Upgrade Notes
 ## 11.0.0
+- [Elements] Added `setParentId`, `setType` and `setParent` methods to `Pimcore\Model\Element\ElementInterface`
 - [Assets] Refactored `Pimcore\Model\Asset::getMetadata` method to allow listing of all metadata entries filtered by a specific language. Prior this version, the language filter was only available when a specific metadata name was defined in the parameters. Added native type hints and related tests.
 - [Documents] Removed `$types` property from `Pimcore\Model\Document`. Use `getTypes` method instead.
 - [Class Definitions] Class Resolver does not catch exceptions anymore.
