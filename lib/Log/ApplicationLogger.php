@@ -16,6 +16,7 @@
 namespace Pimcore\Log;
 
 use Monolog\Logger;
+use Monolog\Level;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
@@ -89,7 +90,7 @@ class ApplicationLogger implements LoggerInterface
         if ($writer instanceof \Monolog\Handler\HandlerInterface) {
             if (!isset($this->loggers['default-monolog'])) {
                 // auto init Monolog logger
-                $this->loggers['default-monolog'] = new \Monolog\Logger('app');
+                $this->loggers['default-monolog'] = new Logger('app');
             }
             $this->loggers['default-monolog']->pushHandler($writer);
         } elseif ($writer instanceof \Psr\Log\LoggerInterface) {
@@ -408,7 +409,7 @@ class ApplicationLogger implements LoggerInterface
         LoggerInterface $logger,
         string $message,
         \Throwable $exception,
-        $level = Logger::ALERT,
+        $level = Level::Alert,
         $relatedObject = null,
         array $context = []
     ) {

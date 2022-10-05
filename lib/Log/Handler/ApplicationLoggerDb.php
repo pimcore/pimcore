@@ -17,7 +17,8 @@ namespace Pimcore\Log\Handler;
 
 use Doctrine\DBAL\Connection;
 use Monolog\Handler\AbstractProcessingHandler;
-use Monolog\Logger;
+use Monolog\Level;
+use Monolog\LogRecord;
 use Pimcore\Db;
 use Psr\Log\LogLevel;
 
@@ -43,27 +44,24 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
      *
      * @phpstan-param Level|LevelName|LogLevel::* $level
      */
-    public function __construct(Connection $db, $level = Logger::DEBUG, $bubble = true)
+    public function __construct(Connection $db, $level = Level::Debug, $bubble = true)
     {
         $this->db = $db;
         parent::__construct($level, $bubble);
     }
 
-    /**
-     * @param array $record
-     */
-    public function write(array $record): void
+    public function write(LogRecord $record): void
     {
         $data = [
             'pid' => getmypid(),
-            'priority' => strtolower($record['level_name']),
-            'message' => $record['message'],
-            'timestamp' => $record['datetime']->format('Y-m-d H:i:s'),
-            'component' => $record['context']['component'] ?? $record['channel'],
-            'fileobject' => $record['context']['fileObject'] ?? null,
-            'relatedobject' => $record['context']['relatedObject'] ?? null,
-            'relatedobjecttype' => $record['context']['relatedObjectType'] ?? null,
-            'source' => $record['context']['source'] ?? null,
+            'priority' => strtolower($record->level->name),
+            'message' => $record->message,
+            'timestamp' => $record->datetime->format('Y-m-d H:i:s'),
+            'component' => $record->context['component'] ?? $record->channel,
+            'fileobject' => $record->context['fileObject'] ?? null,
+            'relatedobject' => $record->context['relatedObject'] ?? null,
+            'relatedobjecttype' => $record->context['relatedObjectType'] ?? null,
+            'source' => $record->context['source'] ?? null,
         ];
 
         $this->db->insert(self::TABLE_NAME, $data);
