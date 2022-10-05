@@ -208,7 +208,8 @@ interface ElementInterface extends ModelInterface
 
     /**
      * @param int|null $id
-     * @return static
+     *
+     * @return $this
      */
     public function setParentId($id);
 
