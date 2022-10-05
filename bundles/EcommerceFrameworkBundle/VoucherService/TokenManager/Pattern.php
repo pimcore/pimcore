@@ -248,7 +248,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
 
             return $codeSets;
         } catch (\Exception $e) {
-            Logger::error($e);
+            Logger::error((string) $e);
         }
 
         return false;
