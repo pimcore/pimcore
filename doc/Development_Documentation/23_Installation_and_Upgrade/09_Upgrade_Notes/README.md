@@ -62,6 +62,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
   removed. Instead, please pass the arguments as an associative array (eg.`getNavigation($args)`.For details, please see [#12310](https://github.com/pimcore/pimcore/issues/12310)
 - [CoreBundle] Please update CoreBundle config resource path from `@PimcoreCoreBundle/Resources/config/...` to `@PimcoreCoreBundle/config/..` in your project configurations.
 - [Email] Bumped `league/html-to-markdown` to ^5.1.
+- [Cache] Removed `sr/simple-cache` dependency due the lack of usage in Core.
 
 ## 10.5.0
 - [Class Definitions] Resolving classes or services will no longer catch exceptions in Pimcore 11. Remove invalid references from class definitions.
