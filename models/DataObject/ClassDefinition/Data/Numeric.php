@@ -35,7 +35,10 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     const DECIMAL_PRECISION_DEFAULT = 0;
 
-    const VALID_FILTER_OPERATORS = [
+    /**
+     * @var array
+     */
+    public static $validFilterOperators = [
         '=',
         'IS',
         'IS NOT',
@@ -582,7 +585,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
             }
         }
 
-        if (is_numeric($value) && in_array($operator, self::VALID_FILTER_OPERATORS)) {
+        if (is_numeric($value) && in_array($operator, self::$validFilterOperators)) {
             return $key . ' ' . $operator . ' ' . $value . ' ';
         }
 

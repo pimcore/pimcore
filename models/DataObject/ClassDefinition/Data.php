@@ -23,19 +23,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 {
     use DataObject\ClassDefinition\Helper\VarExport;
 
-    const VALID_FILTER_OPERATORS = [
-        'LIKE',
-        'NOT LIKE',
-        '=',
-        'IS',
-        'IS NOT',
-        '!=',
-        '<',
-        '>',
-        '>=',
-        '<=',
-    ];
-
     /**
      * @var string|null
      */
@@ -110,6 +97,22 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      * @var bool
      */
     public $visibleSearch = true;
+
+    /**
+     * @var array
+     */
+    public static $validFilterOperators = [
+        'LIKE',
+        'NOT LIKE',
+        '=',
+        'IS',
+        'IS NOT',
+        '!=',
+        '<',
+        '>',
+        '>=',
+        '<=',
+    ];
 
     /**
      * @var array
@@ -575,7 +578,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
             }
         }
 
-        if (in_array($operator, self::VALID_FILTER_OPERATORS)) {
+        if (in_array($operator, DataObject\ClassDefinition\Data::$validFilterOperators)) {
             return $key . ' ' . $operator . ' ' . $value . ' ';
         }
 
