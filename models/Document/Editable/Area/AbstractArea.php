@@ -20,7 +20,7 @@ abstract class AbstractArea
     /**
      * @internal
      *
-     * @var \Pimcore\Config\Config
+     * @var array
      */
     protected $config;
 
@@ -39,7 +39,7 @@ abstract class AbstractArea
     protected $params = [];
 
     /**
-     * @param \Pimcore\Config\Config $config
+     * @param array $config
      *
      * @return $this
      */
@@ -51,7 +51,7 @@ abstract class AbstractArea
     }
 
     /**
-     * @return \Pimcore\Config\Config
+     * @return array
      */
     public function getConfig()
     {

@@ -56,6 +56,13 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @var string
      */
+    public string $title = '';
+
+    /**
+     * @internal
+     *
+     * @var string
+     */
     public $description = '';
 
     /**
@@ -222,13 +229,6 @@ final class ClassDefinition extends Model\AbstractModel
      * @var array
      */
     public $compositeIndices = [];
-
-    /**
-     * @internal
-     *
-     * @var bool
-     */
-    public $generateTypeDeclarations = true;
 
     /**
      * @internal
@@ -550,6 +550,10 @@ final class ClassDefinition extends Model\AbstractModel
         $cd .= ' * Inheritance: '.($this->getAllowInherit() ? 'yes' : 'no')."\n";
         $cd .= ' * Variants: '.($this->getAllowVariants() ? 'yes' : 'no')."\n";
 
+        if ($title = $this->getTitle()) {
+            $cd .= ' * Title: ' . $title."\n";
+        }
+
         if ($description = $this->getDescription()) {
             $description = str_replace(['/**', '*/', '//'], '', $description);
             $description = str_replace("\n", "\n * ", $description);
@@ -829,13 +833,7 @@ final class ClassDefinition extends Model\AbstractModel
      */
     protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
-        //TODO Pimcore 11: remove method_exists BC layer
-        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface || method_exists($fieldDefinition, 'enrichFieldDefinition')) {
-            if (!$fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
-                trigger_deprecation('pimcore/pimcore', '10.1',
-                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                    'Implement the %s interface instead.', FieldDefinitionEnrichmentInterface::class));
-            }
+        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
             $context['class'] = $this;
             $fieldDefinition = $fieldDefinition->enrichFieldDefinition($context);
         }
@@ -1260,6 +1258,26 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
+     * @param string $title
+     *
+     * @return $this
+     */
+    public function setTitle(string $title): static
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    /**
      * @param bool $showVariants
      *
      * @return $this
@@ -1423,26 +1441,6 @@ final class ClassDefinition extends Model\AbstractModel
     public function setCompositeIndices($compositeIndices)
     {
         $this->compositeIndices = $compositeIndices ?? [];
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getGenerateTypeDeclarations()
-    {
-        return (bool) $this->generateTypeDeclarations;
-    }
-
-    /**
-     * @param bool $generateTypeDeclarations
-     *
-     * @return $this
-     */
-    public function setGenerateTypeDeclarations($generateTypeDeclarations)
-    {
-        $this->generateTypeDeclarations = (bool) $generateTypeDeclarations;
 
         return $this;
     }

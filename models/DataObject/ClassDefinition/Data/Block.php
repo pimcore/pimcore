@@ -43,38 +43,28 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $lazyLoading;
+    public bool $lazyLoading = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $disallowAddRemove;
+    public bool $disallowAddRemove = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $disallowReorder;
+    public bool $disallowReorder = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $collapsible;
+    public bool $collapsible = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $collapsed;
+    public bool $collapsed = false;
 
     /**
      * @internal
@@ -698,13 +688,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
     protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
-        //TODO Pimcore 11: remove method_exists BC layer
-        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface || method_exists($fieldDefinition, 'enrichFieldDefinition')) {
-            if (!$fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
-                trigger_deprecation('pimcore/pimcore', '10.1',
-                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                    'Implement the %s interface instead.', FieldDefinitionEnrichmentInterface::class));
-            }
+        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
             $context['containerType'] = 'block';
             $context['containerKey'] = $this->getName();
             $fieldDefinition = $fieldDefinition->enrichFieldDefinition($context);
@@ -1301,8 +1285,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     {
         $obj = new static();
         $obj->setValues($data);
-
-        $obj->childs = $obj->children;  // @phpstan-ignore-line
 
         return $obj;
     }

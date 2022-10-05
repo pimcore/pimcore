@@ -15,7 +15,7 @@
 
 namespace Pimcore\Tests\Model\Inheritance;
 
-use Pimcore\Db\Connection;
+use Doctrine\DBAL\Connection;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Folder;

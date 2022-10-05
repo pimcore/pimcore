@@ -97,17 +97,13 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $border = false;
+    public bool $border = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $provideSplitView;
+    public bool $provideSplitView = false;
 
     /**
      * @internal
@@ -393,7 +389,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function getVersionPreview($data, $object = null, $params = [])
     {
         // this is handled directly in the template
-        // /bundles/AdminBundle/Resources/views/Admin/DataObject/DataObject/previewVersion.html.twig
+        // /bundles/AdminBundle/templates/admin/data_object/data_object/preview_version.html.twig
         return 'LOCALIZED FIELDS';
     }
 
@@ -719,13 +715,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
     private function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
-        //TODO Pimcore 11: remove method_exists BC layer
-        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface || method_exists($fieldDefinition, 'enrichFieldDefinition')) {
-            if (!$fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
-                trigger_deprecation('pimcore/pimcore', '10.1',
-                    sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                    'Implement the %s interface instead.', FieldDefinitionEnrichmentInterface::class));
-            }
+        if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
             $context['class'] = $this;
             $fieldDefinition = $fieldDefinition->enrichFieldDefinition($context);
         }
@@ -1159,7 +1149,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
             'blockedVarsForExport',
             'permissionView',
             'permissionEdit',
-            'childs',
         ];
     }
 
@@ -1189,14 +1178,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
         foreach ($validLanguages as $language) {
             foreach ($this->getFieldDefinitions() as $fd) {
-                //TODO Pimcore 11: remove method_exists BC layer
-                if ($fd instanceof IdRewriterInterface || method_exists($fd, 'rewriteIds')) {
-                    if (!$fd instanceof IdRewriterInterface) {
-                        trigger_deprecation('pimcore/pimcore', '10.1',
-                            sprintf('Usage of method_exists is deprecated since version 10.1 and will be removed in Pimcore 11.' .
-                            'Implement the %s interface instead.', IdRewriterInterface::class));
-                    }
-
+                if ($fd instanceof IdRewriterInterface) {
                     $d = $fd->rewriteIds($data, $idMapping, ['language' => $language]);
                     $data->setLocalizedValue($fd->getName(), $d, $language);
                 }
@@ -1303,7 +1285,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      */
     public function setProvideSplitView($provideSplitView): void
     {
-        $this->provideSplitView = $provideSplitView;
+        $this->provideSplitView = (bool) $provideSplitView;
     }
 
     /**
@@ -1449,8 +1431,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     {
         $obj = new static();
         $obj->setValues($data);
-
-        $obj->childs = $obj->children;  // @phpstan-ignore-line
 
         return $obj;
     }

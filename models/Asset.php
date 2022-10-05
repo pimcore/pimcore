@@ -21,6 +21,7 @@ use function is_array;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToMoveFile;
+use League\Flysystem\UnableToRetrieveMetadata;
 use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
@@ -181,11 +182,11 @@ class Asset extends Element\AbstractElement
      * Static helper to get an asset by the passed path
      *
      * @param string $path
-     * @param array|bool $force
+     * @param array $params
      *
      * @return static|null
      */
-    public static function getByPath($path, $force = false)
+    public static function getByPath($path, array $params = [])
     {
         if (!$path) {
             return null;
@@ -197,7 +198,7 @@ class Asset extends Element\AbstractElement
             $asset = new static();
             $asset->getDao()->getByPath($path);
 
-            return static::getById($asset->getId(), Service::prepareGetByIdParams($force, __METHOD__, func_num_args() > 1));
+            return static::getById($asset->getId(), Service::prepareGetByIdParams($params));
         } catch (NotFoundException $e) {
             return null;
         }
@@ -224,11 +225,11 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param int $id
-     * @param array|bool $force
+     * @param array $params
      *
      * @return static|null
      */
-    public static function getById($id, $force = false)
+    public static function getById($id, array $params = [])
     {
         if (!is_numeric($id) || $id < 1) {
             return null;
@@ -237,7 +238,7 @@ class Asset extends Element\AbstractElement
         $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
 
-        $params = Service::prepareGetByIdParams($force, __METHOD__, func_num_args() > 1);
+        $params = Service::prepareGetByIdParams($params);
 
         if (!$params['force'] && RuntimeCache::isRegistered($cacheKey)) {
             $asset = RuntimeCache::get($cacheKey);
@@ -627,8 +628,12 @@ class Asset extends Element\AbstractElement
                 throw new Exception("invalid filename '" . $this->getKey() . "' for asset with id [ " . $this->getId() . ' ]');
             }
 
+            if (!$this->getParentId()) {
+                throw new Exception('ParentID is mandatory and can´t be null. If you want to add the element as a child to the tree´s root node, consider setting ParentID to 1.');
+            }
+
             if ($this->getParentId() == $this->getId()) {
-                throw new Exception("ParentID and ID is identical, an element can't be the parent of itself.");
+                throw new Exception("ParentID and ID are identical, an element can't be the parent of itself in the tree.");
             }
 
             if ($this->getFilename() === '..' || $this->getFilename() === '.') {
@@ -636,20 +641,13 @@ class Asset extends Element\AbstractElement
             }
 
             $parent = Asset::getById($this->getParentId());
-            if ($parent) {
-                // use the parent's path from the database here (getCurrentFullPath), to ensure the path really exists and does not rely on the path
-                // that is currently in the parent asset (in memory), because this might have changed but wasn't not saved
-                $this->setPath(str_replace('//', '/', $parent->getCurrentFullPath() . '/'));
-            } else {
-                trigger_deprecation(
-                    'pimcore/pimcore',
-                    '10.5',
-                    'Fallback for parentId will be removed in Pimcore 11.',
-                );
-                // parent document doesn't exist anymore, set the parent to to root
-                $this->setParentId(1);
-                $this->setPath('/');
+            if (!$parent) {
+                throw new Exception('ParentID not found.');
             }
+
+            // use the parent's path from the database here (getCurrentFullPath), to ensure the path really exists and does not rely on the path
+            // that is currently in the parent asset (in memory), because this might have changed but wasn't not saved
+            $this->setPath(str_replace('//', '/', $parent->getCurrentFullPath() . '/'));
         } elseif ($this->getId() == 1) {
             // some data in root node should always be the same
             $this->setParentId(0);
@@ -727,7 +725,11 @@ class Asset extends Element\AbstractElement
 
                 $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
 
-                $mimeType = $storage->mimeType($path);
+                try {
+                    $mimeType = $storage->mimeType($path);
+                } catch(UnableToRetrieveMetadata $e) {
+                    $mimeType = 'application/octet-stream';
+                }
                 $this->setMimeType($mimeType);
 
                 // set type
@@ -1528,83 +1530,95 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @param string|null $name
-     * @param string|null $language
-     * @param bool $strictMatch
-     * @param bool $raw
-     *
-     * @return array|string|null
-     */
-    public function getMetadata($name = null, $language = null, $strictMatch = false, $raw = false)
+    public function getMetadata(?string $name = null, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): array|string|null
     {
         $preEvent = new AssetEvent($this);
         $preEvent->setArgument('metadata', $this->metadata);
         $this->dispatchEvent($preEvent, AssetEvents::PRE_GET_METADATA);
         $this->metadata = $preEvent->getArgument('metadata');
 
-        $convert = function ($metaData) {
-            $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
-            $transformedData = $metaData['data'];
-
-            try {
-                /** @var Data $instance */
-                $instance = $loader->build($metaData['type']);
-                $transformedData = $instance->transformGetterData($metaData['data'], $metaData);
-            } catch (UnsupportedException $e) {
-            }
-
-            return $transformedData;
-        };
-
         if ($name) {
-            if ($language === null) {
-                $language = Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
-            }
-
-            $data = null;
-            foreach ($this->metadata as $md) {
-                if ($md['name'] == $name) {
-                    if ($language == $md['language']) {
-                        if ($raw) {
-                            return $md;
-                        }
-
-                        return $convert($md);
-                    }
-                    if (empty($md['language']) && !$strictMatch) {
-                        if ($raw) {
-                            return $md;
-                        }
-                        $data = $md;
-                    }
-                }
-            }
-
-            if ($data) {
-                if ($raw) {
-                    return $data;
-                }
-
-                return $convert($data);
-            }
-
-            return null;
+            return $this->getMetadataByName($name, $language, $strictMatchLanguage, $raw);
         }
 
         $metaData = $this->getObjectVar('metadata');
         $result = [];
+        $metaDataWithLanguage = [];
         if (is_array($metaData)) {
             foreach ($metaData as $md) {
                 $md = (array)$md;
-                if (!$raw) {
-                    $md['data'] = $convert($md);
+
+                if ((empty($md['language']) && !$strictMatchLanguage) || ($language == $md['language']) || !$language) {
+                    if (!$raw) {
+                        $md['data'] = $this->transformMetadata($md);
+                    }
+                    $result[] = $md;
                 }
-                $result[] = $md;
+
+                if (!empty($md['language'])) {
+                    $metaDataWithLanguage[$md['language']][$md['name']] = $md;
+                }
+            }
+        }
+
+        if ($language && !$strictMatchLanguage) {
+            foreach ($result as $key => &$item) {
+                if (!$item['language'] && isset($metaDataWithLanguage[$language][$item['name']])) {
+                    $itemWithLanguage = $metaDataWithLanguage[$language][$item['name']];
+                    if (!in_array($itemWithLanguage, $result)) {
+                        $item = $itemWithLanguage;
+                    } else {
+                        unset($result[$key]);
+                    }
+                }
             }
         }
 
         return $result;
+    }
+
+    private function transformMetadata(array $metaData)
+    {
+        $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+        $transformedData = $metaData['data'];
+
+        try {
+            /** @var Data $instance */
+            $instance = $loader->build($metaData['type']);
+            $transformedData = $instance->transformGetterData($metaData['data'], $metaData);
+        } catch (UnsupportedException $e) {
+        }
+
+        return $transformedData;
+    }
+
+    protected function getMetadataByName(string $name, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): array|string|null
+    {
+        if ($language === null) {
+            $language = Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
+        }
+
+        $data = null;
+        foreach ($this->metadata as $md) {
+            if ($md['name'] == $name) {
+                if (empty($md['language']) && !$strictMatchLanguage) {
+                    if ($raw) {
+                        return $md;
+                    }
+                    $data = $md;
+                } elseif ($language == $md['language']) {
+                    $data = $md;
+
+                    break;
+                }
+            }
+        }
+
+        if ($data) {
+            return $raw ? $data : $this->transformMetadata($data);
+        }
+
+        return null;
     }
 
     /**

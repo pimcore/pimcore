@@ -69,17 +69,13 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $enableBatchEdit = false;
+    public bool $enableBatchEdit = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $allowMultipleAssignments = false;
+    public bool $allowMultipleAssignments = false;
 
     /**
      * @internal
@@ -746,7 +742,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      */
     public function setEnableBatchEdit($enableBatchEdit)
     {
-        $this->enableBatchEdit = $enableBatchEdit;
+        $this->enableBatchEdit = (bool) $enableBatchEdit;
     }
 
     /**
@@ -1012,7 +1008,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      */
     public function setAllowMultipleAssignments($allowMultipleAssignments)
     {
-        $this->allowMultipleAssignments = $allowMultipleAssignments;
+        $this->allowMultipleAssignments = (bool) $allowMultipleAssignments;
 
         return $this;
     }

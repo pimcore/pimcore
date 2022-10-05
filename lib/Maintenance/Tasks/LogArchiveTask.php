@@ -65,7 +65,7 @@ class LogArchiveTask implements TaskInterface
         $storage = Storage::get('application_log');
 
         $date = new \DateTime('now');
-        $tablename = ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX.'_'.$date->format('m').'_'.$date->format('Y');
+        $tablename = ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX.'_'.$date->format('Y').'_'.$date->format('m');
 
         if (!empty($this->config['applicationlog']['archive_alternative_database'])) {
             $tablename = $db->quoteIdentifier($this->config['applicationlog']['archive_alternative_database']).'.'.$tablename;

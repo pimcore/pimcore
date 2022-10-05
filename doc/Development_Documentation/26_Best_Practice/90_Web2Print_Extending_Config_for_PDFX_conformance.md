@@ -11,11 +11,11 @@ creating the file.
 **Solution**
 
 To do so, Pimcore provides two events:
-- [`PRINT_MODIFY_PROCESSING_OPTIONS`](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/DocumentEvents.php#L126):
+- [`PRINT_MODIFY_PROCESSING_OPTIONS`](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/DocumentEvents.php#L126):
   Event to modify the processing options displayed in the Pimcore backend UI. For example add additional options like `AppendLog` and `My Additional ...` 
   in the screenshot above. 
   
-- [`PRINT_MODIFY_PROCESSING_CONFIG`](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/DocumentEvents.php#L148)
+- [`PRINT_MODIFY_PROCESSING_CONFIG`](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/DocumentEvents.php#L148)
   Event to modify the configuration for the PDF processor when the PDF gets created. For example read values for additional
   options and apply these values to the configuration of the PDF processor accordingly or do some other stuff. 
   

@@ -43,10 +43,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $lazyLoading;
+    public bool $lazyLoading = false;
 
     /**
      * @internal
@@ -57,38 +55,28 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $disallowAddRemove = false;
+    public bool $disallowAddRemove = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $disallowReorder = false;
+    public bool $disallowReorder = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $collapsed;
+    public bool $collapsed = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $collapsible;
+    public bool $collapsible = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $border = false;
+    public bool $border = false;
 
     /**
      * @return bool
@@ -542,9 +530,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
         $code .= $this->getPreGetValueHookCode($key);
 
-        // TODO Pimcore 11: remove method_exists BC layer
         // TODO else part should not be needed at all as preGetData is always there
-        // if ($this instanceof PreGetDataInterface || method_exists($this, 'preGetData')) {
+        // if ($this instanceof PreGetDataInterface) {
         $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
 //        } else {
 //            $code .= "\t" . '$data = $this->' . $key . ";\n";
@@ -641,8 +628,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
                 if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                        //TODO Pimcore 11: remove method_exists BC layer
-                        if ($fd instanceof IdRewriterInterface || method_exists($fd, 'rewriteIds')) {
+                        if ($fd instanceof IdRewriterInterface) {
                             $d = $fd->rewriteIds($item, $idMapping, $params);
                             $setter = 'set' . ucfirst($fd->getName());
                             $item->$setter($d);
@@ -701,7 +687,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function setDisallowAddRemove($disallowAddRemove)
     {
-        $this->disallowAddRemove = $disallowAddRemove;
+        $this->disallowAddRemove = (bool) $disallowAddRemove;
     }
 
     /**
@@ -717,7 +703,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function setDisallowReorder($disallowReorder)
     {
-        $this->disallowReorder = $disallowReorder;
+        $this->disallowReorder = (bool) $disallowReorder;
     }
 
     /**
