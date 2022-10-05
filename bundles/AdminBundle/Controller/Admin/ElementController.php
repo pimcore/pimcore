@@ -188,7 +188,7 @@ class ElementController extends AdminController
         if ($request->query->get('xaction') === 'destroy') {
             $data = $this->decodeJson($request->request->get('data'));
             $success = false;
-            if ($note = Element\Note::getById($data['id'])) {
+            if (($note = Element\Note::getById($data['id'])) && !$note->getLocked()) {
                 $note->delete();
                 $success = true;
             }
@@ -321,6 +321,7 @@ class ElementController extends AdminController
         $note->setTitle($request->get('title'));
         $note->setDescription($request->get('description'));
         $note->setType($request->get('type'));
+        $note->setLocked(false);
         $note->save();
 
         return $this->adminJson([

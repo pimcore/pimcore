@@ -49,7 +49,7 @@ pimcore.element.notes = Class.create({
             var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
             this.store = pimcore.helpers.grid.buildDefaultStore(
                 Routing.generate('pimcore_admin_element_notelist'),
-                ['id', 'type', 'title', 'description',"user","date","data","cpath","cid","ctype"],
+                ['id', 'type', 'title', 'description', 'user', 'date', 'data', 'cpath', 'cid', 'ctype', 'locked'],
                 itemsPerPage,
                 {autoLoad: false, remoteFilter: false}
             );
@@ -167,7 +167,7 @@ pimcore.element.notes = Class.create({
                     width: 30,
                     items: [{
                         tooltip: t('details'),
-                        icon: "/bundles/pimcoreadmin/img/flat-color-icons/info.svg",
+                        icon: '/bundles/pimcoreadmin/img/flat-color-icons/info.svg',
                         handler: function (grid, rowIndex, event) {
                             this.showDetailedData(grid, rowIndex, event);
                         }.bind(this)
@@ -179,10 +179,15 @@ pimcore.element.notes = Class.create({
                     width: 30,
                     items: [{
                         tooltip: t('delete'),
-                        icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
+                        icon: '/bundles/pimcoreadmin/img/flat-color-icons/delete.svg',
                         handler: function (grid, rowIndex) {
                             grid.getStore().removeAt(rowIndex);
-                        }.bind(this)
+                        }.bind(this),
+                        getClass: function(v, meta, rec) {  // Or return a class from a function
+                            if (rec.get('locked')) {
+                                return 'pimcore_hidden';
+                            }
+                        }
                     }]
                 }
             );

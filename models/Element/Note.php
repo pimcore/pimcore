@@ -89,6 +89,13 @@ final class Note extends Model\AbstractModel
     protected $data = [];
 
     /**
+     * If the note is locked, it can't be deleted in the admin interface
+     *
+     * @internal
+     */
+    protected bool $locked = true;
+
+    /**
      * @static
      *
      * @param int $id
@@ -338,5 +345,20 @@ final class Note extends Model\AbstractModel
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setLocked(bool $locked): static
+    {
+        $this->locked = $locked;
+
+        return $this;
+    }
+
+    public function getLocked(): bool
+    {
+        return $this->locked;
     }
 }
