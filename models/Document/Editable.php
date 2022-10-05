@@ -38,80 +38,61 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      * Contains some configurations for the editmode, or the thumbnail name, ...
      *
      * @internal
-     *
-     * @var array|null
      */
-    protected $config;
+    protected array $config = [];
 
     /**
      * @internal
      *
-     * @var string
      */
-    protected $name;
+    protected string $name = '';
 
     /**
      * Contains the real name of the editable without the prefixes and suffixes
      * which are generated automatically by blocks and areablocks
      *
      * @internal
-     *
-     * @var string
      */
-    protected $realName;
+    protected string $realName = '';
 
     /**
      * Contains parent hierarchy names (used when building elements inside a block/areablock hierarchy)
      *
-     * @var array
      */
-    private $parentBlockNames = [];
+    private array $parentBlockNames = [];
 
     /**
      * Element belongs to the ID of the document
      *
      * @internal
-     *
-     * @var int
      */
-    protected $documentId;
+    protected ?int $documentId = null;
 
     /**
      * Element belongs to the document
      *
      * @internal
-     *
-     * @var Document\PageSnippet|null
      */
-    protected $document;
+    protected ?Document\PageSnippet $document = null;
 
     /**
      * In Editmode or not
      *
      * @internal
-     *
-     * @var bool
      */
-    protected $editmode;
+    protected bool $editmode = false;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    protected $inherited = false;
+    protected bool $inherited = false;
 
     /**
      * @internal
-     *
-     * @var string
      */
-    protected $inDialogBox = null;
+    protected ?string $inDialogBox = null;
 
-    /**
-     * @var EditmodeEditableDefinitionCollector|null
-     */
-    private $editableDefinitionCollector;
+    private ?EditmodeEditableDefinitionCollector $editableDefinitionCollector = null;
 
     /**
      * @return string|void
@@ -141,12 +122,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      */
     abstract public function frontend();
 
-    /**
-     * @param string $id
-     * @param string $code
-     *
-     * @return string
-     */
+
     private function wrapEditmodeContainerCodeForDialogBox(string $id, string $code): string
     {
         $code = '<template id="template__' . $id . '">' . $code . '</template>';
@@ -156,8 +132,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * Builds config passed to editmode frontend as JSON config
-     *
-     * @return array
      *
      * @internal
      */
@@ -182,20 +156,12 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * Builds data used for editmode
      *
-     * @return mixed
-     *
      * @internal
      */
-    protected function getEditmodeData()
+    protected function getEditmodeData(): mixed
     {
         // get configuration data for admin
-        //TODO Pimcore 11: remove method_exists BC layer
-        if ($this instanceof Document\Editable\EditmodeDataInterface || method_exists($this, 'getDataEditmode')) {
-            if (!$this instanceof Document\Editable\EditmodeDataInterface) {
-                trigger_deprecation('pimcore/pimcore', '10.3',
-                    sprintf('Usage of method_exists is deprecated since version 10.3 and will be removed in Pimcore 11.' .
-                        'Implement the %s interface instead.', Document\Editable\EditmodeDataInterface::class));
-            }
+        if ($this instanceof Document\Editable\EditmodeDataInterface) {
             $data = $this->getDataEditmode();
         } else {
             $data = $this->getData();
@@ -206,8 +172,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * Builds attributes used on the editmode HTML element
-     *
-     * @return array
      *
      * @internal
      */
@@ -228,8 +192,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
-     * @return array
-     *
      * @internal
      */
     protected function getEditmodeBlockStateAttributes(): array
@@ -252,8 +214,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * Builds classes used on the editmode HTML element
-     *
-     * @return array
      *
      * @internal
      */
@@ -278,10 +238,8 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * Sends data to the output stream
-     *
-     * @param string $value
      */
-    protected function outputEditmode($value)
+    protected function outputEditmode(string $value)
     {
         if ($this->getEditmode()) {
             echo $value . "\n";
@@ -370,7 +328,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      */
     public function getConfig()
     {
-        return is_array($this->config) ? $this->config : [];
+        return $this->config;
     }
 
     /**
@@ -539,12 +497,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this->getData();
     }
 
-    /**
-     * @param Model\Document\PageSnippet $ownerDocument
-     * @param array $tags
-     *
-     * @return array
-     */
     public function getCacheTags(Model\Document\PageSnippet $ownerDocument, array $tags = []): array
     {
         return $tags;
@@ -588,8 +540,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * @internal
-     *
-     * @return BlockState
      */
     protected function getBlockState(): BlockState
     {
@@ -598,8 +548,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * @internal
-     *
-     * @return BlockStateStack
      */
     protected function getBlockStateStack(): BlockStateStack
     {
@@ -612,15 +560,9 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @internal
      *
-     * @param string $type
-     * @param string $name
-     * @param Document|null $document
-     *
-     * @return string
-     *
      * @throws \Exception
      */
-    public static function buildEditableName(string $type, string $name, Document $document = null)
+    public static function buildEditableName(string $type, string $name, Document $document = null): string
     {
         // do NOT allow dots (.) and colons (:) here as they act as delimiters
         // for block hierarchy in the new naming scheme (see #1467)!
@@ -666,15 +608,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $editableName;
     }
 
-    /**
-     * @param string $name
-     * @param string $type
-     * @param BlockState $blockState
-     * @param string|null $targetGroupElementName
-     *
-     * @return string
-     */
-    private static function doBuildName(string $name, string $type, BlockState $blockState, string $targetGroupElementName = null): string
+    private static function doBuildName(string $name, string $type, BlockState $blockState, ?string $targetGroupElementName = null): string
     {
         if (!$blockState->hasBlocks()) {
             return $name;
@@ -708,11 +642,8 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
-     * @param string $name
      * @param BlockName[] $blocks
      * @param int[] $indexes
-     *
-     * @return string
      */
     private static function buildHierarchicalName(string $name, array $blocks, array $indexes): string
     {
@@ -739,13 +670,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * @internal
      *
-     * @param string $name
-     * @param string $type
-     * @param array $parentBlockNames
-     * @param int $index
-     *
-     * @return string
-     *
      * @throws \Exception
      */
     public static function buildChildEditableName(string $name, string $type, array $parentBlockNames, int $index): string
@@ -766,11 +690,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * @internal
-     *
-     * @param string $name
-     * @param Document $document
-     *
-     * @return string
      */
     public static function buildEditableRealName(string $name, Document $document): string
     {
@@ -786,48 +705,35 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $name;
     }
 
-    /**
-     * @return bool
-     */
     public function isInDialogBox(): bool
     {
         return (bool) $this->inDialogBox;
     }
 
-    /**
-     * @return string|null
-     */
     public function getInDialogBox(): ?string
     {
         return $this->inDialogBox;
     }
 
     /**
-     * @param string|null $inDialogBox
-     *
      * @return $this
      */
-    public function setInDialogBox(?string $inDialogBox): self
+    public function setInDialogBox(?string $inDialogBox): static
     {
         $this->inDialogBox = $inDialogBox;
 
         return $this;
     }
 
-    /**
-     * @return EditmodeEditableDefinitionCollector|null
-     */
     public function getEditableDefinitionCollector(): ?EditmodeEditableDefinitionCollector
     {
         return $this->editableDefinitionCollector;
     }
 
     /**
-     * @param EditmodeEditableDefinitionCollector|null $editableDefinitionCollector
-     *
      * @return $this
      */
-    public function setEditableDefinitionCollector(?EditmodeEditableDefinitionCollector $editableDefinitionCollector): self
+    public function setEditableDefinitionCollector(?EditmodeEditableDefinitionCollector $editableDefinitionCollector): static
     {
         $this->editableDefinitionCollector = $editableDefinitionCollector;
 

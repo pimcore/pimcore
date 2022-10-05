@@ -95,7 +95,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * {@inheritdoc}
      */
-    public function getDataEditmode() /** : mixed */
+    public function getDataEditmode(): array
     {
         $this->setElements();
         $return = [];
@@ -219,7 +219,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds($idMapping) /** : void */
+    public function rewriteIds(array $idMapping): void
     {
         // reset existing elements store
         $this->elements = [];
@@ -256,7 +256,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * {@inheritdoc}
      */
-    public function load() /** : void */
+    public function load(): void
     {
         $this->setElements();
     }
