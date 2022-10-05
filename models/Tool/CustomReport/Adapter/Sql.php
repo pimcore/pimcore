@@ -158,7 +158,7 @@ class Sql extends AbstractAdapter
         if ($filters) {
             if (is_array($filters)) {
                 foreach ($filters as $filter) {
-                    $value = $filter['value'] ;
+                    $value = $filter['value'] ?? null;
                     $type = $filter['type'];
                     $operator = $filter['operator'];
                     $maxValue = null;
