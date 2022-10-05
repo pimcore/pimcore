@@ -122,7 +122,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      */
     abstract public function frontend();
 
-
     private function wrapEditmodeContainerCodeForDialogBox(string $id, string $code): string
     {
         $code = '<template id="template__' . $id . '">' . $code . '</template>';
