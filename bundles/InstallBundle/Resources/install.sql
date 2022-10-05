@@ -483,7 +483,7 @@ CREATE TABLE `search_backend_data` (
   KEY `type` (`type`),
   KEY `subtype` (`subtype`),
   KEY `published` (`published`),
-  FULLTEXT KEY `fulltext` (`data`,`properties`)
+  FULLTEXT KEY `fulltext` (`data`,`properties`, `fullpath`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `sites`;

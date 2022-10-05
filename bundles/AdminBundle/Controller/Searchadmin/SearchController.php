@@ -92,7 +92,7 @@ class SearchController extends AdminController
 
         $queryCondition = '';
         if (!empty($query)) {
-            $queryCondition = '( MATCH (`data`,`properties`) AGAINST (' . $db->quote($query) . ' IN BOOLEAN MODE) )';
+            $queryCondition = '( MATCH (`data`,`properties`, `fullpath`) AGAINST (' . $db->quote($query) . ' IN BOOLEAN MODE) )';
 
             // the following should be done with an exact-search now "ID", because the Element-ID is now in the fulltext index
             // if the query is numeric the user might want to search by id
