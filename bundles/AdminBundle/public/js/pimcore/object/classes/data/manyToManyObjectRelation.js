@@ -207,7 +207,7 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
                 xtype: "checkbox",
                 boxLabel: t("allow_to_clear_relation"),
                 name: "allowToClearRelation",
-                value: this.datax.allowToClearRelation
+                value: this.datax.allowToClearRelation ?? true
             });
             this.specificPanel.add({
                 xtype: "checkbox",
