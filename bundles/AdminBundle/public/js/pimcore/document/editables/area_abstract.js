@@ -110,10 +110,20 @@ pimcore.document.area_abstract = Class.create(pimcore.document.editable, {
                         html: templateEl.innerHTML
                     };
                 } else {
+                    var templateHTML = templateEl.innerHTML;
+                    if (editablesInBox[config['name']]['config'] 
+                        && editablesInBox[config['name']]['config']['description']) {
+                        
+                        var descriptionHTML = '<div style="font-size: 14px; margin-bottom: 10px;">'
+                          + editablesInBox[config['name']]['config']['description']
+                          + '</div>';
+
+                        templateHTML = descriptionHTML + templateHTML;
+                    }
                     return {
                         xtype: 'fieldset',
                         title: config['label'] ?? config['name'],
-                        html: templateEl.innerHTML
+                        html: templateHTML
                     };
                 }
             }
