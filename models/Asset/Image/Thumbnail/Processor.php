@@ -253,6 +253,10 @@ class Processor
 
             $startTime = microtime(true);
 
+            if (pathinfo($asset->getFilename(), PATHINFO_EXTENSION) == 'indd') {
+                InddPreviewGenerationHelper::generatePreviewImage($asset, $storagePath);
+            }
+
             // after we got the lock, check again if the image exists in the meantime - if not - generate it
             if (!$storage->fileExists($storagePath)) {
                 // all checks on the file system should be below the deferred part for performance reasons (remote file systems)
