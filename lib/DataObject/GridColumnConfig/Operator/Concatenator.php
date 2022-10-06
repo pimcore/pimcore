@@ -65,8 +65,8 @@ final class Concatenator extends AbstractOperator
                 if (!$hasValue) {
                     if (is_object($value) && method_exists($value, 'isEmpty')) {
                         $hasValue = !$value->isEmpty();
-                    } elseif (!empty($value)) {
-                        $hasValue = true;
+                    } else {
+                        $hasValue = !empty($value);
                     }
                 }
 
