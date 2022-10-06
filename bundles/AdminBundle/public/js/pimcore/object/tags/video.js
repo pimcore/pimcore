@@ -121,13 +121,48 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
             style: "padding-bottom: 10px",
             tbar: toolbarItems,
             componentCls: this.getWrapperClassNames(),
-            bodyCls: "pimcore_droptarget_image pimcore_video_container"
+            bodyCls: bodyClass
         };
 
         this.component = new Ext.Panel(conf);
 
 
         this.component.on("afterrender", function (el) {
+            if (allowedTypes.includes("asset")) {
+
+                // add drop zone
+                new Ext.dd.DropZone(el.getEl(), {
+                    reference: this,
+                    ddGroup: "element",
+                    getTargetFromEvent: function (e) {
+                        return this.reference.component.getEl();
+                    },
+
+                    onNodeOver: function (target, dd, e, data) {
+                        if (data.records.length === 1 && data.records[0].data.type === "video") {
+                            return Ext.dd.DropZone.prototype.dropAllowed;
+                        }
+                    },
+
+                    onNodeDrop: this.onNodeDrop.bind(this)
+                });
+
+                el.getEl().on("contextmenu", this.onContextMenu.bind(this));
+
+                pimcore.helpers.registerAssetDnDSingleUpload(el.getEl().dom, this.fieldConfig.uploadPath, 'path', function (e) {
+                    if (e['asset']['type'] === "video") {
+                        this.empty(true);
+                        this.dirty = true;
+                        this.data.id = e['asset']['id'];
+                        this.updateVideo();
+
+                        return true;
+                    } else {
+                        pimcore.helpers.showNotification(t("error"), t('unsupported_filetype'), "error");
+                    }
+                }.bind(this), null, this.context);
+            }
+
             if (this.data) {
                 this.updateVideo();
             }
@@ -185,7 +220,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
                         this.data.id = data["id"];
                         this.dirty = true;
                     }
-                    this.updateImage();
+                    this.updateVideo();
                 } catch (e) {
                     console.log(e);
                 }
@@ -200,6 +235,28 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
                         res.response.responseText);
                 }
             }.bind(this), this.context);
+    },
+
+    onNodeDrop: function (target, dd, e, data) {
+
+        if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+            return false;
+        }
+
+        data = data.records[0].data;
+        if (data.type === "video") {
+            this.empty(true);
+
+            if (this.data.id !== data.id) {
+                this.dirty = true;
+            }
+            this.data.id = data.id;
+
+            this.updateVideo();
+            return true;
+        }
+
+        return false;
     },
 
     openEdit: function () {
@@ -275,6 +332,50 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
         }
 
         this.component.setHtml(content);
+    },
+
+    onContextMenu: function (e) {
+
+        var menu = new Ext.menu.Menu();
+
+        if (this.data) {
+            if(!this.fieldConfig.noteditable) {
+                menu.add(new Ext.menu.Item({
+                    text: t('empty'),
+                    iconCls: "pimcore_icon_delete",
+                    handler: function (item) {
+                        item.parentMenu.destroy();
+
+                        this.empty();
+                    }.bind(this)
+                }));
+            }
+        }
+
+        if (!this.fieldConfig.noteditable) {
+            menu.add(new Ext.menu.Item({
+                text: t('search'),
+                iconCls: "pimcore_icon_search",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    this.openSearchEditor();
+                }.bind(this)
+            }));
+
+            menu.add(new Ext.menu.Item({
+                text: t('upload'),
+                cls: "pimcore_inline_upload",
+                iconCls: "pimcore_icon_upload",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    this.uploadDialog();
+                }.bind(this)
+            }));
+        }
+
+        menu.showAt(e.getXY());
+
+        e.stopEvent();
     },
 
     empty: function () {
