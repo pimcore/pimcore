@@ -16,12 +16,14 @@ final class Version20221005122653 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql("CREATE FULLTEXT INDEX search_backend_data_fulltext_index ON search_backend_data(`data`, `properties`, `fullpath`);");
+        $this->addSql("ALTER TABLE search_backend_data DROP INDEX fulltext;");
+        $this->addSql("ALTER TABLE search_backend_data ADD FULLTEXT(`data`,`properties`, `fullpath`)");
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql("ALTER TABLE search_backend_data DROP INDEX search_backend_data_fulltext_index;");
+        $this->addSql("ALTER TABLE search_backend_data DROP INDEX fulltext;");
+        $this->addSql("ALTER TABLE search_backend_data ADD FULLTEXT(`data`,`properties`)");
 
     }
 }
