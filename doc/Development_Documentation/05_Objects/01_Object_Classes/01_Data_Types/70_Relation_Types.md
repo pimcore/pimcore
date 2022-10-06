@@ -91,6 +91,10 @@ $relationObject = $relation->getObject();
 DataObject::setHideUnpublished(true);
 ```
 
+## Allow inline download of asset
+You can enable inline download of assets from relations if you check the "Allow inline download" checkbox.  
+If the relation is an asset, it will be directly downloaded. If the relation is a folder, a zip file will  
+be downloaded.
 
 ## Advanced Many-To-One Object Relation 
 This data type is an extension to the Many-To-One Object data type. To each assigned object additional metadata can be saved. 
