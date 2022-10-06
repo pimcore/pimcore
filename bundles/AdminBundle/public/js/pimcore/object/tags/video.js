@@ -63,25 +63,65 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
             this.fieldConfig.height = 300;
         }
 
+        const allowedTypes = this.fieldConfig.allowedTypes;
+
+        const toolbarItems = [];
+
+        if (allowedTypes.includes("asset")) {
+            toolbarItems.push(
+                {
+                    xtype: "tbspacer",
+                    width: 48,
+                    height: 24,
+                    cls: "pimcore_icon_droptarget_upload"
+
+                }
+            )
+        }
+
+        toolbarItems.push({
+            xtype: "tbtext",
+            text: "<b>" + this.fieldConfig.title + "</b>"
+        }, "->", {
+            xtype: "button",
+            iconCls: "pimcore_icon_video pimcore_icon_overlay_edit",
+            handler: this.openEdit.bind(this)
+        });
+
+        if (allowedTypes.includes("asset")) {
+            toolbarItems.push(
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_upload",
+                    overflowText: t("upload"),
+                    cls: "pimcore_inline_upload",
+                    handler: this.uploadDialog.bind(this)
+                }
+            )
+        }
+
+        toolbarItems.push(
+            {
+                xtype: "button",
+                iconCls: "pimcore_icon_delete",
+                handler: this.empty.bind(this)
+            }
+        );
+
+        let bodyClass = "pimcore_video_container";
+
+        if (allowedTypes.includes("asset")) {
+            bodyClass = "pimcore_droptarget_image " + bodyClass;
+        }
+
         var conf = {
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             border: true,
             style: "padding-bottom: 10px",
-            tbar: [{
-                xtype: "tbtext",
-                text: "<b>" + this.fieldConfig.title + "</b>"
-            }, "->", {
-                xtype: "button",
-                iconCls: "pimcore_icon_video pimcore_icon_overlay_edit",
-                handler: this.openEdit.bind(this)
-            }, {
-                xtype: "button",
-                iconCls: "pimcore_icon_delete",
-                handler: this.empty.bind(this)
-            }],
+            tbar: toolbarItems,
             componentCls: this.getWrapperClassNames(),
-            bodyCls: "pimcore_video_container"
+            bodyCls: "pimcore_droptarget_image pimcore_video_container"
         };
 
         this.component = new Ext.Panel(conf);
@@ -133,6 +173,33 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
             this.fieldData.setValue(item.fullpath);
             return true;
         }
+    },
+
+    uploadDialog: function () {
+        pimcore.helpers.assetSingleUploadDialog(this.fieldConfig.uploadPath, "path", function (res) {
+                try {
+                    this.empty(true);
+
+                    var data = Ext.decode(res.response.responseText);
+                    if (data["id"] && data["type"] == "video") {
+                        this.data.id = data["id"];
+                        this.dirty = true;
+                    }
+                    this.updateImage();
+                } catch (e) {
+                    console.log(e);
+                }
+            }.bind(this),
+            function (res) {
+                const response = Ext.decode(res.response.responseText);
+                if (response && response.success === false) {
+                    pimcore.helpers.showNotification(t("error"), response.message, "error",
+                        res.response.responseText);
+                } else {
+                    pimcore.helpers.showNotification(t("error"), res, "error",
+                        res.response.responseText);
+                }
+            }.bind(this), this.context);
     },
 
     openEdit: function () {
@@ -188,11 +255,11 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
 
         if (this.data.type == "asset" && pimcore.settings.videoconverter) {
             var path = Routing.generate('pimcore_admin_asset_getvideothumbnail', {
-                    path: this.data.data,
-                    width: width,
-                    height: height,
-                    frame: true
-                });
+                path: this.data.data,
+                width: width,
+                height: height,
+                frame: true
+            });
 
             content = '<img src="'+path+'" />';
         } else if (this.data.type == "youtube") {

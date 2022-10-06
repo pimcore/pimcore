@@ -70,6 +70,11 @@ class Video extends Data implements
     public $height = 0;
 
     /**
+     * @internal
+     */
+    public string $uploadPath;
+
+    /**
      * Type for the column to query
      *
      * @internal
@@ -150,6 +155,23 @@ class Video extends Data implements
         $this->height = $height;
 
         return $this;
+    }
+
+    /**
+     * @param string $uploadPath
+     *
+     * @return $this
+     */
+    public function setUploadPath($uploadPath): static
+    {
+        $this->uploadPath = $uploadPath;
+
+        return $this;
+    }
+
+    public function getUploadPath(): string
+    {
+        return $this->uploadPath;
     }
 
     /**
