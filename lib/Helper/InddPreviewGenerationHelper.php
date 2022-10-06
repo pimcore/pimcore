@@ -14,14 +14,6 @@ use Symfony\Component\Process\Process;
 
 /**
  * Generates Indd Preview Images
- *
- * pimcore/vendor/pimcore/pimcore/models/Asset/Image/Thumbnail/Processor.php:259-261
- * if (pathinfo($asset->getFilename(), PATHINFO_EXTENSION) == 'indd') {
-InddPreviewGenerationHelper::generatePreviewImage($asset, $storagePath);
-}
- *
- * pimcore/vendor/pimcore/pimcore/models/Asset.php:444
- * 'image' => ['/image/', "/\.eps$/", "/\.ai$/", "/\.svgz$/", "/\.pcx$/", "/\.iff$/", "/\.pct$/", "/\.wmf$/", '/photoshop/', "/\.indd/"],
  */
 class InddPreviewGenerationHelper
 {
@@ -30,6 +22,7 @@ class InddPreviewGenerationHelper
      * @param string $storagePath
      *
      * @return void
+     * @throws \Exception
      */
     public static function generatePreviewImage(Asset $asset, string $storagePath): void
     {
@@ -51,10 +44,8 @@ class InddPreviewGenerationHelper
         file_put_contents($tmpPath, base64_decode($image));
 
         $storage = Storage::get('thumbnail');
-        if (!file_exists($storage->fileExists(pathinfo($storagePath, PATHINFO_DIRNAME)))) {
-            imagepng(imagecreatefromstring(file_get_contents($tmpPath)), $tmpPathPng);
-            $storage->write($storagePath, file_get_contents($tmpPathPng));
-        }
+        imagepng(imagecreatefromstring(file_get_contents($tmpPath)), $tmpPathPng);
+        $storage->write($storagePath, file_get_contents($tmpPathPng));
 
         unlink($tmpPath);
         unlink($tmpPathPng);
