@@ -22,6 +22,7 @@ class InddPreviewGenerationHelper
      * @param string $storagePath
      *
      * @return void
+     * @throws \Exception
      */
     public static function generatePreviewImage(Asset $asset, string $storagePath): void
     {
@@ -43,10 +44,8 @@ class InddPreviewGenerationHelper
         file_put_contents($tmpPath, base64_decode($image));
 
         $storage = Storage::get('thumbnail');
-        if (!file_exists($storage->fileExists(pathinfo($storagePath, PATHINFO_DIRNAME)))) {
-            imagepng(imagecreatefromstring(file_get_contents($tmpPath)), $tmpPathPng);
-            $storage->write($storagePath, file_get_contents($tmpPathPng));
-        }
+        imagepng(imagecreatefromstring(file_get_contents($tmpPath)), $tmpPathPng);
+        $storage->write($storagePath, file_get_contents($tmpPathPng));
 
         unlink($tmpPath);
         unlink($tmpPathPng);
