@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
@@ -579,6 +580,13 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         if (in_array($operator, DataObject\ClassDefinition\Data::$validFilterOperators)) {
+            if (str_contains($name, 'cskey') && is_array($value) && !empty($value)) {
+                $values = array_map(function ($val) use ($db) {
+                    return $db->quote(Helper::escapeLike($val));
+                }, $value);
+
+                return $key . ' ' . $operator . ' ' . implode(' OR ' . $key . ' ' . $operator . ' ', $values);
+            }
             return $key . ' ' . $operator . ' ' . $value . ' ';
         }
 
