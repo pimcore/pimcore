@@ -138,7 +138,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     /**
      * @throws \Exception
      */
-    private function decrypt(?string $data, Model\DataObject\Concrete $object, array $params)
+    private function decrypt(?string $data, Model\DataObject\Concrete $object, array $params): ?string
     {
         if ($data) {
             try {
