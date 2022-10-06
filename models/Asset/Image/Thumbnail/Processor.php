@@ -18,6 +18,7 @@ namespace Pimcore\Model\Asset\Image\Thumbnail;
 use League\Flysystem\FilesystemException;
 use Pimcore\Config as PimcoreConfig;
 use Pimcore\File;
+use Pimcore\Helper\InddPreviewGenerationHelper;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Messenger\OptimizeImageMessage;
@@ -252,6 +253,10 @@ class Processor
             $lock->acquire(true);
 
             $startTime = microtime(true);
+
+            if (pathinfo($asset->getFilename(), PATHINFO_EXTENSION) == 'indd') {
+                InddPreviewGenerationHelper::generatePreviewImage($asset, $storagePath);
+            }
 
             // after we got the lock, check again if the image exists in the meantime - if not - generate it
             if (!$storage->fileExists($storagePath)) {
