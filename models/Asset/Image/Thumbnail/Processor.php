@@ -18,6 +18,7 @@ namespace Pimcore\Model\Asset\Image\Thumbnail;
 use League\Flysystem\FilesystemException;
 use Pimcore\Config as PimcoreConfig;
 use Pimcore\File;
+use Pimcore\Helper\InddPreviewGenerationHelper;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Messenger\OptimizeImageMessage;
