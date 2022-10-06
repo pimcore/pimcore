@@ -198,7 +198,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                         tooltip: t('download'),
                         icon: "/bundles/pimcoreadmin/img/flat-color-icons/download-cloud.svg",
                         handler: function (grid, rowIndex) {
-                            var data = grid.getStore().getAt(rowIndex);
+                            const data = grid.getStore().getAt(rowIndex);
                             if (data.data.id && data.data.type && data.data.type === "asset") {
                                 pimcore.helpers.download(Routing.generate('pimcore_admin_asset_download', {id: data.data.id}));
                             }
