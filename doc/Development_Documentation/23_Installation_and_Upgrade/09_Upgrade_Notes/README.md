@@ -59,6 +59,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Core] Removed the deprecated method `Kernel::getRootDir()`, use `Kernel::getProjectDir()` instead.
 - [PhpArrayTable]: Removed PhpArrayTable class
 - [Document Editables] Removed method_exists bc layer for `getDataEditmode()`, `rewriteIds()` & `load()`, please use the corresponding interfaces `EditmodeDataInterface`, `IdRewriterInterface` & `LazyLoadingInterface` instead.
+- [Parallelization] Removed `webmozarts/console-parallelization` dependency due to maintainability reasons. If you still want to use parallelization for console commands, please add the dependency to your own `composer.json`.
 - [Navigation Builder] Calling the method `Pimcore\Navigation\Builder::getNavigation()` using extra arguments is
   removed. Instead, please pass the arguments as an associative array (eg.`getNavigation($args)`.For details, please see [#12310](https://github.com/pimcore/pimcore/issues/12310)
 - [CoreBundle] Please update CoreBundle config resource path from `@PimcoreCoreBundle/Resources/config/...` to `@PimcoreCoreBundle/config/..` in your project configurations.
