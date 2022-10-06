@@ -58,7 +58,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * {@inheritdoc}
      */
-    public function getDataEditmode() /** : mixed */
+    public function getDataEditmode(): ?int
     {
         if ($this->date) {
             return $this->date->getTimestamp();
