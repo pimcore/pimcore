@@ -55,6 +55,7 @@ if (trait_exists('\Webmozarts\Console\Parallelization\Parallelization')) {
             }
 
             $this->runAfterLastCommand($input, $output);
+		return 0;
         }
     }
 }
