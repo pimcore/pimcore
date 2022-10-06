@@ -129,8 +129,12 @@ final class Configuration implements ConfigurationInterface
             ->end()
         ;
 
+        $this->addAdminNode($rootNode);
+
         return $treeBuilder;
     }
+
+
 
     /**
      * @return \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
@@ -267,4 +271,159 @@ final class Configuration implements ConfigurationInterface
 
         return $documentsNode;
     }
+
+
+
+    /**
+     * Add admin config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addAdminNode(ArrayNodeDefinition $rootNode)
+    {
+
+        // add session attribute bag config
+        $this->addAdminSessionAttributeBags($rootNode);
+
+        // unauthenticated routes won't be double checked for authentication in AdminControllerListener
+        $this->addRoutesChild($rootNode, 'unauthenticated_routes');
+
+        $rootNode
+            ->children()
+                ->arrayNode('translations')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('path')->defaultNull()->end()
+                    ->end()
+                ->end()
+            ->end();
+    }
+
+    /**
+     * @param ArrayNodeDefinition $adminNode
+     */
+    private function addAdminSessionAttributeBags(ArrayNodeDefinition $adminNode)
+    {
+        // Normalizes session bag config. Allows the following formats (all formats will be
+        // normalized to the third format.
+        //
+        // attribute_bags:
+        //      - foo
+        //      - bar
+        //
+        // attribute_bags:
+        //      foo: _foo
+        //      bar: _bar
+        //
+        // attribute_bags:
+        //      foo:
+        //          storage_key: _foo
+        //      bar:
+        //          storage_key: _bar
+        $normalizers = [
+            'assoc' => function (array $array) {
+                $result = [];
+                foreach ($array as $name => $value) {
+                    if (null === $value) {
+                        $value = [
+                            'storage_key' => '_' . $name,
+                        ];
+                    }
+
+                    if (is_string($value)) {
+                        $value = [
+                            'storage_key' => $value,
+                        ];
+                    }
+
+                    $result[$name] = $value;
+                }
+
+                return $result;
+            },
+
+            'sequential' => function (array $array) {
+                $result = [];
+                foreach ($array as $name) {
+                    $result[$name] = [
+                        'storage_key' => '_' . $name,
+                    ];
+                }
+
+                return $result;
+            },
+        ];
+
+        $adminNode
+            ->children()
+                ->arrayNode('session')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('attribute_bags')
+                            ->useAttributeAsKey('name')
+                            ->beforeNormalization()
+                                ->ifArray()->then(function ($v) use ($normalizers) {
+                                    if (isAssocArray($v)) {
+                                        return $normalizers['assoc']($v);
+                                    } else {
+                                        return $normalizers['sequential']($v);
+                                    }
+                                })
+                            ->end()
+                            ->example([
+                                ['foo', 'bar'],
+                                [
+                                    'foo' => '_foo',
+                                    'bar' => '_bar',
+                                ],
+                                [
+                                    'foo' => [
+                                        'storage_key' => '_foo',
+                                    ],
+                                    'bar' => [
+                                        'storage_key' => '_bar',
+                                    ],
+                                ],
+                            ])
+                            ->prototype('array')
+                                ->children()
+                                    ->scalarNode('storage_key')
+                                        ->defaultNull()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+    }
+
+        /**
+     * Add a route prototype child
+     *
+     * @param ArrayNodeDefinition $parent
+     * @param string $name
+     */
+    private function addRoutesChild(ArrayNodeDefinition $parent, $name)
+    {
+        $node = $parent->children()->arrayNode($name);
+
+        /** @var ArrayNodeDefinition $prototype */
+        $prototype = $node->prototype('array');
+        $prototype
+            ->beforeNormalization()
+                ->ifNull()->then(function () {
+                    return [];
+                })
+            ->end()
+            ->children()
+                ->scalarNode('path')->defaultFalse()->end()
+                ->scalarNode('route')->defaultFalse()->end()
+                ->scalarNode('host')->defaultFalse()->end()
+                ->arrayNode('methods')
+                    ->prototype('scalar')->end()
+                ->end()
+            ->end();
+    }
+
 }
