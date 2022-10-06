@@ -226,7 +226,8 @@ interface ElementInterface extends ModelInterface
 
     /**
      * @param ElementInterface|null $parent
-     * @return static
+     *
+     * @return $this
      */
     public function setParent($parent);
 
