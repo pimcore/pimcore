@@ -732,13 +732,13 @@ class Decimal
     /**
      * Transforms operand into a numeric value used for calculations.
      */
-    private function getScalarOperand(mixed $operand): float|int|string
+    private function getScalarOperand(mixed $operand): float
     {
         if (is_numeric($operand)) {
-            return $operand;
+            return (float) $operand;
         }
         if ($operand instanceof static) {
-            return $operand->asNumeric();
+            return (float) $operand->asNumeric();
         }
 
         throw new \InvalidArgumentException(sprintf(
