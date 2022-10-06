@@ -200,7 +200,13 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                         handler: function (grid, rowIndex) {
                             const data = grid.getStore().getAt(rowIndex);
                             if (data.data.id && data.data.type && data.data.type === "asset") {
-                                pimcore.helpers.download(Routing.generate('pimcore_admin_asset_download', {id: data.data.id}));
+                                if (data.data.id && data.data.type && data.data.type === "asset") {
+                                    if (data.data.subtype === "folder") {
+                                        pimcore.elementservice.downloadAssetFolderAsZip(data.data.id)
+                                    } else {
+                                        pimcore.helpers.download(Routing.generate('pimcore_admin_asset_download', {id: data.data.id}));
+                                    }
+                                }
                             }
                         }.bind(this)
                     }

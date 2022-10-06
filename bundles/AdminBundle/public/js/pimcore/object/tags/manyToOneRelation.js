@@ -432,7 +432,11 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
 
     downloadAsset: function () {
         if (this.data.id && this.data.type && this.data.type === "asset") {
-            pimcore.helpers.download(Routing.generate('pimcore_admin_asset_download', {id: this.data.id}));
+            if (this.data.subtype === "folder") {
+                pimcore.elementservice.downloadAssetFolderAsZip(this.data.id)
+            } else {
+                pimcore.helpers.download(Routing.generate('pimcore_admin_asset_download', {id: this.data.id}));
+            }
         }
     },
 
