@@ -75,3 +75,5 @@
   - Use `Pimcore\Db\Helper::queryIgnoreError()` instead of `queryIgnoreError()`
   - Use `Pimcore\Db\Helper::selectAndDeleteWhere()` instead of `selectAndDeleteWhere()`
   - Use `Pimcore\Db\Helper::escapeLike()` instead of `escapeLike()`
+
+- [Migration] Add Migration: Update class definition files to replace childs with children
