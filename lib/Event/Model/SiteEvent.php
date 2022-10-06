@@ -3,16 +3,14 @@
 namespace Pimcore\Event\Model;
 
 use Pimcore\Event\Traits\ArgumentsAwareTrait;
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Site;
 use Symfony\Contracts\EventDispatcher\Event;
 
-class SiteEvent extends Event implements ElementEventInterface
+class SiteEvent extends Event
 {
     use ArgumentsAwareTrait;
 
-    /** @var Site */
-    protected $site;
+    protected Site $site;
 
     /**
      * @param Site $site
@@ -24,27 +22,13 @@ class SiteEvent extends Event implements ElementEventInterface
         $this->arguments = $arguments;
     }
 
-    /**
-     * @return Site
-     */
     public function getSite(): Site
     {
         return $this->site;
     }
 
-    /**
-     * @param Site $site
-     */
     public function setSite(Site $site): void
     {
         $this->site = $site;
-    }
-
-    /**
-     * @return ElementInterface|Site
-     */
-    public function getElement()
-    {
-        return $this->getSite();
     }
 }

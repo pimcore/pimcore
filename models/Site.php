@@ -482,7 +482,7 @@ final class Site extends AbstractModel
         $preSaveEvent = new SiteEvent($this);
         $this->dispatchEvent($preSaveEvent, SiteEvents::PRE_SAVE);
 
-        $this->__call(__FUNCTION__, []);
+        $this->getDao()->save();
 
         $postSaveEvent = new SiteEvent($this);
         $this->dispatchEvent($postSaveEvent, SiteEvents::POST_SAVE);
@@ -496,7 +496,7 @@ final class Site extends AbstractModel
         $preDeleteEvent = new SiteEvent($this);
         $this->dispatchEvent($preDeleteEvent, SiteEvents::PRE_DELETE);
 
-        $this->__call(__FUNCTION__, []);
+        $this->getDao()->delete();
 
         $postDeleteEvent = new SiteEvent($this);
         $this->dispatchEvent($postDeleteEvent, SiteEvents::POST_DELETE);
