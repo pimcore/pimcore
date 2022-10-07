@@ -65,6 +65,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [CoreBundle] Please update CoreBundle config resource path from `@PimcoreCoreBundle/Resources/config/...` to `@PimcoreCoreBundle/config/..` in your project configurations.
 - [Relations]: Add confirm dialog to empty button of relations and add possibility to disable clear relations in the class layout.
 - [Email] Bumped `league/html-to-markdown` to ^5.1.
+- [Device Detector] Bumped `matomo/device-detector` to ^6.0.
 
 ## 10.5.0
 - [Class Definitions] Resolving classes or services will no longer catch exceptions in Pimcore 11. Remove invalid references from class definitions.
