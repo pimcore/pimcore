@@ -580,14 +580,19 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         if (in_array($operator, DataObject\ClassDefinition\Data::$validFilterOperators)) {
+            $trailer = '';
+            if($value === '\'0\'' || is_array($value) && in_array(0, $value)) {
+                $trailer = ' OR ' . $key . ' IS NULL';
+            }
+
             if (str_contains($name, 'cskey') && is_array($value) && !empty($value)) {
                 $values = array_map(function ($val) use ($db) {
                     return $db->quote(Helper::escapeLike($val));
                 }, $value);
 
-                return $key . ' ' . $operator . ' ' . implode(' OR ' . $key . ' ' . $operator . ' ', $values);
+                return $key . ' ' . $operator . ' ' . implode(' OR ' . $key . ' ' . $operator . ' ', $values) . $trailer;
             }
-            return $key . ' ' . $operator . ' ' . $value . ' ';
+            return $key . ' ' . $operator . ' ' . $value . ' ' . $trailer;
         }
 
         return '';
