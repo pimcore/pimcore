@@ -1141,7 +1141,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds($idMapping) /** : void */
+    public function rewriteIds(array $idMapping): void
     {
         if ($this->type == self::TYPE_ASSET && array_key_exists(self::TYPE_ASSET, $idMapping) && array_key_exists($this->getId(), $idMapping[self::TYPE_ASSET])) {
             $this->setId($idMapping[self::TYPE_ASSET][$this->getId()]);

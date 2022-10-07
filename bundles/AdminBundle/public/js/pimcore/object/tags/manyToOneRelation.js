@@ -134,17 +134,23 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             iconCls: "pimcore_icon_open",
             style: "margin-left: 5px",
             handler: this.openElement.bind(this)
-        }, {
-            xtype: "button",
-            iconCls: "pimcore_icon_delete",
-            style: "margin-left: 5px",
-            handler: this.empty.bind(this)
-        }, {
+        }];
+
+        if (this.fieldConfig.allowToClearRelation) {
+            items.push({
+                xtype: "button",
+                iconCls: "pimcore_icon_delete",
+                style: "margin-left: 5px",
+                handler: this.empty.bind(this)
+            });
+        }
+
+        items.push({
             xtype: "button",
             iconCls: "pimcore_icon_search",
             style: "margin-left: 5px",
             handler: this.openSearchEditor.bind(this)
-        }];
+        });
 
         // add upload button when assets are allowed
         if (this.fieldConfig.assetsAllowed) {

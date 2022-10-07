@@ -73,7 +73,7 @@ class Input extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * {@inheritdoc}
      */
-    public function getDataEditmode() /** : mixed */
+    public function getDataEditmode(): string
     {
         return htmlentities($this->text);
     }
