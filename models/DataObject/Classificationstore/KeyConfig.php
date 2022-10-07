@@ -404,9 +404,6 @@ final class KeyConfig extends Model\AbstractModel
         return $cacheKey;
     }
 
-    /**
-     * @internal
-     */
     private function removeCache(): void
     {
         // Remove runtime cache

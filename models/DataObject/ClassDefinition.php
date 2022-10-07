@@ -267,8 +267,6 @@ final class ClassDefinition extends Model\AbstractModel
     public $enableGridLocking = false;
 
     /**
-     * @internal
-     *
      * @var ClassDefinition\Data[]
      */
     private array $deletedDataComponents = [];

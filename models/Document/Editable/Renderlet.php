@@ -232,8 +232,6 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
 
     /**
      * get correct type of object as string
-     *
-     * @internal
      */
     private function getObjectType(Element\ElementInterface $object = null): ?string
     {
