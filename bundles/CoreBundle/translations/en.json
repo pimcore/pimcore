@@ -704,6 +704,7 @@
     "error_empty_file_upload": "File is empty!",
     "type_column": "Type column",
     "keep": "keep",
+    "allow_to_clear_relation": "Allow to clear all relations of this field",
     "clear_version_message": "Do you really want to delete all non-published versions of this element?",
     "clear_all": "Clear All",
     "unlink_existing_document": "Unlink existing Document",
