@@ -143,7 +143,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      */
     public function isEmpty($data)
     {
-        return is_string($data) && strlen($data) !== 5;
+        return !is_string($data) || strlen($data) !== 5;
     }
 
     /**
