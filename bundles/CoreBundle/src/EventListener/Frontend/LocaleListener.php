@@ -63,7 +63,7 @@ class LocaleListener implements EventSubscriberInterface
             } else {
                 // try to get a list of territories for this language
                 // usually OS have no "language only" locale, only the combination language-territory (eg. Debian)
-                $languageRegionMapping = include PIMCORE_PATH . '/bundles/CoreBundle/Resources/misc/cldr-language-territory-mapping.php';
+                $languageRegionMapping = include PIMCORE_PATH . '/bundles/CoreBundle/public/misc/cldr-language-territory-mapping.php';
                 if (isset($languageRegionMapping[$primaryLanguage])) {
                     foreach ($languageRegionMapping[$primaryLanguage] as $territory) {
                         $localeList[] = $primaryLanguage . '_' . $territory . '.utf8';

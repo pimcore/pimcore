@@ -1,0 +1,10 @@
+# Pimcore
+pimcore:
+    security:
+        factory_type: password_hasher
+        password_hasher_factories:
+            Pimcore\Bundle\AdminBundle\Security\User\User: pimcore_admin.security.password_hasher_factory
+
+scheb_two_factor:
+    security_tokens:
+        - Pimcore\Bundle\AdminBundle\Security\Authentication\Token\TwoFactorRequiredToken

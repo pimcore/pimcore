@@ -107,7 +107,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
         $loader = new YamlFileLoader(
             $container,
-            new FileLocator(__DIR__ . '/../Resources/config')
+            new FileLocator(__DIR__ . '/../../config')
         );
 
         $loader->load('services.yaml');
@@ -444,7 +444,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
         $loader = new YamlFileLoader(
             $container,
-            new FileLocator(__DIR__ . '/../Resources/config')
+            new FileLocator(__DIR__ . '/../../config')
         );
 
         foreach ($securityConfigs as $config) {

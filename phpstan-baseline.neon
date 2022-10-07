@@ -18,17 +18,17 @@ parameters:
 		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 3
-			path: bundles/CoreBundle/DependencyInjection/PimcoreCoreExtension.php
+			path: bundles/CoreBundle/src/DependencyInjection/PimcoreCoreExtension.php
 
 		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
-			path: bundles/CoreBundle/EventListener/Frontend/RoutingListener.php
+			path: bundles/CoreBundle/src/EventListener/Frontend/RoutingListener.php
 
 		-
 			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"
 			count: 1
-			path: bundles/CoreBundle/Request/ParamConverter/DataObjectParamConverter.php
+			path: bundles/CoreBundle/src/Request/ParamConverter/DataObjectParamConverter.php
 
 		-
 			message: "#^If condition is always true\\.$#"
