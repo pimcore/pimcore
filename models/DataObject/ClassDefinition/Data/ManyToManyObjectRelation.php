@@ -176,6 +176,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @param mixed $params
      *
      * @return string|null
+     *
      * @throws \Exception
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
@@ -209,6 +210,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @param mixed $params
      *
      * @return array
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -238,6 +240,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @param mixed $params
      *
      * @return array|null
+     *
      * @see Data::getDataFromEditmode
      *
      */
@@ -267,6 +270,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @param mixed $params
      *
      * @return array
+     *
      * @see Data::getDataFromEditmode
      *
      */
@@ -293,6 +297,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @param mixed $params
      *
      * @return string|null
+     *
      * @see Data::getVersionPreview
      *
      */
@@ -546,7 +551,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * { @inheritdoc }
      */
     public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = [])
-        /** :mixed */
+    /** :mixed */
     {
         $data = $this->getDataFromObjectParam($container, $params);
         $data = $this->rewriteIdsService($data, $idMapping);
@@ -698,6 +703,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @param array $item
      *
      * @return string
+     *
      * @internal
      *
      */
