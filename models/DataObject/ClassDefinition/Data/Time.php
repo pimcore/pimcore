@@ -106,7 +106,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
         parent::checkValidity($data, $omitMandatoryCheck);
 
         if (is_string($data)) {
-            if (strlen($data) !== 5 && $data !== '') {
+            if (!preg_match('/^(2[0-3]|[01][0-9]):[0-5][0-9]$/', $data) && $data !== '') {
                 throw new Model\Element\ValidationException('Wrong time format given must be a 5 digit string (eg: 06:49) [ '.$this->getName().' ]');
             }
         } elseif (!empty($data)) {
