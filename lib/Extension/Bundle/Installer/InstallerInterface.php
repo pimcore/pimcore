@@ -16,7 +16,8 @@
 namespace Pimcore\Extension\Bundle\Installer;
 
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Output\NullOutput;
 
 interface InstallerInterface
 {
@@ -62,5 +63,5 @@ interface InstallerInterface
      */
     public function needsReloadAfterInstall();
 
-    public function getOutput(): OutputInterface;
+    public function getOutput(): BufferedOutput | NullOutput;
 }

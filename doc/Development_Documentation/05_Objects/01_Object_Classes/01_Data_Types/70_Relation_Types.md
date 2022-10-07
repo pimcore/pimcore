@@ -96,6 +96,10 @@ You can enable inline download of assets from relations if you check the "Allow 
 If the relation is an asset, it will be directly downloaded. If the relation is a folder, a zip file will  
 be downloaded.
 
+## Disable clear complete relation
+If you want to disable the possibility to clear the whole relation, you can uncheck the checkbox "Allow to clear all relations of this field"  
+in the classdefinition.
+
 ## Advanced Many-To-One Object Relation 
 This data type is an extension to the Many-To-One Object data type. To each assigned object additional metadata can be saved. 
 The type of the metadata can be text, number, selection or a boolean value.

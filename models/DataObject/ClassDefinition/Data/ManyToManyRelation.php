@@ -78,6 +78,11 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     public $assetUploadPath;
 
     /**
+     * @internal
+     */
+    public bool $allowToClearRelation = true;
+
+    /**
      * Type for the column to query
      *
      * @internal
@@ -691,6 +696,16 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     public function getAssetUploadPath()
     {
         return $this->assetUploadPath;
+    }
+
+    public function isAllowedToClearRelation(): bool
+    {
+        return $this->allowToClearRelation;
+    }
+
+    public function setAllowToClearRelation(bool $allowToClearRelation): void
+    {
+        $this->allowToClearRelation = $allowToClearRelation;
     }
 
     /**

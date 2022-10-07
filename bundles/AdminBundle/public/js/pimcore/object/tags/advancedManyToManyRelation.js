@@ -318,7 +318,10 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                         tooltip: t('remove'),
                         icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                         handler: function (grid, rowIndex) {
-                            grid.getStore().removeAt(rowIndex);
+                            let data = grid.getStore().getAt(rowIndex);
+                            pimcore.helpers.deleteConfirm(t('relation'), data.data.path, function () {
+                                grid.getStore().removeAt(rowIndex);
+                            }.bind(this));
                         }.bind(this)
                     }
                 ]
@@ -575,12 +578,19 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
         toolbarItems = toolbarItems.concat(this.getFilterEditToolbarItems());
 
         if (!readOnly) {
-            toolbarItems = toolbarItems.concat([
-                {
+            if (this.fieldConfig.allowToClearRelation) {
+                toolbarItems.push({
                     xtype: "button",
                     iconCls: "pimcore_icon_delete",
-                    handler: this.empty.bind(this)
-                },
+                    handler: function () {
+                        pimcore.helpers.deleteConfirm(t('all'), t('relations'), function () {
+                            this.empty();
+                        }.bind(this));
+                    }.bind(this)
+                });
+            }
+
+            toolbarItems = toolbarItems.concat([
                 {
                     xtype: "button",
                     iconCls: "pimcore_icon_search",
