@@ -122,7 +122,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
                 throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is not at least ' . $this->getMinValue());
             }
 
-            if (is_string($this->getMaxValue()) && strlen($this->getMaxValue()) && $this->isLater($this->getMaxValue(), $data)) {
+            if ($this->getMaxValue() && $this->isLater($this->getMaxValue(), $data)) {
                 throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . ' ] is bigger than ' . $this->getMaxValue());
             }
         }
