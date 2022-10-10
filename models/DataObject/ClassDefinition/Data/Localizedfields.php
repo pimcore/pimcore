@@ -989,8 +989,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     private function getDataForValidity(DataObject\Localizedfield $localizedObject, array $languages): array
     {
         if (!$localizedObject->getObject()
-            || $localizedObject->getObject()->getType() != DataObject::OBJECT_TYPE_VARIANT
-            || !$localizedObject instanceof DataObject\Localizedfield) {
+            || $localizedObject->getObject()->getType() != DataObject::OBJECT_TYPE_VARIANT) {
             return $localizedObject->getInternalData(true);
         }
 
