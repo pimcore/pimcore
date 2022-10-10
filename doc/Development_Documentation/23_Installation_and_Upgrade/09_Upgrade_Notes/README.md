@@ -62,6 +62,8 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Parallelization] Removed `webmozarts/console-parallelization` dependency due to maintainability reasons. If you still want to use parallelization for console commands, please add the dependency to your own `composer.json`.
 - [Navigation Builder] Calling the method `Pimcore\Navigation\Builder::getNavigation()` using extra arguments is
   removed. Instead, please pass the arguments as an associative array (eg.`getNavigation($args)`.For details, please see [#12310](https://github.com/pimcore/pimcore/issues/12310)
+- [Flysystem] Bumped `league/flysystem-bundle` minimum requirement to ^3.0 (which introduces `directoryExists()`,`has()` methods and fixes support for `directory_visibility` configuration option). Please bump the Flysystem Adapters requirement accordingly to `^3.0` in your project `composer.json`. 
+ NB: [Visibility](https://flysystem.thephpleague.com/docs/visibility/) permissions were specified as `0644` for files and `0755` for directories, are now using the more simplified `public/private` options which are translated respectively into `0600` and `0744`. 
 - [CoreBundle] Please update CoreBundle config resource path from `@PimcoreCoreBundle/Resources/config/...` to `@PimcoreCoreBundle/config/..` in your project configurations.
 - [Relations]: Add confirm dialog to empty button of relations and add possibility to disable clear relations in the class layout.
 - [Email] Bumped `league/html-to-markdown` to ^5.1.
