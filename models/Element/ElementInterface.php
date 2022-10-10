@@ -22,7 +22,6 @@ use Pimcore\Model\Schedule\Task;
 use Pimcore\Model\User;
 use Pimcore\Model\Version;
 
-
 interface ElementInterface extends ModelInterface
 {
     /**
@@ -76,6 +75,7 @@ interface ElementInterface extends ModelInterface
 
     /**
      * @param string $type
+     *
      * @return $this
      */
     public function setType($type);
