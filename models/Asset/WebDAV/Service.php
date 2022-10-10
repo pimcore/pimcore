@@ -31,7 +31,7 @@ class Service
     }
 
     /**
-     * @return array|mixed
+     * @return mixed
      */
     public static function getDeleteLog()
     {

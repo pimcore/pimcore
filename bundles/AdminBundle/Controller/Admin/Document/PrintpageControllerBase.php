@@ -309,7 +309,7 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
     /**
      * @param int $documentId
      *
-     * @return array|mixed
+     * @return mixed
      */
     private function getStoredProcessingOptions($documentId): mixed
     {

@@ -283,7 +283,7 @@ interface ConnectionInterface extends Connection
      * @param int $column
      * @param int[]|string[] $types
      *
-     * @return  mixed|false
+     * @return mixed
      */
     public function fetchColumn($statement, array $params = [], $column = 0, array $types = []);
 

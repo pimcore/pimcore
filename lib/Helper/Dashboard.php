@@ -67,7 +67,7 @@ final class Dashboard
     }
 
     /**
-     * @return array|mixed
+     * @return mixed
      */
     protected function loadFile()
     {
@@ -102,7 +102,7 @@ final class Dashboard
     }
 
     /**
-     * @return array|mixed
+     * @return mixed
      */
     public function getAllDashboards()
     {
