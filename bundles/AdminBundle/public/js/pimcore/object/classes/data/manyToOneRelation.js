@@ -232,15 +232,26 @@ pimcore.object.classes.data.manyToOneRelation = Class.create(pimcore.object.clas
                         listeners:{
                             change:function(cbox, checked) {
                                 if (checked) {
+                                    Ext.getCmp('class_allow_inline_download_' + this.uniqeFieldId).show();
                                     Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).show();
                                     Ext.getCmp('class_asset_upload_path_' + this.uniqeFieldId).show();
                                 } else {
+                                    Ext.getCmp('class_allow_inline_download_' + this.uniqeFieldId).hide();
                                     Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).hide();
                                     Ext.getCmp('class_asset_upload_path_' + this.uniqeFieldId).hide();
 
                                 }
                             }.bind(this)
                         }
+                    },
+                    {
+                        fieldLabel: t("allow_asset_inline_download"),
+                        name: "assetInlineDownloadAllowed",
+                        id: 'class_allow_inline_download_' + this.uniqeFieldId,
+                        hidden: !this.datax.assetsAllowed,
+                        allowEdit: this.datax.assetsAllowed,
+                        value: this.datax.assetInlineDownloadAllowed,
+                        xtype: 'checkbox'
                     },
                     new Ext.ux.form.MultiSelect({
                         fieldLabel: t("allowed_asset_types") + '<br />' + t('allowed_types_hint'),
@@ -349,6 +360,7 @@ pimcore.object.classes.data.manyToOneRelation = Class.create(pimcore.object.clas
             Ext.apply(this.datax,
                 {
                     width: source.datax.width,
+                    assetInlineDownloadAllowed: source.datax.assetInlineDownloadAllowed,
                     assetUploadPath: source.datax.assetUploadPath,
                     relationType: source.datax.relationType,
                     remoteOwner: source.datax.remoteOwner,

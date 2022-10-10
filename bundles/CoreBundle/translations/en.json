@@ -389,6 +389,7 @@
     "link": "Link",
     "abbr": "Abbr.",
     "stop": "Stop",
+    "allow_asset_inline_download": "Allow inline download",
     "dependencies": "Dependencies",
     "requires": "Requires",
     "required_by": "Required By",
