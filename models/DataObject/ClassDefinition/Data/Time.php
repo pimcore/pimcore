@@ -118,7 +118,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
                 throw new Model\Element\ValidationException('Wrong time format given must be a 5 digit string (eg: 06:49) [ '.$this->getName().' ]');
             }
 
-            if (is_string($this->getMinValue()) && strlen($this->getMinValue()) && $this->isEarlier($this->getMinValue(), $data)) {
+            if ($this->getMinValue() && $this->isEarlier($this->getMinValue(), $data)) {
                 throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is not at least ' . $this->getMinValue());
             }
 
