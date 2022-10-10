@@ -268,6 +268,8 @@ class Composer
             array_push($command, '--symlink', '--relative');
         }
 
+        $command[] = '--ignore-maintenance-mode';
+
         if (!static::hasDirectory($event, 'public-dir', $webDir, 'install assets')) {
             return;
         }
@@ -296,6 +298,7 @@ class Composer
         $command = ['cache:clear'];
         if (!$options['symfony-cache-warmup']) {
             $command[] = '--no-warmup';
+            $command[] = '--ignore-maintenance-mode';
         }
 
         static::executeCommand($event, $consoleDir, $command, $options['process-timeout']);

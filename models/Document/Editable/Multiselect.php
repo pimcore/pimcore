@@ -66,7 +66,7 @@ class Multiselect extends Model\Document\Editable implements EditmodeDataInterfa
     /**
      * {@inheritdoc}
      */
-    public function getDataEditmode() /** : mixed */
+    public function getDataEditmode(): array
     {
         return $this->values;
     }

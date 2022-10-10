@@ -376,6 +376,13 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
             value: this.datax.allowMultipleAssignments
         });
 
+        this.specificPanel.add({
+            xtype: "checkbox",
+            boxLabel: t("allow_to_clear_relation"),
+            name: "allowToClearRelation",
+            value: this.datax.allowToClearRelation ?? true
+        });
+
         if(this.context == 'class') {
             this.specificPanel.add({
                 xtype: "checkbox",
@@ -597,6 +604,7 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
                     objectsAllowed: source.datax.objectsAllowed,
                     classes: source.datax.classes,
                     assetsAllowed: source.datax.assetsAllowed,
+                    allowToClearRelation: source.datax.allowToClearRelation,
                     assetTypes: source.datax.assetTypes,
                     documentsAllowed: source.datax.documentsAllowed,
                     documentTypes: source.datax.documentTypes,
