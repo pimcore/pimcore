@@ -170,6 +170,11 @@ pimcore.object.classes.data.manyToOneRelation = Class.create(pimcore.object.clas
                         fieldLabel: t("path_formatter_service"),
                         name: 'pathFormatterClass',
                         value: this.datax.pathFormatterClass
+                    }, {
+                        xtype: "checkbox",
+                        boxLabel: t("allow_to_clear_relation"),
+                        name: "allowToClearRelation",
+                        value: this.datax.allowToClearRelation ?? true
                     }
                 ]
             },
@@ -353,7 +358,8 @@ pimcore.object.classes.data.manyToOneRelation = Class.create(pimcore.object.clas
                     assetTypes: source.datax.assetTypes,
                     documentsAllowed: source.datax.documentsAllowed,
                     documentTypes: source.datax.documentTypes,
-                    pathFormatterClass: source.datax.pathFormatterClass
+                    pathFormatterClass: source.datax.pathFormatterClass,
+                    allowToClearRelation: source.datax.allowToClearRelation
                 });
         }
     }

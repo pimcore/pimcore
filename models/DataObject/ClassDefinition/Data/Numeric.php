@@ -36,6 +36,20 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     const DECIMAL_PRECISION_DEFAULT = 0;
 
     /**
+     * @var array
+     */
+    public static $validFilterOperators = [
+        '=',
+        'IS',
+        'IS NOT',
+        '!=',
+        '<',
+        '>',
+        '>=',
+        '<=',
+    ];
+
+    /**
      * Static type of this element
      *
      * @internal
@@ -537,6 +551,39 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         $data = $this->getDataFromObjectParam($object, $params);
 
         return (string)$data;
+    }
+
+    /**
+     * returns sql query statement to filter according to this data types value(s)
+     *
+     * @param string $value
+     * @param string $operator
+     * @param array $params optional params used to change the behavior
+     *
+     * @return string
+     */
+    public function getFilterConditionExt($value, $operator, $params = [])
+    {
+        $db = \Pimcore\Db::get();
+        $name = $params['name'] ?: $this->name;
+        $key = $db->quoteIdentifier($name);
+        if (!empty($params['brickPrefix'])) {
+            $key = $params['brickPrefix'].$key;
+        }
+
+        if ($value === 'NULL') {
+            if ($operator === '=') {
+                $operator = 'IS';
+            } elseif ($operator === '!=') {
+                $operator = 'IS NOT';
+            }
+        }
+
+        if (is_numeric($value) && in_array($operator, self::$validFilterOperators)) {
+            return $key . ' ' . $operator . ' ' . $value . ' ';
+        }
+
+        return '';
     }
 
     /**

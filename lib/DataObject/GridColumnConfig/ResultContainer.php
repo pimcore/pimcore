@@ -49,7 +49,7 @@ final class ResultContainer
     }
 
     /**
-     * @return string
+     * @return mixed
      */
     public function getValue()
     {
