@@ -59,7 +59,7 @@ abstract class AbstractDao implements DaoInterface
      * @param string $table
      * @param bool $cache
      *
-     * @return mixed
+     * @return array
      */
     public function getValidTableColumns($table, $cache = true)
     {
