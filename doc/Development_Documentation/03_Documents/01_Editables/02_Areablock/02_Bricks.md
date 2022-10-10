@@ -136,11 +136,6 @@ class Iframe extends AbstractTemplateAreabrick
     {
         return 'Embed contents from other URL (websites) via iframe';
     }
-
-    public function getTemplateLocation()
-    {
-        return static::TEMPLATE_LOCATION_GLOBAL;
-    }
     
     public function needsReload(): bool
     {
