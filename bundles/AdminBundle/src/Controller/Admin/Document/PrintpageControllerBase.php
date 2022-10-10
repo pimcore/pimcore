@@ -286,7 +286,7 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
 
         $returnValue = [];
 
-        $storedValues = $this->getStoredProcessingOptions($request->get('id'));
+        $storedValues = $this->getStoredProcessingOptions((int) $request->query->get('id'));
 
         foreach ($options as $option) {
             $value = $option['default'];
