@@ -580,7 +580,9 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         if (in_array($operator, DataObject\ClassDefinition\Data::$validFilterOperators)) {
+
             $trailer = '';
+            //the db interprets 0 as NULL -> if empty (0) is selected in the filter, we must also filter for NULL
             if($value === '\'0\'' || is_array($value) && in_array(0, $value)) {
                 $trailer = ' OR ' . $key . ' IS NULL';
             }
