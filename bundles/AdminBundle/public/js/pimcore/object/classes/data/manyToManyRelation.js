@@ -195,6 +195,13 @@ pimcore.object.classes.data.manyToManyRelation = Class.create(pimcore.object.cla
                     },
                     {
                         xtype: "checkbox",
+                        width: 600,
+                        fieldLabel: t("allow_to_clear_relation"),
+                        name: "allowToClearRelation",
+                        value: this.datax.allowToClearRelation ?? true
+                    },
+                    {
+                        xtype: "checkbox",
                         fieldLabel: t("enable_text_selection"),
                         width: 600,
                         name: "enableTextSelection",
@@ -381,7 +388,8 @@ pimcore.object.classes.data.manyToManyRelation = Class.create(pimcore.object.cla
                     documentTypes: source.datax.documentTypes,
                     remoteOwner: source.datax.remoteOwner,
                     classes: source.datax.classes,
-                    pathFormatterClass: source.datax.pathFormatterClass
+                    pathFormatterClass: source.datax.pathFormatterClass,
+                    allowToClearRelation: source.datax.allowToClearRelation
                 });
         }
     }
