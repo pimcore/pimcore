@@ -91,6 +91,9 @@ $relationObject = $relation->getObject();
 DataObject::setHideUnpublished(true);
 ```
 
+## Disable clear complete relation
+If you want to disable the possibility to clear the whole relation, you can uncheck the checkbox "Allow to clear all relations of this field"  
+in the classdefinition.
 
 ## Advanced Many-To-One Object Relation 
 This data type is an extension to the Many-To-One Object data type. To each assigned object additional metadata can be saved. 

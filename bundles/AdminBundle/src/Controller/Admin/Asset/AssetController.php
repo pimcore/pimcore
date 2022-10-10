@@ -667,14 +667,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     {
         $type = $request->get('type');
 
-        if ($type === 'childs') {
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '10.4',
-                'Type childs is deprecated. Use children instead'
-            );
-            $type = 'children';
-        }
         if ($type === 'children') {
             $parentAsset = Asset::getById((int) $request->get('id'));
 
@@ -1151,6 +1143,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $stream = $asset->getStream();
 
+        if (!is_resource($stream)) {
+            throw $this->createNotFoundException('Unable to get resource for asset ' . $asset->getId());
+        }
+
         return new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
         }, 200, [
@@ -1303,6 +1299,11 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $stream = $image->getStream();
+
+        if (!is_resource($stream)) {
+            throw $this->createNotFoundException('Unable to get resource for asset ' . $image->getId());
+        }
+
         $response = new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
         }, 200, [

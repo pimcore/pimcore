@@ -167,6 +167,38 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
                         Ext.Msg.alert(t("error"),t("limit_reached"));
                     }
                     return true;
+                }.bind(this),
+                focusenter: function(selectField, e) {
+                    if (this.fieldConfig.dynamicOptions) {
+                        Ext.Ajax.request({
+                            url: Routing.generate('pimcore_admin_dataobject_dataobject_getSelectOptions'),
+                            params: {
+                                objectId: this.object.id,
+                                changedData: this.object.getSaveData().data,
+                                fieldDefinition: JSON.stringify(this.fieldConfig)
+                            },
+                            success: function (response) {
+                                response = Ext.decode(response.responseText);
+                                if (!(response && response.success)) {
+                                    pimcore.helpers.showNotification(t("error"), t(response.message), "error", t(response.message));
+                                } else {
+                                    if (!this.fieldConfig.mandatory) {
+                                        response.options.unshift({'value': '', 'key': "(" + t("empty") + ")"});
+                                    }
+                                    var storeData = [];
+                                    for (var i = 0; i < response.options.length; i++) {
+                                        var value = response.options[i].value;
+                                        var label = t(response.options[i].key);
+                                        if (label.indexOf('<') >= 0) {
+                                            label = replace_html_event_attributes(strip_tags(label, "div,span,b,strong,em,i,small,sup,sub2"));
+                                        }
+                                        storeData.push({id: value, text: label});
+                                    }
+                                    store.setData(storeData);
+                                }
+                            }.bind(this)
+                        });
+                    }
                 }.bind(this)
             }
         };
