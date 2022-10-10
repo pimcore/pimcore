@@ -185,6 +185,26 @@ class ElementController extends AdminController
     {
         $this->checkPermission('notes_events');
 
+        if ($request->query->get('xaction') === 'destroy') {
+            $deleteData = $this->decodeJson((string) $request->request->get('data'));
+            $deleteId   = $deleteData['id'] ?? null;
+            $deleteNote = $deleteId ? Element\Note::getById($deleteId) : null;
+
+            if (!$deleteNote) {
+                throw $this->createNotFoundException();
+            }
+
+            if (!$deleteNote->getIsDeletable()) {
+                throw $this->createAccessDeniedHttpException();
+            }
+            
+            $deleteNote->delete();
+
+            return $this->adminJson([
+                'success' => true,
+            ]);
+        }
+
         $list = new Element\Note\Listing();
 
         $list->setLimit($request->get('limit'));
@@ -310,6 +330,7 @@ class ElementController extends AdminController
         $note->setTitle($request->get('title'));
         $note->setDescription($request->get('description'));
         $note->setType($request->get('type'));
+        $note->setIsDeletable(true);
         $note->save();
 
         return $this->adminJson([

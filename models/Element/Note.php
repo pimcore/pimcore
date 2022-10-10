@@ -83,6 +83,13 @@ final class Note extends Model\AbstractModel
     /**
      * @internal
      *
+     * @var bool|null
+     */
+    protected $isDeletable;
+
+    /**
+     * @internal
+     *
      * @var array
      */
     protected $data = [];
@@ -337,5 +344,25 @@ final class Note extends Model\AbstractModel
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * @param bool|null $isDeletable
+     *
+     * @return $this
+     */
+    public function setIsDeletable($isDeletable)
+    {
+        $this->isDeletable = (bool) $isDeletable;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsDeletable()
+    {
+        return (bool) $this->isDeletable;
     }
 }

@@ -1374,6 +1374,7 @@ class Service extends Model\AbstractModel
             'date' => $note->getDate(),
             'title' => Pimcore::getContainer()->get(TranslatorInterface::class)->trans($note->getTitle(), [], 'admin'),
             'description' => $note->getDescription(),
+            'isDeletable' => $note->getIsDeletable(),
         ];
 
         // prepare key-values

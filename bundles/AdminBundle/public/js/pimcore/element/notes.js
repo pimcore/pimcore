@@ -173,6 +173,22 @@ pimcore.element.notes = Class.create({
                 }]
             });
 
+            columns.push({
+                xtype: 'actioncolumn',
+                menuText: t('delete'),
+                width: 30,
+                items: [{
+                    tooltip: t('delete'),
+                    icon: '/bundles/pimcoreadmin/img/flat-color-icons/delete.svg',
+                    handler: function (grid, rowIndex) {
+                        this.store.removeAt(rowIndex);
+                    }.bind(this),
+                    isDisabled: function (view, rowIndex, colIndex, item, record) {
+                        return !record.data.isDeletable;
+                    },
+                }]
+            });
+
             var plugins = ['pimcore.gridfilters'];
 
             this.grid = new Ext.grid.GridPanel({
