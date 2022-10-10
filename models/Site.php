@@ -474,10 +474,7 @@ final class Site extends AbstractModel
         return $this->creationDate;
     }
 
-    /**
-     * @return void
-     */
-    public function save()
+    public function save(): void
     {
         $preSaveEvent = new SiteEvent($this);
         $this->dispatchEvent($preSaveEvent, SiteEvents::PRE_SAVE);
@@ -488,10 +485,7 @@ final class Site extends AbstractModel
         $this->dispatchEvent($postSaveEvent, SiteEvents::POST_SAVE);
     }
 
-    /**
-     * @return void
-     */
-    public function delete()
+    public function delete(): void
     {
         $preDeleteEvent = new SiteEvent($this);
         $this->dispatchEvent($preDeleteEvent, SiteEvents::PRE_DELETE);

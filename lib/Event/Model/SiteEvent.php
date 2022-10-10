@@ -12,10 +12,6 @@ class SiteEvent extends Event
 
     protected Site $site;
 
-    /**
-     * @param Site $site
-     * @param array $arguments
-     */
     public function __construct(Site $site, array $arguments = [])
     {
         $this->site = $site;
