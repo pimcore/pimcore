@@ -113,7 +113,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
             throw new Model\Element\ValidationException('Wrong time format given must be a 5 digit string (eg: 06:49) [ '.$this->getName().' ]');
         }
 
-        if (!$omitMandatoryCheck && is_string($data) && strlen($data)) {
+        if (!$omitMandatoryCheck && $data) {
             if (!$this->toTime($data)) {
                 throw new Model\Element\ValidationException('Wrong time format given must be a 5 digit string (eg: 06:49) [ '.$this->getName().' ]');
             }
