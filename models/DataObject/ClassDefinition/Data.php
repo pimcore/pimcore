@@ -558,6 +558,10 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      */
     public function getFilterConditionExt($value, $operator, $params = [])
     {
+        if(is_array($value) && empty($value)) {
+            return '';
+        }
+
         $db = \Pimcore\Db::get();
         $name = $params['name'] ?: $this->name;
         $key = $db->quoteIdentifier($name);
