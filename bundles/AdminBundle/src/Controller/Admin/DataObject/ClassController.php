@@ -735,13 +735,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
             $customLayout = DataObject\ClassDefinition\CustomLayout::getById($id);
             if ($customLayout) {
                 $name = $customLayout->getName();
-                $customLayoutData = [
-                    'description' => $customLayout->getDescription(),
-                    'layoutDefinitions' => $customLayout->getLayoutDefinitions(),
-                    'default' => $customLayout->getDefault() ?: 0,
-                ];
-
-                $json = json_encode($customLayoutData, JSON_PRETTY_PRINT);
+                $json = DataObject\ClassDefinition\Service::generateCustomLayoutJson($customLayout);
 
                 $response = new Response($json);
                 $response->headers->set('Content-type', 'application/json');
@@ -1790,30 +1784,32 @@ class ClassController extends AdminController implements KernelControllerEventIn
 
         foreach ($list as $item) {
             if ($item['type'] == 'fieldcollection') {
-                $fieldCollection = DataObject\Fieldcollection\Definition::getByKey($item['name']);
-                $key = $fieldCollection->getKey();
-                $fieldCollectionJson = json_decode(DataObject\ClassDefinition\Service::generateFieldCollectionJson($fieldCollection));
-                $fieldCollectionJson->key = $key;
-                $result['fieldcollection'][] = $fieldCollectionJson;
+                if ($fieldCollection = DataObject\Fieldcollection\Definition::getByKey($item['name'])) {
+                    $fieldCollectionJson = json_decode(DataObject\ClassDefinition\Service::generateFieldCollectionJson($fieldCollection));
+                    $fieldCollectionJson->key = $item['name'];
+                    $result['fieldcollection'][] = $fieldCollectionJson;
+                }
             } elseif ($item['type'] == 'class') {
-                $class = DataObject\ClassDefinition::getByName($item['name']);
-                $data = json_decode(json_encode($class));
-                unset($data->fieldDefinitions);
-                $result['class'][] = $data;
+                if ($class = DataObject\ClassDefinition::getByName($item['name'])) {
+                    $data = json_decode(DataObject\ClassDefinition\Service::generateClassDefinitionJson($class));
+                    $data->name = $item['name'];
+                    $result['class'][] = $data;
+                }
             } elseif ($item['type'] == 'objectbrick') {
-                $objectBrick = DataObject\Objectbrick\Definition::getByKey($item['name']);
-                $key = $objectBrick->getKey();
-                $objectBrickJson = json_decode(DataObject\ClassDefinition\Service::generateObjectBrickJson($objectBrick));
-                $objectBrickJson->key = $key;
-                $result['objectbrick'][] = $objectBrickJson;
+                if ($objectBrick = DataObject\Objectbrick\Definition::getByKey($item['name'])) {
+                    $objectBrickJson = json_decode(DataObject\ClassDefinition\Service::generateObjectBrickJson($objectBrick));
+                    $objectBrickJson->key = $item['name'];
+                    $result['objectbrick'][] = $objectBrickJson;
+                }
             } elseif ($item['type'] == 'customlayout') {
-                /** @var DataObject\ClassDefinition\CustomLayout $customLayout */
-                $customLayout = DataObject\ClassDefinition\CustomLayout::getById($item['name']);
-                $classId = $customLayout->getClassId();
-                $class = DataObject\ClassDefinition::getById($classId);
-                $customLayout = $customLayout->getObjectVars();
-                $customLayout['className'] = $class->getName();
-                $result['customlayout'][] = $customLayout;
+                if ($customLayout = DataObject\ClassDefinition\CustomLayout::getById($item['name'])) {
+                    $classId = $customLayout->getClassId();
+                    $class = DataObject\ClassDefinition::getById($classId);
+                    $customLayoutJson = json_decode(DataObject\ClassDefinition\Service::generateCustomLayoutJson($customLayout));
+                    $customLayoutJson->name = $customLayout->getName();
+                    $customLayoutJson->className = $class->getName();
+                    $result['customlayout'][] = $customLayoutJson;
+                }
             }
         }
 

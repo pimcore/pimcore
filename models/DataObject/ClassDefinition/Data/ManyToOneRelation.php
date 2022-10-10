@@ -59,6 +59,11 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * @internal
      */
+    public bool $allowToClearRelation = true;
+
+    /**
+     * @internal
+     */
     public bool $relationType = true;
 
     /**
@@ -506,6 +511,16 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     public function getAssetUploadPath()
     {
         return $this->assetUploadPath;
+    }
+
+    public function isAllowedToClearRelation(): bool
+    {
+        return $this->allowToClearRelation;
+    }
+
+    public function setAllowToClearRelation(bool $allowToClearRelation): void
+    {
+        $this->allowToClearRelation = $allowToClearRelation;
     }
 
     /**

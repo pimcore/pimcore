@@ -196,6 +196,13 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
             value: this.datax.allowToCreateNewObject
         });
 
+        this.specificPanel.add({
+            xtype: "checkbox",
+            boxLabel: t("allow_to_clear_relation"),
+            name: "allowToClearRelation",
+            value: this.datax.allowToClearRelation ?? true
+        });
+
         if(this.context == 'class') {
             this.specificPanel.add({
                 xtype: "checkbox",
@@ -410,6 +417,7 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
                     enableBatchEdit: source.datax.enableBatchEdit,
                     allowMultipleAssignments: source.datax.allowMultipleAssignments,
                     allowToCreateNewObject: source.datax.allowToCreateNewObject,
+                    allowToClearRelation: source.datax.allowToClearRelation,
                     optimizedAdminLoading: source.datax.optimizedAdminLoading,
                     pathFormatterClass: source.datax.pathFormatterClass
                 });

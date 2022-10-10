@@ -565,39 +565,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
 
         if ($request->get('changedData')) {
-            $data = $this->decodeJson($request->get('changedData'));
-            foreach ($data as $key => $value) {
-                $fd = $object->getClass()->getFieldDefinition($key);
-                if ($fd) {
-                    if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                        $user = Tool\Admin::getCurrentUser();
-                        if (!$user->getAdmin()) {
-                            $allowedLanguages = DataObject\Service::getLanguagePermissions($object, $user, 'lEdit');
-                            if (!is_null($allowedLanguages)) {
-                                $allowedLanguages = array_keys($allowedLanguages);
-                                $submittedLanguages = array_keys($data[$key]);
-                                foreach ($submittedLanguages as $submittedLanguage) {
-                                    if (!in_array($submittedLanguage, $allowedLanguages)) {
-                                        unset($value[$submittedLanguage]);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if ($fd instanceof ReverseObjectRelation) {
-                        $remoteClass = DataObject\ClassDefinition::getByName($fd->getOwnerClassName());
-                        $relations = $object->getRelationData($fd->getOwnerFieldName(), false, $remoteClass->getId());
-                        $toAdd = $this->detectAddedRemoteOwnerRelations($relations, $value);
-                        $toDelete = $this->detectDeletedRemoteOwnerRelations($relations, $value);
-                        if (count($toAdd) > 0 || count($toDelete) > 0) {
-                            $this->processRemoteOwnerRelations($object, $toDelete, $toAdd, $fd->getOwnerFieldName());
-                        }
-                    } else {
-                        $object->setValue($key, $fd->getDataFromEditmode($value, $object));
-                    }
-                }
-            }
+            $this->applyChanges($object, $this->decodeJson($request->get('changedData')));
         }
 
         $fieldDefinitionConfig = json_decode($request->get('fieldDefinition'));
@@ -626,6 +594,42 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         );
 
         return new JsonResponse(['success' => true, 'options' => $options]);
+    }
+
+    private function applyChanges(DataObject\Concrete $object, array $changes): void
+    {
+        foreach ($changes as $key => $value) {
+            $fd = $object->getClass()->getFieldDefinition($key);
+            if ($fd) {
+                if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                    $user = Tool\Admin::getCurrentUser();
+                    if (!$user->getAdmin()) {
+                        $allowedLanguages = DataObject\Service::getLanguagePermissions($object, $user, 'lEdit');
+                        if (!is_null($allowedLanguages)) {
+                            $allowedLanguages = array_keys($allowedLanguages);
+                            $submittedLanguages = array_keys($changes[$key]);
+                            foreach ($submittedLanguages as $submittedLanguage) {
+                                if (!in_array($submittedLanguage, $allowedLanguages)) {
+                                    unset($value[$submittedLanguage]);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if ($fd instanceof ReverseObjectRelation) {
+                    $remoteClass = DataObject\ClassDefinition::getByName($fd->getOwnerClassName());
+                    $relations = $object->getRelationData($fd->getOwnerFieldName(), false, $remoteClass->getId());
+                    $toAdd = $this->detectAddedRemoteOwnerRelations($relations, $value);
+                    $toDelete = $this->detectDeletedRemoteOwnerRelations($relations, $value);
+                    if (count($toAdd) > 0 || count($toDelete) > 0) {
+                        $this->processRemoteOwnerRelations($object, $toDelete, $toAdd, $fd->getOwnerFieldName());
+                    }
+                } else {
+                    $object->setValue($key, $fd->getDataFromEditmode($value, $object));
+                }
+            }
+        }
     }
 
     /**
@@ -1070,21 +1074,28 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $ids = $this->decodeJson($request->get('id'));
 
         if (is_array($ids)) {
+            $return = ['success' => true];
             foreach ($ids as $id) {
                 $object = DataObject::getById((int)$id);
-                if (!$this->executeUpdateAction($object, $values)) {
-                    return $this->adminJson(['success' => false]);
+                $return = $this->executeUpdateAction($object, $values);
+                if (!$return['success']) {
+                    return $this->adminJson($return);
                 }
             }
         } else {
             $object = DataObject::getById((int)$ids);
-            $this->executeUpdateAction($object, $values);
+            $return = $this->executeUpdateAction($object, $values);
         }
 
-        return $this->adminJson(['success' => true]);
+        return $this->adminJson($return);
     }
 
-    private function executeUpdateAction(DataObject $object, mixed $values)
+    /**
+     * @return array{success: bool, message?: string}
+     *
+     * @throws \Exception
+     */
+    private function executeUpdateAction(DataObject $object, mixed $values): array
     {
         $success = false;
 
@@ -1097,7 +1108,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         if ($object instanceof DataObject\Concrete) {
             $latestVersion = $object->getLatestVersion();
             if ($latestVersion && $latestVersion->getData()->getModificationDate() != $object->getModificationDate()) {
-                return $this->adminJson(['success' => false, 'message' => "You can't rename or relocate if there's a newer not published version"]);
+                return ['success' => false, 'message' => "You can't rename or relocate if there's a newer not published version"];
             }
         }
 
@@ -1124,11 +1135,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     $objectWithSamePath = DataObject::getByPath($parent->getRealFullPath() . '/' . $object->getKey());
 
                     if ($objectWithSamePath != null) {
-                        return $this->adminJson(['success' => false, 'message' => 'prevented creating object because object with same path+key already exists']);
+                        return ['success' => false, 'message' => 'prevented creating object because object with same path+key already exists'];
                     }
 
                     if ($object->isLocked()) {
-                        return $this->adminJson(['success' => false, 'message' => 'prevented moving object, because it is locked: ID: ' . $object->getId()]);
+                        return ['success' => false, 'message' => 'prevented moving object, because it is locked: ID: ' . $object->getId()];
                     }
 
                     $object->setParentId($values['parentId']);
@@ -1161,15 +1172,15 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             } catch (\Exception $e) {
                 Logger::error((string) $e);
 
-                return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
+                return ['success' => false, 'message' => $e->getMessage()];
             }
         } elseif ($key && $object->isAllowed('rename')) {
-            return $this->adminJson($this->renameObject($object, $key));
+            return $this->renameObject($object, $key);
         } else {
             Logger::debug('prevented update object because of missing permissions.');
         }
 
-        return $success;
+        return ['success' => $success];
     }
 
     private function executeInsideTransaction(callable $fn)
@@ -1347,7 +1358,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $object->setUserModification($this->getAdminUser()->getId());
 
         $objectFromVersion = $object !== $objectFromDatabase;
-        $originalModificationDate = $objectFromVersion ? $object->getModificationDate() : $objectFromDatabase->getModificationDate();
         if ($objectFromVersion) {
             if (method_exists($object, 'getLocalizedFields')) {
                 /** @var DataObject\Localizedfield $localizedFields */
@@ -1359,39 +1369,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         // data
         $data = [];
         if ($request->get('data')) {
-            $data = $this->decodeJson($request->get('data'));
-            foreach ($data as $key => $value) {
-                $fd = $object->getClass()->getFieldDefinition($key);
-                if ($fd) {
-                    if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                        $user = Tool\Admin::getCurrentUser();
-                        if (!$user->getAdmin()) {
-                            $allowedLanguages = DataObject\Service::getLanguagePermissions($object, $user, 'lEdit');
-                            if (!is_null($allowedLanguages)) {
-                                $allowedLanguages = array_keys($allowedLanguages);
-                                $submittedLanguages = array_keys($data[$key]);
-                                foreach ($submittedLanguages as $submittedLanguage) {
-                                    if (!in_array($submittedLanguage, $allowedLanguages)) {
-                                        unset($value[$submittedLanguage]);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if ($fd instanceof ReverseObjectRelation) {
-                        $remoteClass = DataObject\ClassDefinition::getByName($fd->getOwnerClassName());
-                        $relations = $object->getRelationData($fd->getOwnerFieldName(), false, $remoteClass->getId());
-                        $toAdd = $this->detectAddedRemoteOwnerRelations($relations, $value);
-                        $toDelete = $this->detectDeletedRemoteOwnerRelations($relations, $value);
-                        if (count($toAdd) > 0 || count($toDelete) > 0) {
-                            $this->processRemoteOwnerRelations($object, $toDelete, $toAdd, $fd->getOwnerFieldName());
-                        }
-                    } else {
-                        $object->setValue($key, $fd->getDataFromEditmode($value, $object, ['objectFromVersion' => $objectFromVersion]));
-                    }
-                }
-            }
+            $this->applyChanges($object, $this->decodeJson($request->get('data')));
         }
 
         // general settings
