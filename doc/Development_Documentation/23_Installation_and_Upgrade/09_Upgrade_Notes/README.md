@@ -15,7 +15,7 @@
   - Removed $session property
   - Removed Token condition
   - Removed methods `getSession()` & `setSession()` from `PricingManager\EnvironmentInterface`
-- [Data Objects] Remove "generate type declarations" in class definitions
+- [Data Objects] Remove "generate type declarations" in class definition
 - [Data Objects] Removed method_exists bc layer, please use the corresponding interfaces instead. For details please see [#9571](https://github.com/pimcore/pimcore/issues/9571)
 - [Data Objects] `isEqual()` for advanced relational field types does not check for type equality of meta fields anymore, see [#12595](https://github.com/pimcore/pimcore/pull/12595)
 - [Listings] Removed `JsonListing`, please see [#12877](https://github.com/pimcore/pimcore/pull/12877) for details.
@@ -65,6 +65,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [CoreBundle] Please update CoreBundle config resource path from `@PimcoreCoreBundle/Resources/config/...` to `@PimcoreCoreBundle/config/..` in your project configurations.
 - [Relations]: Add confirm dialog to empty button of relations and add possibility to disable clear relations in the class layout.
 - [Email] Bumped `league/html-to-markdown` to ^5.1.
+- [Elements]: Removed deprecated `getTotalCount()` method
 - [Device Detector] Bumped `matomo/device-detector` to ^6.0.
 
 ## 10.5.0
