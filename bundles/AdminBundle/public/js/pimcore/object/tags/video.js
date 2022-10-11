@@ -153,7 +153,15 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
                     if (e['asset']['type'] === "video") {
                         this.empty(true);
                         this.dirty = true;
+
+                        this.data.type = "asset";
                         this.data.id = e['asset']['id'];
+                        this.data.data = e['asset']['path'];
+
+                        this.data.poster = null;
+                        this.data.title = '';
+                        this.data.description = '';
+
                         this.updateVideo();
 
                         return true;
