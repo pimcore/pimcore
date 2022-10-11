@@ -104,27 +104,31 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
 
     public function getTwigEnvironment($sandboxed = false): Environment
     {
-        if ($sandboxed && !$this->twig->hasExtension(SandboxExtension::class)) {
-            $tags = ['if', 'include', 'import', 'block', 'set', 'for'];
-            $filters = ['date', 'escape', 'trans', 'split', 'length', 'slice', 'lower', 'raw'];
-            $methods = $properties = [];
-            $functions = ['include', 'path', 'absolute_url', 'asset', 'is_granted'];
+        if ($sandboxed) {
+            if (!$this->twig->hasExtension(SandboxExtension::class)) {
+                $tags = ['if', 'include', 'import', 'block', 'set', 'for'];
+                $filters = ['date', 'escape', 'trans', 'split', 'length', 'slice', 'lower', 'raw'];
+                $methods = $properties = [];
+                $functions = ['include', 'path', 'absolute_url', 'asset', 'is_granted'];
 
-            $policy = new SecurityPolicy($tags, $filters, $methods, $properties, $functions);
-            $sandbox = new SandboxExtension($policy);
-            $this->twig->addExtension($sandbox);
+                $policy = new SecurityPolicy($tags, $filters, $methods, $properties, $functions);
+                $sandbox = new SandboxExtension($policy);
+                $this->twig->addExtension($sandbox);
+            }
+
+            $sandbox = $this->twig->getExtension(SandboxExtension::class);
+            $sandbox->enableSandbox();
         }
 
         return $this->twig;
     }
 
-    public function resetSandboxExtensionFromTwigEnvironment(): void
+    public function disableSandboxExtensionFromTwigEnvironment(): void
     {
-        $extensions = $this->twig->getExtensions();
-
-        unset($extensions[SandboxExtension::class]);
-
-        $this->twig->setExtensions($extensions);
+        if ($this->twig->hasExtension(SandboxExtension::class)) {
+            $sandbox = $this->twig->getExtension(SandboxExtension::class);
+            $sandbox->disableSandbox();
+        }
     }
 
     /**

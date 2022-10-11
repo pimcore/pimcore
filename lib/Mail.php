@@ -659,7 +659,7 @@ class Mail extends Email
 
         $rendered = $template->render($this->getParams());
 
-        $templatingEngine->resetSandboxExtensionFromTwigEnvironment();
+        $templatingEngine->disableSandboxExtensionFromTwigEnvironment();
 
         return $rendered;
     }
