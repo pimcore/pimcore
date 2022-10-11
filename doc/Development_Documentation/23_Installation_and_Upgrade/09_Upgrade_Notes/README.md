@@ -72,6 +72,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [DataObjects] Changed `$objectTypes` default value to include variants in certain scenarios.
 - [Elements]: Removed deprecated `getTotalCount()` method
 - [Areabricks] The default template location of `AbstractTemplateAreabrick` is now `TEMPLATE_LOCATION_GLOBAL`.
+- [Config] Rename config files from `*.yml` to `*.yaml`. Note that we now use `system.yaml` as config file and not `system.yml`
 
 ## 10.5.0
 - [Class Definitions] Resolving classes or services will no longer catch exceptions in Pimcore 11. Remove invalid references from class definitions.
@@ -353,7 +354,7 @@ framework:
 - Removed Pimcore Bundles generator and command `pimcore:generate:bundle`.
 - `Pimcore\Controller\Controller` abstract class now extends `Symfony\Bundle\FrameworkBundle\Controller\AbstractController` instead of `Symfony\Bundle\FrameworkBundle\Controller\Controller`.
 - `Pimcore\Translation\Translator::transChoice()` & `Pimcore\Bundle\AdminBundle\Translation\AdminUserTranslator::transChoice()` methods have been removed. Use `trans()` method with `%count%` parameter.
-- Removed `pimcore.documents.create_redirect_when_moved` config. Please remove from System.yml.
+- Removed `pimcore.documents.create_redirect_when_moved` config. Please remove from `system.yaml`.
 - Removed `pimcore.workflows.initial_place` config. Use `pimcore.workflows.initial_markings` instead.
 - `WebDebugToolbarListenerPass` has been removed and `WebDebugToolbarListener` has been marked as final & internal.
 - Bumped `sabre/dav` to ^4.1.1
