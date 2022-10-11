@@ -102,7 +102,7 @@ pimcore.settings.httpErrorLog = Class.create({
             listeners: {
                 "keydown" : function (field, key) {
                     if (key.getKey() == key.ENTER) {
-                        var val = field.getValue();
+                        const val = field.getValue();
                         this.store.getProxy().extraParams.filter = val ? val : "";
                         this.store.load();
                     }
