@@ -116,6 +116,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
                 $this->twig->addExtension($sandbox);
             }
 
+            /** @var SandboxExtension $sandbox */
             $sandbox = $this->twig->getExtension(SandboxExtension::class);
             $sandbox->enableSandbox();
         }
@@ -127,6 +128,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     {
         if ($this->twig->hasExtension(SandboxExtension::class)) {
             $sandbox = $this->twig->getExtension(SandboxExtension::class);
+            /** @var SandboxExtension $sandbox */
             $sandbox->disableSandbox();
         }
     }
