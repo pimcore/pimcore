@@ -19,6 +19,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Templating\DelegatingEngine as BaseDelegatingEngine;
 use Symfony\Component\Templating\EngineInterface;
 use Twig\Environment;
+use Twig\Extension\SandboxExtension;
+use Twig\Sandbox\SecurityPolicy;
 
 /**
  * @internal
@@ -100,12 +102,29 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
         return $this->delegate;
     }
 
-    /**
-     * @return Environment
-     */
-    public function getTwigEnvironment(): Environment
+    public function getTwigEnvironment($sandboxed = false): Environment
     {
+        if ($sandboxed && !$this->twig->hasExtension(SandboxExtension::class)) {
+            $tags = ['if', 'include', 'import', 'block', 'set', 'for'];
+            $filters = ['date', 'escape', 'trans', 'split', 'length', 'slice', 'lower', 'raw'];
+            $methods = $properties = [];
+            $functions = ['include', 'path', 'absolute_url', 'asset', 'is_granted'];
+
+            $policy = new SecurityPolicy($tags, $filters, $methods, $properties, $functions);
+            $sandbox = new SandboxExtension($policy);
+            $this->twig->addExtension($sandbox);
+        }
+
         return $this->twig;
+    }
+
+    public function resetSandboxExtensionFromTwigEnvironment(): void
+    {
+        $extensions = $this->twig->getExtensions();
+
+        unset($extensions[SandboxExtension::class]);
+
+        $this->twig->setExtensions($extensions);
     }
 
     /**

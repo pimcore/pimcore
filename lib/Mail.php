@@ -654,10 +654,14 @@ class Mail extends Email
     private function renderParams(string $string): string
     {
         $templatingEngine = \Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
-        $twig = $templatingEngine->getTwigEnvironment();
+        $twig = $templatingEngine->getTwigEnvironment(true);
         $template = $twig->createTemplate($string);
 
-        return $template->render($this->getParams());
+        $rendered = $template->render($this->getParams());
+
+        $templatingEngine->resetSandboxExtensionFromTwigEnvironment();
+
+        return $rendered;
     }
 
     /**
