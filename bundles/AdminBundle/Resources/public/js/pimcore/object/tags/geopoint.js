@@ -201,7 +201,15 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             url: this.getSearchUrl(address),
             method: "GET",
             success: function (response, opts) {
-                var data = Ext.decode(response.responseText);
+                const data = Ext.decode(response.responseText);
+                if(!Array.isArray(data) || data.length === 0) {
+                    Ext.MessageBox.alert(t('error'), t('unkown_error_occured') + '. <br /> <br /> ' +
+                        t('possible_triggers_for_error_searchfield_entries') +
+                        `<p>${t('wrong')}: "A-5020 Salzburg, Söllheimer Straße 16" <br />` +
+                        `${t('right')}: "5020 Salzburg, Söllheimer Straße 16"</p>` );
+
+                    return;
+                }
                 this.latitude.setValue(data[0].lat);
                 this.longitude.setValue(data[0].lon);
                 this.updateMap();

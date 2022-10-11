@@ -986,5 +986,9 @@
     "asset_upload_overwrite_all": "Overwrite all",
     "could_not_open_zip_file": "The uploaded zip file could not be opened.",
     "objects_sort_method": "Change data objects sort method",
-    "link_recursion_error": "The link is redirecting to itself, causing an infinite loop"
+    "link_recursion_error": "The link is redirecting to itself, causing an infinite loop",
+    "unkown_error_occured": "An unknown error occured",
+    "possible_triggers_for_error_searchfield_entries": "Possible triggers for the error are the following search entries",
+    "wrong": "Wrong",
+    "right": "Right"
 }
