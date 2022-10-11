@@ -31,7 +31,7 @@ class CalculatedValue implements OwnerAwareFieldInterface
     /** @var string|null */
     protected $ownerName;
 
-    /** @var int|null */
+    /** @var int|string|null */
     protected $index;
 
     /** @var string|null */
@@ -91,7 +91,7 @@ class CalculatedValue implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return int|null
+     * @return int|string|null
      */
     public function getIndex()
     {
