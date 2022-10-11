@@ -354,7 +354,7 @@ framework:
 - Removed Pimcore Bundles generator and command `pimcore:generate:bundle`.
 - `Pimcore\Controller\Controller` abstract class now extends `Symfony\Bundle\FrameworkBundle\Controller\AbstractController` instead of `Symfony\Bundle\FrameworkBundle\Controller\Controller`.
 - `Pimcore\Translation\Translator::transChoice()` & `Pimcore\Bundle\AdminBundle\Translation\AdminUserTranslator::transChoice()` methods have been removed. Use `trans()` method with `%count%` parameter.
-- Removed `pimcore.documents.create_redirect_when_moved` config. Please remove from System.yml.
+- Removed `pimcore.documents.create_redirect_when_moved` config. Please remove from `system.yaml`.
 - Removed `pimcore.workflows.initial_place` config. Use `pimcore.workflows.initial_markings` instead.
 - `WebDebugToolbarListenerPass` has been removed and `WebDebugToolbarListener` has been marked as final & internal.
 - Bumped `sabre/dav` to ^4.1.1
