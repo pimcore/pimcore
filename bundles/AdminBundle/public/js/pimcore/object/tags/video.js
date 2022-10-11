@@ -254,6 +254,10 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
             this.data.type = "asset";
             this.data.data = data.path;
 
+            this.data.poster = null;
+            this.data.title = '';
+            this.data.description = '';
+
             this.updateVideo();
             return true;
         }
