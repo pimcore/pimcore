@@ -1,5 +1,20 @@
 # Upgrade Notes
 
+## 10.5.8
+- [Twig] Sending mails and Dataobject Text Layouts, which allow rendering user controlled twig templates are now executed in a sandbox with restrictive security policies for tags, filters, functions and son on.
+         Please use following configuration to allow more tags, filters, properties, methods in template rendering:
+  ```yaml
+  pimcore:
+        templating_engine:
+            twig:
+                security_policy:
+                    tags: ['set']
+                    filters: ['escape', 'trans']
+                    methods: []
+                    properties: []
+                    functions: ['path', 'asset']
+  ```
+
 ## 10.5.0
 - [Class Definitions] Resolving classes or services will no longer catch exceptions in Pimcore 11. Remove invalid references from class definitions.
 - [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`

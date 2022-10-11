@@ -180,6 +180,7 @@ final class Configuration implements ConfigurationInterface
         $this->addCustomViewsNode($rootNode);
         $this->addGlossaryNode($rootNode);
         $this->buildRedirectsStatusCodes($rootNode);
+        $this->addTemplatingEngineNode($rootNode);
 
         return $treeBuilder;
     }
@@ -2275,5 +2276,41 @@ final class Configuration implements ConfigurationInterface
                         ->arrayNode('blocked_tags')
                             ->useAttributeAsKey('name')
                             ->prototype('scalar');
+    }
+
+    /**
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addTemplatingEngineNode(ArrayNodeDefinition $rootNode): void
+    {
+        $rootNode
+            ->children()
+            ->arrayNode('templating_engine')
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->arrayNode('twig')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('security_policy')
+                    ->children()
+                        ->arrayNode('tags')
+                            ->scalarPrototype()->end()
+                        ->end()
+                        ->arrayNode('filters')
+                            ->scalarPrototype()->end()
+                        ->end()
+                        ->arrayNode('methods')
+                            ->scalarPrototype()->end()
+                        ->end()
+                        ->arrayNode('properties')
+                            ->scalarPrototype()->end()
+                        ->end()
+                        ->arrayNode('functions')
+                            ->scalarPrototype()->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ->end();
     }
 }

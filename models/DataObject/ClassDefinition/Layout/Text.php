@@ -143,13 +143,17 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
         }
 
         $templatingEngine = \Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
-        $twig = $templatingEngine->getTwigEnvironment();
-        $template = $twig->createTemplate($this->html);
-        $this->html = $template->render(array_merge($context,
-            [
-                'object' => $object,
-            ]
-        ));
+        try {
+            $twig = $templatingEngine->getTwigEnvironment(true);
+            $template = $twig->createTemplate($this->html);
+            $this->html = $template->render(array_merge($context,
+                [
+                    'object' => $object,
+                ]
+            ));
+        } finally {
+            $templatingEngine->disableSandboxExtensionFromTwigEnvironment();
+        }
 
         return $this;
     }

@@ -15,6 +15,7 @@
 
 namespace Pimcore\Templating;
 
+use Pimcore\Config;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Templating\DelegatingEngine as BaseDelegatingEngine;
 use Symfony\Component\Templating\EngineInterface;
@@ -28,23 +29,15 @@ use Twig\Sandbox\SecurityPolicy;
 class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
 {
     /**
-     * @var Environment
-     */
-    protected $twig;
-
-    /**
      * @var bool
      */
     protected $delegate = false;
 
     /**
-     * @param Environment $twig
      * @param EngineInterface[] $engines
      */
-    public function __construct(Environment $twig, array $engines = [])
+    public function __construct(protected Environment $twig, protected Config $config, array $engines = [])
     {
-        $this->twig = $twig;
-
         parent::__construct($engines);
     }
 
@@ -106,10 +99,13 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     {
         if ($sandboxed) {
             if (!$this->twig->hasExtension(SandboxExtension::class)) {
-                $tags = ['if', 'include', 'import', 'block', 'set', 'for'];
-                $filters = ['date', 'escape', 'trans', 'split', 'length', 'slice', 'lower', 'raw'];
-                $methods = $properties = [];
-                $functions = ['include', 'path', 'absolute_url', 'asset', 'is_granted'];
+                $securityPolicy = $this->config['templating_engine']['twig']['security_policy'];
+
+                $tags = $securityPolicy['tags'];
+                $filters = $securityPolicy['filters'];
+                $methods = $securityPolicy['methods'];
+                $properties = $securityPolicy['properties'];
+                $functions = $securityPolicy['functions'];
 
                 $policy = new SecurityPolicy($tags, $filters, $methods, $properties, $functions);
                 $sandbox = new SandboxExtension($policy);
