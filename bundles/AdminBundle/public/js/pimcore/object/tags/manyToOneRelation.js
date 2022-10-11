@@ -163,6 +163,16 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             });
         }
 
+        if (this.fieldConfig.assetInlineDownloadAllowed) {
+            items.push({
+                xtype: "button",
+                iconCls: "pimcore_icon_download",
+                cls: "pimcore_inline_download",
+                style: "margin-left: 5px",
+                handler: this.downloadAsset.bind(this)
+            });
+        }
+
         var compositeCfg = {
             fieldLabel: this.fieldConfig.title,
             labelWidth: labelWidth,
@@ -423,6 +433,16 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
     openElement: function () {
         if (this.data.id && this.data.type) {
             pimcore.helpers.openElement(this.data.id, this.data.type, this.data.subtype);
+        }
+    },
+
+    downloadAsset: function () {
+        if (this.data.id && this.data.type && this.data.type === "asset") {
+            if (this.data.subtype === "folder") {
+                pimcore.elementservice.downloadAssetFolderAsZip(this.data.id)
+            } else {
+                pimcore.helpers.download(Routing.generate('pimcore_admin_asset_download', {id: this.data.id}));
+            }
         }
     },
 

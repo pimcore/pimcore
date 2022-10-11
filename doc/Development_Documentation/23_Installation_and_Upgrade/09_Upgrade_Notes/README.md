@@ -1,5 +1,6 @@
 # Upgrade Notes
 ## 11.0.0
+- [Elements] Added `setParentId`, `setType` and `setParent` methods to `Pimcore\Model\Element\ElementInterface`
 - [JSRouting Bundle] Bumped `friendsofsymfony/jsrouting-bundle` to version `^3.2.1`
 - [Installer] Changed the return type of `Pimcore\Extension\Bundle\Installer\InstallerInterface::getOutput` to `BufferedOutput | NullOutput`.
 - [Assets] Refactored `Pimcore\Model\Asset::getMetadata` method to allow listing of all metadata entries filtered by a specific language. Prior this version, the language filter was only available when a specific metadata name was defined in the parameters. Added native type hints and related tests.
@@ -57,16 +58,21 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Workflows] Removed classes Pimcore\Model\Workflow, Pimcore\Model\Workflow\Dao, Pimcore\Model\Workflow\Listing\Dao and Pimcore\Model\Workflow\Listing.
     Please check the documentation on how to work with workflows: [Workflow Management](../../07_Workflow_Management/README.md).
 - [Core] Removed the deprecated method `Kernel::getRootDir()`, use `Kernel::getProjectDir()` instead.
+- [Relations] Add possibility to inline download asset from relations
 - [PhpArrayTable]: Removed PhpArrayTable class
 - [Document Editables] Removed method_exists bc layer for `getDataEditmode()`, `rewriteIds()` & `load()`, please use the corresponding interfaces `EditmodeDataInterface`, `IdRewriterInterface` & `LazyLoadingInterface` instead.
 - [Parallelization] Removed `webmozarts/console-parallelization` dependency due to maintainability reasons. If you still want to use parallelization for console commands, please add the dependency to your own `composer.json`.
 - [Navigation Builder] Calling the method `Pimcore\Navigation\Builder::getNavigation()` using extra arguments is
   removed. Instead, please pass the arguments as an associative array (eg.`getNavigation($args)`.For details, please see [#12310](https://github.com/pimcore/pimcore/issues/12310)
+- [Flysystem] Bumped `league/flysystem-bundle` minimum requirement to ^3.0 (which introduces `directoryExists()`,`has()` methods and fixes support for `directory_visibility` configuration option). Please bump the Flysystem Adapters requirement accordingly to `^3.0` in your project `composer.json`. 
+ NB: [Visibility](https://flysystem.thephpleague.com/docs/visibility/) permissions were specified as `0644` for files and `0755` for directories, are now using the more simplified `public/private` options which are translated respectively into `0600` and `0744`. 
 - [CoreBundle] Please update CoreBundle config resource path from `@PimcoreCoreBundle/Resources/config/...` to `@PimcoreCoreBundle/config/..` in your project configurations.
 - [Relations]: Add confirm dialog to empty button of relations and add possibility to disable clear relations in the class layout.
 - [Email] Bumped `league/html-to-markdown` to ^5.1.
+- [DataObjects] Changed `$objectTypes` default value to include variants in certain scenarios.
 - [Elements]: Removed deprecated `getTotalCount()` method
 - Bumped `mjaschen/phpgeo` to "^4.0".
+- [Areabricks] The default template location of `AbstractTemplateAreabrick` is now `TEMPLATE_LOCATION_GLOBAL`.
 
 ## 10.5.0
 - [Class Definitions] Resolving classes or services will no longer catch exceptions in Pimcore 11. Remove invalid references from class definitions.
