@@ -251,6 +251,8 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
                 this.dirty = true;
             }
             this.data.id = data.id;
+            this.data.type = "asset";
+            this.data.data = data.path;
 
             this.updateVideo();
             return true;
