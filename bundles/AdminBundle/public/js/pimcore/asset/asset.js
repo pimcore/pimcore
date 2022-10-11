@@ -492,9 +492,6 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
     showMetaInfo: function() {
         var metainfo = this.getMetaInfo();
 
-        var usermodification = (metainfo.usermodification_fullname.length > 0) ? metainfo.usermodification_fullname : metainfo.usermodification_username;
-        var userowner = (metainfo.userowner_fullname.length > 0) ? metainfo.userowner_fullname : metainfo.userowner_username;
-
         new pimcore.element.metainfo([
             {
                 name: "id",
@@ -522,11 +519,11 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             }, {
                 name: "usermodification",
                 type: "user",
-                value: '<span data-uid="' + metainfo.usermodification + '">' + usermodification + '</span>'
+                value: '<span data-uid="' + metainfo.usermodification + '">' + metainfo.usermodification_fullname + '</span>'
             }, {
                 name: "userowner",
                 type: "user",
-                value: '<span data-uid="' + metainfo.userowner + '">' + userowner + '</span>'
+                value: '<span data-uid="' + metainfo.userowner + '">' + metainfo.userowner_fullname + '</span>'
             }, {
                 name: "deeplink",
                 value: metainfo.deeplink

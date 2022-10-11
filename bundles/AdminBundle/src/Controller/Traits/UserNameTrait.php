@@ -39,7 +39,7 @@ trait UserNameTrait
         } else {
             $data = [
                 'userName' => $user->getName(),
-                'fullName' => $user->getFullName(),
+                'fullName' => (empty($user->getFullName()) ? $user->getName() : $user->getFullName()),
             ];
         }
 
