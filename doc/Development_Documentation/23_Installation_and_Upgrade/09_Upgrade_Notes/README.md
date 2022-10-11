@@ -73,6 +73,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Elements]: Removed deprecated `getTotalCount()` method
 - [Areabricks] The default template location of `AbstractTemplateAreabrick` is now `TEMPLATE_LOCATION_GLOBAL`.
 - [Config] Rename config files from `*.yml` to `*.yaml`. Note that we now use `system.yaml` as config file and not `system.yml`
+- [Video] It's now possible to drop a video asset directly into an video editable in class
 
 ## 10.5.0
 - [Class Definitions] Resolving classes or services will no longer catch exceptions in Pimcore 11. Remove invalid references from class definitions.
