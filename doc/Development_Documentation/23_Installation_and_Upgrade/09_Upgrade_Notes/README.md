@@ -7,12 +7,14 @@
   pimcore:
         templating_engine:
             twig:
-                security_policy:
-                    tags: ['set']
-                    filters: ['escape', 'trans']
-                    methods: []
-                    properties: []
-                    functions: ['path', 'asset']
+              security_policy:
+                tags: ['if']
+                filters: ['upper']
+                methods:
+                    Article: ['getTitle', 'getBody']
+                properties:
+                    Article: ['title', 'body']
+                functions: ['include', 'path', 'range']
   ```
 
 ## 10.5.0
