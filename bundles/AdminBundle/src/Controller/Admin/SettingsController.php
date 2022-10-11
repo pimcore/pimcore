@@ -447,7 +447,7 @@ class SettingsController extends AdminController
         $values = $this->decodeJson($request->get('data'));
 
         try {
-            $file = Config::locateConfigFile('system.yml');
+            $file = Config::locateConfigFile('system.yaml');
             Config::getConfigInstance($file);
         } catch (\Exception $e) {
             // nothing to do
@@ -533,9 +533,9 @@ class SettingsController extends AdminController
             $settings['pimcore']['email']['debug']['email_addresses'] = $values['email.debug.emailAddresses'];
         }
 
-        $settingsYml = Yaml::dump($settings, 5);
-        $configFile = Config::locateConfigFile('system.yml');
-        File::put($configFile, $settingsYml);
+        $settingsYaml = Yaml::dump($settings, 5);
+        $configFile = Config::locateConfigFile('system.yaml');
+        File::put($configFile, $settingsYaml);
 
         // clear all caches
         $this->clearSymfonyCache($request, $kernel, $eventDispatcher, $symfonyCacheClearer);

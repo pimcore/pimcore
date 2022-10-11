@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\UserNameTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Controller\KernelControllerEventInterface;
@@ -58,6 +59,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     use ElementEditLockHelperTrait;
     use ApplySchedulerDataTrait;
     use DataObjectActionsTrait;
+    use UserNameTrait;
 
     protected DataObject\Service $_objectService;
 
@@ -413,7 +415,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             $objectData['general'] = [];
 
-            $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_creationDate', 'o_classId', 'o_className', 'o_type', 'o_parentId', 'o_userOwner'];
+            $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_creationDate', 'o_classId', 'o_className', 'o_type', 'o_parentId', 'o_userOwner', 'o_userModification'];
             foreach ($objectFromDatabase->getObjectVars() as $key => $value) {
                 if (in_array($key, $allowedKeys)) {
                     $objectData['general'][$key] = $value;
@@ -471,6 +473,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             // and for adding the published icon to version overview
             $objectData['general']['versionDate'] = $objectFromDatabase->getModificationDate();
             $objectData['general']['versionCount'] = $objectFromDatabase->getVersionCount();
+
+            $userOwnerName = $this->getUserName($objectData['general']['o_userOwner']);
+            $userModificationName = ($objectData['general']['o_userOwner'] == $objectData['general']['o_userModification']) ? $userOwnerName : $this->getUserName($objectData['general']['o_userModification']);
+            $objectData['general']['o_userOwnerUsername'] = $userOwnerName['userName'];
+            $objectData['general']['o_userOwnerFullname'] = $userOwnerName['fullName'];
+            $objectData['general']['o_userModificationUsername'] = $userModificationName['userName'];
+            $objectData['general']['o_userModificationFullname'] = $userModificationName['fullName'];
 
             $this->addAdminStyle($object, ElementAdminStyleEvent::CONTEXT_EDITOR, $objectData['general']);
 
@@ -799,6 +808,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $objectData['properties'] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
             $objectData['userPermissions'] = $object->getUserPermissions($this->getAdminUser());
             $objectData['classes'] = $this->prepareChildClasses($object->getDao()->getClasses());
+
+            $userOwnerName = $this->getUserName($objectData['general']['o_userOwner']);
+            $userModificationName = ($objectData['general']['o_userOwner'] == $objectData['general']['o_userModification']) ? $userOwnerName : $this->getUserName($objectData['general']['o_userModification']);
+            $objectData['general']['o_userOwnerUsername'] = $userOwnerName['userName'];
+            $objectData['general']['o_userOwnerFullname'] = $userOwnerName['fullName'];
+            $objectData['general']['o_userModificationUsername'] = $userModificationName['userName'];
+            $objectData['general']['o_userModificationFullname'] = $userModificationName['fullName'];
 
             // grid-config
             $configFile = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $object->getId() . '-user_' . $this->getAdminUser()->getId() . '.psf';

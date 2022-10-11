@@ -73,9 +73,9 @@ jobs:
             - name: "Checkout code"
               uses: "actions/checkout@v2"
 
-            - uses: "actions/setup-node@v2"
+            - uses: "actions/setup-node@v3"
               with:
-                  node-version: '10'
+                  node-version: 'lts/*'
 
             - name: "Install PHP"
               uses: "shivammathur/setup-php@v2"
