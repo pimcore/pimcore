@@ -30,6 +30,11 @@ map $args $static_page_root {
     "~*(^|&)pimcore_preview=true(&|$)"      /var/nonexistent;
     "~*(^|&)pimcore_version=[^&]+(&|$)"     /var/nonexistent;
 }
+
+map $uri $static_uri {
+    default                                 $uri;
+    "/"                                     /home;
+}
 ```
 and the following modification must be done to the location block that matches all requests 
 ```nginx
@@ -38,7 +43,7 @@ server {
     
     location / {
         error_page 404 /meta/404;
-        try_files $static_page_root$uri.html $uri /index.php$is_args$args;
+        try_files $static_page_root$static_uri.html $uri /index.php$is_args$args;
     }
     
     ...

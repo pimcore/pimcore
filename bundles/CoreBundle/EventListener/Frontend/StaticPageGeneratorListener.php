@@ -143,6 +143,11 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
             return;
         }
 
+        if (($contentType = $event->getResponse()->headers->get('Content-Type'))
+            && stripos($contentType, 'text/html') === false) {
+            return;
+        }
+
         //return if request is from StaticPageGenerator
         if ($request->attributes->has('pimcore_static_page_generator')) {
             return;
