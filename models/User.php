@@ -216,6 +216,11 @@ final class User extends User\UserRole
         return $this;
     }
 
+    public function getFullName(): string
+    {
+        return trim($this->getFirstname() . ' ' . $this->getLastname());
+    }
+
     /**
      * @return string|null
      */

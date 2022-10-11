@@ -331,7 +331,9 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             modificationdate: this.data.modificationDate,
             creationdate: this.data.creationDate,
             usermodification: this.data.userModification,
+            usermodification_name: this.data.userModificationFullname,
             userowner: this.data.userOwner,
+            userowner_name: this.data.userOwnerFullname,
             deeplink: pimcore.helpers.getDeeplink("asset", this.data.id, this.data.type)
         };
     },
@@ -361,13 +363,12 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             }, {
                 name: "usermodification",
                 type: "user",
-                value: metainfo.usermodification
+                value: '<span data-uid="' + metainfo.usermodification + '">' + metainfo.usermodification_name + '</span>'
             }, {
                 name: "userowner",
                 type: "user",
-                value: metainfo.userowner
-            },
-            {
+                value: '<span data-uid="' + metainfo.userowner + '">' + metainfo.userowner_name + '</span>'
+            }, {
                 name: "deeplink",
                 value: metainfo.deeplink
             }
@@ -386,4 +387,3 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
         }
     }
 });
-

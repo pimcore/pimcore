@@ -454,14 +454,16 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
             modificationdate: this.data.general.o_modificationDate,
             creationdate: this.data.general.o_creationDate,
             usermodification: this.data.general.o_userModification,
+            usermodification_name: this.data.general.o_userModificationFullname,
             userowner: this.data.general.o_userOwner,
+            userowner_name: this.data.general.o_userOwnerFullname,
             deeplink: pimcore.helpers.getDeeplink("object", this.data.general.o_id, "folder")
         };
     },
 
     showMetaInfo: function() {
         var metainfo = this.getMetaInfo();
-
+        
         new pimcore.element.metainfo([
         {
             name: "id",
@@ -481,14 +483,13 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         }, {
             name: "usermodification",
             type: "user",
-            value: metainfo.usermodification
+            value: '<span data-uid="' + metainfo.usermodification + '">' + metainfo.usermodification_name + '</span>'
         }, {
             name: "userowner",
             type: "user",
-            value: metainfo.userowner
-        },
-        {
-            name: "deeplink",
+            value: '<span data-uid="' + metainfo.userowner + '">' + metainfo.userowner_name + '</span>'
+    }, {
+        name: "deeplink",
             value: metainfo.deeplink
         }
         ], "folder");
@@ -507,4 +508,3 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
     }
 
 });
-
