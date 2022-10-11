@@ -30,9 +30,6 @@ interface IdRewriterInterface
      *  "asset" => array(...)
      * )
      *
-     * @param array $idMapping
-     *
-     * @return void
      */
-    public function rewriteIds(/*array*/ $idMapping) /** : void */;
+    public function rewriteIds(array $idMapping): void;
 }
