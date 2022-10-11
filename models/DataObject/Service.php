@@ -510,7 +510,7 @@ class Service extends Model\Element\Service
      * @param string $key
      * @param array $context
      *
-     * @return mixed|ConfigElementInterface|ConfigElementInterface[]
+     * @return ConfigElementInterface|null
      *
      * @internal
      */

@@ -83,7 +83,7 @@ class EditableHandler implements LoggerAwareInterface
     protected $responseStack;
 
     /**
-     * @var array
+     * @var array<string, string>
      */
     protected $brickTemplateCache = [];
 
