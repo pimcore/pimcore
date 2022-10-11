@@ -1,6 +1,7 @@
 # Upgrade Notes
 
 ## 10.5.0
+- [Class Definitions] Resolving classes or services will no longer catch exceptions in Pimcore 11. Remove invalid references from class definitions.
 - [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`
 - [Listings] `JsonListing` class is deprecated. Please use `CallableFilterListingInterface`, `FilterListingTrait` and `CallableOrderListingInterface`, `OrderListingTrait` instead.
   For examples please see existing classes, e.g. `Pimcore\Model\Document\DocType\Listing`.
@@ -34,9 +35,9 @@
     Document::getByPath($path, ['force' => true]);
     DataObject::getByPath($path, ['force' => true]);
   
-    Element\Service::getElementById::getElementById($type, $id, ['force' => true]);
+    Element\Service::getElementById($type, $id, ['force' => true]);
    ```
-- [Navigation Builder] Calling the method `Pimcore\Navigation\Builder::getNavigation()` using extra arguments is deprecated and will be removed in Pimcore 11. Instead of using the extra arguments, it is recommended to call the method using the params array. eg: Currently, the `getNavigation()` method can be called by passing the config params `activeDocument`, `navigationRootDocument`, `htmlMenuIdPrefix`, `pageCallback`, `cache`, `maxDepth` and `cacheLifetime` as the arguments i.e `getNavigation($activeDocument, $navigationRootDocument, $htmlMenuIdPrefix, $pageCallback, $cache,$maxDepth, $cacheLifetime)`. According to the new implementation you should call the method like `getNavigation($params)` where `$params` should be an associative array with the keys `active`, `root`, `htmlMenuPrefix`, `pageCallback`, `cache`, `maxDepth` and `cacheLifetime`.
+- [Navigation Builder] Calling the method `Pimcore\Navigation\Builder::getNavigation()` using extra arguments is deprecated and will be removed in Pimcore 11. Instead of using the extra arguments, it is recommended to call the method using the params array. eg: Currently, the `getNavigation()` method can be called by passing the config params `activeDocument`, `navigationRootDocument`, `htmlMenuIdPrefix`, `pageCallback`, `cache`, `maxDepth`, `cacheLifetime` and `markActiveTrail` as the arguments i.e `getNavigation($activeDocument, $navigationRootDocument, $htmlMenuIdPrefix, $pageCallback, $cache, $maxDepth, $cacheLifetime, $markActiveTrail)`. According to the new implementation you should call the method like `getNavigation($params)` where `$params` should be an associative array with the keys `active`, `root`, `htmlMenuPrefix`, `pageCallback`, `cache`, `maxDepth`, `cacheLifetime` and `markActiveTrail`.
   
 - [Runtime Cache] The trait `\Pimcore\Cache\RuntimeCacheTrait` has been deprecated because of its ambiguous naming and usage of persisted cache along with the runtime object cache.
   It is recommended to use `\Pimcore\Cache\RuntimeCache` instead of this trait. For persisted cache, please use `\Pimcore\Cache` instead.
@@ -51,7 +52,7 @@
   The only cases could be affected are those where the workspace are set but master permissions are disallowed, before this change, it could lead to (not intended) false positive.
 - [Security/User] `UsernameNotFoundException` (deprecated since Symfony 5.3) occurences have been replaced with `UserNotFoundException`.
 - [Deprecated] Generate type declarations option in class definition is deprecated, because type declarations will always be added with Pimcore 11
-- [Application Logger] File Objects are now stored in the flysystem. Due some incompatibilities of checking files by modification date (cloud storages) and for perfomance issues (scan folders/file), the cleanup task now do not run in time range from [midnight and 4 a.m.](https://github.com/pimcore/pimcore/pull/7164) anymore, but it deletes the file matching the column in the database as soon as the database entries are archived.
+- [Application Logger] File Objects are now stored in the flysystem. Due some incompatibilities of checking files by modification date (cloud storages) and for performance issues (scan folders/file), the cleanup task now do not run in time range from [midnight and 4 a.m.](https://github.com/pimcore/pimcore/pull/7164) anymore, but it deletes the file matching the column in the database as soon as the database entries are archived.
 - [Session] Implementing Session Configurator with tag `pimcore.session.configurator` to register session bags, is deprecated and will be removed in Pimcore 11.
   Implement an [EventListener](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/EventListener/SessionBagListener.php) to register a session bag before the session is started.
 - [Ecommerce][PricingManager] Token condition is deprecated and will be removed in Pimcore 11.

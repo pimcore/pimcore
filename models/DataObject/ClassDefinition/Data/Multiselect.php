@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -441,7 +442,7 @@ class Multiselect extends Data implements
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param string $value
+     * @param mixed $value
      * @param string $operator
      * @param array $params optional params used to change the behavior
      *
@@ -456,6 +457,14 @@ class Multiselect extends Data implements
             $key = $db->quoteIdentifier($name);
             if (!empty($params['brickPrefix'])) {
                 $key = $params['brickPrefix'].$key;
+            }
+
+            if (str_contains($name, 'cskey') && is_array($value) && !empty($value)) {
+                $values = array_map(function ($val) use ($db) {
+                    return $db->quote('%' .Helper::escapeLike($val). '%');
+                }, $value);
+
+                return $key . ' LIKE ' . implode(' OR ' . $key . ' LIKE ', $values);
             }
 
             $value = "'%,".$value.",%'";

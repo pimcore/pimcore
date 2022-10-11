@@ -397,11 +397,11 @@ final class User extends User\UserRole
      */
     public function setRoles($roles)
     {
-        if (is_string($roles) && !empty($roles)) {
+        if (is_string($roles) && $roles !== '') {
             $this->roles = explode(',', $roles);
         } elseif (is_array($roles)) {
             $this->roles = $roles;
-        } elseif (empty($roles)) {
+        } else {
             $this->roles = [];
         }
 

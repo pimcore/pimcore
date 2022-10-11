@@ -93,6 +93,13 @@ pimcore.helpers.colorpicker = {
                 if (me.colorPicker) {
                     me.colorPicker.setColor(c);
                 }
+            },
+
+            /**
+             * Deactivate the alpha decimal formatting, see https://github.com/pimcore/pimcore/issues/13304
+             */
+            getAlphaDecimalFormat: function () {
+                return null;
             }
         });
 
