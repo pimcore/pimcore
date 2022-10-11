@@ -72,10 +72,10 @@ The template location defines the base path which will be used to find your temp
 locations. `<bundlePath>` is the filesystem path of the bundle the brick resides in, `<brickId>` the ID of the brick 
 as registered on the areabrick manager (see below).
 
-| Location | Path                                           |
-|----------|------------------------------------------------|
-| global   | `templates/areas/<brickId>`                    |
-| bundle   | `<bundlePath>/Resources/views/Areas/<brickId>` |
+| Location | Path                                                                                                                                                                                    |
+|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| global   | `templates/areas/<brickId>/`                                                                                                                                                            |
+| bundle   | `<bundlePath>/Resources/views/areas/<brickId>/` for legacy (Symfony <= 4) bundle strucure<br>or<br>`<bundlePath>/templates/areas/<brickId>/` for modern (Symfony >= 5) bundle structure |
 
 Depending on the template location, the following files will be used. You can always completely control locations by 
 implementing the methods for templates and icon yourself (see `AreabrickInterface`):
@@ -135,11 +135,6 @@ class Iframe extends AbstractTemplateAreabrick
     public function getDescription()
     {
         return 'Embed contents from other URL (websites) via iframe';
-    }
-
-    public function getTemplateLocation()
-    {
-        return static::TEMPLATE_LOCATION_GLOBAL;
     }
     
     public function needsReload(): bool

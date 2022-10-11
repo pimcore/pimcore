@@ -298,7 +298,7 @@ class Dao extends Model\Element\Dao
      *
      * @return bool
      */
-    public function hasChildren($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], $includingUnpublished = null, $user = null)
+    public function hasChildren($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], $includingUnpublished = null, $user = null)
     {
         if (!$this->model->getId()) {
             return false;
@@ -350,7 +350,7 @@ class Dao extends Model\Element\Dao
      *
      * @return bool
      */
-    public function hasSiblings($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], $includingUnpublished = null)
+    public function hasSiblings($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], $includingUnpublished = null)
     {
         if (!$this->model->getParentId()) {
             return false;
@@ -383,7 +383,7 @@ class Dao extends Model\Element\Dao
      *
      * @return int
      */
-    public function getChildAmount($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], $user = null)
+    public function getChildAmount($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], $user = null)
     {
         if (!$this->model->getId()) {
             return 0;
