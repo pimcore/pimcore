@@ -23,9 +23,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
+use Pimcore\Logger;
 use Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypeSingle;
 use Pimcore\Model\DataObject\OnlineShopVoucherToken;
-use Pimcore\Logger;
 
 /**
  * @property \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypeSingle $configuration
