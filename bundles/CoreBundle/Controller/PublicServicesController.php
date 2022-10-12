@@ -162,10 +162,10 @@ class PublicServicesController extends Controller
                                 $requestedFile = preg_replace('/\.' . $actualFileExtension . '$/', '.' . $requestedFileExtension, $pathReference['src']);
                                 $storage->writeStream($requestedFile, $thumbnailStream);
                             }
-                        }elseif ($thumbnailType =='video' && isset($storagePath)){
+                        } elseif ($thumbnailType =='video' && isset($storagePath)) {
                             $mime = $storage->mimeType($storagePath);
                             $fileSize = $storage->fileSize($storagePath);
-                        }else{
+                        } else {
                             throw new \Exception('Cannot determine mime type and file size of '.$thumbnailType.' thumbnail, see logs for details.');
                         }
                         // set appropriate caching headers
