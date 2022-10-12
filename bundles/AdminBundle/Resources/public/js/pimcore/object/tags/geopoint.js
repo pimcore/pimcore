@@ -203,10 +203,10 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             success: function (response, opts) {
                 const data = Ext.decode(response.responseText);
                 if(!Array.isArray(data) || data.length === 0) {
-                    Ext.MessageBox.alert(t('error'), t('unkown_error_occured') + '. <br /> <br /> ' +
-                        t('possible_triggers_for_error_searchfield_entries') +
-                        `<p>${t('wrong')}: "A-5020 Salzburg, Söllheimer Straße 16" <br />` +
-                        `${t('right')}: "5020 Salzburg, Söllheimer Straße 16"</p>` );
+                    Ext.MessageBox.alert(t('error'), t('address_not_found') + '. <br /> <br /> ' +
+                        t('possible_causes') + ':' +
+                        `<p>${t('postal_code_format')}, ${t('eg_use')} "A-5020 Salzburg, Söllheimer Straße 16" ` +
+                        `${t('instead_of')} "5020 Salzburg, Söllheimer Straße 16"</p>` );
 
                     return;
                 }
