@@ -205,8 +205,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
                 if(!Array.isArray(data) || data.length === 0) {
                     Ext.MessageBox.alert(t('error'), t('address_not_found') + '. <br /> <br /> ' +
                         t('possible_causes') + ':' +
-                        `<p>${t('postal_code_format')}, ${t('eg_use')} "A-5020 Salzburg, Söllheimer Straße 16" ` +
-                        `${t('instead_of')} "5020 Salzburg, Söllheimer Straße 16"</p>` );
+                        `<p>${t('postal_code_format_error')}</p>` );
 
                     return;
                 }
