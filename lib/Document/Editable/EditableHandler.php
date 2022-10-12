@@ -259,10 +259,10 @@ class EditableHandler implements LoggerAwareInterface
         $params['instance'] = $brick;
 
         // check if view template exists and throw error before open tag is rendered
-        $viewTemplate = $this->resolveBrickTemplate($brick, 'view');
+        $viewTemplate = $this->resolveBrickTemplate($brick);
         if (!$this->templating->exists($viewTemplate)) {
             $e = new ConfigurationException(sprintf(
-                'The view template "%s" for areabrick %s does not exist',
+                'The view template "%s" for areabrick "%s" does not exist',
                 $viewTemplate,
                 $brick->getId()
             ));
@@ -318,90 +318,77 @@ class EditableHandler implements LoggerAwareInterface
     }
 
     /**
-     * Try to get the brick template from get*Template method. If method returns null and brick implements
-     * TemplateAreabrickInterface fall back to auto-resolving the template reference. See interface for examples.
+     * Try to get the brick template from getTemplate() method. If method returns null and brick implements
+     * TemplateAreabrickInterface, fall back to auto-resolving the template reference. See interface for examples.
      *
      * @param AreabrickInterface $brick
-     * @param string $type
      *
      * @return mixed|null|string
      */
-    protected function resolveBrickTemplate(AreabrickInterface $brick, $type)
+    protected function resolveBrickTemplate(AreabrickInterface $brick)
     {
-        $cacheKey = sprintf('%s.%s', $brick->getId(), $type);
+        $cacheKey = sprintf('%s.view', $brick->getId());
         if (isset($this->brickTemplateCache[$cacheKey])) {
             return $this->brickTemplateCache[$cacheKey];
         }
 
-        $template = null;
-        if ($type === 'view') {
-            $template = $brick->getTemplate();
+        if ($template = $brick->getTemplate()) {
+            return $this->brickTemplateCache[$cacheKey] = $template;
         }
 
-        if (null === $template) {
-            if ($brick instanceof TemplateAreabrickInterface) {
-                $template = $this->buildBrickTemplateReference($brick, $type);
-            } else {
-                $e = new ConfigurationException(sprintf(
-                    'Brick %s is configured to have a %s template but does not return a template path and does not implement %s',
-                    $brick->getId(),
-                    $type,
-                    TemplateAreabrickInterface::class
-                ));
-
-                $this->logger->error($e->getMessage());
-
-                throw $e;
-            }
+        if ($brick instanceof TemplateAreabrickInterface) {
+            return $this->brickTemplateCache[$cacheKey] = $this->buildBrickTemplateReference($brick);
         }
 
-        $this->brickTemplateCache[$cacheKey] = $template;
+        $e = new ConfigurationException(sprintf(
+            'Brick "%s" is configured to have a view template, but does not return a template path and does not implement %s',
+            $brick->getId(),
+            TemplateAreabrickInterface::class
+        ));
 
-        return $template;
+        $this->logger->error($e->getMessage());
+
+        throw $e;
     }
 
     /**
      * Return either bundle or global (= app/Resources) template reference
      *
      * @param TemplateAreabrickInterface $brick
-     * @param string $type
      *
      * @return string
      */
-    protected function buildBrickTemplateReference(TemplateAreabrickInterface $brick, $type)
+    protected function buildBrickTemplateReference(TemplateAreabrickInterface $brick)
     {
-        if ($brick->getTemplateLocation() === TemplateAreabrickInterface::TEMPLATE_LOCATION_BUNDLE) {
-            $bundle = $this->bundleLocator->getBundle($brick);
-            $bundleName = $bundle->getName();
-            if (str_ends_with($bundleName, 'Bundle')) {
-                $bundleName = substr($bundleName, 0, -6);
-            }
-
-            foreach (['areas', 'Areas'] as $folderName) {
-                $templateReference = sprintf(
-                    '@%s/%s/%s/%s.%s',
-                    $bundleName,
-                    $folderName,
-                    $brick->getId(),
-                    $type,
-                    $brick->getTemplateSuffix()
-                );
-
-                if ($this->templating->exists($templateReference)) {
-                    return $templateReference;
-                }
-            }
-
-            // return the last reference, even we know that it doesn't exist -> let care the templating engine
-            return $templateReference;
-        } else {
+        if ($brick->getTemplateLocation() === TemplateAreabrickInterface::TEMPLATE_LOCATION_GLOBAL) {
             return sprintf(
-                'areas/%s/%s.%s',
+                'areas/%s/view.%s',
                 $brick->getId(),
-                $type,
                 $brick->getTemplateSuffix()
             );
         }
+
+        $bundleName = $this->bundleLocator->getBundle($brick)->getName();
+        if (str_ends_with($bundleName, 'Bundle')) {
+            $bundleName = substr($bundleName, 0, -6);
+        }
+
+        foreach (['areas', 'Areas'] as $folderName) {
+            $templateReference = sprintf(
+                '@%s/%s/%s/view.%s',
+                $bundleName,
+                $folderName,
+                $brick->getId(),
+                $brick->getTemplateSuffix()
+            );
+
+            if ($this->templating->exists($templateReference)) {
+                return $templateReference;
+            }
+        }
+
+        // return the last reference, even we know that it doesn't exist -> let care the templating engine
+        return $templateReference;
     }
 
     /**

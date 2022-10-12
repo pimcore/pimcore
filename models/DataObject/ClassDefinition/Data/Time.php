@@ -105,21 +105,25 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     {
         parent::checkValidity($data, $omitMandatoryCheck);
 
-        if ((is_string($data) && strlen($data) != 5 && !empty($data)) || (!empty($data) && !is_string($data))) {
+        if (is_string($data)) {
+            if (!preg_match('/^(2[0-3]|[01][0-9]):[0-5][0-9]$/', $data) && $data !== '') {
+                throw new Model\Element\ValidationException('Wrong time format given must be a 5 digit string (eg: 06:49) [ '.$this->getName().' ]');
+            }
+        } elseif (!empty($data)) {
             throw new Model\Element\ValidationException('Wrong time format given must be a 5 digit string (eg: 06:49) [ '.$this->getName().' ]');
         }
 
         if (!$omitMandatoryCheck && strlen($data)) {
             if (!$this->toTime($data)) {
-                throw new \Exception('Wrong time format given must be a 5 digit string (eg: 06:49) [ '.$this->getName().' ]');
+                throw new Model\Element\ValidationException('Wrong time format given must be a 5 digit string (eg: 06:49) [ '.$this->getName().' ]');
             }
 
             if (strlen($this->getMinValue()) && $this->isEarlier($this->getMinValue(), $data)) {
-                throw new \Exception('Value in field [ '.$this->getName().' ] is not at least ' . $this->getMinValue());
+                throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is not at least ' . $this->getMinValue());
             }
 
             if (strlen($this->getMaxValue()) && $this->isLater($this->getMaxValue(), $data)) {
-                throw new \Exception('Value in field [ ' . $this->getName() . ' ] is bigger than ' . $this->getMaxValue());
+                throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . ' ] is bigger than ' . $this->getMaxValue());
             }
         }
     }
