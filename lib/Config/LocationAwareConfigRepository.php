@@ -172,7 +172,7 @@ class LocationAwareConfigRepository
      *
      * @param string $key
      *
-     * @return mixed|null
+     * @return mixed
      */
     private function getDataFromLegacyConfig(string $key, ?string &$dataSource)
     {
