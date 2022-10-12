@@ -65,9 +65,8 @@ class PublicServicesController extends Controller
                     $thumbnailStream = null;
 
                     // just check if the thumbnail exists -> throws exception otherwise
-                    $thumbnailConfigClass = 'Pimcore\Model\Asset\\' . ucfirst($thumbnailType) . '\\Thumbnail\Config';
-                    $thumbnailConfig = new $thumbnailConfigClass();
-                    $thumbnailConfig = $thumbnailConfig::getByName($thumbnailName);
+                    $thumbnailConfigClass = 'Pimcore\\Model\\Asset\\' . ucfirst($thumbnailType) . '\\Thumbnail\Config';
+                    $thumbnailConfig = $thumbnailConfigClass::getByName($thumbnailName);
 
                     if (!$thumbnailConfig) {
                         // check if there's an item in the TmpStore
