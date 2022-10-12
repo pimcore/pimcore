@@ -1552,7 +1552,7 @@ class Service extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param mixed|null $element
+     * @param mixed $element
      * @param array|null $context
      *
      * @return DeepCopy

@@ -31,7 +31,7 @@ class Service
     }
 
     /**
-     * @return array|mixed
+     * @return array
      */
     public static function getDeleteLog()
     {
@@ -48,6 +48,8 @@ class Service
                         $tmpLog[$path] = $data;
                     }
                 }
+
+                $log = $tmpLog;
             }
         }
 

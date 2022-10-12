@@ -1003,7 +1003,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @param DataObject\Localizedfield|mixed $localizedObject
+     * @param DataObject\Localizedfield $localizedObject
      * @param array $languages
      *
      * @return array

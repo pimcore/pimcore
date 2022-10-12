@@ -130,7 +130,7 @@ class Info
     /**
      * @param string $name
      *
-     * @return mixed|null
+     * @return mixed
      */
     public function getParam(string $name)
     {
