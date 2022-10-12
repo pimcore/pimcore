@@ -18,12 +18,16 @@ namespace Pimcore\Extension\Document\Areabrick;
 /**
  * Base brick with template autoloading capabilities.
  *
- * Depending on the result of getTemplateLocation and getTemplateSuffix the tag handler builds the following references:
+ * Depending on the result of getTemplateLocation() and getTemplateSuffix() the tag handler builds the
+ * following references:
  *
- * - <currentBundle>:Areas/<brickId>/(view|edit).<suffix>
- * - Areas/<brickId>/(view|edit).<suffix> -> resolves to app/Resources
+ * - @<bundle>/[A|a]reas/<brickId>/view.<suffix>
+ *      -> resolves to <bundle>/templates/[A|a]reas/<brickId>/view.<suffix> (Symfony >= 5 structure)
+ *         or <bundle>/Resources/views/[A|a]reas/<brickId>/view.<suffix> (Symfony <= 4 structure)
+ * - areas/<brickId>/view.<suffix>
+ *      -> resolves to <project>/templates/areas/<brickId>/view.<suffix>
  */
-abstract class AbstractTemplateAreabrick extends AbstractAreabrick implements TemplateAreabrickInterface
+abstract class AbstractTemplateAreabrick extends AbstractAreabrick
 {
     /**
      * {@inheritdoc}
@@ -39,7 +43,7 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick implements Te
      */
     public function getTemplateLocation()
     {
-        return static::TEMPLATE_LOCATION_BUNDLE;
+        return static::TEMPLATE_LOCATION_GLOBAL;
     }
 
     /**

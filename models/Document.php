@@ -320,20 +320,6 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @deprecated will be removed in Pimcore 11
-     *
-     * @param array $config
-     *
-     * @return int count
-     */
-    public static function getTotalCount(array $config = []): int
-    {
-        $list = static::getList($config);
-
-        return $list->getTotalCount();
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function save()

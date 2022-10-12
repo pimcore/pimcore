@@ -64,7 +64,6 @@ It is possible to customize the local storage path for static pages by defining 
 ```yaml
 flysystem:
     storages:
-        # and add directory_visibility config option to the storages
         pimcore.document_static.storage:
             # Storage for generated static document pages, e.g. .html files generated out of Pimcore documents
             # which are then delivered directly by the web-server

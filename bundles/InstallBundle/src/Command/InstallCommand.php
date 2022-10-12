@@ -160,12 +160,12 @@ class InstallCommand extends Command
                 'ignore-existing-config',
                 null,
                 InputOption::VALUE_NONE,
-                'Do not abort if a <comment>system.yml</comment> file already exists'
+                'Do not abort if a <comment>system.yaml</comment> file already exists'
             )->addOption(
                 'skip-database-config',
                 null,
                 InputOption::VALUE_NONE,
-                'Do not write a database config file: <comment>database.yml</comment>'
+                'Do not write a database config file: <comment>database.yaml</comment>'
             )->addOption(
                 'skip-database-structure',
                 null,
@@ -199,9 +199,9 @@ class InstallCommand extends Command
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
         // no installer if Pimcore is already installed
-        $configFile = Config::locateConfigFile('system.yml');
+        $configFile = Config::locateConfigFile('system.yaml');
         if ($configFile && is_file($configFile) && !$input->getOption('ignore-existing-config')) {
-            throw new \RuntimeException(sprintf('The system.yml config file already exists in "%s". You can run this command with the --ignore-existing-config flag to ignore this error.', $configFile));
+            throw new \RuntimeException(sprintf('The system.yaml config file already exists in "%s". You can run this command with the --ignore-existing-config flag to ignore this error.', $configFile));
         }
 
         if ($input->getOption('skip-database-config')) {

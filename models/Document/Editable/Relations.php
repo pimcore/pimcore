@@ -95,7 +95,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * {@inheritdoc}
      */
-    public function getDataEditmode() /** : mixed */
+    public function getDataEditmode(): array
     {
         $this->setElements();
         $return = [];
@@ -105,7 +105,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
                 if ($element instanceof DataObject\Concrete) {
                     $return[] = [$element->getId(), $element->getRealFullPath(), DataObject::OBJECT_TYPE_OBJECT, $element->getClassName()];
                 } elseif ($element instanceof DataObject\AbstractObject) {
-                    $return[] = [$element->getId(), $element->getRealFullPath(), DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER];
+                    $return[] = [$element->getId(), $element->getRealFullPath(), DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER];
                 } elseif ($element instanceof Asset) {
                     $return[] = [$element->getId(), $element->getRealFullPath(), 'asset', $element->getType()];
                 } elseif ($element instanceof Document) {
@@ -219,7 +219,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds($idMapping) /** : void */
+    public function rewriteIds(array $idMapping): void
     {
         // reset existing elements store
         $this->elements = [];
@@ -256,7 +256,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * {@inheritdoc}
      */
-    public function load() /** : void */
+    public function load(): void
     {
         $this->setElements();
     }
