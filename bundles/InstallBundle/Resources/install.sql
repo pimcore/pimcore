@@ -464,7 +464,7 @@ CREATE TABLE `search_backend_data` (
   `id` int(11) NOT NULL,
   `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin default '',
   `index` int(11) unsigned DEFAULT '0',
-  `fullpath` text,
+  `fullpath` text DEFAULT NULL,
   `maintype` varchar(8) NOT NULL DEFAULT '',
   `type` varchar(20) DEFAULT NULL,
   `subtype` varchar(190) DEFAULT NULL,
