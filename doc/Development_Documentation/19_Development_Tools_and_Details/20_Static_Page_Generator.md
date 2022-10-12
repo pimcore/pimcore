@@ -16,10 +16,13 @@ and last generated information is displayed in document settings, when the gener
 In addition, if you are using default local storage for static pages, then make sure your project `.htaccess` has this below section (after the `# Thumbnails` section), which is responsible for looking up static page before passing to templating engine. 
 ```apache
 # static pages
+SetEnvIf Request_URI ^(.*)$ STATIC_PAGE_URI=$1
+SetEnvIf Request_URI / STATIC_PAGE_URI=/%home
+
 RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)
 RewriteCond %{QUERY_STRING}   !(pimcore_editmode=true|pimcore_preview|pimcore_version)
-RewriteCond %{DOCUMENT_ROOT}/var/tmp/pages%{REQUEST_URI}.html -f
-RewriteRule ^(.*)$ /var/tmp/pages%{REQUEST_URI}.html [PT,L]
+RewriteCond %{DOCUMENT_ROOT}/var/tmp/pages%{STATIC_PAGE_URI}.html -f
+RewriteRule ^(.*)$ /var/tmp/pages%{STATIC_PAGE_URI}.html [PT,L]
 ```
 
 If you are using NGINX as web server, this must be added **before** the `server` block
