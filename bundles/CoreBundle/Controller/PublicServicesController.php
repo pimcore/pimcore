@@ -106,6 +106,8 @@ class PublicServicesController extends Controller
 
                             if ($storage->fileExists($storagePath)) {
                                 $thumbnailStream = $storage->readStream($storagePath);
+                                $mime = $storage->mimeType($storagePath);
+                                $fileSize = $storage->fileSize($storagePath);
                             }
                         } else {
                             $time = 1;
@@ -163,9 +165,6 @@ class PublicServicesController extends Controller
                                 $requestedFile = preg_replace('/\.' . $actualFileExtension . '$/', '.' . $requestedFileExtension, $pathReference['src']);
                                 $storage->writeStream($requestedFile, $thumbnailStream);
                             }
-                        }else{
-                            $mime = $storage->mimeType($storagePath);
-                            $fileSize = $storage->fileSize($storagePath);
                         }
                         // set appropriate caching headers
                         // see also: https://github.com/pimcore/pimcore/blob/1931860f0aea27de57e79313b2eb212dcf69ef13/.htaccess#L86-L86

@@ -90,6 +90,7 @@ class AssetThumbnailCacheTest extends TestCase
             'assetId' => $asset->getId(),
             'thumbnailName' => $thumbnailName,
             'filename' => $asset->getFilename(),
+            'type' => 'image'
         ]);
         $response = $controller->thumbnailAction($subRequest);
 
