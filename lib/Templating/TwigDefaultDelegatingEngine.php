@@ -123,8 +123,8 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     public function disableSandboxExtensionFromTwigEnvironment(): void
     {
         if ($this->twig->hasExtension(SandboxExtension::class)) {
-            $sandbox = $this->twig->getExtension(SandboxExtension::class);
             /** @var SandboxExtension $sandbox */
+            $sandbox = $this->twig->getExtension(SandboxExtension::class);
             $sandbox->disableSandbox();
         }
     }
