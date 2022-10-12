@@ -1143,6 +1143,10 @@ span.warning {
     margin-right: 10px;
 }
 
+.object_field > .x-form-item-label-top > .x-form-item-label-inner {
+    display: inline-block;
+}
+
 .object_field_panel {
     padding: 0;
 }
