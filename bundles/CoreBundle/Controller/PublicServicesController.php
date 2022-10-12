@@ -78,7 +78,7 @@ class PublicServicesController extends Controller
                             TmpStore::delete($deferredConfigId);
 
                             if (!$thumbnailConfig instanceof $thumbnailConfigClass) {
-                                throw new \Exception('Deferred thumbnail config file doesn\'t contain a valid //'.$thumbnailConfigClass.' object');
+                                throw new \Exception('Deferred thumbnail config file doesn\'t contain a valid '.$thumbnailConfigClass.' object');
                             }
                         } elseif ($this->getParameter('pimcore.config')['assets'][$thumbnailType]['thumbnails']['status_cache']) {
                             // Delete Thumbnail Name from Cache so the next call can generate a new TmpStore entry
@@ -105,8 +105,6 @@ class PublicServicesController extends Controller
 
                             if ($storage->fileExists($storagePath)) {
                                 $thumbnailStream = $storage->readStream($storagePath);
-                                $mime = $storage->mimeType($storagePath);
-                                $fileSize = $storage->fileSize($storagePath);
                             }
                         } else {
                             $time = 1;
@@ -164,6 +162,9 @@ class PublicServicesController extends Controller
                                 $requestedFile = preg_replace('/\.' . $actualFileExtension . '$/', '.' . $requestedFileExtension, $pathReference['src']);
                                 $storage->writeStream($requestedFile, $thumbnailStream);
                             }
+                        }elseif ($thumbnailType =='video' && $storagePath){
+                            $mime = $storage->mimeType($storagePath);
+                            $fileSize = $storage->fileSize($storagePath);
                         }
                         // set appropriate caching headers
                         // see also: https://github.com/pimcore/pimcore/blob/1931860f0aea27de57e79313b2eb212dcf69ef13/.htaccess#L86-L86

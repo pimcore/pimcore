@@ -110,6 +110,7 @@ class AssetThumbnailCacheTest extends TestCase
             'assetId' => $asset->getId(),
             'thumbnailName' => $thumbnailName,
             'filename' => $asset->getFilename(),
+            'type' => 'image'
         ]);
         $response = $controller->thumbnailAction($subRequest);
         $this->assertNotNull($asset->getDao()->getCachedThumbnailModificationDate($thumbnailName, $asset->getFilename()));
