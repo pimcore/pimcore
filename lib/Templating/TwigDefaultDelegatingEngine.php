@@ -95,7 +95,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
         return $this->delegate;
     }
 
-    public function getTwigEnvironment($sandboxed = false): Environment
+    public function getTwigEnvironment(bool $sandboxed = false): Environment
     {
         if ($sandboxed) {
             if (!$this->twig->hasExtension(SandboxExtension::class)) {
