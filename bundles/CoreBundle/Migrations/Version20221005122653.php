@@ -28,6 +28,5 @@ final class Version20221005122653 extends AbstractMigration
         // Revert back the charset and collation info for the fullpath column
         $this->addSql("ALTER TABLE search_backend_data MODIFY COLUMN fullpath varchar(765);");
         $this->addSql("ALTER TABLE search_backend_data ADD FULLTEXT INDEX fulltext(`data`,`properties`)");
-
     }
 }
