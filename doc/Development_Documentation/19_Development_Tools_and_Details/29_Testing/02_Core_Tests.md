@@ -69,7 +69,7 @@ Don't forget to check logfiles (especially `test.log` and `php.log`) inside the 
 
 #### Important Environment Variables
 
-Meaningful default values are set in the shipped `docker-compose.yml`. Can be modified as needed. 
+Meaningful default values are set in the shipped `docker-compose.yaml`. Can be modified as needed. 
 
 | Env Variable           | Example          | Comment                                                     |
 |------------------------|------------------|-------------------------------------------------------------|

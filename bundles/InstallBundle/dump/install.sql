@@ -334,6 +334,7 @@ CREATE TABLE `notes` (
   `user` int(11) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
   `description` longtext,
+  `locked` tinyint(1) unsigned DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `cid_ctype` (`cid`, `ctype`),
   KEY `date` (`date`),
