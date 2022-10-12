@@ -54,7 +54,7 @@ class StaticPageGenerator
         if ($document instanceof Document\Page && $document->getPrettyUrl()) {
             $path = $document->getPrettyUrl();
         } elseif ($path === '/') {
-            $path = '/home';
+            $path = '/%home';
         }
 
         return $path . '.html';
