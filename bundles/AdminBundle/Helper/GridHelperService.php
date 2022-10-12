@@ -121,7 +121,7 @@ class GridHelperService
                                     'name' => $mappedKey, ]
                             );
 
-                            if(!empty($featureCondition)) {
+                            if (!empty($featureCondition)) {
                                 $featureConditions[$mappedKey] = $featureCondition;
                             }
                         }
