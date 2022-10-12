@@ -987,5 +987,8 @@
     "asset_upload_overwrite_all": "Overwrite all",
     "could_not_open_zip_file": "The uploaded zip file could not be opened.",
     "objects_sort_method": "Change data objects sort method",
-    "link_recursion_error": "The link is redirecting to itself, causing an infinite loop"
+    "link_recursion_error": "The link is redirecting to itself, causing an infinite loop",
+    "address_not_found": "The entered address was not found",
+    "possible_causes": "Possible causes",
+    "postal_code_format_error": "Postal code format, e.g. use \"5020 Salzburg, Söllheimer Straße 16\" instead of \"A-5020 Salzburg, Söllheimer Straße 16\""
 }
