@@ -6,7 +6,7 @@ The `--no-interaction` flag will prevent any interactive prompts:
 
 ```
 ./vendor/bin/pimcore-install --admin-username admin --admin-password admin \
-  --mysql-username username --mysql-password password --mysql-database pimcore \
+  --mysql-username username --mysql-password password --mysql-database pimcore --mysql-host-socket=MYSQL-HOST-SOCKET --mysql-port=MYSQL-PORT \
   --no-interaction
 ```
 
