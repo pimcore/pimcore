@@ -1001,7 +1001,7 @@ final class User extends User\UserRole
     /**
      * @param string|null $key
      *
-     * @return array|mixed|null|string
+     * @return mixed
      */
     public function getTwoFactorAuthentication($key = null)
     {

@@ -57,7 +57,7 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
     /**
      * @param string $id
      *
-     * @return mixed|null
+     * @return mixed
      */
     protected function getDataByName(string $id)
     {

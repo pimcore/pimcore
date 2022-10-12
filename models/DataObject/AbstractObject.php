@@ -1350,7 +1350,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @param string $method
      * @param array $arguments
      *
-     * @return mixed|Listing|null
+     * @return mixed
      *
      * @throws \Exception
      */

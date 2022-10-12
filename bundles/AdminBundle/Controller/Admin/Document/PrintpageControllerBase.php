@@ -309,16 +309,19 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
     /**
      * @param int $documentId
      *
-     * @return array|mixed
+     * @return array
      */
-    private function getStoredProcessingOptions($documentId): mixed
+    private function getStoredProcessingOptions($documentId): array
     {
         $filename = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-processingoptions-' . $documentId . '_' . $this->getAdminUser()->getId() . '.psf';
         if (file_exists($filename)) {
-            return \Pimcore\Tool\Serialize::unserialize(file_get_contents($filename));
-        } else {
-            return [];
+            $options = \Pimcore\Tool\Serialize::unserialize(file_get_contents($filename));
+            if (is_array($options)) {
+                return $options;
+            }
         }
+
+        return [];
     }
 
     /**

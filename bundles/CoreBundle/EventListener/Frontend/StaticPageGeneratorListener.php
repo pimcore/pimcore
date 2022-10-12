@@ -30,6 +30,7 @@ use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Site;
 use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
@@ -51,9 +52,6 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -65,23 +63,18 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param RequestEvent $event
-     */
     public function onKernelRequest(RequestEvent $event)
     {
-        $request = $event->getRequest();
-
         if (!$event->isMainRequest()) {
             return;
         }
 
-        if ($this->requestHelper->isFrontendRequestByAdmin($request)) {
+        $request = $event->getRequest();
+        if (!$this->checkValidRequest($request)) {
             return;
         }
 
         $config = $this->config['documents'];
-
         if (!$config['static_page_router']['enabled']) {
             return;
         }
@@ -124,22 +117,14 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param ResponseEvent $event
-     */
     public function onKernelResponse(ResponseEvent $event)
     {
-        $request = $event->getRequest();
-
-        if ($request->isXmlHttpRequest()) {
-            return;
-        }
-
         if (!$event->isMainRequest()) {
             return;
         }
 
-        if (\Pimcore\Tool::isFrontendRequestByAdmin($request)) {
+        $request = $event->getRequest();
+        if (!$this->checkValidRequest($request)) {
             return;
         }
 
@@ -162,9 +147,6 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param DocumentEvent $e
-     */
     public function onPostAddUpdateDeleteDocument(DocumentEvent $e)
     {
         $document = $e->getDocument();
@@ -185,5 +167,17 @@ class StaticPageGeneratorListener implements EventSubscriberInterface
                 return;
             }
         }
+    }
+
+    private function checkValidRequest(Request $request): bool
+    {
+        if ($this->requestHelper->isFrontendRequestByAdmin($request)
+            || $request->isXmlHttpRequest()
+            || $request->getMethod() !== 'GET'
+            || !in_array('text/html', $request->getAcceptableContentTypes())) {
+            return false;
+        }
+
+        return true;
     }
 }

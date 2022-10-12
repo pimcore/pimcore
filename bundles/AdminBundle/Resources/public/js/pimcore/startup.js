@@ -330,6 +330,7 @@ Ext.onReady(function () {
             'creationDate',
             'modificationDate'
         ],
+        autoSync: false,
         proxy: {
             type: 'ajax',
             reader: {
@@ -342,13 +343,15 @@ Ext.onReady(function () {
                 type: 'json',
                 writeAllFields: true,
                 rootProperty: 'data',
-                encode: 'true'
+                encode: 'true',
+                // DocumentController's method expects single items, ExtJs amy batch them without this setting
+                batchActions: false
             },
             api: {
-                create: Routing.generate('pimcore_admin_document_document_doctypesget', {xaction: "create"}),
+                create: Routing.generate('pimcore_admin_document_document_doctypes', {xaction: "create"}),
                 read: Routing.generate('pimcore_admin_document_document_doctypesget', {xaction: "read"}),
-                update: Routing.generate('pimcore_admin_document_document_doctypesget', {xaction: "update"}),
-                destroy: Routing.generate('pimcore_admin_document_document_doctypesget', {xaction: "destroy"}),
+                update: Routing.generate('pimcore_admin_document_document_doctypes', {xaction: "update"}),
+                destroy: Routing.generate('pimcore_admin_document_document_doctypes', {xaction: "destroy"}),
             }
         }
     });

@@ -351,7 +351,7 @@ class Workflow extends AbstractModel
     /**
      * @param string $stateName
      *
-     * @return bool|mixed
+     * @return mixed
      */
     public function getStateConfig($stateName)
     {
@@ -367,7 +367,7 @@ class Workflow extends AbstractModel
     /**
      * @param string $statusName
      *
-     * @return bool|mixed
+     * @return mixed
      */
     public function getStatusConfig($statusName)
     {

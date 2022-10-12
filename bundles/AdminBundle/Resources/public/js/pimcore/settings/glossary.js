@@ -164,7 +164,7 @@ pimcore.settings.glossary = Class.create({
                     icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                     handler: function (grid, rowIndex) {
                         let data = grid.getStore().getAt(rowIndex);
-                        pimcore.helpers.deleteConfirm(t('redirect'), data.data.id, function () {
+                        pimcore.helpers.deleteConfirm(t('glossary'), data.data.id, function () {
                             grid.getStore().removeAt(rowIndex);
                             this.updateRows();
                         }.bind(this));
