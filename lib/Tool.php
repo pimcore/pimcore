@@ -160,7 +160,7 @@ final class Tool
     }
 
     /**
-     * @return array|mixed
+     * @return array<string, string>
      *
      * @throws \Exception
      */

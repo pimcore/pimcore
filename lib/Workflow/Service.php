@@ -74,7 +74,7 @@ class Service
      * @param mixed $data
      * @param string $pimcoreTagName
      *
-     * @return mixed|null
+     * @return mixed
      */
     public static function getDataFromEditmode($data, $pimcoreTagName)
     {

@@ -12,7 +12,7 @@ Custom Routes come fourth in the route processing priority.
 
 Custom routes are an alternative to Symfony's routing functionalities and give you a bit more flexibility, but you can 
 still use [Symfony's routing capabilities](https://symfony.com/doc/5.2/routing.html) (eg. @Route() annotation,
- `routing.yml`, ...) in parallel to Pimcore Custom Routes.
+ `routing.yaml`, ...) in parallel to Pimcore Custom Routes.
  
 ## Configuring Custom Routes
 

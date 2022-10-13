@@ -26,14 +26,12 @@ From the `Pimcore\Config\BundleConfigLocator`:
  * Example: lookup for config will try to locate the following files from every bundle (will return all files it finds):
  *
  *  - Resources/config/pimcore/config_dev.php
- *  - Resources/config/pimcore/config_dev.yml
  *  - Resources/config/pimcore/config_dev.yaml
  *  - Resources/config/pimcore/config_dev.xml
  *
  * If the previous lookup didn't return any results, it will fall back to:
  *
  *  - Resources/config/pimcore/config.php
- *  - Resources/config/pimcore/config.yml
  *  - Resources/config/pimcore/config.yaml
  *  - Resources/config/pimcore/config.xml
  */

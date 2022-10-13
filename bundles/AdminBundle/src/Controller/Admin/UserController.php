@@ -1081,7 +1081,7 @@ class UserController extends AdminController implements KernelControllerEventInt
         $users = [];
 
         // get available user
-        $list = new \Pimcore\Model\User\Listing();
+        $list = new User\Listing();
 
         $conditions = [ 'type = "user"' ];
 
@@ -1116,7 +1116,7 @@ class UserController extends AdminController implements KernelControllerEventInt
     public function getRolesAction(Request $request)
     {
         $roles = [];
-        $list = new \Pimcore\Model\User\Role\Listing();
+        $list = new User\Role\Listing();
 
         $list->setCondition('type = "role"');
         $list->load();
