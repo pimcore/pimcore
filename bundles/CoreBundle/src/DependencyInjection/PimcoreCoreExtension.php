@@ -421,20 +421,11 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
      */
     public function prepend(ContainerBuilder $container)
     {
-        $securityConfigs = $container->getExtensionConfig('security');
+        /*$securityConfigs = $container->getExtensionConfig('security');
 
-        $loader = new YamlFileLoader(
-            $container,
-            new FileLocator(__DIR__ . '/../../config')
-        );
-
-        foreach ($securityConfigs as $config) {
-            if ($config['enable_authenticator_manager'] ?? false) {
-                $loader->load('authenticator_security.yaml');
-
-                $container->setParameter('security.authenticator.manager.enabled', true);
-            }
-        }
+        if (count($securityConfigs) > 1) {
+            $this->setExtensionConfig($container, 'security', $securityConfigs);
+        }*/
     }
 
     /**

@@ -269,8 +269,6 @@ If you require to change the config on production environments we recommend to c
 ```yaml
 pimcore:
     security:
-        factory_type: password_hasher
-
         # the password hasher factory as defined in services.yml
         password_hasher_factories:
             App\Model\DataObject\User: website_demo.security.password_hasher_factory

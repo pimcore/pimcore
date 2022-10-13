@@ -154,7 +154,6 @@ class LoginController extends AdminController implements KernelControllerEventIn
      * @Route("/login/login", name="pimcore_admin_login_check")
      *
      * @see AdminLoginAuthenticator for the security implementation
-     * @see AdminAuthenticator for the security implementation (Authenticator Based Security)
      */
     public function loginCheckAction()
     {

@@ -1226,7 +1226,6 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('security')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->scalarNode('factory_type')->defaultValue('password_hasher')->end()
                         ->arrayNode('password_hasher_factories')
                             ->info('Password hasher factories to use as className => factory service ID mapping')
                             ->example([
