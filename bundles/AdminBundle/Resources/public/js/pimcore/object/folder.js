@@ -246,7 +246,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                 });
             }
 
-            this.setDeeplink();
+            this.setDeeplink("object_" + this.data.general.o_id + "_folder");
 
             this.toolbarButtons.metainfo = new Ext.SplitButton(
                 {
@@ -336,37 +336,6 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         });
 
         return this.tabbar;
-    },
-
-    setDeeplink: function () {
-        let target   = "object_" + this.data.general.o_id + "_folder";
-        let that     = this;
-        let response = Ext.Ajax.request({
-            method: 'POST',
-            url: Routing.generate('pimcore_admin_element_getdeeplink'),
-            params: {
-                target: target
-            },
-            success: function (response) {
-                let data = Ext.decode(response.responseText);
-
-                if (data.success) {
-                    that.deeplink = data.url;
-
-                    that.toolbarButtons.metainfo.menu.add(
-                        {
-                            text: t("metainfo_copy_deeplink"),
-                            iconCls: "pimcore_icon_copy",
-                            handler: pimcore.helpers.copyStringToClipboard.bind(this, that.deeplink)
-                        }
-                    )
-                }
-            }
-        });
-    },
-
-    getDeeplink: function () {
-        return this.deeplink;
     },
 
     getSaveData: function () {
