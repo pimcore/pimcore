@@ -24,7 +24,6 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-
     const TABLE_NAME_GROUPS = 'classificationstore_groups';
 
     /**

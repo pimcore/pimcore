@@ -16,7 +16,6 @@
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
 use Pimcore\Model;
-use Pimcore\Model\Element;
 
 class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterface
 {
