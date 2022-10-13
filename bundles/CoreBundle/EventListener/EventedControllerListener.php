@@ -51,8 +51,9 @@ class EventedControllerListener implements EventSubscriberInterface
         $request = $event->getRequest();
         $controller = $callable[0];
 
+        $request->attributes->set('_event_controller', $controller);
+
         if ($controller instanceof KernelControllerEventInterface) {
-            $request->attributes->set('_event_controller', $controller);
             $controller->onKernelControllerEvent($event);
         }
     }
