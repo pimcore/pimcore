@@ -2739,7 +2739,7 @@ pimcore.helpers.isValidPassword = function (pass) {
 //deprecate?
 pimcore.helpers.getDeeplink = function (type, id, subtype) {
     return Routing.generate('pimcore_admin_login_deeplink', {}, true) + '?' + type + "_" + id + "_" + subtype;
-}
+};
 
 pimcore.helpers.showElementHistory = function() {
     var user = pimcore.globalmanager.get("user");
