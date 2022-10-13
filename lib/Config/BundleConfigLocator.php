@@ -33,14 +33,12 @@ use Symfony\Component\HttpKernel\KernelInterface;
  *
  *  - Resources/config/pimcore/config_dev.php
  *  - Resources/config/pimcore/config_dev.yaml
- *  - Resources/config/pimcore/config_dev.yml
  *  - Resources/config/pimcore/config_dev.xml
  *
  * If the previous lookup didn't return any results, it will fall back to:
  *
  *  - Resources/config/pimcore/config.php
  *  - Resources/config/pimcore/config.yaml
- *  - Resources/config/pimcore/config.yml
  *  - Resources/config/pimcore/config.xml
  */
 class BundleConfigLocator

@@ -26,6 +26,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Listing;
 use Pimcore\File;
+use Pimcore\Logger;
 use Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern;
 use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
 use Pimcore\Model\DataObject\OnlineShopVoucherToken;
@@ -247,6 +248,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
 
             return $codeSets;
         } catch (\Exception $e) {
+            Logger::error((string) $e);
         }
 
         return false;

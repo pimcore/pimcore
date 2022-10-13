@@ -216,6 +216,11 @@ final class User extends User\UserRole
         return $this;
     }
 
+    public function getFullName(): string
+    {
+        return trim($this->getFirstname() . ' ' . $this->getLastname());
+    }
+
     /**
      * @return string|null
      */
@@ -397,11 +402,11 @@ final class User extends User\UserRole
      */
     public function setRoles($roles)
     {
-        if (is_string($roles) && !empty($roles)) {
+        if (is_string($roles) && $roles !== '') {
             $this->roles = explode(',', $roles);
         } elseif (is_array($roles)) {
             $this->roles = $roles;
-        } elseif (empty($roles)) {
+        } else {
             $this->roles = [];
         }
 
@@ -1001,7 +1006,7 @@ final class User extends User\UserRole
     /**
      * @param string|null $key
      *
-     * @return array|mixed|null|string
+     * @return mixed
      */
     public function getTwoFactorAuthentication($key = null)
     {

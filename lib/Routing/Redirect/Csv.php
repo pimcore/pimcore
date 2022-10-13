@@ -195,7 +195,7 @@ class Csv
      * @param array $data
      * @param array $stats
      *
-     * @return mixed|Redirect|null
+     * @return Redirect
      */
     private function processImportData(array $data, array &$stats)
     {
