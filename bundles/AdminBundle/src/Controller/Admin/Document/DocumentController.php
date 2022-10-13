@@ -28,7 +28,6 @@ use Pimcore\Db;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Image\Chromium;
-use Pimcore\Image\HtmlToImage;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\DocType;
@@ -418,14 +417,6 @@ class DocumentController extends ElementControllerBase implements KernelControll
     {
         $type = $request->get('type');
 
-        if ($type === 'childs') {
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '10.4',
-                'Type childs is deprecated. Use children instead'
-            );
-            $type = 'children';
-        }
         if ($type === 'children') {
             $parentDocument = Document::getById((int) $request->get('id'));
 
@@ -1146,8 +1137,8 @@ class DocumentController extends ElementControllerBase implements KernelControll
     public function diffVersionsAction(Request $request, $from, $to)
     {
         // return with error if prerequisites do not match
-        if ((!Chromium::isSupported() && !HtmlToImage::isSupported()) || !class_exists('Imagick')) {
-            return $this->render('@PimcoreAdmin/Admin/Document/Document/diff-versions-unsupported.html.twig');
+        if (!Chromium::isSupported() || !class_exists('Imagick')) {
+            return $this->render('@PimcoreAdmin/admin/document/document/diff_versions_unsupported.html.twig');
         }
 
         $versionFrom = Version::getById($from);
@@ -1172,15 +1163,8 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
         $viewParams = [];
 
-        if (Chromium::isSupported()) {
-            $tool = Chromium::class;
-        } else {
-            $tool = HtmlToImage::class;
-        }
-
-        /** @var Chromium|HtmlToImage $tool */
-        $tool::convert($fromUrl, $fromFile);
-        $tool::convert($toUrl, $toFile);
+        Chromium::convert($fromUrl, $fromFile);
+        Chromium::convert($toUrl, $toFile);
 
         $image1 = new Imagick($fromFile);
         $image2 = new Imagick($toFile);
@@ -1205,7 +1189,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $image2->clear();
         $image2->destroy();
 
-        return $this->render('@PimcoreAdmin/Admin/Document/Document/diff-versions.html.twig', $viewParams);
+        return $this->render('@PimcoreAdmin/admin/document/document/diff_versions.html.twig', $viewParams);
     }
 
     /**
