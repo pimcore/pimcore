@@ -1790,7 +1790,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
         listeners: {
             keyup: function (el) {
                 const value = el.getValue();
-                const pathRegex = new RegExp('^((\\/)|((\\/[^\\/]+)+(\\/)?))$');
+                const pathRegex = new RegExp('^((/)|((/[^/]+)+(/)?))$');
 
                 if(value && !value.match(pathRegex)) {
                     internalTypeField.setValue(null);
