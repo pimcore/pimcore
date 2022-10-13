@@ -30,24 +30,10 @@ services:
         tags:
             - { name: monolog.logger, channel: security }
 
-    Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler:
-        class: Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: monolog.logger, channel: security }
-
-    Pimcore\Bundle\AdminBundle\EventListener\BruteforceProtectionListener:
-        class: Pimcore\Bundle\AdminBundle\EventListener\BruteforceProtectionListener
-
     pimcore_admin.security.admin_authenticator:
         alias: Pimcore\Bundle\AdminBundle\Security\Guard\AdminAuthenticator
         public: true
 
     pimcore_admin.security.logout_success_handler:
         alias: Pimcore\Bundle\AdminBundle\Security\LogoutSuccessHandler
-        public: true
-
-    pimcore_admin.security.bruteforce_protection_handler:
-        alias: Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler
         public: true
