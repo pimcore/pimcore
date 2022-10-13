@@ -26,7 +26,6 @@ use Pimcore\Tool;
 
 class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface, VarExporterInterface
 {
-    use Element\ChildsCompatibilityTrait;
 
     /**
      * Static type of this element
