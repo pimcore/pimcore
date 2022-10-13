@@ -2736,27 +2736,10 @@ pimcore.helpers.isValidPassword = function (pass) {
     return true;
 };
 
+//deprecate?
 pimcore.helpers.getDeeplink = function (type, id, subtype) {
-    let target = type + "_" + id + "_" + subtype;
-    let url = Routing.generate('pimcore_admin_login_deeplink', {}, true) + '?' + target;
-
-    let response = Ext.Ajax.request({
-        method: 'POST',
-        async: false,
-        url: Routing.generate('pimcore_admin_element_getdeeplink'),
-        params: {
-            target: target
-        }
-    });
-
-    let data = Ext.decode(response.responseText);
-
-    if (data.success) {
-        url = data.url;
-    }
-
-    return url;
-};
+    return Routing.generate('pimcore_admin_login_deeplink', {}, true) + '?' + type + "_" + id + "_" + subtype;
+}
 
 pimcore.helpers.showElementHistory = function() {
     var user = pimcore.globalmanager.get("user");

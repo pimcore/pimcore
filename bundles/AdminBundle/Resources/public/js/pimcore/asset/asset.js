@@ -72,6 +72,8 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         this.tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "asset_" + this.id;
 
+        this.setDeepLink();
+
         this.tab = new Ext.Panel({
             id: tabId,
             title: htmlspecialchars(tabTitle),
@@ -232,12 +234,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             }
 
             buttons.push({
-                xtype: "splitbutton",
-                tooltip: t("show_metainfo"),
-                iconCls: "pimcore_material_icon_info pimcore_material_icon",
-                scale: "medium",
-                handler: this.showMetaInfo.bind(this),
-                menu: this.getMetaInfoMenuItems()
+                itemId: 'placeholder_metainfo'
             });
 
             // only for videos and images
@@ -458,6 +455,39 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
     getType: function () {
         return this.type;
     },
+    setDeepLink: function () {
+        let target = "asset_" + this.data.id + "_" + this.data.type;
+        let that = this;
+        let response = Ext.Ajax.request({
+            method: 'POST',
+            url: Routing.generate('pimcore_admin_element_getdeeplink'),
+            params: {
+                target: target
+            },
+            success: function (response) {
+                let data = Ext.decode(response.responseText);
+
+                if (data.success) {
+                    that.deeplink = data.url;
+
+                    let showinfoButton = {
+                        xtype: "splitbutton",
+                        tooltip: t("show_metainfo"),
+                        iconCls: "pimcore_material_icon_info pimcore_material_icon",
+                        scale: "medium",
+                        handler: that.showMetaInfo.bind(that),
+                        menu: that.getMetaInfoMenuItems()
+                    };
+
+                    that.toolbar.moveAfter(showinfoButton, that.toolbar.getComponent('placeholder_metainfo'));
+                    that.toolbar.remove(that.toolbar.getComponent('placeholder_metainfo'));
+                }
+            }
+        });
+    },
+    getDeepLink: function () {
+        return this.deeplink;
+    },
 
     reload: function () {
         this.tab.on("close", function() {
@@ -481,7 +511,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             creationdate: this.data.creationDate,
             usermodification: this.data.userModification,
             userowner: this.data.userOwner,
-            deeplink: pimcore.helpers.getDeeplink("asset", this.data.id, this.data.type)
+            deeplink: this.getDeepLink()
         };
     },
 
