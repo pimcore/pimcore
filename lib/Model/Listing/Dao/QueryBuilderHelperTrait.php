@@ -18,9 +18,6 @@ namespace Pimcore\Model\Listing\Dao;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Model\DataObject;
 
-/**
- * @internal
- */
 trait QueryBuilderHelperTrait
 {
     /**
