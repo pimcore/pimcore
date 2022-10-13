@@ -76,6 +76,11 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Areabricks] The default template location of `AbstractTemplateAreabrick` is now `TEMPLATE_LOCATION_GLOBAL`.
 - [Config] Rename config files from `*.yml` to `*.yaml`. Note that we now use `system.yaml` as config file and not `system.yml`
 - [Childs Compatibility] Removed `getChilds`, `setChilds` and `hasChild` use `getChildren`, `setChildren` and `hasChildren` instead.
+- [security] Removed support old authentication system (not setting `security.enable_authenticator_manager: true` in `security.yaml`).
+- Removed Pimcore Password Encoder factory, `pimcore_admin.security.password_encoder_factory` service and `pimcore.security.factory_type` config.
+- Removed BruteforceProtection
+- Removed PreAuthenticatedAdminToken
+- 
 
 ## 10.5.8
 - [Nginx] Static pages nginx config has been updated to fix the issue for home static page generation. please adapt the following configuration:
@@ -296,6 +301,8 @@ If you require to change the config on production environments we recommend to c
 ```yaml
 pimcore:
     security:
+        factory_type: password_hasher
+
         # the password hasher factory as defined in services.yml
         password_hasher_factories:
             App\Model\DataObject\User: website_demo.security.password_hasher_factory
