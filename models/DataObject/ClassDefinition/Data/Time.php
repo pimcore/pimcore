@@ -71,7 +71,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      */
     public function setMinValue($minValue)
     {
-        if (strlen($minValue)) {
+        if (is_string($minValue) && strlen($minValue)) {
             $this->minValue = $this->toTime($minValue);
         } else {
             $this->minValue = null;
@@ -91,7 +91,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      */
     public function setMaxValue($maxValue)
     {
-        if (strlen($maxValue)) {
+        if (is_string($maxValue) && strlen($maxValue)) {
             $this->maxValue = $this->toTime($maxValue);
         } else {
             $this->maxValue = null;
@@ -113,16 +113,16 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
             throw new Model\Element\ValidationException('Wrong time format given must be a 5 digit string (eg: 06:49) [ '.$this->getName().' ]');
         }
 
-        if (!$omitMandatoryCheck && strlen($data)) {
+        if (!$omitMandatoryCheck && $data) {
             if (!$this->toTime($data)) {
                 throw new Model\Element\ValidationException('Wrong time format given must be a 5 digit string (eg: 06:49) [ '.$this->getName().' ]');
             }
 
-            if (strlen($this->getMinValue()) && $this->isEarlier($this->getMinValue(), $data)) {
+            if ($this->getMinValue() && $this->isEarlier($this->getMinValue(), $data)) {
                 throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is not at least ' . $this->getMinValue());
             }
 
-            if (strlen($this->getMaxValue()) && $this->isLater($this->getMaxValue(), $data)) {
+            if ($this->getMaxValue() && $this->isLater($this->getMaxValue(), $data)) {
                 throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . ' ] is bigger than ' . $this->getMaxValue());
             }
         }
@@ -143,7 +143,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      */
     public function isEmpty($data)
     {
-        return strlen($data) !== 5;
+        return !is_string($data) || !preg_match('/^(2[0-3]|[01][0-9]):[0-5][0-9]$/', $data);
     }
 
     /**

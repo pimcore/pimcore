@@ -408,21 +408,6 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @deprecated will be removed in Pimcore 11
-     *
-     * @param array $config
-     *
-     * @return int total count
-     */
-    public static function getTotalCount($config = [])
-    {
-        $list = static::getList($config);
-        $count = $list->getTotalCount();
-
-        return $count;
-    }
-
-    /**
      * @internal
      *
      * @param string $mimeType

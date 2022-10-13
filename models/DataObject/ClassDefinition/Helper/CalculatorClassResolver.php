@@ -25,7 +25,7 @@ final class CalculatorClassResolver extends ClassResolver
     /**
      * @param string $calculatorClass
      *
-     * @return mixed|null
+     * @return CalculatorClassInterface|null
      */
     public static function resolveCalculatorClass($calculatorClass)
     {

@@ -216,6 +216,11 @@ final class User extends User\UserRole
         return $this;
     }
 
+    public function getFullName(): string
+    {
+        return trim($this->getFirstname() . ' ' . $this->getLastname());
+    }
+
     /**
      * @return string|null
      */
@@ -1001,7 +1006,7 @@ final class User extends User\UserRole
     /**
      * @param string|null $key
      *
-     * @return array|mixed|null|string
+     * @return mixed
      */
     public function getTwoFactorAuthentication($key = null)
     {

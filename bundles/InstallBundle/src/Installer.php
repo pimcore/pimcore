@@ -90,7 +90,7 @@ class Installer
     private $importDatabaseDataDump = true;
 
     /**
-     * skip writing database.yml file
+     * skip writing database.yaml file
      *
      * @var bool
      */
@@ -391,7 +391,7 @@ class Installer
         $errors = $this->setupDatabase($userCredentials, $errors);
 
         if (!$this->skipDatabaseConfig) {
-            // now we're able to write the server version to the database.yml
+            // now we're able to write the server version to the database.yaml
             $db = \Pimcore\Db::get();
             if ($db instanceof Connection) {
                 $connection = $db->getWrappedConnection();

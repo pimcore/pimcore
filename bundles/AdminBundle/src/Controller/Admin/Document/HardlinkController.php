@@ -63,6 +63,7 @@ class HardlinkController extends DocumentControllerBase
 
         $this->addTranslationsData($link, $data);
         $this->minimizeProperties($link, $data);
+        $this->populateUsersNames($link, $data);
 
         if ($link->getSourceDocument()) {
             $data['sourcePath'] = $link->getSourceDocument()->getRealFullPath();
