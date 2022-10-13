@@ -289,11 +289,6 @@ pimcore.element.abstract = Class.create({
                 text: t("metainfo_copy_fullpath"),
                 iconCls: "pimcore_icon_copy",
                 handler: pimcore.helpers.copyStringToClipboard.bind(this, metainfo.path)
-            },
-            {
-                text: t("metainfo_copy_deeplink"),
-                iconCls: "pimcore_icon_copy",
-                handler: pimcore.helpers.copyStringToClipboard.bind(this, metainfo.deeplink)
             }
         ];
     },

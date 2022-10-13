@@ -246,14 +246,19 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                 });
             }
 
-            buttons.push({
-                xtype: "splitbutton",
-                tooltip: t("show_metainfo"),
-                iconCls: "pimcore_material_icon_info pimcore_material_icon",
-                scale: "medium",
-                handler: this.showMetaInfo.bind(this),
-                menu: this.getMetaInfoMenuItems()
-            });
+            this.setDeeplink();
+
+            this.toolbarButtons.metainfo = new Ext.SplitButton(
+                {
+                    tooltip: t("show_metainfo"),
+                    iconCls: "pimcore_material_icon_info pimcore_material_icon",
+                    scale: "medium",
+                    handler: this.showMetaInfo.bind(this),
+                    menu: this.getMetaInfoMenuItems()
+                }
+            );
+
+            buttons.push(this.toolbarButtons.metainfo);
 
             buttons.push({
                 tooltip: t("search_and_move"),
@@ -331,6 +336,37 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         });
 
         return this.tabbar;
+    },
+
+    setDeeplink: function () {
+        let target   = "object_" + this.data.general.o_id + "_folder";
+        let that     = this;
+        let response = Ext.Ajax.request({
+            method: 'POST',
+            url: Routing.generate('pimcore_admin_element_getdeeplink'),
+            params: {
+                target: target
+            },
+            success: function (response) {
+                let data = Ext.decode(response.responseText);
+
+                if (data.success) {
+                    that.deeplink = data.url;
+
+                    that.toolbarButtons.metainfo.menu.add(
+                        {
+                            text: t("metainfo_copy_deeplink"),
+                            iconCls: "pimcore_icon_copy",
+                            handler: pimcore.helpers.copyStringToClipboard.bind(this, that.deeplink)
+                        }
+                    )
+                }
+            }
+        });
+    },
+
+    getDeeplink: function () {
+        return this.deeplink;
     },
 
     getSaveData: function () {
@@ -455,7 +491,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
             creationdate: this.data.general.o_creationDate,
             usermodification: this.data.general.o_userModification,
             userowner: this.data.general.o_userOwner,
-            deeplink: pimcore.helpers.getDeeplink("object", this.data.general.o_id, "folder")
+            deeplink: this.getDeeplink()
         };
     },
 

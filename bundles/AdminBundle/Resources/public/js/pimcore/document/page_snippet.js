@@ -224,14 +224,19 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 });
             }
 
-            buttons.push({
-                xtype: "splitbutton",
-                tooltip: t("show_metainfo"),
-                iconCls: "pimcore_material_icon_info pimcore_material_icon",
-                scale: "medium",
-                handler: this.showMetaInfo.bind(this),
-                menu: this.getMetaInfoMenuItems()
-            });
+            this.setDeeplink();
+
+            this.toolbarButtons.metainfo = new Ext.SplitButton(
+                {
+                    tooltip: t("show_metainfo"),
+                    iconCls: "pimcore_material_icon_info pimcore_material_icon",
+                    scale: "medium",
+                    handler: this.showMetaInfo.bind(this),
+                    menu: this.getMetaInfoMenuItems()
+                }
+            );
+
+            buttons.push(this.toolbarButtons.metainfo);
 
             buttons.push(this.getTranslationButtons());
 
@@ -333,6 +338,37 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
         return this.toolbar;
     },
 
+    setDeeplink: function () {
+        let target   = "document" + this.data.id + "_" + this.data.type;
+        let that     = this;
+        let response = Ext.Ajax.request({
+            method: 'POST',
+            url: Routing.generate('pimcore_admin_element_getdeeplink'),
+            params: {
+                target: target
+            },
+            success: function (response) {
+                let data = Ext.decode(response.responseText);
+
+                if (data.success) {
+                    that.deeplink = data.url;
+
+                    that.toolbarButtons.metainfo.menu.add(
+                        {
+                            text: t("metainfo_copy_deeplink"),
+                            iconCls: "pimcore_icon_copy",
+                            handler: pimcore.helpers.copyStringToClipboard.bind(this, that.deeplink)
+                        }
+                    )
+                }
+            }
+        });
+    },
+
+    getDeeplink: function () {
+        return this.deeplink;
+    },
+
     saveToSession: function (onComplete) {
 
         if (typeof onComplete != "function") {
@@ -381,7 +417,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             creationdate: this.data.creationDate,
             usermodification: this.data.userModification,
             userowner: this.data.userOwner,
-            deeplink: pimcore.helpers.getDeeplink("document", this.data.id, this.data.type)
+            deeplink: this.getDeeplink()
         };
     },
 
