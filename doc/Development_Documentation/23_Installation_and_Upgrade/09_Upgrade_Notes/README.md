@@ -69,10 +69,37 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [CoreBundle] Please update CoreBundle config resource path from `@PimcoreCoreBundle/Resources/config/...` to `@PimcoreCoreBundle/config/..` in your project configurations.
 - [Relations]: Add confirm dialog to empty button of relations and add possibility to disable clear relations in the class layout.
 - [Email] Bumped `league/html-to-markdown` to ^5.1.
+- [Cache] Removed `psr/simple-cache` dependency, due to the lack of usage in the Core.
+- [Config] Removed deprecated services/aliases: `Pimcore\Templating\Renderer\TagRenderer`, `pimcore.cache.adapter.pdo`, `pimcore.cache.adapter.pdo_tag_aware`
 - [DataObjects] Changed `$objectTypes` default value to include variants in certain scenarios.
 - [Elements]: Removed deprecated `getTotalCount()` method
 - [Areabricks] The default template location of `AbstractTemplateAreabrick` is now `TEMPLATE_LOCATION_GLOBAL`.
 - [Config] Rename config files from `*.yml` to `*.yaml`. Note that we now use `system.yaml` as config file and not `system.yml`
+- [Childs Compatibility] Removed `getChilds`, `setChilds` and `hasChild` use `getChildren`, `setChildren` and `hasChildren` instead.
+
+## 10.5.8
+- [Nginx] Static pages nginx config has been updated to fix the issue for home static page generation. please adapt the following configuration:
+```nginx
+map $args $static_page_root {
+    default                                 /var/tmp/pages;
+    "~*(^|&)pimcore_editmode=true(&|$)"     /var/nonexistent;
+    "~*(^|&)pimcore_preview=true(&|$)"      /var/nonexistent;
+    "~*(^|&)pimcore_version=[^&]+(&|$)"     /var/nonexistent;
+}
+
+map $uri $static_page_uri {
+    default                                 $uri;
+    "/"                                     /%home;
+}
+
+.....
+
+location / {
+    error_page 404 /meta/404;
+
+    try_files $static_page_root$static_page_uri.html $uri /index.php$is_args$args;
+}
+```
 
 ## 10.5.0
 - [Class Definitions] Resolving classes or services will no longer catch exceptions in Pimcore 11. Remove invalid references from class definitions.

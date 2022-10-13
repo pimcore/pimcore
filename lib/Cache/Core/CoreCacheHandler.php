@@ -291,7 +291,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      *
      * @param string $key
      *
-     * @return bool|mixed
+     * @return mixed
      */
     public function load($key)
     {

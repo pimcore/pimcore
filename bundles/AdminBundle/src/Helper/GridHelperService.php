@@ -121,7 +121,9 @@ class GridHelperService
                                     'name' => $mappedKey, ]
                             );
 
-                            $featureConditions[$mappedKey] = $featureCondition;
+                            if (!empty($featureCondition)) {
+                                $featureConditions[$mappedKey] = $featureCondition;
+                            }
                         }
                     }
                 } elseif (count($keyParts) > 1) {
