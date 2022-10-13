@@ -21,6 +21,10 @@ use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface;
 use Pimcore\Model\DataObject\Classificationstore;
+use Pimcore\Model\Translation;
+use Pimcore\Model\Translation\Listing;
+use Pimcore\Model\User;
+use Pimcore\Tool\Admin;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
@@ -272,7 +276,19 @@ class ClassificationstoreController extends AdminController implements KernelCon
 
         $searchfilter = $request->get('searchfilter');
         if ($searchfilter) {
-            $conditionParts[] = '(name LIKE ' . $db->quote('%' . $searchfilter . '%') . ' OR description LIKE ' . $db->quote('%'. $searchfilter . '%') . ')';
+            $searchFilterCondition = 'name LIKE '.$db->quote('%'.$searchfilter.'%').' OR description LIKE '.$db->quote('%'.$searchfilter.'%');
+
+            $user = Admin::getCurrentUser();
+            if ($user instanceof User) {
+                $translationListing = new Listing();
+                $translationListing->setDomain(Translation::DOMAIN_ADMIN);
+                $translationListing->setCondition('language=? AND text LIKE ?', [$user->getLanguage(), '%'.$searchfilter.'%']);
+                foreach ($translationListing as $translation) {
+                    $searchFilterCondition .= ' OR name LIKE '.$db->quote('%'.$translation->getKey().'%').' OR description LIKE '.$db->quote('%'.$translation->getKey().'%');
+                }
+            }
+
+            $conditionParts[] = '('.$searchFilterCondition.')';
         }
 
         $storeId = $request->get('storeId');
@@ -421,7 +437,19 @@ class ClassificationstoreController extends AdminController implements KernelCon
 
         $searchfilter = $request->get('searchfilter');
         if ($searchfilter) {
-            $conditionParts[] = '(name LIKE ' . $db->quote('%' . $searchfilter . '%') . ' OR description LIKE ' . $db->quote('%'. $searchfilter . '%') . ')';
+            $searchFilterCondition = 'name LIKE ' . $db->quote('%' . $searchfilter . '%') . ' OR description LIKE ' . $db->quote('%'. $searchfilter . '%');
+
+            $user = Admin::getCurrentUser();
+            if ($user instanceof User) {
+                $translationListing = new Listing();
+                $translationListing->setDomain(Translation::DOMAIN_ADMIN);
+                $translationListing->setCondition('language=? AND text LIKE ?', [$user->getLanguage(), '%'.$searchfilter.'%']);
+                foreach($translationListing as $translation) {
+                    $searchFilterCondition .= ' OR name LIKE ' . $db->quote('%' .$translation->getKey() . '%') . ' OR description LIKE ' . $db->quote('%'.$translation->getKey() . '%');
+                }
+            }
+
+            $conditionParts[] = '('.$searchFilterCondition.')';
         }
 
         if ($request->get('storeId')) {
@@ -758,11 +786,25 @@ class ClassificationstoreController extends AdminController implements KernelCon
 
         $searchfilter = $request->get('searchfilter');
         if ($searchfilter) {
-            $conditionParts[] = '('
-                . Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . '.name LIKE ' . $db->quote('%' . $searchfilter . '%')
-                . ' OR ' . Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . '.name LIKE ' . $db->quote('%' . $searchfilter . '%')
-                . ' OR ' . Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . '.description LIKE ' . $db->quote('%' . $searchfilter . '%') . ')';
+            $searchFilterCondition = Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS.'.name LIKE '.$db->quote('%'.$searchfilter.'%')
+                .' OR '.Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS.'.name LIKE '.$db->quote('%'.$searchfilter.'%')
+                .' OR '.Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS.'.description LIKE '.$db->quote('%'.$searchfilter.'%');
+
+            $user = Admin::getCurrentUser();
+            if ($user instanceof User) {
+                $translationListing = new Listing();
+                $translationListing->setDomain(Translation::DOMAIN_ADMIN);
+                $translationListing->setCondition('language=? AND text LIKE ?', [$user->getLanguage(), '%'.$searchfilter.'%']);
+                foreach ($translationListing as $translation) {
+                    $searchFilterCondition .= ' OR '.Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS.'.name LIKE '.$db->quote('%'.$translation->getKey().'%')
+                        .' OR '.Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS.'.name LIKE '.$db->quote('%'.$translation->getKey().'%')
+                        .' OR '.Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS.'.description LIKE '.$db->quote('%'.$translation->getKey().'%');
+                }
+            }
+
+            $conditionParts[] = '('.$searchFilterCondition.')';
         }
+
         $condition = implode(' AND ', $conditionParts);
         $list->setCondition($condition);
         $list->setResolveGroupName(true);
