@@ -63,12 +63,7 @@ class EventedControllerListener implements EventSubscriberInterface
     public function onKernelResponse(ResponseEvent $event)
     {
         $request = $event->getRequest();
-        $eventedController = $request->attributes->get('_evented_controller');
         $eventController = $request->attributes->get('_event_controller');
-
-        if (!$eventedController && !$eventController) {
-            return;
-        }
 
         if ($eventController instanceof KernelResponseEventInterface) {
             $eventController->onKernelResponseEvent($event);
