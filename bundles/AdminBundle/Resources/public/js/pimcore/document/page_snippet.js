@@ -224,7 +224,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 });
             }
 
-            this.setDeeplink("document" + this.data.id + "_" + this.data.type);
+            this.setDeeplink("document_" + this.data.id + "_" + this.data.type);
 
             this.toolbarButtons.metainfo = new Ext.SplitButton(
                 {
