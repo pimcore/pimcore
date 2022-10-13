@@ -299,7 +299,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . '()' . "\n";
+        $code .= 'public function get' . ucfirst($key) . '(): ' . $this->getReturnTypeDeclaration() . "\n";
         $code .= '{' . "\n";
 
         $code .= "\t" . '$data' . " = new \\Pimcore\\Model\\DataObject\\Data\\CalculatedValue('" . $key . "');\n";
@@ -328,7 +328,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . '($language = null)' . "\n";
+        $code .= 'public function get' . ucfirst($key) . '($language = null): ' . $this->getReturnTypeDeclaration() . "\n";
         $code .= '{' . "\n";
         $code .= "\t" . 'if (!$language) {' . "\n";
         $code .= "\t\t" . 'try {' . "\n";
@@ -384,7 +384,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . '($language = null)' . "\n";
+        $code .= 'public function get' . ucfirst($key) . '($language = null): ' . $this->getReturnTypeDeclaration() . "\n";
         $code .= '{' . "\n";
 
         $code .= "\t" . '$brickDefinition = DataObject\Objectbrick\Definition::getByKey("' . $brickClass->getKey() . '");' . "\n";
@@ -412,7 +412,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . '()' . "\n";
+        $code .= 'public function get' . ucfirst($key) . '(): ' . $this->getReturnTypeDeclaration() . "\n";
         $code .= '{' . "\n";
 
         $code .= "\t" . '$data' . " = new \\Pimcore\\Model\\DataObject\\Data\\CalculatedValue('" . $key . "');\n";
@@ -562,7 +562,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      */
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\\' . DataObject\Data\CalculatedValue::class;
+        return 'mixed';
     }
 
     /**
@@ -578,6 +578,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      */
     public function getPhpdocReturnType(): ?string
     {
-        return '\\' . DataObject\Data\CalculatedValue::class . '|null';
+        return 'mixed';
     }
 }

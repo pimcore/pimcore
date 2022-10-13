@@ -79,6 +79,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 
     /**
      * @param string $name
+     *
      */
     public function getByName($name)
     {

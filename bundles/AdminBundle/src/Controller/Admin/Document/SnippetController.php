@@ -66,6 +66,7 @@ class SnippetController extends DocumentControllerBase
 
         $this->addTranslationsData($snippet, $data);
         $this->minimizeProperties($snippet, $data);
+        $this->populateUsersNames($snippet, $data);
 
         $data['url'] = $snippet->getUrl();
         $data['scheduledTasks'] = array_map(
