@@ -94,10 +94,13 @@ RewriteCond %{DOCUMENT_ROOT}/var/tmp/thumbnails%{REQUEST_URI} -f
 RewriteRule ^(.*)$ /var/tmp/thumbnails%{REQUEST_URI} [PT,L]
 
 # static pages
+SetEnvIf Request_URI ^(.*)$ STATIC_PAGE_URI=$1
+SetEnvIf Request_URI / STATIC_PAGE_URI=/%home
+
 RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)
 RewriteCond %{QUERY_STRING}   !(pimcore_editmode=true|pimcore_preview|pimcore_version)
-RewriteCond %{DOCUMENT_ROOT}/var/tmp/pages%{REQUEST_URI}.html -f
-RewriteRule ^(.*)$ /var/tmp/pages%{REQUEST_URI}.html [PT,L]
+RewriteCond %{DOCUMENT_ROOT}/var/tmp/pages%{STATIC_PAGE_URI}.html -f
+RewriteRule ^(.*)$ /var/tmp/pages%{STATIC_PAGE_URI}.html [PT,L]
 
 # cache-buster rule for scripts & stylesheets embedded using view helpers
 RewriteRule ^cache-buster\-[\d]+/(.*) $1 [PT,L]

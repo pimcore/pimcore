@@ -30,7 +30,7 @@ final class Dashboard
     protected $user;
 
     /**
-     * @var array
+     * @var array|null
      */
     protected $dashboards;
 
@@ -67,7 +67,7 @@ final class Dashboard
     }
 
     /**
-     * @return array|mixed
+     * @return array
      */
     protected function loadFile()
     {
@@ -102,7 +102,7 @@ final class Dashboard
     }
 
     /**
-     * @return array|mixed
+     * @return array
      */
     public function getAllDashboards()
     {
@@ -112,7 +112,7 @@ final class Dashboard
     /**
      * @param string $key
      *
-     * @return mixed
+     * @return array
      */
     public function getDashboard($key = 'welcome')
     {

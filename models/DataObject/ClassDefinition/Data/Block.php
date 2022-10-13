@@ -28,7 +28,6 @@ use Pimcore\Tool\Serialize;
 
 class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, DataContainerAwareInterface, PreGetDataInterface, PreSetDataInterface
 {
-    use Element\ChildsCompatibilityTrait;
     use Extension\ColumnType;
     use DataObject\Traits\ClassSavedTrait;
 
@@ -1285,8 +1284,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     {
         $obj = new static();
         $obj->setValues($data);
-
-        $obj->childs = $obj->children;  // @phpstan-ignore-line
 
         return $obj;
     }

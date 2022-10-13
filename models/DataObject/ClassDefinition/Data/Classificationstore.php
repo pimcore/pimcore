@@ -26,8 +26,6 @@ use Pimcore\Tool;
 
 class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface, VarExporterInterface
 {
-    use Element\ChildsCompatibilityTrait;
-
     /**
      * Static type of this element
      *
@@ -882,7 +880,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             'fieldDefinitionsCache',
             'referencedFields',
             'blockedVarsForExport',
-            'childs',
         ];
     }
 
@@ -1420,8 +1417,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     {
         $obj = new static();
         $obj->setValues($data);
-
-        $obj->childs = $obj->children;  // @phpstan-ignore-line
 
         return $obj;
     }

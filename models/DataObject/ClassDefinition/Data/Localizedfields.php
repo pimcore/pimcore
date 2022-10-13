@@ -26,7 +26,6 @@ use Pimcore\Tool;
 
 class Localizedfields extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, DataContainerAwareInterface, IdRewriterInterface, PreGetDataInterface, VarExporterInterface
 {
-    use Element\ChildsCompatibilityTrait;
     use Layout\Traits\LabelTrait;
     use DataObject\Traits\ClassSavedTrait;
 
@@ -1003,7 +1002,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     }
 
     /**
-     * @param DataObject\Localizedfield|mixed $localizedObject
+     * @param DataObject\Localizedfield $localizedObject
      * @param array $languages
      *
      * @return array
@@ -1149,7 +1148,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
             'blockedVarsForExport',
             'permissionView',
             'permissionEdit',
-            'childs',
         ];
     }
 
@@ -1432,8 +1430,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     {
         $obj = new static();
         $obj->setValues($data);
-
-        $obj->childs = $obj->children;  // @phpstan-ignore-line
 
         return $obj;
     }

@@ -133,7 +133,7 @@ final class Config implements ArrayAccess
      * @internal ONLY FOR TESTING PURPOSES IF NEEDED FOR SPECIFIC TEST CASES
      *
      * @param null|array $configuration
-     * @param null|mixed $offset
+     * @param string|null $offset
      */
     public static function setSystemConfiguration($configuration, $offset = null)
     {
@@ -148,7 +148,7 @@ final class Config implements ArrayAccess
     /**
      * @internal
      *
-     * @param null|mixed $offset
+     * @param string|null $offset
      *
      * @return null|array
      */

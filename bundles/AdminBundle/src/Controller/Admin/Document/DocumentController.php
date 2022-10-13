@@ -20,6 +20,7 @@ use Imagick;
 use Pimcore;
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\UserNameTrait;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config;
 use Pimcore\Controller\KernelControllerEventInterface;
@@ -58,6 +59,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class DocumentController extends ElementControllerBase implements KernelControllerEventInterface
 {
     use DocumentTreeConfigTrait;
+    use UserNameTrait;
 
     /**
      * @var Document\Service
@@ -107,6 +109,13 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $document = clone $document;
         $data = $document->getObjectVars();
         $data['versionDate'] = $document->getModificationDate();
+
+        $userOwnerName = $this->getUserName($document->getUserOwner());
+        $userModificationName = ($document->getUserOwner() == $document->getUserModification()) ? $userOwnerName : $this->getUserName($document->getUserModification());
+        $data['userOwnerUsername'] = $userOwnerName['userName'];
+        $data['userOwnerFullname'] = $userOwnerName['fullName'];
+        $data['userModificationUsername'] = $userModificationName['userName'];
+        $data['userModificationFullname'] = $userModificationName['fullName'];
 
         $data['php'] = [
             'classes' => array_merge([get_class($document)], array_values(class_parents($document))),
@@ -408,14 +417,6 @@ class DocumentController extends ElementControllerBase implements KernelControll
     {
         $type = $request->get('type');
 
-        if ($type === 'childs') {
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '10.4',
-                'Type childs is deprecated. Use children instead'
-            );
-            $type = 'children';
-        }
         if ($type === 'children') {
             $parentDocument = Document::getById((int) $request->get('id'));
 
@@ -698,7 +699,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
     }
 
     /**
-     * @Route("/doc-types", name="pimcore_admin_document_document_doctypes", methods={"PUT", "POST","DELETE"})
+     * @Route("/doc-types", name="pimcore_admin_document_document_doctypes", methods={"PUT", "POST", "DELETE"})
      *
      * @param Request $request
      *
@@ -709,19 +710,17 @@ class DocumentController extends ElementControllerBase implements KernelControll
         if ($request->get('data')) {
             $this->checkPermission('document_types');
 
-            if ($request->get('xaction') == 'destroy') {
-                $data = $this->decodeJson($request->get('data'));
-                $id = $data['id'];
-                $type = Document\DocType::getById($id);
+            $data = $this->decodeJson($request->get('data'));
+
+            if ($request->get('xaction') === 'destroy') {
+                $type = Document\DocType::getById($data['id']);
                 if (!$type->isWriteable()) {
                     throw new ConfigWriteException();
                 }
                 $type->delete();
 
                 return $this->adminJson(['success' => true, 'data' => []]);
-            } elseif ($request->get('xaction') == 'update') {
-                $data = $this->decodeJson($request->get('data'));
-
+            } elseif ($request->get('xaction') === 'update') {
                 // save type
                 $type = Document\DocType::getById($data['id']);
 
@@ -736,12 +735,11 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 $responseData['writeable'] = $type->isWriteable();
 
                 return $this->adminJson(['data' => $responseData, 'success' => true]);
-            } elseif ($request->get('xaction') == 'create') {
+            } elseif ($request->get('xaction') === 'create') {
                 if (!(new DocType())->isWriteable()) {
                     throw new ConfigWriteException();
                 }
 
-                $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
 
                 // save type

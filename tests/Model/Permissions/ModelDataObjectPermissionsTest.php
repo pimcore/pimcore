@@ -337,7 +337,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->assertEquals(
             $resultAdmin,
             $element->getDao()->hasChildren(
-                [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], true, $admin
+                [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], true, $admin
             ),
             'Has children of `' . $element->getFullpath() . '` for user admin'
         );
@@ -345,7 +345,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->assertEquals(
             $resultPermissionTest1,
             $element->getDao()->hasChildren(
-                [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], true, $this->userPermissionTest1
+                [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], true, $this->userPermissionTest1
             ),
             'Has children of `' . $element->getFullpath() . '` for user UserPermissionTest1'
         );
@@ -353,7 +353,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->assertEquals(
             $resultPermissionTest2,
             $element->getDao()->hasChildren(
-                [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], true, $this->userPermissionTest2
+                [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], true, $this->userPermissionTest2
             ),
             'Has children of `' . $element->getFullpath() . '` for user UserPermissionTest2'
         );
@@ -361,7 +361,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->assertEquals(
             $resultPermissionTest3,
             $element->getDao()->hasChildren(
-                [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], true, $this->userPermissionTest3
+                [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], true, $this->userPermissionTest3
             ),
             'Has children of `' . $element->getFullpath() . '` for user UserPermissionTest3'
         );
@@ -369,7 +369,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         $this->assertEquals(
             $resultPermissionTest4,
             $element->getDao()->hasChildren(
-                [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], true, $this->userPermissionTest4
+                [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], true, $this->userPermissionTest4
             ),
             'Has children of `' . $element->getFullpath() . '` for user UserPermissionTest4'
         );

@@ -95,7 +95,7 @@ class PrefixLoader extends AbstractClassNameLoader
      *
      * @param string $name
      *
-     * @return mixed|string
+     * @return string|null
      */
     private function findClassName(string $name)
     {
@@ -113,6 +113,8 @@ class PrefixLoader extends AbstractClassNameLoader
                 return $className;
             }
         }
+
+        return null;
     }
 
     /**

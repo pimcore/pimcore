@@ -185,8 +185,36 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                     pimcore.helpers.openElement(data.data.id, data.data.type, subtype);
                 }.bind(this)
             }]
-        },
-        {
+        });
+
+        if (this.fieldConfig.assetInlineDownloadAllowed) {
+            columns.push({
+                xtype: 'actioncolumn',
+                menuText: t('download'),
+                width: 40,
+                sortable: false,
+                items: [
+                    {
+                        tooltip: t('download'),
+                        icon: "/bundles/pimcoreadmin/img/flat-color-icons/download-cloud.svg",
+                        handler: function (grid, rowIndex) {
+                            const data = grid.getStore().getAt(rowIndex);
+                            if (data.data.id && data.data.type && data.data.type === "asset") {
+                                if (data.data.id && data.data.type && data.data.type === "asset") {
+                                    if (data.data.subtype === "folder") {
+                                        pimcore.elementservice.downloadAssetFolderAsZip(data.data.id)
+                                    } else {
+                                        pimcore.helpers.download(Routing.generate('pimcore_admin_asset_download', {id: data.data.id}));
+                                    }
+                                }
+                            }
+                        }.bind(this)
+                    }
+                ]
+            })
+        }
+
+        columns.push({
             xtype: 'actioncolumn',
             menuText: t('remove'),
             width: 40,
@@ -195,7 +223,10 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                 tooltip: t('remove'),
                 icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                 handler: function (grid, rowIndex) {
-                    grid.getStore().removeAt(rowIndex);
+                    let data = grid.getStore().getAt(rowIndex);
+                    pimcore.helpers.deleteConfirm(t('relation'), data.data.path, function () {
+                        grid.getStore().removeAt(rowIndex);
+                    }.bind(this));
                 }.bind(this)
             }]
         });
@@ -357,15 +388,22 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
         toolbarItems = toolbarItems.concat([
             {
                 xtype: "button",
-                iconCls: "pimcore_icon_delete",
-                handler: this.empty.bind(this)
-            },
-            {
-                xtype: "button",
                 iconCls: "pimcore_icon_search",
                 handler: this.openSearchEditor.bind(this)
             }
         ]);
+
+        if (this.fieldConfig.allowToClearRelation) {
+            toolbarItems.push({
+                xtype: "button",
+                iconCls: "pimcore_icon_delete",
+                handler: function () {
+                    pimcore.helpers.deleteConfirm(t('all'), t('relations'), function () {
+                        this.empty();
+                    }.bind(this));
+                }.bind(this)
+            });
+        }
 
         if (this.fieldConfig.assetsAllowed) {
             toolbarItems.push({

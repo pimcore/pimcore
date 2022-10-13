@@ -50,7 +50,7 @@ final class Service
      * @param \stdClass[] $jsonConfigs
      * @param array $context
      *
-     * @return array
+     * @return ConfigElementInterface[]
      */
     public function buildOutputDataConfig(array $jsonConfigs, array $context = []): array
     {

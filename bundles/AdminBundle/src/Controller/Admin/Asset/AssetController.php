@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Asset;
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\UserNameTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
@@ -61,6 +62,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     use AdminStyleTrait;
     use ElementEditLockHelperTrait;
     use ApplySchedulerDataTrait;
+    use UserNameTrait;
 
     /**
      * @var Asset\Service
@@ -216,6 +218,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             },
             $asset->getScheduledTasks()
         );
+
+        $userOwnerName = $this->getUserName($asset->getUserOwner());
+        $userModificationName = ($asset->getUserOwner() == $asset->getUserModification()) ? $userOwnerName : $this->getUserName($asset->getUserModification());
+        $data['userOwnerUsername'] = $userOwnerName['userName'];
+        $data['userOwnerFullname'] = $userOwnerName['fullName'];
+        $data['userModificationUsername'] = $userModificationName['userName'];
+        $data['userModificationFullname'] = $userModificationName['fullName'];
 
         $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 
@@ -667,14 +676,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     {
         $type = $request->get('type');
 
-        if ($type === 'childs') {
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '10.4',
-                'Type childs is deprecated. Use children instead'
-            );
-            $type = 'children';
-        }
         if ($type === 'children') {
             $parentAsset = Asset::getById((int) $request->get('id'));
 
@@ -1151,6 +1152,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $stream = $asset->getStream();
 
+        if (!is_resource($stream)) {
+            throw $this->createNotFoundException('Unable to get resource for asset ' . $asset->getId());
+        }
+
         return new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
         }, 200, [
@@ -1303,6 +1308,11 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $stream = $image->getStream();
+
+        if (!is_resource($stream)) {
+            throw $this->createNotFoundException('Unable to get resource for asset ' . $image->getId());
+        }
+
         $response = new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
         }, 200, [

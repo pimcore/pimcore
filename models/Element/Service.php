@@ -1374,6 +1374,7 @@ class Service extends Model\AbstractModel
             'date' => $note->getDate(),
             'title' => Pimcore::getContainer()->get(TranslatorInterface::class)->trans($note->getTitle(), [], 'admin'),
             'description' => $note->getDescription(),
+            'locked' => $note->getLocked(),
         ];
 
         // prepare key-values
@@ -1551,7 +1552,7 @@ class Service extends Model\AbstractModel
     /**
      * @internal
      *
-     * @param mixed|null $element
+     * @param mixed $element
      * @param array|null $context
      *
      * @return DeepCopy
