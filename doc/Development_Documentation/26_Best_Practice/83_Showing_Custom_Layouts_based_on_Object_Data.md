@@ -72,7 +72,7 @@ class MyEventListener
         }
     }
 
-    private function doModifyCustomLayouts(array $data, Product $object, int $customLayoutToSelect, array $layoutsToRemove): void
+    private function doModifyCustomLayouts(array $data, Product $object, int $customLayoutToSelect, array $layoutsToRemove): array
     {
         //set current layout to subcategory layout
         $data['currentLayoutId'] = $customLayoutToSelect;
