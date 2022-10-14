@@ -72,6 +72,7 @@ class LinkController extends DocumentControllerBase
 
         $this->addTranslationsData($link, $data);
         $this->minimizeProperties($link, $data);
+        $this->populateUsersNames($link, $data);
 
         return $this->preSendDataActions($data, $link);
     }

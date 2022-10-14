@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Asset;
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\UserNameTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
@@ -61,6 +62,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     use AdminStyleTrait;
     use ElementEditLockHelperTrait;
     use ApplySchedulerDataTrait;
+    use UserNameTrait;
 
     /**
      * @var Asset\Service
@@ -216,6 +218,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             },
             $asset->getScheduledTasks()
         );
+
+        $userOwnerName = $this->getUserName($asset->getUserOwner());
+        $userModificationName = ($asset->getUserOwner() == $asset->getUserModification()) ? $userOwnerName : $this->getUserName($asset->getUserModification());
+        $data['userOwnerUsername'] = $userOwnerName['userName'];
+        $data['userOwnerFullname'] = $userOwnerName['fullName'];
+        $data['userModificationUsername'] = $userModificationName['userName'];
+        $data['userModificationFullname'] = $userModificationName['fullName'];
 
         $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 

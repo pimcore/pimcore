@@ -37,7 +37,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
     /**
      * @var array
      */
-    protected $objectTypes = [Model\DataObject::OBJECT_TYPE_OBJECT, Model\DataObject::OBJECT_TYPE_FOLDER];
+    protected $objectTypes = [Model\DataObject::OBJECT_TYPE_OBJECT, Model\DataObject::OBJECT_TYPE_VARIANT, Model\DataObject::OBJECT_TYPE_FOLDER];
 
     /**
      * @return array

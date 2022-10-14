@@ -1270,7 +1270,7 @@ class DataObjectHelperController extends AdminController
     /**
      * @param Request $request
      *
-     * @return mixed|string
+     * @return string
      */
     protected function extractLanguage(Request $request)
     {

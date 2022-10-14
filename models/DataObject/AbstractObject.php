@@ -33,7 +33,7 @@ use Pimcore\Model\Element\DuplicateFullPathException;
  * @method array|null getPermissions(?string $type, Model\User $user, bool $quote = true)
  * @method bool __isBasedOnLatestData()
  * @method string getCurrentFullPath()
- * @method int getChildAmount($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], Model\User $user = null)
+ * @method int getChildAmount($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], Model\User $user = null)
  * @method array getChildPermissions(?string $type, Model\User $user, bool $quote = true)
  */
 abstract class AbstractObject extends Model\Element\AbstractElement
@@ -489,21 +489,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @deprecated will be removed in Pimcore 11
-     *
-     * @param array $config
-     *
-     * @return int total count
-     */
-    public static function getTotalCount($config = [])
-    {
-        $list = static::getList($config);
-        $count = $list->getTotalCount();
-
-        return $count;
-    }
-
-    /**
      * @internal
      *
      * @param AbstractObject $object
@@ -521,7 +506,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @return DataObject[]
      */
-    public function getChildren(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = false)
+    public function getChildren(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = false)
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
@@ -552,7 +537,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @return bool
      */
-    public function hasChildren($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = null)
+    public function hasChildren($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = null)
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
@@ -571,7 +556,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @return array
      */
-    public function getSiblings(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = false)
+    public function getSiblings(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = false)
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
@@ -605,7 +590,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @return bool
      */
-    public function hasSiblings($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = null)
+    public function hasSiblings($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = null)
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
@@ -690,24 +675,16 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return $this
-     *
-     * @throws \Exception
+     * @inheritDoc
      */
-    public function save()
+    public function save(array $parameters = []): static
     {
-        // additional parameters (e.g. "versionNote" for the version note)
-        $params = [];
-        if (func_num_args() && is_array(func_get_arg(0))) {
-            $params = func_get_arg(0);
-        }
-
         $isUpdate = false;
         $differentOldPath = null;
 
         try {
             $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
-            $preEvent = new DataObjectEvent($this, $params);
+            $preEvent = new DataObjectEvent($this, $parameters);
             if ($this->getId()) {
                 $isUpdate = true;
                 $this->dispatchEvent($preEvent, DataObjectEvents::PRE_UPDATE);
@@ -716,7 +693,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 $this->dispatchEvent($preEvent, DataObjectEvents::PRE_ADD);
             }
 
-            $params = $preEvent->getArguments();
+            $parameters = $preEvent->getArguments();
 
             $this->correctPath();
 
@@ -756,7 +733,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                         $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
                     }
 
-                    $this->update($isUpdate, $params);
+                    $this->update($isUpdate, $parameters);
 
                     self::setHideUnpublished($hideUnpublishedBackup);
 
@@ -810,7 +787,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
-            $postEvent = new DataObjectEvent($this, $params);
+            $postEvent = new DataObjectEvent($this, $parameters);
             if ($isUpdate) {
                 if ($differentOldPath) {
                     $postEvent->setArgument('oldPath', $differentOldPath);
@@ -823,7 +800,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
             return $this;
         } catch (\Exception $e) {
-            $failureEvent = new DataObjectEvent($this, $params);
+            $failureEvent = new DataObjectEvent($this, $parameters);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
                 $this->dispatchEvent($failureEvent, DataObjectEvents::POST_UPDATE_FAILURE);
@@ -1118,7 +1095,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @return $this
      */
-    public function setChildren($children, array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = false)
+    public function setChildren($children, array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = false)
     {
         if ($children === null) {
             // unset all cached children
@@ -1285,7 +1262,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     protected function getListingCacheKey(array $args = [])
     {
-        $objectTypes = $args[0] ?? [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER];
+        $objectTypes = $args[0] ?? [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER];
         $includingUnpublished = (bool)($args[1] ?? false);
 
         if (is_array($objectTypes)) {
@@ -1342,7 +1319,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @param string $method
      * @param array $arguments
      *
-     * @return mixed|Listing|null
+     * @return mixed
      *
      * @throws \Exception
      */

@@ -91,6 +91,11 @@ $relationObject = $relation->getObject();
 DataObject::setHideUnpublished(true);
 ```
 
+## Allow inline download of asset
+You can enable inline download of assets from relations if you check the "Allow inline download" checkbox.  
+If the relation is an asset, it will be directly downloaded. If the relation is a folder, a zip file will  
+be downloaded.
+
 ## Disable clear complete relation
 If you want to disable the possibility to clear the whole relation, you can uncheck the checkbox "Allow to clear all relations of this field"  
 in the classdefinition.

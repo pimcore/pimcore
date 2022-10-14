@@ -10,14 +10,10 @@ flysystem:
         pimcore.asset.storage:
             # Storage for asset source files, directory structure is equal to the asset tree structure
             adapter: 'local'
-            visibility: public
+            visibility: private
+            directory_visibility: public
             options:
                 directory: '%kernel.project_dir%/public/var/assets'
-                permissions:
-                    file:
-                        private: 0644
-                    dir:
-                        private: 0755
         pimcore.asset_cache.storage:
             # Storage for cached asset files, e.g. PDF and image files generated out of Office files or videos
             # which are then used by the thumbnail engine as source files
@@ -28,14 +24,10 @@ flysystem:
         pimcore.thumbnail.storage:
             # Storage for image and video thumbnails, directory structure is equal to the source asset tree
             adapter: 'local'
-            visibility: public
+            visibility: private
+            directory_visibility: public
             options:
                 directory: '%kernel.project_dir%/public/var/tmp/thumbnails'
-                permissions:
-                    file:
-                        private: 0644
-                    dir:
-                        private: 0755
         pimcore.version.storage:
             # Storage for serialized versioning data of documents/asset/data objects
             adapter: 'local'
@@ -173,14 +165,10 @@ flysystem:
 
         pimcore.thumbnail.storage.source:
             adapter: 'local'
-            visibility: public
+            visibility: private
+            directory_visibility: public
             options:
                 directory: '%kernel.project_dir%/public/var/tmp/thumbnails'
-                permissions:
-                    file:
-                        private: 0644
-                    dir:
-                        private: 0755
 
         pimcore.thumbnail.storage.target:
             adapter: 'aws'
