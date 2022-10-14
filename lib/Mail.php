@@ -414,7 +414,7 @@ class Mail extends Email
      *
      * @return $this Provides fluent interface
      */
-    private function setDocumentSettings()
+    private function setDocumentSettings(): static
     {
         $document = $this->getDocument();
 
@@ -591,11 +591,6 @@ class Mail extends Email
         return $this;
     }
 
-    /**
-     * @param array $addresses
-     *
-     * @return array
-     */
     private function filterLogAddresses(array $addresses): array
     {
         foreach ($addresses as $addrKey => $address) {
@@ -615,11 +610,6 @@ class Mail extends Email
         return $addresses;
     }
 
-    /**
-     * @param array $recipients
-     *
-     * @return array
-     */
     private function getDebugMailRecipients(array $recipients): array
     {
         $headers = $this->getHeaders();
@@ -644,11 +634,6 @@ class Mail extends Email
         return $recipients;
     }
 
-    /**
-     * @param string $string
-     *
-     * @return string
-     */
     private function renderParams(string $string): string
     {
         $templatingEngine = \Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
@@ -838,12 +823,7 @@ class Mail extends Email
         return $this->preventDebugInformationAppending;
     }
 
-    /**
-     * @param string $htmlContent
-     *
-     * @return string
-     */
-    private function html2Text($htmlContent)
+    private function html2Text(string $htmlContent): string
     {
         $content = '';
 
@@ -904,12 +884,8 @@ class Mail extends Email
 
     /**
      * format Address from old params(string $address, string $name)
-     *
-     * @param string|array $addresses
-     *
-     * @return array
      */
-    private function formatAddress(...$addresses)
+    private function formatAddress(string|array ...$addresses): array
     {
         //old param style with string name as second param
         if (isset($addresses[1]) && is_string($addresses[1])) {

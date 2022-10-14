@@ -173,11 +173,6 @@ class Processor
         return $result;
     }
 
-    /**
-     * @param string $locale
-     *
-     * @return array
-     */
     private function getData(string $locale): array
     {
         $siteId = '';
@@ -207,11 +202,6 @@ class Processor
         return $data;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return array
-     */
     private function prepareData(array $data): array
     {
         $mappedData = [];

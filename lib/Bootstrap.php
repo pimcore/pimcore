@@ -144,7 +144,7 @@ class Bootstrap
         }
     }
 
-    private static function prepareEnvVariables()
+    private static function prepareEnvVariables(): void
     {
         if (!($_SERVER['PIMCORE_SKIP_DOTENV_FILE'] ?? false)) {
             if (class_exists('Symfony\Component\Dotenv\Dotenv')) {
@@ -214,7 +214,7 @@ class Bootstrap
         $resolveConstant('PIMCORE_KERNEL_CLASS', '\App\Kernel');
     }
 
-    private static function autoload()
+    private static function autoload(): void
     {
         $loader = \Pimcore::getAutoloader();
 

@@ -40,7 +40,7 @@ use Pimcore\Tests\Test\EcommerceTestCase;
 
 class CartTaxManagementTest extends EcommerceTestCase
 {
-    private function buildTaxClass(array $taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE)
+    private function buildTaxClass(array $taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): OnlineShopTaxClass
     {
         $taxClass = new OnlineShopTaxClass();
         $taxClass->setId(md5(serialize($taxes)));
@@ -105,10 +105,7 @@ class CartTaxManagementTest extends EcommerceTestCase
         return $product;
     }
 
-    /**
-     * @return SessionCart
-     */
-    private function setUpCart()
+    private function setUpCart(): SessionCart
     {
         $sessionBag = $this->buildSession()->getBag(SessionBagListener::ATTRIBUTE_BAG_CART);
 
@@ -127,12 +124,7 @@ class CartTaxManagementTest extends EcommerceTestCase
         return $cart;
     }
 
-    /**
-     * @param CartInterface $cart
-     *
-     * @return CartPriceCalculator
-     */
-    private function setUpCartCalculator(CartInterface $cart, $withModificators = false, $taxes = [])
+    private function setUpCartCalculator(CartInterface $cart, bool $withModificators = false, array $taxes = []): CartPriceCalculator
     {
         $calculator = new CartPriceCalculator($this->buildEnvironment(), $cart);
 

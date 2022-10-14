@@ -68,7 +68,7 @@ class Service
         return json_encode($data, JSON_PRETTY_PRINT);
     }
 
-    private static function removeDynamicOptionsFromLayoutDefinition(&$layout)
+    private static function removeDynamicOptionsFromLayoutDefinition(mixed &$layout): void
     {
         if (method_exists($layout, 'resolveBlockedVars')) {
             $blockedVars = $layout->resolveBlockedVars();
@@ -400,11 +400,7 @@ class Service
         return false;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $blockedVars
-     */
-    private static function removeDynamicOptionsFromArray(&$data, $blockedVars)
+    private static function removeDynamicOptionsFromArray(array &$data, array $blockedVars): void
     {
         foreach ($blockedVars as $blockedVar) {
             if (isset($data[$blockedVar])) {

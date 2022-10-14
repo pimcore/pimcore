@@ -180,10 +180,8 @@ final class Configuration implements ConfigurationInterface
 
     /**
      * Add maintenance config
-     *
-     * @param ArrayNodeDefinition $rootNode
      */
-    private function addMaintenanceNode(ArrayNodeDefinition $rootNode)
+    private function addMaintenanceNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()
@@ -202,10 +200,7 @@ final class Configuration implements ConfigurationInterface
         ;
     }
 
-    /**
-     * @param ArrayNodeDefinition $rootNode
-     */
-    private function buildRedirectsStatusCodes(ArrayNodeDefinition $rootNode)
+    private function buildRedirectsStatusCodes(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()
@@ -222,10 +217,8 @@ final class Configuration implements ConfigurationInterface
 
     /**
      * Add general config
-     *
-     * @param ArrayNodeDefinition $rootNode
      */
-    private function addGeneralNode(ArrayNodeDefinition $rootNode)
+    private function addGeneralNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()
@@ -298,10 +291,7 @@ final class Configuration implements ConfigurationInterface
             ->end();
     }
 
-    /**
-     * @param ArrayNodeDefinition $rootNode
-     */
-    private function addServicesNode(ArrayNodeDefinition $rootNode)
+    private function addServicesNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()
@@ -333,10 +323,7 @@ final class Configuration implements ConfigurationInterface
             ->end();
     }
 
-    /**
-     * @param ArrayNodeDefinition $rootNode
-     */
-    private function addModelsNode(ArrayNodeDefinition $rootNode)
+    private function addModelsNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()
@@ -348,10 +335,7 @@ final class Configuration implements ConfigurationInterface
                             ->prototype('scalar');
     }
 
-    /**
-     * @param ArrayNodeDefinition $rootNode
-     */
-    private function addHttpClientNode(ArrayNodeDefinition $rootNode)
+    private function addHttpClientNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()
@@ -379,10 +363,7 @@ final class Configuration implements ConfigurationInterface
             ->end();
     }
 
-    /**
-     * @param ArrayNodeDefinition $rootNode
-     */
-    private function addApplicationLogNode(ArrayNodeDefinition $rootNode)
+    private function addApplicationLogNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()
@@ -428,10 +409,8 @@ final class Configuration implements ConfigurationInterface
 
     /**
      * Add asset specific extension config
-     *
-     * @param ArrayNodeDefinition $rootNode
      */
-    private function addAssetNode(ArrayNodeDefinition $rootNode)
+    private function addAssetNode(ArrayNodeDefinition $rootNode): void
     {
         $assetsNode = $rootNode
             ->children()
@@ -722,10 +701,8 @@ final class Configuration implements ConfigurationInterface
 
     /**
      * Add object specific extension config
-     *
-     * @param ArrayNodeDefinition $rootNode
      */
-    private function addObjectsNode(ArrayNodeDefinition $rootNode)
+    private function addObjectsNode(ArrayNodeDefinition $rootNode): void
     {
         $objectsNode = $rootNode
             ->children()
@@ -802,10 +779,8 @@ final class Configuration implements ConfigurationInterface
 
     /**
      * Add encryption specific extension config
-     *
-     * @param ArrayNodeDefinition $rootNode
      */
-    private function addEncryptionNode(ArrayNodeDefinition $rootNode)
+    private function addEncryptionNode(ArrayNodeDefinition $rootNode): void
     {
         $encryptionNode = $rootNode
             ->children()
@@ -818,10 +793,8 @@ final class Configuration implements ConfigurationInterface
 
     /**
      * Add document specific extension config
-     *
-     * @param ArrayNodeDefinition $rootNode
      */
-    private function addDocumentsNode(ArrayNodeDefinition $rootNode)
+    private function addDocumentsNode(ArrayNodeDefinition $rootNode): void
     {
         $documentsNode = $rootNode
             ->children()
@@ -1012,11 +985,8 @@ final class Configuration implements ConfigurationInterface
 
     /**
      * Add implementation node config (map, prefixes)
-     *
-     * @param ArrayNodeDefinition $node
-     * @param string $name
      */
-    private function addImplementationLoaderNode(ArrayNodeDefinition $node, $name)
+    private function addImplementationLoaderNode(ArrayNodeDefinition $node, string $name): void
     {
         $node
             ->children()
@@ -1035,7 +1005,7 @@ final class Configuration implements ConfigurationInterface
             ->end();
     }
 
-    private function addRoutingNode(ArrayNodeDefinition $rootNode)
+    private function addRoutingNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()
@@ -1075,10 +1045,8 @@ final class Configuration implements ConfigurationInterface
 
     /**
      * Add context config
-     *
-     * @param ArrayNodeDefinition $rootNode
      */
-    private function addContextNode(ArrayNodeDefinition $rootNode)
+    private function addContextNode(ArrayNodeDefinition $rootNode): void
     {
         $contextNode = $rootNode->children()
             ->arrayNode('context')
@@ -1143,10 +1111,8 @@ final class Configuration implements ConfigurationInterface
 
     /**
      * Configure exclude paths for web profiler toolbar
-     *
-     * @param ArrayNodeDefinition $rootNode
      */
-    private function addWebProfilerNode(ArrayNodeDefinition $rootNode)
+    private function addWebProfilerNode(ArrayNodeDefinition $rootNode): void
     {
         $webProfilerNode = $rootNode->children()
             ->arrayNode('web_profiler')
@@ -1168,11 +1134,8 @@ final class Configuration implements ConfigurationInterface
 
     /**
      * Add a route prototype child
-     *
-     * @param ArrayNodeDefinition $parent
-     * @param string $name
      */
-    private function addRoutesChild(ArrayNodeDefinition $parent, $name)
+    private function addRoutesChild(ArrayNodeDefinition $parent, string $name): void
     {
         $node = $parent->children()->arrayNode($name);
 
@@ -1196,10 +1159,8 @@ final class Configuration implements ConfigurationInterface
 
     /**
      * Add cache config
-     *
-     * @param ArrayNodeDefinition $rootNode
      */
-    private function addCacheNode(ArrayNodeDefinition $rootNode)
+    private function addCacheNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode->children()
             ->arrayNode('full_page_cache')
@@ -1223,10 +1184,8 @@ final class Configuration implements ConfigurationInterface
 
     /**
      * Adds configuration for email source adapters
-     *
-     * @param ArrayNodeDefinition $rootNode
      */
-    private function addEmailNode(ArrayNodeDefinition $rootNode)
+    private function addEmailNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()
@@ -1273,10 +1232,8 @@ final class Configuration implements ConfigurationInterface
 
     /**
      * Adds configuration tree for newsletter source adapters
-     *
-     * @param ArrayNodeDefinition $rootNode
      */
-    private function addNewsletterNode(ArrayNodeDefinition $rootNode)
+    private function addNewsletterNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()
@@ -1325,10 +1282,8 @@ final class Configuration implements ConfigurationInterface
 
     /**
      * Adds configuration tree for custom report adapters
-     *
-     * @param ArrayNodeDefinition $rootNode
      */
-    private function addCustomReportsNode(ArrayNodeDefinition $rootNode)
+    private function addCustomReportsNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()
@@ -1379,7 +1334,7 @@ final class Configuration implements ConfigurationInterface
             ->end();
     }
 
-    private function addTargetingNode(ArrayNodeDefinition $rootNode)
+    private function addTargetingNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()
@@ -1416,7 +1371,7 @@ final class Configuration implements ConfigurationInterface
             ->end();
     }
 
-    private function addSitemapsNode(ArrayNodeDefinition $rootNode)
+    private function addSitemapsNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()
@@ -1454,7 +1409,7 @@ final class Configuration implements ConfigurationInterface
         ->end();
     }
 
-    private function addWorkflowNode(ArrayNodeDefinition $rootNode)
+    private function addWorkflowNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()
@@ -1983,10 +1938,8 @@ final class Configuration implements ConfigurationInterface
 
     /**
      * Add predefined properties specific extension config
-     *
-     * @param ArrayNodeDefinition $rootNode
      */
-    private function addPredefinedPropertiesNode(ArrayNodeDefinition $rootNode)
+    private function addPredefinedPropertiesNode(ArrayNodeDefinition $rootNode): void
     {
         $predefinedPropertiesNode = $rootNode
             ->children()
@@ -2030,10 +1983,8 @@ final class Configuration implements ConfigurationInterface
 
     /**
      * Add static routes specific extension config
-     *
-     * @param ArrayNodeDefinition $rootNode
      */
-    private function addStaticroutesNode(ArrayNodeDefinition $rootNode)
+    private function addStaticroutesNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
         ->children()
@@ -2070,10 +2021,8 @@ final class Configuration implements ConfigurationInterface
 
     /**
      * Add perspectives specific extension config
-     *
-     * @param ArrayNodeDefinition $rootNode
      */
-    private function addPerspectivesNode(ArrayNodeDefinition $rootNode)
+    private function addPerspectivesNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()
@@ -2121,10 +2070,8 @@ final class Configuration implements ConfigurationInterface
 
     /**
      * Add custom views specific extension config
-     *
-     * @param ArrayNodeDefinition $rootNode
      */
-    private function addCustomViewsNode(ArrayNodeDefinition $rootNode)
+    private function addCustomViewsNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()

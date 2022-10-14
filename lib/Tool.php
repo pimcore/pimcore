@@ -263,12 +263,7 @@ final class Tool
         return $iconPath;
     }
 
-    /**
-     * @param Request|null $request
-     *
-     * @return null|Request
-     */
-    private static function resolveRequest(Request $request = null)
+    private static function resolveRequest(Request $request = null): ?Request
     {
         if (null === $request) {
             // do an extra check for the container as we might be in a state where no container is set yet
@@ -627,12 +622,9 @@ final class Tool
     }
 
     /**
-     * @param string $class
      * @param string $type (e.g. 'class', 'interface', 'trait')
-     *
-     * @return bool
      */
-    private static function classInterfaceExists($class, $type)
+    private static function classInterfaceExists(string $class, string $type): bool
     {
         $functionName = $type . '_exists';
 

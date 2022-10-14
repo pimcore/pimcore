@@ -151,14 +151,9 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return null;
     }
 
-    /**
-     * @param int $timestamp
-     *
-     * @return \Carbon\Carbon
-     */
-    private function getDateFromTimestamp($timestamp)
+    private function getDateFromTimestamp(float|int|string $timestamp): Carbon
     {
-        $date = new \Carbon\Carbon();
+        $date = new Carbon();
         $date->setTimestamp($timestamp);
 
         return $date;

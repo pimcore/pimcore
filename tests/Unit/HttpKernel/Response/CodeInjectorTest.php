@@ -88,7 +88,7 @@ class CodeInjectorTest extends TestCase
         $this->testInject($selector, $position, $source, $expected);
     }
 
-    private function testInject(string $selector, string $position, string $source, string $expected)
+    private function testInject(string $selector, string $position, string $source, string $expected): void
     {
         $result = $this->injector->injectIntoHtml($source, $this->codePart, $selector, $position);
 

@@ -123,16 +123,7 @@ class NotificationSubscriber implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param Transition $transition
-     * @param \Symfony\Component\Workflow\Workflow $workflow
-     * @param ElementInterface $subject
-     * @param string $mailType
-     * @param string $mailPath
-     * @param array $notifyUsers
-     * @param array $notifyRoles
-     */
-    private function handleNotifyPostWorkflowEmail(Transition $transition, \Symfony\Component\Workflow\Workflow $workflow, ElementInterface $subject, string $mailType, string $mailPath, array $notifyUsers, array $notifyRoles)
+    private function handleNotifyPostWorkflowEmail(Transition $transition, \Symfony\Component\Workflow\Workflow $workflow, ElementInterface $subject, string $mailType, string $mailPath, array $notifyUsers, array $notifyRoles): void
     {
         //notify users
         $subjectType = ($subject instanceof Concrete ? $subject->getClassName() : Service::getElementType($subject));
@@ -149,14 +140,7 @@ class NotificationSubscriber implements EventSubscriberInterface
         );
     }
 
-    /**
-     * @param Transition $transition
-     * @param \Symfony\Component\Workflow\Workflow $workflow
-     * @param ElementInterface $subject
-     * @param array $notifyUsers
-     * @param array $notifyRoles
-     */
-    private function handleNotifyPostWorkflowPimcoreNotification(Transition $transition, \Symfony\Component\Workflow\Workflow $workflow, ElementInterface $subject, array $notifyUsers, array $notifyRoles)
+    private function handleNotifyPostWorkflowPimcoreNotification(Transition $transition, \Symfony\Component\Workflow\Workflow $workflow, ElementInterface $subject, array $notifyUsers, array $notifyRoles): void
     {
         $subjectType = ($subject instanceof Concrete ? $subject->getClassName() : Service::getElementType($subject));
         $this->pimcoreNotificationService->sendPimcoreNotification(
@@ -171,10 +155,6 @@ class NotificationSubscriber implements EventSubscriberInterface
 
     /**
      * check's if the event subscriber should be executed
-     *
-     * @param Event $event
-     *
-     * @return bool
      */
     private function checkEvent(Event $event): bool
     {

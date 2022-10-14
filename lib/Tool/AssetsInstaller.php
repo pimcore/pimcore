@@ -116,7 +116,7 @@ class AssetsInstaller
         $this->runCallback = $runCallback;
     }
 
-    private function configureOptions(OptionsResolver $resolver)
+    private function configureOptions(OptionsResolver $resolver): void
     {
         $defaults = [
             'symlink' => true,
@@ -148,10 +148,7 @@ class AssetsInstaller
         }
     }
 
-    /**
-     * @return string|null
-     */
-    private function readComposerJsonSetting()
+    private function readComposerJsonSetting(): ?string
     {
         if (null !== $this->composerJsonSetting) {
             return $this->composerJsonSetting;

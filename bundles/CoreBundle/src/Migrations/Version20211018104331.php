@@ -89,8 +89,6 @@ final class Version20211018104331 extends AbstractMigration
     }
 
     /**
-     * @param DataObject\ClassDefinition $class
-     *
      * @return string[]
      */
     private function getForeignKeys(DataObject\ClassDefinition $class): array
@@ -125,7 +123,7 @@ final class Version20211018104331 extends AbstractMigration
         return $foreignKeys;
     }
 
-    private function createForeignKey(Table $tableSchema, string $localForeignKeyColumn)
+    private function createForeignKey(Table $tableSchema, string $localForeignKeyColumn): void
     {
         $fkName = AbstractDao::getForeignKeyName($tableSchema->getName(), $localForeignKeyColumn);
         if (!$tableSchema->hasForeignKey($fkName)) {

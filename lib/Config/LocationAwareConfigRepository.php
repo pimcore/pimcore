@@ -85,13 +85,7 @@ class LocationAwareConfigRepository
         ];
     }
 
-    /**
-     * @param string $key
-     * @param string|null $dataSource
-     *
-     * @return mixed
-     */
-    private function getDataFromContainerConfig(string $key, ?string &$dataSource)
+    private function getDataFromContainerConfig(string $key, ?string &$dataSource): mixed
     {
         if (isset($this->containerConfig[$key])) {
             $dataSource = self::LOCATION_SYMFONY_CONFIG;
@@ -100,13 +94,7 @@ class LocationAwareConfigRepository
         return $this->containerConfig[$key] ?? null;
     }
 
-    /**
-     * @param string $key
-     * @param string|null $dataSource
-     *
-     * @return mixed
-     */
-    private function getDataFromSettingsStore(string $key, ?string &$dataSource)
+    private function getDataFromSettingsStore(string $key, ?string &$dataSource): mixed
     {
         $settingsStoreEntryData = null;
         $settingsStoreEntry = SettingsStore::get($key, $this->settingsStoreScope);
@@ -188,13 +176,7 @@ class LocationAwareConfigRepository
         $this->stopMessengerWorkers();
     }
 
-    /**
-     * @param string $key
-     * @param array $data
-     *
-     * @throws \Exception
-     */
-    private function writeYaml(string $key, $data): void
+    private function writeYaml(string $key, array $data): void
     {
         $yamlFilename = $this->getVarConfigFile($key);
 
@@ -234,11 +216,6 @@ class LocationAwareConfigRepository
         }
     }
 
-    /**
-     * @param string $key
-     *
-     * @return string
-     */
     private function getVarConfigFile(string $key): string
     {
         return $this->storageDirectory . '/' . $key . '.yaml';

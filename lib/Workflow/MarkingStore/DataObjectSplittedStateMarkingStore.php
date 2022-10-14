@@ -18,7 +18,6 @@ namespace Pimcore\Workflow\MarkingStore;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Workflow\Manager;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
-use Symfony\Component\PropertyAccess\PropertyPathInterface;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
@@ -136,13 +135,7 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
         return $places;
     }
 
-    /**
-     *
-     * @param string|PropertyPathInterface $property
-     * @param mixed $places
-     *
-     */
-    private function setProperty(Concrete $subject, $property, $places)
+    private function setProperty(Concrete $subject, string $property, mixed $places): void
     {
         $fd = $subject->getClass()->getFieldDefinition($property);
 
@@ -162,11 +155,9 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
     }
 
     /**
-     * @param object $subject
-     *
-     * @return Concrete
+     * @throws LogicException
      */
-    private function checkIfSubjectIsValid($subject): Concrete
+    private function checkIfSubjectIsValid(object $subject): Concrete
     {
         if (!$subject instanceof Concrete) {
             throw new LogicException('data_object_splitted_state marking store works for pimcore data objects only.');
@@ -175,7 +166,10 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
         return $subject;
     }
 
-    private function validateStateMapping(array $places, array $stateMapping)
+    /**
+     * @throws LogicException
+     */
+    private function validateStateMapping(array $places, array $stateMapping): void
     {
         $diff = array_diff($places, array_keys($stateMapping));
 

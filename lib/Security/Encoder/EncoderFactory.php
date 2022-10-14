@@ -70,11 +70,9 @@ class EncoderFactory implements EncoderFactoryInterface
     /**
      * Returns the password encoder factory to use for the given account.
      *
-     * @param UserInterface|string $user A UserInterface instance or a class name
-     *
-     * @return PasswordEncoderInterface|null
+     * @param string|UserInterface $user A UserInterface instance or a class name
      */
-    private function getEncoderFromFactory($user)
+    private function getEncoderFromFactory(UserInterface|string $user): ?PasswordEncoderInterface
     {
         $factoryKey = null;
 

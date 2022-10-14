@@ -47,7 +47,7 @@ class ImplementationLoader implements LoaderInterface, ClassNameLoaderInterface
     /**
      * @param LoaderInterface[] $loaders
      */
-    private function setLoaders(array $loaders)
+    private function setLoaders(array $loaders): void
     {
         $this->loaders = [];
         $this->loaderCache = [];
@@ -65,12 +65,7 @@ class ImplementationLoader implements LoaderInterface, ClassNameLoaderInterface
         $this->loaders[] = $loader;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return LoaderInterface|null
-     */
-    private function getLoader(string $name)
+    private function getLoader(string $name): ?LoaderInterface
     {
         // loader cache contains index of loader previously found for given name
         if (isset($this->loaderCache[$name])) {

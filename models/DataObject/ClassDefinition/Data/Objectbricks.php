@@ -126,16 +126,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return $editmodeData;
     }
 
-    /**
-     * @param string $getter
-     * @param DataObject\Objectbrick $data
-     * @param array|null $params
-     * @param string $allowedBrickType
-     * @param int $level
-     *
-     * @return array|null
-     */
-    private function doGetDataForEditmode($getter, $data, $params, $allowedBrickType, $level = 0)
+    private function doGetDataForEditmode(string $getter, Objectbrick $data, ?array $params, string $allowedBrickType, int $level = 0): ?array
     {
         $object = $data->getObject();
         if ($object) {
@@ -201,18 +192,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
     /**
      * gets recursively attribute data from parent and fills objectData and metaData
-     *
-     * @param Objectbrick\Data\AbstractData $item
-     * @param string $key
-     * @param Data $fielddefinition
-     * @param int $level
-     * @param DataObject\Concrete|null $baseObject
-     * @param string $getter
-     * @param array|null $params
-     *
-     * @return \stdClass
      */
-    private function getDataForField($item, $key, $fielddefinition, $level, $baseObject, $getter, $params)
+    private function getDataForField(Objectbrick\Data\AbstractData $item, string $key, Data $fielddefinition, int $level, ?DataObject\Concrete $baseObject, string $getter, ?array $params): \stdClass
     {
         $result = new \stdClass();
         if ($baseObject) {
@@ -671,18 +652,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return 'NOT SUPPORTED';
     }
 
-    /**
-     * @param Objectbrick\Data\AbstractData $item
-     * @param string $key
-     * @param Data $fielddefinition
-     * @param int $level
-     * @param DataObject\Concrete $baseObject
-     * @param string $getter
-     * @param array $params
-     *
-     * @return array|null
-     */
-    private function getDiffDataForField($item, $key, $fielddefinition, $level, $baseObject, $getter, $params = [])
+    private function getDiffDataForField(Objectbrick\Data\AbstractData $item, string $key, Data $fielddefinition, int $level, DataObject\Concrete $baseObject, string $getter, array $params = []): ?array
     {
         $valueGetter = 'get' . ucfirst($key);
 
@@ -691,15 +661,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return $value;
     }
 
-    /**
-     * @param Objectbrick $data
-     * @param string $getter
-     * @param array $params
-     * @param int $level
-     *
-     * @return array|null
-     */
-    private function doGetDiffDataForEditmode($data, $getter, $params = [], $level = 0)
+    private function doGetDiffDataForEditmode(Objectbrick $data, string $getter, array $params = [], int $level = 0): ?array
     {
         $parent = DataObject\Service::hasInheritableParentObject($data->getObject());
         $item = $data->$getter();

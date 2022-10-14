@@ -269,10 +269,8 @@ class AreabrickManager implements AreabrickManagerInterface
 
     /**
      * @deprecated
-     *
-     * @return array
      */
-    private function getBrickConfig()
+    private function getBrickConfig(): array
     {
         $config = $this->config->loadConfig();
         if (isset($config->areabrick)) {
@@ -284,8 +282,6 @@ class AreabrickManager implements AreabrickManagerInterface
 
     /**
      * @deprecated
-     *
-     * @param array $config
      */
     private function setBrickConfig(array $config)
     {
