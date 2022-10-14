@@ -2278,9 +2278,6 @@ final class Configuration implements ConfigurationInterface
                             ->prototype('scalar');
     }
 
-    /**
-     * @param ArrayNodeDefinition $rootNode
-     */
     private function addTemplatingEngineNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode

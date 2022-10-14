@@ -854,7 +854,7 @@ class AssetHelperController extends AdminController
     /**
      * @param Request $request
      *
-     * @return mixed|string
+     * @return string
      */
     protected function extractLanguage(Request $request)
     {
