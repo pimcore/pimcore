@@ -510,7 +510,7 @@ class Service extends Model\Element\Service
      * @param string $key
      * @param array $context
      *
-     * @return mixed|null|ConfigElementInterface|ConfigElementInterface[]
+     * @return ConfigElementInterface|null
      *
      * @internal
      */
@@ -1641,7 +1641,7 @@ class Service extends Model\Element\Service
      * @param Concrete|Model\DataObject\Fieldcollection\Data\AbstractData|Model\DataObject\Objectbrick\Data\AbstractData $object
      * @param Model\DataObject\Data\CalculatedValue|null $data
      *
-     * @return mixed|null
+     * @return mixed
      */
     public static function getCalculatedFieldValue($object, $data)
     {

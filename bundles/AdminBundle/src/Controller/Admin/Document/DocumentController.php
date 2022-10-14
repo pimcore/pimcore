@@ -699,7 +699,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
     }
 
     /**
-     * @Route("/doc-types", name="pimcore_admin_document_document_doctypes", methods={"PUT", "POST","DELETE"})
+     * @Route("/doc-types", name="pimcore_admin_document_document_doctypes", methods={"PUT", "POST", "DELETE"})
      *
      * @param Request $request
      *
@@ -710,19 +710,17 @@ class DocumentController extends ElementControllerBase implements KernelControll
         if ($request->get('data')) {
             $this->checkPermission('document_types');
 
-            if ($request->get('xaction') == 'destroy') {
-                $data = $this->decodeJson($request->get('data'));
-                $id = $data['id'];
-                $type = Document\DocType::getById($id);
+            $data = $this->decodeJson($request->get('data'));
+
+            if ($request->get('xaction') === 'destroy') {
+                $type = Document\DocType::getById($data['id']);
                 if (!$type->isWriteable()) {
                     throw new ConfigWriteException();
                 }
                 $type->delete();
 
                 return $this->adminJson(['success' => true, 'data' => []]);
-            } elseif ($request->get('xaction') == 'update') {
-                $data = $this->decodeJson($request->get('data'));
-
+            } elseif ($request->get('xaction') === 'update') {
                 // save type
                 $type = Document\DocType::getById($data['id']);
 
@@ -737,12 +735,11 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 $responseData['writeable'] = $type->isWriteable();
 
                 return $this->adminJson(['data' => $responseData, 'success' => true]);
-            } elseif ($request->get('xaction') == 'create') {
+            } elseif ($request->get('xaction') === 'create') {
                 if (!(new DocType())->isWriteable()) {
                     throw new ConfigWriteException();
                 }
 
-                $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
 
                 // save type
