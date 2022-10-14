@@ -68,6 +68,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Flysystem] Bumped `league/flysystem-bundle` minimum requirement to ^3.0 (which introduces `directoryExists()`,`has()` methods and fixes support for `directory_visibility` configuration option). Please bump the Flysystem Adapters requirement accordingly to `^3.0` in your project `composer.json`. 
  NB: [Visibility](https://flysystem.thephpleague.com/docs/visibility/) permissions were specified as `0644` for files and `0755` for directories, are now using the more simplified `public/private` options which are translated respectively into `0600` and `0744`. 
 - [CoreBundle] Please update CoreBundle config resource path from `@PimcoreCoreBundle/Resources/config/...` to `@PimcoreCoreBundle/config/..` in your project configurations.
+- [Sitemap] Bumped minimum requirement of `presta\sitemap-bundle` to `^3.3`, dropped support for `v2` and removed related BC Layer.
 - [Relations]: Add confirm dialog to empty button of relations and add possibility to disable clear relations in the class layout.
 - [Email] Bumped `league/html-to-markdown` to ^5.1.
 - [Cache] Removed `psr/simple-cache` dependency, due to the lack of usage in the Core.
