@@ -488,5 +488,4 @@ abstract class Kernel extends SymfonyKernel
             date_default_timezone_set('UTC'); // UTC -> default timezone
         }
     }
-
 }
