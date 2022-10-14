@@ -114,7 +114,7 @@ final class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    private function addRootNodeChildren(ArrayNodeDefinition $rootNode)
+    private function addRootNodeChildren(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()

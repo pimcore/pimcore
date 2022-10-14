@@ -59,11 +59,6 @@ class TenantProcessor
 
     /**
      * Merges defaults with values but does not transform scalars into arrays as array_merge_recursive does
-     *
-     * @param array $defaults
-     * @param array $values
-     *
-     * @return array
      */
     private function mergeDefaults(array $defaults, array $values): array
     {
@@ -99,10 +94,6 @@ class TenantProcessor
      * Checks if array is associative or sequential
      *
      * @see https://stackoverflow.com/a/173479/9131
-     *
-     * @param array $array
-     *
-     * @return bool
      */
     private function isArrayAssociative(array $array): bool
     {

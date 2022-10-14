@@ -517,13 +517,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         return $data;
     }
 
-    /**
-     * @param array|null $dataArray
-     * @param array $idMapping
-     *
-     * @return array
-     */
-    private function rewriteIdsInDataEntries($dataArray, $idMapping)
+    private function rewriteIdsInDataEntries(?array $dataArray, array $idMapping): array
     {
         $newDataArray = [];
         if ($dataArray) {

@@ -252,7 +252,7 @@ class TaxCalculationTest extends EcommerceTestCase
         $this->assertTaxesAddUp($price);
     }
 
-    private function assertTaxesAddUp(Price $price)
+    private function assertTaxesAddUp(Price $price): void
     {
         $calculatedGrossAmount = $price->getNetAmount();
         foreach ($price->getTaxEntries() as $taxEntry) {

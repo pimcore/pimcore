@@ -184,10 +184,6 @@ class PimcoreBundleManager
 
     /**
      * Returns names of manually registered bundles (not registered via extension manager)
-     *
-     * @param bool $onlyEnabled
-     *
-     * @return array
      */
     private function getManuallyRegisteredBundleNames(bool $onlyEnabled = false): array
     {
@@ -209,10 +205,8 @@ class PimcoreBundleManager
 
     /**
      * Builds state infos about manually configured bundles (not registered via extension manager)
-     *
-     * @return array
      */
-    private function getManuallyRegisteredBundleState()
+    private function getManuallyRegisteredBundleState(): array
     {
         if (null === $this->manuallyRegisteredBundleState) {
             $collection = $this->kernel->getBundleCollection();

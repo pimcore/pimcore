@@ -51,7 +51,7 @@ final class Version20220829132224 extends AbstractMigration
         }
     }
 
-    private function migrateCommonConfigurations(string $fileName, string $scope)
+    private function migrateCommonConfigurations(string $fileName, string $scope): void
     {
         $configs = $this->loadLegacyConfigs($fileName);
         foreach ($configs as $key => $config) {

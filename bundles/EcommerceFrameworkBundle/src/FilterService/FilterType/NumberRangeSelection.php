@@ -86,7 +86,7 @@ class NumberRangeSelection extends AbstractFilterType
         ];
     }
 
-    private function createLabel($data)
+    private function createLabel(mixed $data): string
     {
         if (is_array($data)) {
             if (!empty($data['from'])) {
@@ -98,9 +98,9 @@ class NumberRangeSelection extends AbstractFilterType
             } elseif (!empty($data['to'])) {
                 return $this->translator->trans('less than') . ' ' . $data['to'];
             }
-        } else {
-            return '';
         }
+
+        return '';
     }
 
     /**

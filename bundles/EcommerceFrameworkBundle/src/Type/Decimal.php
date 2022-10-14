@@ -70,10 +70,8 @@ class Decimal
 
     /**
      * Validates scale not being negative
-     *
-     * @param int $scale
      */
-    private static function validateScale(int $scale)
+    private static function validateScale(int $scale): void
     {
         if ($scale < 0) {
             throw new \DomainException('Scale must be greater or equal than 0');
@@ -86,12 +84,10 @@ class Decimal
      *
      * Adapted from moneyphp/money PhpCalculator
      *
-     * @param int $amount
-     *
      * @throws \OverflowException  If integer overflow occured
      * @throws \UnderflowException If integer underflow occured
      */
-    private static function validateIntegerBounds($amount)
+    private static function validateIntegerBounds(int|float $amount): void
     {
         if ($amount > (PHP_INT_MAX - 1)) {
             throw new \OverflowException('The maximum allowed integer (PHP_INT_MAX) was reached');
@@ -102,13 +98,8 @@ class Decimal
 
     /**
      * Round value to int value if needed
-     *
-     * @param mixed $value
-     * @param int|null $roundingMode
-     *
-     * @return int
      */
-    private static function toIntValue($value, int $roundingMode = null): int
+    private static function toIntValue(mixed $value, int $roundingMode = null): int
     {
         if (!is_int($value)) {
             $value = round($value, 0, $roundingMode ?? PHP_ROUND_HALF_UP);
@@ -358,11 +349,6 @@ class Decimal
     /**
      * Converts decimal string to the given amount of digits. No rounding is done here - additional digits are
      * just truncated.
-     *
-     * @param string $amount
-     * @param int $digits
-     *
-     * @return string
      */
     private function truncateDecimalString(string $amount, int $digits): string
     {
@@ -745,18 +731,14 @@ class Decimal
 
     /**
      * Transforms operand into a numeric value used for calculations.
-     *
-     * @param mixed $operand
-     *
-     * @return float
      */
-    private function getScalarOperand($operand)
+    private function getScalarOperand(mixed $operand): float
     {
         if (is_numeric($operand)) {
-            return $operand;
+            return (float) $operand;
         }
         if ($operand instanceof static) {
-            return $operand->asNumeric();
+            return (float) $operand->asNumeric();
         }
 
         throw new \InvalidArgumentException(sprintf(
@@ -766,7 +748,7 @@ class Decimal
         ));
     }
 
-    private function assertSameScale(Decimal $other, string $message = null)
+    private function assertSameScale(Decimal $other, string $message = null): void
     {
         if ($other->scale !== $this->scale) {
             $message = $message ?? 'Can\'t operate on amounts with different scales. Please convert both amounts to the same scale before proceeding.';

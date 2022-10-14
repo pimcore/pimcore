@@ -267,8 +267,6 @@ final class ClassDefinition extends Model\AbstractModel
     public $enableGridLocking = false;
 
     /**
-     * @internal
-     *
      * @var ClassDefinition\Data[]
      */
     private array $deletedDataComponents = [];
@@ -401,10 +399,7 @@ final class ClassDefinition extends Model\AbstractModel
         }
     }
 
-    /**
-     * @return bool
-     */
-    private function exists()
+    private function exists(): bool
     {
         $name = $this->getDao()->getNameById($this->getId());
 
@@ -637,7 +632,7 @@ final class ClassDefinition extends Model\AbstractModel
         $this->dispatchEvent(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::POST_DELETE);
     }
 
-    private function deletePhpClasses()
+    private function deletePhpClasses(): void
     {
         // delete the class files
         @unlink($this->getPhpClassFile());
@@ -926,10 +921,7 @@ final class ClassDefinition extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param DataObject\ClassDefinition\Layout|DataObject\ClassDefinition\Data $def
-     */
-    private function extractDataDefinitions($def)
+    private function extractDataDefinitions(ClassDefinition\Data|ClassDefinition\Layout $def): void
     {
         if ($def instanceof DataObject\ClassDefinition\Layout) {
             if ($def->hasChildren()) {

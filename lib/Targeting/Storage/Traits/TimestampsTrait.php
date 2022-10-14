@@ -20,9 +20,6 @@ namespace Pimcore\Targeting\Storage\Traits;
 trait TimestampsTrait
 {
     /**
-     * @param \DateTimeInterface|null $createdAt
-     * @param \DateTimeInterface|null $updatedAt
-     *
      * @return \DateTimeInterface[]
      */
     private function normalizeTimestamps(\DateTimeInterface $createdAt = null, \DateTimeInterface $updatedAt = null): array

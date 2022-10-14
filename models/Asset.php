@@ -964,7 +964,7 @@ class Asset extends Element\AbstractElement
     /**
      * @throws FilesystemException
      */
-    private function deletePhysicalFile()
+    private function deletePhysicalFile(): void
     {
         $storage = Storage::get('asset');
         if ($this->getType() != 'folder') {
@@ -1207,7 +1207,7 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    private function closeStream()
+    private function closeStream(): void
     {
         if (is_resource($this->stream)) {
             @fclose($this->stream);
@@ -1726,13 +1726,9 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param FilesystemOperator $storage
-     * @param string $oldPath
-     * @param string|null $newPath
-     *
      * @throws FilesystemException
      */
-    private function updateChildPaths(FilesystemOperator $storage, string $oldPath, string $newPath = null)
+    private function updateChildPaths(FilesystemOperator $storage, string $oldPath, string $newPath = null): void
     {
         if ($newPath === null) {
             $newPath = $this->getRealFullPath();
@@ -1755,11 +1751,9 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param string $oldPath
-     *
      * @throws FilesystemException
      */
-    private function relocateThumbnails(string $oldPath)
+    private function relocateThumbnails(string $oldPath): void
     {
         if ($this instanceof Folder) {
             $oldThumbnailsPath = $oldPath;
@@ -1795,9 +1789,6 @@ class Asset extends Element\AbstractElement
         }
     }
 
-    /**
-     * @param Asset $asset
-     */
     private function clearFolderThumbnails(Asset $asset): void
     {
         do {

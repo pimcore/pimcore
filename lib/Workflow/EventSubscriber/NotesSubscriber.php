@@ -127,12 +127,9 @@ class NotesSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param Workflow\Notes\NotesAwareInterface $notesAware
-     * @param ElementInterface $subject
-     *
      * @throws ValidationException
      */
-    private function handleNotesPreWorkflow(Workflow\Notes\NotesAwareInterface $notesAware, ElementInterface $subject)
+    private function handleNotesPreWorkflow(Workflow\Notes\NotesAwareInterface $notesAware, ElementInterface $subject): void
     {
         if (($setterFn = $notesAware->getNotesCommentSetterFn()) && ($notes = $this->getNotesComment())) {
             $subject->$setterFn($notes);
@@ -161,12 +158,9 @@ class NotesSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param Workflow\Notes\NotesAwareInterface $notesAware
-     * @param ElementInterface $subject
-     *
      * @throws ValidationException
      */
-    private function handleNotesPostWorkflow(Workflow\Notes\NotesAwareInterface $notesAware, ElementInterface $subject)
+    private function handleNotesPostWorkflow(Workflow\Notes\NotesAwareInterface $notesAware, ElementInterface $subject): void
     {
         $additionalFieldsData = [];
         foreach ($notesAware->getNotesAdditionalFields() as $additionalFieldConfig) {
@@ -198,10 +192,6 @@ class NotesSubscriber implements EventSubscriberInterface
 
     /**
      * check's if the event subscriber should be executed
-     *
-     * @param Event $event
-     *
-     * @return bool
      */
     private function checkEvent(Event $event): bool
     {

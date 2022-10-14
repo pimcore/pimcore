@@ -108,10 +108,6 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
     }
 
     /**
-     * @param string $importId
-     *
-     * @return \SimpleXMLElement
-     *
      * @throws \Exception
      */
     private function loadFile(string $importId): \SimpleXMLElement

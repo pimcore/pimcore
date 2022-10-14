@@ -57,7 +57,7 @@ final class RegisterConfiguredServicesPass implements CompilerPassInterface
         $trackingManager->setArgument('$trackers', $trackers);
     }
 
-    private function registerPaymentManagerConfiguration(ContainerBuilder $container)
+    private function registerPaymentManagerConfiguration(ContainerBuilder $container): void
     {
         $providerTypes = [];
 

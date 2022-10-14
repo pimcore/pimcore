@@ -298,7 +298,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $this->activeGroups;
     }
 
-    private function sanitizeActiveGroups($activeGroups)
+    private function sanitizeActiveGroups(array $activeGroups): array
     {
         $newList = [];
 
@@ -327,15 +327,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         $this->activeGroups = $activeGroups;
     }
 
-    /**
-     * @param int $groupId
-     * @param int $keyId
-     * @param string $language
-     * @param Model\DataObject\ClassDefinition\Data $fielddefinition
-     *
-     * @return mixed
-     */
-    private function getFallbackValue($groupId, $keyId, $language, $fielddefinition)
+    private function getFallbackValue(int $groupId, int $keyId, string $language, ClassDefinition\Data $fielddefinition): mixed
     {
         $fallbackLanguages = Tool::getFallbackLanguagesFor($language);
         $data = null;
@@ -518,11 +510,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return new Model\DataObject\Classificationstore\Group($classificationstore, $groupConfig);
     }
 
-    /**
-     * @param int $groupId
-     *
-     * @return Classificationstore\GroupConfig|null
-     */
     private function getGroupConfigById(int $groupId): ?Classificationstore\GroupConfig
     {
         return Classificationstore\GroupConfig::getById($groupId);

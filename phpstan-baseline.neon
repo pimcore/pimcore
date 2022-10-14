@@ -146,11 +146,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/src/Tracking/TrackingItemBuilder.php
 
 		-
-			message: "#^Parameter \\#1 \\$amount of static method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Type\\\\Decimal\\:\\:validateIntegerBounds\\(\\) expects int, float given\\.$#"
-			count: 2
-			path: bundles/EcommerceFrameworkBundle/src/Type/Decimal.php
-
-		-
 			message: "#^Parameter \\#3 \\$mode of function round expects 1\\|2\\|3\\|4, int given\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/src/Type/Decimal.php

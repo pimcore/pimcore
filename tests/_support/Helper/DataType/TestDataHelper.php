@@ -445,10 +445,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected->getHotspots(), $value->getHotspots());
     }
 
-    /**
-     * @return array
-     */
-    private function createHotspots($idx = null, $seed = 0)
+    private function createHotspots(int $idx = null, int $seed = 0): array
     {
         $result = [];
 
@@ -792,10 +789,8 @@ class TestDataHelper extends AbstractTestDataHelper
 
     /**
      * @param ElementInterface[] $elements
-     *
-     * @return array
      */
-    private function getElementPaths(array $elements = [])
+    private function getElementPaths(array $elements = []): array
     {
         $paths = [];
         foreach ($elements as $element) {
@@ -1028,12 +1023,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected->getData(), $value->getData());
     }
 
-    /**
-     * @param int $seed
-     *
-     * @return DataObject\Data\StructuredTable
-     */
-    private function getStructuredTableData($seed = 1)
+    private function getStructuredTableData(int $seed = 1): DataObject\Data\StructuredTable
     {
         $data['row1']['col1'] = 1 + $seed;
         $data['row2']['col1'] = 2 + $seed;
@@ -1672,7 +1662,7 @@ class TestDataHelper extends AbstractTestDataHelper
     /**
      * @return Property[]
      */
-    private function createRandomProperties()
+    private function createRandomProperties(): array
     {
         $properties = [];
 

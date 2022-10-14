@@ -132,12 +132,7 @@ class Video extends Model\Asset
         return null;
     }
 
-    /**
-     * @param string $path
-     *
-     * @return string
-     */
-    private function enrichThumbnailPath($path)
+    private function enrichThumbnailPath(string $path): string
     {
         $fullPath = rtrim($this->getRealPath(), '/') . $path;
 

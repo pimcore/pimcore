@@ -235,15 +235,10 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param DataObject\Classificationstore $data
-     * @param DataObject\Concrete $object
      * @param array $fieldData structure: [language][groupId][keyId] = field data
      * @param array $metaData structure: [language][groupId][keyId] = array with meta info
-     * @param int $level
-     *
-     * @return array
      */
-    private function doGetDataForEditMode($data, $object, &$fieldData, &$metaData, $level = 1)
+    private function doGetDataForEditMode(DataObject\Classificationstore $data, Concrete $object, array &$fieldData, array &$metaData, int $level = 1): array
     {
         $class = $object->getClass();
         $inheritanceAllowed = $class->getAllowInherit();
@@ -994,15 +989,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $this->permissionEdit = $permissionEdit;
     }
 
-    /**
-     * @param DataObject\Concrete|null $object
-     * @param array $mergedMapping
-     *
-     * @return array|null
-     *
-     * @todo: Method returns void/null, should be boolean or null
-     */
-    private function recursiveGetActiveGroupCollectionMapping($object, $mergedMapping = [])
+    private function recursiveGetActiveGroupCollectionMapping(?Concrete $object, array $mergedMapping = []): ?array
     {
         if (!$object) {
             return null;
@@ -1216,7 +1203,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @return string[]
      */
-    private function getValidLanguages()
+    private function getValidLanguages(): array
     {
         if ($this->localized) {
             $validLanguages = Tool::getValidLanguages();

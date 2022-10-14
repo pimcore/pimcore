@@ -62,10 +62,6 @@ class ClassMapLoader extends AbstractClassNameLoader
 
     /**
      * Strip leading slashes from class names
-     *
-     * @param string $name
-     *
-     * @return string
      */
     private function normalizeName(string $name): string
     {

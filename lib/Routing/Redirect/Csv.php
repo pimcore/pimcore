@@ -175,11 +175,6 @@ class Csv
         return $stats;
     }
 
-    /**
-     * @param array $record
-     *
-     * @return array
-     */
     private function preprocessImportData(array $record): array
     {
         // normalize data to types (string, int, ...) or null
@@ -191,13 +186,7 @@ class Csv
         return $data;
     }
 
-    /**
-     * @param array $data
-     * @param array $stats
-     *
-     * @return Redirect
-     */
-    private function processImportData(array $data, array &$stats)
+    private function processImportData(array $data, array &$stats): void
     {
         $redirect = null;
 
@@ -218,13 +207,8 @@ class Csv
 
         $redirect->setValues($data);
         $redirect->save();
-
-        return $redirect;
     }
 
-    /**
-     * @return ArrayNormalizer
-     */
     private function getImportNormalizer(): ArrayNormalizer
     {
         if (null !== $this->importNormalizer) {
@@ -286,9 +270,6 @@ class Csv
         return $this->importNormalizer;
     }
 
-    /**
-     * @return OptionsResolver
-     */
     private function getImportResolver(): OptionsResolver
     {
         if (null !== $this->importResolver) {

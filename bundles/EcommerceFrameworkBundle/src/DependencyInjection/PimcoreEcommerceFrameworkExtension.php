@@ -112,7 +112,7 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $this->registerTrackingManagerConfiguration($container, $config['tracking_manager']);
     }
 
-    private function registerFactoryConfiguration(ContainerBuilder $container, array $config)
+    private function registerFactoryConfiguration(ContainerBuilder $container, array $config): void
     {
         $container
             ->setAlias(
@@ -127,7 +127,7 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         );
     }
 
-    private function registerEnvironmentConfiguration(ContainerBuilder $container, array $config)
+    private function registerEnvironmentConfiguration(ContainerBuilder $container, array $config): void
     {
         $container
             ->setAlias(
@@ -139,7 +139,7 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $container->setParameter('pimcore_ecommerce.environment.options', $config['options']);
     }
 
-    private function registerCartManagerConfiguration(ContainerBuilder $container, array $config)
+    private function registerCartManagerConfiguration(ContainerBuilder $container, array $config): void
     {
         $mapping = [];
 
@@ -186,7 +186,7 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         );
     }
 
-    private function registerOrderManagerConfiguration(ContainerBuilder $container, array $config)
+    private function registerOrderManagerConfiguration(ContainerBuilder $container, array $config): void
     {
         $mapping = [];
 
@@ -223,7 +223,7 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         );
     }
 
-    private function registerPricingManagerConfiguration(ContainerBuilder $container, array $config)
+    private function registerPricingManagerConfiguration(ContainerBuilder $container, array $config): void
     {
         $mapping = [];
 
@@ -257,7 +257,7 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         );
     }
 
-    private function registerPriceSystemsConfiguration(ContainerBuilder $container, array $config)
+    private function registerPriceSystemsConfiguration(ContainerBuilder $container, array $config): void
     {
         $mapping = [];
 
@@ -276,7 +276,7 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         );
     }
 
-    private function registerAvailabilitySystemsConfiguration(ContainerBuilder $container, array $config)
+    private function registerAvailabilitySystemsConfiguration(ContainerBuilder $container, array $config): void
     {
         $mapping = [];
 
@@ -295,7 +295,7 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         );
     }
 
-    private function registerCheckoutManagerConfiguration(ContainerBuilder $container, array $config)
+    private function registerCheckoutManagerConfiguration(ContainerBuilder $container, array $config): void
     {
         $commitOrderProcessorMapping = [];
         $checkoutManagerFactoryMapping = [];
@@ -374,7 +374,7 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         );
     }
 
-    private function registerPaymentManagerConfiguration(ContainerBuilder $container, array $config)
+    private function registerPaymentManagerConfiguration(ContainerBuilder $container, array $config): void
     {
         $container
             ->setAlias(
@@ -411,7 +411,7 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $this->setupServiceLocator($container, 'payment_manager.provider', $mapping);
     }
 
-    private function registerIndexServiceConfig(ContainerBuilder $container, array $config)
+    private function registerIndexServiceConfig(ContainerBuilder $container, array $config): void
     {
         $container
             ->setAlias(
@@ -475,15 +475,12 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
     /**
      * Register synonym providers and their options per tenant config.
-     *
-     * @param array $tenantConfigOptions
-     * @param Definition $config
-     * @param ContainerBuilder $container
      */
-    private function registerIndexServiceElasticSearchSynonymProviders(array $tenantConfigOptions,
+    private function registerIndexServiceElasticSearchSynonymProviders(
+        array $tenantConfigOptions,
         Definition $config,
-        ContainerBuilder $container)
-    {
+        ContainerBuilder $container
+    ): void {
         if (!isset($tenantConfigOptions['synonym_providers'])) {
             return;
         }
@@ -500,7 +497,7 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $config->setArgument('$synonymProviders', $providers);
     }
 
-    private function registerFilterServiceConfig(ContainerBuilder $container, array $config)
+    private function registerFilterServiceConfig(ContainerBuilder $container, array $config): void
     {
         $mapping = [];
 
@@ -541,7 +538,7 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         );
     }
 
-    private function registerVoucherServiceConfig(ContainerBuilder $container, array $config)
+    private function registerVoucherServiceConfig(ContainerBuilder $container, array $config): void
     {
         // voucher service options are referenced in service definition
         $container->setParameter(
@@ -569,7 +566,7 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             ->setPublic(true);
     }
 
-    private function registerOfferToolConfig(ContainerBuilder $container, array $config)
+    private function registerOfferToolConfig(ContainerBuilder $container, array $config): void
     {
         $container
             ->setAlias(
@@ -594,7 +591,7 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         );
     }
 
-    private function registerTrackingManagerConfiguration(ContainerBuilder $container, array $config)
+    private function registerTrackingManagerConfiguration(ContainerBuilder $container, array $config): void
     {
         $container
             ->setAlias(
@@ -631,7 +628,7 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         }
     }
 
-    private function setupTenantAwareComponentLocator(ContainerBuilder $container, string $id, array $mapping, string $class, array $aliases)
+    private function setupTenantAwareComponentLocator(ContainerBuilder $container, string $id, array $mapping, string $class, array $aliases): void
     {
         $serviceLocator = $this->setupServiceLocator($container, $id, $mapping, false);
 
@@ -646,7 +643,7 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         }
     }
 
-    private function setupNameServiceComponentLocator(ContainerBuilder $container, string $id, array $mapping, string $class)
+    private function setupNameServiceComponentLocator(ContainerBuilder $container, string $id, array $mapping, string $class): void
     {
         $serviceLocator = $this->setupServiceLocator($container, $id, $mapping, false);
 
@@ -657,7 +654,7 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $container->setDefinition(sprintf('pimcore_ecommerce.locator.%s', $id), $locator);
     }
 
-    private function setupServiceLocator(ContainerBuilder $container, string $id, array $mapping, bool $register = true)
+    private function setupServiceLocator(ContainerBuilder $container, string $id, array $mapping, bool $register = true): Definition
     {
         foreach ($mapping as $name => $reference) {
             $mapping[$name] = new Reference($reference);

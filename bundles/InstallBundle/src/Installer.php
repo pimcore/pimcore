@@ -211,7 +211,7 @@ class Installer
         return count($this->stepEvents);
     }
 
-    private function dispatchStepEvent(string $type, string $message = null)
+    private function dispatchStepEvent(string $type, string $message = null): InstallerStepEvent
     {
         if (!isset($this->stepEvents[$type])) {
             throw new \InvalidArgumentException(sprintf('Trying to dispatch unsupported event type "%s"', $type));
@@ -417,7 +417,7 @@ class Installer
         return $errors;
     }
 
-    private function runCommand(array $arguments, string $taskName)
+    private function runCommand(array $arguments, string $taskName): void
     {
         $io = $this->commandLineOutput;
 
@@ -463,7 +463,7 @@ class Installer
         }
     }
 
-    private function markMigrationsAsDone()
+    private function markMigrationsAsDone(): void
     {
         $this->runCommand([
             'doctrine:migrations:sync-metadata-storage',
@@ -476,7 +476,7 @@ class Installer
         ], 'Marking all migrations as done');
     }
 
-    private function installClasses()
+    private function installClasses(): void
     {
         $this->runCommand([
             'pimcore:deployment:classes-rebuild',
@@ -484,7 +484,7 @@ class Installer
         ], 'Installing class definitions');
     }
 
-    private function installAssets(KernelInterface $kernel)
+    private function installAssets(KernelInterface $kernel): void
     {
         $this->logger->info('Running {command} command', ['command' => 'assets:install']);
 
@@ -523,7 +523,7 @@ class Installer
         }
     }
 
-    private function createConfigFiles(array $config)
+    private function createConfigFiles(array $config): void
     {
         $writer = new ConfigWriter();
 
@@ -534,7 +534,7 @@ class Installer
         $writer->writeSystemConfig();
     }
 
-    private function clearKernelCacheDir(KernelInterface $kernel)
+    private function clearKernelCacheDir(KernelInterface $kernel): void
     {
         // we don't use $kernel->getCacheDir() here, since we want to have a fully clean cache dir at this point
         $cacheDir = PIMCORE_SYMFONY_CACHE_DIRECTORY;

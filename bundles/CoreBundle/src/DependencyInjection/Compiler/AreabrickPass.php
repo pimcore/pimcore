@@ -161,11 +161,9 @@ final class AreabrickPass implements CompilerPassInterface
     }
 
     /**
-     * @param Definition $definition
-     *
      * @throws \ReflectionException
      */
-    private function handleEditableRendererCall(Definition $definition)
+    private function handleEditableRendererCall(Definition $definition): void
     {
         $reflector = new \ReflectionClass($definition->getClass());
         if ($reflector->hasMethod('setEditableRenderer')) {

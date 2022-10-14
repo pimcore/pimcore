@@ -37,7 +37,7 @@ abstract class AbstractOrder implements ConditionInterface
      *
      * @return mixed
      */
-    private function getData(RuleInterface $rule, $field)
+    private function getData(RuleInterface $rule, string $field): mixed
     {
         if (!array_key_exists($rule->getId(), self::$cache)) {
             $query = <<<'SQL'

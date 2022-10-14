@@ -442,7 +442,7 @@ class Document extends Element\AbstractElement
     /**
      * @throws \Exception|DuplicateFullPathException
      */
-    private function correctPath()
+    private function correctPath(): void
     {
         // set path
         if ($this->getId() != 1) { // not for the root node
@@ -867,12 +867,7 @@ class Document extends Element\AbstractElement
         return $link;
     }
 
-    /**
-     * @param string $path
-     *
-     * @return string
-     */
-    private function prepareFrontendPath($path)
+    private function prepareFrontendPath(string $path): string
     {
         if (\Pimcore\Tool::isFrontend()) {
             $path = urlencode_ignore_slash($path);

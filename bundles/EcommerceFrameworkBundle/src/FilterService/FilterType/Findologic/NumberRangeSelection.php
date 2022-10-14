@@ -138,7 +138,7 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
         return $currentFilter;
     }
 
-    private function createLabel($data)
+    private function createLabel(mixed $data): string
     {
         if (is_array($data)) {
             if (!empty($data['from'])) {
@@ -150,8 +150,8 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
             } elseif (!empty($data['to'])) {
                 return $this->translator->trans('less than') . ' ' . $data['to'];
             }
-        } else {
-            return '';
         }
+
+        return '';
     }
 }

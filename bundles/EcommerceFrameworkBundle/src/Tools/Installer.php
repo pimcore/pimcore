@@ -236,7 +236,7 @@ class Installer extends AbstractInstaller
         return $result;
     }
 
-    private function installClasses()
+    private function installClasses(): void
     {
         $classes = $this->getClassesToInstall();
 
@@ -273,7 +273,7 @@ class Installer extends AbstractInstaller
         }
     }
 
-    private function installFieldCollections()
+    private function installFieldCollections(): void
     {
         $fieldCollections = $this->findInstallFiles(
             $this->installSourcesPath . '/fieldcollection_sources',
@@ -305,7 +305,7 @@ class Installer extends AbstractInstaller
         }
     }
 
-    private function installPermissions()
+    private function installPermissions(): void
     {
         foreach ($this->permissionsToInstall as $permission) {
             $definition = Permission\Definition::getByKey($permission);
@@ -330,7 +330,7 @@ class Installer extends AbstractInstaller
         }
     }
 
-    private function uninstallPermissions()
+    private function uninstallPermissions(): void
     {
         foreach ($this->permissionsToInstall as $permission) {
             $this->db->executeQuery('DELETE FROM users_permission_definitions WHERE `key` = :key', [
@@ -339,7 +339,7 @@ class Installer extends AbstractInstaller
         }
     }
 
-    private function installTables()
+    private function installTables(): void
     {
         foreach ($this->tablesToInstall as $name => $statement) {
             if ($this->getSchema()->hasTable($name)) {
@@ -355,7 +355,7 @@ class Installer extends AbstractInstaller
         }
     }
 
-    private function uninstallTables()
+    private function uninstallTables(): void
     {
         foreach (array_keys($this->tablesToInstall) as $table) {
             if (!$this->getSchema()->hasTable($table)) {
@@ -371,7 +371,7 @@ class Installer extends AbstractInstaller
         }
     }
 
-    private function installTranslations()
+    private function installTranslations(): void
     {
         Translation::importTranslationsFromFile($this->installSourcesPath . '/admin-translations/init.csv', Translation::DOMAIN_ADMIN);
     }
@@ -379,11 +379,6 @@ class Installer extends AbstractInstaller
     /**
      * Finds objectbrick/fieldcollection sources by path returns a result list
      * indexed by element name.
-     *
-     * @param string $directory
-     * @param string $pattern
-     *
-     * @return array
      */
     private function findInstallFiles(string $directory, string $pattern): array
     {
