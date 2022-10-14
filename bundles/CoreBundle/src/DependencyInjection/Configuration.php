@@ -1058,7 +1058,7 @@ final class Configuration implements ConfigurationInterface
         $this->addRoutesChild($prototype, 'routes');
     }
 
-    private function addSecurityNode(ArrayNodeDefinition $rootNode)
+    private function addSecurityNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode
             ->children()
