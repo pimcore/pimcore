@@ -7,7 +7,7 @@
   pimcore:
         templating_engine:
             twig:
-              security_policy:
+              sandbox_security_policy:
                 tags: ['if']
                 filters: ['upper']
                 methods:

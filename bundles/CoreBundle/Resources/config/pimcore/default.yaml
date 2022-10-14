@@ -295,7 +295,7 @@ pimcore:
 
     templating_engine:
         twig:
-            security_policy:
+            sandbox_security_policy:
                 tags: ['set']
                 filters: ['escape', 'trans']
                 methods: []

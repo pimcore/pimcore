@@ -99,7 +99,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     {
         if ($sandboxed) {
             if (!$this->twig->hasExtension(SandboxExtension::class)) {
-                $securityPolicy = $this->config['templating_engine']['twig']['security_policy'];
+                $securityPolicy = $this->config['templating_engine']['twig']['sandbox_security_policy'];
 
                 $tags = $securityPolicy['tags'];
                 $filters = $securityPolicy['filters'];
