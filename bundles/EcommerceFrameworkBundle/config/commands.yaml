@@ -10,5 +10,5 @@ services:
 
     # auto-register all commands as services
     Pimcore\Bundle\EcommerceFrameworkBundle\Command\:
-        resource: '../../Command'
+        resource: '../src/Command'
         tags: ['console.command']
