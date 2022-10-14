@@ -67,7 +67,7 @@
     "http-interop/http-factory-guzzle": "^1.0.0",
     "lcobucci/jwt": "^4.0",
     "league/csv": "^9.7",
-    "mjaschen/phpgeo": "^3.0",
+    "mjaschen/phpgeo": "^4.0",
     "monolog/monolog": "^2.3",
     "mpratt/embera": "^2.0.14",
     "myclabs/deep-copy": "^1.10.1",
@@ -181,7 +181,8 @@
       "Pimcore\\Bundle\\": "bundles",
       "Pimcore\\Bundle\\AdminBundle\\": "bundles/AdminBundle/src/",
       "Pimcore\\Bundle\\InstallBundle\\": "bundles/InstallBundle/src/",
-      "Pimcore\\Bundle\\CoreBundle\\": "bundles/CoreBundle/src/"
+      "Pimcore\\Bundle\\CoreBundle\\": "bundles/CoreBundle/src/",
+      "Pimcore\\Bundle\\EcommerceFrameworkBundle\\": "bundles/EcommerceFrameworkBundle/src/"
     },
     "classmap": [
       "lib/Pimcore.php"

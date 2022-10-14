@@ -24,8 +24,8 @@ services:
 
     # auto-register all core getters as service
     Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\:
-        resource: '../../IndexService/Getter'
+        resource: '../src/IndexService/Getter'
 
     # auto-register all core interpreters as service
     Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\:
-        resource: '../../IndexService/Interpreter'
+        resource: '../src/IndexService/Interpreter'

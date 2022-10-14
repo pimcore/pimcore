@@ -9,7 +9,7 @@ on:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"
         paths-ignore:
-            - 'docs/**'
+            - 'doc/**'
             - 'bundles/**/Resources/public/**'
     push:
         branches:
@@ -17,7 +17,7 @@ on:
             - "[0-9]+.x"
             - "*_actions"
         paths-ignore:
-            - 'docs/**'
+            - 'doc/**'
             - 'bundles/**/Resources/public/**'
 
 env:

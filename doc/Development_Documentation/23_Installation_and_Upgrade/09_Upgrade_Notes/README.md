@@ -60,6 +60,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Core] Removed the deprecated method `Kernel::getRootDir()`, use `Kernel::getProjectDir()` instead.
 - [Relations] Add possibility to inline download asset from relations
 - [PhpArrayTable]: Removed PhpArrayTable class
+- [Elements] Changed method signature on `Pimcore\Model\Element\ElementInterface::save()`, this changes the `::save()` method on all classes (e.g. DataObjects and Pages) implementing the interface, including those inheriting from `Concrete`/`AbstractObject`, see [#13207](https://github.com/pimcore/pimcore/issues/13207)
 - [Document Editables] Removed method_exists bc layer for `getDataEditmode()`, `rewriteIds()` & `load()`, please use the corresponding interfaces `EditmodeDataInterface`, `IdRewriterInterface` & `LazyLoadingInterface` instead.
 - [Parallelization] Removed `webmozarts/console-parallelization` dependency due to maintainability reasons. If you still want to use parallelization for console commands, please add the dependency to your own `composer.json`.
 - [Navigation Builder] Calling the method `Pimcore\Navigation\Builder::getNavigation()` using extra arguments is
@@ -73,6 +74,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Config] Removed deprecated services/aliases: `Pimcore\Templating\Renderer\TagRenderer`, `pimcore.cache.adapter.pdo`, `pimcore.cache.adapter.pdo_tag_aware`
 - [DataObjects] Changed `$objectTypes` default value to include variants in certain scenarios.
 - [Elements]: Removed deprecated `getTotalCount()` method
+- Bumped `mjaschen/phpgeo` to "^4.0".
 - [Areabricks] The default template location of `AbstractTemplateAreabrick` is now `TEMPLATE_LOCATION_GLOBAL`.
 - [Config] Rename config files from `*.yml` to `*.yaml`. Note that we now use `system.yaml` as config file and not `system.yml`
 - [Childs Compatibility] Removed `getChilds`, `setChilds` and `hasChild` use `getChildren`, `setChildren` and `hasChildren` instead.

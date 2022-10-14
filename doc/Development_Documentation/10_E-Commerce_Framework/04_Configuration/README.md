@@ -81,7 +81,7 @@ completely free how to merge common configuration entries.
 
 When configuring tenant specific services, there are multiple configuration entries demanding a service ID as configuration
 value. This means, the system expects the configured value to be available as service definition on the container. You can
-read through the service definitions defined in [PimcoreEcommerceFrameworkBundle](https://github.com/pimcore/pimcore/tree/11.x/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/config)
+read through the service definitions defined in [PimcoreEcommerceFrameworkBundle](https://github.com/pimcore/pimcore/tree/11.x/bundles/EcommerceFrameworkBundle/config)
 to get an insight of default e-commerce services.
 
 As an example let's take a look at a price system configuration:
