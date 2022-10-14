@@ -280,7 +280,7 @@ class LocationAwareConfigRepository
     private function invalidateConfigCache(): void
     {
         // invalidate container config cache if debug flag on kernel is set
-        $systemConfigFile = Config::locateConfigFile('system.yml');
+        $systemConfigFile = Config::locateConfigFile('system.yaml');
         if ($systemConfigFile) {
             touch($systemConfigFile);
         }

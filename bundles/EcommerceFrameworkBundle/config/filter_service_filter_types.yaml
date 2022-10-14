@@ -15,5 +15,5 @@ services:
             - '@request_stack'
 
     Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\:
-        resource: '../../FilterService/FilterType'
+        resource: '../src/FilterService/FilterType'
         parent: Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType

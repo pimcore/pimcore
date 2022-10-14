@@ -51,10 +51,20 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
     /**
      * @internal
+     */
+    public bool $assetInlineDownloadAllowed = false;
+
+    /**
+     * @internal
      *
      * @var string
      */
     public $assetUploadPath;
+
+    /**
+     * @internal
+     */
+    public bool $allowToClearRelation = true;
 
     /**
      * @internal
@@ -489,6 +499,21 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
+     * @return $this
+     */
+    public function setAssetInlineDownloadAllowed(bool $assetInlineDownloadAllowed): static
+    {
+        $this->assetInlineDownloadAllowed = $assetInlineDownloadAllowed;
+
+        return $this;
+    }
+
+    public function getAssetInlineDownloadAllowed(): bool
+    {
+        return $this->assetInlineDownloadAllowed;
+    }
+
+    /**
      * @param string $assetUploadPath
      *
      * @return $this
@@ -506,6 +531,16 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     public function getAssetUploadPath()
     {
         return $this->assetUploadPath;
+    }
+
+    public function isAllowedToClearRelation(): bool
+    {
+        return $this->allowToClearRelation;
+    }
+
+    public function setAllowToClearRelation(bool $allowToClearRelation): void
+    {
+        $this->allowToClearRelation = $allowToClearRelation;
     }
 
     /**

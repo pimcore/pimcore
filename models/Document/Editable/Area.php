@@ -77,7 +77,7 @@ class Area extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function getDataEditmode() /** : mixed */
+    public function getDataEditmode(): array
     {
         return [
             'type' => $this->type,

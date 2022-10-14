@@ -56,7 +56,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * {@inheritdoc}
      */
-    public function getDataEditmode() /** : mixed */
+    public function getDataEditmode(): ?array
     {
         // update path if internal link
         $this->updatePathFromInternal(true, true);
@@ -506,7 +506,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds($idMapping) /** : void */
+    public function rewriteIds(array $idMapping): void
     {
         if (isset($this->data['internal']) && $this->data['internal']) {
             $type = $this->data['internalType'];

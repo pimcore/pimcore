@@ -18,12 +18,14 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\UserNameTrait;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
 use Pimcore\Model\Property;
@@ -42,6 +44,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
     use ApplySchedulerDataTrait;
     use DocumentTreeConfigTrait;
     use ElementEditLockHelperTrait;
+    use UserNameTrait;
 
     const TASK_PUBLISH = 'publish';
 
@@ -464,5 +467,15 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         }
 
         return [$task, $document, $version];
+    }
+
+    protected function populateUsersNames(Document $document, array &$data): void
+    {
+        $userOwnerName = $this->getUserName($document->getUserOwner());
+        $userModificationName = ($document->getUserOwner() == $document->getUserModification()) ? $userOwnerName : $this->getUserName($document->getUserModification());
+        $data['userOwnerUsername'] = $userOwnerName['userName'];
+        $data['userOwnerFullname'] = $userOwnerName['fullName'];
+        $data['userModificationUsername'] = $userModificationName['userName'];
+        $data['userModificationFullname'] = $userModificationName['fullName'];
     }
 }

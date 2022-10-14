@@ -408,21 +408,6 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @deprecated will be removed in Pimcore 11
-     *
-     * @param array $config
-     *
-     * @return int total count
-     */
-    public static function getTotalCount($config = [])
-    {
-        $list = static::getList($config);
-        $count = $list->getTotalCount();
-
-        return $count;
-    }
-
-    /**
      * @internal
      *
      * @param string $mimeType
@@ -473,19 +458,13 @@ class Asset extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function save()
+    public function save(array $parameters = []): static
     {
-        // additional parameters (e.g. "versionNote" for the version note)
-        $params = [];
-        if (func_num_args() && is_array(func_get_arg(0))) {
-            $params = func_get_arg(0);
-        }
-
         $isUpdate = false;
         $differentOldPath = null;
 
         try {
-            $preEvent = new AssetEvent($this, $params);
+            $preEvent = new AssetEvent($this, $parameters);
 
             if ($this->getId()) {
                 $isUpdate = true;
@@ -494,11 +473,11 @@ class Asset extends Element\AbstractElement
                 $this->dispatchEvent($preEvent, AssetEvents::PRE_ADD);
             }
 
-            $params = $preEvent->getArguments();
+            $parameters = $preEvent->getArguments();
 
             $this->correctPath();
 
-            $params['isUpdate'] = $isUpdate; // we need that in $this->update() for certain types (image, video, document)
+            $parameters['isUpdate'] = $isUpdate; // we need that in $this->update() for certain types (image, video, document)
 
             // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
             // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
@@ -518,7 +497,7 @@ class Asset extends Element\AbstractElement
                         $oldPath = $this->getDao()->getCurrentFullPath();
                     }
 
-                    $this->update($params);
+                    $this->update($parameters);
 
                     $storage = Storage::get('asset');
                     // if the old path is different from the new path, update all children
@@ -543,7 +522,7 @@ class Asset extends Element\AbstractElement
                     // this has to be after the registry update and the DB update, otherwise this would cause problem in the
                     // $this->__wakeUp() method which is called by $version->save(); (path correction for version restore)
                     if ($this->getType() != 'folder') {
-                        $this->saveVersion(false, false, isset($params['versionNote']) ? $params['versionNote'] : null);
+                        $this->saveVersion(false, false, $parameters['versionNote'] ?? null);
                     }
 
                     $this->commit();
@@ -591,7 +570,7 @@ class Asset extends Element\AbstractElement
 
             $this->setDataChanged(false);
 
-            $postEvent = new AssetEvent($this, $params);
+            $postEvent = new AssetEvent($this, $parameters);
             if ($isUpdate) {
                 if ($differentOldPath) {
                     $postEvent->setArgument('oldPath', $differentOldPath);
@@ -603,7 +582,7 @@ class Asset extends Element\AbstractElement
 
             return $this;
         } catch (Exception $e) {
-            $failureEvent = new AssetEvent($this, $params);
+            $failureEvent = new AssetEvent($this, $parameters);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
                 $this->dispatchEvent($failureEvent, AssetEvents::POST_UPDATE_FAILURE);

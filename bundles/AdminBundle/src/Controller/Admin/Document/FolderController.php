@@ -51,6 +51,7 @@ class FolderController extends DocumentControllerBase
 
         $this->addTranslationsData($folder, $data);
         $this->minimizeProperties($folder, $data);
+        $this->populateUsersNames($folder, $data);
 
         return $this->preSendDataActions($data, $folder);
     }
