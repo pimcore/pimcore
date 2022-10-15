@@ -291,23 +291,19 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 });
             }
 
-            let user = pimcore.globalmanager.get("user");
+            this.setDeeplink("asset_" + this.data.id + "_" + this.data.type);
 
-            if (user.admin) {
-                this.setDeeplink("asset_" + this.data.id + "_" + this.data.type);
+            this.toolbarButtons.metainfo = new Ext.SplitButton(
+                {
+                    tooltip: t("show_metainfo"),
+                    iconCls: "pimcore_material_icon_info pimcore_material_icon",
+                    scale: "medium",
+                    handler: this.showMetaInfo.bind(this),
+                    menu: this.getMetaInfoMenuItems()
+                }
+            );
 
-                this.toolbarButtons.metainfo = new Ext.SplitButton(
-                    {
-                        tooltip: t("show_metainfo"),
-                        iconCls: "pimcore_material_icon_info pimcore_material_icon",
-                        scale: "medium",
-                        handler: this.showMetaInfo.bind(this),
-                        menu: this.getMetaInfoMenuItems()
-                    }
-                );
-
-                buttons.push(this.toolbarButtons.metainfo);
-            }
+            buttons.push(this.toolbarButtons.metainfo);
 
             buttons.push("-");
             buttons.push({
