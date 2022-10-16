@@ -340,9 +340,6 @@ abstract class Kernel extends SymfonyKernel
         // custom bundles
         $this->registerBundlesToCollection($collection);
 
-        // bundles registered in extensions.php
-        $this->registerExtensionManagerBundles($collection);
-
         $bundles = $collection->getBundles($this->getEnvironment());
 
         $this->bundleCollection = $collection;

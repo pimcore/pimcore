@@ -28,28 +28,6 @@ use Pimcore\Extension\Bundle\PimcoreBundleManager;
 trait StateHelperTrait
 {
     /**
-     * @deprecated will be removed in Pimcore 11
-     *
-     * Helper method to check enabled state from class definitions/non-service instances
-     *
-     * @return bool
-     */
-    public static function isEnabled(): bool
-    {
-        $bundleManager = \Pimcore::getContainer()->get(PimcoreBundleManager::class);
-
-        if (!$bundleManager->exists(__CLASS__)) {
-            return false;
-        }
-
-        if (!$bundleManager->isEnabled(__CLASS__)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
      * Helper method to check installed state from class definitions/non-service instances
      *
      * @return bool
