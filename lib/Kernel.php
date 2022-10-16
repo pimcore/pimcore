@@ -58,12 +58,6 @@ abstract class Kernel extends SymfonyKernel
         registerBundles as microKernelRegisterBundles;
     }
 
-    /**
-     * @deprecated will be removed in Pimcore 11
-     *
-     * @var Extension\Config
-     */
-    protected $extensionConfig;
 
     /**
      * @var BundleCollection
@@ -373,37 +367,6 @@ abstract class Kernel extends SymfonyKernel
     protected function getEnvironmentsForDevBundles(): array
     {
         return ['dev', 'test'];
-    }
-
-    /**
-     * Registers bundles enabled via extension manager
-     *
-     * @deprecated will be removed in Pimcore 11
-     *
-     * @param BundleCollection $collection
-     */
-    protected function registerExtensionManagerBundles(BundleCollection $collection)
-    {
-        $stateConfig = new StateConfig($this->extensionConfig);
-
-        foreach ($stateConfig->getEnabledBundles() as $className => $options) {
-            if (!class_exists($className)) {
-                continue;
-            }
-
-            // do not register bundles twice - skip if it was already loaded manually
-            if ($collection->hasItem($className)) {
-                continue;
-            }
-
-            // use lazy loaded item to instantiate the bundle only if environment matches
-            $collection->add(new LazyLoadedItem(
-                $className,
-                $options['priority'],
-                $options['environments'],
-                ItemInterface::SOURCE_EXTENSION_MANAGER_CONFIG
-            ));
-        }
     }
 
     /**
