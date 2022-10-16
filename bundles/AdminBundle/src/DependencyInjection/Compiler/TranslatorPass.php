@@ -28,11 +28,7 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 final class TranslatorPass implements CompilerPassInterface
 {
-    /**
-     *
-     * @param ContainerBuilder $container
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $translationPath = $container->getParameter('pimcore_admin.translations.path');
         $container

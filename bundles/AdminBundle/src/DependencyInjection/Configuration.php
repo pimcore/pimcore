@@ -272,14 +272,10 @@ final class Configuration implements ConfigurationInterface
         return $documentsNode;
     }
 
-
-
     /**
      * Add admin config
-     *
-     * @param ArrayNodeDefinition $rootNode
      */
-    private function addAdminNode(ArrayNodeDefinition $rootNode)
+    private function addAdminNode(ArrayNodeDefinition $rootNode): void
     {
 
         // add session attribute bag config
@@ -299,10 +295,7 @@ final class Configuration implements ConfigurationInterface
             ->end();
     }
 
-    /**
-     * @param ArrayNodeDefinition $adminNode
-     */
-    private function addAdminSessionAttributeBags(ArrayNodeDefinition $adminNode)
+    private function addAdminSessionAttributeBags(ArrayNodeDefinition $adminNode): void
     {
         // Normalizes session bag config. Allows the following formats (all formats will be
         // normalized to the third format.
@@ -398,13 +391,10 @@ final class Configuration implements ConfigurationInterface
             ->end();
     }
 
-        /**
+    /**
      * Add a route prototype child
-     *
-     * @param ArrayNodeDefinition $parent
-     * @param string $name
      */
-    private function addRoutesChild(ArrayNodeDefinition $parent, $name)
+    private function addRoutesChild(ArrayNodeDefinition $parent, string $name): void
     {
         $node = $parent->children()->arrayNode($name);
 
