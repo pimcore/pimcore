@@ -215,7 +215,7 @@ class RedisStorage implements TargetingStorageInterface
         return $this->loadDate($visitorInfo, $scope, self::STORAGE_KEY_UPDATED_AT);
     }
 
-    private function loadDate(VisitorInfo $visitorInfo, string $scope, string $storageKey)
+    private function loadDate(VisitorInfo $visitorInfo, string $scope, string $storageKey): ?\DateTimeImmutable
     {
         if (!$visitorInfo->hasVisitorId()) {
             return null;
@@ -228,7 +228,7 @@ class RedisStorage implements TargetingStorageInterface
             return null;
         }
 
-        return \DateTimeImmutable::createFromFormat('U', $timestamp);
+        return \DateTimeImmutable::createFromFormat('U', $timestamp) ?: null;
     }
 
     private function buildKey(VisitorInfo $visitorInfo, string $scope): string
@@ -247,7 +247,7 @@ class RedisStorage implements TargetingStorageInterface
         int $currentCreatedAt,
         \DateTimeInterface $createdAt = null,
         \DateTimeInterface $updatedAt = null
-    ) {
+    ): void {
         $timestamps = $this->normalizeTimestamps($createdAt, $updatedAt);
 
         if (0 === $currentCreatedAt) {
@@ -257,7 +257,7 @@ class RedisStorage implements TargetingStorageInterface
         $multi->hSet($key, self::STORAGE_KEY_UPDATED_AT, (string)($timestamps['updatedAt']->getTimestamp()));
     }
 
-    private function updateExpiry(\Credis_Client $multi, string $scope, string $key)
+    private function updateExpiry(\Credis_Client $multi, string $scope, string $key): void
     {
         $expiry = $this->expiryFor($scope);
         if ($expiry > 0) {

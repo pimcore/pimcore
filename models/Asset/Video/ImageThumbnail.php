@@ -197,13 +197,9 @@ final class ImageThumbnail
     }
 
     /**
-     * @param string|array|Image\Thumbnail\Config $selector
-     *
-     * @return Image\Thumbnail\Config|null
-     *
      * @throws Model\Exception\NotFoundException
      */
-    private function createConfig($selector)
+    private function createConfig(array|string|Image\Thumbnail\Config $selector): ?Image\Thumbnail\Config
     {
         $thumbnailConfig = Image\Thumbnail\Config::getByAutoDetect($selector);
 

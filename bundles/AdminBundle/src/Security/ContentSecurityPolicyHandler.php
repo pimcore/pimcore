@@ -89,12 +89,6 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
         return implode(';', $cspHeaderOptions);
     }
 
-    /**
-     * @param string $key
-     * @param bool $flatten
-     *
-     * @return array|string
-     */
     private function getAllowedUrls(string $key, bool $flatten = true): array|string
     {
         if (!$flatten) {
@@ -147,8 +141,6 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
 
     /**
      * Generates a random nonce parameter.
-     *
-     * @return string
      */
     private function getNonce(): string
     {

@@ -48,7 +48,7 @@ class UserChecker extends InMemoryUserChecker
         parent::checkPostAuth($user);
     }
 
-    private function checkValidUser(UserInterface $user)
+    private function checkValidUser(UserInterface $user): void
     {
         if (!($user instanceof User && Authentication::isValidUser($user->getUser()))) {
             $ex = new InvalidUserException('User is no valid Pimcore admin user');

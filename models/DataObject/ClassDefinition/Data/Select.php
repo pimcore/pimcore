@@ -150,7 +150,7 @@ class Select extends Data implements
      *
      * @param string $type
      */
-    private function correctColumnDefinition($type)
+    private function correctColumnDefinition(string $type): void
     {
         if (preg_match("/(.*)\((\d+)\)/i", $this->$type, $matches)) {
             $this->{'set' . ucfirst($type)}($matches[1]);

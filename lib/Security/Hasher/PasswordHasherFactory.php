@@ -70,11 +70,9 @@ class PasswordHasherFactory implements PasswordHasherFactoryInterface
     /**
      * Returns the password hasher factory to use for the given account.
      *
-     * @param UserInterface|string $user A UserInterface instance or a class name
-     *
-     * @return PasswordHasherInterface|null
+     * @param string|UserInterface $user A UserInterface instance or a class name
      */
-    private function getPasswordHasherFromFactory($user)
+    private function getPasswordHasherFromFactory(UserInterface|string $user): ?PasswordHasherInterface
     {
         $factoryKey = null;
 

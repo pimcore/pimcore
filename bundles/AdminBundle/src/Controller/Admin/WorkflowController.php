@@ -325,7 +325,7 @@ class WorkflowController extends AdminController implements KernelControllerEven
         return new JsonResponse($data);
     }
 
-    private function customHtmlResponse(CustomHtmlServiceInterface $customHtmlService = null): JsonResponse
+    private function customHtmlResponse(?CustomHtmlServiceInterface $customHtmlService): JsonResponse
     {
         $data = [
             'success' => true,
@@ -342,13 +342,9 @@ class WorkflowController extends AdminController implements KernelControllerEven
     }
 
     /**
-     * @param Workflow $workflow
-     *
-     * @return string
-     *
      * @throws \Exception
      */
-    private function getWorkflowSvg(Workflow $workflow)
+    private function getWorkflowSvg(Workflow $workflow): string
     {
         $marking = $workflow->getMarking($this->element);
 

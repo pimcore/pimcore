@@ -140,9 +140,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public $decimalPrecision;
 
-    /**
-     * @return string
-     */
     private function getPhpdocType(): string
     {
         if ($this->getInteger()) {
@@ -357,17 +354,11 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this->genericGetQueryColumnType();
     }
 
-    /**
-     * @return bool
-     */
     private function isDecimalType(): bool
     {
         return null !== $this->getDecimalSize() || null !== $this->getDecimalPrecision();
     }
 
-    /**
-     * @return string
-     */
     private function buildDecimalColumnType(): string
     {
         // decimalPrecision already existed in earlier versions to denote the amount of digits after the
@@ -604,12 +595,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return !is_numeric($data);
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @return float|int|string
-     */
-    private function toNumeric($value)
+    private function toNumeric(mixed $value): float|int|string
     {
         $value = str_replace(',', '.', (string) $value);
 

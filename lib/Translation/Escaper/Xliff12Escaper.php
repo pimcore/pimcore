@@ -105,7 +105,7 @@ class Xliff12Escaper
         return $content;
     }
 
-    private function parseInnerXml(string $content)
+    private function parseInnerXml(string $content): string
     {
         $node = simplexml_load_string($content, null, LIBXML_NOCDATA);
 

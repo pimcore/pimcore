@@ -115,10 +115,7 @@ class GD extends Adapter
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    private function hasAlphaChannel()
+    private function hasAlphaChannel(): bool
     {
         if ($this->isAlphaPossible) {
             $width = imagesx($this->resource); // Get the width of the image
@@ -149,13 +146,7 @@ class GD extends Adapter
         }
     }
 
-    /**
-     * @param int $width
-     * @param int $height
-     *
-     * @return \GdImage|false
-     */
-    private function createImage($width, $height)
+    private function createImage(int $width, int $height): \GdImage
     {
         $newImg = imagecreatetruecolor($width, $height);
 

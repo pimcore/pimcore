@@ -442,12 +442,7 @@ class ApplicationLogger implements LoggerInterface
         return implode("\n", $data);
     }
 
-    /**
-     * @param \Throwable $exceptionObject
-     *
-     * @return FileObject
-     */
-    private static function createExceptionFileObject(\Throwable $exceptionObject)
+    private static function createExceptionFileObject(\Throwable $exceptionObject): FileObject
     {
         $data = self::exceptionToString($exceptionObject, true, true);
 

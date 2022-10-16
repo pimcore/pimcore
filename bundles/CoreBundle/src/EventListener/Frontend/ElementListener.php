@@ -182,14 +182,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         }
     }
 
-    /**
-     * @param Request $request
-     * @param Document|null $document
-     * @param User $user
-     *
-     * @return Document|null
-     */
-    private function handleAdminUserDocumentParams(Request $request, ?Document $document, User $user)
+    private function handleAdminUserDocumentParams(Request $request, ?Document $document, User $user): ?Document
     {
         if (!$document) {
             return null;

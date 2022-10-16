@@ -106,12 +106,7 @@ class ConditionTest extends EcommerceTestCase
         $this->assertFalse($cartAmount->check($environment), 'check not empty product and empty cart');
     }
 
-    /**
-     * @param string $path
-     *
-     * @return AbstractCategory
-     */
-    private function mockCategory($path)
+    private function mockCategory(string $path): AbstractCategory
     {
         $category = $this->getMockBuilder(AbstractCategory::class)->getMock();
         $category->method('getFullPath')->willReturn($path);
@@ -188,13 +183,7 @@ class ConditionTest extends EcommerceTestCase
         $this->assertTrue($catalogCategory->check($environment), 'check filled environment with parent category');
     }
 
-    /**
-     * @param int $id
-     * @param int|null $parentId
-     *
-     * @return AbstractProduct
-     */
-    private function mockProduct($id, $parentId = null)
+    private function mockProduct(int $id, int $parentId = null): AbstractProduct
     {
         $product = $this->getMockBuilder(AbstractProduct::class)->getMock();
         $product->method('getId')->willReturn($id);
@@ -209,10 +198,7 @@ class ConditionTest extends EcommerceTestCase
         return $product;
     }
 
-    /**
-     * @return CartInterface
-     */
-    private function mockCart()
+    private function mockCart(): CartInterface
     {
         $sessionBag = $this->buildSession()->getBag(SessionBagListener::ATTRIBUTE_BAG_CART);
 

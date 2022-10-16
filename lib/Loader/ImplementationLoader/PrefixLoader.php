@@ -53,10 +53,7 @@ class PrefixLoader extends AbstractClassNameLoader
         $this->setPrefixes($prefixes);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    private function setPrefixes(array $prefixes)
+    private function setPrefixes(array $prefixes): void
     {
         if (empty($prefixes)) {
             throw new InvalidArgumentException('Prefix loader needs a list of prefixes, empty array given');
@@ -92,18 +89,13 @@ class PrefixLoader extends AbstractClassNameLoader
 
     /**
      * Iterates prefixes and tries to find the class name
-     *
-     * @param string $name
-     *
-     * @return string|null
      */
-    private function findClassName(string $name)
+    private function findClassName(string $name): ?string
     {
         if (isset($this->cache[$name])) {
             return $this->cache[$name];
         }
 
-        $result = null;
         foreach ($this->prefixes as $prefix) {
             $className = $this->buildClassName($prefix, $name);
 

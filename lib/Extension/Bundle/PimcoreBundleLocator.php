@@ -54,10 +54,7 @@ class PimcoreBundleLocator
         $this->handleComposer = $handleComposer;
     }
 
-    /**
-     * @param array $paths
-     */
-    private function setPaths(array $paths)
+    private function setPaths(array $paths): void
     {
         $fs = new Filesystem();
 
@@ -90,12 +87,7 @@ class PimcoreBundleLocator
         return $result;
     }
 
-    /**
-     * @param array $paths
-     *
-     * @return array
-     */
-    private function findBundlesInPaths(array $paths)
+    private function findBundlesInPaths(array $paths): array
     {
         $result = [];
 
@@ -123,10 +115,8 @@ class PimcoreBundleLocator
      *    as list of available bundle names
      *  * If the config entry above is not available, it will scan the package directory with the same logic as for
      *    the other paths
-     *
-     * @return array
      */
-    private function findComposerBundles()
+    private function findComposerBundles(): array
     {
         $pimcoreBundles = $this->composerPackageInfo->getInstalledPackages('pimcore-bundle');
         $composerPaths = [];
@@ -155,11 +145,7 @@ class PimcoreBundleLocator
         return $result;
     }
 
-    /**
-     * @param string $bundle
-     * @param array $result
-     */
-    private function processBundleClass($bundle, array &$result)
+    private function processBundleClass(string $bundle, array &$result): void
     {
         if (empty($bundle) || !is_string($bundle)) {
             return;

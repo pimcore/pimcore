@@ -95,7 +95,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
         }
     }
 
-    private function populateCollection(UrlContainerInterface $urlContainer, Document $rootDocument, string $section, Site $site = null)
+    private function populateCollection(UrlContainerInterface $urlContainer, Document $rootDocument, string $section, Site $site = null): void
     {
         $context = new DocumentGeneratorContext($urlContainer, $section, $site);
         $visit = $this->visit($rootDocument, $context);
@@ -110,13 +110,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
         }
     }
 
-    /**
-     * @param Document $document
-     * @param DocumentGeneratorContext $context
-     *
-     * @return Url|null
-     */
-    private function createUrl(Document $document, DocumentGeneratorContext $context)
+    private function createUrl(Document $document, DocumentGeneratorContext $context): ?Url
     {
         $url = $this->urlGenerator->generateDocumentUrl(
             $document,
@@ -131,11 +125,6 @@ class DocumentTreeGenerator extends AbstractElementGenerator
     }
 
     /**
-     * @param Document $document
-     * @param DocumentGeneratorContext $context
-     *
-     * @return \Generator
-     *
      * @throws \Exception
      */
     private function visit(Document $document, DocumentGeneratorContext $context): \Generator

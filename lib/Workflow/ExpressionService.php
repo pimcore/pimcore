@@ -77,13 +77,8 @@ class ExpressionService
         return $this->expressionLanguage->evaluate($expression, $this->getVariables($subject));
     }
 
-    /**
-     * @param object $subject
-     *
-     * @return array
-     */
     // code should be sync with Symfony\Component\Security\Core\Authorization\Voter\ExpressionVoter
-    private function getVariables($subject)
+    private function getVariables(object $subject): array
     {
         $token = $this->tokenStorage->getToken() ?: new NullToken;
 

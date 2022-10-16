@@ -36,7 +36,7 @@ trait Wrapper
      *
      * @throws \Exception
      */
-    public function save()
+    public function save(array $parameters = []): static
     {
         throw $this->getHardlinkError();
     }

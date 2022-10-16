@@ -1237,7 +1237,7 @@ class DataObjectHelperController extends AdminController
         return $response;
     }
 
-    private function getDataPreview($originalFile, $dialect)
+    private function getDataPreview($originalFile, $dialect): array
     {
         $count = 0;
         $data = [];

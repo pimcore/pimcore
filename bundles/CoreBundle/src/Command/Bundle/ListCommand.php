@@ -128,7 +128,7 @@ class ListCommand extends AbstractBundleCommand
         return 0;
     }
 
-    private function formatBool($state): string
+    private function formatBool(bool $state): string
     {
         $decorated = $this->io->getOutput()->isDecorated();
 

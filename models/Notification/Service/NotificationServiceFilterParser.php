@@ -100,10 +100,6 @@ class NotificationServiceFilterParser
     }
 
     /**
-     * @param array $item
-     *
-     * @return array
-     *
      * @throws \Exception
      */
     private function parseString(array $item): array
@@ -127,10 +123,6 @@ class NotificationServiceFilterParser
     }
 
     /**
-     * @param array $item
-     *
-     * @return array
-     *
      * @throws \Exception
      */
     private function parseDate(array $item): array
@@ -161,11 +153,6 @@ class NotificationServiceFilterParser
         return $result;
     }
 
-    /**
-     * @param array $item
-     *
-     * @return string
-     */
     private function getDbProperty(array $item): string
     {
         $property = $item[self::KEY_PROPERTY];
