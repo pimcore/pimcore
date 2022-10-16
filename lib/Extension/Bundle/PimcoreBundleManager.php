@@ -33,12 +33,6 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 class PimcoreBundleManager
 {
-    /**
-     * @deprecated
-     *
-     * @var StateConfig
-     */
-    protected $stateConfig;
 
     /**
      * @var PimcoreBundleLocator
@@ -65,12 +59,6 @@ class PimcoreBundleManager
      */
     protected $availableBundles;
 
-    /**
-     * @deprecated
-     *
-     * @var array
-     */
-    protected $enabledBundles;
 
     /**
      * @var array
@@ -160,26 +148,6 @@ class PimcoreBundleManager
         }
 
         return $this->availableBundles;
-    }
-
-    /**
-     * @deprecated
-     *
-     * Lists enabled bundle names
-     *
-     * @return array
-     */
-    public function getEnabledBundleNames(): array
-    {
-        $bundleNames = array_merge(
-            $this->getManuallyRegisteredBundleNames(true),
-            $this->stateConfig->getEnabledBundleNames()
-        );
-
-        $bundleNames = array_unique($bundleNames);
-        sort($bundleNames);
-
-        return $bundleNames;
     }
 
     /**
@@ -305,151 +273,6 @@ class PimcoreBundleManager
         $this->validateBundleIdentifier($identifier);
 
         return in_array($identifier, $this->getManuallyRegisteredBundleNames(false));
-    }
-
-    /**
-     * @deprecated
-     *
-     * Checks if a state change (enable/disable, priority, environments) is possible
-     *
-     * @param string $identifier
-     */
-    protected function validateStateChange(string $identifier)
-    {
-        if ($this->isManuallyRegistered($identifier)) {
-            throw new \LogicException(sprintf(
-                'Can\'t change state for bundle "%s" as it is programatically registered',
-                $identifier
-            ));
-        }
-    }
-
-    /**
-     * @deprecated
-     *
-     * Determines if bundle is allowed to change state (can be enabled/disabled)
-     *
-     * @param string|PimcoreBundleInterface $bundle
-     *
-     * @return bool
-     */
-    public function canChangeState($bundle): bool
-    {
-        $identifier = $this->getBundleIdentifier($bundle);
-
-        $this->validateBundleIdentifier($identifier);
-
-        return !$this->isManuallyRegistered($bundle);
-    }
-
-    /**
-     * @deprecated
-     *
-     * Reads bundle state from config
-     *
-     * @param string|PimcoreBundleInterface $bundle
-     *
-     * @return array
-     */
-    public function getState($bundle): array
-    {
-        $identifier = $this->getBundleIdentifier($bundle);
-
-        $this->validateBundleIdentifier($identifier);
-
-        if ($this->isManuallyRegistered($identifier)) {
-            return $this->getManuallyRegisteredBundleState()[$identifier];
-        }
-
-        return $this->stateConfig->getState($identifier);
-    }
-
-    /**
-     * @deprecated
-     *
-     * Updates state for a bundle and writes it to config
-     *
-     * @param string|PimcoreBundleInterface $bundle
-     * @param array $options
-     */
-    public function setState($bundle, array $options)
-    {
-        $identifier = $this->getBundleIdentifier($bundle);
-
-        $this->validateBundleIdentifier($identifier);
-        $this->validateStateChange($identifier);
-
-        $this->stateConfig->setState($identifier, $options);
-    }
-
-    /**
-     * @deprecated
-     *
-     * Batch updates bundle states
-     *
-     * @param array $states
-     */
-    public function setStates(array $states)
-    {
-        $updates = [];
-
-        foreach ($states as $bundle => $options) {
-            $identifier = $this->getBundleIdentifier($bundle);
-
-            $this->validateBundleIdentifier($identifier);
-            $this->validateStateChange($identifier);
-
-            $updates[$identifier] = $options;
-        }
-
-        $this->stateConfig->setStates($updates);
-    }
-
-    /**
-     * @deprecated
-     *
-     * Enables a bundle
-     *
-     * @param string|PimcoreBundleInterface $bundle
-     * @param array $state Optional additional state config (see StateConfig)
-     */
-    public function enable($bundle, array $state = [])
-    {
-        $state = array_merge($state, [
-            'enabled' => true,
-        ]);
-
-        $this->setState($bundle, $state);
-    }
-
-    /**
-     * @deprecated
-     *
-     * Disables a bundle
-     *
-     * @param string|PimcoreBundleInterface $bundle
-     */
-    public function disable($bundle)
-    {
-        $this->setState($bundle, ['enabled' => false]);
-    }
-
-    /**
-     * @deprecated
-     *
-     * Determines if a bundle is enabled
-     *
-     * @param string|PimcoreBundleInterface $bundle
-     *
-     * @return bool
-     */
-    public function isEnabled($bundle): bool
-    {
-        $identifier = $this->getBundleIdentifier($bundle);
-
-        $this->validateBundleIdentifier($identifier);
-
-        return in_array($identifier, $this->getEnabledBundleNames());
     }
 
     /**
