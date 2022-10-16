@@ -29,11 +29,7 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 final class ContextGuesserPass implements CompilerPassInterface
 {
-    /**
-     *
-     * @param ContainerBuilder $container
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $guesser = $container->getDefinition(PimcoreContextGuesser::class);
         $adminContexts = [
