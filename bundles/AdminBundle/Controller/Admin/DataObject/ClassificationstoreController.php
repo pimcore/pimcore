@@ -276,13 +276,14 @@ class ClassificationstoreController extends AdminController implements KernelCon
 
         $searchfilter = $request->get('searchfilter');
         if ($searchfilter) {
-            $searchFilterCondition = 'name LIKE '.$db->quote('%'.$searchfilter.'%').' OR description LIKE '.$db->quote('%'.$searchfilter.'%');
+            $searchFilterConditions = [];
 
-            foreach($this->getTranslatedSearchFilterTerms($searchfilter) as $searchFilterTerm) {
-                $searchFilterCondition .= ' OR name LIKE '.$db->quote('%'.$searchFilterTerm.'%').' OR description LIKE '.$db->quote('%'.$searchFilterTerm.'%');
+            $searchTerms = array_merge([$searchfilter], $this->getTranslatedSearchFilterTerms($searchfilter));
+            foreach($searchTerms as $searchFilterTerm) {
+                $searchFilterConditions[] = 'name LIKE '.$db->quote('%'.$searchFilterTerm.'%').' OR description LIKE '.$db->quote('%'.$searchFilterTerm.'%');
             }
 
-            $conditionParts[] = '('.$searchFilterCondition.')';
+            $conditionParts[] = '('.implode(' OR ', $searchFilterConditions).')';
         }
 
         $storeId = $request->get('storeId');
@@ -431,13 +432,14 @@ class ClassificationstoreController extends AdminController implements KernelCon
 
         $searchfilter = $request->get('searchfilter');
         if ($searchfilter) {
-            $searchFilterCondition = 'name LIKE ' . $db->quote('%' . $searchfilter . '%') . ' OR description LIKE ' . $db->quote('%'. $searchfilter . '%');
+            $searchFilterConditions = [];
 
-            foreach ($this->getTranslatedSearchFilterTerms($searchfilter) as $searchFilterTerm) {
-                $searchFilterCondition .= ' OR name LIKE '.$db->quote('%'.$searchFilterTerm.'%').' OR description LIKE '.$db->quote('%'.$searchFilterTerm.'%');
+            $searchTerms = array_merge([$searchfilter], $this->getTranslatedSearchFilterTerms($searchfilter));
+            foreach ($searchTerms as $searchFilterTerm) {
+                $searchFilterConditions[] = 'name LIKE '.$db->quote('%'.$searchFilterTerm.'%').' OR description LIKE '.$db->quote('%'.$searchFilterTerm.'%');
             }
 
-            $conditionParts[] = '('.$searchFilterCondition.')';
+            $conditionParts[] = '('.implode(' OR ', $searchFilterConditions).')';
         }
 
         if ($request->get('storeId')) {
@@ -774,17 +776,16 @@ class ClassificationstoreController extends AdminController implements KernelCon
 
         $searchfilter = $request->get('searchfilter');
         if ($searchfilter) {
-            $searchFilterCondition = Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS.'.name LIKE '.$db->quote('%'.$searchfilter.'%')
-                .' OR '.Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS.'.name LIKE '.$db->quote('%'.$searchfilter.'%')
-                .' OR '.Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS.'.description LIKE '.$db->quote('%'.$searchfilter.'%');
+            $searchFilterConditions = [];
 
-            foreach ($this->getTranslatedSearchFilterTerms($searchfilter) as $searchFilterTerm) {
-                $searchFilterCondition .= ' OR '.Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS.'.name LIKE '.$db->quote('%'.$searchFilterTerm.'%')
+            $searchTerms = array_merge([$searchfilter], $this->getTranslatedSearchFilterTerms($searchfilter));
+            foreach ($searchTerms as $searchFilterTerm) {
+                $searchFilterConditions[] = Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS.'.name LIKE '.$db->quote('%'.$searchFilterTerm.'%')
                     .' OR '.Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS.'.name LIKE '.$db->quote('%'.$searchFilterTerm.'%')
                     .' OR '.Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS.'.description LIKE '.$db->quote('%'.$searchFilterTerm.'%');
             }
 
-            $conditionParts[] = '('.$searchFilterCondition.')';
+            $conditionParts[] = '('.implode(' OR ', $searchFilterConditions).')';
         }
 
         $condition = implode(' AND ', $conditionParts);
