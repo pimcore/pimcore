@@ -50,22 +50,14 @@ class ListCommand extends AbstractBundleCommand
         $returnData = [
             'headers' => [
                 'Bundle',
-                'Enabled',
                 'Installed',
                 $input->hasOption('json') ? 'Installable' : 'I?',
                 $input->hasOption('json') ? 'Uninstallable' : 'UI?',
-                'Priority',
             ],
             'rows' => [],
         ];
 
         foreach ($this->bundleManager->getAvailableBundles() as $bundleClass) {
-            $enabled = $this->bundleManager->isEnabled($bundleClass);
-
-            $bundle = null;
-            if ($enabled) {
-                $bundle = $this->bundleManager->getActiveBundle($bundleClass, false);
-            }
 
             $row = [];
 
@@ -75,21 +67,9 @@ class ListCommand extends AbstractBundleCommand
                 $row[] = $this->getShortClassName($bundleClass);
             }
 
-            $row[] = $enabled;
-
-            if ($enabled) {
-                $row[] = $this->bundleManager->isInstalled($bundle);
-                $row[] = $this->bundleManager->canBeInstalled($bundle);
-                $row[] = $this->bundleManager->canBeUninstalled($bundle);
-
-                $bundleState = $this->bundleManager->getState($bundle);
-                $row[] = $bundleState['priority'];
-            } else {
-                $row[] = false;
-                $row[] = false;
-                $row[] = false;
-                $row[] = 0;
-            }
+            $row[] = $this->bundleManager->isInstalled($bundleClass);
+            $row[] = $this->bundleManager->canBeInstalled($bundleClass);
+            $row[] = $this->bundleManager->canBeUninstalled($bundleClass);
 
             $returnData['rows'][] = $row;
         }
