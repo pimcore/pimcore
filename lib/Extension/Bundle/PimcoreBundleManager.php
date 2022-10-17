@@ -19,12 +19,13 @@ namespace Pimcore\Extension\Bundle;
 
 use Pimcore\Event\BundleManager\PathsEvent;
 use Pimcore\Event\BundleManagerEvents;
-use Pimcore\Extension\Bundle\Config\StateConfig;
 use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\HttpKernel\BundleCollection\ItemInterface;
 use Pimcore\Kernel;
 use Pimcore\Routing\RouteReferenceInterface;
+use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
@@ -33,6 +34,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 class PimcoreBundleManager
 {
+    private static ?OptionsResolver $optionsResolver = null;
 
     /**
      * @var PimcoreBundleLocator
@@ -66,20 +68,17 @@ class PimcoreBundleManager
     protected $manuallyRegisteredBundleState;
 
     /**
-     * @param StateConfig $stateConfig
      * @param PimcoreBundleLocator $bundleLocator
      * @param Kernel $kernel
      * @param EventDispatcherInterface $dispatcher
      * @param RouterInterface $router
      */
     public function __construct(
-        StateConfig $stateConfig,
         PimcoreBundleLocator $bundleLocator,
         Kernel $kernel,
         EventDispatcherInterface $dispatcher,
         RouterInterface $router
     ) {
-        $this->stateConfig = $stateConfig;
         $this->bundleLocator = $bundleLocator;
         $this->kernel = $kernel;
         $this->dispatcher = $dispatcher;
@@ -190,7 +189,7 @@ class PimcoreBundleManager
                     continue;
                 }
 
-                $bundles[$item->getBundleIdentifier()] = $this->stateConfig->normalizeOptions([
+                $bundles[$item->getBundleIdentifier()] = self::getOptionsResolver()->resolve([
                     'enabled' => in_array($item->getBundleIdentifier(), $enabledBundles),
                     'priority' => $item->getPriority(),
                     'environments' => $item->getEnvironments(),
@@ -201,6 +200,48 @@ class PimcoreBundleManager
         }
 
         return $this->manuallyRegisteredBundleState;
+    }
+
+    private static function getOptionsResolver(): OptionsResolver
+    {
+        if (null !== self::$optionsResolver) {
+            return self::$optionsResolver;
+        }
+
+        $resolver = new OptionsResolver();
+
+        $defaults = [
+            'enabled' => false,
+            'priority' => 10,
+            'environments' => [],
+        ];
+
+        $resolver->setDefaults($defaults);
+
+        $resolver->setRequired(array_keys($defaults));
+
+        $resolver->setAllowedTypes('enabled', 'bool');
+        $resolver->setAllowedTypes('priority', 'int');
+        $resolver->setAllowedTypes('environments', 'array');
+
+        $resolver->setNormalizer('environments', function (Options $options, $value) {
+            // normalize to string and trim
+            $value = array_map(function ($item) {
+                $item = (string)$item;
+                $item = trim($item);
+
+                return $item;
+            }, $value);
+
+            // remove empty values
+            return array_filter($value, function ($item) {
+                return !empty($item);
+            });
+        });
+
+        self::$optionsResolver = $resolver;
+
+        return self::$optionsResolver;
     }
 
     /**
