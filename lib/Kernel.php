@@ -24,10 +24,7 @@ use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config\BundleConfigLocator;
 use Pimcore\Event\SystemEvents;
-use Pimcore\Extension\Bundle\Config\StateConfig;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
-use Pimcore\HttpKernel\BundleCollection\ItemInterface;
-use Pimcore\HttpKernel\BundleCollection\LazyLoadedItem;
 use Presta\SitemapBundle\PrestaSitemapBundle;
 use Scheb\TwoFactorBundle\SchebTwoFactorBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
@@ -40,9 +37,6 @@ use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Cmf\Bundle\RoutingBundle\CmfRoutingBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
-use Symfony\Component\Config\Resource\FileExistenceResource;
-use Symfony\Component\Config\Resource\FileResource;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -226,8 +220,6 @@ abstract class Kernel extends SymfonyKernel
         // handle system requirements
         $this->setSystemRequirements();
 
-        // initialize extension manager config
-        $this->extensionConfig = new Extension\Config();
 
         parent::boot();
     }
@@ -254,9 +246,6 @@ abstract class Kernel extends SymfonyKernel
 
         // initialize runtime cache (defined as synthetic service)
         RuntimeCache::getInstance();
-
-        // set the extension config on the container
-        $this->getContainer()->set(Extension\Config::class, $this->extensionConfig);
 
         \Pimcore::initLogger();
         \Pimcore\Cache::init();

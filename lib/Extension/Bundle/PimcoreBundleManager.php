@@ -393,10 +393,6 @@ class PimcoreBundleManager
      */
     public function canBeInstalled(PimcoreBundleInterface $bundle): bool
     {
-        if (!$this->isEnabled($bundle)) {
-            return false;
-        }
-
         if (null === $installer = $this->loadBundleInstaller($bundle)) {
             return false;
         }
@@ -413,10 +409,6 @@ class PimcoreBundleManager
      */
     public function canBeUninstalled(PimcoreBundleInterface $bundle): bool
     {
-        if (!$this->isEnabled($bundle)) {
-            return false;
-        }
-
         if (null === $installer = $this->loadBundleInstaller($bundle)) {
             return false;
         }

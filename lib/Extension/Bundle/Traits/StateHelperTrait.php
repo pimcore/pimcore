@@ -34,10 +34,6 @@ trait StateHelperTrait
      */
     public static function isInstalled(): bool
     {
-        if (!static::isEnabled()) {
-            return false;
-        }
-
         $bundleManager = \Pimcore::getContainer()->get(PimcoreBundleManager::class);
 
         $bundle = $bundleManager->getActiveBundle(__CLASS__, false);
