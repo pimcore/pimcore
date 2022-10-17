@@ -105,6 +105,10 @@ class Imagick extends Adapter
                     // only for vector graphics
                     // the below causes problems with PSDs when target format is PNG32 (nobody knows why ;-))
                     $i->setBackgroundColor(new \ImagickPixel('transparent'));
+                    if(version_compare($this->getImageMagickVersion(),'7.1.0-32') >= 0) {
+                        // workaround for ImageMagick >= 7.1.0-32, see https://github.com/pimcore/pimcore/issues/13167
+                        $i->setBackgroundColor(new \ImagickPixel("rgba(255, 255, 255, 0.00000001)"));
+                    }
                     //for certain edge-cases simply setting the background-color to transparent does not seem to work
                     //workaround by using transparentPaintImage (somehow even works without setting a target. no clue why)
                     $i->transparentPaintImage('', 1, 0, false);
@@ -1123,5 +1127,12 @@ class Imagick extends Adapter
         } catch (\Exception $e) {
             return false;
         }
+    }
+
+    private function getImageMagickVersion(): string
+    {
+        $v = \Imagick::getVersion();
+        preg_match('/ImageMagick ([\d]+\.[\d]+\.[\d]+\-[\d]+)/', $v['versionString'], $matches);
+        return $matches[1];
     }
 }
