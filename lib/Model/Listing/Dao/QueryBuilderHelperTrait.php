@@ -43,6 +43,9 @@ trait QueryBuilderHelperTrait
         }
     }
 
+    /**
+     * @internal
+     */
     private function applyConditionsToQueryBuilder(QueryBuilder $queryBuilder): void
     {
         $condition = $this->model->getCondition();
@@ -74,6 +77,9 @@ trait QueryBuilderHelperTrait
         }
     }
 
+    /**
+     * @internal
+     */
     private function applyGroupByToQueryBuilder(QueryBuilder $queryBuilder): void
     {
         $groupBy = $this->model->getGroupBy();
@@ -82,6 +88,9 @@ trait QueryBuilderHelperTrait
         }
     }
 
+    /**
+     * @internal
+     */
     private function applyOrderByToQueryBuilder(QueryBuilder $queryBuilder): void
     {
         $orderKey = $this->model->getOrderKey();
@@ -109,6 +118,9 @@ trait QueryBuilderHelperTrait
         }
     }
 
+    /**
+     * @internal
+     */
     private function applyLimitToQueryBuilder(QueryBuilder $queryBuilder): void
     {
         $queryBuilder->setFirstResult($this->model->getOffset());
