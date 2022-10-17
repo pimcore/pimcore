@@ -79,6 +79,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Areabricks] The default template location of `AbstractTemplateAreabrick` is now `TEMPLATE_LOCATION_GLOBAL`.
 - [Config] Rename config files from `*.yml` to `*.yaml`. Note that we now use `system.yaml` as config file and not `system.yml`
 - [Childs Compatibility] Removed `getChilds`, `setChilds` and `hasChild` use `getChildren`, `setChildren` and `hasChildren` instead.
+- [DataObjects] Removed deprecated preview url in class editor.
 - [DataObjects] Removed sql filter functionality for data object grid
 
 ## 10.5.8
