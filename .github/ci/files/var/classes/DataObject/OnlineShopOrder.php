@@ -133,9 +133,10 @@ protected $customized;
 
 /**
 * @param array $values
-* @return \Pimcore\Model\DataObject\OnlineShopOrder
+* @return static
 */
-public static function create($values = array()) {
+public static function create(array $values = []): static
+{
 	$object = new static();
 	$object->setValues($values);
 	return $object;
