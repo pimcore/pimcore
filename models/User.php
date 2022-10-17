@@ -630,9 +630,9 @@ final class User extends User\UserRole
     /**
      * Returns array of perspectives names related to user and all related roles
      *
-     * @return array|string[]
+     * @return string[]
      */
-    private function getMergedPerspectives()
+    private function getMergedPerspectives(): array
     {
         if (null === $this->mergedPerspectives) {
             $this->mergedPerspectives = $this->getPerspectives();
@@ -1006,7 +1006,7 @@ final class User extends User\UserRole
     /**
      * @param string|null $key
      *
-     * @return array|mixed|null|string
+     * @return mixed
      */
     public function getTwoFactorAuthentication($key = null)
     {

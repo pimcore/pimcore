@@ -235,7 +235,10 @@ class RgbaColor extends Data implements
         }
     }
 
-    private function checkColorComponent($color)
+    /**
+     * @throws Model\Element\ValidationException
+     */
+    private function checkColorComponent(?int $color): void
     {
         if (!is_null($color)) {
             if (!($color >= 0 && $color <= 255)) {

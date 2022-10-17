@@ -354,10 +354,7 @@ class Link extends Model\Document
         return $this->setElement($object);
     }
 
-    /**
-     * @return Model\Element\ElementInterface|null
-     */
-    private function setObjectFromId()
+    private function setObjectFromId(): ?Model\Element\ElementInterface
     {
         try {
             if ($this->internal) {

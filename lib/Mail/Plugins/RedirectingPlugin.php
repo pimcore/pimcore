@@ -114,10 +114,8 @@ final class RedirectingPlugin
 
     /**
      * Appends debug information to message
-     *
-     * @param Mail $message
      */
-    private function appendDebugInformation(Mail $message)
+    private function appendDebugInformation(Mail $message): void
     {
         if ($message->isPreventingDebugInformationAppending() != true) {
             $originalData = [];
@@ -163,10 +161,8 @@ final class RedirectingPlugin
 
     /**
      * Sets the sender and receiver information of the mail to keep the log searchable for the original data.
-     *
-     * @param Mail $message
      */
-    private function setSenderAndReceiversParams($message)
+    private function setSenderAndReceiversParams($message): void
     {
         $originalData = $message->getOriginalData();
 
@@ -179,10 +175,8 @@ final class RedirectingPlugin
 
     /**
      * removes debug information from message and resets it
-     *
-     * @param Mail $message
      */
-    private function removeDebugInformation(Mail $message)
+    private function removeDebugInformation(Mail $message): void
     {
         $originalData = $message->getOriginalData();
 

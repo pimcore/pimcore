@@ -133,7 +133,7 @@ class CodeCollector
         $this->enrichBlock($siteId->getConfigKey(), $codeBlock, $block);
     }
 
-    private function enrichBlock(string $configKey, CodeBlock $codeBlock, string $block)
+    private function enrichBlock(string $configKey, CodeBlock $codeBlock, string $block): void
     {
         if (!isset($this->codeParts[$configKey])) {
             return;

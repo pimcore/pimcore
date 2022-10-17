@@ -478,14 +478,9 @@ class MiscController extends AdminController
     }
 
     /**
-     * @param Request $request
-     * @param string $paramName
-     *
-     * @return string
-     *
      * @throws \Exception
      */
-    private function getFileexplorerPath(Request $request, $paramName = 'node')
+    private function getFileexplorerPath(Request $request, string $paramName = 'node'): string
     {
         $path = preg_replace("/^\/fileexplorer/", '', $request->get($paramName));
         $path = resolvePath(PIMCORE_PROJECT_ROOT . $path);

@@ -154,13 +154,7 @@ class LogController extends AdminController implements KernelControllerEventInte
         ]);
     }
 
-    /**
-     * @param string|null $date
-     * @param string|null $time
-     *
-     * @return \DateTime|null
-     */
-    private function parseDateObject($date = null, $time = null)
+    private function parseDateObject(?string $date, ?string $time): ?\DateTime
     {
         if (empty($date)) {
             return null;
@@ -180,12 +174,7 @@ class LogController extends AdminController implements KernelControllerEventInte
         return $dateTime;
     }
 
-    /**
-     * @param int $priority
-     *
-     * @return string
-     */
-    private function getPriorityName($priority)
+    private function getPriorityName(int $priority): string
     {
         $p = ApplicationLoggerDb::getPriorities();
 

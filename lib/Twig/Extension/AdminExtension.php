@@ -77,12 +77,7 @@ class AdminExtension extends AbstractExtension
         return $returnHtml;
     }
 
-    /**
-     * @param string $url
-     *
-     * @return string
-     */
-    private function getScriptTag($url): string
+    private function getScriptTag(string $url): string
     {
         return '<script src="' . $url . '"></script>' . "\n";
     }

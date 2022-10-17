@@ -41,10 +41,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->insert(self::TABLE_NAME, $data);
     }
 
-    /**
-     * @return array
-     */
-    private function getValidObjectVars()
+    private function getValidObjectVars(): array
     {
         $data = $this->model->getObjectVars();
 

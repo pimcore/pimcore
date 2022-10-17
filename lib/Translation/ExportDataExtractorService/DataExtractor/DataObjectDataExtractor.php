@@ -70,13 +70,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
     /**
      * used to extract data either with enabled or disabled inheritance
      *
-     * @param TranslationItem $translationItem
-     * @param string $sourceLanguage
      * @param string[] $targetLanguages
-     * @param array|null $exportAttributes
-     * @param bool $inherited
-     *
-     * @return AttributeSet
      *
      * @throws \Exception
      */

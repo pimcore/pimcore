@@ -820,13 +820,9 @@ pimcore.element.helpers.gridColumnConfig = {
         var condition = "";
         var searchQuery = this.searchField ? this.searchField.getValue() : "";
 
-        if (this.sqlFilter) {
-            condition = this.sqlEditor.getValue();
-        } else {
-            var filterData = this.store.getFilters().items;
-            if (filterData.length > 0) {
-                filters = this.store.getProxy().encodeFilters(filterData);
-            }
+        var filterData = this.store.getFilters().items;
+        if (filterData.length > 0) {
+            filters = this.store.getProxy().encodeFilters(filterData);
         }
 
         var params = {

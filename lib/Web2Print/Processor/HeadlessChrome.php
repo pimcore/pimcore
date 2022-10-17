@@ -114,9 +114,6 @@ class HeadlessChrome extends Processor
         return $output->get();
     }
 
-    /**
-     * @return array
-     */
     private function getDefaultOptions(): array
     {
         return [

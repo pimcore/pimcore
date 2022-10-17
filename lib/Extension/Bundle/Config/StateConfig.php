@@ -87,8 +87,6 @@ final class StateConfig
 
     /**
      * Loads bundles which are defined in configuration
-     *
-     * @return array
      */
     private function getBundlesFromConfig(): array
     {
@@ -155,7 +153,7 @@ final class StateConfig
         $this->config->saveConfig($config);
     }
 
-    private function updateBundleState(PimcoreConfig\Config $config, string $bundle, array $options)
+    private function updateBundleState(PimcoreConfig\Config $config, string $bundle, array $options): void
     {
         if (!isset($config->bundle)) {
             $config->bundle = new PimcoreConfig\Config([], true);
@@ -179,13 +177,9 @@ final class StateConfig
 
     /**
      * Prepares options for writing. If all options besides enabled are the same as the default
-     * value, just the state will be written as bool,
-     *
-     * @param array $options
-     *
-     * @return array|bool
+     * value, just the state will be written as bool.
      */
-    private function prepareWriteOptions(array $options)
+    private function prepareWriteOptions(array $options): bool|array
     {
         $options = $this->normalizeOptions($options);
 

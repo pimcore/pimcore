@@ -572,7 +572,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         return $this->adminJson(['success' => $success]);
     }
 
-    private function createRedirectForFormerPath(Request $request, Document $document, string $oldPath, Document $oldDocument)
+    private function createRedirectForFormerPath(Request $request, Document $document, string $oldPath, Document $oldDocument): void
     {
         if ($document instanceof Document\Page || $document instanceof Document\Hardlink) {
             if ($request->get('create_redirects') === 'true' && $this->getAdminUser()->isAllowed('redirects')) {
@@ -617,7 +617,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         }
     }
 
-    private function doCreateRedirectForFormerPath(string $source, int $targetId, ?Site $sourceSite, ?Site $targetSite)
+    private function doCreateRedirectForFormerPath(string $source, int $targetId, ?Site $sourceSite, ?Site $targetSite): void
     {
         $redirect = new Redirect();
         $redirect->setType(Redirect::TYPE_AUTO_CREATE);
@@ -699,7 +699,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
     }
 
     /**
-     * @Route("/doc-types", name="pimcore_admin_document_document_doctypes", methods={"PUT", "POST","DELETE"})
+     * @Route("/doc-types", name="pimcore_admin_document_document_doctypes", methods={"PUT", "POST", "DELETE"})
      *
      * @param Request $request
      *
@@ -710,19 +710,17 @@ class DocumentController extends ElementControllerBase implements KernelControll
         if ($request->get('data')) {
             $this->checkPermission('document_types');
 
-            if ($request->get('xaction') == 'destroy') {
-                $data = $this->decodeJson($request->get('data'));
-                $id = $data['id'];
-                $type = Document\DocType::getById($id);
+            $data = $this->decodeJson($request->get('data'));
+
+            if ($request->get('xaction') === 'destroy') {
+                $type = Document\DocType::getById($data['id']);
                 if (!$type->isWriteable()) {
                     throw new ConfigWriteException();
                 }
                 $type->delete();
 
                 return $this->adminJson(['success' => true, 'data' => []]);
-            } elseif ($request->get('xaction') == 'update') {
-                $data = $this->decodeJson($request->get('data'));
-
+            } elseif ($request->get('xaction') === 'update') {
                 // save type
                 $type = Document\DocType::getById($data['id']);
 
@@ -737,12 +735,11 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 $responseData['writeable'] = $type->isWriteable();
 
                 return $this->adminJson(['data' => $responseData, 'success' => true]);
-            } elseif ($request->get('xaction') == 'create') {
+            } elseif ($request->get('xaction') === 'create') {
                 if (!(new DocType())->isWriteable()) {
                     throw new ConfigWriteException();
                 }
 
-                $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
 
                 // save type
@@ -1423,7 +1420,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         ]);
     }
 
-    private function getTranslationTreeNodeConfig($document, array $languages, array $translations = null)
+    private function getTranslationTreeNodeConfig(Document $document, array $languages, array $translations = null): array
     {
         $service = new Document\Service();
 
@@ -1611,12 +1608,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         ]);
     }
 
-    /**
-     * @param Document $document
-     *
-     * @return array
-     */
-    private function getSeoNodeConfig($document)
+    private function getSeoNodeConfig(Document $document): array
     {
         $nodeConfig = $this->getTreeNodeConfig($document);
 

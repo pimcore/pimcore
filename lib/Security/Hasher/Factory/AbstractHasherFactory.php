@@ -44,7 +44,7 @@ abstract class AbstractHasherFactory implements PasswordHasherFactoryInterface
 
     /**
      * @param string $className
-     * @param array|mixed $arguments
+     * @param mixed $arguments
      */
     public function __construct($className, $arguments = null)
     {

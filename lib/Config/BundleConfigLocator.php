@@ -86,13 +86,6 @@ class BundleConfigLocator
         return $result;
     }
 
-    /**
-     * @param string $name
-     * @param string $directory
-     * @param bool $includeEnvironment
-     *
-     * @return Finder
-     */
     private function buildContainerConfigFinder(string $name, string $directory, bool $includeEnvironment = false): Finder
     {
         if ($includeEnvironment) {

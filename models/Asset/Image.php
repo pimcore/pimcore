@@ -241,10 +241,7 @@ EOT;
         return $path;
     }
 
-    /**
-     * @return string
-     */
-    private function getLowQualityPreviewStoragePath()
+    private function getLowQualityPreviewStoragePath(): string
     {
         return sprintf(
             '%s/%s/image-thumb__%s__-low-quality-preview.svg',
@@ -508,10 +505,8 @@ EOT;
 
     /**
      * Checks if this object represents an animated gif file
-     *
-     * @return bool
      */
-    private function isAnimatedGif()
+    private function isAnimatedGif(): bool
     {
         $isAnimated = false;
 
@@ -536,10 +531,8 @@ EOT;
 
     /**
      * Checks if this object represents an animated png file
-     *
-     * @return bool
      */
-    private function isAnimatedPng()
+    private function isAnimatedPng(): bool
     {
         $isAnimated = false;
 

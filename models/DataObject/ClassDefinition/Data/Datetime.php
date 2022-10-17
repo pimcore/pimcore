@@ -98,7 +98,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return \Carbon\Carbon|null
+     * @return Carbon|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -150,14 +150,9 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         return null;
     }
 
-    /**
-     * @param int $timestamp
-     *
-     * @return \Carbon\Carbon
-     */
-    private function getDateFromTimestamp($timestamp)
+    private function getDateFromTimestamp(float|int|string $timestamp): Carbon
     {
-        $date = new \Carbon\Carbon();
+        $date = new Carbon();
         $date->setTimestamp($timestamp);
 
         return $date;
@@ -170,7 +165,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return \Carbon\Carbon|null
+     * @return Carbon|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {

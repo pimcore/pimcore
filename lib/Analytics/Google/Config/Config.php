@@ -102,12 +102,7 @@ class Config
         return true;
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @return string|null
-     */
-    private function normalizeStringValue($value)
+    private function normalizeStringValue(mixed $value): ?string
     {
         if (null === $value) {
             return $value;
