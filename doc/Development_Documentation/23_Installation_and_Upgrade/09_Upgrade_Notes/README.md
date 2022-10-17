@@ -80,6 +80,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Config] Rename config files from `*.yml` to `*.yaml`. Note that we now use `system.yaml` as config file and not `system.yml`
 - [Childs Compatibility] Removed `getChilds`, `setChilds` and `hasChild` use `getChildren`, `setChildren` and `hasChildren` instead.
 - [DataObjects] Removed deprecated preview url in class editor.
+- [DataObjects] Removed sql filter functionality for data object grid
 
 ## 10.5.8
 - [Nginx] Static pages nginx config has been updated to fix the issue for home static page generation. please adapt the following configuration:
