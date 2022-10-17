@@ -1105,7 +1105,7 @@ class Service extends Model\AbstractModel
         $key = str_replace('/', '-', $key);
 
         // replace some other special characters
-        $key = preg_replace('/[\t\n\r]/', '', $key);
+        $key = preg_replace('/[\t\n\r\f\v]/', '', $key);
 
         if ($type === 'object') {
             $key = preg_replace('/[<>]/', '-', $key);
