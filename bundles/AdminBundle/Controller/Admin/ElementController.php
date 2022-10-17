@@ -859,39 +859,6 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/get-deeplink", name="pimcore_admin_element_getdeeplink", methods={"POST"})
-     */
-    public function getDeepLink(Request $request): Response
-    {
-        $adminEntryPointRoute = $this->getParameter('pimcore_admin.custom_admin_route_name');
-
-        try {
-            // try to generate deep link for custom admin point
-            $url         = $this->generateUrl($adminEntryPointRoute, [], UrlGeneratorInterface::ABSOLUTE_URL);
-            $deepLinkUrl = sprintf(
-                '%s?deeplink=%s',
-                $url,
-                $request->get('target')
-            );
-        } catch (\Exception) {
-            // use default deep link route as fallback
-            $url         = $this->generateUrl('pimcore_admin_login_deeplink',[], UrlGeneratorInterface::ABSOLUTE_URL);
-            $deepLinkUrl = sprintf(
-                '%s?%s',
-                $url,
-                $request->get('target')
-            );
-        }
-
-        return $this->adminJson(
-            [
-                'success' => true,
-                'url' => $deepLinkUrl,
-            ]
-        );
-    }
-
-    /**
      * @param DataObject\Concrete $source
      * @param array $context
      *

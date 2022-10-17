@@ -2736,28 +2736,12 @@ pimcore.helpers.isValidPassword = function (pass) {
     return true;
 };
 
-/**
- * @deprecated
- */
 pimcore.helpers.getDeeplink = function (type, id, subtype) {
-    console.error('pimcore.helpers.getDeeplink() function is deprecated. It will be removed in Pimcore 11.');
-
     let target = type + "_" + id + "_" + subtype;
-    let url = Routing.generate('pimcore_admin_login_deeplink', {}, true) + '?' + target;
+    let url    = Routing.generate('pimcore_admin_login_deeplink', {}, true) + '?' + target;
 
-    let response = Ext.Ajax.request({
-        method: 'POST',
-        async: false,
-        url: Routing.generate('pimcore_admin_element_getdeeplink'),
-        params: {
-            target: target
-        }
-    });
-
-    let data = Ext.decode(response.responseText);
-
-    if (data.success) {
-        url = data.url;
+    if (pimcore.settings['custom_admin_entrypoint_url'] !== null) {
+        url = pimcore.settings['custom_admin_entrypoint_url'] + '?deeplink=' + target;
     }
 
     return url;

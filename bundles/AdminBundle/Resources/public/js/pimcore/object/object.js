@@ -506,19 +506,14 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 }
             }
 
-            this.setDeeplink("object_" + this.data.general.o_id + "_object");
-
-            this.toolbarButtons.metainfo = new Ext.SplitButton(
-                {
-                    tooltip: t("show_metainfo"),
-                    iconCls: "pimcore_material_icon_info pimcore_material_icon",
-                    scale: "medium",
-                    handler: this.showMetaInfo.bind(this),
-                    menu: this.getMetaInfoMenuItems()
-                }
-            );
-
-            buttons.push(this.toolbarButtons.metainfo);
+            buttons.push({
+                xtype: "splitbutton",
+                tooltip: t("show_metainfo"),
+                iconCls: "pimcore_material_icon_info pimcore_material_icon",
+                scale: "medium",
+                handler: this.showMetaInfo.bind(this),
+                menu: this.getMetaInfoMenuItems()
+            });
 
             if (this.data.general.showFieldLookup) {
                 buttons.push({
@@ -917,7 +912,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             creationdate: this.data.general.o_creationDate,
             usermodification: this.data.general.o_userModification,
             userowner: this.data.general.o_userOwner,
-            deeplink: this.getDeeplink()
+            deeplink: pimcore.helpers.getDeeplink("object", this.data.general.o_id, "object")
         };
     },
 

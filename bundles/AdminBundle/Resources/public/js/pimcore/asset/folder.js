@@ -291,19 +291,14 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                 });
             }
 
-            this.setDeeplink("asset_" + this.data.id + "_" + this.data.type);
-
-            this.toolbarButtons.metainfo = new Ext.SplitButton(
-                {
-                    tooltip: t("show_metainfo"),
-                    iconCls: "pimcore_material_icon_info pimcore_material_icon",
-                    scale: "medium",
-                    handler: this.showMetaInfo.bind(this),
-                    menu: this.getMetaInfoMenuItems()
-                }
-            );
-
-            buttons.push(this.toolbarButtons.metainfo);
+            buttons.push({
+                xtype: "splitbutton",
+                tooltip: t("show_metainfo"),
+                iconCls: "pimcore_material_icon_info pimcore_material_icon",
+                scale: "medium",
+                handler: this.showMetaInfo.bind(this),
+                menu: this.getMetaInfoMenuItems()
+            });
 
             buttons.push("-");
             buttons.push({
@@ -334,7 +329,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             creationdate: this.data.creationDate,
             usermodification: this.data.userModification,
             userowner: this.data.userOwner,
-            deeplink: this.getDeeplink()
+            deeplink: pimcore.helpers.getDeeplink("asset", this.data.id, this.data.type)
         };
     },
 
