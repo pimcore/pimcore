@@ -149,6 +149,7 @@ class EditableHandler implements LoggerAwareInterface
     }
 
     /**
+     * @deprecated With the removal of extension config states, this is no longer of use
      * @param Editable $editable
      * @param AreabrickInterface|string|bool $brick
      *
@@ -157,10 +158,10 @@ class EditableHandler implements LoggerAwareInterface
     public function isBrickEnabled(Editable $editable, $brick)
     {
         if ($brick instanceof AreabrickInterface) {
-            $brick = $brick->getId();
+            return true;
         }
 
-        return $this->brickManager->isEnabled($brick);
+        return false;
     }
 
     /**
