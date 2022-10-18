@@ -44,7 +44,7 @@ class InstallCommand extends Command
 
     private PimcoreStyle $io;
 
-    private array $options;
+    private ?array $options = null;
 
     public function __construct(
         Installer $installer,
