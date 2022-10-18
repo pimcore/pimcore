@@ -57,3 +57,4 @@ pimcore.object.tags.country = Class.create(pimcore.object.tags.select, {
         };
     }
 });
+
