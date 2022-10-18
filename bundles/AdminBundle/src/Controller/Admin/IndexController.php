@@ -418,12 +418,9 @@ class IndexController extends AdminController implements KernelResponseEventInte
     }
 
     /**
-     * @param array $settings
-     * @param Config $config
-     *
      * @return $this
      */
-    protected function addNotificationSettings(array &$settings, Config $config)
+    protected function addNotificationSettings(array &$settings, Config $config): static
     {
         $enabled = (bool)$config['notifications']['enabled'];
 
