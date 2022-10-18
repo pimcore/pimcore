@@ -379,7 +379,7 @@
                                 "width": 400,
                                 "height": "",
                                 "maxLength": null,
-                                "showCharCount": null,
+                                "showCharCount": false,
                                 "excludeFromSearchIndex": false,
                                 "queryColumnType": "longtext",
                                 "columnType": "longtext",
