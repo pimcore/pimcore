@@ -84,7 +84,7 @@ class WkHtmlToPdf extends Processor
     }
 
     /**
-     * {@internal}
+     * @internal
      */
     protected function buildPdf(Document\PrintAbstract $document, $config)
     {
@@ -113,7 +113,7 @@ class WkHtmlToPdf extends Processor
     }
 
     /**
-     * {@internal}
+     * @internal
      */
     public function getProcessingOptions()
     {
@@ -143,7 +143,7 @@ class WkHtmlToPdf extends Processor
     }
 
     /**
-     * {@internal}
+     * @internal
      */
     public function getPdfFromString($html, $params = [], $returnFilePath = false)
     {
