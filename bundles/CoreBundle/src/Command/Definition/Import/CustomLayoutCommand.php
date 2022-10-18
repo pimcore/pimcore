@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -43,7 +44,7 @@ class CustomLayoutCommand extends AbstractStructureImportCommand
      *
      * @return string
      */
-    protected function getType()
+    protected function getType(): string
     {
         return 'Customlayout';
     }
@@ -55,7 +56,7 @@ class CustomLayoutCommand extends AbstractStructureImportCommand
      *
      * @return string|null
      */
-    protected function getDefinitionName($filename)
+    protected function getDefinitionName(string $filename): ?string
     {
         $parts = [];
         if (preg_match('/^custom_definition_(.*)_export\.json$/', $filename, $parts) === 1) {
@@ -70,27 +71,23 @@ class CustomLayoutCommand extends AbstractStructureImportCommand
      *
      * @param string $name
      *
-     * @throws \Exception
-     *
      * @return null|AbstractModel
+     *@throws \Exception
+     *
      */
-    protected function loadDefinition($name)
+    protected function loadDefinition(string $name): ?AbstractModel
     {
         return CustomLayout::getByName($name);
     }
 
-    /**
-     * @param string $name
-     *
-     * @return AbstractModel|null
-     */
-    protected function createDefinition($name)
+    protected function createDefinition(string $name): CustomLayout
     {
+        $newLayout = null;
         $className = $this->input->getOption('class-name');
         if ($className) {
             $class = DataObject\ClassDefinition::getByName($className);
             if ($class) {
-                return CustomLayout::create(
+                $newLayout = CustomLayout::create(
                     [
                         'classId' => $class->getId(),
                         'name' => $name,
@@ -99,18 +96,18 @@ class CustomLayoutCommand extends AbstractStructureImportCommand
             }
         }
 
-        return null;
+        return $newLayout;
     }
 
     /**
-     * @param AbstractModel|null $customLayout
+     * @param AbstractModel $definition
      * @param string|null $json
      *
      * @return bool
      */
-    protected function import(AbstractModel $customLayout = null, $json = null)
+    protected function import(AbstractModel $definition, string $json = null): bool
     {
-        if (!$customLayout instanceof CustomLayout) {
+        if (!$definition instanceof CustomLayout) {
             return false;
         }
 
@@ -119,12 +116,12 @@ class CustomLayoutCommand extends AbstractStructureImportCommand
         try {
             $layout = DataObject\ClassDefinition\Service::generateLayoutTreeFromArray($importData['layoutDefinitions'], true);
 
-            $customLayout->setLayoutDefinitions($layout);
-            $customLayout->setDescription($importData['description']);
-            $customLayout->setUserModification(0);
-            $customLayout->setUserOwner(0);
+            $definition->setLayoutDefinitions($layout);
+            $definition->setDescription($importData['description']);
+            $definition->setUserModification(0);
+            $definition->setUserOwner(0);
 
-            $customLayout->save();
+            $definition->save();
 
             return true;
         } catch (\Exception $e) {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,38 +29,23 @@ class MaintenancePageListener
 {
     use ResponseInjectionTrait;
 
-    /**
-     * @var string
-     */
-    protected $templateCode = null;
+    protected ?string $templateCode = null;
 
-    /**
-     * @param KernelInterface $kernel
-     */
     public function __construct(protected KernelInterface $kernel)
     {
     }
 
-    /**
-     * @param string $code
-     */
-    public function setTemplateCode($code)
+    public function setTemplateCode(string $code): void
     {
         $this->templateCode = $code;
     }
 
-    /**
-     * @return string
-     */
-    public function getTemplateCode()
+    public function getTemplateCode(): ?string
     {
         return $this->templateCode;
     }
 
-    /**
-     * @param string $path
-     */
-    public function loadTemplateFromResource($path)
+    public function loadTemplateFromResource(string $path): void
     {
         $templateFile = $this->kernel->locateResource($path);
         if (file_exists($templateFile)) {
@@ -67,10 +53,7 @@ class MaintenancePageListener
         }
     }
 
-    /**
-     * @param RequestEvent $event
-     */
-    public function onKernelRequest(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;

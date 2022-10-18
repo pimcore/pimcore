@@ -50,18 +50,12 @@ class GoogleTagManagerListener
     use PimcoreContextAwareTrait;
     use PreviewRequestTrait;
 
-    /**
-     * @var array
-     */
-    private $headBlocks = [
+    private array $headBlocks = [
         self::BLOCK_HEAD_BEFORE_SCRIPT_TAG,
         self::BLOCK_HEAD_AFTER_SCRIPT_TAG,
     ];
 
-    /**
-     * @var array
-     */
-    private $bodyBlocks = [
+    private array $bodyBlocks = [
         self::BLOCK_BODY_BEFORE_NOSCRIPT_TAG,
         self::BLOCK_BODY_AFTER_NOSCRIPT_TAG,
     ];
@@ -73,7 +67,7 @@ class GoogleTagManagerListener
     ) {
     }
 
-    public function onKernelResponse(ResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
         if (!$this->isEnabled()) {
             return;

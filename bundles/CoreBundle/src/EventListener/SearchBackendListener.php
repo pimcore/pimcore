@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -56,9 +57,6 @@ class SearchBackendListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param ElementEventInterface $e
-     */
     public function onPostAddUpdateElement(ElementEventInterface $e)
     {
         //do not update index when auto save or only saving version
@@ -76,9 +74,6 @@ class SearchBackendListener implements EventSubscriberInterface
         );
     }
 
-    /**
-     * @param ElementEventInterface $e
-     */
     public function onPreDeleteElement(ElementEventInterface $e)
     {
         $searchEntry = Data::getForElement($e->getElement());

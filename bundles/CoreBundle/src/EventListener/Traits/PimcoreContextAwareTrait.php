@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,17 +25,14 @@ use Symfony\Component\HttpFoundation\Request;
  */
 trait PimcoreContextAwareTrait
 {
-    /**
-     * @var PimcoreContextResolver
-     */
-    private $pimcoreContextResolver;
+    private PimcoreContextResolver $pimcoreContextResolver;
 
     /**
      * @required
      *
      * @param PimcoreContextResolver $contextResolver
      */
-    public function setPimcoreContextResolver(PimcoreContextResolver $contextResolver)
+    public function setPimcoreContextResolver(PimcoreContextResolver $contextResolver): void
     {
         $this->pimcoreContextResolver = $contextResolver;
     }
@@ -43,16 +41,12 @@ trait PimcoreContextAwareTrait
      * Check if the request matches the given pimcore context (e.g. admin)
      *
      * @param Request $request
-     * @param string|array $context
+     * @param array|string $context
      *
      * @return bool
      */
-    protected function matchesPimcoreContext(Request $request, $context)
+    protected function matchesPimcoreContext(Request $request, array|string $context): bool
     {
-        if (null === $this->pimcoreContextResolver) {
-            throw new RuntimeException('Missing pimcore context resolver. Is the listener properly configured?');
-        }
-
         return $this->pimcoreContextResolver->matchesPimcoreContext($request, $context);
     }
 }
