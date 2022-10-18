@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,6 +26,9 @@ final class Version20201113143914 extends AbstractMigration
     private $tables = ['documents_email', 'documents_newsletter', 'documents_page',
         'documents_snippet', 'documents_printpage', ];
 
+    /**
+     * @param Schema $schema
+     */
     public function up(Schema $schema): void
     {
         foreach ($this->tables as $table) {
@@ -40,6 +42,9 @@ final class Version20201113143914 extends AbstractMigration
         }
     }
 
+    /**
+     * @param Schema $schema
+     */
     public function down(Schema $schema): void
     {
         $this->write(sprintf('Unable to rollback %s as the data was already deleted.', self::class));

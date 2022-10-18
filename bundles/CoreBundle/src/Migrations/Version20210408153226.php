@@ -25,6 +25,9 @@ use Doctrine\Migrations\AbstractMigration;
  */
 class Version20210408153226 extends AbstractMigration
 {
+    /**
+     * @param Schema $schema
+     */
     public function up(Schema $schema): void
     {
         $versionsTable = $schema->getTable('versions');
@@ -38,6 +41,9 @@ class Version20210408153226 extends AbstractMigration
         }
     }
 
+    /**
+     * @param Schema $schema
+     */
     public function down(Schema $schema): void
     {
         $this->addSql('ALTER TABLE `versions` DROP COLUMN `autoSave`');

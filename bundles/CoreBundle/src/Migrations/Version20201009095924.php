@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,6 +23,9 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20201009095924 extends AbstractMigration
 {
+    /**
+     * @param Schema $schema
+     */
     public function up(Schema $schema): void
     {
         if ($schema->getTable('users')->hasColumn('apiKey')) {
@@ -31,6 +33,9 @@ final class Version20201009095924 extends AbstractMigration
         }
     }
 
+    /**
+     * @param Schema $schema
+     */
     public function down(Schema $schema): void
     {
         $this->addSql('ALTER TABLE `users` ADD COLUMN `apiKey` varchar(255) DEFAULT NULL;');

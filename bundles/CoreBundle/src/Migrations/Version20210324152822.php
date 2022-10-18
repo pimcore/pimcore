@@ -26,6 +26,9 @@ use Pimcore\Db;
  */
 final class Version20210324152822 extends AbstractMigration
 {
+    /**
+     * @param Schema $schema
+     */
     public function up(Schema $schema): void
     {
         $db = Db::get();
@@ -40,6 +43,9 @@ final class Version20210324152822 extends AbstractMigration
         }
     }
 
+    /**
+     * @param Schema $schema
+     */
     public function down(Schema $schema): void
     {
         $db = Db::get();
