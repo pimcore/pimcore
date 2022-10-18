@@ -149,6 +149,7 @@ class EditableHandler implements LoggerAwareInterface
     }
 
     /**
+     * @deprecated 
      * @param Editable $editable
      * @param AreabrickInterface|string|bool $brick
      *
