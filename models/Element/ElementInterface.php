@@ -249,11 +249,9 @@ interface ElementInterface extends ModelInterface
     public function __isBasedOnLatestData();
 
     /**
-     * @param int|null $versionCount
-     *
      * @return $this
      */
-    public function setVersionCount(?int $versionCount): self;
+    public function setVersionCount(?int $versionCount): static;
 
     /**
      * @return int
