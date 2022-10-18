@@ -425,7 +425,10 @@ class IndexController extends AdminController implements KernelResponseEventInte
      */
     protected function addNotificationSettings(array &$settings, Config $config)
     {
-        $settings['checknewnotification_enabled'] = (bool) $config['notifications']['check_new_notification']['enabled'];
+        $enabled = (bool)$config['notifications']['enabled'];
+
+        $settings['notifications_enabled'] = $enabled;
+        $settings['checknewnotification_enabled'] = $enabled && (bool) $config['notifications']['check_new_notification']['enabled'];
 
         // convert the config parameter interval (seconds) in milliseconds
         $settings['checknewnotification_interval'] = $config['notifications']['check_new_notification']['interval'] * 1000;

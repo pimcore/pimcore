@@ -110,3 +110,43 @@ public function defaultAction(
 }
 ```
 
+### Configuration
+
+The configuration allow to enable/disable the *Notifications menu* in the toolbar
+and the *Check of new notifications* (url: /admin/notification/find-last-unread).
+It takes place in the `pimcore_admin` configuration within the section `notifications`.
+
+default:
+```yaml
+pimcore_admin:
+    notifications:
+        enabled: true
+        check_new_notification:
+            enabled: true
+            interval: 30
+```
+
+#### Example configurations:
+
+* Disable notifications menu and check of new unread notifications:
+```yaml
+pimcore_admin:
+    notifications:
+        enabled: false
+```
+
+* Disable only the check of new unread notifications:
+```yaml
+pimcore_admin:
+    notifications:
+        check_new_notification:
+            enabled: false
+```
+
+* Change interval to get new unread notifications:
+```yaml
+pimcore_admin:
+    notifications:
+        check_new_notification:
+            interval: 60
+```

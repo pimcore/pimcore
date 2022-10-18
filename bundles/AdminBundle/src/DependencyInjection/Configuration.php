@@ -407,6 +407,7 @@ final class Configuration implements ConfigurationInterface
 
         $notificationsNode
             ->addDefaultsIfNotSet()
+            ->canBeDisabled()
             ->children()
                 ->arrayNode('check_new_notification')
                     ->canBeDisabled()
