@@ -24,32 +24,14 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class InstallerStepEvent extends Event
 {
-    /**
-     * @var string
-     */
-    private $type;
+    private string $type;
 
-    /**
-     * @var string
-     */
-    private $message;
+    private string $message;
 
-    /**
-     * @var int
-     */
-    private $step;
+    private int $step;
 
-    /**
-     * @var int
-     */
-    private $totalSteps;
+    private int $totalSteps;
 
-    /**
-     * @param string $type
-     * @param string $message
-     * @param int $step
-     * @param int $totalSteps
-     */
     public function __construct(
         string $type,
         string $message,
