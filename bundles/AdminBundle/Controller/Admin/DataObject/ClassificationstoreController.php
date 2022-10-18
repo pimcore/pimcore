@@ -279,7 +279,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
             $searchFilterConditions = [];
 
             $searchTerms = array_merge([$searchfilter], $this->getTranslatedSearchFilterTerms($searchfilter));
-            foreach($searchTerms as $searchFilterTerm) {
+            foreach ($searchTerms as $searchFilterTerm) {
                 $searchFilterConditions[] = 'name LIKE '.$db->quote('%'.$searchFilterTerm.'%').' OR description LIKE '.$db->quote('%'.$searchFilterTerm.'%');
             }
 
@@ -1617,7 +1617,8 @@ class ClassificationstoreController extends AdminController implements KernelCon
     /**
      * @return string[]
      */
-    private function getTranslatedSearchFilterTerms(string $searchTerm): array {
+    private function getTranslatedSearchFilterTerms(string $searchTerm): array
+    {
         $terms = [];
 
         $user = Admin::getCurrentUser();
