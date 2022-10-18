@@ -41,11 +41,9 @@ final class DataObjectRoute extends Route implements RouteObjectInterface
     }
 
     /**
-     * @param Concrete $object
-     *
      * @return $this
      */
-    public function setObject(Concrete $object): self
+    public function setObject(Concrete $object): static
     {
         $this->object = $object;
 
@@ -61,11 +59,9 @@ final class DataObjectRoute extends Route implements RouteObjectInterface
     }
 
     /**
-     * @param UrlSlug $slug
-     *
      * @return $this
      */
-    public function setSlug(UrlSlug $slug): self
+    public function setSlug(UrlSlug $slug): static
     {
         $this->slug = $slug;
 
@@ -81,11 +77,9 @@ final class DataObjectRoute extends Route implements RouteObjectInterface
     }
 
     /**
-     * @param Site|null $site
-     *
      * @return $this
      */
-    public function setSite(?Site $site): self
+    public function setSite(?Site $site): static
     {
         $this->site = $site;
 

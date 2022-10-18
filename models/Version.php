@@ -699,9 +699,9 @@ final class Version extends AbstractModel
     }
 
     /**
-     * @param bool $autoSave
+     * @return $this
      */
-    public function setAutoSave(bool $autoSave): self
+    public function setAutoSave(bool $autoSave): static
     {
         $this->autoSave = $autoSave;
 

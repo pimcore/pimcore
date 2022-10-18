@@ -193,13 +193,6 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @var string|null
      */
-    public $previewUrl;
-
-    /**
-     * @internal
-     *
-     * @var string|null
-     */
     public $group;
 
     /**
@@ -1187,26 +1180,6 @@ final class ClassDefinition extends Model\AbstractModel
         }
 
         return $this;
-    }
-
-    /**
-     * @param string|null $previewUrl
-     *
-     * @return $this
-     */
-    public function setPreviewUrl($previewUrl)
-    {
-        $this->previewUrl = $previewUrl;
-
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getPreviewUrl()
-    {
-        return $this->previewUrl;
     }
 
     /**

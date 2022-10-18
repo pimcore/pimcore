@@ -99,12 +99,9 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
     }
 
     /**
-     * @param string $key
-     * @param array $value
-     *
      * @return $this
      */
-    public function addAllowedUrls(string $key, array $value): self
+    public function addAllowedUrls(string $key, array $value): static
     {
         if (!isset($this->allowedUrls[$key])) {
             $this->allowedUrls[$key] = [];
@@ -118,12 +115,9 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
     }
 
     /**
-     * @param string $key
-     * @param string $value
-     *
      * @return $this
      */
-    public function setCspHeader(string $key, string $value): self
+    public function setCspHeader(string $key, string $value): static
     {
         $this->cspHeaderOptions[$key] = $value;
 

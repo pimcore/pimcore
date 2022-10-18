@@ -143,7 +143,6 @@ class Service
             'listingParentClass',
             'useTraits',
             'listingUseTraits',
-            'previewUrl',
             'propertyVisibility',
             'linkGeneratorReference',
             'previewGeneratorReference',
