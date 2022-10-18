@@ -534,7 +534,7 @@ class Data extends \Pimcore\Model\AbstractModel
 
         $pathWords = str_replace([ '-', '_', '/', '.', '(', ')'], ' ', $this->getFullPath());
         $this->data .= ' ' . $pathWords;
-        $this->data = 'ID: ' . $element->getId() . "  \nPath: " . $this->getFullPath() . "  \n"  . $this->cleanupData($this->data);
+        $this->data = 'ID: ' . $element->getId() . "  \n"  . $this->cleanupData($this->data);
 
         return $this;
     }
