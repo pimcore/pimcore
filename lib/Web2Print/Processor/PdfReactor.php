@@ -88,7 +88,7 @@ class PdfReactor extends Processor
     }
 
     /**
-     * {@internal}
+     * @internal
      */
     public function getPdfFromString($html, $params = [], $returnFilePath = false)
     {
@@ -117,7 +117,7 @@ class PdfReactor extends Processor
     }
 
     /**
-     * {@internal}
+     * @internal
      */
     protected function buildPdf(Document\PrintAbstract $document, $config)
     {
@@ -167,7 +167,7 @@ class PdfReactor extends Processor
     }
 
     /**
-     * {@internal}
+     * @internal
      */
     public function getProcessingOptions()
     {
