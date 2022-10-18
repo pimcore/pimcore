@@ -58,7 +58,7 @@ class InstallCommand extends Command
 
     private function getOptions(): array
     {
-        if (!empty($this->options)) {
+        if (null !== $this->options) {
             return $this->options;
         }
 
