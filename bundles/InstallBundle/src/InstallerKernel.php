@@ -83,9 +83,6 @@ class InstallerKernel extends Kernel
         return $bundles;
     }
 
-    /**
-     * {}
-     */
     protected function configureContainer(ContainerConfigurator $configurator): void
     {
         $configurator->parameters()->set('secret', uniqid('installer-', true));
