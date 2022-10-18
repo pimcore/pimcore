@@ -3,8 +3,12 @@ Basically Elasticsearch worker works as described in the [optimized architecture
 Currently, Elasticsearch 7 (deprecated) and Elasticsearch 8 are supported. 
 
 ## Installation
+
+### Elasticsearch 7 (deprecated)
 To work properly Pimcore requires the Elasticsearch bindings, install them with: `composer require elasticsearch/elasticsearch`.
 
+### Elasticsearch 8
+To work properly Pimcore requires the Elasticsearch client, install them with: `composer require pimcore/elasticsearch-client`.
 
 ## Index Configuration
 Elasticsearch provides a couple of additional configuration options for the index to utilize elasticsearch features. 
