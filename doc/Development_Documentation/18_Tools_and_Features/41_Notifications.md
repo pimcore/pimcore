@@ -143,7 +143,7 @@ pimcore_admin:
             enabled: false
 ```
 
-* Change interval to get new unread notifications:
+* Change interval to fetch new unread notifications (in seconds):
 ```yaml
 pimcore_admin:
     notifications:
