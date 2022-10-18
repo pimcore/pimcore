@@ -33,7 +33,9 @@ Ext.define('pimcore.object.helpers.ImageGalleryPanel', {
     // private
     initEvents : function(){
         this.callParent();
-        this.dd = Ext.create('pimcore.object.helpers.ImageGalleryDropZone', this, {}, this.proxyConfig);
+        if (!this.proxyConfig.noteditable) {
+            this.dd = Ext.create('pimcore.object.helpers.ImageGalleryDropZone', this, {}, this.proxyConfig);
+        }
     },
 
     // private
