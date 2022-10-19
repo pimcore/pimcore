@@ -32,7 +32,7 @@ final class Check implements \ArrayAccess
     public $name;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $link;
 
@@ -42,7 +42,7 @@ final class Check implements \ArrayAccess
     public $state;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $message;
 
@@ -75,7 +75,7 @@ final class Check implements \ArrayAccess
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getLink()
     {
