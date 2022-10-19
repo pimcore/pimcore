@@ -139,9 +139,9 @@ final class Check implements \ArrayAccess
     /**
      * @param string $offset
      *
-     * @return string|int
+     * @return string|int|null
      */
-    public function offsetGet($offset): string|int
+    public function offsetGet($offset): string|int|null
     {
         return $this->{'get'.$offset}();
     }
