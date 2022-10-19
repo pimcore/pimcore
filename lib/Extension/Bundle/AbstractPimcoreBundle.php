@@ -87,15 +87,10 @@ abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInte
 
     public static function isInstalled(): bool
     {
-        if (!self::$bundleManager) {
-            self::$bundleManager = \Pimcore::getContainer()->get(PimcoreBundleManager::class);
-        }
+        static::$bundleManager ??= \Pimcore::getContainer()->get(PimcoreBundleManager::class);
 
-        $bundle = self::$bundleManager->getActiveBundle(__CLASS__, false);
-        if (!self::$bundleManager->isInstalled($bundle)) {
-            return false;
-        }
+        $bundle = static::$bundleManager->getActiveBundle(static::class, false);
 
-        return true;
+        return static::$bundleManager->isInstalled($bundle);
     }
 }
