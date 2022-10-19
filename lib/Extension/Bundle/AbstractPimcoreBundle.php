@@ -19,9 +19,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInterface
 {
-    public function __construct(protected PimcoreBundleManager $bundleManager)
-    {
-    }
+    protected static ?PimcoreBundleManager $bundleManager = null;
 
     /**
      * {@inheritdoc}
@@ -87,10 +85,14 @@ abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInte
         return [];
     }
 
-    public function isInstalled(): bool
+    public static function isInstalled(): bool
     {
-        $bundle = $this->bundleManager->getActiveBundle(__CLASS__, false);
-        if (!$this->bundleManager->isInstalled($bundle)) {
+        if (!self::$bundleManager) {
+            self::$bundleManager = \Pimcore::getContainer()->get(PimcoreBundleManager::class);
+        }
+
+        $bundle = self::$bundleManager->getActiveBundle(__CLASS__, false);
+        if (!self::$bundleManager->isInstalled($bundle)) {
             return false;
         }
 
