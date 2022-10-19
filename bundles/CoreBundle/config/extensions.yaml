@@ -23,8 +23,6 @@ services:
             $paths: '%pimcore.extensions.bundles.search_paths%'
             $handleComposer: '%pimcore.extensions.bundles.handle_composer%'
 
-    Pimcore\Extension\Bundle\Config\StateConfig: ~
-
     Pimcore\Extension\Bundle\PimcoreBundleManager:
         public: true
 

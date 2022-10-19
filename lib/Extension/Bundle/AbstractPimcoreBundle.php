@@ -19,6 +19,10 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInterface
 {
+    public function __construct(protected PimcoreBundleManager $bundleManager)
+    {
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -54,14 +58,6 @@ abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInte
     /**
      * {@inheritdoc}
      */
-    public function getAdminIframePath()
-    {
-        return null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getJsPaths()
     {
         return [];
@@ -89,5 +85,15 @@ abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInte
     public function getEditmodeCssPaths()
     {
         return [];
+    }
+
+    public function isInstalled(): bool
+    {
+        $bundle = $this->bundleManager->getActiveBundle(__CLASS__, false);
+        if (!$this->bundleManager->isInstalled($bundle)) {
+            return false;
+        }
+
+        return true;
     }
 }
