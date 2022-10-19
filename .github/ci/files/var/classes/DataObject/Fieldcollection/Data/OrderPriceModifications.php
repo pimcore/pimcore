@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
 Fields Summary:
@@ -16,10 +17,10 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 class OrderPriceModifications extends DataObject\Fieldcollection\Data\AbstractData
 {
 protected string $type = "OrderPriceModifications";
-protected $name;
-protected $netAmount;
-protected $pricingRuleId;
-protected $amount;
+protected ?string $name;
+protected ?string $netAmount;
+protected ?int $pricingRuleId;
+protected ?string $amount;
 
 
 /**
@@ -41,7 +42,7 @@ public function getName(): ?string
 * @param string|null $name
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\OrderPriceModifications
 */
-public function setName(?string $name)
+public function setName(?string $name): static
 {
 	$this->name = $name;
 
@@ -67,7 +68,7 @@ public function getNetAmount(): ?string
 * @param string|null $netAmount
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\OrderPriceModifications
 */
-public function setNetAmount(?string $netAmount)
+public function setNetAmount(?string $netAmount): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("netAmount");
@@ -95,7 +96,7 @@ public function getPricingRuleId(): ?int
 * @param int|null $pricingRuleId
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\OrderPriceModifications
 */
-public function setPricingRuleId(?int $pricingRuleId)
+public function setPricingRuleId(?int $pricingRuleId): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("pricingRuleId");
@@ -123,7 +124,7 @@ public function getAmount(): ?string
 * @param string|null $amount
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\OrderPriceModifications
 */
-public function setAmount(?string $amount)
+public function setAmount(?string $amount): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("amount");

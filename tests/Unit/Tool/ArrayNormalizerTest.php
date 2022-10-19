@@ -22,10 +22,7 @@ use Pimcore\Tool\ArrayNormalizer;
 
 class ArrayNormalizerTest extends TestCase
 {
-    /**
-     * @var array
-     */
-    private $input = [
+    private array $input = [
         'a' => 'foo',
         'b' => 'bar',
         'c' => 'baz',

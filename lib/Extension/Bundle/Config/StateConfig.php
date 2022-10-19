@@ -29,7 +29,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 final class StateConfig
 {
-    private static OptionsResolver $optionsResolver;
+    private static ?OptionsResolver $optionsResolver = null;
 
     private static array $optionDefaults = [
         'enabled' => false,

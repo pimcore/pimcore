@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,8 +18,5 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem;
 
 interface AvailabilityInterface
 {
-    /**
-     * @return bool
-     */
-    public function getAvailable();
+    public function getAvailable(): bool;
 }

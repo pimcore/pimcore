@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -57,15 +58,15 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         'preSelect' => 'text',
     ];
 
-    public $width;
+    public mixed $width;
 
-    public $considerTenants = false;
+    public bool $considerTenants = false;
 
-    public $multiPreSelect = false;
+    public bool $multiPreSelect = false;
 
-    public $filterGroups = '';
+    public string $filterGroups = '';
 
-    public $predefinedPreSelectOptions = [];
+    public array $predefinedPreSelectOptions = [];
 
     public function __construct()
     {
@@ -76,7 +77,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         $this->considerTenants = $considerTenants;
     }
 
-    public function getConsiderTenants()
+    public function getConsiderTenants(): bool
     {
         return $this->considerTenants;
     }
@@ -86,39 +87,27 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         $this->filterGroups = $filterGroups;
     }
 
-    public function getFilterGroups()
+    public function getFilterGroups(): string
     {
         return $this->filterGroups;
     }
 
-    /**
-     * @param bool $multiPreSelect
-     */
-    public function setMultiPreSelect($multiPreSelect)
+    public function setMultiPreSelect(bool $multiPreSelect)
     {
         $this->multiPreSelect = $multiPreSelect;
     }
 
-    /**
-     * @return bool
-     */
-    public function getMultiPreSelect()
+    public function getMultiPreSelect(): bool
     {
         return $this->multiPreSelect;
     }
 
-    /**
-     * @param array $predefinedPreSelectOptions
-     */
-    public function setPredefinedPreSelectOptions($predefinedPreSelectOptions)
+    public function setPredefinedPreSelectOptions(array $predefinedPreSelectOptions)
     {
         $this->predefinedPreSelectOptions = $predefinedPreSelectOptions;
     }
 
-    /**
-     * @return array
-     */
-    public function getPredefinedPreSelectOptions()
+    public function getPredefinedPreSelectOptions(): array
     {
         return $this->predefinedPreSelectOptions;
     }
@@ -132,7 +121,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = [])
+    public function getDataForResource(mixed $data, $object = null, array $params = []): array
     {
         if ($data instanceof ObjectData\IndexFieldSelection) {
             return [
@@ -158,7 +147,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = [])
+    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?ObjectData\IndexFieldSelection
     {
         if ($data[$this->getName() . '__field']) {
             return new ObjectData\IndexFieldSelection($data[$this->getName() . '__tenant'], $data[$this->getName() . '__field'], $data[$this->getName() . '__preSelect']);
@@ -176,7 +165,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = [])
+    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): array
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -190,7 +179,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = [])
+    public function getDataForEditmode(mixed $data, $object = null, array $params = []): ?array
     {
         if ($data instanceof ObjectData\IndexFieldSelection) {
             return [
@@ -212,7 +201,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      *@see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = [])
+    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): ?ObjectData\IndexFieldSelection
     {
         if ($data['field']) {
             if (is_array($data['preSelect'])) {
@@ -234,7 +223,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = [])
+    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
     {
         if ($data instanceof ObjectData\IndexFieldSelection) {
             return $data->getTenant() . ' ' . $data->getField() . ' ' . $data->getPreSelect();
@@ -264,7 +253,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      *@internal
      *
      */
-    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = [])
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $key = $this->getName();
         $getter = 'get'.ucfirst($key);
@@ -288,23 +277,17 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      *
      * @return bool
      */
-    public function isDiffChangeAllowed(Concrete $object, array $params = [])
+    public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return false;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getWidth()
+    public function getWidth(): mixed
     {
         return $this->width;
     }
 
-    /**
-     * @param mixed $width
-     */
-    public function setWidth($width)
+    public function setWidth(mixed $width)
     {
         $this->width = (int)$width;
     }
@@ -329,7 +312,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         return '\\' . ObjectData\IndexFieldSelection::class . '|null';
     }
 
-    public function normalize(mixed $value, array $params = [])
+    public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof ObjectData\IndexFieldSelection) {
             return [

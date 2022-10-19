@@ -44,17 +44,11 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
      *
      * @var SessionInterface
      */
-    protected $session;
+    protected SessionInterface $session;
 
-    /**
-     * @var RequestStack
-     */
     protected RequestStack $requestStack;
 
-    /**
-     * @var bool
-     */
-    protected $sessionLoaded = false;
+    protected bool $sessionLoaded = false;
 
     public function __construct(SessionInterface $session, LocaleServiceInterface $localeService, array $options = [])
     {
@@ -144,9 +138,6 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
         $sessionBag->remove(self::SESSION_KEY_CHECKOUT_TENANT);
     }
 
-    /**
-     * @return AttributeBagInterface
-     */
     protected function getSessionBag(): AttributeBagInterface
     {
         /** @var AttributeBagInterface $sessionBag */

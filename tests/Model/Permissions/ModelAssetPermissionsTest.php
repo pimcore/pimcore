@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -58,80 +59,35 @@ class ModelAssetPermissionsTest extends ModelTestCase
      *
      */
 
-    /**
-     * @var Asset\Folder
-     */
-    protected $permissionfoo;
+    protected Asset\Folder $permissionfoo;
 
-    /**
-     * @var Asset\Folder
-     */
-    protected $permissionbar;
+    protected Asset\Folder $permissionbar;
 
-    /**
-     * @var Asset\Folder
-     */
-    protected $foo;
+    protected Asset\Folder $foo;
 
-    /**
-     * @var Asset\Folder
-     */
-    protected $bar;
+    protected Asset\Folder $bar;
 
-    /**
-     * @var Asset\Folder
-     */
-    protected $bars;
+    protected Asset\Folder $bars;
 
-    /**
-     * @var Asset\Folder
-     */
-    protected $userfolder;
+    protected Asset\Folder $userfolder;
 
-    /**
-     * @var Asset\Folder
-     */
-    protected $groupfolder;
+    protected Asset\Folder $groupfolder;
 
-    /**
-     * @var Asset
-     */
-    protected $hiddenobject;
+    protected Asset $hiddenobject;
 
-    /**
-     * @var Asset
-     */
-    protected $hugo;
+    protected Asset $hugo;
 
-    /**
-     * @var Asset
-     */
-    protected $usertestobject;
+    protected Asset $usertestobject;
 
-    /**
-     * @var Asset
-     */
-    protected $grouptestobject;
+    protected Asset $grouptestobject;
 
-    /**
-     * @var Asset\Folder
-     */
-    protected $a;
+    protected Asset\Folder $a;
 
-    /**
-     * @var Asset\Folder
-     */
-    protected $b;
+    protected Asset\Folder $b;
 
-    /**
-     * @var Asset
-     */
-    protected $c;
+    protected Asset $c;
 
-    /**
-     * @var Asset
-     */
-    protected $abcdefghjkl;
+    protected Asset $abcdefghjkl;
 
     protected function prepareObjectTree()
     {

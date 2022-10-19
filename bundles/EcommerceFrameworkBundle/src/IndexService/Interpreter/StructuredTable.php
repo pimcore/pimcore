@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,7 +23,7 @@ class StructuredTable implements InterpreterInterface
 {
     use OptionsResolverTrait;
 
-    public function interpret($value, $config = null)
+    public function interpret($value, $config = null): ?string
     {
         $config = $this->resolveOptions($config ?? []);
 

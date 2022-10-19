@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,14 +31,7 @@ use Pimcore\Tests\Test\EcommerceTestCase;
 
 class ProductTaxManagementTest extends EcommerceTestCase
 {
-    /**
-     * @param float $grossPrice
-     * @param array $taxes
-     * @param string $combinationType
-     *
-     * @return CheckoutableInterface
-     */
-    private function setUpProduct($grossPrice, $taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): CheckoutableInterface
+    private function setUpProduct(float $grossPrice, array $taxes = [], string $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): CheckoutableInterface
     {
         $grossPrice = Decimal::create($grossPrice);
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,21 +29,21 @@ interface ElasticSearchConfigInterface extends ConfigInterface
      *
      * @return array
      */
-    public function getElasticSearchClientParams();
+    public function getElasticSearchClientParams(): array;
 
     /**
      * returns condition for current subtenant
      *
      * @return array
      */
-    public function getSubTenantCondition();
+    public function getSubTenantCondition(): array;
 
     /**
      * creates and returns tenant worker suitable for this tenant configuration
      *
      * @return AbstractElasticSearch
      */
-    public function getTenantWorker();
+    public function getTenantWorker(): AbstractElasticSearch;
 
     /**
      * Get an associative array of configured synonym providers.
@@ -54,11 +55,11 @@ interface ElasticSearchConfigInterface extends ConfigInterface
     public function getSynonymProviders(): array;
 
     /**
-     * @param string $property
+     * @param string|null $property
      *
      * @return array|string
      */
-    public function getClientConfig($property = null);
+    public function getClientConfig(string $property = null): array|string;
 
     /**
      * returns the full field name
@@ -68,7 +69,7 @@ interface ElasticSearchConfigInterface extends ConfigInterface
      *
      * @return string
      */
-    public function getFieldNameMapped($fieldName, $considerSubFieldNames = false);
+    public function getFieldNameMapped(string $fieldName, bool $considerSubFieldNames = false): string;
 
     /**
      * returns short field name based on full field name
@@ -78,5 +79,5 @@ interface ElasticSearchConfigInterface extends ConfigInterface
      *
      * @return false|int|string
      */
-    public function getReverseMappedFieldName($fullFieldName);
+    public function getReverseMappedFieldName(string $fullFieldName): bool|int|string;
 }

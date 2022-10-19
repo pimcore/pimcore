@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,20 +31,12 @@ use Pimcore\Tests\Util\TestHelper;
  */
 class EditableTest extends ModelTestCase
 {
-    /**
-     * @var int
-     */
-    protected $seed = 1;
+    protected int $seed = 1;
 
-    /** @var Page */
-    protected $testPage;
+    protected Page $testPage;
 
-    /** @var TestDataHelper */
-    protected $testDataHelper;
+    protected TestDataHelper $testDataHelper;
 
-    /**
-     * @param TestDataHelper $testData
-     */
     public function _inject(TestDataHelper $testData)
     {
         $this->testDataHelper = $testData;
@@ -156,7 +149,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertScheduledblock($this->testPage, 'scheduledblock', $this->seed);
     }
 
-    protected function createTestPage($fields = [], &$returnData = [])
+    protected function createTestPage($fields = [], &$returnData = []): Page|\Pimcore\Model\Document
     {
         $this->testPage = TestHelper::createEmptyDocumentPage();
         $this->assertInstanceOf(Page::class, $this->testPage);
@@ -176,7 +169,7 @@ class EditableTest extends ModelTestCase
      * @param array|string $fields
      * @param array $returnData
      */
-    protected function fillPage(Page $document, $fields = [], &$returnData = [])
+    protected function fillPage(Page $document, array|string $fields = [], array &$returnData = [])
     {
         // allow to pass only a string (e.g. input) -> fillInput($object, "input", $seed)
         if (!is_array($fields)) {

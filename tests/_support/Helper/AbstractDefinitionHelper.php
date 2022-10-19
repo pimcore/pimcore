@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,18 +22,12 @@ use Pimcore\Tests\Util\TestHelper;
 
 abstract class AbstractDefinitionHelper extends Module
 {
-    /**
-     * @var array
-     */
-    protected $config = [
+    protected array $config = [
         'initialize_definitions' => true,
         'cleanup' => true,
     ];
 
-    /**
-     * @return Module|ClassManager
-     */
-    protected function getClassManager()
+    protected function getClassManager(): ClassManager|Module
     {
         return $this->getModule('\\' . ClassManager::class);
     }
@@ -74,7 +69,7 @@ abstract class AbstractDefinitionHelper extends Module
      *
      * @return Data
      */
-    public function createDataChild($type, $name = null, $mandatory = false, $index = 0, $visibleInGridView = true, $visibleInSearchResult = true)
+    public function createDataChild(string $type, string $name = null, bool $mandatory = false, int $index = 0, bool $visibleInGridView = true, bool $visibleInSearchResult = true): Data
     {
         if (!$name) {
             $name = $type;

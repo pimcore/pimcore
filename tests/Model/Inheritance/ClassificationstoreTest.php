@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -57,9 +58,6 @@ class ClassificationstoreTest extends ModelTestCase
         }
     }
 
-    /**
-     * @param Classificationstore\StoreConfig $store
-     */
     protected function configureStore(Classificationstore\StoreConfig $store)
     {
         $group = Classificationstore\GroupConfig::getByName('group1', $store->getId());

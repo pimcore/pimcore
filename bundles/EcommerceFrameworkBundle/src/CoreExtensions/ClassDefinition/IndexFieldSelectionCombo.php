@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,11 +32,11 @@ class IndexFieldSelectionCombo extends Select
      */
     public string $fieldtype = 'indexFieldSelectionCombo';
 
-    public $specificPriceField = false;
+    public bool $specificPriceField = false;
 
-    public $showAllFields = false;
+    public bool $showAllFields = false;
 
-    public $considerTenants = false;
+    public bool $considerTenants = false;
 
     public function __construct()
     {
@@ -77,7 +78,7 @@ class IndexFieldSelectionCombo extends Select
         $this->specificPriceField = $specificPriceField;
     }
 
-    public function getSpecificPriceField()
+    public function getSpecificPriceField(): bool
     {
         return $this->specificPriceField;
     }
@@ -87,7 +88,7 @@ class IndexFieldSelectionCombo extends Select
         $this->showAllFields = $showAllFields;
     }
 
-    public function getShowAllFields()
+    public function getShowAllFields(): bool
     {
         return $this->showAllFields;
     }
@@ -97,16 +98,13 @@ class IndexFieldSelectionCombo extends Select
         $this->considerTenants = $considerTenants;
     }
 
-    public function getConsiderTenants()
+    public function getConsiderTenants(): bool
     {
         return $this->considerTenants;
     }
 
-    /**
-     * @return $this
-     */
     #[\ReturnTypeWillChange]
-    public function jsonSerialize()// : static
+    public function jsonSerialize(): static// : static
     {
         if (Service::doRemoveDynamicOptions()) {
             $this->options = null;

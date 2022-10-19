@@ -93,12 +93,6 @@ class OptionsProvider implements SelectOptionsProviderInterface
         );
     }
 
-    /**
-     * @param array $context
-     * @param Data $fieldDefinition
-     *
-     * @return bool
-     */
     public function hasStaticOptions(array $context, Data $fieldDefinition): bool
     {
         return true;

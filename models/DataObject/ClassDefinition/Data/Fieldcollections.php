@@ -296,7 +296,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         }
     }
 
-array
     public function load(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): ?DataObject\Fieldcollection
     {
         $container = new DataObject\Fieldcollection([], $this->getName());

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,10 +36,7 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class Pimcore extends Module
 {
-    /**
-     * @var null|ContainerInterface
-     */
-    protected static $testServiceContainer = null;
+    protected static ?ContainerInterface $testServiceContainer = null;
 
     /**
      * {@inheritdoc}
@@ -68,26 +66,17 @@ class Pimcore extends Module
         parent::__construct($moduleContainer, $config);
     }
 
-    /**
-     * @return Pimcore|Module
-     */
-    public function getPimcoreModule()
+    public function getPimcoreModule(): Pimcore|Module
     {
         return $this->getModule('\\' . __CLASS__);
     }
 
-    /**
-     * @return \Symfony\Component\HttpKernel\KernelInterface|null
-     */
-    public function getKernel()
+    public function getKernel(): ?\Symfony\Component\HttpKernel\KernelInterface
     {
         return $this->kernel;
     }
 
-    /**
-     * @return \Symfony\Component\DependencyInjection\ContainerInterface
-     */
-    public function getContainer()
+    public function getContainer(): ContainerInterface
     {
         return $this->kernel->getContainer();
     }
@@ -99,7 +88,7 @@ class Pimcore extends Module
      *
      * @throws \Exception
      */
-    public function grabService(string $serviceId)
+    public function grabService(string $serviceId): ?object
     {
         if (empty(self::$testServiceContainer)) {
             $container = $this->getContainer();
@@ -165,20 +154,12 @@ class Pimcore extends Module
         }
     }
 
-    /**
-     * @return Connection
-     */
-    protected function getDbConnection()
+    protected function getDbConnection(): Connection
     {
         return $this->getContainer()->get('database_connection');
     }
 
-    /**
-     * @param Connection $connection
-     *
-     * @return string
-     */
-    protected function getDbName(Connection $connection)
+    protected function getDbName(Connection $connection): string
     {
         return $connection->getParams()['dbname'];
     }
@@ -231,7 +212,7 @@ class Pimcore extends Module
      *
      * @throws ModuleException
      */
-    protected function initializeDb(Connection $connection)
+    protected function initializeDb(Connection $connection): bool
     {
         $dbName = $this->getDbName($connection);
 

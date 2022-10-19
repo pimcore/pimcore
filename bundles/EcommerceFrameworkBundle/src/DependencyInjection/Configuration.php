@@ -58,20 +58,11 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
  */
 final class Configuration implements ConfigurationInterface
 {
-    /**
-     * @var TenantProcessor
-     */
-    private $tenantProcessor;
+    private TenantProcessor $tenantProcessor;
 
-    /**
-     * @var PlaceholderProcessor
-     */
-    private $placeholderProcessor;
+    private PlaceholderProcessor $placeholderProcessor;
 
-    /**
-     * @var DefaultWorkerConfigMapper
-     */
-    private $indexWorkerConfigMapper;
+    private DefaultWorkerConfigMapper $indexWorkerConfigMapper;
 
     public function __construct()
     {

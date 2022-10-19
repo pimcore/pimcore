@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -39,7 +40,7 @@ class Model extends AbstractDefinitionHelper
      *
      * @return ClassDefinition|null
      */
-    public function setupPimcoreClass_Csstore($params = [], $name = 'csstore', $filename = 'classificationstore.json')
+    public function setupPimcoreClass_Csstore(array $params = [], string $name = 'csstore', string $filename = 'classificationstore.json'): ?ClassDefinition
     {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
@@ -71,7 +72,7 @@ class Model extends AbstractDefinitionHelper
      *
      * @throws \Exception
      */
-    public function setupPimcoreClass_LazyLoading($name = 'LazyLoading', $filename = 'lazyloading/class_LazyLoading_export.json')
+    public function setupPimcoreClass_LazyLoading(string $name = 'LazyLoading', string $filename = 'lazyloading/class_LazyLoading_export.json'): ?ClassDefinition
     {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
@@ -226,7 +227,7 @@ class Model extends AbstractDefinitionHelper
      *
      * @throws \Exception
      */
-    public function setupPimcoreClass_RelationTest($name = 'RelationTest', $filename = 'relations/class_RelationTest_export.json')
+    public function setupPimcoreClass_RelationTest(string $name = 'RelationTest', string $filename = 'relations/class_RelationTest_export.json'): ?ClassDefinition
     {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
@@ -269,7 +270,7 @@ class Model extends AbstractDefinitionHelper
      *
      * @throws \Exception
      */
-    public function setupPimcoreClass_MultipleAssignments($name = 'MultipleAssignments', $filename = 'relations/class_MultipleAssignments_export.json')
+    public function setupPimcoreClass_MultipleAssignments(string $name = 'MultipleAssignments', string $filename = 'relations/class_MultipleAssignments_export.json'): ?ClassDefinition
     {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
@@ -325,7 +326,7 @@ class Model extends AbstractDefinitionHelper
      *
      * @throws \Exception
      */
-    public function setupPimcoreClass_Block($name = 'unittestBlock', $filename = 'block-import.json')
+    public function setupPimcoreClass_Block(string $name = 'unittestBlock', string $filename = 'block-import.json'): ?ClassDefinition
     {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
@@ -388,7 +389,7 @@ class Model extends AbstractDefinitionHelper
      *
      * @throws \Exception
      */
-    public function setupPimcoreClass_Link($name = 'unittestLink', $filename = 'link-import.json')
+    public function setupPimcoreClass_Link(string $name = 'unittestLink', string $filename = 'link-import.json'): ?ClassDefinition
     {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
@@ -429,7 +430,7 @@ class Model extends AbstractDefinitionHelper
      *
      * @throws \Exception
      */
-    public function setupPimcoreClass_Unittest($name = 'unittest', $filename = 'class-import.json')
+    public function setupPimcoreClass_Unittest(string $name = 'unittest', string $filename = 'class-import.json'): ?ClassDefinition
     {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
@@ -476,14 +477,14 @@ class Model extends AbstractDefinitionHelper
 
             $panel->addChild($this->createDataChild('gender'));
 
-            $panel->addChild($this->createDataChild('geopoint', 'point', false, false));
-            $panel->addChild($this->createDataChild('geobounds', 'bounds', false, false));
-            $panel->addChild($this->createDataChild('geopolygon', 'polygon', false, false));
-            $panel->addChild($this->createDataChild('geopolyline', 'polyline', false, false));
+            $panel->addChild($this->createDataChild('geopoint', 'point', false));
+            $panel->addChild($this->createDataChild('geobounds', 'bounds', false));
+            $panel->addChild($this->createDataChild('geopolygon', 'polygon', false));
+            $panel->addChild($this->createDataChild('geopolyline', 'polyline', false));
 
-            $panel->addChild($this->createDataChild('indexFieldSelection', 'indexFieldSelection', false, false));
-            $panel->addChild($this->createDataChild('indexFieldSelectionCombo', 'indexFieldSelectionCombo', false, false));
-            $panel->addChild($this->createDataChild('indexFieldSelectionField', 'indexFieldSelectionField', false, false));
+            $panel->addChild($this->createDataChild('indexFieldSelection', 'indexFieldSelection', false));
+            $panel->addChild($this->createDataChild('indexFieldSelectionCombo', 'indexFieldSelectionCombo', false));
+            $panel->addChild($this->createDataChild('indexFieldSelectionField', 'indexFieldSelectionField', false));
 
             $panel->addChild($this->createDataChild('imageGallery'));
             $panel->addChild($this->createDataChild('input'));
@@ -514,8 +515,8 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('manyToManyObjectRelation', 'objects')
                 ->setClasses([]));
 
-            $panel->addChild($this->createDataChild('newsletterActive', 'newsletterActive', false, false));
-            $panel->addChild($this->createDataChild('newsletterConfirmed', 'newsletterConfirmed', false, false));
+            $panel->addChild($this->createDataChild('newsletterActive', 'newsletterActive', false));
+            $panel->addChild($this->createDataChild('newsletterConfirmed', 'newsletterConfirmed', false));
 
             $panel->addChild($this->createDataChild('inputQuantityValue'));
             $panel->addChild($this->createDataChild('quantityValue'));
@@ -534,7 +535,7 @@ class Model extends AbstractDefinitionHelper
             $passwordField->setAlgorithm(ClassDefinition\Data\Password::HASH_FUNCTION_PASSWORD_HASH);
             $panel->addChild($passwordField);
 
-            $panel->addChild($this->createDataChild('rgbaColor', 'rgbaColor', false, false));
+            $panel->addChild($this->createDataChild('rgbaColor', 'rgbaColor', false));
 
             $panel->addChild($this->createDataChild('select')->setOptions([
                 ['key' => 'Selection 1', 'value' => '1'],
@@ -547,7 +548,7 @@ class Model extends AbstractDefinitionHelper
 
             $panel->addChild($this->createDataChild('wysiwyg'));
 
-            $panel->addChild($this->createDataChild('video', 'video', false, false));
+            $panel->addChild($this->createDataChild('video', 'video', false));
 
             $panel->addChild($this->createDataChild('multiselect')->setOptions([
                 ['key' => 'Katze', 'value' => 'cat'],
@@ -568,7 +569,7 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('checkbox'));
             $panel->addChild($this->createDataChild('booleanSelect'));
             $panel->addChild($this->createDataChild('table'));
-            $panel->addChild($this->createDataChild('structuredTable', 'structuredtable', false, false)
+            $panel->addChild($this->createDataChild('structuredTable', 'structuredtable', false)
                 ->setCols([
                     ['position' => 1, 'key' => 'col1', 'type' => 'number', 'label' => 'collabel1'],
                     ['position' => 2, 'key' => 'col2', 'type' => 'text', 'label' => 'collabel2'],
@@ -640,7 +641,7 @@ class Model extends AbstractDefinitionHelper
      *
      * @throws \Exception
      */
-    public function setupPimcoreClass_Inheritance($name = 'inheritance', $filename = 'inheritance.json')
+    public function setupPimcoreClass_Inheritance(string $name = 'inheritance', string $filename = 'inheritance.json'): ?ClassDefinition
     {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
@@ -691,7 +692,7 @@ class Model extends AbstractDefinitionHelper
      *
      * @return ClassDefinition
      */
-    protected function createClass($name, $layout, $filename, $inheritanceAllowed = false, $id = null)
+    protected function createClass(string $name, ClassDefinition\Layout $layout, string $filename, bool $inheritanceAllowed = false, string $id = null): ClassDefinition
     {
         $cm = $this->getClassManager();
         $def = new ClassDefinition();
@@ -718,7 +719,7 @@ class Model extends AbstractDefinitionHelper
      *
      * @throws \Exception
      */
-    public function setupFieldcollection_Unittestfieldcollection($name = 'unittestfieldcollection', $filename = 'fieldcollection-import.json')
+    public function setupFieldcollection_Unittestfieldcollection(string $name = 'unittestfieldcollection', string $filename = 'fieldcollection-import.json'): ?Definition
     {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
@@ -768,7 +769,7 @@ class Model extends AbstractDefinitionHelper
      *
      * @throws \Exception
      */
-    public function setupFieldcollection_LazyLoadingTest($name = 'LazyLoadingTest', $filename = 'lazyloading/fieldcollection_LazyLoadingTest_export.json')
+    public function setupFieldcollection_LazyLoadingTest(string $name = 'LazyLoadingTest', string $filename = 'lazyloading/fieldcollection_LazyLoadingTest_export.json'): ?Definition
     {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
@@ -822,7 +823,7 @@ class Model extends AbstractDefinitionHelper
      *
      * @throws \Exception
      */
-    public function setupFieldcollection_LazyLoadingLocalizedTest($name = 'LazyLoadingLocalizedTest', $filename = 'lazyloading/fieldcollection_LazyLoadingLocalizedTest_export.json')
+    public function setupFieldcollection_LazyLoadingLocalizedTest(string $name = 'LazyLoadingLocalizedTest', string $filename = 'lazyloading/fieldcollection_LazyLoadingLocalizedTest_export.json'): ?Definition
     {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
@@ -881,11 +882,10 @@ class Model extends AbstractDefinitionHelper
      * @param string $name
      * @param string $filename
      *
-     * @return Definition|null
+     * @return DataObject\Objectbrick\Definition|Definition|null
      *
-     * @throws \Exception
      */
-    public function setupObjectbrick_LazyLoadingTest($name = 'LazyLoadingTest', $filename = 'lazyloading/objectbrick_LazyLoadingTest_export.json')
+    public function setupObjectbrick_LazyLoadingTest(string $name = 'LazyLoadingTest', string $filename = 'lazyloading/objectbrick_LazyLoadingTest_export.json'): DataObject\Objectbrick\Definition|Definition|null
     {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
@@ -938,11 +938,11 @@ class Model extends AbstractDefinitionHelper
      * @param string $name
      * @param string $filename
      *
-     * @return Definition|null
+     * @return DataObject\Objectbrick\Definition|Definition|null
      *
      * @throws \Exception
      */
-    public function setupObjectbrick_LazyLoadingLocalizedTest($name = 'LazyLoadingLocalizedTest', $filename = 'lazyloading/objectbrick_LazyLoadingLocalizedTest_export.json')
+    public function setupObjectbrick_LazyLoadingLocalizedTest(string $name = 'LazyLoadingLocalizedTest', string $filename = 'lazyloading/objectbrick_LazyLoadingLocalizedTest_export.json'): DataObject\Objectbrick\Definition|Definition|null
     {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
@@ -1001,11 +1001,10 @@ class Model extends AbstractDefinitionHelper
      * @param string $name
      * @param string $filename
      *
-     * @return Definition|null
+     * @return DataObject\Objectbrick\Definition|Definition|null
      *
-     * @throws \Exception
      */
-    public function setupObjectbrick_UnittestBrick($name = 'unittestBrick', $filename = 'brick-import.json')
+    public function setupObjectbrick_UnittestBrick(string $name = 'unittestBrick', string $filename = 'brick-import.json'): DataObject\Objectbrick\Definition|Definition|null
     {
         /** @var ClassManager $cm */
         $cm = $this->getClassManager();
@@ -1034,14 +1033,7 @@ class Model extends AbstractDefinitionHelper
         return $definition;
     }
 
-    /**
-     * @param string $name
-     * @param ClassDefinition\Layout $layout
-     * @param string $filename
-     *
-     * @return Definition
-     */
-    protected function createFieldcollection($name, $layout, $filename)
+    protected function createFieldcollection(string $name, ClassDefinition\Layout $layout, string $filename): Definition
     {
         $cm = $this->getClassManager();
         $def = new Definition();
@@ -1053,15 +1045,7 @@ class Model extends AbstractDefinitionHelper
         return $cm->setupFieldcollection($name, $filename);
     }
 
-    /**
-     * @param string $name
-     * @param ClassDefinition\Layout $layout
-     * @param string $filename
-     * @param array $classDefinitions
-     *
-     * @return \Pimcore\Model\DataObject\Objectbrick\Definition
-     */
-    protected function createObjectbrick($name, $layout, $filename, $classDefinitions = [])
+    protected function createObjectbrick(string $name, ClassDefinition\Layout $layout, string $filename, array $classDefinitions = []): DataObject\Objectbrick\Definition
     {
         $cm = $this->getClassManager();
         $def = new \Pimcore\Model\DataObject\Objectbrick\Definition();

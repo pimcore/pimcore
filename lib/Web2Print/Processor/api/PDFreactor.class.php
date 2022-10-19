@@ -79,7 +79,7 @@ class PDFreactor
         $context = stream_context_create($options);
         $result = null;
         $errorMode = true;
-        $rh = fopen($url, false, false, $context);
+        $rh = fopen($url, 'r', false, $context);
         if (!isset($http_response_header)) {
             $lastError = error_get_last();
 
@@ -173,7 +173,7 @@ class PDFreactor
         $context = stream_context_create($options);
         $result = null;
         $errorMode = true;
-        $rh = fopen($url, false, false, $context);
+        $rh = fopen($url, 'r', false, $context);
         if (!isset($http_response_header)) {
             $lastError = error_get_last();
 
@@ -272,7 +272,7 @@ class PDFreactor
         $context = stream_context_create($options);
         $result = null;
         $errorMode = true;
-        $rh = fopen($url, false, false, $context);
+        $rh = fopen($url, 'r', false, $context);
         if (!isset($http_response_header)) {
             $lastError = error_get_last();
 
@@ -383,7 +383,7 @@ class PDFreactor
         $context = stream_context_create($options);
         $result = null;
         $errorMode = true;
-        $rh = fopen($url, false, false, $context);
+        $rh = fopen($url, 'r', false, $context);
         if (!isset($http_response_header)) {
             $lastError = error_get_last();
 
@@ -466,7 +466,7 @@ class PDFreactor
         $context = stream_context_create($options);
         $result = null;
         $errorMode = true;
-        $rh = fopen($url, false, false, $context);
+        $rh = fopen($url, 'r', false, $context);
         if (!isset($http_response_header)) {
             $lastError = error_get_last();
 
@@ -554,7 +554,7 @@ class PDFreactor
         $context = stream_context_create($options);
         $result = null;
         $errorMode = true;
-        $rh = fopen($url, false, false, $context);
+        $rh = fopen($url, 'r', false, $context);
         if (!isset($http_response_header)) {
             $lastError = error_get_last();
 
@@ -646,7 +646,7 @@ class PDFreactor
         $context = stream_context_create($options);
         $result = null;
         $errorMode = true;
-        $rh = fopen($url, false, false, $context);
+        $rh = fopen($url, 'r', false, $context);
         if (!isset($http_response_header)) {
             $lastError = error_get_last();
 
@@ -729,7 +729,7 @@ class PDFreactor
         $context = stream_context_create($options);
         $result = null;
         $errorMode = true;
-        $rh = fopen($url, false, false, $context);
+        $rh = fopen($url, 'r', false, $context);
         if (!isset($http_response_header)) {
             $lastError = error_get_last();
 
@@ -805,7 +805,7 @@ class PDFreactor
         $context = stream_context_create($options);
         $result = null;
         $errorMode = true;
-        $rh = fopen($url, false, false, $context);
+        $rh = fopen($url, 'r', false, $context);
         if (!isset($http_response_header)) {
             $lastError = error_get_last();
 
@@ -881,7 +881,7 @@ class PDFreactor
         $context = stream_context_create($options);
         $result = null;
         $errorMode = true;
-        $rh = fopen($url, false, false, $context);
+        $rh = fopen($url, 'r', false, $context);
         if (!isset($http_response_header)) {
             $lastError = error_get_last();
 

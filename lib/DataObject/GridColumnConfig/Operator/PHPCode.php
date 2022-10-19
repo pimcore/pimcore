@@ -49,9 +49,6 @@ final class PHPCode extends AbstractOperator
         $this->instance = null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getLabel(): string
     {
         return $this->getInstance()->getLabel();

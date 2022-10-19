@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,13 +23,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManagerInterfac
 
 class CancelPaymentOrRecreateOrderStrategy implements HandlePendingPaymentsStrategyInterface
 {
-    /**
-     * @param AbstractOrder $order
-     * @param CartInterface $cart
-     * @param OrderManagerInterface $orderManager
-     *
-     * @return AbstractOrder
-     */
     public function handlePaymentNotAllowed(AbstractOrder $order, CartInterface $cart, OrderManagerInterface $orderManager): AbstractOrder
     {
         if ($orderManager->orderNeedsUpdate($cart, $order)) {

@@ -309,7 +309,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
 
         if ($url) {
             $response = new RedirectResponse($url);
-            $response->headers->setCookie(new Cookie('pimcore_admin_sid', true));
+            $response->headers->setCookie(new Cookie('pimcore_admin_sid', "true"));
 
             return $response;
         }

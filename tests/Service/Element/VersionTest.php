@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -301,7 +302,7 @@ class VersionTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function needsDb()
+    protected function needsDb(): bool
     {
         return true;
     }
@@ -323,12 +324,7 @@ class VersionTest extends TestCase
                                 )");
     }
 
-    /**
-     * @param int $id
-     *
-     * @return Version
-     */
-    protected function getNewestVersion($id)
+    protected function getNewestVersion(int $id): Version
     {
         $list = new Version\Listing();
         $list->setCondition("ctype = 'object' and cid = " . $id);

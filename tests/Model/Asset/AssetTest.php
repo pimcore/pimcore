@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,8 +36,7 @@ class AssetTest extends ModelTestCase
         TestHelper::clearThumbnailConfigurations();
     }
 
-    /** @var Asset */
-    protected $testAsset;
+    protected Asset $testAsset;
 
     public function testCRUD()
     {
@@ -44,7 +44,7 @@ class AssetTest extends ModelTestCase
         $path = TestHelper::resolveFilePath('assets/images/image5.jpg');
         $expectedData = file_get_contents($path);
         $fileSize = strlen($expectedData);
-        $this->assertTrue(strlen($fileSize) > 0);
+        $this->assertTrue(strlen((string)$fileSize) > 0);
 
         $this->testAsset = TestHelper::createImageAsset('', null, true, 'assets/images/image5.jpg');
         $this->assertInstanceOf(Asset\Image::class, $this->testAsset);
@@ -77,7 +77,7 @@ class AssetTest extends ModelTestCase
         $path = TestHelper::resolveFilePath('assets/images/image4.jpg');
         $expectedData = file_get_contents($path);
         $fileSize = strlen($expectedData);
-        $this->assertTrue(strlen($fileSize) > 0);
+        $this->assertTrue(strlen((string)$fileSize) > 0);
         $this->testAsset->setData($expectedData);
         $this->testAsset->save();
         $this->reloadAsset();

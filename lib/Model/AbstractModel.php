@@ -41,7 +41,7 @@ abstract class AbstractModel implements ModelInterface
 
     private static ?array $daoClassMap = null;
 
-    public function getDao(): ?AbstractDao
+    public function getDao(): AbstractDao
     {
         if (!$this->dao) {
             $this->initDao();

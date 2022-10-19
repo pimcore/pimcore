@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,8 +36,7 @@ use Pimcore\Tests\Util\TestHelper;
  */
 class DocumentTest extends ModelTestCase
 {
-    /** @var Page */
-    protected $testPage;
+    protected Page $testPage;
 
     public function testCRUD()
     {

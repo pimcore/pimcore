@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,55 +32,37 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      *
      * @var bool
      */
-    protected $isLoading = false;
+    protected bool $isLoading = false;
 
-    /**
-     * @var CheckoutableInterface|null
-     */
-    protected $product;
+    protected ?CheckoutableInterface $product;
 
-    /**
-     * @var int|null
-     */
-    protected $productId;
+    protected ?int $productId;
 
-    /**
-     * @var string
-     */
-    protected $itemKey;
+    protected string $itemKey;
 
-    protected $count;
+    protected int $count;
 
-    protected $comment;
+    protected string $comment;
 
-    /**
-     * @var string
-     */
-    protected $parentItemKey = '';
+    protected string $parentItemKey = '';
 
-    protected $subItems = null;
+    protected ?array $subItems = null;
 
-    /**
-     * @var CartInterface|null
-     */
-    protected $cart;
+    protected ?CartInterface $cart;
 
-    /**
-     * @var string|int|null
-     */
-    protected $cartId;
+    protected string|int|null $cartId;
 
     /**
      * @var int|null unix timestamp
      */
-    protected $addedDateTimestamp;
+    protected ?int $addedDateTimestamp;
 
     public function __construct()
     {
         $this->setAddedDate(new \DateTime());
     }
 
-    public function setCount($count, bool $fireModified = true)
+    public function setCount(int $count)
     {
         if ($count < 0) {
             $count = 0;
@@ -91,15 +74,11 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         $this->count = $count;
     }
 
-    public function getCount()
+    public function getCount(): int
     {
         return $this->count;
     }
 
-    /**
-     * @param CheckoutableInterface $product
-     * @param bool $fireModified
-     */
     public function setProduct(CheckoutableInterface $product, bool $fireModified = true)
     {
         if ($this->productId !== $product->getId() && !$this->isLoading && $this->getCart() && $fireModified) {
@@ -109,10 +88,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         $this->productId = $product->getId();
     }
 
-    /**
-     * @return CheckoutableInterface
-     */
-    public function getProduct()
+    public function getProduct(): MockProduct|CheckoutableInterface|null
     {
         if ($this->product) {
             return $this->product;
@@ -132,40 +108,25 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         return $this->product;
     }
 
-    /**
-     * @param CartInterface $cart
-     */
     public function setCart(CartInterface $cart)
     {
         $this->cart = $cart;
         $this->cartId = $cart->getId();
     }
 
-    /**
-     * @return CartInterface|null
-     */
-    abstract public function getCart();
+    abstract public function getCart(): ?CartInterface;
 
-    /**
-     * @return string|int|null
-     */
-    public function getCartId()
+    public function getCartId(): int|string|null
     {
         return $this->cartId;
     }
 
-    /**
-     * @param string|int|null $cartId
-     */
-    public function setCartId($cartId)
+    public function setCartId(int|string|null $cartId)
     {
         $this->cartId = $cartId;
     }
 
-    /**
-     * @return int
-     */
-    public function getProductId()
+    public function getProductId(): ?int
     {
         if (!is_null($this->productId)) {
             return $this->productId;
@@ -174,10 +135,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         return $this->getProduct()->getId();
     }
 
-    /**
-     * @param int $productId
-     */
-    public function setProductId($productId)
+    public function setProductId(int $productId)
     {
         if ($this->productId !== $productId && !$this->isLoading && $this->getCart()) {
             $this->getCart()->modified();
@@ -186,44 +144,32 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         $this->product = null;
     }
 
-    /**
-     * @param string $parentItemKey
-     */
-    public function setParentItemKey($parentItemKey)
+    public function setParentItemKey(string $parentItemKey)
     {
         $this->parentItemKey = $parentItemKey;
     }
 
-    /**
-     * @return string
-     */
-    public function getParentItemKey()
+    public function getParentItemKey(): string
     {
         return $this->parentItemKey;
     }
 
-    /**
-     * @param string $itemKey
-     */
-    public function setItemKey($itemKey)
+    public function setItemKey(string $itemKey)
     {
         $this->itemKey = $itemKey;
     }
 
-    /**
-     * @return string
-     */
-    public function getItemKey()
+    public function getItemKey(): string
     {
         return $this->itemKey;
     }
 
     /**
-     * @param  CartItemInterface[] $subItems
+     * @param CartItemInterface[] $subItems
      *
      * @return void
      */
-    public function setSubItems($subItems)
+    public function setSubItems(array $subItems): void
     {
         $cart = $this->getCart();
         if ($cart && !$this->isLoading) {
@@ -238,17 +184,11 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         $this->subItems = $subItems;
     }
 
-    /**
-     * @return PriceInterface
-     */
     public function getPrice(): PriceInterface
     {
         return $this->getPriceInfo()->getPrice();
     }
 
-    /**
-     * @return PriceInfoInterface
-     */
     public function getPriceInfo(): PriceInfoInterface
     {
         if ($this->getProduct() instanceof AbstractSetProduct) {
@@ -265,10 +205,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         return $priceInfo;
     }
 
-    /**
-     * @return AvailabilityInterface
-     */
-    public function getAvailabilityInfo()
+    public function getAvailabilityInfo(): AvailabilityInterface
     {
         if ($this->getProduct() instanceof AbstractSetProduct) {
             return $this->getProduct()->getOSAvailabilityInfo($this->getCount(), $this->getSetEntries());
@@ -280,7 +217,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     /**
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry[]
      */
-    public function getSetEntries()
+    public function getSetEntries(): array
     {
         $products = [];
         if ($this->getSubItems()) {
@@ -292,25 +229,16 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         return $products;
     }
 
-    /**
-     * @param string $comment
-     */
-    public function setComment($comment)
+    public function setComment(string $comment)
     {
         $this->comment = $comment;
     }
 
-    /**
-     * @return string
-     */
-    public function getComment()
+    public function getComment(): string
     {
         return $this->comment;
     }
 
-    /**
-     * @return PriceInterface
-     */
     public function getTotalPrice(): PriceInterface
     {
         return $this->getPriceInfo()->getTotalPrice();
@@ -328,10 +256,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         }
     }
 
-    /**
-     * @return \DateTime|null
-     */
-    public function getAddedDate()
+    public function getAddedDate(): ?\DateTime
     {
         $datetime = null;
         if ($this->addedDateTimestamp) {
@@ -341,18 +266,12 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         return $datetime;
     }
 
-    /**
-     * @return int
-     */
-    public function getAddedDateTimestamp()
+    public function getAddedDateTimestamp(): ?int
     {
         return $this->addedDateTimestamp;
     }
 
-    /**
-     * @param int $time
-     */
-    public function setAddedDateTimestamp($time)
+    public function setAddedDateTimestamp(int $time)
     {
         $this->addedDateTimestamp = $time;
     }
@@ -362,7 +281,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->getProduct()->getOSName();
     }

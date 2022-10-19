@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -67,9 +68,6 @@ class AbstractLazyLoadingTest extends ModelTestCase
         }
     }
 
-    /**
-     * @return LazyLoading
-     */
     protected function createDataObject(): LazyLoading
     {
         $object = new LazyLoading();
@@ -87,7 +85,7 @@ class AbstractLazyLoadingTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    protected function createChildDataObject($parent): LazyLoading
+    protected function createChildDataObject(AbstractObject $parent): LazyLoading
     {
         $object = new LazyLoading();
         $object->setParent($parent);

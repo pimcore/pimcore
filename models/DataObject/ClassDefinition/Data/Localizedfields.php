@@ -487,7 +487,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         }
     }
 
-array
     public function load(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): Localizedfield
     {
         if ($object instanceof DataObject\Fieldcollection\Data\AbstractData || $object instanceof DataObject\Objectbrick\Data\AbstractData) {

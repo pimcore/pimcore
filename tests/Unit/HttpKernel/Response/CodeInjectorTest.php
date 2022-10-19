@@ -24,20 +24,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CodeInjectorTest extends TestCase
 {
-    /**
-     * @var ResponseHelper|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $responseHelper;
+    private ResponseHelper|\PHPUnit_Framework_MockObject_MockObject $responseHelper;
 
-    /**
-     * @var CodeInjector
-     */
-    private $injector;
+    private CodeInjector $injector;
 
-    /**
-     * @var string
-     */
-    private $codePart = '<!-- INJECTED -->';
+    private string $codePart = '<!-- INJECTED -->';
 
     protected function setUp(): void
     {

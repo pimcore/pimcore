@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,28 +27,19 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 class CartItem extends AbstractCartItem implements CartItemInterface
 {
-    /**
-     * @var int
-     */
-    protected $sortIndex = 0;
+    protected int $sortIndex = 0;
 
-    /**
-     * @param int $sortIndex
-     */
-    public function setSortIndex($sortIndex)
+    public function setSortIndex(int $sortIndex)
     {
         $this->sortIndex = (int)$sortIndex;
     }
 
-    /**
-     * @return int
-     */
-    public function getSortIndex()
+    public function getSortIndex(): int
     {
         return $this->sortIndex;
     }
 
-    public function getCart()
+    public function getCart(): ?CartInterface
     {
         if (empty($this->cart)) {
             $cartClass = '\\'.Factory::getInstance()->getCartManager()->getCartClassName();
@@ -68,7 +60,7 @@ class CartItem extends AbstractCartItem implements CartItemInterface
         $this->getDao()->save();
     }
 
-    public static function getByCartIdItemKey($cartId, $itemKey, $parentKey = '')
+    public static function getByCartIdItemKey(int|string $cartId, string $itemKey, string $parentKey = '')
     {
         $cacheKey = CartItem\Dao::TABLE_NAME . '_' . $cartId . '_' . $parentKey . $itemKey;
 
@@ -90,7 +82,7 @@ class CartItem extends AbstractCartItem implements CartItemInterface
         return $cartItem;
     }
 
-    public static function removeAllFromCart($cartId)
+    public static function removeAllFromCart(int|string $cartId)
     {
         $cartItem = new static();
         $cartItem->getDao()->removeAllFromCart($cartId);
@@ -99,7 +91,7 @@ class CartItem extends AbstractCartItem implements CartItemInterface
     /**
      * @return CartItemInterface[]
      */
-    public function getSubItems()
+    public function getSubItems(): array
     {
         if ($this->subItems == null) {
             $this->subItems = [];

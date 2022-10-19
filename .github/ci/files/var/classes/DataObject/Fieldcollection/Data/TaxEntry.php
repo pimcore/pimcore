@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
 Fields Summary:
@@ -15,8 +16,8 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 class TaxEntry extends DataObject\Fieldcollection\Data\AbstractData
 {
 protected string $type = "TaxEntry";
-protected $localizedfields;
-protected $percent;
+protected ?DataObject\Localizedfield $localizedfields;
+protected ?float $percent;
 
 
 /**
@@ -38,8 +39,7 @@ public function getLocalizedfields(): ?\Pimcore\Model\DataObject\Localizedfield
 
 /**
 * Get name - Name
-* @return string|null
-*/
+ */
 public function getName($language = null): ?string
 {
 	$data = $this->getLocalizedfields()->getLocalizedValue("name", $language);
@@ -55,7 +55,7 @@ public function getName($language = null): ?string
 * @param \Pimcore\Model\DataObject\Localizedfield|null $localizedfields
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\TaxEntry
 */
-public function setLocalizedfields(?\Pimcore\Model\DataObject\Localizedfield $localizedfields)
+public function setLocalizedfields(?\Pimcore\Model\DataObject\Localizedfield $localizedfields): static
 {
 	$hideUnpublished = \Pimcore\Model\DataObject\Concrete::getHideUnpublished();
 	\Pimcore\Model\DataObject\Concrete::setHideUnpublished(false);
@@ -69,10 +69,8 @@ public function setLocalizedfields(?\Pimcore\Model\DataObject\Localizedfield $lo
 
 /**
 * Set name - Name
-* @param string|null $name
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\TaxEntry
-*/
-public function setName (?string $name, $language = null)
+ */
+public function setName (?string $name, $language = null): static
 {
 	$isEqual = false;
 	$this->getLocalizedfields()->setLocalizedValue("name", $name, $language, !$isEqual);
@@ -99,7 +97,7 @@ public function getPercent(): ?float
 * @param float|null $percent
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\TaxEntry
 */
-public function setPercent(?float $percent)
+public function setPercent(?float $percent): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("percent");

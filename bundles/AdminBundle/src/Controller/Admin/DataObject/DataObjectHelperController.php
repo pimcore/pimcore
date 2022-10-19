@@ -596,7 +596,7 @@ class DataObjectHelperController extends AdminController
                 if ($field instanceof DataObject\ClassDefinition\Data\Localizedfields) {
                     foreach ($field->getFieldDefinitions($context) as $fd) {
                         if (empty($types) || in_array($fd->getFieldType(), $types)) {
-                            $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $count, false, null, $class, $objectId);
+                            $fieldConfig = $this->getFieldGridConfig($fd, $gridType, (string)$count, false, null, $class, $objectId);
                             if (!empty($fieldConfig)) {
                                 $availableFields[] = $fieldConfig;
                                 $count++;
@@ -605,7 +605,7 @@ class DataObjectHelperController extends AdminController
                     }
                 } elseif ($field instanceof DataObject\ClassDefinition\Data\Objectbricks && $includeBricks) {
                     if (in_array($field->getFieldType(), $types)) {
-                        $fieldConfig = $this->getFieldGridConfig($field, $gridType, $count, false, null, $class, $objectId);
+                        $fieldConfig = $this->getFieldGridConfig($field, $gridType, (string)$count, false, null, $class, $objectId);
                         if (!empty($fieldConfig)) {
                             $availableFields[] = $fieldConfig;
                             $count++;
@@ -623,7 +623,7 @@ class DataObjectHelperController extends AdminController
                     }
                 } else {
                     if (empty($types) || in_array($field->getFieldType(), $types)) {
-                        $fieldConfig = $this->getFieldGridConfig($field, $gridType, $count, !empty($types), null, $class, $objectId);
+                        $fieldConfig = $this->getFieldGridConfig($field, $gridType, (string)$count, !empty($types), null, $class, $objectId);
                         if (!empty($fieldConfig)) {
                             $availableFields[] = $fieldConfig;
                             $count++;
@@ -667,7 +667,7 @@ class DataObjectHelperController extends AdminController
                     } else {
                         $keyPrefix = $brickType . '~';
                     }
-                    $fieldConfig = $this->getFieldGridConfig($bf, $gridType, $count, false, $keyPrefix, $class, $objectId);
+                    $fieldConfig = $this->getFieldGridConfig($bf, $gridType, (string)$count, false, $keyPrefix, $class, $objectId);
                     if (!empty($fieldConfig)) {
                         $availableFields[] = $fieldConfig;
                         $count++;

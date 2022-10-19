@@ -22,19 +22,13 @@ use Pimcore\Tests\Test\TestCase;
 
 class CodeBlockTest extends TestCase
 {
-    /**
-     * @var array
-     */
-    private $defaultParts = [
+    private array $defaultParts = [
         'foo;',
         'bar?',
         'bazinga!' . "\n" . '!!!',
     ];
 
-    /**
-     * @var string
-     */
-    private $defaultResult = <<<'EOL'
+    private string $defaultResult = <<<'EOL'
 foo;
 bar?
 bazinga!

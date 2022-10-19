@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,30 +21,15 @@ use Twig\Environment;
 
 abstract class Tracker implements TrackerInterface
 {
-    /**
-     * @var TrackingItemBuilderInterface
-     */
-    protected $trackingItemBuilder;
+    protected TrackingItemBuilderInterface $trackingItemBuilder;
 
-    /**
-     * @var Environment
-     */
-    protected $twig;
+    protected Environment $twig;
 
-    /**
-     * @var string
-     */
-    protected $templatePrefix;
+    protected string $templatePrefix;
 
-    /**
-     * @var array
-     */
-    protected $assortmentTenants;
+    protected array $assortmentTenants;
 
-    /**
-     * @var array
-     */
-    protected $checkoutTenants;
+    protected array $checkoutTenants;
 
     /**
      * Tracker constructor.
@@ -56,10 +42,10 @@ abstract class Tracker implements TrackerInterface
      */
     public function __construct(
         TrackingItemBuilderInterface $trackingItemBuilder,
-        Environment $twig,
-        array $options = [],
-        $assortmentTenants = [],
-        $checkoutTenants = []
+        Environment                  $twig,
+        array                        $options = [],
+        array                        $assortmentTenants = [],
+        array                        $checkoutTenants = []
     ) {
         $this->trackingItemBuilder = $trackingItemBuilder;
         $this->twig = $twig;
@@ -84,7 +70,7 @@ abstract class Tracker implements TrackerInterface
         $resolver->setAllowedTypes('template_prefix', 'string');
     }
 
-    protected function getTemplatePath(string $name)
+    protected function getTemplatePath(string $name): string
     {
         return sprintf(
             '%s/%s.js.twig',
@@ -109,7 +95,7 @@ abstract class Tracker implements TrackerInterface
      *
      * @return array
      */
-    protected function filterNullValues(array $data, array $protectedKeys = [])
+    protected function filterNullValues(array $data, array $protectedKeys = []): array
     {
         $result = [];
         foreach ($data as $key => $value) {

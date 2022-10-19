@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,10 +32,7 @@ class DefaultFindologic extends AbstractConfig implements FindologicConfigInterf
 {
     use OptionsResolverTrait;
 
-    /**
-     * @var array
-     */
-    protected $clientConfig;
+    protected array $clientConfig;
 
     protected function processOptions(array $options)
     {
@@ -54,14 +52,14 @@ class DefaultFindologic extends AbstractConfig implements FindologicConfigInterf
     }
 
     /**
-     * @param string $property
+     * @param string|null $setting
      *
      * @return array|string
      */
-    public function getClientConfig($property = null)
+    public function getClientConfig(string $setting = null): array|string
     {
-        return $property
-            ? $this->clientConfig[$property]
+        return $setting
+            ? $this->clientConfig[$setting]
             : $this->clientConfig
         ;
     }
@@ -73,7 +71,7 @@ class DefaultFindologic extends AbstractConfig implements FindologicConfigInterf
      *
      * @return bool
      */
-    public function inIndex(IndexableInterface $object)
+    public function inIndex(IndexableInterface $object): bool
     {
         return true;
     }
@@ -86,7 +84,7 @@ class DefaultFindologic extends AbstractConfig implements FindologicConfigInterf
      *
      * @return mixed $subTenantData
      */
-    public function prepareSubTenantEntries(IndexableInterface $object, $subObjectId = null)
+    public function prepareSubTenantEntries(IndexableInterface $object, int $subObjectId = null): mixed
     {
     }
 
@@ -95,11 +93,11 @@ class DefaultFindologic extends AbstractConfig implements FindologicConfigInterf
      *
      * @param mixed $objectId
      * @param mixed $subTenantData
-     * @param mixed $subObjectId
+     * @param mixed|null $subObjectId
      *
      * @return void
      */
-    public function updateSubTenantEntries($objectId, $subTenantData, $subObjectId = null)
+    public function updateSubTenantEntries(mixed $objectId, mixed $subTenantData, mixed $subObjectId = null): void
     {
     }
 
@@ -123,7 +121,7 @@ class DefaultFindologic extends AbstractConfig implements FindologicConfigInterf
      *
      * @return array
      */
-    public function getSubTenantCondition()
+    public function getSubTenantCondition(): array
     {
         return [];
     }
@@ -137,7 +135,7 @@ class DefaultFindologic extends AbstractConfig implements FindologicConfigInterf
      *
      * @return DefaultMockup
      */
-    public function createMockupObject($objectId, $data, $relations)
+    public function createMockupObject(int $objectId, mixed $data, array $relations): DefaultMockup
     {
         return new DefaultMockup($objectId, $data, $relations);
     }

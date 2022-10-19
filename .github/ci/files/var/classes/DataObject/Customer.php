@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
 * Inheritance: no
@@ -22,11 +23,8 @@ class Customer extends Concrete
 protected $o_classId = "CU";
 protected $o_className = "Customer";
 
-/**
-* @param array $values
-* @return \Pimcore\Model\DataObject\Customer
-*/
-public static function create($values = array()) {
+    public static function create(array $values = array()): Customer
+{
 	$object = new static();
 	$object->setValues($values);
 	return $object;

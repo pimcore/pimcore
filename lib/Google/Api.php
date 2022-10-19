@@ -188,7 +188,7 @@ class Api
         $client = \Pimcore::getContainer()->get('pimcore.http_client');
         $result = $client->get(self::ANALYTICS_API_URL.'metadata/ga/columns');
 
-        return json_decode($result->getBody(), true);
+        return json_decode((string)$result->getBody(), true);
     }
 
     /**

@@ -133,9 +133,6 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                 $locale = \Locale::getPrimaryLanguage($locale);
             }
 
-            /**
-             * @var Data $definition
-             */
             foreach ($definitions as $definition) {
                 if (!$this->isFieldExportable($object->getClassName(), $definition, $exportAttributes)) {
                     if ($definition->getFieldtype() === Attribute::TYPE_BLOCK) {

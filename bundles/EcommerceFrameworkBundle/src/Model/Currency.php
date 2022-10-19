@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,25 +33,13 @@ class Currency
 
     const USE_NAME = 'longname';
 
-    /**
-     * @var string
-     */
-    protected $currencyShortName;
+    protected string $currencyShortName;
 
-    /**
-     * @var string
-     */
-    protected $currencySymbol;
+    protected string $currencySymbol;
 
-    /**
-     * @var string
-     */
-    protected $currencyName;
+    protected string $currencyName;
 
-    /**
-     * @var array
-     */
-    protected $patternStore = [
+    protected array $patternStore = [
         self::NO_SYMBOL => [
             self::LEFT => '#,##0.00',
             self::RIGHT => '#,##0.00',
@@ -74,7 +63,7 @@ class Currency
      *
      * @param string $currencyShortName
      */
-    public function __construct($currencyShortName)
+    public function __construct(string $currencyShortName)
     {
         $this->currencyShortName = $currencyShortName;
     }
@@ -84,13 +73,7 @@ class Currency
         return \Pimcore::getContainer()->get(IntlFormatter::class);
     }
 
-    /**
-     * @param Decimal|float|int|string $value
-     * @param string|array $pattern
-     *
-     * @return string
-     */
-    public function toCurrency($value, $pattern = 'default')
+    public function toCurrency(float|int|string|Decimal $value, array|string $pattern = 'default'): string
     {
         if (is_array($pattern)) {
             $symbol = $pattern['display'] ? $pattern['display'] : self::USE_SYMBOL;
@@ -106,18 +89,12 @@ class Currency
         return $this->getFormatter()->formatCurrency($value, $this->currencyShortName, $pattern);
     }
 
-    /**
-     * @return string
-     */
-    public function getShortName()
+    public function getShortName(): string
     {
         return $this->currencyShortName;
     }
 
-    /**
-     * @return string
-     */
-    public function getSymbol()
+    public function getSymbol(): string
     {
         if (empty($this->currencySymbol)) {
             $result = $this->getFormatter()->formatCurrency(0, $this->currencyShortName, '¤||');
@@ -128,10 +105,7 @@ class Currency
         return $this->currencySymbol;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         if (empty($this->currencyName)) {
             $result = $this->getFormatter()->formatCurrency(0, $this->currencyShortName, '¤¤¤||');

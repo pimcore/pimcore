@@ -91,9 +91,15 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
 
     /**#@+
      * Capture type and/or attributes (used for hinting during capture)
-     * @var string
+     * @var bool
      */
-    protected string $_captureLock;
+    protected bool $_captureLock;
+
+    protected ?string $_captureScriptType = null;
+
+    protected ?array $_captureScriptAttrs = null;
+
+    protected string $_captureType;
 
     // #@-
 

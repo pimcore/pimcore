@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,7 +24,7 @@ class QuantityValue implements InterpreterInterface
 {
     use OptionsResolverTrait;
 
-    public function interpret($value, $config = null)
+    public function interpret($value, $config = null): float|int|string|null
     {
         $config = $this->resolveOptions($config ?? []);
 

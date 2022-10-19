@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -36,19 +37,19 @@ interface BatchProcessingWorkerInterface extends WorkerInterface
      *
      * @return array returns the processed subobjects that can be used for the index update.
      */
-    public function prepareDataForIndex(IndexableInterface $object);
+    public function prepareDataForIndex(IndexableInterface $object): array;
 
     /**
      * resets the store table by marking all items as "in preparation", so items in store will be regenerated
      *
      * @return void
      */
-    public function resetPreparationQueue();
+    public function resetPreparationQueue(): void;
 
     /**
      * resets the store table to initiate a re-indexing
      *
      * @return void
      */
-    public function resetIndexingQueue();
+    public function resetIndexingQueue(): void;
 }

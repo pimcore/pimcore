@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,34 +31,16 @@ use Pimcore\Tests\Util\TestHelper;
 
 abstract class AbstractDataTypeTestCase extends TestCase
 {
-    /**
-     * @var bool
-     */
-    protected $cleanupDbInSetup = true;
+    protected bool $cleanupDbInSetup = true;
 
-    /**
-     * @var TestDataHelper
-     */
-    protected $testDataHelper;
+    protected TestDataHelper $testDataHelper;
 
-    /**
-     * @var int
-     */
-    protected $seed = 1;
+    protected int $seed = 1;
 
-    /**
-     * @var Unittest
-     */
-    protected $testObject;
+    protected Unittest $testObject;
 
-    /**
-     * @var Unittest
-     */
-    protected $comparisonObject;
+    protected Unittest $comparisonObject;
 
-    /**
-     * @param TestDataHelper $testData
-     */
     public function _inject(TestDataHelper $testData)
     {
         $this->testDataHelper = $testData;
@@ -70,7 +53,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
      * @param array|string $fields
      * @param array $returnData
      */
-    protected function fillObject(Concrete $object, $fields = [], &$returnData = [])
+    protected function fillObject(Concrete $object, array|string $fields = [], array &$returnData = [])
     {
         // allow to pass only a string (e.g. input) -> fillInput($object, "input", $seed)
         if (!is_array($fields)) {
@@ -113,7 +96,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function needsDb()
+    protected function needsDb(): bool
     {
         return true;
     }
@@ -126,13 +109,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertBooleanSelect($this->testObject, 'booleanSelect', $this->seed);
     }
 
-    /**
-     * @param array $fields
-     * @param array $params
-     *
-     * @return Unittest
-     */
-    abstract protected function createTestObject($fields = [], &$params = []);
+    abstract protected function createTestObject(array $fields = [], array &$params = []): Unittest;
 
     abstract public function refreshObject();
 
@@ -750,6 +727,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
     public function testQuantityValue()
     {
+        $returnData = [];
         $this->createTestObject('quantityValue', $returnData);
 
         $this->refreshObject();

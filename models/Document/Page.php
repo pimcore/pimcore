@@ -124,7 +124,6 @@ class Page extends TargetingDocument
         return $this->metaData;
     }
 
-array
     public function getFullPath(bool $force = false): string
     {
         $path = parent::getFullPath($force);

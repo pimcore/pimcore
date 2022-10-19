@@ -28,20 +28,14 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 
 class IndexService
 {
-    /**
-     * @var EnvironmentInterface
-     */
-    protected $environment;
+    protected EnvironmentInterface $environment;
 
     /**
      * @var WorkerInterface[]
      */
-    protected $tenantWorkers = [];
+    protected array $tenantWorkers = [];
 
-    /**
-     * @var string
-     */
-    protected $defaultTenant = 'default';
+    protected string $defaultTenant = 'default';
 
     /**
      * @param EnvironmentInterface $environment
@@ -66,7 +60,7 @@ class IndexService
      *
      * @internal
      */
-    protected function registerTenantWorker(WorkerInterface $tenantWorker)
+    protected function registerTenantWorker(WorkerInterface $tenantWorker): void
     {
         $this->tenantWorkers[$tenantWorker->getTenantConfig()->getTenantName()] = $tenantWorker;
     }
@@ -120,7 +114,6 @@ class IndexService
      *
      * @return array
      *
-     * @throws InvalidConfigException
      */
     public function getGeneralSearchAttributes(string $tenant = null): array
     {
@@ -136,7 +129,7 @@ class IndexService
     /**
      * Creates or updates necessary index structures (e.g. database tables)
      */
-    public function createOrUpdateIndexStructures()
+    public function createOrUpdateIndexStructures(): void
     {
         foreach ($this->tenantWorkers as $tenant => $tenantWorker) {
             $tenantWorker->createOrUpdateIndexStructures();
@@ -148,7 +141,7 @@ class IndexService
      *
      * @param IndexableInterface $object
      */
-    public function deleteFromIndex(IndexableInterface $object)
+    public function deleteFromIndex(IndexableInterface $object): void
     {
         foreach ($this->tenantWorkers as $tenant => $tenantWorker) {
             $tenantWorker->deleteFromIndex($object);
@@ -160,7 +153,7 @@ class IndexService
      *
      * @param IndexableInterface $object
      */
-    public function updateIndex(IndexableInterface $object)
+    public function updateIndex(IndexableInterface $object): void
     {
         foreach ($this->tenantWorkers as $tenant => $tenantWorker) {
             $tenantWorker->updateIndex($object);
@@ -175,7 +168,6 @@ class IndexService
      *
      * @return array
      *
-     * @throws InvalidConfigException
      */
     public function getIndexAttributes(bool $considerHideInFieldList = false, string $tenant = null): array
     {
@@ -195,7 +187,6 @@ class IndexService
      *
      * @return array
      *
-     * @throws InvalidConfigException
      */
     public function getAllFilterGroups(string $tenant = null): array
     {
@@ -216,9 +207,8 @@ class IndexService
      *
      * @return array
      *
-     * @throws InvalidConfigException
      */
-    public function getIndexAttributesByFilterGroup($filterType, string $tenant = null): array
+    public function getIndexAttributesByFilterGroup(string $filterType, string $tenant = null): array
     {
         try {
             $tenantWorker = $this->resolveTenantWorker($tenant);
@@ -234,9 +224,8 @@ class IndexService
      *
      * @return ConfigInterface
      *
-     * @throws InvalidConfigException
      */
-    public function getCurrentTenantConfig()
+    public function getCurrentTenantConfig(): ConfigInterface
     {
         return $this->getCurrentTenantWorker()->getTenantConfig();
     }

@@ -70,7 +70,7 @@ final class FilteredTableMetadataStorage implements MetadataStorage
         $filteredMigrations = [];
         $items = $migrations->getItems();
         foreach ($items as $migration) {
-            if (strpos($migration->getVersion(), $this->prefix) === 0) {
+            if (strpos((string)$migration->getVersion(), $this->prefix) === 0) {
                 $filteredMigrations[] = $migration;
             }
         }

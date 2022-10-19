@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,13 +29,13 @@ class DataTypeTest extends AbstractDataTypeTestCase
     /**
      * Creates and saves object locally without testing against a comparison object
      *
-     * {@inheritdoc}
+
      */
-    protected function createTestObject($fields = [], &$returnData = [])
+    protected function createTestObject(array $fields = [], array &$params = []): Unittest|\Pimcore\Model\DataObject\Concrete
     {
         $object = TestHelper::createEmptyObject('local', true, true);
         if ($fields) {
-            $this->fillObject($object, $fields, $returnData);
+            $this->fillObject($object, $fields, $params);
         }
 
         $object->save();

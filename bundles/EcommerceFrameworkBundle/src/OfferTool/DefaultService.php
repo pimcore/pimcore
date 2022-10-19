@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,25 +28,13 @@ use Pimcore\Model\DataObject\Service;
 
 class DefaultService implements ServiceInterface
 {
-    /**
-     * @var string
-     */
-    protected $offerClass;
+    protected string $offerClass;
 
-    /**
-     * @var string
-     */
-    protected $offerItemClass;
+    protected string $offerItemClass;
 
-    /**
-     * @var string
-     */
-    protected $parentFolderPath;
+    protected string|false $parentFolderPath;
 
-    /**
-     * @var Folder
-     */
-    protected $parentFolder;
+    protected Folder $parentFolder;
 
     public function __construct(string $offerClass, string $offerItemClass, string $parentFolderPath)
     {
@@ -85,7 +74,7 @@ class DefaultService implements ServiceInterface
      *
      * @return AbstractOffer
      */
-    public function createNewOfferFromCart(CartInterface $cart, array $excludeItems = [])
+    public function createNewOfferFromCart(CartInterface $cart, array $excludeItems = []): AbstractOffer
     {
         $tempOfferNumber = uniqid('offer_');
         $offer = $this->getNewOfferObject($tempOfferNumber);
@@ -115,7 +104,7 @@ class DefaultService implements ServiceInterface
         return $offer;
     }
 
-    protected function getExcludedItemKeys($excludeItems)
+    protected function getExcludedItemKeys($excludeItems): array
     {
         $excludedItemKeys = [];
         if ($excludeItems) {
@@ -127,12 +116,7 @@ class DefaultService implements ServiceInterface
         return $excludedItemKeys;
     }
 
-    /**
-     * @param string $tempOfferNumber
-     *
-     * @return AbstractOffer
-     */
-    protected function getNewOfferObject($tempOfferNumber)
+    protected function getNewOfferObject(string $tempOfferNumber): AbstractOffer
     {
         /** @var AbstractOffer $offer */
         $offer = new $this->offerClass();
@@ -145,21 +129,12 @@ class DefaultService implements ServiceInterface
         return $offer;
     }
 
-    /**
-     * @return AbstractOfferItem
-     */
-    public function getNewOfferItemObject()
+    public function getNewOfferItemObject(): AbstractOfferItem
     {
         return new $this->offerItemClass();
     }
 
-    /**
-     * @param CartItemInterface $item
-     * @param AbstractObject $parent
-     *
-     * @return AbstractOfferItem
-     */
-    protected function createOfferItem(CartItemInterface $item, $parent)
+    protected function createOfferItem(CartItemInterface $item, AbstractObject $parent): AbstractOfferItem
     {
         $offerItem = $this->getNewOfferItemObject();
         $offerItem->setParent($parent);
@@ -202,7 +177,7 @@ class DefaultService implements ServiceInterface
         return $offerItem;
     }
 
-    protected function updateOfferItem(CartItemInterface $cartItem, AbstractOfferItem $offerItem)
+    protected function updateOfferItem(CartItemInterface $cartItem, AbstractOfferItem $offerItem): AbstractOfferItem
     {
         $offerItem->setAmount($cartItem->getCount());
         $offerItem->setProduct($cartItem->getProduct());
@@ -259,7 +234,7 @@ class DefaultService implements ServiceInterface
         return $price;
     }
 
-    protected function setCurrentCustomer(AbstractOffer $offer)
+    protected function setCurrentCustomer(AbstractOffer $offer): AbstractOffer
     {
         $env = Factory::getInstance()->getEnvironment();
 
@@ -271,7 +246,7 @@ class DefaultService implements ServiceInterface
         return $offer;
     }
 
-    public function updateOfferFromCart(AbstractOffer $offer, CartInterface $cart, array $excludeItems = [], $save = true)
+    public function updateOfferFromCart(AbstractOffer $offer, CartInterface $cart, array $excludeItems = [], $save = true): AbstractOffer
     {
         $excludedItemKeys = $this->getExcludedItemKeys($excludeItems);
 
@@ -317,7 +292,7 @@ class DefaultService implements ServiceInterface
         return $offer;
     }
 
-    public function updateTotalPriceOfOffer(AbstractOffer $offer)
+    public function updateTotalPriceOfOffer(AbstractOffer $offer): AbstractOffer
     {
         $totalPrice = Decimal::zero();
 

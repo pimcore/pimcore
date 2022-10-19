@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,10 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 
 class SnippetResponse extends AbstractResponse
 {
-    /**
-     * @var string
-     */
-    protected $snippet;
+    protected string $snippet;
 
     /**
      * SnippetResponse constructor.
@@ -36,9 +34,6 @@ class SnippetResponse extends AbstractResponse
         $this->snippet = $snippet;
     }
 
-    /**
-     * @return string
-     */
     public function getSnippet(): string
     {
         return $this->snippet;

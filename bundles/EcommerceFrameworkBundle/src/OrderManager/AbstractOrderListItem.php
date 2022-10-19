@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,21 +22,12 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
  */
 abstract class AbstractOrderListItem
 {
-    /**
-     * @var array
-     */
-    protected $resultRow;
+    protected array $resultRow;
 
-    /**
-     * @param array $resultRow
-     */
     public function __construct(array $resultRow)
     {
         $this->resultRow = $resultRow;
     }
 
-    /**
-     * @return int
-     */
-    abstract public function getId();
+    abstract public function getId(): int;
 }

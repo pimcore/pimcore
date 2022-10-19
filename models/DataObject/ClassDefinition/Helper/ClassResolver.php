@@ -21,6 +21,8 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
  */
 abstract class ClassResolver
 {
+    private static array $cache;
+
     /**
      * @param string|null $class
      * @param callable|null $validationCallback

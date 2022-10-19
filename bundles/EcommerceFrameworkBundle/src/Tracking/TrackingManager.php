@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,27 +32,18 @@ class TrackingManager implements TrackingManagerInterface
     /**
      * @var TrackerInterface[]
      */
-    protected $trackers = [];
+    protected array $trackers = [];
 
     /**
      * @var TrackerInterface[]
      */
-    protected $activeTrackerCache = [];
+    protected array $activeTrackerCache = [];
 
-    /**
-     * @var string
-     */
-    protected $cachedAssortmentTenant = null;
+    protected ?string $cachedAssortmentTenant = null;
 
-    /**
-     * @var string
-     */
-    protected $cachedCheckoutTenant = null;
+    protected ?string $cachedCheckoutTenant = null;
 
-    /**
-     * @var null|EnvironmentInterface
-     */
-    protected $enviroment = null;
+    protected ?EnvironmentInterface $enviroment = null;
 
     /**
      *
@@ -59,11 +51,8 @@ class TrackingManager implements TrackingManagerInterface
      *
      * @var Session
      */
-    protected $session;
+    protected Session $session;
 
-    /**
-     * @var RequestStack
-     */
     protected RequestStack $requestStack;
 
     /**
@@ -162,9 +151,9 @@ class TrackingManager implements TrackingManagerInterface
      * Tracks a category page view
      *
      * @param array|string $category One or more categories matching the page
-     * @param mixed $page            Any kind of page information you can use to track your page
+     * @param mixed|null $page            Any kind of page information you can use to track your page
      */
-    public function trackCategoryPageView($category, $page = null)
+    public function trackCategoryPageView(array|string $category, mixed $page = null)
     {
         foreach ($this->getActiveTrackers() as $tracker) {
             if ($tracker instanceof CategoryPageViewInterface) {
@@ -221,9 +210,9 @@ class TrackingManager implements TrackingManagerInterface
      *
      * @param CartInterface $cart
      * @param ProductInterface $product
-     * @param int|float $quantity
+     * @param float|int $quantity
      */
-    public function trackCartProductActionAdd(CartInterface $cart, ProductInterface $product, $quantity = 1)
+    public function trackCartProductActionAdd(CartInterface $cart, ProductInterface $product, float|int $quantity = 1)
     {
         foreach ($this->getActiveTrackers() as $tracker) {
             if ($tracker instanceof CartProductActionAddInterface) {
@@ -237,9 +226,9 @@ class TrackingManager implements TrackingManagerInterface
      *
      * @param CartInterface $cart
      * @param ProductInterface $product
-     * @param int|float $quantity
+     * @param float|int $quantity
      */
-    public function trackCartProductActionRemove(CartInterface $cart, ProductInterface $product, $quantity = 1)
+    public function trackCartProductActionRemove(CartInterface $cart, ProductInterface $product, float|int $quantity = 1)
     {
         foreach ($this->getActiveTrackers() as $tracker) {
             if ($tracker instanceof CartProductActionRemoveInterface) {
@@ -292,7 +281,7 @@ class TrackingManager implements TrackingManagerInterface
      * @param string|null $stepNumber
      * @param string|null $checkoutOption
      */
-    public function trackCheckoutStep(CheckoutManagerCheckoutStepInterface $step, CartInterface $cart, $stepNumber = null, $checkoutOption = null)
+    public function trackCheckoutStep(CheckoutManagerCheckoutStepInterface $step, CartInterface $cart, string $stepNumber = null, string $checkoutOption = null)
     {
         foreach ($this->getActiveTrackers() as $tracker) {
             if ($tracker instanceof CheckoutStepInterface) {
@@ -315,9 +304,6 @@ class TrackingManager implements TrackingManagerInterface
         return $result;
     }
 
-    /**
-     * @return $this
-     */
     public function forwardTrackedCodesAsFlashMessage(): static
     {
         $trackedCodes = [];

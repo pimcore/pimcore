@@ -154,7 +154,7 @@ final class ImageThumbnail
                         $this->pathReference = Image\Thumbnail\Processor::process(
                             $this->asset,
                             $this->getConfig(),
-                            $cacheFileStream,
+                            (string)$cacheFileStream,
                             $deferred,
                             $generated
                         );

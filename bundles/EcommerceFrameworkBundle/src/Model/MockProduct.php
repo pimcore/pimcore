@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -48,17 +49,17 @@ class MockProduct extends Concrete implements ProductInterface, IndexableInterfa
         return Factory::getInstance()->getAvailabilitySystem($this->getAvailabilitySystemName());
     }
 
-    public function getOSPrice($quantityScale = 1): ?PriceInterface
+    public function getOSPrice(int $quantityScale = 1): ?PriceInterface
     {
         return null;
     }
 
-    public function getOSPriceInfo($quantityScale = 1): ?PriceInfoInterface
+    public function getOSPriceInfo(int $quantityScale = 1): ?PriceInfoInterface
     {
         return $this->getPriceSystemImplementation()->getPriceInfo($this, 0);
     }
 
-    public function getOSAvailabilityInfo($quantity = null): ?AvailabilityInterface
+    public function getOSAvailabilityInfo(int $quantity = null): ?AvailabilityInterface
     {
         return $this->getAvailabilitySystemImplementation()->getAvailabilityInfo($this, 0);
     }
@@ -103,7 +104,7 @@ class MockProduct extends Concrete implements ProductInterface, IndexableInterfa
         return null;
     }
 
-    public function getPrice()
+    public function getPrice(): int
     {
         return 0;
     }

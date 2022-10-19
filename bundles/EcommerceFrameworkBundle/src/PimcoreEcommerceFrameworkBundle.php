@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -46,9 +47,6 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
         $container->addCompilerPass(new RegisterConfiguredServicesPass());
     }
 
-    /**
-     * @return array
-     */
     public function getCssPaths(): array
     {
         return [
@@ -57,9 +55,6 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
         ];
     }
 
-    /**
-     * @return array
-     */
     public function getJsPaths(): array
     {
         return [
@@ -86,9 +81,6 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
         Decimal::setDefaultScale($container->getParameter('pimcore_ecommerce.decimal_scale'));
     }
 
-    /**
-     * @return Installer
-     */
     public function getInstaller(): Installer
     {
         return $this->container->get(Installer::class);

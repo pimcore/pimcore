@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,7 +20,7 @@ use Codeception\Util\Autoload;
 
 class Autoloader extends Autoload
 {
-    protected static $reg = false;
+    protected static bool $reg = false;
 
     public static function addNamespace($prefix, $base_dir, $prepend = false)
     {

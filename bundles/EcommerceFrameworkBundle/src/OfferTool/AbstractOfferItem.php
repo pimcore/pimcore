@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,26 +29,12 @@ abstract class AbstractOfferItem extends Concrete
      */
     abstract public function getProduct(): ?\Pimcore\Model\Element\AbstractElement;
 
-    /**
-     * @param \Pimcore\Model\Element\AbstractElement|null $product
-     */
     abstract public function setProduct(?\Pimcore\Model\Element\AbstractElement $product);
 
-    /**
-     * @return string|null
-     */
     abstract public function getProductNumber(): ?string;
 
-    /**
-     * @param string|null $productNumber
-     *
-     * @return $this
-     */
-    abstract public function setProductNumber(?string $productNumber);
+    abstract public function setProductNumber(?string $productNumber): static;
 
-    /**
-     * @return string|null
-     */
     abstract public function getProductName(): ?string;
 
     /**
@@ -64,94 +51,33 @@ abstract class AbstractOfferItem extends Concrete
      */
     abstract public function getAmount(): ?float;
 
-    /**
-     * @param float|null $amount
-     *
-     * @return $this
-     */
-    abstract public function setAmount(?float $amount);
+    abstract public function setAmount(?float $amount): static;
 
-    /**
-     * @return string|null
-     */
     abstract public function getOriginalTotalPrice(): ?string;
 
-    /**
-     * @param string|null $originalTotalPrice
-     *
-     * @return $this
-     */
-    abstract public function setOriginalTotalPrice(?string $originalTotalPrice);
+    abstract public function setOriginalTotalPrice(?string $originalTotalPrice): static;
 
-    /**
-     * @return string|null
-     */
     abstract public function getFinalTotalPrice(): ?string;
 
-    /**
-     * @param string|null $finalTotalPrice
-     *
-     * @return $this
-     */
-    abstract public function setFinalTotalPrice(?string $finalTotalPrice);
+    abstract public function setFinalTotalPrice(?string $finalTotalPrice): static;
 
-    /**
-     * @return string|null
-     */
     abstract public function getDiscount(): ?string;
 
-    /**
-     * @param string|null $discount
-     *
-     * @return $this
-     */
-    abstract public function setDiscount(?string $discount);
+    abstract public function setDiscount(?string $discount): static;
 
-    /**
-     * @return string|null
-     */
     abstract public function getDiscountType(): ?string;
 
-    /**
-     * @param string|null $discountType
-     *
-     * @return $this
-     */
-    abstract public function setDiscountType(?string $discountType);
+    abstract public function setDiscountType(?string $discountType): static;
 
-    /**
-     * @return array
-     */
     abstract public function getSubItems(): array;
 
-    /**
-     * @param array|null $subItems
-     *
-     * @return $this
-     */
-    abstract public function setSubItems(?array $subItems);
+    abstract public function setSubItems(?array $subItems): static;
 
-    /**
-     * @return string|null
-     */
     abstract public function getComment(): ?string;
 
-    /**
-     * @param string|null $comment
-     *
-     * @return $this
-     */
-    abstract public function setComment(?string $comment);
+    abstract public function setComment(?string $comment): static;
 
-    /**
-     * @return string|null
-     */
     abstract public function getCartItemKey(): ?string;
 
-    /**
-     * @param string|null $cartItemKey
-     *
-     * @return $this
-     */
-    abstract public function setCartItemKey(?string $cartItemKey);
+    abstract public function setCartItemKey(?string $cartItemKey): static;
 }

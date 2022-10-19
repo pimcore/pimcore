@@ -528,7 +528,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         }
     }
 
-array
     public function load(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): DataObject\Classificationstore
     {
         $classificationStore = new DataObject\Classificationstore();

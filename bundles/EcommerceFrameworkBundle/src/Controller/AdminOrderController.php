@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,6 +29,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Or
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\ProductType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManagerInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\PaymentManagerInterface;
 use Pimcore\Cache;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Localization\IntlFormatter;
@@ -55,16 +57,10 @@ use Symfony\Contracts\Translation\LocaleAwareInterface;
  */
 class AdminOrderController extends AdminController implements KernelControllerEventInterface
 {
-    /**
-     * @var OrderManagerInterface
-     */
-    protected $orderManager;
+    protected OrderManagerInterface $orderManager;
 
-    protected $paymentManager;
+    protected PaymentManagerInterface $paymentManager;
 
-    /**
-     * {@inheritdoc}
-     */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         // set language
@@ -94,7 +90,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
      *
      * @return Response
      */
-    public function listAction(Request $request, IntlFormatter $formatter, PaginatorInterface $paginator)
+    public function listAction(Request $request, IntlFormatter $formatter, PaginatorInterface $paginator): Response
     {
         // create new order list
         /** @var Listing $list */
@@ -207,7 +203,8 @@ class AdminOrderController extends AdminController implements KernelControllerEv
         ClientInterface $client,
         IntlFormatter $formatter,
         LocaleServiceInterface $localeService
-    ) {
+    ): Response
+    {
         $pimcoreSymfonyConfig = $this->getParameter('pimcore.config');
 
         // init
@@ -240,7 +237,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
             try {
                 $response = $client->request('GET', $url);
                 if ($response->getStatusCode() < 300) {
-                    $json = json_decode($response->getBody());
+                    $json = json_decode((string)$response->getBody());
                     if (is_array($json)) {
                         $json = $json[0];
                     }
@@ -386,7 +383,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
      *
      * @return Response
      */
-    public function itemCancelAction(Request $request, CsrfProtectionHandler $csrfProtection)
+    public function itemCancelAction(Request $request, CsrfProtectionHandler $csrfProtection): Response
     {
         // init
         $orderItem = OnlineShopOrderItem::getById((int) $request->get('id'));
@@ -421,9 +418,8 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     /**
      * @Route("/item-edit", name="pimcore_ecommerce_backend_admin-order_item-edit", methods={"GET", "POST"})
      *
-     * @return Response
      */
-    public function itemEditAction(Request $request, CsrfProtectionHandler $csrfProtectionHandler)
+    public function itemEditAction(Request $request, CsrfProtectionHandler $csrfProtectionHandler): Response
     {
         // init
         $orderItem = OnlineShopOrderItem::getById((int) $request->get('id'));
@@ -457,9 +453,8 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     /**
      * @Route("/item-complaint", name="pimcore_ecommerce_backend_admin-order_item-complaint", methods={"GET", "POST"})
      *
-     * @return Response
      */
-    public function itemComplaintAction(Request $request, CsrfProtectionHandler $csrfProtectionHandler)
+    public function itemComplaintAction(Request $request, CsrfProtectionHandler $csrfProtectionHandler): Response
     {
         // init
         $orderItem = OnlineShopOrderItem::getById((int) $request->get('id'));

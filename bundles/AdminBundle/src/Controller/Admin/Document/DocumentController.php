@@ -828,6 +828,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
             }
         }
 
+        $treeData = [];
         $this->addAdminStyle($document, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
 
         return $this->adminJson(['success' => true, 'treeData' => $treeData]);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -61,90 +62,39 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
      *
      */
 
-    /**
-     * @var DataObject\Folder
-     */
-    protected $permissionfoo;
+    protected DataObject\Folder $permissionfoo;
 
-    /**
-     * @var DataObject\Folder
-     */
-    protected $permissionbar;
+    protected DataObject\Folder $permissionbar;
 
-    /**
-     * @var DataObject\Folder
-     */
-    protected $permissioncpath;
+    protected DataObject\Folder $permissioncpath;
 
-    /**
-     * @var DataObject\Folder
-     */
-    protected $foo;
+    protected DataObject\Folder $foo;
 
-    /**
-     * @var DataObject\Folder
-     */
-    protected $bar;
+    protected DataObject\Folder $bar;
 
-    /**
-     * @var DataObject\Folder
-     */
-    protected $bars;
+    protected DataObject\Folder $bars;
 
-    /**
-     * @var DataObject\Folder
-     */
-    protected $userfolder;
+    protected DataObject\Folder $userfolder;
 
-    /**
-     * @var DataObject\Folder
-     */
-    protected $groupfolder;
+    protected DataObject\Folder $groupfolder;
 
-    /**
-     * @var DataObject\AbstractObject
-     */
-    protected $hiddenobject;
+    protected DataObject\AbstractObject $hiddenobject;
 
-    /**
-     * @var DataObject\AbstractObject
-     */
-    protected $hugo;
+    protected DataObject\AbstractObject $hugo;
 
-    /**
-     * @var DataObject\AbstractObject
-     */
-    protected $usertestobject;
+    protected DataObject\AbstractObject $usertestobject;
 
-    /**
-     * @var DataObject\AbstractObject
-     */
-    protected $grouptestobject;
+    protected DataObject\AbstractObject $grouptestobject;
 
-    /**
-     * @var DataObject\Folder
-     */
-    protected $a;
+    protected DataObject\Folder $a;
 
-    /**
-     * @var DataObject\Folder
-     */
-    protected $b;
+    protected DataObject\Folder $b;
 
-    /**
-     * @var DataObject\AbstractObject
-     */
-    protected $c;
+    protected DataObject\AbstractObject $c;
 
-    /**
-     * @var DataObject\AbstractObject
-     */
-    protected $abcdefghjkl;
+    protected DataObject\AbstractObject $abcdefghjkl;
 
-    /**
-     * @var Asset
-     */
-    protected $assetElement;
+    protected Asset $assetElement;
 
     protected function prepareObjectTree()
     {

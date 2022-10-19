@@ -344,7 +344,7 @@ trait ImageThumbnailTrait
             return null;
         }
 
-        return self::getLocalFileFromStream($stream);
+        return self::getLocalFileFromStream((string)$stream);
     }
 
     public function exists(): bool

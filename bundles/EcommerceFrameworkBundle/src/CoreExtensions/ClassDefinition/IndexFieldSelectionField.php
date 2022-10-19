@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,18 +27,18 @@ class IndexFieldSelectionField extends Textarea
      */
     public string $fieldtype = 'indexFieldSelectionField';
 
-    public $specificPriceField = false;
+    public bool $specificPriceField = false;
 
-    public $showAllFields = false;
+    public bool $showAllFields = false;
 
-    public $considerTenants = false;
+    public bool $considerTenants = false;
 
     public function setSpecificPriceField($specificPriceField)
     {
         $this->specificPriceField = $specificPriceField;
     }
 
-    public function getSpecificPriceField()
+    public function getSpecificPriceField(): bool
     {
         return $this->specificPriceField;
     }
@@ -47,7 +48,7 @@ class IndexFieldSelectionField extends Textarea
         $this->showAllFields = $showAllFields;
     }
 
-    public function getShowAllFields()
+    public function getShowAllFields(): bool
     {
         return $this->showAllFields;
     }
@@ -57,17 +58,12 @@ class IndexFieldSelectionField extends Textarea
         $this->considerTenants = $considerTenants;
     }
 
-    public function getConsiderTenants()
+    public function getConsiderTenants(): bool
     {
         return $this->considerTenants;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return bool
-     */
-    public function isEmpty(mixed $data)
+    public function isEmpty(mixed $data): bool
     {
         if (is_string($data)) {
             return strlen($data) < 1;
@@ -86,7 +82,7 @@ class IndexFieldSelectionField extends Textarea
      *
      * @return string
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = [])
+    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): string
     {
         if (is_array($data)) {
             $data = implode(',', $data);

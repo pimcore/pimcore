@@ -22,19 +22,13 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
 
 class TokenManagerFactory implements TokenManagerFactoryInterface
 {
-    /**
-     * @var array
-     */
-    private $mapping;
+    private array $mapping;
 
     /**
      * @var TokenManagerInterface[]
      */
-    private $tokenManagers = [];
+    private array $tokenManagers = [];
 
-    /**
-     * @param array $mapping
-     */
     public function __construct(array $mapping)
     {
         $this->mapping = $mapping;

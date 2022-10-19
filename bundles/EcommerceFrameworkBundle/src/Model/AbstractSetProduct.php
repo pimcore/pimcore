@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -53,7 +54,7 @@ abstract class AbstractSetProduct extends AbstractProduct
      *
      * @return bool
      */
-    public function getOSIsBookable($quantityScale = 1, $products = null): bool
+    public function getOSIsBookable($quantityScale = 1, array $products = null): bool
     {
         if ($this->isActive()) {
             if (empty($products)) {
@@ -80,14 +81,13 @@ abstract class AbstractSetProduct extends AbstractProduct
     /**
      * Delivers min price for given products or with default mandatory products of set product
      *
-     * @throws UnsupportedException
-     *
-     * @param int $quantityScale
-     * @param array|null $products
+     * @param int|null $quantityScale
      *
      * @return PriceInterface|null
+     *@throws UnsupportedException
+     *
      */
-    public function getOSPrice($quantityScale = null, $products = null): ?PriceInterface
+    public function getOSPrice(int $quantityScale = null): ?PriceInterface
     {
         if ($this->getOSPriceInfo($quantityScale, $products)) {
             return $this->getOSPriceInfo($quantityScale, $products)->getPrice();
@@ -99,14 +99,13 @@ abstract class AbstractSetProduct extends AbstractProduct
     /**
      * Delivers priceinfo with min price for given products or with  default mandatory products of set product
      *
-     * @throws UnsupportedException
-     *
-     * @param int $quantityScale
-     * @param array|null $products
+     * @param int|null $quantityScale
      *
      * @return PriceInfoInterface|null
+     *@throws UnsupportedException
+     *
      */
-    public function getOSPriceInfo($quantityScale = null, $products = null): ?PriceInfoInterface
+    public function getOSPriceInfo(int $quantityScale = null): ?PriceInfoInterface
     {
         if (!is_array($products)) {
             $products = $this->getMandatoryProductEntries();
@@ -116,12 +115,11 @@ abstract class AbstractSetProduct extends AbstractProduct
     }
 
     /**
-     * @param int $quantity
-     * @param AbstractSetProductEntry[] $products
+     * @param int|null $quantity
      *
      * @return AvailabilityInterface|null
      */
-    public function getOSAvailabilityInfo($quantity = null, $products = null): ?AvailabilityInterface
+    public function getOSAvailabilityInfo(int $quantity = null): ?AvailabilityInterface
     {
         if ($quantity === null) {
             $quantity = 1;
@@ -137,13 +135,13 @@ abstract class AbstractSetProduct extends AbstractProduct
     /**
      * checks if all mandatory of set products are set in given product list
      *
-     * @throws UnsupportedException
-     *
      * @param  AbstractSetProductEntry[] $products
      *
      * @return void
+          *@throws UnsupportedException
+     *
      */
-    protected function checkMandatoryProducts($products)
+    protected function checkMandatoryProducts(array $products): void
     {
         $mandatoryProducts = $this->getMandatoryProductEntries();
         $mandatoryProductIds = [];

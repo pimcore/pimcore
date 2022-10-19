@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,10 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 
 class JsonResponse extends AbstractResponse
 {
-    /**
-     * @var string
-     */
-    protected $jsonString;
+    protected string $jsonString;
 
     /**
      * JsonResponse constructor.
@@ -36,9 +34,6 @@ class JsonResponse extends AbstractResponse
         $this->jsonString = $jsonString;
     }
 
-    /**
-     * @return string
-     */
     public function getJsonString(): string
     {
         return $this->jsonString;

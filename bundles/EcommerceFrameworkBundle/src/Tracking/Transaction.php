@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,250 +18,140 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
 class Transaction extends AbstractData
 {
-    /**
-     * @var string
-     */
-    protected $type;
+    protected string $type;
 
-    /**
-     * @var string
-     */
-    protected $affiliation;
+    protected string $affiliation;
 
-    /**
-     * @var float
-     */
-    protected $total;
+    protected float $total;
 
-    /**
-     * @var float
-     */
-    protected $subTotal;
+    protected float $subTotal;
 
-    /**
-     * @var float
-     */
-    protected $tax;
+    protected float $tax;
 
-    /**
-     * @var float
-     */
-    protected $shipping;
+    protected float $shipping;
 
-    /**
-     * @var string
-     */
-    protected $coupon;
+    protected string $coupon;
 
-    /**
-     * @var string
-     */
-    protected $list;
+    protected string $list;
 
-    /**
-     * @var string
-     */
-    protected $step;
+    protected string $step;
 
-    /**
-     * @var string
-     */
-    protected $option;
+    protected string $option;
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return $this
-     */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getAffiliation()
+    public function getAffiliation(): string
     {
         return $this->affiliation;
     }
 
-    /**
-     * @param string $affiliation
-     *
-     * @return $this
-     */
-    public function setAffiliation($affiliation)
+    public function setAffiliation(string $affiliation): static
     {
         $this->affiliation = $affiliation;
 
         return $this;
     }
 
-    /**
-     * @return float
-     */
-    public function getTotal()
+    public function getTotal(): float
     {
         return $this->total;
     }
 
-    /**
-     * @param float $total
-     *
-     * @return $this
-     */
-    public function setTotal($total)
+    public function setTotal(float $total): static
     {
         $this->total = $total;
 
         return $this;
     }
 
-    /**
-     * @return float
-     */
-    public function getSubTotal()
+    public function getSubTotal(): float
     {
         return $this->subTotal;
     }
 
-    /**
-     * @param float $subTotal
-     *
-     * @return $this
-     */
-    public function setSubTotal($subTotal)
+    public function setSubTotal(float $subTotal): static
     {
         $this->subTotal = $subTotal;
 
         return $this;
     }
 
-    /**
-     * @return float
-     */
-    public function getTax()
+    public function getTax(): float
     {
         return $this->tax;
     }
 
-    /**
-     * @param float $tax
-     *
-     * @return $this
-     */
-    public function setTax($tax)
+    public function setTax(float $tax): static
     {
         $this->tax = $tax;
 
         return $this;
     }
 
-    /**
-     * @return float
-     */
-    public function getShipping()
+    public function getShipping(): float
     {
         return $this->shipping;
     }
 
-    /**
-     * @param float $shipping
-     *
-     * @return $this
-     */
-    public function setShipping($shipping)
+    public function setShipping(float $shipping): static
     {
         $this->shipping = $shipping;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getCoupon()
+    public function getCoupon(): string
     {
         return $this->coupon;
     }
 
-    /**
-     * @param string $coupon
-     *
-     * @return $this
-     */
-    public function setCoupon($coupon)
+    public function setCoupon(string $coupon): static
     {
         $this->coupon = $coupon;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getList()
+    public function getList(): string
     {
         return $this->list;
     }
 
-    /**
-     * @param string $list
-     *
-     * @return $this
-     */
-    public function setList($list)
+    public function setList(string $list): static
     {
         $this->list = $list;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getStep()
+    public function getStep(): string
     {
         return $this->step;
     }
 
-    /**
-     * @param string $step
-     *
-     * @return $this
-     */
-    public function setStep($step)
+    public function setStep(string $step): static
     {
         $this->step = $step;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getOption()
+    public function getOption(): string
     {
         return $this->option;
     }
 
-    /**
-     * @param string $option
-     *
-     * @return $this
-     */
-    public function setOption($option)
+    public function setOption(string $option): static
     {
         $this->option = $option;
 

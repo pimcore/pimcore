@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * This script exports translations which are maintained in English to POEditor

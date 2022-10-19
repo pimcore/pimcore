@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -44,66 +45,63 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Factory
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private ContainerInterface $container;
 
     /**
      * Tenant specific cart managers
      *
      * @var CartManagerLocatorInterface
      */
-    private $cartManagers;
+    private CartManagerLocatorInterface $cartManagers;
 
     /**
      * Tenant specific order managers
      *
      * @var OrderManagerLocatorInterface
      */
-    private $orderManagers;
+    private OrderManagerLocatorInterface $orderManagers;
 
     /**
      * Pricing managers registered by tenant
      *
      * @var PricingManagerLocatorInterface
      */
-    private $pricingManagers;
+    private PricingManagerLocatorInterface $pricingManagers;
 
     /**
      * Price systems registered by name
      *
      * @var PriceSystemLocatorInterface
      */
-    private $priceSystems;
+    private PriceSystemLocatorInterface $priceSystems;
 
     /**
      * Availability systems registered by name
      *
      * @var AvailabilitySystemLocatorInterface
      */
-    private $availabilitySystems;
+    private AvailabilitySystemLocatorInterface $availabilitySystems;
 
     /**
      * Checkout manager factories registered by tenant
      *
      * @var CheckoutManagerFactoryLocatorInterface
      */
-    private $checkoutManagerFactories;
+    private CheckoutManagerFactoryLocatorInterface $checkoutManagerFactories;
 
     /**
      * Commit order processors registered by tenant
      *
      * @var CommitOrderProcessorLocatorInterface
      */
-    private $commitOrderProcessors;
+    private CommitOrderProcessorLocatorInterface $commitOrderProcessors;
 
     /**
      * Filter services registered by ^tenant
      *
      * @var FilterServiceLocatorInterface
      */
-    private $filterServices;
+    private FilterServiceLocatorInterface $filterServices;
 
     /**
      * Systems with multiple instances (e.g. price systems or tenant specific systems) are
@@ -305,7 +303,7 @@ class Factory
         return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_TRACKING_MANAGER);
     }
 
-    public function saveState()
+    public function saveState(): void
     {
         $this->getCartManager()->save();
         $this->getEnvironment()->save();

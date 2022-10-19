@@ -23,27 +23,18 @@ use Psr\Container\ContainerInterface as PsrContainerInterface;
 
 abstract class TenantAwareServiceLocator
 {
-    /**
-     * @var PsrContainerInterface
-     */
-    protected $locator;
+    protected PsrContainerInterface $locator;
 
-    /**
-     * @var EnvironmentInterface
-     */
-    protected $environment;
+    protected EnvironmentInterface $environment;
 
     /**
      * If true the locator will not fall back to the default tenant if a tenant is requested but not existing
      *
      * @var bool
      */
-    protected $strictTenants = false;
+    protected bool $strictTenants = false;
 
-    /**
-     * @var string
-     */
-    protected $defaultTenant = 'default';
+    protected string $defaultTenant = 'default';
 
     public function __construct(
         PsrContainerInterface $locator,
@@ -68,7 +59,7 @@ abstract class TenantAwareServiceLocator
 
     abstract protected function buildNotFoundException(string $tenant): UnsupportedException;
 
-    protected function resolveTenant(string $tenant = null)
+    protected function resolveTenant(string $tenant = null): string
     {
         // explicitly checking for empty here to catch situations where the tenant is just an empty string
         if (empty($tenant)) {

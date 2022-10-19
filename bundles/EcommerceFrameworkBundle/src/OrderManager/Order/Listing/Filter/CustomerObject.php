@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,25 +22,14 @@ use Pimcore\Model\Element\ElementInterface;
 
 class CustomerObject implements OrderListFilterInterface
 {
-    /**
-     * @var ElementInterface
-     */
-    protected $customer;
+    protected ElementInterface $customer;
 
-    /**
-     * @param ElementInterface $customer
-     */
     public function __construct(ElementInterface $customer)
     {
         $this->customer = $customer;
     }
 
-    /**
-     * @param OrderListInterface $orderList
-     *
-     * @return OrderListFilterInterface
-     */
-    public function apply(OrderListInterface $orderList)
+    public function apply(OrderListInterface $orderList): OrderListFilterInterface
     {
         $orderList->addCondition('order.customer__id = ?', $this->customer->getId());
 

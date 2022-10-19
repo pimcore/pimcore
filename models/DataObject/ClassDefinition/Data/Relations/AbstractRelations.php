@@ -128,7 +128,6 @@ abstract class AbstractRelations extends Data implements
         }
     }
 
-array
     public function load(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
         $data = null;

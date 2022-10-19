@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -88,12 +89,11 @@ class DependenciesTest extends ModelTestCase
      */
     public function testObjectDependencies()
     {
-        /** @var DataObject $source */
         $source = TestHelper::createEmptyObject();
 
         /** @var Unittest[] $targets */
         for ($i = 0; $i <= 2; $i++) {
-            $targets[] = TestHelper::createEmptyObject($i);
+            $targets[] = TestHelper::createEmptyObject((string)$i);
         }
         $this->saveElementDependencies($source, $targets);
 
@@ -119,7 +119,7 @@ class DependenciesTest extends ModelTestCase
         $source = TestHelper::createEmptyDocumentPage();
         /** @var Unittest[] $targets */
         for ($i = 0; $i <= 2; $i++) {
-            $targets[] = TestHelper::createEmptyObject($i);
+            $targets[] = TestHelper::createEmptyObject((string)$i);
         }
         $this->saveElementDependencies($source, $targets);
 
@@ -146,7 +146,7 @@ class DependenciesTest extends ModelTestCase
         /** @var Unittest[] $targets */
         $targets = [];
         for ($i = 0; $i <= 2; $i++) {
-            $targets[] = TestHelper::createEmptyObject($i);
+            $targets[] = TestHelper::createEmptyObject((string)$i);
         }
 
         $this->saveElementDependencies($source, $targets);

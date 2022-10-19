@@ -208,14 +208,7 @@ class Manager
         return $workflow;
     }
 
-    /**
-     * @param string $workflowName
-     *
-     * @return Workflow
-     *
-     * @throws \Exception
-     */
-    public function getWorkflowByName(string $workflowName): Workflow
+    public function getWorkflowByName(string $workflowName): ?object
     {
         $config = $this->getWorkflowConfig($workflowName);
 

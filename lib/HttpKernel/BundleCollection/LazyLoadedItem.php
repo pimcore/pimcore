@@ -25,7 +25,7 @@ class LazyLoadedItem extends AbstractItem
 {
     private string $className;
 
-    private BundleInterface $bundle;
+    private ?BundleInterface $bundle = null;
 
     private static array $classImplementsCache = [];
 

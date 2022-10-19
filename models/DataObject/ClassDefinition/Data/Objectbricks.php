@@ -369,7 +369,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         }
     }
 
-array
     public function load(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
         $classname = '\\Pimcore\\Model\\DataObject\\' . ucfirst($object->getClass()->getName()) . '\\' . ucfirst($this->getName());

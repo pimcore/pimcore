@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
 Fields Summary:
@@ -15,9 +16,9 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 class VoucherTokenTypeSingle extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType
 {
 protected string $type = "VoucherTokenTypeSingle";
-protected $token;
-protected $usages;
-protected $onlyTokenPerCart;
+protected ?string $token;
+protected ?int $usages;
+protected ?bool $onlyTokenPerCart;
 
 
 /**
@@ -39,7 +40,7 @@ public function getToken(): ?string
 * @param string|null $token
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypeSingle
 */
-public function setToken(?string $token)
+public function setToken(?string $token): static
 {
 	$this->token = $token;
 
@@ -65,7 +66,7 @@ public function getUsages(): ?int
 * @param int|null $usages
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypeSingle
 */
-public function setUsages(?int $usages)
+public function setUsages(?int $usages): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("usages");
@@ -93,7 +94,7 @@ public function getOnlyTokenPerCart(): ?bool
 * @param bool|null $onlyTokenPerCart
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypeSingle
 */
-public function setOnlyTokenPerCart(?bool $onlyTokenPerCart)
+public function setOnlyTokenPerCart(?bool $onlyTokenPerCart): static
 {
 	$this->onlyTokenPerCart = $onlyTokenPerCart;
 

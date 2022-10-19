@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
 Fields Summary:
@@ -18,12 +19,12 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 class FilterCategoryMultiselect extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\CategoryFilterDefinitionType
 {
 protected string $type = "FilterCategoryMultiselect";
-protected $label;
-protected $preSelect;
-protected $useAndCondition;
-protected $includeParentCategories;
-protected $scriptPath;
-protected $availableCategories;
+protected ?string $label;
+protected array $preSelect;
+protected ?bool $useAndCondition;
+protected ?bool $includeParentCategories;
+protected ?string $scriptPath;
+protected array $availableCategories;
 
 
 /**
@@ -45,7 +46,7 @@ public function getLabel(): ?string
 * @param string|null $label
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategoryMultiselect
 */
-public function setLabel(?string $label)
+public function setLabel(?string $label): static
 {
 	$this->label = $label;
 
@@ -74,7 +75,7 @@ public function getPreSelect(): array
 * @param \Pimcore\Model\DataObject\ProductCategory[] $preSelect
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategoryMultiselect
 */
-public function setPreSelect(?array $preSelect)
+public function setPreSelect(?array $preSelect): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("preSelect");
@@ -110,7 +111,7 @@ public function getUseAndCondition(): ?bool
 * @param bool|null $useAndCondition
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategoryMultiselect
 */
-public function setUseAndCondition(?bool $useAndCondition)
+public function setUseAndCondition(?bool $useAndCondition): static
 {
 	$this->useAndCondition = $useAndCondition;
 
@@ -136,7 +137,7 @@ public function getIncludeParentCategories(): ?bool
 * @param bool|null $includeParentCategories
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategoryMultiselect
 */
-public function setIncludeParentCategories(?bool $includeParentCategories)
+public function setIncludeParentCategories(?bool $includeParentCategories): static
 {
 	$this->includeParentCategories = $includeParentCategories;
 
@@ -162,7 +163,7 @@ public function getScriptPath(): ?string
 * @param string|null $scriptPath
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategoryMultiselect
 */
-public function setScriptPath(?string $scriptPath)
+public function setScriptPath(?string $scriptPath): static
 {
 	$this->scriptPath = $scriptPath;
 
@@ -191,7 +192,7 @@ public function getAvailableCategories(): array
 * @param \Pimcore\Model\DataObject\ProductCategory[] $availableCategories
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategoryMultiselect
 */
-public function setAvailableCategories(?array $availableCategories)
+public function setAvailableCategories(?array $availableCategories): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("availableCategories");

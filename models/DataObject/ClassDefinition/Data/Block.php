@@ -288,7 +288,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): array
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         $params = (array)$params;
         $result = [];
@@ -336,7 +336,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): array
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         $result = [];
         $count = 0;
@@ -472,7 +472,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return 'not supported';
     }
@@ -854,7 +854,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     {
     }
 
-array
     public function load(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
         $field = $this->getName();

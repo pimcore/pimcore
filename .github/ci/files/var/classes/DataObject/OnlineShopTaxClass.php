@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
 * Inheritance: no
@@ -24,15 +25,12 @@ class OnlineShopTaxClass extends Concrete
 {
 protected $o_classId = "EF_OSTC";
 protected $o_className = "OnlineShopTaxClass";
-protected $taxEntryCombinationType;
-protected $taxEntries;
+protected ?string $taxEntryCombinationType;
+protected ?Fieldcollection $taxEntries;
 
 
-/**
-* @param array $values
-* @return \Pimcore\Model\DataObject\OnlineShopTaxClass
-*/
-public static function create($values = array()) {
+    public static function create(array $values = array()): OnlineShopTaxClass
+{
 	$object = new static();
 	$object->setValues($values);
 	return $object;
@@ -65,17 +63,14 @@ public function getTaxEntryCombinationType(): ?string
 * @param string|null $taxEntryCombinationType
 * @return \Pimcore\Model\DataObject\OnlineShopTaxClass
 */
-public function setTaxEntryCombinationType(?string $taxEntryCombinationType)
+public function setTaxEntryCombinationType(?string $taxEntryCombinationType): static
 {
 	$this->taxEntryCombinationType = $taxEntryCombinationType;
 
 	return $this;
 }
 
-/**
-* @return \Pimcore\Model\DataObject\Fieldcollection|null
-*/
-public function getTaxEntries()
+    public function getTaxEntries(): ?Fieldcollection
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("taxEntries");
@@ -96,7 +91,7 @@ public function getTaxEntries()
 * @param \Pimcore\Model\DataObject\Fieldcollection|null $taxEntries
 * @return \Pimcore\Model\DataObject\OnlineShopTaxClass
 */
-public function setTaxEntries(?\Pimcore\Model\DataObject\Fieldcollection $taxEntries)
+public function setTaxEntries(?\Pimcore\Model\DataObject\Fieldcollection $taxEntries): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections $fd */
 	$fd = $this->getClass()->getFieldDefinition("taxEntries");

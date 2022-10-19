@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,7 +30,7 @@ interface TrackingItemBuilderInterface
      *
      * @return ProductAction
      */
-    public function buildProductViewItem(ProductInterface $product);
+    public function buildProductViewItem(ProductInterface $product): ProductAction;
 
     /**
      * Build a product action item object
@@ -39,7 +40,7 @@ interface TrackingItemBuilderInterface
      *
      * @return ProductAction
      */
-    public function buildProductActionItem(ProductInterface $product, $quantity = 1);
+    public function buildProductActionItem(ProductInterface $product, int $quantity = 1): ProductAction;
 
     /**
      * Build a product impression object
@@ -49,7 +50,7 @@ interface TrackingItemBuilderInterface
      *
      * @return ProductImpression
      */
-    public function buildProductImpressionItem(ProductInterface $product, string $list = 'default');
+    public function buildProductImpressionItem(ProductInterface $product, string $list = 'default'): ProductImpression;
 
     /**
      * Build a checkout transaction object
@@ -58,7 +59,7 @@ interface TrackingItemBuilderInterface
      *
      * @return Transaction
      */
-    public function buildCheckoutTransaction(AbstractOrder $order);
+    public function buildCheckoutTransaction(AbstractOrder $order): Transaction;
 
     /**
      * Build checkout items
@@ -67,7 +68,7 @@ interface TrackingItemBuilderInterface
      *
      * @return ProductAction[]
      */
-    public function buildCheckoutItems(AbstractOrder $order);
+    public function buildCheckoutItems(AbstractOrder $order): array;
 
     /**
      * Build checkout items by cart
@@ -76,7 +77,7 @@ interface TrackingItemBuilderInterface
      *
      * @return ProductAction[]
      */
-    public function buildCheckoutItemsByCart(CartInterface $cart);
+    public function buildCheckoutItemsByCart(CartInterface $cart): array;
 
     /**
      * Build a checkout item object
@@ -86,5 +87,5 @@ interface TrackingItemBuilderInterface
      *
      * @return ProductAction
      */
-    public function buildCheckoutItem(AbstractOrder $order, AbstractOrderItem $orderItem);
+    public function buildCheckoutItem(AbstractOrder $order, AbstractOrderItem $orderItem): ProductAction;
 }

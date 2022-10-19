@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -49,7 +50,7 @@ abstract class AbstractTestDataHelper extends Module
      *
      * @return DataObject[]
      */
-    protected function getObjectList($condition = null)
+    protected function getObjectList(string $condition = null): array
     {
         $list = new DataObject\Listing();
         $list->setOrderKey('o_id');

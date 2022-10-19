@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,47 +23,27 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexField
  */
 abstract class AbstractFilterDefinitionType extends \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData
 {
-    protected $metaData = [];
+    protected array $metaData = [];
 
-    /**
-     * @return array
-     */
-    public function getMetaData()
+    public function getMetaData(): array
     {
         return $this->metaData;
     }
 
-    /**
-     * @param array $metaData
-     *
-     * @return $this
-     */
-    public function setMetaData($metaData)
+    public function setMetaData(array $metaData): static
     {
         $this->metaData = $metaData;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     abstract public function getLabel(): ?string;
 
-    /**
-     * @return IndexFieldSelection|string|null
-     */
-    abstract public function getField();
+    abstract public function getField(): string|IndexFieldSelection|null;
 
-    /**
-     * @return string|null
-     */
     abstract public function getScriptPath(): ?string;
 
-    /**
-     * @return string
-     */
-    public function getRequiredFilterField()
+    public function getRequiredFilterField(): string
     {
         return '';
     }

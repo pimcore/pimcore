@@ -24,8 +24,7 @@ use Pimcore\Tool\Glossary\Processor;
 
 class GlossaryTest extends TestCase
 {
-    /** @var Processor $processor */
-    protected $processor;
+    protected Processor $processor;
 
     /**
      * {@inheritdoc}

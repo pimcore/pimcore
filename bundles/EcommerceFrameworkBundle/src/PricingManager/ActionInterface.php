@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,15 +18,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
 interface ActionInterface
 {
-    /**
-     * @return string
-     */
-    public function toJSON();
+    public function toJSON(): string;
 
-    /**
-     * @param string $string
-     *
-     * @return ActionInterface
-     */
-    public function fromJSON($string);
+    public function fromJSON(string $string): ActionInterface;
 }

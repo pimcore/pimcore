@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
 Fields Summary:
@@ -16,10 +17,10 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 class FilterRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType
 {
 protected string $type = "FilterRelation";
-protected $label;
-protected $field;
-protected $scriptPath;
-protected $availableRelations;
+protected ?string $label;
+protected ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field;
+protected ?string $scriptPath;
+protected array $availableRelations;
 
 
 /**
@@ -41,7 +42,7 @@ public function getLabel(): ?string
 * @param string|null $label
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterRelation
 */
-public function setLabel(?string $label)
+public function setLabel(?string $label): static
 {
 	$this->label = $label;
 
@@ -67,7 +68,7 @@ public function getField(): ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtens
 * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection|null $field
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterRelation
 */
-public function setField(?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field)
+public function setField(?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field): static
 {
 	$this->field = $field;
 
@@ -93,7 +94,7 @@ public function getScriptPath(): ?string
 * @param string|null $scriptPath
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterRelation
 */
-public function setScriptPath(?string $scriptPath)
+public function setScriptPath(?string $scriptPath): static
 {
 	$this->scriptPath = $scriptPath;
 
@@ -122,7 +123,7 @@ public function getAvailableRelations(): array
 * @param \Pimcore\Model\DataObject\AbstractObject[] $availableRelations
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterRelation
 */
-public function setAvailableRelations(?array $availableRelations)
+public function setAvailableRelations(?array $availableRelations): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("availableRelations");

@@ -54,7 +54,7 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
             throw new \Exception(sprintf('invalid language %s', $file['target-language']));
         }
 
-        list($type, $id) = explode('-', $file['original']);
+        list($type, $id) = explode('-', (string)$file['original']);
 
         $translationItem = $this->translationItemResolver->resolve($type, $id);
 
@@ -65,11 +65,11 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
         $attributeSet = new AttributeSet($translationItem);
         $attributeSet->setTargetLanguages([$target]);
         if (!empty($file['source-language'])) {
-            $attributeSet->setSourceLanguage($file['source-language']);
+            $attributeSet->setSourceLanguage((string)$file['source-language']);
         }
 
         foreach ($file->body->{'trans-unit'} as $transUnit) {
-            list($type, $name) = explode(Xliff12Exporter::DELIMITER, $transUnit['id']);
+            list($type, $name) = explode(Xliff12Exporter::DELIMITER, (string)$transUnit['id']);
 
             if (!isset($transUnit->target)) {
                 continue;

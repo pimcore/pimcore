@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -50,7 +51,7 @@ class LinkTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    protected function createLinkObject()
+    protected function createLinkObject(): unittestLink
     {
         $object = new unittestLink();
         $object->setParent(Service::createFolderByPath('/links'));

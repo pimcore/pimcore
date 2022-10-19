@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,51 +31,34 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 class Rule extends AbstractModel implements RuleInterface
 {
-    /**
-     * @var int|null
-     */
-    protected $id;
+    protected ?int $id;
 
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $name;
 
     /**
      * @var string[]
      */
-    protected $label = [];
+    protected array $label = [];
 
     /**
      * @var string[]
      */
-    protected $description = [];
+    protected array $description = [];
 
     protected ?ConditionInterface $condition = null;
 
     /**
      * @var ActionInterface[]
      */
-    protected $action = [];
+    protected array $action = [];
 
-    /**
-     * @var string
-     */
-    protected $behavior;
+    protected string $behavior;
 
     protected bool $active = false;
 
-    /**
-     * @var int
-     */
-    protected $prio = 0;
+    protected int $prio = 0;
 
-    /**
-     * @param int $id
-     *
-     * @return RuleInterface|null
-     */
-    public static function getById($id)
+    public static function getById(int $id): Rule|RuleInterface|null
     {
         $cacheKey = Dao::TABLE_NAME . '_' . $id;
 
@@ -108,7 +92,7 @@ class Rule extends AbstractModel implements RuleInterface
      *
      * @internal
      */
-    public function setValue(string $key, mixed $value)
+    public function setValue(string $key, mixed $value): AbstractModel
     {
         $method = 'set' . $key;
         if (method_exists($this, $method)) {
@@ -139,33 +123,25 @@ class Rule extends AbstractModel implements RuleInterface
         return $this;
     }
 
-    /**
-     * @param int|null $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(?int $id): static
     {
         $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
     /**
      * @param string $label
-     * @param string $locale
+     * @param string|null $locale
      *
      * @return $this
      */
-    public function setLabel($label, $locale = null)
+    public function setLabel(string $label, string $locale = null): static
     {
         $this->label[$this->getLanguage($locale)] = $label;
 
@@ -173,30 +149,21 @@ class Rule extends AbstractModel implements RuleInterface
     }
 
     /**
-     * @param string $locale
+     * @param string|null $locale
      *
      * @return string|null
      */
-    public function getLabel($locale = null)
+    public function getLabel(string $locale = null): ?string
     {
         return $this->label[$this->getLanguage($locale)] ?? null;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     * @param string|null $locale
-     *
-     * @return $this
-     */
-    public function setName($name, $locale = null)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -205,11 +172,11 @@ class Rule extends AbstractModel implements RuleInterface
 
     /**
      * @param string $description
-     * @param string $locale
+     * @param string|null $locale
      *
      * @return $this
      */
-    public function setDescription($description, $locale = null)
+    public function setDescription(string $description, string $locale = null): static
     {
         $this->description[$this->getLanguage($locale)] = $description;
 
@@ -217,70 +184,46 @@ class Rule extends AbstractModel implements RuleInterface
     }
 
     /**
-     * @param string $locale
+     * @param string|null $locale
      *
      * @return string|null
      */
-    public function getDescription($locale = null)
+    public function getDescription(string $locale = null): ?string
     {
         return $this->description[$this->getLanguage($locale)] ?? null;
     }
 
-    /**
-     * @param string $behavior
-     *
-     * @return $this
-     */
-    public function setBehavior($behavior)
+    public function setBehavior(string $behavior): static
     {
         $this->behavior = $behavior;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getBehavior()
+    public function getBehavior(): string
     {
         return $this->behavior;
     }
 
-    /**
-     * @param bool $active
-     *
-     * @return $this
-     */
-    public function setActive($active)
+    public function setActive(bool $active): static
     {
         $this->active = (bool) $active;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getActive()
+    public function getActive(): bool
     {
         return $this->active;
     }
 
-    /**
-     * @param ConditionInterface $condition
-     *
-     * @return $this
-     */
-    public function setCondition(ConditionInterface $condition)
+    public function setCondition(ConditionInterface $condition): static
     {
         $this->condition = $condition;
 
         return $this;
     }
 
-    /**
-     * @return ConditionInterface|null
-     */
     public function getCondition(): ?ConditionInterface
     {
         return $this->condition;
@@ -291,7 +234,7 @@ class Rule extends AbstractModel implements RuleInterface
      *
      * @return $this
      */
-    public function setActions(array $action)
+    public function setActions(array $action): static
     {
         $this->action = $action;
 
@@ -301,35 +244,24 @@ class Rule extends AbstractModel implements RuleInterface
     /**
      * @return ActionInterface[]
      */
-    public function getActions()
+    public function getActions(): array
     {
         return $this->action;
     }
 
-    /**
-     * @param int $prio
-     *
-     * @return $this
-     */
-    public function setPrio($prio)
+    public function setPrio(int $prio): static
     {
         $this->prio = (int)$prio;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getPrio()
+    public function getPrio(): int
     {
         return $this->prio;
     }
 
-    /**
-     * @return $this
-     */
-    public function save()
+    public function save(): static
     {
         $this->getDao()->save();
 
@@ -351,7 +283,7 @@ class Rule extends AbstractModel implements RuleInterface
      *
      * @return bool
      */
-    public function check(EnvironmentInterface $environment)
+    public function check(EnvironmentInterface $environment): bool
     {
         $condition = $this->getCondition();
         if ($condition) {
@@ -366,7 +298,7 @@ class Rule extends AbstractModel implements RuleInterface
      *
      * @return bool
      */
-    public function hasProductActions()
+    public function hasProductActions(): bool
     {
         foreach ($this->getActions() as $action) {
             if ($action instanceof ProductActionInterface) {
@@ -382,7 +314,7 @@ class Rule extends AbstractModel implements RuleInterface
      *
      * @return bool
      */
-    public function hasCartActions()
+    public function hasCartActions(): bool
     {
         foreach ($this->getActions() as $action) {
             if ($action instanceof CartActionInterface) {
@@ -393,12 +325,7 @@ class Rule extends AbstractModel implements RuleInterface
         return false;
     }
 
-    /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return $this
-     */
-    public function executeOnProduct(EnvironmentInterface $environment)
+    public function executeOnProduct(EnvironmentInterface $environment): static
     {
         foreach ($this->getActions() as $action) {
             if ($action instanceof ProductActionInterface) {
@@ -409,12 +336,7 @@ class Rule extends AbstractModel implements RuleInterface
         return $this;
     }
 
-    /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return $this
-     */
-    public function executeOnCart(EnvironmentInterface $environment)
+    public function executeOnCart(EnvironmentInterface $environment): static
     {
         foreach ($this->getActions() as $action) {
             if ($action instanceof CartActionInterface) {
@@ -432,7 +354,7 @@ class Rule extends AbstractModel implements RuleInterface
      *
      * @return string
      */
-    protected function getLanguage($language = null)
+    protected function getLanguage(string $language = null): string
     {
         if ($language) {
             return (string) $language;

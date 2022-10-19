@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -56,7 +57,7 @@ class BlockTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    protected function createBlockObject()
+    protected function createBlockObject(): unittestBlock
     {
         $object = new unittestBlock();
         $object->setParent(Service::createFolderByPath('/blocks'));
@@ -66,12 +67,7 @@ class BlockTest extends ModelTestCase
         return $object;
     }
 
-    /**
-     * @param Page $document
-     *
-     * @return Link
-     */
-    protected function createLinkData($document)
+    protected function createLinkData(Page $document): Link
     {
         $link = new Link();
         $link->setPath($document->getFullPath());
@@ -79,12 +75,7 @@ class BlockTest extends ModelTestCase
         return $link;
     }
 
-    /**
-     * @param Image $image
-     *
-     * @return Hotspotimage
-     */
-    protected function createHotspotImage($image)
+    protected function createHotspotImage(Image $image): Hotspotimage
     {
         $hotspot1 = [
             'name' => 'hotspot1',

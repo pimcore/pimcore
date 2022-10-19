@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,7 +27,7 @@ class LocalizedFieldTest extends ModelTestCase
 {
     public function tearDown(): void
     {
-        Localizedfield::setStrictMode(Localizedfield::STRICT_DISABLED);
+        Localizedfield::setStrictMode((bool)Localizedfield::STRICT_DISABLED);
     }
 
     public function testStrictMode()

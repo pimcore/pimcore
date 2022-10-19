@@ -1604,6 +1604,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             try {
                 $object->save();
 
+                $treeData = [];
                 $this->addAdminStyle($object, ElementAdminStyleEvent::CONTEXT_TREE, $treeData);
 
                 return $this->adminJson(

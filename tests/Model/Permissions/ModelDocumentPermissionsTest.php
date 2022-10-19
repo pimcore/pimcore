@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -59,80 +60,35 @@ class ModelDocumentPermissionsTest extends ModelTestCase
      *
      */
 
-    /**
-     * @var Document\Folder
-     */
-    protected $permissionfoo;
+    protected Document\Folder $permissionfoo;
 
-    /**
-     * @var Document\Folder
-     */
-    protected $permissionbar;
+    protected Document\Folder $permissionbar;
 
-    /**
-     * @var Document\Folder
-     */
-    protected $foo;
+    protected Document\Folder $foo;
 
-    /**
-     * @var Document\Folder
-     */
-    protected $bar;
+    protected Document\Folder $bar;
 
-    /**
-     * @var Document\Folder
-     */
-    protected $bars;
+    protected Document\Folder $bars;
 
-    /**
-     * @var Document\Folder
-     */
-    protected $userfolder;
+    protected Document\Folder $userfolder;
 
-    /**
-     * @var Document\Folder
-     */
-    protected $groupfolder;
+    protected Document\Folder $groupfolder;
 
-    /**
-     * @var Document
-     */
-    protected $hiddenobject;
+    protected Document $hiddenobject;
 
-    /**
-     * @var Document
-     */
-    protected $hugo;
+    protected Document $hugo;
 
-    /**
-     * @var Document
-     */
-    protected $usertestobject;
+    protected Document $usertestobject;
 
-    /**
-     * @var Document
-     */
-    protected $grouptestobject;
+    protected Document $grouptestobject;
 
-    /**
-     * @var Document\Folder
-     */
-    protected $a;
+    protected Document\Folder $a;
 
-    /**
-     * @var Document\Folder
-     */
-    protected $b;
+    protected Document\Folder $b;
 
-    /**
-     * @var Document
-     */
-    protected $c;
+    protected Document $c;
 
-    /**
-     * @var Document
-     */
-    protected $abcdefghjkl;
+    protected Document $abcdefghjkl;
 
     protected function prepareObjectTree()
     {

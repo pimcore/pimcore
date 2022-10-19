@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,8 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class AssetThumbnailCacheTest extends TestCase
 {
-    /** @var Asset */
-    protected $testAsset;
+    protected Asset $testAsset;
 
     protected string $thumbnailName;
 
@@ -49,7 +49,7 @@ class AssetThumbnailCacheTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function needsDb()
+    protected function needsDb(): bool
     {
         return true;
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,8 +25,7 @@ use Pimcore\Tool;
 
 class LocalizedFieldTest extends ModelTestCase
 {
-    /** @var array */
-    protected $originalConfig;
+    protected array $originalConfig;
 
     public function setUp(): void
     {

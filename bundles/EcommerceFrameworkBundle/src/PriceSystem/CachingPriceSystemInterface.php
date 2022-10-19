@@ -27,7 +27,7 @@ interface CachingPriceSystemInterface extends PriceSystemInterface
      *
      * @return mixed
      */
-    public function loadPriceInfos($productEntries, $options);
+    public function loadPriceInfos(array $productEntries, array $options): mixed;
 
     /**
      * Clears cached price infos
@@ -37,5 +37,5 @@ interface CachingPriceSystemInterface extends PriceSystemInterface
      *
      * @return mixed
      */
-    public function clearPriceInfos($productEntries, $options);
+    public function clearPriceInfos(array $productEntries, array $options): mixed;
 }

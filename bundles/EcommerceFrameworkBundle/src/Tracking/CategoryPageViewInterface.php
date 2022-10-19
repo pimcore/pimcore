@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,7 +22,7 @@ interface CategoryPageViewInterface
      * Tracks a category page view
      *
      * @param array|string $category One or more categories matching the page
-     * @param mixed $page            Any kind of page information you can use to track your page
+     * @param mixed|null $page            Any kind of page information you can use to track your page
      */
-    public function trackCategoryPageView($category, $page = null);
+    public function trackCategoryPageView(array|string $category, mixed $page = null);
 }

@@ -43,9 +43,6 @@ class LibreOffice extends Ghostscript
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isFileTypeSupported(string $fileType): bool
     {
         // it's also possible to pass a path or filename
@@ -66,9 +63,6 @@ class LibreOffice extends Ghostscript
         return Console::getExecutable('soffice', true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function load(Asset\Document $asset): Ghostscript|LibreOffice|\Pimcore\Document\Adapter|static
     {
         // avoid timeouts
@@ -171,9 +165,6 @@ class LibreOffice extends Ghostscript
         return $storage->readStream($storagePath);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getText(?int $page = null, ?Asset\Document $asset = null)
     {
         if (!$asset && $this->asset) {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
 Fields Summary:
@@ -16,10 +17,10 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 class FilterMultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType
 {
 protected string $type = "FilterMultiSelectFromMultiSelect";
-protected $label;
-protected $field;
-protected $scriptPath;
-protected $UseAndCondition;
+protected ?string $label;
+protected ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field;
+protected ?string $scriptPath;
+protected ?bool $UseAndCondition;
 
 
 /**
@@ -41,7 +42,7 @@ public function getLabel(): ?string
 * @param string|null $label
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelectFromMultiSelect
 */
-public function setLabel(?string $label)
+public function setLabel(?string $label): static
 {
 	$this->label = $label;
 
@@ -67,7 +68,7 @@ public function getField(): ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtens
 * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection|null $field
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelectFromMultiSelect
 */
-public function setField(?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field)
+public function setField(?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field): static
 {
 	$this->field = $field;
 
@@ -93,7 +94,7 @@ public function getScriptPath(): ?string
 * @param string|null $scriptPath
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelectFromMultiSelect
 */
-public function setScriptPath(?string $scriptPath)
+public function setScriptPath(?string $scriptPath): static
 {
 	$this->scriptPath = $scriptPath;
 
@@ -119,7 +120,7 @@ public function getUseAndCondition(): ?bool
 * @param bool|null $UseAndCondition
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelectFromMultiSelect
 */
-public function setUseAndCondition(?bool $UseAndCondition)
+public function setUseAndCondition(?bool $UseAndCondition): static
 {
 	$this->UseAndCondition = $UseAndCondition;
 

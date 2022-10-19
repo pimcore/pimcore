@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,7 +29,7 @@ class DeliveryAddress extends AbstractStep implements CheckoutStepInterface
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return 'deliveryaddress';
     }
@@ -36,7 +37,7 @@ class DeliveryAddress extends AbstractStep implements CheckoutStepInterface
     /**
      * {@inheritdoc}
      */
-    public function commit($data)
+    public function commit(mixed $data): bool
     {
         $this->cart->setCheckoutData(self::PRIVATE_NAMESPACE, json_encode($data));
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,14 +30,14 @@ interface CheckoutStepInterface
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Returns saved data of step
      *
      * @return mixed
      */
-    public function getData();
+    public function getData(): mixed;
 
     /**
      * Sets delivered data and commits step
@@ -45,5 +46,5 @@ interface CheckoutStepInterface
      *
      * @return bool
      */
-    public function commit($data);
+    public function commit(mixed $data): bool;
 }

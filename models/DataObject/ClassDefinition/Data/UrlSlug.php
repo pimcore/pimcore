@@ -355,7 +355,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return null;
     }
 
-array
     public function load(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): array
     {
         $rawResult = null;
@@ -499,13 +498,6 @@ array
         return null;
     }
 
-    /**
-     * @param mixed $data
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string|null
-     */
     public function getVersionPreview(mixed $data, Model\DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getPreviewData($data, $object, $params);

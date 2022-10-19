@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,45 +25,21 @@ class Environment implements EnvironmentInterface
 {
     const USER_ID_NOT_SET = -1;
 
-    /**
-     * @var LocaleServiceInterface
-     */
-    protected $localeService;
+    protected LocaleServiceInterface $localeService;
 
-    /**
-     * @var Currency
-     */
-    protected $defaultCurrency;
+    protected Currency $defaultCurrency;
 
-    /**
-     * @var array|null
-     */
-    protected $customItems = [];
+    protected ?array $customItems = [];
 
-    /**
-     * @var int
-     */
-    protected $userId = self::USER_ID_NOT_SET;
+    protected int $userId = self::USER_ID_NOT_SET;
 
-    /**
-     * @var bool
-     */
-    protected $useGuestCart = false;
+    protected bool $useGuestCart = false;
 
-    /**
-     * @var string|null
-     */
-    protected $currentAssortmentTenant;
+    protected ?string $currentAssortmentTenant;
 
-    /**
-     * @var string|null
-     */
-    protected $currentAssortmentSubTenant;
+    protected ?string $currentAssortmentSubTenant;
 
-    /**
-     * @var string|null
-     */
-    protected $currentCheckoutTenant;
+    protected ?string $currentCheckoutTenant;
 
     /**
      * Current transient checkout tenant
@@ -72,7 +49,7 @@ class Environment implements EnvironmentInterface
      *
      * @var string|null
      */
-    protected $currentTransientCheckoutTenant;
+    protected ?string $currentTransientCheckoutTenant;
 
     public function __construct(LocaleServiceInterface $localeService, array $options = [])
     {
@@ -104,14 +81,14 @@ class Environment implements EnvironmentInterface
     {
     }
 
-    public function getAllCustomItems()
+    public function getAllCustomItems(): ?array
     {
         $this->load();
 
         return $this->customItems;
     }
 
-    public function getCustomItem($key, $defaultValue = null)
+    public function getCustomItem(string $key, mixed $defaultValue = null)
     {
         $this->load();
 
@@ -122,29 +99,21 @@ class Environment implements EnvironmentInterface
         return $defaultValue;
     }
 
-    public function setCustomItem($key, $value)
+    public function setCustomItem(string $key, mixed $value)
     {
         $this->load();
 
         $this->customItems[$key] = $value;
     }
 
-    /**
-     * @return int
-     */
-    public function getCurrentUserId()
+    public function getCurrentUserId(): int
     {
         $this->load();
 
         return $this->userId;
     }
 
-    /**
-     * @param int $userId
-     *
-     * @return $this
-     */
-    public function setCurrentUserId($userId)
+    public function setCurrentUserId(int $userId): static
     {
         $this->load();
 
@@ -153,17 +122,14 @@ class Environment implements EnvironmentInterface
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasCurrentUserId()
+    public function hasCurrentUserId(): bool
     {
         $this->load();
 
         return $this->getCurrentUserId() !== self::USER_ID_NOT_SET;
     }
 
-    public function removeCustomItem($key)
+    public function removeCustomItem(string $key)
     {
         $this->load();
 
@@ -183,36 +149,24 @@ class Environment implements EnvironmentInterface
         $this->useGuestCart = false;
     }
 
-    /**
-     * @param Currency $currency
-     */
     public function setDefaultCurrency(Currency $currency)
     {
         $this->defaultCurrency = $currency;
     }
 
-    /**
-     * @return Currency
-     */
-    public function getDefaultCurrency()
+    public function getDefaultCurrency(): Currency
     {
         return $this->defaultCurrency;
     }
 
-    /**
-     * @return bool
-     */
-    public function getUseGuestCart()
+    public function getUseGuestCart(): bool
     {
         $this->load();
 
         return $this->useGuestCart;
     }
 
-    /**
-     * @param bool $useGuestCart
-     */
-    public function setUseGuestCart($useGuestCart)
+    public function setUseGuestCart(bool $useGuestCart)
     {
         $this->load();
 
@@ -222,9 +176,9 @@ class Environment implements EnvironmentInterface
     /**
      * sets current assortment tenant which is used for indexing and product lists
      *
-     * @param string $tenant
+     * @param string|null $tenant
      */
-    public function setCurrentAssortmentTenant($tenant)
+    public function setCurrentAssortmentTenant(?string $tenant)
     {
         $this->load();
 
@@ -236,7 +190,7 @@ class Environment implements EnvironmentInterface
      *
      * @return string|null
      */
-    public function getCurrentAssortmentTenant()
+    public function getCurrentAssortmentTenant(): ?string
     {
         $this->load();
 
@@ -248,7 +202,7 @@ class Environment implements EnvironmentInterface
      *
      * @param string|null $subTenant
      */
-    public function setCurrentAssortmentSubTenant($subTenant)
+    public function setCurrentAssortmentSubTenant(?string $subTenant)
     {
         $this->load();
 
@@ -260,7 +214,7 @@ class Environment implements EnvironmentInterface
      *
      * @return string|null
      */
-    public function getCurrentAssortmentSubTenant()
+    public function getCurrentAssortmentSubTenant(): ?string
     {
         $this->load();
 
@@ -273,7 +227,7 @@ class Environment implements EnvironmentInterface
      * @param string $tenant
      * @param bool $persistent - if set to false, tenant is not stored to session and only valid for current process
      */
-    public function setCurrentCheckoutTenant($tenant, $persistent = true)
+    public function setCurrentCheckoutTenant(string $tenant, bool $persistent = true)
     {
         $this->load();
 
@@ -288,9 +242,9 @@ class Environment implements EnvironmentInterface
     /**
      * gets current assortment tenant which is used for cart and checkout manager
      *
-     * @return string
+     * @return string|null
      */
-    public function getCurrentCheckoutTenant()
+    public function getCurrentCheckoutTenant(): ?string
     {
         $this->load();
 
@@ -302,7 +256,7 @@ class Environment implements EnvironmentInterface
      *
      * @return null|string
      */
-    public function getSystemLocale()
+    public function getSystemLocale(): ?string
     {
         $locale = $this->localeService->findLocale();
         if (Tool::isValidLanguage($locale)) {

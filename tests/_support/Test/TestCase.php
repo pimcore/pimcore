@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,19 +21,16 @@ use Pimcore\Tests\Util\TestHelper;
 
 abstract class TestCase extends Test
 {
-    /**
-     * @var bool
-     */
-    protected $cleanupDbInSetup = true;
+    protected bool $cleanupDbInSetup = true;
 
-    protected $backupGlobalsExcludeList = ['IDE_EVAL_CACHE'];     // xdebug
+    protected array $backupGlobalsExcludeList = ['IDE_EVAL_CACHE'];     // xdebug
 
     /**
      * Determine if the test needs a DB connection (will be skipped if no DB is present)
      *
      * @return bool
      */
-    protected function needsDb()
+    protected function needsDb(): bool
     {
         return false;
     }

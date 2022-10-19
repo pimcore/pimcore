@@ -51,7 +51,7 @@ final class Localizedfield extends Model\AbstractModel implements
     /**
      * @internal
      */
-    const STRICT_ENABLED = 1;
+    const STRICT_ENABLED = true;
 
     private static bool $getFallbackValues = false;
 

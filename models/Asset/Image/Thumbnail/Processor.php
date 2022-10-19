@@ -252,7 +252,7 @@ class Processor
                 }
 
                 if (is_resource($fileSystemPath)) {
-                    $fileSystemPath = self::getLocalFileFromStream($fileSystemPath);
+                    $fileSystemPath = self::getLocalFileFromStream((string)$fileSystemPath);
                 }
 
                 if (!file_exists($fileSystemPath)) {

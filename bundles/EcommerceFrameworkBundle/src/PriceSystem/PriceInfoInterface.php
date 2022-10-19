@@ -52,14 +52,14 @@ interface PriceInfoInterface
      *
      * @return int|string
      */
-    public function getQuantity();
+    public function getQuantity(): int|string;
 
     /**
      * Numeric quantity or constant PriceInterfaceInfo::MIN_PRICE
      *
      * @param int|string $quantity
      */
-    public function setQuantity($quantity);
+    public function setQuantity(int|string $quantity);
 
     /**
      * Relation to price system
@@ -68,7 +68,7 @@ interface PriceInfoInterface
      *
      * @return PriceInfoInterface
      */
-    public function setPriceSystem(PriceSystemInterface $priceSystem);
+    public function setPriceSystem(PriceSystemInterface $priceSystem): PriceInfoInterface;
 
     /**
      * Relation to product
@@ -77,12 +77,12 @@ interface PriceInfoInterface
      *
      * @return PriceInfoInterface
      */
-    public function setProduct(CheckoutableInterface $product);
+    public function setProduct(CheckoutableInterface $product): PriceInfoInterface;
 
     /**
      * Returns product
      *
      * @return CheckoutableInterface|null
      */
-    public function getProduct();
+    public function getProduct(): ?CheckoutableInterface;
 }

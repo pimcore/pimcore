@@ -23,10 +23,7 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 class TenantProcessorTest extends TestCase
 {
-    /**
-     * @var TenantProcessor
-     */
-    private $processor;
+    private TenantProcessor $processor;
 
     /**
      * {@inheritdoc}

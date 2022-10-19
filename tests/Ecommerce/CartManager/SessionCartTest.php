@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,17 +25,11 @@ use Pimcore\Tests\Test\TestCase;
 
 class SessionCartTest extends TestCase
 {
-    /**
-     * @var \EcommerceFramework\UnitTester
-     */
-    protected $tester;
+    protected \EcommerceFramework\UnitTester $tester;
 
     // tests
 
-    /**
-     * @return SessionCart
-     */
-    protected function buildCart()
+    protected function buildCart(): SessionCart
     {
         $cart = Stub::construct('\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\SessionCart', [], [
             'getSession' => function () {
@@ -50,12 +45,7 @@ class SessionCartTest extends TestCase
         return $cart;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return AbstractProduct
-     */
-    protected function buildProduct(int $id)
+    protected function buildProduct(int $id): AbstractProduct
     {
         $product = $this->getMockBuilder(AbstractProduct::class)->getMock();
         $product->method('getId')->willReturn($id);

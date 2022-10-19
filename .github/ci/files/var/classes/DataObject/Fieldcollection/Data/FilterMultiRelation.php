@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
 Fields Summary:
@@ -17,11 +18,11 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 class FilterMultiRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType
 {
 protected string $type = "FilterMultiRelation";
-protected $label;
-protected $field;
-protected $useAndCondition;
-protected $scriptPath;
-protected $availableRelations;
+protected ?string $label;
+protected ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field;
+protected ?bool $useAndCondition;
+protected ?string $scriptPath;
+protected array $availableRelations;
 
 
 /**
@@ -43,7 +44,7 @@ public function getLabel(): ?string
 * @param string|null $label
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiRelation
 */
-public function setLabel(?string $label)
+public function setLabel(?string $label): static
 {
 	$this->label = $label;
 
@@ -69,7 +70,7 @@ public function getField(): ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtens
 * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection|null $field
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiRelation
 */
-public function setField(?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field)
+public function setField(?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field): static
 {
 	$this->field = $field;
 
@@ -95,7 +96,7 @@ public function getUseAndCondition(): ?bool
 * @param bool|null $useAndCondition
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiRelation
 */
-public function setUseAndCondition(?bool $useAndCondition)
+public function setUseAndCondition(?bool $useAndCondition): static
 {
 	$this->useAndCondition = $useAndCondition;
 
@@ -121,7 +122,7 @@ public function getScriptPath(): ?string
 * @param string|null $scriptPath
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiRelation
 */
-public function setScriptPath(?string $scriptPath)
+public function setScriptPath(?string $scriptPath): static
 {
 	$this->scriptPath = $scriptPath;
 
@@ -150,7 +151,7 @@ public function getAvailableRelations(): array
 * @param \Pimcore\Model\DataObject\AbstractObject[] $availableRelations
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiRelation
 */
-public function setAvailableRelations(?array $availableRelations)
+public function setAvailableRelations(?array $availableRelations): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("availableRelations");

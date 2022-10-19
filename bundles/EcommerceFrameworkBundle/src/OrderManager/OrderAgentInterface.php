@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,10 +28,7 @@ use Pimcore\Model\Element\Note;
 
 interface OrderAgentInterface
 {
-    /**
-     * @return Order
-     */
-    public function getOrder();
+    public function getOrder(): Order;
 
     /**
      * cancel order item and refund payment
@@ -39,7 +37,7 @@ interface OrderAgentInterface
      *
      * @return Note
      */
-    public function itemCancel(OrderItem $item);
+    public function itemCancel(OrderItem $item): Note;
 
     /**
      * start item complaint
@@ -49,7 +47,7 @@ interface OrderAgentInterface
      *
      * @return Note
      */
-    public function itemComplaint(OrderItem $item, $quantity);
+    public function itemComplaint(OrderItem $item, float $quantity): Note;
 
     /**
      * change order item
@@ -59,32 +57,23 @@ interface OrderAgentInterface
      *
      * @return Note
      */
-    public function itemChangeAmount(OrderItem $item, $amount);
+    public function itemChangeAmount(OrderItem $item, float $amount): Note;
 
     /**
      * set a item state
      *
      * @param OrderItem $item
-     * @param string    $state
+     * @param string $state
      *
      * @return Note
      */
-    public function itemSetState(OrderItem $item, $state);
+    public function itemSetState(OrderItem $item, string $state): Note;
 
-    /**
-     * @return Currency
-     */
-    public function getCurrency();
+    public function getCurrency(): Currency;
 
-    /**
-     * @return bool
-     */
-    public function hasPayment();
+    public function hasPayment(): bool;
 
-    /**
-     * @return PaymentInterface
-     */
-    public function getPaymentProvider();
+    public function getPaymentProvider(): PaymentInterface;
 
     /**
      * @param PaymentInterface $paymentProvider
@@ -92,7 +81,7 @@ interface OrderAgentInterface
      *
      * @return OrderAgentInterface
      */
-    public function setPaymentProvider(PaymentInterface $paymentProvider, AbstractOrder $sourceOrder = null);
+    public function setPaymentProvider(PaymentInterface $paymentProvider, AbstractOrder $sourceOrder = null): OrderAgentInterface;
 
     /**
      * Init payment:
@@ -105,7 +94,7 @@ interface OrderAgentInterface
      *
      * @throws UnsupportedException
      */
-    public function initPayment();
+    public function initPayment(): AbstractPaymentInformation;
 
     /**
      * Starts payment:
@@ -118,14 +107,14 @@ interface OrderAgentInterface
      *
      * @throws UnsupportedException
      */
-    public function startPayment();
+    public function startPayment(): AbstractPaymentInformation;
 
     /**
      * Returns current payment info of order, or null if none exists
      *
      * @return null|AbstractPaymentInformation
      */
-    public function getCurrentPendingPaymentInfo();
+    public function getCurrentPendingPaymentInfo(): ?AbstractPaymentInformation;
 
     /**
      * cancels payment for current payment info
@@ -139,17 +128,12 @@ interface OrderAgentInterface
      *
      * @throws UnsupportedException
      */
-    public function cancelStartedOrderPayment();
+    public function cancelStartedOrderPayment(): Order;
 
-    /**
-     * @param StatusInterface $status
-     *
-     * @return OrderAgentInterface
-     */
-    public function updatePayment(StatusInterface $status);
+    public function updatePayment(StatusInterface $status): OrderAgentInterface;
 
     /**
      * @return Note[]
      */
-    public function getFullChangeLog();
+    public function getFullChangeLog(): array;
 }
