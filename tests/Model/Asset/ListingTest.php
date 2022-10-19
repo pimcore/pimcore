@@ -20,7 +20,7 @@ use Pimcore\Db;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element\Tag;
 use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class ListingTest

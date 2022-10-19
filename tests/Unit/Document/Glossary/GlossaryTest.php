@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Document\Glossary;
 
 use Pimcore\Model\Glossary;
-use Pimcore\Tests\Helper\Pimcore;
+use Pimcore\Tests\Support\Helper\Pimcore;
 use Pimcore\Tests\Test\TestCase;
 use Pimcore\Tool\Glossary\Processor;
 

@@ -18,7 +18,7 @@ namespace Pimcore\Tests\Model\DataType;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Tests\Test\DataType\AbstractDataTypeTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * @group dataTypeLocal

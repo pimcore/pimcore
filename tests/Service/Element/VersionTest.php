@@ -22,7 +22,7 @@ use Pimcore\Model\Version\Adapter\DatabaseVersionStorageAdapter;
 use Pimcore\Model\Version\Adapter\FileSystemVersionStorageAdapter;
 use Pimcore\Model\Version\Adapter\VersionStorageAdapterInterface;
 use Pimcore\Tests\Test\TestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class VersionTest

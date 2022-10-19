@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Support\Tests;
+namespace Pimcore\Tests\Support;
 
 /**
  * Inherited Methods

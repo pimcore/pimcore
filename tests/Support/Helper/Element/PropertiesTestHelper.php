@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests\Helper\Element;
+namespace Pimcore\Tests\Support\Helper\Element;
 
 use Codeception\Module;
 

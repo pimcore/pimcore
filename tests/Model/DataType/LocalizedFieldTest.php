@@ -20,7 +20,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 class LocalizedFieldTest extends ModelTestCase
 {
