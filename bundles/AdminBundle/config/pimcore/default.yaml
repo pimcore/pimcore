@@ -18,3 +18,11 @@ pimcore_admin:
 
     translations:
         path: "@PimcoreCoreBundle/translations"
+
+# adds support for admin related routes that will be used to determine the request context in PimcoreContextGuesser
+pimcore:
+    context:
+        admin:
+            routes:
+                - { path: ^/admin(/.*)?$ }
+                - { route: ^pimcore_admin_ }

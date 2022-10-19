@@ -49,7 +49,6 @@ class PimcoreAdminBundle extends Bundle
         $container->addCompilerPass(new ImportExportLocatorsPass());
         $container->addCompilerPass(new TranslationServicesPass());
         $container->addCompilerPass(new TranslatorPass());
-        $container->addCompilerPass(new ContextGuesserPass());
         $container->addCompilerPass(new ContentSecurityPolicyUrlsPass());
         $container->addCompilerPass(new LegacyAuthenticationSecurityPass());
 
