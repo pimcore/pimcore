@@ -858,6 +858,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             if ($duplicate instanceof self && $duplicate->getId() != $this->getId()) {
                 $duplicateFullPathException = new DuplicateFullPathException('Duplicate full path [ '.$this->getRealFullPath().' ] - cannot save object');
                 $duplicateFullPathException->setDuplicateElement($duplicate);
+                $duplicateFullPathException->setCauseElement($this);
 
                 throw $duplicateFullPathException;
             }

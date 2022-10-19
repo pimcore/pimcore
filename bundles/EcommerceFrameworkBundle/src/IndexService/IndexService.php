@@ -289,9 +289,9 @@ class IndexService
     /**
      * @param WorkerInterface[] $tenantWorkers
      *
-     * @return IndexService
+     * @return $this
      */
-    public function setTenantWorkers(array $tenantWorkers): self
+    public function setTenantWorkers(array $tenantWorkers): static
     {
         $tenantWorkerAssocList = [];
         foreach ($tenantWorkers as $tenantWorker) {

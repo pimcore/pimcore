@@ -343,12 +343,9 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
-     * @param string $name
-     * @param mixed $value
-     *
      * @return $this
      */
-    public function addConfig(string $name, $value): self
+    public function addConfig(string $name, mixed $value): static
     {
         if (!is_array($this->config)) {
             $this->config = [];

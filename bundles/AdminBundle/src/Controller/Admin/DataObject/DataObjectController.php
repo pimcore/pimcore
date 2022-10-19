@@ -394,7 +394,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $linkGeneratorReference = $objectFromDatabase->getClass()->getLinkGeneratorReference();
 
             $objectData['hasPreview'] = false;
-            if ($objectFromDatabase->getClass()->getPreviewUrl() || $linkGeneratorReference || $previewGenerator) {
+            if ($linkGeneratorReference || $previewGenerator) {
                 $objectData['hasPreview'] = true;
             }
 
@@ -1987,21 +1987,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $object = DataObject\Service::getElementFromSession('object', $id);
 
         if ($object instanceof DataObject\Concrete) {
-            $url = $object->getClass()->getPreviewUrl();
-            if ($url) {
-                // replace named variables
-                $vars = $object->getObjectVars();
-                foreach ($vars as $key => $value) {
-                    if (!empty($value) && \is_scalar($value)) {
-                        $url = str_replace('%' . $key, urlencode($value), $url);
-                    } else {
-                        if (strpos($url, '%' . $key) !== false) {
-                            return new Response('No preview available, please ensure that all fields which are required for the preview are filled correctly.');
-                        }
-                    }
-                }
-                $url = str_replace('%_locale', $this->getAdminUser()->getLanguage(), $url);
-            } elseif ($previewService = $object->getClass()->getPreviewGenerator()) {
+            $url = null;
+            if ($previewService = $object->getClass()->getPreviewGenerator()) {
                 $url = $previewService->generatePreviewUrl($object, array_merge(['preview' => true, 'context' => $this], $request->query->all()));
             } elseif ($linkGenerator = $object->getClass()->getLinkGenerator()) {
                 $url = $linkGenerator->generate($object, ['preview' => true, 'context' => $this]);
