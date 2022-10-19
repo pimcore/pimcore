@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
 
+use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -58,20 +59,27 @@ class ListCommand extends AbstractBundleCommand
         ];
 
         foreach ($this->bundleManager->getAvailableBundles() as $bundleClass) {
-
-            $row = [];
-
-            if ($input->getOption('fully-qualified-classnames')) {
-                $row[] = $bundleClass;
-            } else {
-                $row[] = $this->getShortClassName($bundleClass);
+            try {
+                $bundle = $this->bundleManager->getActiveBundle($bundleClass, false);
+            } catch (BundleNotFoundException $e) {
+                $bundle = null;
             }
 
-            $row[] = $this->bundleManager->isInstalled($bundleClass);
-            $row[] = $this->bundleManager->canBeInstalled($bundleClass);
-            $row[] = $this->bundleManager->canBeUninstalled($bundleClass);
+            if ($bundle) {
+                $row = [];
 
-            $returnData['rows'][] = $row;
+                if ($input->getOption('fully-qualified-classnames')) {
+                    $row[] = $bundleClass;
+                } else {
+                    $row[] = $this->getShortClassName($bundleClass);
+                }
+
+                $row[] = $this->bundleManager->isInstalled($bundle);
+                $row[] = $this->bundleManager->canBeInstalled($bundle);
+                $row[] = $this->bundleManager->canBeUninstalled($bundle);
+                $row[] = $this->bundleManager->getManuallyRegisteredBundleState($bundleClass)['priority'];
+                $returnData['rows'][] = $row;
+            }
         }
 
         if ($input->getOption('json')) {
@@ -85,7 +93,7 @@ class ListCommand extends AbstractBundleCommand
             $table->setHeaders($returnData['headers']);
 
             $returnData['rows'] = array_map(function ($row) {
-                for ($i = 1; $i <= 5; $i++) {
+                for ($i = 1; $i <= 3; $i++) {
                     $row[$i] = $this->formatBool($row[$i]);
                 }
 
