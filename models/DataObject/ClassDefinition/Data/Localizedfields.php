@@ -826,17 +826,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $this->layout;
     }
 
-    /**
-     * @return bool
-     */
     public function getBorder(): bool
     {
         return $this->border;
     }
 
-    /**
-     * @param bool $border
-     */
     public function setBorder(bool $border): void
     {
         $this->border = $border;
@@ -1114,9 +1108,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return true;
     }
 
-    /**
-     * @return array
-     */
     public function getBlockedVarsForExport(): array
     {
         return [
@@ -1216,9 +1207,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $this->labelWidth;
     }
 
-    /**
-     * @return array|null
-     */
     public function getPermissionView(): ?array
     {
         return $this->permissionView;
@@ -1232,9 +1220,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $this->permissionView = $permissionView;
     }
 
-    /**
-     * @return array|null
-     */
     public function getPermissionEdit(): ?array
     {
         return $this->permissionEdit;
@@ -1280,9 +1265,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return true;
     }
 
-    /**
-     * @return string
-     */
     public function getTabPosition(): string
     {
         return $this->tabPosition ?? 'top';
@@ -1296,42 +1278,32 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $this->tabPosition = $tabPosition;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Localizedfield::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Localizedfield::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return '\\'. DataObject\Localizedfield::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Localizedfield::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+
+    public function normalize(mixed $value, array $params = [])
     {
         if ($value instanceof DataObject\Localizedfield) {
             $items = $value->getInternalData();
@@ -1364,10 +1336,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+
+    public function denormalize(mixed $value, array $params = [])
     {
         if (is_array($value)) {
             $lf = new DataObject\Localizedfield();

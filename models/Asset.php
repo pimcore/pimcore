@@ -974,9 +974,7 @@ class Asset extends Element\AbstractElement
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function delete(bool $isNested = false)
     {
         if ($this->getId() == 1) {
@@ -1823,9 +1821,6 @@ class Asset extends Element\AbstractElement
         );
     }
 
-    /**
-     * @return string
-     */
     public function getFrontendPath(): string
     {
         $path = $this->getFullPath();

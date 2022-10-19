@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -33,14 +34,8 @@ class BruteforceProtectionListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
-    /**
-     * @var BruteforceProtectionHandler
-     */
-    protected $handler;
+    protected BruteforceProtectionHandler $handler;
 
-    /**
-     * @param BruteforceProtectionHandler $handler
-     */
     public function __construct(BruteforceProtectionHandler $handler)
     {
         $this->handler = $handler;

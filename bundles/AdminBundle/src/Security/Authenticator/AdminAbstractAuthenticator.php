@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -52,10 +53,7 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
 
     use LoggerAwareTrait;
 
-    /**
-     * @var bool
-     */
-    protected $twoFactorRequired = false;
+    protected bool $twoFactorRequired = false;
 
     public function __construct(
         protected EventDispatcherInterface $dispatcher,
@@ -131,10 +129,7 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
         return null;
     }
 
-    /**
-     * @param User $user
-     */
-    protected function saveUserToSession($user): void
+    protected function saveUserToSession(User $user): void
     {
         if ($user && Authentication::isValidUser($user->getUser())) {
             $pimcoreUser = $user->getUser();

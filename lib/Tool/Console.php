@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,12 +27,9 @@ final class Console
     /**
      * @var string system environment
      */
-    private static $systemEnvironment;
+    private static string $systemEnvironment;
 
-    /**
-     * @var array
-     */
-    protected static $executableCache = [];
+    protected static array $executableCache = [];
 
     /**
      * @deprecated since v.6.9.
@@ -40,7 +38,7 @@ final class Console
      *
      * @return string "windows" or "unix"
      */
-    public static function getSystemEnvironment()
+    public static function getSystemEnvironment(): string
     {
         if (self::$systemEnvironment == null) {
             if (stripos(php_uname('s'), 'windows') !== false) {
@@ -63,7 +61,7 @@ final class Console
      *
      * @throws \Exception
      */
-    public static function getExecutable($name, $throwException = false)
+    public static function getExecutable(string $name, bool $throwException = false): bool|string
     {
         if (isset(self::$executableCache[$name])) {
             if (!self::$executableCache[$name] && $throwException) {
@@ -147,22 +145,12 @@ final class Console
         return false;
     }
 
-    /**
-     * @param string $process
-     *
-     * @return bool
-     */
-    protected static function checkComposite($process)
+    protected static function checkComposite(string $process): bool
     {
         return self::checkConvert($process);
     }
 
-    /**
-     * @param string $executablePath
-     *
-     * @return bool
-     */
-    protected static function checkConvert($executablePath)
+    protected static function checkConvert(string $executablePath): bool
     {
         try {
             $process = new Process([$executablePath, '--help']);
@@ -182,7 +170,7 @@ final class Console
      *
      * @throws \Exception
      */
-    public static function getPhpCli()
+    public static function getPhpCli(): mixed
     {
         try {
             return self::getExecutable('php', true);
@@ -197,21 +185,12 @@ final class Console
         }
     }
 
-    /**
-     * @return bool|string
-     */
-    public static function getTimeoutBinary()
+    public static function getTimeoutBinary(): bool|string
     {
         return self::getExecutable('timeout');
     }
 
-    /**
-     * @param string $script
-     * @param array $arguments
-     *
-     * @return array
-     */
-    protected static function buildPhpScriptCmd(string $script, array $arguments = [])
+    protected static function buildPhpScriptCmd(string $script, array $arguments = []): array
     {
         $phpCli = self::getPhpCli();
 
@@ -236,7 +215,7 @@ final class Console
      *
      * @return string
      */
-    public static function runPhpScript($script, $arguments = [], $outputFile = null, $timeout = null)
+    public static function runPhpScript(string $script, array $arguments = [], string $outputFile = null, float $timeout = null): string
     {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
         self::addLowProcessPriority($cmd);
@@ -260,15 +239,15 @@ final class Console
     }
 
     /**
-     * @deprecated since v6.9. For long running background tasks switch to a queue implementation.
-     *
      * @param string $script
      * @param array $arguments
      * @param string|null $outputFile
      *
      * @return int
+     *@deprecated since v6.9. For long running background tasks switch to a queue implementation.
+     *
      */
-    public static function runPhpScriptInBackground($script, $arguments = [], $outputFile = null)
+    public static function runPhpScriptInBackground(string $script, array $arguments = [], string $outputFile = null): int
     {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
         $process = new Process($cmd);
@@ -278,16 +257,16 @@ final class Console
     }
 
     /**
-     * @deprecated since v.6.9. Use Symfony\Component\Process\Process instead. For long running background tasks use queues.
+     * @param string $cmd
+     * @param string|null $outputFile
+     *
+     * @return int
+     *@deprecated since v.6.9. Use Symfony\Component\Process\Process instead. For long running background tasks use queues.
      *
      * @static
      *
-     * @param string $cmd
-     * @param null|string $outputFile
-     *
-     * @return int
      */
-    public static function execInBackground($cmd, $outputFile = null)
+    public static function execInBackground(string $cmd, string $outputFile = null): int
     {
         // windows systems
         if (self::getSystemEnvironment() == 'windows') {
@@ -300,17 +279,17 @@ final class Console
     }
 
     /**
-     * @deprecated since v.6.9. For long running background tasks use queues.
-     *
-     * @static
-     *
      * @param string $cmd
      * @param string $outputFile
      * @param bool $useNohup
      *
      * @return int
+     *@deprecated since v.6.9. For long running background tasks use queues.
+     *
+     * @static
+     *
      */
-    protected static function execInBackgroundUnix($cmd, $outputFile, $useNohup = true)
+    protected static function execInBackgroundUnix(string $cmd, string $outputFile, bool $useNohup = true): int
     {
         if (!$outputFile) {
             $outputFile = '/dev/null';
@@ -351,16 +330,16 @@ final class Console
     }
 
     /**
-     * @deprecated since v.6.9. For long running background tasks use queues.
-     *
-     * @static
-     *
      * @param string $cmd
      * @param string $outputFile
      *
      * @return int
+     *@deprecated since v.6.9. For long running background tasks use queues.
+     *
+     * @static
+     *
      */
-    protected static function execInBackgroundWindows($cmd, $outputFile)
+    protected static function execInBackgroundWindows(string $cmd, string $outputFile): int
     {
         if (!$outputFile) {
             $outputFile = 'NUL';
@@ -377,13 +356,13 @@ final class Console
     }
 
     /**
-     * @internal
-     *
      * @param array|string $cmd
      *
      * @return void
+     *@internal
+     *
      */
-    public static function addLowProcessPriority(&$cmd): void
+    public static function addLowProcessPriority(array|string &$cmd): void
     {
         $nice = (string) self::getExecutable('nice');
         if ($nice) {

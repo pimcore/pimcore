@@ -773,10 +773,8 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return implode(' | ', $this->getPhpDocClassString(true));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+
+    public function normalize(mixed $value, array $params = [])
     {
         if (is_array($value)) {
             $result = [];
@@ -798,11 +796,11 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /** See marshal
      *
      * @param mixed $value
-     * @param mixed $params
+     * @param array $params
      *
      * @return array|null
      */
-    public function denormalize($value, $params = [])
+    public function denormalize(mixed $value, array $params = [])
     {
         if (is_array($value)) {
             $result = [];
@@ -948,17 +946,11 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return true;
     }
 
-    /**
-     * @return bool
-     */
     public function isEnableTextSelection(): bool
     {
         return $this->enableTextSelection;
     }
 
-    /**
-     * @param bool $enableTextSelection
-     */
     public function setEnableTextSelection(bool $enableTextSelection): void
     {
         $this->enableTextSelection = $enableTextSelection;

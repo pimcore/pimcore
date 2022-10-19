@@ -260,10 +260,8 @@ class Geobounds extends AbstractGeo implements
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+
+    public function normalize(mixed $value, array $params = [])
     {
         if ($value instanceof DataObject\Data\Geobounds) {
             return [
@@ -281,10 +279,8 @@ class Geobounds extends AbstractGeo implements
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+
+    public function denormalize(mixed $value, array $params = [])
     {
         if (is_array($value)) {
             $ne = new DataObject\Data\GeoCoordinates($value['northEast']['latitude'], $value['northEast']['longitude']);
@@ -342,33 +338,25 @@ class Geobounds extends AbstractGeo implements
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\Geobounds::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\Geobounds::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\Geobounds::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\Geobounds::class . '|null';

@@ -67,7 +67,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      *
      * @return Model\Asset[]
      */
-    public function getItems($offset, $itemCountPerPage)
+    public function getItems(int $offset, int $itemCountPerPage)
     {
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);

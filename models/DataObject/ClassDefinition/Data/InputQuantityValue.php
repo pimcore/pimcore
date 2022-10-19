@@ -158,10 +158,8 @@ class InputQuantityValue extends QuantityValue
         return '\\' . Model\DataObject\Data\InputQuantityValue::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+
+    public function normalize(mixed $value, array $params = [])
     {
         if ($value instanceof Model\DataObject\Data\InputQuantityValue) {
             return [
@@ -171,10 +169,8 @@ class InputQuantityValue extends QuantityValue
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+
+    public function denormalize(mixed $value, array $params = [])
     {
         if (is_array($value)) {
             return new Model\DataObject\Data\InputQuantityValue($value['value'], $value['unitId']);

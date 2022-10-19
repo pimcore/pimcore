@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,23 +25,14 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  */
 class TokenStorageUserResolver
 {
-    /**
-     * @var TokenStorageInterface
-     */
-    protected $tokenStorage;
+    protected TokenStorageInterface $tokenStorage;
 
-    /**
-     * @param TokenStorageInterface $tokenStorage
-     */
     public function __construct(TokenStorageInterface $tokenStorage)
     {
         $this->tokenStorage = $tokenStorage;
     }
 
-    /**
-     * @return User|null
-     */
-    public function getUser()
+    public function getUser(): ?User
     {
         if ($proxy = $this->getUserProxy()) {
             return $proxy->getUser();
@@ -56,7 +48,7 @@ class TokenStorageUserResolver
      *
      * @return UserProxy|null
      */
-    public function getUserProxy()
+    public function getUserProxy(): ?\Pimcore\Bundle\AdminBundle\Security\User\User
     {
         if (null === $token = $this->tokenStorage->getToken()) {
             return null;

@@ -112,17 +112,11 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getMinimumLength(): ?int
     {
         return $this->minimumLength;
     }
 
-    /**
-     * @param int|null $minimumLength
-     */
     public function setMinimumLength(?int $minimumLength): void
     {
         $this->minimumLength = $minimumLength;
@@ -241,7 +235,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @param string $data
      *
-     * @return bool|null|string
+     * @return string
      */
     public function calculateHash($data)
     {
@@ -457,33 +451,25 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         $this->saltlocation = $masterDefinition->saltlocation;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?string';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return '?string';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return 'string|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return 'string|null';

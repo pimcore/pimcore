@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -34,20 +35,13 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class EncoderFactory implements EncoderFactoryInterface
 {
-    /**
-     * @var EncoderFactoryInterface
-     */
-    protected $frameworkFactory;
+    protected EncoderFactoryInterface $frameworkFactory;
 
     /**
      * @var EncoderFactoryInterface[]
      */
-    protected $encoderFactories = [];
+    protected array $encoderFactories = [];
 
-    /**
-     * @param EncoderFactoryInterface $frameworkFactory
-     * @param array $encoderFactories
-     */
     public function __construct(EncoderFactoryInterface $frameworkFactory, array $encoderFactories = [])
     {
         $this->frameworkFactory = $frameworkFactory;
@@ -57,7 +51,7 @@ class EncoderFactory implements EncoderFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getEncoder($user)
+    public function getEncoder($user): PasswordEncoderInterface
     {
         if ($encoder = $this->getEncoderFromFactory($user)) {
             return $encoder;

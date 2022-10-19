@@ -30,7 +30,7 @@ class Listing extends Model\Listing\AbstractListing
      *
      * @return bool
      */
-    public function isValidOrderKey($key)
+    public function isValidOrderKey(string $key)
     {
         return in_array($key, ['abbreviation', 'group', 'id', 'longname', 'baseunit', 'factor'], true);
     }

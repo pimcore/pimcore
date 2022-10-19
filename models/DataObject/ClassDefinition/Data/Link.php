@@ -401,42 +401,32 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $this->isEqualArray($oldValue, $newValue);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\Link::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\Link::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\Link::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\Link::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+
+    public function normalize(mixed $value, array $params = [])
     {
         if ($value instanceof DataObject\Data\Link) {
             return $value->getObjectVars();
@@ -445,10 +435,8 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+
+    public function denormalize(mixed $value, array $params = [])
     {
         if (is_array($value)) {
             $link = new DataObject\Data\Link();

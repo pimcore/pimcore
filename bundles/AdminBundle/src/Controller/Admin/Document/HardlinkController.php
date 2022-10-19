@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -37,7 +38,7 @@ class HardlinkController extends DocumentControllerBase
      *
      * @throws \Exception
      */
-    public function getDataByIdAction(Request $request)
+    public function getDataByIdAction(Request $request): JsonResponse
     {
         $link = Document\Hardlink::getById((int)$request->get('id'));
 

@@ -418,33 +418,25 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?float';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return '?float';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return 'float|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return 'float|null';

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -54,7 +55,7 @@ class Url extends Page
      *
      * @return Url fluent interface, returns self
      */
-    public function setUri(?string $uri)
+    public function setUri(?string $uri): static
     {
         $this->_uri = $uri;
 
@@ -74,7 +75,7 @@ class Url extends Page
     /**
      * {@inheritdoc}
      */
-    public function getHref()
+    public function getHref(): ?string
     {
         $uri = $this->getUri();
 

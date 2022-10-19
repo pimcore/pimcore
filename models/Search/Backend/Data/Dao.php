@@ -26,9 +26,6 @@ use Pimcore\Model;
  */
 class Dao extends \Pimcore\Model\Dao\AbstractDao
 {
-    /**
-     * @param Model\Element\ElementInterface $element
-     */
     public function getForElement(Model\Element\ElementInterface $element): void
     {
         try {

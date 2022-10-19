@@ -446,9 +446,6 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getBlockedVarsForExport(): array
     {
         return ['blockedVarsForExport'];

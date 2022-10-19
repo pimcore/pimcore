@@ -51,17 +51,11 @@ class Listing extends Model\Listing\AbstractListing
      */
     protected ?array $languages = null;
 
-    /**
-     * @return string
-     */
     public function getDomain(): string
     {
         return $this->domain;
     }
 
-    /**
-     * @param string $domain
-     */
     public function setDomain(string $domain): void
     {
         if (!Model\Translation::isAValidDomain($domain)) {

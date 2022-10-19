@@ -60,17 +60,11 @@ trait OwnerAwareFieldTrait
         return $this->_owner;
     }
 
-    /**
-     * @return string|null
-     */
     public function _getOwnerFieldname(): ?string
     {
         return $this->_fieldname;
     }
 
-    /**
-     * @return string|null
-     */
     public function _getOwnerLanguage(): ?string
     {
         return $this->_language;

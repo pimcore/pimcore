@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -44,5 +45,5 @@ interface UserAwarePasswordEncoderInterface extends PasswordEncoderInterface
      * @throws RuntimeException
      *      if no user was set
      */
-    public function getUser();
+    public function getUser(): UserInterface;
 }

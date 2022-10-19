@@ -31,7 +31,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
      *
      * @return bool
      */
-    public function isValidOrderKey($key)
+    public function isValidOrderKey(string $key)
     {
         if ($key == 'id' || $key == 'token' || $key == 'series_id' || $key == 'usages' || $key == 'timestamp') {
             return true;
@@ -361,12 +361,12 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
     /**
      * Returns an collection of items for a page.
      *
-     * @param  int $offset Page offset
-     * @param  int $itemCountPerPage Number of items per page
+     * @param int $offset Page offset
+     * @param int $itemCountPerPage Number of items per page
      *
      * @return array
      */
-    public function getItems($offset, $itemCountPerPage)
+    public function getItems(int $offset, int $itemCountPerPage)
     {
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);

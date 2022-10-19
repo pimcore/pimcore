@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,15 +26,9 @@ use Twig\Environment;
  */
 class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
 {
-    /**
-     * @var Environment
-     */
-    protected $twig;
+    protected Environment $twig;
 
-    /**
-     * @var bool
-     */
-    protected $delegate = false;
+    protected bool $delegate = false;
 
     /**
      * @param Environment $twig
@@ -84,9 +79,6 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
         }
     }
 
-    /**
-     * @param bool $delegate
-     */
     public function setDelegate(bool $delegate)
     {
         $this->delegate = $delegate;
@@ -95,14 +87,11 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     /**
      * @return bool $delegate
      */
-    public function isDelegate()
+    public function isDelegate(): bool
     {
         return $this->delegate;
     }
 
-    /**
-     * @return Environment
-     */
     public function getTwigEnvironment(): Environment
     {
         return $this->twig;
@@ -117,7 +106,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
      *
      * @throws \Exception
      */
-    public function renderResponse($view, array $parameters = [], Response $response = null)
+    public function renderResponse(string $view, array $parameters = [], Response $response = null): Response
     {
         if (null === $response) {
             $response = new Response();

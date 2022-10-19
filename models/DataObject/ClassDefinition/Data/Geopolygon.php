@@ -285,42 +285,32 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?array';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return '?array';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return '\\'.DataObject\Data\GeoCoordinates::class.'[]|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return '\\'.DataObject\Data\GeoCoordinates::class.'[]|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+
+    public function normalize(mixed $value, array $params = [])
     {
         if (is_array($value)) {
             $points = [];
@@ -335,10 +325,8 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+
+    public function denormalize(mixed $value, array $params = [])
     {
         if (is_array($value)) {
             $result = [];

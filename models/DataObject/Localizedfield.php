@@ -95,41 +95,26 @@ final class Localizedfield extends Model\AbstractModel implements
      */
     protected bool $_loadedAllLazyData = false;
 
-    /**
-     * @param bool $getFallbackValues
-     */
     public static function setGetFallbackValues(bool $getFallbackValues): void
     {
         self::$getFallbackValues = $getFallbackValues;
     }
 
-    /**
-     * @return bool
-     */
     public static function getGetFallbackValues(): bool
     {
         return self::$getFallbackValues;
     }
 
-    /**
-     * @return bool
-     */
     public static function isStrictMode(): bool
     {
         return self::$strictMode;
     }
 
-    /**
-     * @param bool $strictMode
-     */
     public static function setStrictMode(bool $strictMode): void
     {
         self::$strictMode = $strictMode;
     }
 
-    /**
-     * @return bool
-     */
     public static function doGetFallbackValues(): bool
     {
         return self::$getFallbackValues;
@@ -157,9 +142,6 @@ final class Localizedfield extends Model\AbstractModel implements
         $this->markAllLanguagesAsDirty();
     }
 
-    /**
-     * @return array
-     */
     public function getItems(): array
     {
         return $this->items;
@@ -264,9 +246,6 @@ final class Localizedfield extends Model\AbstractModel implements
         return $this;
     }
 
-    /**
-     * @return Concrete|null
-     */
     public function getObject(): ?Concrete
     {
         if ($this->objectId && !$this->object) {
@@ -288,9 +267,6 @@ final class Localizedfield extends Model\AbstractModel implements
         return $this;
     }
 
-    /**
-     * @return ClassDefinition|null
-     */
     public function getClass(): ?ClassDefinition
     {
         if (!$this->class && $this->getObject()) {
@@ -335,11 +311,6 @@ final class Localizedfield extends Model\AbstractModel implements
         }
     }
 
-    /**
-     * @param string $language
-     *
-     * @return bool
-     */
     public function languageExists(string $language): bool
     {
         return array_key_exists($language, $this->items);
@@ -665,9 +636,6 @@ final class Localizedfield extends Model\AbstractModel implements
         return true;
     }
 
-    /**
-     * @return array
-     */
     public function __sleep(): array
     {
         if (!$this->isInDumpState()) {
@@ -689,17 +657,11 @@ final class Localizedfield extends Model\AbstractModel implements
         return ['items', 'context', 'objectId'];
     }
 
-    /**
-     * @return array
-     */
     public function getContext(): array
     {
         return $this->context ?? [];
     }
 
-    /**
-     * @param array|null $context
-     */
     public function setContext(?array $context): void
     {
         $this->context = $context ?? [];
@@ -836,9 +798,6 @@ final class Localizedfield extends Model\AbstractModel implements
         return $lazyLoadedFieldNames;
     }
 
-    /**
-     * @return int|null
-     */
     public function getObjectId(): ?int
     {
         return $this->objectId;

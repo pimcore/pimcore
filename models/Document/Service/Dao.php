@@ -119,9 +119,6 @@ class Dao extends Model\Dao\AbstractDao
         ]);
     }
 
-    /**
-     * @param Document $document
-     */
     public function removeTranslation(Document $document)
     {
         // if $document is a source-document, we need to move them over to a new document
@@ -132,10 +129,6 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @param Document $document
-     * @param Document $targetDocument
-     */
     public function removeTranslationLink(Document $document, Document $targetDocument)
     {
         $sourceId = $this->getTranslationSourceId($document);

@@ -29,9 +29,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
 {
     use QueryBuilderHelperTrait;
 
-    /**
-     * @return string
-     */
     public function getDatabaseTableName(): string
     {
         return Model\Translation\Dao::TABLE_PREFIX . $this->model->getDomain();

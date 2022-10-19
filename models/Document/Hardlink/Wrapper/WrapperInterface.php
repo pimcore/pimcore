@@ -30,13 +30,7 @@ interface WrapperInterface extends ElementInterface
      */
     public function getHardLinkSource();
 
-    /**
-     * @param Document $sourceDocument
-     */
     public function setSourceDocument(Document $sourceDocument);
 
-    /**
-     * @return Document|null
-     */
     public function getSourceDocument(): ?Document;
 }

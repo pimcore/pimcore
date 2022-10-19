@@ -838,10 +838,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return $dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+
+    public function normalize(mixed $value, array $params = [])
     {
         if (is_array($value)) {
             $result = [];
@@ -871,7 +869,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     /**
      * {@inheritdoc}
      */
-    public function denormalize($value, $params = [])
+    public function denormalize(mixed $value, array $params = [])
     {
         if (is_array($value)) {
             $result = [];
@@ -1056,9 +1054,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         $this->enableBatchEdit = (bool) $enableBatchEdit;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return '\\'.DataObject\Data\ElementMetadata::class.'[]';

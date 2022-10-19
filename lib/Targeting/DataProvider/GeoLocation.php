@@ -33,15 +33,9 @@ class GeoLocation implements DataProviderInterface
 
     const COOKIE_NAME_GEOLOCATION = '_pc_tgl';
 
-    /**
-     * @var GeoIp
-     */
-    private $geoIpDataProvider;
+    private GeoIp $geoIpDataProvider;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(
         GeoIp $geoIpProvider,

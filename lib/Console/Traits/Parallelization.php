@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,8 +26,7 @@ use Symfony\Component\Lock\LockInterface;
 
 trait Parallelization
 {
-    /** @var LockInterface|null */
-    private $lock;
+    private ?LockInterface $lock;
 
     use ParallelizationBase;
 
@@ -64,17 +64,11 @@ trait Parallelization
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getSegmentSize(): int
     {
         return (int)$this->input->getOption('batch-size');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
     {
         if (!$this->lock()) {
@@ -83,9 +77,6 @@ trait Parallelization
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function runAfterBatch(InputInterface $input, OutputInterface $output, array $items): void
     {
         if ((int)$this->input->getOption('processes') <= 1) {
@@ -96,26 +87,17 @@ trait Parallelization
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function runAfterLastCommand(InputInterface $input, OutputInterface $output): void
     {
         $this->release(); //release the lock
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getItemName(int $count): string
     {
         return $count <= 1 ? 'item' : 'items';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getContainer()
+    protected function getContainer(): \Symfony\Component\DependencyInjection\ContainerInterface
     {
         return \Pimcore::getKernel()->getContainer();
     }
@@ -147,9 +129,6 @@ trait Parallelization
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getConsolePath(): string
     {
         return PIMCORE_PROJECT_ROOT . '/bin/console';

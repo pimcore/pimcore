@@ -151,9 +151,6 @@ class Hotspotimage implements OwnerAwareFieldInterface
         return $this;
     }
 
-    /**
-     * @return Asset\Image|null
-     */
     public function getImage(): ?Asset\Image
     {
         return $this->image;

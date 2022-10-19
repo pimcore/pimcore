@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,6 +16,8 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
+use Pimcore\Model\Element\ElementInterface;
+
 /**
  * @internal
  */
@@ -23,12 +26,12 @@ final class Iterator extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($elements)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         $result = new \stdClass();
         $result->label = $this->label;
         $result->value = [];
-        if (!is_array($elements)) {
+        if (!is_array($element)) {
             return $result;
         }
 
@@ -41,7 +44,7 @@ final class Iterator extends AbstractOperator
 
             $valueArray = [];
 
-            foreach ($elements as $element) {
+            foreach ($element as $element) {
                 $childResult = $c->getLabeledValue($element);
 
                 $valueArray[] = $childResult->value ? $childResult->value : null;

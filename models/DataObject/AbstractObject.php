@@ -1151,7 +1151,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @throws \Exception
      */
-    public function __call($method, $args)
+    public function __call(string $method, array $args)
     {
         // compatibility mode (they do not have any set_oXyz() methods anymore)
         if (preg_match('/^(get|set)o_/i', $method)) {
@@ -1286,9 +1286,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getChildrenSortOrder(): string
     {
         return $this->o_childrenSortOrder ?? self::OBJECT_CHILDREN_SORT_ORDER_DEFAULT;

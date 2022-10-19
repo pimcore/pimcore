@@ -421,42 +421,32 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $oldValue === $newValue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\Consent::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\Consent::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\Consent::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\Consent::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+
+    public function normalize(mixed $value, array $params = [])
     {
         if ($value instanceof DataObject\Data\Consent) {
             return [
@@ -468,10 +458,8 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+
+    public function denormalize(mixed $value, array $params = [])
     {
         if (is_array($value)) {
             return new DataObject\Data\Consent($value['consent'], $value['noteId']);

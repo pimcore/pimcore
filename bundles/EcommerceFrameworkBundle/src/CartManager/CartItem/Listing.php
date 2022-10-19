@@ -29,19 +29,19 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     /**
      * @var array
      */
-    protected $order = ['ASC'];
+    protected array $order = ['ASC'];
 
     /**
      * @var array
      */
-    protected $orderKey = ['`sortIndex`', '`addedDateTimestamp`'];
+    protected array $orderKey = ['`sortIndex`', '`addedDateTimestamp`'];
 
     /**
      * @param string $key
      *
      * @return bool
      */
-    public function isValidOrderKey($key)
+    public function isValidOrderKey(string $key)
     {
         if (in_array($key, ['productId', 'cartId', 'count', 'itemKey', 'addedDateTimestamp', 'sortIndex'])) {
             return true;

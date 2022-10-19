@@ -240,9 +240,6 @@ trait FieldcollectionObjectbrickDefinitionTrait
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getImplementsInterfaces(): ?string
     {
         return $this->implementsInterfaces;

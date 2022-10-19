@@ -204,9 +204,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         parent::checkValidity($data, $omitMandatoryCheck);
     }
 
-    /**
-     * @return string
-     */
     public function getAction(): string
     {
         return $this->action;
@@ -608,9 +605,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getDomainLabelWidth(): ?int
     {
         return $this->domainLabelWidth;
@@ -725,42 +719,32 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?array';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return '?array';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Model\DataObject\Data\UrlSlug::class . '[]';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Model\DataObject\Data\UrlSlug::class . '[]';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+
+    public function normalize(mixed $value, array $params = [])
     {
         if (is_array($value)) {
             $result = [];
@@ -778,10 +762,8 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+
+    public function denormalize(mixed $value, array $params = [])
     {
         if (is_array($value)) {
             $result = [];

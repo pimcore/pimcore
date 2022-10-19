@@ -110,7 +110,7 @@ class Analytics extends AbstractAdapter
      * @param array|null $drillDownFilters
      * @param bool $useDimensionHandling
      *
-     * @return array
+     * @return \Google\Service\Analytics\GaData
      *
      * @throws \Exception
      */

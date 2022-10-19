@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,15 +32,9 @@ class Ghostscript extends Adapter
 {
     use TemporaryFileHelperTrait;
 
-    /**
-     * @var string|null
-     */
-    private $version;
+    private ?string $version;
 
-    /**
-     * @return bool
-     */
-    public function isAvailable()
+    public function isAvailable(): bool
     {
         try {
             $ghostscript = self::getGhostscriptCli();
@@ -54,10 +49,8 @@ class Ghostscript extends Adapter
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isFileTypeSupported($fileType)
+
+    public function isFileTypeSupported(string $fileType): bool
     {
         // it's also possible to pass a path or filename
         if (preg_match("/\.?pdf$/i", $fileType)) {
@@ -72,7 +65,7 @@ class Ghostscript extends Adapter
      *
      * @throws \Exception
      */
-    public static function getGhostscriptCli()
+    public static function getGhostscriptCli(): string
     {
         return Console::getExecutable('gs', true);
     }
@@ -82,15 +75,13 @@ class Ghostscript extends Adapter
      *
      * @throws \Exception
      */
-    public static function getPdftotextCli()
+    public static function getPdftotextCli(): string
     {
         return Console::getExecutable('pdftotext', true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load(Asset\Document $asset)
+
+    public function load(Asset\Document $asset): Ghostscript|Adapter|static
     {
         // avoid timeouts
         $maxExecTime = (int) ini_get('max_execution_time');
@@ -132,7 +123,7 @@ class Ghostscript extends Adapter
     /**
      * {@inheritdoc}
      */
-    public function getPageCount()
+    public function getPageCount(): int
     {
         $process = Process::fromShellCommandline($this->buildPageCountCommand());
         $process->setTimeout(120);
@@ -151,7 +142,7 @@ class Ghostscript extends Adapter
      *
      * @throws \Exception
      */
-    protected function buildPageCountCommand()
+    protected function buildPageCountCommand(): string
     {
         $command = self::getGhostscriptCli() . ' -dNODISPLAY -q';
         $localFile = self::getLocalFileFromStream($this->getPdf());
@@ -175,7 +166,7 @@ class Ghostscript extends Adapter
      *
      * @throws \Exception
      */
-    protected function getVersion()
+    protected function getVersion(): string
     {
         if (is_null($this->version)) {
             $process = new Process([self::getGhostscriptCli(), '--version']);
@@ -186,10 +177,8 @@ class Ghostscript extends Adapter
         return $this->version;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function saveImage(string $imageTargetPath, $page = 1, $resolution = 200)
+
+    public function saveImage(string $imageTargetPath, int $page = 1, int $resolution = 200)
     {
         try {
             $localFile = self::getLocalFileFromStream($this->getPdf());
@@ -207,9 +196,7 @@ class Ghostscript extends Adapter
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getText(?int $page = null, ?Asset\Document $asset = null)
     {
         try {

@@ -872,10 +872,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+
+    public function denormalize(mixed $value, array $params = [])
     {
         if (is_array($value)) {
             $object = $params['object'] ?? null;
@@ -905,10 +903,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+
+    public function normalize(mixed $value, array $params = [])
     {
         if (is_array($value)) {
             $result = [];
@@ -1029,9 +1025,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $elementType . $id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return '\\'.DataObject\Data\ObjectMetadata::class.'[]';

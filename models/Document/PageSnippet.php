@@ -692,33 +692,21 @@ abstract class PageSnippet extends Model\Document
         }
     }
 
-    /**
-     * @return bool|null
-     */
     public function getStaticGeneratorEnabled(): ?bool
     {
         return $this->staticGeneratorEnabled;
     }
 
-    /**
-     * @param bool|null $staticGeneratorEnabled
-     */
     public function setStaticGeneratorEnabled(?bool $staticGeneratorEnabled): void
     {
         $this->staticGeneratorEnabled = $staticGeneratorEnabled;
     }
 
-    /**
-     * @return int|null
-     */
     public function getStaticGeneratorLifetime(): ?int
     {
         return $this->staticGeneratorLifetime;
     }
 
-    /**
-     * @param int|null $staticGeneratorLifetime
-     */
     public function setStaticGeneratorLifetime(?int $staticGeneratorLifetime): void
     {
         $this->staticGeneratorLifetime = $staticGeneratorLifetime;

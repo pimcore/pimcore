@@ -43,13 +43,7 @@ interface OwnerAwareFieldInterface
      */
     public function _getOwner();
 
-    /**
-     * @return string|null
-     */
     public function _getOwnerFieldname(): ?string;
 
-    /**
-     * @return string|null
-     */
     public function _getOwnerLanguage(): ?string;
 }

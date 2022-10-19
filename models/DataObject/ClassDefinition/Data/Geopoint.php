@@ -225,28 +225,24 @@ class Geopoint extends AbstractGeo implements
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($data, $params = [])
+
+    public function normalize(mixed $value, array $params = [])
     {
-        if ($data instanceof DataObject\Data\GeoCoordinates) {
+        if ($value instanceof DataObject\Data\GeoCoordinates) {
             return [
-                'latitude' => $data->getLatitude(),
-                'longitude' => $data->getLongitude(),
+                'latitude' => $value->getLatitude(),
+                'longitude' => $value->getLongitude(),
             ];
         }
 
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($data, $params = [])
+
+    public function denormalize(mixed $value, array $params = [])
     {
-        if (is_array($data)) {
-            $coordinates = new DataObject\Data\GeoCoordinates($data['latitude'], $data['longitude']);
+        if (is_array($value)) {
+            $coordinates = new DataObject\Data\GeoCoordinates($value['latitude'], $value['longitude']);
 
             $coordinates->_setOwnerFieldname($params['fieldname'] ?? null);
             $coordinates->_setOwner($params['owner'] ?? null);
@@ -311,33 +307,25 @@ class Geopoint extends AbstractGeo implements
             && (abs($oldValue->getLatitude() - $newValue->getLatitude()) < 0.000000000001);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\GeoCoordinates::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\GeoCoordinates::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\GeoCoordinates::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\GeoCoordinates::class . '|null';

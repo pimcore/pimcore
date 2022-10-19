@@ -129,9 +129,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $this;
     }
 
-    /**
-     * @return Concrete|null
-     */
     public function getObject(): ?Concrete
     {
         return $this->object;
@@ -149,9 +146,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $this;
     }
 
-    /**
-     * @return Model\DataObject\ClassDefinition|null
-     */
     public function getClass(): ?ClassDefinition
     {
         if (!$this->class && $this->getObject()) {
@@ -445,17 +439,11 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return true;
     }
 
-    /**
-     * @return array
-     */
     public function getGroupCollectionMappings(): array
     {
         return $this->groupCollectionMapping;
     }
 
-    /**
-     * @param array $groupCollectionMapping
-     */
     public function setGroupCollectionMappings(array $groupCollectionMapping): void
     {
         $this->groupCollectionMapping = $groupCollectionMapping;
@@ -497,12 +485,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $groups;
     }
 
-    /**
-     * @param Classificationstore $classificationstore
-     * @param Classificationstore\GroupConfig $groupConfig
-     *
-     * @return Model\DataObject\Classificationstore\Group
-     */
     public function createGroup(
         Classificationstore $classificationstore,
         Classificationstore\GroupConfig $groupConfig

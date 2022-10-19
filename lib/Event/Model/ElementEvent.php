@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,10 +24,7 @@ class ElementEvent extends Event implements ElementEventInterface
 {
     use ArgumentsAwareTrait;
 
-    /**
-     * @var AbstractModel
-     */
-    protected $element;
+    protected AbstractModel $element;
 
     /**
      * ElementEvent constructor.
@@ -40,18 +38,12 @@ class ElementEvent extends Event implements ElementEventInterface
         $this->arguments = $arguments;
     }
 
-    /**
-     * @return AbstractModel
-     */
-    public function getElement()
+    public function getElement(): AbstractModel
     {
         return $this->element;
     }
 
-    /**
-     * @param AbstractModel $element
-     */
-    public function setElement($element)
+    public function setElement(AbstractModel $element)
     {
         $this->element = $element;
     }

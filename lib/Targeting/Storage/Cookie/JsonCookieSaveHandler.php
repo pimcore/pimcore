@@ -26,7 +26,7 @@ class JsonCookieSaveHandler extends AbstractCookieSaveHandler
     /**
      * {@inheritdoc}
      */
-    protected function parseData(string $scope, string $name, $data): array
+    protected function parseData(string $scope, string $name, ?string $data): array
     {
         if (null === $data) {
             return [];
@@ -43,7 +43,7 @@ class JsonCookieSaveHandler extends AbstractCookieSaveHandler
     /**
      * {@inheritdoc}
      */
-    protected function prepareData(string $scope, string $name, $expire, $data)
+    protected function prepareData(string $scope, string $name, \DateTimeInterface|int|string $expire, ?array $data): bool|string|null
     {
         if (empty($data)) {
             return null;

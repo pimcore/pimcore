@@ -95,11 +95,6 @@ class Dao extends Model\Dao\AbstractDao
         return (bool) $exists;
     }
 
-    /**
-     * @param string $hash
-     *
-     * @return int|null
-     */
     public function getBinaryFileIdForHash(string $hash): ?int
     {
         $id = $this->db->fetchOne('SELECT IFNULL(binaryFileId, id) FROM versions WHERE binaryFileHash = ? AND cid = ? AND storageType = ? ORDER BY id ASC LIMIT 1', [$hash, $this->model->getCid(), $this->model->getStorageType()]);
@@ -110,11 +105,6 @@ class Dao extends Model\Dao\AbstractDao
         return (int)$id;
     }
 
-    /**
-     * @param string|null $hash
-     *
-     * @return bool
-     */
     public function isBinaryHashInUse(?string $hash): bool
     {
         $count = $this->db->fetchOne('SELECT count(*) FROM versions WHERE binaryFileHash = ? AND cid = ?', [$hash, $this->model->getCid()]);

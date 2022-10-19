@@ -25,7 +25,7 @@ class PreviewGeneratorResolver extends ClassResolver
     /**
      * @param string $generatorClass
      *
-     * @return PreviewGeneratorInterface|null
+     * @return object|null
      */
     public static function resolveGenerator($generatorClass)
     {

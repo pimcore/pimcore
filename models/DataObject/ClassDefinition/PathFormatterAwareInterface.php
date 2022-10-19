@@ -17,8 +17,5 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 
 interface PathFormatterAwareInterface
 {
-    /**
-     * @return string|null
-     */
     public function getPathFormatterClass(): ?string;
 }

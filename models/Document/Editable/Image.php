@@ -548,9 +548,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getCacheTags(Model\Document\PageSnippet $ownerDocument, array $tags = []): array
     {
         $image = $this->getImage();

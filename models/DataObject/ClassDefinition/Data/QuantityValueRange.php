@@ -306,10 +306,8 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+
+    public function normalize(mixed $value, array $params = [])
     {
         if ($value instanceof DataObject\Data\QuantityValueRange) {
             return $value->toArray();
@@ -318,10 +316,8 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+
+    public function denormalize(mixed $value, array $params = [])
     {
         if (\is_array($value)) {
             return new DataObject\Data\QuantityValueRange($value['minimum'], $value['maximum'], $value['unitId']);
@@ -475,33 +471,25 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
             && (string) $oldValue->getUnitId() === (string) $newValue->getUnitId();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\QuantityValueRange::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\QuantityValueRange::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\QuantityValueRange::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\QuantityValueRange::class . '|null';

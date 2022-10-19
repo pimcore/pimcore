@@ -164,17 +164,11 @@ class Video extends Data implements
         return $this;
     }
 
-    /**
-     * @return array|null
-     */
     public function getAllowedTypes(): ?array
     {
         return $this->allowedTypes;
     }
 
-    /**
-     * @return array
-     */
     public function getSupportedTypes(): array
     {
         return $this->supportedTypes;
@@ -593,10 +587,8 @@ class Video extends Data implements
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+
+    public function normalize(mixed $value, array $params = [])
     {
         if ($value instanceof DataObject\Data\Video) {
             $result = [];
@@ -634,10 +626,8 @@ class Video extends Data implements
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+
+    public function denormalize(mixed $value, array $params = [])
     {
         if (is_array($value)) {
             $video = new DataObject\Data\Video();
@@ -663,33 +653,25 @@ class Video extends Data implements
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\Video::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\Video::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\Video::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\Video::class . '|null';

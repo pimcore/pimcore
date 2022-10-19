@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,5 +31,5 @@ interface EncoderFactoryAwareUserInterface
      *
      * @return string
      */
-    public function getEncoderFactoryName();
+    public function getEncoderFactoryName(): string;
 }

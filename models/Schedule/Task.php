@@ -254,9 +254,6 @@ class Task extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getUserId(): ?int
     {
         return $this->userId;

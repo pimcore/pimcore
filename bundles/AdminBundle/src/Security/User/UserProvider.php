@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -42,7 +43,7 @@ class UserProvider implements UserProviderInterface
      *
      * @deprecated use loadUserByIdentifier() instead.
      */
-    public function loadUserByUsername($identifier)
+    public function loadUserByUsername($identifier): UserInterface
     {
         return $this->loadUserByIdentifier($identifier);
     }
@@ -54,7 +55,7 @@ class UserProvider implements UserProviderInterface
      *
      * @return UserInterface
      */
-    public function refreshUser(UserInterface $user)//: UserInterface
+    public function refreshUser(UserInterface $user): UserInterface|User//: UserInterface
     {
         if (!$user instanceof User) {
             // user is not supported - we only support pimcore users
@@ -67,12 +68,7 @@ class UserProvider implements UserProviderInterface
         return $this->buildUser($refreshedPimcoreUser);
     }
 
-    /**
-     * @param PimcoreUser $pimcoreUser
-     *
-     * @return User
-     */
-    protected function buildUser(PimcoreUser $pimcoreUser)
+    protected function buildUser(PimcoreUser $pimcoreUser): User
     {
         return new User($pimcoreUser);
     }
@@ -82,7 +78,7 @@ class UserProvider implements UserProviderInterface
      *
      * @return bool
      */
-    public function supportsClass($class)//: bool
+    public function supportsClass($class): bool//: bool
     {
         return $class === User::class;
     }

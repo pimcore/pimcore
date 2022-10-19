@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -63,12 +64,9 @@ abstract class Kernel extends SymfonyKernel
      *
      * @var Extension\Config
      */
-    protected $extensionConfig;
+    protected Extension\Config $extensionConfig;
 
-    /**
-     * @var BundleCollection
-     */
-    private $bundleCollection;
+    private BundleCollection $bundleCollection;
 
     /**
      * {@inheritdoc}
@@ -76,7 +74,7 @@ abstract class Kernel extends SymfonyKernel
      * @return string
      */
     #[\ReturnTypeWillChange]
-    public function getProjectDir()// : string
+    public function getProjectDir(): string// : string
     {
         return PIMCORE_PROJECT_ROOT;
     }
@@ -87,7 +85,7 @@ abstract class Kernel extends SymfonyKernel
      * @return string
      */
     #[\ReturnTypeWillChange]
-    public function getCacheDir()// : string
+    public function getCacheDir(): string// : string
     {
         if (isset($_SERVER['APP_CACHE_DIR'])) {
             return $_SERVER['APP_CACHE_DIR'].'/'.$this->environment;
@@ -102,14 +100,11 @@ abstract class Kernel extends SymfonyKernel
      * @return string
      */
     #[\ReturnTypeWillChange]
-    public function getLogDir()// : string
+    public function getLogDir(): string// : string
     {
         return PIMCORE_LOG_DIRECTORY;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureContainer(ContainerConfigurator $container): void
     {
         $projectDir = realpath($this->getProjectDir());
@@ -125,9 +120,6 @@ abstract class Kernel extends SymfonyKernel
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureRoutes(RoutingConfigurator $routes): void
     {
         $projectDir = realpath($this->getProjectDir());

@@ -98,9 +98,6 @@ class UrlSlug implements OwnerAwareFieldInterface
         $this->siteId = $siteId ?? 0;
     }
 
-    /**
-     * @return int
-     */
     public function getObjectId(): int
     {
         return $this->objectId;
@@ -118,9 +115,6 @@ class UrlSlug implements OwnerAwareFieldInterface
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getSlug(): ?string
     {
         return $this->slug;
@@ -158,9 +152,6 @@ class UrlSlug implements OwnerAwareFieldInterface
         $this->previousSlug = $previousSlug;
     }
 
-    /**
-     * @return int|null
-     */
     public function getSiteId(): ?int
     {
         return $this->siteId;
@@ -178,9 +169,6 @@ class UrlSlug implements OwnerAwareFieldInterface
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getFieldname(): ?string
     {
         return $this->fieldname;
@@ -198,9 +186,6 @@ class UrlSlug implements OwnerAwareFieldInterface
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getIndex(): ?int
     {
         return $this->index;
@@ -218,9 +203,6 @@ class UrlSlug implements OwnerAwareFieldInterface
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getOwnertype(): ?string
     {
         return $this->ownertype;
@@ -238,9 +220,6 @@ class UrlSlug implements OwnerAwareFieldInterface
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getOwnername(): ?string
     {
         return $this->ownername;
@@ -258,9 +237,6 @@ class UrlSlug implements OwnerAwareFieldInterface
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getPosition(): ?string
     {
         return $this->position;

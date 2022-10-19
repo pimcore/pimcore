@@ -503,17 +503,11 @@ final class Redirect extends AbstractModel
         return $this->creationDate;
     }
 
-    /**
-     * @return int|null
-     */
     public function getUserOwner(): ?int
     {
         return $this->userOwner;
     }
 
-    /**
-     * @param int|null $userOwner
-     */
     public function setUserOwner(?int $userOwner)
     {
         $this->userOwner = $userOwner;

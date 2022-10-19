@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,38 +30,26 @@ use Symfony\Component\Security\Core\Exception\RuntimeException;
  */
 class PasswordFieldEncoder extends AbstractUserAwarePasswordEncoder
 {
-    /**
-     * @var string
-     */
-    protected $fieldName = 'password';
+    protected string $fieldName = 'password';
 
     /**
      * If true, the user password hash will be updated if necessary.
      *
      * @var bool
      */
-    protected $updateHash = true;
+    protected bool $updateHash = true;
 
-    /**
-     * @param string $fieldName
-     */
-    public function __construct($fieldName)
+    public function __construct(string $fieldName)
     {
         $this->fieldName = $fieldName;
     }
 
-    /**
-     * @return bool
-     */
-    public function getUpdateHash()
+    public function getUpdateHash(): bool
     {
         return $this->updateHash;
     }
 
-    /**
-     * @param bool $updateHash
-     */
-    public function setUpdateHash($updateHash)
+    public function setUpdateHash(bool $updateHash)
     {
         $this->updateHash = (bool)$updateHash;
     }
@@ -68,7 +57,7 @@ class PasswordFieldEncoder extends AbstractUserAwarePasswordEncoder
     /**
      * {@inheritdoc}
      */
-    public function encodePassword($raw, $salt)
+    public function encodePassword($raw, $salt): bool|string|null
     {
         if ($this->isPasswordTooLong($raw)) {
             throw new BadCredentialsException(sprintf('Password exceeds a maximum of %d characters', static::MAX_PASSWORD_LENGTH));
@@ -80,7 +69,7 @@ class PasswordFieldEncoder extends AbstractUserAwarePasswordEncoder
     /**
      * {@inheritdoc}
      */
-    public function isPasswordValid($encoded, $raw, $salt)
+    public function isPasswordValid($encoded, $raw, $salt): bool
     {
         if ($this->isPasswordTooLong($raw)) {
             return false;
@@ -94,7 +83,7 @@ class PasswordFieldEncoder extends AbstractUserAwarePasswordEncoder
      *
      * @throws RuntimeException
      */
-    protected function getFieldDefinition()
+    protected function getFieldDefinition(): Password
     {
         $field = $this->getUser()->getClass()->getFieldDefinition($this->fieldName);
 

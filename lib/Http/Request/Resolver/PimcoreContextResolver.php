@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,14 +32,9 @@ class PimcoreContextResolver extends AbstractRequestResolver
 
     const CONTEXT_DEFAULT = 'default';
 
-    /**
-     * @var PimcoreContextGuesser
-     */
-    protected $guesser;
+    protected PimcoreContextGuesser $guesser;
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function __construct(RequestStack $requestStack, PimcoreContextGuesser $guesser)
     {
         $this->guesser = $guesser;
@@ -53,7 +49,7 @@ class PimcoreContextResolver extends AbstractRequestResolver
      *
      * @return string|null
      */
-    public function getPimcoreContext(Request $request = null)
+    public function getPimcoreContext(Request $request = null): ?string
     {
         if (null === $request) {
             $request = $this->getCurrentRequest();
@@ -85,11 +81,11 @@ class PimcoreContextResolver extends AbstractRequestResolver
      * of the contexts matches, the method will return true.
      *
      * @param Request $request
-     * @param string|array $context
+     * @param array|string $context
      *
      * @return bool
      */
-    public function matchesPimcoreContext(Request $request, $context): bool
+    public function matchesPimcoreContext(Request $request, array|string $context): bool
     {
         if (!is_array($context)) {
             if (!empty($context)) {

@@ -31,9 +31,6 @@ class Listing extends Model\Listing\AbstractListing
      */
     protected bool $loadAutoSave = false;
 
-    /**
-     * @return bool
-     */
     public function isLoadAutoSave(): bool
     {
         return $this->loadAutoSave;

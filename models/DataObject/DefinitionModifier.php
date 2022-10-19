@@ -110,12 +110,6 @@ final class DefinitionModifier
         return $this->findField($layoutDefinition, $nameToFind, $callable);
     }
 
-    /**
-     * @param Layout $layoutDefinition
-     * @param string $nameToFind
-     *
-     * @return bool
-     */
     public function removeField(Layout $layoutDefinition, string $nameToFind): bool
     {
         $callable = function () {

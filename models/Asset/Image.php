@@ -251,9 +251,6 @@ EOT;
         );
     }
 
-    /**
-     * @return string|null
-     */
     public function getLowQualityPreviewDataUri(): ?string
     {
         if (!$this->isLowQualityPreviewEnabled()) {

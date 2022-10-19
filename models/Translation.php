@@ -94,9 +94,7 @@ final class Translation extends AbstractModel
         $this->type = $type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public static function IsAValidLanguage(string $domain, string $locale): bool
     {
         return in_array($locale, (array)static::getValidLanguages($domain));
@@ -194,49 +192,31 @@ final class Translation extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getDomain(): string
     {
         return $this->domain;
     }
 
-    /**
-     * @param string $domain
-     */
     public function setDomain(string $domain): void
     {
         $this->domain = !empty($domain) ? $domain : self::DOMAIN_DEFAULT;
     }
 
-    /**
-     * @return int|null
-     */
     public function getUserOwner(): ?int
     {
         return $this->userOwner;
     }
 
-    /**
-     * @param int|null $userOwner
-     */
     public function setUserOwner(?int $userOwner): void
     {
         $this->userOwner = $userOwner;
     }
 
-    /**
-     * @return int|null
-     */
     public function getUserModification(): ?int
     {
         return $this->userModification;
     }
 
-    /**
-     * @param int|null $userModification
-     */
     public function setUserModification(?int $userModification): void
     {
         $this->userModification = $userModification;
@@ -410,11 +390,6 @@ final class Translation extends AbstractModel
         return null;
     }
 
-    /**
-     * @param string $domain
-     *
-     * @return bool
-     */
     public static function isAValidDomain(string $domain): bool
     {
         $translation = new static();

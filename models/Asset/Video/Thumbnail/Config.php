@@ -459,17 +459,11 @@ final class Config extends Model\AbstractModel
         $this->creationDate = $creationDate;
     }
 
-    /**
-     * @return string
-     */
     public function getGroup(): string
     {
         return $this->group;
     }
 
-    /**
-     * @param string $group
-     */
     public function setGroup(string $group): void
     {
         $this->group = $group;

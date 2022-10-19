@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -42,7 +43,7 @@ class UserAwareEncoderFactory extends AbstractEncoderFactory
     /**
      * @var PasswordEncoderInterface[]
      */
-    private $encoders = [];
+    private array $encoders = [];
 
     /**
      * {@inheritdoc}

@@ -108,7 +108,7 @@ class Rule extends AbstractModel implements RuleInterface
      *
      * @internal
      */
-    public function setValue($key, $value)
+    public function setValue(string $key, mixed $value)
     {
         $method = 'set' . $key;
         if (method_exists($this, $method)) {

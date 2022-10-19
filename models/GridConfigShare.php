@@ -68,33 +68,21 @@ class GridConfigShare extends AbstractModel
         $this->getDao()->delete();
     }
 
-    /**
-     * @return int
-     */
     public function getGridConfigId(): int
     {
         return $this->gridConfigId;
     }
 
-    /**
-     * @param int $gridConfigId
-     */
     public function setGridConfigId(int $gridConfigId)
     {
         $this->gridConfigId = $gridConfigId;
     }
 
-    /**
-     * @return int
-     */
     public function getSharedWithUserId(): int
     {
         return $this->sharedWithUserId;
     }
 
-    /**
-     * @param int $sharedWithUserId
-     */
     public function setSharedWithUserId(int $sharedWithUserId)
     {
         $this->sharedWithUserId = $sharedWithUserId;

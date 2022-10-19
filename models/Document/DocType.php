@@ -322,17 +322,11 @@ class DocType extends Model\AbstractModel
         return $this->creationDate;
     }
 
-    /**
-     * @return bool
-     */
     public function getStaticGeneratorEnabled(): bool
     {
         return $this->staticGeneratorEnabled;
     }
 
-    /**
-     * @param bool $staticGeneratorEnabled
-     */
     public function setStaticGeneratorEnabled(bool $staticGeneratorEnabled): void
     {
         $this->staticGeneratorEnabled = $staticGeneratorEnabled;

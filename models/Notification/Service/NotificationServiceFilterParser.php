@@ -70,9 +70,6 @@ class NotificationServiceFilterParser
         ];
     }
 
-    /**
-     * @return array
-     */
     public function parse(): array
     {
         $result = [];

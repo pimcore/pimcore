@@ -53,17 +53,11 @@ class EncryptedField implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @return Data
-     */
     public function getDelegate(): Data
     {
         return $this->delegate;
     }
 
-    /**
-     * @param Data $delegate
-     */
     public function setDelegate(Data $delegate)
     {
         $this->delegate = $delegate;

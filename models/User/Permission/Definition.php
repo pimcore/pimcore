@@ -64,19 +64,11 @@ class Definition extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getCategory(): ?string
     {
         return $this->category;
     }
 
-    /**
-     * @param string $category
-     *
-     * @return Definition
-     */
     public function setCategory(string $category): Definition
     {
         $this->category = $category;

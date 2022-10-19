@@ -136,11 +136,6 @@ class Dao extends AbstractDao
         $model->setRead($data['read'] == 1 ? true : false);
     }
 
-    /**
-     * @param Notification $model
-     *
-     * @return array
-     */
     protected function getData(Notification $model): array
     {
         return [
@@ -157,9 +152,6 @@ class Dao extends AbstractDao
         ];
     }
 
-    /**
-     * @return Notification
-     */
     protected function getModel(): Notification
     {
         return $this->model;

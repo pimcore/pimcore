@@ -28,7 +28,7 @@ interface ConditionInterface
      *
      * @return ConditionInterface
      */
-    public static function fromConfig(array $config);
+    public static function fromConfig(array $config): ConditionInterface;
 
     /**
      * Determines if the condition is able to match. E.g. if a country condition

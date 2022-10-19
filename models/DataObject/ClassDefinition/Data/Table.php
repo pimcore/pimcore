@@ -260,33 +260,21 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isColumnConfigActivated(): bool
     {
         return $this->columnConfigActivated;
     }
 
-    /**
-     * @param bool $columnConfigActivated
-     */
     public function setColumnConfigActivated(bool $columnConfigActivated): void
     {
         $this->columnConfigActivated = $columnConfigActivated;
     }
 
-    /**
-     * @return array
-     */
     public function getColumnConfig(): array
     {
         return $this->columnConfig;
     }
 
-    /**
-     * @param array $columnConfig
-     */
     public function setColumnConfig(array $columnConfig): void
     {
         $this->columnConfig = $columnConfig;
@@ -629,33 +617,25 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $this->isEqualArray($oldValue, $newValue);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?array';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return 'array';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return 'array|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return 'array';

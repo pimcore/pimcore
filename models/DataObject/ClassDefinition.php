@@ -1038,9 +1038,6 @@ final class ClassDefinition extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getEncryption(): bool
     {
         return $this->encryption;
@@ -1094,9 +1091,6 @@ final class ClassDefinition extends Model\AbstractModel
         return (array_search($table, $this->encryptedTables) === false) ? false : true;
     }
 
-    /**
-     * @return bool
-     */
     public function hasEncryptedTables(): bool
     {
         return (bool) count($this->encryptedTables);
@@ -1222,11 +1216,6 @@ final class ClassDefinition extends Model\AbstractModel
         return $this->description;
     }
 
-    /**
-     * @param string $title
-     *
-     * @return $this
-     */
     public function setTitle(string $title): static
     {
         $this->title = $title;
@@ -1234,9 +1223,6 @@ final class ClassDefinition extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
         return $this->title;
@@ -1322,57 +1308,36 @@ final class ClassDefinition extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return DataObject\ClassDefinition\LinkGeneratorInterface|null
-     */
-    public function getLinkGenerator()
+    public function getLinkGenerator(): ?ClassDefinition\LinkGeneratorInterface
     {
         return DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
     }
 
-    /**
-     * @return string|null
-     */
     public function getPreviewGeneratorReference(): ?string
     {
         return $this->previewGeneratorReference;
     }
 
-    /**
-     * @param string|null $previewGeneratorReference
-     */
     public function setPreviewGeneratorReference(?string $previewGeneratorReference): void
     {
         $this->previewGeneratorReference = $previewGeneratorReference;
     }
 
-    /**
-     * @return DataObject\ClassDefinition\PreviewGeneratorInterface|null
-     */
-    public function getPreviewGenerator()
+    public function getPreviewGenerator(): ?ClassDefinition\PreviewGeneratorInterface
     {
         return DataObject\ClassDefinition\Helper\PreviewGeneratorResolver::resolveGenerator($this->getPreviewGeneratorReference());
     }
 
-    /**
-     * @return bool
-     */
     public function isEnableGridLocking(): bool
     {
         return $this->enableGridLocking;
     }
 
-    /**
-     * @param bool $enableGridLocking
-     */
     public function setEnableGridLocking(bool $enableGridLocking): void
     {
         $this->enableGridLocking = $enableGridLocking;
     }
 
-    /**
-     * @return string|null
-     */
     public function getImplementsInterfaces(): ?string
     {
         return $this->implementsInterfaces;
@@ -1390,9 +1355,6 @@ final class ClassDefinition extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getCompositeIndices(): array
     {
         return $this->compositeIndices;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -45,21 +46,16 @@ use Symfony\Component\Workflow\Workflow;
  */
 class WorkflowController extends AdminController implements KernelControllerEventInterface
 {
-    /**
-     * @var Document|Asset|ConcreteObject|null $element
-     */
-    private $element;
+    private ConcreteObject|Document|Asset|null $element;
 
     /**
      * Returns a JSON of the available workflow actions to the admin panel
      *
      * @Route("/get-workflow-form", name="pimcore_admin_workflow_getworkflowform")
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
-    public function getWorkflowFormAction(Request $request, Manager $workflowManager)
+    public function getWorkflowFormAction(Request $request, Manager $workflowManager): JsonResponse
     {
         try {
             $workflow = $workflowManager->getWorkflowIfExists($this->element, (string) $request->get('workflowName'));
@@ -102,11 +98,9 @@ class WorkflowController extends AdminController implements KernelControllerEven
     /**
      * @Route("/submit-workflow-transition", name="pimcore_admin_workflow_submitworkflowtransition", methods={"POST"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
-    public function submitWorkflowTransitionAction(Request $request, Registry $workflowRegistry, Manager $workflowManager)
+    public function submitWorkflowTransitionAction(Request $request, Registry $workflowRegistry, Manager $workflowManager): JsonResponse
     {
         $workflowOptions = $request->get('workflow', []);
         $workflow = $workflowRegistry->get($this->element, $request->get('workflowName'));
@@ -160,11 +154,9 @@ class WorkflowController extends AdminController implements KernelControllerEven
     /**
      * @Route("/submit-global-action", name="pimcore_admin_workflow_submitglobal", methods={"POST"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
-    public function submitGlobalAction(Request $request, Registry $workflowRegistry, Manager $workflowManager)
+    public function submitGlobalAction(Request $request, Registry $workflowRegistry, Manager $workflowManager): JsonResponse
     {
         $workflowOptions = $request->get('workflow', []);
         $workflow = $workflowRegistry->get($this->element, $request->get('workflowName'));
@@ -206,16 +198,11 @@ class WorkflowController extends AdminController implements KernelControllerEven
      *
      * @Route("/get-workflow-details", name="pimcore_admin_workflow_getworkflowdetailsstore")
      *
-     * @param Request $request
-     * @param Manager $workflowManager
-     * @param StatusInfo $placeStatusInfo
-     * @param RouterInterface $router
      *
-     * @return JsonResponse
      *
      * @throws \Exception
      */
-    public function getWorkflowDetailsStore(Request $request, Manager $workflowManager, StatusInfo $placeStatusInfo, RouterInterface $router, ActionsButtonService $actionsButtonService)
+    public function getWorkflowDetailsStore(Request $request, Manager $workflowManager, StatusInfo $placeStatusInfo, RouterInterface $router, ActionsButtonService $actionsButtonService): JsonResponse
     {
         $data = [];
 
@@ -271,7 +258,7 @@ class WorkflowController extends AdminController implements KernelControllerEven
      *
      * @throws \Exception
      */
-    public function showGraph(Request $request, Manager $workflowManager)
+    public function showGraph(Request $request, Manager $workflowManager): Response
     {
         $workflow = $workflowManager->getWorkflowByName($request->get('workflow'));
 
@@ -290,11 +277,11 @@ class WorkflowController extends AdminController implements KernelControllerEven
      * @param Registry $workflowRegistry
      * @param Manager $manager
      *
-     * @return Response
+     * @return JsonResponse
      *
      * @throws \Exception
      */
-    public function getModalCustomHtml(Request $request, Registry $workflowRegistry, Manager $manager)
+    public function getModalCustomHtml(Request $request, Registry $workflowRegistry, Manager $manager): JsonResponse
     {
         $workflow = $workflowRegistry->get($this->element, $request->get('workflowName'));
 
@@ -380,7 +367,7 @@ class WorkflowController extends AdminController implements KernelControllerEven
      *
      * @return T
      */
-    protected function getLatestVersion($element)
+    protected function getLatestVersion(mixed $element)
     {
         if (
             $element instanceof Document\Folder

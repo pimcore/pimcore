@@ -282,10 +282,8 @@ class DateRange extends Data implements
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function normalize($value, $params = [])
+
+    public function normalize(mixed $value, array $params = [])
     {
         if ($value instanceof CarbonPeriod) {
             return $value->toArray();
@@ -294,10 +292,8 @@ class DateRange extends Data implements
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function denormalize($value, $params = [])
+
+    public function denormalize(mixed $value, array $params = [])
     {
         if (\is_array($value)) {
             return CarbonPeriod::create(\reset($value), \end($value));
@@ -382,33 +378,25 @@ class DateRange extends Data implements
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . CarbonPeriod::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . CarbonPeriod::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return '\\' . CarbonPeriod::class . '|null';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . CarbonPeriod::class . '|null';

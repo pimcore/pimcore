@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,23 +32,16 @@ class BruteforceProtectionHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /**
-     * @var RequestHelper
-     */
-    protected $requestHelper;
+    protected RequestHelper $requestHelper;
 
-    /**
-     * @var string
-     */
-    protected $logFile;
+    protected ?string $logFile;
 
     protected bool $disabled;
 
     /**
-     * @param RequestHelper $requestHelper
      * @param string|null $logFile
      */
-    public function __construct(RequestHelper $requestHelper, $logFile = null, bool $disabled = false)
+    public function __construct(RequestHelper $requestHelper, string $logFile = null, bool $disabled = false)
     {
         $this->requestHelper = $requestHelper;
 
@@ -62,13 +56,13 @@ class BruteforceProtectionHandler implements LoggerAwareInterface
     /**
      * Checks bruteforce protection for the given request
      *
-     * @throws BruteforceProtectionException
-     *      if access is denied
-     *
      * @param string|null $username
      * @param Request|null $request
+     *@throws BruteforceProtectionException
+     *      if access is denied
+     *
      */
-    public function checkProtection($username = null, Request $request = null)
+    public function checkProtection(string $username = null, Request $request = null)
     {
         //disabled for Authenticator system as it uses login throttling
         if ($this->disabled) {
@@ -126,7 +120,7 @@ class BruteforceProtectionHandler implements LoggerAwareInterface
      * @param string|null $username
      * @param Request|null $request
      */
-    public function addEntry($username = null, Request $request = null)
+    public function addEntry(string $username = null, Request $request = null)
     {
         //disabled for Authenticator system as it uses login throttling
         if ($this->disabled) {
@@ -152,7 +146,7 @@ class BruteforceProtectionHandler implements LoggerAwareInterface
      *
      * @return string|null
      */
-    protected function normalizeUsername($username = null)
+    protected function normalizeUsername(string $username = null): ?string
     {
         if (null === $username) {
             return $username;
@@ -173,7 +167,7 @@ class BruteforceProtectionHandler implements LoggerAwareInterface
      *
      * @return array
      */
-    protected function getLogEntries()
+    protected function getLogEntries(): array
     {
         $data = $this->readLogFile();
         $lines = explode("\n", $data);
@@ -194,7 +188,7 @@ class BruteforceProtectionHandler implements LoggerAwareInterface
      * @param string $username
      * @param string $ip
      */
-    protected function writeLogEntry($username, $ip)
+    protected function writeLogEntry(string $username, string $ip)
     {
         $entries = $this->getLogEntries();
         $entries[] = [
@@ -211,7 +205,7 @@ class BruteforceProtectionHandler implements LoggerAwareInterface
      *
      * @return string
      */
-    protected function readLogFile()
+    protected function readLogFile(): string
     {
         if (!is_file($this->logFile)) {
             File::put($this->logFile, '');

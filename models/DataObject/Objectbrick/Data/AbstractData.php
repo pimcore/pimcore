@@ -56,9 +56,6 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
 
     protected ?int $objectId = null;
 
-    /**
-     * @param Concrete $object
-     */
     public function __construct(Concrete $object)
     {
         $this->setObject($object);
@@ -198,9 +195,6 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return $this;
     }
 
-    /**
-     * @return Concrete|null
-     */
     public function getObject(): ?Concrete
     {
         if ($this->objectId && !$this->object) {

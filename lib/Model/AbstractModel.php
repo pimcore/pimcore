@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,6 +17,7 @@
 namespace Pimcore\Model;
 
 use Pimcore\Logger;
+use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 
 /**
@@ -35,20 +37,11 @@ abstract class AbstractModel implements ModelInterface
      */
     protected $dao;
 
-    /**
-     * @var array
-     */
-    private static $daoClassCache = [];
+    private static array $daoClassCache = [];
 
-    /**
-     * @var array|null
-     */
-    private static $daoClassMap = null;
+    private static ?array $daoClassMap = null;
 
-    /**
-     * @return \Pimcore\Model\Dao\AbstractDao
-     */
-    public function getDao()
+    public function getDao(): ?AbstractDao
     {
         if (!$this->dao) {
             $this->initDao();
@@ -57,12 +50,7 @@ abstract class AbstractModel implements ModelInterface
         return $this->dao;
     }
 
-    /**
-     * @param \Pimcore\Model\Dao\AbstractDao|null $dao
-     *
-     * @return $this
-     */
-    public function setDao($dao)
+    public function setDao(AbstractDao $dao): static
     {
         $this->dao = $dao;
 
@@ -75,7 +63,7 @@ abstract class AbstractModel implements ModelInterface
      *
      * @throws \Exception
      */
-    public function initDao($key = null, $forceDetection = false)
+    public function initDao(string $key = null, bool $forceDetection = false)
     {
         $myClass = get_class($this);
         $cacheKey = $myClass . ($key ? ('-' . $key) : '');
@@ -124,12 +112,7 @@ abstract class AbstractModel implements ModelInterface
         }
     }
 
-    /**
-     * @param string $modelClass
-     *
-     * @return string|null
-     */
-    public static function locateDaoClass($modelClass)
+    public static function locateDaoClass(string $modelClass): ?string
     {
         $forbiddenClassNames = ['Pimcore\\Resource'];
 
@@ -175,12 +158,7 @@ abstract class AbstractModel implements ModelInterface
         return null;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return $this
-     */
-    public function setValues($data = [])
+    public function setValues(array $data = []): static
     {
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $key => $value) {
@@ -191,13 +169,7 @@ abstract class AbstractModel implements ModelInterface
         return $this;
     }
 
-    /**
-     * @param string $key
-     * @param mixed $value
-     *
-     * @return $this
-     */
-    public function setValue($key, $value)
+    public function setValue(string $key, mixed $value): static
     {
         $method = 'set' . $key;
         if (strcasecmp($method, __FUNCTION__) !== 0) {
@@ -232,7 +204,7 @@ abstract class AbstractModel implements ModelInterface
      *
      * @throws \Exception
      */
-    public function __call($method, $args)
+    public function __call(string $method, array $args)
     {
         // protected / private methods shouldn't be delegated to the dao -> this can have dangerous effects
         if (!is_callable([$this, $method])) {
@@ -273,10 +245,7 @@ abstract class AbstractModel implements ModelInterface
         return $result;
     }
 
-    /**
-     * @return Factory
-     */
-    protected static function getModelFactory()
+    protected static function getModelFactory(): Factory
     {
         return \Pimcore::getContainer()->get('pimcore.model.factory');
     }

@@ -36,7 +36,7 @@ interface DynamicRouteHandlerInterface
      * @throws RouteNotFoundException If there is no route with that name in
      *                                this repository
      */
-    public function getRouteByName(string $name);
+    public function getRouteByName(string $name): Route;
 
     /**
      * Add matching routes to the route collection

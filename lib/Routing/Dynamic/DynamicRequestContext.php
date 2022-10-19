@@ -26,26 +26,12 @@ use Symfony\Component\HttpFoundation\Request;
  */
 final class DynamicRequestContext
 {
-    /**
-     * @var Request
-     */
-    private $request;
+    private Request $request;
 
-    /**
-     * @var string
-     */
-    private $path;
+    private string $path;
 
-    /**
-     * @var string
-     */
-    private $originalPath;
+    private string $originalPath;
 
-    /**
-     * @param Request $request
-     * @param string $path
-     * @param string $originalPath
-     */
     public function __construct(Request $request, string $path, string $originalPath)
     {
         $this->request = $request;
@@ -53,50 +39,32 @@ final class DynamicRequestContext
         $this->originalPath = $originalPath;
     }
 
-    /**
-     * @return Request
-     */
     public function getRequest(): Request
     {
         return $this->request;
     }
 
-    /**
-     * @param Request $request
-     */
-    public function setRequest(Request $request)
+    public function setRequest(Request $request): void
     {
         $this->request = $request;
     }
 
-    /**
-     * @return string
-     */
     public function getPath(): string
     {
         return $this->path;
     }
 
-    /**
-     * @param string $path
-     */
-    public function setPath(string $path)
+    public function setPath(string $path): void
     {
         $this->path = $path;
     }
 
-    /**
-     * @return string
-     */
     public function getOriginalPath(): string
     {
         return $this->originalPath;
     }
 
-    /**
-     * @param string $originalPath
-     */
-    public function setOriginalPath(string $originalPath)
+    public function setOriginalPath(string $originalPath): void
     {
         $this->originalPath = $originalPath;
     }

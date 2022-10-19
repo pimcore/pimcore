@@ -27,27 +27,16 @@ trait LazyLoadedRelationTrait
      */
     protected $loadedLazyKeys = [];
 
-    /**
-     * @param string $key
-     */
     public function markLazyKeyAsLoaded(string $key)
     {
         $this->loadedLazyKeys[$key] = 1;
     }
 
-    /**
-     * @param string $key
-     */
     public function unmarkLazyKeyAsLoaded(string $key)
     {
         unset($this->loadedLazyKeys[$key]);
     }
 
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
     public function isLazyKeyLoaded(string $key): bool
     {
         if ($this->isAllLazyKeysMarkedAsLoaded()) {
@@ -59,12 +48,6 @@ trait LazyLoadedRelationTrait
         return $isset;
     }
 
-    /**
-     * @param string $name
-     * @param string $language
-     *
-     * @return string
-     */
     public function buildLazyKey(string $name, string $language): string
     {
         return $name . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;

@@ -436,9 +436,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $this->setProperties($properties);
     }
 
-    /**
-     * @return int
-     */
     public function getVersionCount(): int
     {
         return $this->versionCount ? $this->versionCount : 0;
@@ -478,9 +475,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return Service::getElementCacheTag($elementType, $id);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getCacheTags(array $tags = []): array
     {
         $tags[$this->getCacheTag()] = $this->getCacheTag();

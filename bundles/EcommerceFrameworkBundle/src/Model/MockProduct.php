@@ -108,7 +108,7 @@ class MockProduct extends Concrete implements ProductInterface, IndexableInterfa
         return 0;
     }
 
-    public function __call($method, $args)
+    public function __call(string $method, array $args)
     {
         return null;
     }

@@ -78,7 +78,7 @@ class Service extends Model\Element\Service
      *
      * @return Concrete[]
      */
-    public static function getObjectsReferencingUser($userId)
+    public static function getObjectsReferencingUser($userId): array
     {
         $userObjects = [[]];
         $classesList = new ClassDefinition\Listing();
@@ -1709,9 +1709,6 @@ class Service extends Model\Element\Service
         }
     }
 
-    /**
-     * @param AbstractObject $object
-     */
     public static function recursiveResetDirtyMap(AbstractObject $object)
     {
         if ($object instanceof DirtyIndicatorInterface) {

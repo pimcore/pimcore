@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,10 +24,7 @@ use Pimcore\Config;
  */
 abstract class ReportsControllerBase extends AdminController
 {
-    /**
-     * @return array
-     */
-    public function getConfig()
+    public function getConfig(): array
     {
         return Config::getReportConfig();
     }

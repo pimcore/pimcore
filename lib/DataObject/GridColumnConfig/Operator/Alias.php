@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,6 +16,8 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
+use Pimcore\Model\Element\ElementInterface;
+
 /**
  * @internal
  */
@@ -23,7 +26,7 @@ final class Alias extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         $result = new \stdClass();
         $result->label = $this->label;

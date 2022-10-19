@@ -136,7 +136,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * {@inheritdoc}
      */
-    protected function prepareDataStructureForYaml(string $id, $data)
+    protected function prepareDataStructureForYaml(string $id, mixed $data)
     {
         return [
             'pimcore' => [

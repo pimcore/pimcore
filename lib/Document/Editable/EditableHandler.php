@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -47,81 +48,35 @@ class EditableHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /**
-     * @var AreabrickManagerInterface
-     */
-    protected $brickManager;
+    protected AreabrickManagerInterface $brickManager;
 
-    /**
-     * @var EngineInterface
-     */
-    protected $templating;
+    protected EngineInterface $templating;
 
-    /**
-     * @var BundleLocatorInterface
-     */
-    protected $bundleLocator;
+    protected BundleLocatorInterface $bundleLocator;
 
-    /**
-     * @var WebPathResolver
-     */
-    protected $webPathResolver;
+    protected WebPathResolver $webPathResolver;
 
-    /**
-     * @var RequestHelper
-     */
-    protected $requestHelper;
+    protected RequestHelper $requestHelper;
 
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    protected TranslatorInterface $translator;
 
-    /**
-     * @var ResponseStack
-     */
-    protected $responseStack;
+    protected ResponseStack $responseStack;
 
     /**
      * @var array<string, string>
      */
-    protected $brickTemplateCache = [];
+    protected array $brickTemplateCache = [];
 
-    /**
-     * @var EditmodeResolver
-     */
-    protected $editmodeResolver;
+    protected EditmodeResolver $editmodeResolver;
 
-    /**
-     * @var HttpKernelRuntime
-     */
-    protected $httpKernelRuntime;
+    protected HttpKernelRuntime $httpKernelRuntime;
 
-    /**
-     * @var FragmentRendererInterface
-     */
-    protected $fragmentRenderer;
+    protected FragmentRendererInterface $fragmentRenderer;
 
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
+    protected RequestStack $requestStack;
 
     public const ATTRIBUTE_AREABRICK_INFO = '_pimcore_areabrick_info';
 
-    /**
-     * @param AreabrickManagerInterface $brickManager
-     * @param EngineInterface $templating
-     * @param BundleLocatorInterface $bundleLocator
-     * @param WebPathResolver $webPathResolver
-     * @param RequestHelper $requestHelper
-     * @param TranslatorInterface $translator
-     * @param ResponseStack $responseStack
-     * @param EditmodeResolver $editmodeResolver
-     * @param HttpKernelRuntime $httpKernelRuntime
-     * @param FragmentRendererInterface $fragmentRenderer
-     * @param RequestStack $requestStack
-     */
     public function __construct(
         AreabrickManagerInterface $brickManager,
         EngineInterface $templating,
@@ -148,13 +103,7 @@ class EditableHandler implements LoggerAwareInterface
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * @param Editable $editable
-     * @param AreabrickInterface|string|bool $brick
-     *
-     * @return bool
-     */
-    public function isBrickEnabled(Editable $editable, $brick)
+    public function isBrickEnabled(Editable $editable, bool|string|AreabrickInterface $brick): bool
     {
         if ($brick instanceof AreabrickInterface) {
             $brick = $brick->getId();
@@ -163,13 +112,7 @@ class EditableHandler implements LoggerAwareInterface
         return $this->brickManager->isEnabled($brick);
     }
 
-    /**
-     * @param Editable\Areablock $editable
-     * @param array $options
-     *
-     * @return array
-     */
-    public function getAvailableAreablockAreas(Editable\Areablock $editable, array $options)
+    public function getAvailableAreablockAreas(Editable\Areablock $editable, array $options): array
     {
         $areas = [];
         foreach ($this->brickManager->getBricks() as $brick) {
@@ -234,13 +177,7 @@ class EditableHandler implements LoggerAwareInterface
         return $areas;
     }
 
-    /**
-     * @param Info $info
-     * @param array $templateParams
-     *
-     * @return string
-     */
-    public function renderAreaFrontend(Info $info, $templateParams = []): string
+    public function renderAreaFrontend(Info $info, array $templateParams = []): string
     {
         $brick = $this->brickManager->getBrick($info->getId());
 
@@ -304,10 +241,7 @@ class EditableHandler implements LoggerAwareInterface
         return $html;
     }
 
-    /**
-     * @param Response|null $result
-     */
-    protected function handleBrickActionResult($result)
+    protected function handleBrickActionResult(?Response $result)
     {
         // if the action result is a response object, push it onto the
         // response stack. this response will be used by the ResponseStackListener
@@ -325,7 +259,7 @@ class EditableHandler implements LoggerAwareInterface
      *
      * @return null|string
      */
-    protected function resolveBrickTemplate(AreabrickInterface $brick)
+    protected function resolveBrickTemplate(AreabrickInterface $brick): ?string
     {
         $cacheKey = sprintf('%s.view', $brick->getId());
         if (isset($this->brickTemplateCache[$cacheKey])) {
@@ -358,7 +292,7 @@ class EditableHandler implements LoggerAwareInterface
      *
      * @return string
      */
-    protected function buildBrickTemplateReference(TemplateAreabrickInterface $brick)
+    protected function buildBrickTemplateReference(TemplateAreabrickInterface $brick): string
     {
         if ($brick->getTemplateLocation() === TemplateAreabrickInterface::TEMPLATE_LOCATION_GLOBAL) {
             return sprintf(
@@ -391,14 +325,7 @@ class EditableHandler implements LoggerAwareInterface
         return $templateReference;
     }
 
-    /**
-     * @param string $controller
-     * @param array $attributes
-     * @param array $query
-     *
-     * @return string|Response
-     */
-    public function renderAction($controller, array $attributes = [], array $query = [])
+    public function renderAction(string $controller, array $attributes = [], array $query = []): string|Response
     {
         $document = $attributes['document'] ?? null;
         if ($document && $document instanceof PageSnippet) {
@@ -421,13 +348,7 @@ class EditableHandler implements LoggerAwareInterface
         }
     }
 
-    /**
-     * @param PageSnippet $document
-     * @param array $attributes
-     *
-     * @return array
-     */
-    public function addDocumentAttributes(PageSnippet $document, array $attributes = [])
+    public function addDocumentAttributes(PageSnippet $document, array $attributes = []): array
     {
         // The CMF dynamic router sets the 2 attributes contentDocument and contentTemplate to set
         // a route's document and template. Those attributes are later used by controller listeners to

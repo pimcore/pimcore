@@ -76,9 +76,7 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getCacheTags(Model\Document\PageSnippet $ownerDocument, array $tags = []): array
     {
         $asset = Asset::getById($this->id);

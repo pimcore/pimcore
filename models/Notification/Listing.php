@@ -32,7 +32,7 @@ class Listing extends AbstractListing
      *
      * @return bool
      */
-    public function isValidOrderKey($key)
+    public function isValidOrderKey(string $key)
     {
         return true;
     }

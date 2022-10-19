@@ -345,9 +345,6 @@ trait ImageThumbnailTrait
         return $path;
     }
 
-    /**
-     * @return string
-     */
     public function getFrontendPath(): string
     {
         $path = $this->getPath();
@@ -376,9 +373,6 @@ trait ImageThumbnailTrait
         return self::getLocalFileFromStream($stream);
     }
 
-    /**
-     * @return bool
-     */
     public function exists(): bool
     {
         $pathReference = $this->getPathReference(true);

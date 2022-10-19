@@ -289,9 +289,6 @@ class Dao extends Model\Dao\AbstractDao
         DataObject::setGetInheritedValues($inheritedValues);
     }
 
-    /**
-     * @param DataObject\Concrete $object
-     */
     public function delete(DataObject\Concrete $object)
     {
         // update data for store table

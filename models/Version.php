@@ -169,9 +169,6 @@ final class Version extends AbstractModel
         self::$disabled = false;
     }
 
-    /**
-     * @return bool
-     */
     public static function isEnabled(): bool
     {
         return !self::$disabled;
@@ -562,9 +559,6 @@ final class Version extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return User|null
-     */
     public function getUser(): ?User
     {
         return $this->user;
@@ -610,9 +604,6 @@ final class Version extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getVersionCount(): int
     {
         return $this->versionCount ? $this->versionCount : 0;
@@ -626,33 +617,21 @@ final class Version extends AbstractModel
         $this->versionCount = (int) $versionCount;
     }
 
-    /**
-     * @return string|null
-     */
     public function getBinaryFileHash(): ?string
     {
         return $this->binaryFileHash;
     }
 
-    /**
-     * @param string|null $binaryFileHash
-     */
     public function setBinaryFileHash(?string $binaryFileHash): void
     {
         $this->binaryFileHash = $binaryFileHash;
     }
 
-    /**
-     * @return int|null
-     */
     public function getBinaryFileId(): ?int
     {
         return $this->binaryFileId;
     }
 
-    /**
-     * @param int|null $binaryFileId
-     */
     public function setBinaryFileId(?int $binaryFileId): void
     {
         $this->binaryFileId = $binaryFileId;
@@ -666,33 +645,21 @@ final class Version extends AbstractModel
         return (bool) $this->generateStackTrace;
     }
 
-    /**
-     * @param bool $generateStackTrace
-     */
     public function setGenerateStackTrace(bool $generateStackTrace): void
     {
         $this->generateStackTrace = $generateStackTrace;
     }
 
-    /**
-     * @param string|null $stackTrace
-     */
     public function setStackTrace(?string $stackTrace): void
     {
         $this->stackTrace = $stackTrace;
     }
 
-    /**
-     * @return string|null
-     */
     public function getStackTrace(): ?string
     {
         return $this->stackTrace;
     }
 
-    /**
-     * @return bool
-     */
     public function isAutoSave(): bool
     {
         return $this->autoSave;
@@ -708,17 +675,11 @@ final class Version extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getStorageType(): ?string
     {
         return $this->storageType;
     }
 
-    /**
-     * @param string $storageType
-     */
     public function setStorageType(string $storageType): void
     {
         $this->storageType = $storageType;

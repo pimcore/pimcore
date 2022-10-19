@@ -560,9 +560,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $code;
     }
 
-    /**
-     * @return string
-     */
     private function parseYoutubeId(): string
     {
         $youtubeId = '';

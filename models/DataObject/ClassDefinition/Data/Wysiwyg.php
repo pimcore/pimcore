@@ -135,25 +135,16 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this;
     }
 
-    /**
-     * @param string $toolbarConfig
-     */
     public function setToolbarConfig(string $toolbarConfig)
     {
         $this->toolbarConfig = $toolbarConfig;
     }
 
-    /**
-     * @return string
-     */
     public function getToolbarConfig(): string
     {
         return $this->toolbarConfig;
     }
 
-    /**
-     * @return bool
-     */
     public function isExcludeFromSearchIndex(): bool
     {
         return $this->excludeFromSearchIndex;
@@ -404,33 +395,25 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?string';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return '?string';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return 'string|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return 'string|null';

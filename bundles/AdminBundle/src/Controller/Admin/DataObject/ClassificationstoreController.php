@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -1334,12 +1335,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
         return $this->adminJson(['success' => false]);
     }
 
-    /**
-     * @param Classificationstore\KeyConfig $config
-     *
-     * @return array
-     */
-    protected function getConfigItem($config): array
+    protected function getConfigItem(Classificationstore\KeyConfig $config): array
     {
         $name = $config->getName();
 
@@ -1557,9 +1553,6 @@ class ClassificationstoreController extends AdminController implements KernelCon
         return $this->adminJson(['success' => true, 'page' => $page]);
     }
 
-    /**
-     * @param ControllerEvent $event
-     */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         if (!$event->isMainRequest()) {

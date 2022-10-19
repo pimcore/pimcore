@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -132,10 +133,7 @@ final class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    /**
-     * @return \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
-     */
-    protected function buildGdprDataExtractorNode()
+    protected function buildGdprDataExtractorNode(): ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
     {
         $treeBuilder = new TreeBuilder('gdpr_data_extractor');
 
@@ -201,10 +199,7 @@ final class Configuration implements ConfigurationInterface
         return $gdprDataExtractor;
     }
 
-    /**
-     * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
-     */
-    protected function buildEventsNode()
+    protected function buildEventsNode(): ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
     {
         $treeBuilder = new TreeBuilder('notes_events');
         $notesEvents = $treeBuilder->getRootNode();
@@ -223,10 +218,7 @@ final class Configuration implements ConfigurationInterface
         return $notesEvents;
     }
 
-    /**
-     * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
-     */
-    protected function buildObjectsNode()
+    protected function buildObjectsNode(): ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
     {
         $treeBuilder = new TreeBuilder('objects');
         $objectsNode = $treeBuilder->getRootNode();
@@ -238,10 +230,7 @@ final class Configuration implements ConfigurationInterface
         return $objectsNode;
     }
 
-    /**
-     * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
-     */
-    protected function buildAssetsNode()
+    protected function buildAssetsNode(): ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
     {
         $treeBuilder = new TreeBuilder('assets');
         $assetsNode = $treeBuilder->getRootNode();
@@ -253,10 +242,7 @@ final class Configuration implements ConfigurationInterface
         return $assetsNode;
     }
 
-    /**
-     * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
-     */
-    protected function buildDocumentsNode()
+    protected function buildDocumentsNode(): ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
     {
         $treeBuilder = new TreeBuilder('documents');
         $documentsNode = $treeBuilder->getRootNode();

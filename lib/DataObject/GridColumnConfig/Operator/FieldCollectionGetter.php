@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,30 +17,20 @@
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\Model\DataObject\Fieldcollection;
+use Pimcore\Model\Element\ElementInterface;
 
 /**
  * @internal
  */
 final class FieldCollectionGetter extends AbstractOperator
 {
-    /**
-     * @var string
-     */
-    private $attr;
+    private string $attr;
 
-    /**
-     * @var int
-     */
-    private $idx;
+    private int $idx;
 
-    /**
-     * @var string
-     */
-    private $colAttr;
+    private string $colAttr;
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -52,7 +43,7 @@ final class FieldCollectionGetter extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         $result = new \stdClass();
         $result->label = $this->label;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -33,10 +34,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
 
     const BLOCK_DELIMITER = '|';
 
-    /**
-     * @var array
-     */
-    protected $exportAttributes;
+    protected array $exportAttributes;
 
     public function __construct(array $exportAttributes = [])
     {
@@ -172,7 +170,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
      * @param AttributeSet $result
      * @param array|null $exportAttributes
      */
-    protected function addBlocksInLocalizedfields(Localizedfields $fd, $definition, DataObject\Concrete $object, AttributeSet $result, array $exportAttributes = null)
+    protected function addBlocksInLocalizedfields(Localizedfields $fd, Data $definition, DataObject\Concrete $object, AttributeSet $result, array $exportAttributes = null)
     {
         $locale = str_replace('-', '_', $result->getSourceLanguage());
         if (!Tool::isValidLanguage($locale)) {

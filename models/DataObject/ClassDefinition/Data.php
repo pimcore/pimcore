@@ -583,11 +583,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return '';
     }
 
-    /**
-     * @param string $key
-     *
-     * @return string
-     */
     protected function getPreGetValueHookCode(string $key): string
     {
         $code = "\t" . 'if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {' . "\n";
@@ -1409,17 +1404,11 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $data;
     }
 
-    /**
-     * @param DataObject\ClassDefinition\Data $masterDefinition
-     */
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
         // implement in child classes
     }
 
-    /**
-     * @param DataObject\ClassDefinition\Data $masterDefinition
-     */
     public function adoptMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
         $vars = get_object_vars($this);

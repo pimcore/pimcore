@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,10 +21,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class CustomLayoutEvent extends Event
 {
-    /**
-     * @var ClassDefinition\CustomLayout
-     */
-    protected $customLayout;
+    protected ClassDefinition\CustomLayout $customLayout;
 
     /**
      * DocumentEvent constructor.
@@ -35,18 +33,12 @@ class CustomLayoutEvent extends Event
         $this->customLayout = $customLayout;
     }
 
-    /**
-     * @return ClassDefinition\CustomLayout
-     */
-    public function getCustomLayout()
+    public function getCustomLayout(): ClassDefinition\CustomLayout
     {
         return $this->customLayout;
     }
 
-    /**
-     * @param ClassDefinition\CustomLayout $customLayout
-     */
-    public function setCustomLayout($customLayout)
+    public function setCustomLayout(ClassDefinition\CustomLayout $customLayout)
     {
         $this->customLayout = $customLayout;
     }

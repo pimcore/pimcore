@@ -63,9 +63,6 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     */
     public function delete(DataObject\ClassDefinition $class)
     {
         $table = $this->getTableName($class, false);
@@ -75,9 +72,6 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->executeQuery('DROP TABLE IF EXISTS `' . $table . '`');
     }
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     */
     public function createUpdateTable(DataObject\ClassDefinition $class)
     {
         $tableStore = $this->getTableName($class, false);
@@ -163,9 +157,6 @@ class Dao extends Model\Dao\AbstractDao
         $this->removeUnusedColumns($tableQuery, $columnsToRemoveQuery, $protectedColumnsQuery);
     }
 
-    /**
-     * @param DataObject\ClassDefinition $classDefinition
-     */
     public function classSaved(DataObject\ClassDefinition $classDefinition)
     {
         $tableStore = $this->getTableName($classDefinition, false);

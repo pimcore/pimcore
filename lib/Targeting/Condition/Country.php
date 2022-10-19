@@ -23,10 +23,7 @@ use Pimcore\Targeting\Model\VisitorInfo;
 
 class Country extends AbstractVariableCondition implements DataProviderDependentInterface
 {
-    /**
-     * @var string
-     */
-    private $country;
+    private ?string $country;
 
     /**
      * @param string|null $country
@@ -39,7 +36,7 @@ class Country extends AbstractVariableCondition implements DataProviderDependent
     /**
      * {@inheritdoc}
      */
-    public static function fromConfig(array $config)
+    public static function fromConfig(array $config): ConditionInterface|static
     {
         return new static($config['country'] ?? null);
     }

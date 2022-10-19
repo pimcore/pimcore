@@ -236,11 +236,6 @@ interface ElementInterface extends ModelInterface
      */
     public function getCacheTag();
 
-    /**
-     * @param array $tags
-     *
-     * @return array
-     */
     public function getCacheTags(array $tags = []): array;
 
     /**
@@ -253,9 +248,6 @@ interface ElementInterface extends ModelInterface
      */
     public function setVersionCount(?int $versionCount): static;
 
-    /**
-     * @return int
-     */
     public function getVersionCount(): int;
 
     /**

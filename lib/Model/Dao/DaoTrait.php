@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,6 +16,8 @@
 
 namespace Pimcore\Model\Dao;
 
+use Pimcore\Model\AbstractModel;
+
 /**
  * @internal
  */
@@ -25,12 +28,7 @@ trait DaoTrait
      */
     protected $model;
 
-    /**
-     * @param \Pimcore\Model\AbstractModel $model
-     *
-     * @return $this
-     */
-    public function setModel($model)
+    public function setModel(AbstractModel $model): static
     {
         $this->model = $model;
 
@@ -40,7 +38,7 @@ trait DaoTrait
     /**
      * @param array $data
      */
-    protected function assignVariablesToModel($data)
+    protected function assignVariablesToModel($data): void
     {
         $this->model->setValues($data);
     }

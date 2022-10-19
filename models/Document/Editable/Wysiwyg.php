@@ -119,9 +119,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
         return Text::getDependenciesOfWysiwygText($this->text);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getCacheTags(Model\Document\PageSnippet $ownerDocument, array $tags = []): array
     {
         return Text::getCacheTagsOfWysiwygText($this->text, $tags);

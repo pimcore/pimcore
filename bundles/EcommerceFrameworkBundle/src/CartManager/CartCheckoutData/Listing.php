@@ -30,7 +30,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
      *
      * @return bool
      */
-    public function isValidOrderKey($key)
+    public function isValidOrderKey(string $key)
     {
         if ($key == 'key' || $key == 'cartId') {
             return true;

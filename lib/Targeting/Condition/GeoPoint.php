@@ -26,20 +26,11 @@ use Pimcore\Targeting\Model\VisitorInfo;
 
 class GeoPoint extends AbstractVariableCondition implements DataProviderDependentInterface
 {
-    /**
-     * @var float
-     */
-    private $latitude;
+    private ?float $latitude;
 
-    /**
-     * @var float
-     */
-    private $longitude;
+    private ?float $longitude;
 
-    /**
-     * @var int
-     */
-    private $radius;
+    private ?int $radius;
 
     public function __construct(float $latitude = null, float $longitude = null, int $radius = null)
     {
@@ -51,7 +42,7 @@ class GeoPoint extends AbstractVariableCondition implements DataProviderDependen
     /**
      * {@inheritdoc}
      */
-    public static function fromConfig(array $config)
+    public static function fromConfig(array $config): ConditionInterface|static
     {
         return new static(
             $config['latitude'] ? (float)$config['latitude'] : null,

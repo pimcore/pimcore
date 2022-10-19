@@ -25,7 +25,7 @@ class ImportClassResolver extends ClassResolver
     /**
      * @param string $importServiceOrClass
      *
-     * @return ImportDataServiceInterface|null
+     * @return object|null
      */
     public static function resolveClassOrService($importServiceOrClass)
     {

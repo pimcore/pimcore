@@ -26,7 +26,7 @@ trait SimpleNormalizerTrait
      *
      * @return mixed
      */
-    public function normalize($value, $params = [])
+    public function normalize(mixed $value, array $params = [])
     {
         return $value;
     }
@@ -37,7 +37,7 @@ trait SimpleNormalizerTrait
      *
      * @return mixed
      */
-    public function denormalize($value, $params = [])
+    public function denormalize(mixed $value, array $params = [])
     {
         return $value;
     }

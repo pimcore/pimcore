@@ -89,9 +89,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getCondition()
     {
         $condition = parent::getCondition();
@@ -124,7 +122,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
     /**
      * {@inheritdoc}
      */
-    public function getItems($offset, $itemCountPerPage)
+    public function getItems(int $offset, int $itemCountPerPage)
     {
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);

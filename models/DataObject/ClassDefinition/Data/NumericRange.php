@@ -442,10 +442,8 @@ class NumericRange extends Data implements
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function normalize($value, $params = [])
+
+    public function normalize(mixed $value, array $params = [])
     {
         if ($value instanceof DataObject\Data\NumericRange) {
             return $value->toArray();
@@ -454,10 +452,8 @@ class NumericRange extends Data implements
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function denormalize($value, $params = [])
+
+    public function denormalize(mixed $value, array $params = [])
     {
         if (\is_array($value)) {
             return new DataObject\Data\NumericRange($value['minimum'], $value['maximum']);
@@ -573,33 +569,25 @@ class NumericRange extends Data implements
             && (abs($oldValue->getMaximum() - $newValue->getMaximum()) < 0.000000000001);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\NumericRange::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\NumericRange::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\NumericRange::class . '|null';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\NumericRange::class . '|null';

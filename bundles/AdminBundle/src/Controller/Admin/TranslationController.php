@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -57,7 +58,7 @@ class TranslationController extends AdminController
      *
      * @return JsonResponse
      */
-    public function importAction(Request $request, LocaleServiceInterface $localeService)
+    public function importAction(Request $request, LocaleServiceInterface $localeService): JsonResponse
     {
         $domain = $request->get('domain', Translation::DOMAIN_DEFAULT);
         $admin = $domain == Translation::DOMAIN_ADMIN;
@@ -125,7 +126,7 @@ class TranslationController extends AdminController
      *
      * @return JsonResponse
      */
-    public function uploadImportFileAction(Request $request)
+    public function uploadImportFileAction(Request $request): JsonResponse
     {
         $tmpData = file_get_contents($_FILES['Filedata']['tmp_name']);
 
@@ -161,7 +162,7 @@ class TranslationController extends AdminController
      *
      * @return Response
      */
-    public function exportAction(Request $request)
+    public function exportAction(Request $request): Response
     {
         $domain = $request->get('domain', Translation::DOMAIN_DEFAULT);
         $admin = $domain == Translation::DOMAIN_ADMIN;
@@ -293,7 +294,7 @@ class TranslationController extends AdminController
      *
      * @return JsonResponse
      */
-    public function addAdminTranslationKeysAction(Request $request)
+    public function addAdminTranslationKeysAction(Request $request): JsonResponse
     {
         $keys = $request->get('keys');
         if ($keys) {
@@ -338,7 +339,7 @@ class TranslationController extends AdminController
      *
      * @return JsonResponse
      */
-    public function translationsAction(Request $request, TranslatorInterface $translator)
+    public function translationsAction(Request $request, TranslatorInterface $translator): JsonResponse
     {
         $domain = $request->get('domain', Translation::DOMAIN_DEFAULT);
         $admin = $domain === Translation::DOMAIN_ADMIN;
@@ -499,12 +500,7 @@ class TranslationController extends AdminController
         return $this->adminJson(['success' => false]);
     }
 
-    /**
-     * @param array $translations
-     *
-     * @return array
-     */
-    protected function prefixTranslations($translations)
+    protected function prefixTranslations(array $translations): array
     {
         if (!is_array($translations)) {
             return $translations;
@@ -518,13 +514,7 @@ class TranslationController extends AdminController
         return $prefixedTranslations;
     }
 
-    /**
-     * @param array $joins
-     * @param Translation\Listing $list
-     * @param string $tableName
-     * @param array $filters
-     */
-    protected function extendTranslationQuery($joins, $list, $tableName, $filters)
+    protected function extendTranslationQuery(array $joins, Translation\Listing $list, string $tableName, array $filters)
     {
         if ($joins) {
             $list->onCreateQueryBuilder(
@@ -567,14 +557,7 @@ class TranslationController extends AdminController
         }
     }
 
-    /**
-     * @param Request $request
-     * @param string $tableName
-     * @param bool $languageMode
-     *
-     * @return array|null|string
-     */
-    protected function getGridFilterCondition(Request $request, $tableName, $languageMode = false, $admin = false)
+    protected function getGridFilterCondition(Request $request, string $tableName, bool $languageMode = false, $admin = false): array|string|null
     {
         $joins = [];
         $conditions = [];
@@ -672,7 +655,7 @@ class TranslationController extends AdminController
      *
      * @return JsonResponse
      */
-    public function cleanupAction(Request $request)
+    public function cleanupAction(Request $request): JsonResponse
     {
         $domain = $request->get('domain', Translation::DOMAIN_DEFAULT);
         $list = new Translation\Listing();
@@ -698,7 +681,7 @@ class TranslationController extends AdminController
      *
      * @return JsonResponse
      */
-    public function contentExportJobsAction(Request $request)
+    public function contentExportJobsAction(Request $request): JsonResponse
     {
         $data = $this->decodeJson($request->get('data'));
         $elements = [];
@@ -818,7 +801,7 @@ class TranslationController extends AdminController
      *
      * @throws \Exception
      */
-    public function xliffExportAction(Request $request, ExportServiceInterface $exportService)
+    public function xliffExportAction(Request $request, ExportServiceInterface $exportService): JsonResponse
     {
         $id = $request->get('id');
         $data = $this->decodeJson($request->get('data'));
@@ -842,12 +825,9 @@ class TranslationController extends AdminController
     /**
      * @Route("/xliff-export-download", name="pimcore_admin_translation_xliffexportdownload", methods={"GET"})
      *
-     * @param Request $request
-     * @param ExporterInterface $translationExporter
      *
-     * @return BinaryFileResponse
      */
-    public function xliffExportDownloadAction(Request $request, ExporterInterface $translationExporter, ExportServiceInterface $exportService)
+    public function xliffExportDownloadAction(Request $request, ExporterInterface $translationExporter, ExportServiceInterface $exportService): BinaryFileResponse
     {
         $id = $request->get('id');
         $exportFile = $exportService->getTranslationExporter()->getExportFilePath($id);
@@ -870,7 +850,7 @@ class TranslationController extends AdminController
      *
      * @throws \Exception
      */
-    public function xliffImportUploadAction(Request $request, ImportDataExtractorInterface $importDataExtractor)
+    public function xliffImportUploadAction(Request $request, ImportDataExtractorInterface $importDataExtractor): JsonResponse
     {
         $jobs = [];
         $id = uniqid();
@@ -913,7 +893,7 @@ class TranslationController extends AdminController
      *
      * @throws \Exception
      */
-    public function xliffImportElementAction(Request $request, ImportDataExtractorInterface $importDataExtractor, ImporterServiceInterface $importerService)
+    public function xliffImportElementAction(Request $request, ImportDataExtractorInterface $importDataExtractor, ImporterServiceInterface $importerService): JsonResponse
     {
         $id = $request->get('id');
         $step = $request->get('step');
@@ -946,7 +926,7 @@ class TranslationController extends AdminController
      *
      * @return JsonResponse
      */
-    public function wordExportAction(Request $request)
+    public function wordExportAction(Request $request): JsonResponse
     {
         ini_set('display_errors', 'off');
 
@@ -1156,7 +1136,7 @@ class TranslationController extends AdminController
      *
      * @return Response
      */
-    public function wordExportDownloadAction(Request $request)
+    public function wordExportDownloadAction(Request $request): Response
     {
         $id = $this->sanitzeExportId((string)$request->get('id'));
         $exportFile = $this->getExportFilePath($id, true);
@@ -1219,7 +1199,7 @@ class TranslationController extends AdminController
      *
      * @return JsonResponse
      */
-    public function mergeItemAction(Request $request)
+    public function mergeItemAction(Request $request): JsonResponse
     {
         $domain = $request->get('domain', Translation::DOMAIN_DEFAULT);
 
@@ -1247,7 +1227,7 @@ class TranslationController extends AdminController
      *
      * @return JsonResponse
      */
-    public function getWebsiteTranslationLanguagesAction(Request $request)
+    public function getWebsiteTranslationLanguagesAction(Request $request): JsonResponse
     {
         return $this->adminJson(
             [
@@ -1267,7 +1247,7 @@ class TranslationController extends AdminController
      *
      * @return JsonResponse
      */
-    public function getTranslationDomainsAction(Request $request)
+    public function getTranslationDomainsAction(Request $request): JsonResponse
     {
         $translation = new Translation();
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,10 +21,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class ConsoleEvent extends Event
 {
-    /**
-     * @var Application
-     */
-    protected $application;
+    protected Application $application;
 
     /**
      * ConsoleEvent constructor.
@@ -35,18 +33,12 @@ class ConsoleEvent extends Event
         $this->application = $application;
     }
 
-    /**
-     * @return Application
-     */
-    public function getApplication()
+    public function getApplication(): Application
     {
         return $this->application;
     }
 
-    /**
-     * @param Application $application
-     */
-    public function setApplication($application)
+    public function setApplication(Application $application)
     {
         $this->application = $application;
     }

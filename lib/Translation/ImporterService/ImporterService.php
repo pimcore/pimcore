@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,7 +24,7 @@ class ImporterService implements ImporterServiceInterface
     /**
      * @var ImporterInterface[]
      */
-    private $importers = [];
+    private array $importers = [];
 
     /**
      * {@inheritdoc}

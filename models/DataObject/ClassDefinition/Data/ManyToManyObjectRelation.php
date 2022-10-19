@@ -653,10 +653,8 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return implode(' | ', $this->getPhpDocClassString(true));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+
+    public function normalize(mixed $value, array $params = [])
     {
         if (is_array($value)) {
             $result = [];
@@ -675,10 +673,8 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+
+    public function denormalize(mixed $value, array $params = [])
     {
         if (is_array($value)) {
             $result = [];
@@ -830,9 +826,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return $this->visibleFields;
     }
 
-    /**
-     * @return bool
-     */
     public function isAllowToCreateNewObject(): bool
     {
         return $this->allowToCreateNewObject;
@@ -872,17 +865,11 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         $this->optimizedAdminLoading = $optimizedAdminLoading;
     }
 
-    /**
-     * @return bool
-     */
     public function isEnableTextSelection(): bool
     {
         return $this->enableTextSelection;
     }
 
-    /**
-     * @param bool $enableTextSelection
-     */
     public function setEnableTextSelection(bool $enableTextSelection): void
     {
         $this->enableTextSelection = $enableTextSelection;

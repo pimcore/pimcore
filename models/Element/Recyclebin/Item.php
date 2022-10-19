@@ -244,9 +244,6 @@ class Item extends Model\AbstractModel
         $this->getDao()->delete();
     }
 
-    /**
-     * @param Element\ElementInterface $element
-     */
     public function loadChildren(Element\ElementInterface $element)
     {
         $this->amount++;

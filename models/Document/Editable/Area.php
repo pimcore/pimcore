@@ -38,9 +38,7 @@ class Area extends Model\Document\Editable
      */
     protected $type;
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getBrickType()
     {
         return $this->type;
@@ -74,9 +72,7 @@ class Area extends Model\Document\Editable
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDataEditmode(): array
     {
         return [

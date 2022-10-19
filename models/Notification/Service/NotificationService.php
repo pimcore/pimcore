@@ -183,12 +183,6 @@ class NotificationService
         return $notification;
     }
 
-    /**
-     * @param array $filter
-     * @param array $options
-     *
-     * @return array
-     */
     public function findAll(array $filter = [], array $options = []): array
     {
         $listing = new Listing();
@@ -221,14 +215,6 @@ class NotificationService
         return $result;
     }
 
-    /**
-     * @param int $user
-     * @param int $lastUpdate
-     *
-     * @return array
-     *
-     * @throws Exception
-     */
     public function findLastUnread(int $user, int $lastUpdate): array
     {
         $listing = new Listing();
@@ -255,11 +241,6 @@ class NotificationService
         return $result;
     }
 
-    /**
-     * @param Notification $notification
-     *
-     * @return array
-     */
     public function format(Notification $notification): array
     {
         $data = [
@@ -293,11 +274,6 @@ class NotificationService
         return $data;
     }
 
-    /**
-     * @param int $user
-     *
-     * @return int
-     */
     public function countAllUnread(int $user): int
     {
         $listing = new Listing();
@@ -306,10 +282,6 @@ class NotificationService
         return $listing->count();
     }
 
-    /**
-     * @param int $id
-     * @param int|null $recipientId
-     */
     public function delete(int $id, ?int $recipientId = null): void
     {
         $this->beginTransaction();
@@ -323,9 +295,6 @@ class NotificationService
         $this->commit();
     }
 
-    /**
-     * @param int $user
-     */
     public function deleteAll(int $user): void
     {
         $listing = new Listing();

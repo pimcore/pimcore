@@ -47,26 +47,17 @@ class RgbaColor implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @return int
-     */
     public function getR(): int
     {
         return $this->r;
     }
 
-    /**
-     * @param int|null $r
-     */
     public function setR(?int $r): void
     {
         $this->r = is_null($r) ? 0 : $r;
         $this->markMeDirty();
     }
 
-    /**
-     * @return int
-     */
     public function getG(): int
     {
         return $this->g;
@@ -81,43 +72,28 @@ class RgbaColor implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @return int
-     */
     public function getB(): int
     {
         return $this->b;
     }
 
-    /**
-     * @param int|null $b
-     */
     public function setB(?int $b): void
     {
         $this->b = is_null($b) ? 0 : $b;
         $this->markMeDirty();
     }
 
-    /**
-     * @return int
-     */
     public function getA(): int
     {
         return $this->a;
     }
 
-    /**
-     * @param int|null $a
-     */
     public function setA(?int $a): void
     {
         $this->a = is_null($a) ? 255 : $a;
         $this->markMeDirty();
     }
 
-    /**
-     * @return array
-     */
     public function getRgb(): array
     {
         return [$this->r, $this->g, $this->b];

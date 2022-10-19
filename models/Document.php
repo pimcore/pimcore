@@ -723,9 +723,7 @@ class Document extends Element\AbstractElement
         $service->removeTranslation($this);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function delete()
     {
         $this->dispatchEvent(new DocumentEvent($this), DocumentEvents::PRE_DELETE);

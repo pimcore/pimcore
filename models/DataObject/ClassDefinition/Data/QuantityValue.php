@@ -379,9 +379,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         $this->unique = (bool) $unique;
     }
 
-    /**
-     * @return bool
-     */
     public function isAutoConvert(): bool
     {
         return $this->autoConvert;
@@ -892,42 +889,32 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         return $unitId;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\QuantityValue::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\QuantityValue::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Model\DataObject\Data\QuantityValue::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Model\DataObject\Data\QuantityValue::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+
+    public function normalize(mixed $value, array $params = [])
     {
         if ($value instanceof Model\DataObject\Data\QuantityValue) {
             return [
@@ -937,10 +924,8 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+
+    public function denormalize(mixed $value, array $params = [])
     {
         if (is_array($value)) {
             return new Model\DataObject\Data\QuantityValue($value['value'], $value['unitId']);

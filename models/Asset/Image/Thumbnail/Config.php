@@ -235,21 +235,11 @@ final class Config extends Model\AbstractModel
         return $clone;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
     protected static function getCacheKey(string $name): string
     {
         return 'imagethumb_' . crc32($name);
     }
 
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
     public static function exists(string $name): bool
     {
         $cacheKey = self::getCacheKey($name);
@@ -833,17 +823,11 @@ final class Config extends Model\AbstractModel
         $this->preserveMetaData = $preserveMetaData;
     }
 
-    /**
-     * @return bool
-     */
     public function isRasterizeSVG(): bool
     {
         return $this->rasterizeSVG;
     }
 
-    /**
-     * @param bool $rasterizeSVG
-     */
     public function setRasterizeSVG(bool $rasterizeSVG): void
     {
         $this->rasterizeSVG = $rasterizeSVG;
@@ -864,49 +848,31 @@ final class Config extends Model\AbstractModel
         return true;
     }
 
-    /**
-     * @return string
-     */
     public function getGroup(): string
     {
         return $this->group;
     }
 
-    /**
-     * @param string $group
-     */
     public function setGroup(string $group): void
     {
         $this->group = $group;
     }
 
-    /**
-     * @return bool
-     */
     public function getPreserveAnimation(): bool
     {
         return $this->preserveAnimation;
     }
 
-    /**
-     * @param bool $preserveAnimation
-     */
     public function setPreserveAnimation(bool $preserveAnimation): void
     {
         $this->preserveAnimation = $preserveAnimation;
     }
 
-    /**
-     * @return bool
-     */
     public function isDownloadable(): bool
     {
         return $this->downloadable;
     }
 
-    /**
-     * @param bool $downloadable
-     */
     public function setDownloadable(bool $downloadable): void
     {
         $this->downloadable = $downloadable;

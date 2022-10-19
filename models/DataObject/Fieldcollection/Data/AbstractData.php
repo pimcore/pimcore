@@ -119,9 +119,6 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return $this;
     }
 
-    /**
-     * @return Concrete|null
-     */
     public function getObject(): ?Concrete
     {
         if ($this->objectId && !$this->object) {

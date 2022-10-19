@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -33,7 +34,7 @@ class AdminPasswordEncoder extends AbstractUserAwarePasswordEncoder
     /**
      * {@inheritdoc}
      */
-    public function encodePassword($raw, $salt)
+    public function encodePassword($raw, $salt): string
     {
         if ($this->isPasswordTooLong($raw)) {
             throw new BadCredentialsException(sprintf('Password exceeds a maximum of %d characters', static::MAX_PASSWORD_LENGTH));
@@ -45,7 +46,7 @@ class AdminPasswordEncoder extends AbstractUserAwarePasswordEncoder
     /**
      * {@inheritdoc}
      */
-    public function isPasswordValid($encoded, $raw, $salt)
+    public function isPasswordValid($encoded, $raw, $salt): bool
     {
         if ($this->isPasswordTooLong($raw)) {
             return false;

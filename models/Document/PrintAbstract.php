@@ -45,9 +45,6 @@ abstract class PrintAbstract extends Document\PageSnippet
      */
     protected $controller = 'web2print';
 
-    /**
-     * @param \DateTime $lastGenerated
-     */
     public function setLastGeneratedDate(\DateTime $lastGenerated)
     {
         $this->lastGenerated = $lastGenerated->getTimestamp();

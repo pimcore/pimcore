@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -54,49 +55,20 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
 {
     use LoggerAwareTrait;
 
-    /**
-     * @var TokenStorageInterface
-     */
-    protected $tokenStorage;
+    protected TokenStorageInterface $tokenStorage;
 
-    /**
-     * @var RouterInterface
-     */
-    protected $router;
+    protected RouterInterface $router;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
+    protected EventDispatcherInterface $dispatcher;
 
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    protected TranslatorInterface $translator;
 
-    /**
-     * @var HttpUtils
-     */
-    protected $httpUtils;
+    protected HttpUtils $httpUtils;
 
-    /**
-     * @var BruteforceProtectionHandler
-     */
-    protected $bruteforceProtectionHandler;
+    protected BruteforceProtectionHandler $bruteforceProtectionHandler;
 
-    /**
-     * @var bool
-     */
-    protected $twoFactorRequired = false;
+    protected bool $twoFactorRequired = false;
 
-    /**
-     * @param TokenStorageInterface $tokenStorage
-     * @param RouterInterface $router
-     * @param EventDispatcherInterface $dispatcher
-     * @param TranslatorInterface $translator
-     * @param HttpUtils $httpUtils
-     * @param BruteforceProtectionHandler $bruteforceProtectionHandler
-     */
     public function __construct(
         TokenStorageInterface $tokenStorage,
         RouterInterface $router,
@@ -117,7 +89,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     /**
      * {@inheritdoc}
      */
-    public function supports(Request $request)
+    public function supports(Request $request): bool
     {
         return $request->attributes->get('_route') === 'pimcore_admin_login_check'
             || Authentication::authenticateSession($request);
@@ -126,7 +98,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     /**
      * {@inheritdoc}
      */
-    public function start(Request $request, AuthenticationException $authException = null)
+    public function start(Request $request, AuthenticationException $authException = null): RedirectResponse|Response
     {
         if ($request->isXmlHttpRequest()) {
             // TODO use a JSON formatted error response?
@@ -189,7 +161,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     /**
      * {@inheritdoc}
      */
-    public function getUser($credentials, UserProviderInterface $userProvider)
+    public function getUser($credentials, UserProviderInterface $userProvider): UserInterface|User|null
     {
         /** @var User|null $user */
         $user = null;
@@ -269,7 +241,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     /**
      * {@inheritdoc}
      */
-    public function checkCredentials($credentials, UserInterface $user)
+    public function checkCredentials($credentials, UserInterface $user): bool
     {
         // we rely on getUser returning a valid user
         if ($user instanceof User) {
@@ -282,7 +254,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     /**
      * {@inheritdoc}
      */
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): RedirectResponse|Response|null
     {
         $this->bruteforceProtectionHandler->addEntry($request->get('username'), $request);
 
@@ -296,7 +268,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     /**
      * {@inheritdoc}
      */
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): RedirectResponse|Response|null
     {
         /** @var UserModel $user */
         $user = $token->getUser()->getUser();
@@ -348,12 +320,12 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
     /**
      * {@inheritdoc}
      */
-    public function supportsRememberMe()
+    public function supportsRememberMe(): bool
     {
         return false;
     }
 
-    public function createAuthenticatedToken(UserInterface $user, $providerKey)
+    public function createAuthenticatedToken(UserInterface $user, $providerKey): \Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken|LegacyTwoFactorRequiredToken
     {
         if ($this->twoFactorRequired) {
             return new LegacyTwoFactorRequiredToken(

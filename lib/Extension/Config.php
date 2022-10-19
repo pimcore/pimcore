@@ -31,9 +31,6 @@ class Config
 
     private ?string $file = null;
 
-    /**
-     * @return PimcoreConfig\Config
-     */
     public function loadConfig(): PimcoreConfig\Config
     {
         if (!$this->config) {
@@ -57,10 +54,7 @@ class Config
         return $this->config;
     }
 
-    /**
-     * @param PimcoreConfig\Config $config
-     */
-    public function saveConfig(PimcoreConfig\Config $config)
+    public function saveConfig(PimcoreConfig\Config $config): void
     {
         $this->config = $config;
 
@@ -70,9 +64,6 @@ class Config
         );
     }
 
-    /**
-     * @return string
-     */
     public function locateConfigFile(): string
     {
         if (null === $this->file) {
@@ -82,9 +73,6 @@ class Config
         return $this->file;
     }
 
-    /**
-     * @return bool
-     */
     public function configFileExists(): bool
     {
         $file = $this->locateConfigFile();

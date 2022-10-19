@@ -70,9 +70,6 @@ trait LabelTrait
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getLabelAlign(): string
     {
         return $this->labelAlign;

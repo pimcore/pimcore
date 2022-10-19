@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,7 +21,7 @@ namespace com\realobjects\pdfreactor\webservice\client;
  */
 class PDFreactor
 {
-    public $url;
+    public mixed $url;
 
     public function __construct($url = 'http://localhost:9423/service/rest')
     {
@@ -123,7 +124,7 @@ class PDFreactor
         return $result;
     }
 
-    public function convertAsBinary($config, & $wh = null, & $connectionSettings = null)
+    public function convertAsBinary($config, & $wh = null, & $connectionSettings = null): bool|string|null
     {
         $url = $this->url .'/convert.bin';
         if (!is_null($this->apiKey)) {
@@ -226,7 +227,7 @@ class PDFreactor
         return $result;
     }
 
-    public function convertAsync($config, & $connectionSettings = null)
+    public function convertAsync($config, & $connectionSettings = null): ?string
     {
         $documentId = null;
         $url = $this->url .'/convert/async.json';
@@ -506,7 +507,7 @@ class PDFreactor
         return $result;
     }
 
-    public function getDocumentAsBinary($documentId, & $wh = null, & $connectionSettings = null)
+    public function getDocumentAsBinary($documentId, & $wh = null, & $connectionSettings = null): bool|string|null
     {
         if (is_null($documentId)) {
             throw new ClientException('No conversion was triggered.');
@@ -686,7 +687,7 @@ class PDFreactor
         return $result;
     }
 
-    public function deleteDocument($documentId, & $connectionSettings = null)
+    public function deleteDocument($documentId, & $connectionSettings = null): void
     {
         if (is_null($documentId)) {
             throw new ClientException('No conversion was triggered.');
@@ -841,7 +842,7 @@ class PDFreactor
         return $result;
     }
 
-    public function getStatus(& $connectionSettings = null)
+    public function getStatus(& $connectionSettings = null): void
     {
         $url = $this->url .'/status.json';
         if (!is_null($this->apiKey)) {
@@ -915,7 +916,7 @@ class PDFreactor
         }
     }
 
-    public function getDocumentUrl($documentId)
+    public function getDocumentUrl($documentId): ?string
     {
         if (!is_null($documentId)) {
             return $this->url . '/document/' . $documentId;
@@ -924,7 +925,7 @@ class PDFreactor
         return null;
     }
 
-    public function getProgressUrl($documentId)
+    public function getProgressUrl($documentId): ?string
     {
         if (!is_null($documentId)) {
             return $this->url . '/progress/' . $documentId;
@@ -942,7 +943,7 @@ class PDFreactor
         }
     }
 
-    public function _createServerException($errorId = null, $message = null, $result = null)
+    public function _createServerException($errorId = null, $message = null, $result = null): ServerException|NotAcceptableException|CommandRejectedException|NoInputDocumentException|UnprocessableConfigurationException|ResourceNotFoundException|BadRequestException|NoConfigurationException|InvalidClientException|DocumentNotFoundException|RequestRejectedException|ConversionFailureException|AsyncUnavailableException|UnprocessableInputException|ConversionAbortedException|UnauthorizedException
     {
         switch ($errorId) {
             case 'asyncUnavailable':
@@ -986,7 +987,7 @@ class PDFreactor
 }
 class PDFreactorWebserviceException extends \Exception
 {
-    public $result;
+    public mixed $result;
 
     public function __construct($message)
     {

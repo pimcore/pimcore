@@ -52,9 +52,6 @@ class Hardlink extends Document
      */
     protected $childrenFromSource;
 
-    /**
-     * @return Document|null
-     */
     public function getSourceDocument(): ?Document
     {
         if ($this->getSourceId()) {

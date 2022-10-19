@@ -649,33 +649,25 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this->toNumeric($oldValue) == $this->toNumeric($newValue);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?' . $this->getPhpdocType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return '?' . $this->getPhpdocType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return $this->getPhpdocType() . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return $this->getPhpdocType() . '|null';

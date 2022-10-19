@@ -109,9 +109,6 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     */
     public function createOrUpdateTable(DataObject\ClassDefinition $class)
     {
         $classId = $class->getId();

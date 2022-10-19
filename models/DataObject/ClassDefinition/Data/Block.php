@@ -722,9 +722,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $this->fieldDefinitionsCache = null;
     }
 
-    /**
-     * @return array
-     */
     public function getBlockedVarsForExport(): array
     {
         return [
@@ -1153,17 +1150,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?array';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return '?array';
@@ -1192,26 +1185,20 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\BlockElement::class . '[][]';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return '\\' .DataObject\Data\BlockElement::class . '[][]';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+
+    public function normalize(mixed $value, array $params = [])
     {
         $result = null;
         if ($value) {
@@ -1243,10 +1230,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+
+    public function denormalize(mixed $value, array $params = [])
     {
         if (is_array($value)) {
             $result = [];

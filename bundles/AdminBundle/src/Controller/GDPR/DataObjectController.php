@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,9 +33,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         if (!$event->isMainRequest()) {
@@ -47,11 +46,9 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
     /**
      * @Route("/search-data-objects", name="pimcore_admin_gdpr_dataobject_searchdataobjects", methods={"GET"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
-    public function searchDataObjectsAction(Request $request, DataObjects $service)
+    public function searchDataObjectsAction(Request $request, DataObjects $service): JsonResponse
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
@@ -71,13 +68,11 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
     /**
      * @Route("/export", name="pimcore_admin_gdpr_dataobject_exportdataobject", methods={"GET"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      *
      * @throws \Exception
      */
-    public function exportDataObjectAction(Request $request, DataObjects $service)
+    public function exportDataObjectAction(Request $request, DataObjects $service): JsonResponse
     {
         $object = DataObject::getById((int) $request->get('id'));
         if (!$object) {

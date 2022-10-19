@@ -90,11 +90,6 @@ final class Thumbnail
         return $path;
     }
 
-    /**
-     * @param string $eventName
-     *
-     * @return bool
-     */
     protected function hasListeners(string $eventName): bool
     {
         if (!isset(self::$hasListenersCache[$eventName])) {
@@ -286,12 +281,6 @@ final class Thumbnail
         return $html;
     }
 
-    /**
-     * @param array $options
-     * @param array $removeAttributes
-     *
-     * @return string
-     */
     public function getImageTag(array $options = [], array $removeAttributes = []): string
     {
         /** @var Image $image */

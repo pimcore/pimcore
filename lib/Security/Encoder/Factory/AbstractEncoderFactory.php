@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,25 +31,22 @@ abstract class AbstractEncoderFactory implements EncoderFactoryInterface
      *
      * @var string
      */
-    protected $className;
+    protected string $className;
 
     /**
      * Arguments passed to encoder constructor
      *
      * @var array
      */
-    protected $arguments = [];
+    protected mixed $arguments = [];
 
-    /**
-     * @var \ReflectionClass
-     */
-    protected $reflector;
+    protected \ReflectionClass $reflector;
 
     /**
      * @param string $className
-     * @param mixed $arguments
+     * @param mixed|null $arguments
      */
-    public function __construct($className, $arguments = null)
+    public function __construct(string $className, mixed $arguments = null)
     {
         $this->className = $className;
 
@@ -63,12 +61,7 @@ abstract class AbstractEncoderFactory implements EncoderFactoryInterface
         $this->arguments = $arguments;
     }
 
-    /**
-     * @param \ReflectionClass $reflectionClass
-     *
-     * @return PasswordEncoderInterface
-     */
-    protected function buildEncoder(\ReflectionClass $reflectionClass)
+    protected function buildEncoder(\ReflectionClass $reflectionClass): PasswordEncoderInterface
     {
         /** @var PasswordEncoderInterface $encoder */
         $encoder = $reflectionClass->newInstanceArgs($this->arguments);
@@ -76,10 +69,7 @@ abstract class AbstractEncoderFactory implements EncoderFactoryInterface
         return $encoder;
     }
 
-    /**
-     * @return \ReflectionClass
-     */
-    protected function getReflector()
+    protected function getReflector(): \ReflectionClass
     {
         if (null === $this->reflector) {
             $this->reflector = new \ReflectionClass($this->className);

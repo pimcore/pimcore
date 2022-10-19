@@ -24,17 +24,11 @@ trait ElementDumpStateTrait
      */
     protected $_fulldump = false;
 
-    /**
-     * @param bool $dumpState
-     */
     public function setInDumpState(bool $dumpState)
     {
         $this->_fulldump = $dumpState;
     }
 
-    /**
-     * @return bool
-     */
     public function isInDumpState(): bool
     {
         return $this->_fulldump;

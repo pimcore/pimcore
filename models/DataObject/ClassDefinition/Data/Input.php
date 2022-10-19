@@ -253,17 +253,11 @@ class Input extends Data implements
         return $this->regex;
     }
 
-    /**
-     * @return array
-     */
     public function getRegexFlags(): array
     {
         return $this->regexFlags;
     }
 
-    /**
-     * @param array $regexFlags
-     */
     public function setRegexFlags(array $regexFlags): void
     {
         $this->regexFlags = $regexFlags;
@@ -377,33 +371,25 @@ class Input extends Data implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?string';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return '?string';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return 'string|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return 'string|null';

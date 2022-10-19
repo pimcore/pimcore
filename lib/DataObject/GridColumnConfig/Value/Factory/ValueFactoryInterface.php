@@ -23,9 +23,9 @@ interface ValueFactoryInterface
 {
     /**
      * @param \stdClass $configElement
-     * @param mixed $context
+     * @param mixed|null $context
      *
      * @return ValueInterface
      */
-    public function build(\stdClass $configElement, $context = null): ValueInterface;
+    public function build(\stdClass $configElement, mixed $context = null): ValueInterface;
 }

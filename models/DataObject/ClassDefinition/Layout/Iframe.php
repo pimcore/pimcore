@@ -44,33 +44,21 @@ class Iframe extends Model\DataObject\ClassDefinition\Layout implements LayoutDe
      */
     public $renderingData;
 
-    /**
-     * @return string
-     */
     public function getIframeUrl(): string
     {
         return $this->iframeUrl;
     }
 
-    /**
-     * @param string $iframeUrl
-     */
     public function setIframeUrl(string $iframeUrl): void
     {
         $this->iframeUrl = $iframeUrl;
     }
 
-    /**
-     * @return string
-     */
     public function getRenderingData(): string
     {
         return $this->renderingData;
     }
 
-    /**
-     * @param string $renderingData
-     */
     public function setRenderingData(string $renderingData): void
     {
         $this->renderingData = $renderingData;

@@ -306,9 +306,6 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
         }
     }
 
-    /**
-     * @return Concrete|null
-     */
     protected function getObject(): ?Concrete
     {
         $this->rewind();

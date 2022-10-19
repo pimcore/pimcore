@@ -25,7 +25,7 @@ class DefaultValueGeneratorResolver extends ClassResolver
     /**
      * @param string $generatorClass
      *
-     * @return DefaultValueGeneratorInterface|null
+     * @return object|null
      */
     public static function resolveGenerator($generatorClass)
     {

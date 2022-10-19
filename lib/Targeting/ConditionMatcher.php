@@ -28,35 +28,17 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class ConditionMatcher implements ConditionMatcherInterface
 {
-    /**
-     * @var ConditionFactoryInterface
-     */
-    private $conditionFactory;
+    private ConditionFactoryInterface $conditionFactory;
 
-    /**
-     * @var DataLoaderInterface
-     */
-    private $dataLoader;
+    private DataLoaderInterface $dataLoader;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @var ExpressionLanguage
-     */
-    private $expressionLanguage;
+    private ExpressionLanguage $expressionLanguage;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @var array
-     */
-    private $collectedVariables = [];
+    private array $collectedVariables = [];
 
     public function __construct(
         ConditionFactoryInterface $conditionFactory,

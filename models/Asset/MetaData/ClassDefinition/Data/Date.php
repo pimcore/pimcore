@@ -28,7 +28,7 @@ class Date extends Data
     /**
      * {@inheritdoc}
      */
-    public function normalize($value, $params = [])
+    public function normalize(mixed $value, array $params = [])
     {
         if ($value && !is_numeric($value)) {
             $value = strtotime($value);

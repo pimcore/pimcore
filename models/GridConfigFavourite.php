@@ -140,9 +140,6 @@ class GridConfigFavourite extends AbstractModel
         $this->gridConfigId = $gridConfigId;
     }
 
-    /**
-     * @return string
-     */
     public function getSearchType(): string
     {
         return $this->searchType;
@@ -164,9 +161,6 @@ class GridConfigFavourite extends AbstractModel
         return $this->objectId;
     }
 
-    /**
-     * @param int $objectId
-     */
     public function setObjectId(int $objectId)
     {
         $this->objectId = $objectId;

@@ -31,7 +31,7 @@ class CustomAdminEntryPointCheckListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
-    protected $customAdminPathIdentifier;
+    protected ?string $customAdminPathIdentifier;
 
     public function __construct(?string $customAdminPathIdentifier)
     {
@@ -48,9 +48,6 @@ class CustomAdminEntryPointCheckListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param RequestEvent $event
-     */
     public function onKernelRequest(RequestEvent $event)
     {
         $request = $event->getRequest();

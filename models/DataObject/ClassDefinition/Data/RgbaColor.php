@@ -299,10 +299,8 @@ class RgbaColor extends Data implements
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+
+    public function normalize(mixed $value, array $params = [])
     {
         if ($value instanceof Model\DataObject\Data\RgbaColor) {
             return [
@@ -316,10 +314,8 @@ class RgbaColor extends Data implements
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+
+    public function denormalize(mixed $value, array $params = [])
     {
         if (is_array($value)) {
             $color = new Model\DataObject\Data\RgbaColor();
@@ -424,33 +420,25 @@ class RgbaColor extends Data implements
         return $oldValue === $newValue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\RgbaColor::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\RgbaColor::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Model\DataObject\Data\RgbaColor::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Model\DataObject\Data\RgbaColor::class . '|null';

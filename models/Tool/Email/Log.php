@@ -613,17 +613,11 @@ class Log extends Model\AbstractModel
         return $this->bodyText;
     }
 
-    /**
-     * @return string|null
-     */
     public function getError(): ?string
     {
         return $this->error;
     }
 
-    /**
-     * @param string|null $error
-     */
     public function setError(?string $error): void
     {
         $this->error = $error;

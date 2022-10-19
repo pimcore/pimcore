@@ -33,7 +33,7 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
     /**
      * {@inheritdoc}
      */
-    public function getVersion()
+    public function getVersion(): string
     {
         return sprintf('%s build %s', Version::getVersion(), Version::getRevision());
     }
@@ -49,7 +49,7 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
     /**
      * @return array
      */
-    public function getCssPaths()
+    public function getCssPaths(): array
     {
         return [
             '/bundles/pimcoreecommerceframework/css/backend.css',
@@ -60,7 +60,7 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
     /**
      * @return array
      */
-    public function getJsPaths()
+    public function getJsPaths(): array
     {
         return [
             '/bundles/pimcoreecommerceframework/js/indexfieldselectionfield/data/indexFieldSelectionField.js',
@@ -89,7 +89,7 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
     /**
      * @return Installer
      */
-    public function getInstaller()
+    public function getInstaller(): Installer
     {
         return $this->container->get(Installer::class);
     }

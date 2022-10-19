@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,15 +21,9 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class TargetGroupEvent extends Event
 {
-    /**
-     * @var TargetGroup
-     */
-    protected $targetGroup;
+    protected TargetGroup $targetGroup;
 
-    /**
-     * @var array
-     */
-    protected $arguments;
+    protected array $arguments;
 
     /**
      * TargetGroupEvent constructor.
@@ -42,26 +37,17 @@ class TargetGroupEvent extends Event
         $this->arguments = $arguments;
     }
 
-    /**
-     * @return TargetGroup
-     */
-    public function getTargetGroup()
+    public function getTargetGroup(): TargetGroup
     {
         return $this->targetGroup;
     }
 
-    /**
-     * @param TargetGroup $targetGroup
-     */
-    public function setTargetGroup($targetGroup)
+    public function setTargetGroup(TargetGroup $targetGroup)
     {
         $this->targetGroup = $targetGroup;
     }
 
-    /**
-     * @return TargetGroup
-     */
-    public function getElement()
+    public function getElement(): TargetGroup
     {
         return $this->getTargetGroup();
     }

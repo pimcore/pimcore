@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,13 +27,13 @@ trait TemporaryFileHelperTrait
     /**
      * Get local file path of the given file or URL
      *
-     * @param string|resource $stream local path, wrapper or file handle
+     * @param string $stream local path, wrapper or file handle
      *
      * @return string path to local file
      *
      * @throws \Exception
      */
-    protected static function getLocalFileFromStream($stream): string
+    protected static function getLocalFileFromStream(string $stream): string
     {
         if (!stream_is_local($stream) || stream_get_meta_data($stream)['uri'] === 'php://temp') {
             $stream = self::getTemporaryFileFromStream($stream);
@@ -47,14 +48,14 @@ trait TemporaryFileHelperTrait
     }
 
     /**
-     * @param resource|string $stream
+     * @param string $stream
      * @param bool $keep whether to delete this file on shutdown or not
      *
      * @return string
      *
      * @throws \Exception
      */
-    protected static function getTemporaryFileFromStream($stream, bool $keep = false): string
+    protected static function getTemporaryFileFromStream(string $stream, bool $keep = false): string
     {
         if (is_string($stream)) {
             $src = fopen($stream, 'rb');

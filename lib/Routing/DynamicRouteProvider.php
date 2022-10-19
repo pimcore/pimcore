@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,15 +30,12 @@ use Symfony\Component\Routing\RouteCollection;
  */
 final class DynamicRouteProvider implements RouteProviderInterface
 {
-    /**
-     * @var SiteResolver
-     */
-    protected $siteResolver;
+    protected SiteResolver $siteResolver;
 
     /**
      * @var DynamicRouteHandlerInterface[]
      */
-    protected $handlers = [];
+    protected array $handlers = [];
 
     /**
      * @param SiteResolver $siteResolver
@@ -52,9 +50,6 @@ final class DynamicRouteProvider implements RouteProviderInterface
         }
     }
 
-    /**
-     * @param DynamicRouteHandlerInterface $handler
-     */
     public function addHandler(DynamicRouteHandlerInterface $handler)
     {
         if (!in_array($handler, $this->handlers, true)) {

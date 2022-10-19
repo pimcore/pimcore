@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,7 +25,7 @@ class ExportDataExtractorService implements ExportDataExtractorServiceInterface
     /**
      * @var DataExtractorInterface[]
      */
-    private $dataExtractors;
+    private array $dataExtractors;
 
     /**
      * @param TranslationItem $translationItem

@@ -77,17 +77,17 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     }
 
     /**
-     * @param string $name
-     * @param array $arguments
+     * @param string $method
+     * @param array $args
      *
      * @return mixed|void
      *
      * @throws \Exception
      */
-    public function __call($name, $arguments)
+    public function __call(string $method, array $args)
     {
-        if (str_starts_with($name, 'get')) {
-            $key = substr($name, 3, strlen($name) - 3);
+        if (str_starts_with($method, 'get')) {
+            $key = substr($method, 3, strlen($method) - 3);
             $idx = array_searchi($key, $this->columns);
 
             if ($idx !== false) {
@@ -99,13 +99,13 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
             throw new \Exception("Requested data $key not available");
         }
 
-        if (str_starts_with($name, 'set')) {
-            $key = substr($name, 3);
+        if (str_starts_with($method, 'set')) {
+            $key = substr($method, 3);
             $idx = array_searchi($key, $this->columns);
 
             if ($idx !== false) {
                 $correctedKey = $this->columns[$idx];
-                $this->data[$correctedKey] = $arguments[0];
+                $this->data[$correctedKey] = $args[0];
                 $this->markMeDirty();
             } else {
                 throw new \Exception("Requested data $key not available");
@@ -243,17 +243,11 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
         return $this->columns;
     }
 
-    /**
-     * @return array
-     */
     public function getData(): array
     {
         return $this->data;
     }
 
-    /**
-     * @param array $data
-     */
     public function setData(array $data): void
     {
         $this->data = $data;

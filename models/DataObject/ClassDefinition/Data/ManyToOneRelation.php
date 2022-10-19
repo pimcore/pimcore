@@ -582,10 +582,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return implode(' | ', $this->getPhpDocClassString(false));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+
+    public function normalize(mixed $value, array $params = [])
     {
         if ($value) {
             $type = Element\Service::getElementType($value);
@@ -600,10 +598,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+
+    public function denormalize(mixed $value, array $params = [])
     {
         if (is_array($value)) {
             $type = $value['type'];
@@ -678,9 +674,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         if ($phpdocType = $this->getPhpdocType()) {

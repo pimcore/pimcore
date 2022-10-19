@@ -24,10 +24,7 @@ class TargetingStorage implements DataProviderInterface
 {
     const PROVIDER_KEY = 'targeting_storage';
 
-    /**
-     * @var TargetingStorageInterface
-     */
-    private $storage;
+    private TargetingStorageInterface $storage;
 
     public function __construct(TargetingStorageInterface $storage)
     {

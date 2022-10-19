@@ -24,7 +24,7 @@ class DataObject extends Data
     /**
      * {@inheritdoc}
      */
-    public function normalize($value, $params = [])
+    public function normalize(mixed $value, array $params = [])
     {
         $element = Service::getElementByPath('object', $value);
         if ($element) {
@@ -37,7 +37,7 @@ class DataObject extends Data
     /**
      * {@inheritdoc}
      */
-    public function denormalize($value, $params = [])
+    public function denormalize(mixed $value, array $params = [])
     {
         $element = null;
         if (is_numeric($value)) {

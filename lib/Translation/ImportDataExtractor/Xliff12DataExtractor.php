@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,15 +24,9 @@ use Pimcore\Translation\ImportDataExtractor\TranslationItemResolver\TranslationI
 
 class Xliff12DataExtractor implements ImportDataExtractorInterface
 {
-    /**
-     * @var Xliff12Escaper
-     */
-    protected $xliffEscaper;
+    protected Xliff12Escaper $xliffEscaper;
 
-    /**
-     * @var TranslationItemResolverInterface
-     */
-    protected $translationItemResolver;
+    protected TranslationItemResolverInterface $translationItemResolver;
 
     public function __construct(Xliff12Escaper $xliffEscaper, TranslationItemResolverInterface $translationItemResolver)
     {
@@ -89,9 +84,7 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
         return $attributeSet;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getImportFilePath(string $importId): string
     {
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $importId . '.xliff';

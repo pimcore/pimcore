@@ -174,9 +174,6 @@ trait Wrapper
         return false;
     }
 
-    /**
-     * @return \Exception
-     */
     protected function getHardlinkError(): \Exception
     {
         return new \Exception('Method not supported by hard linked documents');
@@ -202,17 +199,11 @@ trait Wrapper
         return $this->hardLinkSource;
     }
 
-    /**
-     * @return Document|null
-     */
     public function getSourceDocument(): ?Document
     {
         return $this->sourceDocument;
     }
 
-    /**
-     * @param Document $sourceDocument
-     */
     public function setSourceDocument(Document $sourceDocument): void
     {
         $this->sourceDocument = $sourceDocument;

@@ -25,7 +25,7 @@ class LinkGeneratorResolver extends ClassResolver
     /**
      * @param string $generatorClass
      *
-     * @return LinkGeneratorInterface|null
+     * @return object|null
      */
     public static function resolveGenerator($generatorClass)
     {

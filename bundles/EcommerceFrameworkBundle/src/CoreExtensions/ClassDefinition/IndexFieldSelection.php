@@ -329,7 +329,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         return '\\' . ObjectData\IndexFieldSelection::class . '|null';
     }
 
-    public function normalize($value, $params = [])
+    public function normalize(mixed $value, array $params = [])
     {
         if ($value instanceof ObjectData\IndexFieldSelection) {
             return [
@@ -342,7 +342,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         return null;
     }
 
-    public function denormalize($value, $params = [])
+    public function denormalize(mixed $value, array $params = [])
     {
         if (is_array($value)) {
             $tenant = $value['tenant'];

@@ -216,9 +216,6 @@ class Rule extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getActions(): array
     {
         return $this->actions;
@@ -282,17 +279,11 @@ class Rule extends Model\AbstractModel
         return $this->active;
     }
 
-    /**
-     * @return int
-     */
     public function getPrio(): int
     {
         return $this->prio;
     }
 
-    /**
-     * @param int $prio
-     */
     public function setPrio(int $prio)
     {
         $this->prio = $prio;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,15 +33,9 @@ class TwoFactorListener
 {
     use LoggerAwareTrait;
 
-    /**
-     * @var TwoFactorProviderRegistry
-     */
-    private $providerRegistry;
+    private TwoFactorProviderRegistry $providerRegistry;
 
-    /**
-     * @var PreparationRecorderInterface
-     */
-    private $preparationRecorder;
+    private PreparationRecorderInterface $preparationRecorder;
 
     public function __construct(TwoFactorProviderRegistry $providerRegistry, PreparationRecorderInterface $preparationRecorder)
     {
@@ -48,7 +43,7 @@ class TwoFactorListener
         $this->preparationRecorder = $preparationRecorder;
     }
 
-    public function onAuthenticationComplete(TwoFactorAuthenticationEvent $event)
+    public function onAuthenticationComplete(TwoFactorAuthenticationEvent $event): void
     {
         // this session flag is set in \Pimcore\Bundle\AdminBundle\Security\AdminAuthenticator
         // or \Pimcore\Bundle\AdminBundle\Security\AdminAuthenticator (Authenticator Based Security)
@@ -58,7 +53,7 @@ class TwoFactorListener
         });
     }
 
-    public function onAuthenticationAttempt(TwoFactorAuthenticationEvent $event)
+    public function onAuthenticationAttempt(TwoFactorAuthenticationEvent $event): void
     {
         $twoFactorToken = $event->getToken();
         if (!$twoFactorToken instanceof TwoFactorTokenInterface) {

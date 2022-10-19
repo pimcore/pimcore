@@ -25,7 +25,7 @@ class DynamicTextResolver extends ClassResolver
     /**
      * @param string $renderingClass
      *
-     * @return DynamicTextLabelInterface|null
+     * @return object|null
      */
     public static function resolveRenderingClass($renderingClass)
     {

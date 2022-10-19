@@ -75,17 +75,11 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return $this->maxItems;
     }
 
-    /**
-     * @return bool
-     */
     public function getBorder(): bool
     {
         return $this->border;
     }
 
-    /**
-     * @param bool $border
-     */
     public function setBorder(bool $border): void
     {
         $this->border = $border;
@@ -877,7 +871,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     public static function collectCalculatedValueItems($container, &$list = [])
     {
         if (is_array($container)) {
-            /** @var DataObject\ClassDefinition\Data $childDef */
             foreach ($container as $childDef) {
                 if ($childDef instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
                     $list[] = $childDef;
@@ -886,42 +879,32 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Objectbrick::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Objectbrick::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Objectbrick::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Objectbrick::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+
+    public function normalize(mixed $value, array $params = [])
     {
         if ($value instanceof Objectbrick) {
             $result = [];
@@ -952,10 +935,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+
+    public function denormalize(mixed $value, array $params = [])
     {
         if (is_array($value)) {
             $result = [];

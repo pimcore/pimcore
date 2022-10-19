@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,10 +25,6 @@ class SiteResolver extends AbstractRequestResolver
 
     const ATTRIBUTE_SITE_PATH = '_site_path';
 
-    /**
-     * @param Request $request
-     * @param Site $site
-     */
     public function setSite(Request $request, Site $site)
     {
         $request->attributes->set(static::ATTRIBUTE_SITE, $site);
@@ -38,7 +35,7 @@ class SiteResolver extends AbstractRequestResolver
      *
      * @return Site|null
      */
-    public function getSite(Request $request = null)
+    public function getSite(Request $request = null): ?Site
     {
         if (null === $request) {
             $request = $this->getCurrentRequest();
@@ -47,11 +44,7 @@ class SiteResolver extends AbstractRequestResolver
         return $request->attributes->get(static::ATTRIBUTE_SITE);
     }
 
-    /**
-     * @param Request $request
-     * @param string $path
-     */
-    public function setSitePath(Request $request, $path)
+    public function setSitePath(Request $request, string $path)
     {
         $request->attributes->set(static::ATTRIBUTE_SITE_PATH, $path);
     }
@@ -61,7 +54,7 @@ class SiteResolver extends AbstractRequestResolver
      *
      * @return string|null
      */
-    public function getSitePath(Request $request = null)
+    public function getSitePath(Request $request = null): ?string
     {
         if (null === $request) {
             $request = $this->getCurrentRequest();
@@ -75,7 +68,7 @@ class SiteResolver extends AbstractRequestResolver
      *
      * @return bool
      */
-    public function isSiteRequest(Request $request = null)
+    public function isSiteRequest(Request $request = null): bool
     {
         $site = $this->getSite($request);
 

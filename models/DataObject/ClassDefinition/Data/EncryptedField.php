@@ -109,7 +109,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /**
-     * @throws \Defuse\Crypto\Exception\BadFormatException
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
     private function encrypt(mixed $data, Model\DataObject\Concrete $object, array $params): string
@@ -502,42 +501,32 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return $this->delegate ? $this->delegate->getPhpdocInputType() . '|\\Pimcore\\Model\\DataObject\\Data\\EncryptedField' : null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return $this->delegate ? $this->delegate->getPhpdocReturnType() . '|\\Pimcore\\Model\\DataObject\\Data\\EncryptedField' : null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+
+    public function normalize(mixed $value, array $params = [])
     {
         if ($value instanceof Model\DataObject\Data\EncryptedField) {
             $plainValue = $value->getPlain();
@@ -549,10 +538,8 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+
+    public function denormalize(mixed $value, array $params = [])
     {
         if ($this->delegate instanceof NormalizerInterface) {
             $value = $this->delegate->denormalize($value, $params);

@@ -126,9 +126,6 @@ class Data extends \Pimcore\Model\AbstractModel
         }
     }
 
-    /**
-     * @return Data\Id|null
-     */
     public function getId(): ?Data\Id
     {
         return $this->id;
@@ -577,11 +574,6 @@ class Data extends \Pimcore\Model\AbstractModel
         return $data;
     }
 
-    /**
-     * @param Element\ElementInterface $element
-     *
-     * @return self
-     */
     public static function getForElement(Element\ElementInterface $element): self
     {
         $data = new self();

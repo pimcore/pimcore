@@ -93,9 +93,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      */
     public $columnLength = 190;
 
-    /**
-     * @return string
-     */
     public function getElementType(): string
     {
         return $this->elementType;
@@ -172,33 +169,21 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $this->calculatorClass = $calculatorClass;
     }
 
-    /**
-     * @return string
-     */
     public function getCalculatorType(): string
     {
         return $this->calculatorType;
     }
 
-    /**
-     * @param string $calculatorType
-     */
     public function setCalculatorType(string $calculatorType): void
     {
         $this->calculatorType = $calculatorType;
     }
 
-    /**
-     * @return string|null
-     */
     public function getCalculatorExpression(): ?string
     {
         return $this->calculatorExpression;
     }
 
-    /**
-     * @param string|null $calculatorExpression
-     */
     public function setCalculatorExpression(?string $calculatorExpression): void
     {
         $this->calculatorExpression = $calculatorExpression;
@@ -549,33 +534,25 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $oldValue === $newValue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\CalculatedValue::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return 'mixed';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\CalculatedValue::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return 'mixed';

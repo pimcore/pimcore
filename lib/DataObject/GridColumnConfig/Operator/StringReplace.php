@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,26 +16,20 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
+use Pimcore\Model\Element\ElementInterface;
+
 /**
  * @internal
  */
 final class StringReplace extends AbstractOperator
 {
-    /**
-     * @var string
-     */
-    private $search;
+    private string $search;
 
-    /**
-     * @var string
-     */
-    private $replace;
+    private string $replace;
 
     private bool $insensitive;
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -47,7 +42,7 @@ final class StringReplace extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         $result = new \stdClass();
         $result->label = $this->label;
@@ -92,12 +87,7 @@ final class StringReplace extends AbstractOperator
         return $result;
     }
 
-    /**
-     * @param string $value
-     *
-     * @return string
-     */
-    public function replace($value)
+    public function replace(string $value): string
     {
         if ($this->getInsensitive()) {
             return str_ireplace($this->getSearch(), $this->getReplace(), $value);
@@ -106,50 +96,32 @@ final class StringReplace extends AbstractOperator
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getSearch()
+    public function getSearch(): string
     {
         return $this->search;
     }
 
-    /**
-     * @param string $search
-     */
-    public function setSearch($search)
+    public function setSearch(string $search)
     {
         $this->search = $search;
     }
 
-    /**
-     * @return string
-     */
-    public function getReplace()
+    public function getReplace(): string
     {
         return $this->replace;
     }
 
-    /**
-     * @param string $replace
-     */
-    public function setReplace($replace)
+    public function setReplace(string $replace)
     {
         $this->replace = $replace;
     }
 
-    /**
-     * @return bool
-     */
-    public function getInsensitive()
+    public function getInsensitive(): bool
     {
         return $this->insensitive;
     }
 
-    /**
-     * @param bool $insensitive
-     */
-    public function setInsensitive($insensitive)
+    public function setInsensitive(bool $insensitive)
     {
         $this->insensitive = $insensitive;
     }

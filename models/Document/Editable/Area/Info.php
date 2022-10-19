@@ -91,9 +91,6 @@ class Info
         return $this->editable;
     }
 
-    /**
-     * @param Editable $editable
-     */
     public function setEditable(Editable $editable)
     {
         $this->editable = $editable;

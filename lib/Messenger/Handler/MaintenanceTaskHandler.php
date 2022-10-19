@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,7 +29,7 @@ class MaintenanceTaskHandler
     ) {
     }
 
-    public function __invoke(MaintenanceTaskMessage $message)
+    public function __invoke(MaintenanceTaskMessage $message): void
     {
         $this->maintenanceExecutor->executeTask($message->getName());
     }

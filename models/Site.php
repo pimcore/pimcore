@@ -29,9 +29,6 @@ final class Site extends AbstractModel
 {
     use RecursionBlockingEventDispatchHelperTrait;
 
-    /**
-     * @var Site|null
-     */
     protected static ?Site $currentSite = null;
 
     /**
@@ -264,9 +261,6 @@ final class Site extends AbstractModel
         return $this->rootId;
     }
 
-    /**
-     * @return Document\Page|null
-     */
     public function getRootDocument(): ?Document\Page
     {
         return $this->rootDocument;

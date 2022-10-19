@@ -17,23 +17,11 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 interface TypeDeclarationSupportInterface
 {
-    /**
-     * @return string|null
-     */
     public function getParameterTypeDeclaration(): ?string;
 
-    /**
-     * @return string|null
-     */
     public function getReturnTypeDeclaration(): ?string;
 
-    /**
-     * @return string|null
-     */
     public function getPhpdocInputType(): ?string;
 
-    /**
-     * @return string|null
-     */
     public function getPhpdocReturnType(): ?string;
 }

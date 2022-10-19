@@ -52,9 +52,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class Service extends Model\AbstractModel
 {
-    /**
-     * @var EscapeFormula|null
-     */
     private static ?EscapeFormula $formatter = null;
 
     /**

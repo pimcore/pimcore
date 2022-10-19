@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,20 +20,17 @@ use Pimcore\Image\Adapter;
 
 class GD extends Adapter
 {
-    /**
-     * @var string
-     */
-    protected $path;
+    protected string $path;
 
     /**
      * @var resource|\GdImage|false
      */
-    protected $resource;
+    protected mixed $resource;
 
     /**
      * {@inheritdoc}
      */
-    public function load($imagePath, $options = [])
+    public function load(string $imagePath, array $options = []): Adapter|bool|GD|static
     {
         $this->path = $imagePath;
         if (!$this->resource = @imagecreatefromstring(file_get_contents($this->path))) {
@@ -58,10 +56,8 @@ class GD extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getContentOptimizedFormat()
+
+    public function getContentOptimizedFormat(): string
     {
         $format = 'pjpeg';
         if ($this->hasAlphaChannel()) {
@@ -74,7 +70,7 @@ class GD extends Adapter
     /**
      * {@inheritdoc}
      */
-    public function save($path, $format = null, $quality = null)
+    public function save(string $path, string $format = null, int $quality = null): Adapter|GD|static
     {
         if (!$format || $format == 'png32') {
             $format = 'png';
@@ -158,10 +154,8 @@ class GD extends Adapter
         return $newImg;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function resize($width, $height)
+
+    public function resize(int $width, int $height): Adapter|GD|static
     {
         $this->preModify();
 
@@ -177,10 +171,8 @@ class GD extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function crop($x, $y, $width, $height)
+
+    public function crop(int $x, int $y, int $width, int $height): Adapter|GD|static
     {
         $this->preModify();
 
@@ -202,10 +194,8 @@ class GD extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function frame($width, $height, $forceResize = false)
+
+    public function frame(int $width, int $height, bool $forceResize = false): Adapter|GD|static
     {
         $this->preModify();
 
@@ -228,10 +218,8 @@ class GD extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setBackgroundColor($color)
+
+    public function setBackgroundColor(string $color): Adapter|GD|static
     {
         $this->preModify();
 
@@ -253,10 +241,8 @@ class GD extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setBackgroundImage($image, $mode = null)
+
+    public function setBackgroundImage(string $image): Adapter|GD|static
     {
         $this->preModify();
 
@@ -290,10 +276,8 @@ class GD extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function grayscale()
+
+    public function grayscale(): Adapter|GD|static
     {
         $this->preModify();
 
@@ -304,10 +288,8 @@ class GD extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sepia()
+
+    public function sepia(): Adapter|GD|static
     {
         $this->preModify();
 
@@ -322,7 +304,7 @@ class GD extends Adapter
     /**
      * {@inheritdoc}
      */
-    public function addOverlay($image, $x = 0, $y = 0, $alpha = 100, $composite = 'COMPOSITE_DEFAULT', $origin = 'top-left')
+    public function addOverlay(mixed $image, int $x = 0, int $y = 0, int $alpha = 100, string $composite = 'COMPOSITE_DEFAULT', string $origin = 'top-left'): Adapter|GD|static
     {
         $this->preModify();
 
@@ -354,10 +336,8 @@ class GD extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function mirror($mode)
+
+    public function mirror(string $mode): Adapter|GD|static
     {
         $this->preModify();
 
@@ -372,10 +352,8 @@ class GD extends Adapter
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function rotate($angle)
+
+    public function rotate(int $angle): Adapter|GD|static
     {
         $this->preModify();
         $angle = 360 - $angle;
@@ -391,7 +369,7 @@ class GD extends Adapter
         return $this;
     }
 
-    protected static $supportedFormatsCache = [];
+    protected static array $supportedFormatsCache = [];
 
     /**
      * {@inheritdoc}

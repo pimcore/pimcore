@@ -19,36 +19,25 @@ namespace Pimcore\DataObject\GridColumnConfig\Value;
 
 abstract class AbstractValue implements ValueInterface
 {
-    /**
-     * @var string
-     */
-    protected $attribute;
+    protected string $attribute;
 
-    /**
-     * @var string
-     */
-    protected $label;
+    protected string $label;
 
-    /**
-     * @var mixed
-     */
-    protected $context;
+    protected mixed $context;
 
     /**
      * @param \stdClass $config
-     * @param mixed $context
+     * @param mixed|null $context
      */
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, mixed $context = null)
     {
         $this->attribute = $config->attribute;
         $this->label = $config->label;
         $this->context = $context;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getLabel()
+
+    public function getLabel(): string
     {
         return $this->label;
     }

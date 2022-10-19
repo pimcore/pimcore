@@ -24,15 +24,9 @@ use Pimcore\DependencyInjection\CollectionServiceLocator;
  */
 class Manager
 {
-    /**
-     * @var CollectionServiceLocator
-     */
-    private $services;
+    private CollectionServiceLocator $services;
 
-    /**
-     * @var array
-     */
-    private $sortedServices;
+    private array $sortedServices;
 
     public function __construct(CollectionServiceLocator $services)
     {

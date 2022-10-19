@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,25 +27,15 @@ class LogoutEvent extends Event
     use RequestAwareTrait;
     use ResponseAwareTrait;
 
-    /**
-     * @var User
-     */
-    protected $user;
+    protected User $user;
 
-    /**
-     * @param Request $request
-     * @param User $user
-     */
     public function __construct(Request $request, User $user)
     {
         $this->request = $request;
         $this->user = $user;
     }
 
-    /**
-     * @return User
-     */
-    public function getUser()
+    public function getUser(): User
     {
         return $this->user;
     }

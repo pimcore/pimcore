@@ -338,42 +338,32 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $oldValue === $newValue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Asset\Image::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Asset\Image::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Asset\Image::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Asset\Image::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+
+    public function normalize(mixed $value, array $params = [])
     {
         if ($value instanceof \Pimcore\Model\Asset\Image) {
             return [
@@ -385,10 +375,8 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+
+    public function denormalize(mixed $value, array $params = [])
     {
         if (isset($value['id'])) {
             return Asset\Image::getById($value['id']);

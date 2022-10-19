@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -44,28 +45,18 @@ class ObjectUserProvider implements UserProviderInterface
      *
      * @var string
      */
-    protected $className;
+    protected string $className;
 
-    /**
-     * @var string
-     */
-    protected $usernameField = 'username';
+    protected string $usernameField = 'username';
 
-    /**
-     * @param string $className
-     * @param string $usernameField
-     */
-    public function __construct($className, $usernameField = 'username')
+    public function __construct(string $className, string $usernameField = 'username')
     {
         $this->setClassName($className);
 
         $this->usernameField = $usernameField;
     }
 
-    /**
-     * @param string $className
-     */
-    protected function setClassName($className)
+    protected function setClassName(string $className)
     {
         if (empty($className)) {
             throw new InvalidArgumentException('Object class name is empty');
@@ -86,7 +77,7 @@ class ObjectUserProvider implements UserProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadUserByIdentifier(string $username)
+    public function loadUserByIdentifier(string $username): UserInterface
     {
         $getter = sprintf('getBy%s', ucfirst($this->usernameField));
 
@@ -104,7 +95,7 @@ class ObjectUserProvider implements UserProviderInterface
      *
      * @deprecated use loadUserByIdentifier() instead.
      */
-    public function loadUserByUsername($username)
+    public function loadUserByUsername($username): UserInterface
     {
         return $this->loadUserByIdentifier($username);
     }
@@ -126,7 +117,7 @@ class ObjectUserProvider implements UserProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function supportsClass($class)
+    public function supportsClass($class): bool
     {
         return $class === $this->className;
     }

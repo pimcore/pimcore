@@ -33,9 +33,6 @@ class Dao extends Model\Dao\AbstractDao
      */
     const TABLE_PREFIX = 'translations_';
 
-    /**
-     * @return string
-     */
     public function getDatabaseTableName(): string
     {
         return self::TABLE_PREFIX . $this->model->getDomain();

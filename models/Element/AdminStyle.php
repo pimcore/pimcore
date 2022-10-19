@@ -46,9 +46,6 @@ class AdminStyle
      */
     protected $elementQtipConfig;
 
-    /**
-     * @param ElementInterface $element
-     */
     public function __construct(ElementInterface $element)
     {
         if ($element instanceof AbstractObject) {

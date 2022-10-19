@@ -244,9 +244,7 @@ abstract class AbstractRelations extends Data implements
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPathFormatterClass(): ?string
     {
         return $this->pathFormatterClass;
@@ -469,25 +467,18 @@ abstract class AbstractRelations extends Data implements
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?array';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return 'array';
     }
 
-    /**
-     * @return string|null
-     */
     public function getPhpdocInputType(): ?string
     {
         if ($this->getPhpdocType()) {
@@ -497,9 +488,7 @@ abstract class AbstractRelations extends Data implements
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         if ($phpdocType = $this->getPhpdocType()) {

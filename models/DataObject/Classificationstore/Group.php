@@ -31,27 +31,17 @@ final class Group
      */
     protected $classificationStore;
 
-    /**
-     * @param Classificationstore $classificationStore
-     * @param GroupConfig $configuration
-     */
     public function __construct(Classificationstore $classificationStore, GroupConfig $configuration)
     {
         $this->configuration = $configuration;
         $this->classificationStore = $classificationStore;
     }
 
-    /**
-     * @return GroupConfig
-     */
     public function getConfiguration(): GroupConfig
     {
         return $this->configuration;
     }
 
-    /**
-     * @return Classificationstore
-     */
     public function getClassificationStore(): Classificationstore
     {
         return $this->classificationStore;
@@ -81,9 +71,6 @@ final class Group
             ->load();
     }
 
-    /**
-     * @return KeyGroupRelation\Listing
-     */
     protected function getKeyGroupRelationListing(): KeyGroupRelation\Listing
     {
         return new KeyGroupRelation\Listing();
@@ -99,11 +86,6 @@ final class Group
         return array_map([$this, 'getKeyByKeyGroupRelation'], $keyGroupRelations);
     }
 
-    /**
-     * @param KeyGroupRelation $keyGroupRelation
-     *
-     * @return Key
-     */
     protected function getKeyByKeyGroupRelation(KeyGroupRelation $keyGroupRelation): Key
     {
         $keyConfig = $this->getKeyConfigById((int)$keyGroupRelation->getKeyId());
@@ -111,11 +93,6 @@ final class Group
         return new Key($this, $keyConfig);
     }
 
-    /**
-     * @param int $id
-     *
-     * @return KeyConfig
-     */
     public function getKeyConfigById(int $id): KeyConfig
     {
         return KeyConfig::getById($id);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -34,20 +35,13 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class PasswordHasherFactory implements PasswordHasherFactoryInterface
 {
-    /**
-     * @var PasswordHasherFactoryInterface
-     */
-    protected $frameworkFactory;
+    protected PasswordHasherFactoryInterface $frameworkFactory;
 
     /**
      * @var PasswordHasherFactoryInterface[]
      */
-    protected $encoderFactories = [];
+    protected array $encoderFactories = [];
 
-    /**
-     * @param PasswordHasherFactoryInterface $frameworkFactory
-     * @param array $encoderFactories
-     */
     public function __construct(PasswordHasherFactoryInterface $frameworkFactory, array $encoderFactories = [])
     {
         $this->frameworkFactory = $frameworkFactory;

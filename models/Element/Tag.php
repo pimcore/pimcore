@@ -220,9 +220,6 @@ final class Tag extends Model\AbstractModel
         }
     }
 
-    /**
-     * @return int|null
-     */
     public function getId(): ?int
     {
         return $this->id;
@@ -260,9 +257,6 @@ final class Tag extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getParentId(): int
     {
         return $this->parentId;
@@ -282,9 +276,6 @@ final class Tag extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return Tag|null
-     */
     public function getParent(): ?Tag
     {
         if ($this->parent === null && $parentId = $this->getParentId()) {

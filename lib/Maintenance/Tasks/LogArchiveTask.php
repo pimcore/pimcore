@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,26 +30,12 @@ use Psr\Log\LoggerInterface;
  */
 class LogArchiveTask implements TaskInterface
 {
-    /**
-     * @var Connection
-     */
-    private $db;
+    private Connection $db;
 
-    /**
-     * @var Config
-     */
-    private $config;
+    private Config $config;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @param Connection $db
-     * @param Config $config
-     * @param LoggerInterface $logger
-     */
     public function __construct(Connection $db, Config $config, LoggerInterface $logger)
     {
         $this->db = $db;

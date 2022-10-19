@@ -182,7 +182,7 @@ class Installer extends AbstractInstaller
     /**
      * {@inheritdoc}
      */
-    public function isInstalled()
+    public function isInstalled(): bool
     {
         $installed = false;
 
@@ -201,7 +201,7 @@ class Installer extends AbstractInstaller
     /**
      * {@inheritdoc}
      */
-    public function canBeInstalled()
+    public function canBeInstalled(): bool
     {
         return !$this->isInstalled();
     }
@@ -209,7 +209,7 @@ class Installer extends AbstractInstaller
     /**
      * {@inheritdoc}
      */
-    public function canBeUninstalled()
+    public function canBeUninstalled(): bool
     {
         return $this->isInstalled();
     }
@@ -399,7 +399,7 @@ class Installer extends AbstractInstaller
         return $results;
     }
 
-    public function needsReloadAfterInstall()
+    public function needsReloadAfterInstall(): bool
     {
         return true;
     }

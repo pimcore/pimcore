@@ -866,9 +866,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return false;
     }
 
-    /**
-     * @return array
-     */
     public function getBlockedVarsForExport(): array
     {
         return [
@@ -957,9 +954,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $this->localized = (bool) $localized;
     }
 
-    /**
-     * @return array|null
-     */
     public function getPermissionView(): ?array
     {
         return $this->permissionView;
@@ -973,9 +967,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $this->permissionView = $permissionView;
     }
 
-    /**
-     * @return array|null
-     */
     public function getPermissionEdit(): ?array
     {
         return $this->permissionEdit;
@@ -1085,7 +1076,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $relation->setOrderKey(['sorter', 'id']);
             $relation->setOrder(['ASC', 'ASC']);
             $relation = $relation->load();
-            /** @var DataObject\Classificationstore\KeyGroupRelation $keyGroupRelation */
             foreach ($relation as $keyGroupRelation) {
                 if (!$keyGroupRelation->isEnabled()) {
                     continue;
@@ -1255,42 +1245,32 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Classificationstore::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Classificationstore::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Classificationstore::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Classificationstore::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+
+    public function normalize(mixed $value, array $params = [])
     {
         if ($value instanceof DataObject\Classificationstore) {
             $validLanguages = array_merge(['default'], Tool::getValidLanguages());
@@ -1333,10 +1313,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+
+    public function denormalize(mixed $value, array $params = [])
     {
         if (is_array($value)) {
             $activeGroups = [];

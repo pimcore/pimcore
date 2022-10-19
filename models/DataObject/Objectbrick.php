@@ -135,9 +135,6 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getBrickGetters(): array
     {
         $getters = [];
@@ -148,17 +145,11 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         return $getters;
     }
 
-    /**
-     * @return array
-     */
     public function getAllowedBrickTypes(): array
     {
         return $this->brickGetters;
     }
 
-    /**
-     * @return array
-     */
     public function getItemDefinitions(): array
     {
         $definitions = [];
@@ -245,9 +236,6 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         }
     }
 
-    /**
-     * @return Concrete|null
-     */
     public function getObject(): ?Concrete
     {
         if ($this->objectId && !$this->object) {
@@ -279,9 +267,6 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         return $this;
     }
 
-    /**
-     * @param Concrete $object
-     */
     public function delete(Concrete $object): void
     {
         if (is_array($this->getItems())) {
@@ -295,9 +280,6 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         $this->getDao()->delete($object);
     }
 
-    /**
-     * @return array
-     */
     public function __sleep(): array
     {
         $finalVars = [];

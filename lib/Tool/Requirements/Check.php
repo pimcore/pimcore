@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,25 +27,13 @@ final class Check implements \ArrayAccess
 
     const STATE_ERROR = 3;
 
-    /**
-     * @var string
-     */
-    public $name;
+    public string $name;
 
-    /**
-     * @var string
-     */
-    public $link;
+    public string $link;
 
-    /**
-     * @var string
-     */
-    public $state;
+    public string $state;
 
-    /**
-     * @var string
-     */
-    public $message;
+    public string $message;
 
     /**
      * Check constructor.
@@ -58,58 +47,37 @@ final class Check implements \ArrayAccess
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
-    public function getLink()
+    public function getLink(): string
     {
         return $this->link;
     }
 
-    /**
-     * @param string $link
-     */
-    public function setLink($link)
+    public function setLink(string $link)
     {
         $this->link = $link;
     }
 
-    /**
-     * @return string
-     */
-    public function getState()
+    public function getState(): string
     {
         return $this->state;
     }
 
-    /**
-     * @param string $state
-     */
-    public function setState($state)
+    public function setState(string $state)
     {
         $this->state = $state;
     }
 
-    /**
-     * @return string
-     */
-    public function getMessage()
+    public function getMessage(): string
     {
         if (empty($this->message)) {
             return $this->getName() . ' is required.';
@@ -118,10 +86,7 @@ final class Check implements \ArrayAccess
         return $this->message;
     }
 
-    /**
-     * @param string $message
-     */
-    public function setMessage($message)
+    public function setMessage(string $message)
     {
         $this->message = $message;
     }

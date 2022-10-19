@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,9 +33,6 @@ final class DataObjectRoute extends Route implements RouteObjectInterface
 
     protected ?Site $site;
 
-    /**
-     * @return Concrete|null
-     */
     public function getObject(): ?Concrete
     {
         return $this->object;
@@ -50,9 +48,6 @@ final class DataObjectRoute extends Route implements RouteObjectInterface
         return $this;
     }
 
-    /**
-     * @return UrlSlug|null
-     */
     public function getSlug(): ?UrlSlug
     {
         return $this->slug;
@@ -68,9 +63,6 @@ final class DataObjectRoute extends Route implements RouteObjectInterface
         return $this;
     }
 
-    /**
-     * @return Site|null
-     */
     public function getSite(): ?Site
     {
         return $this->site;

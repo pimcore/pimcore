@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,15 +27,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class OptionsProvider implements SelectOptionsProviderInterface
 {
-    /**
-     * @var Manager
-     */
-    private $workflowManager;
+    private Manager $workflowManager;
 
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
+    private TranslatorInterface $translator;
 
     public function __construct(Manager $workflowManager, TranslatorInterface $translator)
     {
@@ -50,7 +45,7 @@ class OptionsProvider implements SelectOptionsProviderInterface
      *
      * @throws \Exception
      */
-    public function getOptions($context, $fieldDefinition)
+    public function getOptions($context, $fieldDefinition): array
     {
         $workflowName = $fieldDefinition->getOptionsProviderData();
         if (!$workflowName) {
@@ -104,7 +99,7 @@ class OptionsProvider implements SelectOptionsProviderInterface
      *
      * @return bool
      */
-    public function hasStaticOptions($context, $fieldDefinition)
+    public function hasStaticOptions($context, $fieldDefinition): bool
     {
         return true;
     }

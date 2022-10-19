@@ -25,9 +25,7 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
-    /**
-     * {@inheritdoc}
-     */
+
     public function configure()
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
@@ -68,11 +66,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         }
     }
 
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
     public function exists(string $name): bool
     {
         return (bool) $this->getDataByName($this->model->getName());
@@ -118,7 +111,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * {@inheritdoc}
      */
-    protected function prepareDataStructureForYaml(string $id, $data)
+    protected function prepareDataStructureForYaml(string $id, mixed $data)
     {
         return [
             'pimcore' => [

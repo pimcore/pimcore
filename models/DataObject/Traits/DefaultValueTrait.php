@@ -43,7 +43,7 @@ trait DefaultValueTrait
      * @param Concrete $object
      * @param array $params
      *
-     * @return mixed modified data
+     * @return \Carbon\Carbon|float|int|\Pimcore\Model\DataObject\Data\QuantityValue|string|null modified data
      */
     protected function handleDefaultValue($data, $object = null, $params = [])
     {
@@ -142,9 +142,6 @@ trait DefaultValueTrait
         return $data;
     }
 
-    /**
-     * @return string
-     */
     public function getDefaultValueGenerator(): string
     {
         return $this->defaultValueGenerator;

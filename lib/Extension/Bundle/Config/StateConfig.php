@@ -29,28 +29,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 final class StateConfig
 {
-    /**
-     * @var OptionsResolver
-     */
-    private static $optionsResolver;
+    private static OptionsResolver $optionsResolver;
 
-    /**
-     * @var array
-     */
-    private static $optionDefaults = [
+    private static array $optionDefaults = [
         'enabled' => false,
         'priority' => 10,
         'environments' => [],
     ];
 
-    /**
-     * @var Config
-     */
-    private $config;
+    private Config $config;
 
-    /**
-     * @param Config $config
-     */
     public function __construct(Config $config)
     {
         $this->config = $config;
@@ -128,7 +116,7 @@ final class StateConfig
      * @param string $bundle
      * @param array $options
      */
-    public function setState(string $bundle, array $options)
+    public function setState(string $bundle, array $options): void
     {
         $config = $this->config->loadConfig();
 
@@ -142,7 +130,7 @@ final class StateConfig
      *
      * @param array $states
      */
-    public function setStates(array $states)
+    public function setStates(array $states): void
     {
         $config = $this->config->loadConfig();
 
@@ -206,11 +194,11 @@ final class StateConfig
     /**
      * Normalizes options array as expected in extension manager config
      *
-     * @param array|bool $options
+     * @param bool|array $options
      *
      * @return array
      */
-    public function normalizeOptions($options): array
+    public function normalizeOptions(bool|array $options): array
     {
         if (is_bool($options)) {
             $options = ['enabled' => $options];

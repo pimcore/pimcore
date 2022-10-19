@@ -285,9 +285,6 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isUseCurrentDate(): bool
     {
         return $this->useCurrentDate;
@@ -424,42 +421,32 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $oldValue === $newValue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Carbon::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Carbon::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Carbon::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Carbon::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+
+    public function normalize(mixed $value, array $params = [])
     {
         if ($value instanceof Carbon) {
             return $value->getTimestamp();
@@ -468,10 +455,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+
+    public function denormalize(mixed $value, array $params = [])
     {
         if ($value !== null) {
             return $this->getDateFromTimestamp($value);

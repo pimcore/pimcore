@@ -99,25 +99,13 @@ final class SettingsStore extends Model\AbstractModel
         return $instance->getDao()->set($id, $data, $type, $scope);
     }
 
-    /**
-     * @param string $id
-     * @param string|null $scope
-     *
-     * @return mixed
-     */
-    public static function delete(string $id, ?string $scope = null)
+    public static function delete(string $id, ?string $scope = null): int|string
     {
         $instance = self::getInstance();
 
         return $instance->getDao()->delete($id, $scope);
     }
 
-    /**
-     * @param string $id
-     * @param string|null $scope
-     *
-     * @return SettingsStore|null
-     */
     public static function get(string $id, ?string $scope = null): ?SettingsStore
     {
         $item = new self();
@@ -140,41 +128,26 @@ final class SettingsStore extends Model\AbstractModel
         return $instance->getDao()->getIdsByScope($scope);
     }
 
-    /**
-     * @return string
-     */
     public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @param string $id
-     */
     public function setId(string $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @return string|null
-     */
     public function getScope(): ?string
     {
         return $this->scope;
     }
 
-    /**
-     * @param string|null $scope
-     */
     public function setScope(?string $scope): void
     {
         $this->scope = (string) $scope;
     }
 
-    /**
-     * @return string|null
-     */
     public function getType(): ?string
     {
         return $this->type;

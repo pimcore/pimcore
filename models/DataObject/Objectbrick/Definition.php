@@ -309,9 +309,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         return $result;
     }
 
-    /**
-     * @param string $serializedFilename
-     */
     private function cleanupOldFiles(string $serializedFilename): void
     {
         $oldObject = null;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,10 +27,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 abstract class AbstractUserAwarePasswordEncoder extends BasePasswordEncoder implements UserAwarePasswordEncoderInterface
 {
-    /**
-     * @var UserInterface|null
-     */
-    protected $user;
+    protected ?UserInterface $user;
 
     /**
      * {@inheritdoc}
@@ -46,7 +44,7 @@ abstract class AbstractUserAwarePasswordEncoder extends BasePasswordEncoder impl
     /**
      * {@inheritdoc}
      */
-    public function getUser()
+    public function getUser(): ?UserInterface
     {
         if (!$this->user) {
             throw new RuntimeException('No user was set');

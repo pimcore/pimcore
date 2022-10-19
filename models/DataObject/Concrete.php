@@ -346,11 +346,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return null;
     }
 
-    /**
-     * @param array $tags
-     *
-     * @return array
-     */
     public function getCacheTags(array $tags = []): array
     {
         $tags = parent::getCacheTags($tags);
@@ -396,9 +391,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $this;
     }
 
-    /**
-     * @return ClassDefinition|null
-     */
     public function getClass(): ?ClassDefinition
     {
         if (!$this->o_class) {
@@ -533,11 +525,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $this->getClosestParentOfClass($this->getClassId());
     }
 
-    /**
-     * @param string $classId
-     *
-     * @return self|null
-     */
     public function getClosestParentOfClass(string $classId): ?self
     {
         $parent = $this->getParent();

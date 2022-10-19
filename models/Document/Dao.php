@@ -231,9 +231,6 @@ class Dao extends Model\Element\Dao
         return $path;
     }
 
-    /**
-     * @return int
-     */
     public function getVersionCountForUpdate(): int
     {
         if (!$this->model->getId()) {

@@ -38,52 +38,27 @@ class PimcoreBundleManager
      *
      * @var StateConfig
      */
-    protected $stateConfig;
+    protected StateConfig $stateConfig;
 
-    /**
-     * @var PimcoreBundleLocator
-     */
-    protected $bundleLocator;
+    protected PimcoreBundleLocator $bundleLocator;
 
-    /**
-     * @var Kernel
-     */
-    protected $kernel;
+    protected Kernel $kernel;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
+    protected EventDispatcherInterface $dispatcher;
 
-    /**
-     * @var RouterInterface
-     */
-    protected $router;
+    protected RouterInterface $router;
 
-    /**
-     * @var array
-     */
-    protected $availableBundles;
+    protected array $availableBundles;
 
     /**
      * @deprecated
      *
      * @var array
      */
-    protected $enabledBundles;
+    protected array $enabledBundles;
 
-    /**
-     * @var array
-     */
-    protected $manuallyRegisteredBundleState;
+    protected array $manuallyRegisteredBundleState;
 
-    /**
-     * @param StateConfig $stateConfig
-     * @param PimcoreBundleLocator $bundleLocator
-     * @param Kernel $kernel
-     * @param EventDispatcherInterface $dispatcher
-     * @param RouterInterface $router
-     */
     public function __construct(
         StateConfig $stateConfig,
         PimcoreBundleLocator $bundleLocator,
@@ -122,12 +97,6 @@ class PimcoreBundleManager
         return $bundles;
     }
 
-    /**
-     * @param string $id
-     * @param bool $onlyInstalled
-     *
-     * @return PimcoreBundleInterface
-     */
     public function getActiveBundle(string $id, bool $onlyInstalled = true): PimcoreBundleInterface
     {
         foreach ($this->getActiveBundles($onlyInstalled) as $bundle) {
@@ -242,19 +211,14 @@ class PimcoreBundleManager
      *
      * @return bool
      */
-    public function exists($bundle): bool
+    public function exists(string|PimcoreBundleInterface $bundle): bool
     {
         $identifier = $this->getBundleIdentifier($bundle);
 
         return $this->isValidBundleIdentifier($identifier);
     }
 
-    /**
-     * @param string|PimcoreBundleInterface $bundle
-     *
-     * @return string
-     */
-    public function getBundleIdentifier($bundle): string
+    public function getBundleIdentifier(string|PimcoreBundleInterface $bundle): string
     {
         $identifier = $bundle;
         if ($bundle instanceof PimcoreBundleInterface) {
@@ -264,11 +228,6 @@ class PimcoreBundleManager
         return $identifier;
     }
 
-    /**
-     * @param string $identifier
-     *
-     * @return bool
-     */
     protected function isValidBundleIdentifier(string $identifier): bool
     {
         $validNames = array_merge(
@@ -284,7 +243,7 @@ class PimcoreBundleManager
      *
      * @param string $identifier
      */
-    protected function validateBundleIdentifier(string $identifier)
+    protected function validateBundleIdentifier(string $identifier): void
     {
         if (!$this->isValidBundleIdentifier($identifier)) {
             throw new BundleNotFoundException(sprintf('Bundle "%s" is no valid bundle identifier', $identifier));
@@ -298,7 +257,7 @@ class PimcoreBundleManager
      *
      * @return bool
      */
-    public function isManuallyRegistered($bundle): bool
+    public function isManuallyRegistered(string|PimcoreBundleInterface $bundle): bool
     {
         $identifier = $this->getBundleIdentifier($bundle);
 
@@ -314,7 +273,7 @@ class PimcoreBundleManager
      *
      * @param string $identifier
      */
-    protected function validateStateChange(string $identifier)
+    protected function validateStateChange(string $identifier): void
     {
         if ($this->isManuallyRegistered($identifier)) {
             throw new \LogicException(sprintf(
@@ -325,15 +284,15 @@ class PimcoreBundleManager
     }
 
     /**
-     * @deprecated
-     *
-     * Determines if bundle is allowed to change state (can be enabled/disabled)
-     *
      * @param string|PimcoreBundleInterface $bundle
      *
      * @return bool
+     *@deprecated
+     *
+     * Determines if bundle is allowed to change state (can be enabled/disabled)
+     *
      */
-    public function canChangeState($bundle): bool
+    public function canChangeState(string|PimcoreBundleInterface $bundle): bool
     {
         $identifier = $this->getBundleIdentifier($bundle);
 
@@ -343,15 +302,15 @@ class PimcoreBundleManager
     }
 
     /**
-     * @deprecated
-     *
-     * Reads bundle state from config
-     *
      * @param string|PimcoreBundleInterface $bundle
      *
      * @return array
+     *@deprecated
+          *
+          * Reads bundle state from config
+     *
      */
-    public function getState($bundle): array
+    public function getState(string|PimcoreBundleInterface $bundle): array
     {
         $identifier = $this->getBundleIdentifier($bundle);
 
@@ -365,14 +324,14 @@ class PimcoreBundleManager
     }
 
     /**
-     * @deprecated
+     * @param string|PimcoreBundleInterface $bundle
+     * @param array $options
+     *@deprecated
      *
      * Updates state for a bundle and writes it to config
      *
-     * @param string|PimcoreBundleInterface $bundle
-     * @param array $options
      */
-    public function setState($bundle, array $options)
+    public function setState(string|PimcoreBundleInterface $bundle, array $options): void
     {
         $identifier = $this->getBundleIdentifier($bundle);
 
@@ -389,7 +348,7 @@ class PimcoreBundleManager
      *
      * @param array $states
      */
-    public function setStates(array $states)
+    public function setStates(array $states): void
     {
         $updates = [];
 
@@ -406,14 +365,14 @@ class PimcoreBundleManager
     }
 
     /**
-     * @deprecated
+     * @param string|PimcoreBundleInterface $bundle
+     * @param array $state Optional additional state config (see StateConfig)
+     *@deprecated
      *
      * Enables a bundle
      *
-     * @param string|PimcoreBundleInterface $bundle
-     * @param array $state Optional additional state config (see StateConfig)
      */
-    public function enable($bundle, array $state = [])
+    public function enable(string|PimcoreBundleInterface $bundle, array $state = []): void
     {
         $state = array_merge($state, [
             'enabled' => true,
@@ -423,27 +382,27 @@ class PimcoreBundleManager
     }
 
     /**
-     * @deprecated
-     *
-     * Disables a bundle
-     *
      * @param string|PimcoreBundleInterface $bundle
+     *@deprecated
+     *
+          * Disables a bundle
+     *
      */
-    public function disable($bundle)
+    public function disable(string|PimcoreBundleInterface $bundle): void
     {
         $this->setState($bundle, ['enabled' => false]);
     }
 
     /**
-     * @deprecated
-     *
-     * Determines if a bundle is enabled
-     *
      * @param string|PimcoreBundleInterface $bundle
      *
      * @return bool
+     *@deprecated
+          *
+          * Determines if a bundle is enabled
+     *
      */
-    public function isEnabled($bundle): bool
+    public function isEnabled(string|PimcoreBundleInterface $bundle): bool
     {
         $identifier = $this->getBundleIdentifier($bundle);
 
@@ -452,13 +411,7 @@ class PimcoreBundleManager
         return in_array($identifier, $this->getEnabledBundleNames());
     }
 
-    /**
-     * @param PimcoreBundleInterface $bundle
-     * @param bool $throwException
-     *
-     * @return null|Installer\InstallerInterface
-     */
-    protected function loadBundleInstaller(PimcoreBundleInterface $bundle, bool $throwException = false)
+    protected function loadBundleInstaller(PimcoreBundleInterface $bundle, bool $throwException = false): ?Installer\InstallerInterface
     {
         if (null === $installer = $bundle->getInstaller()) {
             if ($throwException) {
@@ -479,7 +432,7 @@ class PimcoreBundleManager
      *
      * @return null|Installer\InstallerInterface
      */
-    public function getInstaller(PimcoreBundleInterface $bundle, bool $throwException = false)
+    public function getInstaller(PimcoreBundleInterface $bundle, bool $throwException = false): ?Installer\InstallerInterface
     {
         return $this->loadBundleInstaller($bundle, $throwException);
     }
@@ -491,7 +444,7 @@ class PimcoreBundleManager
      *
      * @throws InstallationException If the bundle can not be installed or doesn't define an installer
      */
-    public function install(PimcoreBundleInterface $bundle)
+    public function install(PimcoreBundleInterface $bundle): void
     {
         $installer = $this->loadBundleInstaller($bundle, true);
 
@@ -509,7 +462,7 @@ class PimcoreBundleManager
      *
      * @throws InstallationException If the bundle can not be uninstalled or doesn't define an installer
      */
-    public function uninstall(PimcoreBundleInterface $bundle)
+    public function uninstall(PimcoreBundleInterface $bundle): void
     {
         $installer = $this->loadBundleInstaller($bundle, true);
 

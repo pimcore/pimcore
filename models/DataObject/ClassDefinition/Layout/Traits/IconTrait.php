@@ -27,17 +27,11 @@ trait IconTrait
      */
     public $icon;
 
-    /**
-     * @return string|null
-     */
     public function getIcon(): ?string
     {
         return $this->icon;
     }
 
-    /**
-     * @param string|null $icon
-     */
     public function setIcon(?string $icon): void
     {
         $this->icon = $icon;

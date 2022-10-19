@@ -56,7 +56,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param string $id
      * @param string|null $scope
      *
-     * @return mixed
+     * @return int|string
      */
     public function delete(string $id, ?string $scope = null)
     {
@@ -66,12 +66,6 @@ class Dao extends Model\Dao\AbstractDao
         ]);
     }
 
-    /**
-     * @param string $id
-     * @param string|null $scope
-     *
-     * @return bool
-     */
     public function getById(string $id, ?string $scope = null): bool
     {
         $item = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id = :id AND scope = :scope', [
@@ -91,11 +85,6 @@ class Dao extends Model\Dao\AbstractDao
         return false;
     }
 
-    /**
-     * @param string $scope
-     *
-     * @return array
-     */
     public function getIdsByScope(string $scope): array
     {
         return $this->db->fetchFirstColumn('SELECT id FROM ' . self::TABLE_NAME . ' WHERE scope = ?', [$scope]);

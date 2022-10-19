@@ -103,9 +103,6 @@ class WorkflowState extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getPlace(): string
     {
         return $this->place;

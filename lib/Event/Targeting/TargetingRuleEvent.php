@@ -22,10 +22,7 @@ use Pimcore\Targeting\Model\VisitorInfo;
 
 class TargetingRuleEvent extends TargetingEvent
 {
-    /**
-     * @var Rule
-     */
-    private $rule;
+    private Rule $rule;
 
     public function __construct(VisitorInfo $visitorInfo, Rule $rule)
     {

@@ -32,7 +32,7 @@ class UnitConversionService
      * @param T $quantityValue
      * @param Unit $toUnit
      *
-     * @return T
+     * @return QuantityValue
      *
      * @throws UnsupportedException If $quantityValue is no QuantityValue
      * @throws \Exception

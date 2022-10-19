@@ -82,17 +82,17 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @param string $name
-     * @param array $arguments
+     * @param string $method
+     * @param array $args
      *
      * @return mixed|void
      *
      * @throws \Exception
      */
-    public function __call($name, $arguments)
+    public function __call(string $method, array $args)
     {
-        if (substr($name, 0, 3) == 'get') {
-            $key = substr($name, 3, strlen($name) - 3);
+        if (substr($method, 0, 3) == 'get') {
+            $key = substr($method, 3, strlen($method) - 3);
 
             $idx = array_searchi($key, $this->columns);
             if ($idx !== false) {
@@ -104,13 +104,13 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
             throw new \Exception("Requested data $key not available");
         }
 
-        if (substr($name, 0, 3) == 'set') {
-            $key = substr($name, 3, strlen($name) - 3);
+        if (substr($method, 0, 3) == 'set') {
+            $key = substr($method, 3, strlen($method) - 3);
             $idx = array_searchi($key, $this->columns);
 
             if ($idx !== false) {
                 $correctedKey = $this->columns[$idx];
-                $this->data[$correctedKey] = $arguments[0];
+                $this->data[$correctedKey] = $args[0];
                 $this->markMeDirty();
             } else {
                 throw new \Exception("Requested data $key not available");
@@ -228,17 +228,11 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         return $this->columns;
     }
 
-    /**
-     * @return array
-     */
     public function getData(): array
     {
         return $this->data;
     }
 
-    /**
-     * @param array $data
-     */
     public function setData(array $data): void
     {
         $this->data = $data;

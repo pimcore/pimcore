@@ -31,10 +31,7 @@ use Pimcore\Model\Search\Backend\Data;
  */
 class DataObjects extends Elements implements DataProviderInterface
 {
-    /**
-     * @var array
-     */
-    protected $exportIds = [];
+    protected array $exportIds = [];
 
     /**
      * @var array

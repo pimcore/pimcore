@@ -32,26 +32,12 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
  */
 class PreAuthenticatedAdminSessionListener
 {
-    /**
-     * @var TokenStorageInterface
-     */
-    private $tokenStorage;
+    private TokenStorageInterface $tokenStorage;
 
-    /**
-     * @var AuthenticationManagerInterface
-     */
-    private $authenticationManager;
+    private AuthenticationManagerInterface $authenticationManager;
 
-    /**
-     * @var string
-     */
-    private $providerKey;
+    private string $providerKey;
 
-    /**
-     * @param TokenStorageInterface $tokenStorage
-     * @param AuthenticationManagerInterface $authenticationManager
-     * @param string $providerKey
-     */
     public function __construct(
         TokenStorageInterface $tokenStorage,
         AuthenticationManagerInterface $authenticationManager,
@@ -62,7 +48,7 @@ class PreAuthenticatedAdminSessionListener
         $this->providerKey = $providerKey;
     }
 
-    public function __invoke(RequestEvent $event)
+    public function __invoke(RequestEvent $event): void
     {
         $request = $event->getRequest();
 

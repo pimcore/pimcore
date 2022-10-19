@@ -40,17 +40,11 @@ class Consent implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @return bool
-     */
     public function getConsent(): bool
     {
         return $this->consent;
     }
 
-    /**
-     * @param bool $consent
-     */
     public function setConsent(bool $consent): void
     {
         if ($consent != $this->consent) {
@@ -59,17 +53,11 @@ class Consent implements OwnerAwareFieldInterface
         }
     }
 
-    /**
-     * @return int|null
-     */
     public function getNoteId(): ?int
     {
         return $this->noteId;
     }
 
-    /**
-     * @param int $noteId
-     */
     public function setNoteId(int $noteId): void
     {
         if ($noteId != $this->noteId) {
@@ -78,9 +66,6 @@ class Consent implements OwnerAwareFieldInterface
         }
     }
 
-    /**
-     * @return Note|null
-     */
     public function getNote(): ?Note
     {
         if (empty($this->note) && !empty($this->noteId)) {
@@ -90,18 +75,12 @@ class Consent implements OwnerAwareFieldInterface
         return $this->note;
     }
 
-    /**
-     * @param Note $note
-     */
     public function setNote(Note $note): void
     {
         $this->note = $note;
         $this->markMeDirty();
     }
 
-    /**
-     * @return string
-     */
     public function getSummaryString(): string
     {
         $note = $this->getNote();

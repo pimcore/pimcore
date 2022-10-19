@@ -163,9 +163,6 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         $this->showCharCount = (bool) $showCharCount;
     }
 
-    /**
-     * @return bool
-     */
     public function isExcludeFromSearchIndex(): bool
     {
         return $this->excludeFromSearchIndex;
@@ -314,33 +311,25 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getParameterTypeDeclaration(): ?string
     {
         return '?string';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getReturnTypeDeclaration(): ?string
     {
         return '?string';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocInputType(): ?string
     {
         return 'string|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPhpdocReturnType(): ?string
     {
         return 'string|null';

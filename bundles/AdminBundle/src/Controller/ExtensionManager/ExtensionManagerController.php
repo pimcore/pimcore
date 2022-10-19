@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -43,10 +44,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ExtensionManagerController extends AdminController implements KernelControllerEventInterface
 {
-    /**
-     * @var AreabrickManagerInterface
-     */
-    private $areabrickManager;
+    private AreabrickManagerInterface $areabrickManager;
 
     public function __construct(
         AreabrickManagerInterface $areabrickManager
@@ -54,9 +52,6 @@ class ExtensionManagerController extends AdminController implements KernelContro
         $this->areabrickManager = $areabrickManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         $this->checkPermission('plugins');
@@ -67,7 +62,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
      *
      * @return JsonResponse
      */
-    public function getExtensionsAction()
+    public function getExtensionsAction(): JsonResponse
     {
         $extensions = array_merge(
             $this->getBundleList(),
@@ -86,7 +81,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
      *
      * @return JsonResponse
      */
-    public function updateExtensionsAction(Request $request)
+    public function updateExtensionsAction(Request $request): JsonResponse
     {
         $data = $this->decodeJson($request->getContent());
 
@@ -129,18 +124,15 @@ class ExtensionManagerController extends AdminController implements KernelContro
     /**
      * @Route("/admin/toggle-extension-state", name="pimcore_admin_extensionmanager_extensionmanager_toggleextensionstate", methods={"PUT"})
      *
-     * @param Request $request
-     * @param KernelInterface $kernel
-     * @param AssetsInstaller $assetsInstaller
      *
-     * @return JsonResponse
      */
     public function toggleExtensionStateAction(
         Request $request,
         KernelInterface $kernel,
         CacheClearer $cacheClearer,
         AssetsInstaller $assetsInstaller
-    ) {
+    ): JsonResponse
+    {
         $type = $request->get('type');
         $id = $request->get('id');
         $enable = $request->get('method', 'enable') === 'enable' ? true : false;
@@ -222,7 +214,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
      *
      * @return JsonResponse
      */
-    public function installAction(Request $request)
+    public function installAction(Request $request): JsonResponse
     {
         return $this->handleInstallation($request, true);
     }
@@ -234,7 +226,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
      *
      * @return JsonResponse
      */
-    public function uninstallAction(Request $request)
+    public function uninstallAction(Request $request): JsonResponse
     {
         return $this->handleInstallation($request, false);
     }
