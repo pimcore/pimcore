@@ -82,8 +82,6 @@ services:
     # content was added (e.g. headTitle)
     Twig\DeferredExtension\DeferredExtension: ~
 
-    Twig\Extra\String\StringExtension: ~
-
     Pimcore\Twig\Sandbox\SecurityPolicy:
         arguments:
             $allowedTags: '%pimcore.templating.twig.sandbox_security_policy.tags%'
