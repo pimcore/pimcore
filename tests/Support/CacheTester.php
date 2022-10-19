@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests;
+namespace Pimcore\Support\Tests;
 
 /**
  * Inherited Methods
@@ -31,7 +31,11 @@ namespace Pimcore\Tests;
  *
  * @SuppressWarnings(PHPMD)
  */
-class ModelTester extends \Codeception\Actor
+class CacheTester extends \Codeception\Actor
 {
-    use _generated\ModelTesterActions;
+    use _generated\CacheTesterActions;
+
+    /**
+     * Define custom actions here
+     */
 }

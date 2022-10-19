@@ -24,7 +24,7 @@ abstract class AbstractDefinitionHelper extends Module
     /**
      * @var array
      */
-    protected $config = [
+    protected array $config = [
         'initialize_definitions' => true,
         'cleanup' => true,
     ];

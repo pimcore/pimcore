@@ -33,13 +33,13 @@ class ClassUtilsTest extends TestCase
     public function testFindNamespaceClassName()
     {
         //find classname for DummyNamespace/ClassX
-        $file = new \SplFileInfo(__DIR__ . '/../../_support/Resources/dummyfiles/ClassX.php');
+        $file = new \SplFileInfo(__DIR__ . '/../../Support/Resources/dummyfiles/ClassX.php');
         $className = ClassUtils::findClassName($file);
 
         $this->assertEquals('DummyNamespace\\ClassX', $className);
 
         //find classname for DummyNamespace/ClassY
-        $file = new \SplFileInfo(__DIR__ . '/../../_support/Resources/dummyfiles/ClassY.php');
+        $file = new \SplFileInfo(__DIR__ . '/../../Support/Resources/dummyfiles/ClassY.php');
         $className = ClassUtils::findClassName($file);
 
         $this->assertEquals('Pimcore\\DummyNamespace\\ClassY', $className);
