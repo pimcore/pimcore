@@ -21,7 +21,6 @@ use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Event\Model\ElementEventInterface;
 use Pimcore\Messenger\SearchBackendMessage;
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Search\Backend\Data;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -72,11 +71,8 @@ class SearchBackendListener implements EventSubscriberInterface
         }
 
         $element = $e->getElement();
-        $data = Data::getForElement($element);
-
-        $shouldChildrenBeUpdated = $element->getRealFullPath() != $data->getFullPath();
         $this->messengerBusPimcoreCore->dispatch(
-            new SearchBackendMessage(Service::getElementType($element), $element->getId(), $shouldChildrenBeUpdated)
+            new SearchBackendMessage(Service::getElementType($element), $element->getId())
         );
     }
 

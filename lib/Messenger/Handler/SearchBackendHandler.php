@@ -15,12 +15,7 @@
 
 namespace Pimcore\Messenger\Handler;
 
-use Pimcore\Db;
-use Pimcore\Logger;
 use Pimcore\Messenger\SearchBackendMessage;
-use Pimcore\Model\Asset;
-use Pimcore\Model\DataObject\AbstractObject;
-use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Search\Backend\Data;
 use Symfony\Component\Messenger\Handler\Acknowledger;
@@ -40,27 +35,6 @@ class SearchBackendHandler implements BatchHandlerInterface
         return $this->handle($message, $ack);
     }
 
-    private function processElement(Element\ElementInterface $element, bool $updateChildren) {
-
-        $searchEntry = Data::getForElement($element);
-        $originalFullPath = $searchEntry->getFullPath();
-        if ($searchEntry->getId() instanceof Data\Id) {
-            $searchEntry->setDataFromElement($element);
-        } else {
-            $searchEntry = new Data($element);
-        }
-        $searchEntry->save();
-
-        if ($updateChildren) {
-            try {
-                $db = Db::getConnection();
-                $db->exec(sprintf("update search_backend_data set fullpath=replace(fullpath, '%s', '%s') where fullpath like '%s%%'", $originalFullPath, $searchEntry->getFullPath(), $originalFullPath));
-            } catch (\Throwable $exception) {
-                Logger::error('Could not update the search indices for children: ' . $exception->getMessage());
-            }
-        }
-    }
-
     private function process(array $jobs): void
     {
         $jobs = $this->filterUnique($jobs, static function (SearchBackendMessage $message) {
@@ -76,7 +50,15 @@ class SearchBackendHandler implements BatchHandlerInterface
                     continue;
                 }
 
-                $this->processElement($element, $message->shouldChildrenBeUpdated());
+                $searchEntry = Data::getForElement($element);
+                if ($searchEntry instanceof Data && $searchEntry->getId() instanceof Data\Id) {
+                    $searchEntry->setDataFromElement($element);
+                    $searchEntry->save();
+                } else {
+                    $searchEntry = new Data($element);
+                    $searchEntry->save();
+                }
+
                 $ack->ack($message);
             } catch (\Throwable $e) {
                 $ack->nack($e);

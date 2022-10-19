@@ -20,7 +20,7 @@ namespace Pimcore\Messenger;
  */
 class SearchBackendMessage
 {
-    public function __construct(protected string $type, protected int $id, protected bool $updateChildren)
+    public function __construct(protected string $type, protected int $id)
     {
     }
 
@@ -38,13 +38,5 @@ class SearchBackendMessage
     public function getId(): int
     {
         return $this->id;
-    }
-
-    /**
-     * @return bool
-     */
-    public function shouldChildrenBeUpdated(): bool
-    {
-        return $this->updateChildren;
     }
 }
