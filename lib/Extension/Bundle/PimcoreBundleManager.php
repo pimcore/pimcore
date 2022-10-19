@@ -65,7 +65,7 @@ class PimcoreBundleManager
     /**
      * @var array
      */
-    protected $manuallyRegisteredBundleState;
+    protected $manuallyRegisteredBundles;
 
     /**
      * @param PimcoreBundleLocator $bundleLocator
@@ -86,8 +86,8 @@ class PimcoreBundleManager
     }
 
     /**
-     * List of currently active bundles from kernel. A bundle can be in this list without being enabled via extensions
-     * config file if it is registered manually on the kernel.
+     * List of currently active bundles from kernel. A bundle can be in this list, without being enabled via
+     * config file, if it is registered manually on the kernel.
      *
      * @param bool $onlyInstalled
      *
@@ -149,19 +149,31 @@ class PimcoreBundleManager
         return $this->availableBundles;
     }
 
+    public function getManuallyRegisteredBundleState(string $bundleClass): array
+    {
+        $manuallyRegisteredBundles = $this->getManuallyRegisteredBundles();
+
+        if (!isset($manuallyRegisteredBundles[$bundleClass])) {
+            throw new \InvalidArgumentException(sprintf('Bundle "%s" is not registered. 
+                Maybe you forgot to add it in the "Kernel::registerBundles()?', $bundleClass));
+        }
+
+        return $manuallyRegisteredBundles[$bundleClass];
+    }
+
     /**
-     * Returns names of manually registered bundles (not registered via extension manager)
+     * Returns names of manually registered bundles
      */
     private function getManuallyRegisteredBundleNames(bool $onlyEnabled = false): array
     {
-        $state = $this->getManuallyRegisteredBundleState();
+        $manuallyRegisteredBundles = $this->getManuallyRegisteredBundles();
 
         if (!$onlyEnabled) {
-            return array_keys($state);
+            return array_keys($manuallyRegisteredBundles);
         }
 
         $bundleNames = [];
-        foreach ($state as $bundleName => $options) {
+        foreach ($manuallyRegisteredBundles as $bundleName => $options) {
             if ($options['enabled']) {
                 $bundleNames[] = $bundleName;
             }
@@ -171,11 +183,11 @@ class PimcoreBundleManager
     }
 
     /**
-     * Builds state infos about manually configured bundles (not registered via extension manager)
+     * Builds state infos & return manually configured bundles
      */
-    private function getManuallyRegisteredBundleState(): array
+    private function getManuallyRegisteredBundles(): array
     {
-        if (null === $this->manuallyRegisteredBundleState) {
+        if (null === $this->manuallyRegisteredBundles) {
             $collection = $this->kernel->getBundleCollection();
             $enabledBundles = array_keys($this->getActiveBundles(false));
 
@@ -196,10 +208,10 @@ class PimcoreBundleManager
                 ]);
             }
 
-            $this->manuallyRegisteredBundleState = $bundles;
+            $this->manuallyRegisteredBundles = $bundles;
         }
 
-        return $this->manuallyRegisteredBundleState;
+        return $this->manuallyRegisteredBundles;
     }
 
     private static function getOptionsResolver(): OptionsResolver
