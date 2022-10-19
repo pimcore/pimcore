@@ -102,25 +102,16 @@ trait Relation
         return [];
     }
 
-    /**
-     * @return bool
-     */
     public function getDocumentsAllowed(): bool
     {
         return false;
     }
 
-    /**
-     * @return bool
-     */
     public function getAssetsAllowed(): bool
     {
         return false;
     }
 
-    /**
-     * @return bool
-     */
     public function getObjectsAllowed(): bool
     {
         return false;

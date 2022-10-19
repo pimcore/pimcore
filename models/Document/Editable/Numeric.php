@@ -86,9 +86,7 @@ class Numeric extends Model\Document\Editable
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function isEmpty(): bool
     {
         if (is_numeric($this->number)) {

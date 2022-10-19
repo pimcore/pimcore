@@ -55,9 +55,6 @@ class Gender extends Model\DataObject\ClassDefinition\Data\Select
         return $obj;
     }
 
-    /**
-     * @return $this
-     */
     #[\ReturnTypeWillChange]
     public function jsonSerialize(): static// : static
     {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,6 +24,7 @@ use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Pimcore\Workflow\Notification\NotificationEmailService;
 use Pimcore\Workflow\Transition;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -1259,7 +1261,7 @@ final class Configuration implements ConfigurationInterface
     /**
      * Add a route prototype child
      */
-    private function addRoutesChild(ArrayNodeDefinition $parent, string $name): void
+    private function addRoutesChild(ArrayNodeDefinition|NodeDefinition $parent, string $name): void
     {
         $node = $parent->children()->arrayNode($name);
 
@@ -2238,9 +2240,6 @@ final class Configuration implements ConfigurationInterface
             ->end();
     }
 
-    /**
-     * @param ArrayNodeDefinition $rootNode
-     */
     private function addGlossaryNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode

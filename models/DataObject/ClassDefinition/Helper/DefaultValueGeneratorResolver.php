@@ -23,11 +23,6 @@ use Pimcore\Model\DataObject\ClassDefinition\DefaultValueGeneratorInterface;
  */
 class DefaultValueGeneratorResolver extends ClassResolver
 {
-    /**
-     * @param string $generatorClass
-     *
-     * @return object|null
-     */
     public static function resolveGenerator(string $generatorClass): ?object
     {
         return self::resolve($generatorClass, static function ($generator) {

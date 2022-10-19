@@ -27,9 +27,6 @@ use Sabre\DAV;
  */
 class File extends DAV\File
 {
-    /**
-     * @var Asset
-     */
     private Asset $asset;
 
     public function __construct(Asset $asset)
@@ -37,9 +34,6 @@ class File extends DAV\File
         $this->asset = $asset;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->asset->getFilename();
@@ -97,9 +91,6 @@ class File extends DAV\File
         }
     }
 
-    /**
-     * @return int
-     */
     public function getLastModified(): int
     {
         return $this->asset->getModificationDate();

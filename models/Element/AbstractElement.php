@@ -109,19 +109,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     protected ?int $parentId = null;
 
-    /**
-     * @return string|null
-     */
     public function getPath(): ?string
     {
         return $this->path;
     }
 
-    /**
-     * @param string $path
-     *
-     * @return $this
-     */
     public function setPath(string $path): static
     {
         $this->path = (string) $path;
@@ -129,19 +121,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getParentId(): ?int
     {
         return $this->parentId;
     }
 
-    /**
-     * @param int|null $parentId
-     *
-     * @return $this
-     */
     public function setParentId(?int $parentId): static
     {
         $parentId = (int) $parentId;
@@ -151,19 +135,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getUserModification(): ?int
     {
         return $this->userModification;
     }
 
-    /**
-     * @param int $userModification
-     *
-     * @return $this
-     */
     public function setUserModification(int $userModification): static
     {
         $this->markFieldDirty('userModification');
@@ -172,19 +148,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }
 
-    /**
-     * @param int $creationDate
-     *
-     * @return $this
-     */
     public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = (int) $creationDate;
@@ -192,19 +160,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
-    /**
-     * @param int $modificationDate
-     *
-     * @return $this
-     */
     public function setModificationDate(int $modificationDate): static
     {
         $this->markFieldDirty('modificationDate');
@@ -214,19 +174,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getUserOwner(): ?int
     {
         return $this->userOwner;
     }
 
-    /**
-     * @param int $userOwner
-     *
-     * @return $this
-     */
     public function setUserOwner(int $userOwner): static
     {
         $this->userOwner = (int) $userOwner;
@@ -262,19 +214,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param int|null $id
-     *
-     * @return $this
-     */
     public function setId(?int $id): static
     {
         $this->id = $id ? (int)$id : null;
@@ -282,14 +226,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this;
     }
 
-    /**
-     * @var self|null
-     */
     protected ?AbstractElement $parent = null;
 
-    /**
-     * @return self|null
-     */
     public function getParent(): ?AbstractElement
     {
         if ($this->parent === null) {
@@ -334,15 +272,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this;
     }
 
-    /**
-     * @param string $name
-     * @param string $type
-     * @param mixed $data
-     * @param bool $inherited
-     * @param bool $inheritable
-     *
-     * @return $this
-     */
     public function setProperty(string $name, string $type, mixed $data, bool $inherited = false, bool $inheritable = false): static
     {
         $this->getProperties();
@@ -417,9 +346,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function hasProperty(string $name): bool
     {
         $properties = $this->getProperties();
@@ -449,9 +376,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getCacheTag(): string
     {
         $elementType = Service::getElementType($this);
@@ -636,9 +561,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this->getFullPath();
     }
 
-    /**
-     * @return int|null
-     */
     public function __getDataVersionTimestamp(): ?int
     {
         return $this->__dataVersionTimestamp;
@@ -649,9 +571,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $this->__dataVersionTimestamp = $_dataVersionTimestamp;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function __isBasedOnLatestData(): bool
     {
         return $this->getDao()->__isBasedOnLatestData();
@@ -707,9 +627,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $version;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDependencies(): ?Model\Dependency
     {
         if (!$this->dependencies) {

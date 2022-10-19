@@ -28,94 +28,40 @@ use Pimcore\Model;
  */
 class Config extends Model\AbstractModel implements \JsonSerializable
 {
-    /**
-     * @var string
-     */
     protected string $name = '';
 
-    /**
-     * @var string
-     */
     protected string $sql = '';
 
-    /**
-     * @var array
-     */
     protected array $dataSourceConfig = [];
 
-    /**
-     * @var array
-     */
     protected array $columnConfiguration = [];
 
-    /**
-     * @var string
-     */
     protected string $niceName = '';
 
-    /**
-     * @var string
-     */
     protected string $group = '';
 
-    /**
-     * @var string
-     */
     protected string $groupIconClass = '';
 
-    /**
-     * @var string
-     */
     protected string $iconClass = '';
 
-    /**
-     * @var bool
-     */
     protected bool $menuShortcut = true;
 
-    /**
-     * @var string
-     */
     protected string $reportClass = '';
 
-    /**
-     * @var string
-     */
     protected string $chartType = '';
 
-    /**
-     * @var string
-     */
     protected string $pieColumn = '';
 
-    /**
-     * @var string
-     */
     protected string $pieLabelColumn = '';
 
-    /**
-     * @var string
-     */
     protected string $xAxis = '';
 
-    /**
-     * @var string|array
-     */
     protected string|array $yAxis = [];
 
-    /**
-     * @var int|null
-     */
     protected ?int $modificationDate;
 
-    /**
-     * @var int|null
-     */
     protected ?int $creationDate;
 
-    /**
-     * @var bool
-     */
     protected bool $shareGlobally = true;
 
     /**
@@ -206,9 +152,6 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
@@ -219,9 +162,6 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         $this->sql = $sql;
     }
 
-    /**
-     * @return string
-     */
     public function getSql(): string
     {
         return $this->sql;
@@ -232,9 +172,6 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         $this->columnConfiguration = $columnConfiguration;
     }
 
-    /**
-     * @return array
-     */
     public function getColumnConfiguration(): array
     {
         return $this->columnConfiguration;
@@ -245,9 +182,6 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         $this->group = $group;
     }
 
-    /**
-     * @return string
-     */
     public function getGroup(): string
     {
         return $this->group;
@@ -258,9 +192,6 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         $this->groupIconClass = $groupIconClass;
     }
 
-    /**
-     * @return string
-     */
     public function getGroupIconClass(): string
     {
         return $this->groupIconClass;
@@ -271,9 +202,6 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         $this->iconClass = $iconClass;
     }
 
-    /**
-     * @return string
-     */
     public function getIconClass(): string
     {
         return $this->iconClass;
@@ -284,9 +212,6 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         $this->niceName = $niceName;
     }
 
-    /**
-     * @return string
-     */
     public function getNiceName(): string
     {
         return $this->niceName;
@@ -297,9 +222,6 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         $this->menuShortcut = (bool) $menuShortcut;
     }
 
-    /**
-     * @return bool
-     */
     public function getMenuShortcut(): bool
     {
         return $this->menuShortcut;
@@ -310,9 +232,6 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         $this->dataSourceConfig = $dataSourceConfig;
     }
 
-    /**
-     * @return \stdClass|null
-     */
     public function getDataSourceConfig(): ?\stdClass
     {
         if (is_array($this->dataSourceConfig) && isset($this->dataSourceConfig[0])) {
@@ -334,9 +253,6 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         $this->chartType = $chartType;
     }
 
-    /**
-     * @return string
-     */
     public function getChartType(): string
     {
         return $this->chartType;
@@ -347,9 +263,6 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         $this->pieColumn = $pieColumn;
     }
 
-    /**
-     * @return string
-     */
     public function getPieColumn(): string
     {
         return $this->pieColumn;
@@ -360,9 +273,6 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         $this->xAxis = $xAxis;
     }
 
-    /**
-     * @return string
-     */
     public function getXAxis(): string
     {
         return $this->xAxis;
@@ -373,9 +283,6 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         $this->yAxis = $yAxis;
     }
 
-    /**
-     * @return array|string
-     */
     public function getYAxis(): array|string
     {
         return $this->yAxis;
@@ -386,17 +293,11 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         $this->pieLabelColumn = $pieLabelColumn;
     }
 
-    /**
-     * @return string
-     */
     public function getPieLabelColumn(): string
     {
         return $this->pieLabelColumn;
     }
 
-    /**
-     * @return int|null
-     */
     public function getModificationDate(): ?int
     {
         return $this->modificationDate;
@@ -407,9 +308,6 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         $this->modificationDate = $modificationDate;
     }
 
-    /**
-     * @return int|null
-     */
     public function getCreationDate(): ?int
     {
         return $this->creationDate;
@@ -420,9 +318,6 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         $this->creationDate = $creationDate;
     }
 
-    /**
-     * @return string
-     */
     public function getReportClass(): string
     {
         return $this->reportClass;
@@ -433,9 +328,6 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         $this->reportClass = $reportClass;
     }
 
-    /**
-     * @return bool
-     */
     public function getShareGlobally(): bool
     {
         return $this->shareGlobally;

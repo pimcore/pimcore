@@ -32,22 +32,13 @@ class Dao extends Model\Dao\AbstractDao
 {
     use DataObject\ClassDefinition\Helper\Dao;
 
-    /**
-     * @var array|null
-     */
     protected ?array $tableDefinitions = null;
 
-    /**
-     * @return string
-     */
     public function getDataTableName(): string
     {
         return 'object_classificationstore_data_' . $this->model->getClass()->getId();
     }
 
-    /**
-     * @return string
-     */
     public function getGroupsTableName(): string
     {
         return 'object_classificationstore_groups_' . $this->model->getClass()->getId();

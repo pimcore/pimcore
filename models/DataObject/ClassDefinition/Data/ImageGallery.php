@@ -104,9 +104,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         $this->ratioX = $ratioX;
     }
 
-    /**
-     * @return int
-     */
     public function getRatioX(): int
     {
         return $this->ratioX;
@@ -117,17 +114,11 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         $this->ratioY = $ratioY;
     }
 
-    /**
-     * @return int
-     */
     public function getRatioY(): int
     {
         return $this->ratioY;
     }
 
-    /**
-     * @return string
-     */
     public function getPredefinedDataTemplates(): string
     {
         return $this->predefinedDataTemplates;
@@ -138,9 +129,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         $this->predefinedDataTemplates = $predefinedDataTemplates;
     }
 
-    /**
-     * @return string|int
-     */
     public function getWidth(): int|string
     {
         return $this->width;
@@ -154,9 +142,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         $this->width = $width;
     }
 
-    /**
-     * @return string|int
-     */
     public function getHeight(): int|string
     {
         return $this->height;
@@ -170,9 +155,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         $this->height = $height;
     }
 
-    /**
-     * @return string
-     */
     public function getUploadPath(): string
     {
         return $this->uploadPath;
@@ -394,17 +376,13 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getCacheTags(mixed $data, array $tags = []): array
     {
         if ($data instanceof DataObject\Data\ImageGallery) {
@@ -418,11 +396,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return $tags;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return array
-     */
     public function resolveDependencies(mixed $data): array
     {
         $dependencies = [];
@@ -482,11 +455,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         parent::checkValidity($data, $omitMandatoryCheck);
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return bool
-     */
     public function isEmpty(mixed $data): bool
     {
         if (empty($data)) {

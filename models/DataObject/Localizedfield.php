@@ -145,11 +145,6 @@ final class Localizedfield extends Model\AbstractModel implements
         return $this->items;
     }
 
-    /**
-     * @param array $items
-     *
-     * @return $this
-     */
     public function setItems(array $items): static
     {
         $this->items = $items;
@@ -253,11 +248,6 @@ final class Localizedfield extends Model\AbstractModel implements
         return $this->object;
     }
 
-    /**
-     * @param ClassDefinition|null $class
-     *
-     * @return $this
-     */
     public function setClass(?ClassDefinition $class): static
     {
         $this->class = $class;
@@ -314,12 +304,6 @@ final class Localizedfield extends Model\AbstractModel implements
         return array_key_exists($language, $this->items);
     }
 
-    /**
-     * @param string $name
-     * @param array $context
-     *
-     * @return ClassDefinition\Data|null
-     */
     public function getFieldDefinition(string $name, array $context = []): ?ClassDefinition\Data
     {
         if (isset($context['containerType']) && $context['containerType'] === 'fieldcollection') {

@@ -23,9 +23,6 @@ class StructuredTable implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    /**
-     * @var array
-     */
     protected array $data = [];
 
     public function __construct(array $data = [])
@@ -36,11 +33,6 @@ class StructuredTable implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @param array $data
-     *
-     * @return $this
-     */
     public function setData(array $data): static
     {
         $this->data = $data;
@@ -49,9 +41,6 @@ class StructuredTable implements OwnerAwareFieldInterface
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getData(): array
     {
         return $this->data;
@@ -113,9 +102,6 @@ class StructuredTable implements OwnerAwareFieldInterface
         }
     }
 
-    /**
-     * @return bool
-     */
     public function isEmpty(): bool
     {
         foreach ($this->data as $dataRow) {
@@ -151,12 +137,6 @@ class StructuredTable implements OwnerAwareFieldInterface
         return $string;
     }
 
-    /**
-     * @param array $rowDefs
-     * @param array $colDefs
-     *
-     * @return string
-     */
     public function getHtmlTable(array $rowDefs, array $colDefs): string
     {
         $string = '<table>';

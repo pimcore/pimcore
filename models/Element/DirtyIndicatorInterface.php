@@ -18,16 +18,8 @@ namespace Pimcore\Model\Element;
 
 interface DirtyIndicatorInterface
 {
-    /**
-     * @return bool
-     */
     public function hasDirtyFields(): bool;
 
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
     public function isFieldDirty(string $key): bool;
 
     /**

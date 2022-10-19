@@ -23,11 +23,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Layout\DynamicTextLabelInterface;
  */
 class DynamicTextResolver extends ClassResolver
 {
-    /**
-     * @param string $renderingClass
-     *
-     * @return object|null
-     */
     public static function resolveRenderingClass(string $renderingClass): ?object
     {
         return self::resolve($renderingClass);

@@ -37,9 +37,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     const DECIMAL_PRECISION_DEFAULT = 0;
 
-    /**
-     * @var array
-     */
     public static array $validFilterOperators = [
         '=',
         'IS',
@@ -155,19 +152,11 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return 'float';
     }
 
-    /**
-     * @return string|int
-     */
     public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @param int|string $width
-     *
-     * @return $this
-     */
     public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
@@ -178,9 +167,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this;
     }
 
-    /**
-     * @return float|int|string|null
-     */
     public function getDefaultValue(): float|int|string|null
     {
         if ($this->defaultValue !== null) {
@@ -190,11 +176,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return null;
     }
 
-    /**
-     * @param float|int|string|null $defaultValue
-     *
-     * @return $this
-     */
     public function setDefaultValue(float|int|string|null $defaultValue): static
     {
         if ((string)$defaultValue !== '') {
@@ -209,9 +190,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         $this->integer = $integer;
     }
 
-    /**
-     * @return bool
-     */
     public function getInteger(): bool
     {
         return $this->integer;
@@ -222,9 +200,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         $this->maxValue = $maxValue;
     }
 
-    /**
-     * @return float|null
-     */
     public function getMaxValue(): ?float
     {
         return $this->maxValue;
@@ -235,9 +210,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         $this->minValue = $minValue;
     }
 
-    /**
-     * @return float|null
-     */
     public function getMinValue(): ?float
     {
         return $this->minValue;
@@ -248,17 +220,11 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         $this->unsigned = $unsigned;
     }
 
-    /**
-     * @return bool
-     */
     public function getUnsigned(): bool
     {
         return $this->unsigned;
     }
 
-    /**
-     * @return int|null
-     */
     public function getDecimalSize(): ?int
     {
         return $this->decimalSize;
@@ -282,17 +248,11 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         $this->decimalPrecision = $decimalPrecision;
     }
 
-    /**
-     * @return int|null
-     */
     public function getDecimalPrecision(): ?int
     {
         return $this->decimalPrecision;
     }
 
-    /**
-     * @return bool
-     */
     public function getUnique(): bool
     {
         return $this->unique;
@@ -451,14 +411,14 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     /**
      * @param mixed $data
-     * @param null|Model\DataObject\Concrete $object
+     * @param null|DataObject\AbstractObject $object
      * @param array $params
      *
      * @return float|int|string|null
      *@see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): float|int|string|null
+    public function getDataFromEditmode(mixed $data, DataObject\AbstractObject $object = null, array $params = []): float|int|string|null
     {
         return $this->getDataFromResource($data, $object, $params);
     }
@@ -566,11 +526,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return true;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return bool
-     */
     public function isEmpty(mixed $data): bool
     {
         return !is_numeric($data);
@@ -611,9 +566,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     protected function doGetDefaultValue(Concrete $object, array $context = []): float|int|string|null
     {
         return $this->getDefaultValue() ?? null;

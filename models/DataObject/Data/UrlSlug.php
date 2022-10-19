@@ -37,54 +37,24 @@ class UrlSlug implements OwnerAwareFieldInterface
 
     public const TABLE_NAME = 'object_url_slugs';
 
-    /**
-     * @var int
-     */
     protected int $objectId;
 
-    /**
-     * @var string
-     */
     protected string $classId;
 
-    /**
-     * @var string|null
-     */
     protected ?string $slug;
 
-    /**
-     * @var int|null
-     */
     protected ?int $siteId;
 
-    /**
-     * @var string
-     */
     protected string $fieldname;
 
-    /**
-     * @var int
-     */
     protected int $index;
 
-    /**
-     * @var string
-     */
     protected string $ownertype;
 
-    /**
-     * @var string
-     */
     protected string $ownername;
 
-    /**
-     * @var string
-     */
     protected string $position;
 
-    /**
-     * @var null|string
-     */
     protected ?string $previousSlug;
 
     /**
@@ -104,11 +74,6 @@ class UrlSlug implements OwnerAwareFieldInterface
         return $this->objectId;
     }
 
-    /**
-     * @param int $objectId
-     *
-     * @return $this
-     */
     public function setObjectId(int $objectId): static
     {
         $this->objectId = $objectId;
@@ -121,11 +86,6 @@ class UrlSlug implements OwnerAwareFieldInterface
         return $this->slug;
     }
 
-    /**
-     * @param string|null $slug
-     *
-     * @return $this
-     */
     public function setSlug(?string $slug): static
     {
         $this->slug = $slug;
@@ -158,11 +118,6 @@ class UrlSlug implements OwnerAwareFieldInterface
         return $this->siteId;
     }
 
-    /**
-     * @param int|null $siteId
-     *
-     * @return $this
-     */
     public function setSiteId(?int $siteId): static
     {
         $this->siteId = $siteId ?? 0;
@@ -175,11 +130,6 @@ class UrlSlug implements OwnerAwareFieldInterface
         return $this->fieldname;
     }
 
-    /**
-     * @param string|null $fieldname
-     *
-     * @return $this
-     */
     public function setFieldname(?string $fieldname): static
     {
         $this->fieldname = $fieldname;
@@ -192,11 +142,6 @@ class UrlSlug implements OwnerAwareFieldInterface
         return $this->index;
     }
 
-    /**
-     * @param int|null $index
-     *
-     * @return $this
-     */
     public function setIndex(?int $index): static
     {
         $this->index = $index;
@@ -209,11 +154,6 @@ class UrlSlug implements OwnerAwareFieldInterface
         return $this->ownertype;
     }
 
-    /**
-     * @param string|null $ownertype
-     *
-     * @return $this
-     */
     public function setOwnertype(?string $ownertype): static
     {
         $this->ownertype = $ownertype;
@@ -226,11 +166,6 @@ class UrlSlug implements OwnerAwareFieldInterface
         return $this->ownername;
     }
 
-    /**
-     * @param string|null $ownername
-     *
-     * @return $this
-     */
     public function setOwnername(?string $ownername): static
     {
         $this->ownername = $ownername;
@@ -243,11 +178,6 @@ class UrlSlug implements OwnerAwareFieldInterface
         return $this->position;
     }
 
-    /**
-     * @param string|null $position
-     *
-     * @return $this
-     */
     public function setPosition(?string $position): static
     {
         $this->position = $position;
@@ -255,19 +185,11 @@ class UrlSlug implements OwnerAwareFieldInterface
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getClassId(): string
     {
         return $this->classId;
     }
 
-    /**
-     * @param string $classId
-     *
-     * @return $this
-     */
     public function setClassId(string $classId): static
     {
         $this->classId = $classId;

@@ -89,11 +89,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         $this->markFieldDirty('_self');
     }
 
-    /**
-     * @param array $items
-     *
-     * @return $this
-     */
     public function setItems(array $items): static
     {
         $this->items = $items;
@@ -102,19 +97,11 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getItems(): array
     {
         return $this->items;
     }
 
-    /**
-     * @param Concrete $object
-     *
-     * @return $this
-     */
     public function setObject(Concrete $object): static
     {
         if ($this->object) {
@@ -132,11 +119,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $this->object;
     }
 
-    /**
-     * @param ClassDefinition|null $class
-     *
-     * @return $this
-     */
     public function setClass(?ClassDefinition $class): static
     {
         $this->class = $class;
@@ -266,9 +248,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return array_keys($this->items);
     }
 
-    /**
-     * @return string
-     */
     public function getFieldname(): string
     {
         return $this->fieldname;
@@ -279,9 +258,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         $this->fieldname = $fieldname;
     }
 
-    /**
-     * @return array
-     */
     public function getActiveGroups(): array
     {
         return $this->activeGroups;
@@ -423,9 +399,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $data;
     }
 
-    /**
-     * @return bool
-     */
     public static function doGetFallbackValues(): bool
     {
         return true;
@@ -452,11 +425,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         }
     }
 
-    /**
-     * @param int $groupId
-     *
-     * @return int|null
-     */
     public function getGroupCollectionMapping(int $groupId): ?int
     {
         return $this->groupCollectionMapping[$groupId] ?? null;

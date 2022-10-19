@@ -36,51 +36,22 @@ class Rule extends Model\AbstractModel
 
     const SCOPE_VISITOR = 'visitor';
 
-    /**
-     * @var int
-     */
     protected int $id;
 
-    /**
-     * @var string
-     */
     protected string $name;
 
-    /**
-     * @var string
-     */
     protected string $description = '';
 
-    /**
-     * @var string
-     */
     protected string $scope = self::SCOPE_HIT;
 
-    /**
-     * @var bool
-     */
     protected bool $active = true;
 
-    /**
-     * @var int
-     */
     protected int $prio = 0;
 
-    /**
-     * @var array
-     */
     protected array $conditions = [];
 
-    /**
-     * @var array
-     */
     protected array $actions = [];
 
-    /**
-     * @param mixed $target
-     *
-     * @return bool
-     */
     public static function inTarget(mixed $target): bool
     {
         if ($target instanceof Model\Tool\Targeting\Rule) {
@@ -141,11 +112,6 @@ class Rule extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param string $description
-     *
-     * @return $this
-     */
     public function setDescription(string $description): static
     {
         $this->description = $description;
@@ -153,19 +119,11 @@ class Rule extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
     public function setId(int $id): static
     {
         $this->id = (int) $id;
@@ -173,19 +131,11 @@ class Rule extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -193,19 +143,11 @@ class Rule extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param array $actions
-     *
-     * @return $this
-     */
     public function setActions(array $actions): static
     {
         if (!$actions) {
@@ -222,11 +164,6 @@ class Rule extends Model\AbstractModel
         return $this->actions;
     }
 
-    /**
-     * @param array $conditions
-     *
-     * @return $this
-     */
     public function setConditions(array $conditions): static
     {
         if (!$conditions) {
@@ -238,9 +175,6 @@ class Rule extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getConditions(): array
     {
         return $this->conditions;
@@ -253,9 +187,6 @@ class Rule extends Model\AbstractModel
         }
     }
 
-    /**
-     * @return string
-     */
     public function getScope(): string
     {
         return $this->scope;
@@ -266,9 +197,6 @@ class Rule extends Model\AbstractModel
         $this->active = (bool) $active;
     }
 
-    /**
-     * @return bool
-     */
     public function getActive(): bool
     {
         return $this->active;

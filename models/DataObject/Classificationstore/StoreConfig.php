@@ -28,9 +28,6 @@ final class StoreConfig extends Model\AbstractModel
 {
     use RecursionBlockingEventDispatchHelperTrait;
 
-    /**
-     * @var int|null
-     */
     protected ?int $id;
 
     /**
@@ -47,11 +44,6 @@ final class StoreConfig extends Model\AbstractModel
      */
     protected ?string $description;
 
-    /**
-     * @param int $id
-     *
-     * @return self|null
-     */
     public static function getById(int $id): ?StoreConfig
     {
         try {
@@ -64,11 +56,6 @@ final class StoreConfig extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param string $name
-     *
-     * @return self|null
-     */
     public static function getByName(string $name): ?StoreConfig
     {
         try {
@@ -81,9 +68,6 @@ final class StoreConfig extends Model\AbstractModel
         }
     }
 
-    /**
-     * @return Model\DataObject\Classificationstore\StoreConfig
-     */
     public static function create(): StoreConfig
     {
         $config = new self();
@@ -92,11 +76,6 @@ final class StoreConfig extends Model\AbstractModel
         return $config;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -104,9 +83,6 @@ final class StoreConfig extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getName(): ?string
     {
         return $this->name;
@@ -171,9 +147,6 @@ final class StoreConfig extends Model\AbstractModel
         return $model;
     }
 
-    /**
-     * @return int|null
-     */
     public function getId(): ?int
     {
         return $this->id;

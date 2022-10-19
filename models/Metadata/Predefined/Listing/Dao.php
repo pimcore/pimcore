@@ -49,9 +49,6 @@ class Dao extends Model\Metadata\Predefined\Dao
         return $properties;
     }
 
-    /**
-     * @return int
-     */
     public function getTotalCount(): int
     {
         return count($this->loadList());

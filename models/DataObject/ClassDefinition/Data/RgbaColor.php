@@ -74,19 +74,11 @@ class RgbaColor extends Data implements
         'a' => 'VARCHAR(2) NULL DEFAULT NULL',
     ];
 
-    /**
-     * @return string|int
-     */
     public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @param int|string $width
-     *
-     * @return $this
-     */
     public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
@@ -257,11 +249,6 @@ class RgbaColor extends Data implements
         $this->width = $masterDefinition->width;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return bool
-     */
     public function isEmpty(mixed $data): bool
     {
         return $data === null;
@@ -335,7 +322,7 @@ class RgbaColor extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, array $params = []): ?string
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): ?string
     {
         $data = $this->getDataFromObjectParam($object, $params);
 

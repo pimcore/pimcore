@@ -241,27 +241,17 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
 
-    /**
-     * @return int|null
-     */
     public function getDefaultValue(): ?int
     {
         return $this->defaultValue;
     }
 
-    /**
-     * @param mixed $defaultValue
-     *
-     * @return $this
-     */
     public function setDefaultValue(mixed $defaultValue): static
     {
         if (strlen((string)$defaultValue) > 0) {
@@ -275,11 +265,6 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this;
     }
 
-    /**
-     * @param bool $useCurrentDate
-     *
-     * @return $this
-     */
     public function setUseCurrentDate(bool $useCurrentDate): static
     {
         $this->useCurrentDate = (bool)$useCurrentDate;
@@ -392,9 +377,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     protected function doGetDefaultValue(Concrete $object, array $context = []): ?Carbon
     {
         if ($this->getDefaultValue()) {

@@ -57,11 +57,6 @@ final class ImageThumbnail
         $this->deferred = $deferred;
     }
 
-    /**
-     * @param bool $deferredAllowed
-     *
-     * @return string
-     */
     public function getPath(bool $deferredAllowed = true): string
     {
         $pathReference = $this->getPathReference($deferredAllowed);
@@ -169,11 +164,6 @@ final class ImageThumbnail
         return $this->getPath();
     }
 
-    /**
-     * @param string|array|Image\Thumbnail\Config $selector
-     *
-     * @return Image\Thumbnail\Config
-     */
     protected function createConfig(array|string|Image\Thumbnail\Config $selector): Image\Thumbnail\Config
     {
         $config = Image\Thumbnail\Config::getByAutoDetect($selector);

@@ -84,11 +84,6 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->delete('versions', ['id' => $this->model->getId()]);
     }
 
-    /**
-     * @param Model\Version $version
-     *
-     * @return bool
-     */
     public function isVersionUsedInScheduler(Model\Version $version): bool
     {
         $exists = $this->db->fetchOne('SELECT id FROM schedule_tasks WHERE version = ?', [$version->getId()]);
@@ -114,12 +109,6 @@ class Dao extends Model\Dao\AbstractDao
         return $returnValue;
     }
 
-    /**
-     * @param array $elementTypes
-     * @param array $ignoreIds
-     *
-     * @return array
-     */
     public function maintenanceGetOutdatedVersions(array $elementTypes, array $ignoreIds = []): array
     {
         $ignoreIdsList = implode(',', $ignoreIds);

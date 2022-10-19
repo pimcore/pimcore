@@ -428,9 +428,6 @@ class Dao extends Model\Element\Dao
         return $t;
     }
 
-    /**
-     * @return bool
-     */
     public function isLocked(): bool
     {
         // check for an locked element below this element
@@ -450,9 +447,6 @@ class Dao extends Model\Element\Dao
         return false;
     }
 
-    /**
-     * @return array
-     */
     public function unlockPropagate(): array
     {
         $lockIds = $this->db->fetchFirstColumn('SELECT o_id from objects WHERE o_path LIKE ' . $this->db->quote(Helper::escapeLike($this->model->getRealFullPath()) . '/%') . ' OR o_id = ' . $this->model->getId());
@@ -517,12 +511,6 @@ class Dao extends Model\Element\Dao
         return $this->InheritingPermission($type, $userIds, 'object');
     }
 
-    /**
-     * @param string $type
-     * @param Model\User $user
-     *
-     * @return bool
-     */
     public function isAllowed(string $type, User $user): bool
     {
         $parentIds = $this->collectParentIds();
@@ -569,13 +557,6 @@ class Dao extends Model\Element\Dao
         return $this->permissionByTypes($columns, $user, 'object');
     }
 
-    /**
-     * @param string|null $type
-     * @param Model\User $user
-     * @param bool $quote
-     *
-     * @return array|null
-     */
     public function getPermissions(?string $type, User $user, bool $quote = true): ?array
     {
         $parentIds = $this->collectParentIds();
@@ -641,13 +622,6 @@ class Dao extends Model\Element\Dao
         return null;
     }
 
-    /**
-     * @param string|null $type
-     * @param Model\User $user
-     * @param bool $quote
-     *
-     * @return array
-     */
     public function getChildPermissions(?string $type, User $user, bool $quote = true): array
     {
         $userIds = $user->getRoles();
@@ -680,9 +654,6 @@ class Dao extends Model\Element\Dao
         ]);
     }
 
-    /**
-     * @return bool
-     */
     public function __isBasedOnLatestData(): bool
     {
         $data = $this->db->fetchAssociative('SELECT o_modificationDate, o_versionCount  from objects WHERE o_id = ?', [$this->model->getId()]);

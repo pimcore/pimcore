@@ -412,9 +412,6 @@ class Dao extends Model\Element\Dao
         return (int) $this->db->fetchOne($query, [$this->model->getId()]);
     }
 
-    /**
-     * @return bool
-     */
     public function isLocked(): bool
     {
         // check for an locked element below this element
@@ -434,9 +431,6 @@ class Dao extends Model\Element\Dao
         return false;
     }
 
-    /**
-     * @return array
-     */
     public function unlockPropagate(): array
     {
         $lockIds = $this->db->fetchFirstColumn('SELECT id from assets WHERE path LIKE ' . $this->db->quote(Helper::escapeLike($this->model->getRealFullPath()) . '/%') . ' OR id = ' . $this->model->getId());
@@ -458,12 +452,6 @@ class Dao extends Model\Element\Dao
         return $this->InheritingPermission($type, $userIds, 'asset');
     }
 
-    /**
-     * @param string $type
-     * @param Model\User $user
-     *
-     * @return bool
-     */
     public function isAllowed(string $type, User $user): bool
     {
         // collect properties via parent - ids
@@ -528,9 +516,6 @@ class Dao extends Model\Element\Dao
         $this->db->update('assets', ['customSettings' => $customSettingsData], ['id' => $this->model->getId()]);
     }
 
-    /**
-     * @return bool
-     */
     public function __isBasedOnLatestData(): bool
     {
         $data = $this->db->fetchAssociative('SELECT modificationDate, versionCount from assets WHERE id = ?', [$this->model->getId()]);

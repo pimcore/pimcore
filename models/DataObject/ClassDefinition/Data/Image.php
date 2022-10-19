@@ -219,17 +219,13 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getCacheTags(mixed $data, array $tags = []): array
     {
         if ($data instanceof Asset\Image) {
@@ -241,11 +237,6 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $tags;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return array
-     */
     public function resolveDependencies(mixed $data): array
     {
         $dependencies = [];

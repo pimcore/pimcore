@@ -56,11 +56,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
         return $this->getData();
     }
 
-    /**
-     * @param array $documents
-     *
-     * @return Listing
-     */
     public function setDocuments(array $documents): Listing
     {
         return $this->setData($documents);
@@ -111,9 +106,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      * Methods for AdapterInterface
      */
 
-    /**
-     * @return int
-     */
     #[\ReturnTypeWillChange]
     public function count(): int// : int
     {

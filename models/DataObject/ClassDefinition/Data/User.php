@@ -53,14 +53,14 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
 
     /**
      * @param mixed $data
-     * @param null|Model\DataObject\Concrete $object
+     * @param Concrete|null $object
      * @param array $params
      *
      * @return string|null
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataFromResource(mixed $data, Concrete $object = null, array $params = []): ?string
     {
         if (!empty($data)) {
             try {
@@ -143,9 +143,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
@@ -178,9 +176,6 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         $this->init();
     }
 
-    /**
-     * @return $this
-     */
     #[\ReturnTypeWillChange]
     public function jsonSerialize(): static// : static
     {
@@ -202,9 +197,6 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         return $blockedVars;
     }
 
-    /**
-     * @return bool
-     */
     public function getUnique(): bool
     {
         return $this->unique;

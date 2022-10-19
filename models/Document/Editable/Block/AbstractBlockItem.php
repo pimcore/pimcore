@@ -50,11 +50,6 @@ abstract class AbstractBlockItem
 
     abstract protected function getItemType(): string;
 
-    /**
-     * @param string $name
-     *
-     * @return Document\Editable|null
-     */
     public function getEditable(string $name): ?Document\Editable
     {
         $id = Document\Editable::buildChildEditableName($name, $this->getItemType(), $this->parentBlockNames, $this->index);

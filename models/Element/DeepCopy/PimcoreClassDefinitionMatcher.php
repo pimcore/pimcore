@@ -25,7 +25,6 @@ use Pimcore\Model\DataObject\Concrete;
  */
 class PimcoreClassDefinitionMatcher implements Matcher
 {
-    /** @var string $matchType */
     private string $matchType;
 
     /**

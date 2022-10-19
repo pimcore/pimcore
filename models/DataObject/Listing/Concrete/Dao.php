@@ -29,16 +29,10 @@ use Pimcore\Tool;
  */
 class Dao extends Model\DataObject\Listing\Dao
 {
-    /**
-     * @var bool
-     */
     protected bool $firstException = true;
 
     private ?string $tableName = null;
 
-    /**
-     * @var int
-     */
     protected int $totalCount = 0;
 
     /**

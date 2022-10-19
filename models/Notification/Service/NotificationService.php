@@ -29,7 +29,6 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  */
 class NotificationService
 {
-    /** @var UserService */
     private UserService $userService;
 
     /**

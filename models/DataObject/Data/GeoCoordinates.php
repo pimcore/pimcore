@@ -23,14 +23,8 @@ class GeoCoordinates implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    /**
-     * @var float
-     */
     protected float $longitude;
 
-    /**
-     * @var float
-     */
     protected float $latitude;
 
     /**
@@ -50,19 +44,11 @@ class GeoCoordinates implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @return float
-     */
     public function getLongitude(): float
     {
         return $this->longitude;
     }
 
-    /**
-     * @param float $longitude
-     *
-     * @return $this
-     */
     public function setLongitude(float $longitude): static
     {
         $longitude = (float)$longitude;
@@ -75,19 +61,11 @@ class GeoCoordinates implements OwnerAwareFieldInterface
         return $this;
     }
 
-    /**
-     * @return float
-     */
     public function getLatitude(): float
     {
         return $this->latitude;
     }
 
-    /**
-     * @param float $latitude
-     *
-     * @return $this
-     */
     public function setLatitude(float $latitude): static
     {
         $latitude = (float)$latitude;

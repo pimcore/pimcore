@@ -28,32 +28,18 @@ use Pimcore\Model;
  */
 abstract class AbstractListing extends Model\Listing\AbstractListing
 {
-    /**
-     * @var string
-     */
     protected string $type;
 
-    /**
-     * @return array
-     */
     public function getItems(): array
     {
         return $this->getData();
     }
 
-    /**
-     * @param array $items
-     *
-     * @return $this
-     */
     public function setItems(array $items): static
     {
         return $this->setData($items);
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;

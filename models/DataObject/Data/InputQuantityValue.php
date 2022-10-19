@@ -20,9 +20,6 @@ use Pimcore\Model\DataObject\QuantityValue\Unit;
 
 class InputQuantityValue extends AbstractQuantityValue
 {
-    /**
-     * @var string|null
-     */
     protected ?string $value;
 
     /**
@@ -41,9 +38,6 @@ class InputQuantityValue extends AbstractQuantityValue
         $this->markMeDirty();
     }
 
-    /**
-     * @return string
-     */
     public function getValue(): string
     {
         return (string)$this->value;

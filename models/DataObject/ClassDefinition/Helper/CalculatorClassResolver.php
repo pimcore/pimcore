@@ -23,11 +23,6 @@ use Pimcore\Model\DataObject\ClassDefinition\CalculatorClassInterface;
  */
 final class CalculatorClassResolver extends ClassResolver
 {
-    /**
-     * @param string $calculatorClass
-     *
-     * @return object|null
-     */
     public static function resolveCalculatorClass(string $calculatorClass): ?object
     {
         return self::resolve($calculatorClass, static function ($generator) {

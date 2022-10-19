@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,8 +28,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class RequirementsCheckCommand extends AbstractCommand
 {
-    /** @var array $levelsToDisplay */
-    protected $levelsToDisplay = [];
+    protected array $levelsToDisplay = [];
 
     /**
      * {@inheritdoc}
@@ -95,11 +95,6 @@ class RequirementsCheckCommand extends AbstractCommand
         }
     }
 
-    /**
-     * @param string $state
-     *
-     * @return string
-     */
     protected function displayState(string $state): string
     {
         switch ($state) {

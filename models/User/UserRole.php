@@ -142,19 +142,11 @@ class UserRole extends AbstractUser
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getPermissions(): array
     {
         return $this->permissions;
     }
 
-    /**
-     * @param string $permissionName
-     *
-     * @return bool
-     */
     public function getPermission(string $permissionName): bool
     {
         if (in_array($permissionName, $this->permissions)) {
@@ -187,11 +179,6 @@ class UserRole extends AbstractUser
         return $permissionInfo;
     }
 
-    /**
-     * @param array|string $permissions
-     *
-     * @return $this
-     */
     public function setPermissions(array|string $permissions): static
     {
         if (is_string($permissions)) {
@@ -263,11 +250,6 @@ class UserRole extends AbstractUser
         return $this->workspacesObject;
     }
 
-    /**
-     * @param array|string $classes
-     *
-     * @return $this
-     */
     public function setClasses(array|string $classes): static
     {
         $classes = $this->prepareArray($classes);
@@ -277,19 +259,11 @@ class UserRole extends AbstractUser
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getClasses(): array
     {
         return $this->classes;
     }
 
-    /**
-     * @param array|string $docTypes
-     *
-     * @return $this
-     */
     public function setDocTypes(array|string $docTypes): static
     {
         $docTypes = $this->prepareArray($docTypes);
@@ -299,27 +273,16 @@ class UserRole extends AbstractUser
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getDocTypes(): array
     {
         return $this->docTypes;
     }
 
-    /**
-     * @return array
-     */
     public function getPerspectives(): array
     {
         return $this->perspectives;
     }
 
-    /**
-     * @param array|string $perspectives
-     *
-     * @return $this
-     */
     public function setPerspectives(array|string $perspectives): static
     {
         $perspectives = $this->prepareArray($perspectives);
@@ -329,19 +292,11 @@ class UserRole extends AbstractUser
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getWebsiteTranslationLanguagesView(): array
     {
         return $this->websiteTranslationLanguagesView;
     }
 
-    /**
-     * @param array|string $websiteTranslationLanguagesView
-     *
-     * @return $this
-     */
     public function setWebsiteTranslationLanguagesView(array|string $websiteTranslationLanguagesView): static
     {
         $websiteTranslationLanguagesView = $this->prepareArray($websiteTranslationLanguagesView);
@@ -351,19 +306,11 @@ class UserRole extends AbstractUser
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getWebsiteTranslationLanguagesEdit(): array
     {
         return $this->websiteTranslationLanguagesEdit;
     }
 
-    /**
-     * @param array|string $websiteTranslationLanguagesEdit
-     *
-     * @return $this
-     */
     public function setWebsiteTranslationLanguagesEdit(array|string $websiteTranslationLanguagesEdit): static
     {
         $websiteTranslationLanguagesEdit = $this->prepareArray($websiteTranslationLanguagesEdit);

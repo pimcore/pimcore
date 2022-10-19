@@ -28,47 +28,20 @@ use Pimcore\Tool\Session;
  */
 final class Editlock extends Model\AbstractModel
 {
-    /**
-     * @var int
-     */
     protected int $id;
 
-    /**
-     * @var int
-     */
     protected int $cid;
 
-    /**
-     * @var string
-     */
     protected string $ctype;
 
-    /**
-     * @var int
-     */
     protected int $userId;
 
-    /**
-     * @var string
-     */
     protected string $sessionId;
 
-    /**
-     * @var int
-     */
     protected int $date;
 
-    /**
-     * @var string
-     */
     protected string $cpath;
 
-    /**
-     * @param int $cid
-     * @param string $ctype
-     *
-     * @return bool
-     */
     public static function isLocked(int $cid, string $ctype): bool
     {
         if ($lock = self::getByElement($cid, $ctype)) {
@@ -85,12 +58,6 @@ final class Editlock extends Model\AbstractModel
         return false;
     }
 
-    /**
-     * @param int $cid
-     * @param string $ctype
-     *
-     * @return null|Editlock
-     */
     public static function getByElement(int $cid, string $ctype): ?Editlock
     {
         try {
@@ -103,11 +70,6 @@ final class Editlock extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param string $sessionId
-     *
-     * @return bool|null
-     */
     public static function clearSession(string $sessionId): ?bool
     {
         try {
@@ -120,12 +82,6 @@ final class Editlock extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param int $cid
-     * @param string $ctype
-     *
-     * @return bool|Editlock
-     */
     public static function lock(int $cid, string $ctype): Editlock|bool
     {
         // try to get user
@@ -144,12 +100,6 @@ final class Editlock extends Model\AbstractModel
         return $lock;
     }
 
-    /**
-     * @param int $cid
-     * @param string $ctype
-     *
-     * @return bool
-     */
     public static function unlock(int $cid, string $ctype): bool
     {
         if ($lock = self::getByElement($cid, $ctype)) {
@@ -159,35 +109,21 @@ final class Editlock extends Model\AbstractModel
         return true;
     }
 
-    /**
-     * @return int
-     */
     public function getCid(): int
     {
         return $this->cid;
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return int
-     */
     public function getUserId(): int
     {
         return $this->userId;
     }
 
-    /**
-     * @param int $cid
-     *
-     * @return $this
-     */
     public function setCid(int $cid): static
     {
         $this->cid = (int) $cid;
@@ -195,11 +131,6 @@ final class Editlock extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
     public function setId(int $id): static
     {
         $this->id = (int) $id;
@@ -207,11 +138,6 @@ final class Editlock extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param int $userId
-     *
-     * @return $this
-     */
     public function setUserId(int $userId): static
     {
         $this->userId = (int) $userId;
@@ -219,19 +145,11 @@ final class Editlock extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getCtype(): string
     {
         return $this->ctype;
     }
 
-    /**
-     * @param string $ctype
-     *
-     * @return $this
-     */
     public function setCtype(string $ctype): static
     {
         $this->ctype = (string) $ctype;
@@ -239,19 +157,11 @@ final class Editlock extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getSessionId(): string
     {
         return $this->sessionId;
     }
 
-    /**
-     * @param string $sessionId
-     *
-     * @return $this
-     */
     public function setSessionId(string $sessionId): static
     {
         $this->sessionId = (string) $sessionId;
@@ -259,9 +169,6 @@ final class Editlock extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return Model\User|null
-     */
     public function getUser(): ?Model\User
     {
         if ($user = Model\User::getById($this->getUserId())) {
@@ -271,19 +178,11 @@ final class Editlock extends Model\AbstractModel
         return null;
     }
 
-    /**
-     * @return int
-     */
     public function getDate(): int
     {
         return $this->date;
     }
 
-    /**
-     * @param int $date
-     *
-     * @return $this
-     */
     public function setDate(int $date): static
     {
         $this->date = (int) $date;
@@ -291,11 +190,6 @@ final class Editlock extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param string $cpath
-     *
-     * @return $this
-     */
     public function setCpath(string $cpath): static
     {
         $this->cpath = $cpath;
@@ -303,9 +197,6 @@ final class Editlock extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getCpath(): string
     {
         return $this->cpath;

@@ -36,19 +36,10 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
 {
     use OwnerAwareFieldTrait;
 
-    /**
-     * @var string
-     */
     protected string $name;
 
-    /**
-     * @var string
-     */
     protected string $type;
 
-    /**
-     * @var mixed
-     */
     protected mixed $data;
 
     /**
@@ -73,9 +64,6 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
         $this->markMeDirty();
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
@@ -89,9 +77,6 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
         }
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
@@ -105,9 +90,6 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
         }
     }
 
-    /**
-     * @return mixed
-     */
     public function getData(): mixed
     {
         if ($this->needsRenewReferences) {
@@ -208,9 +190,6 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
         $this->_language = $language;
     }
 
-    /**
-     * @return mixed
-     */
     public function marshalForCache(): mixed
     {
         $this->needsRenewReferences = true;

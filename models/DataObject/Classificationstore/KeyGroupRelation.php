@@ -26,14 +26,8 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 final class KeyGroupRelation extends Model\AbstractModel
 {
-    /**
-     * @var int
-     */
     protected int $keyId;
 
-    /**
-     * @var int
-     */
     protected int $groupId;
 
     /** The key
@@ -62,7 +56,6 @@ final class KeyGroupRelation extends Model\AbstractModel
      */
     protected string $type;
 
-    /** @var int */
     protected int $sorter;
 
     /** The group name
@@ -70,23 +63,15 @@ final class KeyGroupRelation extends Model\AbstractModel
      */
     protected string $groupName;
 
-    /** @var bool */
     protected bool $mandatory;
 
-    /** @var bool */
     protected bool $enabled;
 
-    /**
-     * @return Model\DataObject\Classificationstore\KeyGroupRelation
-     */
     public static function create(): KeyGroupRelation
     {
         return new self();
     }
 
-    /**
-     * @return int
-     */
     public function getGroupId(): int
     {
         return $this->groupId;
@@ -97,9 +82,6 @@ final class KeyGroupRelation extends Model\AbstractModel
         $this->groupId = $groupId;
     }
 
-    /**
-     * @return int
-     */
     public function getKeyId(): int
     {
         return $this->keyId;
@@ -110,9 +92,6 @@ final class KeyGroupRelation extends Model\AbstractModel
         $this->keyId = $keyId;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
@@ -123,9 +102,6 @@ final class KeyGroupRelation extends Model\AbstractModel
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
         return $this->description;
@@ -136,9 +112,6 @@ final class KeyGroupRelation extends Model\AbstractModel
         $this->description = $description;
     }
 
-    /**
-     * @return string
-     */
     public function getDefinition(): string
     {
         return $this->definition;
@@ -149,9 +122,6 @@ final class KeyGroupRelation extends Model\AbstractModel
         $this->definition = $definition;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
@@ -162,9 +132,6 @@ final class KeyGroupRelation extends Model\AbstractModel
         $this->type = $type;
     }
 
-    /**
-     * @return int
-     */
     public function getSorter(): int
     {
         return $this->sorter;
@@ -175,9 +142,6 @@ final class KeyGroupRelation extends Model\AbstractModel
         $this->sorter = (int) $sorter;
     }
 
-    /**
-     * @return bool
-     */
     public function isMandatory(): bool
     {
         return $this->mandatory;
@@ -188,9 +152,6 @@ final class KeyGroupRelation extends Model\AbstractModel
         $this->mandatory = (bool)$mandatory;
     }
 
-    /**
-     * @return bool
-     */
     public function isEnabled(): bool
     {
         return $this->enabled;
@@ -201,12 +162,6 @@ final class KeyGroupRelation extends Model\AbstractModel
         $this->enabled = $enabled;
     }
 
-    /**
-     * @param int $groupId
-     * @param int $keyId
-     *
-     * @return KeyGroupRelation|null
-     */
     public static function getByGroupAndKeyId(int $groupId, int $keyId): ?KeyGroupRelation
     {
         try {

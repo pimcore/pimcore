@@ -35,9 +35,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return Model\Translation\Dao::TABLE_PREFIX . $this->model->getDomain();
     }
 
-    /**
-     * @return int
-     */
     public function getTotalCount(): int
     {
         $queryBuilder = $this->getQueryBuilder([$this->getDatabaseTableName() . '.key']);
@@ -51,9 +48,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $amount;
     }
 
-    /**
-     * @return int
-     */
     public function getCount(): int
     {
         if (count($this->model->load()) > 0) {
@@ -68,9 +62,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $amount;
     }
 
-    /**
-     * @return array
-     */
     public function getAllTranslations(): array
     {
         $queryBuilder = $this->getQueryBuilder(['*']);
@@ -107,9 +98,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $translations;
     }
 
-    /**
-     * @return array
-     */
     public function loadRaw(): array
     {
         $queryBuilder = $this->getQueryBuilder(['*']);
@@ -118,9 +106,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $translationsData;
     }
 
-    /**
-     * @return array
-     */
     public function load(): array
     {
         //$allTranslations = $this->getAllTranslations();
@@ -143,9 +128,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $translations;
     }
 
-    /**
-     * @return bool
-     */
     public function isCacheable(): bool
     {
         $count = $this->db->fetchOne('SELECT COUNT(*) FROM ' . $this->getDatabaseTableName());

@@ -23,14 +23,8 @@ class Geobounds implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    /**
-     * @var GeoCoordinates|null
-     */
     protected ?GeoCoordinates $northEast;
 
-    /**
-     * @var GeoCoordinates|null
-     */
     protected ?GeoCoordinates $southWest;
 
     /**
@@ -48,19 +42,11 @@ class Geobounds implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @return GeoCoordinates|null
-     */
     public function getNorthEast(): ?GeoCoordinates
     {
         return $this->northEast;
     }
 
-    /**
-     * @param GeoCoordinates $northEast
-     *
-     * @return $this
-     */
     public function setNorthEast(GeoCoordinates $northEast): static
     {
         $this->northEast = $northEast;
@@ -69,19 +55,11 @@ class Geobounds implements OwnerAwareFieldInterface
         return $this;
     }
 
-    /**
-     * @return GeoCoordinates|null
-     */
     public function getSouthWest(): ?GeoCoordinates
     {
         return $this->southWest;
     }
 
-    /**
-     * @param GeoCoordinates $southWest
-     *
-     * @return $this
-     */
     public function setSouthWest(GeoCoordinates $southWest): static
     {
         $this->southWest = $southWest;

@@ -20,11 +20,5 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 interface SelectOptionsProviderInterface extends MultiSelectOptionsProviderInterface
 {
-    /**
-     * @param array $context
-     * @param Data $fieldDefinition
-     *
-     * @return string|null
-     */
     public function getDefaultValue(array $context, Data $fieldDefinition): ?string;
 }

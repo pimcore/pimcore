@@ -40,19 +40,10 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      */
     protected $type;
 
-    /**
-     * @var string|null
-     */
     protected ?string $fieldname;
 
-    /**
-     * @var bool
-     */
     protected bool $doDelete = false;
 
-    /**
-     * @var Concrete|Model\Element\ElementDescriptor|null
-     */
     protected Concrete|Model\Element\ElementDescriptor|null $object;
 
     protected ?int $objectId = null;
@@ -62,19 +53,11 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         $this->setObject($object);
     }
 
-    /**
-     * @return string|null
-     */
     public function getFieldname(): ?string
     {
         return $this->fieldname;
     }
 
-    /**
-     * @param string|null $fieldname
-     *
-     * @return $this
-     */
     public function setFieldname(?string $fieldname): static
     {
         $this->fieldname = $fieldname;
@@ -82,17 +65,11 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return DataObject\Objectbrick\Definition
-     */
     public function getDefinition(): DataObject\Objectbrick\Definition
     {
         $definition = DataObject\Objectbrick\Definition::getByKey($this->getType());
@@ -100,11 +77,6 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return $definition;
     }
 
-    /**
-     * @param bool $doDelete
-     *
-     * @return $this
-     */
     public function setDoDelete(bool $doDelete): static
     {
         $this->flushContainer();
@@ -113,9 +85,6 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getDoDelete(): bool
     {
         return $this->doDelete;
@@ -177,11 +146,6 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         throw new InheritanceParentNotFoundException('No parent object available to get a value from');
     }
 
-    /**
-     * @param Concrete|null $object
-     *
-     * @return $this
-     */
     public function setObject(?Concrete $object): static
     {
         $this->objectId = $object ? $object->getId() : null;
@@ -199,11 +163,6 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return $this->object;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return mixed
-     */
     public function getValueForFieldName(string $key): mixed
     {
         if ($this->$key) {

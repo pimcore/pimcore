@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,7 +31,7 @@ trait StaticPageContextAwareTrait
      *
      * @param StaticPageResolver $staticPageResolver
      */
-    public function setStaticPageResolver(StaticPageResolver $staticPageResolver)
+    public function setStaticPageResolver(StaticPageResolver $staticPageResolver): void
     {
         $this->staticPageResolver = $staticPageResolver;
     }

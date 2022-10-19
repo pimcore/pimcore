@@ -64,11 +64,6 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         }
     }
 
-    /**
-     * @param string $fieldName
-     *
-     * @return array
-     */
     public function getRelationIds(string $fieldName): array
     {
         $relations = [];
@@ -80,13 +75,6 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         return $relations;
     }
 
-    /**
-     * @param string $field
-     * @param bool $forOwner
-     * @param string $remoteClassId
-     *
-     * @return array
-     */
     public function getRelationData(string $field, bool $forOwner, string $remoteClassId): array
     {
         $id = $this->model->getId();

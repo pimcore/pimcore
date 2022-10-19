@@ -26,48 +26,22 @@ use Pimcore\Model;
  */
 class Task extends Model\AbstractModel
 {
-    /**
-     * @var int
-     */
     protected int $id;
 
-    /**
-     * @var int
-     */
     protected int $cid;
 
-    /**
-     * @var string
-     */
     protected string $ctype;
 
-    /**
-     * @var int
-     */
     protected int $date;
 
-    /**
-     * @var string
-     */
     protected string $action;
 
-    /**
-     * @var int|null
-     */
     protected ?int $version;
 
     protected bool $active = false;
 
-    /**
-     * @var int|null
-     */
     protected ?int $userId;
 
-    /**
-     * @param int $id
-     *
-     * @return self|null
-     */
     public static function getById(int $id): ?Task
     {
         $cacheKey = 'scheduled_task_' . $id;
@@ -90,11 +64,6 @@ class Task extends Model\AbstractModel
         return $task;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return self
-     */
     public static function create(array $data): Task
     {
         $task = new self();
@@ -109,59 +78,36 @@ class Task extends Model\AbstractModel
         $this->setValues($data);
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return int
-     */
     public function getCid(): int
     {
         return $this->cid;
     }
 
-    /**
-     * @return string
-     */
     public function getCtype(): string
     {
         return $this->ctype;
     }
 
-    /**
-     * @return int
-     */
     public function getDate(): int
     {
         return $this->date;
     }
 
-    /**
-     * @return string
-     */
     public function getAction(): string
     {
         return $this->action;
     }
 
-    /**
-     * @return int|null
-     */
     public function getVersion(): ?int
     {
         return $this->version;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
     public function setId(int $id): static
     {
         $this->id = (int) $id;
@@ -169,11 +115,6 @@ class Task extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param int $cid
-     *
-     * @return $this
-     */
     public function setCid(int $cid): static
     {
         $this->cid = (int) $cid;
@@ -181,11 +122,6 @@ class Task extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param string $ctype
-     *
-     * @return $this
-     */
     public function setCtype(string $ctype): static
     {
         $this->ctype = $ctype;
@@ -193,11 +129,6 @@ class Task extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param int $date
-     *
-     * @return $this
-     */
     public function setDate(int $date): static
     {
         $this->date = (int) $date;
@@ -205,11 +136,6 @@ class Task extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param string $action
-     *
-     * @return $this
-     */
     public function setAction(string $action): static
     {
         $this->action = $action;
@@ -217,11 +143,6 @@ class Task extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param int|null $version
-     *
-     * @return $this
-     */
     public function setVersion(?int $version): static
     {
         $this->version = $version;
@@ -229,19 +150,11 @@ class Task extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getActive(): bool
     {
         return $this->active;
     }
 
-    /**
-     * @param bool $active
-     *
-     * @return $this
-     */
     public function setActive(bool $active): static
     {
         if (empty($active)) {

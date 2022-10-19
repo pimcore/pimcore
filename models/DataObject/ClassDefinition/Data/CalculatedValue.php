@@ -100,11 +100,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $this->elementType;
     }
 
-    /**
-     * @param string $elementType
-     *
-     * @return $this
-     */
     public function setElementType(string $elementType): static
     {
         if ($elementType) {
@@ -114,9 +109,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $this;
     }
 
-    /**
-     * @return string|int
-     */
     public function getWidth(): int|string
     {
         return $this->width;
@@ -130,19 +122,11 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $this->width = $width;
     }
 
-    /**
-     * @return int
-     */
     public function getColumnLength(): int
     {
         return $this->columnLength;
     }
 
-    /**
-     * @param int|null $columnLength
-     *
-     * @return $this
-     */
     public function setColumnLength(?int $columnLength): static
     {
         if ($columnLength) {
@@ -152,9 +136,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getCalculatorClass(): string
     {
         return $this->calculatorClass;

@@ -63,19 +63,11 @@ class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multisel
         $this->setOptions($options);
     }
 
-    /**
-     * @return bool
-     */
     public function getOnlySystemLanguages(): bool
     {
         return $this->onlySystemLanguages;
     }
 
-    /**
-     * @param bool|int|null $value
-     *
-     * @return $this
-     */
     public function setOnlySystemLanguages(bool|int|null $value): static
     {
         $this->onlySystemLanguages = (bool) $value;
@@ -96,9 +88,6 @@ class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multisel
         return $obj;
     }
 
-    /**
-     * @return $this
-     */
     #[\ReturnTypeWillChange]
     public function jsonSerialize(): static// : static
     {

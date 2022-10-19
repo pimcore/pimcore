@@ -38,19 +38,10 @@ class Dao extends Model\Dao\AbstractDao
     use DataObject\ClassDefinition\Helper\Dao;
     use DataObject\Traits\CompositeIndexTrait;
 
-    /**
-     * @var array|null
-     */
     protected ?array $tableDefinitions = null;
 
-    /**
-     * @var DataObject\Concrete\Dao\InheritanceHelper
-     */
     protected DataObject\Concrete\Dao\InheritanceHelper $inheritanceHelper;
 
-    /**
-     * @return string
-     */
     public function getTableName(): string
     {
         $context = $this->model->getContext();
@@ -70,9 +61,6 @@ class Dao extends Model\Dao\AbstractDao
         return 'object_localized_data_'.$this->model->getClass()->getId();
     }
 
-    /**
-     * @return string
-     */
     public function getQueryTableName(): string
     {
         $context = $this->model->getContext();
@@ -958,13 +946,6 @@ QUERY;
         $this->tableDefinitions = null;
     }
 
-    /**
-     * @param string $fieldname
-     * @param string $language
-     * @param array $extraParams
-     *
-     * @return array
-     */
     public function getFieldDefinitionParams(string $fieldname, string $language, array $extraParams = []): array
     {
         return array_merge(

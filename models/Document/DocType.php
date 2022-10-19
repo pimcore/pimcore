@@ -143,51 +143,31 @@ class DocType extends Model\AbstractModel
         return $type;
     }
 
-    /**
-     * @return string
-     */
     public function getController(): string
     {
         return $this->controller;
     }
 
-    /**
-     * @return string|null
-     */
     public function getId(): ?string
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
     public function getGroup(): string
     {
         return $this->group;
     }
 
-    /**
-     * @return string|null
-     */
     public function getTemplate(): ?string
     {
         return $this->template;
     }
 
-    /**
-     * @param string $controller
-     *
-     * @return $this
-     */
     public function setController(string $controller): static
     {
         $this->controller = $controller;
@@ -195,11 +175,6 @@ class DocType extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param string $id
-     *
-     * @return $this
-     */
     public function setId(string $id): static
     {
         $this->id = $id;
@@ -207,11 +182,6 @@ class DocType extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -219,11 +189,6 @@ class DocType extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param string $group
-     *
-     * @return $this
-     */
     public function setGroup(string $group): static
     {
         $this->group = $group;
@@ -231,11 +196,6 @@ class DocType extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param string $template
-     *
-     * @return $this
-     */
     public function setTemplate(string $template): static
     {
         $this->template = $template;
@@ -243,19 +203,11 @@ class DocType extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return $this
-     */
     public function setType(string $type): static
     {
         $this->type = $type;
@@ -263,11 +215,6 @@ class DocType extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param int $priority
-     *
-     * @return $this
-     */
     public function setPriority(int $priority): static
     {
         $this->priority = (int) $priority;
@@ -275,19 +222,11 @@ class DocType extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getPriority(): int
     {
         return $this->priority;
     }
 
-    /**
-     * @param int $modificationDate
-     *
-     * @return $this
-     */
     public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = (int) $modificationDate;
@@ -295,19 +234,11 @@ class DocType extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
-    /**
-     * @param int $creationDate
-     *
-     * @return $this
-     */
     public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = (int) $creationDate;
@@ -315,9 +246,6 @@ class DocType extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getCreationDate(): ?int
     {
         return $this->creationDate;

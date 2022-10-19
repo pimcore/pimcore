@@ -64,9 +64,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return array_map('intval', $notesIds);
     }
 
-    /**
-     * @return int
-     */
     public function getTotalCount(): int
     {
         try {

@@ -70,9 +70,6 @@ class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multi
         return $obj;
     }
 
-    /**
-     * @return $this
-     */
     #[\ReturnTypeWillChange]
     public function jsonSerialize(): static// : static
     {

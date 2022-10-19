@@ -27,26 +27,12 @@ use Pimcore\Model;
  */
 class Blacklist extends Model\AbstractModel
 {
-    /**
-     * @var string|null
-     */
     protected ?string $address;
 
-    /**
-     * @var int|null
-     */
     protected ?int $creationDate;
 
-    /**
-     * @var int|null
-     */
     protected ?int $modificationDate;
 
-    /**
-     * @param string $addr
-     *
-     * @return null|Blacklist
-     */
     public static function getByAddress(string $addr): ?Blacklist
     {
         try {
@@ -64,9 +50,6 @@ class Blacklist extends Model\AbstractModel
         $this->address = $address;
     }
 
-    /**
-     * @return string|null
-     */
     public function getAddress(): ?string
     {
         return $this->address;
@@ -77,9 +60,6 @@ class Blacklist extends Model\AbstractModel
         $this->creationDate = (int) $creationDate;
     }
 
-    /**
-     * @return int
-     */
     public function getCreationDate(): int
     {
         if (!$this->creationDate) {
@@ -94,9 +74,6 @@ class Blacklist extends Model\AbstractModel
         $this->modificationDate = (int) $modificationDate;
     }
 
-    /**
-     * @return int
-     */
     public function getModificationDate(): int
     {
         if (!$this->modificationDate) {

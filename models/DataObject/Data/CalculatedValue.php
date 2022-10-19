@@ -23,30 +23,20 @@ class CalculatedValue implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    /** @var string */
     protected string $fieldname;
 
-    /** @var string */
     protected string $ownerType = 'object';
 
-    /** @var string|null */
     protected ?string $ownerName;
 
-    /** @var int|string|null */
     protected string|int|null $index;
 
-    /** @var string|null */
     protected ?string $position;
 
-    /** @var int|null */
     protected ?int $groupId;
 
-    /** @var int|null */
     protected ?int $keyId;
 
-    /**
-     * @var mixed
-     */
     protected mixed $keyDefinition;
 
     /**
@@ -83,65 +73,41 @@ class CalculatedValue implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @return string
-     */
     public function getFieldname(): string
     {
         return $this->fieldname;
     }
 
-    /**
-     * @return int|string|null
-     */
     public function getIndex(): int|string|null
     {
         return $this->index;
     }
 
-    /**
-     * @return string|null
-     */
     public function getOwnerName(): ?string
     {
         return $this->ownerName;
     }
 
-    /**
-     * @return string
-     */
     public function getOwnerType(): string
     {
         return $this->ownerType;
     }
 
-    /**
-     * @return string|null
-     */
     public function getPosition(): ?string
     {
         return $this->position;
     }
 
-    /**
-     * @return int|null
-     */
     public function getGroupId(): ?int
     {
         return $this->groupId;
     }
 
-    /**
-     * @return mixed
-     */
     public function getKeyDefinition(): mixed
     {
         return $this->keyDefinition;
     }
 
-    /**
-     * @return int|null
-     */
     public function getKeyId(): ?int
     {
         return $this->keyId;

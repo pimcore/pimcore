@@ -38,21 +38,10 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     use DataObject\Traits\LocateFileTrait;
     use DataObject\Traits\FieldcollectionObjectbrickDefinitionTrait;
 
-    /**
-     * @var array
-     */
     public array $classDefinitions = [];
 
-    /**
-     * @var array
-     */
     private array $oldClassDefinitions = [];
 
-    /**
-     * @param array $classDefinitions
-     *
-     * @return $this
-     */
     public function setClassDefinitions(array $classDefinitions): static
     {
         $this->classDefinitions = $classDefinitions;
@@ -60,9 +49,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getClassDefinitions(): array
     {
         return $this->classDefinitions;

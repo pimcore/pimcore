@@ -30,12 +30,6 @@ class OptionsProviderResolver extends ClassResolver
 
     public static array $providerCache = [];
 
-    /**
-     * @param string|null $providerClass
-     * @param int $mode
-     *
-     * @return object|null
-     */
     public static function resolveProvider(?string $providerClass, int $mode): ?object
     {
         return self::resolve($providerClass, function ($provider) use ($mode) {

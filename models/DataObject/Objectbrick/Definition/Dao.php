@@ -28,17 +28,8 @@ class Dao extends Model\Dao\AbstractDao
 {
     use DataObject\ClassDefinition\Helper\Dao;
 
-    /**
-     * @var array|null
-     */
     protected ?array $tableDefinitions = null;
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     * @param bool $query
-     *
-     * @return string
-     */
     public function getTableName(DataObject\ClassDefinition $class, bool $query = false): string
     {
         if ($query) {
@@ -48,13 +39,6 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     * @param bool $query
-     * @param string $language
-     *
-     * @return string
-     */
     public function getLocalizedTableName(DataObject\ClassDefinition $class, bool $query = false, string $language = 'en'): string
     {
         if ($query) {

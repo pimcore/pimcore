@@ -48,18 +48,13 @@ class Embed extends Model\Document\Editable
         ];
     }
 
-    /**
-     * @return string
-     */
     public function getUrl(): string
     {
         return $this->url;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForResource()
+
+    public function getDataForResource(): array
     {
         return [
             'url' => $this->url,
@@ -138,9 +133,7 @@ class Embed extends Model\Document\Editable
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function isEmpty(): bool
     {
         if ($this->url) {

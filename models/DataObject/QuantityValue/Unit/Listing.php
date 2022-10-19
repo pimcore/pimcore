@@ -26,11 +26,6 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\AbstractListing
 {
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
     public function isValidOrderKey(string $key): bool
     {
         return in_array($key, ['abbreviation', 'group', 'id', 'longname', 'baseunit', 'factor'], true);

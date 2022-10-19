@@ -31,10 +31,7 @@ interface QueryResourcePersistenceAwareInterface
      *
      * abstract public function getDataForQueryResource($data);
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): mixed;
+    public function getDataForQueryResource(mixed $data, Concrete $object = null, array $params = []): mixed;
 
-    /**
-     * @return string|array|null
-     */
     public function getQueryColumnType(): array|string|null;
 }

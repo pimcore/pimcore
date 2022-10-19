@@ -23,9 +23,7 @@ use Pimcore\Model;
  */
 class Listing extends Model\User\Listing\AbstractListing
 {
-    /**
-     * {@inheritdoc}
-     */
+
     protected string $type = 'role';
 
     /**

@@ -111,11 +111,6 @@ trait EmbeddedMetaDataTrait
         return $tempArray;
     }
 
-    /**
-     * @param string|null $filePath
-     *
-     * @return array
-     */
     public function getEXIFData(?string $filePath = null): array
     {
         if (!$filePath) {

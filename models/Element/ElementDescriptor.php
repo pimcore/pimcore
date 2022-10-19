@@ -21,14 +21,8 @@ namespace Pimcore\Model\Element;
  */
 final class ElementDescriptor
 {
-    /**
-     * @var string
-     */
     protected string $type;
 
-    /**
-     * @var int
-     */
     protected int $id;
 
     public function __construct(string $type, int $id)
@@ -37,19 +31,11 @@ final class ElementDescriptor
         $this->id = $id;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return $this
-     */
     public function setType(string $type): static
     {
         $this->type = $type;
@@ -57,19 +43,11 @@ final class ElementDescriptor
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
     public function setId(int $id): static
     {
         $this->id = $id;

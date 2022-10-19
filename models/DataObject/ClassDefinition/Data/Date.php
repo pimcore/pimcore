@@ -229,9 +229,6 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return '';
     }
 
-    /**
-     * @return int
-     */
     public function getDefaultValue(): int
     {
         if ($this->defaultValue !== null) {
@@ -241,11 +238,6 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return 0;
     }
 
-    /**
-     * @param mixed $defaultValue
-     *
-     * @return $this
-     */
     public function setDefaultValue(mixed $defaultValue): static
     {
         if (strlen((string)$defaultValue) > 0) {
@@ -272,19 +264,12 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
 
-    /**
-     * @param bool $useCurrentDate
-     *
-     * @return $this
-     */
     public function setUseCurrentDate(bool $useCurrentDate): static
     {
         $this->useCurrentDate = (bool)$useCurrentDate;
@@ -330,7 +315,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *
      * @return array|null
      */
-    public function getDiffDataForEditMode(mixed $data, $object = null, array $params = []): ?array
+    public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         $result = [];
 
@@ -396,9 +381,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     protected function doGetDefaultValue(Concrete $object, array $context = []): ?Carbon
     {
         if ($this->getDefaultValue()) {

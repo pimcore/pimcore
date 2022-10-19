@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-declare(strict_types=1);
 
 /**
  * Pimcore
@@ -130,22 +129,12 @@ final class TmpStore extends Model\AbstractModel
         return $instance->getDao()->add($id, $data, $tag, $lifetime);
     }
 
-    /**
-     * @param string $id
-     *
-     * @return void
-     */
     public static function delete(string $id): void
     {
         $instance = self::getInstance();
         $instance->getDao()->delete($id);
     }
 
-    /**
-     * @param string $id
-     *
-     * @return null|TmpStore
-     */
     public static function get(string $id): ?TmpStore
     {
         $item = new self();
@@ -160,11 +149,6 @@ final class TmpStore extends Model\AbstractModel
         return null;
     }
 
-    /**
-     * @param string $tag
-     *
-     * @return array
-     */
     public static function getIdsByTag(string $tag): array
     {
         $instance = self::getInstance();
@@ -173,9 +157,6 @@ final class TmpStore extends Model\AbstractModel
         return $items;
     }
 
-    /**
-     * @return string
-     */
     public function getId(): string
     {
         return $this->id;
@@ -186,9 +167,6 @@ final class TmpStore extends Model\AbstractModel
         $this->id = $id;
     }
 
-    /**
-     * @return string
-     */
     public function getTag(): string
     {
         return $this->tag;
@@ -199,9 +177,6 @@ final class TmpStore extends Model\AbstractModel
         $this->tag = $tag;
     }
 
-    /**
-     * @return mixed
-     */
     public function getData(): mixed
     {
         return $this->data;
@@ -212,9 +187,6 @@ final class TmpStore extends Model\AbstractModel
         $this->data = $data;
     }
 
-    /**
-     * @return int
-     */
     public function getDate(): int
     {
         return $this->date;
@@ -225,9 +197,6 @@ final class TmpStore extends Model\AbstractModel
         $this->date = $date;
     }
 
-    /**
-     * @return bool
-     */
     public function isSerialized(): bool
     {
         return $this->serialized;
@@ -238,9 +207,6 @@ final class TmpStore extends Model\AbstractModel
         $this->serialized = $serialized;
     }
 
-    /**
-     * @return int
-     */
     public function getExpiryDate(): int
     {
         return $this->expiryDate;

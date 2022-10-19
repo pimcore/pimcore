@@ -480,9 +480,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
         return '\\' . DataObject\Data\QuantityValueRange::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function isEmpty(mixed $data): bool
     {
         if ($data instanceof DataObject\Data\QuantityValueRange) {

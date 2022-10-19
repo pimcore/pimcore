@@ -25,33 +25,14 @@ use Pimcore\Model;
  */
 class WorkflowState extends Model\AbstractModel
 {
-    /**
-     * @var int
-     */
     protected int $cid;
 
-    /**
-     * @var string
-     */
     protected string $ctype;
 
-    /**
-     * @var string
-     */
     protected string $workflow;
 
-    /**
-     * @var string
-     */
     protected string $place;
 
-    /**
-     * @param int $cid
-     * @param string $ctype
-     * @param string $workflow
-     *
-     * @return null|WorkflowState
-     */
     public static function getByPrimary(int $cid, string $ctype, string $workflow): ?WorkflowState
     {
         try {
@@ -64,19 +45,11 @@ class WorkflowState extends Model\AbstractModel
         }
     }
 
-    /**
-     * @return int
-     */
     public function getCid(): int
     {
         return $this->cid;
     }
 
-    /**
-     * @param int $cid
-     *
-     * @return WorkflowState
-     */
     public function setCid(int $cid): static
     {
         $this->cid = $cid;
@@ -84,19 +57,11 @@ class WorkflowState extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getCtype(): string
     {
         return $this->ctype;
     }
 
-    /**
-     * @param string $ctype
-     *
-     * @return WorkflowState
-     */
     public function setCtype(string $ctype): static
     {
         $this->ctype = $ctype;
@@ -109,11 +74,6 @@ class WorkflowState extends Model\AbstractModel
         return $this->place;
     }
 
-    /**
-     * @param string $place
-     *
-     * @return WorkflowState
-     */
     public function setPlace(string $place): static
     {
         $this->place = $place;
@@ -121,19 +81,11 @@ class WorkflowState extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getWorkflow(): string
     {
         return $this->workflow;
     }
 
-    /**
-     * @param string $workflow
-     *
-     * @return WorkflowState
-     */
     public function setWorkflow(string $workflow): static
     {
         $this->workflow = $workflow;

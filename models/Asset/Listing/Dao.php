@@ -82,9 +82,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return array_map('intval', $assetIds);
     }
 
-    /**
-     * @return int
-     */
     public function getCount(): int
     {
         if ($this->model->isLoaded()) {
@@ -96,9 +93,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
     }
 
-    /**
-     * @return int
-     */
     public function getTotalCount(): int
     {
         $queryBuilder = $this->getQueryBuilder();

@@ -88,27 +88,16 @@ class Page extends TargetingDocument
         parent::doDelete();
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
         return \Pimcore\Tool\Text::removeLineBreaks($this->title);
     }
 
-    /**
-     * @param string $description
-     *
-     * @return $this
-     */
     public function setDescription(string $description): static
     {
         $this->description = str_replace("\n", ' ', $description);
@@ -116,11 +105,6 @@ class Page extends TargetingDocument
         return $this;
     }
 
-    /**
-     * @param string $title
-     *
-     * @return $this
-     */
     public function setTitle(string $title): static
     {
         $this->title = $title;
@@ -128,11 +112,6 @@ class Page extends TargetingDocument
         return $this;
     }
 
-    /**
-     * @param array $metaData
-     *
-     * @return $this
-     */
     public function setMetaData(array $metaData): static
     {
         $this->metaData = $metaData;
@@ -140,17 +119,12 @@ class Page extends TargetingDocument
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getMetaData(): array
     {
         return $this->metaData;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+array
     public function getFullPath(bool $force = false): string
     {
         $path = parent::getFullPath($force);
@@ -167,11 +141,6 @@ class Page extends TargetingDocument
         return $path;
     }
 
-    /**
-     * @param string|null $prettyUrl
-     *
-     * @return $this
-     */
     public function setPrettyUrl(?string $prettyUrl): static
     {
         if (!$prettyUrl) {
@@ -186,9 +155,6 @@ class Page extends TargetingDocument
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getPrettyUrl(): ?string
     {
         return $this->prettyUrl;
@@ -272,9 +238,6 @@ class Page extends TargetingDocument
         return $targetGroups;
     }
 
-    /**
-     * @return string
-     */
     public function getPreviewImageFilesystemPath(): string
     {
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/document-page-previews/document-page-screenshot-' . $this->getId() . '@2x.jpg';

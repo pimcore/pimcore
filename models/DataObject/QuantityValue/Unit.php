@@ -31,56 +31,24 @@ class Unit extends Model\AbstractModel
 
     const CACHE_KEY = 'quantityvalue_units_table';
 
-    /**
-     * @var string
-     */
     protected string $id;
 
-    /**
-     * @var string
-     */
     protected string $abbreviation;
 
-    /**
-     * @var string
-     */
     protected string $group;
 
-    /**
-     * @var string
-     */
     protected string $longname;
 
-    /**
-     * @var string
-     */
     protected string $baseunit;
 
-    /**
-     * @var string
-     */
     protected string $reference;
 
-    /**
-     * @var float|null
-     */
     protected ?float $factor;
 
-    /**
-     * @var float|null
-     */
     protected ?float $conversionOffset;
 
-    /**
-     * @var string
-     */
     protected string $converter;
 
-    /**
-     * @param string $abbreviation
-     *
-     * @return self|null
-     */
     public static function getByAbbreviation(string $abbreviation): ?Unit
     {
         try {
@@ -93,11 +61,6 @@ class Unit extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param string $reference
-     *
-     * @return self|null
-     */
     public static function getByReference(string $reference): ?Unit
     {
         try {
@@ -110,11 +73,6 @@ class Unit extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param string $id
-     *
-     * @return Unit|null
-     */
     public static function getById(string $id): ?Unit
     {
         try {
@@ -152,11 +110,6 @@ class Unit extends Model\AbstractModel
         return null;
     }
 
-    /**
-     * @param array $values
-     *
-     * @return Unit
-     */
     public static function create(array $values = []): Unit
     {
         $unit = new self();
@@ -203,11 +156,6 @@ class Unit extends Model\AbstractModel
         return ucfirst($this->getAbbreviation() . ' (' . $this->getId() . ')');
     }
 
-    /**
-     * @param string $abbreviation
-     *
-     * @return $this
-     */
     public function setAbbreviation(string $abbreviation): static
     {
         $this->abbreviation = $abbreviation;
@@ -215,19 +163,11 @@ class Unit extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getAbbreviation(): string
     {
         return $this->abbreviation;
     }
 
-    /**
-     * @param int|Unit $baseunit
-     *
-     * @return $this
-     */
     public function setBaseunit(Unit|int $baseunit): static
     {
         if ($baseunit instanceof self) {
@@ -238,9 +178,6 @@ class Unit extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return Unit|null
-     */
     public function getBaseunit(): ?Unit
     {
         if ($this->baseunit) {
@@ -250,11 +187,6 @@ class Unit extends Model\AbstractModel
         return null;
     }
 
-    /**
-     * @param float $factor
-     *
-     * @return $this
-     */
     public function setFactor(float $factor): static
     {
         $this->factor = $factor;
@@ -262,19 +194,11 @@ class Unit extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return float|null
-     */
     public function getFactor(): ?float
     {
         return $this->factor;
     }
 
-    /**
-     * @param string $group
-     *
-     * @return $this
-     */
     public function setGroup(string $group): static
     {
         $this->group = $group;
@@ -282,19 +206,11 @@ class Unit extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getGroup(): string
     {
         return $this->group;
     }
 
-    /**
-     * @param string $id
-     *
-     * @return $this
-     */
     public function setId(string $id): static
     {
         $this->id = (string) $id;
@@ -302,19 +218,11 @@ class Unit extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getId(): string
     {
         return (string) $this->id;
     }
 
-    /**
-     * @param string $longname
-     *
-     * @return $this
-     */
     public function setLongname(string $longname): static
     {
         $this->longname = $longname;
@@ -322,27 +230,16 @@ class Unit extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getLongname(): string
     {
         return $this->longname;
     }
 
-    /**
-     * @return string
-     */
     public function getReference(): string
     {
         return $this->reference;
     }
 
-    /**
-     * @param string $reference
-     *
-     * @return $this
-     */
     public function setReference(string $reference): static
     {
         $this->reference = $reference;
@@ -350,19 +247,11 @@ class Unit extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return float|null
-     */
     public function getConversionOffset(): ?float
     {
         return $this->conversionOffset;
     }
 
-    /**
-     * @param float $conversionOffset
-     *
-     * @return $this
-     */
     public function setConversionOffset(float $conversionOffset): static
     {
         $this->conversionOffset = $conversionOffset;
@@ -370,19 +259,11 @@ class Unit extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getConverter(): string
     {
         return $this->converter;
     }
 
-    /**
-     * @param string $converter
-     *
-     * @return $this
-     */
     public function setConverter(string $converter): static
     {
         $this->converter = (string)$converter;

@@ -68,11 +68,6 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         }
     }
 
-    /**
-     * @param bool $withInheritedValues
-     *
-     * @return array
-     */
     public function getItems(bool $withInheritedValues = false): array
     {
         if ($withInheritedValues) {
@@ -99,11 +94,6 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         return $this->items;
     }
 
-    /**
-     * @param array $items
-     *
-     * @return $this
-     */
     public function setItems(array $items): static
     {
         $this->items = $items;
@@ -112,19 +102,11 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getFieldname(): string
     {
         return $this->fieldname;
     }
 
-    /**
-     * @param string $fieldname
-     *
-     * @return $this
-     */
     public function setFieldname(string $fieldname): static
     {
         $this->fieldname = $fieldname;
@@ -238,11 +220,6 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         return $this->object;
     }
 
-    /**
-     * @param Concrete|null $object
-     *
-     * @return $this
-     */
     public function setObject(?Concrete $object): static
     {
         $this->objectId = $object ? $object->getId() : null;
@@ -316,22 +293,11 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         }
     }
 
-    /**
-     * @param string $fieldName
-     *
-     * @return mixed
-     */
     public function get(string $fieldName): mixed
     {
         return $this->{'get'.ucfirst($fieldName)}();
     }
 
-    /**
-     * @param string $fieldName
-     * @param mixed $value
-     *
-     * @return mixed
-     */
     public function set(string $fieldName, mixed $value): mixed
     {
         return $this->{'set'.ucfirst($fieldName)}($value);

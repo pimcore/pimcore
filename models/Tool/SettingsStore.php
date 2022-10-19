@@ -165,9 +165,6 @@ final class SettingsStore extends Model\AbstractModel
         $this->type = $type;
     }
 
-    /**
-     * @return int|string|bool|float
-     */
     public function getData(): float|bool|int|string
     {
         return $this->data;

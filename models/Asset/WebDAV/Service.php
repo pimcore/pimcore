@@ -23,17 +23,11 @@ use Pimcore\Model\Asset;
  */
 class Service
 {
-    /**
-     * @return string
-     */
     public static function getDeleteLogFile(): string
     {
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/webdav-delete.dat';
     }
 
-    /**
-     * @return array
-     */
     public static function getDeleteLog(): array
     {
         $log = [];

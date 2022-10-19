@@ -87,9 +87,6 @@ class Folder extends Model\Asset
         return $this->children;
     }
 
-    /**
-     * @return bool
-     */
     public function hasChildren(): bool
     {
         if (is_bool($this->hasChildren)) {

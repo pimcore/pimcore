@@ -28,11 +28,6 @@ class Folder extends DataObject
      */
     protected string $o_type = 'folder';
 
-    /**
-     * @param array $values
-     *
-     * @return Folder
-     */
     public static function create(array $values): Folder
     {
         $object = new static();

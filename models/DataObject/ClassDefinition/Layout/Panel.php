@@ -48,11 +48,6 @@ class Panel extends Model\DataObject\ClassDefinition\Layout
      */
     public bool $border = false;
 
-    /**
-     * @param string $layout
-     *
-     * @return $this
-     */
     public function setLayout(string $layout): static
     {
         $this->layout = $layout;
@@ -60,9 +55,6 @@ class Panel extends Model\DataObject\ClassDefinition\Layout
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getLayout(): string
     {
         return $this->layout;

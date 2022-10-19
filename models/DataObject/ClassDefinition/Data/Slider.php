@@ -103,19 +103,11 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      */
     public $columnType = 'double';
 
-    /**
-     * @return string|int
-     */
     public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @param int|string $width
-     *
-     * @return $this
-     */
     public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
@@ -126,19 +118,11 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $this;
     }
 
-    /**
-     * @return string|int
-     */
     public function getHeight(): int|string
     {
         return $this->height;
     }
 
-    /**
-     * @param int|string $height
-     *
-     * @return $this
-     */
     public function setHeight(int|string $height): static
     {
         if (is_numeric($height)) {
@@ -149,19 +133,11 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $this;
     }
 
-    /**
-     * @return float|null
-     */
     public function getMinValue(): ?float
     {
         return $this->minValue;
     }
 
-    /**
-     * @param float|null $minValue
-     *
-     * @return $this
-     */
     public function setMinValue(?float $minValue): static
     {
         $this->minValue = $this->getAsFloatCast($minValue);
@@ -169,19 +145,11 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $this;
     }
 
-    /**
-     * @return float|null
-     */
     public function getMaxValue(): ?float
     {
         return $this->maxValue;
     }
 
-    /**
-     * @param float|null $maxValue
-     *
-     * @return $this
-     */
     public function setMaxValue(?float $maxValue): static
     {
         $this->maxValue = $this->getAsFloatCast($maxValue);
@@ -189,9 +157,6 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getVertical(): bool
     {
         return $this->vertical;
@@ -205,11 +170,6 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return null;
     }
 
-    /**
-     * @param bool $vertical
-     *
-     * @return $this
-     */
     public function setVertical(bool $vertical): static
     {
         $this->vertical = (bool) $vertical;
@@ -217,19 +177,11 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $this;
     }
 
-    /**
-     * @return float|null
-     */
     public function getIncrement(): ?float
     {
         return $this->increment;
     }
 
-    /**
-     * @param float|null $increment
-     *
-     * @return $this
-     */
     public function setIncrement(?float $increment): static
     {
         $this->increment = $this->getAsFloatCast($increment);
@@ -237,19 +189,11 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getDecimalPrecision(): ?int
     {
         return $this->decimalPrecision;
     }
 
-    /**
-     * @param int|null $decimalPrecision
-     *
-     * @return $this
-     */
     public function setDecimalPrecision(?int $decimalPrecision): static
     {
         $this->decimalPrecision = $this->getAsIntegerCast($decimalPrecision);

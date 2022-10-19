@@ -18,10 +18,5 @@ namespace Pimcore\Model\DataObject;
 
 interface ObjectAwareFieldInterface
 {
-    /**
-     * @param Concrete|null $object
-     *
-     * @return $this
-     */
     public function setObject(?Concrete $object): static;
 }

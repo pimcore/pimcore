@@ -23,7 +23,6 @@ class ExternalImage implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    /** @var string|null */
     protected ?string $url;
 
     /**
@@ -35,9 +34,6 @@ class ExternalImage implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @return string|null
-     */
     public function getUrl(): ?string
     {
         return $this->url;

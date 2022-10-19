@@ -51,9 +51,6 @@ abstract class PrintAbstract extends Document\PageSnippet
         $this->lastGenerated = $lastGenerated->getTimestamp();
     }
 
-    /**
-     * @return null|\DateTime
-     */
     public function getLastGeneratedDate(): ?\DateTime
     {
         if ($this->lastGenerated) {
@@ -66,9 +63,6 @@ abstract class PrintAbstract extends Document\PageSnippet
         return null;
     }
 
-    /**
-     * @return null|TmpStore
-     */
     public function getInProgress(): ?TmpStore
     {
         return TmpStore::get($this->getLockKey());
@@ -79,9 +73,6 @@ abstract class PrintAbstract extends Document\PageSnippet
         $this->lastGenerated = $lastGenerated;
     }
 
-    /**
-     * @return int|null
-     */
     public function getLastGenerated(): ?int
     {
         return $this->lastGenerated;
@@ -92,29 +83,16 @@ abstract class PrintAbstract extends Document\PageSnippet
         $this->lastGenerateMessage = $lastGenerateMessage;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLastGenerateMessage(): ?string
     {
         return $this->lastGenerateMessage;
     }
 
-    /**
-     * @param array $config
-     *
-     * @return bool
-     */
     public function generatePdf(array $config): bool
     {
         return Processor::getInstance()->preparePdfGeneration($this->getId(), $config);
     }
 
-    /**
-     * @param array $params
-     *
-     * @return string
-     */
     public function renderDocument(array $params): string
     {
         $html = Document\Service::render($this, $params, true);
@@ -122,17 +100,11 @@ abstract class PrintAbstract extends Document\PageSnippet
         return $html;
     }
 
-    /**
-     * @return string
-     */
     public function getPdfFileName(): string
     {
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-document-' . $this->getId() . '.pdf';
     }
 
-    /**
-     * @return bool
-     */
     public function pdfIsDirty(): bool
     {
         return $this->getLastGenerated() < $this->getModificationDate();

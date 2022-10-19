@@ -48,9 +48,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $configList;
     }
 
-    /**
-     * @return array
-     */
     public function getDataArray(): array
     {
         $configsData = $this->db->fetchAllAssociative('SELECT * FROM ' . DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
@@ -58,9 +55,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $configsData;
     }
 
-    /**
-     * @return int
-     */
     public function getTotalCount(): int
     {
         try {
@@ -70,9 +64,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
     }
 
-    /**
-     * @return string
-     */
     protected function getCondition(): string
     {
         $condition = $this->model->getIncludeDisabled() ? '(enabled is null or enabled = 0)' : 'enabled = 1';

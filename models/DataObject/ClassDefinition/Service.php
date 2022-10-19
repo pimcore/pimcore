@@ -24,9 +24,6 @@ use Pimcore\Tool;
 
 class Service
 {
-    /**
-     * @var bool
-     */
     private static bool $doRemoveDynamicOptions = false;
 
     /**
@@ -49,12 +46,6 @@ class Service
         self::$doRemoveDynamicOptions = $doRemoveDynamicOptions;
     }
 
-    /**
-     *
-     * @param DataObject\ClassDefinition $class
-     *
-     * @return string
-     */
     public static function generateClassDefinitionJson(DataObject\ClassDefinition $class): string
     {
         $class = clone $class;
@@ -100,14 +91,6 @@ class Service
         }
     }
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     * @param string $json
-     * @param bool $throwException
-     * @param bool $ignoreId
-     *
-     * @return bool
-     */
     public static function importClassDefinitionFromJson(DataObject\ClassDefinition $class, string $json, bool $throwException = false, bool $ignoreId = false): bool
     {
         $userId = 0;
@@ -165,11 +148,6 @@ class Service
         return true;
     }
 
-    /**
-     * @param DataObject\Fieldcollection\Definition $fieldCollection
-     *
-     * @return string
-     */
     public static function generateFieldCollectionJson(DataObject\Fieldcollection\Definition $fieldCollection): string
     {
         $fieldCollection = clone $fieldCollection;
@@ -185,13 +163,6 @@ class Service
         return json_encode($data, JSON_PRETTY_PRINT);
     }
 
-    /**
-     * @param DataObject\Fieldcollection\Definition $fieldCollection
-     * @param string $json
-     * @param bool $throwException
-     *
-     * @return bool
-     */
     public static function importFieldCollectionFromJson(DataObject\Fieldcollection\Definition $fieldCollection, string $json, bool $throwException = false): bool
     {
         $importData = json_decode($json, true);
@@ -219,11 +190,6 @@ class Service
         return true;
     }
 
-    /**
-     * @param DataObject\Objectbrick\Definition $objectBrick
-     *
-     * @return string
-     */
     public static function generateObjectBrickJson(DataObject\Objectbrick\Definition $objectBrick): string
     {
         $objectBrick = clone $objectBrick;
@@ -271,13 +237,6 @@ class Service
         return json_encode($data, JSON_PRETTY_PRINT);
     }
 
-    /**
-     * @param DataObject\Objectbrick\Definition $objectBrick
-     * @param string $json
-     * @param bool $throwException
-     *
-     * @return bool
-     */
     public static function importObjectBrickFromJson(DataObject\Objectbrick\Definition $objectBrick, string $json, bool $throwException = false): bool
     {
         $importData = json_decode($json, true);

@@ -26,44 +26,20 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 final class WebsiteSetting extends AbstractModel
 {
-    /**
-     * @var int|null
-     */
     protected ?int $id;
 
-    /**
-     * @var string
-     */
     protected string $name;
 
-    /**
-     * @var string
-     */
     protected string $language;
 
-    /**
-     * @var string
-     */
     protected string $type;
 
-    /**
-     * @var mixed
-     */
     protected mixed $data;
 
-    /**
-     * @var int|null
-     */
     protected ?int $siteId;
 
-    /**
-     * @var int|null
-     */
     protected ?int $creationDate;
 
-    /**
-     * @var int|null
-     */
     protected ?int $modificationDate;
 
     /**
@@ -85,11 +61,6 @@ final class WebsiteSetting extends AbstractModel
         return $name . '~~~' . $siteId . '~~~' . $language;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return self|null
-     */
     public static function getById(int $id): ?WebsiteSetting
     {
         $cacheKey = 'website_setting_' . $id;
@@ -157,19 +128,11 @@ final class WebsiteSetting extends AbstractModel
         return $setting;
     }
 
-    /**
-     * @return int|null
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
     public function setId(int $id): static
     {
         $this->id = (int) $id;
@@ -177,11 +140,6 @@ final class WebsiteSetting extends AbstractModel
         return $this;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -189,19 +147,11 @@ final class WebsiteSetting extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param int $creationDate
-     *
-     * @return $this
-     */
     public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = (int) $creationDate;
@@ -209,19 +159,11 @@ final class WebsiteSetting extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return $this
-     */
     public function setData(mixed $data): static
     {
         if ($data instanceof ElementInterface) {
@@ -234,9 +176,6 @@ final class WebsiteSetting extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getData(): mixed
     {
         // lazy-load data of type asset, document, object
@@ -247,11 +186,6 @@ final class WebsiteSetting extends AbstractModel
         return $this->data;
     }
 
-    /**
-     * @param int $modificationDate
-     *
-     * @return $this
-     */
     public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = (int) $modificationDate;
@@ -259,19 +193,11 @@ final class WebsiteSetting extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
-    /**
-     * @param int $siteId
-     *
-     * @return $this
-     */
     public function setSiteId(int $siteId): static
     {
         $this->siteId = (int) $siteId;
@@ -279,9 +205,6 @@ final class WebsiteSetting extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getSiteId(): ?int
     {
         return $this->siteId;
@@ -311,9 +234,6 @@ final class WebsiteSetting extends AbstractModel
         return $this->type;
     }
 
-    /**
-     * @return string
-     */
     public function getLanguage(): string
     {
         return $this->language;

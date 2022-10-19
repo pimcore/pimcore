@@ -326,11 +326,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $this;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return mixed
-     */
     public function getValueForFieldName(string $key): mixed
     {
         if (isset($this->$key)) {
@@ -380,11 +375,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return array_merge(...$dependencies);
     }
 
-    /**
-     * @param ClassDefinition|null $o_class
-     *
-     * @return $this
-     */
     public function setClass(?ClassDefinition $o_class): static
     {
         $this->o_class = $o_class;
@@ -401,19 +391,11 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $this->o_class;
     }
 
-    /**
-     * @return string
-     */
     public function getClassId(): string
     {
         return $this->o_classId;
     }
 
-    /**
-     * @param string $o_classId
-     *
-     * @return $this
-     */
     public function setClassId(string $o_classId): static
     {
         $this->o_classId = $o_classId;
@@ -421,19 +403,11 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getClassName(): string
     {
         return $this->o_className;
     }
 
-    /**
-     * @param string $o_className
-     *
-     * @return $this
-     */
     public function setClassName(string $o_className): static
     {
         $this->o_className = $o_className;
@@ -441,27 +415,16 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getPublished(): bool
     {
         return (bool) $this->o_published;
     }
 
-    /**
-     * @return bool
-     */
     public function isPublished(): bool
     {
         return (bool) $this->getPublished();
     }
 
-    /**
-     * @param bool $o_published
-     *
-     * @return $this
-     */
     public function setPublished(bool $o_published): static
     {
         $this->o_published = (bool) $o_published;
@@ -469,11 +432,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $this;
     }
 
-    /**
-     * @param bool $omitMandatoryCheck
-     *
-     * @return $this
-     */
     public function setOmitMandatoryCheck(bool $omitMandatoryCheck): static
     {
         $this->omitMandatoryCheck = $omitMandatoryCheck;

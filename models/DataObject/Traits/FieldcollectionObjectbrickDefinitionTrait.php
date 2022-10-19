@@ -61,9 +61,6 @@ trait FieldcollectionObjectbrickDefinitionTrait
      */
     protected $fieldDefinitions = [];
 
-    /**
-     * @return string|null
-     */
     public function getKey(): ?string
     {
         return $this->key;
@@ -81,9 +78,6 @@ trait FieldcollectionObjectbrickDefinitionTrait
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getParentClass(): ?string
     {
         return $this->parentClass;
@@ -101,9 +95,6 @@ trait FieldcollectionObjectbrickDefinitionTrait
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
         return $this->title;
@@ -121,9 +112,6 @@ trait FieldcollectionObjectbrickDefinitionTrait
         return $this;
     }
 
-    /**
-     * @return Layout|null
-     */
     public function getLayoutDefinitions(): ?Layout
     {
         return $this->layoutDefinitions;
@@ -221,9 +209,6 @@ trait FieldcollectionObjectbrickDefinitionTrait
         return null;
     }
 
-    /**
-     * @return string
-     */
     public function getGroup(): string
     {
         return $this->group;
@@ -246,11 +231,6 @@ trait FieldcollectionObjectbrickDefinitionTrait
         return $this->implementsInterfaces;
     }
 
-    /**
-     * @param string|null $implementsInterfaces
-     *
-     * @return $this
-     */
     public function setImplementsInterfaces(?string $implementsInterfaces): static
     {
         $this->implementsInterfaces = $implementsInterfaces;

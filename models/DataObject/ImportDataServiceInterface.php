@@ -20,14 +20,5 @@ use stdClass;
 
 interface ImportDataServiceInterface
 {
-    /**
-     *
-     * @param stdClass $resolverConfig
-     * @param Concrete $object
-     * @param array $rowData
-     * @param array $params
-     *
-     * @return Concrete
-     */
     public function populate(stdClass $resolverConfig, Concrete $object, array $rowData, array $params = []): Concrete;
 }

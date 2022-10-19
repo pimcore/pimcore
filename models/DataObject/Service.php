@@ -46,14 +46,8 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
  */
 class Service extends Model\Element\Service
 {
-    /**
-     * @var array
-     */
     protected array $_copyRecursiveIds;
 
-    /**
-     * @var Model\User|null
-     */
     protected ?Model\User $_user;
 
     /**
@@ -542,14 +536,6 @@ class Service extends Model\Element\Service
         return $config;
     }
 
-    /**
-     * @param AbstractObject $object
-     * @param array $helperDefinitions
-     * @param string $key
-     * @param array $context
-     *
-     * @return \stdClass|array|null
-     */
     public static function calculateCellValue(AbstractObject $object, array $helperDefinitions, string $key, array $context = []): array|\stdClass|null
     {
         $config = static::getConfigForHelperDefinition($helperDefinitions, $key, $context);
@@ -579,9 +565,6 @@ class Service extends Model\Element\Service
         return null;
     }
 
-    /**
-     * @return mixed
-     */
     public static function getHelperDefinitions(): mixed
     {
         return Session::useSession(function (AttributeBagInterface $session) {
@@ -591,13 +574,6 @@ class Service extends Model\Element\Service
         }, 'pimcore_gridconfig');
     }
 
-    /**
-     * @param AbstractObject|Model\DataObject\Fieldcollection\Data\AbstractData|Model\DataObject\Objectbrick\Data\AbstractData $object
-     * @param Model\User $user
-     * @param string $type
-     *
-     * @return array|null
-     */
     public static function getLanguagePermissions(Fieldcollection\Data\AbstractData|Objectbrick\Data\AbstractData|AbstractObject $object, Model\User $user, string $type): ?array
     {
         $languageAllowed = null;
@@ -628,12 +604,6 @@ class Service extends Model\Element\Service
         return $languageAllowed;
     }
 
-    /**
-     * @param string $classId
-     * @param array $permissionSet
-     *
-     * @return array|null
-     */
     public static function getLayoutPermissions(string $classId, array $permissionSet): ?array
     {
         $layoutPermissions = null;
@@ -661,12 +631,6 @@ class Service extends Model\Element\Service
         return $layoutPermissions;
     }
 
-    /**
-     * @param ClassDefinition $class
-     * @param string $bricktype
-     *
-     * @return int|null|string
-     */
     public static function getFieldForBrickType(ClassDefinition $class, string $bricktype): int|string|null
     {
         $fieldDefinitions = $class->getFieldDefinitions();
@@ -779,11 +743,6 @@ class Service extends Model\Element\Service
         return null;
     }
 
-    /**
-     * @param Concrete $object
-     *
-     * @return Concrete|null
-     */
     public static function hasInheritableParentObject(Concrete $object): ?Concrete
     {
         if ($object->getClass()->getAllowInherit()) {
@@ -1600,12 +1559,6 @@ class Service extends Model\Element\Service
         return $result;
     }
 
-    /**
-     * @param Concrete|Model\DataObject\Fieldcollection\Data\AbstractData|Model\DataObject\Objectbrick\Data\AbstractData $object
-     * @param Model\DataObject\Data\CalculatedValue|null $data
-     *
-     * @return mixed
-     */
     public static function getCalculatedFieldValue(Fieldcollection\Data\AbstractData|Objectbrick\Data\AbstractData|Concrete $object, ?Data\CalculatedValue $data): mixed
     {
         if (!$data) {
@@ -1671,9 +1624,6 @@ class Service extends Model\Element\Service
         return $result;
     }
 
-    /**
-     * @return array
-     */
     public static function getSystemFields(): array
     {
         return self::$systemFields;
@@ -1842,12 +1792,6 @@ class Service extends Model\Element\Service
         return $data;
     }
 
-    /**
-     * @param string $field
-     * @param array $helperDefinitions
-     *
-     * @return string
-     */
     protected static function mapFieldname(string $field, array $helperDefinitions): string
     {
         if (strpos($field, '#') === 0) {

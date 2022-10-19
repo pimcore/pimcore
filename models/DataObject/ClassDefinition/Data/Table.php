@@ -117,19 +117,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public $columnType = 'longtext';
 
-    /**
-     * @return string|int
-     */
     public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @param int|string $width
-     *
-     * @return $this
-     */
     public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
@@ -140,19 +132,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $this;
     }
 
-    /**
-     * @return string|int
-     */
     public function getHeight(): int|string
     {
         return $this->height;
     }
 
-    /**
-     * @param int|string $height
-     *
-     * @return $this
-     */
     public function setHeight(int|string $height): static
     {
         if (is_numeric($height)) {
@@ -163,19 +147,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getCols(): ?int
     {
         return $this->cols;
     }
 
-    /**
-     * @param int|null $cols
-     *
-     * @return $this
-     */
     public function setCols(?int $cols): static
     {
         $this->cols = $this->getAsIntegerCast($cols);
@@ -183,19 +159,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getRows(): ?int
     {
         return $this->rows;
     }
 
-    /**
-     * @param int|null $rows
-     *
-     * @return $this
-     */
     public function setRows(?int $rows): static
     {
         $this->rows = $this->getAsIntegerCast($rows);
@@ -203,19 +171,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getRowsFixed(): bool
     {
         return $this->rowsFixed;
     }
 
-    /**
-     * @param bool $rowsFixed
-     *
-     *@return $this
-     */
     public function setRowsFixed(bool $rowsFixed): static
     {
         $this->rowsFixed = (bool)$rowsFixed;
@@ -223,19 +183,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getColsFixed(): bool
     {
         return $this->colsFixed;
     }
 
-    /**
-     * @param bool $colsFixed
-     *
-     * @return $this
-     */
     public function setColsFixed(bool $colsFixed): static
     {
         $this->colsFixed = (bool)$colsFixed;
@@ -243,19 +195,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getData(): string
     {
         return $this->data;
     }
 
-    /**
-     * @param string $data
-     *
-     * @return $this
-     */
     public function setData(string $data): static
     {
         $this->data = $data;
@@ -283,11 +227,6 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $this->columnConfig = $columnConfig;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return array
-     */
     protected function convertDataToValueArray(array $data): array
     {
         $valueArray = [];
@@ -504,7 +443,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, array $params = []): string
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if (is_array($data)) {
@@ -514,9 +453,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -641,7 +578,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * {@inheritdoc}
      */
-    public function getGetterCode($class): string
+    public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         $key = $this->getName();
 

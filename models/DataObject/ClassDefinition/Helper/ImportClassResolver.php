@@ -23,11 +23,6 @@ use Pimcore\Model\DataObject\ImportDataServiceInterface;
  */
 class ImportClassResolver extends ClassResolver
 {
-    /**
-     * @param string $importServiceOrClass
-     *
-     * @return object|null
-     */
     public static function resolveClassOrService(string $importServiceOrClass): ?object
     {
         return self::resolve($importServiceOrClass);

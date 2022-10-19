@@ -28,124 +28,53 @@ final class User extends User\UserRole
 {
     use TemporaryFileHelperTrait;
 
-    /**
-     * @var string
-     */
     protected string $type = 'user';
 
-    /**
-     * @var string|null
-     */
     protected ?string $password;
 
-    /**
-     * @var string|null
-     */
     protected ?string $firstname;
 
-    /**
-     * @var string|null
-     */
     protected ?string $lastname;
 
-    /**
-     * @var string|null
-     */
     protected ?string $email;
 
-    /**
-     * @var string
-     */
     protected string $language = 'en';
 
-    /**
-     * @var bool
-     */
     protected bool $admin = false;
 
-    /**
-     * @var bool
-     */
     protected bool $active = true;
 
-    /**
-     * @var array
-     */
     protected array $roles = [];
 
-    /**
-     * @var bool
-     */
     protected bool $welcomescreen = false;
 
-    /**
-     * @var bool
-     */
     protected bool $closeWarning = true;
 
-    /**
-     * @var bool
-     */
     protected bool $memorizeTabs = true;
 
-    /**
-     * @var bool
-     */
     protected bool $allowDirtyClose = false;
 
-    /**
-     * @var string|null
-     */
     protected ?string $contentLanguages;
 
-    /**
-     * @var string|null
-     */
     protected ?string $activePerspective;
 
-    /**
-     * @var null|array
-     */
     protected ?array $mergedPerspectives = null;
 
-    /**
-     * @var null|array
-     */
     protected ?array $mergedWebsiteTranslationLanguagesEdit = null;
 
-    /**
-     * @var null|array
-     */
     protected ?array $mergedWebsiteTranslationLanguagesView = null;
 
-    /**
-     * @var int
-     */
     protected int $lastLogin;
 
-    /**
-     * @var string
-     */
     protected string $keyBindings;
 
-    /**
-     * @var array
-     */
     protected array $twoFactorAuthentication;
 
-    /**
-     * @return string|null
-     */
     public function getPassword(): ?string
     {
         return $this->password;
     }
 
-    /**
-     * @param string|null $password
-     *
-     * @return $this
-     */
     public function setPassword(?string $password): static
     {
         if (strlen((string) $password) > 4) {
@@ -165,11 +94,6 @@ final class User extends User\UserRole
         return $this->getName();
     }
 
-    /**
-     * @param string|null $username
-     *
-     * @return $this
-     */
     public function setUsername(?string $username): static
     {
         $this->setName($username);
@@ -177,19 +101,11 @@ final class User extends User\UserRole
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getFirstname(): ?string
     {
         return $this->firstname;
     }
 
-    /**
-     * @param string|null $firstname
-     *
-     * @return $this
-     */
     public function setFirstname(?string $firstname): static
     {
         $this->firstname = $firstname;
@@ -197,19 +113,11 @@ final class User extends User\UserRole
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLastname(): ?string
     {
         return $this->lastname;
     }
 
-    /**
-     * @param string|null $lastname
-     *
-     * @return $this
-     */
     public function setLastname(?string $lastname): static
     {
         $this->lastname = $lastname;
@@ -222,19 +130,11 @@ final class User extends User\UserRole
         return trim($this->getFirstname() . ' ' . $this->getLastname());
     }
 
-    /**
-     * @return string|null
-     */
     public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    /**
-     * @param string|null $email
-     *
-     * @return $this
-     */
     public function setEmail(?string $email): static
     {
         $this->email = $email;
@@ -242,19 +142,11 @@ final class User extends User\UserRole
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getLanguage(): string
     {
         return $this->language;
     }
 
-    /**
-     * @param string $language
-     *
-     * @return $this
-     */
     public function setLanguage(string $language): static
     {
         if ($language) {
@@ -274,19 +166,11 @@ final class User extends User\UserRole
         return $this->getAdmin();
     }
 
-    /**
-     * @return bool
-     */
     public function getAdmin(): bool
     {
         return $this->admin;
     }
 
-    /**
-     * @param bool $admin
-     *
-     * @return $this
-     */
     public function setAdmin(bool $admin): static
     {
         $this->admin = (bool)$admin;
@@ -294,19 +178,11 @@ final class User extends User\UserRole
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getActive(): bool
     {
         return $this->active;
     }
 
-    /**
-     * @param bool $active
-     *
-     * @return $this
-     */
     public function setActive(bool $active): static
     {
         $this->active = (bool)$active;
@@ -314,20 +190,11 @@ final class User extends User\UserRole
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isActive(): bool
     {
         return $this->getActive();
     }
 
-    /**
-     * @param string $key
-     * @param string $type
-     *
-     * @return bool
-     */
     public function isAllowed(string $key, string $type = 'permission'): bool
     {
         if ($this->isAdmin()) {
@@ -381,12 +248,6 @@ final class User extends User\UserRole
         return false;
     }
 
-    /**
-     *
-     * @param string $permissionName
-     *
-     * @return bool
-     */
     public function getPermission(string $permissionName): bool
     {
         if ($this->isAdmin()) {
@@ -396,11 +257,6 @@ final class User extends User\UserRole
         return parent::getPermission($permissionName);
     }
 
-    /**
-     * @param array|string $roles
-     *
-     * @return $this
-     */
     public function setRoles(array|string $roles): static
     {
         if (is_string($roles) && $roles !== '') {
@@ -414,9 +270,6 @@ final class User extends User\UserRole
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getRoles(): array
     {
         if (empty($this->roles)) {
@@ -426,11 +279,6 @@ final class User extends User\UserRole
         return $this->roles;
     }
 
-    /**
-     * @param bool $welcomescreen
-     *
-     * @return $this
-     */
     public function setWelcomescreen(bool $welcomescreen): static
     {
         $this->welcomescreen = (bool)$welcomescreen;
@@ -438,19 +286,11 @@ final class User extends User\UserRole
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getWelcomescreen(): bool
     {
         return $this->welcomescreen;
     }
 
-    /**
-     * @param bool $closeWarning
-     *
-     * @return $this
-     */
     public function setCloseWarning(bool $closeWarning): static
     {
         $this->closeWarning = (bool)$closeWarning;
@@ -458,19 +298,11 @@ final class User extends User\UserRole
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getCloseWarning(): bool
     {
         return $this->closeWarning;
     }
 
-    /**
-     * @param bool $memorizeTabs
-     *
-     * @return $this
-     */
     public function setMemorizeTabs(bool $memorizeTabs): static
     {
         $this->memorizeTabs = (bool)$memorizeTabs;
@@ -478,19 +310,11 @@ final class User extends User\UserRole
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getMemorizeTabs(): bool
     {
         return $this->memorizeTabs;
     }
 
-    /**
-     * @param bool $allowDirtyClose
-     *
-     * @return $this
-     */
     public function setAllowDirtyClose(bool $allowDirtyClose): static
     {
         $this->allowDirtyClose = (bool)$allowDirtyClose;
@@ -498,9 +322,6 @@ final class User extends User\UserRole
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getAllowDirtyClose(): bool
     {
         return $this->allowDirtyClose;
@@ -582,9 +403,6 @@ final class User extends User\UserRole
         return fopen($this->getFallbackImage(), 'rb');
     }
 
-    /**
-     * @return array
-     */
     public function getContentLanguages(): array
     {
         if (strlen($this->contentLanguages)) {
@@ -602,9 +420,6 @@ final class User extends User\UserRole
         $this->contentLanguages = $contentLanguages;
     }
 
-    /**
-     * @return string
-     */
     public function getActivePerspective(): string
     {
         if (!$this->activePerspective) {
@@ -745,19 +560,11 @@ final class User extends User\UserRole
         return $mergedWebsiteTranslationLanguagesView;
     }
 
-    /**
-     * @return int
-     */
     public function getLastLogin(): int
     {
         return (int)$this->lastLogin;
     }
 
-    /**
-     * @param int $lastLogin
-     *
-     * @return $this
-     */
     public function setLastLogin(int $lastLogin): static
     {
         $this->lastLogin = (int)$lastLogin;
@@ -979,9 +786,6 @@ final class User extends User\UserRole
             ]);
     }
 
-    /**
-     * @return string
-     */
     public function getKeyBindings(): string
     {
         return $this->keyBindings ? $this->keyBindings : self::getDefaultKeyBindings();

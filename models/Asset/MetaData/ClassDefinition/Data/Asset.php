@@ -21,9 +21,7 @@ use Pimcore\Model\Element\Service;
 
 class Asset extends Data
 {
-    /**
-     * {@inheritdoc}
-     */
+
     public function normalize(mixed $value, array $params = [])
     {
         $element = Service::getElementByPath('asset', $value);
@@ -34,9 +32,7 @@ class Asset extends Data
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function denormalize(mixed $value, array $params = [])
     {
         $element = null;
@@ -76,12 +72,6 @@ class Asset extends Data
         return $value;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
     public function transformGetterData(mixed $data, array $params = []): mixed
     {
         if (is_numeric($data)) {
@@ -91,12 +81,6 @@ class Asset extends Data
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
     public function transformSetterData(mixed $data, array $params = []): mixed
     {
         if ($data instanceof \Pimcore\Model\Asset) {
@@ -106,12 +90,6 @@ class Asset extends Data
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return int|string|null
-     */
     public function getDataFromEditMode(mixed $data, array $params = []): int|string|null
     {
         $element = Service::getElementByPath('asset', $data);
@@ -122,12 +100,6 @@ class Asset extends Data
         return '';
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
     public function getDataForResource(mixed $data, array $params = []): mixed
     {
         if ($data instanceof ElementInterface) {
@@ -137,9 +109,7 @@ class Asset extends Data
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDataForEditMode(mixed $data, array $params = [])
     {
         if (is_numeric($data)) {
@@ -152,12 +122,6 @@ class Asset extends Data
         }
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
     public function getDataForListfolderGrid(mixed $data, array $params = []): mixed
     {
         if (is_numeric($data)) {
@@ -171,12 +135,6 @@ class Asset extends Data
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return array
-     */
     public function resolveDependencies(mixed $data, array $params = []): array
     {
         if ($data instanceof \Pimcore\Model\Asset && isset($params['type'])) {
@@ -195,12 +153,6 @@ class Asset extends Data
         return [];
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return int|null
-     */
     public function getDataFromListfolderGrid(mixed $data, array $params = []): ?int
     {
         $data = \Pimcore\Model\Asset::getByPath($data);

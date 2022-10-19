@@ -21,17 +21,8 @@ namespace Pimcore\Model\DataObject\Classificationstore;
  */
 class DefinitionCache
 {
-    /**
-     * @var array
-     */
     public static array $cache = [];
 
-    /**
-     * @param int $id
-     * @param string $type
-     *
-     * @return KeyConfig|null
-     */
     public static function get(int $id, string $type = 'key'): ?KeyConfig
     {
         $key = $type . $id;
@@ -75,11 +66,6 @@ class DefinitionCache
         }
     }
 
-    /**
-     * @param GroupConfig|KeyConfig $config
-     *
-     * @return string|null
-     */
     protected static function getType(GroupConfig|KeyConfig $config): ?string
     {
         $type = null;

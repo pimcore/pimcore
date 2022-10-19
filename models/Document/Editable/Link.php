@@ -186,9 +186,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function checkValidity(): bool
     {
         $sane = true;
@@ -229,9 +227,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $sane;
     }
 
-    /**
-     * @return string
-     */
     public function getHref(): string
     {
         $this->updatePathFromInternal();
@@ -303,9 +298,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         }
     }
 
-    /**
-     * @return string
-     */
     public function getText(): string
     {
         return $this->data['text'] ?? '';
@@ -316,73 +308,46 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         $this->data['text'] = $text;
     }
 
-    /**
-     * @return string
-     */
     public function getTarget(): string
     {
         return $this->data['target'] ?? '';
     }
 
-    /**
-     * @return string
-     */
     public function getParameters(): string
     {
         return $this->data['parameters'] ?? '';
     }
 
-    /**
-     * @return string
-     */
     public function getAnchor(): string
     {
         return $this->data['anchor'] ?? '';
     }
 
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
         return $this->data['title'] ?? '';
     }
 
-    /**
-     * @return string
-     */
     public function getRel(): string
     {
         return $this->data['rel'] ?? '';
     }
 
-    /**
-     * @return string
-     */
     public function getTabindex(): string
     {
         return $this->data['tabindex'] ?? '';
     }
 
-    /**
-     * @return string
-     */
     public function getAccesskey(): string
     {
         return $this->data['accesskey'] ?? '';
     }
 
-    /**
-     * @return mixed
-     */
     public function getClass(): mixed
     {
         return $this->data['class'] ?? '';
     }
 
-    /**
-     * @return mixed
-     */
     public function getAttributes(): mixed
     {
         return $this->data['attributes'] ?? '';
@@ -454,9 +419,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function isEmpty(): bool
     {
         return strlen($this->getHref()) < 1;

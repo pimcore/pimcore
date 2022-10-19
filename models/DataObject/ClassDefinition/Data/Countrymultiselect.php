@@ -51,17 +51,11 @@ class Countrymultiselect extends Model\DataObject\ClassDefinition\Data\Multisele
         $this->restrictTo = $restrictTo;
     }
 
-    /**
-     * @return string|null
-     */
     public function getRestrictTo(): ?string
     {
         return $this->restrictTo;
     }
 
-    /**
-     * @return string
-     */
     public function getOptionsProviderClass(): string
     {
         return '@' . CountryOptionsProvider::class;

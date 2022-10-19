@@ -22,17 +22,14 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Traits;
  */
 trait EnabledTrait
 {
-    /**
-     * @var bool
-     */
-    private $enabled = true;
+    private bool $enabled = true;
 
-    public function disable()
+    public function disable(): void
     {
         $this->enabled = false;
     }
 
-    public function enable()
+    public function enable(): void
     {
         $this->enabled = true;
     }

@@ -35,16 +35,8 @@ class Dao extends Model\Dao\AbstractDao
      */
     protected $model;
 
-    /**
-     * @var mixed
-     */
     protected mixed $tableDefinitions = null;
 
-    /**
-     * @param string $id
-     *
-     * @return string|null
-     */
     public function getNameById(string $id): ?string
     {
         try {

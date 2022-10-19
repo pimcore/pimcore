@@ -48,9 +48,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $configList;
     }
 
-    /**
-     * @return array
-     */
     public function getDataArray(): array
     {
         $configsData = $this->db->fetchAllAssociative('SELECT * FROM ' . DataObject\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
@@ -58,9 +55,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $configsData;
     }
 
-    /**
-     * @return int
-     */
     public function getTotalCount(): int
     {
         try {

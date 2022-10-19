@@ -129,38 +129,22 @@ class BooleanSelect extends Data implements
      */
     public $columnType = 'tinyint(1) null';
 
-    /**
-     * @return array
-     */
     public function getOptions(): array
     {
         return $this->options;
     }
 
-    /**
-     * @param array $options
-     *
-     * @return $this
-     */
     public function setOptions(array $options): static
     {
         // nothing to do
         return $this;
     }
 
-    /**
-     * @return string|int
-     */
     public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @param int|string $width
-     *
-     * @return $this
-     */
     public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
@@ -241,7 +225,7 @@ class BooleanSelect extends Data implements
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data === true) {
             return $this->getYesLabel();
@@ -307,11 +291,6 @@ class BooleanSelect extends Data implements
         }
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return bool
-     */
     public function isEmpty(mixed $data): bool
     {
         return $data !== true && $data !== false;
@@ -326,19 +305,11 @@ class BooleanSelect extends Data implements
         $this->width = $masterDefinition->width;
     }
 
-    /**
-     * @return string
-     */
     public function getYesLabel(): string
     {
         return $this->yesLabel;
     }
 
-    /**
-     * @param string|null $yesLabel
-     *
-     * @return $this
-     */
     public function setYesLabel(?string $yesLabel): static
     {
         $this->yesLabel = $yesLabel;
@@ -368,9 +339,6 @@ class BooleanSelect extends Data implements
         }
     }
 
-    /**
-     * @return string
-     */
     public function getNoLabel(): string
     {
         return $this->noLabel;
@@ -384,9 +352,6 @@ class BooleanSelect extends Data implements
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getEmptyLabel(): string
     {
         return $this->emptyLabel;

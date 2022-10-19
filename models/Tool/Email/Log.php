@@ -148,11 +148,6 @@ class Log extends Model\AbstractModel
      */
     protected ?string $error;
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
     public function setDocumentId(int $id): static
     {
         $this->documentId = $id;
@@ -160,11 +155,6 @@ class Log extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param string $requestUri
-     *
-     * @return $this
-     */
     public function setRequestUri(string $requestUri): static
     {
         $this->requestUri = $requestUri;
@@ -192,11 +182,6 @@ class Log extends Model\AbstractModel
         return (int)$this->id;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
     public function setId(int $id): static
     {
         $this->id = (int)$id;
@@ -204,11 +189,6 @@ class Log extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param string $subject
-     *
-     * @return $this
-     */
     public function setSubject(string $subject): static
     {
         $this->subject = $subject;
@@ -260,11 +240,6 @@ class Log extends Model\AbstractModel
         return $this->documentId;
     }
 
-    /**
-     * @param array $params
-     *
-     * @return $this
-     */
     public function setParams(array $params): static
     {
         $this->params = $params;
@@ -460,11 +435,6 @@ class Log extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param string|null $to
-     *
-     * @return $this
-     */
     public function setTo(?string $to): static
     {
         $this->to = $to;
@@ -482,11 +452,6 @@ class Log extends Model\AbstractModel
         return $this->to;
     }
 
-    /**
-     * @param string|null $cc
-     *
-     * @return $this
-     */
     public function setCc(?string $cc): static
     {
         $this->cc = $cc;
@@ -504,11 +469,6 @@ class Log extends Model\AbstractModel
         return $this->cc;
     }
 
-    /**
-     * @param string|null $bcc
-     *
-     * @return $this
-     */
     public function setBcc(?string $bcc): static
     {
         $this->bcc = $bcc;
@@ -526,11 +486,6 @@ class Log extends Model\AbstractModel
         return $this->bcc;
     }
 
-    /**
-     * @param string $from
-     *
-     * @return $this
-     */
     public function setFrom(string $from): static
     {
         $this->from = $from;
@@ -548,11 +503,6 @@ class Log extends Model\AbstractModel
         return $this->from;
     }
 
-    /**
-     * @param string $replyTo
-     *
-     * @return $this
-     */
     public function setReplyTo(string $replyTo): static
     {
         $this->replyTo = $replyTo;
@@ -570,11 +520,6 @@ class Log extends Model\AbstractModel
         return $this->replyTo;
     }
 
-    /**
-     * @param string $html
-     *
-     * @return $this
-     */
     public function setBodyHtml(string $html): static
     {
         $this->bodyHtml = $html;
@@ -592,11 +537,6 @@ class Log extends Model\AbstractModel
         return $this->bodyHtml;
     }
 
-    /**
-     * @param string $text
-     *
-     * @return $this
-     */
     public function setBodyText(string $text): static
     {
         $this->bodyText = $text;

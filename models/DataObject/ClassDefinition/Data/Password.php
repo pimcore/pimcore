@@ -86,24 +86,13 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public string $saltlocation = '';
 
-    /**
-     * @var int|null
-     */
     public ?int $minimumLength;
 
-    /**
-     * @return string|int
-     */
     public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @param int|string $width
-     *
-     * @return $this
-     */
     public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
@@ -129,9 +118,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         $this->algorithm = $algorithm;
     }
 
-    /**
-     * @return string
-     */
     public function getAlgorithm(): string
     {
         return $this->algorithm;
@@ -142,9 +128,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         $this->salt = $salt;
     }
 
-    /**
-     * @return string
-     */
     public function getSalt(): string
     {
         return $this->salt;
@@ -155,9 +138,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         $this->saltlocation = $saltlocation;
     }
 
-    /**
-     * @return string
-     */
     public function getSaltlocation(): string
     {
         return $this->saltlocation;
@@ -365,21 +345,12 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         return '******';
     }
 
-    /**
-     * @param string $data
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
-     */
     public function getDataForGrid(string $data, Concrete $object, array $params = []): string
     {
         return '******';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';

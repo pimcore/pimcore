@@ -25,9 +25,6 @@ use Pimcore\Model;
  */
 class Dao extends Model\Staticroute\Dao
 {
-    /**
-     * @return array
-     */
     public function loadList(): array
     {
         $staticRoutes = [];
@@ -46,9 +43,6 @@ class Dao extends Model\Staticroute\Dao
         return $staticRoutes;
     }
 
-    /**
-     * @return int
-     */
     public function getTotalCount(): int
     {
         return count($this->loadList());

@@ -58,19 +58,11 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
      */
     public bool $border = false;
 
-    /**
-     * @return string
-     */
     public function getHtml(): string
     {
         return $this->html;
     }
 
-    /**
-     * @param string $html
-     *
-     * @return $this
-     */
     public function setHtml(string $html): static
     {
         $this->html = $html;
@@ -78,9 +70,6 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getRenderingClass(): string
     {
         return $this->renderingClass;
@@ -91,9 +80,6 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
         $this->renderingClass = $renderingClass;
     }
 
-    /**
-     * @return string
-     */
     public function getRenderingData(): string
     {
         return $this->renderingData;

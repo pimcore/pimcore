@@ -21,14 +21,8 @@ use Pimcore\Model\DataObject\ClassDefinition;
 
 final class Key
 {
-    /**
-     * @var KeyConfig
-     */
     protected KeyConfig $configuration;
 
-    /**
-     * @var Group
-     */
     protected Group $group;
 
     public function __construct(Group $group, KeyConfig $configuration)
@@ -47,13 +41,6 @@ final class Key
         return $this->group;
     }
 
-    /**
-     * @param string|null $language
-     * @param bool $ignoreFallbackLanguage
-     * @param bool $ignoreDefaultLanguage
-     *
-     * @return mixed
-     */
     public function getValue(
         ?string $language = 'default',
         bool $ignoreFallbackLanguage = false,

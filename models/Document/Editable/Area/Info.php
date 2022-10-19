@@ -64,19 +64,11 @@ class Info
      */
     protected ?int $index;
 
-    /**
-     * @return string|null
-     */
     public function getId(): ?string
     {
         return $this->id;
     }
 
-    /**
-     * @param string|null $id
-     *
-     * @return $this
-     */
     public function setId(?string $id): static
     {
         $this->id = $id;
@@ -84,9 +76,6 @@ class Info
         return $this;
     }
 
-    /**
-     * @return Editable|null
-     */
     public function getEditable(): ?Editable
     {
         return $this->editable;
@@ -97,19 +86,11 @@ class Info
         $this->editable = $editable;
     }
 
-    /**
-     * @return string|null
-     */
     public function getType(): ?string
     {
         return $this->type;
     }
 
-    /**
-     * @param string|null $type
-     *
-     * @return $this
-     */
     public function setType(?string $type): static
     {
         $this->type = $type;
@@ -117,19 +98,11 @@ class Info
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getParams(): array
     {
         return $this->params;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return mixed
-     */
     public function getParam(string $name): mixed
     {
         if (isset($this->params[$name])) {
@@ -139,12 +112,6 @@ class Info
         return null;
     }
 
-    /**
-     * @param string $name
-     * @param mixed $value
-     *
-     * @return $this
-     */
     public function setParam(string $name, mixed $value): static
     {
         $this->params[$name] = $value;
@@ -152,11 +119,6 @@ class Info
         return $this;
     }
 
-    /**
-     * @param array $params
-     *
-     * @return $this
-     */
     public function setParams(array $params): static
     {
         $this->params = $params;
@@ -164,19 +126,11 @@ class Info
         return $this;
     }
 
-    /**
-     * @return Request|null
-     */
     public function getRequest(): ?Request
     {
         return $this->request;
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return $this
-     */
     public function setRequest(Request $request): static
     {
         $this->request = $request;
@@ -184,11 +138,6 @@ class Info
         return $this;
     }
 
-    /**
-     * @param int|null $index
-     *
-     * @return $this
-     */
     public function setIndex(?int $index): static
     {
         $this->index = $index;
@@ -196,17 +145,11 @@ class Info
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getIndex(): ?int
     {
         return $this->index;
     }
 
-    /**
-     * @return Document\PageSnippet
-     */
     public function getDocument(): Document\PageSnippet
     {
         return $this->editable->getDocument();

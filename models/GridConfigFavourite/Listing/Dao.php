@@ -47,9 +47,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $gridConfigs;
     }
 
-    /**
-     * @return int
-     */
     public function getTotalCount(): int
     {
         try {

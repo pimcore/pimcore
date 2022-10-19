@@ -134,9 +134,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getIterator(): \Generator
     {
         while ($this->loop()) {
@@ -514,9 +512,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         $this->blockStarted = false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function setConfig(array $config): Document\Editable|Areablock|static
     {
         // we need to set this here otherwise custom areaDir's won't work
@@ -656,9 +652,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         return $this->indices[$this->getCurrent()]['key'] ?? null;
     }
 
-    /**
-     * @return array
-     */
     public function getIndices(): array
     {
         return $this->indices;
@@ -673,9 +666,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         reset($this->indices);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function isEmpty(): bool
     {
         return !(bool) count($this->indices);

@@ -19,9 +19,6 @@ namespace Pimcore\Model\Document\Editable;
 
 interface BlockInterface
 {
-    /**
-     * @return \Generator
-     */
     public function getIterator(): \Generator;
 
     /**
@@ -75,8 +72,5 @@ interface BlockInterface
      */
     public function getCurrentIndex(): int;
 
-    /**
-     * @return bool
-     */
     public function isEmpty(): bool;
 }

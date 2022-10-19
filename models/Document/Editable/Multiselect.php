@@ -48,9 +48,6 @@ class Multiselect extends Model\Document\Editable implements EditmodeDataInterfa
         return $this->values;
     }
 
-    /**
-     * @return array
-     */
     public function getValues(): array
     {
         return $this->getData();
@@ -98,9 +95,7 @@ class Multiselect extends Model\Document\Editable implements EditmodeDataInterfa
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function isEmpty(): bool
     {
         return empty($this->values);

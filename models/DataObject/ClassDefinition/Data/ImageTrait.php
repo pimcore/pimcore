@@ -44,19 +44,11 @@ trait ImageTrait
      */
     public string $uploadPath;
 
-    /**
-     * @return string|int
-     */
     public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @param int|string $width
-     *
-     * @return $this
-     */
     public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
@@ -67,19 +59,11 @@ trait ImageTrait
         return $this;
     }
 
-    /**
-     * @return string|int
-     */
     public function getHeight(): int|string
     {
         return $this->height;
     }
 
-    /**
-     * @param int|string $height
-     *
-     * @return $this
-     */
     public function setHeight(int|string $height): static
     {
         if (is_numeric($height)) {
@@ -90,11 +74,6 @@ trait ImageTrait
         return $this;
     }
 
-    /**
-     * @param string $uploadPath
-     *
-     * @return $this
-     */
     public function setUploadPath(string $uploadPath): static
     {
         $this->uploadPath = $uploadPath;
@@ -102,9 +81,6 @@ trait ImageTrait
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getUploadPath(): string
     {
         return $this->uploadPath;

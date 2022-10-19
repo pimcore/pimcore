@@ -167,9 +167,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         'unit' => 'varchar(64)',
     ];
 
-    /**
-     * @return string|int
-     */
     public function getWidth(): int|string
     {
         return $this->width;
@@ -183,9 +180,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         $this->width = $width;
     }
 
-    /**
-     * @return string|int
-     */
     public function getUnitWidth(): int|string
     {
         return $this->unitWidth;
@@ -199,9 +193,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         $this->unitWidth = $unitWidth;
     }
 
-    /**
-     * @return float|int|string|null
-     */
     public function getDefaultValue(): float|int|string|null
     {
         if ($this->defaultValue !== null) {
@@ -225,17 +216,11 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         $this->validUnits = $validUnits;
     }
 
-    /**
-     * @return array
-     */
     public function getValidUnits(): array
     {
         return $this->validUnits;
     }
 
-    /**
-     * @return string|null
-     */
     public function getDefaultUnit(): ?string
     {
         return $this->defaultUnit;
@@ -251,9 +236,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         $this->integer = $integer;
     }
 
-    /**
-     * @return bool
-     */
     public function getInteger(): bool
     {
         return $this->integer;
@@ -264,9 +246,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         $this->maxValue = $maxValue;
     }
 
-    /**
-     * @return float|null
-     */
     public function getMaxValue(): ?float
     {
         return $this->maxValue;
@@ -277,9 +256,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         $this->minValue = $minValue;
     }
 
-    /**
-     * @return float|null
-     */
     public function getMinValue(): ?float
     {
         return $this->minValue;
@@ -290,17 +266,11 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         $this->unsigned = $unsigned;
     }
 
-    /**
-     * @return bool
-     */
     public function getUnsigned(): bool
     {
         return $this->unsigned;
     }
 
-    /**
-     * @return int|null
-     */
     public function getDecimalSize(): ?int
     {
         return $this->decimalSize;
@@ -324,17 +294,11 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         $this->decimalPrecision = $decimalPrecision;
     }
 
-    /**
-     * @return int|null
-     */
     public function getDecimalPrecision(): ?int
     {
         return $this->decimalPrecision;
     }
 
-    /**
-     * @return bool
-     */
     public function getUnique(): bool
     {
         return $this->unique;
@@ -748,9 +712,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         return (float) $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     protected function doGetDefaultValue(Concrete $object, array $context = []): ?Model\DataObject\Data\QuantityValue
     {
         if ($this->getDefaultValue() || $this->getDefaultUnit()) {
@@ -891,9 +853,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function isEmpty(mixed $data): bool
     {
         if ($data instanceof Model\DataObject\Data\QuantityValue) {

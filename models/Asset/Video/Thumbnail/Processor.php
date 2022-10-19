@@ -30,9 +30,6 @@ use Symfony\Component\Lock\LockFactory;
  */
 class Processor
 {
-    /**
-     * @var array
-     */
     protected static array $argumentMapping = [
         'resize'            => ['width', 'height'],
         'scaleByWidth'      => ['width'],
@@ -48,24 +45,12 @@ class Processor
      */
     protected array $queue = [];
 
-    /**
-     * @var string
-     */
     protected string $processId;
 
-    /**
-     * @var int
-     */
     protected int $assetId;
 
-    /**
-     * @var Config
-     */
     protected Config $config;
 
-    /**
-     * @var int
-     */
     protected int $status;
 
     /**
@@ -306,9 +291,6 @@ class Processor
         TmpStore::delete($instance->getJobStoreId());
     }
 
-    /**
-     * @return bool
-     */
     public function save(): bool
     {
         TmpStore::add($this->getJobStoreId(), $this, 'video-job');
@@ -330,11 +312,6 @@ class Processor
         return 'video-job-' . $processId;
     }
 
-    /**
-     * @param string $processId
-     *
-     * @return $this
-     */
     public function setProcessId(string $processId): static
     {
         $this->processId = $processId;
@@ -342,19 +319,11 @@ class Processor
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getProcessId(): string
     {
         return $this->processId;
     }
 
-    /**
-     * @param int $assetId
-     *
-     * @return $this
-     */
     public function setAssetId(int $assetId): static
     {
         $this->assetId = $assetId;
@@ -362,19 +331,11 @@ class Processor
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getAssetId(): int
     {
         return $this->assetId;
     }
 
-    /**
-     * @param Config $config
-     *
-     * @return $this
-     */
     public function setConfig(Config $config): static
     {
         $this->config = $config;
@@ -382,19 +343,11 @@ class Processor
         return $this;
     }
 
-    /**
-     * @return Config
-     */
     public function getConfig(): Config
     {
         return $this->config;
     }
 
-    /**
-     * @param array $queue
-     *
-     * @return $this
-     */
     public function setQueue(array $queue): static
     {
         $this->queue = $queue;
@@ -402,9 +355,6 @@ class Processor
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getQueue(): array
     {
         return $this->queue;

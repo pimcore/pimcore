@@ -34,73 +34,34 @@ class InheritanceHelper
 
     const DEFAULT_QUERY_ID_COLUMN = 'ooo_id';
 
-    /**
-     * @var Connection
-     */
     protected Connection $db;
 
-    /**
-     * @var array
-     */
     protected array $fields = [];
 
-    /**
-     * @var array
-     */
     protected array $relations = [];
 
-    /**
-     * @var array
-     */
     protected array $fieldIds = [];
 
-    /**
-     * @var array
-     */
     protected array $deletionFieldIds = [];
 
-    /**
-     * @var array
-     */
     protected array $fieldDefinitions = [];
 
-    /**
-     * @var string
-     */
     protected string $classId;
 
     protected static bool $useRuntimeCache = false;
 
     protected bool $childFound = false;
 
-    /**
-     * @var array
-     */
     protected static array $runtimeCache = [];
 
-    /**
-     * @var string|null
-     */
     protected ?string $storetable;
 
-    /**
-     * @var string|null
-     */
     protected ?string $querytable;
 
-    /**
-     * @var null|string
-     */
     protected ?string $relationtable;
 
-    /**
-     * @var null|string
-     */
     protected ?string $idField;
 
-    /**
-     * @var null|string
-     */
     protected ?string $queryIdField;
 
     /**
@@ -391,13 +352,6 @@ class InheritanceHelper
         }
     }
 
-    /**
-     * @param array $result
-     * @param string $language
-     * @param string $column
-     *
-     * @return array
-     */
     protected function filterResultByLanguage(array $result, string $language, string $column): array
     {
         $filteredResult = [];
@@ -524,11 +478,6 @@ class InheritanceHelper
         return $objects;
     }
 
-    /**
-     * @param array $params
-     *
-     * @return string
-     */
     protected function getRelationCondition(array $params = []): string
     {
         $condition = '';
@@ -547,12 +496,6 @@ class InheritanceHelper
         return $condition;
     }
 
-    /**
-     * @param array $node
-     * @param array $params
-     *
-     * @return array
-     */
     protected function getRelationsForNode(array &$node, array $params = []): array
     {
         // if the relations are already set, skip here

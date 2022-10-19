@@ -46,9 +46,6 @@ class Listing extends Model\Listing\AbstractListing
         return $this->setData($theList);
     }
 
-    /**
-     * @return bool
-     */
     public function getIncludeDisabled(): bool
     {
         return $this->includeDisabled;

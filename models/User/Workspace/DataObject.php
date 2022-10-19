@@ -53,11 +53,6 @@ class DataObject extends AbstractWorkspace
      */
     protected ?string $layouts = null;
 
-    /**
-     * @param bool $save
-     *
-     * @return $this
-     */
     public function setSave(bool $save): static
     {
         $this->save = $save;
@@ -65,19 +60,11 @@ class DataObject extends AbstractWorkspace
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getSave(): bool
     {
         return $this->save;
     }
 
-    /**
-     * @param bool $unpublish
-     *
-     * @return $this
-     */
     public function setUnpublish(bool $unpublish): static
     {
         $this->unpublish = $unpublish;
@@ -85,9 +72,6 @@ class DataObject extends AbstractWorkspace
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getUnpublish(): bool
     {
         return $this->unpublish;
@@ -99,9 +83,6 @@ class DataObject extends AbstractWorkspace
         $this->lEdit = $lEdit;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLEdit(): ?string
     {
         return $this->lEdit;
@@ -112,9 +93,6 @@ class DataObject extends AbstractWorkspace
         $this->lView = $lView;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLView(): ?string
     {
         return $this->lView;
@@ -125,9 +103,6 @@ class DataObject extends AbstractWorkspace
         $this->layouts = $layouts;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLayouts(): ?string
     {
         return $this->layouts;

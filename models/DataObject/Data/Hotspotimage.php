@@ -136,11 +136,6 @@ class Hotspotimage implements OwnerAwareFieldInterface
         return $this->crop;
     }
 
-    /**
-     * @param Asset\Image|null $image
-     *
-     * @return $this
-     */
     public function setImage(?Asset\Image $image): static
     {
         $this->image = $image;

@@ -246,27 +246,16 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         }
     }
 
-    /**
-     * @return mixed
-     */
     public function getValue(): mixed
     {
         return $this->getData();
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -274,11 +263,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
     public function setDocumentId(int $id): static
     {
         $this->documentId = (int) $id;
@@ -290,19 +274,11 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getDocumentId(): ?int
     {
         return $this->documentId;
     }
 
-    /**
-     * @param Document\PageSnippet $document
-     *
-     * @return $this
-     */
     public function setDocument(Document\PageSnippet $document): static
     {
         $this->document = $document;
@@ -311,9 +287,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this;
     }
 
-    /**
-     * @return Document\PageSnippet|null
-     */
     public function getDocument(): ?PageSnippet
     {
         if (!$this->document) {
@@ -323,19 +296,11 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this->document;
     }
 
-    /**
-     * @return array
-     */
     public function getConfig(): array
     {
         return $this->config;
     }
 
-    /**
-     * @param array $config
-     *
-     * @return $this
-     */
     public function setConfig(array $config): static
     {
         $this->config = $config;
@@ -357,9 +322,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getRealName(): string
     {
         return $this->realName;
@@ -461,19 +423,11 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return '';
     }
 
-    /**
-     * @return bool
-     */
     public function getEditmode(): bool
     {
         return $this->editmode;
     }
 
-    /**
-     * @param bool $editmode
-     *
-     * @return $this
-     */
     public function setEditmode(bool $editmode): static
     {
         $this->editmode = (bool) $editmode;
@@ -481,9 +435,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getDataForResource(): mixed
     {
         $this->checkValidity();
@@ -504,19 +455,11 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return [];
     }
 
-    /**
-     * @return bool
-     */
     public function checkValidity(): bool
     {
         return true;
     }
 
-    /**
-     * @param bool $inherited
-     *
-     * @return $this
-     */
     public function setInherited(bool $inherited): static
     {
         $this->inherited = $inherited;
@@ -524,9 +467,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getInherited(): bool
     {
         return $this->inherited;

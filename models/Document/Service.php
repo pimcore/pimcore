@@ -44,14 +44,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Service extends Model\Element\Service
 {
-    /**
-     * @var Model\User|null
-     */
     protected ?Model\User $_user;
 
-    /**
-     * @var array
-     */
     protected array $_copyRecursiveIds;
 
     /**
@@ -173,7 +167,7 @@ class Service extends Model\Element\Service
      *
      * @throws ValidationException
      */
-    public function copyAsChild(Document $target, Document $source, bool $enableInheritance = false, bool $resetIndex = false, $language = false): Page|Document|PageSnippet
+    public function copyAsChild(Document $target, Document $source, bool $enableInheritance = false, bool $resetIndex = false, bool $language = false): Page|Document|PageSnippet
     {
         if ($source instanceof Document\PageSnippet) {
             $source->getEditables();
@@ -355,11 +349,6 @@ class Service extends Model\Element\Service
         return false;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return bool
-     */
     public static function isValidType(string $type): bool
     {
         return in_array($type, Document::getTypes());

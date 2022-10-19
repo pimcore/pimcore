@@ -433,11 +433,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return '';
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return array
-     */
     public function resolveDependencies(mixed $data): array
     {
         $dependencies = [];
@@ -457,9 +452,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
         if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
@@ -504,6 +497,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         $table = 'object_metadata_' . $classId;
         $db = Db::get();
 
+        $relation = [];
         $this->enrichDataRow($object, $params, $classId, $relation);
 
         $position = (isset($relation['position']) && $relation['position']) ? $relation['position'] : '0';
@@ -592,9 +586,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return Element\Service::filterUnpublishedAdvancedElements($data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
         $db = Db::get();
@@ -633,11 +625,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         }
     }
 
-    /**
-     * @param string|null $allowedClassId
-     *
-     * @return $this
-     */
     public function setAllowedClassId(?string $allowedClassId): static
     {
         $this->allowedClassId = $allowedClassId;
@@ -645,19 +632,11 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getAllowedClassId(): ?string
     {
         return $this->allowedClassId;
     }
 
-    /**
-     * @param array|string|null $visibleFields
-     *
-     * @return $this
-     */
     public function setVisibleFields(array|string|null $visibleFields): static
     {
         /**
@@ -675,19 +654,11 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getVisibleFields(): ?string
     {
         return $this->visibleFields;
     }
 
-    /**
-     * @param array $columns
-     *
-     * @return $this
-     */
     public function setColumns(array $columns): static
     {
         if (isset($columns['key'])) {
@@ -705,17 +676,11 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getColumns(): array
     {
         return $this->columns;
     }
 
-    /**
-     * @return array
-     */
     public function getColumnKeys(): array
     {
         $this->columnKeys = [];
@@ -726,9 +691,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $this->columnKeys;
     }
 
-    /**
-     * @return bool
-     */
     public function getEnableBatchEdit(): bool
     {
         return $this->enableBatchEdit;
@@ -979,19 +941,11 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $data;
     }
 
-    /**
-     * @return bool
-     */
     public function getAllowMultipleAssignments(): bool
     {
         return $this->allowMultipleAssignments;
     }
 
-    /**
-     * @param bool $allowMultipleAssignments
-     *
-     * @return $this
-     */
     public function setAllowMultipleAssignments(bool $allowMultipleAssignments): static
     {
         $this->allowMultipleAssignments = (bool) $allowMultipleAssignments;

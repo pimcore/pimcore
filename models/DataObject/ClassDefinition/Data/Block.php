@@ -480,7 +480,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, array $params = []): string
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
@@ -522,29 +522,16 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $this->collapsed = $masterDefinition->collapsed;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return bool
-     */
     public function isEmpty(mixed $data): bool
     {
         return is_null($data) || count($data) === 0;
     }
 
-    /**
-     * @return array
-     */
     public function getChildren(): array
     {
         return $this->children;
     }
 
-    /**
-     * @param array $children
-     *
-     * @return $this
-     */
     public function setChildren(array $children): static
     {
         $this->children = $children;
@@ -553,9 +540,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function hasChildren(): bool
     {
         if (is_array($this->children) && count($this->children) > 0) {
@@ -571,11 +555,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $this->fieldDefinitionsCache = null;
     }
 
-    /**
-     * @param array|null $layout
-     *
-     * @return $this
-     */
     public function setLayout(?array $layout): static
     {
         $this->layout = $layout;
@@ -583,9 +562,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $this;
     }
 
-    /**
-     * @return array|null
-     */
     public function getLayout(): ?array
     {
         return $this->layout;
@@ -742,11 +718,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return array_keys($vars);
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return array
-     */
     public function resolveDependencies(mixed $data): array
     {
         $dependencies = [];
@@ -773,9 +744,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getCacheTags(mixed $data, array $tags = []): array
     {
         if ($this->getLazyLoading()) {
@@ -804,9 +773,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $tags;
     }
 
-    /**
-     * @return bool
-     */
     public function isCollapsed(): bool
     {
         return $this->collapsed;
@@ -817,9 +783,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $this->collapsed = (bool) $collapsed;
     }
 
-    /**
-     * @return bool
-     */
     public function isCollapsible(): bool
     {
         return $this->collapsible;
@@ -830,19 +793,11 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $this->collapsible = (bool) $collapsible;
     }
 
-    /**
-     * @return string
-     */
     public function getStyleElement(): string
     {
         return $this->styleElement;
     }
 
-    /**
-     * @param string $styleElement
-     *
-     * @return $this
-     */
     public function setStyleElement(string $styleElement): static
     {
         $this->styleElement = $styleElement;
@@ -850,19 +805,11 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getLazyLoading(): bool
     {
         return $this->lazyLoading;
     }
 
-    /**
-     * @param bool $lazyLoading
-     *
-     * @return $this
-     */
     public function setLazyLoading(bool $lazyLoading): static
     {
         $this->lazyLoading = (bool) $lazyLoading;
@@ -907,10 +854,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load(Localizedfield|AbstractData|Concrete $object, array $params = [])
+array
+    public function load(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
         $field = $this->getName();
         $db = Db::get();
@@ -997,9 +942,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return is_array($data) ? $data : [];
     }
 
-    /**
-     * @return int|null
-     */
     public function getMaxItems(): ?int
     {
         return $this->maxItems;
@@ -1010,9 +952,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $this->maxItems = $this->getAsIntegerCast($maxItems);
     }
 
-    /**
-     * @return bool
-     */
     public function isDisallowAddRemove(): bool
     {
         return $this->disallowAddRemove;
@@ -1023,9 +962,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $this->disallowAddRemove = (bool) $disallowAddRemove;
     }
 
-    /**
-     * @return bool
-     */
     public function isDisallowReorder(): bool
     {
         return $this->disallowReorder;

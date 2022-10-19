@@ -45,9 +45,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      */
     const STRICT_ENABLED = 1;
 
-    /**
-     * @var int
-     */
     private static int $strictMode = self::STRICT_ENABLED;
 
     /**
@@ -292,11 +289,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         $this->datatype = $masterDefinition->datatype;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return bool
-     */
     public function isEmpty(mixed $data): bool
     {
         $fd = $this->getDelegateDatatypeDefinition();
@@ -350,7 +342,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, array $params = []): string
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd) {
@@ -383,9 +375,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         return '';
     }
 
-    /**
-     * @return string
-     */
     public function getDelegateDatatype(): string
     {
         return $this->delegateDatatype;
@@ -396,9 +385,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         $this->delegateDatatype = $delegateDatatype;
     }
 
-    /**
-     * @return Model\DataObject\ClassDefinition\Data|null
-     */
     public function getDelegateDatatypeDefinition(): ?Data
     {
         return $this->getDelegate();
@@ -426,9 +412,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         }
     }
 
-    /**
-     * @return int
-     */
     public static function isStrictMode(): int
     {
         return self::$strictMode;
@@ -439,9 +422,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         self::$strictMode = $strictMode;
     }
 
-    /**
-     * @return Model\DataObject\ClassDefinition\Data|null
-     */
     public function getDelegate(): ?Data
     {
         return $this->delegate;
@@ -466,9 +446,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         // encrypted data shouldn't be in search index

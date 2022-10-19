@@ -29,64 +29,28 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 final class Staticroute extends AbstractModel
 {
-    /**
-     * @var string
-     */
     protected string $id;
 
-    /**
-     * @var string
-     */
     protected string $name;
 
-    /**
-     * @var string
-     */
     protected string $pattern;
 
-    /**
-     * @var string
-     */
     protected string $reverse;
 
-    /**
-     * @var string
-     */
     protected string $controller;
 
-    /**
-     * @var string
-     */
     protected string $variables;
 
-    /**
-     * @var string
-     */
     protected string $defaults;
 
-    /**
-     * @var array
-     */
     protected array $siteId = [];
 
-    /**
-     * @var array
-     */
     protected array $methods;
 
-    /**
-     * @var int
-     */
     protected int $priority = 1;
 
-    /**
-     * @var int|null
-     */
     protected ?int $creationDate;
 
-    /**
-     * @var int|null
-     */
     protected ?int $modificationDate;
 
     /**
@@ -198,9 +162,6 @@ final class Staticroute extends AbstractModel
         return null;
     }
 
-    /**
-     * @return self
-     */
     public static function create(): Staticroute
     {
         $route = new self();
@@ -232,51 +193,31 @@ final class Staticroute extends AbstractModel
         return $defaults;
     }
 
-    /**
-     * @return string
-     */
     public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
     public function getPattern(): string
     {
         return $this->pattern;
     }
 
-    /**
-     * @return string
-     */
     public function getController(): string
     {
         return $this->controller;
     }
 
-    /**
-     * @return string
-     */
     public function getVariables(): string
     {
         return $this->variables;
     }
 
-    /**
-     * @return string
-     */
     public function getDefaults(): string
     {
         return $this->defaults;
     }
 
-    /**
-     * @param string $id
-     *
-     * @return $this
-     */
     public function setId(string $id): static
     {
         $this->id = $id;
@@ -284,11 +225,6 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
-    /**
-     * @param string $pattern
-     *
-     * @return $this
-     */
     public function setPattern(string $pattern): static
     {
         $this->pattern = $pattern;
@@ -296,11 +232,6 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
-    /**
-     * @param string $controller
-     *
-     * @return $this
-     */
     public function setController(string $controller): static
     {
         $this->controller = $controller;
@@ -308,11 +239,6 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
-    /**
-     * @param string $variables
-     *
-     * @return $this
-     */
     public function setVariables(string $variables): static
     {
         $this->variables = $variables;
@@ -320,11 +246,6 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
-    /**
-     * @param string $defaults
-     *
-     * @return $this
-     */
     public function setDefaults(string $defaults): static
     {
         $this->defaults = $defaults;
@@ -332,11 +253,6 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
-    /**
-     * @param int $priority
-     *
-     * @return $this
-     */
     public function setPriority(int $priority): static
     {
         $this->priority = (int) $priority;
@@ -344,19 +260,11 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getPriority(): int
     {
         return $this->priority;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -364,19 +272,11 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $reverse
-     *
-     * @return $this
-     */
     public function setReverse(string $reverse): static
     {
         $this->reverse = $reverse;
@@ -384,19 +284,11 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getReverse(): string
     {
         return $this->reverse;
     }
 
-    /**
-     * @param array|string|null $siteId
-     *
-     * @return $this
-     */
     public function setSiteId(array|string|null $siteId): static
     {
         $result = [];
@@ -428,9 +320,6 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getSiteId(): array
     {
         if ($this->siteId && !is_array($this->siteId)) {
@@ -597,9 +486,6 @@ final class Staticroute extends AbstractModel
         return [];
     }
 
-    /**
-     * @return array
-     */
     public function getMethods(): array
     {
         if ($this->methods && is_string($this->methods)) {
@@ -609,11 +495,6 @@ final class Staticroute extends AbstractModel
         return $this->methods;
     }
 
-    /**
-     * @param array|string $methods
-     *
-     * @return $this
-     */
     public function setMethods(array|string $methods): static
     {
         if (is_string($methods)) {
@@ -626,11 +507,6 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
-    /**
-     * @param int $modificationDate
-     *
-     * @return $this
-     */
     public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = (int) $modificationDate;
@@ -638,19 +514,11 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
-    /**
-     * @param int $creationDate
-     *
-     * @return $this
-     */
     public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = (int) $creationDate;
@@ -658,9 +526,6 @@ final class Staticroute extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getCreationDate(): ?int
     {
         return $this->creationDate;

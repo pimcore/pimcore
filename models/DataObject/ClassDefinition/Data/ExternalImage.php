@@ -75,9 +75,6 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public $columnType = 'longtext';
 
-    /**
-     * @return int|null
-     */
     public function getPreviewWidth(): ?int
     {
         return $this->previewWidth;
@@ -88,9 +85,6 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
         $this->previewWidth = $this->getAsIntegerCast($previewWidth);
     }
 
-    /**
-     * @return int|null
-     */
     public function getPreviewHeight(): ?int
     {
         return $this->previewHeight;
@@ -101,9 +95,6 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
         $this->previewHeight = $this->getAsIntegerCast($previewHeight);
     }
 
-    /**
-     * @return int|null
-     */
     public function getInputWidth(): ?int
     {
         return $this->inputWidth;
@@ -245,7 +236,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, array $params = []): ?string
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): ?string
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Model\DataObject\Data\ExternalImage) {
@@ -305,11 +296,6 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
         }
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return bool
-     */
     public function isEmpty(mixed $data): bool
     {
         return !($data instanceof DataObject\Data\ExternalImage && $data->getUrl());

@@ -18,12 +18,6 @@ namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
 interface DataDefinitionInterface
 {
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return bool
-     */
     public function isEmpty(mixed $data, array $params = []): bool;
 
     /**
@@ -34,35 +28,11 @@ interface DataDefinitionInterface
      */
     public function checkValidity(mixed $data, array $params = []);
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
     public function getDataForListfolderGrid(mixed $data, array $params = []): mixed;
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
     public function getDataFromEditMode(mixed $data, array $params = []): mixed;
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
     public function getDataFromListfolderGrid(mixed $data, array $params = []): mixed;
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return array
-     */
     public function resolveDependencies(mixed $data, array $params = []): array;
 }

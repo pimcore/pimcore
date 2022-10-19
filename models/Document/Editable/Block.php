@@ -118,9 +118,7 @@ class Block extends Model\Document\Editable implements BlockInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getIterator(): \Generator
     {
         while ($this->loop()) {
@@ -345,9 +343,7 @@ EOT;
         $this->outputEditmode($html);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function setConfig(array $config): Model\Document\Editable|Block|static
     {
         if (empty($config['limit'])) {
@@ -387,9 +383,6 @@ EOT;
         return $this->indices[$this->getCurrent()] ?? 0;
     }
 
-    /**
-     * @return array
-     */
     public function getIndices(): array
     {
         return $this->indices;
@@ -403,9 +396,7 @@ EOT;
         $this->current = 0;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function isEmpty(): bool
     {
         return !(bool) count($this->indices);

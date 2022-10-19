@@ -27,24 +27,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AdminStyle
 {
-    /**
-     * @var string|bool|null
-     */
     protected string|bool|null $elementCssClass = '';
 
-    /**
-     * @var string|bool|null
-     */
     protected string|bool|null $elementIcon;
 
-    /**
-     * @var string|bool|null
-     */
     protected string|bool|null $elementIconClass;
 
-    /**
-     * @var array|null
-     */
     protected ?array $elementQtipConfig;
 
     public function __construct(ElementInterface $element)
@@ -117,11 +105,6 @@ class AdminStyle
         }
     }
 
-    /**
-     * @param bool|string|null $elementCssClass
-     *
-     * @return $this
-     */
     public function setElementCssClass(bool|string|null $elementCssClass): static
     {
         $this->elementCssClass = $elementCssClass;
@@ -129,11 +112,6 @@ class AdminStyle
         return $this;
     }
 
-    /**
-     * @param string $elementCssClass
-     *
-     * @return $this
-     */
     public function appendElementCssClass(string $elementCssClass): static
     {
         $this->elementCssClass .= ' ' . $elementCssClass;
@@ -141,19 +119,11 @@ class AdminStyle
         return $this;
     }
 
-    /**
-     * @return string|bool|null
-     */
     public function getElementCssClass(): bool|string|null
     {
         return $this->elementCssClass;
     }
 
-    /**
-     * @param bool|string|null $elementIcon
-     *
-     * @return $this
-     */
     public function setElementIcon(bool|string|null $elementIcon): static
     {
         $this->elementIcon = $elementIcon;
@@ -169,11 +139,6 @@ class AdminStyle
         return $this->elementIcon;
     }
 
-    /**
-     * @param bool|string|null $elementIconClass
-     *
-     * @return $this
-     */
     public function setElementIconClass(bool|string|null $elementIconClass): static
     {
         $this->elementIconClass = $elementIconClass;
@@ -189,9 +154,6 @@ class AdminStyle
         return $this->elementIconClass;
     }
 
-    /**
-     * @return array|null
-     */
     public function getElementQtipConfig(): ?array
     {
         return $this->elementQtipConfig;

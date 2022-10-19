@@ -48,9 +48,6 @@ class Select extends Model\Document\Editable
         return $this->text;
     }
 
-    /**
-     * @return string
-     */
     public function getText(): string
     {
         return $this->getData();
@@ -84,9 +81,7 @@ class Select extends Model\Document\Editable
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function isEmpty(): bool
     {
         return empty($this->text);

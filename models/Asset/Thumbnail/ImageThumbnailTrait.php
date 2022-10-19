@@ -133,9 +133,6 @@ trait ImageThumbnailTrait
         $this->realWidth = null;
     }
 
-    /**
-     * @return int
-     */
     public function getWidth(): int
     {
         if (!$this->width) {
@@ -145,9 +142,6 @@ trait ImageThumbnailTrait
         return $this->width;
     }
 
-    /**
-     * @return int
-     */
     public function getHeight(): int
     {
         if (!$this->height) {
@@ -157,9 +151,6 @@ trait ImageThumbnailTrait
         return $this->height;
     }
 
-    /**
-     * @return int
-     */
     public function getRealWidth(): int
     {
         if (!$this->realWidth) {
@@ -169,9 +160,6 @@ trait ImageThumbnailTrait
         return $this->realWidth;
     }
 
-    /**
-     * @return int
-     */
     public function getRealHeight(): int
     {
         if (!$this->realHeight) {
@@ -213,9 +201,6 @@ trait ImageThumbnailTrait
         return $dimensions;
     }
 
-    /**
-     * @return array
-     */
     public function getDimensions(): array
     {
         if (!$this->width || !$this->height) {
@@ -265,25 +250,16 @@ trait ImageThumbnailTrait
         ];
     }
 
-    /**
-     * @return Asset
-     */
     public function getAsset(): Asset
     {
         return $this->asset;
     }
 
-    /**
-     * @return Config|null
-     */
     public function getConfig(): ?Config
     {
         return $this->config;
     }
 
-    /**
-     * @return string
-     */
     public function getMimeType(): string
     {
         if (!$this->mimetype) {
@@ -306,9 +282,6 @@ trait ImageThumbnailTrait
         return $this->mimetype;
     }
 
-    /**
-     * @return string
-     */
     public function getFileExtension(): string
     {
         return \Pimcore\File::getFileExtension($this->getPath(true));

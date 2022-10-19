@@ -124,19 +124,11 @@ class Select extends Data implements
      */
     public bool $dynamicOptions = false;
 
-    /**
-     * @return int
-     */
     public function getColumnLength(): int
     {
         return $this->columnLength;
     }
 
-    /**
-     * @param int $columnLength
-     *
-     * @return $this
-     */
     public function setColumnLength(int $columnLength): static
     {
         if ($columnLength) {
@@ -182,19 +174,11 @@ class Select extends Data implements
         return $this->queryColumnType . '(' . $this->getColumnLength() . ')';
     }
 
-    /**
-     * @return array|null
-     */
     public function getOptions(): ?array
     {
         return $this->options;
     }
 
-    /**
-     * @param array|null $options
-     *
-     * @return $this
-     */
     public function setOptions(?array $options): static
     {
         if (is_array($options)) {
@@ -214,19 +198,11 @@ class Select extends Data implements
         return $this;
     }
 
-    /**
-     * @return string|int
-     */
     public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @param int|string $width
-     *
-     * @return $this
-     */
     public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
@@ -376,11 +352,6 @@ class Select extends Data implements
         }
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return bool
-     */
     public function isEmpty(mixed $data): bool
     {
         if (is_array($data)) {
@@ -402,9 +373,6 @@ class Select extends Data implements
         $this->optionsProviderData = $masterDefinition->optionsProviderData;
     }
 
-    /**
-     * @return string|null
-     */
     public function getDefaultValue(): ?string
     {
         return $this->defaultValue;
@@ -415,9 +383,6 @@ class Select extends Data implements
         $this->defaultValue = $defaultValue;
     }
 
-    /**
-     * @return string|null
-     */
     public function getOptionsProviderClass(): ?string
     {
         return $this->optionsProviderClass;
@@ -428,9 +393,6 @@ class Select extends Data implements
         $this->optionsProviderClass = $optionsProviderClass;
     }
 
-    /**
-     * @return string|null
-     */
     public function getOptionsProviderData(): ?string
     {
         return $this->optionsProviderData;
@@ -539,9 +501,7 @@ class Select extends Data implements
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     protected function doGetDefaultValue(Concrete $object, array $context = []): ?string
     {
         /** @var DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface|null $optionsProvider */
@@ -566,9 +526,6 @@ class Select extends Data implements
         return $this->getDefaultValue();
     }
 
-    /**
-     * @return $this
-     */
     #[\ReturnTypeWillChange]
     public function jsonSerialize(): static// : static
     {

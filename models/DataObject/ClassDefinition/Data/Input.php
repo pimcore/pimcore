@@ -110,19 +110,11 @@ class Input extends Data implements
      */
     public bool $showCharCount = false;
 
-    /**
-     * @return string|int
-     */
     public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @param int|string $width
-     *
-     * @return $this
-     */
     public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
@@ -142,7 +134,7 @@ class Input extends Data implements
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForResource(mixed $data, Concrete $object = null, array $params = []): ?string
     {
         $data = $this->handleDefaultValue($data, $object, $params);
 
@@ -217,19 +209,11 @@ class Input extends Data implements
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
-    /**
-     * @return int
-     */
     public function getColumnLength(): int
     {
         return $this->columnLength;
     }
 
-    /**
-     * @param int|null $columnLength
-     *
-     * @return $this
-     */
     public function setColumnLength(?int $columnLength): static
     {
         if ($columnLength) {
@@ -244,9 +228,6 @@ class Input extends Data implements
         $this->regex = $regex;
     }
 
-    /**
-     * @return string
-     */
     public function getRegex(): string
     {
         return $this->regex;
@@ -262,9 +243,6 @@ class Input extends Data implements
         $this->regexFlags = $regexFlags;
     }
 
-    /**
-     * @return bool
-     */
     public function getUnique(): bool
     {
         return $this->unique;
@@ -275,9 +253,6 @@ class Input extends Data implements
         $this->unique = (bool) $unique;
     }
 
-    /**
-     * @return bool
-     */
     public function getShowCharCount(): bool
     {
         return $this->showCharCount;
@@ -334,27 +309,17 @@ class Input extends Data implements
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     protected function doGetDefaultValue(Concrete $object, array $context = []): ?string
     {
         return $this->getDefaultValue();
     }
 
-    /**
-     * @return string|null
-     */
     public function getDefaultValue(): ?string
     {
         return $this->defaultValue;
     }
 
-    /**
-     * @param string $defaultValue
-     *
-     * @return $this
-     */
     public function setDefaultValue(string $defaultValue): static
     {
         if ((string)$defaultValue !== '') {

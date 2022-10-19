@@ -61,19 +61,11 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
         $this->setOptions($options);
     }
 
-    /**
-     * @return bool
-     */
     public function getOnlySystemLanguages(): bool
     {
         return $this->onlySystemLanguages;
     }
 
-    /**
-     * @param bool|int $value
-     *
-     * @return $this
-     */
     public function setOnlySystemLanguages(bool|int $value): static
     {
         $this->onlySystemLanguages = (bool) $value;
@@ -94,9 +86,6 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
         return $obj;
     }
 
-    /**
-     * @return $this
-     */
     #[\ReturnTypeWillChange]
     public function jsonSerialize(): static// : static
     {

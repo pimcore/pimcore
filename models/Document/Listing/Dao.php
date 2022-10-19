@@ -83,9 +83,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return array_map('intval', $documentIds);
     }
 
-    /**
-     * @return array
-     */
     public function loadIdPathList(): array
     {
         $queryBuilder = $this->getQueryBuilder(['documents.id', 'CONCAT(documents.path, documents.key) as path']);
@@ -94,9 +91,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $documentIds;
     }
 
-    /**
-     * @return int
-     */
     public function getCount(): int
     {
         if ($this->model->isLoaded()) {
@@ -108,9 +102,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
     }
 
-    /**
-     * @return int
-     */
     public function getTotalCount(): int
     {
         $queryBuilder = $this->getQueryBuilder();

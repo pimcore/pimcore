@@ -40,9 +40,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class Document extends Element\AbstractElement
 {
-    /**
-     * @var bool
-     */
     private static bool $hideUnpublished = false;
 
     /**
@@ -153,13 +150,7 @@ class Document extends Element\AbstractElement
         return 'document_path_' . md5($path);
     }
 
-    /**
-     * @param string $path
-     * @param array $params
-     *
-     * @return static|null
-     */
-    public static function getByPath(string $path, array $params = []): ?Document|static
+    public static function getByPath(string $path, array $params = []): Document|static|null
     {
         if (!$path) {
             return null;
@@ -208,12 +199,7 @@ class Document extends Element\AbstractElement
         return true;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return static|null
-     */
-    public static function getById(int $id): ?Document|static
+    public static function getById(int $id): Document|static|null
     {
         if (!is_numeric($id) || $id < 1) {
             return null;
@@ -283,13 +269,6 @@ class Document extends Element\AbstractElement
         return $document;
     }
 
-    /**
-     * @param int $parentId
-     * @param array $data
-     * @param bool $save
-     *
-     * @return static
-     */
     public static function create(int $parentId, array $data = [], bool $save = true): static
     {
         $document = new static();
@@ -768,9 +747,7 @@ class Document extends Element\AbstractElement
         $this->dispatchEvent(new DocumentEvent($this), DocumentEvents::POST_DELETE);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getFullPath(bool $force = false): string
     {
         $link = $force ? null : $this->fullPathCache;
@@ -879,17 +856,13 @@ class Document extends Element\AbstractElement
         return $path;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getKey(): ?string
     {
         return $this->key;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getPath(): array|string|null
     {
         // check for site, if so rewrite the path for output
@@ -913,17 +886,13 @@ class Document extends Element\AbstractElement
         return $this->path;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getRealPath(): ?string
     {
         return $this->path;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getRealFullPath(): string
     {
         $path = $this->getRealPath() . $this->getKey();
@@ -931,9 +900,7 @@ class Document extends Element\AbstractElement
         return $path;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function setKey(string $key): Document|ElementInterface|static
     {
         $this->key = (string)$key;
@@ -982,9 +949,7 @@ class Document extends Element\AbstractElement
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getType(): string
     {
         return $this->type;
@@ -1004,27 +969,16 @@ class Document extends Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isPublished(): bool
     {
         return $this->getPublished();
     }
 
-    /**
-     * @return bool
-     */
     public function getPublished(): bool
     {
         return (bool) $this->published;
     }
 
-    /**
-     * @param bool $published
-     *
-     * @return Document
-     */
     public function setPublished(bool $published): static
     {
         $this->published = (bool) $published;
@@ -1032,9 +986,6 @@ class Document extends Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @return Document|null
-     */
     public function getParent(): ?Document
         /** : ?Document */
     {

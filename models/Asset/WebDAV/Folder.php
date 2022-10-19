@@ -27,9 +27,6 @@ use Sabre\DAV;
  */
 class Folder extends DAV\Collection
 {
-    /**
-     * @var Asset
-     */
     private Asset $asset;
 
     public function __construct(Asset $asset)
@@ -100,9 +97,6 @@ class Folder extends DAV\Collection
         throw new DAV\Exception\NotFound('File not found: ' . $name);
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->asset->getFilename();
@@ -198,9 +192,6 @@ class Folder extends DAV\Collection
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getLastModified(): int
     {
         return $this->asset->getModificationDate();

@@ -29,31 +29,14 @@ class AbstractUser extends Model\AbstractModel
 {
     use RecursionBlockingEventDispatchHelperTrait;
 
-    /**
-     * @var int|null
-     */
     protected ?int $id;
 
-    /**
-     * @var int|null
-     */
     protected ?int $parentId;
 
-    /**
-     * @var string|null
-     */
     protected ?string $name;
 
-    /**
-     * @var string
-     */
     protected string $type;
 
-    /**
-     * @param int $id
-     *
-     * @return AbstractUser|static|null
-     */
     public static function getById(int $id): AbstractUser|static|null
     {
         $cacheKey = 'user_' . $id;
@@ -84,11 +67,6 @@ class AbstractUser extends Model\AbstractModel
         return $user;
     }
 
-    /**
-     * @param array $values
-     *
-     * @return static
-     */
     public static function create(array $values = []): static
     {
         $user = new static();
@@ -99,11 +77,6 @@ class AbstractUser extends Model\AbstractModel
         return $user;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return static|null
-     */
     public static function getByName(string $name): ?static
     {
         try {
@@ -116,19 +89,11 @@ class AbstractUser extends Model\AbstractModel
         }
     }
 
-    /**
-     * @return int|null
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
     public function setId(int $id): static
     {
         $this->id = (int) $id;
@@ -136,19 +101,11 @@ class AbstractUser extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getParentId(): ?int
     {
         return $this->parentId;
     }
 
-    /**
-     * @param int $parentId
-     *
-     * @return $this
-     */
     public function setParentId(int $parentId): static
     {
         $this->parentId = (int)$parentId;
@@ -156,19 +113,11 @@ class AbstractUser extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -176,9 +125,6 @@ class AbstractUser extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
@@ -285,11 +231,6 @@ class AbstractUser extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param string $type
-     *
-     * @return $this
-     */
     public function setType(string $type): static
     {
         $this->type = $type;

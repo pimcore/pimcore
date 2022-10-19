@@ -45,12 +45,6 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @param string $id
-     * @param string|null $scope
-     *
-     * @return int|string
-     */
     public function delete(string $id, ?string $scope = null): int|string
     {
         return $this->db->delete(self::TABLE_NAME, [

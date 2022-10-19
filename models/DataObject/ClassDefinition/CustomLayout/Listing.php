@@ -43,19 +43,11 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
      */
     protected $order;
 
-    /**
-     * @return callable|null
-     */
     public function getOrder(): ?callable
     {
         return $this->order;
     }
 
-    /**
-     * @param callable|null $order
-     *
-     * @return $this
-     */
     public function setOrder(?callable $order): static
     {
         $this->order = $order;

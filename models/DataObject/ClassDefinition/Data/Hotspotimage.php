@@ -85,9 +85,6 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         $this->ratioX = $ratioX;
     }
 
-    /**
-     * @return int
-     */
     public function getRatioX(): int
     {
         return $this->ratioX;
@@ -98,17 +95,11 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         $this->ratioY = $ratioY;
     }
 
-    /**
-     * @return int
-     */
     public function getRatioY(): int
     {
         return $this->ratioY;
     }
 
-    /**
-     * @return string
-     */
     public function getPredefinedDataTemplates(): string
     {
         return $this->predefinedDataTemplates;
@@ -368,17 +359,13 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getCacheTags(mixed $data, array $tags = [])
     {
         if ($data instanceof DataObject\Data\Hotspotimage && $data->getImage() instanceof Asset\Image) {
@@ -416,11 +403,6 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         return $tags;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return array
-     */
     public function resolveDependencies(mixed $data): array
     {
         $dependencies = [];

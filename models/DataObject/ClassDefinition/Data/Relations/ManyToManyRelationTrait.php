@@ -24,10 +24,8 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 trait ManyToManyRelationTrait
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
+
+    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
         if (!isset($params['forceSave']) || $params['forceSave'] !== true) {
             if (!DataObject::isDirtyDetectionDisabled() && $object instanceof DirtyIndicatorInterface) {

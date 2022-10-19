@@ -28,26 +28,13 @@ class Dao extends Model\Dao\AbstractDao
 {
     use DataObject\ClassDefinition\Helper\Dao;
 
-    /**
-     * @var array|null
-     */
     protected ?array $tableDefinitions = null;
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     *
-     * @return string
-     */
     public function getTableName(DataObject\ClassDefinition $class): string
     {
         return 'object_collection_' . $this->model->getKey() . '_' . $class->getId();
     }
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     *
-     * @return string
-     */
     public function getLocalizedTableName(DataObject\ClassDefinition $class): string
     {
         return 'object_collection_' . $this->model->getKey() . '_localized_' . $class->getId();

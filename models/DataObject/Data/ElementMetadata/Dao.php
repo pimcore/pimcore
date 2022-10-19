@@ -25,17 +25,6 @@ use Pimcore\Model\DataObject;
  */
 class Dao extends DataObject\Data\ObjectMetadata\Dao
 {
-    /**
-     * @param DataObject\Concrete $source
-     * @param int $destinationId
-     * @param string $fieldname
-     * @param string $ownertype
-     * @param string $ownername
-     * @param string $position
-     * @param int $index
-     *
-     * @return DataObject\Data\ElementMetadata|null
-     */
     public function load(DataObject\Concrete $source, int $destinationId, string $fieldname, string $ownertype, string $ownername, string $position, int $index): ?DataObject\Data\ElementMetadata
     {
         if ($destinationType == 'object') {

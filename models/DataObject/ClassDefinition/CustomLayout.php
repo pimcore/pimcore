@@ -36,61 +36,26 @@ class CustomLayout extends Model\AbstractModel
     use DataObject\ClassDefinition\Helper\VarExport;
     use RecursionBlockingEventDispatchHelperTrait;
 
-    /**
-     * @var string|null
-     */
     protected ?string $id;
 
-    /**
-     * @var string
-     */
     protected string $name;
 
-    /**
-     * @var string
-     */
     protected string $description;
 
-    /**
-     * @var int|null
-     */
     protected ?int $creationDate;
 
-    /**
-     * @var int|null
-     */
     protected ?int $modificationDate;
 
-    /**
-     * @var int
-     */
     protected int $userOwner;
 
-    /**
-     * @var int
-     */
     protected int $userModification;
 
-    /**
-     * @var string
-     */
     protected string $classId;
 
-    /**
-     * @var Layout|null
-     */
     protected ?Layout $layoutDefinitions;
 
-    /**
-     * @var int
-     */
     protected int $default = 0;
 
-    /**
-     * @param string $id
-     *
-     * @return null|CustomLayout
-     */
     public static function getById(string $id): ?CustomLayout
     {
         $cacheKey = 'customlayout_' . $id;
@@ -167,11 +132,6 @@ class CustomLayout extends Model\AbstractModel
         return null;
     }
 
-    /**
-     * @param string $field
-     *
-     * @return Data|Layout|null
-     */
     public function getFieldDefinition(string $field): Data|Layout|null
     {
         /**
@@ -198,11 +158,6 @@ class CustomLayout extends Model\AbstractModel
         return $findElement($field, $this->getLayoutDefinitions());
     }
 
-    /**
-     * @param array $values
-     *
-     * @return CustomLayout
-     */
     public static function create(array $values = []): CustomLayout
     {
         $class = new self();
@@ -301,9 +256,6 @@ class CustomLayout extends Model\AbstractModel
         $this->getDao()->delete();
     }
 
-    /**
-     * @return bool
-     */
     public function exists(): bool
     {
         if (is_null($this->getId())) {
@@ -314,59 +266,36 @@ class CustomLayout extends Model\AbstractModel
         return is_string($name);
     }
 
-    /**
-     * @return string|null
-     */
     public function getId(): ?string
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return int|null
-     */
     public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }
 
-    /**
-     * @return int|null
-     */
     public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
-    /**
-     * @return int
-     */
     public function getUserOwner(): int
     {
         return $this->userOwner;
     }
 
-    /**
-     * @return int
-     */
     public function getUserModification(): int
     {
         return $this->userModification;
     }
 
-    /**
-     * @param string $id
-     *
-     * @return $this
-     */
     public function setId(string $id): static
     {
         $this->id = $id;
@@ -374,11 +303,6 @@ class CustomLayout extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -386,19 +310,11 @@ class CustomLayout extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getDefault(): int
     {
         return $this->default;
     }
 
-    /**
-     * @param int $default
-     *
-     * @return $this
-     */
     public function setDefault(int $default): static
     {
         $this->default = (int)$default;
@@ -406,11 +322,6 @@ class CustomLayout extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param int $creationDate
-     *
-     * @return $this
-     */
     public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = (int) $creationDate;
@@ -418,11 +329,6 @@ class CustomLayout extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param int $modificationDate
-     *
-     * @return $this
-     */
     public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = (int) $modificationDate;
@@ -430,11 +336,6 @@ class CustomLayout extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param int $userOwner
-     *
-     * @return $this
-     */
     public function setUserOwner(int $userOwner): static
     {
         $this->userOwner = (int) $userOwner;
@@ -442,11 +343,6 @@ class CustomLayout extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param int $userModification
-     *
-     * @return $this
-     */
     public function setUserModification(int $userModification): static
     {
         $this->userModification = (int) $userModification;
@@ -454,11 +350,6 @@ class CustomLayout extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param string $description
-     *
-     * @return $this
-     */
     public function setDescription(string $description): static
     {
         $this->description = $description;
@@ -466,9 +357,6 @@ class CustomLayout extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
         return $this->description;
@@ -479,9 +367,6 @@ class CustomLayout extends Model\AbstractModel
         $this->layoutDefinitions = $layoutDefinitions;
     }
 
-    /**
-     * @return Layout|null
-     */
     public function getLayoutDefinitions(): ?Layout
     {
         return $this->layoutDefinitions;
@@ -492,9 +377,6 @@ class CustomLayout extends Model\AbstractModel
         $this->classId = $classId;
     }
 
-    /**
-     * @return string
-     */
     public function getClassId(): string
     {
         return $this->classId;

@@ -373,12 +373,6 @@ class Service extends Model\AbstractModel
         return is_array($data) ? $data : [];
     }
 
-    /**
-     * @param string $type
-     * @param string $path
-     *
-     * @return ElementInterface|null
-     */
     public static function getElementByPath(string $type, string $path): ?ElementInterface
     {
         $element = null;
@@ -489,13 +483,6 @@ class Service extends Model\AbstractModel
         return false;
     }
 
-    /**
-     * @param string $type
-     * @param int $id
-     * @param  array $params
-     *
-     * @return Asset|AbstractObject|Document|null
-     */
     public static function getElementById(string $type, int $id, array $params = []): Asset|Document|AbstractObject|null
     {
         $element = null;
@@ -1078,12 +1065,6 @@ class Service extends Model\AbstractModel
         return null;
     }
 
-    /**
-     * @param string $key
-     * @param string $type
-     *
-     * @return string
-     */
     public static function getValidKey(string $key, string $type): string
     {
         $event = new GenericEvent(null, [
@@ -1120,23 +1101,11 @@ class Service extends Model\AbstractModel
         return $key;
     }
 
-    /**
-     * @param string $key
-     * @param string $type
-     *
-     * @return bool
-     */
     public static function isValidKey(string $key, string $type): bool
     {
         return self::getValidKey($key, $type) == $key;
     }
 
-    /**
-     * @param string $path
-     * @param string $type
-     *
-     * @return bool
-     */
     public static function isValidPath(string $path, string $type): bool
     {
         $parts = explode('/', $path);
@@ -1262,11 +1231,6 @@ class Service extends Model\AbstractModel
         return $result;
     }
 
-    /**
-     * @param ElementInterface $element
-     *
-     * @return ElementInterface
-     */
     public static function cloneMe(ElementInterface $element): ElementInterface
     {
         $deepCopy = new \DeepCopy\DeepCopy();
@@ -1432,14 +1396,6 @@ class Service extends Model\AbstractModel
         return $tmpStoreKey;
     }
 
-    /**
-     *
-     * @param string $type
-     * @param int $elementId
-     * @param string|null $postfix
-     *
-     * @return AbstractObject|Document|Asset|null
-     */
     public static function getElementFromSession(string $type, int $elementId, ?string $postfix = ''): Asset|Document|AbstractObject|null
     {
         $element = null;

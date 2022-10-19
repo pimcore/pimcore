@@ -28,19 +28,10 @@ class EncryptedField implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    /**
-     * @var Data
-     */
     protected Data $delegate;
 
-    /**
-     * @var mixed
-     */
     protected mixed $plain;
 
-    /**
-     * @var mixed
-     */
     protected mixed $encrypted;
 
     /**
@@ -64,9 +55,6 @@ class EncryptedField implements OwnerAwareFieldInterface
         $this->delegate = $delegate;
     }
 
-    /**
-     * @return mixed
-     */
     public function getPlain(): mixed
     {
         return $this->plain;

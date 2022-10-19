@@ -96,9 +96,6 @@ class Dependency extends AbstractModel
         $this->getDao()->clear();
     }
 
-    /**
-     * @return int
-     */
     public function getSourceId(): int
     {
         return $this->sourceId;
@@ -143,11 +140,6 @@ class Dependency extends AbstractModel
         return $this->getDao()->getRequiredByWithPath($offset, $limit, $orderBy, $orderDirection);
     }
 
-    /**
-     * @param int $sourceId
-     *
-     * @return $this
-     */
     public function setSourceId(int $sourceId): static
     {
         $this->sourceId = (int) $sourceId;
@@ -155,11 +147,6 @@ class Dependency extends AbstractModel
         return $this;
     }
 
-    /**
-     * @param array $requires
-     *
-     * @return $this
-     */
     public function setRequires(array $requires): static
     {
         $this->requires = $requires;
@@ -167,19 +154,11 @@ class Dependency extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getSourceType(): string
     {
         return $this->sourceType;
     }
 
-    /**
-     * @param string $sourceType
-     *
-     * @return $this
-     */
     public function setSourceType(string $sourceType): static
     {
         $this->sourceType = $sourceType;
@@ -187,17 +166,11 @@ class Dependency extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getRequiresTotalCount(): int
     {
         return count($this->requires);
     }
 
-    /**
-     * @return int
-     */
     public function getRequiredByTotalCount(): int
     {
         return $this->getDao()->getRequiredByTotalCount();

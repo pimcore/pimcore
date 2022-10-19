@@ -25,116 +25,42 @@ use Pimcore\Model\Version;
 
 interface ElementInterface extends ModelInterface
 {
-    /**
-     * @return int|null
-     */
     public function getId(): ?int;
 
-    /**
-     * @return string|null
-     */
     public function getKey(): ?string;
 
-    /**
-     * @param string $key
-     *
-     * @return $this
-     */
     public function setKey(string $key): static;
 
-    /**
-     * @return string|null
-     */
     public function getPath(): ?string;
 
-    /**
-     * @param string $path
-     *
-     * @return $this
-     */
     public function setPath(string $path): static;
 
-    /**
-     * @return string
-     */
     public function getRealPath(): string;
 
-    /**
-     * @return string
-     */
     public function getFullPath(): string;
 
-    /**
-     * @return string
-     */
     public function getRealFullPath(): string;
 
-    /**
-     * @return string
-     */
     public function getType(): string;
 
-    /**
-     * @param string $type
-     *
-     * @return $this
-     */
     public function setType(string $type): static;
 
-    /**
-     * @return int|null
-     */
     public function getCreationDate(): ?int;
 
-    /**
-     * @param int $creationDate
-     *
-     * @return $this
-     */
     public function setCreationDate(int $creationDate): static;
 
-    /**
-     * @return int|null
-     */
     public function getModificationDate(): ?int;
 
-    /**
-     * @param int $modificationDate
-     *
-     * @return $this
-     */
     public function setModificationDate(int $modificationDate): static;
 
-    /**
-     * @return int|null
-     */
     public function getUserOwner(): ?int;
 
-    /**
-     * @param int $userOwner
-     *
-     * @return $this
-     */
     public function setUserOwner(int $userOwner): static;
 
-    /**
-     * @return int|null
-     */
     public function getUserModification(): ?int;
 
-    /**
-     * @param int $userModification
-     *
-     * @return $this
-     */
     public function setUserModification(int $userModification): static;
 
-    /**
-     *
-     * @param int $id
-     *
-     * @return static|null
-     */
     public static function getById(int $id): ?static;
 
     /**
@@ -167,22 +93,8 @@ interface ElementInterface extends ModelInterface
      */
     public function getProperty(string $name, bool $asContainer = false): mixed;
 
-    /**
-     * @param string $name
-     * @param string $type
-     * @param mixed $data
-     * @param bool $inherited
-     * @param bool $inheritable
-     *
-     * @return $this
-     */
     public function setProperty(string $name, string $type, mixed $data, bool $inherited = false, bool $inheritable = false): static;
 
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
     public function hasProperty(string $name): bool;
 
     /**
@@ -208,40 +120,18 @@ interface ElementInterface extends ModelInterface
      */
     public function getLocked(): ?string;
 
-    /**
-     * @return int|null
-     */
     public function getParentId(): ?int;
 
-    /**
-     * @param int|null $id
-     *
-     * @return $this
-     */
     public function setParentId(?int $id): static;
 
-    /**
-     * @return self|null
-     */
     public function getParent(): ?ElementInterface;
 
-    /**
-     * @param ElementInterface|null $parent
-     *
-     * @return $this
-     */
     public function setParent(?ElementInterface $parent): static;
 
-    /**
-     * @return string
-     */
     public function getCacheTag(): string;
 
     public function getCacheTags(array $tags = []): array;
 
-    /**
-     * @return bool
-     */
     public function __isBasedOnLatestData(): bool;
 
     /**
@@ -267,11 +157,6 @@ interface ElementInterface extends ModelInterface
 
     public function clearDependentCache(array $additionalTags = []);
 
-    /**
-     * @param int|null $id
-     *
-     * @return $this
-     */
     public function setId(?int $id): static;
 
     /**
@@ -294,9 +179,6 @@ interface ElementInterface extends ModelInterface
      */
     public function getVersions(): array;
 
-    /**
-     * @return Dependency
-     */
     public function getDependencies(): Dependency;
 
     /**

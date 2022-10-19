@@ -46,36 +46,24 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
         return current($this->items);
     }
 
-    /**
-     * @return void
-     */
     #[\ReturnTypeWillChange]
     public function next(): void// : void
     {
         next($this->items);
     }
 
-    /**
-     * @return int|string|null
-     */
     #[\ReturnTypeWillChange]
     public function key(): int|string|null// : mixed
     {
         return key($this->items);
     }
 
-    /**
-     * @return bool
-     */
     #[\ReturnTypeWillChange]
     public function valid(): bool// : bool
     {
         return $this->current() !== false;
     }
 
-    /**
-     * @return void
-     */
     #[\ReturnTypeWillChange]
     public function rewind(): void// : void
     {

@@ -96,11 +96,6 @@ class Hardlink extends Document
         return $tags;
     }
 
-    /**
-     * @param bool $childrenFromSource
-     *
-     * @return Hardlink
-     */
     public function setChildrenFromSource(bool $childrenFromSource): static
     {
         $this->childrenFromSource = (bool) $childrenFromSource;
@@ -108,19 +103,11 @@ class Hardlink extends Document
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getChildrenFromSource(): bool
     {
         return $this->childrenFromSource;
     }
 
-    /**
-     * @param int $sourceId
-     *
-     * @return $this
-     */
     public function setSourceId(int $sourceId): static
     {
         $this->sourceId = (int) $sourceId;
@@ -128,19 +115,11 @@ class Hardlink extends Document
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getSourceId(): int
     {
         return $this->sourceId;
     }
 
-    /**
-     * @param bool $propertiesFromSource
-     *
-     * @return $this
-     */
     public function setPropertiesFromSource(bool $propertiesFromSource): static
     {
         $this->propertiesFromSource = (bool) $propertiesFromSource;
@@ -148,9 +127,6 @@ class Hardlink extends Document
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getPropertiesFromSource(): bool
     {
         return $this->propertiesFromSource;

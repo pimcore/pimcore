@@ -25,8 +25,11 @@ class UnitConverterResolver extends ClassResolver
 {
     public static function resolveUnitConverter(string $converterServiceName): ?QuantityValueConverterInterface
     {
-        return self::resolve('@' . $converterServiceName, static function ($converterService) {
+        /** @var QuantityValueConverterInterface $converter */
+        $converter = self::resolve('@' . $converterServiceName, static function ($converterService) {
             return $converterService instanceof QuantityValueConverterInterface;
         });
+
+        return $converter;
     }
 }

@@ -86,27 +86,16 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public $columnType = 'longtext';
 
-    /**
-     * @return string|int
-     */
     public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @return string|int
-     */
     public function getHeight(): int|string
     {
         return $this->height;
     }
 
-    /**
-     * @param int|string $width
-     *
-     * @return $this
-     */
     public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
@@ -117,11 +106,6 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this;
     }
 
-    /**
-     * @param int|string $height
-     *
-     * @return $this
-     */
     public function setHeight(int|string $height): static
     {
         if (is_numeric($height)) {
@@ -132,9 +116,6 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getMaxLength(): ?int
     {
         return $this->maxLength;
@@ -145,9 +126,6 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         $this->maxLength = $maxLength;
     }
 
-    /**
-     * @return bool
-     */
     public function isShowCharCount(): bool
     {
         return $this->showCharCount;
@@ -163,11 +141,6 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $this->excludeFromSearchIndex;
     }
 
-    /**
-     * @param bool $excludeFromSearchIndex
-     *
-     * @return $this
-     */
     public function setExcludeFromSearchIndex(bool $excludeFromSearchIndex): static
     {
         $this->excludeFromSearchIndex = $excludeFromSearchIndex;
@@ -205,14 +178,14 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      * @param mixed $data
-     * @param null|Model\DataObject\Concrete $object
+     * @param Concrete|null $object
      * @param array $params
      *
      * @return string|null
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForQueryResource(mixed $data, Concrete $object = null, array $params = []): ?string
     {
         return $data;
     }
@@ -272,9 +245,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         if ($this->isExcludeFromSearchIndex()) {

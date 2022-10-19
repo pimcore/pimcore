@@ -90,19 +90,11 @@ class Listing extends Model\Listing\AbstractListing
         return $this->getData();
     }
 
-    /**
-     * @param array $translations
-     *
-     * @return \Pimcore\Model\Translation\Listing
-     */
     public function setTranslations(array $translations): Listing
     {
         return $this->setData($translations);
     }
 
-    /**
-     * @return int
-     */
     public static function getCacheLimit(): int
     {
         return self::$cacheLimit;

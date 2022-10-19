@@ -40,44 +40,20 @@ use Pimcore\Tool\Storage;
  */
 class Item extends Model\AbstractModel
 {
-    /**
-     * @var int
-     */
     protected int $id;
 
-    /**
-     * @var string
-     */
     protected string $path;
 
-    /**
-     * @var string
-     */
     protected string $type;
 
-    /**
-     * @var string
-     */
     protected string $subtype;
 
-    /**
-     * @var int
-     */
     protected int $amount = 0;
 
-    /**
-     * @var Element\ElementInterface
-     */
     protected Element\ElementInterface $element;
 
-    /**
-     * @var int
-     */
     protected int $date;
 
-    /**
-     * @var string
-     */
     protected string $deletedby;
 
     /**
@@ -323,11 +299,6 @@ class Item extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param Element\ElementInterface $data
-     *
-     * @return mixed
-     */
     public function marshalData(Element\ElementInterface $data): mixed
     {
         //for full dump of relation fields in container types
@@ -379,11 +350,6 @@ class Item extends Model\AbstractModel
         return $copier->copy($data);
     }
 
-    /**
-     * @param Element\ElementInterface $data
-     *
-     * @return Element\ElementInterface
-     */
     public function unmarshalData(Element\ElementInterface $data): Element\ElementInterface
     {
         $context = [
@@ -410,37 +376,21 @@ class Item extends Model\AbstractModel
         return $copier->copy($data);
     }
 
-    /**
-     * @return string
-     */
     public function getStoreageFile(): string
     {
         return sprintf('%s/%s.psf', $this->getType(), $this->getId());
     }
 
-    /**
-     * @param Element\ElementInterface $element
-     *
-     * @return string
-     */
     protected function getStorageFileBinary(Element\ElementInterface $element): string
     {
         return sprintf('%s/%s_%s-%s.bin', $this->getType(), $this->getId(), Element\Service::getElementType($element), $element->getId());
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
     public function setId(int $id): static
     {
         $this->id = (int) $id;
@@ -448,19 +398,11 @@ class Item extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getPath(): string
     {
         return $this->path;
     }
 
-    /**
-     * @param string $path
-     *
-     * @return $this
-     */
     public function setPath(string $path): static
     {
         $this->path = $path;
@@ -468,19 +410,11 @@ class Item extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return $this
-     */
     public function setType(string $type): static
     {
         $this->type = $type;
@@ -488,19 +422,11 @@ class Item extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getSubtype(): string
     {
         return $this->subtype;
     }
 
-    /**
-     * @param string $subtype
-     *
-     * @return $this
-     */
     public function setSubtype(string $subtype): static
     {
         $this->subtype = $subtype;
@@ -508,19 +434,11 @@ class Item extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getAmount(): int
     {
         return $this->amount;
     }
 
-    /**
-     * @param int $amount
-     *
-     * @return $this
-     */
     public function setAmount(int $amount): static
     {
         $this->amount = (int) $amount;
@@ -528,19 +446,11 @@ class Item extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getDate(): int
     {
         return $this->date;
     }
 
-    /**
-     * @param int $date
-     *
-     * @return $this
-     */
     public function setDate(int $date): static
     {
         $this->date = (int) $date;
@@ -548,19 +458,11 @@ class Item extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return Element\ElementInterface
-     */
     public function getElement(): Element\ElementInterface
     {
         return $this->element;
     }
 
-    /**
-     * @param Element\ElementInterface $element
-     *
-     * @return $this
-     */
     public function setElement(Element\ElementInterface $element): static
     {
         $this->element = $element;
@@ -568,11 +470,6 @@ class Item extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param string $username
-     *
-     * @return $this
-     */
     public function setDeletedby(string $username): static
     {
         $this->deletedby = $username;
@@ -580,9 +477,6 @@ class Item extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getDeletedby(): string
     {
         return $this->deletedby;

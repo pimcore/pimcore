@@ -28,12 +28,6 @@ use Pimcore\Model\Site;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    /**
-     * @param Site $site
-     * @param string $path
-     *
-     * @return int
-     */
     public function getDocumentIdByPrettyUrlInSite(Site $site, string $path): int
     {
         return (int) $this->db->fetchOne(
@@ -44,11 +38,6 @@ class Dao extends Model\Dao\AbstractDao
         );
     }
 
-    /**
-     * @param Document $document
-     *
-     * @return int
-     */
     public function getTranslationSourceId(Document $document): int
     {
         $sourceId = $this->db->fetchOne('SELECT sourceId FROM documents_translations WHERE id = ?', [$document->getId()]);

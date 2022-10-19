@@ -110,11 +110,6 @@ abstract class AbstractWorkspace extends Model\AbstractModel
      */
     protected bool $properties = false;
 
-    /**
-     * @param bool $create
-     *
-     * @return $this
-     */
     public function setCreate(bool $create): static
     {
         $this->create = $create;
@@ -122,19 +117,11 @@ abstract class AbstractWorkspace extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getCreate(): bool
     {
         return $this->create;
     }
 
-    /**
-     * @param bool $delete
-     *
-     * @return $this
-     */
     public function setDelete(bool $delete): static
     {
         $this->delete = $delete;
@@ -142,19 +129,11 @@ abstract class AbstractWorkspace extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getDelete(): bool
     {
         return $this->delete;
     }
 
-    /**
-     * @param bool $list
-     *
-     * @return $this
-     */
     public function setList(bool $list): static
     {
         $this->list = $list;
@@ -162,19 +141,11 @@ abstract class AbstractWorkspace extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getList(): bool
     {
         return $this->list;
     }
 
-    /**
-     * @param bool $properties
-     *
-     * @return $this
-     */
     public function setProperties(bool $properties): static
     {
         $this->properties = $properties;
@@ -182,19 +153,11 @@ abstract class AbstractWorkspace extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getProperties(): bool
     {
         return $this->properties;
     }
 
-    /**
-     * @param bool $publish
-     *
-     * @return $this
-     */
     public function setPublish(bool $publish): static
     {
         $this->publish = $publish;
@@ -202,19 +165,11 @@ abstract class AbstractWorkspace extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getPublish(): bool
     {
         return $this->publish;
     }
 
-    /**
-     * @param bool $rename
-     *
-     * @return $this
-     */
     public function setRename(bool $rename): static
     {
         $this->rename = $rename;
@@ -222,19 +177,11 @@ abstract class AbstractWorkspace extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getRename(): bool
     {
         return $this->rename;
     }
 
-    /**
-     * @param bool $settings
-     *
-     * @return $this
-     */
     public function setSettings(bool $settings): static
     {
         $this->settings = $settings;
@@ -242,19 +189,11 @@ abstract class AbstractWorkspace extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getSettings(): bool
     {
         return $this->settings;
     }
 
-    /**
-     * @param bool $versions
-     *
-     * @return $this
-     */
     public function setVersions(bool $versions): static
     {
         $this->versions = $versions;
@@ -262,19 +201,11 @@ abstract class AbstractWorkspace extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getVersions(): bool
     {
         return $this->versions;
     }
 
-    /**
-     * @param bool $view
-     *
-     * @return $this
-     */
     public function setView(bool $view): static
     {
         $this->view = $view;
@@ -282,19 +213,11 @@ abstract class AbstractWorkspace extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getView(): bool
     {
         return $this->view;
     }
 
-    /**
-     * @param int $cid
-     *
-     * @return $this
-     */
     public function setCid(int $cid): static
     {
         $this->cid = $cid;
@@ -302,19 +225,11 @@ abstract class AbstractWorkspace extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getCid(): int
     {
         return $this->cid;
     }
 
-    /**
-     * @param int $userId
-     *
-     * @return $this
-     */
     public function setUserId(int $userId): static
     {
         $this->userId = $userId;
@@ -322,19 +237,11 @@ abstract class AbstractWorkspace extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getUserId(): int
     {
         return $this->userId;
     }
 
-    /**
-     * @param string $cpath
-     *
-     * @return $this
-     */
     public function setCpath(string $cpath): static
     {
         $this->cpath = $cpath;
@@ -342,9 +249,6 @@ abstract class AbstractWorkspace extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getCpath(): string
     {
         return $this->cpath;

@@ -32,14 +32,8 @@ final class Site extends AbstractModel
 
     protected static ?Site $currentSite = null;
 
-    /**
-     * @var int
-     */
     protected int $id;
 
-    /**
-     * @var array
-     */
     protected array $domains;
 
     /**
@@ -51,39 +45,18 @@ final class Site extends AbstractModel
 
     protected ?Document\Page $rootDocument = null;
 
-    /**
-     * @var string|null
-     */
     protected ?string $rootPath;
 
-    /**
-     * @var string
-     */
     protected string $mainDomain = '';
 
-    /**
-     * @var string
-     */
     protected string $errorDocument = '';
 
-    /**
-     * @var array
-     */
     protected array $localizedErrorDocuments;
 
-    /**
-     * @var bool
-     */
     protected bool $redirectToMainDomain = false;
 
-    /**
-     * @var int|null
-     */
     protected ?int $creationDate;
 
-    /**
-     * @var int|null
-     */
     protected ?int $modificationDate;
 
     /**
@@ -118,11 +91,6 @@ final class Site extends AbstractModel
         return $site;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return Site|null
-     */
     public static function getByRootId(int $id): ?Site
     {
         try {
@@ -189,11 +157,6 @@ final class Site extends AbstractModel
         return $site;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return Site
-     */
     public static function create(array $data): Site
     {
         $site = new self();
@@ -241,25 +204,16 @@ final class Site extends AbstractModel
         self::$currentSite = $site;
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return array
-     */
     public function getDomains(): array
     {
         return $this->domains;
     }
 
-    /**
-     * @return int
-     */
     public function getRootId(): int
     {
         return $this->rootId;
@@ -270,11 +224,6 @@ final class Site extends AbstractModel
         return $this->rootDocument;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
     public function setId(int $id): static
     {
         $this->id = (int) $id;
@@ -282,11 +231,6 @@ final class Site extends AbstractModel
         return $this;
     }
 
-    /**
-     * @param mixed $domains
-     *
-     * @return $this
-     */
     public function setDomains(mixed $domains): static
     {
         if (is_string($domains)) {
@@ -297,11 +241,6 @@ final class Site extends AbstractModel
         return $this;
     }
 
-    /**
-     * @param int $rootId
-     *
-     * @return $this
-     */
     public function setRootId(int $rootId): static
     {
         $this->rootId = (int) $rootId;
@@ -312,11 +251,6 @@ final class Site extends AbstractModel
         return $this;
     }
 
-    /**
-     * @param Document\Page|null $rootDocument
-     *
-     * @return $this
-     */
     public function setRootDocument(?Document\Page $rootDocument): static
     {
         $this->rootDocument = $rootDocument;
@@ -324,11 +258,6 @@ final class Site extends AbstractModel
         return $this;
     }
 
-    /**
-     * @param string|null $path
-     *
-     * @return $this
-     */
     public function setRootPath(?string $path): static
     {
         $this->rootPath = $path;
@@ -336,9 +265,6 @@ final class Site extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getRootPath(): ?string
     {
         if (!$this->rootPath && $this->getRootDocument()) {
@@ -353,19 +279,11 @@ final class Site extends AbstractModel
         $this->errorDocument = $errorDocument;
     }
 
-    /**
-     * @return string
-     */
     public function getErrorDocument(): string
     {
         return $this->errorDocument;
     }
 
-    /**
-     * @param mixed $localizedErrorDocuments
-     *
-     * @return $this
-     */
     public function setLocalizedErrorDocuments(mixed $localizedErrorDocuments): static
     {
         if (is_string($localizedErrorDocuments)) {
@@ -376,9 +294,6 @@ final class Site extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getLocalizedErrorDocuments(): array
     {
         return $this->localizedErrorDocuments;
@@ -389,9 +304,6 @@ final class Site extends AbstractModel
         $this->mainDomain = $mainDomain;
     }
 
-    /**
-     * @return string
-     */
     public function getMainDomain(): string
     {
         return $this->mainDomain;
@@ -402,9 +314,6 @@ final class Site extends AbstractModel
         $this->redirectToMainDomain = (bool) $redirectToMainDomain;
     }
 
-    /**
-     * @return bool
-     */
     public function getRedirectToMainDomain(): bool
     {
         return $this->redirectToMainDomain;
@@ -423,11 +332,6 @@ final class Site extends AbstractModel
         }
     }
 
-    /**
-     * @param int $modificationDate
-     *
-     * @return $this
-     */
     public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = (int) $modificationDate;
@@ -435,19 +339,11 @@ final class Site extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
-    /**
-     * @param int $creationDate
-     *
-     * @return $this
-     */
     public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = (int) $creationDate;
@@ -455,9 +351,6 @@ final class Site extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getCreationDate(): ?int
     {
         return $this->creationDate;

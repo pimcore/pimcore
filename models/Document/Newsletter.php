@@ -153,9 +153,6 @@ class Newsletter extends Model\Document\PageSnippet
         return $this->from;
     }
 
-    /**
-     * @return bool
-     */
     public function getEnableTrackingParameters(): bool
     {
         return $this->enableTrackingParameters;
@@ -166,9 +163,6 @@ class Newsletter extends Model\Document\PageSnippet
         $this->enableTrackingParameters = $enableTrackingParameters;
     }
 
-    /**
-     * @return string
-     */
     public function getTrackingParameterSource(): string
     {
         return $this->trackingParameterSource;
@@ -179,9 +173,6 @@ class Newsletter extends Model\Document\PageSnippet
         $this->trackingParameterSource = $trackingParameterSource;
     }
 
-    /**
-     * @return string
-     */
     public function getTrackingParameterMedium(): string
     {
         return $this->trackingParameterMedium;
@@ -211,9 +202,6 @@ class Newsletter extends Model\Document\PageSnippet
         $this->trackingParameterName = $trackingParameterName;
     }
 
-    /**
-     * @return string
-     */
     public function getSendingMode(): string
     {
         return $this->sendingMode;

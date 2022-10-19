@@ -50,10 +50,8 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForResource()
+
+    public function getDataForResource(): array
     {
         return [
             'id' => $this->id,
@@ -109,9 +107,7 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
         return $dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function checkValidity(): bool
     {
         $sane = true;
@@ -201,9 +197,7 @@ HTML;
         return $code;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function isEmpty(): bool
     {
         if ($this->id) {
@@ -213,9 +207,6 @@ HTML;
         return true;
     }
 
-    /**
-     * @return Asset|null
-     */
     public function getElement(): ?Asset
     {
         $data = $this->getData();
@@ -228,9 +219,6 @@ HTML;
         $this->id = $id;
     }
 
-    /**
-     * @return int|null
-     */
     public function getId(): ?int
     {
         return $this->id;

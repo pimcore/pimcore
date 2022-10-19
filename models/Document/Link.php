@@ -231,11 +231,6 @@ class Link extends Model\Document
         return $this->linktype;
     }
 
-    /**
-     * @param int $internal
-     *
-     * @return $this
-     */
     public function setInternal(int $internal): static
     {
         if (!empty($internal)) {
@@ -248,11 +243,6 @@ class Link extends Model\Document
         return $this;
     }
 
-    /**
-     * @param string $direct
-     *
-     * @return $this
-     */
     public function setDirect(string $direct): static
     {
         $this->direct = $direct;
@@ -260,11 +250,6 @@ class Link extends Model\Document
         return $this;
     }
 
-    /**
-     * @param string $linktype
-     *
-     * @return $this
-     */
     public function setLinktype(string $linktype): static
     {
         $this->linktype = $linktype;
@@ -272,19 +257,11 @@ class Link extends Model\Document
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getInternalType(): ?string
     {
         return $this->internalType;
     }
 
-    /**
-     * @param string|null $type
-     *
-     * @return $this
-     */
     public function setInternalType(?string $type): static
     {
         $this->internalType = $type;
@@ -292,9 +269,6 @@ class Link extends Model\Document
         return $this;
     }
 
-    /**
-     * @return Model\Element\ElementInterface|null
-     */
     public function getElement(): ?Model\Element\ElementInterface
     {
         if ($this->object instanceof Model\Element\ElementInterface) {
@@ -307,11 +281,6 @@ class Link extends Model\Document
         return null;
     }
 
-    /**
-     * @param Model\Element\ElementInterface|null $element
-     *
-     * @return $this
-     */
     public function setElement(?Model\Element\ElementInterface $element): static
     {
         $this->object = $element;

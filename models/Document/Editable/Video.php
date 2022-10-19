@@ -90,11 +90,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      */
     protected ?array $allowedTypes;
 
-    /**
-     * @param int|string|null $id
-     *
-     * @return Video
-     */
     public function setId(int|string|null $id): static
     {
         $this->id = $id;
@@ -102,19 +97,11 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this;
     }
 
-    /**
-     * @return int|string|null
-     */
     public function getId(): int|string|null
     {
         return $this->id;
     }
 
-    /**
-     * @param string $title
-     *
-     * @return $this
-     */
     public function setTitle(string $title): static
     {
         $this->title = $title;
@@ -122,9 +109,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
         if (!$this->title && $this->getVideoAsset()) {
@@ -135,11 +119,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->title;
     }
 
-    /**
-     * @param string $description
-     *
-     * @return $this
-     */
     public function setDescription(string $description): static
     {
         $this->description = $description;
@@ -147,9 +126,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
         if (!$this->description) {
@@ -160,11 +136,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->description;
     }
 
-    /**
-     * @param int|null $id
-     *
-     * @return $this
-     */
     public function setPoster(?int $id): static
     {
         $this->poster = $id;
@@ -172,19 +143,11 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getPoster(): ?int
     {
         return $this->poster;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return $this
-     */
     public function setType(string $type): static
     {
         $this->type = $type;
@@ -200,11 +163,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return 'video';
     }
 
-    /**
-     * @param array $allowedTypes
-     *
-     * @return $this
-     */
     public function setAllowedTypes(array $allowedTypes): static
     {
         $this->allowedTypes = $allowedTypes;
@@ -212,9 +170,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getAllowedTypes(): array
     {
         if ($this->allowedTypes === null) {
@@ -261,10 +216,8 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForResource()
+
+    public function getDataForResource(): array
     {
         return [
             'id'           => $this->id,
@@ -337,9 +290,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function checkValidity(): bool
     {
         $valid = true;
@@ -434,17 +385,11 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this;
     }
 
-    /**
-     * @return int|string
-     */
     public function getWidth(): int|string
     {
         return $this->getConfig()['width'] ?? '100%';
     }
 
-    /**
-     * @return int|string
-     */
     public function getHeight(): int|string
     {
         return $this->getConfig()['height'] ?? 300;
@@ -1031,9 +976,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return 'video_' . uniqid();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function isEmpty(): bool
     {
         if ($this->id) {
@@ -1043,9 +986,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return true;
     }
 
-    /**
-     * @return string
-     */
     public function getVideoType(): string
     {
         if (empty($this->type) === true) {
@@ -1055,9 +995,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->type;
     }
 
-    /**
-     * @return Asset\Video|null
-     */
     public function getVideoAsset(): ?Asset\Video
     {
         if ($this->getVideoType() === self::TYPE_ASSET) {
@@ -1067,9 +1004,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return null;
     }
 
-    /**
-     * @return Asset\Image|null
-     */
     public function getPosterAsset(): ?Asset\Image
     {
         return Asset\Image::getById($this->poster);
@@ -1095,11 +1029,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return '';
     }
 
-    /**
-     * @param string|Asset\Video\Thumbnail\Config $config
-     *
-     * @return array
-     */
     public function getThumbnail(string|Asset\Video\Thumbnail\Config $config): array
     {
         if ($this->getVideoAsset()) {

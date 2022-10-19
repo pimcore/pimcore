@@ -394,9 +394,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return 'NOT SUPPORTED';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $dataString = '';
@@ -421,19 +419,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $dataString;
     }
 
-    /**
-     * @return array
-     */
     public function getChildren(): array
     {
         return $this->children;
     }
 
-    /**
-     * @param array $children
-     *
-     * @return $this
-     */
     public function setChildren(array $children): static
     {
         $this->children = $children;
@@ -442,9 +432,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function hasChildren(): bool
     {
         return is_array($this->children) && count($this->children) > 0;
@@ -500,10 +487,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load(Localizedfield|AbstractData|Concrete $object, array $params = [])
+array
+    public function load(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): Localizedfield
     {
         if ($object instanceof DataObject\Fieldcollection\Data\AbstractData || $object instanceof DataObject\Objectbrick\Data\AbstractData) {
             $object = $object->getObject();
@@ -733,9 +718,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $fields;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getCacheTags(mixed $data, array $tags = []): array
     {
         if (!$data instanceof DataObject\Localizedfield) {
@@ -753,11 +736,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $tags;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return array
-     */
     public function resolveDependencies(mixed $data): array
     {
         $dependencies = [];
@@ -777,11 +755,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $dependencies;
     }
 
-    /**
-     * @param int|string $height
-     *
-     * @return $this
-     */
     public function setHeight(int|string $height): static
     {
         if (is_numeric($height)) {
@@ -792,19 +765,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $this;
     }
 
-    /**
-     * @return string|int
-     */
     public function getHeight(): int|string
     {
         return $this->height;
     }
 
-    /**
-     * @param mixed $layout
-     *
-     * @return $this
-     */
     public function setLayout(mixed $layout): static
     {
         $this->layout = $layout;
@@ -812,9 +777,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getLayout(): string
     {
         return $this->layout;
@@ -848,11 +810,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $this;
     }
 
-    /**
-     * @param string|null $region
-     *
-     * @return $this
-     */
     public function setRegion(?string $region): static
     {
         $this->region = $region;
@@ -860,19 +817,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getRegion(): string
     {
         return $this->region;
     }
 
-    /**
-     * @param int|string $width
-     *
-     * @return $this
-     */
     public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
@@ -883,9 +832,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $this;
     }
 
-    /**
-     * @return int|string
-     */
     public function getWidth(): int|string
     {
         return $this->width;
@@ -1149,19 +1095,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $data;
     }
 
-    /**
-     * @return int
-     */
     public function getHideLabelsWhenTabsReached(): int
     {
         return $this->hideLabelsWhenTabsReached;
     }
 
-    /**
-     * @param int $hideLabelsWhenTabsReached
-     *
-     * @return $this
-     */
     public function setHideLabelsWhenTabsReached(int $hideLabelsWhenTabsReached): static
     {
         $this->hideLabelsWhenTabsReached = $hideLabelsWhenTabsReached;
@@ -1174,9 +1112,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $this->maxTabs = $maxTabs;
     }
 
-    /**
-     * @return int
-     */
     public function getMaxTabs(): int
     {
         return $this->maxTabs;
@@ -1187,9 +1122,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $this->labelWidth = (int)$labelWidth;
     }
 
-    /**
-     * @return int
-     */
     public function getLabelWidth(): int
     {
         return $this->labelWidth;
@@ -1215,9 +1147,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $this->permissionEdit = $permissionEdit;
     }
 
-    /**
-     * @return bool
-     */
     public function getProvideSplitView(): bool
     {
         return $this->provideSplitView;
@@ -1228,9 +1157,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $this->provideSplitView = (bool) $provideSplitView;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function supportsDirtyDetection(): bool
     {
         return true;

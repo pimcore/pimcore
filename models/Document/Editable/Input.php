@@ -48,9 +48,6 @@ class Input extends Model\Document\Editable implements EditmodeDataInterface
         return $this->text;
     }
 
-    /**
-     * @return string
-     */
     public function getText(): string
     {
         return $this->getData();
@@ -100,9 +97,7 @@ class Input extends Model\Document\Editable implements EditmodeDataInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function isEmpty(): bool
     {
         return !(bool) strlen($this->text);

@@ -20,6 +20,9 @@ use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
+use Pimcore\Model\DataObject\Localizedfield;
 
 class ReverseObjectRelation extends ManyToManyObjectRelation
 {
@@ -60,22 +63,12 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
      */
     public bool $lazyLoading = true;
 
-    /**
-     * @param array $classes
-     *
-     * @return $this
-     */
     public function setClasses(array $classes): static
     {
         //dummy, classes are set from owner classId
         return $this;
     }
 
-    /**
-     * @param string $ownerClassName
-     *
-     * @return $this
-     */
     public function setOwnerClassName(string $ownerClassName): static
     {
         $this->ownerClassName = $ownerClassName;
@@ -83,9 +76,6 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getOwnerClassName(): ?string
     {
         //fallback for legacy data
@@ -104,9 +94,6 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return $this->ownerClassName;
     }
 
-    /**
-     * @return string|null
-     */
     public function getOwnerClassId(): ?string
     {
         if (empty($this->ownerClassId)) {
@@ -126,19 +113,11 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return $this->ownerClassId;
     }
 
-    /**
-     * @return string
-     */
     public function getOwnerFieldName(): string
     {
         return $this->ownerFieldName;
     }
 
-    /**
-     * @param string $fieldName
-     *
-     * @return $this
-     */
     public function setOwnerFieldName(string $fieldName): static
     {
         $this->ownerFieldName = $fieldName;
@@ -183,13 +162,7 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         }
     }
 
-    /**
-     * @param AbstractData|Concrete|Localizedfield|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
-     *
-     * @return array
-     */
-    public function load(Localizedfield|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData|AbstractData|Concrete $object, array $params = []): array
+    public function load(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): array
     {
         if ($this->getOwnerClassId() === null) {
             return [];
@@ -213,19 +186,12 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return $data['data'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getCacheTags(mixed $data, array $tags = []): array
     {
         return $tags;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return array
-     */
     public function resolveDependencies(mixed $data): array
     {
         return [];

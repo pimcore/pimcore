@@ -39,9 +39,6 @@ final class Translation extends AbstractModel
 
     const DOMAIN_ADMIN = 'admin';
 
-    /**
-     * @var string|null
-     */
     protected ?string $key;
 
     /**
@@ -49,24 +46,12 @@ final class Translation extends AbstractModel
      */
     protected array $translations = [];
 
-    /**
-     * @var int|null
-     */
     protected ?int $creationDate;
 
-    /**
-     * @var int|null
-     */
     protected ?int $modificationDate;
 
-    /**
-     * @var string
-     */
     protected string $domain = self::DOMAIN_DEFAULT;
 
-    /**
-     * @var string
-     */
     protected string $type = 'simple';
 
     /**
@@ -79,9 +64,6 @@ final class Translation extends AbstractModel
      */
     protected ?int $userModification = null;
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type ?: 'simple';
@@ -98,19 +80,11 @@ final class Translation extends AbstractModel
         return in_array($locale, (array)static::getValidLanguages($domain));
     }
 
-    /**
-     * @return string|null
-     */
     public function getKey(): ?string
     {
         return $this->key;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return $this
-     */
     public function setKey(string $key): static
     {
         $this->key = $key;
@@ -138,11 +112,6 @@ final class Translation extends AbstractModel
         return $this;
     }
 
-    /**
-     * @param int $date
-     *
-     * @return $this
-     */
     public function setDate(int $date): static
     {
         $this->setModificationDate($date);
@@ -150,19 +119,11 @@ final class Translation extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }
 
-    /**
-     * @param int $date
-     *
-     * @return $this
-     */
     public function setCreationDate(int $date): static
     {
         $this->creationDate = (int) $date;
@@ -170,19 +131,11 @@ final class Translation extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
-    /**
-     * @param int $date
-     *
-     * @return $this
-     */
     public function setModificationDate(int $date): static
     {
         $this->modificationDate = (int) $date;
@@ -241,21 +194,11 @@ final class Translation extends AbstractModel
         $this->translations[$language] = $text;
     }
 
-    /**
-     * @param string $language
-     *
-     * @return string
-     */
     public function getTranslation(string $language): string
     {
         return $this->translations[$language];
     }
 
-    /**
-     * @param string $language
-     *
-     * @return bool
-     */
     public function hasTranslation(string $language): bool
     {
         return isset($this->translations[$language]);

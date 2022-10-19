@@ -61,11 +61,6 @@ final class UUID extends Model\AbstractModel
      */
     protected mixed $item;
 
-    /**
-     * @param string $instanceIdentifier
-     *
-     * @return $this
-     */
     public function setInstanceIdentifier(string $instanceIdentifier): static
     {
         $this->instanceIdentifier = $instanceIdentifier;
@@ -73,9 +68,6 @@ final class UUID extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getInstanceIdentifier(): string
     {
         return $this->instanceIdentifier;
@@ -99,11 +91,6 @@ final class UUID extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
     public function setItemId(int $id): static
     {
         $this->itemId = $id;
@@ -111,19 +98,11 @@ final class UUID extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getItemId(): int
     {
         return $this->itemId;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return $this
-     */
     public function setType(string $type): static
     {
         $this->type = $type;
@@ -131,9 +110,6 @@ final class UUID extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
@@ -164,9 +140,6 @@ final class UUID extends Model\AbstractModel
         return $this->uuid;
     }
 
-    /**
-     * @return string
-     */
     public function getUuid(): string
     {
         return $this->uuid;
@@ -177,11 +150,6 @@ final class UUID extends Model\AbstractModel
         $this->uuid = $uuid;
     }
 
-    /**
-     * @param mixed $item
-     *
-     * @return $this
-     */
     public function setItem(mixed $item): static
     {
         $this->setItemId($item->getId());
@@ -213,11 +181,6 @@ final class UUID extends Model\AbstractModel
         return $self;
     }
 
-    /**
-     * @param string $uuid
-     *
-     * @return self
-     */
     public static function getByUuid(string $uuid): UUID
     {
         $self = new self;

@@ -34,9 +34,6 @@ class Processor
 {
     use TemporaryFileHelperTrait;
 
-    /**
-     * @var array
-     */
     protected static array $argumentMapping = [
         'resize' => ['width', 'height'],
         'scaleByWidth' => ['width', 'forceResize'],

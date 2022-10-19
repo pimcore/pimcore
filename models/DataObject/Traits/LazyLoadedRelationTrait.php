@@ -23,9 +23,6 @@ use Pimcore\Model\DataObject\LazyLoadedFieldsInterface;
  */
 trait LazyLoadedRelationTrait
 {
-    /**
-     * @var array
-     */
     protected array $loadedLazyKeys = [];
 
     public function markLazyKeyAsLoaded(string $key): void

@@ -45,9 +45,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $definitions;
     }
 
-    /**
-     * @return int
-     */
     public function getTotalCount(): int
     {
         try {

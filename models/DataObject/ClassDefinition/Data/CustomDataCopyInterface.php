@@ -20,11 +20,5 @@ use Pimcore\Model\DataObject\Concrete;
 
 interface CustomDataCopyInterface
 {
-    /**
-     * @param Concrete $object
-     * @param mixed $data
-     *
-     * @return mixed
-     */
     public function createDataCopy(Concrete $object, mixed $data): mixed;
 }

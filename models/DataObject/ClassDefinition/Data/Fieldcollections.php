@@ -82,19 +82,11 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public bool $border = false;
 
-    /**
-     * @return bool
-     */
     public function getLazyLoading(): bool
     {
         return $this->lazyLoading;
     }
 
-    /**
-     * @param bool $lazyLoading
-     *
-     * @return $this
-     */
     public function setLazyLoading(bool $lazyLoading): static
     {
         $this->lazyLoading = (bool) $lazyLoading;
@@ -258,9 +250,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return 'NOT SUPPORTED';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $dataString = '';
@@ -306,10 +296,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load($object, array $params = [])
+array
+    public function load(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): ?DataObject\Fieldcollection
     {
         $container = new DataObject\Fieldcollection([], $this->getName());
         $container->load($object);
@@ -328,19 +316,11 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         $container->delete($object);
     }
 
-    /**
-     * @return array
-     */
     public function getAllowedTypes(): array
     {
         return $this->allowedTypes;
     }
 
-    /**
-     * @param array|string|null $allowedTypes
-     *
-     * @return $this
-     */
     public function setAllowedTypes(array|string|null $allowedTypes): static
     {
         if (is_string($allowedTypes)) {
@@ -362,11 +342,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $this;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return array
-     */
     public function resolveDependencies(mixed $data): array
     {
         $dependencies = [];
@@ -389,9 +364,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getCacheTags(mixed $data, array $tags = []): array
     {
         if ($data instanceof DataObject\Fieldcollection) {
@@ -517,7 +490,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * {@inheritdoc}
      */
-    public function getGetterCode($class): string
+    public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         // getter, no inheritance here, that's the only difference
         $key = $this->getName();
@@ -543,11 +516,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $code;
     }
 
-    /**
-     * @param int|null $maxItems
-     *
-     * @return $this
-     */
     public function setMaxItems(?int $maxItems): static
     {
         $this->maxItems = $this->getAsIntegerCast($maxItems);
@@ -555,9 +523,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getMaxItems(): ?int
     {
         return $this->maxItems;
@@ -687,9 +652,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         $this->disallowAddRemove = (bool) $disallowAddRemove;
     }
 
-    /**
-     * @return bool
-     */
     public function getDisallowAddRemove(): bool
     {
         return $this->disallowAddRemove;
@@ -700,9 +662,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         $this->disallowReorder = (bool) $disallowReorder;
     }
 
-    /**
-     * @return bool
-     */
     public function getDisallowReorder(): bool
     {
         return $this->disallowReorder;
@@ -718,9 +677,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         $this->border = $border;
     }
 
-    /**
-     * @return bool
-     */
     public function isCollapsed(): bool
     {
         return $this->collapsed;
@@ -731,9 +687,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         $this->collapsed = (bool) $collapsed;
     }
 
-    /**
-     * @return bool
-     */
     public function isCollapsible(): bool
     {
         return $this->collapsible;

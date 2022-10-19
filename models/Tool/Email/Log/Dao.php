@@ -108,11 +108,6 @@ class Dao extends Model\Dao\AbstractDao
         $this->model->setModificationDate($date);
     }
 
-    /**
-     * @param array|string $data
-     *
-     * @return array|string
-     */
     protected function createJsonLoggingObject(array|string $data): array|string
     {
         if (!is_array($data)) {

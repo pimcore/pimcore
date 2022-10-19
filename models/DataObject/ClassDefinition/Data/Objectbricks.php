@@ -59,11 +59,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      */
     public bool $border = false;
 
-    /**
-     * @param int|null $maxItems
-     *
-     * @return $this
-     */
     public function setMaxItems(?int $maxItems): static
     {
         $this->maxItems = $this->getAsIntegerCast($maxItems);
@@ -71,9 +66,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getMaxItems(): ?int
     {
         return $this->maxItems;
@@ -339,14 +331,12 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, array $params = []): string
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return 'NOT SUPPORTED';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $dataString = '';
@@ -379,10 +369,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load(Localizedfield|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData|AbstractData|Concrete $object, array $params = [])
+array
+    public function load(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
         $classname = '\\Pimcore\\Model\\DataObject\\' . ucfirst($object->getClass()->getName()) . '\\' . ucfirst($this->getName());
 
@@ -405,19 +393,11 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         }
     }
 
-    /**
-     * @return array
-     */
     public function getAllowedTypes(): array
     {
         return $this->allowedTypes;
     }
 
-    /**
-     * @param array|string|null $allowedTypes
-     *
-     * @return $this
-     */
     public function setAllowedTypes(array|string|null $allowedTypes): static
     {
         if (is_string($allowedTypes)) {
@@ -451,11 +431,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return array
-     */
     public function resolveDependencies(mixed $data): array
     {
         $dependencies = [];
@@ -480,9 +455,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return $dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getCacheTags(mixed $data, array $tags = []): array
     {
         if ($data instanceof DataObject\Objectbrick) {

@@ -29,9 +29,6 @@ class Dao extends Model\Dao\AbstractDao
 {
     use DataObject\ClassDefinition\Helper\Dao;
 
-    /**
-     * @var array|null
-     */
     protected ?array $tableDefinitions = null;
 
     /**
@@ -66,27 +63,11 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @param DataObject\Concrete $object
-     *
-     * @return string
-     */
     protected function getTablename(DataObject\Concrete $object): string
     {
         return 'object_metadata_' . $object->getClassId();
     }
 
-    /**
-     * @param DataObject\Concrete $source
-     * @param int $destinationId
-     * @param string $fieldname
-     * @param string $ownertype
-     * @param string $ownername
-     * @param string $position
-     * @param int $index
-     *
-     * @return null|DataObject\Data\ObjectMetadata
-     */
     public function load(DataObject\Concrete $source, int $destinationId, string $fieldname, string $ownertype, string $ownername, string $position, int $index): ?DataObject\Data\ObjectMetadata
     {
         $typeQuery = " AND (type = 'object' or type = '')";

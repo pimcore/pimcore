@@ -36,11 +36,6 @@ class Listing extends Model\Listing\AbstractListing
         return $this->getData();
     }
 
-    /**
-     * @param array $items
-     *
-     * @return $this
-     */
     public function setItems(array $items): static
     {
         return $this->setData($items);

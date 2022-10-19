@@ -173,11 +173,6 @@ class Analytics extends AbstractAdapter
         return $service->data_ga->get('ga:'.$configuration->profileId, date('Y-m-d', $configuration->startDate), date('Y-m-d', $configuration->endDate), (is_array($configuration->metric) ? implode(',', $configuration->metric) : $configuration->metric), $options);
     }
 
-    /**
-     * @param array $results
-     *
-     * @return array
-     */
     protected function extractData(array $results): array
     {
         $data = [];
@@ -195,12 +190,6 @@ class Analytics extends AbstractAdapter
         return $data;
     }
 
-    /**
-     * @param \stdClass $configuration
-     * @param array $fields
-     *
-     * @return \stdClass
-     */
     protected function handleFields(\stdClass $configuration, array $fields): \stdClass
     {
         $metrics = $configuration->metric;
@@ -222,11 +211,6 @@ class Analytics extends AbstractAdapter
         return $configuration;
     }
 
-    /**
-     * @param \stdClass $configuration
-     *
-     * @return \stdClass
-     */
     protected function handleDimensions(\stdClass $configuration): \stdClass
     {
         $dimension = $configuration->dimension;
@@ -246,12 +230,6 @@ class Analytics extends AbstractAdapter
         return $configuration;
     }
 
-    /**
-     * @param int $date
-     * @param string $relativeDate
-     *
-     * @return float|int
-     */
     protected function calcDate(int $date, string $relativeDate): float|int
     {
         if (strpos($relativeDate, '-') !== false || strpos($relativeDate, '+') !== false) {

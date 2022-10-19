@@ -35,9 +35,6 @@ class Printcontainer extends Document\PrintAbstract
      */
     protected string $action = 'container';
 
-    /**
-     * @var array
-     */
     private array $allChildren = [];
 
     /**
@@ -63,9 +60,6 @@ class Printcontainer extends Document\PrintAbstract
         return $tmpDocument;
     }
 
-    /**
-     * @return array
-     */
     public function getAllChildren(): array
     {
         $this->allChildren = [];
@@ -96,9 +90,6 @@ class Printcontainer extends Document\PrintAbstract
         }
     }
 
-    /**
-     * @return bool
-     */
     public function pdfIsDirty(): bool
     {
         $dirty = parent::pdfIsDirty();

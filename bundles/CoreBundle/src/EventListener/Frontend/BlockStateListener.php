@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,9 +36,6 @@ class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterfa
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;
 
-    /**
-     * @param BlockStateStack $blockStateStack
-     */
     public function __construct(protected BlockStateStack $blockStateStack)
     {
     }
@@ -53,9 +51,6 @@ class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterfa
         ];
     }
 
-    /**
-     * @param RequestEvent $event
-     */
     public function onKernelRequest(RequestEvent $event)
     {
         $request = $event->getRequest();
@@ -78,9 +73,6 @@ class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterfa
         $this->blockStateStack->push();
     }
 
-    /**
-     * @param ResponseEvent $event
-     */
     public function onKernelResponse(ResponseEvent $event)
     {
         $request = $event->getRequest();

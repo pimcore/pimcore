@@ -23,7 +23,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Countrymultiselect;
 
 class CountryOptionsProvider implements SelectOptionsProviderInterface
 {
-    /** @var LocaleServiceInterface */
     private LocaleServiceInterface $localeService;
 
     public function __construct(LocaleServiceInterface $localeService)
@@ -31,9 +30,7 @@ class CountryOptionsProvider implements SelectOptionsProviderInterface
         $this->localeService = $localeService;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getOptions(array $context, Data $fieldDefinition): array
     {
         $countries = $this->localeService->getDisplayRegions();
@@ -71,9 +68,7 @@ class CountryOptionsProvider implements SelectOptionsProviderInterface
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDefaultValue(array $context, Data $fieldDefinition): ?string
     {
         if ($fieldDefinition instanceof Country) {

@@ -63,19 +63,11 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public $columnType = 'tinyint(1)';
 
-    /**
-     * @return int|null
-     */
     public function getDefaultValue(): ?int
     {
         return $this->defaultValue;
     }
 
-    /**
-     * @param mixed $defaultValue
-     *
-     * @return $this
-     */
     public function setDefaultValue(mixed $defaultValue): static
     {
         if (!is_numeric($defaultValue)) {
@@ -258,17 +250,13 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
         return 'IFNULL(' . $brickPrefix . $key . ', 0) = ' . $value . ' ';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function isEmpty(mixed $data): bool
     {
         return $data === null;
@@ -282,9 +270,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     protected function doGetDefaultValue(Concrete $object, array $context = []): ?int
     {
         return $this->getDefaultValue() ?? null;

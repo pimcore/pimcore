@@ -26,14 +26,8 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 final class CollectionGroupRelation extends Model\AbstractModel
 {
-    /**
-     * @var int
-     */
     protected int $colId;
 
-    /**
-     * @var int
-     */
     protected int $groupId;
 
     /** The key
@@ -48,12 +42,8 @@ final class CollectionGroupRelation extends Model\AbstractModel
      */
     protected string $description;
 
-    /** @var int */
     protected int $sorter;
 
-    /**
-     * @return Model\DataObject\Classificationstore\CollectionGroupRelation
-     */
     public static function create(): CollectionGroupRelation
     {
         return new self();
@@ -77,9 +67,6 @@ final class CollectionGroupRelation extends Model\AbstractModel
         }
     }
 
-    /**
-     * @return int
-     */
     public function getGroupId(): int
     {
         return $this->groupId;
@@ -90,9 +77,6 @@ final class CollectionGroupRelation extends Model\AbstractModel
         $this->groupId = $groupId;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
@@ -103,9 +87,6 @@ final class CollectionGroupRelation extends Model\AbstractModel
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
         return $this->description;
@@ -116,9 +97,6 @@ final class CollectionGroupRelation extends Model\AbstractModel
         $this->description = $description;
     }
 
-    /**
-     * @return int
-     */
     public function getColId(): int
     {
         return $this->colId;
@@ -129,9 +107,6 @@ final class CollectionGroupRelation extends Model\AbstractModel
         $this->colId = $colId;
     }
 
-    /**
-     * @return int
-     */
     public function getSorter(): int
     {
         return $this->sorter;

@@ -30,9 +30,6 @@ final class KeyConfig extends Model\AbstractModel
 {
     use RecursionBlockingEventDispatchHelperTrait;
 
-    /**
-     * @var int|null
-     */
     protected ?int $id;
 
     /**
@@ -66,30 +63,14 @@ final class KeyConfig extends Model\AbstractModel
      */
     protected string $type;
 
-    /**
-     * @var int|null
-     */
     protected ?int $creationDate;
 
-    /**
-     * @var int|null
-     */
     protected ?int $modificationDate;
 
-    /**
-     * @var string
-     */
     protected string $definition;
 
-    /** @var bool */
     protected bool $enabled;
 
-    /**
-     * @param int $id
-     * @param null|bool $force
-     *
-     * @return self|null
-     */
     public static function getById(int $id, ?bool $force = false): ?KeyConfig
     {
         $id = (int)$id;
@@ -155,9 +136,6 @@ final class KeyConfig extends Model\AbstractModel
         }
     }
 
-    /**
-     * @return Model\DataObject\Classificationstore\KeyConfig
-     */
     public static function create(): KeyConfig
     {
         $config = new self();
@@ -166,11 +144,6 @@ final class KeyConfig extends Model\AbstractModel
         return $config;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
     public function setId(int $id): static
     {
         $this->id = (int) $id;
@@ -178,19 +151,11 @@ final class KeyConfig extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -198,9 +163,6 @@ final class KeyConfig extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
@@ -280,9 +242,6 @@ final class KeyConfig extends Model\AbstractModel
         }
     }
 
-    /**
-     * @return int|null
-     */
     public function getCreationDate(): ?int
     {
         return $this->creationDate;
@@ -293,9 +252,6 @@ final class KeyConfig extends Model\AbstractModel
         $this->creationDate = $creationDate;
     }
 
-    /**
-     * @return int|null
-     */
     public function getModificationDate(): ?int
     {
         return $this->modificationDate;
@@ -306,9 +262,6 @@ final class KeyConfig extends Model\AbstractModel
         $this->modificationDate = $modificationDate;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
@@ -319,9 +272,6 @@ final class KeyConfig extends Model\AbstractModel
         $this->type = $type;
     }
 
-    /**
-     * @return string
-     */
     public function getDefinition(): string
     {
         return $this->definition;
@@ -332,9 +282,6 @@ final class KeyConfig extends Model\AbstractModel
         $this->definition = $definition;
     }
 
-    /**
-     * @return bool
-     */
     public function getEnabled(): bool
     {
         return $this->enabled;
@@ -345,9 +292,6 @@ final class KeyConfig extends Model\AbstractModel
         $this->enabled = $enabled;
     }
 
-    /**
-     * @return string|null
-     */
     public function getTitle(): ?string
     {
         return $this->title;
@@ -358,9 +302,6 @@ final class KeyConfig extends Model\AbstractModel
         $this->title = $title;
     }
 
-    /**
-     * @return int
-     */
     public function getStoreId(): int
     {
         return $this->storeId;

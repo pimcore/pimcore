@@ -39,11 +39,6 @@ abstract class AbstractArea
      */
     protected array $params = [];
 
-    /**
-     * @param array $config
-     *
-     * @return $this
-     */
     public function setConfig(array $config): static
     {
         $this->config = $config;
@@ -51,19 +46,11 @@ abstract class AbstractArea
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getConfig(): array
     {
         return $this->config;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return mixed
-     */
     public function getParam(string $key): mixed
     {
         if (array_key_exists($key, $this->params)) {
@@ -73,9 +60,6 @@ abstract class AbstractArea
         return null;
     }
 
-    /**
-     * @return array
-     */
     public function getAllParams(): array
     {
         return $this->params;
@@ -86,11 +70,6 @@ abstract class AbstractArea
         $this->params[$key] = $value;
     }
 
-    /**
-     * @param array $params
-     *
-     * @return $this
-     */
     public function setParams(array $params): static
     {
         $this->params = $params;
@@ -98,11 +77,6 @@ abstract class AbstractArea
         return $this;
     }
 
-    /**
-     * @param Info $brick
-     *
-     * @return $this
-     */
     public function setBrick(Info $brick): static
     {
         $this->brick = $brick;
@@ -110,9 +84,6 @@ abstract class AbstractArea
         return $this;
     }
 
-    /**
-     * @return Info
-     */
     public function getBrick(): Info
     {
         return $this->brick;

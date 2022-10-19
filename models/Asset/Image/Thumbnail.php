@@ -49,12 +49,6 @@ final class Thumbnail
         $this->config = $this->createConfig($config);
     }
 
-    /**
-     * @param bool $deferredAllowed
-     * @param bool $cacheBuster
-     *
-     * @return string
-     */
     public function getPath(bool $deferredAllowed = true, bool $cacheBuster = false): string
     {
         $pathReference = null;
@@ -100,11 +94,6 @@ final class Thumbnail
         return self::$hasListenersCache[$eventName];
     }
 
-    /**
-     * @param string $filename
-     *
-     * @return bool
-     */
     protected function useOriginalFile(string $filename): bool
     {
         if ($this->getConfig()) {

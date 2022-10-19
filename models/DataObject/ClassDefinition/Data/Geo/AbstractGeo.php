@@ -67,19 +67,11 @@ abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterfa
      */
     public string $mapType = 'roadmap';
 
-    /**
-     * @return float
-     */
     public function getLat(): float
     {
         return $this->lat;
     }
 
-    /**
-     * @param float $lat
-     *
-     * @return $this
-     */
     public function setLat(float $lat): static
     {
         $this->lat = (float) $lat;
@@ -87,19 +79,11 @@ abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterfa
         return $this;
     }
 
-    /**
-     * @return float
-     */
     public function getLng(): float
     {
         return $this->lng;
     }
 
-    /**
-     * @param float $lng
-     *
-     * @return $this
-     */
     public function setLng(float $lng): static
     {
         $this->lng = (float) $lng;
@@ -107,19 +91,11 @@ abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterfa
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getZoom(): int
     {
         return $this->zoom;
     }
 
-    /**
-     * @param int $zoom
-     *
-     * @return $this
-     */
     public function setZoom(int $zoom): static
     {
         $this->zoom = (int) $zoom;
@@ -127,19 +103,11 @@ abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterfa
         return $this;
     }
 
-    /**
-     * @return string|int
-     */
     public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @param int|string $width
-     *
-     * @return $this
-     */
     public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
@@ -150,19 +118,11 @@ abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterfa
         return $this;
     }
 
-    /**
-     * @return string|int
-     */
     public function getHeight(): int|string
     {
         return $this->height;
     }
 
-    /**
-     * @param int|string $height
-     *
-     * @return $this
-     */
     public function setHeight(int|string $height): static
     {
         if (is_numeric($height)) {

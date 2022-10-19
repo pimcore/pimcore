@@ -68,9 +68,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return array_map('intval', $versionIds);
     }
 
-    /**
-     * @return int
-     */
     public function getTotalCount(): int
     {
         try {

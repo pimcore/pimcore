@@ -24,9 +24,6 @@ class QuantityValue extends AbstractQuantityValue
 {
     use ObjectVarTrait;
 
-    /**
-     * @var float|int|null
-     */
     protected int|null|float $value;
 
     /**
@@ -45,9 +42,6 @@ class QuantityValue extends AbstractQuantityValue
         $this->markMeDirty();
     }
 
-    /**
-     * @return float|int|null
-     */
     public function getValue(): float|int|null
     {
         return $this->value;

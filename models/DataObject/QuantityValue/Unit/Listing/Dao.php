@@ -26,9 +26,6 @@ use Pimcore\Model\DataObject;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
-    /**
-     * @return array
-     */
     public function load(): array
     {
         $units = [];
@@ -47,9 +44,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $units;
     }
 
-    /**
-     * @return int
-     */
     public function getTotalCount(): int
     {
         try {

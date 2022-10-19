@@ -32,11 +32,6 @@ class Document extends AbstractWorkspace
      */
     protected bool $unpublish = false;
 
-    /**
-     * @param bool $save
-     *
-     * @return $this
-     */
     public function setSave(bool $save): static
     {
         $this->save = $save;
@@ -44,19 +39,11 @@ class Document extends AbstractWorkspace
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getSave(): bool
     {
         return $this->save;
     }
 
-    /**
-     * @param bool $unpublish
-     *
-     * @return $this
-     */
     public function setUnpublish(bool $unpublish): static
     {
         $this->unpublish = $unpublish;
@@ -64,9 +51,6 @@ class Document extends AbstractWorkspace
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getUnpublish(): bool
     {
         return $this->unpublish;

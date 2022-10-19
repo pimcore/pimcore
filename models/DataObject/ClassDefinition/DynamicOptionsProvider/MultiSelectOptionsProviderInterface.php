@@ -20,12 +20,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 interface MultiSelectOptionsProviderInterface
 {
-    /**
-     * @param array $context
-     * @param Data $fieldDefinition
-     *
-     * @return array
-     */
     public function getOptions(array $context, Data $fieldDefinition): array;
 
     /**

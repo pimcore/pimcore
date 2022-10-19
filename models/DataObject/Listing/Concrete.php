@@ -36,9 +36,6 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     protected $className;
 
-    /**
-     * @var string|null
-     */
     protected ?string $locale;
 
     /**
@@ -57,27 +54,16 @@ abstract class Concrete extends Model\DataObject\Listing
         $this->initDao(__CLASS__);
     }
 
-    /**
-     * @return string
-     */
     public function getClassId(): string
     {
         return $this->classId;
     }
 
-    /**
-     * @return string
-     */
     public function getClassName(): string
     {
         return $this->className;
     }
 
-    /**
-     * @param string $classId
-     *
-     * @return $this
-     */
     public function setClassId(string $classId): static
     {
         $this->setData(null);
@@ -87,11 +73,6 @@ abstract class Concrete extends Model\DataObject\Listing
         return $this;
     }
 
-    /**
-     * @param string $className
-     *
-     * @return $this
-     */
     public function setClassName(string $className): static
     {
         $this->setData(null);
@@ -101,9 +82,6 @@ abstract class Concrete extends Model\DataObject\Listing
         return $this;
     }
 
-    /**
-     * @return DataObject\ClassDefinition
-     */
     public function getClass(): DataObject\ClassDefinition
     {
         $class = DataObject\ClassDefinition::getById($this->getClassId());
@@ -111,11 +89,6 @@ abstract class Concrete extends Model\DataObject\Listing
         return $class;
     }
 
-    /**
-     * @param string|null $locale
-     *
-     * @return $this
-     */
     public function setLocale(?string $locale): static
     {
         $this->setData(null);
@@ -125,19 +98,11 @@ abstract class Concrete extends Model\DataObject\Listing
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLocale(): ?string
     {
         return $this->locale;
     }
 
-    /**
-     * @param bool $ignoreLocalizedFields
-     *
-     * @return $this
-     */
     public function setIgnoreLocalizedFields(bool $ignoreLocalizedFields): static
     {
         $this->setData(null);
@@ -147,9 +112,6 @@ abstract class Concrete extends Model\DataObject\Listing
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getIgnoreLocalizedFields(): bool
     {
         return $this->ignoreLocalizedFields;
@@ -198,9 +160,6 @@ abstract class Concrete extends Model\DataObject\Listing
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getFieldCollections(): array
     {
         return $this->fieldCollectionConfigs;
@@ -252,9 +211,6 @@ abstract class Concrete extends Model\DataObject\Listing
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getObjectbricks(): array
     {
         return $this->objectBrickConfigs;

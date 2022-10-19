@@ -50,9 +50,6 @@ class Dao extends Model\Property\Predefined\Dao
         return $properties;
     }
 
-    /**
-     * @return int
-     */
     public function getTotalCount(): int
     {
         return count($this->loadList());

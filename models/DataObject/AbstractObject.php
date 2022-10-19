@@ -59,14 +59,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     public static array $types = [self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT];
 
-    /**
-     * @var bool
-     */
     private static bool $hideUnpublished = false;
 
-    /**
-     * @var bool
-     */
     private static bool $getInheritedValues = false;
 
     /**
@@ -421,12 +415,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $object;
     }
 
-    /**
-     * @param string $path
-     * @param array $params
-     *
-     * @return AbstractObject|Concrete|null|static
-     */
     public static function getByPath(string $path, array $params = []): AbstractObject|Concrete|null|static
     {
         if (!$path) {
@@ -947,9 +935,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         $this->clearDependentCache();
     }
 
-    /**
-     * @return string
-     */
     public function getFullPath(): string
     {
         $path = $this->getPath() . $this->getKey();
@@ -957,25 +942,16 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $path;
     }
 
-    /**
-     * @return string
-     */
     public function getRealPath(): string
     {
         return $this->getPath();
     }
 
-    /**
-     * @return string
-     */
     public function getRealFullPath(): string
     {
         return $this->getFullPath();
     }
 
-    /**
-     * @return int|null
-     */
     public function getParentId(): ?int
     {
         $parentId = parent::getParentId();
@@ -988,35 +964,21 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $parentId;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->o_type;
     }
 
-    /**
-     * @return string|null
-     */
     public function getKey(): ?string
     {
         return $this->o_key;
     }
 
-    /**
-     * @return int
-     */
     public function getIndex(): int
     {
         return $this->o_index;
     }
 
-    /**
-     * @param int|null $parentId
-     *
-     * @return $this
-     */
     public function setParentId(?int $parentId): static
     {
         $parentId = (int) $parentId;
@@ -1032,11 +994,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @param string $o_type
-     *
-     * @return $this
-     */
     public function setType(string $o_type): static
     {
         $this->o_type = $o_type;
@@ -1044,11 +1001,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @param string $o_key
-     *
-     * @return $this
-     */
     public function setKey(string $o_key): static
     {
         $this->o_key = (string)$o_key;
@@ -1056,11 +1008,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @param int $o_index
-     *
-     * @return $this
-     */
     public function setIndex(int $o_index): static
     {
         $this->o_index = (int) $o_index;
@@ -1100,9 +1047,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @return self|null
-     */
     public function getParent(): ?AbstractObject
         /** : ?self **/
     {
@@ -1111,11 +1055,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $parent instanceof AbstractObject ? $parent : null;
     }
 
-    /**
-     * @param ElementInterface|null $parent
-     *
-     * @return $this
-     */
     public function setParent(?ElementInterface $parent): static
     {
         $newParentId = $parent instanceof self ? $parent->getId() : 0;
@@ -1125,9 +1064,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getChildrenSortBy(): string
     {
         return $this->o_childrenSortBy ?? self::OBJECT_CHILDREN_SORT_BY_DEFAULT;
@@ -1156,9 +1092,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return parent::__call($method, $args);
     }
 
-    /**
-     * @return bool
-     */
     public static function doNotRestoreKeyAndPath(): bool
     {
         return self::$doNotRestoreKeyAndPath;

@@ -93,9 +93,7 @@ class Table extends Model\Document\Editable
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function isEmpty(): bool
     {
         return empty($this->data);

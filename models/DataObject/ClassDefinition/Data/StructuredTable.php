@@ -78,19 +78,11 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      */
     public array $rows = [];
 
-    /**
-     * @return string|int
-     */
     public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @param int|string $width
-     *
-     * @return $this
-     */
     public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
@@ -101,19 +93,11 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return $this;
     }
 
-    /**
-     * @return string|int
-     */
     public function getHeight(): int|string
     {
         return $this->height;
     }
 
-    /**
-     * @param int|string $height
-     *
-     * @return $this
-     */
     public function setHeight(int|string $height): static
     {
         if (is_numeric($height)) {
@@ -124,19 +108,11 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getLabelWidth(): int
     {
         return $this->labelWidth;
     }
 
-    /**
-     * @param int $labelWidth
-     *
-     * @return $this
-     */
     public function setLabelWidth(int $labelWidth): static
     {
         $this->labelWidth = (int)$labelWidth;
@@ -144,11 +120,6 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return $this;
     }
 
-    /**
-     * @param string $labelFirstCell
-     *
-     * @return $this
-     */
     public function setLabelFirstCell(string $labelFirstCell): static
     {
         $this->labelFirstCell = $labelFirstCell;
@@ -156,27 +127,16 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getLabelFirstCell(): string
     {
         return $this->labelFirstCell;
     }
 
-    /**
-     * @return array
-     */
     public function getCols(): array
     {
         return $this->cols;
     }
 
-    /**
-     * @param array $cols
-     *
-     * @return $this
-     */
     public function setCols(array $cols): static
     {
         if (isset($cols['key'])) {
@@ -194,19 +154,11 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getRows(): array
     {
         return $this->rows;
     }
 
-    /**
-     * @param array $rows
-     *
-     * @return $this
-     */
     public function setRows(array $rows): static
     {
         if (isset($rows['key'])) {
@@ -416,7 +368,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, array $params = []): string
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $value = $this->getDataFromObjectParam($object, $params);
         $string = '';
@@ -459,9 +411,6 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return $columns;
     }
 
-    /**
-     * @return array
-     */
     protected function calculateDbColumns(): array
     {
         $rows = $this->getRows();
@@ -504,11 +453,6 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return $mapper[$type];
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return bool
-     */
     public function isEmpty(mixed $data): bool
     {
         if ($data instanceof DataObject\Data\StructuredTable) {

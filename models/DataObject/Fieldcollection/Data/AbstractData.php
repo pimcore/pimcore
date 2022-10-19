@@ -29,41 +29,21 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
     use Model\Element\Traits\DirtyIndicatorTrait;
 
-    /**
-     * @var int
-     */
     protected int $index;
 
-    /**
-     * @var string|null
-     */
     protected ?string $fieldname;
 
-    /**
-     * @var Concrete|Model\Element\ElementDescriptor|null
-     */
     protected Concrete|Model\Element\ElementDescriptor|null $object;
 
     protected ?int $objectId = null;
 
-    /**
-     * @var string
-     */
     protected string $type;
 
-    /**
-     * @return int
-     */
     public function getIndex(): int
     {
         return $this->index;
     }
 
-    /**
-     * @param int $index
-     *
-     * @return $this
-     */
     public function setIndex(int $index): static
     {
         $this->index = (int) $index;
@@ -71,19 +51,11 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getFieldname(): ?string
     {
         return $this->fieldname;
     }
 
-    /**
-     * @param string|null $fieldname
-     *
-     * @return $this
-     */
     public function setFieldname(?string $fieldname): static
     {
         $this->fieldname = $fieldname;
@@ -91,27 +63,16 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return Model\DataObject\Fieldcollection\Definition
-     */
     public function getDefinition(): Model\DataObject\Fieldcollection\Definition
     {
         return Model\DataObject\Fieldcollection\Definition::getByKey($this->getType());
     }
 
-    /**
-     * @param Concrete|null $object
-     *
-     * @return $this
-     */
     public function setObject(?Concrete $object): static
     {
         $this->objectId = $object ? $object->getId() : null;

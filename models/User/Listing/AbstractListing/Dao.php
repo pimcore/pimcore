@@ -48,9 +48,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $items;
     }
 
-    /**
-     * @return string
-     */
     protected function getCondition(): string
     {
         $condition = parent::getCondition();
@@ -66,9 +63,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $condition;
     }
 
-    /**
-     * @return int
-     */
     public function getTotalCount(): int
     {
         try {

@@ -358,11 +358,6 @@ final class Config extends Model\AbstractModel
         $this->medias = [];
     }
 
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
     public function selectMedia(string $name): bool
     {
         if (preg_match('/^[0-9a-f]{8}$/', $name)) {
@@ -384,11 +379,6 @@ final class Config extends Model\AbstractModel
         return false;
     }
 
-    /**
-     * @param string $description
-     *
-     * @return $this
-     */
     public function setDescription(string $description): static
     {
         $this->description = $description;
@@ -396,19 +386,11 @@ final class Config extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @param array $items
-     *
-     * @return $this
-     */
     public function setItems(array $items): static
     {
         $this->items = $items;
@@ -416,19 +398,11 @@ final class Config extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getItems(): array
     {
         return $this->items;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -436,19 +410,11 @@ final class Config extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $format
-     *
-     * @return $this
-     */
     public function setFormat(string $format): static
     {
         $this->format = $format;
@@ -456,19 +422,11 @@ final class Config extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getFormat(): string
     {
         return $this->format;
     }
 
-    /**
-     * @param int $quality
-     *
-     * @return $this
-     */
     public function setQuality(int $quality): static
     {
         if ($quality) {
@@ -478,9 +436,6 @@ final class Config extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getQuality(): int
     {
         return $this->quality;
@@ -491,9 +446,6 @@ final class Config extends Model\AbstractModel
         $this->highResolution = (float) $highResolution;
     }
 
-    /**
-     * @return float|null
-     */
     public function getHighResolution(): ?float
     {
         return $this->highResolution;
@@ -504,17 +456,11 @@ final class Config extends Model\AbstractModel
         $this->medias = $medias;
     }
 
-    /**
-     * @return array
-     */
     public function getMedias(): array
     {
         return $this->medias;
     }
 
-    /**
-     * @return bool
-     */
     public function hasMedias(): bool
     {
         return !empty($this->medias);
@@ -525,9 +471,6 @@ final class Config extends Model\AbstractModel
         $this->filenameSuffix = $filenameSuffix;
     }
 
-    /**
-     * @return string|null
-     */
     public function getFilenameSuffix(): ?string
     {
         return $this->filenameSuffix;
@@ -748,9 +691,6 @@ final class Config extends Model\AbstractModel
         return $dimensions;
     }
 
-    /**
-     * @return int|null
-     */
     public function getModificationDate(): ?int
     {
         return $this->modificationDate;
@@ -761,9 +701,6 @@ final class Config extends Model\AbstractModel
         $this->modificationDate = $modificationDate;
     }
 
-    /**
-     * @return int|null
-     */
     public function getCreationDate(): ?int
     {
         return $this->creationDate;
@@ -774,9 +711,6 @@ final class Config extends Model\AbstractModel
         $this->creationDate = $creationDate;
     }
 
-    /**
-     * @return bool
-     */
     public function isPreserveColor(): bool
     {
         return $this->preserveColor;
@@ -787,9 +721,6 @@ final class Config extends Model\AbstractModel
         $this->preserveColor = $preserveColor;
     }
 
-    /**
-     * @return bool
-     */
     public function isPreserveMetaData(): bool
     {
         return $this->preserveMetaData;
@@ -810,9 +741,6 @@ final class Config extends Model\AbstractModel
         $this->rasterizeSVG = $rasterizeSVG;
     }
 
-    /**
-     * @return bool
-     */
     public function isSvgTargetFormatPossible(): bool
     {
         $supportedTransformations = ['resize', 'scaleByWidth', 'scaleByHeight'];

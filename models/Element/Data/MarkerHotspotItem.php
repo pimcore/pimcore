@@ -23,19 +23,10 @@ use Pimcore\Model;
  */
 class MarkerHotspotItem implements \ArrayAccess
 {
-    /**
-     * @var string
-     */
     public string $name = '';
 
-    /**
-     * @var string
-     */
     public string $type = '';
 
-    /**
-     * @var mixed
-     */
     public mixed $value;
 
     public function __construct(array $data)
@@ -48,9 +39,6 @@ class MarkerHotspotItem implements \ArrayAccess
         }
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
@@ -61,9 +49,6 @@ class MarkerHotspotItem implements \ArrayAccess
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
@@ -74,9 +59,6 @@ class MarkerHotspotItem implements \ArrayAccess
         $this->type = $type;
     }
 
-    /**
-     * @return mixed
-     */
     public function getValue(): mixed
     {
         return $this->value;

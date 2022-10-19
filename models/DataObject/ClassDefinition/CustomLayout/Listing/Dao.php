@@ -51,9 +51,6 @@ class Dao extends Model\DataObject\ClassDefinition\CustomLayout\Dao
         return $layouts;
     }
 
-    /**
-     * @return int
-     */
     public function getTotalCount(): int
     {
         try {

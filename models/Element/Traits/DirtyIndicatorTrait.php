@@ -21,24 +21,13 @@ namespace Pimcore\Model\Element\Traits;
  */
 trait DirtyIndicatorTrait
 {
-    /**
-     * @var array|null
-     */
     protected ?array $o_dirtyFields;
 
-    /**
-     * @return bool
-     */
     public function hasDirtyFields(): bool
     {
         return is_array($this->o_dirtyFields) && count($this->o_dirtyFields);
     }
 
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
     public function isFieldDirty(string $key): bool
     {
         if (is_array($this->o_dirtyFields) && array_key_exists($key, $this->o_dirtyFields)) {

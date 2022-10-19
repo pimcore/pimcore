@@ -26,29 +26,14 @@ class Video implements OwnerAwareFieldInterface
     use OwnerAwareFieldTrait;
     use ObjectVarTrait;
 
-    /**
-     * @var string
-     */
     protected string $type;
 
-    /**
-     * @var Asset|string|int
-     */
     protected string|int|Asset $data;
 
-    /**
-     * @var Asset|string|int
-     */
     protected string|int|Asset $poster;
 
-    /**
-     * @var string
-     */
     protected string $title;
 
-    /**
-     * @var string
-     */
     protected string $description;
 
     public function setData(Asset|int|string $data)
@@ -57,9 +42,6 @@ class Video implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @return Asset|string|int
-     */
     public function getData(): Asset|int|string
     {
         return $this->data;
@@ -71,9 +53,6 @@ class Video implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
@@ -85,9 +64,6 @@ class Video implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
         return $this->description;
@@ -99,9 +75,6 @@ class Video implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @return Asset|string|int
-     */
     public function getPoster(): Asset|int|string
     {
         return $this->poster;
@@ -113,9 +86,6 @@ class Video implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
         return $this->title;

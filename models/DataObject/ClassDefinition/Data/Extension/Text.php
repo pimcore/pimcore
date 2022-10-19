@@ -31,11 +31,6 @@ trait Text
         }
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return bool
-     */
     public function isEmpty(mixed $data): bool
     {
         return strlen((string) $data) < 1;

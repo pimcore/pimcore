@@ -72,9 +72,6 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @return bool
-     */
     public function hasChildren(): bool
     {
         if (!$this->model->getId()) {

@@ -46,14 +46,8 @@ class NotificationServiceFilterParser
 
     const OPERATOR_LT = 'lt';
 
-    /**
-     * @var Request
-     */
     private Request $request;
 
-    /**
-     * @var array
-     */
     private array $properties;
 
     /**

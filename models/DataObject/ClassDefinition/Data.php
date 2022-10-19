@@ -25,50 +25,26 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 {
     use DataObject\ClassDefinition\Helper\VarExport;
 
-    /**
-     * @var string|null
-     */
     public ?string $name;
 
-    /**
-     * @var string|null
-     */
     public ?string $title;
 
-    /**
-     * @var string|null
-     */
     public ?string $tooltip;
 
     public bool $mandatory = false;
 
     public bool $noteditable = false;
 
-    /**
-     * @var int|null
-     */
     public ?int $index;
 
     public bool $locked = false;
 
-    /**
-     * @var string
-     */
     public string $style;
 
-    /**
-     * @var array
-     */
     public array $permissions;
 
-    /**
-     * @var string
-     */
     public string $datatype = 'data';
 
-    /**
-     * @var string
-     */
     public string $fieldtype;
 
     public bool $relationType = false;
@@ -79,9 +55,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     public bool $visibleSearch = true;
 
-    /**
-     * @var array
-     */
     public static array $validFilterOperators = [
         'LIKE',
         'NOT LIKE',
@@ -116,7 +89,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *
      * @return mixed
      */
-    abstract public function getDataForEditmode(mixed $data, $object = null, array $params = []): mixed;
+    abstract public function getDataForEditmode(mixed $data, DataObject\AbstractObject $object = null, array $params = []): mixed;
 
     /**
      * Converts data from editmode to internal eg. Image-Id to Asset\Image object
@@ -127,7 +100,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *
      * @return mixed
      */
-    abstract public function getDataFromEditmode(mixed $data, $object = null, array $params = []): mixed;
+    abstract public function getDataFromEditmode(mixed $data, DataObject\AbstractObject $object = null, array $params = []): mixed;
 
     /**
      * Checks if data is valid for current data field
@@ -168,60 +141,37 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *@internal
      *
      */
-    public function getForCsvExport($object, array $params = []): string
+    public function getForCsvExport(DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object, array $params = []): string
     {
         return $this->getDataFromObjectParam($object, $params);
     }
 
-    /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
-     *
-     * @return string
-     */
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         // this is the default, but csv doesn't work for all data types
         return $this->getForCsvExport($object, $params);
     }
 
-    /**
-     * @return string|null
-     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
         return $this->title ?? '';
     }
 
-    /**
-     * @return bool
-     */
     public function getMandatory(): bool
     {
         return $this->mandatory;
     }
 
-    /**
-     * @return array
-     */
     public function getPermissions(): array
     {
         return $this->permissions;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -229,11 +179,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
-    /**
-     * @param string $title
-     *
-     * @return $this
-     */
     public function setTitle(string $title): static
     {
         $this->title = $title;
@@ -241,11 +186,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
-    /**
-     * @param bool $mandatory
-     *
-     * @return $this
-     */
     public function setMandatory(bool $mandatory): static
     {
         $this->mandatory = (bool)$mandatory;
@@ -253,11 +193,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
-    /**
-     * @param array $permissions
-     *
-     * @return $this
-     */
     public function setPermissions(array $permissions): static
     {
         $this->permissions = $permissions;
@@ -265,12 +200,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
-    /**
-     * @param array $data
-     * @param array $blockedKeys
-     *
-     * @return $this
-     */
     public function setValues(array $data = [], array $blockedKeys = []): static
     {
         foreach ($data as $key => $value) {
@@ -285,19 +214,11 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getDatatype(): string
     {
         return $this->datatype;
     }
 
-    /**
-     * @param string $datatype
-     *
-     * @return $this
-     */
     public function setDatatype(string $datatype): static
     {
         $this->datatype = $datatype;
@@ -305,27 +226,16 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getFieldtype(): string
     {
         return $this->fieldtype;
     }
 
-    /**
-     * @return bool
-     */
     public function getNoteditable(): bool
     {
         return $this->noteditable;
     }
 
-    /**
-     * @param bool $noteditable
-     *
-     * @return $this
-     */
     public function setNoteditable(bool $noteditable): static
     {
         $this->noteditable = (bool)$noteditable;
@@ -333,19 +243,11 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getIndex(): ?int
     {
         return $this->index;
     }
 
-    /**
-     * @param int|null $index
-     *
-     * @return $this
-     */
     public function setIndex(?int $index): static
     {
         $this->index = $index;
@@ -353,20 +255,11 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
-    /**
-     *
-     * @return string
-     */
     public function getStyle(): string
     {
         return $this->style;
     }
 
-    /**
-     * @param string|null $style
-     *
-     * @return $this
-     */
     public function setStyle(?string $style): static
     {
         $this->style = (string)$style;
@@ -374,20 +267,11 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
-    /**
-     *
-     * @return bool
-     */
     public function getLocked(): bool
     {
         return $this->locked;
     }
 
-    /**
-     * @param bool $locked
-     *
-     * @return $this
-     */
     public function setLocked(bool $locked): static
     {
         $this->locked = (bool)$locked;
@@ -395,20 +279,11 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
-    /**
-     *
-     * @return string|null
-     */
     public function getTooltip(): ?string
     {
         return $this->tooltip;
     }
 
-    /**
-     * @param string|null $tooltip
-     *
-     * @return $this
-     */
     public function setTooltip(?string $tooltip): static
     {
         $this->tooltip = (string)$tooltip;
@@ -416,28 +291,16 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
-    /**
-     *
-     * @return bool
-     */
     public function isRelationType(): bool
     {
         return $this->relationType;
     }
 
-    /**
-     * @return bool
-     */
     public function getInvisible(): bool
     {
         return $this->invisible;
     }
 
-    /**
-     * @param bool|int|null $invisible
-     *
-     * @return $this
-     */
     public function setInvisible(bool|int|null $invisible): static
     {
         $this->invisible = (bool)$invisible;
@@ -445,19 +308,11 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getVisibleGridView(): bool
     {
         return $this->visibleGridView;
     }
 
-    /**
-     * @param bool|int|null $visibleGridView
-     *
-     * @return $this
-     */
     public function setVisibleGridView(bool|int|null $visibleGridView): static
     {
         $this->visibleGridView = (bool)$visibleGridView;
@@ -465,19 +320,11 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getVisibleSearch(): bool
     {
         return $this->visibleSearch;
     }
 
-    /**
-     * @param bool|int|null $visibleSearch
-     *
-     * @return $this
-     */
     public function setVisibleSearch(bool|int|null $visibleSearch): static
     {
         $this->visibleSearch = (bool)$visibleSearch;
@@ -485,22 +332,11 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $tags
-     *
-     * @return array
-     */
     public function getCacheTags(mixed $data, array $tags = []): array
     {
         return $tags;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return array
-     */
     public function resolveDependencies(mixed $data): array
     {
         return [];
@@ -603,7 +439,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *
      * @return string
      */
-    public function getGetterCode($class): string
+    public function getGetterCode(DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class): string
     {
         $key = $this->getName();
 
@@ -1152,21 +988,11 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $code;
     }
 
-    /**
-     * @param mixed $number
-     *
-     * @return int|null
-     */
     public function getAsIntegerCast(mixed $number): ?int
     {
         return strlen((string) $number) === 0 ? null : (int)$number;
     }
 
-    /**
-     * @param mixed $number
-     *
-     * @return float|null
-     */
     public function getAsFloatCast(mixed $number): ?float
     {
         return strlen((string) $number) === 0 ? null : (float)$number;
@@ -1179,16 +1005,11 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *
      * @return string
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return 'no preview';
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return bool
-     */
     public function isEmpty(mixed $data): bool
     {
         return empty($data);
@@ -1217,7 +1038,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *
      * @return mixed
      */
-    public function getDiffDataFromEditmode(array $data, $object = null, array $params = []): mixed
+    public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): mixed
     {
         $thedata = $this->getDataFromEditmode($data[0]['data'], $object, $params);
 
@@ -1243,7 +1064,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      *
      * @return null|array
      */
-    public function getDiffDataForEditMode(mixed $data, $object = null, array $params = []): ?array
+    public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         $diffdata = [];
         $diffdata['data'] = $this->getDataForEditmode($data, $object, $params);
@@ -1267,9 +1088,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $result;
     }
 
-    /**
-     * @return bool
-     */
     public function getUnique(): bool
     {
         return false;
@@ -1427,23 +1245,11 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
     }
 
-    /**
-     * @param array|null $existingData
-     * @param array $additionalData
-     *
-     * @return array|null
-     */
     public function appendData(?array $existingData, array $additionalData): ?array
     {
         return $existingData;
     }
 
-    /**
-     * @param mixed $existingData
-     * @param mixed $removeData
-     *
-     * @return mixed
-     */
     public function removeData(mixed $existingData, mixed $removeData): mixed
     {
         return $existingData;
@@ -1459,9 +1265,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return true;
     }
 
-    /**
-     * @return bool
-     */
     public function supportsDirtyDetection(): bool
     {
         return false;
@@ -1496,9 +1299,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $listing->addFilterByField($this->getName(), $operator, $data);
     }
 
-    /**
-     * @return bool
-     */
     public function isForbiddenName(): bool
     {
         return in_array($this->getName(), self::FORBIDDEN_NAMES);

@@ -205,9 +205,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function isEmpty(): bool
     {
         $this->setElement();
@@ -239,9 +237,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
         return $dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function checkValidity(): bool
     {
         $sane = true;
@@ -287,11 +283,6 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
         }
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
     public function setId(int $id): static
     {
         $this->id = $id;
@@ -299,19 +290,11 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return (int) $this->id;
     }
 
-    /**
-     * @param string $subtype
-     *
-     * @return $this
-     */
     public function setSubtype(string $subtype): static
     {
         $this->subtype = $subtype;
@@ -319,9 +302,6 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getSubtype(): ?string
     {
         return $this->subtype;

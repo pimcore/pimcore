@@ -248,9 +248,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function isEmpty(): bool
     {
         $this->load();
@@ -262,9 +260,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function checkValidity(): bool
     {
         $sane = true;
@@ -310,11 +306,6 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         }
     }
 
-    /**
-     * @param int $id
-     *
-     * @return Document\Editable\Renderlet
-     */
     public function setId(int $id): static
     {
         $this->id = $id;
@@ -322,19 +313,11 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return (int) $this->id;
     }
 
-    /**
-     * @param Asset|DataObject|Document|null $o
-     *
-     * @return Document\Editable\Renderlet
-     */
     public function setO(DataObject|Asset|Document|null $o): static
     {
         $this->o = $o;
@@ -342,19 +325,11 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         return $this;
     }
 
-    /**
-     * @return Asset|Document|DataObject|null
-     */
     public function getO(): DataObject|Asset|Document|null
     {
         return $this->o;
     }
 
-    /**
-     * @param string $subtype
-     *
-     * @return Document\Editable\Renderlet
-     */
     public function setSubtype(string $subtype): static
     {
         $this->subtype = $subtype;
@@ -362,9 +337,6 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getSubtype(): ?string
     {
         return $this->subtype;

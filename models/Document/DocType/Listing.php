@@ -51,11 +51,6 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
         return $this->docTypes;
     }
 
-    /**
-     * @param array $docTypes
-     *
-     * @return $this
-     */
     public function setDocTypes(array $docTypes): static
     {
         $this->docTypes = $docTypes;

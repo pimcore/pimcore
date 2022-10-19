@@ -65,11 +65,6 @@ abstract class AbstractRelations extends Data implements
         return $this->classes ?: [];
     }
 
-    /**
-     * @param array $classes
-     *
-     * @return $this
-     */
     public function setClasses(array $classes): static
     {
         $this->classes = Element\Service::fixAllowedTypes($classes, 'classes');
@@ -77,9 +72,7 @@ abstract class AbstractRelations extends Data implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getLazyLoading(): bool
     {
         return true;
@@ -135,10 +128,8 @@ abstract class AbstractRelations extends Data implements
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load(Localizedfield|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData|AbstractData|Concrete $object, array $params = [])
+array
+    public function load(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
         $data = null;
         $relations = [];
@@ -255,17 +246,13 @@ abstract class AbstractRelations extends Data implements
         $this->pathFormatterClass = $pathFormatterClass;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function appendData(?array $existingData, array $additionalData): ?array
     {
         $newData = [];
@@ -294,10 +281,8 @@ abstract class AbstractRelations extends Data implements
         return $newData;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function removeData(mixed $existingData, mixed $removeData)
+
+    public function removeData(mixed $existingData, mixed $removeData): array
     {
         $newData = [];
         if (!is_array($existingData)) {
@@ -370,9 +355,7 @@ abstract class AbstractRelations extends Data implements
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function supportsDirtyDetection(): bool
     {
         return true;

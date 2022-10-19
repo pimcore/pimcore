@@ -136,19 +136,11 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      */
     public bool $enableTextSelection = false;
 
-    /**
-     * @return bool
-     */
     public function getObjectsAllowed(): bool
     {
         return $this->objectsAllowed;
     }
 
-    /**
-     * @param bool $objectsAllowed
-     *
-     * @return $this
-     */
     public function setObjectsAllowed(bool $objectsAllowed): static
     {
         $this->objectsAllowed = $objectsAllowed;
@@ -156,19 +148,11 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getDocumentsAllowed(): bool
     {
         return $this->documentsAllowed;
     }
 
-    /**
-     * @param bool $documentsAllowed
-     *
-     * @return $this
-     */
     public function setDocumentsAllowed(bool $documentsAllowed): static
     {
         $this->documentsAllowed = $documentsAllowed;
@@ -176,19 +160,11 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getDocumentTypes(): array
     {
         return $this->documentTypes ?: [];
     }
 
-    /**
-     * @param array $documentTypes
-     *
-     * @return $this
-     */
     public function setDocumentTypes(array $documentTypes): static
     {
         $this->documentTypes = Element\Service::fixAllowedTypes($documentTypes, 'documentTypes');
@@ -196,21 +172,11 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this;
     }
 
-    /**
-     *
-     * @return bool
-     */
     public function getAssetsAllowed(): bool
     {
         return $this->assetsAllowed;
     }
 
-    /**
-     *
-     * @param bool $assetsAllowed
-     *
-     * @return $this
-     */
     public function setAssetsAllowed(bool $assetsAllowed): static
     {
         $this->assetsAllowed = $assetsAllowed;
@@ -218,19 +184,11 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getAssetTypes(): array
     {
         return $this->assetTypes;
     }
 
-    /**
-     * @param array $assetTypes
-     *
-     * @return $this
-     */
     public function setAssetTypes(array $assetTypes): static
     {
         $this->assetTypes = Element\Service::fixAllowedTypes($assetTypes, 'assetTypes');
@@ -456,19 +414,11 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return null;
     }
 
-    /**
-     * @return string|int
-     */
     public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @param int|string $width
-     *
-     * @return $this
-     */
     public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
@@ -479,19 +429,11 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this;
     }
 
-    /**
-     * @return string|int
-     */
     public function getHeight(): int|string
     {
         return $this->height;
     }
 
-    /**
-     * @param int|string $height
-     *
-     * @return $this
-     */
     public function setHeight(int|string $height): static
     {
         if (is_numeric($height)) {
@@ -540,7 +482,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, array $params = []): string
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if (is_array($data)) {
@@ -557,19 +499,12 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getCacheTags(mixed $data, array $tags = []): array
     {
         return $tags;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return array
-     */
     public function resolveDependencies(mixed $data): array
     {
         $dependencies = [];
@@ -645,11 +580,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $data;
     }
 
-    /**
-     * @param int|null $maxItems
-     *
-     * @return $this
-     */
     public function setMaxItems(?int $maxItems): static
     {
         $this->maxItems = $this->getAsIntegerCast($maxItems);
@@ -657,9 +587,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getMaxItems(): ?int
     {
         return $this->maxItems;
@@ -680,11 +607,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this->assetInlineDownloadAllowed;
     }
 
-    /**
-     * @param string $assetUploadPath
-     *
-     * @return $this
-     */
     public function setAssetUploadPath(string $assetUploadPath): static
     {
         $this->assetUploadPath = $assetUploadPath;
@@ -692,9 +614,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getAssetUploadPath(): string
     {
         return $this->assetUploadPath;

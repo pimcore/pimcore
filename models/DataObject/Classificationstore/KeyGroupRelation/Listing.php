@@ -26,7 +26,6 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\AbstractListing
 {
-    /** @var bool */
     protected bool $resolveGroupName = false;
 
     /**
@@ -47,9 +46,6 @@ class Listing extends Model\Listing\AbstractListing
         return $this->setData($theList);
     }
 
-    /**
-     * @return bool
-     */
     public function getResolveGroupName(): bool
     {
         return $this->resolveGroupName;

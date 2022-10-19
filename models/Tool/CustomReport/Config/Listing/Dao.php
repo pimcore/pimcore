@@ -68,9 +68,6 @@ class Dao extends \Pimcore\Model\Tool\CustomReport\Config\Dao
         return $filteredConfigs;
     }
 
-    /**
-     * @return int
-     */
     public function getTotalCount(): int
     {
         return count($this->loadIdList());

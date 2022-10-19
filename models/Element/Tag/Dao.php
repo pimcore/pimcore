@@ -316,9 +316,6 @@ class Dao extends Model\Dao\AbstractDao
         return $tag;
     }
 
-    /**
-     * @return bool
-     */
     public function exists(): bool
     {
         if (is_null($this->model->getId())) {

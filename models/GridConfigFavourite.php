@@ -25,29 +25,14 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 class GridConfigFavourite extends AbstractModel
 {
-    /**
-     * @var int
-     */
     protected int $ownerId;
 
-    /**
-     * @var string
-     */
     protected string $classId;
 
-    /**
-     * @var int
-     */
     protected int $objectId;
 
-    /**
-     * @var int
-     */
     protected int $gridConfigId;
 
-    /**
-     * @var string
-     */
     protected string $searchType;
 
     /**
@@ -93,9 +78,6 @@ class GridConfigFavourite extends AbstractModel
         $this->getDao()->delete();
     }
 
-    /**
-     * @return int
-     */
     public function getOwnerId(): int
     {
         return $this->ownerId;
@@ -106,9 +88,6 @@ class GridConfigFavourite extends AbstractModel
         $this->ownerId = $ownerId;
     }
 
-    /**
-     * @return string
-     */
     public function getClassId(): string
     {
         return $this->classId;
@@ -119,9 +98,6 @@ class GridConfigFavourite extends AbstractModel
         $this->classId = $classId;
     }
 
-    /**
-     * @return int
-     */
     public function getGridConfigId(): int
     {
         return $this->gridConfigId;
@@ -142,9 +118,6 @@ class GridConfigFavourite extends AbstractModel
         $this->searchType = $searchType;
     }
 
-    /**
-     * @return int
-     */
     public function getObjectId(): int
     {
         return $this->objectId;

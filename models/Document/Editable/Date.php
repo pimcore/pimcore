@@ -48,9 +48,6 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
         return $this->date;
     }
 
-    /**
-     * @return \Carbon\Carbon|null
-     */
     public function getDate(): ?\Carbon\Carbon
     {
         return $this->getData();
@@ -88,9 +85,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDataForResource()
     {
         if ($this->date) {
@@ -125,9 +120,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function isEmpty(): bool
     {
         if ($this->date) {

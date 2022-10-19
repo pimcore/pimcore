@@ -115,13 +115,6 @@ final class Note extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param string $name
-     * @param string $type
-     * @param mixed $data
-     *
-     * @return $this
-     */
     public function addData(string $name, string $type, mixed $data): static
     {
         $this->data[$name] = [
@@ -132,11 +125,6 @@ final class Note extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param ElementInterface $element
-     *
-     * @return $this
-     */
     public function setElement(ElementInterface $element): static
     {
         $this->setCid($element->getId());
@@ -168,11 +156,6 @@ final class Note extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param int $cid
-     *
-     * @return $this
-     */
     public function setCid(int $cid): static
     {
         $this->cid = (int) $cid;
@@ -180,19 +163,11 @@ final class Note extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getCid(): int
     {
         return $this->cid;
     }
 
-    /**
-     * @param string $ctype
-     *
-     * @return $this
-     */
     public function setCtype(string $ctype): static
     {
         $this->ctype = $ctype;
@@ -200,19 +175,11 @@ final class Note extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getCtype(): string
     {
         return $this->ctype;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return $this
-     */
     public function setData(array $data): static
     {
         $this->data = $data;
@@ -220,19 +187,11 @@ final class Note extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getData(): array
     {
         return $this->data;
     }
 
-    /**
-     * @param int $date
-     *
-     * @return $this
-     */
     public function setDate(int $date): static
     {
         $this->date = (int) $date;
@@ -240,19 +199,11 @@ final class Note extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getDate(): int
     {
         return $this->date;
     }
 
-    /**
-     * @param string $description
-     *
-     * @return $this
-     */
     public function setDescription(string $description): static
     {
         $this->description = $description;
@@ -260,19 +211,11 @@ final class Note extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
     public function setId(int $id): static
     {
         $this->id = (int) $id;
@@ -280,19 +223,11 @@ final class Note extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param string $title
-     *
-     * @return $this
-     */
     public function setTitle(string $title): static
     {
         $this->title = $title;
@@ -300,19 +235,11 @@ final class Note extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
         return $this->title;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return $this
-     */
     public function setType(string $type): static
     {
         $this->type = $type;
@@ -320,19 +247,11 @@ final class Note extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param int $user
-     *
-     * @return $this
-     */
     public function setUser(int $user): static
     {
         $this->user = $user;
@@ -340,9 +259,6 @@ final class Note extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getUser(): ?int
     {
         return $this->user;

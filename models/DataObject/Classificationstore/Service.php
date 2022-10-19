@@ -67,12 +67,6 @@ class Service
         return $fd;
     }
 
-    /**
-     * @param array $definition
-     * @param string $type
-     *
-     * @return EncryptedField|Data|null
-     */
     public static function getFieldDefinitionFromJson(array $definition, string $type): DataObject\ClassDefinition\Data\EncryptedField|DataObject\ClassDefinition\Data|null
     {
         if (!$definition) {

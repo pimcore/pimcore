@@ -52,9 +52,6 @@ class Folder extends Model\User\AbstractUser
         return $this->hasChildren;
     }
 
-    /**
-     * @return array
-     */
     public function getChildren(): array
     {
         if ($this->children === null) {
@@ -71,11 +68,6 @@ class Folder extends Model\User\AbstractUser
         return $this->children;
     }
 
-    /**
-     * @param array $children
-     *
-     * @return $this
-     */
     public function setChildren(array $children): static
     {
         if (is_array($children)) {

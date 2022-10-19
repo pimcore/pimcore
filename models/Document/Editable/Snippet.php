@@ -66,9 +66,6 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         $this->id = $id;
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return (int) $this->id;
@@ -181,9 +178,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function isEmpty(): bool
     {
         $this->load();
@@ -260,9 +255,6 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         }
     }
 
-    /**
-     * @return Document\Snippet|null
-     */
     public function getSnippet(): ?Document\Snippet
     {
         $this->load();

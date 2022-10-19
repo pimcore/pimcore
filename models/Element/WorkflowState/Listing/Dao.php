@@ -46,9 +46,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $workflowStates;
     }
 
-    /**
-     * @return int
-     */
     public function getTotalCount(): int
     {
         try {

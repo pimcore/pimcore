@@ -111,9 +111,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      */
     public array $visibleFieldDefinitions = [];
 
-    /**
-     * @return bool
-     */
     public function getObjectsAllowed(): bool
     {
         return true;
@@ -275,7 +272,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromGridEditor(array $data, $object = null, array $params = []): ?array
+    public function getDataFromGridEditor(array $data, Concrete $object = null, array $params = []): ?array
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
@@ -287,7 +284,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      *
      * @return array|null
      */
-    public function getDataForGrid(?array $data, $object = null, array $params = []): ?array
+    public function getDataForGrid(?array $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         return $this->getDataForEditmode($data, $object, $params);
     }
@@ -302,7 +299,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): ?string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         if (is_array($data) && count($data) > 0) {
             $paths = [];
@@ -318,19 +315,11 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return null;
     }
 
-    /**
-     * @return string|int
-     */
     public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @param int|string $width
-     *
-     * @return $this
-     */
     public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
@@ -341,19 +330,11 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return $this;
     }
 
-    /**
-     * @return string|int
-     */
     public function getHeight(): int|string
     {
         return $this->height;
     }
 
-    /**
-     * @param int|string $height
-     *
-     * @return $this
-     */
     public function setHeight(int|string $height): static
     {
         if (is_numeric($height)) {
@@ -419,11 +400,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return '';
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return array
-     */
     public function resolveDependencies(mixed $data): array
     {
         $dependencies = [];
@@ -442,12 +418,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return $dependencies;
     }
 
-    /**
-     * @param mixed $container
-     * @param array $params
-     *
-     * @return array
-     */
     public function preGetData(/** mixed */ mixed $container, /** array */ array $params = []): array // : mixed
     {
         $data = null;
@@ -497,11 +467,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return $data;
     }
 
-    /**
-     * @param int|null $maxItems
-     *
-     * @return $this
-     */
     public function setMaxItems(?int $maxItems): static
     {
         $this->maxItems = $this->getAsIntegerCast($maxItems);
@@ -509,9 +474,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getMaxItems(): ?int
     {
         return $this->maxItems;
@@ -785,7 +747,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      *
      * @return array|null
      */
-    public function getDiffDataFromEditmode(array $data, $object = null, array $params = []): ?array
+    public function getDiffDataFromEditmode(array $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data) {
             $tabledata = $data[0]['data'];
@@ -804,11 +766,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return null;
     }
 
-    /**
-     * @param array|string|null $visibleFields
-     *
-     * @return $this
-     */
     public function setVisibleFields(array|string|null $visibleFields): static
     {
         if (is_array($visibleFields) && count($visibleFields)) {
@@ -819,9 +776,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getVisibleFields(): ?string
     {
         return $this->visibleFields;

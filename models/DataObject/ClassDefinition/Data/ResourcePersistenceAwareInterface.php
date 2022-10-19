@@ -29,7 +29,7 @@ interface ResourcePersistenceAwareInterface
      *
      * @return mixed
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = []): mixed;
+    public function getDataForResource(mixed $data, Concrete $object = null, array $params = []): mixed;
 
     /**
      * Convert the saved data in the resource to the internal eg. Image-Id to Asset\Image object, this is the inverted getDataForResource()
@@ -40,10 +40,7 @@ interface ResourcePersistenceAwareInterface
      *
      * @return mixed
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): mixed;
+    public function getDataFromResource(mixed $data, Concrete $object = null, array $params = []): mixed;
 
-    /**
-     * @return string|array|null
-     */
     public function getColumnType(): array|string|null;
 }

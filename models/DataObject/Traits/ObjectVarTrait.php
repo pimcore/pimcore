@@ -44,11 +44,6 @@ trait ObjectVarTrait
         return $data;
     }
 
-    /**
-     * @param string $var
-     *
-     * @return mixed
-     */
     public function getObjectVar(string $var): mixed
     {
         if (!property_exists($this, $var)) {

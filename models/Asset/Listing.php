@@ -53,9 +53,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      * Methods for AdapterInterface
      */
 
-    /**
-     * @return int
-     */
     #[\ReturnTypeWillChange]
     public function count(): int// : int
     {

@@ -129,19 +129,11 @@ class Multiselect extends Data implements
      */
     public bool $dynamicOptions = false;
 
-    /**
-     * @return array|null
-     */
     public function getOptions(): ?array
     {
         return $this->options;
     }
 
-    /**
-     * @param array $options
-     *
-     * @return $this
-     */
     public function setOptions(array $options): static
     {
         $this->options = $options;
@@ -149,19 +141,11 @@ class Multiselect extends Data implements
         return $this;
     }
 
-    /**
-     * @return string|int
-     */
     public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @param int|string $width
-     *
-     * @return $this
-     */
     public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
@@ -172,19 +156,11 @@ class Multiselect extends Data implements
         return $this;
     }
 
-    /**
-     * @return string|int
-     */
     public function getHeight(): int|string
     {
         return $this->height;
     }
 
-    /**
-     * @param int|string $height
-     *
-     * @return $this
-     */
     public function setHeight(int|string $height): static
     {
         if (is_numeric($height)) {
@@ -195,11 +171,6 @@ class Multiselect extends Data implements
         return $this;
     }
 
-    /**
-     * @param int|null $maxItems
-     *
-     * @return $this
-     */
     public function setMaxItems(?int $maxItems): static
     {
         $this->maxItems = $this->getAsIntegerCast($maxItems);
@@ -207,19 +178,11 @@ class Multiselect extends Data implements
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getMaxItems(): ?int
     {
         return $this->maxItems;
     }
 
-    /**
-     * @param string|null $renderType
-     *
-     * @return $this
-     */
     public function setRenderType(?string $renderType): static
     {
         $this->renderType = $renderType;
@@ -227,9 +190,6 @@ class Multiselect extends Data implements
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getRenderType(): ?string
     {
         return $this->renderType;
@@ -405,9 +365,7 @@ class Multiselect extends Data implements
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -529,9 +487,6 @@ class Multiselect extends Data implements
         $this->options = $masterDefinition->options;
     }
 
-    /**
-     * @return string|null
-     */
     public function getOptionsProviderClass(): ?string
     {
         return $this->optionsProviderClass;
@@ -542,9 +497,6 @@ class Multiselect extends Data implements
         $this->optionsProviderClass = $optionsProviderClass;
     }
 
-    /**
-     * @return string|null
-     */
     public function getOptionsProviderData(): ?string
     {
         return $this->optionsProviderData;
@@ -555,12 +507,6 @@ class Multiselect extends Data implements
         $this->optionsProviderData = $optionsProviderData;
     }
 
-    /**
-     * @param array|null $existingData
-     * @param array $additionalData
-     *
-     * @return array
-     */
     public function appendData(?array $existingData, array $additionalData): array
     {
         if (!is_array($existingData)) {
@@ -572,12 +518,6 @@ class Multiselect extends Data implements
         return $existingData;
     }
 
-    /**
-     * @param mixed $existingData
-     * @param mixed $removeData
-     *
-     * @return array
-     */
     public function removeData(mixed $existingData, mixed $removeData): array
     {
         if (!is_array($existingData)) {
@@ -602,9 +542,6 @@ class Multiselect extends Data implements
         return $this->isEqualArray($oldValue, $newValue);
     }
 
-    /**
-     * @return $this
-     */
     #[\ReturnTypeWillChange]
     public function jsonSerialize(): static// : static
     {

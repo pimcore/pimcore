@@ -25,65 +25,30 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 class GridConfig extends AbstractModel
 {
-    /**
-     * @var int|null
-     */
     protected ?int $id;
 
-    /**
-     * @var int|null
-     */
     protected ?int $ownerId;
 
-    /**
-     * @var string
-     */
     protected string $classId;
 
-    /**
-     * @var string
-     */
     protected string $name;
 
-    /**
-     * @var string
-     */
     protected string $searchType;
 
-    /**
-     * @var string
-     */
     protected string $config;
 
-    /**
-     * @var string|null
-     */
     protected ?string $description;
 
-    /**
-     * @var int|null
-     */
     protected ?int $creationDate;
 
-    /**
-     * @var int|null
-     */
     protected ?int $modificationDate;
 
     protected bool $shareGlobally = false;
 
     protected bool $setAsFavourite = false;
 
-    /**
-     * @var string
-     */
     protected string $type = 'object';
 
-    /**
-     * @param int $id
-     *
-     * @return GridConfig|null
-     */
     public static function getById(int $id): ?GridConfig
     {
         if (!$id) {
@@ -122,9 +87,6 @@ class GridConfig extends AbstractModel
         $this->getDao()->delete();
     }
 
-    /**
-     * @return int|null
-     */
     public function getId(): ?int
     {
         return $this->id;
@@ -135,9 +97,6 @@ class GridConfig extends AbstractModel
         $this->id = (int) $id;
     }
 
-    /**
-     * @return int|null
-     */
     public function getOwnerId(): ?int
     {
         return $this->ownerId;
@@ -148,9 +107,6 @@ class GridConfig extends AbstractModel
         $this->ownerId = $ownerId;
     }
 
-    /**
-     * @return string
-     */
     public function getClassId(): string
     {
         return $this->classId;
@@ -161,9 +117,6 @@ class GridConfig extends AbstractModel
         $this->classId = $classId;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
@@ -174,9 +127,6 @@ class GridConfig extends AbstractModel
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
     public function getSearchType(): string
     {
         return $this->searchType;
@@ -187,9 +137,6 @@ class GridConfig extends AbstractModel
         $this->searchType = $searchType;
     }
 
-    /**
-     * @return string
-     */
     public function getConfig(): string
     {
         return $this->config;
@@ -200,9 +147,6 @@ class GridConfig extends AbstractModel
         $this->config = $config;
     }
 
-    /**
-     * @return string|null
-     */
     public function getDescription(): ?string
     {
         return $this->description;
@@ -213,9 +157,6 @@ class GridConfig extends AbstractModel
         $this->description = $description;
     }
 
-    /**
-     * @return int|null
-     */
     public function getCreationDate(): ?int
     {
         return $this->creationDate;
@@ -226,9 +167,6 @@ class GridConfig extends AbstractModel
         $this->creationDate = $creationDate;
     }
 
-    /**
-     * @return int|null
-     */
     public function getModificationDate(): ?int
     {
         return $this->modificationDate;
@@ -239,9 +177,6 @@ class GridConfig extends AbstractModel
         $this->modificationDate = $modificationDate;
     }
 
-    /**
-     * @return bool
-     */
     public function isShareGlobally(): bool
     {
         return $this->shareGlobally;
@@ -252,9 +187,6 @@ class GridConfig extends AbstractModel
         $this->shareGlobally = (bool) $shareGlobally;
     }
 
-    /**
-     * @return bool
-     */
     public function isSetAsFavourite(): bool
     {
         return $this->setAsFavourite;

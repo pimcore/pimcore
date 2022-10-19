@@ -584,9 +584,6 @@ class Dao extends Model\Element\Dao
         return $index;
     }
 
-    /**
-     * @return bool
-     */
     public function __isBasedOnLatestData(): bool
     {
         $data = $this->db->fetchAssociative('SELECT modificationDate,versionCount from documents WHERE id = ?', [$this->model->getId()]);

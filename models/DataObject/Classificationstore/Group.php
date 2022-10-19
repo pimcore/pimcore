@@ -21,14 +21,8 @@ use Pimcore\Model\DataObject\Classificationstore;
 
 final class Group
 {
-    /**
-     * @var GroupConfig
-     */
     protected GroupConfig $configuration;
 
-    /**
-     * @var Classificationstore
-     */
     protected Classificationstore $classificationStore;
 
     public function __construct(Classificationstore $classificationStore, GroupConfig $configuration)

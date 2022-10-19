@@ -98,11 +98,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         }
     }
 
-    /**
-     * @param string $id
-     *
-     * @return string|null
-     */
     public function getNameById(string $id): ?string
     {
         $name = null;
@@ -155,9 +150,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         return $id;
     }
 
-    /**
-     * @return UuidV4
-     */
     public function getNewId(): UuidV4
     {
         $newId = Uid::v4();

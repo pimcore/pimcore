@@ -43,9 +43,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $targetGroups;
     }
 
-    /**
-     * @return int
-     */
     public function getTotalCount(): int
     {
         try {

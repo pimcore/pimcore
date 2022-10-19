@@ -46,11 +46,6 @@ class Fieldcontainer extends Model\DataObject\ClassDefinition\Layout
      */
     public string $fieldLabel;
 
-    /**
-     * @param string $layout
-     *
-     * @return $this
-     */
     public function setLayout(string $layout): static
     {
         $this->layout = $layout;
@@ -58,19 +53,11 @@ class Fieldcontainer extends Model\DataObject\ClassDefinition\Layout
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getLayout(): string
     {
         return $this->layout;
     }
 
-    /**
-     * @param string $fieldLabel
-     *
-     * @return $this
-     */
     public function setFieldLabel(string $fieldLabel): static
     {
         $this->fieldLabel = $fieldLabel;
@@ -78,9 +65,6 @@ class Fieldcontainer extends Model\DataObject\ClassDefinition\Layout
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getFieldLabel(): string
     {
         return $this->fieldLabel;

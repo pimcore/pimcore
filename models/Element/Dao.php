@@ -55,11 +55,6 @@ abstract class Dao extends Model\Dao\AbstractDao
         return $parentIds;
     }
 
-    /**
-     * @param string $fullpath
-     *
-     * @return array
-     */
     protected function extractKeyAndPath(string $fullpath): array
     {
         $key = '';

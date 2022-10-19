@@ -69,19 +69,11 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      */
     public ?array $availableSites;
 
-    /**
-     * @return string|int
-     */
     public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @param int|string $width
-     *
-     * @return $this
-     */
     public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
@@ -213,11 +205,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $this->action;
     }
 
-    /**
-     * @param string|null $action
-     *
-     * @return $this
-     */
     public function setAction(?string $action): static
     {
         $this->action = $action;
@@ -368,10 +355,8 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load($object, array $params = [])
+array
+    public function load(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): array
     {
         $rawResult = null;
         if ($object instanceof Model\DataObject\Concrete) {
@@ -416,9 +401,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         }
     }
 
-    /**
-     * @return bool
-     */
     public function getUnique(): bool
     {
         return true;
@@ -432,9 +414,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         $this->action = $masterDefinition->action;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
@@ -469,19 +449,12 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $oldData === $newData;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function supportsDirtyDetection(): bool
     {
         return true;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return bool
-     */
     public function isEmpty(mixed $data): bool
     {
         if (is_array($data)) {
@@ -533,7 +506,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      *
      * @return string|null
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): ?string
+    public function getVersionPreview(mixed $data, Model\DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getPreviewData($data, $object, $params);
     }
@@ -604,11 +577,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $this->domainLabelWidth;
     }
 
-    /**
-     * @param int|null $domainLabelWidth
-     *
-     * @return $this
-     */
     public function setDomainLabelWidth(?int $domainLabelWidth): static
     {
         $this->domainLabelWidth = $domainLabelWidth;
@@ -679,9 +647,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $data;
     }
 
-    /**
-     * @return bool
-     */
     public function getLazyLoading(): bool
     {
         return true;

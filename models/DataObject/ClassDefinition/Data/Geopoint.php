@@ -98,7 +98,7 @@ class Geopoint extends AbstractGeo implements
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?DataObject\Data\GeoCoordinates
+    public function getDataFromResource(mixed $data, Concrete $object = null, array $params = []): ?DataObject\Data\GeoCoordinates
     {
         if ($data[$this->getName() . '__longitude'] && $data[$this->getName() . '__latitude']) {
             $geopoint = new DataObject\Data\GeoCoordinates($data[$this->getName() . '__latitude'], $data[$this->getName() . '__longitude']);
@@ -211,9 +211,7 @@ class Geopoint extends AbstractGeo implements
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';

@@ -115,75 +115,46 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
      */
     public bool $locked = false;
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return string
-     */
     public function getRegion(): string
     {
         return $this->region;
     }
 
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
         return $this->title;
     }
 
-    /**
-     * @return int|string
-     */
     public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @return int|string
-     */
     public function getHeight(): int|string
     {
         return $this->height;
     }
 
-    /**
-     * @return bool
-     */
     public function getCollapsible(): bool
     {
         return $this->collapsible;
     }
 
-    /**
-     * @return array
-     */
     public function getPermissions(): array
     {
         return $this->permissions;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -191,11 +162,6 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
         return $this;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return $this
-     */
     public function setType(string $type): static
     {
         $this->type = $type;
@@ -203,11 +169,6 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
         return $this;
     }
 
-    /**
-     * @param string $region
-     *
-     * @return $this
-     */
     public function setRegion(string $region): static
     {
         $this->region = $region;
@@ -215,11 +176,6 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
         return $this;
     }
 
-    /**
-     * @param string $title
-     *
-     * @return $this
-     */
     public function setTitle(string $title): static
     {
         $this->title = $title;
@@ -227,11 +183,6 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
         return $this;
     }
 
-    /**
-     * @param int|string $width
-     *
-     * @return $this
-     */
     public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
@@ -242,11 +193,6 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
         return $this;
     }
 
-    /**
-     * @param int|string $height
-     *
-     * @return $this
-     */
     public function setHeight(int|string $height): static
     {
         if (is_numeric($height)) {
@@ -257,11 +203,6 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
         return $this;
     }
 
-    /**
-     * @param bool $collapsible
-     *
-     * @return $this
-     */
     public function setCollapsible(bool $collapsible): static
     {
         $this->collapsible = (bool) $collapsible;
@@ -271,11 +212,6 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
         return $this;
     }
 
-    /**
-     * @param array $permissions
-     *
-     * @return $this
-     */
     public function setPermissions(array $permissions): static
     {
         $this->permissions = $permissions;
@@ -283,9 +219,6 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getChildren(): array
     {
         return $this->children;
@@ -301,11 +234,6 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
         return $this->children;
     }
 
-    /**
-     * @param array $children
-     *
-     * @return $this
-     */
     public function setChildren(array $children): static
     {
         $this->children = $children;
@@ -313,9 +241,6 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function hasChildren(): bool
     {
         if (is_array($this->children) && count($this->children) > 0) {
@@ -330,12 +255,6 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
         $this->children[] = $child;
     }
 
-    /**
-     * @param array $data
-     * @param array $blockedKeys
-     *
-     * @return $this
-     */
     public function setValues(array $data = [], array $blockedKeys = []): static
     {
         foreach ($data as $key => $value) {
@@ -350,19 +269,11 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getDatatype(): string
     {
         return $this->datatype;
     }
 
-    /**
-     * @param string $datatype
-     *
-     * @return $this
-     */
     public function setDatatype(string $datatype): static
     {
         $this->datatype = $datatype;
@@ -370,20 +281,11 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
         return $this;
     }
 
-    /**
-     *
-     * @return bool
-     */
     public function getLocked(): bool
     {
         return $this->locked;
     }
 
-    /**
-     * @param bool $locked
-     *
-     * @return $this
-     */
     public function setLocked(bool $locked): static
     {
         $this->locked = (bool) $locked;
@@ -391,11 +293,6 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
         return $this;
     }
 
-    /**
-     * @param bool $collapsed
-     *
-     * @return $this
-     */
     public function setCollapsed(bool $collapsed): static
     {
         $this->collapsed = (bool) $collapsed;
@@ -405,19 +302,11 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getCollapsed(): bool
     {
         return $this->collapsed;
     }
 
-    /**
-     * @param string $bodyStyle
-     *
-     * @return $this
-     */
     public function setBodyStyle(string $bodyStyle): static
     {
         $this->bodyStyle = $bodyStyle;
@@ -425,17 +314,11 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getBodyStyle(): string
     {
         return $this->bodyStyle;
     }
 
-    /**
-     * @return Layout
-     */
     protected function filterCollapsibleValue(): static
     {
         //if class definition set as collapsed the code below forces collapsible, issue: #778

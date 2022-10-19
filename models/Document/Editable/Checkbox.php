@@ -48,9 +48,7 @@ class Checkbox extends Model\Document\Editable
         return $this->value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getValue()
     {
         return $this->getData();
@@ -84,17 +82,12 @@ class Checkbox extends Model\Document\Editable
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function isEmpty(): bool
     {
         return !$this->value;
     }
 
-    /**
-     * @return bool
-     */
     public function isChecked(): bool
     {
         return $this->value;

@@ -23,11 +23,6 @@ use Pimcore\Model\DataObject\ClassDefinition\PreviewGeneratorInterface;
  */
 class PreviewGeneratorResolver extends ClassResolver
 {
-    /**
-     * @param string $generatorClass
-     *
-     * @return object|null
-     */
     public static function resolveGenerator(string $generatorClass): ?object
     {
         return self::resolve($generatorClass, static function ($generator) {

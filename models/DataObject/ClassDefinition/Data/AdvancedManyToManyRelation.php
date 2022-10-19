@@ -539,9 +539,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
         if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
@@ -675,9 +673,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return Element\Service::filterUnpublishedAdvancedElements($data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
         $db = Db::get();
@@ -725,11 +721,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         }
     }
 
-    /**
-     * @param array $columns
-     *
-     * @return $this
-     */
     public function setColumns(array $columns): static
     {
         if (isset($columns['key'])) {
@@ -747,17 +738,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getColumns(): array
     {
         return $this->columns;
     }
 
-    /**
-     * @return array
-     */
     public function getColumnKeys(): array
     {
         $this->columnKeys = [];
@@ -816,11 +801,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         $this->columns = $masterDefinition->columns;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return array
-     */
     public function resolveDependencies(mixed $data): array
     {
         $dependencies = [];
@@ -1018,19 +998,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         $this->optimizedAdminLoading = (bool) $optimizedAdminLoading;
     }
 
-    /**
-     * @return bool
-     */
     public function getAllowMultipleAssignments(): bool
     {
         return $this->allowMultipleAssignments;
     }
 
-    /**
-     * @param bool|int|null $allowMultipleAssignments
-     *
-     * @return $this
-     */
     public function setAllowMultipleAssignments(bool|int|null $allowMultipleAssignments): static
     {
         $this->allowMultipleAssignments = (bool) $allowMultipleAssignments;
@@ -1038,9 +1010,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getEnableBatchEdit(): bool
     {
         return $this->enableBatchEdit;

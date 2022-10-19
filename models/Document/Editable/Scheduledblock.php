@@ -227,9 +227,7 @@ class Scheduledblock extends Block implements BlockInterface
         return $this->indices[$this->getCurrent()]['key'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+array
     public function getIterator(): \Generator
     {
         while ($this->loop()) {
@@ -255,9 +253,7 @@ class Scheduledblock extends Block implements BlockInterface
         return $list;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+array
     public function setConfig(array $config): Scheduledblock|\Pimcore\Model\Document\Editable|Block|static
     {
         $config['reload'] = true;

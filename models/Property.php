@@ -25,34 +25,16 @@ use Pimcore\Model\Element\Service;
  */
 final class Property extends AbstractModel
 {
-    /**
-     * @var string
-     */
     protected string $name;
 
-    /**
-     * @var mixed
-     */
     protected mixed $data;
 
-    /**
-     * @var string
-     */
     protected string $type;
 
-    /**
-     * @var string
-     */
     protected string $ctype;
 
-    /**
-     * @var string|null
-     */
     protected ?string $cpath;
 
-    /**
-     * @var int
-     */
     protected int $cid;
 
     protected bool $inheritable = false;
@@ -115,9 +97,6 @@ final class Property extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getCid(): int
     {
         return $this->cid;
@@ -133,9 +112,6 @@ final class Property extends AbstractModel
         return $this->ctype;
     }
 
-    /**
-     * @return mixed
-     */
     public function getData(): mixed
     {
         // lazy-load data of type asset, document, object
@@ -146,9 +122,6 @@ final class Property extends AbstractModel
         return $this->data;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
@@ -164,11 +137,6 @@ final class Property extends AbstractModel
         return $this->type;
     }
 
-    /**
-     * @param int $cid
-     *
-     * @return $this
-     */
     public function setCid(int $cid): static
     {
         $this->cid = (int) $cid;
@@ -190,11 +158,6 @@ final class Property extends AbstractModel
         return $this;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return $this
-     */
     public function setData(mixed $data): static
     {
         if ($data instanceof ElementInterface) {
@@ -207,11 +170,6 @@ final class Property extends AbstractModel
         return $this;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -233,17 +191,11 @@ final class Property extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getCpath(): ?string
     {
         return $this->cpath;
     }
 
-    /**
-     * @return bool
-     */
     public function getInherited(): bool
     {
         return $this->inherited;
@@ -259,11 +211,6 @@ final class Property extends AbstractModel
         return $this->getInherited();
     }
 
-    /**
-     * @param string|null $cpath
-     *
-     * @return $this
-     */
     public function setCpath(?string $cpath): static
     {
         $this->cpath = $cpath;
@@ -271,11 +218,6 @@ final class Property extends AbstractModel
         return $this;
     }
 
-    /**
-     * @param bool $inherited
-     *
-     * @return $this
-     */
     public function setInherited(bool $inherited): static
     {
         $this->inherited = (bool) $inherited;
@@ -283,19 +225,11 @@ final class Property extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getInheritable(): bool
     {
         return $this->inheritable;
     }
 
-    /**
-     * @param bool $inheritable
-     *
-     * @return $this
-     */
     public function setInheritable(bool $inheritable): static
     {
         $this->inheritable = (bool) $inheritable;

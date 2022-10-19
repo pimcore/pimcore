@@ -31,9 +31,6 @@ final class GroupConfig extends Model\AbstractModel
 {
     use RecursionBlockingEventDispatchHelperTrait;
 
-    /**
-     * @var int|null
-     */
     protected ?int $id;
 
     /**
@@ -64,22 +61,10 @@ final class GroupConfig extends Model\AbstractModel
      */
     protected string $description;
 
-    /**
-     * @var int|null
-     */
     protected ?int $creationDate;
 
-    /**
-     * @var int|null
-     */
     protected ?int $modificationDate;
 
-    /**
-     * @param int $id
-     * @param bool|null $force
-     *
-     * @return self|null
-     */
     public static function getById(int $id, ?bool $force = false): ?GroupConfig
     {
         $id = (int)$id;
@@ -144,9 +129,6 @@ final class GroupConfig extends Model\AbstractModel
         }
     }
 
-    /**
-     * @return Model\DataObject\Classificationstore\GroupConfig
-     */
     public static function create(): GroupConfig
     {
         $config = new self();
@@ -155,11 +137,6 @@ final class GroupConfig extends Model\AbstractModel
         return $config;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
     public function setId(int $id): static
     {
         $this->id = (int) $id;
@@ -167,17 +144,11 @@ final class GroupConfig extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return int|null
-     */
     public function getParentId(): ?int
     {
         return $this->parentId;
@@ -188,11 +159,6 @@ final class GroupConfig extends Model\AbstractModel
         $this->parentId = $parentId;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -200,9 +166,6 @@ final class GroupConfig extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
@@ -273,11 +236,6 @@ final class GroupConfig extends Model\AbstractModel
         return $model;
     }
 
-    /**
-     * @param int $modificationDate
-     *
-     * @return $this
-     */
     public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = (int) $modificationDate;
@@ -285,19 +243,11 @@ final class GroupConfig extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
-    /**
-     * @param int $creationDate
-     *
-     * @return $this
-     */
     public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = (int) $creationDate;
@@ -305,9 +255,6 @@ final class GroupConfig extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getCreationDate(): ?int
     {
         return $this->creationDate;
@@ -327,9 +274,6 @@ final class GroupConfig extends Model\AbstractModel
         return $list;
     }
 
-    /**
-     * @return int
-     */
     public function getStoreId(): int
     {
         return $this->storeId;

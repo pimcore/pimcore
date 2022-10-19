@@ -50,9 +50,6 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
         return $this->text;
     }
 
-    /**
-     * @return string
-     */
     public function getText(): string
     {
         return $this->getData();
@@ -104,9 +101,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function isEmpty(): bool
     {
         return empty($this->text);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,29 +27,20 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class CacheWarmingCommand extends AbstractCommand
 {
-    /**
-     * @var array
-     */
-    protected $validTypes = [
+    protected array $validTypes = [
         'document',
         'asset',
         'object',
     ];
 
-    /**
-     * @var array
-     */
-    protected $validDocumentTypes = [
+    protected array $validDocumentTypes = [
         'page',
         'snippet',
         'folder',
         'link',
     ];
 
-    /**
-     * @var array
-     */
-    protected $validAssetTypes = [
+    protected array $validAssetTypes = [
         'archive',
         'audio',
         'document',
@@ -59,10 +51,7 @@ class CacheWarmingCommand extends AbstractCommand
         'video',
     ];
 
-    /**
-     * @var array
-     */
-    protected $validObjectTypes = [
+    protected array $validObjectTypes = [
         'object',
         'folder',
         'variant',
@@ -153,11 +142,7 @@ class CacheWarmingCommand extends AbstractCommand
         return 0;
     }
 
-    /**
-     * @param string $type
-     * @param array $types
-     */
-    protected function writeWarmingMessage($type, $types, $extra = '')
+    protected function writeWarmingMessage(string $type, array $types, $extra = '')
     {
         $output = sprintf('Warming <comment>%s</comment> cache', $type);
         if (null !== $types && count($types) > 0) {
@@ -183,7 +168,7 @@ class CacheWarmingCommand extends AbstractCommand
      *
      * @return string
      */
-    protected function humanList($list, $glue = 'or', $template = null)
+    protected function humanList(array $list, string $glue = 'or', string $template = null): string
     {
         if (null !== $template) {
             array_walk($list, function (&$item) use ($template) {
@@ -211,7 +196,7 @@ class CacheWarmingCommand extends AbstractCommand
      *
      * @return mixed
      */
-    protected function getArrayOption($option, $property, $singular, $fallback = false)
+    protected function getArrayOption(string $option, string $property, string $singular, bool $fallback = false): mixed
     {
         $input = $this->input->getOption($option);
 

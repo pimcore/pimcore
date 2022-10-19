@@ -49,9 +49,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return 'relations';
     }
 
-    /**
-     * @return $this
-     */
     public function setElements(): static
     {
         if (empty($this->elements)) {
@@ -67,9 +64,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getElementIds(): array
     {
         return $this->elementIds;
@@ -85,9 +79,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return $this->elements;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDataForResource()
     {
         return $this->elementIds;
@@ -182,9 +174,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return $elements;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function isEmpty(): bool
     {
         $this->setElements();
@@ -266,9 +256,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
      * Methods for Iterator
      */
 
-    /**
-     * @return void
-     */
     #[\ReturnTypeWillChange]
     public function rewind(): void// : void
     {
@@ -287,9 +274,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return current($this->elements);
     }
 
-    /**
-     * @return int|null
-     */
     #[\ReturnTypeWillChange]
     public function key(): ?int// : int|null
     {
@@ -298,9 +282,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return key($this->elements);
     }
 
-    /**
-     * @return void
-     */
     #[\ReturnTypeWillChange]
     public function next(): void// : void
     {
@@ -308,9 +289,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         next($this->elements);
     }
 
-    /**
-     * @return bool
-     */
     #[\ReturnTypeWillChange]
     public function valid(): bool// : bool
     {

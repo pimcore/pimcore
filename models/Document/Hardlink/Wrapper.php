@@ -25,10 +25,7 @@ use Pimcore\Model\Document;
  */
 trait Wrapper
 {
-    /**
-     * @var Document\Hardlink
-     */
-    protected Document\Hardlink $hardLinkSource;
+    protected Document $hardLinkSource;
 
     protected ?Document $sourceDocument = null;
 
@@ -60,9 +57,6 @@ trait Wrapper
         throw $this->getHardlinkError();
     }
 
-    /**
-     * @return array|null
-     */
     public function getProperties(): ?array
     {
         if ($this->properties == null) {
@@ -159,11 +153,6 @@ trait Wrapper
         return $this->children[$cacheKey];
     }
 
-    /**
-     * @param bool $includingUnpublished
-     *
-     * @return bool
-     */
     public function hasChildren(bool $includingUnpublished = false): bool
     {
         $hardLink = $this->getHardLinkSource();
@@ -180,11 +169,6 @@ trait Wrapper
         return new \Exception('Method not supported by hard linked documents');
     }
 
-    /**
-     * @param Document $hardLinkSource
-     *
-     * @return $this
-     */
     public function setHardLinkSource(Document $hardLinkSource): static
     {
         $this->hardLinkSource = $hardLinkSource;
@@ -192,10 +176,7 @@ trait Wrapper
         return $this;
     }
 
-    /**
-     * @return Document\Hardlink
-     */
-    public function getHardLinkSource(): Document\Hardlink
+    public function getHardLinkSource(): Document
     {
         return $this->hardLinkSource;
     }

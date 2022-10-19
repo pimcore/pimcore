@@ -221,11 +221,6 @@ final class Tag extends Model\AbstractModel
         return $this->id;
     }
 
-    /**
-     * @param int|null $id
-     *
-     * @return Tag
-     */
     public function setId(?int $id): static
     {
         $this->id = $id;
@@ -233,19 +228,11 @@ final class Tag extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return Tag
-     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -258,11 +245,6 @@ final class Tag extends Model\AbstractModel
         return $this->parentId;
     }
 
-    /**
-     * @param int $parentId
-     *
-     * @return Tag
-     */
     public function setParentId(int $parentId): static
     {
         $this->parentId = $parentId;
@@ -281,27 +263,16 @@ final class Tag extends Model\AbstractModel
         return $this->parent;
     }
 
-    /**
-     * @return string
-     */
     public function getIdPath(): string
     {
         return $this->idPath;
     }
 
-    /**
-     * @return string
-     */
     public function getFullIdPath(): string
     {
         return $this->getIdPath() . $this->getId() . '/';
     }
 
-    /**
-     * @param bool $includeOwnName
-     *
-     * @return string
-     */
     public function getNamePath(bool $includeOwnName = true): string
     {
         //set id path to correct value
@@ -344,9 +315,6 @@ final class Tag extends Model\AbstractModel
         return $this->children;
     }
 
-    /**
-     * @return bool
-     */
     public function hasChildren(): bool
     {
         return count($this->getChildren()) > 0;
@@ -384,9 +352,6 @@ final class Tag extends Model\AbstractModel
         $this->dispatchEvent(new TagEvent($this), TagEvents::POST_DELETE);
     }
 
-    /**
-     * @return bool
-     */
     public function exists(): bool
     {
         return $this->getDao()->exists();

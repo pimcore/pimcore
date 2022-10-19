@@ -22,9 +22,7 @@ use Pimcore\Model\Element\Service;
 
 class DataObject extends Data
 {
-    /**
-     * {@inheritdoc}
-     */
+
     public function normalize(mixed $value, array $params = [])
     {
         $element = Service::getElementByPath('object', $value);
@@ -35,9 +33,7 @@ class DataObject extends Data
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function denormalize(mixed $value, array $params = [])
     {
         $element = null;
@@ -77,12 +73,6 @@ class DataObject extends Data
         return $value;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
     public function transformGetterData(mixed $data, array $params = []): mixed
     {
         if (is_numeric($data)) {
@@ -92,12 +82,6 @@ class DataObject extends Data
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
     public function transformSetterData(mixed $data, array $params = []): mixed
     {
         if ($data instanceof AbstractObject) {
@@ -107,12 +91,6 @@ class DataObject extends Data
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return int|string|null
-     */
     public function getDataFromEditMode(mixed $data, array $params = []): int|string|null
     {
         $element = Service::getElementByPath('object', $data);
@@ -123,12 +101,6 @@ class DataObject extends Data
         return '';
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
     public function getDataForResource(mixed $data, array $params = []): mixed
     {
         if ($data instanceof ElementInterface) {
@@ -138,9 +110,7 @@ class DataObject extends Data
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDataForEditMode(mixed $data, array $params = [])
     {
         if (is_numeric($data)) {
@@ -153,12 +123,6 @@ class DataObject extends Data
         }
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
     public function getDataForListfolderGrid(mixed $data, array $params = []): mixed
     {
         if (is_numeric($data)) {
@@ -172,12 +136,6 @@ class DataObject extends Data
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return array
-     */
     public function resolveDependencies(mixed $data, array $params = []): array
     {
         if ($data instanceof AbstractObject && isset($params['type'])) {
@@ -196,12 +154,6 @@ class DataObject extends Data
         return [];
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return int|null
-     */
     public function getDataFromListfolderGrid(mixed $data, array $params = []): ?int
     {
         $data = \Pimcore\Model\DataObject::getByPath($data);

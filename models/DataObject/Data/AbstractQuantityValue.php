@@ -27,14 +27,8 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    /**
-     * @var string|null
-     */
     protected string|null $unitId;
 
-    /**
-     * @var Unit|null
-     */
     protected ?Unit $unit;
 
     /**
@@ -58,17 +52,11 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @return string|null
-     */
     public function getUnitId(): string|null
     {
         return $this->unitId;
     }
 
-    /**
-     * @return Unit|null
-     */
     public function getUnit(): ?Unit
     {
         if (empty($this->unit)) {

@@ -31,22 +31,11 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterf
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    /**
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array
-     */
     public function save(DataObject\Concrete $object, array $params = []): array
     {
         return $this->delete($object, true);
     }
 
-    /**
-     * @param DataObject\Concrete $object
-     *
-     * @return array
-     */
     public function load(DataObject\Concrete $object): array
     {
         /** @var DataObject\ClassDefinition\Data\Fieldcollections $fieldDef */

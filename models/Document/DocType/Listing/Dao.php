@@ -25,9 +25,6 @@ use Pimcore\Model;
  */
 class Dao extends Model\Document\DocType\Dao
 {
-    /**
-     * @return array
-     */
     public function loadList(): array
     {
         $docTypes = [];
@@ -46,9 +43,6 @@ class Dao extends Model\Document\DocType\Dao
         return $docTypes;
     }
 
-    /**
-     * @return int
-     */
     public function getTotalCount(): int
     {
         return count($this->loadList());

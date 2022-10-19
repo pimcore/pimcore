@@ -58,8 +58,5 @@ interface EditableInterface
      */
     public function setDataFromResource(mixed $data): static;
 
-    /**
-     * @return bool
-     */
     public function isEmpty(): bool;
 }

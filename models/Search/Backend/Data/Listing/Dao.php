@@ -65,17 +65,11 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
         return $entries;
     }
 
-    /**
-     * @return int
-     */
     public function getTotalCount(): int
     {
         return (int)$this->db->fetchOne('SELECT COUNT(*) FROM search_backend_data' . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
     }
 
-    /**
-     * @return int|string
-     */
     public function getCount(): int|string
     {
         if (count($this->model->getEntries()) > 0) {
@@ -87,9 +81,6 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
         return $amount;
     }
 
-    /**
-     * @return string
-     */
     protected function getCondition(): string
     {
         if ($cond = $this->model->getCondition()) {

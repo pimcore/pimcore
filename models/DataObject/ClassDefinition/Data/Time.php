@@ -60,9 +60,6 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      */
     public int $increment = 15 ;
 
-    /**
-     * @return string|null
-     */
     public function getMinValue(): ?string
     {
         return $this->minValue;
@@ -77,9 +74,6 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
         }
     }
 
-    /**
-     * @return string|null
-     */
     public function getMaxValue(): ?string
     {
         return $this->maxValue;
@@ -132,11 +126,6 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
         return true;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return bool
-     */
     public function isEmpty(mixed $data): bool
     {
         return !is_string($data) || !preg_match('/^(2[0-3]|[01][0-9]):[0-5][0-9]$/', $data);
@@ -206,17 +195,12 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
         return $this->toTimestamp($subject, $baseTs) < $this->toTimestamp($comparison, $baseTs);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
 
-    /**
-     * @return int
-     */
     public function getIncrement(): int
     {
         return $this->increment;

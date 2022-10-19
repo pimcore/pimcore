@@ -29,66 +29,28 @@ use Pimcore\Model;
  */
 final class Predefined extends Model\AbstractModel
 {
-    /**
-     * @var string
-     */
     protected string $id;
 
-    /**
-     * @var string
-     */
     protected string $name;
 
-    /**
-     * @var string
-     */
     protected string $description;
 
-    /**
-     * @var string|null
-     */
     protected ?string $key;
 
-    /**
-     * @var string
-     */
     protected string $type;
 
-    /**
-     * @var string
-     */
     protected string $data;
 
-    /**
-     * @var string
-     */
     protected string $config;
 
-    /**
-     * @var string
-     */
     protected string $ctype;
 
-    /**
-     * @var bool
-     */
     protected bool $inheritable = false;
 
-    /**
-     * @var int|null
-     */
     protected ?int $creationDate;
 
-    /**
-     * @var int|null
-     */
     protected ?int $modificationDate;
 
-    /**
-     * @param string $id
-     *
-     * @return self|null
-     */
     public static function getById(string $id): ?Predefined
     {
         try {
@@ -101,11 +63,6 @@ final class Predefined extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param string $key
-     *
-     * @return self|null
-     */
     public static function getByKey(string $key): ?Predefined
     {
         $cacheKey = 'property_predefined_' . $key;
@@ -128,9 +85,6 @@ final class Predefined extends Model\AbstractModel
         return $property;
     }
 
-    /**
-     * @return self
-     */
     public static function create(): Predefined
     {
         $type = new self();
@@ -139,43 +93,26 @@ final class Predefined extends Model\AbstractModel
         return $type;
     }
 
-    /**
-     * @return string|null
-     */
     public function getKey(): ?string
     {
         return $this->key;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return string
-     */
     public function getData(): string
     {
         return $this->data;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return $this
-     */
     public function setKey(string $key): static
     {
         $this->key = $key;
@@ -183,11 +120,6 @@ final class Predefined extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -195,11 +127,6 @@ final class Predefined extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return $this
-     */
     public function setType(string $type): static
     {
         $this->type = $type;
@@ -207,11 +134,6 @@ final class Predefined extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param string $data
-     *
-     * @return $this
-     */
     public function setData(string $data): static
     {
         $this->data = $data;
@@ -219,19 +141,11 @@ final class Predefined extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @param string $id
-     *
-     * @return $this
-     */
     public function setId(string $id): static
     {
         $this->id = $id;
@@ -239,19 +153,11 @@ final class Predefined extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getConfig(): string
     {
         return $this->config;
     }
 
-    /**
-     * @param string $config
-     *
-     * @return $this
-     */
     public function setConfig(string $config): static
     {
         $this->config = $config;
@@ -259,19 +165,11 @@ final class Predefined extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getCtype(): string
     {
         return $this->ctype;
     }
 
-    /**
-     * @param string $ctype
-     *
-     * @return $this
-     */
     public function setCtype(string $ctype): static
     {
         $this->ctype = $ctype;
@@ -279,19 +177,11 @@ final class Predefined extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getInheritable(): bool
     {
         return $this->inheritable;
     }
 
-    /**
-     * @param bool $inheritable
-     *
-     * @return $this
-     */
     public function setInheritable(bool $inheritable): static
     {
         $this->inheritable = (bool) $inheritable;
@@ -299,11 +189,6 @@ final class Predefined extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param string $description
-     *
-     * @return $this
-     */
     public function setDescription(string $description): static
     {
         $this->description = $description;
@@ -311,19 +196,11 @@ final class Predefined extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @param int $creationDate
-     *
-     * @return $this
-     */
     public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = (int) $creationDate;
@@ -331,19 +208,11 @@ final class Predefined extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }
 
-    /**
-     * @param int $modificationDate
-     *
-     * @return $this
-     */
     public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = (int) $modificationDate;
@@ -351,9 +220,6 @@ final class Predefined extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getModificationDate(): ?int
     {
         return $this->modificationDate;

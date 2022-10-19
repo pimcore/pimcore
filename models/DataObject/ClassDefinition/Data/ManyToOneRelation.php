@@ -118,19 +118,11 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      */
     public array $documentTypes = [];
 
-    /**
-     * @return bool
-     */
     public function getObjectsAllowed(): bool
     {
         return $this->objectsAllowed;
     }
 
-    /**
-     * @param bool $objectsAllowed
-     *
-     * @return $this
-     */
     public function setObjectsAllowed(bool $objectsAllowed): static
     {
         $this->objectsAllowed = $objectsAllowed;
@@ -138,19 +130,11 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getDocumentsAllowed(): bool
     {
         return $this->documentsAllowed;
     }
 
-    /**
-     * @param bool $documentsAllowed
-     *
-     * @return $this
-     */
     public function setDocumentsAllowed(bool $documentsAllowed): static
     {
         $this->documentsAllowed = $documentsAllowed;
@@ -158,19 +142,11 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getDocumentTypes(): array
     {
         return $this->documentTypes ?: [];
     }
 
-    /**
-     * @param array $documentTypes
-     *
-     * @return $this
-     */
     public function setDocumentTypes(array $documentTypes): static
     {
         $this->documentTypes = Element\Service::fixAllowedTypes($documentTypes, 'documentTypes');
@@ -178,21 +154,11 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $this;
     }
 
-    /**
-     *
-     * @return bool
-     */
     public function getAssetsAllowed(): bool
     {
         return $this->assetsAllowed;
     }
 
-    /**
-     *
-     * @param bool $assetsAllowed
-     *
-     * @return $this
-     */
     public function setAssetsAllowed(bool $assetsAllowed): static
     {
         $this->assetsAllowed = $assetsAllowed;
@@ -200,19 +166,11 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getAssetTypes(): array
     {
         return $this->assetTypes ?: [];
     }
 
-    /**
-     * @param array $assetTypes
-     *
-     * @return $this
-     */
     public function setAssetTypes(array $assetTypes): static
     {
         $this->assetTypes = Element\Service::fixAllowedTypes($assetTypes, 'assetTypes');
@@ -370,19 +328,11 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return '';
     }
 
-    /**
-     * @return string|int
-     */
     public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @param int|string $width
-     *
-     * @return $this
-     */
     public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
@@ -423,7 +373,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, array $params = []): string
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Element\ElementInterface) {
@@ -433,11 +383,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return '';
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return array
-     */
     public function resolveDependencies(mixed $data): array
     {
         $dependencies = [];
@@ -453,12 +398,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $dependencies;
     }
 
-    /**
-     * @param mixed $container
-     * @param array $params
-     *
-     * @return null|Element\ElementInterface
-     */
     public function preGetData(/** mixed */ mixed $container, /** array */ array $params = []): ?Element\ElementInterface // : mixed
     {
         $data = null;
@@ -515,11 +454,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $this->assetInlineDownloadAllowed;
     }
 
-    /**
-     * @param string $assetUploadPath
-     *
-     * @return $this
-     */
     public function setAssetUploadPath(string $assetUploadPath): static
     {
         $this->assetUploadPath = $assetUploadPath;
@@ -527,9 +461,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getAssetUploadPath(): string
     {
         return $this->assetUploadPath;

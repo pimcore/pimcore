@@ -223,11 +223,6 @@ final class Config extends Model\AbstractModel
         return true;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
     public function selectMedia(string $name): bool
     {
         if (preg_match('/^[0-9a-f]{8}$/', $name)) {
@@ -258,11 +253,6 @@ final class Config extends Model\AbstractModel
         $this->medias = [];
     }
 
-    /**
-     * @param string $description
-     *
-     * @return $this
-     */
     public function setDescription(string $description): static
     {
         $this->description = $description;
@@ -270,19 +260,11 @@ final class Config extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @param array $items
-     *
-     * @return $this
-     */
     public function setItems(array $items): static
     {
         $this->items = $items;
@@ -290,9 +272,6 @@ final class Config extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getItems(): array
     {
         return $this->items;
@@ -303,17 +282,11 @@ final class Config extends Model\AbstractModel
         $this->medias = $medias;
     }
 
-    /**
-     * @return array
-     */
     public function getMedias(): array
     {
         return $this->medias;
     }
 
-    /**
-     * @return bool
-     */
     public function hasMedias(): bool
     {
         return !empty($this->medias);
@@ -324,19 +297,11 @@ final class Config extends Model\AbstractModel
         $this->filenameSuffix = $filenameSuffix;
     }
 
-    /**
-     * @return string|null
-     */
     public function getFilenameSuffix(): ?string
     {
         return $this->filenameSuffix;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -344,19 +309,11 @@ final class Config extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param int $audioBitrate
-     *
-     * @return $this
-     */
     public function setAudioBitrate(int $audioBitrate): static
     {
         $this->audioBitrate = (int) $audioBitrate;
@@ -364,19 +321,11 @@ final class Config extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getAudioBitrate(): ?int
     {
         return $this->audioBitrate;
     }
 
-    /**
-     * @param int $videoBitrate
-     *
-     * @return $this
-     */
     public function setVideoBitrate(int $videoBitrate): static
     {
         $this->videoBitrate = (int) $videoBitrate;
@@ -415,9 +364,6 @@ final class Config extends Model\AbstractModel
         return $dimensions;
     }
 
-    /**
-     * @return int|null
-     */
     public function getModificationDate(): ?int
     {
         return $this->modificationDate;
@@ -428,9 +374,6 @@ final class Config extends Model\AbstractModel
         $this->modificationDate = $modificationDate;
     }
 
-    /**
-     * @return int|null
-     */
     public function getCreationDate(): ?int
     {
         return $this->creationDate;

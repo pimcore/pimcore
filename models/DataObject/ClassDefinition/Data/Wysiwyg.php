@@ -90,27 +90,16 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public string|int $maxCharacters = 0;
 
-    /**
-     * @return string|int
-     */
     public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @return string|int
-     */
     public function getHeight(): int|string
     {
         return $this->height;
     }
 
-    /**
-     * @param int|string $width
-     *
-     * @return $this
-     */
     public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
@@ -121,11 +110,6 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this;
     }
 
-    /**
-     * @param int|string $height
-     *
-     * @return $this
-     */
     public function setHeight(int|string $height): static
     {
         if (is_numeric($height)) {
@@ -151,11 +135,6 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this->excludeFromSearchIndex;
     }
 
-    /**
-     * @param bool $excludeFromSearchIndex
-     *
-     * @return $this
-     */
     public function setExcludeFromSearchIndex(bool $excludeFromSearchIndex): static
     {
         $this->excludeFromSearchIndex = $excludeFromSearchIndex;
@@ -163,9 +142,6 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this;
     }
 
-    /**
-     * @return string|int
-     */
     public function getMaxCharacters(): int|string
     {
         return $this->maxCharacters;
@@ -192,14 +168,14 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     /**
      * @param mixed $data
-     * @param null|DataObject\Concrete $object
+     * @param Concrete|null $object
      * @param array $params
      *
      * @return string|null
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataFromResource(mixed $data, Concrete $object = null, array $params = []): ?string
     {
         return Text::wysiwygText($data);
     }
@@ -229,9 +205,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         if ($this->isExcludeFromSearchIndex()) {
@@ -269,19 +243,12 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return array
-     */
     public function resolveDependencies(mixed $data): array
     {
         return Text::getDependenciesOfWysiwygText($data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getCacheTags(mixed $data, $tags = []): array
     {
         return Text::getCacheTagsOfWysiwygText($data, $tags);
@@ -306,12 +273,6 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         }
     }
 
-    /**
-     * @param mixed $container
-     * @param array $params
-     *
-     * @return string
-     */
     public function preGetData(/** mixed */ mixed $container, /** array */ array $params = []): string // : mixed
     {
         $data = '';

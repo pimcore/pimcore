@@ -236,9 +236,6 @@ class Video extends Model\Asset
         return $duration;
     }
 
-    /**
-     * @return array|null
-     */
     public function getDimensions(): ?array
     {
         $dimensions = null;
@@ -264,9 +261,6 @@ class Video extends Model\Asset
         return $dimensions;
     }
 
-    /**
-     * @return int|null
-     */
     public function getWidth(): ?int
     {
         $dimensions = $this->getDimensions();
@@ -277,9 +271,6 @@ class Video extends Model\Asset
         return null;
     }
 
-    /**
-     * @return int|null
-     */
     public function getHeight(): ?int
     {
         $dimensions = $this->getDimensions();

@@ -50,19 +50,11 @@ class Button extends Model\DataObject\ClassDefinition\Layout
      */
     public string $icon;
 
-    /**
-     * @return string
-     */
     public function getText(): string
     {
         return $this->text;
     }
 
-    /**
-     * @param string $text
-     *
-     * @return $this
-     */
     public function setText(string $text): static
     {
         $this->text = $text;
@@ -70,19 +62,11 @@ class Button extends Model\DataObject\ClassDefinition\Layout
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getHandler(): string
     {
         return $this->handler;
     }
 
-    /**
-     * @param string $handler
-     *
-     * @return $this
-     */
     public function setHandler(string $handler): static
     {
         $this->handler = $handler;
@@ -90,19 +74,11 @@ class Button extends Model\DataObject\ClassDefinition\Layout
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getIcon(): string
     {
         return $this->icon;
     }
 
-    /**
-     * @param string $icon
-     *
-     * @return $this
-     */
     public function setIcon(string $icon): static
     {
         $this->icon = $icon;

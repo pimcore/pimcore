@@ -218,9 +218,6 @@ EOT;
         return false;
     }
 
-    /**
-     * @return string
-     */
     public function getLowQualityPreviewPath(): string
     {
         $storagePath = $this->getLowQualityPreviewStoragePath();
@@ -318,9 +315,6 @@ EOT;
         return $image;
     }
 
-    /**
-     * @return string
-     */
     public function getFormat(): string
     {
         if ($this->getWidth() > $this->getHeight()) {
@@ -420,9 +414,6 @@ EOT;
         return $dimensions;
     }
 
-    /**
-     * @return int
-     */
     public function getWidth(): int
     {
         $dimensions = $this->getDimensions();
@@ -434,9 +425,6 @@ EOT;
         return 0;
     }
 
-    /**
-     * @return int
-     */
     public function getHeight(): int
     {
         $dimensions = $this->getDimensions();
@@ -448,9 +436,7 @@ EOT;
         return 0;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function setCustomSetting(string $key, mixed $value): Model\Asset|Image
     {
         if (in_array($key, ['focalPointX', 'focalPointY'])) {
@@ -463,9 +449,6 @@ EOT;
         return parent::setCustomSetting($key, $value);
     }
 
-    /**
-     * @return bool
-     */
     public function isVectorGraphic(): bool
     {
         // we use a simple file-extension check, for performance reasons

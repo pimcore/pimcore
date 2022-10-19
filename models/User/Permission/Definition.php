@@ -25,14 +25,8 @@ use Pimcore\Model;
  */
 class Definition extends Model\AbstractModel
 {
-    /**
-     * @var string|null
-     */
     protected ?string $key;
 
-    /**
-     * @var string|null
-     */
     protected ?string $category;
 
     public function __construct(array $data = [])
@@ -42,19 +36,11 @@ class Definition extends Model\AbstractModel
         }
     }
 
-    /**
-     * @return string|null
-     */
     public function getKey(): ?string
     {
         return $this->key;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return $this
-     */
     public function setKey(string $key): static
     {
         $this->key = $key;

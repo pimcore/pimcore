@@ -20,14 +20,8 @@ use Pimcore\Model\Tool\CustomReport\Config;
 
 abstract class AbstractAdapter implements CustomReportAdapterInterface
 {
-    /**
-     * @var \stdClass
-     */
     protected \stdClass $config;
 
-    /**
-     * @var Config|null
-     */
     protected ?Config $fullConfig;
 
     /**

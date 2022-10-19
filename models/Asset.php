@@ -170,10 +170,6 @@ class Asset extends Element\AbstractElement
         return $blockedVars;
     }
 
-    /**
-     *
-     * @return array
-     */
     public static function getTypes(): array
     {
         return self::$types;
@@ -224,11 +220,6 @@ class Asset extends Element\AbstractElement
         return true;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return Asset|static|null
-     */
     public static function getById(int $id): Asset|static|null
     {
         if (!is_numeric($id) || $id < 1) {
@@ -285,13 +276,6 @@ class Asset extends Element\AbstractElement
         return $asset;
     }
 
-    /**
-     * @param int $parentId
-     * @param array $data
-     * @param bool $save
-     *
-     * @return Asset
-     */
     public static function create(int $parentId, array $data = [], bool $save = true): Asset
     {
         // create already the real class for the asset type, this is especially for images, because a system-thumbnail
@@ -850,9 +834,7 @@ class Asset extends Element\AbstractElement
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getFullPath(): string
     {
         $path = $this->getPath() . $this->getFilename();
@@ -888,17 +870,13 @@ class Asset extends Element\AbstractElement
         return $event->getArgument('frontendPath');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getRealPath(): ?string
     {
         return $this->path;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getRealFullPath(): string
     {
         $path = $this->getRealPath() . $this->getFilename();
@@ -906,9 +884,6 @@ class Asset extends Element\AbstractElement
         return $path;
     }
 
-    /**
-     * @return array
-     */
     public function getSiblings(): array
     {
         if ($this->siblings === null) {
@@ -929,9 +904,6 @@ class Asset extends Element\AbstractElement
         return $this->siblings;
     }
 
-    /**
-     * @return bool|null
-     */
     public function hasSiblings(): ?bool
     {
         if (is_bool($this->hasSiblings)) {
@@ -945,9 +917,6 @@ class Asset extends Element\AbstractElement
         return $this->getDao()->hasSiblings();
     }
 
-    /**
-     * @return bool
-     */
     public function hasChildren(): bool
     {
         return false;
@@ -1066,35 +1035,23 @@ class Asset extends Element\AbstractElement
         }
     }
 
-    /**
-     * @return string|null
-     */
     public function getFilename(): ?string
     {
         return $this->filename;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getKey(): ?string
     {
         return $this->getFilename();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $filename
-     *
-     * @return $this
-     */
     public function setFilename(string $filename): static
     {
         $this->filename = (string)$filename;
@@ -1102,19 +1059,12 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function setKey(string $key): Asset|ElementInterface|static
     {
         return $this->setFilename($key);
     }
 
-    /**
-     * @param string $type
-     *
-     * @return $this
-     */
     public function setType(string $type): static
     {
         $this->type = (string)$type;
@@ -1135,11 +1085,6 @@ class Asset extends Element\AbstractElement
         return '';
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return $this
-     */
     public function setData(mixed $data): static
     {
         $handle = tmpfile();
@@ -1211,19 +1156,11 @@ class Asset extends Element\AbstractElement
         }
     }
 
-    /**
-     * @return bool
-     */
     public function getDataChanged(): bool
     {
         return $this->dataChanged;
     }
 
-    /**
-     * @param bool $changed
-     *
-     * @return $this
-     */
     public function setDataChanged(bool $changed = true): static
     {
         $this->dataChanged = $changed;
@@ -1281,12 +1218,6 @@ class Asset extends Element\AbstractElement
         return self::getLocalFileFromStream($this->getStream());
     }
 
-    /**
-     * @param string $key
-     * @param mixed $value
-     *
-     * @return $this
-     */
     public function setCustomSetting(string $key, mixed $value): static
     {
         $this->customSettings[$key] = $value;
@@ -1294,11 +1225,6 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return mixed
-     */
     public function getCustomSetting(string $key): mixed
     {
         if (is_array($this->customSettings) && array_key_exists($key, $this->customSettings)) {
@@ -1315,19 +1241,11 @@ class Asset extends Element\AbstractElement
         }
     }
 
-    /**
-     * @return array
-     */
     public function getCustomSettings(): array
     {
         return $this->customSettings;
     }
 
-    /**
-     * @param mixed $customSettings
-     *
-     * @return $this
-     */
     public function setCustomSettings(mixed $customSettings): static
     {
         if (is_string($customSettings)) {
@@ -1347,19 +1265,11 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getMimeType(): ?string
     {
         return $this->mimetype;
     }
 
-    /**
-     * @param string $mimetype
-     *
-     * @return $this
-     */
     public function setMimeType(string $mimetype): static
     {
         $this->mimetype = (string)$mimetype;
@@ -1404,19 +1314,11 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getHasMetaData(): bool
     {
         return $this->hasMetaData;
     }
 
-    /**
-     * @param bool $hasMetaData
-     *
-     * @return $this
-     */
     public function setHasMetaData(bool $hasMetaData): static
     {
         $this->hasMetaData = (bool)$hasMetaData;
@@ -1473,12 +1375,6 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @param string $name
-     * @param string|null $language
-     *
-     * @return $this
-     */
     public function removeMetadata(string $name, ?string $language = null): static
     {
         if ($name) {
@@ -1593,12 +1489,6 @@ class Asset extends Element\AbstractElement
         return null;
     }
 
-    /**
-     * @param bool $formatted
-     * @param int $precision
-     *
-     * @return string|int
-     */
     public function getFileSize(bool $formatted = false, int $precision = 2): int|string
     {
         try {
@@ -1614,9 +1504,6 @@ class Asset extends Element\AbstractElement
         return $bytes;
     }
 
-    /**
-     * @return Asset|null
-     */
     public function getParent(): ?Asset
         /** : ?Asset */
     {
@@ -1625,11 +1512,6 @@ class Asset extends Element\AbstractElement
         return $parent instanceof Asset ? $parent : null;
     }
 
-    /**
-     * @param ElementInterface|null $parent
-     *
-     * @return $this
-     */
     public function setParent(?ElementInterface $parent): static
     {
         $this->parent = $parent;

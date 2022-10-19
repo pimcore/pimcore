@@ -69,78 +69,36 @@ abstract class Data implements DataDefinitionInterface, NormalizerInterface
         return get_class($this);
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
     public function transformGetterData(mixed $data, array $params = []): mixed
     {
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
     public function transformSetterData(mixed $data, array $params = []): mixed
     {
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
     public function getDataFromEditMode(mixed $data, array $params = []): mixed
     {
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
     public function getDataForResource(mixed $data, array $params = []): mixed
     {
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
     public function getDataFromResource(mixed $data, array $params = []): mixed
     {
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
     public function getDataForEditMode(mixed $data, array $params = []): mixed
     {
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return bool
-     */
     public function isEmpty(mixed $data, array $params = []): bool
     {
         return empty($data);
@@ -150,56 +108,26 @@ abstract class Data implements DataDefinitionInterface, NormalizerInterface
     {
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
     public function getDataForListfolderGrid(mixed $data, array $params = []): mixed
     {
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return mixed
-     */
     public function getDataFromListfolderGrid(mixed $data, array $params = []): mixed
     {
         return $data;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return array
-     */
     public function resolveDependencies(mixed $data, array $params = []): array
     {
         return [];
     }
 
-    /**
-     * @param mixed $value
-     * @param array $params
-     *
-     * @return string
-     */
     public function getVersionPreview(mixed $value, array $params = []): string
     {
         return (string)$value;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $params
-     *
-     * @return string|null
-     */
     public function getDataForSearchIndex(mixed $data, array $params = []): ?string
     {
         if (is_scalar($data)) {

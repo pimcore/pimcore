@@ -63,10 +63,8 @@ class Area extends Model\Document\Editable
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForResource()
+
+    public function getDataForResource(): array
     {
         return [
             'type' => $this->type,
@@ -237,9 +235,7 @@ class Area extends Model\Document\Editable
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function isEmpty(): bool
     {
         return false;

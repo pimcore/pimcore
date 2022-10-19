@@ -25,14 +25,8 @@ use Pimcore\Model\Element\Service;
  */
 class MarshalMatcher extends TypeMatcher
 {
-    /**
-     * @var string|null
-     */
     private ?string $sourceType;
 
-    /**
-     * @var int|null
-     */
     private ?int $sourceId;
 
     /**

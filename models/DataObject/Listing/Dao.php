@@ -30,9 +30,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
 {
     use QueryBuilderHelperTrait;
 
-    /**
-     * @return string
-     */
     public function getTableName(): string
     {
         return 'objects';
@@ -80,9 +77,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $objects;
     }
 
-    /**
-     * @return int
-     */
     public function getTotalCount(): int
     {
         $queryBuilder = $this->getQueryBuilder();
@@ -93,9 +87,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return (int) $totalCount;
     }
 
-    /**
-     * @return int
-     */
     public function getCount(): int
     {
         if ($this->model->isLoaded()) {
@@ -120,11 +111,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return array_map('intval', $objectIds);
     }
 
-    /**
-     * @param DoctrineQueryBuilder $queryBuilder
-     *
-     * @return $this
-     */
     protected function applyJoins(DoctrineQueryBuilder $queryBuilder): static
     {
         return $this;

@@ -61,19 +61,11 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
         $this->markFieldDirty('_self', true);
     }
 
-    /**
-     * @return TItem[]
-     */
     public function getItems(): array
     {
         return $this->items;
     }
 
-    /**
-     * @param TItem[] $items
-     *
-     * @return $this
-     */
     public function setItems(array $items): static
     {
         $this->items = $items;
@@ -82,19 +74,11 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getFieldname(): string
     {
         return $this->fieldname;
     }
 
-    /**
-     * @param string $fieldname
-     *
-     * @return $this
-     */
     public function setFieldname(string $fieldname): static
     {
         $this->fieldname = $fieldname;
@@ -152,9 +136,6 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
         }
     }
 
-    /**
-     * @return bool
-     */
     public function isEmpty(): bool
     {
         return count($this->getItems()) < 1;
@@ -176,11 +157,6 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
         }
     }
 
-    /**
-     * @param int $index
-     *
-     * @return Fieldcollection\Data\AbstractData|null
-     */
     public function get(int $index): ?Fieldcollection\Data\AbstractData
     {
         return $this->items[$index] ?? null;
@@ -203,9 +179,6 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
         return null;
     }
 
-    /**
-     * @return int
-     */
     public function getCount(): int
     {
         return count($this->getItems());
@@ -215,9 +188,6 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      * Methods for Iterator
      */
 
-    /**
-     * @return void
-     */
     #[\ReturnTypeWillChange]
     public function rewind(): void// : void
     {
@@ -233,27 +203,18 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
         return current($this->items);
     }
 
-    /**
-     * @return int|null
-     */
     #[\ReturnTypeWillChange]
     public function key(): ?int// : int|null
     {
         return key($this->items);
     }
 
-    /**
-     * @return void
-     */
     #[\ReturnTypeWillChange]
     public function next(): void// : void
     {
         next($this->items);
     }
 
-    /**
-     * @return bool
-     */
     #[\ReturnTypeWillChange]
     public function valid(): bool// : bool
     {
@@ -312,11 +273,6 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
         return null;
     }
 
-    /**
-     * @param Concrete|null $object
-     *
-     * @return $this
-     */
     public function setObject(?Concrete $object): static
     {
         // update all items with the new $object

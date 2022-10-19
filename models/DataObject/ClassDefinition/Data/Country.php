@@ -55,19 +55,11 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
         return true;
     }
 
-    /**
-     * @return string|int
-     */
     public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @param int|string $width
-     *
-     * @return $this
-     */
     public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
@@ -90,9 +82,6 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
         $this->restrictTo = $restrictTo;
     }
 
-    /**
-     * @return string|null
-     */
     public function getRestrictTo(): ?string
     {
         return $this->restrictTo;
@@ -106,9 +95,6 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
         return true;
     }
 
-    /**
-     * @return string
-     */
     public function getOptionsProviderClass(): string
     {
         return '@' . CountryOptionsProvider::class;

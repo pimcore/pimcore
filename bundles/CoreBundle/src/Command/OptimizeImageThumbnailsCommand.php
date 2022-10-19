@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,9 +28,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class OptimizeImageThumbnailsCommand extends AbstractCommand
 {
-    /**
-     * @param ImageOptimizerInterface $optimizer
-     */
     public function __construct(private ImageOptimizerInterface $optimizer)
     {
         parent::__construct();

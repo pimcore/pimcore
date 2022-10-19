@@ -30,36 +30,16 @@ class TargetGroup extends Model\AbstractModel
 {
     use RecursionBlockingEventDispatchHelperTrait;
 
-    /**
-     * @var int
-     */
     protected int $id;
 
-    /**
-     * @var string
-     */
     protected string $name;
 
-    /**
-     * @var string
-     */
     protected string $description = '';
 
-    /**
-     * @var int
-     */
     protected int $threshold = 1;
 
-    /**
-     * @var bool
-     */
     protected bool $active = true;
 
-    /**
-     * @param int $id
-     *
-     * @return null|TargetGroup
-     */
     public static function getById(int $id): ?TargetGroup
     {
         try {
@@ -72,11 +52,6 @@ class TargetGroup extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param string $name
-     *
-     * @return TargetGroup|null
-     */
     public static function getByName(string $name): ?TargetGroup
     {
         try {
@@ -89,11 +64,6 @@ class TargetGroup extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param int $id
-     *
-     * @return bool
-     */
     public static function isIdActive(int $id): bool
     {
         $targetGroup = Model\Tool\Targeting\TargetGroup::getById($id);
@@ -105,11 +75,6 @@ class TargetGroup extends Model\AbstractModel
         return false;
     }
 
-    /**
-     * @param string $description
-     *
-     * @return $this
-     */
     public function setDescription(string $description): static
     {
         $this->description = $description;
@@ -117,19 +82,11 @@ class TargetGroup extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
     public function setId(int $id): static
     {
         $this->id = (int)$id;
@@ -137,19 +94,11 @@ class TargetGroup extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -157,9 +106,6 @@ class TargetGroup extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
@@ -170,9 +116,6 @@ class TargetGroup extends Model\AbstractModel
         $this->threshold = $threshold;
     }
 
-    /**
-     * @return int
-     */
     public function getThreshold(): int
     {
         return $this->threshold;
@@ -183,26 +126,17 @@ class TargetGroup extends Model\AbstractModel
         $this->active = (bool)$active;
     }
 
-    /**
-     * @return bool
-     */
     public function getActive(): bool
     {
         return $this->active;
     }
 
-    /**
-     * @return void
-     */
     public function delete(): void
     {
         $this->getDao()->delete();
         $this->dispatchEvent(new TargetGroupEvent($this), TargetGroupEvents::POST_DELETE);
     }
 
-    /**
-     * @return void
-     */
     public function save(): void
     {
         $isUpdate = false;

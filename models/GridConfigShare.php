@@ -25,22 +25,10 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 class GridConfigShare extends AbstractModel
 {
-    /**
-     * @var int
-     */
     protected int $gridConfigId;
 
-    /**
-     * @var int
-     */
     protected int $sharedWithUserId;
 
-    /**
-     * @param int $gridConfigId
-     * @param int $sharedWithUserId
-     *
-     * @return GridConfigShare|null
-     */
     public static function getByGridConfigAndSharedWithId(int $gridConfigId, int $sharedWithUserId): ?GridConfigShare
     {
         try {

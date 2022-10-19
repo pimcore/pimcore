@@ -20,9 +20,6 @@ use Pimcore\Model\Tool\CustomReport\Config;
 
 class DefaultCustomReportAdapterFactory implements CustomReportAdapterFactoryInterface
 {
-    /**
-     * @var string
-     */
     private string $className;
 
     public function __construct(string $className)
