@@ -55,13 +55,13 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     public function save()
     {
         try {
-            $oldFullPath = $this->db->fetchOne('SELECT fullpath WHERE id = :id and type = :type FOR UPDATE', [
+            $oldFullPath = $this->db->fetchOne('SELECT fullpath FROM search_backend_data WHERE id = :id and maintype = :type FOR UPDATE', [
                 'id' => $this->model->getId()->getId(),
                 'type' => $this->model->getId()->getType(),
             ]);
 
             if($oldFullPath && $oldFullPath !== $this->model->getFullPath()) {
-                $this->db->executeQuery('UPDATE properties SET fullpath = replace(fullpath,' . $this->db->quote($oldFullPath . '/') . ',' . $this->db->quote($this->model->getFullPath() . '/') . ') where fullpath like ' . $this->db->quote(Helper::escapeLike($oldFullPath) . '/%') . ';');
+                $this->db->executeQuery('UPDATE search_backend_data SET fullpath = replace(fullpath,' . $this->db->quote($oldFullPath . '/') . ',' . $this->db->quote($this->model->getFullPath() . '/') . ') where fullpath like ' . $this->db->quote(Helper::escapeLike($oldFullPath) . '/%') . ';');
             }
 
             $data = [
