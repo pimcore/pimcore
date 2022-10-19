@@ -503,7 +503,7 @@
                                     "FilterSelect"
                                 ],
                                 "lazyLoading": false,
-                                "maxItems": "",
+                                "maxItems": null,
                                 "disallowAddRemove": false,
                                 "disallowReorder": false,
                                 "collapsed": false,
@@ -770,7 +770,7 @@
                                             "SimilarityField"
                                         ],
                                         "lazyLoading": true,
-                                        "maxItems": "",
+                                        "maxItems": null,
                                         "disallowAddRemove": false,
                                         "disallowReorder": false,
                                         "collapsed": false,

@@ -201,7 +201,7 @@
                         "fieldtype": "manyToManyObjectRelation",
                         "width": "",
                         "height": "",
-                        "maxItems": "",
+                        "maxItems": null,
                         "queryColumnType": "text",
                         "relationType": true,
                         "visibleFields": null,

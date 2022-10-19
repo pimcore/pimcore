@@ -102,7 +102,7 @@
                             "TaxEntry"
                         ],
                         "lazyLoading": false,
-                        "maxItems": "",
+                        "maxItems": null,
                         "disallowAddRemove": false,
                         "disallowReorder": false,
                         "collapsed": false,

@@ -146,7 +146,7 @@
             "fieldtype": "manyToManyRelation",
             "width": "",
             "height": "",
-            "maxItems": "",
+            "maxItems": null,
             "assetUploadPath": "",
             "queryColumnType": "text",
             "relationType": true,
