@@ -59,7 +59,7 @@ The `availability_systems` configuration maps names to service IDs:
 pimcore_ecommerce_framework:
     # defines 3 availability systems
     availability_systems:
-        # the attribute price system is already defined in core price_systems.yaml service definition
+        # the availability system is already defined in core availability_systems.yaml service definition
         default:
             id: Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystem
        

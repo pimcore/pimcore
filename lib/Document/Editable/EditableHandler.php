@@ -83,7 +83,7 @@ class EditableHandler implements LoggerAwareInterface
     protected $responseStack;
 
     /**
-     * @var array
+     * @var array<string, string>
      */
     protected $brickTemplateCache = [];
 
@@ -324,7 +324,7 @@ class EditableHandler implements LoggerAwareInterface
      * @param AreabrickInterface $brick
      * @param string $type
      *
-     * @return mixed|null|string
+     * @return null|string
      */
     protected function resolveBrickTemplate(AreabrickInterface $brick, $type)
     {
