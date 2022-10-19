@@ -18,6 +18,7 @@ namespace Pimcore\Model\Element;
 class DuplicateFullPathException extends \Exception
 {
     private ?ElementInterface $causeElement = null;
+
     private ?ElementInterface $duplicateElement = null;
 
     public function setDuplicateElement(?ElementInterface $duplicateElement): void
