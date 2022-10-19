@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests\Util;
+namespace Pimcore\Tests\Support\Util;
 
 use Codeception\Util\Autoload;
 

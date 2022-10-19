@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests\Helper;
+namespace Pimcore\Tests\Support\Helper;
 
 use Codeception\Module;
 use Pimcore\Model\DataObject\ClassDefinition;

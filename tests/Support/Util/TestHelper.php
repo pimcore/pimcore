@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests\Util;
+namespace Pimcore\Tests\Support\Util;
 
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Asset;
@@ -26,7 +26,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Tag;
 use Pimcore\Model\Property;
-use Pimcore\Tests\Helper\DataType\TestDataHelper;
+use Pimcore\Tests\Support\Helper\DataType\TestDataHelper;
 use Pimcore\Tool;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;

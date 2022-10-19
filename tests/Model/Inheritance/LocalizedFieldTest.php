@@ -19,7 +19,7 @@ use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Inheritance;
 use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool;
 
 class LocalizedFieldTest extends ModelTestCase

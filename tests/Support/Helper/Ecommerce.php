@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests\Helper;
+namespace Pimcore\Tests\Support\Helper;
 
 use Codeception\Lib\ModuleContainer;
 use Codeception\Module;
@@ -27,7 +27,7 @@ use Pimcore\Model\DataObject\OnlineShopOrder;
 use Pimcore\Model\DataObject\OnlineShopOrderItem;
 use Pimcore\Model\DataObject\OnlineShopTaxClass;
 use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
-use Pimcore\Tests\Util\Autoloader;
+use Pimcore\Tests\Support\Util\Autoloader;
 
 class Ecommerce extends Module
 {

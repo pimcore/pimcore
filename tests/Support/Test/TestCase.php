@@ -16,7 +16,7 @@
 namespace Pimcore\Tests\Test;
 
 use Codeception\Test\Unit;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 abstract class TestCase extends Unit
 {
