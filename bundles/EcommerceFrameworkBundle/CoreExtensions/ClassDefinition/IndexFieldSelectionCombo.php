@@ -46,7 +46,7 @@ class IndexFieldSelectionCombo extends Select
     {
         $options = [];
 
-        if (!headers_sent && \Pimcore::getContainer()->has(PimcoreEcommerceFrameworkExtension::SERVICE_ID_FACTORY)) {
+        if (!headers_sent() && \Pimcore::getContainer()->has(PimcoreEcommerceFrameworkExtension::SERVICE_ID_FACTORY)) {
             try {
                 $indexService = Factory::getInstance()->getIndexService();
                 $indexColumns = $indexService->getIndexAttributes(true);
