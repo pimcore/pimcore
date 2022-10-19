@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,12 +30,12 @@ class Table extends Model\Document\Editable
      *
      * @var array
      */
-    protected $data;
+    protected array $data;
 
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return 'table';
     }
@@ -75,7 +76,7 @@ class Table extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): Table|EditableInterface|static
     {
         $this->data = \Pimcore\Tool\Serialize::unserialize($data);
 
@@ -85,7 +86,7 @@ class Table extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): Table|EditableInterface|static
     {
         $this->data = $data;
 
@@ -95,7 +96,7 @@ class Table extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return empty($this->data);
     }

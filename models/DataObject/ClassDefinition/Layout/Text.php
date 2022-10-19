@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,40 +28,40 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
      *
      * @var string
      */
-    public $fieldtype = 'text';
+    public string $fieldtype = 'text';
 
     /**
      * @internal
      *
      * @var string
      */
-    public $html = '';
+    public string $html = '';
 
     /**
      * @internal
      *
      * @var string
      */
-    public $renderingClass;
+    public string $renderingClass;
 
     /**
      * @internal
      *
      * @var string
      */
-    public $renderingData;
+    public string $renderingData;
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $border = false;
+    public bool $border = false;
 
     /**
      * @return string
      */
-    public function getHtml()
+    public function getHtml(): string
     {
         return $this->html;
     }
@@ -70,7 +71,7 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
      *
      * @return $this
      */
-    public function setHtml($html)
+    public function setHtml(string $html): static
     {
         $this->html = $html;
 
@@ -80,15 +81,12 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
     /**
      * @return string
      */
-    public function getRenderingClass()
+    public function getRenderingClass(): string
     {
         return $this->renderingClass;
     }
 
-    /**
-     * @param string $renderingClass
-     */
-    public function setRenderingClass($renderingClass)
+    public function setRenderingClass(string $renderingClass)
     {
         $this->renderingClass = $renderingClass;
     }
@@ -96,15 +94,12 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
     /**
      * @return string
      */
-    public function getRenderingData()
+    public function getRenderingData(): string
     {
         return $this->renderingData;
     }
 
-    /**
-     * @param string $renderingData
-     */
-    public function setRenderingData($renderingData)
+    public function setRenderingData(string $renderingData)
     {
         $this->renderingData = $renderingData;
     }
@@ -122,7 +117,7 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/* ?Concrete */ $object, /* array */ $context = []) // : static
+    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): Text|Model\DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface|static // : static
     {
         $renderer = Model\DataObject\ClassDefinition\Helper\DynamicTextResolver::resolveRenderingClass(
             $this->getRenderingClass()

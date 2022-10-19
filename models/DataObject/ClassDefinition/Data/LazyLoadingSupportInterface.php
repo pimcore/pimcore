@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,5 +24,5 @@ interface LazyLoadingSupportInterface
     /**
      * @return bool
      */
-    public function getLazyLoading();
+    public function getLazyLoading(): bool;
 }

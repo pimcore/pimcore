@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,63 +31,63 @@ final class Note extends Model\AbstractModel
      *
      * @var int|null
      */
-    protected $id;
+    protected ?int $id;
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $type;
+    protected string $type;
 
     /**
      * @internal
      *
      * @var int
      */
-    protected $cid;
+    protected int $cid;
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $ctype;
+    protected string $ctype;
 
     /**
      * @internal
      *
      * @var int
      */
-    protected $date;
+    protected int $date;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected $user;
+    protected ?int $user;
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $title;
+    protected string $title;
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $description;
+    protected string $description;
 
     /**
      * @internal
      *
      * @var array
      */
-    protected $data = [];
+    protected array $data = [];
 
     /**
      * If the note is locked, it can't be deleted in the admin interface
@@ -102,7 +103,7 @@ final class Note extends Model\AbstractModel
      *
      * @return self|null
      */
-    public static function getById($id)
+    public static function getById(int $id): ?Note
     {
         try {
             $note = new self();
@@ -121,7 +122,7 @@ final class Note extends Model\AbstractModel
      *
      * @return $this
      */
-    public function addData($name, $type, $data)
+    public function addData(string $name, string $type, mixed $data): static
     {
         $this->data[$name] = [
             'type' => $type,
@@ -136,7 +137,7 @@ final class Note extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setElement(ElementInterface $element)
+    public function setElement(ElementInterface $element): static
     {
         $this->setCid($element->getId());
         $this->setCtype(Service::getElementType($element));
@@ -172,7 +173,7 @@ final class Note extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setCid($cid)
+    public function setCid(int $cid): static
     {
         $this->cid = (int) $cid;
 
@@ -182,7 +183,7 @@ final class Note extends Model\AbstractModel
     /**
      * @return int
      */
-    public function getCid()
+    public function getCid(): int
     {
         return $this->cid;
     }
@@ -192,7 +193,7 @@ final class Note extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setCtype($ctype)
+    public function setCtype(string $ctype): static
     {
         $this->ctype = $ctype;
 
@@ -202,7 +203,7 @@ final class Note extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getCtype()
+    public function getCtype(): string
     {
         return $this->ctype;
     }
@@ -212,7 +213,7 @@ final class Note extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setData($data)
+    public function setData(array $data): static
     {
         $this->data = $data;
 
@@ -222,7 +223,7 @@ final class Note extends Model\AbstractModel
     /**
      * @return array
      */
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }
@@ -232,7 +233,7 @@ final class Note extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setDate($date)
+    public function setDate(int $date): static
     {
         $this->date = (int) $date;
 
@@ -242,7 +243,7 @@ final class Note extends Model\AbstractModel
     /**
      * @return int
      */
-    public function getDate()
+    public function getDate(): int
     {
         return $this->date;
     }
@@ -252,7 +253,7 @@ final class Note extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setDescription($description)
+    public function setDescription(string $description): static
     {
         $this->description = $description;
 
@@ -262,7 +263,7 @@ final class Note extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -272,7 +273,7 @@ final class Note extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setId($id)
+    public function setId(int $id): static
     {
         $this->id = (int) $id;
 
@@ -282,7 +283,7 @@ final class Note extends Model\AbstractModel
     /**
      * @return int|null
      */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -292,7 +293,7 @@ final class Note extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setTitle($title)
+    public function setTitle(string $title): static
     {
         $this->title = $title;
 
@@ -302,7 +303,7 @@ final class Note extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -312,7 +313,7 @@ final class Note extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
@@ -322,7 +323,7 @@ final class Note extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -332,7 +333,7 @@ final class Note extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setUser($user)
+    public function setUser(int $user): static
     {
         $this->user = $user;
 
@@ -342,7 +343,7 @@ final class Note extends Model\AbstractModel
     /**
      * @return int|null
      */
-    public function getUser()
+    public function getUser(): ?int
     {
         return $this->user;
     }

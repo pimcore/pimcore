@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,7 +24,7 @@ interface DataDefinitionInterface
      *
      * @return bool
      */
-    public function isEmpty($data, $params = []);
+    public function isEmpty(mixed $data, array $params = []): bool;
 
     /**
      * @param mixed $data
@@ -31,7 +32,7 @@ interface DataDefinitionInterface
      *
      * @throws \Exception
      */
-    public function checkValidity($data, $params = []);
+    public function checkValidity(mixed $data, array $params = []);
 
     /**
      * @param mixed $data
@@ -39,7 +40,7 @@ interface DataDefinitionInterface
      *
      * @return mixed
      */
-    public function getDataForListfolderGrid($data, $params = []);
+    public function getDataForListfolderGrid(mixed $data, array $params = []): mixed;
 
     /**
      * @param mixed $data
@@ -47,7 +48,7 @@ interface DataDefinitionInterface
      *
      * @return mixed
      */
-    public function getDataFromEditMode($data, $params = []);
+    public function getDataFromEditMode(mixed $data, array $params = []): mixed;
 
     /**
      * @param mixed $data
@@ -55,7 +56,7 @@ interface DataDefinitionInterface
      *
      * @return mixed
      */
-    public function getDataFromListfolderGrid($data, $params = []);
+    public function getDataFromListfolderGrid(mixed $data, array $params = []): mixed;
 
     /**
      * @param mixed $data
@@ -63,5 +64,5 @@ interface DataDefinitionInterface
      *
      * @return array
      */
-    public function resolveDependencies($data, $params = []);
+    public function resolveDependencies(mixed $data, array $params = []): array;
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -36,10 +37,10 @@ class Area extends Model\Document\Editable
      *
      * @var string|null
      */
-    protected $type;
+    protected ?string $type;
 
 
-    public function getBrickType()
+    public function getBrickType(): ?string
     {
         return $this->type;
     }
@@ -47,7 +48,7 @@ class Area extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return 'area';
     }
@@ -213,7 +214,7 @@ class Area extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): Area|EditableInterface|static
     {
         if (strlen($data) > 2) {
             $data = Serialize::unserialize($data);
@@ -227,7 +228,7 @@ class Area extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): Area|EditableInterface|static
     {
         if (is_array($data)) {
             $this->type = $data['type'] ?? null;
@@ -239,7 +240,7 @@ class Area extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return false;
     }
@@ -253,7 +254,7 @@ class Area extends Model\Document\Editable
      *
      * @return Model\Document\Editable
      */
-    public function getElement(string $name)
+    public function getElement(string $name): Model\Document\Editable
     {
         $document = $this->getDocument();
         $parentBlockNames = $this->getParentBlockNames();

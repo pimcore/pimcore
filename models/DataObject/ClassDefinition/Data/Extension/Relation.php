@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,13 +19,13 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 trait Relation
 {
     /**
-     * @internal
-     *
      * @param bool $asArray
      *
      * @return string[]
+     *@internal
+     *
      */
-    protected function getPhpDocClassString($asArray = false)
+    protected function getPhpDocClassString(bool $asArray = false): array
     {
         // init
         $class = [];
@@ -76,7 +77,7 @@ trait Relation
      *  'classes' => string,
      * ]
      */
-    public function getClasses()
+    public function getClasses(): array
     {
         return $this->classes ?: [];
     }
@@ -86,7 +87,7 @@ trait Relation
      *  'assetTypes' => string,
      * ]
      */
-    public function getAssetTypes()
+    public function getAssetTypes(): array
     {
         return [];
     }
@@ -96,7 +97,7 @@ trait Relation
      *  'documentTypes' => string,
      * ]
      */
-    public function getDocumentTypes()
+    public function getDocumentTypes(): array
     {
         return [];
     }
@@ -104,7 +105,7 @@ trait Relation
     /**
      * @return bool
      */
-    public function getDocumentsAllowed()
+    public function getDocumentsAllowed(): bool
     {
         return false;
     }
@@ -112,7 +113,7 @@ trait Relation
     /**
      * @return bool
      */
-    public function getAssetsAllowed()
+    public function getAssetsAllowed(): bool
     {
         return false;
     }
@@ -120,7 +121,7 @@ trait Relation
     /**
      * @return bool
      */
-    public function getObjectsAllowed()
+    public function getObjectsAllowed(): bool
     {
         return false;
     }

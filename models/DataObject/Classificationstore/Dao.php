@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -34,12 +35,12 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @var array|null
      */
-    protected $tableDefinitions = null;
+    protected ?array $tableDefinitions = null;
 
     /**
      * @return string
      */
-    public function getDataTableName()
+    public function getDataTableName(): string
     {
         return 'object_classificationstore_data_' . $this->model->getClass()->getId();
     }
@@ -47,7 +48,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @return string
      */
-    public function getGroupsTableName()
+    public function getGroupsTableName(): string
     {
         return 'object_classificationstore_groups_' . $this->model->getClass()->getId();
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,12 +30,12 @@ class Checkbox extends Model\Document\Editable
      *
      * @var bool
      */
-    protected $value = false;
+    protected bool $value = false;
 
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return 'checkbox';
     }
@@ -66,7 +67,7 @@ class Checkbox extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): EditableInterface|Checkbox|static
     {
         $this->value = (bool) $data;
 
@@ -76,7 +77,7 @@ class Checkbox extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): EditableInterface|Checkbox|static
     {
         $this->value = (bool) $data;
 
@@ -86,7 +87,7 @@ class Checkbox extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return !$this->value;
     }
@@ -94,7 +95,7 @@ class Checkbox extends Model\Document\Editable
     /**
      * @return bool
      */
-    public function isChecked()
+    public function isChecked(): bool
     {
         return $this->value;
     }

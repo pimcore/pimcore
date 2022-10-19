@@ -33,7 +33,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      *
      * @var string
      */
-    public $fieldtype = 'indexFieldSelection';
+    public string $fieldtype = 'indexFieldSelection';
 
     /**
      * Type for the column to query
@@ -124,15 +124,15 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param ObjectData\IndexFieldSelection|null $data
+     * @param mixed $data
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
      * @param array $params
      *
      * @return array
+     * @see ResourcePersistenceAwareInterface::getDataForResource
+     *
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function getDataForResource(mixed $data, $object = null, array $params = [])
     {
         if ($data instanceof ObjectData\IndexFieldSelection) {
             return [
@@ -150,15 +150,15 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param array $data
+     * @param mixed $data
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return ObjectData\IndexFieldSelection|null
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
+     *
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function getDataFromResource(mixed $data, $object = null, array $params = [])
     {
         if ($data[$this->getName() . '__field']) {
             return new ObjectData\IndexFieldSelection($data[$this->getName() . '__tenant'], $data[$this->getName() . '__field'], $data[$this->getName() . '__preSelect']);
@@ -168,29 +168,29 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     }
 
     /**
-     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
-     * @param ObjectData\IndexFieldSelection|null $data
+     * @param mixed $data
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
+     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
+     *
      */
-    public function getDataForQueryResource($data, $object = null, $params = [])
+    public function getDataForQueryResource(mixed $data, $object = null, array $params = [])
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
     /**
-     * @see Data::getDataForEditmode
-     *
-     * @param ObjectData\IndexFieldSelection|null $data
+     * @param mixed $data
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array|null
+     * @see Data::getDataForEditmode
+     *
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, $object = null, array $params = [])
     {
         if ($data instanceof ObjectData\IndexFieldSelection) {
             return [
@@ -204,15 +204,15 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     }
 
     /**
-     * @see Data::getDataFromEditmode
-     *
-     * @param array $data
+     * @param mixed $data
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
      * @param array $params
      *
      * @return ObjectData\IndexFieldSelection|null
+     *@see Data::getDataFromEditmode
+     *
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, $object = null, array $params = [])
     {
         if ($data['field']) {
             if (is_array($data['preSelect'])) {
@@ -226,15 +226,15 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     }
 
     /**
-     * @see Data::getVersionPreview
-     *
-     * @param ObjectData\IndexFieldSelection|null $data
+     * @param mixed $data
      * @param Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
+     * @see Data::getVersionPreview
+     *
      */
-    public function getVersionPreview($data, $object = null, $params = [])
+    public function getVersionPreview(mixed $data, $object = null, array $params = [])
     {
         if ($data instanceof ObjectData\IndexFieldSelection) {
             return $data->getTenant() . ' ' . $data->getField() . ' ' . $data->getPreSelect();
@@ -246,7 +246,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     /**
      * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
     {
         if (!$omitMandatoryCheck && $this->getMandatory() &&
             ($data === null || $data->getField() === null)) {
@@ -257,14 +257,14 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     /**
      * converts object data to a simple string value or CSV Export
      *
-     * @internal
-     *
      * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @return string
+     *@internal
+     *
      */
-    public function getForCsvExport($object, $params = [])
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = [])
     {
         $key = $this->getName();
         $getter = 'get'.ucfirst($key);
@@ -284,11 +284,11 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      * True if change is allowed in edit mode.
      *
      * @param Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return bool
      */
-    public function isDiffChangeAllowed($object, $params = [])
+    public function isDiffChangeAllowed(Concrete $object, array $params = [])
     {
         return false;
     }

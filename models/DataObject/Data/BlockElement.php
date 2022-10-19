@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -38,24 +39,24 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
     /**
      * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * @var string
      */
-    protected $type;
+    protected string $type;
 
     /**
      * @var mixed
      */
-    protected $data;
+    protected mixed $data;
 
     /**
      * @internal
      *
      * @var bool
      */
-    protected $needsRenewReferences = false;
+    protected bool $needsRenewReferences = false;
 
     /**
      * BlockElement constructor.
@@ -64,7 +65,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
      * @param string $type
      * @param mixed $data
      */
-    public function __construct($name, $type, $data)
+    public function __construct(string $name, string $type, mixed $data)
     {
         $this->name = $name;
         $this->type = $type;
@@ -75,15 +76,12 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name)
     {
         if ($name != $this->name) {
             $this->name = $name;
@@ -94,15 +92,12 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     */
-    public function setType($type)
+    public function setType(string $type)
     {
         if ($type != $this->type) {
             $this->type = $type;
@@ -113,7 +108,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
     /**
      * @return mixed
      */
-    public function getData()
+    public function getData(): mixed
     {
         if ($this->needsRenewReferences) {
             $this->needsRenewReferences = false;
@@ -123,10 +118,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
         return $this->data;
     }
 
-    /**
-     * @param mixed $data
-     */
-    public function setData($data)
+    public function setData(mixed $data)
     {
         $this->data = $data;
         $this->markMeDirty();
@@ -163,7 +155,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
         );
 
         $copier->addFilter(new \DeepCopy\Filter\KeepFilter(), new class() implements \DeepCopy\Matcher\Matcher {
-            public function matches($object, $property)
+            public function matches($object, $property): bool
             {
                 return $object instanceof AbstractElement;
             }
@@ -219,7 +211,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
     /**
      * @return mixed
      */
-    public function marshalForCache()
+    public function marshalForCache(): mixed
     {
         $this->needsRenewReferences = true;
 

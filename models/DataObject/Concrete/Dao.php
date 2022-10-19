@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,10 +36,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     use Model\Element\Traits\ScheduledTasksDaoTrait;
     use Model\Element\Traits\VersionDaoTrait;
 
-    /**
-     * @var DataObject\Concrete\Dao\InheritanceHelper
-     */
-    protected $inheritanceHelper = null;
+    protected ?Dao\InheritanceHelper $inheritanceHelper = null;
 
     public function init()
     {
@@ -52,7 +50,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById($id)
+    public function getById(int $id)
     {
         $data = $this->db->fetchAssociative("SELECT objects.*, tree_locks.locked as o_locked FROM objects
             LEFT JOIN tree_locks ON objects.o_id = tree_locks.id AND tree_locks.type = 'object'
@@ -67,11 +65,11 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     }
 
     /**
-     * @param  string $fieldName
+     * @param string $fieldName
      *
      * @return array
      */
-    public function getRelationIds($fieldName)
+    public function getRelationIds(string $fieldName): array
     {
         $relations = [];
         $allRelations = $this->db->fetchAllAssociative('SELECT * FROM object_relations_' . $this->model->getClassId() . " WHERE fieldname = ? AND src_id = ? AND ownertype = 'object' ORDER BY `index` ASC", [$fieldName, $this->model->getId()]);
@@ -89,7 +87,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      *
      * @return array
      */
-    public function getRelationData($field, $forOwner, $remoteClassId)
+    public function getRelationData(string $field, bool $forOwner, string $remoteClassId): array
     {
         $id = $this->model->getId();
         if ($remoteClassId) {
@@ -194,7 +192,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      *
      * @param bool|null $isUpdate
      */
-    public function update($isUpdate = null)
+    public function update(bool $isUpdate = null)
     {
         parent::update($isUpdate);
 

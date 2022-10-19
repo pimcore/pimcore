@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,47 +27,47 @@ class Info
      *
      * @var string|null
      */
-    protected $id;
+    protected ?string $id;
 
     /**
      * @internal
      *
      * @var Editable|null
      */
-    protected $editable;
+    protected ?Editable $editable;
 
     /**
      * @internal
      *
      * @var array
      */
-    protected $params = [];
+    protected array $params = [];
 
     /**
      * @internal
      *
      * @var Request|null
      */
-    protected $request;
+    protected ?Request $request;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected $type;
+    protected ?string $type;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected $index;
+    protected ?int $index;
 
     /**
      * @return string|null
      */
-    public function getId()
+    public function getId(): ?string
     {
         return $this->id;
     }
@@ -76,7 +77,7 @@ class Info
      *
      * @return $this
      */
-    public function setId($id)
+    public function setId(?string $id): static
     {
         $this->id = $id;
 
@@ -86,12 +87,12 @@ class Info
     /**
      * @return Editable|null
      */
-    public function getEditable()
+    public function getEditable(): ?Editable
     {
         return $this->editable;
     }
 
-    public function setEditable(Editable $editable)
+    public function setEditable(Editable $editable): void
     {
         $this->editable = $editable;
     }
@@ -99,7 +100,7 @@ class Info
     /**
      * @return string|null
      */
-    public function getType()
+    public function getType(): ?string
     {
         return $this->type;
     }
@@ -109,7 +110,7 @@ class Info
      *
      * @return $this
      */
-    public function setType($type)
+    public function setType(?string $type): static
     {
         $this->type = $type;
 
@@ -119,7 +120,7 @@ class Info
     /**
      * @return array
      */
-    public function getParams()
+    public function getParams(): array
     {
         return $this->params;
     }
@@ -129,7 +130,7 @@ class Info
      *
      * @return mixed
      */
-    public function getParam(string $name)
+    public function getParam(string $name): mixed
     {
         if (isset($this->params[$name])) {
             return $this->params[$name];
@@ -144,7 +145,7 @@ class Info
      *
      * @return $this
      */
-    public function setParam(string $name, $value)
+    public function setParam(string $name, mixed $value): static
     {
         $this->params[$name] = $value;
 
@@ -156,7 +157,7 @@ class Info
      *
      * @return $this
      */
-    public function setParams(array $params)
+    public function setParams(array $params): static
     {
         $this->params = $params;
 
@@ -166,7 +167,7 @@ class Info
     /**
      * @return Request|null
      */
-    public function getRequest()
+    public function getRequest(): ?Request
     {
         return $this->request;
     }
@@ -176,7 +177,7 @@ class Info
      *
      * @return $this
      */
-    public function setRequest(Request $request)
+    public function setRequest(Request $request): static
     {
         $this->request = $request;
 
@@ -188,7 +189,7 @@ class Info
      *
      * @return $this
      */
-    public function setIndex($index)
+    public function setIndex(?int $index): static
     {
         $this->index = $index;
 
@@ -198,7 +199,7 @@ class Info
     /**
      * @return int|null
      */
-    public function getIndex()
+    public function getIndex(): ?int
     {
         return $this->index;
     }
@@ -206,7 +207,7 @@ class Info
     /**
      * @return Document\PageSnippet
      */
-    public function getDocument()
+    public function getDocument(): Document\PageSnippet
     {
         return $this->editable->getDocument();
     }
@@ -219,7 +220,7 @@ class Info
      *
      * @throws \Exception
      */
-    public function getDocumentElement($name, $type = '')
+    public function getDocumentElement(string $name, string $type = ''): ?Editable
     {
         $editable = null;
         $document = $this->getDocument();

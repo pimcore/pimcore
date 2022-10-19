@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,12 +30,12 @@ class Input extends Model\Document\Editable implements EditmodeDataInterface
      *
      * @var string
      */
-    protected $text = '';
+    protected string $text = '';
 
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return 'input';
     }
@@ -50,7 +51,7 @@ class Input extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * @return string
      */
-    public function getText()
+    public function getText(): string
     {
         return $this->getData();
     }
@@ -81,7 +82,7 @@ class Input extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): Input|EditableInterface|static
     {
         $this->text = $data;
 
@@ -91,7 +92,7 @@ class Input extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): Input|EditableInterface|static
     {
         $data = html_entity_decode($data, ENT_HTML5); // this is because the input is now an div contenteditable -> therefore in entities
         $this->text = $data;
@@ -102,7 +103,7 @@ class Input extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * {@inheritdoc}
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return !(bool) strlen($this->text);
     }

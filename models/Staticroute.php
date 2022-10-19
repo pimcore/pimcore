@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,62 +32,62 @@ final class Staticroute extends AbstractModel
     /**
      * @var string
      */
-    protected $id;
+    protected string $id;
 
     /**
      * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * @var string
      */
-    protected $pattern;
+    protected string $pattern;
 
     /**
      * @var string
      */
-    protected $reverse;
+    protected string $reverse;
 
     /**
      * @var string
      */
-    protected $controller;
+    protected string $controller;
 
     /**
      * @var string
      */
-    protected $variables;
+    protected string $variables;
 
     /**
      * @var string
      */
-    protected $defaults;
+    protected string $defaults;
 
     /**
      * @var array
      */
-    protected $siteId = [];
+    protected array $siteId = [];
 
     /**
      * @var array
      */
-    protected $methods;
+    protected array $methods;
 
     /**
      * @var int
      */
-    protected $priority = 1;
+    protected int $priority = 1;
 
     /**
      * @var int|null
      */
-    protected $creationDate;
+    protected ?int $creationDate;
 
     /**
      * @var int|null
      */
-    protected $modificationDate;
+    protected ?int $modificationDate;
 
     /**
      * Associative array filled on match() that holds matched path values
@@ -94,14 +95,14 @@ final class Staticroute extends AbstractModel
      *
      * @var array
      */
-    protected $_values = [];
+    protected array $_values = [];
 
     /**
      * this is a small per request cache to know which route is which is, this info is used in self::getByName()
      *
      * @var array
      */
-    protected static $nameIdMappingCache = [];
+    protected static array $nameIdMappingCache = [];
 
     /**
      * contains the static route which the current request matches (it he does), this is used in the view to get the current route
@@ -137,7 +138,7 @@ final class Staticroute extends AbstractModel
      *
      * @return self|null
      */
-    public static function getById($id)
+    public static function getById(string $id): ?Staticroute
     {
         $cacheKey = 'staticroute_' . $id;
 
@@ -168,7 +169,7 @@ final class Staticroute extends AbstractModel
      *
      * @throws \Exception
      */
-    public static function getByName($name, $siteId = null)
+    public static function getByName(string $name, int $siteId = null): ?Staticroute
     {
         $cacheKey = $name . '~~~' . $siteId;
 
@@ -200,7 +201,7 @@ final class Staticroute extends AbstractModel
     /**
      * @return self
      */
-    public static function create()
+    public static function create(): Staticroute
     {
         $route = new self();
         $route->save();
@@ -234,7 +235,7 @@ final class Staticroute extends AbstractModel
     /**
      * @return string
      */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
@@ -242,7 +243,7 @@ final class Staticroute extends AbstractModel
     /**
      * @return string
      */
-    public function getPattern()
+    public function getPattern(): string
     {
         return $this->pattern;
     }
@@ -250,7 +251,7 @@ final class Staticroute extends AbstractModel
     /**
      * @return string
      */
-    public function getController()
+    public function getController(): string
     {
         return $this->controller;
     }
@@ -258,7 +259,7 @@ final class Staticroute extends AbstractModel
     /**
      * @return string
      */
-    public function getVariables()
+    public function getVariables(): string
     {
         return $this->variables;
     }
@@ -266,7 +267,7 @@ final class Staticroute extends AbstractModel
     /**
      * @return string
      */
-    public function getDefaults()
+    public function getDefaults(): string
     {
         return $this->defaults;
     }
@@ -276,7 +277,7 @@ final class Staticroute extends AbstractModel
      *
      * @return $this
      */
-    public function setId($id)
+    public function setId(string $id): static
     {
         $this->id = $id;
 
@@ -288,7 +289,7 @@ final class Staticroute extends AbstractModel
      *
      * @return $this
      */
-    public function setPattern($pattern)
+    public function setPattern(string $pattern): static
     {
         $this->pattern = $pattern;
 
@@ -300,7 +301,7 @@ final class Staticroute extends AbstractModel
      *
      * @return $this
      */
-    public function setController($controller)
+    public function setController(string $controller): static
     {
         $this->controller = $controller;
 
@@ -312,7 +313,7 @@ final class Staticroute extends AbstractModel
      *
      * @return $this
      */
-    public function setVariables($variables)
+    public function setVariables(string $variables): static
     {
         $this->variables = $variables;
 
@@ -324,7 +325,7 @@ final class Staticroute extends AbstractModel
      *
      * @return $this
      */
-    public function setDefaults($defaults)
+    public function setDefaults(string $defaults): static
     {
         $this->defaults = $defaults;
 
@@ -336,7 +337,7 @@ final class Staticroute extends AbstractModel
      *
      * @return $this
      */
-    public function setPriority($priority)
+    public function setPriority(int $priority): static
     {
         $this->priority = (int) $priority;
 
@@ -346,7 +347,7 @@ final class Staticroute extends AbstractModel
     /**
      * @return int
      */
-    public function getPriority()
+    public function getPriority(): int
     {
         return $this->priority;
     }
@@ -356,7 +357,7 @@ final class Staticroute extends AbstractModel
      *
      * @return $this
      */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -366,7 +367,7 @@ final class Staticroute extends AbstractModel
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -376,7 +377,7 @@ final class Staticroute extends AbstractModel
      *
      * @return $this
      */
-    public function setReverse($reverse)
+    public function setReverse(string $reverse): static
     {
         $this->reverse = $reverse;
 
@@ -386,17 +387,17 @@ final class Staticroute extends AbstractModel
     /**
      * @return string
      */
-    public function getReverse()
+    public function getReverse(): string
     {
         return $this->reverse;
     }
 
     /**
-     * @param string|array|null $siteId
+     * @param array|string|null $siteId
      *
      * @return $this
      */
-    public function setSiteId($siteId)
+    public function setSiteId(array|string|null $siteId): static
     {
         $result = [];
 
@@ -430,7 +431,7 @@ final class Staticroute extends AbstractModel
     /**
      * @return array
      */
-    public function getSiteId()
+    public function getSiteId(): array
     {
         if ($this->siteId && !is_array($this->siteId)) {
             $this->siteId = explode(',', $this->siteId);
@@ -440,14 +441,14 @@ final class Staticroute extends AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param array $urlOptions
      * @param bool $encode
      *
      * @return string
+     *@internal
+     *
      */
-    public function assemble(array $urlOptions = [], $encode = true)
+    public function assemble(array $urlOptions = [], bool $encode = true): string
     {
         $defaultValues = $this->getDefaultsArray();
 
@@ -538,16 +539,16 @@ final class Staticroute extends AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param string $path
      * @param array $params
      *
      * @return array|bool
      *
      * @throws \Exception
+     *@internal
+     *
      */
-    public function match($path, $params = [])
+    public function match(string $path, array $params = []): bool|array
     {
         if (@preg_match($this->getPattern(), $path)) {
             // check for site
@@ -599,7 +600,7 @@ final class Staticroute extends AbstractModel
     /**
      * @return array
      */
-    public function getMethods()
+    public function getMethods(): array
     {
         if ($this->methods && is_string($this->methods)) {
             $this->methods = explode(',', $this->methods);
@@ -613,7 +614,7 @@ final class Staticroute extends AbstractModel
      *
      * @return $this
      */
-    public function setMethods($methods)
+    public function setMethods(array|string $methods): static
     {
         if (is_string($methods)) {
             $methods = strlen($methods) ? explode(',', $methods) : [];
@@ -630,7 +631,7 @@ final class Staticroute extends AbstractModel
      *
      * @return $this
      */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = (int) $modificationDate;
 
@@ -640,7 +641,7 @@ final class Staticroute extends AbstractModel
     /**
      * @return int|null
      */
-    public function getModificationDate()
+    public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
@@ -650,7 +651,7 @@ final class Staticroute extends AbstractModel
      *
      * @return $this
      */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = (int) $creationDate;
 
@@ -660,7 +661,7 @@ final class Staticroute extends AbstractModel
     /**
      * @return int|null
      */
-    public function getCreationDate()
+    public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }

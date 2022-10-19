@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -38,49 +39,49 @@ class Rule extends Model\AbstractModel
     /**
      * @var int
      */
-    protected $id;
+    protected int $id;
 
     /**
      * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * @var string
      */
-    protected $description = '';
+    protected string $description = '';
 
     /**
      * @var string
      */
-    protected $scope = self::SCOPE_HIT;
+    protected string $scope = self::SCOPE_HIT;
 
     /**
      * @var bool
      */
-    protected $active = true;
+    protected bool $active = true;
 
     /**
      * @var int
      */
-    protected $prio = 0;
+    protected int $prio = 0;
 
     /**
      * @var array
      */
-    protected $conditions = [];
+    protected array $conditions = [];
 
     /**
      * @var array
      */
-    protected $actions = [];
+    protected array $actions = [];
 
     /**
      * @param mixed $target
      *
      * @return bool
      */
-    public static function inTarget($target)
+    public static function inTarget(mixed $target): bool
     {
         if ($target instanceof Model\Tool\Targeting\Rule) {
             $targetId = $target->getId();
@@ -109,7 +110,7 @@ class Rule extends Model\AbstractModel
      *
      * @return self|null
      */
-    public static function getById($id)
+    public static function getById(int $id): ?Rule
     {
         try {
             $target = new self();
@@ -128,7 +129,7 @@ class Rule extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public static function getByName($name)
+    public static function getByName(string $name): ?Rule
     {
         try {
             $target = new self();
@@ -145,7 +146,7 @@ class Rule extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setDescription($description)
+    public function setDescription(string $description): static
     {
         $this->description = $description;
 
@@ -155,7 +156,7 @@ class Rule extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -165,7 +166,7 @@ class Rule extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setId($id)
+    public function setId(int $id): static
     {
         $this->id = (int) $id;
 
@@ -175,7 +176,7 @@ class Rule extends Model\AbstractModel
     /**
      * @return int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -185,7 +186,7 @@ class Rule extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -195,7 +196,7 @@ class Rule extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -205,7 +206,7 @@ class Rule extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setActions($actions)
+    public function setActions(array $actions): static
     {
         if (!$actions) {
             $actions = [];
@@ -226,7 +227,7 @@ class Rule extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setConditions($conditions)
+    public function setConditions(array $conditions): static
     {
         if (!$conditions) {
             $conditions = [];
@@ -240,15 +241,12 @@ class Rule extends Model\AbstractModel
     /**
      * @return array
      */
-    public function getConditions()
+    public function getConditions(): array
     {
         return $this->conditions;
     }
 
-    /**
-     * @param string $scope
-     */
-    public function setScope($scope)
+    public function setScope(string $scope)
     {
         if (!empty($scope)) {
             $this->scope = $scope;
@@ -258,15 +256,12 @@ class Rule extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getScope()
+    public function getScope(): string
     {
         return $this->scope;
     }
 
-    /**
-     * @param bool $active
-     */
-    public function setActive($active)
+    public function setActive(bool $active)
     {
         $this->active = (bool) $active;
     }
@@ -274,7 +269,7 @@ class Rule extends Model\AbstractModel
     /**
      * @return bool
      */
-    public function getActive()
+    public function getActive(): bool
     {
         return $this->active;
     }

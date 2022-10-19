@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,7 +24,7 @@ class Analytics extends AbstractAdapter
     /**
      * {@inheritdoc}
      */
-    public function getData($filters, $sort, $dir, $offset, $limit, $fields = null, $drillDownFilters = null)
+    public function getData(?array $filters, ?string $sort, ?string $dir, ?int $offset, ?int $limit, array $fields = null, array $drillDownFilters = null): array
     {
         $this->setFilters($filters, $drillDownFilters);
 
@@ -49,7 +50,7 @@ class Analytics extends AbstractAdapter
     /**
      * {@inheritdoc}
      */
-    public function getColumns($configuration)
+    public function getColumns(?\stdClass $configuration): array
     {
         $result = $this->getDataHelper();
         $columns = [];
@@ -61,11 +62,7 @@ class Analytics extends AbstractAdapter
         return $columns;
     }
 
-    /**
-     * @param array $filters
-     * @param array $drillDownFilters
-     */
-    protected function setFilters(array $filters, $drillDownFilters = []): void
+    protected function setFilters(array $filters, array $drillDownFilters = []): void
     {
         $gaFilters = [ $this->config->filters ];
         if (count($filters)) {
@@ -114,7 +111,7 @@ class Analytics extends AbstractAdapter
      *
      * @throws \Exception
      */
-    protected function getDataHelper($fields = null, $drillDownFilters = null, $useDimensionHandling = true)
+    protected function getDataHelper(array $fields = null, array $drillDownFilters = null, bool $useDimensionHandling = true): \Google\Service\Analytics\GaData
     {
         $configuration = clone $this->config;
 
@@ -181,7 +178,7 @@ class Analytics extends AbstractAdapter
      *
      * @return array
      */
-    protected function extractData($results)
+    protected function extractData(array $results): array
     {
         $data = [];
 
@@ -204,7 +201,7 @@ class Analytics extends AbstractAdapter
      *
      * @return \stdClass
      */
-    protected function handleFields($configuration, $fields)
+    protected function handleFields(\stdClass $configuration, array $fields): \stdClass
     {
         $metrics = $configuration->metric;
         foreach ($metrics as $key => $metric) {
@@ -230,7 +227,7 @@ class Analytics extends AbstractAdapter
      *
      * @return \stdClass
      */
-    protected function handleDimensions($configuration)
+    protected function handleDimensions(\stdClass $configuration): \stdClass
     {
         $dimension = $configuration->dimension;
         if (count($dimension)) {
@@ -253,9 +250,9 @@ class Analytics extends AbstractAdapter
      * @param int $date
      * @param string $relativeDate
      *
-     * @return int
+     * @return float|int
      */
-    protected function calcDate($date, $relativeDate)
+    protected function calcDate(int $date, string $relativeDate): float|int
     {
         if (strpos($relativeDate, '-') !== false || strpos($relativeDate, '+') !== false) {
             $modifiers = explode(' ', str_replace('  ', ' ', $relativeDate));
@@ -294,7 +291,7 @@ class Analytics extends AbstractAdapter
     /**
      * {@inheritdoc}
      */
-    public function getAvailableOptions($filters, $field, $drillDownFilters)
+    public function getAvailableOptions(array $filters, string $field, array $drillDownFilters): array
     {
         $this->setFilters($filters, $drillDownFilters);
         $results = $this->getDataHelper([], $drillDownFilters, false);

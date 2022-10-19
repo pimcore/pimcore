@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,42 +31,42 @@ final class UUID extends Model\AbstractModel
      *
      * @var int
      */
-    protected $itemId;
+    protected int $itemId;
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $type;
+    protected string $type;
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $uuid;
+    protected string $uuid;
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $instanceIdentifier;
+    protected string $instanceIdentifier;
 
     /**
      * @internal
      *
      * @var mixed
      */
-    protected $item;
+    protected mixed $item;
 
     /**
      * @param string $instanceIdentifier
      *
      * @return $this
      */
-    public function setInstanceIdentifier($instanceIdentifier)
+    public function setInstanceIdentifier(string $instanceIdentifier): static
     {
         $this->instanceIdentifier = $instanceIdentifier;
 
@@ -75,7 +76,7 @@ final class UUID extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getInstanceIdentifier()
+    public function getInstanceIdentifier(): string
     {
         return $this->instanceIdentifier;
     }
@@ -87,7 +88,7 @@ final class UUID extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public function setSystemInstanceIdentifier()
+    public function setSystemInstanceIdentifier(): static
     {
         $instanceIdentifier = \Pimcore\Config::getSystemConfiguration('general')['instance_identifier'] ?? null;
         if (empty($instanceIdentifier)) {
@@ -103,7 +104,7 @@ final class UUID extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setItemId($id)
+    public function setItemId(int $id): static
     {
         $this->itemId = $id;
 
@@ -113,7 +114,7 @@ final class UUID extends Model\AbstractModel
     /**
      * @return int
      */
-    public function getItemId()
+    public function getItemId(): int
     {
         return $this->itemId;
     }
@@ -123,7 +124,7 @@ final class UUID extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
@@ -133,7 +134,7 @@ final class UUID extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -145,7 +146,7 @@ final class UUID extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public function createUuid()
+    public function createUuid(): string
     {
         if (!$this->getInstanceIdentifier()) {
             throw new \Exception('No instance identifier specified.');
@@ -166,15 +167,12 @@ final class UUID extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getUuid()
+    public function getUuid(): string
     {
         return $this->uuid;
     }
 
-    /**
-     * @param string $uuid
-     */
-    public function setUuid($uuid)
+    public function setUuid(string $uuid)
     {
         $this->uuid = $uuid;
     }
@@ -184,7 +182,7 @@ final class UUID extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setItem($item)
+    public function setItem(mixed $item): static
     {
         $this->setItemId($item->getId());
 
@@ -206,7 +204,7 @@ final class UUID extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public static function getByItem($item)
+    public static function getByItem(mixed $item): UUID
     {
         $self = new self;
         $self->setSystemInstanceIdentifier();
@@ -220,7 +218,7 @@ final class UUID extends Model\AbstractModel
      *
      * @return self
      */
-    public static function getByUuid($uuid)
+    public static function getByUuid(string $uuid): UUID
     {
         $self = new self;
 
@@ -234,7 +232,7 @@ final class UUID extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public static function create($item)
+    public static function create(mixed $item): static
     {
         $uuid = new static;
         $uuid->setSystemInstanceIdentifier()->setItem($item);

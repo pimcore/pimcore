@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,7 +32,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @var array|null
      */
-    protected $tableDefinitions = null;
+    protected ?array $tableDefinitions = null;
 
     /**
      * @param DataObject\Concrete $object
@@ -43,7 +44,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function save(DataObject\Concrete $object, $ownertype, $ownername, $position, $index, $type = 'object')
+    public function save(DataObject\Concrete $object, string $ownertype, string $ownername, string $position, int $index, string $type = 'object')
     {
         $table = $this->getTablename($object);
 
@@ -70,7 +71,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return string
      */
-    protected function getTablename($object)
+    protected function getTablename(DataObject\Concrete $object): string
     {
         return 'object_metadata_' . $object->getClassId();
     }
@@ -86,7 +87,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return null|DataObject\Data\ObjectMetadata
      */
-    public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index)
+    public function load(DataObject\Concrete $source, int $destinationId, string $fieldname, string $ownertype, string $ownername, string $position, int $index): ?DataObject\Data\ObjectMetadata
     {
         $typeQuery = " AND (type = 'object' or type = '')";
 

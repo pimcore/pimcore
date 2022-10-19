@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,7 +27,7 @@ trait SimpleNormalizerTrait
      *
      * @return mixed
      */
-    public function normalize(mixed $value, array $params = [])
+    public function normalize(mixed $value, array $params = []): mixed
     {
         return $value;
     }
@@ -37,7 +38,7 @@ trait SimpleNormalizerTrait
      *
      * @return mixed
      */
-    public function denormalize(mixed $value, array $params = [])
+    public function denormalize(mixed $value, array $params = []): mixed
     {
         return $value;
     }

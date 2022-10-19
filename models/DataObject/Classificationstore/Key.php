@@ -24,12 +24,12 @@ final class Key
     /**
      * @var KeyConfig
      */
-    protected $configuration;
+    protected KeyConfig $configuration;
 
     /**
      * @var Group
      */
-    protected $group;
+    protected Group $group;
 
     public function __construct(Group $group, KeyConfig $configuration)
     {
@@ -58,7 +58,8 @@ final class Key
         ?string $language = 'default',
         bool $ignoreFallbackLanguage = false,
         bool $ignoreDefaultLanguage = false
-    ) {
+    ): mixed
+    {
         $classificationstore = $this->group->getClassificationStore();
 
         return $classificationstore->getLocalizedKeyValue(

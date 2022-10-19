@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,24 +30,24 @@ class Blacklist extends Model\AbstractModel
     /**
      * @var string|null
      */
-    protected $address;
+    protected ?string $address;
 
     /**
      * @var int|null
      */
-    protected $creationDate;
+    protected ?int $creationDate;
 
     /**
      * @var int|null
      */
-    protected $modificationDate;
+    protected ?int $modificationDate;
 
     /**
      * @param string $addr
      *
      * @return null|Blacklist
      */
-    public static function getByAddress($addr)
+    public static function getByAddress(string $addr): ?Blacklist
     {
         try {
             $address = new self();
@@ -58,10 +59,7 @@ class Blacklist extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param string $address
-     */
-    public function setAddress($address)
+    public function setAddress(string $address)
     {
         $this->address = $address;
     }
@@ -69,15 +67,12 @@ class Blacklist extends Model\AbstractModel
     /**
      * @return string|null
      */
-    public function getAddress()
+    public function getAddress(): ?string
     {
         return $this->address;
     }
 
-    /**
-     * @param int $creationDate
-     */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate)
     {
         $this->creationDate = (int) $creationDate;
     }
@@ -85,7 +80,7 @@ class Blacklist extends Model\AbstractModel
     /**
      * @return int
      */
-    public function getCreationDate()
+    public function getCreationDate(): int
     {
         if (!$this->creationDate) {
             $this->creationDate = time();
@@ -94,10 +89,7 @@ class Blacklist extends Model\AbstractModel
         return $this->creationDate;
     }
 
-    /**
-     * @param int $modificationDate
-     */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate)
     {
         $this->modificationDate = (int) $modificationDate;
     }
@@ -105,7 +97,7 @@ class Blacklist extends Model\AbstractModel
     /**
      * @return int
      */
-    public function getModificationDate()
+    public function getModificationDate(): int
     {
         if (!$this->modificationDate) {
             $this->modificationDate = time();

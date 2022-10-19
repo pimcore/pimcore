@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,12 +23,7 @@ use Pimcore\Model\DataObject\QuantityValue\QuantityValueConverterInterface;
  */
 class UnitConverterResolver extends ClassResolver
 {
-    /**
-     * @param string $converterServiceName
-     *
-     * @return QuantityValueConverterInterface|null
-     */
-    public static function resolveUnitConverter($converterServiceName): ?QuantityValueConverterInterface
+    public static function resolveUnitConverter(string $converterServiceName): ?QuantityValueConverterInterface
     {
         return self::resolve('@' . $converterServiceName, static function ($converterService) {
             return $converterService instanceof QuantityValueConverterInterface;

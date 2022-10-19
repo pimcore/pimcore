@@ -15,7 +15,7 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class FilterMultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType
 {
-protected $type = "FilterMultiSelectFromMultiSelect";
+protected string $type = "FilterMultiSelectFromMultiSelect";
 protected $label;
 protected $field;
 protected $scriptPath;

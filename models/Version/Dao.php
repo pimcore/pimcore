@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,7 +33,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws NotFoundException
      */
-    public function getById($id)
+    public function getById(int $id)
     {
         $data = $this->db->fetchAssociative('SELECT * FROM versions WHERE id = ?', [$id]);
 
@@ -50,7 +51,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @todo: $data could be undefined
      */
-    public function save()
+    public function save(): int
     {
         $version = $this->model->getObjectVars();
         $data = [];
@@ -88,7 +89,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return bool
      */
-    public function isVersionUsedInScheduler($version)
+    public function isVersionUsedInScheduler(Model\Version $version): bool
     {
         $exists = $this->db->fetchOne('SELECT id FROM schedule_tasks WHERE version = ?', [$version->getId()]);
 
@@ -119,7 +120,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return array
      */
-    public function maintenanceGetOutdatedVersions($elementTypes, $ignoreIds = [])
+    public function maintenanceGetOutdatedVersions(array $elementTypes, array $ignoreIds = []): array
     {
         $ignoreIdsList = implode(',', $ignoreIds);
         if (!$ignoreIdsList) {

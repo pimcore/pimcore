@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,12 +26,9 @@ class StructuredTable implements OwnerAwareFieldInterface
     /**
      * @var array
      */
-    protected $data = [];
+    protected array $data = [];
 
-    /**
-     * @param array $data
-     */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         if ($data) {
             $this->data = $data;
@@ -43,7 +41,7 @@ class StructuredTable implements OwnerAwareFieldInterface
      *
      * @return $this
      */
-    public function setData($data)
+    public function setData(array $data): static
     {
         $this->data = $data;
         $this->markMeDirty();
@@ -54,7 +52,7 @@ class StructuredTable implements OwnerAwareFieldInterface
     /**
      * @return array
      */
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }
@@ -67,7 +65,7 @@ class StructuredTable implements OwnerAwareFieldInterface
      *
      * @throws \Exception
      */
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments)
     {
         if (substr($name, 0, 3) == 'get') {
             $key = strtolower(substr($name, 3, strlen($name) - 3));
@@ -118,7 +116,7 @@ class StructuredTable implements OwnerAwareFieldInterface
     /**
      * @return bool
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         foreach ($this->data as $dataRow) {
             foreach ($dataRow as $col) {
@@ -159,7 +157,7 @@ class StructuredTable implements OwnerAwareFieldInterface
      *
      * @return string
      */
-    public function getHtmlTable($rowDefs, $colDefs)
+    public function getHtmlTable(array $rowDefs, array $colDefs): string
     {
         $string = '<table>';
 

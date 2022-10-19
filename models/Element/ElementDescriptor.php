@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,18 +24,14 @@ final class ElementDescriptor
     /**
      * @var string
      */
-    protected $type;
+    protected string $type;
 
     /**
      * @var int
      */
-    protected $id;
+    protected int $id;
 
-    /**
-     * @param string $type
-     * @param int $id
-     */
-    public function __construct($type, $id)
+    public function __construct(string $type, int $id)
     {
         $this->type = $type;
         $this->id = $id;
@@ -43,7 +40,7 @@ final class ElementDescriptor
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -53,7 +50,7 @@ final class ElementDescriptor
      *
      * @return $this
      */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
@@ -63,7 +60,7 @@ final class ElementDescriptor
     /**
      * @return int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -73,7 +70,7 @@ final class ElementDescriptor
      *
      * @return $this
      */
-    public function setId(int $id)
+    public function setId(int $id): static
     {
         $this->id = $id;
 
@@ -85,7 +82,7 @@ final class ElementDescriptor
      *
      * @return string
      */
-    public function getCacheKey()
+    public function getCacheKey(): string
     {
         return $this->getType() . '_' . $this->getId();
     }

@@ -24,7 +24,7 @@ class IndexFieldSelectionField extends Textarea
      *
      * @var string
      */
-    public $fieldtype = 'indexFieldSelectionField';
+    public string $fieldtype = 'indexFieldSelectionField';
 
     public $specificPriceField = false;
 
@@ -63,11 +63,11 @@ class IndexFieldSelectionField extends Textarea
     }
 
     /**
-     * @param array|string|null $data
+     * @param mixed $data
      *
      * @return bool
      */
-    public function isEmpty($data)
+    public function isEmpty(mixed $data)
     {
         if (is_string($data)) {
             return strlen($data) < 1;
@@ -80,13 +80,13 @@ class IndexFieldSelectionField extends Textarea
     }
 
     /**
-     * @param array|string $data
+     * @param mixed $data
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, $object = null, array $params = [])
     {
         if (is_array($data)) {
             $data = implode(',', $data);

@@ -35,77 +35,77 @@ class Notification extends AbstractModel
      *
      * @var int
      */
-    protected $id;
+    protected int $id;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected $creationDate;
+    protected ?string $creationDate;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected $modificationDate;
+    protected ?string $modificationDate;
 
     /**
      * @internal
      *
      * @var User|null
      */
-    protected $sender;
+    protected ?User $sender;
 
     /**
      * @internal
      *
      * @var User|null
      */
-    protected $recipient;
+    protected ?User $recipient;
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $title;
+    protected string $title;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected $type;
+    protected ?string $type;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected $message;
+    protected ?string $message;
 
     /**
      * @internal
      *
      * @var Element\ElementInterface|null
      */
-    protected $linkedElement;
+    protected ?Element\ElementInterface $linkedElement;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected $linkedElementType;
+    protected ?string $linkedElementType;
 
     /**
      * @internal
      *
      * @var bool
      */
-    protected $read = false;
+    protected bool $read = false;
 
     public static function getById(int $id): ?Notification
     {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,7 +26,7 @@ trait ImageTrait
      *
      * @var string|int
      */
-    public $width = 0;
+    public string|int $width = 0;
 
     /**
      * Type for the column to query
@@ -34,29 +35,29 @@ trait ImageTrait
      *
      * @var string|int
      */
-    public $height = 0;
+    public string|int $height = 0;
 
     /**
      * @internal
      *
      * @var string
      */
-    public $uploadPath;
+    public string $uploadPath;
 
     /**
      * @return string|int
      */
-    public function getWidth()
+    public function getWidth(): int|string
     {
         return $this->width;
     }
 
     /**
-     * @param string|int $width
+     * @param int|string $width
      *
      * @return $this
      */
-    public function setWidth($width)
+    public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
             $width = (int)$width;
@@ -69,17 +70,17 @@ trait ImageTrait
     /**
      * @return string|int
      */
-    public function getHeight()
+    public function getHeight(): int|string
     {
         return $this->height;
     }
 
     /**
-     * @param string|int $height
+     * @param int|string $height
      *
      * @return $this
      */
-    public function setHeight($height)
+    public function setHeight(int|string $height): static
     {
         if (is_numeric($height)) {
             $height = (int)$height;
@@ -94,7 +95,7 @@ trait ImageTrait
      *
      * @return $this
      */
-    public function setUploadPath($uploadPath)
+    public function setUploadPath(string $uploadPath): static
     {
         $this->uploadPath = $uploadPath;
 
@@ -104,7 +105,7 @@ trait ImageTrait
     /**
      * @return string
      */
-    public function getUploadPath()
+    public function getUploadPath(): string
     {
         return $this->uploadPath;
     }

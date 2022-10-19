@@ -13,7 +13,7 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class OrderByFields extends DataObject\Fieldcollection\Data\AbstractData
 {
-    protected $type = "OrderByFields";
+    protected string $type = "OrderByFields";
     protected $field;
     protected $direction;
 

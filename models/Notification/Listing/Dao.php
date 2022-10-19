@@ -43,7 +43,7 @@ class Dao extends AbstractDao
         return $count;
     }
 
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         return $this->count();
     }

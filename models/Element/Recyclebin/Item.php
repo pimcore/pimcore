@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -42,42 +43,42 @@ class Item extends Model\AbstractModel
     /**
      * @var int
      */
-    protected $id;
+    protected int $id;
 
     /**
      * @var string
      */
-    protected $path;
+    protected string $path;
 
     /**
      * @var string
      */
-    protected $type;
+    protected string $type;
 
     /**
      * @var string
      */
-    protected $subtype;
+    protected string $subtype;
 
     /**
      * @var int
      */
-    protected $amount = 0;
+    protected int $amount = 0;
 
     /**
      * @var Element\ElementInterface
      */
-    protected $element;
+    protected Element\ElementInterface $element;
 
     /**
      * @var int
      */
-    protected $date;
+    protected int $date;
 
     /**
      * @var string
      */
-    protected $deletedby;
+    protected string $deletedby;
 
     /**
      * @static
@@ -99,7 +100,7 @@ class Item extends Model\AbstractModel
      *
      * @return self|null
      */
-    public static function getById($id)
+    public static function getById(int $id): ?Item
     {
         try {
             $item = new self();
@@ -116,7 +117,7 @@ class Item extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public function restore($user = null)
+    public function restore(Model\User $user = null)
     {
         $dummy = null;
         $raw = Storage::get('recycle_bin')->read($this->getStoreageFile());
@@ -182,9 +183,9 @@ class Item extends Model\AbstractModel
     }
 
     /**
-     * @param Model\User $user
+     * @param Model\User|null $user
      */
-    public function save($user = null)
+    public function save(Model\User $user = null)
     {
         $this->setType(Element\Service::getElementType($this->getElement()));
         $this->setSubtype($this->getElement()->getType());
@@ -327,7 +328,7 @@ class Item extends Model\AbstractModel
      *
      * @return mixed
      */
-    public function marshalData($data)
+    public function marshalData(Element\ElementInterface $data): mixed
     {
         //for full dump of relation fields in container types
         $context = [
@@ -351,7 +352,7 @@ class Item extends Model\AbstractModel
                  *
                  * @return bool
                  */
-                public function matches($element)
+                public function matches($element): bool
                 {
                     //compress only elements with full_dump_state = false
                     return $element instanceof Element\ElementInterface && $element instanceof Element\ElementDumpStateInterface && !($element->isInDumpState());
@@ -383,7 +384,7 @@ class Item extends Model\AbstractModel
      *
      * @return Element\ElementInterface
      */
-    public function unmarshalData($data)
+    public function unmarshalData(Element\ElementInterface $data): Element\ElementInterface
     {
         $context = [
             'source' => __METHOD__,
@@ -412,7 +413,7 @@ class Item extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getStoreageFile()
+    public function getStoreageFile(): string
     {
         return sprintf('%s/%s.psf', $this->getType(), $this->getId());
     }
@@ -422,7 +423,7 @@ class Item extends Model\AbstractModel
      *
      * @return string
      */
-    protected function getStorageFileBinary($element)
+    protected function getStorageFileBinary(Element\ElementInterface $element): string
     {
         return sprintf('%s/%s_%s-%s.bin', $this->getType(), $this->getId(), Element\Service::getElementType($element), $element->getId());
     }
@@ -430,7 +431,7 @@ class Item extends Model\AbstractModel
     /**
      * @return int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -440,7 +441,7 @@ class Item extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setId($id)
+    public function setId(int $id): static
     {
         $this->id = (int) $id;
 
@@ -450,7 +451,7 @@ class Item extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
@@ -460,7 +461,7 @@ class Item extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setPath($path)
+    public function setPath(string $path): static
     {
         $this->path = $path;
 
@@ -470,7 +471,7 @@ class Item extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -480,7 +481,7 @@ class Item extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
@@ -490,7 +491,7 @@ class Item extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getSubtype()
+    public function getSubtype(): string
     {
         return $this->subtype;
     }
@@ -500,7 +501,7 @@ class Item extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setSubtype($subtype)
+    public function setSubtype(string $subtype): static
     {
         $this->subtype = $subtype;
 
@@ -510,7 +511,7 @@ class Item extends Model\AbstractModel
     /**
      * @return int
      */
-    public function getAmount()
+    public function getAmount(): int
     {
         return $this->amount;
     }
@@ -520,7 +521,7 @@ class Item extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setAmount($amount)
+    public function setAmount(int $amount): static
     {
         $this->amount = (int) $amount;
 
@@ -530,7 +531,7 @@ class Item extends Model\AbstractModel
     /**
      * @return int
      */
-    public function getDate()
+    public function getDate(): int
     {
         return $this->date;
     }
@@ -540,7 +541,7 @@ class Item extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setDate($date)
+    public function setDate(int $date): static
     {
         $this->date = (int) $date;
 
@@ -550,7 +551,7 @@ class Item extends Model\AbstractModel
     /**
      * @return Element\ElementInterface
      */
-    public function getElement()
+    public function getElement(): Element\ElementInterface
     {
         return $this->element;
     }
@@ -560,7 +561,7 @@ class Item extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setElement($element)
+    public function setElement(Element\ElementInterface $element): static
     {
         $this->element = $element;
 
@@ -572,7 +573,7 @@ class Item extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setDeletedby($username)
+    public function setDeletedby(string $username): static
     {
         $this->deletedby = $username;
 
@@ -582,7 +583,7 @@ class Item extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getDeletedby()
+    public function getDeletedby(): string
     {
         return $this->deletedby;
     }

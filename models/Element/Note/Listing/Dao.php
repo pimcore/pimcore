@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,7 +30,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @return Model\Element\Note[]
      */
-    public function load()
+    public function load(): array
     {
         $notesData = $this->db->fetchFirstColumn(
             'SELECT id FROM notes' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(),
@@ -52,7 +53,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * @return int[]
      */
-    public function loadIdList()
+    public function loadIdList(): array
     {
         $notesIds = $this->db->fetchFirstColumn(
             'SELECT id FROM notes' . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(),
@@ -66,7 +67,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * @return int
      */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         try {
             return (int)$this->db->fetchOne(

@@ -49,12 +49,12 @@ class NotificationServiceFilterParser
     /**
      * @var Request
      */
-    private $request;
+    private Request $request;
 
     /**
      * @var array
      */
-    private $properties;
+    private array $properties;
 
     /**
      * ExtJSFilterParser constructor.

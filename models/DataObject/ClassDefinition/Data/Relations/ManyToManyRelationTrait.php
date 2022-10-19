@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,6 +17,9 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
 
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
+use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 trait ManyToManyRelationTrait
@@ -23,19 +27,19 @@ trait ManyToManyRelationTrait
     /**
      * {@inheritdoc}
      */
-    public function save($container, $params = [])
+    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
         if (!isset($params['forceSave']) || $params['forceSave'] !== true) {
-            if (!DataObject::isDirtyDetectionDisabled() && $container instanceof DirtyIndicatorInterface) {
-                if ($container instanceof DataObject\Localizedfield) {
-                    if ($container->getObject() instanceof DirtyIndicatorInterface) {
-                        if (!$container->hasDirtyFields()) {
+            if (!DataObject::isDirtyDetectionDisabled() && $object instanceof DirtyIndicatorInterface) {
+                if ($object instanceof DataObject\Localizedfield) {
+                    if ($object->getObject() instanceof DirtyIndicatorInterface) {
+                        if (!$object->hasDirtyFields()) {
                             return;
                         }
                     }
                 } else {
                     if ($this->supportsDirtyDetection()) {
-                        if (!$container->isFieldDirty($this->getName())) {
+                        if (!$object->isFieldDirty($this->getName())) {
                             return;
                         }
                     }
@@ -43,8 +47,8 @@ trait ManyToManyRelationTrait
             }
         }
 
-        $data = $this->getDataFromObjectParam($container, $params);
+        $data = $this->getDataFromObjectParam($object, $params);
 
-        parent::save($container, $params);
+        parent::save($object, $params);
     }
 }

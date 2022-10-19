@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,7 +28,7 @@ class DefaultValueGeneratorResolver extends ClassResolver
      *
      * @return object|null
      */
-    public static function resolveGenerator($generatorClass)
+    public static function resolveGenerator(string $generatorClass): ?object
     {
         return self::resolve($generatorClass, static function ($generator) {
             return $generator instanceof DefaultValueGeneratorInterface;

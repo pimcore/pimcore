@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,7 +29,7 @@ use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
 trait DefaultValueTrait
 {
     /** @var string */
-    public $defaultValueGenerator = '';
+    public string $defaultValueGenerator = '';
 
     /**
      * @param \Pimcore\Model\DataObject\Concrete $object
@@ -36,16 +37,16 @@ trait DefaultValueTrait
      *
      * @return mixed
      */
-    abstract protected function doGetDefaultValue($object, $context = []);
+    abstract protected function doGetDefaultValue(Concrete $object, array $context = []): mixed;
 
     /**
      * @param mixed $data
-     * @param Concrete $object
+     * @param Concrete|null $object
      * @param array $params
      *
      * @return \Carbon\Carbon|float|int|\Pimcore\Model\DataObject\Data\QuantityValue|string|null modified data
      */
-    protected function handleDefaultValue($data, $object = null, $params = [])
+    protected function handleDefaultValue(mixed $data, Concrete $object = null, array $params = []): float|\Pimcore\Model\DataObject\Data\QuantityValue|int|\Carbon\Carbon|string|null
     {
         $context = isset($params['context']) ? $params['context'] : [];
         $isUpdate = isset($params['isUpdate']) ? $params['isUpdate'] : true;
@@ -147,10 +148,7 @@ trait DefaultValueTrait
         return $this->defaultValueGenerator;
     }
 
-    /**
-     * @param string $defaultValueGenerator
-     */
-    public function setDefaultValueGenerator($defaultValueGenerator)
+    public function setDefaultValueGenerator(string $defaultValueGenerator): void
     {
         $this->defaultValueGenerator = (string)$defaultValueGenerator;
     }

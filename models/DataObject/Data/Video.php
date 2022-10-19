@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,32 +29,29 @@ class Video implements OwnerAwareFieldInterface
     /**
      * @var string
      */
-    protected $type;
+    protected string $type;
 
     /**
      * @var Asset|string|int
      */
-    protected $data;
+    protected string|int|Asset $data;
 
     /**
      * @var Asset|string|int
      */
-    protected $poster;
+    protected string|int|Asset $poster;
 
     /**
      * @var string
      */
-    protected $title;
+    protected string $title;
 
     /**
      * @var string
      */
-    protected $description;
+    protected string $description;
 
-    /**
-     * @param Asset|string|int $data
-     */
-    public function setData($data)
+    public function setData(Asset|int|string $data)
     {
         $this->data = $data;
         $this->markMeDirty();
@@ -62,15 +60,12 @@ class Video implements OwnerAwareFieldInterface
     /**
      * @return Asset|string|int
      */
-    public function getData()
+    public function getData(): Asset|int|string
     {
         return $this->data;
     }
 
-    /**
-     * @param string $type
-     */
-    public function setType($type)
+    public function setType(string $type)
     {
         $this->type = $type;
         $this->markMeDirty();
@@ -79,15 +74,12 @@ class Video implements OwnerAwareFieldInterface
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $description
-     */
-    public function setDescription($description)
+    public function setDescription(string $description)
     {
         $this->description = $description;
         $this->markMeDirty();
@@ -96,15 +88,12 @@ class Video implements OwnerAwareFieldInterface
     /**
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @param Asset|string|int $poster
-     */
-    public function setPoster($poster)
+    public function setPoster(Asset|int|string $poster)
     {
         $this->poster = $poster;
         $this->markMeDirty();
@@ -113,15 +102,12 @@ class Video implements OwnerAwareFieldInterface
     /**
      * @return Asset|string|int
      */
-    public function getPoster()
+    public function getPoster(): Asset|int|string
     {
         return $this->poster;
     }
 
-    /**
-     * @param string $title
-     */
-    public function setTitle($title)
+    public function setTitle(string $title)
     {
         $this->title = $title;
         $this->markMeDirty();
@@ -130,7 +116,7 @@ class Video implements OwnerAwareFieldInterface
     /**
      * @return string
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title;
     }

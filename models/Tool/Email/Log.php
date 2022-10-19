@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -33,126 +34,126 @@ class Log extends Model\AbstractModel
      *
      * @var int
      */
-    protected $id;
+    protected int $id;
 
     /**
      * Id of the email document or null if no document was given
      *
      * @var int | null
      */
-    protected $documentId;
+    protected ?int $documentId;
 
     /**
      * Parameters passed for replacement
      *
      * @var array
      */
-    protected $params;
+    protected array $params;
 
     /**
      * Modification date as timestamp
      *
      * @var int
      */
-    protected $modificationDate;
+    protected int $modificationDate;
 
     /**
      * The request URI from were the email was sent
      *
      * @var string
      */
-    protected $requestUri;
+    protected string $requestUri;
 
     /**
      * The "from" email address
      *
      * @var string
      */
-    protected $from;
+    protected string $from;
 
     /**
      * Contains the reply to email addresses (multiple recipients are separated by a ",")
      *
      * @var string
      */
-    protected $replyTo;
+    protected string $replyTo;
 
     /**
      * The "to" recipients (multiple recipients are separated by a ",")
      *
      * @var string|null
      */
-    protected $to;
+    protected ?string $to;
 
     /**
      * The carbon copy recipients (multiple recipients are separated by a ",")
      *
      * @var string|null
      */
-    protected $cc;
+    protected ?string $cc;
 
     /**
      * The blind carbon copy recipients (multiple recipients are separated by a ",")
      *
      * @var string|null
      */
-    protected $bcc;
+    protected ?string $bcc;
 
     /**
      * Contains 1 if a html logfile exists and 0 if no html logfile exists
      *
      * @var int
      */
-    protected $emailLogExistsHtml;
+    protected int $emailLogExistsHtml;
 
     /**
      * Contains 1 if a text logfile exists and 0 if no text logfile exists
      *
      * @var int
      */
-    protected $emailLogExistsText;
+    protected int $emailLogExistsText;
 
     /**
      * Contains the timestamp when the email was sent
      *
      * @var int
      */
-    protected $sentDate;
+    protected int $sentDate;
 
     /**
      * Contains the rendered html content of the email
      *
      * @var string
      */
-    protected $bodyHtml;
+    protected string $bodyHtml;
 
     /**
      * Contains the rendered text content of the email
      *
      * @var string
      */
-    protected $bodyText;
+    protected string $bodyText;
 
     /**
      * Contains the rendered subject of the email
      *
      * @var string
      */
-    protected $subject;
+    protected string $subject;
 
     /**
      * Error log, when mail send resulted in failure - empty if successfully sent
      *
      * @var ?string
      */
-    protected $error;
+    protected ?string $error;
 
     /**
      * @param int $id
      *
      * @return $this
      */
-    public function setDocumentId($id)
+    public function setDocumentId(int $id): static
     {
         $this->documentId = $id;
 
@@ -164,7 +165,7 @@ class Log extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setRequestUri($requestUri)
+    public function setRequestUri(string $requestUri): static
     {
         $this->requestUri = $requestUri;
 
@@ -176,7 +177,7 @@ class Log extends Model\AbstractModel
      *
      * @return string
      */
-    public function getRequestUri()
+    public function getRequestUri(): string
     {
         return $this->requestUri;
     }
@@ -186,7 +187,7 @@ class Log extends Model\AbstractModel
      *
      * @return int
      */
-    public function getId()
+    public function getId(): int
     {
         return (int)$this->id;
     }
@@ -196,7 +197,7 @@ class Log extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setId($id)
+    public function setId(int $id): static
     {
         $this->id = (int)$id;
 
@@ -208,7 +209,7 @@ class Log extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setSubject($subject)
+    public function setSubject(string $subject): static
     {
         $this->subject = $subject;
 
@@ -220,7 +221,7 @@ class Log extends Model\AbstractModel
      *
      * @return string
      */
-    public function getSubject()
+    public function getSubject(): string
     {
         return $this->subject;
     }
@@ -234,7 +235,7 @@ class Log extends Model\AbstractModel
      *
      * @return Log|null
      */
-    public static function getById($id)
+    public static function getById(int $id): ?Log
     {
         $id = (int)$id;
         if ($id < 1) {
@@ -254,7 +255,7 @@ class Log extends Model\AbstractModel
      *
      * @return int|null
      */
-    public function getDocumentId()
+    public function getDocumentId(): ?int
     {
         return $this->documentId;
     }
@@ -264,7 +265,7 @@ class Log extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setParams($params)
+    public function setParams(array $params): static
     {
         $this->params = $params;
 
@@ -276,7 +277,7 @@ class Log extends Model\AbstractModel
      *
      * @return array
      */
-    public function getParams()
+    public function getParams(): array
     {
         return $this->params;
     }
@@ -288,7 +289,7 @@ class Log extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = $modificationDate;
 
@@ -300,7 +301,7 @@ class Log extends Model\AbstractModel
      *
      * @return int - Timestamp
      */
-    public function getModificationDate()
+    public function getModificationDate(): int
     {
         return $this->modificationDate;
     }
@@ -312,7 +313,7 @@ class Log extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setSentDate($sentDate)
+    public function setSentDate(int $sentDate): static
     {
         $this->sentDate = $sentDate;
 
@@ -324,7 +325,7 @@ class Log extends Model\AbstractModel
      *
      * @return int
      */
-    public function getSentDate()
+    public function getSentDate(): int
     {
         return $this->sentDate;
     }
@@ -332,7 +333,7 @@ class Log extends Model\AbstractModel
     /**
      *  Checks if a html log file exits and sets $this->emailLogExistsHtml to 0 or 1
      */
-    public function setEmailLogExistsHtml()
+    public function setEmailLogExistsHtml(): static
     {
         $storage = Storage::get('email_log');
         $storageFile = $this->getHtmlLogFilename();
@@ -346,7 +347,7 @@ class Log extends Model\AbstractModel
      *
      * @return int - 0 or 1
      */
-    public function getEmailLogExistsHtml()
+    public function getEmailLogExistsHtml(): int
     {
         return $this->emailLogExistsHtml;
     }
@@ -354,7 +355,7 @@ class Log extends Model\AbstractModel
     /**
      * Checks if a text log file exits and sets $this->emailLogExistsText to 0 or 1
      */
-    public function setEmailLogExistsText()
+    public function setEmailLogExistsText(): static
     {
         $storage = Storage::get('email_log');
         $storageFile = $this->getTextLogFilename();
@@ -368,7 +369,7 @@ class Log extends Model\AbstractModel
      *
      * @return int - 0 or 1
      */
-    public function getEmailLogExistsText()
+    public function getEmailLogExistsText(): int
     {
         return $this->emailLogExistsText;
     }
@@ -378,7 +379,7 @@ class Log extends Model\AbstractModel
      *
      * @return string
      */
-    public function getHtmlLogFilename()
+    public function getHtmlLogFilename(): string
     {
         return 'email-' . $this->getId() . '-html.log';
     }
@@ -388,7 +389,7 @@ class Log extends Model\AbstractModel
      *
      * @return string
      */
-    public function getTextLogFilename()
+    public function getTextLogFilename(): string
     {
         return 'email-' . $this->getId() . '-txt.log';
     }
@@ -398,7 +399,7 @@ class Log extends Model\AbstractModel
      *
      * @return string | false
      */
-    public function getHtmlLog()
+    public function getHtmlLog(): bool|string
     {
         if ($this->getEmailLogExistsHtml()) {
             $storage = Storage::get('email_log');
@@ -414,7 +415,7 @@ class Log extends Model\AbstractModel
      *
      * @return string | false
      */
-    public function getTextLog()
+    public function getTextLog(): bool|string
     {
         if ($this->getEmailLogExistsText()) {
             $storage = Storage::get('email_log');
@@ -464,7 +465,7 @@ class Log extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setTo($to)
+    public function setTo(?string $to): static
     {
         $this->to = $to;
 
@@ -476,7 +477,7 @@ class Log extends Model\AbstractModel
      *
      * @return string|null
      */
-    public function getTo()
+    public function getTo(): ?string
     {
         return $this->to;
     }
@@ -486,7 +487,7 @@ class Log extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setCc($cc)
+    public function setCc(?string $cc): static
     {
         $this->cc = $cc;
 
@@ -498,7 +499,7 @@ class Log extends Model\AbstractModel
      *
      * @return string|null
      */
-    public function getCc()
+    public function getCc(): ?string
     {
         return $this->cc;
     }
@@ -508,7 +509,7 @@ class Log extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setBcc($bcc)
+    public function setBcc(?string $bcc): static
     {
         $this->bcc = $bcc;
 
@@ -520,7 +521,7 @@ class Log extends Model\AbstractModel
      *
      * @return string|null
      */
-    public function getBcc()
+    public function getBcc(): ?string
     {
         return $this->bcc;
     }
@@ -530,7 +531,7 @@ class Log extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setFrom($from)
+    public function setFrom(string $from): static
     {
         $this->from = $from;
 
@@ -542,7 +543,7 @@ class Log extends Model\AbstractModel
      *
      * @return string
      */
-    public function getFrom()
+    public function getFrom(): string
     {
         return $this->from;
     }
@@ -552,7 +553,7 @@ class Log extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setReplyTo($replyTo)
+    public function setReplyTo(string $replyTo): static
     {
         $this->replyTo = $replyTo;
 
@@ -564,7 +565,7 @@ class Log extends Model\AbstractModel
      *
      * @return string
      */
-    public function getReplyTo()
+    public function getReplyTo(): string
     {
         return $this->replyTo;
     }
@@ -574,7 +575,7 @@ class Log extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setBodyHtml($html)
+    public function setBodyHtml(string $html): static
     {
         $this->bodyHtml = $html;
 
@@ -586,7 +587,7 @@ class Log extends Model\AbstractModel
      *
      * @return string | null
      */
-    public function getBodyHtml()
+    public function getBodyHtml(): ?string
     {
         return $this->bodyHtml;
     }
@@ -596,7 +597,7 @@ class Log extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setBodyText($text)
+    public function setBodyText(string $text): static
     {
         $this->bodyText = $text;
 
@@ -608,7 +609,7 @@ class Log extends Model\AbstractModel
      *
      * @return string
      */
-    public function getBodyText()
+    public function getBodyText(): string
     {
         return $this->bodyText;
     }

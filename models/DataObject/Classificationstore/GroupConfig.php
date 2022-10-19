@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -33,45 +34,45 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * @var int|null
      */
-    protected $id;
+    protected ?int $id;
 
     /**
      * Store ID
      *
      * @var int
      */
-    protected $storeId = 1;
+    protected int $storeId = 1;
 
     /**
      * Parent id
      *
      * @var int|null
      */
-    protected $parentId;
+    protected ?int $parentId;
 
     /**
      * The group name.
      *
      * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * The group description.
      *
      * @var string
      */
-    protected $description;
+    protected string $description;
 
     /**
      * @var int|null
      */
-    protected $creationDate;
+    protected ?int $creationDate;
 
     /**
      * @var int|null
      */
-    protected $modificationDate;
+    protected ?int $modificationDate;
 
     /**
      * @param int $id
@@ -79,7 +80,7 @@ final class GroupConfig extends Model\AbstractModel
      *
      * @return self|null
      */
-    public static function getById($id, ?bool $force = false)
+    public static function getById(int $id, ?bool $force = false): ?GroupConfig
     {
         $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
@@ -115,7 +116,7 @@ final class GroupConfig extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public static function getByName($name, $storeId = 1, ?bool $force = false)
+    public static function getByName(string $name, int $storeId = 1, ?bool $force = false): ?GroupConfig
     {
         $cacheKey = self::getCacheKey($storeId, $name);
 
@@ -146,7 +147,7 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * @return Model\DataObject\Classificationstore\GroupConfig
      */
-    public static function create()
+    public static function create(): GroupConfig
     {
         $config = new self();
         $config->save();
@@ -159,7 +160,7 @@ final class GroupConfig extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setId($id)
+    public function setId(int $id): static
     {
         $this->id = (int) $id;
 
@@ -169,7 +170,7 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * @return int|null
      */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -177,15 +178,12 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * @return int|null
      */
-    public function getParentId()
+    public function getParentId(): ?int
     {
         return $this->parentId;
     }
 
-    /**
-     * @param int $parentId
-     */
-    public function setParentId($parentId)
+    public function setParentId(int $parentId)
     {
         $this->parentId = $parentId;
     }
@@ -195,7 +193,7 @@ final class GroupConfig extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -205,7 +203,7 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -215,7 +213,7 @@ final class GroupConfig extends Model\AbstractModel
      *
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -227,7 +225,7 @@ final class GroupConfig extends Model\AbstractModel
      *
      * @return Model\DataObject\Classificationstore\GroupConfig
      */
-    public function setDescription($description)
+    public function setDescription(string $description): static
     {
         $this->description = $description;
 
@@ -280,7 +278,7 @@ final class GroupConfig extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = (int) $modificationDate;
 
@@ -290,7 +288,7 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * @return int|null
      */
-    public function getModificationDate()
+    public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
@@ -300,7 +298,7 @@ final class GroupConfig extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = (int) $creationDate;
 
@@ -310,7 +308,7 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * @return int|null
      */
-    public function getCreationDate()
+    public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }
@@ -320,7 +318,7 @@ final class GroupConfig extends Model\AbstractModel
      *
      * @return KeyGroupRelation[]
      */
-    public function getRelations()
+    public function getRelations(): array
     {
         $list = new KeyGroupRelation\Listing();
         $list->setCondition('groupId = ' . $this->id);
@@ -332,15 +330,12 @@ final class GroupConfig extends Model\AbstractModel
     /**
      * @return int
      */
-    public function getStoreId()
+    public function getStoreId(): int
     {
         return $this->storeId;
     }
 
-    /**
-     * @param int $storeId
-     */
-    public function setStoreId($storeId)
+    public function setStoreId(int $storeId)
     {
         $this->storeId = $storeId;
     }

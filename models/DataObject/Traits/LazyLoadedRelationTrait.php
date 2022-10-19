@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,14 +26,14 @@ trait LazyLoadedRelationTrait
     /**
      * @var array
      */
-    protected $loadedLazyKeys = [];
+    protected array $loadedLazyKeys = [];
 
-    public function markLazyKeyAsLoaded(string $key)
+    public function markLazyKeyAsLoaded(string $key): void
     {
         $this->loadedLazyKeys[$key] = 1;
     }
 
-    public function unmarkLazyKeyAsLoaded(string $key)
+    public function unmarkLazyKeyAsLoaded(string $key): void
     {
         unset($this->loadedLazyKeys[$key]);
     }

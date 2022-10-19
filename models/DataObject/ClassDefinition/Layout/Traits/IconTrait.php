@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,7 +26,7 @@ trait IconTrait
      *
      * @var string|null
      */
-    public $icon;
+    public ?string $icon;
 
     public function getIcon(): ?string
     {

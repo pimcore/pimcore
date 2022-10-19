@@ -15,7 +15,7 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class OrderPriceModifications extends DataObject\Fieldcollection\Data\AbstractData
 {
-protected $type = "OrderPriceModifications";
+protected string $type = "OrderPriceModifications";
 protected $name;
 protected $netAmount;
 protected $pricingRuleId;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -33,7 +34,7 @@ class DocType extends Model\AbstractModel
      *
      * @var string|null
      */
-    protected $id;
+    protected ?string $id;
 
     /**
      * Name of the document-type
@@ -42,7 +43,7 @@ class DocType extends Model\AbstractModel
      *
      * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * Group of document-types
@@ -51,7 +52,7 @@ class DocType extends Model\AbstractModel
      *
      * @var string
      */
-    protected $group;
+    protected string $group;
 
     /**
      * The specified controller
@@ -60,7 +61,7 @@ class DocType extends Model\AbstractModel
      *
      * @var string
      */
-    protected $controller;
+    protected string $controller;
 
     /**
      * The specified template
@@ -69,7 +70,7 @@ class DocType extends Model\AbstractModel
      *
      * @var string|null
      */
-    protected $template;
+    protected ?string $template;
 
     /**
      * Type, must be one of the following: page,snippet,email
@@ -78,28 +79,28 @@ class DocType extends Model\AbstractModel
      *
      * @var string
      */
-    protected $type;
+    protected string $type;
 
     /**
      * @internal
      *
      * @var int
      */
-    protected $priority = 0;
+    protected int $priority = 0;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected $creationDate;
+    protected ?int $creationDate;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected $modificationDate;
+    protected ?int $modificationDate;
 
     /**
      * @internal
@@ -113,7 +114,7 @@ class DocType extends Model\AbstractModel
      *
      * @return self|null
      */
-    public static function getById($id)
+    public static function getById(string $id): ?DocType
     {
         if (empty($id)) {
             return null;
@@ -134,7 +135,7 @@ class DocType extends Model\AbstractModel
      *
      * @return DocType
      */
-    public static function create()
+    public static function create(): DocType
     {
         $type = new self();
         $type->save();
@@ -145,15 +146,15 @@ class DocType extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getController()
+    public function getController(): string
     {
         return $this->controller;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getId()
+    public function getId(): ?string
     {
         return $this->id;
     }
@@ -161,7 +162,7 @@ class DocType extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -169,15 +170,15 @@ class DocType extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getGroup()
+    public function getGroup(): string
     {
         return $this->group;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getTemplate()
+    public function getTemplate(): ?string
     {
         return $this->template;
     }
@@ -187,7 +188,7 @@ class DocType extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setController($controller)
+    public function setController(string $controller): static
     {
         $this->controller = $controller;
 
@@ -199,7 +200,7 @@ class DocType extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setId($id)
+    public function setId(string $id): static
     {
         $this->id = $id;
 
@@ -211,7 +212,7 @@ class DocType extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -223,7 +224,7 @@ class DocType extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setGroup($group)
+    public function setGroup(string $group): static
     {
         $this->group = $group;
 
@@ -235,7 +236,7 @@ class DocType extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setTemplate($template)
+    public function setTemplate(string $template): static
     {
         $this->template = $template;
 
@@ -245,7 +246,7 @@ class DocType extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -255,7 +256,7 @@ class DocType extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
@@ -267,7 +268,7 @@ class DocType extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setPriority($priority)
+    public function setPriority(int $priority): static
     {
         $this->priority = (int) $priority;
 
@@ -277,7 +278,7 @@ class DocType extends Model\AbstractModel
     /**
      * @return int
      */
-    public function getPriority()
+    public function getPriority(): int
     {
         return $this->priority;
     }
@@ -287,7 +288,7 @@ class DocType extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = (int) $modificationDate;
 
@@ -297,7 +298,7 @@ class DocType extends Model\AbstractModel
     /**
      * @return int|null
      */
-    public function getModificationDate()
+    public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
@@ -307,7 +308,7 @@ class DocType extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = (int) $creationDate;
 
@@ -317,7 +318,7 @@ class DocType extends Model\AbstractModel
     /**
      * @return int|null
      */
-    public function getCreationDate()
+    public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }

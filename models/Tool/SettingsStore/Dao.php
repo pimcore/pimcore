@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,15 +29,7 @@ class Dao extends Model\Dao\AbstractDao
 {
     const TABLE_NAME = 'settings_store';
 
-    /**
-     * @param string $id
-     * @param int|string|bool|float $data
-     * @param string $type
-     * @param string|null $scope
-     *
-     * @return bool
-     */
-    public function set(string $id, $data, string $type = 'string', ?string $scope = null): bool
+    public function set(string $id, float|bool|int|string $data, string $type = 'string', ?string $scope = null): bool
     {
         try {
             Helper::insertOrUpdate($this->db, self::TABLE_NAME, [
@@ -58,7 +51,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return int|string
      */
-    public function delete(string $id, ?string $scope = null)
+    public function delete(string $id, ?string $scope = null): int|string
     {
         return $this->db->delete(self::TABLE_NAME, [
             'id' => $id,

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -63,7 +64,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     /**
      * @return string|null
      */
-    public function getKey()
+    public function getKey(): ?string
     {
         return $this->key;
     }
@@ -73,7 +74,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return $this
      */
-    public function setKey($key)
+    public function setKey($key): static
     {
         $this->key = $key;
 
@@ -83,7 +84,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     /**
      * @return string|null
      */
-    public function getParentClass()
+    public function getParentClass(): ?string
     {
         return $this->parentClass;
     }
@@ -93,7 +94,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return $this
      */
-    public function setParentClass($parentClass)
+    public function setParentClass($parentClass): static
     {
         $this->parentClass = $parentClass;
 
@@ -103,7 +104,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     /**
      * @return string
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -113,7 +114,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return $this
      */
-    public function setTitle($title)
+    public function setTitle($title): static
     {
         $this->title = $title;
 
@@ -123,7 +124,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     /**
      * @return Layout|null
      */
-    public function getLayoutDefinitions()
+    public function getLayoutDefinitions(): ?Layout
     {
         return $this->layoutDefinitions;
     }
@@ -133,7 +134,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return $this
      */
-    public function setLayoutDefinitions($layoutDefinitions)
+    public function setLayoutDefinitions($layoutDefinitions): static
     {
         $this->layoutDefinitions = $layoutDefinitions;
 
@@ -148,7 +149,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return Data[]
      */
-    public function getFieldDefinitions($context = [])
+    public function getFieldDefinitions($context = []): array
     {
         if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
             return $this->fieldDefinitions;
@@ -170,7 +171,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return $this
      */
-    public function setFieldDefinitions(array $fieldDefinitions)
+    public function setFieldDefinitions(array $fieldDefinitions): static
     {
         $this->fieldDefinitions = $fieldDefinitions;
 
@@ -183,7 +184,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return $this
      */
-    public function addFieldDefinition($key, $data)
+    public function addFieldDefinition($key, $data): static
     {
         $this->fieldDefinitions[$key] = $data;
 
@@ -196,7 +197,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return Data|null
      */
-    public function getFieldDefinition($key, $context = [])
+    public function getFieldDefinition($key, $context = []): ?Data
     {
         if (is_array($this->fieldDefinitions)) {
             $fieldDefinition = null;
@@ -223,7 +224,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     /**
      * @return string
      */
-    public function getGroup()
+    public function getGroup(): string
     {
         return $this->group;
     }
@@ -233,7 +234,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return $this
      */
-    public function setGroup($group)
+    public function setGroup($group): static
     {
         $this->group = $group;
 
@@ -250,7 +251,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return $this
      */
-    public function setImplementsInterfaces(?string $implementsInterfaces)
+    public function setImplementsInterfaces(?string $implementsInterfaces): static
     {
         $this->implementsInterfaces = $implementsInterfaces;
 
@@ -265,5 +266,5 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return mixed
      */
-    abstract protected function doEnrichFieldDefinition($fieldDefinition, $context = []);
+    abstract protected function doEnrichFieldDefinition($fieldDefinition, $context = []): mixed;
 }

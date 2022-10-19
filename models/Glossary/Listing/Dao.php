@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,7 +30,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @return array
      */
-    public function load()
+    public function load(): array
     {
         $glossarysData = $this->db->fetchFirstColumn('SELECT id FROM glossary' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
@@ -46,7 +47,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * @return array
      */
-    public function getDataArray()
+    public function getDataArray(): array
     {
         $glossarysData = $this->db->fetchAllAssociative('SELECT * FROM glossary' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
@@ -58,7 +59,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @todo: $amount could not be defined, so this could cause an issue
      */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM glossary ' . $this->getCondition(), $this->model->getConditionVariables());

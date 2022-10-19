@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,7 +28,7 @@ class DynamicTextResolver extends ClassResolver
      *
      * @return object|null
      */
-    public static function resolveRenderingClass($renderingClass)
+    public static function resolveRenderingClass(string $renderingClass): ?object
     {
         return self::resolve($renderingClass);
     }

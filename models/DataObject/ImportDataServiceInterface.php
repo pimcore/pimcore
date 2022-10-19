@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,5 +29,5 @@ interface ImportDataServiceInterface
      *
      * @return Concrete
      */
-    public function populate($resolverConfig, $object, $rowData, $params = []);
+    public function populate(stdClass $resolverConfig, Concrete $object, array $rowData, array $params = []): Concrete;
 }

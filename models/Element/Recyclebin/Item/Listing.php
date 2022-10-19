@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,7 +31,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @return Model\Element\Recyclebin\Item[]
      */
-    public function getItems()
+    public function getItems(): array
     {
         return $this->getData();
     }
@@ -40,7 +41,7 @@ class Listing extends Model\Listing\AbstractListing
      *
      * @return $this
      */
-    public function setItems($items)
+    public function setItems(array $items): static
     {
         return $this->setData($items);
     }

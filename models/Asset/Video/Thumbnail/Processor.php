@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,7 +33,7 @@ class Processor
     /**
      * @var array
      */
-    protected static $argumentMapping = [
+    protected static array $argumentMapping = [
         'resize'            => ['width', 'height'],
         'scaleByWidth'      => ['width'],
         'scaleByHeight'     => ['height'],
@@ -45,27 +46,27 @@ class Processor
     /**
      * @var \Pimcore\Video\Adapter[]
      */
-    protected $queue = [];
+    protected array $queue = [];
 
     /**
      * @var string
      */
-    protected $processId;
+    protected string $processId;
 
     /**
      * @var int
      */
-    protected $assetId;
+    protected int $assetId;
 
     /**
      * @var Config
      */
-    protected $config;
+    protected Config $config;
 
     /**
      * @var int
      */
-    protected $status;
+    protected int $status;
 
     /**
      * @param Model\Asset\Video $asset
@@ -76,7 +77,7 @@ class Processor
      *
      * @throws \Exception
      */
-    public static function process(Model\Asset\Video $asset, $config, $onlyFormats = [])
+    public static function process(Model\Asset\Video $asset, Config $config, array $onlyFormats = []): ?Processor
     {
         if (!\Pimcore\Video::isAvailable()) {
             throw new \Exception('No ffmpeg executable found, please configure the correct path in the system settings');
@@ -208,10 +209,7 @@ class Processor
         }
     }
 
-    /**
-     * @param string $processId
-     */
-    public static function execute($processId)
+    public static function execute(string $processId): void
     {
         $instance = new self();
         $instance->setProcessId($processId);
@@ -311,7 +309,7 @@ class Processor
     /**
      * @return bool
      */
-    public function save()
+    public function save(): bool
     {
         TmpStore::add($this->getJobStoreId(), $this, 'video-job');
 
@@ -319,11 +317,11 @@ class Processor
     }
 
     /**
-     * @param string $processId
+     * @param string|null $processId
      *
      * @return string
      */
-    protected function getJobStoreId($processId = null)
+    protected function getJobStoreId(string $processId = null): string
     {
         if (!$processId) {
             $processId = $this->getProcessId();
@@ -337,7 +335,7 @@ class Processor
      *
      * @return $this
      */
-    public function setProcessId($processId)
+    public function setProcessId(string $processId): static
     {
         $this->processId = $processId;
 
@@ -347,7 +345,7 @@ class Processor
     /**
      * @return string
      */
-    public function getProcessId()
+    public function getProcessId(): string
     {
         return $this->processId;
     }
@@ -357,7 +355,7 @@ class Processor
      *
      * @return $this
      */
-    public function setAssetId($assetId)
+    public function setAssetId(int $assetId): static
     {
         $this->assetId = $assetId;
 
@@ -367,7 +365,7 @@ class Processor
     /**
      * @return int
      */
-    public function getAssetId()
+    public function getAssetId(): int
     {
         return $this->assetId;
     }
@@ -377,7 +375,7 @@ class Processor
      *
      * @return $this
      */
-    public function setConfig($config)
+    public function setConfig(Config $config): static
     {
         $this->config = $config;
 
@@ -387,7 +385,7 @@ class Processor
     /**
      * @return Config
      */
-    public function getConfig()
+    public function getConfig(): Config
     {
         return $this->config;
     }
@@ -397,7 +395,7 @@ class Processor
      *
      * @return $this
      */
-    public function setQueue($queue)
+    public function setQueue(array $queue): static
     {
         $this->queue = $queue;
 
@@ -407,7 +405,7 @@ class Processor
     /**
      * @return array
      */
-    public function getQueue()
+    public function getQueue(): array
     {
         return $this->queue;
     }

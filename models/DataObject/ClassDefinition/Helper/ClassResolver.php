@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,15 +21,13 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
  */
 abstract class ClassResolver
 {
-    private static $cache;
-
     /**
      * @param string|null $class
      * @param callable|null $validationCallback
      *
      * @return object|null
      */
-    protected static function resolve($class, callable $validationCallback = null)
+    protected static function resolve(?string $class, callable $validationCallback = null): ?object
     {
         if (!$class) {
             return null;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,20 +36,20 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      *
      * @var TItem[]
      */
-    protected $items = [];
+    protected array $items = [];
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $fieldname;
+    protected string $fieldname;
 
     /**
      * @param TItem[] $items
      * @param string|null $fieldname
      */
-    public function __construct($items = [], $fieldname = null)
+    public function __construct(array $items = [], string $fieldname = null)
     {
         if (!empty($items)) {
             $this->setItems($items);
@@ -63,7 +64,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * @return TItem[]
      */
-    public function getItems()
+    public function getItems(): array
     {
         return $this->items;
     }
@@ -73,7 +74,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      *
      * @return $this
      */
-    public function setItems($items)
+    public function setItems(array $items): static
     {
         $this->items = $items;
         $this->markFieldDirty('_self', true);
@@ -84,7 +85,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * @return string
      */
-    public function getFieldname()
+    public function getFieldname(): string
     {
         return $this->fieldname;
     }
@@ -94,7 +95,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      *
      * @return $this
      */
-    public function setFieldname($fieldname)
+    public function setFieldname(string $fieldname): static
     {
         $this->fieldname = $fieldname;
 
@@ -106,7 +107,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      *
      * @return Fieldcollection\Definition[]
      */
-    public function getItemDefinitions()
+    public function getItemDefinitions(): array
     {
         $definitions = [];
         foreach ($this->getItems() as $item) {
@@ -122,7 +123,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      *
      * @throws \Exception
      */
-    public function save($object, $params = [])
+    public function save(Concrete $object, array $params = [])
     {
         $saveRelationalData = $this->getDao()->save($object, $params);
 
@@ -154,25 +155,19 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * @return bool
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return count($this->getItems()) < 1;
     }
 
-    /**
-     * @param TItem $item
-     */
-    public function add($item)
+    public function add(mixed $item)
     {
         $this->items[] = $item;
 
         $this->markFieldDirty('_self', true);
     }
 
-    /**
-     * @param int $index
-     */
-    public function remove($index)
+    public function remove(int $index)
     {
         if (isset($this->items[$index])) {
             array_splice($this->items, $index, 1);
@@ -186,7 +181,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      *
      * @return Fieldcollection\Data\AbstractData|null
      */
-    public function get($index)
+    public function get(int $index): ?Fieldcollection\Data\AbstractData
     {
         return $this->items[$index] ?? null;
     }
@@ -211,7 +206,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * @return int
      */
-    public function getCount()
+    public function getCount(): int
     {
         return count($this->getItems());
     }
@@ -224,7 +219,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function rewind()// : void
+    public function rewind(): void// : void
     {
         reset($this->items);
     }
@@ -242,7 +237,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      * @return int|null
      */
     #[\ReturnTypeWillChange]
-    public function key()// : int|null
+    public function key(): ?int// : int|null
     {
         return key($this->items);
     }
@@ -251,7 +246,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function next()// : void
+    public function next(): void// : void
     {
         next($this->items);
     }
@@ -260,7 +255,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      * @return bool
      */
     #[\ReturnTypeWillChange]
-    public function valid()// : bool
+    public function valid(): bool// : bool
     {
         return $this->current() !== false;
     }
@@ -276,7 +271,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      *
      * @internal
      */
-    public function loadLazyField(Concrete $object, $type, $fcField, $index, $field)
+    public function loadLazyField(Concrete $object, string $type, string $fcField, int $index, string $field)
     {
         // lazy loading existing can be data if the item already had an index
         $item = $this->getByOriginalIndex($index);
@@ -322,7 +317,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      *
      * @return $this
      */
-    public function setObject(?Concrete $object)
+    public function setObject(?Concrete $object): static
     {
         // update all items with the new $object
         if (is_array($this->getItems())) {

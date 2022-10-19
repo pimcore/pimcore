@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,32 +29,32 @@ final class CollectionGroupRelation extends Model\AbstractModel
     /**
      * @var int
      */
-    protected $colId;
+    protected int $colId;
 
     /**
      * @var int
      */
-    protected $groupId;
+    protected int $groupId;
 
     /** The key
      * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * The key description.
      *
      * @var string
      */
-    protected $description;
+    protected string $description;
 
     /** @var int */
-    protected $sorter;
+    protected int $sorter;
 
     /**
      * @return Model\DataObject\Classificationstore\CollectionGroupRelation
      */
-    public static function create()
+    public static function create(): CollectionGroupRelation
     {
         return new self();
     }
@@ -64,7 +65,7 @@ final class CollectionGroupRelation extends Model\AbstractModel
      *
      * @return self|null
      */
-    public static function getByGroupAndColId($groupId = null, $colId = null)
+    public static function getByGroupAndColId(int $groupId = null, int $colId = null): ?CollectionGroupRelation
     {
         try {
             $config = new self();
@@ -79,15 +80,12 @@ final class CollectionGroupRelation extends Model\AbstractModel
     /**
      * @return int
      */
-    public function getGroupId()
+    public function getGroupId(): int
     {
         return $this->groupId;
     }
 
-    /**
-     * @param int $groupId
-     */
-    public function setGroupId($groupId)
+    public function setGroupId(int $groupId)
     {
         $this->groupId = $groupId;
     }
@@ -95,15 +93,12 @@ final class CollectionGroupRelation extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
@@ -111,15 +106,12 @@ final class CollectionGroupRelation extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @param string $description
-     */
-    public function setDescription($description)
+    public function setDescription(string $description)
     {
         $this->description = $description;
     }
@@ -127,15 +119,12 @@ final class CollectionGroupRelation extends Model\AbstractModel
     /**
      * @return int
      */
-    public function getColId()
+    public function getColId(): int
     {
         return $this->colId;
     }
 
-    /**
-     * @param int $colId
-     */
-    public function setColId($colId)
+    public function setColId(int $colId)
     {
         $this->colId = $colId;
     }
@@ -143,15 +132,12 @@ final class CollectionGroupRelation extends Model\AbstractModel
     /**
      * @return int
      */
-    public function getSorter()
+    public function getSorter(): int
     {
         return $this->sorter;
     }
 
-    /**
-     * @param int $sorter
-     */
-    public function setSorter($sorter)
+    public function setSorter(int $sorter)
     {
         $this->sorter = (int) $sorter;
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,12 +31,12 @@ class Scheduledblock extends Block implements BlockInterface
      *
      * @var array|null
      */
-    protected $cachedCurrentElement = null;
+    protected ?array $cachedCurrentElement = null;
 
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return 'scheduledblock';
     }
@@ -43,7 +44,7 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): Scheduledblock|EditableInterface|Block|static
     {
         $this->indices = $data;
 
@@ -61,7 +62,7 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    protected function setDefault()
+    protected function setDefault(): Scheduledblock|Block|static
     {
         if (empty($this->indices)) {
             $this->indices[] = [
@@ -130,7 +131,7 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function loop()
+    public function loop(): bool
     {
         $this->setDefault();
         $elements = $this->filterElements();
@@ -161,7 +162,7 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function start()
+    public function start(): Scheduledblock|static
     {
         if ($this->getEditmode()) {
             // this is actually to add the block to the EditmodeEditableDefinitionCollector
@@ -229,7 +230,7 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function getIterator()
+    public function getIterator(): \Generator
     {
         while ($this->loop()) {
             yield $this->getCurrentIndex();
@@ -239,7 +240,7 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function getElements()
+    public function getElements(): array
     {
         $document = $this->getDocument();
 
@@ -257,7 +258,7 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function setConfig($config)
+    public function setConfig(array $config): Scheduledblock|\Pimcore\Model\Document\Editable|Block|static
     {
         $config['reload'] = true;
         parent::setConfig($config);

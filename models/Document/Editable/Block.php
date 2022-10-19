@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -36,7 +37,7 @@ class Block extends Model\Document\Editable implements BlockInterface
      *
      * @var array
      */
-    protected $indices = [];
+    protected array $indices = [];
 
     /**
      * Current step of the block while iteration
@@ -45,12 +46,12 @@ class Block extends Model\Document\Editable implements BlockInterface
      *
      * @var int
      */
-    protected $current = 0;
+    protected int $current = 0;
 
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return 'block';
     }
@@ -84,7 +85,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): EditableInterface|Block|static
     {
         $this->indices = \Pimcore\Tool\Serialize::unserialize($data);
 
@@ -94,7 +95,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): EditableInterface|Block|static
     {
         $this->indices = $data;
 
@@ -106,7 +107,7 @@ class Block extends Model\Document\Editable implements BlockInterface
      *
      * @return $this
      */
-    protected function setDefault()
+    protected function setDefault(): static
     {
         if (empty($this->indices) && isset($this->config['default']) && $this->config['default']) {
             for ($i = 0; $i < (int)$this->config['default']; $i++) {
@@ -120,7 +121,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function getIterator()
+    public function getIterator(): \Generator
     {
         while ($this->loop()) {
             yield $this->getCurrentIndex();
@@ -167,7 +168,7 @@ class Block extends Model\Document\Editable implements BlockInterface
      *
      * @return bool
      */
-    public function loop()
+    public function loop(): bool
     {
         $manual = false;
         if (($this->config['manual'] ?? false) == true) {
@@ -221,7 +222,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function start()
+    public function start(): static
     {
         // set name suffix for the whole block element, this will be added to all child elements of the block
         $this->getBlockState()->pushBlock(BlockName::createFromEditable($this));
@@ -304,9 +305,8 @@ class Block extends Model\Document\Editable implements BlockInterface
     /**
      * Custom position of button controls between blockStart -> blockEnd
      *
-     * @param bool $return
      */
-    public function blockControls($return = false)
+    public function blockControls(bool $return = false)
     {
         $attr = $this->getBlockAttributes();
 
@@ -348,7 +348,7 @@ EOT;
     /**
      * {@inheritdoc}
      */
-    public function setConfig($config)
+    public function setConfig(array $config): Model\Document\Editable|Block|static
     {
         if (empty($config['limit'])) {
             $config['limit'] = 1000000;
@@ -366,7 +366,7 @@ EOT;
     /**
      * {@inheritdoc}
      */
-    public function getCount()
+    public function getCount(): int
     {
         return count($this->indices);
     }
@@ -374,7 +374,7 @@ EOT;
     /**
      * {@inheritdoc}
      */
-    public function getCurrent()
+    public function getCurrent(): int
     {
         return $this->current - 1;
     }
@@ -390,7 +390,7 @@ EOT;
     /**
      * @return array
      */
-    public function getIndices()
+    public function getIndices(): array
     {
         return $this->indices;
     }
@@ -406,7 +406,7 @@ EOT;
     /**
      * {@inheritdoc}
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return !(bool) count($this->indices);
     }
@@ -414,7 +414,7 @@ EOT;
     /**
      * @return Block\Item[]
      */
-    public function getElements()
+    public function getElements(): array
     {
         $document = $this->getDocument();
 

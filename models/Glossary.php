@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,77 +30,77 @@ class Glossary extends AbstractModel
      *
      * @var int|null
      */
-    protected $id;
+    protected ?int $id;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected $text;
+    protected ?string $text;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected $link;
+    protected ?string $link;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected $abbr;
+    protected ?string $abbr;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected $language;
+    protected ?string $language;
 
     /**
      * @internal
      *
      * @var bool
      */
-    protected $casesensitive = false;
+    protected bool $casesensitive = false;
 
     /**
      * @internal
      *
      * @var bool
      */
-    protected $exactmatch = false;
+    protected bool $exactmatch = false;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected $site;
+    protected ?int $site;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected $creationDate;
+    protected ?int $creationDate;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected $modificationDate;
+    protected ?int $modificationDate;
 
     /**
      * @param int $id
      *
      * @return self|null
      */
-    public static function getById($id)
+    public static function getById(int $id): ?Glossary
     {
         try {
             $glossary = new self();
@@ -115,7 +116,7 @@ class Glossary extends AbstractModel
     /**
      * @return Glossary
      */
-    public static function create()
+    public static function create(): Glossary
     {
         $glossary = new self();
         $glossary->save();
@@ -128,7 +129,7 @@ class Glossary extends AbstractModel
      *
      * @return $this
      */
-    public function setId($id)
+    public function setId(int $id): static
     {
         $this->id = (int) $id;
 
@@ -138,7 +139,7 @@ class Glossary extends AbstractModel
     /**
      * @return int|null
      */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -148,7 +149,7 @@ class Glossary extends AbstractModel
      *
      * @return $this
      */
-    public function setText($text)
+    public function setText(string $text): static
     {
         $this->text = $text;
 
@@ -158,7 +159,7 @@ class Glossary extends AbstractModel
     /**
      * @return string|null
      */
-    public function getText()
+    public function getText(): ?string
     {
         return $this->text;
     }
@@ -168,7 +169,7 @@ class Glossary extends AbstractModel
      *
      * @return $this
      */
-    public function setLink($link)
+    public function setLink(string $link): static
     {
         $this->link = $link;
 
@@ -178,7 +179,7 @@ class Glossary extends AbstractModel
     /**
      * @return string|null
      */
-    public function getLink()
+    public function getLink(): ?string
     {
         return $this->link;
     }
@@ -188,7 +189,7 @@ class Glossary extends AbstractModel
      *
      * @return $this
      */
-    public function setAbbr($abbr)
+    public function setAbbr(string $abbr): static
     {
         $this->abbr = $abbr;
 
@@ -198,7 +199,7 @@ class Glossary extends AbstractModel
     /**
      * @return string|null
      */
-    public function getAbbr()
+    public function getAbbr(): ?string
     {
         return $this->abbr;
     }
@@ -208,7 +209,7 @@ class Glossary extends AbstractModel
      *
      * @return $this
      */
-    public function setLanguage($language)
+    public function setLanguage(string $language): static
     {
         $this->language = $language;
 
@@ -218,7 +219,7 @@ class Glossary extends AbstractModel
     /**
      * @return string|null
      */
-    public function getLanguage()
+    public function getLanguage(): ?string
     {
         return $this->language;
     }
@@ -228,7 +229,7 @@ class Glossary extends AbstractModel
      *
      * @return $this
      */
-    public function setCasesensitive($casesensitive)
+    public function setCasesensitive(bool $casesensitive): static
     {
         $this->casesensitive = (bool) $casesensitive;
 
@@ -238,7 +239,7 @@ class Glossary extends AbstractModel
     /**
      * @return bool
      */
-    public function getCasesensitive()
+    public function getCasesensitive(): bool
     {
         return $this->casesensitive;
     }
@@ -248,7 +249,7 @@ class Glossary extends AbstractModel
      *
      * @return $this
      */
-    public function setExactmatch($exactmatch)
+    public function setExactmatch(bool $exactmatch): static
     {
         $this->exactmatch = (bool) $exactmatch;
 
@@ -258,17 +259,17 @@ class Glossary extends AbstractModel
     /**
      * @return bool
      */
-    public function getExactmatch()
+    public function getExactmatch(): bool
     {
         return $this->exactmatch;
     }
 
     /**
-     * @param Site|int $site
+     * @param int|Site $site
      *
      * @return $this
      */
-    public function setSite($site)
+    public function setSite(Site|int $site): static
     {
         if ($site instanceof Site) {
             $site = $site->getId();
@@ -281,7 +282,7 @@ class Glossary extends AbstractModel
     /**
      * @return int|null
      */
-    public function getSite()
+    public function getSite(): ?int
     {
         return $this->site;
     }
@@ -291,7 +292,7 @@ class Glossary extends AbstractModel
      *
      * @return $this
      */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = (int) $modificationDate;
 
@@ -301,7 +302,7 @@ class Glossary extends AbstractModel
     /**
      * @return int|null
      */
-    public function getModificationDate()
+    public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
@@ -311,7 +312,7 @@ class Glossary extends AbstractModel
      *
      * @return $this
      */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = (int) $creationDate;
 
@@ -319,9 +320,9 @@ class Glossary extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getCreationDate()
+    public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }

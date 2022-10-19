@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -34,14 +35,14 @@ class Image extends Model\Asset
     /**
      * {@inheritdoc}
      */
-    protected $type = 'image';
+    protected string $type = 'image';
 
     private bool $clearThumbnailsOnSave = false;
 
     /**
      * {@inheritdoc}
      */
-    protected function update($params = [])
+    protected function update(array $params = [])
     {
         if ($this->getDataChanged()) {
             foreach (['imageWidth', 'imageHeight', 'imageDimensionsCalculated'] as $key) {
@@ -159,15 +160,15 @@ class Image extends Model\Asset
     }
 
     /**
-     * @internal
+     * @param string|null $generator
      *
-     * @param null|string $generator
-     *
-     * @return bool|string
+          * @return bool|string
      *
      * @throws \Exception
+     *@internal
+     *
      */
-    public function generateLowQualityPreview($generator = null)
+    public function generateLowQualityPreview(string $generator = null): bool|string
     {
         if (!$this->isLowQualityPreviewEnabled()) {
             return false;
@@ -220,7 +221,7 @@ EOT;
     /**
      * @return string
      */
-    public function getLowQualityPreviewPath()
+    public function getLowQualityPreviewPath(): string
     {
         $storagePath = $this->getLowQualityPreviewStoragePath();
         $path = $storagePath;
@@ -275,7 +276,7 @@ EOT;
      *
      * @return Image\Thumbnail\Config|null
      */
-    public function getThumbnailConfig($config)
+    public function getThumbnailConfig(array|string|Image\Thumbnail\Config $config): ?Image\Thumbnail\Config
     {
         $thumbnail = $this->getThumbnail($config);
 
@@ -290,7 +291,7 @@ EOT;
      *
      * @return Image\Thumbnail
      */
-    public function getThumbnail($config = null, $deferred = true)
+    public function getThumbnail(array|string|Image\Thumbnail\Config $config = null, bool $deferred = true): Image\Thumbnail
     {
         return new Image\Thumbnail($this, $config, $deferred);
     }
@@ -302,7 +303,7 @@ EOT;
      *
      * @return null|\Pimcore\Image\Adapter
      */
-    public static function getImageTransformInstance()
+    public static function getImageTransformInstance(): ?\Pimcore\Image\Adapter
     {
         try {
             $image = \Pimcore\Image::getInstance();
@@ -320,7 +321,7 @@ EOT;
     /**
      * @return string
      */
-    public function getFormat()
+    public function getFormat(): string
     {
         if ($this->getWidth() > $this->getHeight()) {
             return 'landscape';
@@ -341,7 +342,7 @@ EOT;
      *
      * @throws \Exception
      */
-    public function getDimensions($path = null, $force = false)
+    public function getDimensions(string $path = null, bool $force = false): ?array
     {
         if (!$force) {
             $width = $this->getCustomSetting('imageWidth');
@@ -422,7 +423,7 @@ EOT;
     /**
      * @return int
      */
-    public function getWidth()
+    public function getWidth(): int
     {
         $dimensions = $this->getDimensions();
 
@@ -436,7 +437,7 @@ EOT;
     /**
      * @return int
      */
-    public function getHeight()
+    public function getHeight(): int
     {
         $dimensions = $this->getDimensions();
 
@@ -450,7 +451,7 @@ EOT;
     /**
      * {@inheritdoc}
      */
-    public function setCustomSetting($key, $value)
+    public function setCustomSetting(string $key, mixed $value): Model\Asset|Image
     {
         if (in_array($key, ['focalPointX', 'focalPointY'])) {
             // if the focal point changes we need to clean all thumbnails on save
@@ -465,7 +466,7 @@ EOT;
     /**
      * @return bool
      */
-    public function isVectorGraphic()
+    public function isVectorGraphic(): bool
     {
         // we use a simple file-extension check, for performance reasons
         if (preg_match("@\.(svgz?|eps|pdf|ps|ai|indd)$@", $this->getFilename())) {
@@ -480,7 +481,7 @@ EOT;
      *
      * @return bool
      */
-    public function isAnimated()
+    public function isAnimated(): bool
     {
         $isAnimated = false;
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,12 +30,9 @@ class Folder extends DAV\Collection
     /**
      * @var Asset
      */
-    private $asset;
+    private Asset $asset;
 
-    /**
-     * @param Asset $asset
-     */
-    public function __construct($asset)
+    public function __construct(Asset $asset)
     {
         $this->asset = $asset;
     }
@@ -44,7 +42,7 @@ class Folder extends DAV\Collection
      *
      * @return array
      */
-    public function getChildren()
+    public function getChildren(): array
     {
         $children = [];
 
@@ -72,7 +70,7 @@ class Folder extends DAV\Collection
      *
      * @throws DAV\Exception\NotFound
      */
-    public function getChild($name)
+    public function getChild($name): File|Folder
     {
         $asset = null;
 
@@ -105,7 +103,7 @@ class Folder extends DAV\Collection
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->asset->getFilename();
     }
@@ -188,7 +186,7 @@ class Folder extends DAV\Collection
      * @throws DAV\Exception\Forbidden
      * @throws \Exception
      */
-    public function setName($name)
+    public function setName($name): static
     {
         if ($this->asset->isAllowed('rename')) {
             $this->asset->setFilename(Element\Service::getValidKey($name, 'asset'));
@@ -203,7 +201,7 @@ class Folder extends DAV\Collection
     /**
      * @return int
      */
-    public function getLastModified()
+    public function getLastModified(): int
     {
         return $this->asset->getModificationDate();
     }

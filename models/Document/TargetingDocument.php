@@ -27,7 +27,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     /**
      * @var int
      */
-    private $useTargetGroup;
+    private int $useTargetGroup;
 
     /**
      * {@inheritdoc}
@@ -40,7 +40,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     /**
      * {@inheritdoc}
      */
-    public function getUseTargetGroup()
+    public function getUseTargetGroup(): ?int
     {
         return $this->useTargetGroup;
     }
@@ -99,7 +99,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     /**
      * {@inheritdoc}
      */
-    public function setEditable(Editable $editable)
+    public function setEditable(Editable $editable): TargetingDocument|PageSnippet
     {
         if ($this->getUseTargetGroup()) {
             $name = $this->getTargetGroupEditableName($editable->getName());
@@ -116,7 +116,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
      *
      * @return Editable|null
      */
-    public function getEditable($name)
+    public function getEditable(string $name): ?Editable
     {
         // check if a target group is requested for this page, if yes deliver a different version of the editable (prefixed)
         if ($this->getUseTargetGroup()) {

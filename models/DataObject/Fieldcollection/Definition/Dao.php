@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,14 +31,14 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @var array|null
      */
-    protected $tableDefinitions = null;
+    protected ?array $tableDefinitions = null;
 
     /**
      * @param DataObject\ClassDefinition $class
      *
      * @return string
      */
-    public function getTableName(DataObject\ClassDefinition $class)
+    public function getTableName(DataObject\ClassDefinition $class): string
     {
         return 'object_collection_' . $this->model->getKey() . '_' . $class->getId();
     }
@@ -47,7 +48,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return string
      */
-    public function getLocalizedTableName(DataObject\ClassDefinition $class)
+    public function getLocalizedTableName(DataObject\ClassDefinition $class): string
     {
         return 'object_collection_' . $this->model->getKey() . '_localized_' . $class->getId();
     }

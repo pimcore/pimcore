@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,5 +23,5 @@ interface ObjectAwareFieldInterface
      *
      * @return $this
      */
-    public function setObject(?Concrete $object);
+    public function setObject(?Concrete $object): static;
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,5 +26,5 @@ interface CustomDataCopyInterface
      *
      * @return mixed
      */
-    public function createDataCopy(Concrete $object, $data);
+    public function createDataCopy(Concrete $object, mixed $data): mixed;
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,28 +23,28 @@ abstract class AbstractArea
      *
      * @var array
      */
-    protected $config;
+    protected array $config;
 
     /**
      * @internal
      *
      * @var Info
      */
-    protected $brick;
+    protected Info $brick;
 
     /**
      * @internal
      *
      * @var array
      */
-    protected $params = [];
+    protected array $params = [];
 
     /**
      * @param array $config
      *
      * @return $this
      */
-    public function setConfig($config)
+    public function setConfig(array $config): static
     {
         $this->config = $config;
 
@@ -53,7 +54,7 @@ abstract class AbstractArea
     /**
      * @return array
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         return $this->config;
     }
@@ -63,7 +64,7 @@ abstract class AbstractArea
      *
      * @return mixed
      */
-    public function getParam($key)
+    public function getParam(string $key): mixed
     {
         if (array_key_exists($key, $this->params)) {
             return $this->params[$key];
@@ -75,16 +76,12 @@ abstract class AbstractArea
     /**
      * @return array
      */
-    public function getAllParams()
+    public function getAllParams(): array
     {
         return $this->params;
     }
 
-    /**
-     * @param string $key
-     * @param mixed $value
-     */
-    public function addParam($key, $value)
+    public function addParam(string $key, mixed $value): void
     {
         $this->params[$key] = $value;
     }
@@ -94,7 +91,7 @@ abstract class AbstractArea
      *
      * @return $this
      */
-    public function setParams($params)
+    public function setParams(array $params): static
     {
         $this->params = $params;
 
@@ -106,7 +103,7 @@ abstract class AbstractArea
      *
      * @return $this
      */
-    public function setBrick($brick)
+    public function setBrick(Info $brick): static
     {
         $this->brick = $brick;
 
@@ -116,7 +113,7 @@ abstract class AbstractArea
     /**
      * @return Info
      */
-    public function getBrick()
+    public function getBrick(): Info
     {
         return $this->brick;
     }

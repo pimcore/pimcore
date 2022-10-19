@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -48,78 +49,78 @@ class Data extends \Pimcore\Model\AbstractModel
     /**
      * @var string
      */
-    protected $fullPath;
+    protected string $fullPath;
 
     /**
      * document | object | asset
      *
      * @var string
      */
-    protected $maintype;
+    protected string $maintype;
 
     /**
      * webresource type (e.g. page, snippet ...)
      *
      * @var string
      */
-    protected $type;
+    protected string $type;
 
     /**
      * currently only relevant for objects where it portrays the class name
      *
      * @var string
      */
-    protected $subtype;
+    protected string $subtype;
 
     /**
      * published or not
      *
      * @var bool
      */
-    protected $published;
+    protected bool $published;
 
     /**
      * timestamp of creation date
      *
      * @var int|null
      */
-    protected $creationDate;
+    protected ?int $creationDate;
 
     /**
      * timestamp of modification date
      *
      * @var int|null
      */
-    protected $modificationDate;
+    protected ?int $modificationDate;
 
     /**
      * User-ID of the owner
      *
      * @var int
      */
-    protected $userOwner;
+    protected int $userOwner;
 
     /**
      * User-ID of the user last modified the element
      *
      * @var int|null
      */
-    protected $userModification;
+    protected ?int $userModification;
 
     /**
      * @var string|null
      */
-    protected $data;
+    protected ?string $data;
 
     /**
      * @var string
      */
-    protected $properties;
+    protected string $properties;
 
     /**
-     * @param Element\ElementInterface $element
+     * @param Element\ElementInterface|null $element
      */
-    public function __construct($element = null)
+    public function __construct(Element\ElementInterface $element = null)
     {
         if ($element instanceof Element\ElementInterface) {
             $this->setDataFromElement($element);
@@ -136,7 +137,7 @@ class Data extends \Pimcore\Model\AbstractModel
      *
      * @return $this
      */
-    public function setId(?Data\Id $id)
+    public function setId(?Data\Id $id): static
     {
         $this->id = $id;
 
@@ -170,17 +171,17 @@ class Data extends \Pimcore\Model\AbstractModel
     /**
      * @return string
      */
-    public function getFullPath()
+    public function getFullPath(): string
     {
         return $this->fullPath;
     }
 
     /**
-     * @param  string $fullpath
+     * @param string $fullpath
      *
      * @return $this
      */
-    public function setFullPath($fullpath)
+    public function setFullPath(string $fullpath): static
     {
         $this->fullPath = $fullpath;
 
@@ -190,7 +191,7 @@ class Data extends \Pimcore\Model\AbstractModel
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -200,7 +201,7 @@ class Data extends \Pimcore\Model\AbstractModel
      *
      * @return $this
      */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
@@ -210,7 +211,7 @@ class Data extends \Pimcore\Model\AbstractModel
     /**
      * @return string
      */
-    public function getSubtype()
+    public function getSubtype(): string
     {
         return $this->subtype;
     }
@@ -220,7 +221,7 @@ class Data extends \Pimcore\Model\AbstractModel
      *
      * @return $this
      */
-    public function setSubtype($subtype)
+    public function setSubtype(string $subtype): static
     {
         $this->subtype = $subtype;
 
@@ -230,7 +231,7 @@ class Data extends \Pimcore\Model\AbstractModel
     /**
      * @return int|null
      */
-    public function getCreationDate()
+    public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }
@@ -240,7 +241,7 @@ class Data extends \Pimcore\Model\AbstractModel
      *
      * @return $this
      */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = $creationDate;
 
@@ -250,7 +251,7 @@ class Data extends \Pimcore\Model\AbstractModel
     /**
      * @return int|null
      */
-    public function getModificationDate()
+    public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
@@ -260,7 +261,7 @@ class Data extends \Pimcore\Model\AbstractModel
      *
      * @return $this
      */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = $modificationDate;
 
@@ -270,7 +271,7 @@ class Data extends \Pimcore\Model\AbstractModel
     /**
      * @return int|null
      */
-    public function getUserModification()
+    public function getUserModification(): ?int
     {
         return $this->userModification;
     }
@@ -280,7 +281,7 @@ class Data extends \Pimcore\Model\AbstractModel
      *
      * @return $this
      */
-    public function setUserModification($userModification)
+    public function setUserModification(int $userModification): static
     {
         $this->userModification = $userModification;
 
@@ -290,7 +291,7 @@ class Data extends \Pimcore\Model\AbstractModel
     /**
      * @return int
      */
-    public function getUserOwner()
+    public function getUserOwner(): int
     {
         return $this->userOwner;
     }
@@ -300,7 +301,7 @@ class Data extends \Pimcore\Model\AbstractModel
      *
      * @return $this
      */
-    public function setUserOwner($userOwner)
+    public function setUserOwner(int $userOwner): static
     {
         $this->userOwner = $userOwner;
 
@@ -310,7 +311,7 @@ class Data extends \Pimcore\Model\AbstractModel
     /**
      * @return bool
      */
-    public function isPublished()
+    public function isPublished(): bool
     {
         return (bool) $this->getPublished();
     }
@@ -318,7 +319,7 @@ class Data extends \Pimcore\Model\AbstractModel
     /**
      * @return bool
      */
-    public function getPublished()
+    public function getPublished(): bool
     {
         return (bool) $this->published;
     }
@@ -328,7 +329,7 @@ class Data extends \Pimcore\Model\AbstractModel
      *
      * @return $this
      */
-    public function setPublished($published)
+    public function setPublished(bool $published): static
     {
         $this->published = (bool) $published;
 
@@ -336,19 +337,19 @@ class Data extends \Pimcore\Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getData()
+    public function getData(): ?string
     {
         return $this->data;
     }
 
     /**
-     * @param  string $data
+     * @param string $data
      *
      * @return $this
      */
-    public function setData($data)
+    public function setData(string $data): static
     {
         $this->data = $data;
 
@@ -358,17 +359,17 @@ class Data extends \Pimcore\Model\AbstractModel
     /**
      * @return string
      */
-    public function getProperties()
+    public function getProperties(): string
     {
         return $this->properties;
     }
 
     /**
-     * @param  string $properties
+     * @param string $properties
      *
      * @return $this
      */
-    public function setProperties($properties)
+    public function setProperties(string $properties): static
     {
         $this->properties = $properties;
 
@@ -380,7 +381,7 @@ class Data extends \Pimcore\Model\AbstractModel
      *
      * @return $this
      */
-    public function setDataFromElement(Element\ElementInterface $element)
+    public function setDataFromElement(Element\ElementInterface $element): static
     {
         $this->data = null;
 
@@ -538,7 +539,7 @@ class Data extends \Pimcore\Model\AbstractModel
      *
      * @return string
      */
-    protected function cleanupData($data)
+    protected function cleanupData(string $data): string
     {
         $data = preg_replace('/(<\?.*?(\?>|$)|<[^<]+>)/s', '', $data);
 

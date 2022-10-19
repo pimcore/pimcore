@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,6 +21,9 @@ use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
+use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
 
 abstract class AbstractRelations extends Data implements
@@ -40,7 +44,7 @@ abstract class AbstractRelations extends Data implements
      *
      * @var array
      */
-    public $classes = [];
+    public array $classes = [];
 
     /**
      * Optional path formatter class
@@ -49,14 +53,14 @@ abstract class AbstractRelations extends Data implements
      *
      * @var null|string
      */
-    public $pathFormatterClass;
+    public ?string $pathFormatterClass;
 
     /**
      * @return array[
      *  'classes' => string,
      * ]
      */
-    public function getClasses()
+    public function getClasses(): array
     {
         return $this->classes ?: [];
     }
@@ -66,7 +70,7 @@ abstract class AbstractRelations extends Data implements
      *
      * @return $this
      */
-    public function setClasses($classes)
+    public function setClasses(array $classes): static
     {
         $this->classes = Element\Service::fixAllowedTypes($classes, 'classes');
 
@@ -76,15 +80,13 @@ abstract class AbstractRelations extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function getLazyLoading()
+    public function getLazyLoading(): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function save($object, $params = [])
+
+    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
         if (isset($params['isUntouchable']) && $params['isUntouchable']) {
             return;
@@ -136,7 +138,7 @@ abstract class AbstractRelations extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function load($object, $params = [])
+    public function load(Localizedfield|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData|AbstractData|Concrete $object, array $params = [])
     {
         $data = null;
         $relations = [];
@@ -182,31 +184,29 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @internal
-     *
      * @param array $data
-     * @param DataObject\Concrete $object
+     * @param DataObject\Concrete|null $object
      * @param array $params
      *
      * @return mixed
+     *@internal
+     *
      */
-    abstract protected function loadData(array $data, $object = null, $params = []);
+    abstract protected function loadData(array $data, Concrete $object = null, array $params = []): mixed;
 
     /**
-     * @internal
-     *
      * @param array|Element\ElementInterface $data
-     * @param DataObject\Concrete $object
+     * @param DataObject\Concrete|null $object
      * @param array $params
      *
      * @return mixed
+     *@internal
+     *
      */
-    abstract protected function prepareDataForPersistence($data, $object = null, $params = []);
+    abstract protected function prepareDataForPersistence(array|Element\ElementInterface $data, Concrete $object = null, array $params = []): mixed;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function delete($object, $params = [])
+
+    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
     }
 
@@ -221,14 +221,14 @@ abstract class AbstractRelations extends Data implements
      *  "asset" => array(...)
      * )
      *
-     * @internal
-     *
      * @param mixed $data
      * @param array $idMapping
      *
      * @return array
+     *@internal
+     *
      */
-    protected function rewriteIdsService($data, $idMapping)
+    protected function rewriteIdsService(mixed $data, array $idMapping): array
     {
         if (is_array($data)) {
             foreach ($data as &$element) {
@@ -250,10 +250,7 @@ abstract class AbstractRelations extends Data implements
         return $this->pathFormatterClass;
     }
 
-    /**
-     * @param null|string $pathFormatterClass
-     */
-    public function setPathFormatterClass($pathFormatterClass)
+    public function setPathFormatterClass(?string $pathFormatterClass)
     {
         $this->pathFormatterClass = $pathFormatterClass;
     }
@@ -261,7 +258,7 @@ abstract class AbstractRelations extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function getDataForSearchIndex($object, $params = [])
+    public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
@@ -269,7 +266,7 @@ abstract class AbstractRelations extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function appendData($existingData, $additionalData)
+    public function appendData(?array $existingData, array $additionalData): ?array
     {
         $newData = [];
         if (!is_array($existingData)) {
@@ -300,7 +297,7 @@ abstract class AbstractRelations extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function removeData($existingData, $removeData)
+    public function removeData(mixed $existingData, mixed $removeData)
     {
         $newData = [];
         if (!is_array($existingData)) {
@@ -329,13 +326,13 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @internal
-     *
      * @param Element\ElementInterface $item
+          *
+          * @return string
+     *@internal
      *
-     * @return string
      */
-    protected function buildUniqueKeyForAppending($item)
+    protected function buildUniqueKeyForAppending(Element\ElementInterface $item): string
     {
         $elementType = Element\Service::getElementType($item);
         $id = $item->getId();
@@ -346,7 +343,7 @@ abstract class AbstractRelations extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function isEqual($array1, $array2): bool
+    public function isEqual(mixed $array1, mixed $array2): bool
     {
         $array1 = array_filter(is_array($array1) ? $array1 : []);
         $array2 = array_filter(is_array($array2) ? $array2 : []);
@@ -376,7 +373,7 @@ abstract class AbstractRelations extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function supportsDirtyDetection()
+    public function supportsDirtyDetection(): bool
     {
         return true;
     }
@@ -425,13 +422,13 @@ abstract class AbstractRelations extends Data implements
     /**
      * checks for multiple assignments and throws an exception in case the rules are violated.
      *
-     * @internal
-     *
      * @param array|null $data
      *
      * @throws Element\ValidationException
+     *@internal
+     *
      */
-    public function performMultipleAssignmentCheck($data)
+    public function performMultipleAssignmentCheck(?array $data)
     {
         if (is_array($data)) {
             if (!method_exists($this, 'getAllowMultipleAssignments') || !$this->getAllowMultipleAssignments()) {
@@ -503,5 +500,5 @@ abstract class AbstractRelations extends Data implements
      *
      * @return string
      */
-    abstract protected function getPhpdocType();
+    abstract protected function getPhpdocType(): string;
 }

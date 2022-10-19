@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,28 +32,28 @@ class Panel extends Model\DataObject\ClassDefinition\Layout
      *
      * @var string
      */
-    public $fieldtype = 'panel';
+    public string $fieldtype = 'panel';
 
     /**
      * @internal
      *
      * @var string
      */
-    public $layout;
+    public string $layout;
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $border = false;
+    public bool $border = false;
 
     /**
      * @param string $layout
      *
      * @return $this
      */
-    public function setLayout($layout)
+    public function setLayout(string $layout): static
     {
         $this->layout = $layout;
 
@@ -62,7 +63,7 @@ class Panel extends Model\DataObject\ClassDefinition\Layout
     /**
      * @return string
      */
-    public function getLayout()
+    public function getLayout(): string
     {
         return $this->layout;
     }

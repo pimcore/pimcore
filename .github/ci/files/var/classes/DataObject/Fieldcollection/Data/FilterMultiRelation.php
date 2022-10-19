@@ -16,7 +16,7 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class FilterMultiRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType
 {
-protected $type = "FilterMultiRelation";
+protected string $type = "FilterMultiRelation";
 protected $label;
 protected $field;
 protected $useAndCondition;

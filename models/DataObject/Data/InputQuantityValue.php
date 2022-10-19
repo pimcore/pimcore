@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,22 +23,19 @@ class InputQuantityValue extends AbstractQuantityValue
     /**
      * @var string|null
      */
-    protected $value;
+    protected ?string $value;
 
     /**
      * @param string|null $value
-     * @param Unit|string|null $unit
+     * @param string|Unit|null $unit
      */
-    public function __construct($value = null, $unit = null)
+    public function __construct($value = null, Unit|string $unit = null)
     {
         $this->value = $value;
         parent::__construct($unit);
     }
 
-    /**
-     * @param string $value
-     */
-    public function setValue($value)
+    public function setValue(string $value)
     {
         $this->value = $value;
         $this->markMeDirty();
@@ -46,7 +44,7 @@ class InputQuantityValue extends AbstractQuantityValue
     /**
      * @return string
      */
-    public function getValue()
+    public function getValue(): string
     {
         return (string)$this->value;
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,7 +21,7 @@ class Date extends Data
     /**
      * {@inheritdoc}
      */
-    public function getDataFromEditMode($data, $params = [])
+    public function getDataFromEditMode(mixed $data, array $params = [])
     {
         return $this->normalize($data, $params);
     }
@@ -43,7 +44,7 @@ class Date extends Data
      *
      * @return string
      */
-    public function getVersionPreview($value, $params = [])
+    public function getVersionPreview(mixed $value, array $params = []): string
     {
         return (string)date('m/d/Y', $value);
     }

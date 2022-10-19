@@ -14,7 +14,7 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class PricingRule extends DataObject\Fieldcollection\Data\AbstractData
 {
-protected $type = "PricingRule";
+protected string $type = "PricingRule";
 protected $ruleId;
 protected $localizedfields;
 
@@ -48,7 +48,7 @@ public function setRuleId(?float $ruleId)
 }
 
 /**
-* Get localizedfields - 
+* Get localizedfields -
 * @return \Pimcore\Model\DataObject\Localizedfield|null
 */
 public function getLocalizedfields(): ?\Pimcore\Model\DataObject\Localizedfield
@@ -79,7 +79,7 @@ public function getName($language = null): ?string
 }
 
 /**
-* Set localizedfields - 
+* Set localizedfields -
 * @param \Pimcore\Model\DataObject\Localizedfield|null $localizedfields
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\PricingRule
 */

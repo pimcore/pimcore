@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,5 +24,5 @@ class Role extends UserRole
     /**
      * {@inheritdoc}
      */
-    protected $type = 'role';
+    protected string $type = 'role';
 }

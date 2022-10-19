@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,29 +32,29 @@ class AbstractUser extends Model\AbstractModel
     /**
      * @var int|null
      */
-    protected $id;
+    protected ?int $id;
 
     /**
      * @var int|null
      */
-    protected $parentId;
+    protected ?int $parentId;
 
     /**
      * @var string|null
      */
-    protected $name;
+    protected ?string $name;
 
     /**
      * @var string
      */
-    protected $type;
+    protected string $type;
 
     /**
      * @param int $id
      *
-     * @return static|null
+     * @return AbstractUser|static|null
      */
-    public static function getById($id)
+    public static function getById(int $id): AbstractUser|static|null
     {
         $cacheKey = 'user_' . $id;
 
@@ -88,7 +89,7 @@ class AbstractUser extends Model\AbstractModel
      *
      * @return static
      */
-    public static function create($values = [])
+    public static function create(array $values = []): static
     {
         $user = new static();
         self::checkCreateData($values);
@@ -103,7 +104,7 @@ class AbstractUser extends Model\AbstractModel
      *
      * @return static|null
      */
-    public static function getByName($name)
+    public static function getByName(string $name): ?static
     {
         try {
             $user = new static();
@@ -118,7 +119,7 @@ class AbstractUser extends Model\AbstractModel
     /**
      * @return int|null
      */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -128,7 +129,7 @@ class AbstractUser extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setId($id)
+    public function setId(int $id): static
     {
         $this->id = (int) $id;
 
@@ -138,7 +139,7 @@ class AbstractUser extends Model\AbstractModel
     /**
      * @return int|null
      */
-    public function getParentId()
+    public function getParentId(): ?int
     {
         return $this->parentId;
     }
@@ -148,7 +149,7 @@ class AbstractUser extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setParentId($parentId)
+    public function setParentId(int $parentId): static
     {
         $this->parentId = (int)$parentId;
 
@@ -158,7 +159,7 @@ class AbstractUser extends Model\AbstractModel
     /**
      * @return string|null
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -168,7 +169,7 @@ class AbstractUser extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -178,7 +179,7 @@ class AbstractUser extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -188,7 +189,7 @@ class AbstractUser extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public function save()
+    public function save(): static
     {
         $isUpdate = false;
         if ($this->getId()) {
@@ -289,7 +290,7 @@ class AbstractUser extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 

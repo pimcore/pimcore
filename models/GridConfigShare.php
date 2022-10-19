@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,12 +28,12 @@ class GridConfigShare extends AbstractModel
     /**
      * @var int
      */
-    protected $gridConfigId;
+    protected int $gridConfigId;
 
     /**
      * @var int
      */
-    protected $sharedWithUserId;
+    protected int $sharedWithUserId;
 
     /**
      * @param int $gridConfigId
@@ -40,7 +41,7 @@ class GridConfigShare extends AbstractModel
      *
      * @return GridConfigShare|null
      */
-    public static function getByGridConfigAndSharedWithId($gridConfigId, $sharedWithUserId)
+    public static function getByGridConfigAndSharedWithId(int $gridConfigId, int $sharedWithUserId): ?GridConfigShare
     {
         try {
             $share = new self();

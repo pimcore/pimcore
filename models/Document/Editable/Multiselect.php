@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,12 +30,12 @@ class Multiselect extends Model\Document\Editable implements EditmodeDataInterfa
      *
      * @var array
      */
-    protected $values = [];
+    protected array $values = [];
 
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return 'multiselect';
     }
@@ -50,7 +51,7 @@ class Multiselect extends Model\Document\Editable implements EditmodeDataInterfa
     /**
      * @return array
      */
-    public function getValues()
+    public function getValues(): array
     {
         return $this->getData();
     }
@@ -74,7 +75,7 @@ class Multiselect extends Model\Document\Editable implements EditmodeDataInterfa
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): Multiselect|EditableInterface|static
     {
         $this->values = \Pimcore\Tool\Serialize::unserialize($data);
 
@@ -84,7 +85,7 @@ class Multiselect extends Model\Document\Editable implements EditmodeDataInterfa
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): Multiselect|EditableInterface|static
     {
         if (empty($data)) {
             $this->values = [];
@@ -100,7 +101,7 @@ class Multiselect extends Model\Document\Editable implements EditmodeDataInterfa
     /**
      * {@inheritdoc}
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return empty($this->values);
     }

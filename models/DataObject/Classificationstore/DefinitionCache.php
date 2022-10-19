@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,7 +24,7 @@ class DefinitionCache
     /**
      * @var array
      */
-    public static $cache = [];
+    public static array $cache = [];
 
     /**
      * @param int $id
@@ -31,7 +32,7 @@ class DefinitionCache
      *
      * @return KeyConfig|null
      */
-    public static function get($id, $type = 'key')
+    public static function get(int $id, string $type = 'key'): ?KeyConfig
     {
         $key = $type . $id;
         $config = isset(self::$cache[$key]) ? self::$cache[$key] : null;
@@ -49,10 +50,7 @@ class DefinitionCache
         return $config;
     }
 
-    /**
-     * @param KeyConfig|GroupConfig $config
-     */
-    public static function put($config)
+    public static function put(GroupConfig|KeyConfig $config): void
     {
         $type = self::getType($config);
         if (!$type) {
@@ -62,10 +60,7 @@ class DefinitionCache
         self::$cache[$key] = $config;
     }
 
-    /**
-     * @param KeyConfig|GroupConfig|null $config
-     */
-    public static function clear($config)
+    public static function clear(GroupConfig|KeyConfig|null $config): void
     {
         if ($config) {
             $type = self::getType($config);
@@ -81,11 +76,11 @@ class DefinitionCache
     }
 
     /**
-     * @param KeyConfig|GroupConfig $config
+     * @param GroupConfig|KeyConfig $config
      *
      * @return string|null
      */
-    protected static function getType($config)
+    protected static function getType(GroupConfig|KeyConfig $config): ?string
     {
         $type = null;
 

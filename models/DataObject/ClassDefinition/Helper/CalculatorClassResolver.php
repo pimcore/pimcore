@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,7 +28,7 @@ final class CalculatorClassResolver extends ClassResolver
      *
      * @return object|null
      */
-    public static function resolveCalculatorClass($calculatorClass)
+    public static function resolveCalculatorClass(string $calculatorClass): ?object
     {
         return self::resolve($calculatorClass, static function ($generator) {
             return $generator instanceof CalculatorClassInterface;

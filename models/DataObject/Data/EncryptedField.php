@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,23 +31,23 @@ class EncryptedField implements OwnerAwareFieldInterface
     /**
      * @var Data
      */
-    protected $delegate;
+    protected Data $delegate;
 
     /**
      * @var mixed
      */
-    protected $plain;
+    protected mixed $plain;
 
     /**
      * @var mixed
      */
-    protected $encrypted;
+    protected mixed $encrypted;
 
     /**
      * @param mixed $plain
      * @param Data $delegate
      */
-    public function __construct(Data $delegate, $plain)
+    public function __construct(Data $delegate, mixed $plain)
     {
         $this->plain = $plain;
         $this->delegate = $delegate;
@@ -66,15 +67,12 @@ class EncryptedField implements OwnerAwareFieldInterface
     /**
      * @return mixed
      */
-    public function getPlain()
+    public function getPlain(): mixed
     {
         return $this->plain;
     }
 
-    /**
-     * @param mixed $plain
-     */
-    public function setPlain($plain)
+    public function setPlain(mixed $plain)
     {
         $this->plain = $plain;
         $this->markMeDirty();

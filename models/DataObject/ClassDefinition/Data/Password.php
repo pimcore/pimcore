@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,6 +19,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class Password extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
@@ -36,14 +38,14 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @var string
      */
-    public $fieldtype = 'password';
+    public string $fieldtype = 'password';
 
     /**
      * @internal
      *
      * @var string|int
      */
-    public $width = 0;
+    public string|int $width = 0;
 
     /**
      * Type for the column to query
@@ -68,41 +70,41 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @var string
      */
-    public $algorithm = self::HASH_FUNCTION_PASSWORD_HASH;
+    public string $algorithm = self::HASH_FUNCTION_PASSWORD_HASH;
 
     /**
      * @internal
      *
      * @var string
      */
-    public $salt = '';
+    public string $salt = '';
 
     /**
      * @internal
      *
      * @var string
      */
-    public $saltlocation = '';
+    public string $saltlocation = '';
 
     /**
      * @var int|null
      */
-    public $minimumLength;
+    public ?int $minimumLength;
 
     /**
      * @return string|int
      */
-    public function getWidth()
+    public function getWidth(): int|string
     {
         return $this->width;
     }
 
     /**
-     * @param string|int $width
+     * @param int|string $width
      *
      * @return $this
      */
-    public function setWidth($width)
+    public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
             $width = (int)$width;
@@ -122,10 +124,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         $this->minimumLength = $minimumLength;
     }
 
-    /**
-     * @param string $algorithm
-     */
-    public function setAlgorithm($algorithm)
+    public function setAlgorithm(string $algorithm)
     {
         $this->algorithm = $algorithm;
     }
@@ -133,15 +132,12 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @return string
      */
-    public function getAlgorithm()
+    public function getAlgorithm(): string
     {
         return $this->algorithm;
     }
 
-    /**
-     * @param string $salt
-     */
-    public function setSalt($salt)
+    public function setSalt(string $salt)
     {
         $this->salt = $salt;
     }
@@ -149,15 +145,12 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @return string
      */
-    public function getSalt()
+    public function getSalt(): string
     {
         return $this->salt;
     }
 
-    /**
-     * @param string $saltlocation
-     */
-    public function setSaltlocation($saltlocation)
+    public function setSaltlocation(string $saltlocation)
     {
         $this->saltlocation = $saltlocation;
     }
@@ -165,21 +158,21 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @return string
      */
-    public function getSaltlocation()
+    public function getSaltlocation(): string
     {
         return $this->saltlocation;
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param string $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string|null
+     *@see ResourcePersistenceAwareInterface::getDataForResource
+     *
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function getDataForResource(mixed $data, $object = null, array $params = []): ?string
     {
         if (empty($data)) {
             return null;
@@ -231,13 +224,13 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * Calculate hash according to configured parameters
      *
-     * @internal
-     *
      * @param string $data
      *
      * @return string
+     *@internal
+     *
      */
-    public function calculateHash($data)
+    public function calculateHash(string $data): string
     {
         $hash = null;
         if ($this->algorithm === static::HASH_FUNCTION_PASSWORD_HASH) {
@@ -264,15 +257,15 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * from the ones which were used to create the hash (e.g. cost was increased from 10 to 12).
      * In this case, the hash will be re-calculated with the new parameters and saved back to the object.
      *
-     * @internal
-     *
      * @param string $password
      * @param DataObject\Concrete $object
      * @param bool|true $updateHash
      *
      * @return bool
+     *@internal
+     *
      */
-    public function verifyPassword($password, DataObject\Concrete $object, $updateHash = true)
+    public function verifyPassword(string $password, DataObject\Concrete $object, bool $updateHash = true): bool
     {
         $getter = 'get' . ucfirst($this->getName());
         $setter = 'set' . ucfirst($this->getName());
@@ -303,71 +296,71 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param string|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string|null
+     *@see ResourcePersistenceAwareInterface::getDataFromResource
+     *
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?string
     {
         return $data;
     }
 
     /**
-     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
-     * @param string $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return string
+     * @return string|null
+     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
+     *
      */
-    public function getDataForQueryResource($data, $object = null, $params = [])
+    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): ?string
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
     /**
+     * @param mixed $data
+     * @param null|DataObject\Concrete $object
+     * @param array $params
+     *
+     * @return string
      * @see Data::getDataForEditmode
      *
-     * @param string $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, $object = null, array $params = []): string
     {
         return $data;
     }
 
     /**
+     * @param mixed $data
+     * @param null|DataObject\Concrete $object
+     * @param array $params
+     *
+     * @return string
      * @see Data::getDataFromEditmode
      *
-     * @param string $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): string
     {
         return $data;
     }
 
     /**
-     * @see Data::getVersionPreview
-     *
-     * @param string $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
+     * @see Data::getVersionPreview
+     *
      */
-    public function getVersionPreview($data, $object = null, $params = [])
+    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
     {
         return '******';
     }
@@ -379,7 +372,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @return string
      */
-    public function getDataForGrid($data, $object, $params = [])
+    public function getDataForGrid(string $data, Concrete $object, array $params = []): string
     {
         return '******';
     }
@@ -387,7 +380,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * {@inheritdoc}
      */
-    public function getDataForSearchIndex($object, $params = [])
+    public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
@@ -395,7 +388,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * {@inheritdoc}
      */
-    public function isDiffChangeAllowed($object, $params = [])
+    public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
@@ -403,11 +396,11 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @param array $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return mixed
      */
-    public function getDiffDataFromEditmode($data, $object = null, $params = [])
+    public function getDiffDataFromEditmode(array $data, $object = null, array $params = []): mixed
     {
         return $data[0]['data'];
     }
@@ -415,11 +408,11 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     /** See parent class.
      * @param mixed $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array|null
      */
-    public function getDiffDataForEditMode($data, $object = null, $params = [])
+    public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         $diffdata = [];
         $diffdata['data'] = $data;
@@ -482,7 +475,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @throws Model\Element\ValidationException|\Exception
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
     {
         if (!$omitMandatoryCheck && ($this->getMinimumLength() && strlen($data) < $this->getMinimumLength())) {
             throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . ' ] is not at least ' . $this->getMinimumLength() . ' characters');

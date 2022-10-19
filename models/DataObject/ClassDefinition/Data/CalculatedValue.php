@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,6 +19,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Fieldcollection\Definition;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class CalculatedValue extends Data implements QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
@@ -42,21 +44,21 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      *
      * @var string
      */
-    public $fieldtype = 'calculatedValue';
+    public string $fieldtype = 'calculatedValue';
 
     /**
      * @internal
      *
      * @var string
      */
-    public $elementType = 'input';
+    public string $elementType = 'input';
 
     /**
      * @internal
      *
      * @var string|int
      */
-    public $width = 0;
+    public string|int $width = 0;
 
     /**
      * @internal
@@ -73,7 +75,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      *
      * @var string
      */
-    public $calculatorClass;
+    public string $calculatorClass;
 
     /**
      * Type for the column to query
@@ -91,7 +93,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      *
      * @var int
      */
-    public $columnLength = 190;
+    public int $columnLength = 190;
 
     public function getElementType(): string
     {
@@ -103,7 +105,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      *
      * @return $this
      */
-    public function setElementType($elementType)
+    public function setElementType(string $elementType): static
     {
         if ($elementType) {
             $this->elementType = $elementType;
@@ -115,15 +117,12 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * @return string|int
      */
-    public function getWidth()
+    public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @param string|int $width
-     */
-    public function setWidth($width)
+    public function setWidth(int|string $width)
     {
         if (is_numeric($width)) {
             $width = (int)$width;
@@ -134,7 +133,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * @return int
      */
-    public function getColumnLength()
+    public function getColumnLength(): int
     {
         return $this->columnLength;
     }
@@ -144,7 +143,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      *
      * @return $this
      */
-    public function setColumnLength($columnLength)
+    public function setColumnLength(?int $columnLength): static
     {
         if ($columnLength) {
             $this->columnLength = $columnLength;
@@ -156,15 +155,12 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * @return string
      */
-    public function getCalculatorClass()
+    public function getCalculatorClass(): string
     {
         return $this->calculatorClass;
     }
 
-    /**
-     * @param string $calculatorClass
-     */
-    public function setCalculatorClass($calculatorClass)
+    public function setCalculatorClass(string $calculatorClass)
     {
         $this->calculatorClass = $calculatorClass;
     }
@@ -190,29 +186,29 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
-     * @param string|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string|null
+     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
+     *
      */
-    public function getDataForQueryResource($data, $object = null, $params = [])
+    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): ?string
     {
         return $data;
     }
 
     /**
-     * @see Data::getDataForEditmode
-     *
-     * @param Model\DataObject\Data\CalculatedValue|null $data
+     * @param mixed $data
      * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string|null
+     * @see Data::getDataForEditmode
+     *
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, $object = null, array $params = []): ?string
     {
         if ($data instanceof Model\DataObject\Data\CalculatedValue) {
             return Model\DataObject\Service::getCalculatedFieldValueForEditMode($object, $params, $data);
@@ -222,29 +218,29 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @see Data::getDataFromEditmode
-     *
-     * @param float $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return null
+     * @see Data::getDataFromEditmode
+     *
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, $object = null, array $params = [])
     {
         return null;
     }
 
     /**
-     * @see Data::getVersionPreview
-     *
-     * @param DataObject\Data\CalculatedValue|null $data
+     * @param mixed $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
+     * @see Data::getVersionPreview
+     *
      */
-    public function getVersionPreview($data, $object = null, $params = [])
+    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
     {
         return (string)$this->getDataForEditmode($data, $object, $params);
     }
@@ -252,7 +248,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
     {
         // nothing to do
     }
@@ -260,7 +256,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, $params = [])
+    public function getForCsvExport($object, array $params = [])
     {
         return $this->getDataFromObjectParam($object, $params);
     }
@@ -268,7 +264,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * {@inheritdoc}
      */
-    public function getQueryColumnType()
+    public function getQueryColumnType(): array|string|null
     {
         return $this->queryColumnType . '(' . $this->getColumnLength() . ')';
     }
@@ -276,7 +272,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * {@inheritdoc}
      */
-    public function getGetterCode($class)
+    public function getGetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         $key = $this->getName();
 
@@ -306,7 +302,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * {@inheritdoc}
      */
-    public function getGetterCodeLocalizedfields($class)
+    public function getGetterCodeLocalizedfields(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         $key = $this->getName();
         $code = '/**' . "\n";
@@ -361,7 +357,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * {@inheritdoc}
      */
-    public function getGetterCodeObjectbrick($brickClass)
+    public function getGetterCodeObjectbrick(\Pimcore\Model\DataObject\Objectbrick\Definition $brickClass): string
     {
         $key = $this->getName();
         $code = '';
@@ -388,7 +384,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * {@inheritdoc}
      */
-    public function getGetterCodeFieldcollection($fieldcollectionDefinition)
+    public function getGetterCodeFieldcollection(Definition $fieldcollectionDefinition): string
     {
         $key = $this->getName();
 
@@ -417,7 +413,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * {@inheritdoc}
      */
-    public function getSetterCode($class)
+    public function getSetterCode(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         $key = $this->getName();
 
@@ -438,7 +434,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * {@inheritdoc}
      */
-    public function getSetterCodeObjectbrick($brickClass)
+    public function getSetterCodeObjectbrick(\Pimcore\Model\DataObject\Objectbrick\Definition $brickClass): string
     {
         $key = $this->getName();
 
@@ -459,7 +455,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * {@inheritdoc}
      */
-    public function getSetterCodeFieldcollection($fieldcollectionDefinition)
+    public function getSetterCodeFieldcollection(Definition $fieldcollectionDefinition): string
     {
         $key = $this->getName();
 
@@ -479,7 +475,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * {@inheritdoc}
      */
-    public function getSetterCodeLocalizedfields($class)
+    public function getSetterCodeLocalizedfields(DataObject\Objectbrick\Definition|DataObject\ClassDefinition|DataObject\Fieldcollection\Definition $class): string
     {
         $key = $this->getName();
         if ($class instanceof DataObject\Objectbrick\Definition) {
@@ -510,7 +506,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      *
      * @return mixed
      */
-    public function getDataForGrid($data, $object = null, $params = [])
+    public function getDataForGrid(mixed $data, DataObject\Concrete $object = null, array $params = []): mixed
     {
         return $data;
     }
@@ -518,18 +514,12 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * {@inheritdoc}
      */
-    public function supportsInheritance()
+    public function supportsInheritance(): bool
     {
         return false;
     }
 
-    /**
-     * @param mixed $oldValue
-     * @param mixed $newValue
-     *
-     * @return bool
-     */
-    public function isEqual($oldValue, $newValue): bool
+    public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
         return $oldValue === $newValue;
     }

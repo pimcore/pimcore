@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -49,7 +50,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @return Model\Version[]
      */
-    public function getVersions()
+    public function getVersions(): array
     {
         return $this->getData();
     }
@@ -59,7 +60,7 @@ class Listing extends Model\Listing\AbstractListing
      *
      * @return $this
      */
-    public function setVersions($versions)
+    public function setVersions(?array $versions): static
     {
         return $this->setData($versions);
     }

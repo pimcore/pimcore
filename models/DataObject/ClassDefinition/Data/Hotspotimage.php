@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -38,7 +39,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @var string
      */
-    public $fieldtype = 'hotspotimage';
+    public string $fieldtype = 'hotspotimage';
 
     /**
      * Type for the column to query
@@ -63,26 +64,23 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @var int
      */
-    public $ratioX;
+    public int $ratioX;
 
     /**
      * @internal
      *
      * @var int
      */
-    public $ratioY;
+    public int $ratioY;
 
     /**
      * @internal
      *
      * @var string
      */
-    public $predefinedDataTemplates;
+    public string $predefinedDataTemplates;
 
-    /**
-     * @param int $ratioX
-     */
-    public function setRatioX($ratioX)
+    public function setRatioX(int $ratioX)
     {
         $this->ratioX = $ratioX;
     }
@@ -90,15 +88,12 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * @return int
      */
-    public function getRatioX()
+    public function getRatioX(): int
     {
         return $this->ratioX;
     }
 
-    /**
-     * @param int $ratioY
-     */
-    public function setRatioY($ratioY)
+    public function setRatioY(int $ratioY)
     {
         $this->ratioY = $ratioY;
     }
@@ -106,7 +101,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * @return int
      */
-    public function getRatioY()
+    public function getRatioY(): int
     {
         return $this->ratioY;
     }
@@ -114,29 +109,26 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * @return string
      */
-    public function getPredefinedDataTemplates()
+    public function getPredefinedDataTemplates(): string
     {
         return $this->predefinedDataTemplates;
     }
 
-    /**
-     * @param string $predefinedDataTemplates
-     */
-    public function setPredefinedDataTemplates($predefinedDataTemplates)
+    public function setPredefinedDataTemplates(string $predefinedDataTemplates)
     {
         $this->predefinedDataTemplates = $predefinedDataTemplates;
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
      * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return array
+     * @see ResourcePersistenceAwareInterface::getDataForResource
+     *
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function getDataForResource(mixed $data, $object = null, array $params = []): array
     {
         if ($data instanceof DataObject\Data\Hotspotimage) {
             $imageId = null;
@@ -165,15 +157,15 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param array $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return DataObject\Data\Hotspotimage|null
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
+     *
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?DataObject\Data\Hotspotimage
     {
         $imageId = $data[$this->getName() . '__image'];
         $image = Asset::getById($imageId);
@@ -229,29 +221,29 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
-     * @param DataObject\Data\Hotspotimage $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
+     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
+     *
      */
-    public function getDataForQueryResource($data, $object = null, $params = [])
+    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): array
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
     /**
-     * @see Data::getDataForEditmode
-     *
-     * @param DataObject\Data\Hotspotimage|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array|null
+     * @see Data::getDataForEditmode
+     *
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, $object = null, array $params = []): ?array
     {
         if ($data instanceof DataObject\Data\Hotspotimage) {
             $imageId = null;
@@ -292,15 +284,15 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @see Data::getDataFromEditmode
-     *
-     * @param array $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return DataObject\Data\Hotspotimage
+     *@see Data::getDataFromEditmode
+     *
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): DataObject\Data\Hotspotimage
     {
         $rewritePath = function ($data) {
             if (!is_array($data)) {
@@ -336,25 +328,25 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * @param array $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return DataObject\Data\Hotspotimage
      */
-    public function getDataFromGridEditor($data, $object = null, $params = [])
+    public function getDataFromGridEditor(array $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\Hotspotimage
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
     /**
-     * @see Data::getVersionPreview
-     *
-     * @param DataObject\Data\Hotspotimage|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string|null
+     * @see Data::getVersionPreview
+     *
      */
-    public function getVersionPreview($data, $object = null, $params = [])
+    public function getVersionPreview(mixed $data, $object = null, array $params = []): ?string
     {
         if ($data instanceof DataObject\Data\Hotspotimage && $data->getImage() instanceof Asset\Image) {
             return '<img src="/admin/asset/get-image-thumbnail?id=' . $data->getImage()->getId() . '&width=100&height=100&aspectratio=true" />';
@@ -366,7 +358,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, $params = [])
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof DataObject\Data\Hotspotimage && $data->getImage() instanceof Asset\Image) {
@@ -379,7 +371,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * {@inheritdoc}
      */
-    public function getDataForSearchIndex($object, $params = [])
+    public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
@@ -387,7 +379,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * {@inheritdoc}
      */
-    public function getCacheTags($data, array $tags = [])
+    public function getCacheTags(mixed $data, array $tags = [])
     {
         if ($data instanceof DataObject\Data\Hotspotimage && $data->getImage() instanceof Asset\Image) {
             if (!array_key_exists($data->getImage()->getCacheTag(), $tags)) {
@@ -425,11 +417,11 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * @param DataObject\Data\Hotspotimage|null $data
+     * @param mixed $data
      *
      * @return array
      */
-    public function resolveDependencies($data)
+    public function resolveDependencies(mixed $data): array
     {
         $dependencies = [];
 
@@ -474,7 +466,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @return array|null
      */
-    public function getDataForGrid($data, $object = null, $params = [])
+    public function getDataForGrid(?DataObject\Data\Hotspotimage $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         return $this->getDataForEditmode($data, $object, $params);
     }
@@ -482,7 +474,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :mixed */
+    public function rewriteIds(/** mixed */ mixed $container, /** array */ array $idMapping, /** array */ array $params = []) /** :mixed */
     {
         $data = $this->getDataFromObjectParam($container, $params);
         $this->doRewriteIds($container, $idMapping, $params, $data);
@@ -557,13 +549,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         return $newDataArray;
     }
 
-    /**
-     * @param DataObject\Data\Hotspotimage|null $oldValue
-     * @param DataObject\Data\Hotspotimage|null $newValue
-     *
-     * @return bool
-     */
-    public function isEqual($oldValue, $newValue): bool
+    public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
         if ($oldValue === null && $newValue === null) {
             return true;
@@ -623,7 +609,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
 
-    public function normalize(mixed $value, array $params = [])
+    public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof DataObject\Data\Hotspotimage) {
             $result = [];
@@ -648,7 +634,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
 
-    public function denormalize(mixed $value, array $params = [])
+    public function denormalize(mixed $value, array $params = []): ?DataObject\Data\Hotspotimage
     {
         if (is_array($value)) {
             $image = new DataObject\Data\Hotspotimage();
@@ -673,13 +659,13 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * Filter by relation feature
      *
-     * @param array|string|null $value
-     * @param string            $operator
-     * @param array             $params
+     * @param mixed $value
+     * @param string $operator
+     * @param array $params
      *
      * @return string
      */
-    public function getFilterConditionExt($value, $operator, $params = [])
+    public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {
         $name = $params['name'] ?: $this->name;
         $name .= '__image';

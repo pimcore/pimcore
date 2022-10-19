@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,12 +28,12 @@ class Embed extends Model\Document\Editable
      *
      * @var string
      */
-    protected $url;
+    protected string $url;
 
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return 'embed';
     }
@@ -50,7 +51,7 @@ class Embed extends Model\Document\Editable
     /**
      * @return string
      */
-    public function getUrl()
+    public function getUrl(): string
     {
         return $this->url;
     }
@@ -114,7 +115,7 @@ class Embed extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): EditableInterface|Embed|static
     {
         if (!empty($data)) {
             $data = \Pimcore\Tool\Serialize::unserialize($data);
@@ -128,7 +129,7 @@ class Embed extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): EditableInterface|Embed|static
     {
         if ($data['url']) {
             $this->url = $data['url'];
@@ -140,7 +141,7 @@ class Embed extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         if ($this->url) {
             return false;

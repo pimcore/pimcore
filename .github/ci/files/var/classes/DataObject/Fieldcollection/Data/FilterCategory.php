@@ -17,7 +17,7 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class FilterCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\CategoryFilterDefinitionType
 {
-protected $type = "FilterCategory";
+protected string $type = "FilterCategory";
 protected $label;
 protected $preSelect;
 protected $rootCategory;

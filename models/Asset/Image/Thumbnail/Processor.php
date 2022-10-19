@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -36,7 +37,7 @@ class Processor
     /**
      * @var array
      */
-    protected static $argumentMapping = [
+    protected static array $argumentMapping = [
         'resize' => ['width', 'height'],
         'scaleByWidth' => ['width', 'forceResize'],
         'scaleByHeight' => ['height', 'forceResize'],
@@ -84,7 +85,7 @@ class Processor
     /**
      * @param Asset $asset
      * @param Config $config
-     * @param string|resource|null $fileSystemPath
+     * @param string|null $fileSystemPath
      * @param bool $deferred deferred means that the image will be generated on-the-fly (details see below)
      * @param bool $generated
      *
@@ -92,7 +93,7 @@ class Processor
      *
      * @throws \Exception
      */
-    public static function process(Asset $asset, Config $config, $fileSystemPath = null, $deferred = false, &$generated = false)
+    public static function process(Asset $asset, Config $config, string $fileSystemPath = null, bool $deferred = false, bool &$generated = false): array
     {
         $generated = false;
         $format = strtolower($config->getFormat());

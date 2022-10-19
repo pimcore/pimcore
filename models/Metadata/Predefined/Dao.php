@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -42,7 +43,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById($id = null)
+    public function getById(string $id = null)
     {
         if ($id != null) {
             $this->model->setId($id);
@@ -67,7 +68,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws \Exception
      */
-    public function getByNameAndLanguage($name = null, $language = null)
+    public function getByNameAndLanguage(string $name = null, string $language = null)
     {
         $list = new Listing();
         /** @var Model\Metadata\Predefined[] $definitions */

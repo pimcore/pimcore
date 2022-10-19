@@ -29,7 +29,7 @@ class IndexFieldSelectionCombo extends Select
      *
      * @var string
      */
-    public $fieldtype = 'indexFieldSelectionCombo';
+    public string $fieldtype = 'indexFieldSelectionCombo';
 
     public $specificPriceField = false;
 

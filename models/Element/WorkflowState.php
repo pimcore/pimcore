@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,22 +28,22 @@ class WorkflowState extends Model\AbstractModel
     /**
      * @var int
      */
-    protected $cid;
+    protected int $cid;
 
     /**
      * @var string
      */
-    protected $ctype;
+    protected string $ctype;
 
     /**
      * @var string
      */
-    protected $workflow;
+    protected string $workflow;
 
     /**
      * @var string
      */
-    protected $place;
+    protected string $place;
 
     /**
      * @param int $cid
@@ -51,7 +52,7 @@ class WorkflowState extends Model\AbstractModel
      *
      * @return null|WorkflowState
      */
-    public static function getByPrimary(int $cid, string $ctype, string $workflow)
+    public static function getByPrimary(int $cid, string $ctype, string $workflow): ?WorkflowState
     {
         try {
             $workflowState = new self();
@@ -66,7 +67,7 @@ class WorkflowState extends Model\AbstractModel
     /**
      * @return int
      */
-    public function getCid()
+    public function getCid(): int
     {
         return $this->cid;
     }
@@ -76,7 +77,7 @@ class WorkflowState extends Model\AbstractModel
      *
      * @return WorkflowState
      */
-    public function setCid($cid)
+    public function setCid(int $cid): static
     {
         $this->cid = $cid;
 
@@ -86,7 +87,7 @@ class WorkflowState extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getCtype()
+    public function getCtype(): string
     {
         return $this->ctype;
     }
@@ -96,7 +97,7 @@ class WorkflowState extends Model\AbstractModel
      *
      * @return WorkflowState
      */
-    public function setCtype($ctype)
+    public function setCtype(string $ctype): static
     {
         $this->ctype = $ctype;
 
@@ -113,7 +114,7 @@ class WorkflowState extends Model\AbstractModel
      *
      * @return WorkflowState
      */
-    public function setPlace(string $place)
+    public function setPlace(string $place): static
     {
         $this->place = $place;
 
@@ -123,7 +124,7 @@ class WorkflowState extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getWorkflow()
+    public function getWorkflow(): string
     {
         return $this->workflow;
     }
@@ -133,7 +134,7 @@ class WorkflowState extends Model\AbstractModel
      *
      * @return WorkflowState
      */
-    public function setWorkflow(string $workflow)
+    public function setWorkflow(string $workflow): static
     {
         $this->workflow = $workflow;
 

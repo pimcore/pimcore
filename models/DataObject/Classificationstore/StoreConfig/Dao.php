@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,11 +31,11 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Get the data for the object from database for the given id, or from the ID which is set in the object
      *
-     * @param int $id
+     * @param int|null $id
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById($id = null)
+    public function getById(int $id = null)
     {
         if ($id != null) {
             $this->model->setId($id);
@@ -53,7 +55,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByName($name = null)
+    public function getByName(string $name = null)
     {
         if ($name != null) {
             $this->model->setName($name);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,34 +33,34 @@ class TargetGroup extends Model\AbstractModel
     /**
      * @var int
      */
-    protected $id;
+    protected int $id;
 
     /**
      * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * @var string
      */
-    protected $description = '';
+    protected string $description = '';
 
     /**
      * @var int
      */
-    protected $threshold = 1;
+    protected int $threshold = 1;
 
     /**
      * @var bool
      */
-    protected $active = true;
+    protected bool $active = true;
 
     /**
      * @param int $id
      *
      * @return null|TargetGroup
      */
-    public static function getById($id)
+    public static function getById(int $id): ?TargetGroup
     {
         try {
             $targetGroup = new self();
@@ -76,7 +77,7 @@ class TargetGroup extends Model\AbstractModel
      *
      * @return TargetGroup|null
      */
-    public static function getByName($name)
+    public static function getByName(string $name): ?TargetGroup
     {
         try {
             $target = new self();
@@ -93,7 +94,7 @@ class TargetGroup extends Model\AbstractModel
      *
      * @return bool
      */
-    public static function isIdActive($id)
+    public static function isIdActive(int $id): bool
     {
         $targetGroup = Model\Tool\Targeting\TargetGroup::getById($id);
 
@@ -109,7 +110,7 @@ class TargetGroup extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setDescription($description)
+    public function setDescription(string $description): static
     {
         $this->description = $description;
 
@@ -119,7 +120,7 @@ class TargetGroup extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -129,7 +130,7 @@ class TargetGroup extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setId($id)
+    public function setId(int $id): static
     {
         $this->id = (int)$id;
 
@@ -139,7 +140,7 @@ class TargetGroup extends Model\AbstractModel
     /**
      * @return int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -149,7 +150,7 @@ class TargetGroup extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -159,15 +160,12 @@ class TargetGroup extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param int $threshold
-     */
-    public function setThreshold($threshold)
+    public function setThreshold(int $threshold)
     {
         $this->threshold = $threshold;
     }
@@ -175,15 +173,12 @@ class TargetGroup extends Model\AbstractModel
     /**
      * @return int
      */
-    public function getThreshold()
+    public function getThreshold(): int
     {
         return $this->threshold;
     }
 
-    /**
-     * @param bool $active
-     */
-    public function setActive($active)
+    public function setActive(bool $active)
     {
         $this->active = (bool)$active;
     }
@@ -191,7 +186,7 @@ class TargetGroup extends Model\AbstractModel
     /**
      * @return bool
      */
-    public function getActive()
+    public function getActive(): bool
     {
         return $this->active;
     }
@@ -199,7 +194,7 @@ class TargetGroup extends Model\AbstractModel
     /**
      * @return void
      */
-    public function delete()
+    public function delete(): void
     {
         $this->getDao()->delete();
         $this->dispatchEvent(new TargetGroupEvent($this), TargetGroupEvents::POST_DELETE);
@@ -208,7 +203,7 @@ class TargetGroup extends Model\AbstractModel
     /**
      * @return void
      */
-    public function save()
+    public function save(): void
     {
         $isUpdate = false;
         if ($this->getId()) {

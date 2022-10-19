@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,14 +21,14 @@ interface DirtyIndicatorInterface
     /**
      * @return bool
      */
-    public function hasDirtyFields();
+    public function hasDirtyFields(): bool;
 
     /**
      * @param string $key
      *
      * @return bool
      */
-    public function isFieldDirty($key);
+    public function isFieldDirty(string $key): bool;
 
     /**
      * marks the given field as dirty
@@ -35,7 +36,7 @@ interface DirtyIndicatorInterface
      * @param string $field
      * @param bool $dirty
      */
-    public function markFieldDirty($field, $dirty = true);
+    public function markFieldDirty(string $field, bool $dirty = true);
 
     public function resetDirtyMap();
 }

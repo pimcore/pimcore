@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,7 +29,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * @return TargetGroup[]
      */
-    public function load()
+    public function load(): array
     {
         $ids = $this->db->fetchFirstColumn('SELECT id FROM targeting_target_groups' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
@@ -45,7 +46,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * @return int
      */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM targeting_target_groups ' . $this->getCondition(), $this->model->getConditionVariables());

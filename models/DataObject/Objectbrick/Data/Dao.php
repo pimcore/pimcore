@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,10 +32,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterf
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    /**
-     * @var DataObject\Concrete\Dao\InheritanceHelper
-     */
-    protected $inheritanceHelper = null;
+    protected ?DataObject\Concrete\Dao\InheritanceHelper $inheritanceHelper = null;
 
     /**
      * @param DataObject\Concrete $object
@@ -42,7 +40,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function save(DataObject\Concrete $object, $params = [])
+    public function save(DataObject\Concrete $object, array $params = [])
     {
         // HACK: set the pimcore admin mode to false to get the inherited values from parent if this source one is empty
         $inheritedValues = DataObject::doGetInheritedValues();
@@ -369,7 +367,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return array
      */
-    public function getRelationData($field, $forOwner, $remoteClassId)
+    public function getRelationData(string $field, bool $forOwner, string $remoteClassId): array
     {
         $id = $this->model->getObject()->getId();
         if ($remoteClassId) {

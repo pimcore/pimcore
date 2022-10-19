@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,7 +31,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @var array|null
      */
-    protected $tableDefinitions = null;
+    protected ?array $tableDefinitions = null;
 
     /**
      * @param DataObject\ClassDefinition $class
@@ -38,7 +39,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return string
      */
-    public function getTableName(DataObject\ClassDefinition $class, $query = false)
+    public function getTableName(DataObject\ClassDefinition $class, bool $query = false): string
     {
         if ($query) {
             return 'object_brick_query_' . $this->model->getKey() . '_' . $class->getId();
@@ -54,7 +55,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return string
      */
-    public function getLocalizedTableName(DataObject\ClassDefinition $class, $query = false, $language = 'en')
+    public function getLocalizedTableName(DataObject\ClassDefinition $class, bool $query = false, string $language = 'en'): string
     {
         if ($query) {
             return 'object_brick_localized_query_' . $this->model->getKey() . '_' . $class->getId() . '_' . $language;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,7 +29,7 @@ use Pimcore\Model\User;
  */
 class PermissionChecker
 {
-    public static function check(ElementInterface $element, $users)
+    public static function check(ElementInterface $element, $users): array
     {
         $protectedColumns = ['cid', 'cpath', 'userId', 'lEdit', 'lView', 'layouts'];
 
@@ -147,10 +148,7 @@ class PermissionChecker
         return $result;
     }
 
-    /**
-     * @return array
-     */
-    protected static function collectParentIds($element)
+    protected static function collectParentIds($element): array
     {
         // collect properties via parent - ids
         $parentIds = [1];
@@ -167,7 +165,7 @@ class PermissionChecker
         return $parentIds;
     }
 
-    protected static function createDetail($user, $a = null, $b = null, $c = null, $d = null, $e = null, $f = null)
+    protected static function createDetail($user, $a = null, $b = null, $c = null, $d = null, $e = null, $f = null): array
     {
         $detailEntry = [
             'userId' => $user->getId(),
@@ -183,7 +181,7 @@ class PermissionChecker
         return $detailEntry;
     }
 
-    protected static function getUserPermissions($user, &$details)
+    protected static function getUserPermissions($user, &$details): void
     {
         if ($user->isAdmin()) {
             $details[] = self::createDetail($user, 'ADMIN', true, null, null);
@@ -219,12 +217,7 @@ class PermissionChecker
         }
     }
 
-    /**
-     * @param User $user
-     * @param ElementInterface $element
-     * @param array $details
-     */
-    protected static function getLanguagePermissions($user, $element, &$details)
+    protected static function getLanguagePermissions(User $user, ElementInterface $element, array &$details): void
     {
         if ($user->isAdmin()) {
             return;

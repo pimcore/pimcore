@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -39,52 +40,52 @@ class UrlSlug implements OwnerAwareFieldInterface
     /**
      * @var int
      */
-    protected $objectId;
+    protected int $objectId;
 
     /**
      * @var string
      */
-    protected $classId;
+    protected string $classId;
 
     /**
      * @var string|null
      */
-    protected $slug;
+    protected ?string $slug;
 
     /**
      * @var int|null
      */
-    protected $siteId;
+    protected ?int $siteId;
 
     /**
      * @var string
      */
-    protected $fieldname;
+    protected string $fieldname;
 
     /**
      * @var int
      */
-    protected $index;
+    protected int $index;
 
     /**
      * @var string
      */
-    protected $ownertype;
+    protected string $ownertype;
 
     /**
      * @var string
      */
-    protected $ownername;
+    protected string $ownername;
 
     /**
      * @var string
      */
-    protected $position;
+    protected string $position;
 
     /**
      * @var null|string
      */
-    protected $previousSlug;
+    protected ?string $previousSlug;
 
     /**
      * UrlSlug constructor.
@@ -108,7 +109,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      *
      * @return $this
      */
-    public function setObjectId(int $objectId)
+    public function setObjectId(int $objectId): static
     {
         $this->objectId = $objectId;
 
@@ -125,7 +126,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      *
      * @return $this
      */
-    public function setSlug(?string $slug)
+    public function setSlug(?string $slug): static
     {
         $this->slug = $slug;
 
@@ -162,7 +163,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      *
      * @return $this
      */
-    public function setSiteId(?int $siteId)
+    public function setSiteId(?int $siteId): static
     {
         $this->siteId = $siteId ?? 0;
 
@@ -179,7 +180,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      *
      * @return $this
      */
-    public function setFieldname(?string $fieldname)
+    public function setFieldname(?string $fieldname): static
     {
         $this->fieldname = $fieldname;
 
@@ -196,7 +197,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      *
      * @return $this
      */
-    public function setIndex(?int $index)
+    public function setIndex(?int $index): static
     {
         $this->index = $index;
 
@@ -213,7 +214,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      *
      * @return $this
      */
-    public function setOwnertype(?string $ownertype)
+    public function setOwnertype(?string $ownertype): static
     {
         $this->ownertype = $ownertype;
 
@@ -230,7 +231,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      *
      * @return $this
      */
-    public function setOwnername(?string $ownername)
+    public function setOwnername(?string $ownername): static
     {
         $this->ownername = $ownername;
 
@@ -247,7 +248,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      *
      * @return $this
      */
-    public function setPosition(?string $position)
+    public function setPosition(?string $position): static
     {
         $this->position = $position;
 
@@ -257,7 +258,7 @@ class UrlSlug implements OwnerAwareFieldInterface
     /**
      * @return string
      */
-    public function getClassId()
+    public function getClassId(): string
     {
         return $this->classId;
     }
@@ -267,19 +268,14 @@ class UrlSlug implements OwnerAwareFieldInterface
      *
      * @return $this
      */
-    public function setClassId($classId)
+    public function setClassId(string $classId): static
     {
         $this->classId = $classId;
 
         return $this;
     }
 
-    /**
-     * @param array $rawItem
-     *
-     * @return UrlSlug
-     */
-    public static function createFromDataRow($rawItem): UrlSlug
+    public static function createFromDataRow(array $rawItem): UrlSlug
     {
         $slug = new self($rawItem['slug'], $rawItem['siteId']);
         $slug->setObjectId($rawItem['objectId']);
@@ -295,14 +291,14 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
-     * @internal
-     *
      * @param string $path
      * @param int $siteId
      *
      * @return UrlSlug|null
+     *@internal
+     *
      */
-    public static function resolveSlug($path, $siteId = 0)
+    public static function resolveSlug(string $path, int $siteId = 0): ?UrlSlug
     {
         $cacheKey = self::getCacheKey($path, $siteId);
         if (RuntimeCache::isRegistered($cacheKey)) {
@@ -350,7 +346,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      *
      * @throws \Exception
      */
-    public function getAction()
+    public function getAction(): string
     {
         /** @var ClassDefinition\Data\UrlSlug $fd */
         $fd = null;
@@ -489,14 +485,14 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
-     * @internal
-     *
      * @param string $path
      * @param int $siteId
      *
      * @return string
+     *@internal
+     *
      */
-    protected static function getCacheKey($path, $siteId): string
+    protected static function getCacheKey(string $path, int $siteId): string
     {
         return "UrlSlug~~{$path}~~{$siteId}";
     }

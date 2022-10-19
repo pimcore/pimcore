@@ -30,7 +30,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 class NotificationService
 {
     /** @var UserService */
-    private $userService;
+    private UserService $userService;
 
     /**
      * NotificationService constructor.
@@ -57,7 +57,8 @@ class NotificationService
         string $title,
         string $message,
         ?ElementInterface $element = null
-    ) {
+    ): void
+    {
         $this->beginTransaction();
 
         $sender = User::getById($fromUser);
@@ -101,7 +102,8 @@ class NotificationService
         string $title,
         string $message,
         ?ElementInterface $element = null
-    ) {
+    ): void
+    {
         $group = User\Role::getById($groupId);
 
         if (!$group instanceof User\Role) {

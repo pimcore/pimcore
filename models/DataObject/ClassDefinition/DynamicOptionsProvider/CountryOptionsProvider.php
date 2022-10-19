@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,13 +17,14 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider;
 
 use Pimcore\Localization\LocaleServiceInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Country;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Countrymultiselect;
 
 class CountryOptionsProvider implements SelectOptionsProviderInterface
 {
     /** @var LocaleServiceInterface */
-    private $localeService;
+    private LocaleServiceInterface $localeService;
 
     public function __construct(LocaleServiceInterface $localeService)
     {
@@ -32,7 +34,7 @@ class CountryOptionsProvider implements SelectOptionsProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getOptions($context, $fieldDefinition)
+    public function getOptions(array $context, Data $fieldDefinition): array
     {
         $countries = $this->localeService->getDisplayRegions();
         asort($countries);
@@ -64,7 +66,7 @@ class CountryOptionsProvider implements SelectOptionsProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function hasStaticOptions($context, $fieldDefinition)
+    public function hasStaticOptions(array $context, Data $fieldDefinition): bool
     {
         return true;
     }
@@ -72,7 +74,7 @@ class CountryOptionsProvider implements SelectOptionsProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getDefaultValue($context, $fieldDefinition)
+    public function getDefaultValue(array $context, Data $fieldDefinition): ?string
     {
         if ($fieldDefinition instanceof Country) {
             return $fieldDefinition->getDefaultValue();

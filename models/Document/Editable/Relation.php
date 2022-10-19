@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -33,7 +34,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
      *
      * @var int|null
      */
-    protected $id;
+    protected ?int $id;
 
     /**
      * Type of the source object (document, asset, object)
@@ -42,7 +43,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
      *
      * @var string|null
      */
-    protected $type;
+    protected ?string $type;
 
     /**
      * Subtype of the source object (eg. page, link, video, news, ...)
@@ -51,7 +52,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
      *
      * @var string|null
      */
-    protected $subtype;
+    protected ?string $subtype;
 
     /**
      * Contains the source object
@@ -60,12 +61,12 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
      *
      * @var mixed
      */
-    protected $element;
+    protected mixed $element;
 
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         //TODO: getType != $type ... that might be dangerous
         return 'relation';
@@ -124,7 +125,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): Relation|EditableInterface|static
     {
         if (!empty($data)) {
             $data = \Pimcore\Tool\Serialize::unserialize($data);
@@ -142,7 +143,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): Relation|EditableInterface|static
     {
         $this->id = $data['id'] ?? null;
         $this->type = $data['type'] ?? null;
@@ -172,7 +173,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
      *
      * @return Element\ElementInterface|false|null
      */
-    public function getElement()
+    public function getElement(): bool|Element\ElementInterface|null
     {
         $this->setElement();
 
@@ -189,7 +190,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
      *
      * @return string|false|null
      */
-    public function getFullPath()
+    public function getFullPath(): bool|string|null
     {
         $this->setElement();
 
@@ -207,7 +208,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
     /**
      * {@inheritdoc}
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         $this->setElement();
 
@@ -221,7 +222,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
     /**
      * {@inheritdoc}
      */
-    public function resolveDependencies()
+    public function resolveDependencies(): array
     {
         $dependencies = [];
         $this->setElement();
@@ -241,7 +242,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
     /**
      * {@inheritdoc}
      */
-    public function checkValidity()
+    public function checkValidity(): bool
     {
         $sane = true;
         if ($this->id) {
@@ -291,7 +292,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
      *
      * @return $this
      */
-    public function setId($id)
+    public function setId(int $id): static
     {
         $this->id = $id;
 
@@ -301,7 +302,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
     /**
      * @return int
      */
-    public function getId()
+    public function getId(): int
     {
         return (int) $this->id;
     }
@@ -311,7 +312,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
      *
      * @return $this
      */
-    public function setSubtype($subtype)
+    public function setSubtype(string $subtype): static
     {
         $this->subtype = $subtype;
 
@@ -319,9 +320,9 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getSubtype()
+    public function getSubtype(): ?string
     {
         return $this->subtype;
     }

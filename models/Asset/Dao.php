@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -45,7 +46,7 @@ class Dao extends Model\Element\Dao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById($id)
+    public function getById(int $id)
     {
         $data = $this->db->fetchAssociative("SELECT assets.*, tree_locks.locked FROM assets
             LEFT JOIN tree_locks ON assets.id = tree_locks.id AND tree_locks.type = 'asset'
@@ -89,7 +90,7 @@ class Dao extends Model\Element\Dao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByPath($path)
+    public function getByPath(string $path)
     {
         $params = $this->extractKeyAndPath($path);
         $data = $this->db->fetchAssociative('SELECT id FROM assets WHERE path = :path AND `filename` = :key', $params);
@@ -192,13 +193,13 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @internal
-     *
      * @param string $oldPath
      *
      * @return array
+     *@internal
+     *
      */
-    public function updateChildPaths($oldPath)
+    public function updateChildPaths(string $oldPath): array
     {
         //get assets to empty their cache
         $assets = $this->db->fetchFirstColumn('SELECT id FROM assets WHERE path LIKE ' . $this->db->quote(Helper::escapeLike($oldPath) . '%'));
@@ -228,7 +229,7 @@ class Dao extends Model\Element\Dao
      *
      * @return array
      */
-    public function getProperties($onlyInherited = false)
+    public function getProperties(bool $onlyInherited = false): array
     {
         $properties = [];
 
@@ -289,7 +290,7 @@ class Dao extends Model\Element\Dao
     /**
      * @return string|null retrieves the current full set path from DB
      */
-    public function getCurrentFullPath()
+    public function getCurrentFullPath(): ?string
     {
         $path = null;
 
@@ -321,11 +322,11 @@ class Dao extends Model\Element\Dao
     /**
      * quick test if there are children
      *
-     * @param Model\User $user
+     * @param Model\User|null $user
      *
      * @return bool
      */
-    public function hasChildren($user = null)
+    public function hasChildren(User $user = null): bool
     {
         if (!$this->model->getId()) {
             return false;
@@ -358,7 +359,7 @@ class Dao extends Model\Element\Dao
      *
      * @return bool
      */
-    public function hasSiblings()
+    public function hasSiblings(): bool
     {
         if (!$this->model->getParentId()) {
             return false;
@@ -382,11 +383,11 @@ class Dao extends Model\Element\Dao
     /**
      * returns the amount of directly children (not recursivly)
      *
-     * @param Model\User $user
+     * @param Model\User|null $user
      *
      * @return int
      */
-    public function getChildAmount($user = null)
+    public function getChildAmount(User $user = null): int
     {
         if (!$this->model->getId()) {
             return 0;
@@ -414,7 +415,7 @@ class Dao extends Model\Element\Dao
     /**
      * @return bool
      */
-    public function isLocked()
+    public function isLocked(): bool
     {
         // check for an locked element below this element
         $belowLocks = $this->db->fetchOne("SELECT tree_locks.id FROM tree_locks INNER JOIN assets ON tree_locks.id = assets.id WHERE assets.path LIKE ? AND tree_locks.type = 'asset' AND tree_locks.locked IS NOT NULL AND tree_locks.locked != '' LIMIT 1", [Helper::escapeLike($this->model->getRealFullPath()) . '/%']);
@@ -436,7 +437,7 @@ class Dao extends Model\Element\Dao
     /**
      * @return array
      */
-    public function unlockPropagate()
+    public function unlockPropagate(): array
     {
         $lockIds = $this->db->fetchFirstColumn('SELECT id from assets WHERE path LIKE ' . $this->db->quote(Helper::escapeLike($this->model->getRealFullPath()) . '/%') . ' OR id = ' . $this->model->getId());
         $this->db->executeQuery("DELETE FROM tree_locks WHERE type = 'asset' AND id IN (" . implode(',', $lockIds) . ')');
@@ -463,7 +464,7 @@ class Dao extends Model\Element\Dao
      *
      * @return bool
      */
-    public function isAllowed($type, $user)
+    public function isAllowed(string $type, User $user): bool
     {
         // collect properties via parent - ids
         $parentIds = [1];
@@ -516,7 +517,7 @@ class Dao extends Model\Element\Dao
      * @return array<string, int>
      *
      */
-    public function areAllowed(array $columns, User $user)
+    public function areAllowed(array $columns, User $user): array
     {
         return $this->permissionByTypes($columns, $user, 'asset');
     }
@@ -530,7 +531,7 @@ class Dao extends Model\Element\Dao
     /**
      * @return bool
      */
-    public function __isBasedOnLatestData()
+    public function __isBasedOnLatestData(): bool
     {
         $data = $this->db->fetchAssociative('SELECT modificationDate, versionCount from assets WHERE id = ?', [$this->model->getId()]);
         if ($data['modificationDate'] == $this->model->__getDataVersionTimestamp() && $data['versionCount'] == $this->model->getVersionCount()) {

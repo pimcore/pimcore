@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,15 +21,15 @@ class ValidationException extends \Exception
     /**
      * @var array
      */
-    protected $contextStack = [];
+    protected array $contextStack = [];
 
     /** @var \Exception[] */
-    protected $subItems = [];
+    protected array $subItems = [];
 
     /**
      * @return \Exception[]
      */
-    public function getSubItems()
+    public function getSubItems(): array
     {
         return $this->subItems;
     }
@@ -41,10 +42,7 @@ class ValidationException extends \Exception
         $this->subItems = $subItems;
     }
 
-    /**
-     * @param string $context
-     */
-    public function addContext($context)
+    public function addContext(string $context)
     {
         $this->contextStack[] = $context;
     }
@@ -52,7 +50,7 @@ class ValidationException extends \Exception
     /**
      * @return array
      */
-    public function getContextStack()
+    public function getContextStack(): array
     {
         return $this->contextStack;
     }

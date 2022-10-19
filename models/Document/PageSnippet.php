@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -38,14 +39,14 @@ abstract class PageSnippet extends Model\Document
      *
      * @var string|null
      */
-    protected $controller;
+    protected ?string $controller;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected $template;
+    protected ?string $template;
 
     /**
      * Contains all content-editables of the document
@@ -55,23 +56,23 @@ abstract class PageSnippet extends Model\Document
      * @var array|null
      *
      */
-    protected $editables = null;
+    protected ?array $editables = null;
 
     /**
      * Contains all versions of the document
      *
      * @internal
      *
-     * @var array
+     * @var array|null
      */
-    protected $versions = null;
+    protected ?array $versions = null;
 
     /**
      * @internal
      *
      * @var null|int
      */
-    protected $contentMasterDocumentId;
+    protected ?int $contentMasterDocumentId;
 
     /**
      * @internal
@@ -83,7 +84,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @var null|bool
      */
-    protected $missingRequiredEditable = null;
+    protected ?bool $missingRequiredEditable = null;
 
     /**
      * @internal
@@ -95,14 +96,14 @@ abstract class PageSnippet extends Model\Document
      *
      * @var null|int
      */
-    protected $staticGeneratorLifetime = null;
+    protected ?int $staticGeneratorLifetime = null;
 
     /**
      * @internal
      *
      * @var array
      */
-    protected $inheritedEditables = [];
+    protected array $inheritedEditables = [];
 
     /**
      * {@inheritdoc}
@@ -122,7 +123,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * {@inheritdoc}
      */
-    protected function update($params = [])
+    protected function update(array $params = [])
     {
         // update elements
         $editables = $this->getEditables();
@@ -148,14 +149,14 @@ abstract class PageSnippet extends Model\Document
     /**
      * @param bool $setModificationDate
      * @param bool $saveOnlyVersion
-     * @param string $versionNote
+     * @param string|null $versionNote
      * @param bool $isAutoSave
      *
      * @return null|Model\Version
      *
      * @throws \Exception
      */
-    public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null, $isAutoSave = false)
+    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, string $versionNote = null, bool $isAutoSave = false): ?Model\Version
     {
         try {
             // hook should be also called if "save only new version" is selected
@@ -227,9 +228,7 @@ abstract class PageSnippet extends Model\Document
         parent::doDelete();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function getCacheTags(array $tags = []): array
     {
         $tags = parent::getCacheTags($tags);
@@ -266,9 +265,9 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getController()
+    public function getController(): ?string
     {
         if (empty($this->controller)) {
             $this->controller = \Pimcore::getContainer()->getParameter('pimcore.documents.default_controller');
@@ -280,7 +279,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * @return string|null
      */
-    public function getTemplate()
+    public function getTemplate(): ?string
     {
         return $this->template;
     }
@@ -290,7 +289,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @return $this
      */
-    public function setController($controller)
+    public function setController(?string $controller): static
     {
         $this->controller = $controller;
 
@@ -302,7 +301,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @return $this
      */
-    public function setTemplate($template)
+    public function setTemplate(?string $template): static
     {
         $this->template = $template;
 
@@ -320,7 +319,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @return $this
      */
-    public function setRawEditable(string $name, string $type, $data)
+    public function setRawEditable(string $name, string $type, mixed $data): static
     {
         try {
             if ($type) {
@@ -348,7 +347,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @return $this
      */
-    public function setEditable(Editable $editable)
+    public function setEditable(Editable $editable): static
     {
         $this->getEditables();
         $this->editables[$editable->getName()] = $editable;
@@ -361,7 +360,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @return $this
      */
-    public function removeEditable(string $name)
+    public function removeEditable(string $name): static
     {
         $this->getEditables();
         if (isset($this->editables[$name])) {
@@ -378,7 +377,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @return Editable|null
      */
-    public function getEditable(string $name)
+    public function getEditable(string $name): ?Editable
     {
         $editables = $this->getEditables();
         if (isset($this->editables[$name])) {
@@ -414,7 +413,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @throws \Exception
      */
-    public function setContentMasterDocumentId($contentMasterDocumentId, bool $validate = false)
+    public function setContentMasterDocumentId(int|string|null $contentMasterDocumentId, bool $validate = false): static
     {
         // this is that the path is automatically converted to ID => when setting directly from admin UI
         if (!is_numeric($contentMasterDocumentId) && !empty($contentMasterDocumentId)) {
@@ -450,7 +449,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * @return int|null
      */
-    public function getContentMasterDocumentId()
+    public function getContentMasterDocumentId(): ?int
     {
         return $this->contentMasterDocumentId;
     }
@@ -458,7 +457,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * @return Document\PageSnippet|null
      */
-    public function getContentMasterDocument()
+    public function getContentMasterDocument(): ?PageSnippet
     {
         if ($masterDocumentId = $this->getContentMasterDocumentId()) {
             return Document\PageSnippet::getById($masterDocumentId);
@@ -472,7 +471,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @return $this
      */
-    public function setContentMasterDocument($document)
+    public function setContentMasterDocument(?PageSnippet $document): static
     {
         if ($document instanceof self) {
             $this->setContentMasterDocumentId($document->getId(), true);
@@ -488,7 +487,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @return bool
      */
-    public function hasEditable(string $name)
+    public function hasEditable(string $name): bool
     {
         return $this->getEditable($name) !== null;
     }
@@ -511,7 +510,7 @@ abstract class PageSnippet extends Model\Document
      * @return $this
      *
      */
-    public function setEditables(?array $editables)
+    public function setEditables(?array $editables): static
     {
         $this->editables = $editables;
 
@@ -521,7 +520,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * @return Model\Version[]
      */
-    public function getVersions()
+    public function getVersions(): array
     {
         if ($this->versions === null) {
             $this->setVersions($this->getDao()->getVersions());
@@ -535,7 +534,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @return $this
      */
-    public function setVersions($versions)
+    public function setVersions(array $versions): static
     {
         $this->versions = $versions;
 
@@ -547,7 +546,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @return string
      */
-    public function getHref()
+    public function getHref(): string
     {
         return $this->getFullPath();
     }
@@ -579,7 +578,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @throws \Exception
      */
-    public function getUrl($hostname = null, $scheme = null)
+    public function getUrl(string $hostname = null, string $scheme = null): string
     {
         if (!$scheme) {
             $scheme = 'http://';
@@ -620,7 +619,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @return bool|null
      */
-    public function getMissingRequiredEditable()
+    public function getMissingRequiredEditable(): ?bool
     {
         return $this->missingRequiredEditable;
     }
@@ -630,7 +629,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @return $this
      */
-    public function setMissingRequiredEditable($missingRequiredEditable)
+    public function setMissingRequiredEditable(?bool $missingRequiredEditable): static
     {
         if ($missingRequiredEditable !== null) {
             $missingRequiredEditable = (bool) $missingRequiredEditable;

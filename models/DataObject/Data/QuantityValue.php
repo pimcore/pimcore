@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,22 +27,19 @@ class QuantityValue extends AbstractQuantityValue
     /**
      * @var float|int|null
      */
-    protected $value;
+    protected int|null|float $value;
 
     /**
      * @param float|int|null $value
-     * @param Unit|string|null $unit
+     * @param string|Unit|null $unit
      */
-    public function __construct($value = null, $unit = null)
+    public function __construct($value = null, Unit|string $unit = null)
     {
         $this->value = $value;
         parent::__construct($unit);
     }
 
-    /**
-     * @param float|int|null $value
-     */
-    public function setValue($value)
+    public function setValue(float|int|null $value)
     {
         $this->value = $value;
         $this->markMeDirty();
@@ -50,7 +48,7 @@ class QuantityValue extends AbstractQuantityValue
     /**
      * @return float|int|null
      */
-    public function getValue()
+    public function getValue(): float|int|null
     {
         return $this->value;
     }

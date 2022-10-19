@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,7 +28,7 @@ class OptionsProviderResolver extends ClassResolver
 
     const MODE_MULTISELECT = 2;
 
-    public static $providerCache = [];
+    public static array $providerCache = [];
 
     /**
      * @param string|null $providerClass
@@ -35,7 +36,7 @@ class OptionsProviderResolver extends ClassResolver
      *
      * @return object|null
      */
-    public static function resolveProvider($providerClass, $mode)
+    public static function resolveProvider(?string $providerClass, int $mode): ?object
     {
         return self::resolve($providerClass, function ($provider) use ($mode) {
             return ($mode == self::MODE_SELECT && ($provider instanceof SelectOptionsProviderInterface))

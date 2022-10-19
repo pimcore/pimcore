@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,7 +28,7 @@ class Dao extends Model\Staticroute\Dao
     /**
      * @return array
      */
-    public function loadList()
+    public function loadList(): array
     {
         $staticRoutes = [];
         foreach ($this->loadIdList() as $id) {
@@ -48,7 +49,7 @@ class Dao extends Model\Staticroute\Dao
     /**
      * @return int
      */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         return count($this->loadList());
     }

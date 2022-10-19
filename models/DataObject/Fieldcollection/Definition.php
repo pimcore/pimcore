@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -53,7 +54,7 @@ class Definition extends Model\AbstractModel
      *
      * @param DataObject\ClassDefinition\Layout|DataObject\ClassDefinition\Data $def
      */
-    protected function extractDataDefinitions($def)
+    protected function extractDataDefinitions(DataObject\ClassDefinition\Data|DataObject\ClassDefinition\Layout $def)
     {
         if ($def instanceof DataObject\ClassDefinition\Layout) {
             if ($def->hasChildren()) {
@@ -79,11 +80,11 @@ class Definition extends Model\AbstractModel
     /**
      * @param string $key
      *
-     * @throws \Exception
-     *
      * @return self|null
+     *@throws \Exception
+     *
      */
-    public static function getByKey($key)
+    public static function getByKey(string $key): ?Definition
     {
         /** @var Definition $fc */
         $fc = null;
@@ -117,7 +118,7 @@ class Definition extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public function save($saveDefinitionFile = true)
+    public function save(bool $saveDefinitionFile = true)
     {
         if (!$this->getKey()) {
             throw new \Exception('A field-collection needs a key to be saved!');
@@ -164,14 +165,14 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param bool $generateDefinitionFile
      *
      * @throws \Exception
      * @throws DataObject\Exception\DefinitionWriteException
+     *@internal
+     *
      */
-    protected function generateClassFiles($generateDefinitionFile = true)
+    protected function generateClassFiles(bool $generateDefinitionFile = true)
     {
         if ($generateDefinitionFile && !$this->isWritable()) {
             throw new DataObject\Exception\DefinitionWriteException();
@@ -242,13 +243,13 @@ class Definition extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param string|null $key
      *
      * @return string
+     *@internal
+     *
      */
-    public function getDefinitionFile($key = null)
+    public function getDefinitionFile(string $key = null): string
     {
         return $this->locateDefinitionFile($key ?? $this->getKey(), 'fieldcollections/%s.php');
     }
@@ -258,7 +259,7 @@ class Definition extends Model\AbstractModel
      *
      * @return string
      */
-    public function getPhpClassFile()
+    public function getPhpClassFile(): string
     {
         return $this->locateFile(ucfirst($this->getKey()), 'DataObject/Fieldcollection/Data/%s.php');
     }

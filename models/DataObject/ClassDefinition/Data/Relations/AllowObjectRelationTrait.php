@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,13 +27,13 @@ trait AllowObjectRelationTrait
     /**
      * Checks if an object is an allowed relation
      *
-     * @internal
-     *
      * @param DataObject\AbstractObject $object
+          *
+          * @return bool
+     *@internal
      *
-     * @return bool
      */
-    protected function allowObjectRelation($object)
+    protected function allowObjectRelation(DataObject\AbstractObject $object): bool
     {
         if (!$object instanceof DataObject\AbstractObject || $object->getId() <= 0) {
             return false;

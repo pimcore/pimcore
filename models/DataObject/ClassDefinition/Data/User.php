@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,7 +28,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
      *
      * @var string
      */
-    public $fieldtype = 'user';
+    public string $fieldtype = 'user';
 
     /**
      * @internal
@@ -39,7 +40,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
      *
      * @return User
      */
-    protected function init()
+    protected function init(): static
     {
         //loads select list options
         $options = $this->getOptions();
@@ -51,15 +52,15 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     }
 
     /**
+     * @param mixed $data
+     * @param null|Model\DataObject\Concrete $object
+     * @param array $params
+     *
+     * @return string|null
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param string $data
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?string
     {
         if (!empty($data)) {
             try {
@@ -73,15 +74,15 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param string|null $data
+     * @param mixed $data
      * @param Model\DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return null|string
+     *@see ResourcePersistenceAwareInterface::getDataForResource
+     *
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function getDataForResource(mixed $data, $object = null, array $params = []): ?string
     {
         $this->init();
         if (!empty($data)) {
@@ -128,7 +129,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
@@ -145,7 +146,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * {@inheritdoc}
      */
-    public function getDataForSearchIndex($object, $params = [])
+    public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
@@ -181,7 +182,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
      * @return $this
      */
     #[\ReturnTypeWillChange]
-    public function jsonSerialize()// : static
+    public function jsonSerialize(): static// : static
     {
         if (Service::doRemoveDynamicOptions()) {
             $this->options = null;
@@ -204,15 +205,12 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * @return bool
      */
-    public function getUnique()
+    public function getUnique(): bool
     {
         return $this->unique;
     }
 
-    /**
-     * @param bool $unique
-     */
-    public function setUnique($unique)
+    public function setUnique(bool $unique)
     {
         $this->unique = (bool) $unique;
     }

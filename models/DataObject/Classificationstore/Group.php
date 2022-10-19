@@ -24,12 +24,12 @@ final class Group
     /**
      * @var GroupConfig
      */
-    protected $configuration;
+    protected GroupConfig $configuration;
 
     /**
      * @var Classificationstore
      */
-    protected $classificationStore;
+    protected Classificationstore $classificationStore;
 
     public function __construct(Classificationstore $classificationStore, GroupConfig $configuration)
     {

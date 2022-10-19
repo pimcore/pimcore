@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -33,7 +34,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByOwnerAndClassAndObjectId($ownerId, $classId, $objectId = null, $searchType = null)
+    public function getByOwnerAndClassAndObjectId(int $ownerId, string $classId, int $objectId = null, string $searchType = null)
     {
         $query = 'SELECT * FROM gridconfig_favourites WHERE ownerId = ? AND classId = ? AND searchType = ?';
         $params = [$ownerId, $classId, $searchType];
@@ -56,7 +57,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return Model\GridConfigFavourite
      */
-    public function save()
+    public function save(): Model\GridConfigFavourite
     {
         $gridConfigFavourite = $this->model->getObjectVars();
         $data = [];

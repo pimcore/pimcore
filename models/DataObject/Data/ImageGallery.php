@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,12 +26,12 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
     /**
      * @var Hotspotimage[]
      */
-    protected $items;
+    protected array $items;
 
     /**
      * @param Hotspotimage[] $items
      */
-    public function __construct($items = [])
+    public function __construct(array $items = [])
     {
         $this->setItems($items);
         $this->markMeDirty();
@@ -40,7 +41,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
      * @return Hotspotimage|false
      */
     #[\ReturnTypeWillChange]
-    public function current()// : Hotspotimage|false
+    public function current(): Hotspotimage|bool// : Hotspotimage|false
     {
         return current($this->items);
     }
@@ -49,7 +50,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function next()// : void
+    public function next(): void// : void
     {
         next($this->items);
     }
@@ -58,7 +59,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
      * @return int|string|null
      */
     #[\ReturnTypeWillChange]
-    public function key()// : mixed
+    public function key(): int|string|null// : mixed
     {
         return key($this->items);
     }
@@ -67,7 +68,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
      * @return bool
      */
     #[\ReturnTypeWillChange]
-    public function valid()// : bool
+    public function valid(): bool// : bool
     {
         return $this->current() !== false;
     }
@@ -76,7 +77,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function rewind()// : void
+    public function rewind(): void// : void
     {
         reset($this->items);
     }
@@ -84,7 +85,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
     /**
      * @return Hotspotimage[]
      */
-    public function getItems()
+    public function getItems(): array
     {
         return $this->items;
     }
@@ -92,7 +93,7 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
     /**
      * @param Hotspotimage[] $items
      */
-    public function setItems($items)
+    public function setItems(array $items)
     {
         if (!is_array($items)) {
             $items = [];

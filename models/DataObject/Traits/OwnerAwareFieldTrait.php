@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,26 +27,26 @@ trait OwnerAwareFieldTrait
     /**
      * @var mixed
      */
-    protected $_owner;
+    protected mixed $_owner;
 
     /**
      * @var string
      */
-    protected $_fieldname;
+    protected string $_fieldname;
 
     /**
      * @var string|null
      */
-    protected $_language;
+    protected ?string $_language;
 
     /**
-     * @internal
-     *
      * @param mixed $owner
      *
      * @return $this;
+     *@internal
+     *
      */
-    public function _setOwner($owner)
+    public function _setOwner(mixed $owner): static
     {
         $this->_owner = $owner;
 
@@ -55,7 +56,7 @@ trait OwnerAwareFieldTrait
     /**
      * @return mixed
      */
-    public function _getOwner()
+    public function _getOwner(): mixed
     {
         return $this->_owner;
     }
@@ -77,7 +78,7 @@ trait OwnerAwareFieldTrait
      *
      * @return $this;
      */
-    public function _setOwnerFieldname(?string $fieldname)
+    public function _setOwnerFieldname(?string $fieldname): static
     {
         $this->_fieldname = $fieldname;
 
@@ -91,7 +92,7 @@ trait OwnerAwareFieldTrait
      *
      * @return $this
      */
-    public function _setOwnerLanguage(?string $language)
+    public function _setOwnerLanguage(?string $language): static
     {
         $this->_language = $language;
 
@@ -101,7 +102,7 @@ trait OwnerAwareFieldTrait
     /**
      * @internal
      */
-    protected function markMeDirty($dirty = true)
+    protected function markMeDirty($dirty = true): void
     {
         if ($this->_owner && $this->_owner instanceof DirtyIndicatorInterface) {
             $this->_owner->markFieldDirty($this->_fieldname, $dirty);

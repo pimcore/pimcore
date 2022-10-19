@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,11 +22,7 @@ use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
 
 interface CustomResourcePersistingInterface
 {
-    /**
-     * @param Concrete|Localizedfield|AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
-     */
-    public function save($object, $params = []);
+    public function save(Localizedfield|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData|AbstractData|Concrete $object, array $params = []);
 
     /**
      * @param Concrete|Localizedfield|AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
@@ -33,11 +30,7 @@ interface CustomResourcePersistingInterface
      *
      * @return mixed
      */
-    public function load($object, $params = []);
+    public function load($object, array $params = []): mixed;
 
-    /**
-     * @param Concrete|Localizedfield|AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array $params
-     */
-    public function delete($object, $params = []);
+    public function delete(Localizedfield|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData|AbstractData|Concrete $object, array $params = []);
 }

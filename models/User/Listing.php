@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,14 +27,14 @@ class Listing extends Listing\AbstractListing
     /**
      * {@inheritdoc}
      */
-    protected $type = 'user';
+    protected string $type = 'user';
 
     /**
      * Alias for $this->getItems()
      *
      * @return \Pimcore\Model\User[]
      */
-    public function getUsers()
+    public function getUsers(): array
     {
         return $this->getItems();
     }

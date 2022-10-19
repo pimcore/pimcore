@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,12 +30,12 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
      *
      * @var \Carbon\Carbon|null
      */
-    protected $date;
+    protected ?\Carbon\Carbon $date;
 
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return 'date';
     }
@@ -50,7 +51,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * @return \Carbon\Carbon|null
      */
-    public function getDate()
+    public function getDate(): ?\Carbon\Carbon
     {
         return $this->getData();
     }
@@ -102,7 +103,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): EditableInterface|Date|static
     {
         if ($data) {
             $this->setDateFromTimestamp($data);
@@ -114,7 +115,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): EditableInterface|Date|static
     {
         if (strlen($data) > 5) {
             $timestamp = strtotime($data);
@@ -127,7 +128,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * {@inheritdoc}
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         if ($this->date) {
             return false;

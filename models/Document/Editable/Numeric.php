@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,12 +30,12 @@ class Numeric extends Model\Document\Editable
      *
      * @var string
      */
-    protected $number = '';
+    protected string $number = '';
 
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return 'numeric';
     }
@@ -52,7 +53,7 @@ class Numeric extends Model\Document\Editable
      *
      * @return string
      */
-    public function getNumber()
+    public function getNumber(): string
     {
         return $this->getData();
     }
@@ -68,7 +69,7 @@ class Numeric extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): Numeric|EditableInterface|static
     {
         $this->number = $data;
 
@@ -78,7 +79,7 @@ class Numeric extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): Numeric|EditableInterface|static
     {
         $this->number = $data;
 
@@ -88,7 +89,7 @@ class Numeric extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         if (is_numeric($this->number)) {
             return false;

@@ -14,13 +14,13 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class TaxEntry extends DataObject\Fieldcollection\Data\AbstractData
 {
-protected $type = "TaxEntry";
+protected string $type = "TaxEntry";
 protected $localizedfields;
 protected $percent;
 
 
 /**
-* Get localizedfields - 
+* Get localizedfields -
 * @return \Pimcore\Model\DataObject\Localizedfield|null
 */
 public function getLocalizedfields(): ?\Pimcore\Model\DataObject\Localizedfield
@@ -51,7 +51,7 @@ public function getName($language = null): ?string
 }
 
 /**
-* Set localizedfields - 
+* Set localizedfields -
 * @param \Pimcore\Model\DataObject\Localizedfield|null $localizedfields
 * @return \Pimcore\Model\DataObject\Fieldcollection\Data\TaxEntry
 */

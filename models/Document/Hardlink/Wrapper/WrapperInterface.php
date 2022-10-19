@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,15 +21,12 @@ use Pimcore\Model\Element\ElementInterface;
 
 interface WrapperInterface extends ElementInterface
 {
-    /**
-     * @param Document $hardLinkSource
-     */
-    public function setHardLinkSource($hardLinkSource);
+    public function setHardLinkSource(Document $hardLinkSource);
 
     /**
      * @return Document\Hardlink
      */
-    public function getHardLinkSource();
+    public function getHardLinkSource(): Document\Hardlink;
 
     public function setSourceDocument(Document $sourceDocument);
 

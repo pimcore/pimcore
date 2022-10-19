@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,14 +36,14 @@ class Listing extends Model\Listing\AbstractListing
      *
      * @var int maximum number of cacheable items
      */
-    protected static $cacheLimit = 5000;
+    protected static int $cacheLimit = 5000;
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $domain = Model\Translation::DOMAIN_DEFAULT;
+    protected string $domain = Model\Translation::DOMAIN_DEFAULT;
 
     /**
      * @internal
@@ -84,7 +85,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @return \Pimcore\Model\Translation[]
      */
-    public function getTranslations()
+    public function getTranslations(): array
     {
         return $this->getData();
     }
@@ -94,7 +95,7 @@ class Listing extends Model\Listing\AbstractListing
      *
      * @return \Pimcore\Model\Translation\Listing
      */
-    public function setTranslations($translations)
+    public function setTranslations(array $translations): Listing
     {
         return $this->setData($translations);
     }
@@ -102,15 +103,12 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @return int
      */
-    public static function getCacheLimit()
+    public static function getCacheLimit(): int
     {
         return self::$cacheLimit;
     }
 
-    /**
-     * @param int $cacheLimit
-     */
-    public static function setCacheLimit($cacheLimit)
+    public static function setCacheLimit(int $cacheLimit)
     {
         self::$cacheLimit = $cacheLimit;
     }

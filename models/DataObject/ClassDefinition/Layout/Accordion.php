@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,14 +27,14 @@ class Accordion extends Model\DataObject\ClassDefinition\Layout
      *
      * @var string
      */
-    public $fieldtype = 'accordion';
+    public string $fieldtype = 'accordion';
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $border = false;
+    public bool $border = false;
 
     public function getBorder(): bool
     {

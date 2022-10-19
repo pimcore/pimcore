@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,7 +33,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @var int
      */
-    protected $id;
+    protected int $id;
 
     /**
      * The ALT text of the image
@@ -41,7 +42,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @var string
      */
-    protected $alt;
+    protected string $alt;
 
     /**
      * Contains the imageobject itself
@@ -50,56 +51,56 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @var Asset\Image|null
      */
-    protected $image;
+    protected ?Asset\Image $image;
 
     /**
      * @internal
      *
      * @var bool
      */
-    protected $cropPercent = false;
+    protected bool $cropPercent = false;
 
     /**
      * @internal
      *
      * @var float
      */
-    protected $cropWidth;
+    protected float $cropWidth;
 
     /**
      * @internal
      *
      * @var float
      */
-    protected $cropHeight;
+    protected float $cropHeight;
 
     /**
      * @internal
      *
      * @var float
      */
-    protected $cropTop;
+    protected float $cropTop;
 
     /**
      * @internal
      *
      * @var float
      */
-    protected $cropLeft;
+    protected float $cropLeft;
 
     /**
      * @internal
      *
      * @var array
      */
-    protected $hotspots = [];
+    protected array $hotspots = [];
 
     /**
      * @internal
      *
      * @var array
      */
-    protected $marker = [];
+    protected array $marker = [];
 
     /**
      * The Thumbnail config of the image
@@ -108,12 +109,12 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @var string
      */
-    protected $thumbnail;
+    protected string $thumbnail;
 
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return 'image';
     }
@@ -216,7 +217,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * {@inheritdoc}
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         $config = parent::getConfig();
         if (isset($config['thumbnail']) && !isset($config['focal_point_context_menu_item'])) {
@@ -304,7 +305,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): EditableInterface|Image|static
     {
         if (strlen($data) > 2) {
             $data = Serialize::unserialize($data);
@@ -354,7 +355,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): EditableInterface|Image|static
     {
         $rewritePath = function ($data) {
             if (!is_array($data)) {
@@ -403,15 +404,12 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * @return string
      */
-    public function getText()
+    public function getText(): string
     {
         return $this->alt;
     }
 
-    /**
-     * @param string $text
-     */
-    public function setText($text)
+    public function setText(string $text)
     {
         $this->alt = $text;
     }
@@ -419,7 +417,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * @return string
      */
-    public function getAlt()
+    public function getAlt(): string
     {
         return $this->getText();
     }
@@ -427,7 +425,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * @return string|null
      */
-    public function getThumbnailConfig()
+    public function getThumbnailConfig(): ?string
     {
         return $this->thumbnail;
     }
@@ -435,7 +433,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * @return string
      */
-    public function getSrc()
+    public function getSrc(): string
     {
         $image = $this->getImage();
         if ($image instanceof Asset) {
@@ -448,7 +446,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * @return Asset\Image|null
      */
-    public function getImage()
+    public function getImage(): ?Asset\Image
     {
         if (!$this->image) {
             $this->image = Asset\Image::getById($this->getId());
@@ -462,7 +460,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @return Model\Document\Editable\Image
      */
-    public function setImage($image)
+    public function setImage(?Asset\Image $image): static
     {
         $this->image = $image;
 
@@ -478,7 +476,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @return Model\Document\Editable\Image
      */
-    public function setId($id)
+    public function setId(int $id): static
     {
         $this->id = $id;
 
@@ -488,7 +486,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * @return int
      */
-    public function getId()
+    public function getId(): int
     {
         return (int) $this->id;
     }
@@ -499,7 +497,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @return Asset\Image\Thumbnail|string
      */
-    public function getThumbnail($conf, $deferred = true)
+    public function getThumbnail(array|string|Asset\Image\Thumbnail\Config $conf, bool $deferred = true): Asset\Image\Thumbnail|string
     {
         $image = $this->getImage();
         if ($image instanceof Asset) {
@@ -538,7 +536,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * {@inheritdoc}
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         $image = $this->getImage();
         if ($image instanceof Asset\Image) {
@@ -642,7 +640,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @return $this
      */
-    public function setCropHeight($cropHeight)
+    public function setCropHeight(float $cropHeight): static
     {
         $this->cropHeight = $cropHeight;
 
@@ -652,7 +650,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * @return float
      */
-    public function getCropHeight()
+    public function getCropHeight(): float
     {
         return $this->cropHeight;
     }
@@ -662,7 +660,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @return $this
      */
-    public function setCropLeft($cropLeft)
+    public function setCropLeft(float $cropLeft): static
     {
         $this->cropLeft = $cropLeft;
 
@@ -672,7 +670,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * @return float
      */
-    public function getCropLeft()
+    public function getCropLeft(): float
     {
         return $this->cropLeft;
     }
@@ -682,7 +680,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @return $this
      */
-    public function setCropPercent($cropPercent)
+    public function setCropPercent(bool $cropPercent): static
     {
         $this->cropPercent = $cropPercent;
 
@@ -692,7 +690,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * @return bool
      */
-    public function getCropPercent()
+    public function getCropPercent(): bool
     {
         return $this->cropPercent;
     }
@@ -702,7 +700,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @return $this
      */
-    public function setCropTop($cropTop)
+    public function setCropTop(float $cropTop): static
     {
         $this->cropTop = $cropTop;
 
@@ -712,7 +710,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * @return float
      */
-    public function getCropTop()
+    public function getCropTop(): float
     {
         return $this->cropTop;
     }
@@ -722,7 +720,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @return $this
      */
-    public function setCropWidth($cropWidth)
+    public function setCropWidth(float $cropWidth): static
     {
         $this->cropWidth = $cropWidth;
 
@@ -732,15 +730,12 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * @return float
      */
-    public function getCropWidth()
+    public function getCropWidth(): float
     {
         return $this->cropWidth;
     }
 
-    /**
-     * @param array $hotspots
-     */
-    public function setHotspots($hotspots)
+    public function setHotspots(array $hotspots)
     {
         $this->hotspots = $hotspots;
     }
@@ -748,15 +743,12 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * @return array
      */
-    public function getHotspots()
+    public function getHotspots(): array
     {
         return $this->hotspots;
     }
 
-    /**
-     * @param array $marker
-     */
-    public function setMarker($marker)
+    public function setMarker(array $marker)
     {
         $this->marker = $marker;
     }
@@ -764,7 +756,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * @return array
      */
-    public function getMarker()
+    public function getMarker(): array
     {
         return $this->marker;
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,7 +32,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
      *
      * @return array
      */
-    public function load()
+    public function load(): array
     {
         $entries = [];
         $data = $this->db->fetchAllAssociative('SELECT * FROM search_backend_data' .  $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
@@ -67,7 +68,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
     /**
      * @return int
      */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         return (int)$this->db->fetchOne('SELECT COUNT(*) FROM search_backend_data' . $this->getCondition() . $this->getGroupBy(), $this->model->getConditionVariables());
     }
@@ -75,7 +76,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
     /**
      * @return int|string
      */
-    public function getCount()
+    public function getCount(): int|string
     {
         if (count($this->model->getEntries()) > 0) {
             return count($this->model->getEntries());
@@ -89,7 +90,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
     /**
      * @return string
      */
-    protected function getCondition()
+    protected function getCondition(): string
     {
         if ($cond = $this->model->getCondition()) {
             return ' WHERE ' . $cond . ' ';

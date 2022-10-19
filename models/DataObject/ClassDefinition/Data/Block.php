@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,6 +23,9 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
+use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
@@ -38,7 +42,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @var string
      */
-    public $fieldtype = 'block';
+    public string $fieldtype = 'block';
 
     /**
      * @internal
@@ -70,7 +74,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @var int|null
      */
-    public $maxItems;
+    public ?int $maxItems;
 
     /**
      * Type for the column
@@ -86,21 +90,21 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @var string
      */
-    public $styleElement = '';
+    public string $styleElement = '';
 
     /**
      * @internal
      *
      * @var array
      */
-    public $children = [];
+    public array $children = [];
 
     /**
      * @internal
      *
      * @var array|null
      */
-    public $layout;
+    public ?array $layout;
 
     /**
      * contains further child field definitions if there are more than one localized fields in on class
@@ -109,25 +113,25 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @var array
      */
-    protected $referencedFields = [];
+    protected array $referencedFields = [];
 
     /**
      * @internal
      *
      * @var array|null
      */
-    public $fieldDefinitionsCache;
+    public ?array $fieldDefinitionsCache;
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param array $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return string
+     * @see ResourcePersistenceAwareInterface::getDataForResource
+     *
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function getDataForResource(mixed $data, $object = null, array $params = []): string
     {
         $result = [];
 
@@ -183,15 +187,15 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param string $data
+     * @param mixed $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array|null
+     *@see ResourcePersistenceAwareInterface::getDataFromResource
+     *
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?array
     {
         if ($data) {
             $count = 0;
@@ -276,15 +280,15 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @see Data::getDataForEditmode
-     *
-     * @param array|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
+     * @see Data::getDataForEditmode
+     *
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, $object = null, array $params = []): array
     {
         $params = (array)$params;
         $result = [];
@@ -324,15 +328,15 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @see Data::getDataFromEditmode
-     *
-     * @param array $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
+     * @see Data::getDataFromEditmode
+     *
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): array
     {
         $result = [];
         $count = 0;
@@ -399,7 +403,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @throws \Exception
      */
-    protected function getBlockDataFromContainer($object, $params = [])
+    protected function getBlockDataFromContainer(Concrete $object, array $params = []): mixed
     {
         $data = null;
 
@@ -460,15 +464,15 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @see Data::getVersionPreview
-     *
-     * @param array|null $data
+     * @param mixed $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
+     * @see Data::getVersionPreview
+     *
      */
-    public function getVersionPreview($data, $object = null, $params = [])
+    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
     {
         return 'not supported';
     }
@@ -476,7 +480,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, $params = [])
+    public function getForCsvExport($object, array $params = []): string
     {
         return '';
     }
@@ -484,7 +488,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * {@inheritdoc}
      */
-    public function isDiffChangeAllowed($object, $params = [])
+    public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
@@ -494,11 +498,11 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @param array|null $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
      */
-    public function getDiffVersionPreview($data, $object = null, $params = [])
+    public function getDiffVersionPreview(?array $data, Concrete $object = null, array $params = []): string
     {
         if ($data) {
             return 'not supported';
@@ -519,11 +523,11 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param DataObject\Data\BlockElement[][]|null $data
+     * @param mixed $data
      *
      * @return bool
      */
-    public function isEmpty($data)
+    public function isEmpty(mixed $data): bool
     {
         return is_null($data) || count($data) === 0;
     }
@@ -531,7 +535,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @return array
      */
-    public function getChildren()
+    public function getChildren(): array
     {
         return $this->children;
     }
@@ -541,7 +545,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @return $this
      */
-    public function setChildren($children)
+    public function setChildren(array $children): static
     {
         $this->children = $children;
         $this->fieldDefinitionsCache = null;
@@ -552,7 +556,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @return bool
      */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
         if (is_array($this->children) && count($this->children) > 0) {
             return true;
@@ -561,10 +565,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return false;
     }
 
-    /**
-     * @param Data|Layout $child
-     */
-    public function addChild($child)
+    public function addChild(Data|Layout $child)
     {
         $this->children[] = $child;
         $this->fieldDefinitionsCache = null;
@@ -575,7 +576,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @return $this
      */
-    public function setLayout($layout)
+    public function setLayout(?array $layout): static
     {
         $this->layout = $layout;
 
@@ -585,18 +586,18 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @return array|null
      */
-    public function getLayout()
+    public function getLayout(): ?array
     {
         return $this->layout;
     }
 
     /**
-     * @param mixed $def
+     * @param mixed|null $def
      * @param array $fields
      *
      * @return array
      */
-    public function doGetFieldDefinitions($def = null, $fields = [])
+    public function doGetFieldDefinitions(mixed $def = null, array $fields = []): array
     {
         if ($def === null) {
             $def = $this->getChildren();
@@ -634,9 +635,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @param array $context additional contextual data
      *
-     * @return DataObject\ClassDefinition\Data[]
+     * @return DataObject\ClassDefinition\Data[]|null
      */
-    public function getFieldDefinitions($context = [])
+    public function getFieldDefinitions(array $context = []): ?array
     {
         if (empty($this->fieldDefinitionsCache)) {
             $definitions = $this->doGetFieldDefinitions();
@@ -670,7 +671,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @return DataObject\ClassDefinition\Data|null
      */
-    public function getFieldDefinition($name, $context = [])
+    public function getFieldDefinition(string $name, array $context = []): ?Data
     {
         $fds = $this->getFieldDefinitions();
         if (isset($fds[$name])) {
@@ -696,10 +697,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $fieldDefinition;
     }
 
-    /**
-     * @param array $referencedFields
-     */
-    public function setReferencedFields($referencedFields)
+    public function setReferencedFields(array $referencedFields)
     {
         $this->referencedFields = $referencedFields;
         $this->fieldDefinitionsCache = null;
@@ -708,15 +706,12 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @return Data[]
      */
-    public function getReferencedFields()
+    public function getReferencedFields(): array
     {
         return $this->referencedFields;
     }
 
-    /**
-     * @param Data $field
-     */
-    public function addReferencedField($field)
+    public function addReferencedField(Data $field)
     {
         $this->referencedFields[] = $field;
         $this->fieldDefinitionsCache = null;
@@ -748,11 +743,11 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param array|null $data
+     * @param mixed $data
      *
      * @return array
      */
-    public function resolveDependencies($data)
+    public function resolveDependencies(mixed $data): array
     {
         $dependencies = [];
 
@@ -781,7 +776,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * {@inheritdoc}
      */
-    public function getCacheTags($data, array $tags = [])
+    public function getCacheTags(mixed $data, array $tags = []): array
     {
         if ($this->getLazyLoading()) {
             return $tags;
@@ -812,15 +807,12 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @return bool
      */
-    public function isCollapsed()
+    public function isCollapsed(): bool
     {
         return $this->collapsed;
     }
 
-    /**
-     * @param bool $collapsed
-     */
-    public function setCollapsed($collapsed)
+    public function setCollapsed(bool $collapsed)
     {
         $this->collapsed = (bool) $collapsed;
     }
@@ -828,15 +820,12 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @return bool
      */
-    public function isCollapsible()
+    public function isCollapsible(): bool
     {
         return $this->collapsible;
     }
 
-    /**
-     * @param bool $collapsible
-     */
-    public function setCollapsible($collapsible)
+    public function setCollapsible(bool $collapsible)
     {
         $this->collapsible = (bool) $collapsible;
     }
@@ -844,7 +833,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @return string
      */
-    public function getStyleElement()
+    public function getStyleElement(): string
     {
         return $this->styleElement;
     }
@@ -854,7 +843,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @return $this
      */
-    public function setStyleElement($styleElement)
+    public function setStyleElement(string $styleElement): static
     {
         $this->styleElement = $styleElement;
 
@@ -864,7 +853,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @return bool
      */
-    public function getLazyLoading()
+    public function getLazyLoading(): bool
     {
         return $this->lazyLoading;
     }
@@ -874,7 +863,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @return $this
      */
-    public function setLazyLoading($lazyLoading)
+    public function setLazyLoading(bool $lazyLoading): static
     {
         $this->lazyLoading = (bool) $lazyLoading;
 
@@ -884,7 +873,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * { @inheritdoc }
      */
-    public function preSetData(/** mixed */ $container, /**  mixed */ $data, /** array */ $params = []) // : mixed
+    public function preSetData(/** mixed */ mixed $container, /**  mixed */ mixed $data, /** array */ array $params = []) // : mixed
     {
         $this->markLazyloadedFieldAsLoaded($container);
 
@@ -913,27 +902,25 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function save($object, $params = [])
+
+    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function load($container, $params = [])
+    public function load(Localizedfield|AbstractData|Concrete $object, array $params = [])
     {
         $field = $this->getName();
         $db = Db::get();
         $data = null;
 
-        if ($container instanceof DataObject\Concrete) {
-            $query = 'select ' . $db->quoteIdentifier($field) . ' from object_store_' . $container->getClassId() . ' where oo_id  = ' . $container->getId();
+        if ($object instanceof DataObject\Concrete) {
+            $query = 'select ' . $db->quoteIdentifier($field) . ' from object_store_' . $object->getClassId() . ' where oo_id  = ' . $object->getId();
             $data = $db->fetchOne($query);
-            $data = $this->getDataFromResource($data, $container, $params);
-        } elseif ($container instanceof DataObject\Localizedfield) {
+            $data = $this->getDataFromResource($data, $object, $params);
+        } elseif ($object instanceof DataObject\Localizedfield) {
             $context = $params['context'];
             $object = $context['object'];
             $containerType = $context['containerType'] ?? null;
@@ -947,7 +934,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             }
             $data = $db->fetchOne($query);
             $data = $this->getDataFromResource($data, $object, $params);
-        } elseif ($container instanceof DataObject\Objectbrick\Data\AbstractData) {
+        } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
             $context = $params['context'];
 
             $object = $context['object'];
@@ -958,7 +945,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 . ' where  o_id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($fieldname);
             $data = $db->fetchOne($query);
             $data = $this->getDataFromResource($data, $object, $params);
-        } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
+        } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
             $context = $params['context'];
             $collectionType = $context['containerKey'];
             $object = $context['object'];
@@ -975,17 +962,15 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function delete($object, $params = [])
+
+    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function preGetData(/** mixed */ $container, /** array */ $params = []) // : mixed
+    public function preGetData(/** mixed */ mixed $container, /** array */ array $params = []) // : mixed
     {
         $data = null;
         $params['owner'] = $container;
@@ -1015,15 +1000,12 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @return int|null
      */
-    public function getMaxItems()
+    public function getMaxItems(): ?int
     {
         return $this->maxItems;
     }
 
-    /**
-     * @param int|null $maxItems
-     */
-    public function setMaxItems($maxItems)
+    public function setMaxItems(?int $maxItems)
     {
         $this->maxItems = $this->getAsIntegerCast($maxItems);
     }
@@ -1031,15 +1013,12 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @return bool
      */
-    public function isDisallowAddRemove()
+    public function isDisallowAddRemove(): bool
     {
         return $this->disallowAddRemove;
     }
 
-    /**
-     * @param bool $disallowAddRemove
-     */
-    public function setDisallowAddRemove($disallowAddRemove)
+    public function setDisallowAddRemove(bool $disallowAddRemove)
     {
         $this->disallowAddRemove = (bool) $disallowAddRemove;
     }
@@ -1047,15 +1026,12 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @return bool
      */
-    public function isDisallowReorder()
+    public function isDisallowReorder(): bool
     {
         return $this->disallowReorder;
     }
 
-    /**
-     * @param bool $disallowReorder
-     */
-    public function setDisallowReorder($disallowReorder)
+    public function setDisallowReorder(bool $disallowReorder)
     {
         $this->disallowReorder = (bool) $disallowReorder;
     }
@@ -1063,7 +1039,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
     {
         if (!$omitMandatoryCheck) {
             if (is_array($data)) {
@@ -1134,7 +1110,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @param DataObject\ClassDefinition $class
      * @param array $params
      */
-    public function classSaved($class, $params = [])
+    public function classSaved(DataObject\ClassDefinition $class, array $params = [])
     {
         $blockDefinitions = $this->getFieldDefinitions();
 
@@ -1198,7 +1174,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
 
-    public function normalize(mixed $value, array $params = [])
+    public function normalize(mixed $value, array $params = []): array
     {
         $result = null;
         if ($value) {
@@ -1231,7 +1207,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
 
-    public function denormalize(mixed $value, array $params = [])
+    public function denormalize(mixed $value, array $params = []): ?array
     {
         if (is_array($value)) {
             $result = [];

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -38,14 +39,14 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      *
      * @var string
      */
-    protected $fieldname;
+    protected string $fieldname;
 
     /**
      * @internal
      *
      * @var Model\DataObject\Concrete|null
      */
-    protected $object = null;
+    protected ?Concrete $object = null;
 
     /**
      * @internal
@@ -59,11 +60,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      */
     protected $brickGetters = [];
 
-    /**
-     * @param Concrete $object
-     * @param string $fieldname
-     */
-    public function __construct($object, $fieldname)
+    public function __construct(Concrete $object, string $fieldname)
     {
         $this->setObject($object);
         if ($fieldname) {
@@ -76,7 +73,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      *
      * @return array
      */
-    public function getItems($withInheritedValues = false)
+    public function getItems(bool $withInheritedValues = false): array
     {
         if ($withInheritedValues) {
             $getters = $this->getBrickGetters();
@@ -107,7 +104,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      *
      * @return $this
      */
-    public function setItems(array $items)
+    public function setItems(array $items): static
     {
         $this->items = $items;
         $this->markFieldDirty('_self', true);
@@ -118,7 +115,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     /**
      * @return string
      */
-    public function getFieldname()
+    public function getFieldname(): string
     {
         return $this->fieldname;
     }
@@ -128,7 +125,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      *
      * @return $this
      */
-    public function setFieldname($fieldname)
+    public function setFieldname(string $fieldname): static
     {
         $this->fieldname = $fieldname;
 
@@ -160,11 +157,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         return $definitions;
     }
 
-    /**
-     * @param Concrete $object
-     * @param array $params
-     */
-    public function save(Concrete $object, $params = []): void
+    public function save(Concrete $object, array $params = []): void
     {
         // set the current object again, this is necessary because the related object in $this->object can change (eg. clone & copy & paste, etc.)
         $this->setObject($object);
@@ -250,7 +243,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      *
      * @return $this
      */
-    public function setObject(?Concrete $object)
+    public function setObject(?Concrete $object): static
     {
         $this->objectId = $object ? $object->getId() : null;
         $this->object = $object;
@@ -328,7 +321,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      *
      * @return mixed
      */
-    public function get($fieldName)
+    public function get(string $fieldName): mixed
     {
         return $this->{'get'.ucfirst($fieldName)}();
     }
@@ -339,21 +332,21 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      *
      * @return mixed
      */
-    public function set($fieldName, $value)
+    public function set(string $fieldName, mixed $value): mixed
     {
         return $this->{'set'.ucfirst($fieldName)}($value);
     }
 
     /**
-     * @internal
-     *
      * @param string $brick
      * @param string $brickField
      * @param string $field
      *
      * @throws \Exception
+     *@internal
+     *
      */
-    public function loadLazyField($brick, $brickField, $field)
+    public function loadLazyField(string $brick, string $brickField, string $field)
     {
         $item = $this->get($brick);
         if ($item && !$item->isLazyKeyLoaded($field)) {

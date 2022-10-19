@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,27 +30,27 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     /**
      * @var string|null
      */
-    protected $elementType;
+    protected ?string $elementType;
 
     /**
      * @var int|null
      */
-    protected $elementId;
+    protected ?int $elementId;
 
     /**
      * @var string
      */
-    protected $fieldname;
+    protected string $fieldname;
 
     /**
      * @var array
      */
-    protected $columns = [];
+    protected array $columns = [];
 
     /**
      * @var array
      */
-    protected $data = [];
+    protected array $data = [];
 
     /**
      * @param string $fieldname
@@ -58,18 +59,14 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
      *
      * @throws \Exception
      */
-    public function __construct($fieldname, $columns = [], $element = null)
+    public function __construct(string $fieldname, array $columns = [], Model\Element\ElementInterface $element = null)
     {
         $this->fieldname = $fieldname;
         $this->columns = $columns;
         $this->setElement($element);
     }
 
-    /**
-     * @param string|null $elementType
-     * @param int|null $elementId
-     */
-    public function setElementTypeAndId($elementType, $elementId)
+    public function setElementTypeAndId(?string $elementType, ?int $elementId)
     {
         $this->elementType = $elementType;
         $this->elementId = $elementId;
@@ -113,14 +110,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
         }
     }
 
-    /**
-     * @param DataObject\Concrete $object
-     * @param string $ownertype
-     * @param string $ownername
-     * @param string $position
-     * @param int $index
-     */
-    public function save($object, $ownertype, $ownername, $position, $index)
+    public function save(DataObject\Concrete $object, string $ownertype, string $ownername, string $position, int $index)
     {
         $element = $this->getElement();
         $type = Model\Element\Service::getElementType($element);
@@ -139,7 +129,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
      *
      * @return DataObject\Data\ElementMetadata|null
      */
-    public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index, $destinationType)
+    public function load(DataObject\Concrete $source, int $destinationId, string $fieldname, string $ownertype, string $ownername, string $position, int $index, string $destinationType): ?ElementMetadata
     {
         $return = $this->getDao()->load($source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index, $destinationType);
         $this->markMeDirty(false);
@@ -152,7 +142,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
      *
      * @return $this
      */
-    public function setFieldname($fieldname)
+    public function setFieldname(string $fieldname): static
     {
         $this->fieldname = $fieldname;
         $this->markMeDirty();
@@ -163,7 +153,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     /**
      * @return string
      */
-    public function getFieldname()
+    public function getFieldname(): string
     {
         return $this->fieldname;
     }
@@ -173,7 +163,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
      *
      * @return $this
      */
-    public function setElement($element)
+    public function setElement(?Model\Element\ElementInterface $element): static
     {
         $this->markMeDirty();
         if (!$element) {
@@ -192,7 +182,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     /**
      * @return Model\Element\ElementInterface|null
      */
-    public function getElement()
+    public function getElement(): ?Model\Element\ElementInterface
     {
         if ($this->getElementType() && $this->getElementId()) {
             $element = Model\Element\Service::getElementById($this->getElementType(), $this->getElementId());
@@ -207,17 +197,17 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getElementType()
+    public function getElementType(): ?string
     {
         return $this->elementType;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getElementId()
+    public function getElementId(): ?int
     {
         return $this->elementId;
     }
@@ -227,7 +217,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
      *
      * @return $this
      */
-    public function setColumns($columns)
+    public function setColumns(array $columns): static
     {
         $this->columns = $columns;
         $this->markMeDirty();
@@ -238,7 +228,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     /**
      * @return array
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return $this->columns;
     }

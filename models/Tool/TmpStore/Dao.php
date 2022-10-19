@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -33,7 +34,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return bool
      */
-    public function add($id, $data, $tag, $lifetime)
+    public function add(string $id, mixed $data, string $tag, int $lifetime): bool
     {
         try {
             $serialized = false;
@@ -57,10 +58,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @param string $id
-     */
-    public function delete($id)
+    public function delete(string $id)
     {
         $this->db->delete('tmp_store', ['id' => $id]);
     }
@@ -70,7 +68,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return bool
      */
-    public function getById($id)
+    public function getById(string $id): bool
     {
         $item = $this->db->fetchAssociative('SELECT * FROM tmp_store WHERE id = ?', [$id]);
 
@@ -92,7 +90,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return array
      */
-    public function getIdsByTag($tag)
+    public function getIdsByTag(string $tag): array
     {
         $items = $this->db->fetchFirstColumn('SELECT id FROM tmp_store WHERE tag = ?', [$tag]);
 

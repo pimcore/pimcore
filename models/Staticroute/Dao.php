@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -51,7 +52,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @return Model\Staticroute[]
      */
-    public function getAll()
+    public function getAll(): array
     {
         $list = new Model\Staticroute\Listing();
         $list = $list->load();
@@ -66,7 +67,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws NotFoundException
      */
-    public function getById($id = null)
+    public function getById(string $id = null)
     {
         if ($id != null) {
             $this->model->setId($id);
@@ -94,7 +95,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws NotFoundException
      */
-    public function getByName($name = null, $siteId = null)
+    public function getByName(string $name = null, int $siteId = null)
     {
         if ($name != null) {
             $this->model->setName($name);

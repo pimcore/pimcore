@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,7 +31,7 @@ class Dao extends Model\Metadata\Predefined\Dao
      *
      * @return \Pimcore\Model\Metadata\Predefined[]
      */
-    public function loadList()
+    public function loadList(): array
     {
         $properties = [];
         foreach ($this->loadIdList() as $id) {
@@ -51,7 +52,7 @@ class Dao extends Model\Metadata\Predefined\Dao
     /**
      * @return int
      */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         return count($this->loadList());
     }

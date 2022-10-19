@@ -39,13 +39,13 @@ class OptionsProvider implements SelectOptionsProviderInterface
 
     /**
      * @param array $context
-     * @param Select|Multiselect $fieldDefinition
+     * @param Data $fieldDefinition
      *
      * @return array
      *
      * @throws \Exception
      */
-    public function getOptions($context, $fieldDefinition): array
+    public function getOptions(array $context, Data $fieldDefinition): array
     {
         $workflowName = $fieldDefinition->getOptionsProviderData();
         if (!$workflowName) {
@@ -99,7 +99,7 @@ class OptionsProvider implements SelectOptionsProviderInterface
      *
      * @return bool
      */
-    public function hasStaticOptions($context, $fieldDefinition): bool
+    public function hasStaticOptions(array $context, Data $fieldDefinition): bool
     {
         return true;
     }
@@ -110,7 +110,7 @@ class OptionsProvider implements SelectOptionsProviderInterface
      *
      * @return null
      */
-    public function getDefaultValue($context, $fieldDefinition)
+    public function getDefaultValue(array $context, Data $fieldDefinition)
     {
         return null;
     }

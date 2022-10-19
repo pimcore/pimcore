@@ -15,7 +15,7 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class FilterInputfield extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType
 {
-protected $type = "FilterInputfield";
+protected string $type = "FilterInputfield";
 protected $label;
 protected $field;
 protected $preSelect;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,12 +33,12 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
      *
      * @var array|null
      */
-    protected $data;
+    protected ?array $data;
 
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return 'link';
     }
@@ -188,7 +189,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * {@inheritdoc}
      */
-    public function checkValidity()
+    public function checkValidity(): bool
     {
         $sane = true;
         if (is_array($this->data) && isset($this->data['internal']) && $this->data['internal']) {
@@ -231,7 +232,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * @return string
      */
-    public function getHref()
+    public function getHref(): string
     {
         $this->updatePathFromInternal();
 
@@ -305,15 +306,12 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * @return string
      */
-    public function getText()
+    public function getText(): string
     {
         return $this->data['text'] ?? '';
     }
 
-    /**
-     * @param string $text
-     */
-    public function setText($text)
+    public function setText(string $text)
     {
         $this->data['text'] = $text;
     }
@@ -321,7 +319,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * @return string
      */
-    public function getTarget()
+    public function getTarget(): string
     {
         return $this->data['target'] ?? '';
     }
@@ -329,7 +327,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * @return string
      */
-    public function getParameters()
+    public function getParameters(): string
     {
         return $this->data['parameters'] ?? '';
     }
@@ -337,7 +335,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * @return string
      */
-    public function getAnchor()
+    public function getAnchor(): string
     {
         return $this->data['anchor'] ?? '';
     }
@@ -345,7 +343,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * @return string
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->data['title'] ?? '';
     }
@@ -353,7 +351,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * @return string
      */
-    public function getRel()
+    public function getRel(): string
     {
         return $this->data['rel'] ?? '';
     }
@@ -361,7 +359,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * @return string
      */
-    public function getTabindex()
+    public function getTabindex(): string
     {
         return $this->data['tabindex'] ?? '';
     }
@@ -369,7 +367,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * @return string
      */
-    public function getAccesskey()
+    public function getAccesskey(): string
     {
         return $this->data['accesskey'] ?? '';
     }
@@ -377,7 +375,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * @return mixed
      */
-    public function getClass()
+    public function getClass(): mixed
     {
         return $this->data['class'] ?? '';
     }
@@ -385,7 +383,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * @return mixed
      */
-    public function getAttributes()
+    public function getAttributes(): mixed
     {
         return $this->data['attributes'] ?? '';
     }
@@ -393,7 +391,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): Link|EditableInterface|static
     {
         $this->data = \Pimcore\Tool\Serialize::unserialize($data);
         if (!is_array($this->data)) {
@@ -406,7 +404,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): Link|EditableInterface|static
     {
         if (!is_array($data)) {
             $data = [];
@@ -459,7 +457,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * {@inheritdoc}
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return strlen($this->getHref()) < 1;
     }
@@ -467,7 +465,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * {@inheritdoc}
      */
-    public function resolveDependencies()
+    public function resolveDependencies(): array
     {
         $dependencies = [];
         $isInternal = $this->data['internal'] ?? false;

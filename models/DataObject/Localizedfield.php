@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -64,7 +65,7 @@ final class Localizedfield extends Model\AbstractModel implements
      *
      * @var Concrete|Model\Element\ElementDescriptor|null
      */
-    protected $object;
+    protected Concrete|Model\Element\ElementDescriptor|null $object;
 
     /**
      * @internal
@@ -132,10 +133,7 @@ final class Localizedfield extends Model\AbstractModel implements
         $this->markAllLanguagesAsDirty();
     }
 
-    /**
-     * @param mixed $item
-     */
-    public function addItem($item)
+    public function addItem(mixed $item)
     {
         $this->items[] = $item;
         $this->markFieldDirty('_self');
@@ -152,7 +150,7 @@ final class Localizedfield extends Model\AbstractModel implements
      *
      * @return $this
      */
-    public function setItems(array $items)
+    public function setItems(array $items): static
     {
         $this->items = $items;
         $this->markFieldDirty('_self');
@@ -170,11 +168,11 @@ final class Localizedfield extends Model\AbstractModel implements
     }
 
     /**
-     * @internal
-     *
      * @param bool $mark
+     *@internal
+          *
      */
-    public function setLoadedAllLazyData($mark = true)
+    public function setLoadedAllLazyData(bool $mark = true)
     {
         $this->_loadedAllLazyData = $mark;
     }
@@ -226,7 +224,7 @@ final class Localizedfield extends Model\AbstractModel implements
      *
      * @throws \Exception
      */
-    public function setObject($object, bool $markAsDirty = true)
+    public function setObject(Model\Element\ElementDescriptor|Concrete|null $object, bool $markAsDirty = true): static
     {
         if ($object instanceof Model\Element\ElementDescriptor) {
             $object = Service::getElementById($object->getType(), $object->getId());
@@ -260,7 +258,7 @@ final class Localizedfield extends Model\AbstractModel implements
      *
      * @return $this
      */
-    public function setClass(?ClassDefinition $class)
+    public function setClass(?ClassDefinition $class): static
     {
         $this->class = $class;
 
@@ -322,7 +320,7 @@ final class Localizedfield extends Model\AbstractModel implements
      *
      * @return ClassDefinition\Data|null
      */
-    public function getFieldDefinition(string $name, $context = [])
+    public function getFieldDefinition(string $name, array $context = []): ?ClassDefinition\Data
     {
         if (isset($context['containerType']) && $context['containerType'] === 'fieldcollection') {
             $containerKey = $context['containerKey'];
@@ -358,7 +356,7 @@ final class Localizedfield extends Model\AbstractModel implements
      *
      * @throws \Exception
      */
-    protected function getFieldDefinitions($context = [], $params = []): array
+    protected function getFieldDefinitions(array $context = [], array $params = []): array
     {
         if (isset($context['containerType']) && $context['containerType'] === 'fieldcollection') {
             $containerKey = $context['containerKey'];
@@ -421,7 +419,7 @@ final class Localizedfield extends Model\AbstractModel implements
      * @throws \Exception
      * @throws Model\Exception\NotFoundException
      */
-    public function getLocalizedValue(string $name, string $language = null, bool $ignoreFallbackLanguage = false)
+    public function getLocalizedValue(string $name, string $language = null, bool $ignoreFallbackLanguage = false): mixed
     {
         $data = null;
         $language = $this->getLanguage($language);
@@ -539,7 +537,7 @@ final class Localizedfield extends Model\AbstractModel implements
      *
      * @throws \Exception
      */
-    public function setLocalizedValue(string $name, $value, string $language = null, bool $markFieldAsDirty = true)
+    public function setLocalizedValue(string $name, mixed $value, string $language = null, bool $markFieldAsDirty = true): static
     {
         if ($markFieldAsDirty) {
             $this->markFieldDirty('_self');

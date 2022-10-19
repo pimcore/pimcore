@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,7 +29,7 @@ class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multisel
      *
      * @var string
      */
-    public $fieldtype = 'languagemultiselect';
+    public string $fieldtype = 'languagemultiselect';
 
     /**
      * @internal
@@ -65,17 +66,17 @@ class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multisel
     /**
      * @return bool
      */
-    public function getOnlySystemLanguages()
+    public function getOnlySystemLanguages(): bool
     {
         return $this->onlySystemLanguages;
     }
 
     /**
-     * @param int|bool|null $value
+     * @param bool|int|null $value
      *
      * @return $this
      */
-    public function setOnlySystemLanguages($value)
+    public function setOnlySystemLanguages(bool|int|null $value): static
     {
         $this->onlySystemLanguages = (bool) $value;
 
@@ -99,7 +100,7 @@ class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multisel
      * @return $this
      */
     #[\ReturnTypeWillChange]
-    public function jsonSerialize()// : static
+    public function jsonSerialize(): static// : static
     {
         if (Service::doRemoveDynamicOptions()) {
             $this->options = null;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,11 +33,10 @@ class Dao extends DataObject\Data\ObjectMetadata\Dao
      * @param string $ownername
      * @param string $position
      * @param int $index
-     * @param string $destinationType
      *
      * @return DataObject\Data\ElementMetadata|null
      */
-    public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index, $destinationType = 'object')
+    public function load(DataObject\Concrete $source, int $destinationId, string $fieldname, string $ownertype, string $ownername, string $position, int $index): ?DataObject\Data\ElementMetadata
     {
         if ($destinationType == 'object') {
             $typeQuery = " AND (type = 'object' or type = '')";

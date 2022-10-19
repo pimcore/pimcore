@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,12 +27,12 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /** @var bool */
-    protected $resolveGroupName = false;
+    protected bool $resolveGroupName = false;
 
     /**
      * @return Model\DataObject\Classificationstore\KeyGroupRelation[]
      */
-    public function getList()
+    public function getList(): array
     {
         return $this->getData();
     }
@@ -41,7 +42,7 @@ class Listing extends Model\Listing\AbstractListing
      *
      * @return $this
      */
-    public function setList($theList)
+    public function setList(?array $theList): static
     {
         return $this->setData($theList);
     }
@@ -49,15 +50,12 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @return bool
      */
-    public function getResolveGroupName()
+    public function getResolveGroupName(): bool
     {
         return $this->resolveGroupName;
     }
 
-    /**
-     * @param bool $resolveGroupName
-     */
-    public function setResolveGroupName($resolveGroupName)
+    public function setResolveGroupName(bool $resolveGroupName)
     {
         $this->resolveGroupName = (bool) $resolveGroupName;
     }

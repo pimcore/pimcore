@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,64 +32,64 @@ final class Predefined extends Model\AbstractModel
     /**
      * @var string
      */
-    protected $id;
+    protected string $id;
 
     /**
      * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * @var string
      */
-    protected $description;
+    protected string $description;
 
     /**
      * @var string|null
      */
-    protected $key;
+    protected ?string $key;
 
     /**
      * @var string
      */
-    protected $type;
+    protected string $type;
 
     /**
      * @var string
      */
-    protected $data;
+    protected string $data;
 
     /**
      * @var string
      */
-    protected $config;
+    protected string $config;
 
     /**
      * @var string
      */
-    protected $ctype;
+    protected string $ctype;
 
     /**
      * @var bool
      */
-    protected $inheritable = false;
+    protected bool $inheritable = false;
 
     /**
      * @var int|null
      */
-    protected $creationDate;
+    protected ?int $creationDate;
 
     /**
      * @var int|null
      */
-    protected $modificationDate;
+    protected ?int $modificationDate;
 
     /**
      * @param string $id
      *
      * @return self|null
      */
-    public static function getById($id)
+    public static function getById(string $id): ?Predefined
     {
         try {
             $property = new self();
@@ -105,7 +106,7 @@ final class Predefined extends Model\AbstractModel
      *
      * @return self|null
      */
-    public static function getByKey($key)
+    public static function getByKey(string $key): ?Predefined
     {
         $cacheKey = 'property_predefined_' . $key;
 
@@ -130,7 +131,7 @@ final class Predefined extends Model\AbstractModel
     /**
      * @return self
      */
-    public static function create()
+    public static function create(): Predefined
     {
         $type = new self();
         $type->save();
@@ -141,7 +142,7 @@ final class Predefined extends Model\AbstractModel
     /**
      * @return string|null
      */
-    public function getKey()
+    public function getKey(): ?string
     {
         return $this->key;
     }
@@ -149,7 +150,7 @@ final class Predefined extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -157,7 +158,7 @@ final class Predefined extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -165,7 +166,7 @@ final class Predefined extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getData()
+    public function getData(): string
     {
         return $this->data;
     }
@@ -175,7 +176,7 @@ final class Predefined extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setKey($key)
+    public function setKey(string $key): static
     {
         $this->key = $key;
 
@@ -187,7 +188,7 @@ final class Predefined extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -199,7 +200,7 @@ final class Predefined extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
@@ -211,7 +212,7 @@ final class Predefined extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setData($data)
+    public function setData(string $data): static
     {
         $this->data = $data;
 
@@ -221,7 +222,7 @@ final class Predefined extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
@@ -231,7 +232,7 @@ final class Predefined extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setId($id)
+    public function setId(string $id): static
     {
         $this->id = $id;
 
@@ -241,7 +242,7 @@ final class Predefined extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getConfig()
+    public function getConfig(): string
     {
         return $this->config;
     }
@@ -251,7 +252,7 @@ final class Predefined extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setConfig($config)
+    public function setConfig(string $config): static
     {
         $this->config = $config;
 
@@ -261,7 +262,7 @@ final class Predefined extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getCtype()
+    public function getCtype(): string
     {
         return $this->ctype;
     }
@@ -271,7 +272,7 @@ final class Predefined extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setCtype($ctype)
+    public function setCtype(string $ctype): static
     {
         $this->ctype = $ctype;
 
@@ -281,7 +282,7 @@ final class Predefined extends Model\AbstractModel
     /**
      * @return bool
      */
-    public function getInheritable()
+    public function getInheritable(): bool
     {
         return $this->inheritable;
     }
@@ -291,7 +292,7 @@ final class Predefined extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setInheritable($inheritable)
+    public function setInheritable(bool $inheritable): static
     {
         $this->inheritable = (bool) $inheritable;
 
@@ -303,7 +304,7 @@ final class Predefined extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setDescription($description)
+    public function setDescription(string $description): static
     {
         $this->description = $description;
 
@@ -313,7 +314,7 @@ final class Predefined extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -323,7 +324,7 @@ final class Predefined extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = (int) $creationDate;
 
@@ -333,7 +334,7 @@ final class Predefined extends Model\AbstractModel
     /**
      * @return int|null
      */
-    public function getCreationDate()
+    public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }
@@ -343,7 +344,7 @@ final class Predefined extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = (int) $modificationDate;
 
@@ -353,7 +354,7 @@ final class Predefined extends Model\AbstractModel
     /**
      * @return int|null
      */
-    public function getModificationDate()
+    public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }

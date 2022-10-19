@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,18 +26,18 @@ class GeoCoordinates implements OwnerAwareFieldInterface
     /**
      * @var float
      */
-    protected $longitude;
+    protected float $longitude;
 
     /**
      * @var float
      */
-    protected $latitude;
+    protected float $latitude;
 
     /**
      * @param float|null $latitude
      * @param float|null $longitude
      */
-    public function __construct($latitude = null, $longitude = null)
+    public function __construct(float $latitude = null, float $longitude = null)
     {
         if ($latitude !== null) {
             $this->setLatitude($latitude);
@@ -52,7 +53,7 @@ class GeoCoordinates implements OwnerAwareFieldInterface
     /**
      * @return float
      */
-    public function getLongitude()
+    public function getLongitude(): float
     {
         return $this->longitude;
     }
@@ -62,7 +63,7 @@ class GeoCoordinates implements OwnerAwareFieldInterface
      *
      * @return $this
      */
-    public function setLongitude($longitude)
+    public function setLongitude(float $longitude): static
     {
         $longitude = (float)$longitude;
 
@@ -77,7 +78,7 @@ class GeoCoordinates implements OwnerAwareFieldInterface
     /**
      * @return float
      */
-    public function getLatitude()
+    public function getLatitude(): float
     {
         return $this->latitude;
     }
@@ -87,7 +88,7 @@ class GeoCoordinates implements OwnerAwareFieldInterface
      *
      * @return $this
      */
-    public function setLatitude($latitude)
+    public function setLatitude(float $latitude): static
     {
         $latitude = (float)$latitude;
         if ($this->latitude != $latitude) {

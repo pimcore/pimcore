@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,21 +29,21 @@ class Iframe extends Model\DataObject\ClassDefinition\Layout implements LayoutDe
      *
      * @var string
      */
-    public $fieldtype = 'iframe';
+    public string $fieldtype = 'iframe';
 
     /**
      * @internal
      *
      * @var string
      */
-    public $iframeUrl;
+    public string $iframeUrl;
 
     /**
      * @internal
      *
      * @var string
      */
-    public $renderingData;
+    public string $renderingData;
 
     public function getIframeUrl(): string
     {
@@ -67,7 +68,7 @@ class Iframe extends Model\DataObject\ClassDefinition\Layout implements LayoutDe
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/* ?Concrete */ $object, /* array */ $context = []) // : static
+    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): LayoutDefinitionEnrichmentInterface|Iframe|static // : static
     {
         $this->width = $this->getWidth() ? $this->getWidth() : 500;
         $this->height = $this->getHeight() ? $this->getHeight() : 500;

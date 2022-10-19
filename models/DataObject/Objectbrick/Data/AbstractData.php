@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -42,17 +43,17 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     /**
      * @var string|null
      */
-    protected $fieldname;
+    protected ?string $fieldname;
 
     /**
      * @var bool
      */
-    protected $doDelete = false;
+    protected bool $doDelete = false;
 
     /**
      * @var Concrete|Model\Element\ElementDescriptor|null
      */
-    protected $object;
+    protected Concrete|Model\Element\ElementDescriptor|null $object;
 
     protected ?int $objectId = null;
 
@@ -64,7 +65,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     /**
      * @return string|null
      */
-    public function getFieldname()
+    public function getFieldname(): ?string
     {
         return $this->fieldname;
     }
@@ -74,7 +75,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      *
      * @return $this
      */
-    public function setFieldname($fieldname)
+    public function setFieldname(?string $fieldname): static
     {
         $this->fieldname = $fieldname;
 
@@ -84,7 +85,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -92,7 +93,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     /**
      * @return DataObject\Objectbrick\Definition
      */
-    public function getDefinition()
+    public function getDefinition(): DataObject\Objectbrick\Definition
     {
         $definition = DataObject\Objectbrick\Definition::getByKey($this->getType());
 
@@ -104,7 +105,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      *
      * @return $this
      */
-    public function setDoDelete($doDelete)
+    public function setDoDelete(bool $doDelete): static
     {
         $this->flushContainer();
         $this->doDelete = (bool)$doDelete;
@@ -115,23 +116,17 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     /**
      * @return bool
      */
-    public function getDoDelete()
+    public function getDoDelete(): bool
     {
         return $this->doDelete;
     }
 
-    /**
-     * @return DataObject\Concrete
-     */
-    public function getBaseObject()
+    public function getBaseObject(): ?Concrete
     {
         return $this->getObject();
     }
 
-    /**
-     * @param Concrete $object
-     */
-    public function delete($object)
+    public function delete(Concrete $object)
     {
         $this->doDelete = true;
         $this->getDao()->delete($object);
@@ -162,7 +157,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      *
      * @throws InheritanceParentNotFoundException
      */
-    public function getValueFromParent($key)
+    public function getValueFromParent(string $key): mixed
     {
         $object = $this->getObject();
         if ($object) {
@@ -187,7 +182,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      *
      * @return $this
      */
-    public function setObject(?Concrete $object)
+    public function setObject(?Concrete $object): static
     {
         $this->objectId = $object ? $object->getId() : null;
         $this->object = $object;
@@ -209,7 +204,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      *
      * @return mixed
      */
-    public function getValueForFieldName($key)
+    public function getValueForFieldName(string $key): mixed
     {
         if ($this->$key) {
             return $this->$key;
@@ -224,7 +219,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      *
      * @return mixed
      */
-    public function get($fieldName, $language = null)
+    public function get(string $fieldName, string $language = null): mixed
     {
         return $this->{'get'.ucfirst($fieldName)}($language);
     }
@@ -236,7 +231,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      *
      * @return mixed
      */
-    public function set($fieldName, $value, $language = null)
+    public function set(string $fieldName, mixed $value, string $language = null): mixed
     {
         return $this->{'set'.ucfirst($fieldName)}($value, $language);
     }

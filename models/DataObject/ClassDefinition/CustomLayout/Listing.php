@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -45,7 +46,7 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
     /**
      * @return callable|null
      */
-    public function getOrder()
+    public function getOrder(): ?callable
     {
         return $this->order;
     }
@@ -55,7 +56,7 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
      *
      * @return $this
      */
-    public function setOrder(?callable $order)
+    public function setOrder(?callable $order): static
     {
         $this->order = $order;
 
@@ -67,7 +68,7 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
      *
      * @return $this
      */
-    public function setLayoutDefinitions($layoutDefinitions)
+    public function setLayoutDefinitions(?array $layoutDefinitions): static
     {
         $this->layoutDefinitions = $layoutDefinitions;
 
@@ -77,7 +78,7 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
     /**
      * @return Model\DataObject\ClassDefinition\CustomLayout[]
      */
-    public function getLayoutDefinitions()
+    public function getLayoutDefinitions(): array
     {
         if ($this->layoutDefinitions === null) {
             $this->layoutDefinitions = $this->load();

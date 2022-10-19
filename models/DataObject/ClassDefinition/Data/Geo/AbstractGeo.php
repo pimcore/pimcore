@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,6 +20,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\AfterDecryptionUnmarshallerInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\BeforeEncryptionMarshallerInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Tool\Serialize;
 
 abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterface, BeforeEncryptionMarshallerInterface, AfterDecryptionUnmarshallerInterface
@@ -28,47 +30,47 @@ abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterfa
      *
      * @var float
      */
-    public $lat = 0.0;
+    public float $lat = 0.0;
 
     /**
      * @internal
      *
      * @var float
      */
-    public $lng = 0.0;
+    public float $lng = 0.0;
 
     /**
      * @internal
      *
      * @var int
      */
-    public $zoom = 1;
+    public int $zoom = 1;
 
     /**
      * @internal
      *
      * @var string|int
      */
-    public $width = 0;
+    public string|int $width = 0;
 
     /**
      * @internal
      *
      * @var string|int
      */
-    public $height = 0;
+    public string|int $height = 0;
 
     /**
      * @internal
      *
      * @var string
      */
-    public $mapType = 'roadmap';
+    public string $mapType = 'roadmap';
 
     /**
      * @return float
      */
-    public function getLat()
+    public function getLat(): float
     {
         return $this->lat;
     }
@@ -78,7 +80,7 @@ abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterfa
      *
      * @return $this
      */
-    public function setLat($lat)
+    public function setLat(float $lat): static
     {
         $this->lat = (float) $lat;
 
@@ -88,7 +90,7 @@ abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterfa
     /**
      * @return float
      */
-    public function getLng()
+    public function getLng(): float
     {
         return $this->lng;
     }
@@ -98,7 +100,7 @@ abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterfa
      *
      * @return $this
      */
-    public function setLng($lng)
+    public function setLng(float $lng): static
     {
         $this->lng = (float) $lng;
 
@@ -108,7 +110,7 @@ abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterfa
     /**
      * @return int
      */
-    public function getZoom()
+    public function getZoom(): int
     {
         return $this->zoom;
     }
@@ -118,7 +120,7 @@ abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterfa
      *
      * @return $this
      */
-    public function setZoom($zoom)
+    public function setZoom(int $zoom): static
     {
         $this->zoom = (int) $zoom;
 
@@ -128,17 +130,17 @@ abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterfa
     /**
      * @return string|int
      */
-    public function getWidth()
+    public function getWidth(): int|string
     {
         return $this->width;
     }
 
     /**
-     * @param string|int $width
+     * @param int|string $width
      *
      * @return $this
      */
-    public function setWidth($width)
+    public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
             $width = (int)$width;
@@ -151,17 +153,17 @@ abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterfa
     /**
      * @return string|int
      */
-    public function getHeight()
+    public function getHeight(): int|string
     {
         return $this->height;
     }
 
     /**
-     * @param string|int $height
+     * @param int|string $height
      *
      * @return $this
      */
-    public function setHeight($height)
+    public function setHeight(int|string $height): static
     {
         if (is_numeric($height)) {
             $height = (int)$height;
@@ -172,13 +174,13 @@ abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterfa
     }
 
     /** { @inheritdoc } */
-    public function marshalBeforeEncryption(/** mixed */ $value, /**  Concrete */ $object = null, /** array */ $params = []) /** : mixed */
+    public function marshalBeforeEncryption(/** mixed */ mixed $value, /**  Concrete */ Concrete $object = null, /** array */ array $params = []) /** : mixed */
     {
         return Serialize::serialize($value);
     }
 
     /** { @inheritdoc } */
-    public function unmarshalAfterDecryption(/** mixed */ $value, /**  Concrete */ $object = null, /** array */ $params = []) /** : mixed */
+    public function unmarshalAfterDecryption(/** mixed */ mixed $value, /**  Concrete */ Concrete $object = null, /** array */ array $params = []) /** : mixed */
     {
         return Serialize::unserialize($value);
     }

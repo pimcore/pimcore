@@ -18,7 +18,7 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class FilterNumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType
 {
-protected $type = "FilterNumberRangeSelection";
+protected string $type = "FilterNumberRangeSelection";
 protected $label;
 protected $field;
 protected $ranges;

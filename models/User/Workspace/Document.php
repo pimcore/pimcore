@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,21 +23,21 @@ class Document extends AbstractWorkspace
      *
      * @var bool
      */
-    protected $save = false;
+    protected bool $save = false;
 
     /**
      * @internal
      *
      * @var bool
      */
-    protected $unpublish = false;
+    protected bool $unpublish = false;
 
     /**
      * @param bool $save
      *
      * @return $this
      */
-    public function setSave($save)
+    public function setSave(bool $save): static
     {
         $this->save = $save;
 
@@ -46,7 +47,7 @@ class Document extends AbstractWorkspace
     /**
      * @return bool
      */
-    public function getSave()
+    public function getSave(): bool
     {
         return $this->save;
     }
@@ -56,7 +57,7 @@ class Document extends AbstractWorkspace
      *
      * @return $this
      */
-    public function setUnpublish($unpublish)
+    public function setUnpublish(bool $unpublish): static
     {
         $this->unpublish = $unpublish;
 
@@ -66,7 +67,7 @@ class Document extends AbstractWorkspace
     /**
      * @return bool
      */
-    public function getUnpublish()
+    public function getUnpublish(): bool
     {
         return $this->unpublish;
     }

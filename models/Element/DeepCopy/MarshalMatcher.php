@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,12 +28,12 @@ class MarshalMatcher extends TypeMatcher
     /**
      * @var string|null
      */
-    private $sourceType;
+    private ?string $sourceType;
 
     /**
      * @var int|null
      */
-    private $sourceId;
+    private ?int $sourceId;
 
     /**
      * MarshalMatcher constructor.

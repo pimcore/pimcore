@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -37,14 +38,14 @@ final class ImageThumbnail
      *
      * @var int|null
      */
-    protected $timeOffset;
+    protected ?int $timeOffset;
 
     /**
      * @internal
      *
      * @var Image|null
      */
-    protected $imageAsset;
+    protected ?Image $imageAsset;
 
     /**
      * @param Model\Asset\Video|null $asset
@@ -53,7 +54,7 @@ final class ImageThumbnail
      * @param Image|null $imageAsset
      * @param bool $deferred
      */
-    public function __construct($asset, $config = null, $timeOffset = null, $imageAsset = null, $deferred = true)
+    public function __construct(?Model\Asset\Video $asset, array|string|Image\Thumbnail\Config $config = null, int $timeOffset = null, Image $imageAsset = null, bool $deferred = true)
     {
         $this->asset = $asset;
         $this->timeOffset = $timeOffset;
@@ -67,7 +68,7 @@ final class ImageThumbnail
      *
      * @return string
      */
-    public function getPath($deferredAllowed = true)
+    public function getPath(bool $deferredAllowed = true): string
     {
         $pathReference = $this->getPathReference($deferredAllowed);
         $path = $this->convertToWebPath($pathReference);
@@ -83,13 +84,13 @@ final class ImageThumbnail
     }
 
     /**
-     * @internal
-     *
      * @param bool $deferredAllowed
      *
      * @throws \Exception
+     *@internal
+     *
      */
-    public function generate($deferredAllowed = true)
+    public function generate(bool $deferredAllowed = true): void
     {
         $deferred = $deferredAllowed && $this->deferred;
         $generated = false;
@@ -218,7 +219,7 @@ final class ImageThumbnail
      *
      * @throws \Exception
      */
-    public function getMedia($name, $highRes = 1)
+    public function getMedia(string $name, int $highRes = 1): ?Image\Thumbnail
     {
         $thumbConfig = $this->getConfig();
         if ($thumbConfig instanceof Image\Thumbnail\Config) {

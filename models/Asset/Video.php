@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,12 +33,12 @@ class Video extends Model\Asset
     /**
      * {@inheritdoc}
      */
-    protected $type = 'video';
+    protected string $type = 'video';
 
     /**
      * {@inheritdoc}
      */
-    protected function update($params = [])
+    protected function update(array $params = [])
     {
         if ($this->getDataChanged()) {
             foreach (['duration', 'videoWidth', 'videoHeight'] as $key) {
@@ -52,10 +53,8 @@ class Video extends Model\Asset
         parent::update($params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function clearThumbnails($force = false)
+
+    public function clearThumbnails(bool $force = false)
     {
         if ($this->getDataChanged() || $force) {
             // clear the thumbnail custom settings
@@ -73,7 +72,7 @@ class Video extends Model\Asset
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getThumbnailConfig($config)
+    public function getThumbnailConfig(string|Video\Thumbnail\Config $config): ?Video\Thumbnail\Config
     {
         $thumbnail = null;
 
@@ -98,7 +97,7 @@ class Video extends Model\Asset
      *
      * @return array|null
      */
-    public function getThumbnail($thumbnailName, $onlyFormats = [])
+    public function getThumbnail(string|Video\Thumbnail\Config $thumbnailName, array $onlyFormats = []): ?array
     {
         $thumbnail = $this->getThumbnailConfig($thumbnailName);
 
@@ -158,7 +157,7 @@ class Video extends Model\Asset
      *
      * @return Video\ImageThumbnail
      */
-    public function getImageThumbnail($thumbnailName, $timeOffset = null, $imageAsset = null)
+    public function getImageThumbnail(array|string|Image\Thumbnail\Config $thumbnailName, int $timeOffset = null, Image $imageAsset = null): Video\ImageThumbnail
     {
         if (!\Pimcore\Video::isAvailable()) {
             Logger::error("Couldn't create image-thumbnail of video " . $this->getRealFullPath() . ' no video adapter is available');
@@ -183,7 +182,7 @@ class Video extends Model\Asset
      *
      * @return float|null
      */
-    public function getDurationFromBackend(?string $filePath = null)
+    public function getDurationFromBackend(?string $filePath = null): ?float
     {
         if (\Pimcore\Video::isAvailable()) {
             if (!$filePath) {
@@ -204,7 +203,7 @@ class Video extends Model\Asset
      *
      * @return array|null
      */
-    public function getDimensionsFromBackend()
+    public function getDimensionsFromBackend(): ?array
     {
         if (\Pimcore\Video::isAvailable()) {
             $converter = \Pimcore\Video::getInstance();
@@ -217,9 +216,10 @@ class Video extends Model\Asset
     }
 
     /**
-     * @return int|null
+     * @return float|int|null
+     * @throws \Exception
      */
-    public function getDuration()
+    public function getDuration(): float|int|null
     {
         $duration = $this->getCustomSetting('duration');
         if (!$duration) {
@@ -239,7 +239,7 @@ class Video extends Model\Asset
     /**
      * @return array|null
      */
-    public function getDimensions()
+    public function getDimensions(): ?array
     {
         $dimensions = null;
         $width = $this->getCustomSetting('videoWidth');
@@ -267,7 +267,7 @@ class Video extends Model\Asset
     /**
      * @return int|null
      */
-    public function getWidth()
+    public function getWidth(): ?int
     {
         $dimensions = $this->getDimensions();
         if ($dimensions) {
@@ -280,7 +280,7 @@ class Video extends Model\Asset
     /**
      * @return int|null
      */
-    public function getHeight()
+    public function getHeight(): ?int
     {
         $dimensions = $this->getDimensions();
         if ($dimensions) {
@@ -295,7 +295,7 @@ class Video extends Model\Asset
      *
      * @return array
      */
-    public function getSphericalMetaData()
+    public function getSphericalMetaData(): array
     {
         $data = [];
 

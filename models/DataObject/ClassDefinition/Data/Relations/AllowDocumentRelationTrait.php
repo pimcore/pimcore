@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,13 +27,13 @@ trait AllowDocumentRelationTrait
     /**
      * Checks if a document is an allowed relation
      *
-     * @internal
-     *
      * @param Document $document
      *
-     * @return bool
+          * @return bool
+     *@internal
+     *
      */
-    protected function allowDocumentRelation($document)
+    protected function allowDocumentRelation(Document $document): bool
     {
         if (!$document instanceof Document || $document->getId() <= 0) {
             return false;

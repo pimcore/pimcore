@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,34 +28,34 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     use DataObject\Traits\OwnerAwareFieldTrait;
 
     /** @var DataObject\AbstractObject|null */
-    protected $object;
+    protected ?DataObject\AbstractObject $object;
 
     /**
      * @var int
      */
-    protected $objectId;
+    protected int $objectId;
 
     /**
      * @var string
      */
-    protected $fieldname;
+    protected string $fieldname;
 
     /**
      * @var array
      */
-    protected $columns = [];
+    protected array $columns = [];
 
     /**
      * @var array
      */
-    protected $data = [];
+    protected array $data = [];
 
     /**
      * @param string $fieldname
      * @param array $columns
      * @param DataObject\Concrete|null $object
      */
-    public function __construct($fieldname, $columns = [], $object = null)
+    public function __construct(string $fieldname, array $columns = [], DataObject\Concrete $object = null)
     {
         $this->fieldname = $fieldname;
         $this->columns = $columns;
@@ -66,7 +67,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
      *
      * @return $this
      */
-    public function setObject(?DataObject\Concrete $object)
+    public function setObject(?DataObject\Concrete $object): static
     {
         $this->markMeDirty();
 
@@ -118,14 +119,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         }
     }
 
-    /**
-     * @param DataObject\Concrete $object
-     * @param string $ownertype
-     * @param string $ownername
-     * @param string $position
-     * @param int $index
-     */
-    public function save($object, $ownertype, $ownername, $position, $index)
+    public function save(DataObject\Concrete $object, string $ownertype, string $ownername, string $position, int $index)
     {
         $this->getDao()->save($object, $ownertype, $ownername, $position, $index);
     }
@@ -141,7 +135,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
      *
      * @return ObjectMetadata|null
      */
-    public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index)
+    public function load(DataObject\Concrete $source, int $destinationId, string $fieldname, string $ownertype, string $ownername, string $position, int $index): ?ObjectMetadata
     {
         $return = $this->getDao()->load($source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index);
         $this->markMeDirty(false);
@@ -154,7 +148,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
      *
      * @return $this
      */
-    public function setFieldname($fieldname)
+    public function setFieldname(string $fieldname): static
     {
         $this->fieldname = $fieldname;
         $this->markMeDirty();
@@ -165,7 +159,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     /**
      * @return string
      */
-    public function getFieldname()
+    public function getFieldname(): string
     {
         return $this->fieldname;
     }
@@ -173,7 +167,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     /**
      * @return DataObject\Concrete|null
      */
-    public function getObject()
+    public function getObject(): ?DataObject\Concrete
     {
         if ($this->getObjectId()) {
             $object = DataObject\Concrete::getById($this->getObjectId());
@@ -192,7 +186,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
      *
      * @return $this
      */
-    public function setElement($element)
+    public function setElement(DataObject\Concrete $element): static
     {
         $this->markMeDirty();
 
@@ -202,7 +196,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     /**
      * @return DataObject\Concrete|null
      */
-    public function getElement()
+    public function getElement(): ?DataObject\Concrete
     {
         return $this->getObject();
     }
@@ -212,7 +206,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
      *
      * @return $this
      */
-    public function setColumns($columns)
+    public function setColumns(array $columns): static
     {
         $this->columns = $columns;
         $this->markMeDirty();
@@ -223,7 +217,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     /**
      * @return array
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return $this->columns;
     }
@@ -250,15 +244,12 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     /**
      * @return int
      */
-    public function getObjectId()
+    public function getObjectId(): int
     {
         return (int) $this->objectId;
     }
 
-    /**
-     * @param int|null $objectId
-     */
-    public function setObjectId($objectId)
+    public function setObjectId(?int $objectId)
     {
         $this->objectId = $objectId;
     }

@@ -20,7 +20,7 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class PaymentInfo extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation
 {
-protected $type = "PaymentInfo";
+protected string $type = "PaymentInfo";
 protected $paymentStart;
 protected $paymentFinish;
 protected $paymentReference;

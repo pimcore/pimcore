@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,29 +32,29 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     /**
      * @var int
      */
-    protected $index;
+    protected int $index;
 
     /**
      * @var string|null
      */
-    protected $fieldname;
+    protected ?string $fieldname;
 
     /**
      * @var Concrete|Model\Element\ElementDescriptor|null
      */
-    protected $object;
+    protected Concrete|Model\Element\ElementDescriptor|null $object;
 
     protected ?int $objectId = null;
 
     /**
      * @var string
      */
-    protected $type;
+    protected string $type;
 
     /**
      * @return int
      */
-    public function getIndex()
+    public function getIndex(): int
     {
         return $this->index;
     }
@@ -63,7 +64,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      *
      * @return $this
      */
-    public function setIndex($index)
+    public function setIndex(int $index): static
     {
         $this->index = (int) $index;
 
@@ -73,7 +74,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     /**
      * @return string|null
      */
-    public function getFieldname()
+    public function getFieldname(): ?string
     {
         return $this->fieldname;
     }
@@ -83,7 +84,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      *
      * @return $this
      */
-    public function setFieldname($fieldname)
+    public function setFieldname(?string $fieldname): static
     {
         $this->fieldname = $fieldname;
 
@@ -93,7 +94,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -101,7 +102,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     /**
      * @return Model\DataObject\Fieldcollection\Definition
      */
-    public function getDefinition()
+    public function getDefinition(): Model\DataObject\Fieldcollection\Definition
     {
         return Model\DataObject\Fieldcollection\Definition::getByKey($this->getType());
     }
@@ -111,7 +112,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      *
      * @return $this
      */
-    public function setObject(?Concrete $object)
+    public function setObject(?Concrete $object): static
     {
         $this->objectId = $object ? $object->getId() : null;
         $this->object = $object;
@@ -134,7 +135,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      *
      * @return mixed
      */
-    public function get($fieldName, $language = null)
+    public function get(string $fieldName, string $language = null): mixed
     {
         return $this->{'get'.ucfirst($fieldName)}($language);
     }
@@ -146,7 +147,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      *
      * @return mixed
      */
-    public function set($fieldName, $value, $language = null)
+    public function set(string $fieldName, mixed $value, string $language = null): mixed
     {
         return $this->{'set'.ucfirst($fieldName)}($value, $language);
     }

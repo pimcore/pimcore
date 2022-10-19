@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,7 +28,7 @@ trait Wrapper
     /**
      * @var Document\Hardlink
      */
-    protected $hardLinkSource;
+    protected Document\Hardlink $hardLinkSource;
 
     protected ?Document $sourceDocument = null;
 
@@ -46,7 +47,7 @@ trait Wrapper
      *
      * @throws \Exception
      */
-    protected function update($params = [])
+    protected function update(array $params = [])
     {
         throw $this->getHardlinkError();
     }
@@ -62,7 +63,7 @@ trait Wrapper
     /**
      * @return array|null
      */
-    public function getProperties()
+    public function getProperties(): ?array
     {
         if ($this->properties == null) {
             $hardLink = $this->getHardLinkSource();
@@ -107,7 +108,7 @@ trait Wrapper
         return $this->properties;
     }
 
-    public function getProperty($name, $asContainer = false)
+    public function getProperty(string $name, bool $asContainer = false)
     {
         $result = parent::getProperty($name, $asContainer);
         if ($result instanceof Document) {
@@ -134,7 +135,7 @@ trait Wrapper
      *
      * @return Document[]
      */
-    public function getChildren($includingUnpublished = false)
+    public function getChildren(bool $includingUnpublished = false): array
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
         if (!isset($this->children[$cacheKey])) {
@@ -159,16 +160,16 @@ trait Wrapper
     }
 
     /**
-     * @param bool $unpublished
+     * @param bool $includingUnpublished
      *
      * @return bool
      */
-    public function hasChildren($unpublished = false)
+    public function hasChildren(bool $includingUnpublished = false): bool
     {
         $hardLink = $this->getHardLinkSource();
 
         if ($hardLink->getChildrenFromSource() && $hardLink->getSourceDocument() && !\Pimcore::inAdmin()) {
-            return parent::hasChildren($unpublished);
+            return parent::hasChildren($includingUnpublished);
         }
 
         return false;
@@ -180,11 +181,11 @@ trait Wrapper
     }
 
     /**
-     * @param Document\Hardlink $hardLinkSource
+     * @param Document $hardLinkSource
      *
      * @return $this
      */
-    public function setHardLinkSource($hardLinkSource)
+    public function setHardLinkSource(Document $hardLinkSource): static
     {
         $this->hardLinkSource = $hardLinkSource;
 
@@ -194,7 +195,7 @@ trait Wrapper
     /**
      * @return Document\Hardlink
      */
-    public function getHardLinkSource()
+    public function getHardLinkSource(): Document\Hardlink
     {
         return $this->hardLinkSource;
     }

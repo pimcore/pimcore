@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,7 +28,7 @@ class ImportClassResolver extends ClassResolver
      *
      * @return object|null
      */
-    public static function resolveClassOrService($importServiceOrClass)
+    public static function resolveClassOrService(string $importServiceOrClass): ?object
     {
         return self::resolve($importServiceOrClass);
     }

@@ -14,7 +14,7 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class VoucherTokenTypeSingle extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType
 {
-protected $type = "VoucherTokenTypeSingle";
+protected string $type = "VoucherTokenTypeSingle";
 protected $token;
 protected $usages;
 protected $onlyTokenPerCart;

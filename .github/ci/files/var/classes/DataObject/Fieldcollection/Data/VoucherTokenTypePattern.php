@@ -19,7 +19,7 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class VoucherTokenTypePattern extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType
 {
-protected $type = "VoucherTokenTypePattern";
+protected string $type = "VoucherTokenTypePattern";
 protected $count;
 protected $prefix;
 protected $length;

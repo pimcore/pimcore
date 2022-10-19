@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -37,7 +38,7 @@ class UnitConversionService
      * @throws UnsupportedException If $quantityValue is no QuantityValue
      * @throws \Exception
      */
-    public function convert(AbstractQuantityValue $quantityValue, Unit $toUnit)
+    public function convert(AbstractQuantityValue $quantityValue, Unit $toUnit): QuantityValue
     {
         if (!$quantityValue instanceof QuantityValue) {
             throw new UnsupportedException('Only QuantityValue is supported.');

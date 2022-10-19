@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -43,7 +44,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws \Exception
      */
-    public function getByName($id = null)
+    public function getByName(string $id = null)
     {
         if ($id != null) {
             $this->model->setName($id);
@@ -76,7 +77,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws \Exception
      */
-    public function save($forceClearTempFiles = false)
+    public function save(bool $forceClearTempFiles = false)
     {
         $ts = time();
         if (!$this->model->getCreationDate()) {
@@ -133,7 +134,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @param bool $forceClearTempFiles force removing generated thumbnail files of saved thumbnail config
      */
-    public function delete($forceClearTempFiles = false)
+    public function delete(bool $forceClearTempFiles = false)
     {
         $this->deleteData($this->model->getName());
 

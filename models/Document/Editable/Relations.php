@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,19 +32,19 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
      *
      * @var Element\ElementInterface[]
      */
-    protected $elements = [];
+    protected array $elements = [];
 
     /**
      * @internal
      *
      * @var array
      */
-    protected $elementIds = [];
+    protected array $elementIds = [];
 
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return 'relations';
     }
@@ -51,7 +52,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * @return $this
      */
-    public function setElements()
+    public function setElements(): static
     {
         if (empty($this->elements)) {
             $this->elements = [];
@@ -69,7 +70,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * @return array
      */
-    public function getElementIds()
+    public function getElementIds(): array
     {
         return $this->elementIds;
     }
@@ -137,7 +138,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): Relations|EditableInterface|static
     {
         if ($data = \Pimcore\Tool\Serialize::unserialize($data)) {
             $this->setDataFromEditmode($data);
@@ -149,7 +150,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): Relations|EditableInterface|static
     {
         if (is_array($data)) {
             $this->elementIds = $data;
@@ -162,7 +163,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * @return Element\ElementInterface[]
      */
-    public function getElements()
+    public function getElements(): array
     {
         $this->setElements();
 
@@ -184,7 +185,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * {@inheritdoc}
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         $this->setElements();
 
@@ -194,7 +195,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * {@inheritdoc}
      */
-    public function resolveDependencies()
+    public function resolveDependencies(): array
     {
         $this->setElements();
         $dependencies = [];
@@ -269,7 +270,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function rewind()// : void
+    public function rewind(): void// : void
     {
         $this->setElements();
         reset($this->elements);
@@ -279,7 +280,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
      * @return Element\ElementInterface|false
      */
     #[\ReturnTypeWillChange]
-    public function current()// : Element\ElementInterface|false
+    public function current(): bool|Element\ElementInterface// : Element\ElementInterface|false
     {
         $this->setElements();
 
@@ -290,7 +291,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
      * @return int|null
      */
     #[\ReturnTypeWillChange]
-    public function key()// : int|null
+    public function key(): ?int// : int|null
     {
         $this->setElements();
 
@@ -301,7 +302,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
      * @return void
      */
     #[\ReturnTypeWillChange]
-    public function next()// : void
+    public function next(): void// : void
     {
         $this->setElements();
         next($this->elements);
@@ -311,7 +312,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
      * @return bool
      */
     #[\ReturnTypeWillChange]
-    public function valid()// : bool
+    public function valid(): bool// : bool
     {
         $this->setElements();
 

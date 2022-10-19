@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,22 +30,22 @@ class AdminStyle
     /**
      * @var string|bool|null
      */
-    protected $elementCssClass = '';
+    protected string|bool|null $elementCssClass = '';
 
     /**
      * @var string|bool|null
      */
-    protected $elementIcon;
+    protected string|bool|null $elementIcon;
 
     /**
      * @var string|bool|null
      */
-    protected $elementIconClass;
+    protected string|bool|null $elementIconClass;
 
     /**
      * @var array|null
      */
-    protected $elementQtipConfig;
+    protected ?array $elementQtipConfig;
 
     public function __construct(ElementInterface $element)
     {
@@ -117,11 +118,11 @@ class AdminStyle
     }
 
     /**
-     * @param string|bool|null $elementCssClass
+     * @param bool|string|null $elementCssClass
      *
      * @return $this
      */
-    public function setElementCssClass($elementCssClass)
+    public function setElementCssClass(bool|string|null $elementCssClass): static
     {
         $this->elementCssClass = $elementCssClass;
 
@@ -133,7 +134,7 @@ class AdminStyle
      *
      * @return $this
      */
-    public function appendElementCssClass($elementCssClass)
+    public function appendElementCssClass(string $elementCssClass): static
     {
         $this->elementCssClass .= ' ' . $elementCssClass;
 
@@ -143,17 +144,17 @@ class AdminStyle
     /**
      * @return string|bool|null
      */
-    public function getElementCssClass()
+    public function getElementCssClass(): bool|string|null
     {
         return $this->elementCssClass;
     }
 
     /**
-     * @param string|bool|null $elementIcon
+     * @param bool|string|null $elementIcon
      *
      * @return $this
      */
-    public function setElementIcon($elementIcon)
+    public function setElementIcon(bool|string|null $elementIcon): static
     {
         $this->elementIcon = $elementIcon;
 
@@ -163,17 +164,17 @@ class AdminStyle
     /**
      * @return string|bool|null Return false if you don't want to overwrite the default.
      */
-    public function getElementIcon()
+    public function getElementIcon(): bool|string|null
     {
         return $this->elementIcon;
     }
 
     /**
-     * @param string|bool|null $elementIconClass
+     * @param bool|string|null $elementIconClass
      *
      * @return $this
      */
-    public function setElementIconClass($elementIconClass)
+    public function setElementIconClass(bool|string|null $elementIconClass): static
     {
         $this->elementIconClass = $elementIconClass;
 
@@ -183,7 +184,7 @@ class AdminStyle
     /**
      * @return string|bool|null Return false if you don't want to overwrite the default.
      */
-    public function getElementIconClass()
+    public function getElementIconClass(): bool|string|null
     {
         return $this->elementIconClass;
     }
@@ -191,15 +192,12 @@ class AdminStyle
     /**
      * @return array|null
      */
-    public function getElementQtipConfig()
+    public function getElementQtipConfig(): ?array
     {
         return $this->elementQtipConfig;
     }
 
-    /**
-     * @param null|array $elementQtipConfig
-     */
-    public function setElementQtipConfig($elementQtipConfig)
+    public function setElementQtipConfig(?array $elementQtipConfig): void
     {
         $this->elementQtipConfig = $elementQtipConfig;
     }
