@@ -121,4 +121,4 @@ jobs:
                   ./bin/console debug:config flysystem
 
             - name: "Run Codeception"
-              run: "vendor/bin/codecept run -c . -vvv --json"
+              run: "vendor/bin/codecept run -c . -vvv"
