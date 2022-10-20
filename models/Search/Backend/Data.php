@@ -532,7 +532,10 @@ class Data extends \Pimcore\Model\AbstractModel
 
         // replace all occurrences of @ to # because when using InnoDB @ is reserved for the @distance operator
         $this->data = str_replace('@', '#', $this->data);
-        $this->data = 'ID: ' . $element->getId() . "  \nKey: " . $this->getKey() . "  \n"  . $this->cleanupData($this->data);
+
+        $pathWords = str_replace([ '-', '_', '/', '.', '(', ')'], ' ', $this->getFullPath());
+        $this->data .= ' ' . $pathWords;
+        $this->data = 'ID: ' . $element->getId() . "  \nPath: " . $this->getFullPath() . "  \n"  . $this->cleanupData($this->data);
 
         return $this;
     }
@@ -606,20 +609,20 @@ class Data extends \Pimcore\Model\AbstractModel
 
             $maxRetries = 5;
             for ($retries = 0; $retries < $maxRetries; $retries++) {
-//                $this->beginTransaction();
+                $this->beginTransaction();
                 try {
                     $this->getDao()->save();
 
-//                    $this->commit();
+                    $this->commit();
 
                     break; // transaction was successfully completed, so we cancel the loop here -> no restart required
                 } catch (\Exception $e) {
-//                    try {
-////                        $this->rollBack();
-//                    } catch (\Exception $er) {
-//                        // PDO adapter throws exceptions if rollback fails
-//                        Logger::error((string) $er);
-//                    }
+                    try {
+                        $this->rollBack();
+                    } catch (\Exception $er) {
+                        // PDO adapter throws exceptions if rollback fails
+                        Logger::error((string) $er);
+                    }
 
                     // we try to start the transaction $maxRetries times again (deadlocks, ...)
                     if ($e instanceof DeadlockException && $retries < ($maxRetries - 1)) {
