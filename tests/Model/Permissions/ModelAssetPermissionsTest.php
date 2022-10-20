@@ -659,7 +659,10 @@ class ModelAssetPermissionsTest extends ModelTestCase
         $this->assertCount(
             count($expectedResultPaths),
             $responseData['data'],
-            'Assert number of expected result matches count of nodes array for `' . $searchText . '` for user `' . $user->getName() . '` (' . print_r($responsePaths, true) . ')'
+            'Assert number of expected result matches count of nodes array for `' . $searchText . '` for user `' . $user->getName() . '` (' . print_r([
+                'expectedValue' => $expectedResultPaths,
+                'actualValue' => $responseData['data'],
+            ], true) . ')'
         );
 
         foreach ($expectedResultPaths as $path) {

@@ -423,7 +423,7 @@ class Data extends \Pimcore\Model\AbstractModel
             }
         }
 
-        $this->data = $element->getKey();
+        $this->data = '';
 
         if ($element instanceof Document) {
             if ($element instanceof Document\Folder) {
@@ -606,20 +606,20 @@ class Data extends \Pimcore\Model\AbstractModel
 
             $maxRetries = 5;
             for ($retries = 0; $retries < $maxRetries; $retries++) {
-                $this->beginTransaction();
+//                $this->beginTransaction();
                 try {
                     $this->getDao()->save();
 
-                    $this->commit();
+//                    $this->commit();
 
                     break; // transaction was successfully completed, so we cancel the loop here -> no restart required
                 } catch (\Exception $e) {
-                    try {
-                        $this->rollBack();
-                    } catch (\Exception $er) {
-                        // PDO adapter throws exceptions if rollback fails
-                        Logger::error((string) $er);
-                    }
+//                    try {
+////                        $this->rollBack();
+//                    } catch (\Exception $er) {
+//                        // PDO adapter throws exceptions if rollback fails
+//                        Logger::error((string) $er);
+//                    }
 
                     // we try to start the transaction $maxRetries times again (deadlocks, ...)
                     if ($e instanceof DeadlockException && $retries < ($maxRetries - 1)) {
