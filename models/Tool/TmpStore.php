@@ -72,9 +72,6 @@ final class TmpStore extends Model\AbstractModel
      */
     protected static ?self $instance = null;
 
-    /**
-     * @return self
-     */
     private static function getInstance(): self
     {
         if (!self::$instance) {
@@ -84,10 +81,7 @@ final class TmpStore extends Model\AbstractModel
         return self::$instance;
     }
 
-    /**
-     * @return int
-     */
-    private static function getDefaultLifetime()
+    private static function getDefaultLifetime(): int
     {
         return 86400 * 7;
     }

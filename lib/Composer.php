@@ -230,7 +230,7 @@ class Composer
         return true;
     }
 
-    private static function removeDecoration($string)
+    private static function removeDecoration(string $string): string
     {
         return preg_replace("/\033\[[^m]*m/", '', $string);
     }

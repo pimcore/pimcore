@@ -188,17 +188,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $result;
     }
 
-    /**
-     * @param DataObject\Localizedfield $data
-     * @param DataObject\Concrete $object
-     * @param array $fieldData
-     * @param array $metaData
-     * @param int $level
-     * @param array $params
-     *
-     * @return array
-     */
-    private function doGetDataForEditMode($data, $object, &$fieldData, &$metaData, $level = 1, $params = [])
+    private function doGetDataForEditMode(DataObject\Localizedfield $data, DataObject\Concrete $object, array &$fieldData, array &$metaData, int $level = 1, array $params = []): array
     {
         $class = $object->getClass();
         $inheritanceAllowed = $class->getAllowInherit();
@@ -712,7 +702,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $enrichedFieldDefinitions;
     }
 
-    private function doEnrichFieldDefinition($fieldDefinition, $context = [])
+    private function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data
     {
         if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
             $context['class'] = $this;
@@ -722,13 +712,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $fieldDefinition;
     }
 
-    /**
-     * @param mixed $def
-     * @param array $fields
-     *
-     * @return array
-     */
-    private function doGetFieldDefinitions($def = null, $fields = [])
+    private function doGetFieldDefinitions(mixed $def = null, array $fields = [])
     {
         if ($def === null) {
             $def = $this->getChildren();
@@ -1001,17 +985,10 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         }
     }
 
-    /**
-     * @param DataObject\Localizedfield $localizedObject
-     * @param array $languages
-     *
-     * @return array
-     */
-    private function getDataForValidity($localizedObject, array $languages)
+    private function getDataForValidity(DataObject\Localizedfield $localizedObject, array $languages): array
     {
         if (!$localizedObject->getObject()
-            || $localizedObject->getObject()->getType() != DataObject::OBJECT_TYPE_VARIANT
-            || !$localizedObject instanceof DataObject\Localizedfield) {
+            || $localizedObject->getObject()->getType() != DataObject::OBJECT_TYPE_VARIANT) {
             return $localizedObject->getInternalData(true);
         }
 

@@ -182,7 +182,7 @@ class FallbackStorage implements TargetingStorageInterface
         }
     }
 
-    private function migrateFromFallback(VisitorInfo $visitorInfo, string $scope)
+    private function migrateFromFallback(VisitorInfo $visitorInfo, string $scope): void
     {
         try {
             $this->primaryStorage->migrateFromStorage($this->fallbackStorage, $visitorInfo, $scope);

@@ -144,7 +144,7 @@ This generator iterates the whole document tree and adds entries for every docum
 hardlinks. It uses the the host names configured as main/site domain and falls back to the request context host by using
 the [url generator service](#page_Generating-absolute-URLs). You can either disable the default generator completely as shown in the example above or define your own service using the
 `DocumentTreeGenerator` class with your own filters/processors. The default service definition can be found in
-[sitemaps.yaml in the CoreBundle](https://github.com/pimcore/pimcore/blob/11.x/bundles/CoreBundle/Resources/config/sitemaps.yaml).
+[sitemaps.yaml in the CoreBundle](https://github.com/pimcore/pimcore/blob/11.x/bundles/CoreBundle/config/sitemaps.yaml).
 
 
 #### Creating a custom generator
@@ -224,7 +224,7 @@ and processors. For example, the `DocumentTreeProcessor` uses the context to def
 In the example above, the URL is created by using a [Link Generator](../05_Objects/01_Object_Classes/05_Class_Settings/30_Link_Generator.md).
 
 > It's important that your link generator is able to generate an absolute URL for the given object. Above is only an example, but
-  you can have a look at the [demo](https://github.com/pimcore/demo/tree/10.x/src/)
+  you can have a look at the [demo](https://github.com/pimcore/demo/tree/11.x/src/)
   for a working example building sitemap entries for News objects.
 
 After creating the generator, register it as service and add it to the config. Use filters and processors to reuse already
@@ -358,7 +358,7 @@ class RandomPriorityProcessor implements ProcessorInterface
 
 > It's important that a processor returns an Url instance as otherwise it will be omitted. You can use this in your own
   processors to apply some kind of filtering on the processor level or to return a different instance from your processor.
-  A typical use case would be to use an [Url Decorator](https://github.com/prestaconcept/PrestaSitemapBundle/blob/master/Resources/doc/6-Url_Decorator.md)
+  A typical use case would be to use an [Url Decorator](https://github.com/prestaconcept/PrestaSitemapBundle/blob/3.x/doc/5-decorating-urls.md)
   in a processor and to return its instance instead of the original Url.
 
 Again, define it as service and start using it from your generators:
@@ -383,7 +383,7 @@ services:
 
 To generate absolute URLs, Pimcore defines an [url generator](https://github.com/pimcore/pimcore/blob/11.x/lib/Sitemap/UrlGenerator.php) which, given a path, takes care of creating an absolute URL
 based on the [Request Context](https://symfony.com/doc/5.2/routing.html#generating-urls-in-commands).
-See core processors/generators and [demo](https://github.com/pimcore/demo/tree/10.x/src/Sitemaps)
+See core processors/generators and [demo](https://github.com/pimcore/demo/tree/11.x/src/Sitemaps)
 for details. As example how to use the URL generator in a processor:
 
 ```php

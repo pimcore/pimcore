@@ -222,13 +222,8 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
 
     /**
      * Handle route params for link document
-     *
-     * @param Document\Link $document
-     * @param DocumentRoute $route
-     *
-     * @return DocumentRoute
      */
-    private function handleLinkDocument(Document\Link $document, DocumentRoute $route)
+    private function handleLinkDocument(Document\Link $document, DocumentRoute $route): DocumentRoute
     {
         $route->setDefault('_controller', 'Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction');
         $route->setDefault('path', $document->getHref());
@@ -239,18 +234,12 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
 
     /**
      * Handle direct route documents (not link)
-     *
-     * @param Document\PageSnippet $document
-     * @param DocumentRoute $route
-     * @param DynamicRequestContext|null $context
-     *
-     * @return DocumentRoute|null
      */
     private function handleDirectRouteDocument(
         Document\PageSnippet $document,
         DocumentRoute $route,
         DynamicRequestContext $context = null
-    ) {
+    ): ?DocumentRoute {
         // if we have a request in context, we're currently in match mode (not generating URLs) -> only match when frontend request by admin
         try {
             $request = $context ? $context->getRequest() : $this->requestHelper->getMainRequest();
@@ -298,18 +287,12 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
 
     /**
      * Handle document redirects (pretty url, SEO without trailing slash)
-     *
-     * @param Document\PageSnippet $document
-     * @param DocumentRoute $route
-     * @param DynamicRequestContext|null $context
-     *
-     * @return DocumentRoute|null
      */
     private function handleDirectRouteRedirect(
         Document\PageSnippet $document,
         DocumentRoute $route,
         DynamicRequestContext $context = null
-    ) {
+    ): ?DocumentRoute {
         $redirectTargetUrl = $context->getOriginalPath();
 
         // check for a pretty url, and if the document is called by that, otherwise redirect to pretty url
@@ -351,13 +334,8 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
 
     /**
      * Handle page snippet route (controller, action, view)
-     *
-     * @param Document\PageSnippet $document
-     * @param DocumentRoute $route
-     *
-     * @return DocumentRoute
      */
-    private function buildRouteForPageSnippetDocument(Document\PageSnippet $document, DocumentRoute $route)
+    private function buildRouteForPageSnippetDocument(Document\PageSnippet $document, DocumentRoute $route): DocumentRoute
     {
         $route->setDefault('_controller', $document->getController());
 
@@ -370,12 +348,8 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
 
     /**
      * Check if document is can be used to generate a route
-     *
-     * @param Document|null $document
-     *
-     * @return bool
      */
-    private function isDirectRouteDocument($document)
+    private function isDirectRouteDocument(?Document $document): bool
     {
         if ($document instanceof Document\PageSnippet) {
             if (in_array($document->getType(), $this->getDirectRouteDocumentTypes())) {

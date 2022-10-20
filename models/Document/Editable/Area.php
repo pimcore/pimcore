@@ -97,12 +97,7 @@ class Area extends Model\Document\Editable
         $this->outputEditmode('</div>');
     }
 
-    /**
-     * @param array $config
-     * @param EditableRenderer $editableRenderer
-     * @param string $dialogId
-     */
-    private function renderDialogBoxEditables(array $config, EditableRenderer $editableRenderer, string $dialogId)
+    private function renderDialogBoxEditables(array $config, EditableRenderer $editableRenderer, string $dialogId): void
     {
         if (isset($config['items']) && is_array($config['items'])) {
             // layout component

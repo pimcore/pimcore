@@ -32,7 +32,10 @@ abstract class AbstractBundleCommand extends AbstractCommand
         parent::__construct($name);
     }
 
-    protected function configureDescriptionAndHelp(string $description, string $help = null): self
+    /**
+     * @return $this
+     */
+    protected function configureDescriptionAndHelp(string $description, string $help = null): static
     {
         if (null === $help) {
             $help = 'Bundle can be passed as fully qualified class name or as bundle short name (e.g. <comment>PimcoreEcommerceFrameworkBundle</comment>).';
@@ -45,7 +48,10 @@ abstract class AbstractBundleCommand extends AbstractCommand
         return $this;
     }
 
-    protected function configureFailWithoutErrorOption(): self
+    /**
+     * @return $this
+     */
+    protected function configureFailWithoutErrorOption(): static
     {
         $this->addOption(
             'fail-without-error',

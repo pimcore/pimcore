@@ -434,9 +434,6 @@ EOT;
         return $list;
     }
 
-    /**
-     * @return string
-     */
     private function getBlockAttributes(): string
     {
         $attributes = [
@@ -447,9 +444,6 @@ EOT;
         return HtmlUtils::assembleAttributeString($attributes);
     }
 
-    /**
-     * @return bool
-     */
     private function isIgnoreEditmodeIndices(): bool
     {
         $requestStack = \Pimcore::getContainer()->get('request_stack');

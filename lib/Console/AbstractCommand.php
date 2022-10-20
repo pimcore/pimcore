@@ -86,7 +86,7 @@ abstract class AbstractCommand extends Command
         }
     }
 
-    private function doDump($data)
+    private function doDump(mixed $data): void
     {
         if (null === $this->cliDumper) {
             $this->cliDumper = new CliDumper();

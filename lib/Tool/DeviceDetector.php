@@ -176,7 +176,7 @@ class DeviceDetector
         return $this->getDevice();
     }
 
-    private function determineDeviceType()
+    private function determineDeviceType(): void
     {
         $this->setWasUsed(true);
 

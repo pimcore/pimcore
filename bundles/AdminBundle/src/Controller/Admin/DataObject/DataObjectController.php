@@ -178,13 +178,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         return $this->adminJson($objects);
     }
 
-    /**
-     * @param DataObject\AbstractObject $object
-     * @param string|null $filter
-     * @param string|null $view
-     *
-     * @return string
-     */
     private function buildChildrenCondition(DataObject\AbstractObject $object, ?string $filter, ?string $view): string
     {
         $condition = "objects.o_parentId = '" . $object->getId() . "'";
@@ -401,7 +394,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $linkGeneratorReference = $objectFromDatabase->getClass()->getLinkGeneratorReference();
 
             $objectData['hasPreview'] = false;
-            if ($objectFromDatabase->getClass()->getPreviewUrl() || $linkGeneratorReference || $previewGenerator) {
+            if ($linkGeneratorReference || $previewGenerator) {
                 $objectData['hasPreview'] = true;
             }
 
@@ -641,11 +634,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
     }
 
-    /**
-     * @param DataObject\Concrete $object
-     * @param bool $objectFromVersion
-     */
-    private function getDataForObject(DataObject\Concrete $object, $objectFromVersion = false)
+    private function getDataForObject(DataObject\Concrete $object, bool $objectFromVersion = false): void
     {
         foreach ($object->getClass()->getFieldDefinitions(['object' => $object]) as $key => $def) {
             $this->getDataForField($object, $key, $def, $objectFromVersion);
@@ -653,15 +642,9 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     }
 
     /**
-     * gets recursively attribute data from parent and fills objectData and metaData
-     *
-     * @param DataObject\Concrete $object
-     * @param string $key
-     * @param DataObject\ClassDefinition\Data $fielddefinition
-     * @param bool $objectFromVersion
-     * @param int $level
+     * Gets recursively attribute data from parent and fills objectData and metaData
      */
-    private function getDataForField($object, $key, $fielddefinition, $objectFromVersion, $level = 0)
+    private function getDataForField(DataObject\Concrete $object, string $key, DataObject\ClassDefinition\Data $fielddefinition, bool $objectFromVersion, int $level = 0): void
     {
         $parent = DataObject\Service::hasInheritableParentObject($object);
         $getter = 'get' . ucfirst($key);
@@ -1199,7 +1182,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         return ['success' => $success];
     }
 
-    private function executeInsideTransaction(callable $fn)
+    private function executeInsideTransaction(callable $fn): void
     {
         $maxRetries = 5;
         for ($retries = 0; $retries < $maxRetries; $retries++) {
@@ -1277,7 +1260,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $this->executeInsideTransaction($fn);
     }
 
-    private function updateLatestVersionIndex($objectId, $newIndex)
+    private function updateLatestVersionIndex(int $objectId, int $newIndex): void
     {
         $object = DataObject\Concrete::getById($objectId);
 
@@ -2004,21 +1987,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $object = DataObject\Service::getElementFromSession('object', $id);
 
         if ($object instanceof DataObject\Concrete) {
-            $url = $object->getClass()->getPreviewUrl();
-            if ($url) {
-                // replace named variables
-                $vars = $object->getObjectVars();
-                foreach ($vars as $key => $value) {
-                    if (!empty($value) && \is_scalar($value)) {
-                        $url = str_replace('%' . $key, urlencode($value), $url);
-                    } else {
-                        if (strpos($url, '%' . $key) !== false) {
-                            return new Response('No preview available, please ensure that all fields which are required for the preview are filled correctly.');
-                        }
-                    }
-                }
-                $url = str_replace('%_locale', $this->getAdminUser()->getLanguage(), $url);
-            } elseif ($previewService = $object->getClass()->getPreviewGenerator()) {
+            $url = null;
+            if ($previewService = $object->getClass()->getPreviewGenerator()) {
                 $url = $previewService->generatePreviewUrl($object, array_merge(['preview' => true, 'context' => $this], $request->query->all()));
             } elseif ($linkGenerator = $object->getClass()->getLinkGenerator()) {
                 $url = $linkGenerator->generate($object, ['preview' => true, 'context' => $this]);

@@ -185,12 +185,7 @@ HTML;
         }
     }
 
-    /**
-     * @param string $message
-     *
-     * @return string
-     */
-    private function getErrorCode($message = '')
+    private function getErrorCode(string $message = ''): string
     {
         // only display error message in debug mode
         if (!\Pimcore::inDebugMode()) {

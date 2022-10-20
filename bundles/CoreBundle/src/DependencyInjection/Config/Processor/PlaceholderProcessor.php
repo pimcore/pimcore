@@ -25,18 +25,13 @@ class PlaceholderProcessor
     /**
      * Merges placeholders recursively into an an array structure. Replaces placeholders
      * in both keys and values.
-     *
-     * @param array $config
-     * @param array $placeholders
-     *
-     * @return array
      */
     public function mergePlaceholders(array $config, array $placeholders): array
     {
         return $this->processArrayValue($config, $placeholders);
     }
 
-    private function processValue($value, array $placeholders)
+    private function processValue(mixed $value, array $placeholders): mixed
     {
         if (is_string($value)) {
             $value = strtr($value, $placeholders);

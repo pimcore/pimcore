@@ -35,8 +35,6 @@ class Printcontainer extends Document\PrintAbstract
     protected $action = 'container';
 
     /**
-     * @internal
-     *
      * @var array
      */
     private $allChildren = [];
@@ -75,10 +73,7 @@ class Printcontainer extends Document\PrintAbstract
         return $this->allChildren;
     }
 
-    /**
-     * @param Document $document
-     */
-    private function doGetChildren(Document $document)
+    private function doGetChildren(Document $document): void
     {
         $children = $document->getChildren();
         foreach ($children as $child) {

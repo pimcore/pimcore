@@ -51,11 +51,9 @@ class EditableDialogBoxConfiguration implements \JsonSerializable
     }
 
     /**
-     * @param string|null $id
-     *
      * @return $this
      */
-    public function setId(?string $id): self
+    public function setId(?string $id): static
     {
         $this->id = $id;
 
@@ -71,11 +69,9 @@ class EditableDialogBoxConfiguration implements \JsonSerializable
     }
 
     /**
-     * @param int|null $width
-     *
      * @return $this
      */
-    public function setWidth(?int $width): self
+    public function setWidth(?int $width): static
     {
         $this->width = $width;
 
@@ -91,11 +87,9 @@ class EditableDialogBoxConfiguration implements \JsonSerializable
     }
 
     /**
-     * @param int|null $height
-     *
      * @return $this
      */
-    public function setHeight(?int $height): self
+    public function setHeight(?int $height): static
     {
         $this->height = $height;
 
@@ -111,11 +105,9 @@ class EditableDialogBoxConfiguration implements \JsonSerializable
     }
 
     /**
-     * @param array $items
-     *
      * @return $this
      */
-    public function setItems(array $items): self
+    public function setItems(array $items): static
     {
         $this->items = $items;
 
@@ -123,11 +115,9 @@ class EditableDialogBoxConfiguration implements \JsonSerializable
     }
 
     /**
-     * @param array $item
-     *
      * @return $this
      */
-    public function addItem(array $item): self
+    public function addItem(array $item): static
     {
         $this->items[] = $item;
 
@@ -143,11 +133,9 @@ class EditableDialogBoxConfiguration implements \JsonSerializable
     }
 
     /**
-     * @param bool $reloadOnClose
-     *
      * @return $this
      */
-    public function setReloadOnClose(bool $reloadOnClose): self
+    public function setReloadOnClose(bool $reloadOnClose): static
     {
         $this->reloadOnClose = $reloadOnClose;
 

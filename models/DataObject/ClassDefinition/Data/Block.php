@@ -1169,7 +1169,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return '?array';
     }
 
-    private function setBlockElementOwner(DataObject\Data\BlockElement $blockElement, $params = [])
+    private function setBlockElementOwner(DataObject\Data\BlockElement $blockElement, $params = []): void
     {
         if (!isset($params['owner'])) {
             throw new \Error('owner missing');

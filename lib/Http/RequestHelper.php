@@ -123,10 +123,6 @@ class RequestHelper
 
     /**
      * TODO use pimcore context here?
-     *
-     * @param Request $request
-     *
-     * @return bool
      */
     private function detectFrontendRequest(Request $request): bool
     {
@@ -199,12 +195,8 @@ class RequestHelper
 
     /**
      * Anonymize IP: replace the last octet with 255
-     *
-     * @param string $ip
-     *
-     * @return string
      */
-    private function anonymizeIp(string $ip)
+    private function anonymizeIp(string $ip): string
     {
         $aip = substr($ip, 0, strrpos($ip, '.') + 1);
         $aip .= '255';

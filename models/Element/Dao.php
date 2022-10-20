@@ -186,15 +186,8 @@ abstract class Dao extends Model\Dao\AbstractDao
 
     /**
      * for "path traversal" intending the list=1 on parent folder (with list=0) when there are nested children allowed
-     *
-     * @param string $tableSuffix
-     * @param array $userIds
-     *
-     * @return int
-     *
-     * @internal
      */
-    private function checkChildrenForPathTraversal(string $tableSuffix, array $userIds)
+    private function checkChildrenForPathTraversal(string $tableSuffix, array $userIds): int
     {
         $path = $this->model->getId() == 1 ? '/' : $this->model->getRealFullPath() . '/';
 

@@ -7,14 +7,14 @@ on:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"
         paths:
-            - 'docs/**'
+            - 'doc/**'
     push:
         branches:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"
             - "*_actions"
         paths:
-            - 'docs/**'
+            - 'doc/**'
 
 permissions:
   contents: read

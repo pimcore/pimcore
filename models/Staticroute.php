@@ -210,10 +210,8 @@ final class Staticroute extends AbstractModel
 
     /**
      * Get the defaults defined in a string as array
-     *
-     * @return array
      */
-    private function getDefaultsArray()
+    private function getDefaultsArray(): array
     {
         $defaultsString = $this->getDefaults();
         if (empty($defaultsString)) {
