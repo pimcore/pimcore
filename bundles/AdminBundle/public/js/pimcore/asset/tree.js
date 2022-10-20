@@ -295,31 +295,51 @@
                      };
  
                      if (res.exists) {
-                         var messageBox = new Ext.window.MessageBox();
+                         let applyToAllCheckbox = Ext.create('Ext.form.field.Checkbox', {
+                             xtype: 'checkbox',
+                             boxLabel: t('asset_upload_apply_to_all'),
+                             itemId: 'applyToAllCheckbox'
+                         });
+                         let messageBox = new Ext.window.MessageBox({
+                             layout: {
+                                 type: 'vbox',
+                                 align: 'center'
+                             },
+                         });
                          overwriteConfirmMessageBoxes.push(messageBox);
                          messageBox.show({
                              title: t('file_exists'),
                              msg: t('asset_upload_want_to_overwrite').replace('%s', file.name),
                              buttons: Ext.Msg.OK & Ext.Msg.YES & Ext.Msg.NO,
-                             buttonText: { ok: t('asset_upload_overwrite'), yes: t('asset_upload_keep_both'), no: t('asset_upload_overwrite_all') },
+                             buttonText: {
+                                 ok: t('asset_upload_overwrite'),
+                                 yes: t('asset_upload_keep_both'),
+                                 no: t('asset_upload_skip')
+                             },
                              prompt: false,
                              icon: Ext.MessageBox.QUESTION,
                              fn: function (action) {
-                                 if (action === 'ok') {
-                                     uploadFunction(true);
-                                 } else if (action === 'yes') {
-                                     uploadFunction(false);
-                                 } else if (action === 'no') {
-                                     Ext.each(overwriteConfirmMessageBoxes, function(messageBox) {
-                                         if (messageBox) {
-                                             messageBox.down('button[itemId=ok]').fireHandler();
-                                         }
-                                     });
-                                 } else if (action === 'cancel') {
+                                 if (action === 'ok' || action === 'yes') {
+                                     let allowOverwrite = false;
+                                     if (action === 'ok') {
+                                         allowOverwrite = true;
+                                     }
+                                     if (applyToAllCheckbox.getValue()) {
+                                         // prevent endless loop
+                                         applyToAllCheckbox.setValue(false);
+                                         Ext.each(overwriteConfirmMessageBoxes, function(messageBox) {
+                                             if (messageBox.isVisible()) {
+                                                 messageBox.down('button[itemId='+action+']').fireHandler();
+                                             }
+                                         });
+                                     }
+                                     uploadFunction(allowOverwrite);
+                                 } else {
                                      finishedErrorHandler();
                                  }
-                             }
+                             },
                          });
+                         messageBox.add(applyToAllCheckbox);
                      } else {
                          uploadFunction();
                      }
