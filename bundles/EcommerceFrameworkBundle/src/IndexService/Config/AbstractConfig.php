@@ -31,7 +31,7 @@ abstract class AbstractConfig implements ConfigInterface
 
     protected array $searchAttributeConfig;
 
-    protected AttributeFactory $attributeFactory;
+    protected ?AttributeFactory $attributeFactory = null;
 
     /**
      * @var Attribute[]
@@ -42,9 +42,9 @@ abstract class AbstractConfig implements ConfigInterface
 
     protected array $filterTypes;
 
-    protected WorkerInterface $tenantWorker;
+    protected ?WorkerInterface $tenantWorker = null;
 
-    protected ?array $filterTypeConfig;
+    protected ?array $filterTypeConfig = null;
 
     protected array $options;
 

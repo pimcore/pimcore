@@ -37,7 +37,7 @@ class AbstractUser extends Model\AbstractModel
 
     protected string $type;
 
-    public static function getById(int $id): AbstractUser|static|null
+    public static function getById(int $id): static|null
     {
         $cacheKey = 'user_' . $id;
 

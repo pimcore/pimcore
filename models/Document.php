@@ -150,7 +150,7 @@ class Document extends Element\AbstractElement
         return 'document_path_' . md5($path);
     }
 
-    public static function getByPath(string $path, array $params = []): Document|static|null
+    public static function getByPath(string $path, array $params = []): static|null
     {
         if (!$path) {
             return null;
@@ -199,7 +199,7 @@ class Document extends Element\AbstractElement
         return true;
     }
 
-    public static function getById(int $id): ?static
+    public static function getById(int $id, array $params = []): ?static
     {
         if (!is_numeric($id) || $id < 1) {
             return null;
@@ -608,7 +608,7 @@ class Document extends Element\AbstractElement
      *
      * @return bool
      */
-    public function hasChildren(bool $includingUnpublished = null): bool
+    public function hasChildren(bool $includingUnpublished = false): bool
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 

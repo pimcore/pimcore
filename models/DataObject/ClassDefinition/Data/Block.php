@@ -131,7 +131,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = []): string
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         $result = [];
 
@@ -195,7 +195,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?array
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data) {
             $count = 0;
@@ -820,7 +820,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * { @inheritdoc }
      */
-    public function preSetData(/** mixed */ mixed $container, /**  mixed */ mixed $data, /** array */ array $params = []) // : mixed
+    public function preSetData(mixed $container, /**  mixed */ mixed $data, array $params = []) : mixed
     {
         $this->markLazyloadedFieldAsLoaded($container);
 
@@ -914,7 +914,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * {@inheritdoc}
      */
-    public function preGetData(/** mixed */ mixed $container, /** array */ array $params = []) // : mixed
+    public function preGetData(mixed $container, array $params = []) : mixed
     {
         $data = null;
         $params['owner'] = $container;

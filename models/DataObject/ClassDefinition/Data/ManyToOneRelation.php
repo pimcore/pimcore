@@ -181,7 +181,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * {@inheritdoc}
      */
-    protected function prepareDataForPersistence(array|Element\ElementInterface $data, Concrete $object = null, array $params = [])
+    protected function prepareDataForPersistence(array|Element\ElementInterface $data, Concrete $object = null, array $params = []): mixed
     {
         if ($data instanceof Element\ElementInterface) {
             $type = Element\Service::getElementType($data);
@@ -200,7 +200,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * {@inheritdoc}
      */
-    protected function loadData(array $data, Concrete $object = null, array $params = [])
+    protected function loadData(array $data, Concrete $object = null, array $params = []): mixed
     {
         // data from relation table
         $data = current($data);
@@ -231,7 +231,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): array
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         $rData = $this->prepareDataForPersistence($data, $object, $params);
         $return = [];
@@ -251,7 +251,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data instanceof Element\ElementInterface) {
             $r = [
@@ -270,14 +270,14 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
     /**
      * @param mixed $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return Asset|Document|DataObject\AbstractObject|null
      *@see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, DataObject\AbstractObject $object = null, array $params = []): Asset|Document|DataObject\AbstractObject|null
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): Asset|Document|DataObject\AbstractObject|null
     {
         if (!empty($data['id']) && !empty($data['type'])) {
             return Element\Service::getElementById($data['type'], $data['id']);
@@ -319,7 +319,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof Element\ElementInterface) {
             return Element\Service::getElementType($data).' '.$data->getRealFullPath();
@@ -398,7 +398,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $dependencies;
     }
 
-    public function preGetData(/** mixed */ mixed $container, /** array */ array $params = []): ?Element\ElementInterface // : mixed
+    public function preGetData(mixed $container, array $params = []): ?Element\ElementInterface
     {
         $data = null;
         if ($container instanceof DataObject\Concrete) {
@@ -432,7 +432,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * { @inheritdoc }
      */
-    public function preSetData(/** mixed */ mixed $container, /**  mixed */ mixed $data, /** array */ array $params = []) // : mixed
+    public function preSetData(mixed $container, /**  mixed */ mixed $data, array $params = []) : mixed
     {
         $this->markLazyloadedFieldAsLoaded($container);
 
@@ -487,7 +487,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(/** mixed */ mixed $container, /** array */ array $idMapping, /** array */ array $params = []) /** :mixed */
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
         if ($data) {

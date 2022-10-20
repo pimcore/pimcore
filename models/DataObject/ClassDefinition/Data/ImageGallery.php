@@ -18,6 +18,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
@@ -174,7 +175,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = []): array
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         if ($data instanceof DataObject\Data\ImageGallery) {
             $hotspots = [];
@@ -214,7 +215,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): DataObject\Data\ImageGallery
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\ImageGallery
     {
         if (!is_array($data)) {
             return $this->createEmptyImageGallery($params);
@@ -295,7 +296,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): array
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         $result = [];
         if ($data instanceof DataObject\Data\ImageGallery) {
@@ -318,7 +319,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      *@see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): DataObject\Data\ImageGallery
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\ImageGallery
     {
         $resultItems = [];
 
@@ -354,7 +355,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): ?string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         if ($data instanceof DataObject\Data\ImageGallery) {
             return count($data->getItems()) . ' items';
@@ -426,7 +427,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(/** mixed */ mixed $container, /** array */ array $idMapping, /** array */ array $params = []) /** :mixed */
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
         if ($data instanceof DataObject\Data\ImageGallery) {

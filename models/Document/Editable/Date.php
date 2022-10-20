@@ -43,7 +43,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->date;
     }
@@ -86,7 +86,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
     }
 
 
-    public function getDataForResource()
+    public function getDataForResource(): mixed
     {
         if ($this->date) {
             return $this->date->getTimestamp();
@@ -98,7 +98,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource(mixed $data): EditableInterface|Date|static
+    public function setDataFromResource(mixed $data): static
     {
         if ($data) {
             $this->setDateFromTimestamp($data);
@@ -110,7 +110,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode(mixed $data): EditableInterface|Date|static
+    public function setDataFromEditmode(mixed $data): static
     {
         if (strlen($data) > 5) {
             $timestamp = strtotime($data);

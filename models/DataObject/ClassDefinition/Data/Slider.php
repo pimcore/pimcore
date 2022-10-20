@@ -210,7 +210,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = []): ?float
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?float
     {
         if ($data != null) {
             $data = (float) $data;
@@ -228,7 +228,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?float
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?float
     {
         if ($data != null) {
             $data = (float) $data;
@@ -246,7 +246,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): ?float
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?float
     {
         return $data;
     }
@@ -260,7 +260,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): ?float
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?float
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -274,7 +274,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): ?float
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?float
     {
         return $this->getDataFromResource($data, $object, $params);
     }
@@ -300,7 +300,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return (string)$data;
     }

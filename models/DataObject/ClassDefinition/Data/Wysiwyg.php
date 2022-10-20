@@ -161,21 +161,21 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return Text::wysiwygText($data);
     }
 
     /**
      * @param mixed $data
-     * @param Concrete|null $object
+     * @param DataObject\Concrete|null $object
      * @param array $params
      *
      * @return string|null
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, Concrete $object = null, array $params = []): ?string
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return Text::wysiwygText($data);
     }
@@ -189,7 +189,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         $data = $this->getDataForResource($data, $object, $params);
 
@@ -224,7 +224,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -238,7 +238,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): string
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return $data;
     }
@@ -273,7 +273,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         }
     }
 
-    public function preGetData(/** mixed */ mixed $container, /** array */ array $params = []): string // : mixed
+    public function preGetData(mixed $container, array $params = []): string
     {
         $data = '';
         if ($container instanceof DataObject\Concrete) {
@@ -317,7 +317,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(/** mixed */ mixed $container, /** array */ array $idMapping, /** array */ array $params = []) /** :mixed */
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
 

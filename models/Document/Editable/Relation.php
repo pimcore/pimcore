@@ -75,7 +75,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         return [
             'id' => $this->id,
@@ -125,7 +125,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource(mixed $data): Relation|EditableInterface|static
+    public function setDataFromResource(mixed $data): static
     {
         if (!empty($data)) {
             $data = \Pimcore\Tool\Serialize::unserialize($data);
@@ -143,7 +143,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode(mixed $data): Relation|EditableInterface|static
+    public function setDataFromEditmode(mixed $data): static
     {
         $this->id = $data['id'] ?? null;
         $this->type = $data['type'] ?? null;

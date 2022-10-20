@@ -84,23 +84,23 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      * Returns the data for the editmode
      *
      * @param mixed $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return mixed
      */
-    abstract public function getDataForEditmode(mixed $data, DataObject\AbstractObject $object = null, array $params = []): mixed;
+    abstract public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): mixed;
 
     /**
      * Converts data from editmode to internal eg. Image-Id to Asset\Image object
      *
      * @param mixed $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return mixed
      */
-    abstract public function getDataFromEditmode(mixed $data, DataObject\AbstractObject $object = null, array $params = []): mixed;
+    abstract public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): mixed;
 
     /**
      * Checks if data is valid for current data field

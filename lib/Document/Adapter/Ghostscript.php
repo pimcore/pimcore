@@ -81,7 +81,7 @@ class Ghostscript extends Adapter
     }
 
 
-    public function load(Asset\Document $asset): Ghostscript|Adapter|static
+    public function load(Asset\Document $asset): static
     {
         // avoid timeouts
         $maxExecTime = (int) ini_get('max_execution_time');

@@ -280,6 +280,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      */
     public function updateAction(Request $request): JsonResponse
     {
+        /** @var User|null $user */
         $user = User\UserRole::getById((int)$request->get('id'));
 
         if (!$user) {

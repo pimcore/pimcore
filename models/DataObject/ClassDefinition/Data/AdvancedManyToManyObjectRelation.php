@@ -91,7 +91,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * {@inheritdoc}
      */
-    protected function prepareDataForPersistence(array|Element\ElementInterface $data, Concrete $object = null, array $params = [])
+    protected function prepareDataForPersistence(array|Element\ElementInterface $data, Concrete $object = null, array $params = []): mixed
     {
         $return = [];
 
@@ -123,7 +123,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * {@inheritdoc}
      */
-    protected function loadData(array $data, Concrete $object = null, array $params = [])
+    protected function loadData(array $data, Concrete $object = null, array $params = []): mixed
     {
         $list = [
             'dirty' => false,
@@ -192,16 +192,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $list;
     }
 
-    /**
-     * @param mixed $data
-     * @param Model\DataObject\AbstractObject|null $object
-     * @param array $params
-     *
-     * @return string|null
-     *
-     * @throws \Exception
-     */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         //return null when data is not set
         if (!$data) {
@@ -233,7 +224,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): array
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         $return = [];
 
@@ -277,7 +268,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): ?array
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         //if not set, return null
         if ($data === null || $data === false) {
@@ -345,7 +336,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         $items = [];
         if (is_array($data) && count($data) > 0) {
@@ -560,7 +551,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * {@inheritdoc}
      */
-    public function preGetData(/** mixed */ mixed $container, /** array */ array $params = []) // : mixed
+    public function preGetData(mixed $container, array $params = []): mixed
     {
         $data = null;
         if ($container instanceof DataObject\Concrete) {
@@ -715,7 +706,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * {@inheritdoc}
      */
-    public function rewriteIds(/** mixed */ mixed $container, /** array */ array $idMapping, /** array */ array $params = []) /** :mixed */
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
 
@@ -752,7 +743,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): AdvancedManyToManyObjectRelation|LayoutDefinitionEnrichmentInterface|ManyToManyObjectRelation|static // : static
+    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): static // : static
     {
         $classId = $this->allowedClassId;
 
@@ -962,9 +953,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      */
     protected function buildUniqueKeyForAppending(ElementInterface $item): string
     {
-        $element = $item->getElement();
-        $elementType = Element\Service::getElementType($element);
-        $id = $element->getId();
+        $elementType = Element\Service::getElementType($item);
+        $id = $item->getId();
 
         return $elementType . $id;
     }

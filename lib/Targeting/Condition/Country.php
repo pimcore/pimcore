@@ -36,7 +36,7 @@ class Country extends AbstractVariableCondition implements DataProviderDependent
     /**
      * {@inheritdoc}
      */
-    public static function fromConfig(array $config): ConditionInterface|static
+    public static function fromConfig(array $config): static
     {
         return new static($config['country'] ?? null);
     }

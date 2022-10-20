@@ -20,9 +20,9 @@ class RuntimeCache extends \ArrayObject
 {
     private const SERVICE_ID = __CLASS__;
 
-    protected static ?RuntimeCache $tempInstance;
+    protected static ?RuntimeCache $tempInstance = null;
 
-    protected static ?RuntimeCache $instance;
+    protected static ?RuntimeCache $instance = null;
 
     /**
      * Retrieves the default registry instance.

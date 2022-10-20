@@ -43,7 +43,7 @@ class Checkbox extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->value;
     }
@@ -65,7 +65,7 @@ class Checkbox extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource(mixed $data): EditableInterface|Checkbox|static
+    public function setDataFromResource(mixed $data): static
     {
         $this->value = (bool) $data;
 
@@ -75,7 +75,7 @@ class Checkbox extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode(mixed $data): EditableInterface|Checkbox|static
+    public function setDataFromEditmode(mixed $data): static
     {
         $this->value = (bool) $data;
 

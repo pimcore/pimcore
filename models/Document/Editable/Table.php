@@ -43,7 +43,7 @@ class Table extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->data;
     }
@@ -76,7 +76,7 @@ class Table extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource(mixed $data): Table|EditableInterface|static
+    public function setDataFromResource(mixed $data): static
     {
         $this->data = \Pimcore\Tool\Serialize::unserialize($data);
 
@@ -86,7 +86,7 @@ class Table extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode(mixed $data): Table|EditableInterface|static
+    public function setDataFromEditmode(mixed $data): static
     {
         $this->data = $data;
 

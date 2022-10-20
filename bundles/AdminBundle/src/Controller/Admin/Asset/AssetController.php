@@ -705,6 +705,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
     protected function getTreeNodeConfig(ElementInterface $element): array
     {
+        /** @var Asset $asset */
         $asset = $element;
 
         $permissions =  $asset->getUserPermissions($this->getAdminUser());
@@ -1487,6 +1488,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $video->save();
         }
 
+        /** @var Asset\Video $video */
         $thumb = $video->getImageThumbnail($thumbnail, $time, $image);
 
         if ($request->get('origin') === 'treeNode' && !$thumb->exists()) {

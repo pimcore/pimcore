@@ -23,6 +23,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
+use Pimcore\Model\DataObject;
 
 /**
  * Class EncryptedField
@@ -88,7 +89,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = []): mixed
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): mixed
     {
         if ($data) {
             /** @var ResourcePersistenceAwareInterface|null $fd */
@@ -185,7 +186,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?Model\DataObject\Data\EncryptedField
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\EncryptedField
     {
         /** @var ResourcePersistenceAwareInterface|null $fd */
         $fd = $this->getDelegateDatatypeDefinition();
@@ -216,7 +217,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd) {
@@ -238,7 +239,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      *@see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): ?Model\DataObject\Data\EncryptedField
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\EncryptedField
     {
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd) {
@@ -331,7 +332,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      *
      * @return string
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         $fd = $this->getDelegateDatatypeDefinition();
         $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : null;
@@ -435,7 +436,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     /**
      * @inheritdoc
      */
-    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): EncryptedField|LayoutDefinitionEnrichmentInterface|static // : static
+    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): static // : static
     {
         $delegate = $this->getDelegate();
 

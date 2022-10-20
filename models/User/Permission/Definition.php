@@ -91,7 +91,7 @@ class Definition extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public static function create(string $permission): Definition|static
+    public static function create(string $permission): self|static
     {
         if (!$permission) {
             throw new \Exception('No permisson defined.');

@@ -591,7 +591,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                         $count = 0;
 
                         foreach ($childrenList as $child) {
-                            $source = preg_replace('@^' . preg_quote($document->getRealFullPath(), '@') . '@', $oldDocument, $child['path']);
+                            $source = preg_replace('@^' . preg_quote($document->getRealFullPath(), '@') . '@', $oldDocument->getRealFullPath(), $child['path']);
                             if ($sourceSite) {
                                 $source = preg_replace('@^' . preg_quote($sourceSite->getRootPath(), '@') . '@', '', $source);
                             }

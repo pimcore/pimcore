@@ -68,7 +68,7 @@ class Iframe extends Model\DataObject\ClassDefinition\Layout implements LayoutDe
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): LayoutDefinitionEnrichmentInterface|Iframe|static // : static
+    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): static // : static
     {
         $this->width = $this->getWidth() ? $this->getWidth() : 500;
         $this->height = $this->getHeight() ? $this->getHeight() : 500;

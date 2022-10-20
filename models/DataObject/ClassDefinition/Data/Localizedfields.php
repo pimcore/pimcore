@@ -161,7 +161,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): array
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         $fieldData = [];
         $metaData = [];
@@ -313,7 +313,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      *@see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): Localizedfield
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): Localizedfield
     {
         $localizedFields = $this->getDataFromObjectParam($object, $params);
 
@@ -379,7 +379,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         // this is handled directly in the template
         // /bundles/AdminBundle/templates/admin/data_object/data_object/preview_version.html.twig
@@ -544,7 +544,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     /**
      * { @inheritdoc }
      */
-    public function preGetData(/** mixed */ mixed $container, /** array */ array $params = []) // : mixed
+    public function preGetData(mixed $container, array $params = []) : mixed
     {
         if (
             !$container instanceof DataObject\Concrete &&
@@ -944,7 +944,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      *
      * @return array|null
      */
-    public function getDiffDataForEditmode(mixed $data, $object = null, array $params = []): ?array
+    public function getDiffDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         $return = [];
 
@@ -1076,7 +1076,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(/** mixed */ mixed $container, /** array */ array $idMapping, /** array */ array $params = []) /** :mixed */
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
 

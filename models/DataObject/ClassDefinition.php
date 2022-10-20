@@ -18,6 +18,7 @@ namespace Pimcore\Model\DataObject;
 
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface;
 use Pimcore\DataObject\ClassBuilder\PHPClassDumperInterface;
 use Pimcore\Db;

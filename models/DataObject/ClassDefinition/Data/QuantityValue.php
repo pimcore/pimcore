@@ -21,7 +21,9 @@ use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
 use Pimcore\Normalizer\NormalizerInterface;
@@ -417,7 +419,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = []): array
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         $data = $this->handleDefaultValue($data, $object, $params);
 
@@ -443,7 +445,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?Model\DataObject\Data\QuantityValue
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\QuantityValue
     {
         if ($data[$this->getName() . '__value'] !== null || $data[$this->getName() . '__unit']) {
             if (!is_numeric($data[$this->getName() . '__value'])) {
@@ -488,7 +490,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data instanceof Model\DataObject\Data\AbstractQuantityValue) {
             return [
@@ -514,14 +516,13 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 
     /**
      * @param mixed $data
-     * @param Model\DataObject\Concrete $object
+     * @param DataObject\Concrete|null $object
      * @param array $params
      *
      * @return Model\DataObject\Data\QuantityValue|null
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): ?Model\DataObject\Data\QuantityValue
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\QuantityValue
     {
         if (strlen($data['value']) > 0 || $data['unit']) {
             if (empty($data['unit']) || $data['unit'] == -1) {
@@ -543,7 +544,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof Model\DataObject\Data\AbstractQuantityValue) {
             $unit = '';

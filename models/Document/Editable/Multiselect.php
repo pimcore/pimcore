@@ -43,7 +43,7 @@ class Multiselect extends Model\Document\Editable implements EditmodeDataInterfa
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->values;
     }
@@ -72,7 +72,7 @@ class Multiselect extends Model\Document\Editable implements EditmodeDataInterfa
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource(mixed $data): Multiselect|EditableInterface|static
+    public function setDataFromResource(mixed $data): static
     {
         $this->values = \Pimcore\Tool\Serialize::unserialize($data);
 
@@ -82,7 +82,7 @@ class Multiselect extends Model\Document\Editable implements EditmodeDataInterfa
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode(mixed $data): Multiselect|EditableInterface|static
+    public function setDataFromEditmode(mixed $data): static
     {
         if (empty($data)) {
             $this->values = [];

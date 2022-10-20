@@ -17,7 +17,9 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 
@@ -150,7 +152,7 @@ class Input extends Data implements
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $data;
     }
@@ -164,7 +166,7 @@ class Input extends Data implements
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -178,21 +180,20 @@ class Input extends Data implements
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
     /**
      * @param mixed $data
-     * @param null|Model\DataObject\Concrete $object
+     * @param DataObject\Concrete|null $object
      * @param array $params
      *
      * @return string|null
      * @see Data::getDataFromEditmode
-     *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): ?string
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataFromResource($data, $object, $params);
     }

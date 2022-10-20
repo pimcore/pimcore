@@ -164,7 +164,7 @@ class Video extends Data implements
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         if ($data instanceof DataObject\Data\Video) {
             $data = clone $data;
@@ -240,7 +240,7 @@ class Video extends Data implements
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -254,7 +254,7 @@ class Video extends Data implements
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data) {
             $data = clone $data;
@@ -280,7 +280,7 @@ class Video extends Data implements
      *@see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): ?DataObject\Data\Video
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Video
     {
         $video = null;
 
@@ -354,7 +354,7 @@ class Video extends Data implements
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data && $data->getType() == 'asset' && $data->getData() instanceof Asset) {
             return '<img src="/admin/asset/get-video-thumbnail?id=' . $data->getData()->getId() . '&width=100&height=100&aspectratio=true" />';
@@ -415,7 +415,7 @@ class Video extends Data implements
     /**
      * { @inheritdoc }
      */
-    public function enrichFieldDefinition(/** array */ array $context = []): Video|FieldDefinitionEnrichmentInterface|static
+    public function enrichFieldDefinition(array $context = []): static
         /** : static */
     {
         if (empty($this->getAllowedTypes()) && (isset($context['object']) || isset($context['containerType']))) {
@@ -428,7 +428,7 @@ class Video extends Data implements
     /**
      * { @inheritdoc }
      */
-    public function enrichLayoutDefinition(?Concrete $object, array $context = []): Video|LayoutDefinitionEnrichmentInterface|FieldDefinitionEnrichmentInterface|static
+    public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
     {
         return $this->enrichFieldDefinition($context);
     }
@@ -493,7 +493,7 @@ class Video extends Data implements
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(/** mixed */ mixed $container, /** array */ array $idMapping, /** array */ array $params = []) /** :mixed */
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
 

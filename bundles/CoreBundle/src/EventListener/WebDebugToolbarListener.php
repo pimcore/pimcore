@@ -35,7 +35,7 @@ class WebDebugToolbarListener implements EventSubscriberInterface
     /**
      * @var RequestMatcherInterface[]
      */
-    protected array $excludeMatchers;
+    protected ?array $excludeMatchers = null;
 
     public function __construct(
         protected RequestHelper $requestHelper,

@@ -27,5 +27,5 @@ interface PreSetDataInterface
      *
      * @return mixed
      */
-    public function preSetData(/** mixed */ mixed $container, /**  mixed */ mixed $data, /** array */ array $params = []): mixed /*: mixed*/;
+    public function preSetData(mixed $container, /**  mixed */ mixed $data, array $params = []): mixed /*: mixed*/;
 }

@@ -107,7 +107,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): DataObject\Data\Consent
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\Consent
     {
         if (is_array($data) && $data[$this->getName() . '__consent'] !== null) {
             $consent = new DataObject\Data\Consent($data[$this->getName() . '__consent'], $data[$this->getName() . '__note']);
@@ -133,7 +133,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): bool
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): bool
     {
         if ($data instanceof DataObject\Data\Consent) {
             return $data->getConsent();
@@ -151,7 +151,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         // get data & info from note
         if ($data instanceof DataObject\Data\Consent) {
@@ -174,7 +174,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *@see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): DataObject\Data\Consent
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\Consent
     {
         if ($data === 'false') {
             $data = false;
@@ -287,7 +287,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return $data ? (string)$data->getConsent() : '';
     }

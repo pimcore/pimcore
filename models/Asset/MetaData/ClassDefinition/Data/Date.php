@@ -19,13 +19,13 @@ namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 class Date extends Data
 {
 
-    public function getDataFromEditMode(mixed $data, array $params = [])
+    public function getDataFromEditMode(mixed $data, array $params = []): mixed
     {
         return $this->normalize($data, $params);
     }
 
 
-    public function normalize(mixed $value, array $params = [])
+    public function normalize(mixed $value, array $params = []): mixed
     {
         if ($value && !is_numeric($value)) {
             $value = strtotime($value);

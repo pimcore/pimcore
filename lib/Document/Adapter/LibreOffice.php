@@ -63,7 +63,7 @@ class LibreOffice extends Ghostscript
         return Console::getExecutable('soffice', true);
     }
 
-    public function load(Asset\Document $asset): Ghostscript|LibreOffice|\Pimcore\Document\Adapter|static
+    public function load(Asset\Document $asset): static
     {
         // avoid timeouts
         $maxExecTime = (int) ini_get('max_execution_time');

@@ -182,7 +182,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         $path = $this->id;
         if ($this->type === self::TYPE_ASSET && ($video = Asset::getById($this->id))) {
@@ -330,7 +330,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource(mixed $data): EditableInterface|Video|static
+    public function setDataFromResource(mixed $data): static
     {
         if (!empty($data)) {
             $data = \Pimcore\Tool\Serialize::unserialize($data);
@@ -348,7 +348,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode(mixed $data): EditableInterface|Video|static
+    public function setDataFromEditmode(mixed $data): static
     {
         if (isset($data['type'])
             && in_array($data['type'], self::ALLOWED_TYPES, true) === true

@@ -98,6 +98,13 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @internal
      *
+     * @deprecated
+     */
+    protected ?Element\AbstractElement $o_parent;
+
+    /**
+     * @internal
+     *
      * @var string
      */
     protected string $o_type = 'object';
@@ -344,11 +351,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * Static helper to get an object by the passed ID
      *
-     * @param int $id
-     *
-     * @return AbstractObject|null
      */
-    public static function getById(int $id): ?static
+    public static function getById(int $id, array $params = []): ?static
     {
         if (!is_numeric($id) || $id < 1) {
             return null;
@@ -415,7 +419,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $object;
     }
 
-    public static function getByPath(string $path, array $params = []): AbstractObject|Concrete|null|static
+    public static function getByPath(string $path, array $params = []): static|null
     {
         if (!$path) {
             return null;
@@ -1059,6 +1063,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     {
         $newParentId = $parent instanceof self ? $parent->getId() : 0;
         $this->setParentId($newParentId);
+        /** @var Element\AbstractElement $parent  */
         $this->parent = $parent;
 
         return $this;

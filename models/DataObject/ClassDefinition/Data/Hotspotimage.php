@@ -119,7 +119,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = []): array
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         if ($data instanceof DataObject\Data\Hotspotimage) {
             $imageId = null;
@@ -156,7 +156,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?DataObject\Data\Hotspotimage
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Hotspotimage
     {
         $imageId = $data[$this->getName() . '__image'];
         $image = Asset::getById($imageId);
@@ -220,7 +220,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): array
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -234,7 +234,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data instanceof DataObject\Data\Hotspotimage) {
             $imageId = null;
@@ -283,7 +283,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      *@see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): DataObject\Data\Hotspotimage
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\Hotspotimage
     {
         $rewritePath = function ($data) {
             if (!is_array($data)) {
@@ -337,7 +337,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): ?string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         if ($data instanceof DataObject\Data\Hotspotimage && $data->getImage() instanceof Asset\Image) {
             return '<img src="/admin/asset/get-image-thumbnail?id=' . $data->getImage()->getId() . '&width=100&height=100&aspectratio=true" />';
@@ -456,7 +456,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(/** mixed */ mixed $container, /** array */ array $idMapping, /** array */ array $params = []) /** :mixed */
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
         $this->doRewriteIds($container, $idMapping, $params, $data);

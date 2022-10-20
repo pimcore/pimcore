@@ -134,13 +134,13 @@ abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterfa
     }
 
     /** { @inheritdoc } */
-    public function marshalBeforeEncryption(/** mixed */ mixed $value, /**  Concrete */ Concrete $object = null, /** array */ array $params = []) /** : mixed */
+    public function marshalBeforeEncryption(mixed $value, /**  Concrete */ Concrete $object = null, array $params = []) /** : mixed */
     {
         return Serialize::serialize($value);
     }
 
     /** { @inheritdoc } */
-    public function unmarshalAfterDecryption(/** mixed */ mixed $value, /**  Concrete */ Concrete $object = null, /** array */ array $params = []) /** : mixed */
+    public function unmarshalAfterDecryption(mixed $value, /**  Concrete */ Concrete $object = null, array $params = []) /** : mixed */
     {
         return Serialize::unserialize($value);
     }

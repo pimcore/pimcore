@@ -45,7 +45,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->text;
     }
@@ -84,7 +84,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource(mixed $data): EditableInterface|Wysiwyg|static
+    public function setDataFromResource(mixed $data): static
     {
         $this->text = $data;
 
@@ -94,7 +94,7 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode(mixed $data): EditableInterface|Wysiwyg|static
+    public function setDataFromEditmode(mixed $data): static
     {
         $this->text = $data;
 

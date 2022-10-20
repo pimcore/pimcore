@@ -41,7 +41,7 @@ class Embed extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         return [
             'url' => $this->url,
@@ -110,7 +110,7 @@ class Embed extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource(mixed $data): EditableInterface|Embed|static
+    public function setDataFromResource(mixed $data): static
     {
         if (!empty($data)) {
             $data = \Pimcore\Tool\Serialize::unserialize($data);
@@ -124,7 +124,7 @@ class Embed extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode(mixed $data): EditableInterface|Embed|static
+    public function setDataFromEditmode(mixed $data): static
     {
         if ($data['url']) {
             $this->url = $data['url'];

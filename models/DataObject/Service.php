@@ -241,14 +241,6 @@ class Service extends Model\Element\Service
         return $new;
     }
 
-    /**
-     * @param Concrete $target
-     * @param Concrete $source
-     *
-     * @return Concrete
-     *
-     * @throws \Exception
-     */
     public function copyContents(Concrete $target, Concrete $source): Concrete
     {
         // check if the type is the same

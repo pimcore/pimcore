@@ -56,7 +56,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->id;
     }
@@ -155,7 +155,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource(mixed $data): EditableInterface|Snippet|static
+    public function setDataFromResource(mixed $data): static
     {
         if ((int)$data > 0) {
             $this->id = $data;
@@ -168,7 +168,7 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode(mixed $data): EditableInterface|Snippet|static
+    public function setDataFromEditmode(mixed $data): static
     {
         if ((int)$data > 0) {
             $this->id = $data;

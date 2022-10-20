@@ -44,7 +44,7 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode(mixed $data): Scheduledblock|EditableInterface|Block|static
+    public function setDataFromEditmode(mixed $data): static
     {
         $this->indices = $data;
 
@@ -62,7 +62,7 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    protected function setDefault(): Scheduledblock|Block|static
+    protected function setDefault(): static
     {
         if (empty($this->indices)) {
             $this->indices[] = [
@@ -162,7 +162,7 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function start(): Scheduledblock|static
+    public function start(): static
     {
         if ($this->getEditmode()) {
             // this is actually to add the block to the EditmodeEditableDefinitionCollector
@@ -252,7 +252,7 @@ class Scheduledblock extends Block implements BlockInterface
         return $list;
     }
 
-    public function setConfig(array $config): Scheduledblock|\Pimcore\Model\Document\Editable|Block|static
+    public function setConfig(array $config): static
     {
         $config['reload'] = true;
         parent::setConfig($config);

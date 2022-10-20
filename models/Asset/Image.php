@@ -436,8 +436,7 @@ EOT;
         return 0;
     }
 
-
-    public function setCustomSetting(string $key, mixed $value): Model\Asset|Image
+    public function setCustomSetting(string $key, mixed $value): static
     {
         if (in_array($key, ['focalPointX', 'focalPointY'])) {
             // if the focal point changes we need to clean all thumbnails on save

@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 
 class User extends Model\DataObject\ClassDefinition\Data\Select
@@ -82,7 +84,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         $this->init();
         if (!empty($data)) {

@@ -181,9 +181,9 @@ class Asset extends Element\AbstractElement
      * @param string $path
      * @param array $params
      *
-     * @return Asset|static|null
+     * @return static|null
      */
-    public static function getByPath(string $path, array $params = []): Asset|static|null
+    public static function getByPath(string $path, array $params = []): static|null
     {
         if (!$path) {
             return null;
@@ -220,7 +220,7 @@ class Asset extends Element\AbstractElement
         return true;
     }
 
-    public static function getById(int $id): ?static
+    public static function getById(int $id, array $params = []): ?static
     {
         if (!is_numeric($id) || $id < 1) {
             return null;
@@ -1171,7 +1171,7 @@ class Asset extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function getVersions(): ?array
+    public function getVersions(): array
     {
         if ($this->versions === null) {
             $this->setVersions($this->getDao()->getVersions());
@@ -1514,6 +1514,7 @@ class Asset extends Element\AbstractElement
 
     public function setParent(?ElementInterface $parent): static
     {
+        /** @var Pimcore\Model\Element\AbstractElement $parent */
         $this->parent = $parent;
         if ($parent instanceof Asset) {
             $this->parentId = $parent->getId();

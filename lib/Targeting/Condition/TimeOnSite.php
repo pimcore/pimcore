@@ -38,7 +38,7 @@ class TimeOnSite implements ConditionInterface, DataProviderDependentInterface
     /**
      * {@inheritdoc}
      */
-    public static function fromConfig(array $config): ConditionInterface|static
+    public static function fromConfig(array $config): static
     {
         $seconds = $config['seconds'] ?? 0;
         $seconds += ($config['minutes'] ?? 0) * 60;

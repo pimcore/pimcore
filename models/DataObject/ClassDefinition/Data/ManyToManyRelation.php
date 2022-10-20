@@ -199,7 +199,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * {@inheritdoc}
      */
-    protected function prepareDataForPersistence(array|Element\ElementInterface $data, Concrete $object = null, array $params = [])
+    protected function prepareDataForPersistence(array|Element\ElementInterface $data, Concrete $object = null, array $params = []): mixed
     {
         $return = [];
 
@@ -230,7 +230,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * {@inheritdoc}
      */
-    protected function loadData(array $data, Concrete $object = null, array $params = [])
+    protected function loadData(array $data, Concrete $object = null, array $params = []): mixed
     {
         $elements = [
             'dirty' => false,
@@ -267,7 +267,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         //return null when data is not set
         if (!$data) {
@@ -299,7 +299,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\AbstractObject $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         $return = [];
 
@@ -334,7 +334,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): ?array
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         //if not set, return null
         if ($data === null || $data === false) {
@@ -397,7 +397,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): ?string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         if (is_array($data) && count($data) > 0) {
             $paths = [];
@@ -527,7 +527,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * { @inheritdoc }
      */
-    public function preGetData(/** mixed */ mixed $container, /** array */ array $params = []) // : mixed
+    public function preGetData(mixed $container, array $params = []) : mixed
     {
         $data = null;
         if ($container instanceof DataObject\Concrete) {
@@ -569,7 +569,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * { @inheritdoc }
      */
-    public function preSetData(/** mixed */ mixed $container, /**  mixed */ mixed $data, /** array */ array $params = []) // : mixed
+    public function preSetData(mixed $container, /**  mixed */ mixed $data, array $params = []) : mixed
     {
         if ($data === null) {
             $data = [];
@@ -663,7 +663,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(/** mixed */ mixed $container, /** array */ array $idMapping, /** array */ array $params = []) /** :mixed */
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
         $data = $this->rewriteIdsService($data, $idMapping);
@@ -824,7 +824,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * {@inheritdoc}
      */
-    public function getDiffDataForEditMode(mixed $data, $object = null, array $params = []): ?array
+    public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         $originalData = $data;
         $data = parent::getDiffDataForEditMode($data, $object, $params);

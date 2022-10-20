@@ -43,7 +43,7 @@ class Select extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->text;
     }
@@ -64,7 +64,7 @@ class Select extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource(mixed $data): EditableInterface|Select|static
+    public function setDataFromResource(mixed $data): static
     {
         $this->text = $data;
 
@@ -74,7 +74,7 @@ class Select extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode(mixed $data): EditableInterface|Select|static
+    public function setDataFromEditmode(mixed $data): static
     {
         $this->text = $data;
 

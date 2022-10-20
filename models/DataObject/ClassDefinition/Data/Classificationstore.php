@@ -176,14 +176,14 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * @param mixed $data
-     * @param null|DataObject\AbstractObject $object
+     * @param Concrete|null $object
      * @param array $params
      *
      * @return array
+     * @throws \Exception
      * @see Data::getDataForEditmode
-     *
      */
-    public function getDataForEditmode(mixed $data, DataObject\AbstractObject $object = null, array $params = []): array
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         if (!$data instanceof DataObject\Classificationstore) {
             return [];
@@ -338,7 +338,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      *@see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): DataObject\Classificationstore
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Classificationstore
     {
         $classificationStore = $this->getDataFromObjectParam($object);
 
@@ -415,7 +415,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         // this is handled directly in the template
         // /bundles/AdminBundle/templates/admin/data_object/data_object/preview_version.html.twig
@@ -566,7 +566,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * { @inheritdoc }
      */
-    public function preGetData(/** mixed */ mixed $container, /** array */ array $params = []) // : mixed
+    public function preGetData(mixed $container, array $params = []) : mixed
     {
         if (!$container instanceof DataObject\Concrete) {
             throw new \Exception('Classification store fields are only valid in Objects');
@@ -754,7 +754,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      *
      * @throws \Exception
      */
-    public function getDiffDataForEditmode(mixed $data, $object = null, array $params = []): ?array
+    public function getDiffDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         throw new \Exception('not supported');
     }
@@ -934,7 +934,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): LayoutDefinitionEnrichmentInterface|Classificationstore|static // : static
+    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): static // : static
     {
         $this->activeGroupDefinitions = [];
         $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);

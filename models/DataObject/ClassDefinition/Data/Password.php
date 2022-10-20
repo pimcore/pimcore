@@ -152,7 +152,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         if (empty($data)) {
             return null;
@@ -284,7 +284,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $data;
     }
@@ -298,7 +298,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -312,7 +312,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): string
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return $data;
     }
@@ -326,7 +326,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): string
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return $data;
     }
@@ -340,7 +340,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return '******';
     }

@@ -21,6 +21,7 @@ use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
@@ -164,7 +165,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = []): array
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         if ($data instanceof DataObject\Data\QuantityValueRange) {
             return [
@@ -186,7 +187,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?DataObject\Data\QuantityValueRange
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\QuantityValueRange
     {
         if (isset($data[$this->getName() . '__minimum'], $data[$this->getName() . '__maximum'], $data[$this->getName() . '__unit'])) {
             $quantityValueRange = new DataObject\Data\QuantityValueRange(
@@ -208,11 +209,11 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * @param Concrete|null $object
+     * @param DataObject\Concrete|null $object
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, Concrete $object = null, array $params = []): array
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -222,7 +223,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data instanceof DataObject\Data\QuantityValueRange) {
             return [
@@ -236,11 +237,13 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * @param DataObject\Concrete $object
+     * @param mixed $data
+     * @param DataObject\Concrete|null $object
+     * @param array $params
+     * @return DataObject\Data\QuantityValueRange|null
      * @see Data::getDataFromEditmode
-     *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): ?DataObject\Data\QuantityValueRange
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\QuantityValueRange
     {
         if (\is_array($data) && (isset($data['minimum']) || isset($data['maximum']) || isset($data['unit']))) {
             if ($data['unit'] === -1 || empty($data['unit'])) {
@@ -263,7 +266,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof DataObject\Data\QuantityValueRange) {
             return $data->__toString();

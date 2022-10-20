@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Normalizer\NormalizerInterface;
+use Pimcore\Model\DataObject;
 
 class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
@@ -157,7 +158,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $data;
     }
@@ -171,21 +172,21 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $data;
     }
 
     /**
      * @param mixed $data
-     * @param Concrete|null $object
+     * @param DataObject\Concrete|null $object
      * @param array $params
      *
      * @return string|null
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, Concrete $object = null, array $params = []): ?string
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $data;
     }
@@ -199,7 +200,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -213,7 +214,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): string
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return $data;
     }

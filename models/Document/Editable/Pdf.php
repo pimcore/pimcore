@@ -43,7 +43,7 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         return [
             'id' => $this->id,
@@ -126,7 +126,7 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource(mixed $data): Pdf|EditableInterface|static
+    public function setDataFromResource(mixed $data): static
     {
         if (!empty($data)) {
             $data = \Pimcore\Tool\Serialize::unserialize($data);
@@ -140,7 +140,7 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode(mixed $data): Pdf|EditableInterface|static
+    public function setDataFromEditmode(mixed $data): static
     {
         $pdf = Asset::getById($data['id']);
         if ($pdf instanceof Asset\Document) {

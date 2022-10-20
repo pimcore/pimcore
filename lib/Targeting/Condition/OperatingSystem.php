@@ -46,7 +46,7 @@ class OperatingSystem extends AbstractVariableCondition implements DataProviderD
     /**
      * {@inheritdoc}
      */
-    public static function fromConfig(array $config): ConditionInterface|static
+    public static function fromConfig(array $config): static
     {
         return new static($config['system'] ?? null);
     }

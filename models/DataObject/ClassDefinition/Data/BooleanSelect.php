@@ -164,7 +164,7 @@ class BooleanSelect extends Data implements
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?bool
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?bool
     {
         if (is_numeric($data)) {
             $data = (int) $data;
@@ -188,7 +188,7 @@ class BooleanSelect extends Data implements
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): ?int
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -202,7 +202,7 @@ class BooleanSelect extends Data implements
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = []): ?int
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
     {
         if (is_numeric($data)) {
             $data = (bool) $data;
@@ -252,7 +252,7 @@ class BooleanSelect extends Data implements
      *
      * @return array|null
      */
-    public function getDiffDataForEditMode(mixed $data, $object = null, array $params = []): ?array
+    public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         $result = [];
 
@@ -386,7 +386,7 @@ class BooleanSelect extends Data implements
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): int
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): int
     {
         if ($data === true) {
             return self::YES_VALUE;
@@ -419,7 +419,7 @@ class BooleanSelect extends Data implements
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): ?bool
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?bool
     {
         if ((int)$data === 1) {
             return true;

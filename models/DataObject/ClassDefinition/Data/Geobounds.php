@@ -125,7 +125,7 @@ class Geobounds extends AbstractGeo implements
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?DataObject\Data\Geobounds
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Geobounds
     {
         if ($data[$this->getName() . '__NElongitude'] && $data[$this->getName() . '__NElatitude'] && $data[$this->getName() . '__SWlongitude'] && $data[$this->getName() . '__SWlatitude']) {
             $ne = new DataObject\Data\GeoCoordinates($data[$this->getName() . '__NElatitude'], $data[$this->getName() . '__NElongitude']);
@@ -154,7 +154,7 @@ class Geobounds extends AbstractGeo implements
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): array
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -168,7 +168,7 @@ class Geobounds extends AbstractGeo implements
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data instanceof DataObject\Data\Geobounds) {
             return [
@@ -203,7 +203,7 @@ class Geobounds extends AbstractGeo implements
      *@see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): ?DataObject\Data\Geobounds
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Geobounds
     {
         if ($data['NElongitude'] !== null && $data['NElatitude'] !== null && $data['SWlongitude'] !== null && $data['SWlatitude'] !== null) {
             $ne = new DataObject\Data\GeoCoordinates($data['NElatitude'], $data['NElongitude']);
@@ -224,7 +224,7 @@ class Geobounds extends AbstractGeo implements
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof DataObject\Data\Geobounds) {
             return $data->getNorthEast()->getLongitude() . ',' . $data->getNorthEast()->getLatitude() . ' ' . $data->getSouthWest()->getLongitude() . ',' . $data->getSouthWest()->getLatitude();

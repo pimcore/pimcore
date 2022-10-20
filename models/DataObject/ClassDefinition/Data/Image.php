@@ -22,6 +22,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
+use Pimcore\Model\DataObject;
 
 class Image extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
 {
@@ -66,7 +67,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = []): ?int
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
     {
         if ($data instanceof Asset\Image) {
             return $data->getId();
@@ -84,7 +85,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?Asset
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Asset
     {
         if ((int)$data > 0) {
             return Asset\Image::getById($data);
@@ -102,7 +103,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): ?int
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
     {
         if ($data instanceof Asset\Image) {
             return $data->getId();
@@ -120,7 +121,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\AbstractObject $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data instanceof Asset\Image) {
             return $data->getObjectVars();
@@ -150,7 +151,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *@see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): ?Asset\Image
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Asset\Image
     {
         if ($data && (int)$data['id'] > 0) {
             return Asset\Image::getById($data['id']);
@@ -197,7 +198,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): ?string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         if ($data instanceof Asset\Image) {
             return '<img src="/admin/asset/get-image-thumbnail?id=' . $data->getId() . '&width=100&height=100&aspectratio=true" />';
@@ -289,7 +290,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(/** mixed */ mixed $container, /** array */ array $idMapping, /** array */ array $params = []) /** :mixed */
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
         if ($data instanceof Asset\Image) {

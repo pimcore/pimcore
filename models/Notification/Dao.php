@@ -85,7 +85,7 @@ class Dao extends AbstractDao
     /**
      * @param array $data
      */
-    protected function assignVariablesToModel($data)
+    protected function assignVariablesToModel(array $data): void
     {
         $model = $this->getModel();
         $sender = null;

@@ -77,7 +77,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         return [
             'id' => $this->id,
@@ -168,7 +168,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource(mixed $data): EditableInterface|Renderlet|static
+    public function setDataFromResource(mixed $data): static
     {
         $data = \Pimcore\Tool\Serialize::unserialize($data);
 
@@ -184,7 +184,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode(mixed $data): EditableInterface|Renderlet|static
+    public function setDataFromEditmode(mixed $data): static
     {
         if (is_array($data) && isset($data['id'])) {
             $this->id = $data['id'];

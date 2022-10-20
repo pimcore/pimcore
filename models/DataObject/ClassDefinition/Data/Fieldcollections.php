@@ -103,7 +103,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): array
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         $editmodeData = [];
         $idx = -1;
@@ -159,7 +159,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      *@see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): DataObject\Fieldcollection
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Fieldcollection
     {
         $values = [];
         $count = 0;
@@ -237,7 +237,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return 'FIELDCOLLECTIONS';
     }
@@ -437,7 +437,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * { @inheritdoc }
      */
-    public function preGetData(/** mixed */ mixed $container, /** array */ array $params = []) // : mixed
+    public function preGetData(mixed $container, array $params = []) : mixed
     {
         if (!$container instanceof DataObject\Concrete) {
             throw new \Exception('Field Collections are only valid in Objects');
@@ -463,7 +463,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * { @inheritdoc }
      */
-    public function preSetData(/** mixed */ mixed $container, /**  mixed */ mixed $data, /** array */ array $params = []) // : mixed
+    public function preSetData(mixed $container, /**  mixed */ mixed $data, array $params = []) : mixed
     {
         $this->markLazyloadedFieldAsLoaded($container);
 
@@ -580,7 +580,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(/** mixed */ mixed $container, /** array */ array $idMapping, /** array */ array $params = []) /** :mixed */
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
 

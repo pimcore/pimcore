@@ -83,7 +83,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     /**
      * {@inheritdoc}
      */
-    protected function prepareDataForPersistence(array|Element\ElementInterface $data, Concrete $object = null, array $params = [])
+    protected function prepareDataForPersistence(array|Element\ElementInterface $data, Concrete $object = null, array $params = []): mixed
     {
         $return = [];
 
@@ -115,7 +115,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     /**
      * {@inheritdoc}
      */
-    protected function loadData(array $data, Concrete $object = null, array $params = [])
+    protected function loadData(array $data, Concrete $object = null, array $params = []): mixed
     {
         $list = [
             'dirty' => false,
@@ -210,7 +210,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      *
      * @throws \Exception
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         //return null when data is not set
         if (!$data) {
@@ -243,7 +243,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): bool|array|null
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): bool|array|null
     {
         $return = [];
 
@@ -371,7 +371,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): ?array
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         //if not set, return null
         if ($data === null || $data === false) {
@@ -448,7 +448,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): ?string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         $items = [];
         if (is_array($data) && count($data) > 0) {
@@ -647,7 +647,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     /**
      * { @inheritdoc }
      */
-    public function preGetData(/** mixed */ mixed $container, /** array */ array $params = []) // : mixed
+    public function preGetData(mixed $container, array $params = []) : mixed
     {
         $data = null;
         if ($container instanceof DataObject\Concrete) {
@@ -770,7 +770,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(/** mixed */ mixed $container, /** array */ array $idMapping, /** array */ array $params = []) /** :mixed */
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
 
@@ -936,7 +936,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     /**
      * {@inheritdoc}
      */
-    public function getDiffDataForEditMode(mixed $data, $object = null, array $params = []): ?array
+    public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         $data = parent::getDiffDataForEditMode($data, $object, $params);
 
@@ -978,9 +978,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      */
     protected function buildUniqueKeyForAppending(ElementInterface $item): string
     {
-        $element = $item->getElement();
-        $elementType = Element\Service::getElementType($element);
-        $id = $element->getId();
+        $elementType = Element\Service::getElementType($item);
+        $id = $item->getId();
 
         return $elementType . $id;
     }

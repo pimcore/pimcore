@@ -25,7 +25,7 @@ class Folder extends UserRole\Folder
     protected string $type = 'userfolder';
 
 
-    public function getChildren(): ?array
+    public function getChildren(): array
     {
         if ($this->children === null) {
             if ($this->getId()) {

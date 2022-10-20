@@ -465,7 +465,7 @@ class Service extends Model\Element\Service
      *
      * @throws \Exception
      */
-    public static function getUniqueKey(ElementInterface $element): string
+    public static function getUniqueKey(ElementInterface $element, int $nr = 0): string
     {
         $list = new Listing();
         $key = Element\Service::getValidKey($element->getKey(), 'asset');

@@ -59,7 +59,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->indices;
     }
@@ -85,7 +85,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource(mixed $data): EditableInterface|Block|static
+    public function setDataFromResource(mixed $data): static
     {
         $this->indices = \Pimcore\Tool\Serialize::unserialize($data);
 
@@ -95,7 +95,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode(mixed $data): EditableInterface|Block|static
+    public function setDataFromEditmode(mixed $data): static
     {
         $this->indices = $data;
 
@@ -344,7 +344,7 @@ EOT;
     }
 
 
-    public function setConfig(array $config): Model\Document\Editable|Block|static
+    public function setConfig(array $config): static
     {
         if (empty($config['limit'])) {
             $config['limit'] = 1000000;

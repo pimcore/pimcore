@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
@@ -349,7 +350,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = []): float|int|string|null
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): float|int|string|null
     {
         $data = $this->handleDefaultValue($data, $object, $params);
 
@@ -370,7 +371,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): float|int|string|null
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): float|int|string|null
     {
         if (is_numeric($data)) {
             return $this->toNumeric($data);
@@ -404,21 +405,21 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *@see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): float|int|string|null
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): float|int|string|null
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
     /**
      * @param mixed $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return float|int|string|null
      *@see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, DataObject\AbstractObject $object = null, array $params = []): float|int|string|null
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): float|int|string|null
     {
         return $this->getDataFromResource($data, $object, $params);
     }
@@ -432,7 +433,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *@see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): float|int|string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): float|int|string
     {
         return $data;
     }
@@ -549,7 +550,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * { @inheritdoc }
      */
-    public function preSetData(/** mixed */ mixed $container, /**  mixed */ mixed $data, /** array */ array $params = []) // : mixed
+    public function preSetData(mixed $container, /**  mixed */ mixed $data, array $params = []) : mixed
     {
         if (!is_null($data) && $this->getDecimalPrecision()) {
             $data = round($data, $this->getDecimalPrecision());

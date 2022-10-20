@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Data\InputQuantityValue as InputQuantityValueDataObject;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 
@@ -70,7 +72,7 @@ class InputQuantityValue extends QuantityValue
      *
      * @return InputQuantityValueDataObject|null
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?InputQuantityValueDataObject
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?InputQuantityValueDataObject
     {
         if ($data[$this->getName() . '__value'] || $data[$this->getName() . '__unit']) {
             $dataObject = $this->getNewDataObject($data[$this->getName() . '__value'], $data[$this->getName() . '__unit']);
@@ -89,12 +91,12 @@ class InputQuantityValue extends QuantityValue
 
     /**
      * @param mixed $data
-     * @param Model\DataObject\Concrete|null $object
+     * @param DataObject\Concrete|null $object
      * @param array $params
      *
      * @return InputQuantityValueDataObject|null
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): ?InputQuantityValueDataObject
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?InputQuantityValueDataObject
     {
         if ($data['value'] || $data['unit']) {
             if (empty($data['unit']) || $data['unit'] == -1) {

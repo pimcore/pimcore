@@ -22,7 +22,7 @@ use Pimcore\Model\Element\Service;
 class Document extends Data
 {
 
-    public function normalize(mixed $value, array $params = [])
+    public function normalize(mixed $value, array $params = []): mixed
     {
         $element = Service::getElementByPath('document', $value);
         if ($element) {
@@ -33,7 +33,7 @@ class Document extends Data
     }
 
 
-    public function denormalize(mixed $value, array $params = [])
+    public function denormalize(mixed $value, array $params = []): mixed
     {
         $element = null;
         if (is_numeric($value)) {
@@ -110,7 +110,7 @@ class Document extends Data
     }
 
 
-    public function getDataForEditMode(mixed $data, array $params = [])
+    public function getDataForEditMode(mixed $data, array $params = []): mixed
     {
         if (is_numeric($data)) {
             $data = Service::getElementById('document', $data);

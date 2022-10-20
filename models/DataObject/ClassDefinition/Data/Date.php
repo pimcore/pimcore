@@ -78,7 +78,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = []): ?int
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
     {
         $data = $this->handleDefaultValue($data, $object, $params);
 
@@ -103,7 +103,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?Carbon
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Carbon
     {
         if ($data) {
             if ($this->getColumnType() == 'date') {
@@ -130,7 +130,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): ?int
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -144,7 +144,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): ?int
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
     {
         if ($data) {
             return $data->getTimestamp();
@@ -170,7 +170,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *@see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): ?Carbon
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Carbon
     {
         if (is_numeric($data)) {
             return $this->getDateFromTimestamp($data / 1000);
@@ -220,7 +220,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof \DateTimeInterface) {
             return $data->format('Y-m-d');

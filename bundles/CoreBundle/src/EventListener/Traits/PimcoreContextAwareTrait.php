@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 trait PimcoreContextAwareTrait
 {
-    private PimcoreContextResolver $pimcoreContextResolver;
+    private ?PimcoreContextResolver $pimcoreContextResolver = null;
 
     /**
      * @required

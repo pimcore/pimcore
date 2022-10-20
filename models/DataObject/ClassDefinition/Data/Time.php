@@ -18,6 +18,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject;
 
 class Time extends Model\DataObject\ClassDefinition\Data\Input
 {

@@ -46,7 +46,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         // update path if internal link
         $this->updatePathFromInternal(true);
@@ -356,7 +356,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource(mixed $data): Link|EditableInterface|static
+    public function setDataFromResource(mixed $data): static
     {
         $this->data = \Pimcore\Tool\Serialize::unserialize($data);
         if (!is_array($this->data)) {
@@ -369,7 +369,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode(mixed $data): Link|EditableInterface|static
+    public function setDataFromEditmode(mixed $data): static
     {
         if (!is_array($data)) {
             $data = [];

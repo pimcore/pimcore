@@ -34,7 +34,7 @@ class Url extends AbstractVariableCondition implements ConditionInterface
     /**
      * {@inheritdoc}
      */
-    public static function fromConfig(array $config): ConditionInterface|static
+    public static function fromConfig(array $config): static
     {
         return new static($config['url'] ?? null);
     }

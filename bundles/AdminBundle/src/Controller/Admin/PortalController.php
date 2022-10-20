@@ -38,11 +38,6 @@ class PortalController extends AdminController implements KernelControllerEventI
 {
     protected ?\Pimcore\Helper\Dashboard $dashboardHelper = null;
 
-    /**
-     * @param Request $request
-     *
-     * @return \array[][]
-     */
     protected function getCurrentConfiguration(Request $request): array
     {
         return $this->dashboardHelper->getDashboard($request->get('key'));

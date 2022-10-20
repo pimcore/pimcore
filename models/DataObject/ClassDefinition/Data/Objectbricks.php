@@ -90,7 +90,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): array
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         $editmodeData = [];
 
@@ -253,14 +253,14 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
     /**
      * @param mixed $data
-     * @param null|DataObject\AbstractObject $object
+     * @param Concrete|null $object
      * @param array $params
      *
      * @return Objectbrick\Data\AbstractData
-     *@see Data::getDataFromEditmode
-     *
+     * @throws \Exception
+     * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, DataObject\AbstractObject $object = null, array $params = []): Objectbrick\Data\AbstractData
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): Objectbrick\Data\AbstractData
     {
         $container = $this->getDataFromObjectParam($object);
 
@@ -321,7 +321,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         // this is handled directly in the template
         // /bundles/AdminBundle/templates/admin/data_object/data_object/preview_version.html.twig
@@ -421,7 +421,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     /**
      * { @inheritdoc }
      */
-    public function preSetData(/** mixed */ mixed $container, /**  mixed */ mixed $data, /** array */ array $params = []) // : mixed
+    public function preSetData(mixed $container, /**  mixed */ mixed $data, array $params = []) : mixed
     {
         if ($data instanceof DataObject\Objectbrick) {
             $data->setFieldname($this->getName());
@@ -768,7 +768,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(/** mixed */ mixed $container, /** array */ array $idMapping, /** array */ array $params = []) /** :mixed */
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
 

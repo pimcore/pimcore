@@ -266,7 +266,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         return $itemKey;
     }
 
-    public function clear()
+    public function clear(): void
     {
         $this->items = [];
         $this->giftItems = [];
@@ -280,10 +280,10 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     /**
      * @param string $countSubItems - use one of COUNT_MAIN_ITEMS_ONLY, COUNT_MAIN_OR_SUB_ITEMS, COUNT_MAIN_AND_SUB_ITEMS
      *
-     * @return float|int|null
+     * @return int
      * @throws InvalidConfigException
      */
-    public function getItemAmount(string $countSubItems = self::COUNT_MAIN_ITEMS_ONLY): float|int|null
+    public function getItemAmount(string $countSubItems = self::COUNT_MAIN_ITEMS_ONLY): int
     {
         switch ($countSubItems) {
             case self::COUNT_MAIN_OR_SUB_ITEMS:
@@ -352,10 +352,10 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     /**
      * @param string $countSubItems - use one of COUNT_MAIN_ITEMS_ONLY, COUNT_MAIN_OR_SUB_ITEMS, COUNT_MAIN_AND_SUB_ITEMS
      *
-     * @return int|null
+     * @return int
      * @throws InvalidConfigException
      */
-    public function getItemCount(string $countSubItems = self::COUNT_MAIN_ITEMS_ONLY): ?int
+    public function getItemCount(string $countSubItems = self::COUNT_MAIN_ITEMS_ONLY): int
     {
         switch ($countSubItems) {
             case self::COUNT_MAIN_OR_SUB_ITEMS:
@@ -410,7 +410,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         }
     }
 
-    public function getItems(): ?array
+    public function getItems(): array
     {
         $this->items = $this->items ? $this->items : [];
 
@@ -464,7 +464,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         $this->modified();
     }
 
-    public function removeItem(string $itemKey)
+    public function removeItem(string $itemKey): void
     {
         //load items first in order to lazyload items (if they are lazy loaded)
         $this->getItems();
@@ -475,7 +475,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         $this->modified();
     }
 
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -506,7 +506,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         return $this->id;
     }
 
-    public function getCreationDate(): ?\DateTime
+    public function getCreationDate(): \DateTime
     {
         if (empty($this->creationDate) && $this->creationDateTimestamp) {
             $this->creationDate = new \DateTime();
@@ -519,7 +519,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     /**
      * @param \DateTime|null $creationDate
      */
-    public function setCreationDate(\DateTime $creationDate = null)
+    public function setCreationDate(\DateTime $creationDate = null): void
     {
         $this->creationDate = $creationDate;
         if ($creationDate) {
@@ -553,7 +553,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     /**
      * @param \DateTime|null $modificationDate
      */
-    public function setModificationDate(\DateTime $modificationDate = null)
+    public function setModificationDate(\DateTime $modificationDate = null): void
     {
         $this->modificationDate = $modificationDate;
         if ($modificationDate) {
@@ -608,7 +608,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         $this->checkoutData[$key] = $value;
     }
 
-    public function getPriceCalculator(): ?CartPriceCalculatorInterface
+    public function getPriceCalculator(): CartPriceCalculatorInterface
     {
         if (empty($this->priceCalculator)) {
             $this->priceCalculator = Factory::getInstance()->getCartManager()->getCartPriceCalculator($this);

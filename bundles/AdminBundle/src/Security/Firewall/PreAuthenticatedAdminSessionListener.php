@@ -57,7 +57,7 @@ class PreAuthenticatedAdminSessionListener
             $user = new User($pimcoreUser);
 
             $token = new PreAuthenticatedAdminToken($user, $this->providerKey);
-            $token->setUser($user->getUserIdentifier());
+            $token->setUser($user->getUserIdentifier()); // @phpstan-ignore-line
 
             try {
                 $authenticatedToken = $this->authenticationManager->authenticate($token);

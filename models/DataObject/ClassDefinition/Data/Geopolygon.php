@@ -64,7 +64,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = []): string
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return Serialize::serialize($data);
     }
@@ -112,7 +112,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?array
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         return Serialize::unserialize($data);
     }
@@ -126,7 +126,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): string
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -140,7 +140,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if (!empty($data)) {
             if (is_array($data)) {
@@ -168,7 +168,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      *@see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): ?array
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if (is_array($data)) {
             $points = [];
@@ -191,7 +191,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return $this->getDiffVersionPreview($data, $object, $params);
     }

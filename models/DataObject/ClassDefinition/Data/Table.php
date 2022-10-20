@@ -250,7 +250,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         if (empty($data)) {
             // if it is empty then there is no need to serialize anything
@@ -274,7 +274,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): array
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         $unserializedData = Serialize::unserialize((string) $data);
 
@@ -317,7 +317,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): string
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if (!empty($data)) {
             $tmpLine = [];
@@ -344,7 +344,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if (is_array($data)) {
             //make sure only array values are used of edit mode (other wise ext stores do not work anymore)
@@ -375,7 +375,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): ?array
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         // check for empty data
         $checkData = '';

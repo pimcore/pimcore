@@ -17,7 +17,9 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
@@ -98,7 +100,7 @@ class RgbaColor extends Data implements
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = []): array
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         if ($data instanceof Model\DataObject\Data\RgbaColor) {
             $rgb = sprintf('%02x%02x%02x', $data->getR(), $data->getG(), $data->getB());
@@ -125,7 +127,7 @@ class RgbaColor extends Data implements
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?Model\DataObject\Data\RgbaColor
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\RgbaColor
     {
         if (is_array($data) && isset($data[$this->getName() . '__rgb']) && isset($data[$this->getName() . '__a'])) {
             list($r, $g, $b) = sscanf($data[$this->getName() . '__rgb'], '%02x%02x%02x');
@@ -155,7 +157,7 @@ class RgbaColor extends Data implements
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): array
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -169,7 +171,7 @@ class RgbaColor extends Data implements
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         if ($data instanceof  Model\DataObject\Data\RgbaColor) {
             $rgba = sprintf('#%02x%02x%02x%02x', $data->getR(), $data->getG(), $data->getB(), $data->getA());
@@ -182,14 +184,13 @@ class RgbaColor extends Data implements
 
     /**
      * @param mixed $data
-     * @param null|Model\DataObject\Concrete $object
+     * @param DataObject\Concrete|null $object
      * @param array $params
      *
      * @return Model\DataObject\Data\RgbaColor|null
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): ?Model\DataObject\Data\RgbaColor
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\RgbaColor
     {
         if ($data) {
             $data = trim($data, '# ');
@@ -275,7 +276,7 @@ class RgbaColor extends Data implements
      *
      * @return string|null
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): ?string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         if ($data instanceof  Model\DataObject\Data\RgbaColor) {
             $value = $data->getHex(true, true);
@@ -384,13 +385,13 @@ class RgbaColor extends Data implements
     }
 
     /** { @inheritdoc } */
-    public function marshalBeforeEncryption(/** mixed */ mixed $value, /**  Concrete */ Concrete $object = null, /** array */ array $params = []) /** : mixed */
+    public function marshalBeforeEncryption(mixed $value, /**  Concrete */ Concrete $object = null, array $params = []) /** : mixed */
     {
         return Serialize::serialize($value);
     }
 
     /** { @inheritdoc } */
-    public function unmarshalAfterDecryption(/** mixed */ mixed $value, /**  Concrete */ Concrete $object = null, /** array */ array $params = []) /** : mixed */
+    public function unmarshalAfterDecryption(mixed $value, /**  Concrete */ Concrete $object = null, array $params = []) /** : mixed */
     {
         return Serialize::unserialize($value);
     }

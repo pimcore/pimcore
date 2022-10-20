@@ -21,6 +21,7 @@ use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
@@ -77,7 +78,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = []): ?int
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
     {
         $data = $this->handleDefaultValue($data, $object, $params);
 
@@ -102,7 +103,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?Carbon
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Carbon
     {
         if ($data) {
             if ($this->getColumnType() == 'datetime') {
@@ -129,7 +130,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): ?int
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -143,7 +144,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): ?int
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
     {
         if ($data) {
             return $data->getTimestamp();
@@ -169,7 +170,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): ?Carbon
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Carbon
     {
         if (is_numeric($data)) {
             return $this->getDateFromTimestamp($data / 1000);
@@ -310,7 +311,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @return array|null
      */
-    public function getDiffDataForEditMode(mixed $data, $object = null, array $params = []): ?array
+    public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         $result = [];
 

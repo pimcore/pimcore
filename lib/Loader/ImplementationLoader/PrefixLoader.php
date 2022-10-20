@@ -68,7 +68,7 @@ class PrefixLoader extends AbstractClassNameLoader
     }
 
 
-    protected function getClassName(string $name): ?string
+    protected function getClassName(string $name): string
     {
         return $this->findClassName($name);
     }

@@ -56,7 +56,7 @@ class Area extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         return [
             'type' => $this->type,
@@ -212,7 +212,7 @@ class Area extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource(mixed $data): Area|EditableInterface|static
+    public function setDataFromResource(mixed $data): static
     {
         if (strlen($data) > 2) {
             $data = Serialize::unserialize($data);
@@ -226,7 +226,7 @@ class Area extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode(mixed $data): Area|EditableInterface|static
+    public function setDataFromEditmode(mixed $data): static
     {
         if (is_array($data)) {
             $this->type = $data['type'] ?? null;

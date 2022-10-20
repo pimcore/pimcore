@@ -204,7 +204,7 @@ class Multiselect extends Data implements
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         if (is_array($data)) {
             return implode(',', $data);
@@ -222,7 +222,7 @@ class Multiselect extends Data implements
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?array
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if (strlen((string) $data)) {
             return explode(',', $data);
@@ -240,7 +240,7 @@ class Multiselect extends Data implements
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         if (!empty($data) && is_array($data)) {
             return ','.implode(',', $data).',';
@@ -258,7 +258,7 @@ class Multiselect extends Data implements
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         if (is_array($data)) {
             return implode(',', $data);
@@ -313,7 +313,7 @@ class Multiselect extends Data implements
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): string
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return $data;
     }
@@ -327,7 +327,7 @@ class Multiselect extends Data implements
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): ?string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         if (is_array($data)) {
             return implode(',', array_map(function ($v) {
@@ -631,7 +631,7 @@ class Multiselect extends Data implements
     /**
      * { @inheritdoc }
      */
-    public function enrichFieldDefinition(/** array */ array $context = []): Multiselect|FieldDefinitionEnrichmentInterface|static
+    public function enrichFieldDefinition(array $context = []): static
         /** : static */
     {
         $this->doEnrichDefinitionDefinition(null, $this->getName(),
@@ -643,7 +643,7 @@ class Multiselect extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): Multiselect|LayoutDefinitionEnrichmentInterface|static // : static
+    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): static // : static
     {
         $this->doEnrichDefinitionDefinition($object, $this->getName(),
             'layout', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT, $context);

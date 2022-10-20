@@ -72,7 +72,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         $this->setElements();
 
@@ -80,7 +80,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     }
 
 
-    public function getDataForResource()
+    public function getDataForResource(): mixed
     {
         return $this->elementIds;
     }
@@ -130,7 +130,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource(mixed $data): Relations|EditableInterface|static
+    public function setDataFromResource(mixed $data): static
     {
         if ($data = \Pimcore\Tool\Serialize::unserialize($data)) {
             $this->setDataFromEditmode($data);
@@ -142,7 +142,7 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode(mixed $data): Relations|EditableInterface|static
+    public function setDataFromEditmode(mixed $data): static
     {
         if (is_array($data)) {
             $this->elementIds = $data;

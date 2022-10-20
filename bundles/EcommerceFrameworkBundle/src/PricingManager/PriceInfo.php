@@ -51,7 +51,7 @@ class PriceInfo implements PriceInfoInterface
         $this->environment = $environment;
     }
 
-    public function addRule(RuleInterface $rule): PriceSystemPriceInfoInterface|static
+    public function addRule(RuleInterface $rule): static
     {
         $this->rules[] = $rule;
 
@@ -63,7 +63,7 @@ class PriceInfo implements PriceInfoInterface
         return $this->environment;
     }
 
-    public function setEnvironment(EnvironmentInterface $environment): PriceInfoInterface|static
+    public function setEnvironment(EnvironmentInterface $environment): static
     {
         $this->environment = $environment;
 
@@ -186,7 +186,7 @@ class PriceInfo implements PriceInfoInterface
     /**
      * {@inheritdoc}
      */
-    public function setPriceSystem(PriceSystemInterface $priceSystem): PriceSystemPriceInfoInterface|static
+    public function setPriceSystem(PriceSystemInterface $priceSystem): static
     {
         $this->priceInfo->setPriceSystem($priceSystem);
 
@@ -196,7 +196,7 @@ class PriceInfo implements PriceInfoInterface
     /**
      * {@inheritdoc}
      */
-    public function setProduct(CheckoutableInterface $product): PriceSystemPriceInfoInterface|static
+    public function setProduct(CheckoutableInterface $product): static
     {
         $this->priceInfo->setProduct($product);
 
@@ -211,7 +211,7 @@ class PriceInfo implements PriceInfoInterface
         return $this->priceInfo->getProduct();
     }
 
-    public function setAmount(Decimal $amount): PriceInfoInterface|static
+    public function setAmount(Decimal $amount): static
     {
         $this->amount = $amount;
 

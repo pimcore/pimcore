@@ -37,7 +37,7 @@ class VisitedPagesBefore extends AbstractVariableCondition implements DataProvid
     /**
      * {@inheritdoc}
      */
-    public static function fromConfig(array $config): ConditionInterface|static
+    public static function fromConfig(array $config): static
     {
         return new static($config['number'] ?? 0);
     }

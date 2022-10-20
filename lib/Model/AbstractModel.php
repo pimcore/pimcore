@@ -50,7 +50,7 @@ abstract class AbstractModel implements ModelInterface
         return $this->dao;
     }
 
-    public function setDao(AbstractDao $dao): static
+    public function setDao(?AbstractDao $dao): static
     {
         $this->dao = $dao;
 

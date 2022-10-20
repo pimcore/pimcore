@@ -318,6 +318,14 @@ class Item extends Model\AbstractModel
                 }
             ),
             new class($this->element) extends TypeMatcher {
+
+                protected mixed $element;
+                public function __construct($element)
+                {
+                    $this->element = $element;
+                    parent::__construct($element);
+                }
+
                 /**
                  * @param mixed $element
                  *
@@ -326,7 +334,7 @@ class Item extends Model\AbstractModel
                 public function matches($element): bool
                 {
                     //compress only elements with full_dump_state = false
-                    return $element instanceof Element\ElementInterface && $element instanceof Element\ElementDumpStateInterface && !($element->isInDumpState());
+                    return $this->element instanceof Element\ElementInterface && $this->element instanceof Element\ElementDumpStateInterface && !($this->element->isInDumpState());
                 }
             }
         );

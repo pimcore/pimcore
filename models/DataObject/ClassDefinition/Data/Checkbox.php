@@ -103,7 +103,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): bool
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): bool
     {
         if (!is_null($data)) {
             $data = (bool) $data;
@@ -121,7 +121,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): ?int
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -135,7 +135,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): ?int
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -149,7 +149,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): bool
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): bool
     {
         return $this->getDataFromResource($data, $object, $params);
     }
@@ -163,7 +163,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return (string)$data;
     }

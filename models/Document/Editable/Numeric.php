@@ -43,7 +43,7 @@ class Numeric extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->number;
     }
@@ -69,7 +69,7 @@ class Numeric extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource(mixed $data): Numeric|EditableInterface|static
+    public function setDataFromResource(mixed $data): static
     {
         $this->number = $data;
 
@@ -79,7 +79,7 @@ class Numeric extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode(mixed $data): Numeric|EditableInterface|static
+    public function setDataFromEditmode(mixed $data): static
     {
         $this->number = $data;
 

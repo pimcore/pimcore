@@ -50,7 +50,7 @@ class SearchEngine extends AbstractVariableCondition implements ConditionInterfa
     /**
      * {@inheritdoc}
      */
-    public static function fromConfig(array $config): ConditionInterface|static
+    public static function fromConfig(array $config): static
     {
         return new static($config['searchengine'] ?? null);
     }

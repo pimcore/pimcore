@@ -119,7 +119,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * {@inheritdoc}
      */
-    protected function prepareDataForPersistence(array|Element\ElementInterface $data, Concrete $object = null, array $params = [])
+    protected function prepareDataForPersistence(array|Element\ElementInterface $data, Concrete $object = null, array $params = []): mixed
     {
         $return = [];
 
@@ -150,7 +150,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * {@inheritdoc}
      */
-    protected function loadData(array $data, Concrete $object = null, array $params = [])
+    protected function loadData(array $data, Concrete $object = null, array $params = []): mixed
     {
         $objects = [
             'dirty' => false,
@@ -180,7 +180,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         //return null when data is not set
         if (!$data) {
@@ -212,7 +212,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): array
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         $return = [];
 
@@ -242,7 +242,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): ?array
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         //if not set, return null
         if ($data === null || $data === false) {
@@ -418,7 +418,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return $dependencies;
     }
 
-    public function preGetData(/** mixed */ mixed $container, /** array */ array $params = []): array // : mixed
+    public function preGetData(mixed $container, array $params = []): array
     {
         $data = null;
         if ($container instanceof DataObject\Concrete) {
@@ -456,7 +456,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * { @inheritdoc }
      */
-    public function preSetData(/** mixed */ mixed $container, /**  mixed */ mixed $data, /** array */ array $params = []) // : mixed
+    public function preSetData(mixed $container, /**  mixed */ mixed $data, array $params = []) : mixed
     {
         if ($data === null) {
             $data = [];
@@ -513,8 +513,8 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(/** mixed */ mixed $container, /** array */ array $idMapping, /** array */ array $params = [])
-    /** :mixed */
+    public function rewriteIds(mixed $container, array $idMapping, array $params = [])
+   : mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
         $data = $this->rewriteIdsService($data, $idMapping);
@@ -534,7 +534,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): LayoutDefinitionEnrichmentInterface|ManyToManyObjectRelation|static // : static
+    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): static // : static
     {
         if (!$this->visibleFields) {
             return $this;
@@ -730,7 +730,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * {@inheritdoc}
      */
-    public function getDiffDataForEditMode(mixed $data, $object = null, array $params = []): ?array
+    public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         $originalData = $data;
         $data = parent::getDiffDataForEditMode($data, $object, $params);

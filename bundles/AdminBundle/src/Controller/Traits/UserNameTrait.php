@@ -30,6 +30,7 @@ trait UserNameTrait
      */
     protected function getUserName(int $userId): array
     {
+        /** @var User|null $user */
         $user = User::getById($userId);
 
         if (empty($user)) {

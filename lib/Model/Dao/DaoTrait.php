@@ -35,10 +35,7 @@ trait DaoTrait
         return $this;
     }
 
-    /**
-     * @param array $data
-     */
-    protected function assignVariablesToModel($data): void
+    protected function assignVariablesToModel(array $data): void
     {
         $this->model->setValues($data);
     }

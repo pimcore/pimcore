@@ -125,7 +125,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
             // we are even not able to render the error page, so we send the client a unicorn
             $response = 'Page not found. 🦄';
             $this->logger->emergency('Unable to render error page, exception thrown');
-            $this->logger->emergency($e);
+            $this->logger->emergency((string)$e);
         }
 
         $event->setResponse(new Response($response, $statusCode, $headers));

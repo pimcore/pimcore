@@ -68,7 +68,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         if ($data instanceof DataObject\Data\Link) {
             $data = clone $data;
@@ -106,7 +106,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
-    public function getDataFromResource(mixed $data, $object = null, array $params = []): ?DataObject\Data\Link
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Link
     {
         $link = Serialize::unserialize($data);
 
@@ -139,7 +139,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -153,7 +153,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if (!$data instanceof DataObject\Data\Link) {
             return null;
@@ -185,7 +185,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *@see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): ?DataObject\Data\Link
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Link
     {
         $link = new DataObject\Data\Link();
         $link->setValues($data);
@@ -218,7 +218,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return (string) $data;
     }
@@ -347,7 +347,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(/** mixed */ mixed $container, /** array */ array $idMapping, /** array */ array $params = []) /** :mixed */
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
         if ($data instanceof DataObject\Data\Link && $data->getLinktype() == 'internal') {

@@ -122,7 +122,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         return [
             'id' => $this->id,
@@ -301,7 +301,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource(mixed $data): EditableInterface|Image|static
+    public function setDataFromResource(mixed $data): static
     {
         if (strlen($data) > 2) {
             $data = Serialize::unserialize($data);
@@ -351,7 +351,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode(mixed $data): EditableInterface|Image|static
+    public function setDataFromEditmode(mixed $data): static
     {
         $rewritePath = function ($data) {
             if (!is_array($data)) {

@@ -720,6 +720,8 @@ class DataObjectHelperController extends AdminController
         } catch (\Exception $e) {
             Logger::error((string) $e);
         }
+
+        return null;
     }
 
     /**

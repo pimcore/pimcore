@@ -27,7 +27,7 @@ use Pimcore\Tool\Authentication;
  */
 class UserLoader
 {
-    protected UserModel $user;
+    protected ?UserModel $user = null;
 
     protected TokenStorageUserResolver $userResolver;
 

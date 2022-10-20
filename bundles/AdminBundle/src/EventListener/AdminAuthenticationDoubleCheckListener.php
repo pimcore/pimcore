@@ -41,14 +41,14 @@ class AdminAuthenticationDoubleCheckListener implements EventSubscriberInterface
     use ControllerTypeTrait;
     use PimcoreContextAwareTrait;
 
-    protected RequestMatcherFactory $requestMatcherFactory;
+    protected ?RequestMatcherFactory $requestMatcherFactory = null;
 
     protected array $unauthenticatedRoutes;
 
     /**
      * @var RequestMatcherInterface[]
      */
-    protected array $unauthenticatedMatchers;
+    protected ?array $unauthenticatedMatchers = null;
 
     protected TokenStorageUserResolver $tokenResolver;
 

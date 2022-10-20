@@ -81,7 +81,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->indices;
     }
@@ -279,7 +279,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource(mixed $data): EditableInterface|Areablock|static
+    public function setDataFromResource(mixed $data): static
     {
         $this->indices = Tool\Serialize::unserialize($data);
         if (!is_array($this->indices)) {
@@ -292,7 +292,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode(mixed $data): EditableInterface|Areablock|static
+    public function setDataFromEditmode(mixed $data): static
     {
         $this->indices = $data;
 
@@ -513,7 +513,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
 
-    public function setConfig(array $config): Document\Editable|Areablock|static
+    public function setConfig(array $config): static
     {
         // we need to set this here otherwise custom areaDir's won't work
         $this->config = $config;

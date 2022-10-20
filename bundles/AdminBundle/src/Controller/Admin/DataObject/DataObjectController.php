@@ -232,6 +232,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     protected function getTreeNodeConfig(ElementInterface $element): array
     {
+        /** @var DataObject $child */
         $child = $element;
 
         $tmpObject = [
@@ -1948,7 +1949,9 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                         $sessionBag['parentId'] = $newObject->getId();
                     }
                 } elseif ($request->get('type') == 'replace') {
-                    $this->_objectService->copyContents($target, $source);
+                    $concreteTarget = DataObject\Concrete::getById($target->getId());
+                    $concreteSource = DataObject\Concrete::getById($source->getId());
+                    $this->_objectService->copyContents($concreteTarget, $concreteSource);
                 }
 
                 $session->set($request->get('transactionId'), $sessionBag);

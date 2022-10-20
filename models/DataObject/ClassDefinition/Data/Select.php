@@ -222,7 +222,7 @@ class Select extends Data implements
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         $data = $this->handleDefaultValue($data, $object, $params);
 
@@ -252,7 +252,7 @@ class Select extends Data implements
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
-    public function getDataForQueryResource(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -266,7 +266,7 @@ class Select extends Data implements
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): ?string
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -280,7 +280,7 @@ class Select extends Data implements
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): ?string
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataFromResource($data, $object, $params);
     }
@@ -294,7 +294,7 @@ class Select extends Data implements
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
     }
@@ -314,7 +314,7 @@ class Select extends Data implements
      *
      * @return array|null
      */
-    public function getDiffDataForEditMode(mixed $data, $object = null, array $params = []): ?array
+    public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         $result = [];
 
@@ -406,7 +406,7 @@ class Select extends Data implements
     /**
      * { @inheritdoc }
      */
-    public function enrichFieldDefinition(/** array */ array $context = []): Select|FieldDefinitionEnrichmentInterface|static
+    public function enrichFieldDefinition(array $context = []): static
         /** : static */
     {
         $this->doEnrichDefinitionDefinition(null, $this->getName(),
@@ -418,7 +418,7 @@ class Select extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): Select|LayoutDefinitionEnrichmentInterface|static // : static
+    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): static // : static
     {
         $this->doEnrichDefinitionDefinition($object, $this->getName(),
             'layout', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT, $context);

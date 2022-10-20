@@ -20,7 +20,9 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
@@ -93,7 +95,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, $object = null, array $params = []): array
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         $result = [];
         if (is_array($data)) {
@@ -122,14 +124,13 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
     /**
      * @param mixed $data
-     * @param null|Model\DataObject\Concrete $object
+     * @param DataObject\Concrete|null $object
      * @param array $params
      *
      * @return Model\DataObject\Data\UrlSlug[]
-     *@see Data::getDataFromEditmode
-     *
+     * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): array
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         $result = [];
         if (is_array($data)) {
@@ -414,7 +415,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
 
-    public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
+    public function getDataForSearchIndex(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): string
     {
         return '';
     }
@@ -579,7 +580,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     /**
      * { @inheritdoc }
      */
-    public function preGetData(/** mixed */ mixed $container, /** array */ array $params = []) // : mixed
+    public function preGetData(mixed $container, array $params = []) : mixed
     {
         $data = null;
         if ($container instanceof Model\DataObject\Concrete) {
@@ -628,7 +629,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     /**
      * { @inheritdoc }
      */
-    public function preSetData(/** mixed */ mixed $container, /**  mixed */ mixed $data, /** array */ array $params = []) // : mixed
+    public function preSetData(mixed $container, /**  mixed */ mixed $data, array $params = []) : mixed
     {
         if ($data === null) {
             $data = [];

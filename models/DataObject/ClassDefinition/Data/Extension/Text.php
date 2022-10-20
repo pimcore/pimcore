@@ -46,14 +46,14 @@ trait Text
 
     /**
      * @param mixed $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return string
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, $object = null, array $params = []): string
+    public function getVersionPreview(mixed $data, Model\DataObject\Concrete $object = null, array $params = []): string
     {
         return htmlspecialchars((string)$data, ENT_QUOTES, 'UTF-8');
     }

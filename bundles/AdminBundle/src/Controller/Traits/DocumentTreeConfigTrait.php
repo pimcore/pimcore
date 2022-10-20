@@ -41,6 +41,7 @@ trait DocumentTreeConfigTrait
     public function getTreeNodeConfig(ElementInterface $element): array
     {
         $site = null;
+        /** @var Document $childDocument */
         $childDocument = $element;
         $container = \Pimcore::getContainer();
 
@@ -50,7 +51,7 @@ trait DocumentTreeConfigTrait
         $tmpDocument = [
             'id' => $childDocument->getId(),
             'key' => $childDocument->getKey(),
-            'idx' => (int)$childDocument->getIndex(),
+            'idx' => $childDocument->getIndex(),
             'text' => $childDocument->getKey(),
             'type' => $childDocument->getType(),
             'path' => $childDocument->getRealFullPath(),

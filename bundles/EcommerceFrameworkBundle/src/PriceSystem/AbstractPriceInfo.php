@@ -65,7 +65,7 @@ class AbstractPriceInfo implements PriceInfoInterface
     /**
      * {@inheritdoc}
      */
-    public function setPriceSystem(PriceSystemInterface $priceSystem): PriceInfoInterface|static
+    public function setPriceSystem(PriceSystemInterface $priceSystem): static
     {
         $this->priceSystem = $priceSystem;
 
@@ -96,7 +96,7 @@ class AbstractPriceInfo implements PriceInfoInterface
     /**
      * {@inheritdoc}
      */
-    public function setProduct(CheckoutableInterface $product): PriceInfoInterface|static
+    public function setProduct(CheckoutableInterface $product): static
     {
         $this->product = $product;
 
