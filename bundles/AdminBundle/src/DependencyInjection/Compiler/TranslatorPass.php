@@ -20,6 +20,7 @@ namespace Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler;
 use Pimcore\Translation\Translator;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * @internal
@@ -40,7 +41,7 @@ final class TranslatorPass implements CompilerPassInterface
 
 
         $editableHandlerDefinition = $container->getDefinition('Pimcore\\Document\\Editable\\EditableHandler');
-        $adminUserTranslatorDefinition = $container->getDefinition('Pimcore\\Bundle\\AdminBundle\\Translation\\AdminUserTranslator');
-        $editableHandlerDefinition->setArgument('$translator', $adminUserTranslatorDefinition);
+        $adminUserTranslatorReference = new Reference('Pimcore\\Bundle\\AdminBundle\\Translation\\AdminUserTranslator');
+        $editableHandlerDefinition->setArgument('$translator', $adminUserTranslatorReference);
     }
 }
