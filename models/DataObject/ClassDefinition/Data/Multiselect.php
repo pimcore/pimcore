@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -82,7 +83,7 @@ class Multiselect extends Data implements
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $renderType;
 
@@ -91,7 +92,7 @@ class Multiselect extends Data implements
      *
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $optionsProviderClass;
 
@@ -100,7 +101,7 @@ class Multiselect extends Data implements
      *
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     public $optionsProviderData;
 
@@ -228,7 +229,7 @@ class Multiselect extends Data implements
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getRenderType()
     {
@@ -441,7 +442,7 @@ class Multiselect extends Data implements
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param string $value
+     * @param mixed $value
      * @param string $operator
      * @param array $params optional params used to change the behavior
      *
@@ -456,6 +457,14 @@ class Multiselect extends Data implements
             $key = $db->quoteIdentifier($name);
             if (!empty($params['brickPrefix'])) {
                 $key = $params['brickPrefix'].$key;
+            }
+
+            if (str_contains($name, 'cskey') && is_array($value) && !empty($value)) {
+                $values = array_map(function ($val) use ($db) {
+                    return $db->quote('%' .Helper::escapeLike($val). '%');
+                }, $value);
+
+                return $key . ' LIKE ' . implode(' OR ' . $key . ' LIKE ', $values);
             }
 
             $value = "'%,".$value.",%'";
@@ -522,7 +531,7 @@ class Multiselect extends Data implements
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getOptionsProviderClass()
     {
@@ -530,7 +539,7 @@ class Multiselect extends Data implements
     }
 
     /**
-     * @param string $optionsProviderClass
+     * @param string|null $optionsProviderClass
      */
     public function setOptionsProviderClass($optionsProviderClass)
     {
@@ -538,7 +547,7 @@ class Multiselect extends Data implements
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getOptionsProviderData()
     {
@@ -546,7 +555,7 @@ class Multiselect extends Data implements
     }
 
     /**
-     * @param string $optionsProviderData
+     * @param string|null $optionsProviderData
      */
     public function setOptionsProviderData($optionsProviderData)
     {
@@ -673,7 +682,7 @@ class Multiselect extends Data implements
      */
     public function preSave($containerDefinition, $params = [])
     {
-        /** @var ?DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface $optionsProvider */
+        /** @var DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface|null $optionsProvider */
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
             $this->getOptionsProviderClass(),
             DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT
@@ -710,7 +719,7 @@ class Multiselect extends Data implements
     /**
      * { @inheritdoc }
      */
-    public function enrichFieldDefinition(/** array */ $context = []) /** : Data */
+    public function enrichFieldDefinition(/** array */ $context = []) /** : static */
     {
         $this->doEnrichDefinitionDefinition(null, $this->getName(),
             'fielddefinition', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT, $context);

@@ -25,10 +25,10 @@ abstract class ClassResolver
     private static $cache;
 
     /**
-     * @param string $class
+     * @param string|null $class
      * @param callable|null $validationCallback
      *
-     * @return mixed|null
+     * @return object|null
      */
     protected static function resolve($class, callable $validationCallback = null)
     {
@@ -50,6 +50,12 @@ abstract class ClassResolver
                 return self::$cache[$class];
             } catch (\Throwable $e) {
                 Logger::error((string) $e);
+
+                trigger_deprecation(
+                    'pimcore/pimcore',
+                    '10.5',
+                    sprintf('Resolving classes or services will no longer catch exceptions in Pimcore 11. Remove invalid reference %s from class definitions.', $class)
+                );
             }
         }
 

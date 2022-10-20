@@ -21,10 +21,11 @@ Assumptions - change them to match your environment/distro:
 The following configuration is used with the assumption that it is for development only. It is not approperiate for a production environment and *should not* be exposed towards public access.  
 
 ```nginx
-# mime types are covered in nginx.conf by:
-# http {
-#   include       mime.types;
-# }
+# mime types are already covered in nginx.conf
+#include mime.types;
+types {
+    image/avif avif;
+}
 
 upstream php-pimcore10 {
     server unix:/var/run/php/pimcore.sock;
@@ -37,8 +38,14 @@ map $args $static_page_root {
     "~*(^|&)pimcore_version=[^&]+(&|$)"     /var/nonexistent;
 }
 
+map $uri $static_page_uri {
+    default                                 $uri;
+    "/"                                     /%home;
+}
+
 server {
     listen 80;
+    listen [::]:80
     server_name YOUPROJECT.local;
     root /var/www/pimcore/public;
     index index.php;
@@ -126,7 +133,7 @@ server {
 
     location / {
         error_page 404 /meta/404;
-        try_files $static_page_root$uri.html $uri /index.php$is_args$args;
+        try_files $static_page_root$static_page_uri.html $uri /index.php$is_args$args;
     }
 
     # Use this location when the installer has to be run
@@ -189,10 +196,11 @@ server {
 The following configuration provides an approperiate base for a secure application hosting. It can be adapted to your setup and preferences. However it is primarily taking security into account. It is recommended to develop within a secured environment, too.
 
 ```nginx
-# mime types are covered in nginx.conf by:
-# http {
-#   include       mime.types;
-# }
+# mime types are already covered in nginx.conf
+#include mime.types;
+types {
+    image/avif avif;
+}
 
 upstream php-pimcore10 {
     server unix:/var/run/php/pimcore.sock;

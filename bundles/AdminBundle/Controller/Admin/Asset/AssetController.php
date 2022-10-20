@@ -1149,6 +1149,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $stream = $asset->getStream();
 
+        if (!is_resource($stream)) {
+            throw $this->createNotFoundException('Unable to get resource for asset ' . $asset->getId());
+        }
+
         return new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
         }, 200, [
@@ -1301,6 +1305,11 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $stream = $image->getStream();
+
+        if (!is_resource($stream)) {
+            throw $this->createNotFoundException('Unable to get resource for asset ' . $image->getId());
+        }
+
         $response = new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
         }, 200, [

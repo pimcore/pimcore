@@ -55,7 +55,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param string $name
      *
-     * @return mixed|null
+     * @return string|null
      */
     public function getIdByName($name)
     {

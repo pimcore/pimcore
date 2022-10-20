@@ -147,7 +147,7 @@ abstract class Adapter
      * @param int $width
      * @param int $height
      *
-     * @return self
+     * @return $this
      */
     public function resize($width, $height)
     {
@@ -158,7 +158,7 @@ abstract class Adapter
      * @param int $width
      * @param bool $forceResize
      *
-     * @return self
+     * @return $this
      */
     public function scaleByWidth($width, $forceResize = false)
     {
@@ -174,7 +174,7 @@ abstract class Adapter
      * @param int $height
      * @param bool $forceResize
      *
-     * @return self
+     * @return $this
      */
     public function scaleByHeight($height, $forceResize = false)
     {
@@ -191,7 +191,7 @@ abstract class Adapter
      * @param int $height
      * @param bool $forceResize
      *
-     * @return self
+     * @return $this
      */
     public function contain($width, $height, $forceResize = false)
     {
@@ -214,7 +214,7 @@ abstract class Adapter
      * @param string|array $orientation
      * @param bool $forceResize
      *
-     * @return self
+     * @return $this
      */
     public function cover($width, $height, $orientation = 'center', $forceResize = false)
     {
@@ -297,7 +297,7 @@ abstract class Adapter
     /**
      * @param int $tolerance
      *
-     * @return self
+     * @return $this
      */
     public function trim($tolerance)
     {
@@ -320,7 +320,7 @@ abstract class Adapter
      * @param int $width
      * @param int $height
      *
-     * @return self
+     * @return $this
      */
     public function crop($x, $y, $width, $height)
     {
@@ -330,7 +330,7 @@ abstract class Adapter
     /**
      * @param string $color
      *
-     * @return self
+     * @return $this
      */
     public function setBackgroundColor($color)
     {
@@ -340,7 +340,7 @@ abstract class Adapter
     /**
      * @param string $image
      *
-     * @return self
+     * @return $this
      */
     public function setBackgroundImage($image)
     {
@@ -366,7 +366,7 @@ abstract class Adapter
      * @param string $composite
      * @param string $origin Origin of the X and Y coordinates (top-left, top-right, bottom-left, bottom-right or center)
      *
-     * @return self
+     * @return $this
      */
     public function addOverlay($image, $x = 0, $y = 0, $alpha = 100, $composite = 'COMPOSITE_DEFAULT', $origin = 'top-left')
     {
@@ -387,7 +387,7 @@ abstract class Adapter
     /**
      * @param string $image
      *
-     * @return self
+     * @return $this
      */
     public function applyMask($image)
     {
@@ -400,7 +400,7 @@ abstract class Adapter
      * @param int $x
      * @param int $y
      *
-     * @return self
+     * @return $this
      */
     public function cropPercent($width, $height, $x, $y)
     {
@@ -422,7 +422,7 @@ abstract class Adapter
     }
 
     /**
-     * @return self
+     * @return $this
      */
     public function grayscale()
     {
@@ -430,7 +430,7 @@ abstract class Adapter
     }
 
     /**
-     * @return self
+     * @return $this
      */
     public function sepia()
     {
@@ -438,7 +438,7 @@ abstract class Adapter
     }
 
     /**
-     * @return self
+     * @return $this
      */
     public function sharpen()
     {
@@ -448,7 +448,7 @@ abstract class Adapter
     /**
      * @param string $mode
      *
-     * @return self
+     * @return $this
      */
     public function mirror($mode)
     {
@@ -459,7 +459,7 @@ abstract class Adapter
      * @param int $radius
      * @param float $sigma
      *
-     * @return $this|Adapter
+     * @return $this
      */
     public function gaussianBlur($radius = 0, $sigma = 1.0)
     {
@@ -484,7 +484,7 @@ abstract class Adapter
      * @param string $imagePath
      * @param array $options
      *
-     * @return self|false
+     * @return $this|false
      */
     abstract public function load($imagePath, $options = []);
 

@@ -21,6 +21,7 @@ use function is_array;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToMoveFile;
+use League\Flysystem\UnableToRetrieveMetadata;
 use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
@@ -727,7 +728,11 @@ class Asset extends Element\AbstractElement
 
                 $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
 
-                $mimeType = $storage->mimeType($path);
+                try {
+                    $mimeType = $storage->mimeType($path);
+                } catch(UnableToRetrieveMetadata $e) {
+                    $mimeType = 'application/octet-stream';
+                }
                 $this->setMimeType($mimeType);
 
                 // set type
@@ -1396,7 +1401,7 @@ class Asset extends Element\AbstractElement
     /**
      * @param array $metadata for each array item: mandatory keys: name, type - optional keys: data, language
      *
-     * @return self
+     * @return $this
      *
      * @internal
      *
@@ -1414,7 +1419,7 @@ class Asset extends Element\AbstractElement
     /**
      * @param array[]|stdClass[] $metadata for each array item: mandatory keys: name, type - optional keys: data, language
      *
-     * @return self
+     * @return $this
      */
     public function setMetadata($metadata)
     {
@@ -1441,7 +1446,7 @@ class Asset extends Element\AbstractElement
     /**
      * @param bool $hasMetaData
      *
-     * @return self
+     * @return $this
      */
     public function setHasMetaData($hasMetaData)
     {
@@ -1456,7 +1461,7 @@ class Asset extends Element\AbstractElement
      * @param mixed $data
      * @param string|null $language
      *
-     * @return self
+     * @return $this
      */
     public function addMetadata($name, $type, $data = null, $language = null)
     {
@@ -1503,7 +1508,7 @@ class Asset extends Element\AbstractElement
      * @param string $name
      * @param string|null $language
      *
-     * @return self
+     * @return $this
      */
     public function removeMetadata(string $name, ?string $language = null)
     {

@@ -166,7 +166,7 @@ class Dao extends AbstractDao {
             $this->model->setId($id);
         }
 
-        $data = $this->db->fetchRow('SELECT * FROM '.$this->tableName.' WHERE id = ?', [$this->model->getId()]);
+        $data = $this->db->fetchAssociative('SELECT * FROM '.$this->tableName.' WHERE id = ?', [$this->model->getId()]);
 
         if(!$data["id"]) {
             throw new NotFoundException("Object with the ID " . $this->model->getId() . " doesn't exists");
@@ -421,8 +421,6 @@ class Dao extends Listing\Dao\AbstractDao
     }
 
     /**
-     * @param string|string[]|null $columns
-     *
      * @return DoctrineQueryBuilder
      */
     public function getQueryBuilder()
@@ -467,15 +465,11 @@ class Dao extends Listing\Dao\AbstractDao
      */
     public function loadIdList()
     {
-        try {
-            $query = $this->getQueryBuilder();
-            $objectIds = $this->db->fetchCol((string) $query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
-            $this->totalCount = (int) $this->db->fetchOne('SELECT FOUND_ROWS()');
+        $query = $this->getQueryBuilder();
+        $objectIds = $this->db->fetchFirstColumn((string) $query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        $this->totalCount = (int) $this->db->fetchOne('SELECT FOUND_ROWS()');
 
-            return array_map('intval', $objectIds);
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        return array_map('intval', $objectIds);
     }
 
     /**

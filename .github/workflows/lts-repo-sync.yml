@@ -7,6 +7,9 @@ on:
         branches:
             - 10.x
 
+permissions:
+  contents: read
+
 jobs:
     lts-repo-sync:
         runs-on: ubuntu-latest

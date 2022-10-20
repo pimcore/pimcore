@@ -558,7 +558,7 @@ class Installer
         }
 
         // see Symfony's cache:clear command
-        $oldCacheDir = substr($cacheDir, 0, -1) . ('~' === substr($cacheDir, -1) ? '+' : '~');
+        $oldCacheDir = substr($cacheDir, 0, -1) . '~';
 
         $filesystem = new Filesystem();
         if ($filesystem->exists($oldCacheDir)) {
@@ -612,6 +612,9 @@ class Installer
             $dataFiles = $this->getDataFiles();
 
             try {
+                //create a system user with id 0
+                $this->insertSystemUser($db);
+
                 if (empty($dataFiles) || !$this->importDatabaseDataDump) {
                     // empty installation
                     $this->insertDatabaseContents();
@@ -704,9 +707,6 @@ class Installer
 
             $db->executeStatement(implode("\n", $batchQueries));
         }
-
-        // set the id of the system user to 0
-        $db->update('users', ['id' => 0], ['name' => 'system']);
     }
 
     protected function insertDatabaseContents()
@@ -756,15 +756,6 @@ class Installer
             'o_userOwner' => 1,
             'o_userModification' => 1,
         ]);
-
-        $db->insert('users', [
-            'parentId' => 0,
-            'name' => 'system',
-            'admin' => 1,
-            'active' => 1,
-        ]);
-        $db->update('users', ['id' => 0], ['name' => 'system']);
-
         $userPermissions = [
             ['key' => 'application_logging'],
             ['key' => 'assets'],
@@ -814,5 +805,18 @@ class Installer
         foreach ($userPermissions as $up) {
             $db->insert('users_permission_definitions', $up);
         }
+    }
+
+    protected function insertSystemUser(Connection $db): void
+    {
+        $db->insert('users', [
+            'parentId' => 0,
+            'name' => 'system',
+            'admin' => 1,
+            'active' => 1,
+        ]);
+
+        // set the id of the system user to 0
+        $db->update('users', ['id' => 0], ['name' => 'system', 'type' => 'user' ]);
     }
 }

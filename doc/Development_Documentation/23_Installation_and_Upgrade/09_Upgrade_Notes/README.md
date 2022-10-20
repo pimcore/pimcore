@@ -1,6 +1,31 @@
 # Upgrade Notes
 
+## 10.5.8
+- [Nginx] Static pages nginx config has been updated to fix the issue for home static page generation. please adapt the following configuration:
+```nginx
+map $args $static_page_root {
+    default                                 /var/tmp/pages;
+    "~*(^|&)pimcore_editmode=true(&|$)"     /var/nonexistent;
+    "~*(^|&)pimcore_preview=true(&|$)"      /var/nonexistent;
+    "~*(^|&)pimcore_version=[^&]+(&|$)"     /var/nonexistent;
+}
+
+map $uri $static_page_uri {
+    default                                 $uri;
+    "/"                                     /%home;
+}
+
+.....
+
+location / {
+    error_page 404 /meta/404;
+
+    try_files $static_page_root$static_page_uri.html $uri /index.php$is_args$args;
+}
+```
+
 ## 10.5.0
+- [Class Definitions] Resolving classes or services will no longer catch exceptions in Pimcore 11. Remove invalid references from class definitions.
 - [Sessions] Changed default value for `symfony.session.cookie_secure` to `auto`
 - [Listings] `JsonListing` class is deprecated. Please use `CallableFilterListingInterface`, `FilterListingTrait` and `CallableOrderListingInterface`, `OrderListingTrait` instead.
   For examples please see existing classes, e.g. `Pimcore\Model\Document\DocType\Listing`.
@@ -11,21 +36,32 @@
     security:
         enable_authenticator_manager: true
     ```
-- [Elements] Calling the methods `Asset::getById()`, `Document::getById()` and `DataObject::getById()` with second boolean parameter `$force` is deprecated and will throw exception in Pimcore 11. Instead pass the second parameter as associative array with `$force` value.
+- [Elements] Calling the methods `getById` and `getByPath` on `Asset`,`Document`,`DataObject` with second boolean parameter `$force` and `Element\Service::getElementById` with third boolean  parameter `$force` is deprecated and will throw exception in Pimcore 11. Instead pass the parameter as associative array with `$force` value.
   e.g. Before 
    ```php
     Asset::getById($id, true);
     Document::getById($id, true);
     DataObject::getById($id, true);
+  
+    Asset::getByPath($path, true);
+    Document::getByPath($path, true);
+    DataObject::getByPath($path, true);
+  
+    Element\Service::getElementById::getElementById($type, $id, $true);
    ```
     After
    ```php
     Asset::getById($id, ['force' => true]);
     Document::getById($id, ['force' => true]);
     DataObject::getById($id, ['force' => true]);
-   ```
   
-- [Navigation Builder] Calling the method `Pimcore\Navigation\Builder::getNavigation()` using extra arguments is deprecated and will be removed in Pimcore 11. Instead of using the extra arguments, it is recommended to call the method using the params array. eg: Currently, the `getNavigation()` method can be called by passing the config params `activeDocument`, `navigationRootDocument`, `htmlMenuIdPrefix`, `pageCallback`, `cache`, `maxDepth` and `cacheLifetime` as the arguments i.e `getNavigation($activeDocument, $navigationRootDocument, $htmlMenuIdPrefix, $pageCallback, $cache,$maxDepth, $cacheLifetime)`. According to the new implementation you should call the method like `getNavigation($params)` where `$params` should be an associative array with the keys `active`, `root`, `htmlMenuPrefix`, `pageCallback`, `cache`, `maxDepth` and `cacheLifetime`.
+    Asset::getByPath($path, ['force' => true]);
+    Document::getByPath($path, ['force' => true]);
+    DataObject::getByPath($path, ['force' => true]);
+  
+    Element\Service::getElementById($type, $id, ['force' => true]);
+   ```
+- [Navigation Builder] Calling the method `Pimcore\Navigation\Builder::getNavigation()` using extra arguments is deprecated and will be removed in Pimcore 11. Instead of using the extra arguments, it is recommended to call the method using the params array. eg: Currently, the `getNavigation()` method can be called by passing the config params `activeDocument`, `navigationRootDocument`, `htmlMenuIdPrefix`, `pageCallback`, `cache`, `maxDepth`, `cacheLifetime` and `markActiveTrail` as the arguments i.e `getNavigation($activeDocument, $navigationRootDocument, $htmlMenuIdPrefix, $pageCallback, $cache, $maxDepth, $cacheLifetime, $markActiveTrail)`. According to the new implementation you should call the method like `getNavigation($params)` where `$params` should be an associative array with the keys `active`, `root`, `htmlMenuPrefix`, `pageCallback`, `cache`, `maxDepth`, `cacheLifetime` and `markActiveTrail`.
   
 - [Runtime Cache] The trait `\Pimcore\Cache\RuntimeCacheTrait` has been deprecated because of its ambiguous naming and usage of persisted cache along with the runtime object cache.
   It is recommended to use `\Pimcore\Cache\RuntimeCache` instead of this trait. For persisted cache, please use `\Pimcore\Cache` instead.
@@ -40,7 +76,7 @@
   The only cases could be affected are those where the workspace are set but master permissions are disallowed, before this change, it could lead to (not intended) false positive.
 - [Security/User] `UsernameNotFoundException` (deprecated since Symfony 5.3) occurences have been replaced with `UserNotFoundException`.
 - [Deprecated] Generate type declarations option in class definition is deprecated, because type declarations will always be added with Pimcore 11
-- [Application Logger] File Objects are now stored in the flysystem. Due some incompatibilities of checking files by modification date (cloud storages) and for perfomance issues (scan folders/file), the cleanup task now do not run in time range from [midnight and 4 a.m.](https://github.com/pimcore/pimcore/pull/7164) anymore, but it deletes the file matching the column in the database as soon as the database entries are archived.
+- [Application Logger] File Objects are now stored in the flysystem. Due some incompatibilities of checking files by modification date (cloud storages) and for performance issues (scan folders/file), the cleanup task now do not run in time range from [midnight and 4 a.m.](https://github.com/pimcore/pimcore/pull/7164) anymore, but it deletes the file matching the column in the database as soon as the database entries are archived.
 - [Session] Implementing Session Configurator with tag `pimcore.session.configurator` to register session bags, is deprecated and will be removed in Pimcore 11.
   Implement an [EventListener](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/EventListener/SessionBagListener.php) to register a session bag before the session is started.
 - [Ecommerce][PricingManager] Token condition is deprecated and will be removed in Pimcore 11.
@@ -94,6 +130,11 @@ Please use [event listener](../../20_Extending_Pimcore/13_Bundle_Developers_Guid
   }
   ```
 - [Elements] Deprecated setting the parent id to 1 (root node), when an element with a non-existing parent id gets created.
+- [Custom Layouts] Deprecated Class `ClassLayoutDefinitionManager` and constant `PIMCORE_CUSTOMLAYOUT_DIRECTORY`.
+- [Workflows] Deprecated classes Pimcore\Model\Workflow, Pimcore\Model\Workflow\Dao, Pimcore\Model\Workflow\Listing\Dao and Pimcore\Model\Workflow\Listing. 
+Please check the documentation on how to work with workflows: [Workflow Management](../../07_Workflow_Management/README.md).
+- [Maintenance] Deprecated passing `--force` option to maintenance command.
+- [Exception] `MissingDependencyException` has been deprecated and will be removed in Pimcore 11.
 
 ## 10.4.2
 - When maintenance mode is active, all commands are prevented from starting (not just commands inheriting from `AbstractCommand`).
@@ -145,6 +186,7 @@ $newId = $object->getId(); //returns null
 - [Documents] Introduced additional interfaces for editable methods `getDataEditmode()`, `rewriteIds()` & `load()`. Existing `method_exists` calls are deprecated and will be removed in Pimcore 11.
 - [Data objects] Default values now get saved to versions -> Restoring a version also restores the default values (before those fields were null after restoring)
 - Method `create()` from `Pimcore\Model\DataObject\Classificationstore\CollectionGroupRelation` and `Pimcore\Model\DataObject\Classificationstore\KeyGroupRelation` no longer saves the new object, but just returns the instance. Related changes can be found here: https://github.com/pimcore/pimcore/pull/11326/files 
+- Method `Kernel::getRootDir()` is deprecated, use `Kernel::getProjectDir()` instead. For more details, please check [10923](https://github.com/pimcore/pimcore/pull/10923).
 
 ## 10.2.0
 - [Maintenance] Maintenance tasks are now handled with Symfony Messenger. The `pimcore:maintenance` command will add the maintenance messages to the bus and runs them afterwards immediately from the queue. However it's recommended to setup independent workers that process the queues, by running `bin/console messenger:consume pimcore_core pimcore_maintenance` (using e.g. Supervisor) and adding `--async` option to the `pimcore:maintenance` command that stops the maintenance command to process the queue directly. Details about setting it up for production environments, please check [Symfony Messenger Component docs](https://symfony.com/doc/current/messenger.html#deploying-to-production).

@@ -88,10 +88,20 @@ class MaintenanceCommand extends AbstractCommand
         $excludedJobs = $this->getArrayOptionValue($input, 'excludedJobs');
         $async = (bool)$input->getOption('async');
 
+        $force = (bool)$input->getOption('force');
+        if ($force) {
+            trigger_deprecation(
+                'pimcore/pimcore',
+                '10.5',
+                'Running Maintenance Command with --force option is deprecated and will be removed from Pimcore in 11.',
+                __CLASS__
+            );
+        }
+
         $this->maintenanceExecutor->executeMaintenance(
             $validJobs,
             $excludedJobs,
-            (bool)$input->getOption('force')
+            $force
         );
 
         if (!$async) {

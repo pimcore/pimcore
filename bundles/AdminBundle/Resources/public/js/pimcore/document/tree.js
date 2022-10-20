@@ -934,8 +934,8 @@ pimcore.document.tree = Class.create({
         const prepareDocumentTreeContextMenu = new CustomEvent(pimcore.events.prepareDocumentTreeContextMenu, {
             detail: {
                 menu: menu,
-                object: this,
-                record: record
+                tree: this,
+                document: record
             }
         });
 

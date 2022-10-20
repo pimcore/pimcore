@@ -439,7 +439,7 @@ pimcore.element.properties = Class.create({
 
     getTypeRenderer: function (value, metaData, record, rowIndex, colIndex, store) {
 
-        return '<div class="pimcore_icon_' + value + '" name="' + record.data.name + '">&nbsp;</div>';
+        return '<div class="pimcore_icon_' + value + '" name="' + Ext.util.Format.htmlEncode(record.data.name) + '">&nbsp;</div>';
     },
 
     getCellRenderer: function (value, metaData, record, rowIndex, colIndex, store) {

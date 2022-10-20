@@ -53,7 +53,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
     public $maxLength;
 
@@ -136,7 +136,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getMaxLength()
     {
@@ -144,7 +144,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param int $maxLength
+     * @param int|null $maxLength
      */
     public function setMaxLength($maxLength)
     {
@@ -164,7 +164,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function setShowCharCount($showCharCount)
     {
-        $this->showCharCount = $showCharCount;
+        $this->showCharCount = (bool) $showCharCount;
     }
 
     /**
@@ -178,7 +178,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @param bool $excludeFromSearchIndex
      *
-     * @return self
+     * @return $this
      */
     public function setExcludeFromSearchIndex(bool $excludeFromSearchIndex)
     {
@@ -190,11 +190,11 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param string $data
+     * @param string|null $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -204,11 +204,11 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param string $data
+     * @param string|null $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -218,11 +218,11 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param string $data
+     * @param string|null $data
      * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {

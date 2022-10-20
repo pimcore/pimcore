@@ -302,7 +302,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
             }
         } else {
             $hash = $this->calculateHash($password);
-            $result = $hash === $objectHash;
+            $result = hash_equals($objectHash, $hash);
         }
 
         return $result;
@@ -311,11 +311,11 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param string $data
+     * @param string|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {

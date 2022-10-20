@@ -40,7 +40,7 @@ interface VersionStorageAdapterInterface
     /**
      * @param Version $version
      *
-     * @return ?string
+     * @return string|null
      */
     public function loadMetaData(Version $version): ?string;
 

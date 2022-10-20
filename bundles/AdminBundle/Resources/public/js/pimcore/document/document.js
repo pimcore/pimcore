@@ -95,30 +95,20 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 saveData.missingRequiredEditable = this.data.missingRequiredEditable;
             }
 
-            try {
-                const preSaveDocument = new CustomEvent(pimcore.events.preSaveDocument, {
-                    detail: {
-                        object: this,
-                        type: this.getType(),
-                        task: task,
-                        only: only
-                    }
-                });
+            const preSaveDocument = new CustomEvent(pimcore.events.preSaveDocument, {
+                detail: {
+                    document: this,
+                    type: this.getType(),
+                    task: task,
+                    onlySaveVersion: only
+                },
+                cancelable: true
+            });
 
-                document.dispatchEvent(preSaveDocument);
-
-            } catch (e) {
-                if (e instanceof pimcore.error.ValidationException) {
-                    this.tab.unmask();
-                    pimcore.helpers.showPrettyError('document', t("error"), t("saving_failed"), e.message);
-                    return false;
-                }
-
-                if (e instanceof pimcore.error.ActionCancelledException) {
-                    this.tab.unmask();
-                    pimcore.helpers.showNotification(t("Info"), 'Document not saved: ' + e.message, 'info');
-                    return false;
-                }
+            const isAllowed = document.dispatchEvent(preSaveDocument);
+            if (!isAllowed) {
+                this.tab.unmask();
+                return false;
             }
 
             Ext.Ajax.request({
@@ -155,10 +145,10 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
                             const postSaveDocument = new CustomEvent(pimcore.events.postSaveDocument, {
                                 detail: {
-                                    object: this,
+                                    document: this,
                                     type: this.getType(),
                                     task: task,
-                                    only: only
+                                    onlySaveVersion: only
                                 }
                             });
 

@@ -18,6 +18,8 @@ namespace Pimcore\Model;
 use Pimcore\Model\Exception\NotFoundException;
 
 /**
+ * @deprecated
+ *
  * @method Workflow\Dao getDao()
  * @method void save()
  */
@@ -349,7 +351,7 @@ class Workflow extends AbstractModel
     /**
      * @param string $stateName
      *
-     * @return bool|mixed
+     * @return mixed
      */
     public function getStateConfig($stateName)
     {
@@ -365,7 +367,7 @@ class Workflow extends AbstractModel
     /**
      * @param string $statusName
      *
-     * @return bool|mixed
+     * @return mixed
      */
     public function getStatusConfig($statusName)
     {

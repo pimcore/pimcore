@@ -29,16 +29,6 @@ class Sql extends AbstractAdapter
     {
         $db = Db::get();
 
-        if ($fields === null) {
-            $columns = $this->fullConfig->getColumnConfiguration();
-            $fields = [];
-            foreach ($columns as $column) {
-                if ($column['export'] || $column['display'] || $column['order'] || ($column['columnAction'] ?? null)) {
-                    $fields[] = $column['name'];
-                }
-            }
-        }
-
         $baseQuery = $this->getBaseQuery($filters, $fields, false, $drillDownFilters);
         $data = [];
         $total = 0;
@@ -117,17 +107,10 @@ class Sql extends AbstractAdapter
         }
 
         if (!empty($config['where'])) {
-            $whereParts = [];
-            if (!empty($config['where'])) {
-                if (strpos(strtoupper(trim($config['where'])), 'WHERE') === 0) {
-                    $config['where'] = preg_replace('/^\s*WHERE\s*/', '', $config['where']);
-                }
-                $whereParts[] = '(' . str_replace("\n", ' ', $config['where']) . ')';
+            if (str_starts_with(strtoupper(trim($config['where'])), 'WHERE')) {
+                $config['where'] = preg_replace('/^\s*WHERE\s*/', '', $config['where']);
             }
-
-            if ($whereParts) {
-                $sql .= ' WHERE ' . implode(' AND ', $whereParts);
-            }
+            $sql .= ' WHERE (' . str_replace("\n", ' ', $config['where']) . ')';
         }
 
         if (!empty($config['groupby']) && !$ignoreSelectAndGroupBy) {
@@ -171,11 +154,11 @@ class Sql extends AbstractAdapter
         $sql = $this->buildQueryString($this->config, $ignoreSelectAndGroupBy, $drillDownFilters, $selectField);
 
         $data = '';
-
+        $extractAllFields = empty($fields);
         if ($filters) {
             if (is_array($filters)) {
                 foreach ($filters as $filter) {
-                    $value = $filter['value'] ;
+                    $value = $filter['value'] ?? null;
                     $type = $filter['type'];
                     $operator = $filter['operator'];
                     $maxValue = null;
@@ -227,8 +210,8 @@ class Sql extends AbstractAdapter
 
             $total = 'SELECT COUNT(*) FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
 
-            if ($fields) {
-                $data = 'SELECT `' . implode('`, `', $fields) . '` FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
+            if ($fields && !$extractAllFields) {
+                $data = 'SELECT `' . implode('`,`', $fields) . '` FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
             } else {
                 $data = 'SELECT * FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
             }

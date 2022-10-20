@@ -510,7 +510,7 @@ class Service extends Model\Element\Service
      * @param string $key
      * @param array $context
      *
-     * @return mixed|null|ConfigElementInterface|ConfigElementInterface[]
+     * @return ConfigElementInterface|null
      *
      * @internal
      */
@@ -1240,18 +1240,18 @@ class Service extends Model\Element\Service
         $mergedFieldDefinition = self::cloneDefinition($masterFieldDefinition);
 
         if (count($layoutDefinitions)) {
-            foreach ($mergedFieldDefinition as $key => $def) {
+            foreach ($mergedFieldDefinition as $def) {
                 if ($def instanceof ClassDefinition\Data\Localizedfields) {
-                    $mergedLocalizedFieldDefinitions = $mergedFieldDefinition[$key]->getFieldDefinitions();
+                    $mergedLocalizedFieldDefinitions = $def->getFieldDefinitions();
 
-                    foreach ($mergedLocalizedFieldDefinitions as $locKey => $locValue) {
-                        $mergedLocalizedFieldDefinitions[$locKey]->setInvisible(false);
-                        $mergedLocalizedFieldDefinitions[$locKey]->setNotEditable(false);
+                    foreach ($mergedLocalizedFieldDefinitions as $locValue) {
+                        $locValue->setInvisible(false);
+                        $locValue->setNotEditable(false);
                     }
-                    $mergedFieldDefinition[$key]->setChildren($mergedLocalizedFieldDefinitions);
+                    $def->setChildren($mergedLocalizedFieldDefinitions);
                 } else {
-                    $mergedFieldDefinition[$key]->setInvisible(false);
-                    $mergedFieldDefinition[$key]->setNotEditable(false);
+                    $def->setInvisible(false);
+                    $def->setNotEditable(false);
                 }
             }
         }
@@ -1290,9 +1290,11 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param mixed $definition
+     * @template T
      *
-     * @return array
+     * @param T $definition
+     *
+     * @return T
      */
     public static function cloneDefinition($definition)
     {
@@ -1651,7 +1653,7 @@ class Service extends Model\Element\Service
      * @param Concrete|Model\DataObject\Fieldcollection\Data\AbstractData|Model\DataObject\Objectbrick\Data\AbstractData $object
      * @param Model\DataObject\Data\CalculatedValue|null $data
      *
-     * @return mixed|null
+     * @return mixed
      */
     public static function getCalculatedFieldValue($object, $data)
     {

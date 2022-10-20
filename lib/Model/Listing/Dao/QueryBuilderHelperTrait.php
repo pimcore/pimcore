@@ -18,9 +18,6 @@ namespace Pimcore\Model\Listing\Dao;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Model\DataObject;
 
-/**
- * @internal
- */
 trait QueryBuilderHelperTrait
 {
     /**
@@ -46,6 +43,9 @@ trait QueryBuilderHelperTrait
         }
     }
 
+    /**
+     * @internal
+     */
     private function applyConditionsToQueryBuilder(QueryBuilder $queryBuilder): void
     {
         $condition = $this->model->getCondition();
@@ -77,6 +77,9 @@ trait QueryBuilderHelperTrait
         }
     }
 
+    /**
+     * @internal
+     */
     private function applyGroupByToQueryBuilder(QueryBuilder $queryBuilder): void
     {
         $groupBy = $this->model->getGroupBy();
@@ -85,6 +88,9 @@ trait QueryBuilderHelperTrait
         }
     }
 
+    /**
+     * @internal
+     */
     private function applyOrderByToQueryBuilder(QueryBuilder $queryBuilder): void
     {
         $orderKey = $this->model->getOrderKey();
@@ -112,6 +118,9 @@ trait QueryBuilderHelperTrait
         }
     }
 
+    /**
+     * @internal
+     */
     private function applyLimitToQueryBuilder(QueryBuilder $queryBuilder): void
     {
         $queryBuilder->setFirstResult($this->model->getOffset());
@@ -131,7 +140,7 @@ trait QueryBuilderHelperTrait
         }
 
         if ($this->isQueryBuilderPartInUse($queryBuilder, 'groupBy') || $this->isQueryBuilderPartInUse($queryBuilder, 'having')) {
-            $queryBuilder->select(!empty($originalSelect) ? $originalSelect : '*');
+            $queryBuilder->select(!empty($originalSelect) ? $originalSelect : $identifierColumn);
 
             // Rewrite to 'SELECT COUNT(*) FROM (' . $queryBuilder . ') XYZ'
             $innerQuery = (string)$queryBuilder;

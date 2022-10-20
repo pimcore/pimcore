@@ -59,20 +59,18 @@ class NumberRange extends AbstractFilterType
 
         $db = Db::get();
 
-        if (!empty($value)) {
-            if (!empty($value['from'])) {
-                if ($isPrecondition) {
-                    $productList->addCondition($this->getField($filterDefinition) . ' >= ' . $db->quote($value['from']), 'PRECONDITION_' . $this->getField($filterDefinition));
-                } elseif ($value['from'] != AbstractFilterType::EMPTY_STRING) {
-                    $productList->addCondition($this->getField($filterDefinition) . ' >= ' . $db->quote($value['from']), $this->getField($filterDefinition));
-                }
+        if (!empty($value['from'])) {
+            if ($isPrecondition) {
+                $productList->addCondition($this->getField($filterDefinition) . ' >= ' . $db->quote($value['from']), 'PRECONDITION_' . $this->getField($filterDefinition));
+            } elseif ($value['from'] != AbstractFilterType::EMPTY_STRING) {
+                $productList->addCondition($this->getField($filterDefinition) . ' >= ' . $db->quote($value['from']), $this->getField($filterDefinition));
             }
-            if (!empty($value['to'])) {
-                if ($isPrecondition) {
-                    $productList->addCondition($this->getField($filterDefinition) . ' <= ' . $db->quote($value['to']), 'PRECONDITION_' . $this->getField($filterDefinition));
-                } elseif ($value['to'] != AbstractFilterType::EMPTY_STRING) {
-                    $productList->addCondition($this->getField($filterDefinition) . ' <= ' . $db->quote($value['to']), $this->getField($filterDefinition));
-                }
+        }
+        if (!empty($value['to'])) {
+            if ($isPrecondition) {
+                $productList->addCondition($this->getField($filterDefinition) . ' <= ' . $db->quote($value['to']), 'PRECONDITION_' . $this->getField($filterDefinition));
+            } elseif ($value['to'] != AbstractFilterType::EMPTY_STRING) {
+                $productList->addCondition($this->getField($filterDefinition) . ' <= ' . $db->quote($value['to']), $this->getField($filterDefinition));
             }
         }
 
