@@ -21,6 +21,10 @@ pimcore_admin:
 
 # adds support for admin related routes that will be used to determine the request context in PimcoreContextGuesser
 pimcore:
+    web_profiler:
+        toolbar:
+            excluded_routes:
+                - { path: '^/admin/asset/image-editor' }
     context:
         admin:
             routes:

@@ -99,11 +99,6 @@ cmf_routing:
 
 # Pimcore
 pimcore:
-    web_profiler:
-        toolbar:
-            excluded_routes:
-                - {path: '^/admin/asset/image-editor'}
-
     bundles:
         search_paths:
             - src
