@@ -238,12 +238,7 @@ class PimcoreBundleManager
 
         $resolver->setNormalizer('environments', function (Options $options, $value) {
             // normalize to string and trim
-            $value = array_map(function ($item) {
-                $item = (string)$item;
-                $item = trim($item);
-
-                return $item;
-            }, $value);
+            $value = array_map(fn ($item) => trim((string) $item), $value);
 
             // remove empty values
             return array_filter($value, function ($item) {
