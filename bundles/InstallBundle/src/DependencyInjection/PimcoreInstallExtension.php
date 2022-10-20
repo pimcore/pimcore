@@ -40,7 +40,7 @@ final class PimcoreInstallExtension extends ConfigurableExtension
         $this->configureInstaller($container, $config);
     }
 
-    private function configureInstaller(ContainerBuilder $container, array $config)
+    private function configureInstaller(ContainerBuilder $container, array $config): void
     {
         $parameters = $config['parameters'] ?? [];
         $definition = $container->getDefinition(Installer::class);
@@ -55,10 +55,6 @@ final class PimcoreInstallExtension extends ConfigurableExtension
 
     /**
      * Only add DB credentials which are not empty
-     *
-     * @param array $dbCredentials
-     *
-     * @return array
      */
     private function normalizeDbCredentials(array $dbCredentials): array
     {

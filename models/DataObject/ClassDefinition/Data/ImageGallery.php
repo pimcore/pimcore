@@ -245,7 +245,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @param array $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return DataObject\Data\ImageGallery
      */
@@ -294,12 +294,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return $imageGallery;
     }
 
-    /**
-     * @param mixed $params
-     *
-     * @return DataObject\Data\ImageGallery
-     */
-    private function createEmptyImageGallery($params = [])
+    private function createEmptyImageGallery(array $params): DataObject\Data\ImageGallery
     {
         $imageGallery = new DataObject\Data\ImageGallery();
 

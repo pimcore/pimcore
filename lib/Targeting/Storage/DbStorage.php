@@ -308,7 +308,7 @@ EOF;
         }
     }
 
-    private function loadDate(VisitorInfo $visitorInfo, string $scope, string $select)
+    private function loadDate(VisitorInfo $visitorInfo, string $scope, string $select): ?\DateTimeImmutable
     {
         if (!$visitorInfo->hasVisitorId()) {
             return null;
@@ -337,7 +337,7 @@ EOF;
         return null;
     }
 
-    private function convertToDateTime($result = null)
+    private function convertToDateTime($result = null): ?\DateTimeImmutable
     {
         if (!$result) {
             return null;
@@ -353,7 +353,7 @@ EOF;
         string $scope,
         \DateTimeInterface $createdAt = null,
         \DateTimeInterface $updatedAt = null
-    ) {
+    ): void {
         $timestamps = $this->normalizeTimestamps($createdAt, $updatedAt);
 
         $query = <<<EOF
@@ -392,7 +392,7 @@ EOF;
         return $expiry;
     }
 
-    private function addExpiryParam(QueryBuilder $qb, string $scope)
+    private function addExpiryParam(QueryBuilder $qb, string $scope): void
     {
         $expiry = $this->expiryFor($scope);
         if (0 === $expiry) {
@@ -403,7 +403,7 @@ EOF;
         $qb->setParameter('expiry', $expiry);
     }
 
-    private function cleanup(string $scope)
+    private function cleanup(string $scope): void
     {
         $expiry = $this->expiryFor($scope);
         if (0 === $expiry) {

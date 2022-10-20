@@ -48,14 +48,14 @@ class AssetUpdateTasksHandler
         }
     }
 
-    private function saveAsset(Asset $asset)
+    private function saveAsset(Asset $asset): void
     {
         Version::disable();
         $asset->save();
         Version::enable();
     }
 
-    private function processDocument(Asset\Document $asset)
+    private function processDocument(Asset\Document $asset): void
     {
         if (!$asset->getCustomSetting('document_page_count')) {
             $asset->processPageCount();

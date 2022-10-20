@@ -114,9 +114,6 @@ class HeadlessChrome extends Processor
         return $output->get();
     }
 
-    /**
-     * @return array
-     */
     private function getDefaultOptions(): array
     {
         return [
@@ -134,11 +131,9 @@ class HeadlessChrome extends Processor
     }
 
     /**
-     * @param string $nodePath
-     *
      * @return $this
      */
-    public function setNodePath(string $nodePath): self
+    public function setNodePath(string $nodePath): static
     {
         $this->nodePath = $nodePath;
 

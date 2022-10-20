@@ -42,7 +42,7 @@ class CacheClearer
         $this->resolveOptions($options);
     }
 
-    private function resolveOptions(array $options = [])
+    private function resolveOptions(array $options = []): void
     {
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
@@ -100,7 +100,7 @@ class CacheClearer
         $this->runCallback = $runCallback;
     }
 
-    private function runCommand(string $command, array $arguments = [])
+    private function runCommand(string $command, array $arguments = []): Process
     {
         $process = $this->buildProcess($command, $arguments);
         $process->run($this->runCallback);

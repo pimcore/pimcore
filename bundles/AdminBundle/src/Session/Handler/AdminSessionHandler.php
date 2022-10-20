@@ -80,10 +80,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
         return $this->getSession()->getId();
     }
 
-    /**
-     * @return SessionInterface
-     */
-    private function getSession()
+    private function getSession(): SessionInterface
     {
         try {
             return $this->requestHelper->getSession();
@@ -292,17 +289,11 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
         }
     }
 
-    /**
-     * @return bool
-     */
     private function shouldWriteAndClose(): bool
     {
         return $this->canWriteAndClose ??= $this->isAdminRequest($this->requestHelper->getMainRequest());
     }
 
-    /**
-     * @return bool
-     */
     private function isAdminRequest(Request $request): bool
     {
         return $this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN)

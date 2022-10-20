@@ -89,12 +89,6 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
         return implode(';', $cspHeaderOptions);
     }
 
-    /**
-     * @param string $key
-     * @param bool $flatten
-     *
-     * @return array|string
-     */
     private function getAllowedUrls(string $key, bool $flatten = true): array|string
     {
         if (!$flatten) {
@@ -105,12 +99,9 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
     }
 
     /**
-     * @param string $key
-     * @param array $value
-     *
      * @return $this
      */
-    public function addAllowedUrls(string $key, array $value): self
+    public function addAllowedUrls(string $key, array $value): static
     {
         if (!isset($this->allowedUrls[$key])) {
             $this->allowedUrls[$key] = [];
@@ -124,12 +115,9 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
     }
 
     /**
-     * @param string $key
-     * @param string $value
-     *
      * @return $this
      */
-    public function setCspHeader(string $key, string $value): self
+    public function setCspHeader(string $key, string $value): static
     {
         $this->cspHeaderOptions[$key] = $value;
 
@@ -147,8 +135,6 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
 
     /**
      * Generates a random nonce parameter.
-     *
-     * @return string
      */
     private function getNonce(): string
     {

@@ -105,7 +105,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * @throws \Exception
      */
-    private function checkTablenames()
+    private function checkTablenames(): void
     {
         $tables = [];
         $key = $this->getKey();
@@ -212,11 +212,10 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * @param DataObject\ClassDefinition\Data[] $fds
-     * @param array $found
      *
      * @throws \Exception
      */
-    private function enforceBlockRules($fds, $found = [])
+    private function enforceBlockRules(array $fds, array $found = []): void
     {
         foreach ($fds as $fd) {
             $childParams = $found;
@@ -233,7 +232,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         }
     }
 
-    private function checkContainerRestrictions()
+    private function checkContainerRestrictions(): void
     {
         $fds = $this->getFieldDefinitions();
         $this->enforceBlockRules($fds);
@@ -276,12 +275,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         \Pimcore::getContainer()->get(PHPObjectBrickClassDumperInterface::class)->dumpPHPClasses($this);
     }
 
-    /**
-     * @param array $definitions
-     *
-     * @return array
-     */
-    private function buildClassList($definitions)
+    private function buildClassList(array $definitions): array
     {
         $result = [];
         foreach ($definitions as $definition) {
@@ -293,12 +287,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * Returns a list of classes which need to be "rebuild" because they are affected of changes.
-     *
-     * @param self $oldObject
-     *
-     * @return array
      */
-    private function getClassesToCleanup($oldObject)
+    private function getClassesToCleanup(Definition $oldObject): array
     {
         $oldDefinitions = $oldObject->getClassDefinitions() ? $oldObject->getClassDefinitions() : [];
         $newDefinitions = $this->getClassDefinitions() ? $this->getClassDefinitions() : [];
@@ -322,7 +312,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * @param string $serializedFilename
      */
-    private function cleanupOldFiles($serializedFilename)
+    private function cleanupOldFiles(string $serializedFilename): void
     {
         $oldObject = null;
         $this->oldClassDefinitions = [];
@@ -360,7 +350,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * Update Database according to class-definition
      */
-    private function updateDatabase()
+    private function updateDatabase(): void
     {
         $processedClasses = [];
         if (!empty($this->classDefinitions)) {
@@ -426,7 +416,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * @throws \Exception
      */
-    private function createContainerClasses()
+    private function createContainerClasses(): void
     {
         $containerDefinition = [];
 

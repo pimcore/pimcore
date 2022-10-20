@@ -336,7 +336,7 @@ class Ffmpeg extends Adapter
         }
     }
 
-    private function deleteConversionLogFile()
+    private function deleteConversionLogFile(): void
     {
         @unlink($this->getConversionLogFile());
     }

@@ -249,11 +249,9 @@ interface ElementInterface extends ModelInterface
     public function __isBasedOnLatestData();
 
     /**
-     * @param int|null $versionCount
-     *
      * @return $this
      */
-    public function setVersionCount(?int $versionCount): self;
+    public function setVersionCount(?int $versionCount): static;
 
     /**
      * @return int
@@ -261,9 +259,16 @@ interface ElementInterface extends ModelInterface
     public function getVersionCount(): int;
 
     /**
+     * Save this Element.
+     *
+     * Items in the $parameters array are also passed on to Events triggered during this method's execution.
+     *
+     * @param array{versionNote?: string} $parameters Optional. Associative array currently using these keys:
+     *  - versionNote: Optional. Descriptive text saved alongside versioned data
+     *
      * @return $this
      */
-    public function save();
+    public function save(array $parameters = []): static;
 
     public function delete();
 

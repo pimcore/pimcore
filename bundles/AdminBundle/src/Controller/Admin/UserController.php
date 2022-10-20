@@ -1228,14 +1228,11 @@ class UserController extends AdminController implements KernelControllerEventInt
     }
 
     /**
-     *
-     * @param array $params
-     * @param string $fallbackUrl
      * @param int $referenceType //UrlGeneratorInterface::ABSOLUTE_URL, ABSOLUTE_PATH, RELATIVE_PATH, NETWORK_PATH
      *
      * @return string The generated URL
      */
-    private function generateCustomUrl(array $params, $fallbackUrl = 'pimcore_admin_login_check', $referenceType = UrlGeneratorInterface::ABSOLUTE_URL): string
+    private function generateCustomUrl(array $params, string $fallbackUrl = 'pimcore_admin_login_check', int $referenceType = UrlGeneratorInterface::ABSOLUTE_URL): string
     {
         try {
             $adminEntryPointRoute = $this->getParameter('pimcore_admin.custom_admin_route_name');

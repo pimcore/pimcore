@@ -61,14 +61,7 @@ class Processor
         'mirror' => ['mode'],
     ];
 
-    /**
-     * @param string $format
-     * @param array $allowed
-     * @param string $fallback
-     *
-     * @return string
-     */
-    private static function getAllowedFormat($format, $allowed = [], $fallback = 'png')
+    private static function getAllowedFormat(string $format, array $allowed = [], string $fallback = 'png'): string
     {
         $typeMappings = [
             'jpg' => 'jpeg',
@@ -472,12 +465,6 @@ class Processor
         ];
     }
 
-    /**
-     * @param Config $config
-     * @param string $transformationType
-     *
-     * @return bool
-     */
     private static function containsTransformationType(Config $config, string $transformationType): bool
     {
         $transformations = $config->getItems();

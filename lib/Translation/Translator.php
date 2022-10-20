@@ -285,17 +285,9 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
-     * @param string $id
-     * @param string $translated
-     * @param array $parameters
-     * @param string $domain
-     * @param string $locale
-     *
-     * @return string
-     *
      * @throws \Exception
      */
-    private function checkForEmptyTranslation($id, $translated, $parameters, $domain, $locale)
+    private function checkForEmptyTranslation(string $id, string $translated, array $parameters, string $domain, string $locale): string
     {
         if (empty($id)) {
             return $translated;
@@ -451,11 +443,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         $this->disableTranslations = $disableTranslations;
     }
 
-    /**
-     * @param string $text
-     *
-     * @return string
-     */
     private function updateLinks(string $text): string
     {
         if (strpos($text, 'pimcore_id')) {
@@ -478,12 +465,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         return call_user_func_array([$this->translator, $method], $args);
     }
 
-    /**
-     * @param string $domain
-     * @param string $locale
-     *
-     * @return string
-     */
     private function getCacheKey(string $domain, string $locale): string
     {
         return 'translation_data_' . md5($domain . '_' . $locale);

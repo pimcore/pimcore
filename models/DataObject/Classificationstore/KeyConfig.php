@@ -393,11 +393,6 @@ final class KeyConfig extends Model\AbstractModel
 
     /**
      * Calculate cache key
-     *
-     * @param int $id
-     * @param string|null $name
-     *
-     * @return string
      */
     private static function getCacheKey(int $id, string $name = null): string
     {
@@ -409,9 +404,6 @@ final class KeyConfig extends Model\AbstractModel
         return $cacheKey;
     }
 
-    /**
-     * @internal
-     */
     private function removeCache(): void
     {
         // Remove runtime cache

@@ -28,7 +28,7 @@ use Pimcore\Tests\Test\ModelTestCase;
  */
 class ClassDefinitionTest extends ModelTestCase
 {
-    private function testSetterCode(string $fieldName, string $expectedSetterCode, bool $localizedField = false)
+    private function testSetterCode(string $fieldName, string $expectedSetterCode, bool $localizedField = false): void
     {
         $class = ClassDefinition::getByName('unittest');
         if ($localizedField) {

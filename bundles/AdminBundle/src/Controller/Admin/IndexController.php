@@ -282,10 +282,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    private function getInstanceId()
+    private function getInstanceId(): string
     {
         $instanceId = 'not-set';
 

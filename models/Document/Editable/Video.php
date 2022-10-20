@@ -500,12 +500,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->getEmptyCode();
     }
 
-    /**
-     * @param Asset\Video $asset
-     *
-     * @return Asset\Image\Thumbnail|Asset\Video\ImageThumbnail
-     */
-    private function getPosterThumbnailImage(Asset\Video $asset)
+    private function getPosterThumbnailImage(Asset\Video $asset): Asset\Video\ImageThumbnail|Asset\Image\Thumbnail
     {
         $config = $this->getConfig();
         if (!array_key_exists('imagethumbnail', $config) || empty($config['imagethumbnail'])) {
@@ -538,20 +533,12 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $asset->getImageThumbnail($imageThumbnailConf);
     }
 
-    /**
-     * @return string
-     */
-    private function getUrlCode()
+    private function getUrlCode(): string
     {
         return $this->getHtml5Code(['mp4' => (string) $this->id]);
     }
 
-    /**
-     * @param string $message
-     *
-     * @return string
-     */
-    private function getErrorCode($message = '')
+    private function getErrorCode(string $message = ''): string
     {
         $width = $this->getWidth();
         if (strpos($this->getWidth(), '%') === false) {
@@ -576,7 +563,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     /**
      * @return string
      */
-    private function parseYoutubeId()
+    private function parseYoutubeId(): string
     {
         $youtubeId = '';
         if ($this->type === self::TYPE_YOUTUBE) {
@@ -857,13 +844,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->getEmptyCode();
     }
 
-    /**
-     * @param array $urls
-     * @param Asset\Image\Thumbnail|Asset\Video\ImageThumbnail|null $thumbnail
-     *
-     * @return string
-     */
-    private function getHtml5Code($urls = [], $thumbnail = null)
+    private function getHtml5Code(array $urls = [], Asset\Video\ImageThumbnail|Asset\Image\Thumbnail $thumbnail = null): string
     {
         $code = '';
         $video = $this->getVideoAsset();
@@ -986,12 +967,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $code;
     }
 
-    /**
-     * @param string|null $thumbnail
-     *
-     * @return string
-     */
-    private function getProgressCode($thumbnail = null)
+    private function getProgressCode(string $thumbnail = null): string
     {
         $uid = $this->getUniqId();
         $code = '
@@ -1022,9 +998,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $code;
     }
 
-    /**
-     * @return string
-     */
     private function getEmptyCode(): string
     {
         $uid = 'video_' . uniqid();
