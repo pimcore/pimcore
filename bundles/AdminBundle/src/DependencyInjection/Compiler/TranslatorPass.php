@@ -30,13 +30,10 @@ final class TranslatorPass implements CompilerPassInterface
     public function process(ContainerBuilder $container): void
     {
         $translationPath = $container->getParameter('pimcore_admin.translations.path');
-        $container
-            ->getDefinition(Translator::class)
-            ->addMethodCall('setAdminPath', [$translationPath]);
-
         $translationMapping = $container->getParameter('pimcore.translations.admin_translation_mapping');
         $container
             ->getDefinition(Translator::class)
+            ->addMethodCall('setAdminPath', [$translationPath])
             ->addMethodCall('setAdminTranslationMapping', [$translationMapping]);
 
 
