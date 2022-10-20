@@ -296,9 +296,7 @@
  
                      if (res.exists) {
                          let applyToAllCheckbox = Ext.create('Ext.form.field.Checkbox', {
-                             xtype: 'checkbox',
-                             boxLabel: t('asset_upload_apply_to_all'),
-                             itemId: 'applyToAllCheckbox'
+                             boxLabel: t('asset_upload_apply_to_all')
                          });
                          let messageBox = new Ext.window.MessageBox({
                              layout: {
@@ -325,15 +323,15 @@
                                          allowOverwrite = true;
                                      }
                                      if (applyToAllCheckbox.getValue()) {
-                                         // prevent endless loop
-                                         applyToAllCheckbox.setValue(false);
+                                         applyToAllCheckbox.setValue(false); // prevent endless loop
                                          Ext.each(overwriteConfirmMessageBoxes, function(messageBox) {
                                              if (messageBox.isVisible()) {
                                                  messageBox.down('button[itemId='+action+']').fireHandler();
                                              }
                                          });
                                      }
-                                     uploadFunction(allowOverwrite);
+
+                                     uploadFunction(allowOverwrite); // currently visible message box if not visible anymore after clicking a button -> action for current message box gets executed here instead of in above loop
                                  } else {
                                      finishedErrorHandler();
                                  }
