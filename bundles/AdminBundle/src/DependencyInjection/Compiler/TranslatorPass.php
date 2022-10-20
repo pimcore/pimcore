@@ -20,8 +20,6 @@ namespace Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler;
 use Pimcore\Translation\Translator;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * @internal
