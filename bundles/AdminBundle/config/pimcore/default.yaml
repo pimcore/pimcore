@@ -43,3 +43,8 @@ flysystem:
             visibility: private
             options:
                 directory: '%kernel.project_dir%/var/admin'
+
+twig:
+    globals:
+        pimcore_csrf: '@Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler'
+        pimcore_csp: '@Pimcore\Bundle\AdminBundle\Security\ContentSecurityPolicyHandler'

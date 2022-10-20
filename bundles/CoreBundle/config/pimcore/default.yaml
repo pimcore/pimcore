@@ -62,8 +62,6 @@ twig:
         # avoid fetching and using services from templates if possible
         # this is only here for compatibility/dev reasons and may be removed later
         container: '@service_container'
-        pimcore_csrf: '@Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler'
-        pimcore_csp: '@Pimcore\Bundle\AdminBundle\Security\ContentSecurityPolicyHandler'
     paths:
         '%kernel.project_dir%/templates': App
 
