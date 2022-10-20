@@ -14,7 +14,7 @@ services:
     #
     # See UserAwareEncoderFactory which is used from the admin bundle and from CMS demo profile.
     #
-    # The second argument (factory mapping) is read from config (pimcore.security.encoder_factories) and set by the extension.
+    # The second argument (factory mapping) is read from config (pimcore.security.password_hasher_factories) and set by the extension.
     pimcore.security.password_hasher_factory:
         class: Pimcore\Security\Hasher\PasswordHasherFactory
         decorates: security.password_hasher_factory

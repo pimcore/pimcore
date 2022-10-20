@@ -108,12 +108,12 @@ To be able to integrate our user object, we need 2 integration points:
 * A `PasswordFieldHasher` which has access to the user instance and delegates calculation and verification of the password
   hash to the password field definition. The password hasher needs to be configured with the name of the field it should operate 
   on (`password` in our case).
-* A `UserAwareHasherFactory` which builds a dedicated instance of a `PasswordFieldHasher` per user object.
+* A `UserAwarePasswordHasherFactory` which builds a dedicated instance of a `PasswordFieldHasher` per user object.
 
 To achieve this, we define a factory service which builds `PasswordFieldHasher` instances as specified above:
 ```yaml
 # The password hasher factory is responsible for verifying the password hash for a given user. As we need some special
-# handling to be able to work with the password field, we use the UserAwareHasherFactory to build a dedicated
+# handling to be able to work with the password field, we use the UserAwarePasswordHasherFactory  to build a dedicated
 # hasher per user. This service is configured in pimcore.security.password_hasher_factories to handle our user model.
 services:
     website_demo.security.password_hasher_factory:
@@ -135,7 +135,7 @@ pimcore:
             App\Model\DataObject\User: website_demo.security.password_hasher_factory
 ```
 
-When a password hasher is loaded for a `App\Model\DataObject\User` object, the UserAwareHasherFactory will build a dedicated
+When a password hasher is loaded for a `App\Model\DataObject\User` object, the UserAwarePasswordHasherFactory will build a dedicated
 instance of `PasswordFieldHasher` instead of always returning the same instance for all users.
 
 
