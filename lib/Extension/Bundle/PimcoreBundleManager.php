@@ -241,9 +241,7 @@ class PimcoreBundleManager
             $value = array_map(fn ($item) => trim((string) $item), $value);
 
             // remove empty values
-            return array_filter($value, function ($item) {
-                return !empty($item);
-            });
+            return array_filter($value, fn ($item) => !empty($item));
         });
 
         self::$optionsResolver = $resolver;
