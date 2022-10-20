@@ -72,7 +72,7 @@ class Video extends Data implements
     /**
      * @internal
      */
-    public string $uploadPath;
+    public string $uploadPath = '';
 
     /**
      * Type for the column to query

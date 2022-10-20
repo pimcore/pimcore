@@ -74,7 +74,6 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
                     width: 48,
                     height: 24,
                     cls: "pimcore_icon_droptarget_upload"
-
                 }
             )
         }
