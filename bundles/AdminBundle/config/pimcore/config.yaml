@@ -1,2 +1,3 @@
 imports:
-    - { resource: default.yaml }
+  - { resource: default.yaml }
+  - { resource: two_factor_authentication.yaml }

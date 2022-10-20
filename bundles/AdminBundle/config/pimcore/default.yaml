@@ -26,3 +26,6 @@ pimcore:
             routes:
                 - { path: ^/admin(/.*)?$ }
                 - { route: ^pimcore_admin_ }
+    security:
+        password_hasher_factories:
+            Pimcore\Bundle\AdminBundle\Security\User\User: pimcore_admin.security.password_hasher_factory
