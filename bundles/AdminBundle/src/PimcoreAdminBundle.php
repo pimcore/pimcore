@@ -15,7 +15,6 @@
 
 namespace Pimcore\Bundle\AdminBundle;
 
-use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\ContextGuesserPass;
 use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\ContentSecurityPolicyUrlsPass;
 use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\GDPRDataProviderPass;
 use Pimcore\Bundle\AdminBundle\DependencyInjection\Compiler\ImportExportLocatorsPass;
