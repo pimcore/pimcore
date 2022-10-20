@@ -54,7 +54,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     {
         $data = [
             'pid' => getmypid(),
-            'priority' => strtolower($record->level->name),
+            'priority' => $record->level->toPsrLogLevel(),
             'message' => $record->message,
             'timestamp' => $record->datetime->format('Y-m-d H:i:s'),
             'component' => $record->context['component'] ?? $record->channel,
