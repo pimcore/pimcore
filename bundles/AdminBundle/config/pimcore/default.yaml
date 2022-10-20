@@ -33,3 +33,13 @@ pimcore:
     security:
         password_hasher_factories:
             Pimcore\Bundle\AdminBundle\Security\User\User: pimcore_admin.security.password_hasher_factory
+
+
+flysystem:
+    storages:
+        pimcore.admin.storage:
+            # Storage for shared admin resources, such as the user avatar, custom logos, ...
+            adapter: 'local'
+            visibility: private
+            options:
+                directory: '%kernel.project_dir%/var/admin'
