@@ -146,7 +146,6 @@
   },
   "conflict": {
     "symfony/symfony": "*",
-    "symfony/monolog-bundle": "3.6.0",
     "doctrine/doctrine-migrations-bundle": "3.1.0",
     "sabre/dav": "4.2.2"
   },
