@@ -34,5 +34,10 @@ final class TranslatorPass implements CompilerPassInterface
         $container
             ->getDefinition(Translator::class)
             ->addMethodCall('setAdminPath', [$translationPath]);
+
+        $translationMapping = $container->getParameter('pimcore.translations.admin_translation_mapping');
+        $container
+            ->getDefinition(Translator::class)
+            ->addMethodCall('setAdminTranslationMapping', [$translationMapping]);
     }
 }
