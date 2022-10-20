@@ -21,8 +21,8 @@ use Pimcore\Bundle\AdminBundle\Security\User\User;
 use Pimcore\Tool\Authentication;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 /**
@@ -36,7 +36,8 @@ class PreAuthenticatedAdminSessionListener
         private TokenStorageInterface $tokenStorage,
         private AuthenticationManagerInterface $authenticationManager,
         private string $providerKey
-    ) {}
+    ) {
+    }
 
     public function __invoke(RequestEvent $event): void
     {
