@@ -256,7 +256,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
             'title'        => $this->title,
             'description'  => $this->description,
             'path'         => $path,
-            'poster'       => $poster ? $poster->getFullPath() : '',
+            'poster'       => $poster ? $poster->getRealFullPath() : '',
         ];
     }
 
