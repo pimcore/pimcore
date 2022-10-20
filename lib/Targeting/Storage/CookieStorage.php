@@ -214,7 +214,7 @@ class CookieStorage implements TargetingStorageInterface
         return $this->data[$scope];
     }
 
-    private function addSaveListener(VisitorInfo $visitorInfo)
+    private function addSaveListener(VisitorInfo $visitorInfo): void
     {
         if ($this->changed) {
             return;
@@ -248,7 +248,7 @@ class CookieStorage implements TargetingStorageInterface
         string $scope,
         \DateTimeInterface $createdAt = null,
         \DateTimeInterface $updatedAt = null
-    ) {
+    ): void {
         $timestamps = $this->normalizeTimestamps($createdAt, $updatedAt);
 
         if (!isset($this->data[$scope][self::STORAGE_KEY_CREATED_AT])) {

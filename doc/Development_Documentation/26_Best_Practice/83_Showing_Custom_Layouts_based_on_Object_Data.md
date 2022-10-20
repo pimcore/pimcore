@@ -44,24 +44,23 @@ namespace App\EventListener;
 
 use ... 
 
-class MyEventListener {
-
-    public function selectCustomLayout(GenericEvent $event) {
-
-        $object = $event->getArgument("object");
-        if($object instanceof Product) {
-            
+class MyEventListener
+{
+    public function selectCustomLayout(GenericEvent $event)
+    {
+        $object = $event->getArgument('object');
+        if ($object instanceof Product) {
             //get product hierarchy level
             $hierarchyLevel = $object->getLevel(); 
-            
+
             //data element that is send to Pimcore backend UI
-            $data = $event->getArgument("data");
+            $data = $event->getArgument('data');
 
             switch ($hierarchyLevel) {
-                case "Article":
+                case 'Article':
                     $data = $this->doModifyCustomLayouts($data, $object, 2, [0, 1]);
                     break;
-                case "Color Variant":
+                case 'Color Variant':
                     $data = $this->doModifyCustomLayouts($data, $object, 1, [0, 2]);
                     break;
                 default:
@@ -69,38 +68,31 @@ class MyEventListener {
                     break;
             }
             
-            $event->setArgument("data", $data);
+            $event->setArgument('data', $data);
         }
-
     }
-    
-    /**
-    * 
-    */
-    private function doModifyCustomLayouts($data, $object, $customLayoutToSelect = null, $layoutsToRemove = []) {
+
+    private function doModifyCustomLayouts(array $data, Product $object, int $customLayoutToSelect, array $layoutsToRemove): array
+    {
+        //set current layout to subcategory layout
+        $data['currentLayoutId'] = $customLayoutToSelect;
+        $customLayout = CustomLayout::getById($customLayoutToSelect);
+        $data['layout'] = $customLayout->getLayoutDefinitions();
+        Service::enrichLayoutDefinition($data['layout'], $object);
         
-        if($customLayoutToSelect != null) {
-            //set current layout to subcategory layout
-            $data['currentLayoutId'] = $customLayoutToSelect;
-            $customLayout = CustomLayout::getById($customLayoutToSelect);
-            $data['layout'] = $customLayout->getLayoutDefinitions();
-            Service::enrichLayoutDefinition($data["layout"], $object);            
-        }
-        
-        if(!empty($layoutsToRemove)) {
+        if (!empty($layoutsToRemove)) {
             //remove master layout from valid layouts
-            $validLayouts = $data["validLayouts"];
+            $validLayouts = $data['validLayouts'];
             foreach($validLayouts as $key => $validLayout) {
                 if(in_array($validLayout['id'], $layoutsToRemove)) {
                     unset($validLayouts[$key]);
                 }
             }
-            $data["validLayouts"] = array_values($validLayouts);            
+            $data['validLayouts'] = array_values($validLayouts);            
         }
 
         return $data; 
     }
-
 }
 
 

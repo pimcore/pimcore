@@ -265,7 +265,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    private function getDummyOwnerInfo()
+    private function getDummyOwnerInfo(): array
     {
         return [
             'owner' => 'dummy owner',

@@ -73,7 +73,7 @@ class Scheduledblock extends Block implements BlockInterface
         return $this;
     }
 
-    private function filterElements()
+    private function filterElements(): ?array
     {
         if ($this->getEditmode()) {
             return $this->indices;
@@ -112,11 +112,8 @@ class Scheduledblock extends Block implements BlockInterface
 
     /**
      * Set cache lifetime to timestamp of next element
-     *
-     * @param int $outputTimestamp
-     * @param array $nextElement
      */
-    private function updateOutputCacheLifetime($outputTimestamp, $nextElement)
+    private function updateOutputCacheLifetime(int $outputTimestamp, array $nextElement): void
     {
         $cacheService = \Pimcore::getContainer()->get(FullPageCacheListener::class);
 

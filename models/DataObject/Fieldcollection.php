@@ -191,12 +191,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
         return $this->items[$index] ?? null;
     }
 
-    /**
-     * @param int|null $index
-     *
-     * @return Fieldcollection\Data\AbstractData|null
-     */
-    private function getByOriginalIndex($index)
+    private function getByOriginalIndex(?int $index): ?Fieldcollection\Data\AbstractData
     {
         if ($index === null) {
             return null;

@@ -251,12 +251,7 @@ final class Version extends AbstractModel
         $this->dispatchEvent(new VersionEvent($this), VersionEvents::POST_SAVE);
     }
 
-    /**
-     * @param ElementInterface $data
-     *
-     * @return mixed
-     */
-    private function marshalData($data)
+    private function marshalData(ElementInterface $data): mixed
     {
         $context = [
             'source' => __METHOD__,
@@ -287,12 +282,7 @@ final class Version extends AbstractModel
         return $newData;
     }
 
-    /**
-     * @param ElementInterface $data
-     *
-     * @return mixed
-     */
-    private function unmarshalData($data)
+    private function unmarshalData(ElementInterface $data): mixed
     {
         $context = [
             'source' => __METHOD__,
@@ -709,9 +699,9 @@ final class Version extends AbstractModel
     }
 
     /**
-     * @param bool $autoSave
+     * @return $this
      */
-    public function setAutoSave(bool $autoSave): self
+    public function setAutoSave(bool $autoSave): static
     {
         $this->autoSave = $autoSave;
 

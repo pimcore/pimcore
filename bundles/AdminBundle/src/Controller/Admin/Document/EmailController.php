@@ -66,6 +66,7 @@ class EmailController extends DocumentControllerBase
 
         $this->addTranslationsData($email, $data);
         $this->minimizeProperties($email, $data);
+        $this->populateUsersNames($email, $data);
 
         $data['url'] = $email->getUrl();
 

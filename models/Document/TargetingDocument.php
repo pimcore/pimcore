@@ -25,8 +25,6 @@ use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 abstract class TargetingDocument extends PageSnippet implements TargetingDocumentInterface
 {
     /**
-     * @internal
-     *
      * @var int
      */
     private $useTargetGroup;

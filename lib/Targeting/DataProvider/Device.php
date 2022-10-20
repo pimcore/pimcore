@@ -87,7 +87,7 @@ class Device implements DataProviderInterface
         );
     }
 
-    private function handleOverrides(Request $request, array $result = null)
+    private function handleOverrides(Request $request, array $result = null): ?array
     {
         $overrides = OverrideAttributeResolver::getOverrideValue($request, 'device');
         if (empty($overrides)) {
@@ -118,7 +118,7 @@ class Device implements DataProviderInterface
         return $result;
     }
 
-    private function loadData(string $userAgent)
+    private function loadData(string $userAgent): ?array
     {
         if (null === $this->cache) {
             return $this->doLoadData($userAgent);
@@ -140,7 +140,7 @@ class Device implements DataProviderInterface
         return $result;
     }
 
-    private function doLoadData(string $userAgent)
+    private function doLoadData(string $userAgent): ?array
     {
         try {
             $dd = new DeviceDetector($userAgent);

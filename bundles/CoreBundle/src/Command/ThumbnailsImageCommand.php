@@ -198,9 +198,6 @@ class ThumbnailsImageCommand extends AbstractCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param string $thumbnailConfigName
-     *
      * @return Asset\Image\Thumbnail\Config[]
      */
     private function fetchThumbnailConfigs(InputInterface $input, string $thumbnailConfigName): array

@@ -88,11 +88,6 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
     }
 
     /**
-     * @param DataObject\Data\UrlSlug $slug
-     * @param DataObject\Concrete $object
-     *
-     * @return DataObjectRoute
-     *
      * @throws \Exception
      */
     private function buildRouteForFromSlug(DataObject\Data\UrlSlug $slug, DataObject\Concrete $object): DataObjectRoute

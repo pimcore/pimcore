@@ -1100,7 +1100,7 @@ class Model extends AbstractDefinitionHelper
         $this->setupObjectbrick_UnittestBrick();
     }
 
-    private function setupUnit($abbr)
+    private function setupUnit(string $abbr): void
     {
         $unit = DataObject\QuantityValue\Unit::getByAbbreviation($abbr);
         if (!$unit) {

@@ -55,13 +55,9 @@ class BundleLocator implements BundleLocatorInterface
     }
 
     /**
-     * @param object|string $class
-     *
-     * @return BundleInterface
-     *
      * @throws \ReflectionException
      */
-    private function getBundleForClass($class): BundleInterface
+    private function getBundleForClass(object|string $class): BundleInterface
     {
         if (is_object($class)) {
             $class = get_class($class);
@@ -75,10 +71,6 @@ class BundleLocator implements BundleLocatorInterface
     }
 
     /**
-     * @param string $class
-     *
-     * @return BundleInterface
-     *
      * @throws \ReflectionException
      */
     private function findBundleForClass(string $class): BundleInterface

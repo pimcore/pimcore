@@ -140,11 +140,9 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @param int $id
-     *
-     * @return Notification
+     * @return $this
      */
-    public function setId(int $id): self
+    public function setId(int $id): static
     {
         $this->id = $id;
 
@@ -160,11 +158,9 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @param string $creationDate
-     *
-     * @return Notification
+     * @return $this
      */
-    public function setCreationDate(string $creationDate): self
+    public function setCreationDate(string $creationDate): static
     {
         $this->creationDate = $creationDate;
 
@@ -180,11 +176,9 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @param string $modificationDate
-     *
-     * @return Notification
+     * @return $this
      */
-    public function setModificationDate(string $modificationDate): self
+    public function setModificationDate(string $modificationDate): static
     {
         $this->modificationDate = $modificationDate;
 
@@ -200,11 +194,9 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @param null|User $sender
-     *
-     * @return Notification
+     * @return $this
      */
-    public function setSender(?User $sender): self
+    public function setSender(?User $sender): static
     {
         $this->sender = $sender;
 
@@ -220,11 +212,9 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @param null|User $recipient
-     *
-     * @return Notification
+     * @return $this
      */
-    public function setRecipient(?User $recipient): self
+    public function setRecipient(?User $recipient): static
     {
         $this->recipient = $recipient;
 
@@ -240,11 +230,9 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @param null|string $title
-     *
-     * @return Notification
+     * @return $this
      */
-    public function setTitle(?string $title): self
+    public function setTitle(?string $title): static
     {
         $this->title = $title;
 
@@ -260,11 +248,9 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @param null|string $type
-     *
-     * @return Notification
+     * @return $this
      */
-    public function setType(?string $type): self
+    public function setType(?string $type): static
     {
         $this->type = $type;
 
@@ -280,11 +266,9 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @param null|string $message
-     *
-     * @return Notification
+     * @return $this
      */
-    public function setMessage(?string $message): self
+    public function setMessage(?string $message): static
     {
         $this->message = $message;
 
@@ -300,11 +284,9 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @param null|Element\ElementInterface $linkedElement
-     *
-     * @return Notification
+     * @return $this
      */
-    public function setLinkedElement(?Element\ElementInterface $linkedElement): self
+    public function setLinkedElement(?Element\ElementInterface $linkedElement): static
     {
         $this->linkedElement = $linkedElement;
         $this->linkedElementType = Element\Service::getElementType($linkedElement);
@@ -331,11 +313,9 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @param bool $read
-     *
-     * @return Notification
+     * @return $this
      */
-    public function setRead(bool $read): self
+    public function setRead(bool $read): static
     {
         $this->read = $read;
 

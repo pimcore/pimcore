@@ -19,13 +19,6 @@ services:
         calls:
             - [setLogger, ['@logger']]
 
-    Pimcore\Templating\Renderer\TagRenderer:
-        alias: Pimcore\Templating\Renderer\EditableRenderer
-        deprecated:
-            message: 'The "%alias_id%" service is deprecated. Use "Pimcore\Templating\Renderer\EditableRenderer" instead'
-            package: pimcore/pimcore
-            version: 6.8
-
     # NAVIGATION
 
     # renderer locator collecting all registered renderers

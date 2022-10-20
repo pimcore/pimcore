@@ -58,7 +58,7 @@ class MigrateElementsCommand extends AbstractCommand
         return 0;
     }
 
-    private function processVersionRow(array $row)
+    private function processVersionRow(array $row): void
     {
         $vId = $row['vId'];
         $documentId = $row['dId'];

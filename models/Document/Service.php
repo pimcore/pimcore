@@ -94,39 +94,6 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * Save document and all child documents
-     *
-     * @param Document $document
-     * @param int $collectGarbageAfterIteration
-     * @param int $saved
-     *
-     * @throws \Exception
-     */
-    private static function saveRecursive($document, $collectGarbageAfterIteration = 25, &$saved = 0)
-    {
-        if ($document instanceof Document) {
-            $document->save();
-            $saved++;
-            if ($saved % $collectGarbageAfterIteration === 0) {
-                \Pimcore::collectGarbage();
-            }
-        }
-
-        foreach ($document->getChildren() as $child) {
-            if (!$child->hasChildren()) {
-                $child->save();
-                $saved++;
-                if ($saved % $collectGarbageAfterIteration === 0) {
-                    \Pimcore::collectGarbage();
-                }
-            }
-            if ($child->hasChildren()) {
-                self::saveRecursive($child, $collectGarbageAfterIteration, $saved);
-            }
-        }
-    }
-
-    /**
      * @param  Document $target
      * @param  Document $source
      *
@@ -345,13 +312,7 @@ class Service extends Model\Element\Service
 
         if ($doc instanceof Document\PageSnippet) {
             foreach ($doc->getEditables() as $name => $data) {
-                //TODO Pimcore 11: remove method_exists BC layer
-                if ($data instanceof LazyLoadingInterface || method_exists($data, 'load')) {
-                    if (!$data instanceof LazyLoadingInterface) {
-                        trigger_deprecation('pimcore/pimcore', '10.3',
-                            sprintf('Usage of method_exists is deprecated since version 10.3 and will be removed in Pimcore 11.' .
-                                'Implement the %s interface instead.', LazyLoadingInterface::class));
-                    }
+                if ($data instanceof LazyLoadingInterface) {
                     $data->load();
                 }
             }
@@ -430,13 +391,7 @@ class Service extends Model\Element\Service
                 if ($contentMaster instanceof Document\PageSnippet) {
                     $contentMasterEditables = $contentMaster->getEditables();
                     foreach ($contentMasterEditables as $contentMasterEditable) {
-                        //TODO Pimcore 11: remove method_exists BC layer
-                        if ($contentMasterEditable instanceof IdRewriterInterface || method_exists($contentMasterEditable, 'rewriteIds')) {
-                            if (!$contentMasterEditable instanceof IdRewriterInterface) {
-                                trigger_deprecation('pimcore/pimcore', '10.3',
-                                    sprintf('Usage of method_exists is deprecated since version 10.3 and will be removed in Pimcore 11.' .
-                                        'Implement the %s interface instead.', IdRewriterInterface::class));
-                            }
+                        if ($contentMasterEditable instanceof IdRewriterInterface) {
                             $editable = clone $contentMasterEditable;
                             $editable->rewriteIds($rewriteConfig);
 
@@ -453,13 +408,7 @@ class Service extends Model\Element\Service
             } else {
                 $editables = $document->getEditables();
                 foreach ($editables as &$editable) {
-                    //TODO Pimcore 11: remove method_exists BC layer
-                    if ($editable instanceof IdRewriterInterface || method_exists($editable, 'rewriteIds')) {
-                        if (!$editable instanceof IdRewriterInterface) {
-                            trigger_deprecation('pimcore/pimcore', '10.3',
-                                sprintf('Usage of method_exists is deprecated since version 10.3 and will be removed in Pimcore 11.' .
-                                    'Implement the %s interface instead.', IdRewriterInterface::class));
-                        }
+                    if ($editable instanceof IdRewriterInterface) {
                         $editable->rewriteIds($rewriteConfig);
                     }
                 }

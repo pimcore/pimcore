@@ -40,9 +40,9 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @param bool $loadAutoSave
+     * @return $this
      */
-    public function setLoadAutoSave(bool $loadAutoSave): self
+    public function setLoadAutoSave(bool $loadAutoSave): static
     {
         $this->loadAutoSave = $loadAutoSave;
 

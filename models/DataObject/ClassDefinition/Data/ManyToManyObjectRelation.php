@@ -91,6 +91,11 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @internal
      */
+    public bool $allowToClearRelation = true;
+
+    /**
+     * @internal
+     */
     public bool $optimizedAdminLoading = false;
 
     /**
@@ -166,15 +171,16 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
      * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
+     * @return string|null
+     *
      * @throws \Exception
      *
-     * @return string|null
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
+     *
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
@@ -199,13 +205,14 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @see Data::getDataForEditmode
-     *
      * @param array $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
+     *
+     * @see Data::getDataForEditmode
+     *
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -228,13 +235,14 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @see Data::getDataFromEditmode
-     *
      * @param array|null|false $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
+     *
+     * @see Data::getDataFromEditmode
+     *
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -257,13 +265,14 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @see Data::getDataFromEditmode
-     *
      * @param array $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
+     *
+     * @see Data::getDataFromEditmode
+     *
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {
@@ -283,13 +292,14 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @see Data::getVersionPreview
-     *
      * @param Element\ElementInterface[]|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null
+     *
+     * @see Data::getVersionPreview
+     *
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
@@ -359,7 +369,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
-            throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
+            throw new Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
         }
 
         if (is_array($data)) {
@@ -378,7 +388,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                         $id = '??';
                     }
 
-                    throw new Element\ValidationException('Invalid object relation to object ['.$id.'] in field ' . $this->getName(). ' , tried to assign ' . $o->getId());
+                    throw new Element\ValidationException('Invalid object relation to object [' . $id . '] in field ' . $this->getName() . ' , tried to assign ' . $o->getId());
                 }
             }
 
@@ -540,7 +550,8 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :mixed */
+    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = [])
+    /** :mixed */
     {
         $data = $this->getDataFromObjectParam($container, $params);
         $data = $this->rewriteIdsService($data, $idMapping);
@@ -689,11 +700,12 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * Returns a ID which must be unique across the grid rows
      *
-     * @internal
-     *
      * @param array $item
      *
      * @return string
+     *
+     * @internal
+     *
      */
     protected function buildUniqueKeyForDiffEditor($item)
     {
@@ -832,6 +844,16 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     public function setAllowToCreateNewObject($allowToCreateNewObject)
     {
         $this->allowToCreateNewObject = (bool)$allowToCreateNewObject;
+    }
+
+    public function isAllowedToClearRelation(): bool
+    {
+        return $this->allowToClearRelation;
+    }
+
+    public function setAllowToClearRelation(bool $allowToClearRelation): void
+    {
+        $this->allowToClearRelation = $allowToClearRelation;
     }
 
     /**

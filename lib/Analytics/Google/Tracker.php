@@ -157,14 +157,7 @@ class Tracker extends AbstractTracker
         return $this->doBuildCode($siteId, $config, $siteConfig);
     }
 
-    /**
-     * @param SiteId $siteId
-     * @param Config $config
-     * @param array $siteConfig
-     *
-     * @return string
-     */
-    private function doBuildCode(SiteId $siteId, Config $config, array $siteConfig)
+    private function doBuildCode(SiteId $siteId, Config $config, array $siteConfig): string
     {
         $data = [
             'siteId' => $siteId,

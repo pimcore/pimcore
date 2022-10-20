@@ -205,6 +205,12 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
             });
             this.specificPanel.add({
                 xtype: "checkbox",
+                boxLabel: t("allow_to_clear_relation"),
+                name: "allowToClearRelation",
+                value: this.datax.allowToClearRelation ?? true
+            });
+            this.specificPanel.add({
+                xtype: "checkbox",
                 boxLabel: t("enable_admin_async_load"),
                 name: "optimizedAdminLoading",
                 value: this.datax.optimizedAdminLoading
@@ -236,7 +242,8 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
                     visibleFields: source.datax.visibleFields,
                     optimizedAdminLoading: source.datax.optimizedAdminLoading,
                     pathFormatterClass: source.datax.pathFormatterClass,
-                    allowToCreateNewObject: source.datax.allowToCreateNewObject
+                    allowToCreateNewObject: source.datax.allowToCreateNewObject,
+                    allowToClearRelation: source.datax.allowToClearRelation
                 });
         }
     }

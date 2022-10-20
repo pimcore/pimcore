@@ -698,7 +698,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @throws \Exception
      */
-    public function save()
+    public function save(array $parameters = []): static
     {
         $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
 
@@ -709,12 +709,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         }
 
         try {
-            $params = [];
-            if (func_num_args() && is_array(func_get_arg(0))) {
-                $params = func_get_arg(0);
-            }
-
-            parent::save($params);
+            parent::save($parameters);
             if ($this instanceof DirtyIndicatorInterface) {
                 $this->resetDirtyMap();
             }

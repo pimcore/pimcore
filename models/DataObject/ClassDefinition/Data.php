@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
@@ -536,6 +537,10 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      */
     public function getFilterConditionExt($value, $operator, $params = [])
     {
+        if (is_array($value) && empty($value)) {
+            return '';
+        }
+
         $db = \Pimcore\Db::get();
         $name = $params['name'] ?: $this->name;
         $key = $db->quoteIdentifier($name);
@@ -558,7 +563,21 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         }
 
         if (in_array($operator, DataObject\ClassDefinition\Data::$validFilterOperators)) {
-            return $key . ' ' . $operator . ' ' . $value . ' ';
+            $trailer = '';
+            //the db interprets 0 as NULL -> if empty (0) is selected in the filter, we must also filter for NULL
+            if ($value === '\'0\'' || is_array($value) && in_array(0, $value)) {
+                $trailer = ' OR ' . $key . ' IS NULL';
+            }
+
+            if (str_contains($name, 'cskey') && is_array($value) && !empty($value)) {
+                $values = array_map(function ($val) use ($db) {
+                    return $db->quote(Helper::escapeLike($val));
+                }, $value);
+
+                return $key . ' ' . $operator . ' ' . implode(' OR ' . $key . ' ' . $operator . ' ', $values) . $trailer;
+            }
+
+            return $key . ' ' . $operator . ' ' . $value . ' ' . $trailer;
         }
 
         return '';

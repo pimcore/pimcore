@@ -107,7 +107,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * {@inheritdoc}
      */
-    public function save()
+    public function save(array $parameters = []): static
     {
         // checking the required editables renders the document, so this needs to be
         // before the database transaction, see also https://github.com/pimcore/pimcore/issues/8992
@@ -116,7 +116,7 @@ abstract class PageSnippet extends Model\Document
             throw new Model\Element\ValidationException('Prevented publishing document - missing values for required editables');
         }
 
-        return parent::save(...func_get_args());
+        return parent::save($parameters);
     }
 
     /**

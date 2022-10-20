@@ -159,7 +159,7 @@ abstract class Kernel extends SymfonyKernel
         $this->microKernelRegisterContainerConfiguration($loader);
 
         //load system configuration
-        $systemConfigFile = Config::locateConfigFile('system.yml');
+        $systemConfigFile = Config::locateConfigFile('system.yaml');
         if (file_exists($systemConfigFile)) {
             $loader->load($systemConfigFile);
         }
@@ -222,13 +222,9 @@ abstract class Kernel extends SymfonyKernel
     }
 
     /**
-     * @param ContainerBuilder $container
-     *
-     * @return void
-     *
      * @deprecated Remove in Pimcore 11
      */
-    private function registerExtensionConfigFileResources(ContainerBuilder $container)
+    private function registerExtensionConfigFileResources(ContainerBuilder $container): void
     {
         $filenames = [
             'extensions.php',
@@ -487,25 +483,5 @@ abstract class Kernel extends SymfonyKernel
         if (!$defaultTimezone) {
             date_default_timezone_set('UTC'); // UTC -> default timezone
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function locateResource(string $name)
-    {
-        // BC layer for supporting both presta/sitemap-bundle": "^2.1 || ^3.2
-        // @TODO to be removed in Pimcore 11
-        if ($name === '@PrestaSitemapBundle/Resources/config/routing.yml') {
-            try {
-                // try the new location of v3 first, as most probably this is used
-                return parent::locateResource('@PrestaSitemapBundle/config/routing.yml');
-            } catch (\InvalidArgumentException $e) {
-                // if the file doesnt exist in the new location, try the v2 location
-                return parent::locateResource($name);
-            }
-        }
-
-        return parent::locateResource($name);
     }
 }

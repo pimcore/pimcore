@@ -58,7 +58,7 @@ class VersionsCleanupTask implements TaskInterface
         $this->doAutoSaveVersionCleanup();
     }
 
-    private function doAutoSaveVersionCleanup()
+    private function doAutoSaveVersionCleanup(): void
     {
         $date = \Carbon\Carbon::now();
         $date->subHours(72);
@@ -76,7 +76,7 @@ class VersionsCleanupTask implements TaskInterface
         }
     }
 
-    private function doVersionCleanup()
+    private function doVersionCleanup(): void
     {
         $conf['document'] = $this->config['documents']['versions'] ?? null;
         $conf['asset'] = $this->config['assets']['versions'] ?? null;

@@ -13,7 +13,7 @@ echo out.
 ```twig
 {% do pimcore_placeholder('foo').set("Some text for later") %}
 
-{% outputs "Some text for later" %}
+{# outputs "Some text for later" #}
 {{ pimcore_placeholder('foo') }}
 ```
 
