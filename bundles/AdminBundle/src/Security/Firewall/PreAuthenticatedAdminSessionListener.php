@@ -17,12 +17,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\Security\Firewall;
 
-use Pimcore\Bundle\AdminBundle\Security\Authentication\Token\PreAuthenticatedAdminToken;
 use Pimcore\Bundle\AdminBundle\Security\User\User;
 use Pimcore\Tool\Authentication;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 /**
@@ -32,37 +32,13 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
  */
 class PreAuthenticatedAdminSessionListener
 {
-    /**
-     * @var TokenStorageInterface
-     */
-    private $tokenStorage;
-
-    /**
-     * @var AuthenticationManagerInterface
-     */
-    private $authenticationManager;
-
-    /**
-     * @var string
-     */
-    private $providerKey;
-
-    /**
-     * @param TokenStorageInterface $tokenStorage
-     * @param AuthenticationManagerInterface $authenticationManager
-     * @param string $providerKey
-     */
     public function __construct(
-        TokenStorageInterface $tokenStorage,
-        AuthenticationManagerInterface $authenticationManager,
-        string $providerKey
-    ) {
-        $this->tokenStorage = $tokenStorage;
-        $this->authenticationManager = $authenticationManager;
-        $this->providerKey = $providerKey;
-    }
+        private TokenStorageInterface $tokenStorage,
+        private AuthenticationManagerInterface $authenticationManager,
+        private string $providerKey
+    ) {}
 
-    public function __invoke(RequestEvent $event)
+    public function __invoke(RequestEvent $event): void
     {
         $request = $event->getRequest();
 
@@ -70,8 +46,8 @@ class PreAuthenticatedAdminSessionListener
         if (null !== $pimcoreUser) {
             $user = new User($pimcoreUser);
 
-            $token = new PreAuthenticatedAdminToken($user, $this->providerKey);
-            $token->setUser($user->getUserIdentifier());
+            $token = new PreAuthenticatedToken($user, $this->providerKey);
+            $token->setUser($user);
 
             try {
                 $authenticatedToken = $this->authenticationManager->authenticate($token);
@@ -79,7 +55,7 @@ class PreAuthenticatedAdminSessionListener
             } catch (AuthenticationException $e) {
                 // clear token on auth failure
                 $storedToken = $this->tokenStorage->getToken();
-                if ($storedToken instanceof PreAuthenticatedAdminToken && $storedToken->getFirewallName() === $this->providerKey) {
+                if ($storedToken instanceof PreAuthenticatedToken && $storedToken->getFirewallName() === $this->providerKey) {
                     $this->tokenStorage->setToken(null);
                 }
             }

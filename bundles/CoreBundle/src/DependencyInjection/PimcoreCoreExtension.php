@@ -140,7 +140,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $this->configureRouting($container, $config['routing']);
         $this->configureTranslations($container, $config['translations']);
         $this->configureTargeting($container, $loader, $config['targeting']);
-        $this->configurePasswordEncoders($container, $config);
         $this->configurePasswordHashers($container, $config);
         $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories');
         $this->configureAdapterFactories($container, $config['custom_report']['adapters'], 'pimcore.custom_report.adapter.factories');
@@ -313,21 +312,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
     }
 
     /**
-     * Handle pimcore.security.encoder_factories mapping
-     */
-    private function configurePasswordEncoders(ContainerBuilder $container, array $config): void
-    {
-        $definition = $container->findDefinition('pimcore.security.encoder_factory');
-
-        $factoryMapping = [];
-        foreach ($config['security']['encoder_factories'] as $className => $factoryConfig) {
-            $factoryMapping[$className] = new Reference($factoryConfig['id']);
-        }
-
-        $definition->replaceArgument(1, $factoryMapping);
-    }
-
-    /**
      * Handle pimcore.security.password_hasher_factories mapping
      */
     private function configurePasswordHashers(ContainerBuilder $container, array $config): void
@@ -418,20 +402,11 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
      */
     public function prepend(ContainerBuilder $container)
     {
-        $securityConfigs = $container->getExtensionConfig('security');
+        /*$securityConfigs = $container->getExtensionConfig('security');
 
-        $loader = new YamlFileLoader(
-            $container,
-            new FileLocator(__DIR__ . '/../../config')
-        );
-
-        foreach ($securityConfigs as $config) {
-            if ($config['enable_authenticator_manager'] ?? false) {
-                $loader->load('authenticator_security.yaml');
-
-                $container->setParameter('security.authenticator.manager.enabled', true);
-            }
-        }
+        if (count($securityConfigs) > 1) {
+            $this->setExtensionConfig($container, 'security', $securityConfigs);
+        }*/
     }
 
     /**

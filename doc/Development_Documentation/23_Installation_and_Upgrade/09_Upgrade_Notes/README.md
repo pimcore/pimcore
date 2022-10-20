@@ -82,6 +82,11 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [DataObjects] Removed deprecated preview url in class editor.
 - [DataObjects] Removed sql filter functionality for data object grid
 - [Device Detector] Bumped `matomo/device-detector` to ^6.0.
+- [security] Removed support old authentication system (not setting `security.enable_authenticator_manager: true` in `security.yaml`).
+- Removed Pimcore Password Encoder factory, `pimcore_admin.security.password_encoder_factory` service and `pimcore.security.factory_type` config.
+- Removed BruteforceProtection
+- Removed PreAuthenticatedAdminToken
+- 
 
 ## 10.5.8
 - [Nginx] Static pages nginx config has been updated to fix the issue for home static page generation. please adapt the following configuration:

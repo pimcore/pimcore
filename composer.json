@@ -111,7 +111,6 @@
     "symfony/routing": "^5.3",
     "symfony/security-bundle": "^5.4.0",
     "symfony/security-core": "^5.4.0",
-    "symfony/security-guard": "^5.3",
     "symfony/security-http": "^5.3",
     "symfony/serializer": "^5.2.0",
     "symfony/stopwatch": "^5.2.0",

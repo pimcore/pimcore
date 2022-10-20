@@ -21,7 +21,7 @@ namespace Pimcore\Security\Hasher;
 interface PasswordHasherFactoryAwareUserInterface
 {
     /**
-     * Gets the name of the encoder factory used to hash the password.
+     * Gets the name of the password hasher factory used to hash the password.
      *
      * If the method returns null, the standard way to retrieve the hasher
      * will be used instead.
