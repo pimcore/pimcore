@@ -370,9 +370,9 @@ pimcore.element.tag.tree = Class.create({
     },
 
     isKeyInSameLevel: function (parentNode, key, record) {
-        var parentChilds = parentNode.childNodes;
-        for (var i = 0; i < parentChilds.length; i++) {
-            if (parentChilds[i].data.text == key && parentChilds[i] !== record) {
+        var parentChildren = parentNode.childNodes;
+        for (var i = 0; i < parentChildren.length; i++) {
+            if (parentChildren[i].data.text == key && parentChildren[i] !== record) {
                 Ext.MessageBox.alert(t('error'),
                     t('name_already_in_use'));
                 return true;

@@ -470,7 +470,7 @@ class ModelDocumentPermissionsTest extends ModelTestCase
         return $DocumentController;
     }
 
-    protected function doTestTreeGetChildsById(Document $element, User $user, array $expectedChildren)
+    protected function doTestTreeGetChildrenById(Document $element, User $user, array $expectedChildren)
     {
         $controller = $this->buildController('\\Pimcore\\Bundle\\AdminBundle\\Controller\\Admin\\Document\\DocumentController', $user);
 
@@ -481,7 +481,7 @@ class ModelDocumentPermissionsTest extends ModelTestCase
         ]);
         $eventDispatcher = new EventDispatcher();
 
-        $responseData = $controller->treeGetChildsByIdAction(
+        $responseData = $controller->treeGetChildrenByIdAction(
             $request,
             $eventDispatcher
         );
@@ -512,119 +512,119 @@ class ModelDocumentPermissionsTest extends ModelTestCase
         }
     }
 
-    public function testTreeGetChildsById()
+    public function testTreeGetChildrenById()
     {
         $admin = User::getByName('admin');
 
         // test /permissionfoo
-        $this->doTestTreeGetChildsById(
+        $this->doTestTreeGetChildrenById(
             $this->permissionfoo,
             $admin,
             [$this->bars->getFullpath()]
         );
 
-        $this->doTestTreeGetChildsById( //did not work before (count vs. total)
+        $this->doTestTreeGetChildrenById( //did not work before (count vs. total)
             $this->permissionfoo,
             $this->userPermissionTest1,
             [$this->bars->getFullpath()]
         );
 
-        $this->doTestTreeGetChildsById( //did not work before
+        $this->doTestTreeGetChildrenById( //did not work before
             $this->permissionfoo,
             $this->userPermissionTest2,
             [$this->bars->getFullpath()]
         );
 
         // test /permissionfoo/bars
-        $this->doTestTreeGetChildsById(
+        $this->doTestTreeGetChildrenById(
             $this->bars,
             $admin,
             [$this->hugo->getFullpath(), $this->userfolder->getFullpath(), $this->groupfolder->getFullpath()]
         );
 
-        $this->doTestTreeGetChildsById(
+        $this->doTestTreeGetChildrenById(
             $this->bars,
             $this->userPermissionTest1,
             [$this->userfolder->getFullpath(), $this->groupfolder->getFullpath()]
         );
 
-        $this->doTestTreeGetChildsById( //did not work before (count vs. total)
+        $this->doTestTreeGetChildrenById( //did not work before (count vs. total)
             $this->bars,
             $this->userPermissionTest2,
             [$this->userfolder->getFullpath()]
         );
 
         // test /permissionfoo/bars/userfolder
-        $this->doTestTreeGetChildsById(
+        $this->doTestTreeGetChildrenById(
             $this->userfolder,
             $admin,
             [$this->usertestobject->getFullpath()]
         );
 
-        $this->doTestTreeGetChildsById(
+        $this->doTestTreeGetChildrenById(
             $this->userfolder,
             $this->userPermissionTest1,
             [$this->usertestobject->getFullpath()]
         );
 
-        $this->doTestTreeGetChildsById(
+        $this->doTestTreeGetChildrenById(
             $this->userfolder,
             $this->userPermissionTest2,
             [$this->usertestobject->getFullpath()]
         );
 
         // test /permissionfoo/bars/groupfolder
-        $this->doTestTreeGetChildsById(
+        $this->doTestTreeGetChildrenById(
             $this->groupfolder,
             $admin,
             [$this->grouptestobject->getFullpath()]
         );
 
-        $this->doTestTreeGetChildsById(
+        $this->doTestTreeGetChildrenById(
             $this->groupfolder,
             $this->userPermissionTest1,
             [$this->grouptestobject->getFullpath()]
         );
 
-        $this->doTestTreeGetChildsById( //did not work before (count vs. total)
+        $this->doTestTreeGetChildrenById( //did not work before (count vs. total)
             $this->groupfolder,
             $this->userPermissionTest2,
             []
         );
 
         // test /permissionbar
-        $this->doTestTreeGetChildsById(
+        $this->doTestTreeGetChildrenById(
             $this->permissionbar,
             $admin,
             [$this->foo->getFullpath()]
         );
 
-        $this->doTestTreeGetChildsById(
+        $this->doTestTreeGetChildrenById(
             $this->permissionbar,
             $this->userPermissionTest1,
             []
         );
 
-        $this->doTestTreeGetChildsById(
+        $this->doTestTreeGetChildrenById(
             $this->permissionbar,
             $this->userPermissionTest2,
             []
         );
 
         // test /permissionbar/foo
-        $this->doTestTreeGetChildsById(
+        $this->doTestTreeGetChildrenById(
             $this->foo,
             $admin,
             [$this->hiddenobject->getFullpath()]
         );
 
-        $this->doTestTreeGetChildsById(
+        $this->doTestTreeGetChildrenById(
             $this->foo,
             $this->userPermissionTest1,
             []
         );
 
-        $this->doTestTreeGetChildsById(
+        $this->doTestTreeGetChildrenById(
             $this->foo,
             $this->userPermissionTest2,
             []

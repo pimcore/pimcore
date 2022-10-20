@@ -41,13 +41,13 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class UserController extends AdminController implements KernelControllerEventInterface
 {
     /**
-     * @Route("/user/tree-get-childs-by-id", name="pimcore_admin_user_treegetchildsbyid", methods={"GET"})
+     * @Route("/user/tree-get-children-by-id", name="pimcore_admin_user_treegetchildrenbyid", methods={"GET"})
      *
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function treeGetChildsByIdAction(Request $request)
+    public function treeGetChildrenByIdAction(Request $request)
     {
         $list = new User\Listing();
         $list->setCondition('parentId = ?', (int)$request->get('node'));
@@ -663,13 +663,13 @@ class UserController extends AdminController implements KernelControllerEventInt
     // ROLES
 
     /**
-     * @Route("/user/role-tree-get-childs-by-id", name="pimcore_admin_user_roletreegetchildsbyid", methods={"GET"})
+     * @Route("/user/role-tree-get-children-by-id", name="pimcore_admin_user_roletreegetchildrenbyid", methods={"GET"})
      *
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function roleTreeGetChildsByIdAction(Request $request)
+    public function roleTreeGetChildrenByIdAction(Request $request)
     {
         $list = new User\Role\Listing();
         $list->setCondition('parentId = ?', (int)$request->get('node'));

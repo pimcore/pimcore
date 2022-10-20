@@ -46,13 +46,13 @@ final class DateFormatter extends AbstractOperator
         $result->label = $this->label;
         $result->value = null;
 
-        $childs = $this->getChilds();
+        $children = $this->getChildren();
 
-        if ($childs) {
-            $newChildsResult = [];
+        if ($children) {
+            $newChildrenResult = [];
             $isArrayType = null;
 
-            foreach ($childs as $c) {
+            foreach ($children as $c) {
                 $childResult = $c->getLabeledValue($element);
                 $isArrayType = $childResult->isArrayType ?? false;
 
@@ -78,14 +78,14 @@ final class DateFormatter extends AbstractOperator
                     }
                 }
 
-                $newChildsResult[] = $newValue;
+                $newChildrenResult[] = $newValue;
             }
 
             $result->isArrayType = $isArrayType;
             if ($isArrayType) {
-                $result->value = $newChildsResult;
+                $result->value = $newChildrenResult;
             } else {
-                $result->value = $newChildsResult[0];
+                $result->value = $newChildrenResult[0];
             }
         }
 

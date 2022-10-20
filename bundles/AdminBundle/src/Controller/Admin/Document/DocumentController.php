@@ -139,13 +139,13 @@ class DocumentController extends ElementControllerBase implements KernelControll
     }
 
     /**
-     * @Route("/tree-get-childs-by-id", name="pimcore_admin_document_document_treegetchildsbyid", methods={"GET"})
+     * @Route("/tree-get-children-by-id", name="pimcore_admin_document_document_treegetchildrenbyid", methods={"GET"})
      *
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function treeGetChildsByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function treeGetChildrenByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
@@ -660,10 +660,10 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $list->setCondition('parentId = ? AND id != ?', [$document->getParentId(), $document->getId()]);
         $list->setOrderKey('index');
         $list->setOrder('asc');
-        $childsList = $list->load();
+        $childrenList = $list->load();
 
         $count = 0;
-        foreach ($childsList as $child) {
+        foreach ($childrenList as $child) {
             if ($count == $newIndex) {
                 $count++;
             }
@@ -1305,9 +1305,9 @@ class DocumentController extends ElementControllerBase implements KernelControll
             /** @var Document\Listing $list */
             $list = $beforeListLoadEvent->getArgument('list');
 
-            $childsList = $list->load();
+            $childrenList = $list->load();
 
-            foreach ($childsList as $childDocument) {
+            foreach ($childrenList as $childDocument) {
                 // only display document if listing is allowed for the current user
                 if ($childDocument->isAllowed('list')) {
                     $list = new Document\Listing();

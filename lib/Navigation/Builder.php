@@ -377,14 +377,14 @@ class Builder
     {
         $this->currentLevel++;
         $pages = [];
-        $childs = $this->getChildren($parentDocument);
+        $children = $this->getChildren($parentDocument);
         $parents[$parentDocument->getId()] = $parentDocument;
 
-        if (!is_array($childs)) {
+        if (!is_array($children)) {
             return $pages;
         }
 
-        foreach ($childs as $child) {
+        foreach ($children as $child) {
             $classes = '';
 
             if ($child instanceof Document\Hardlink) {

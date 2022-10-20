@@ -40,14 +40,14 @@ final class IsEqual extends AbstractOperator
         $result = new \stdClass();
         $result->label = $this->label;
 
-        $childs = $this->getChilds();
+        $children = $this->getChildren();
 
-        if (!$childs) {
+        if (!$children) {
             return $result;
         } else {
             $isEqual = true;
             $valueArray = [];
-            foreach ($childs as $c) {
+            foreach ($children as $c) {
                 $childResult = $c->getLabeledValue($element);
                 $isArrayType = $childResult->isArrayType ?? false;
                 $childValues = $childResult->value ?? null;

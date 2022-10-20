@@ -54,8 +54,8 @@ final class LFExpander extends AbstractOperator
      */
     public function getLabeledValue($element)
     {
-        $childs = $this->getChilds();
-        if (isset($childs[0])) {
+        $children = $this->getChildren();
+        if (isset($children[0])) {
             if ($this->getAsArray()) {
                 $result = new ResultContainer();
                 $result->label = $this->label;
@@ -67,7 +67,7 @@ final class LFExpander extends AbstractOperator
                 foreach ($validLanguages as $validLanguage) {
                     $this->localeService->setLocale($validLanguage);
 
-                    $childValue = $childs[0]->getLabeledValue($element);
+                    $childValue = $children[0]->getLabeledValue($element);
                     if ($childValue && $childValue->value) {
                         $resultValues[] = $childValue;
                     } else {
@@ -81,7 +81,7 @@ final class LFExpander extends AbstractOperator
 
                 return $result;
             } else {
-                $value = $childs[0]->getLabeledValue($element);
+                $value = $children[0]->getLabeledValue($element);
             }
 
             return $value;

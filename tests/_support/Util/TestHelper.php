@@ -877,9 +877,9 @@ class TestHelper
     public static function getObjectCount()
     {
         $list = new ObjectModel\Listing();
-        $childs = $list->load();
+        $children = $list->load();
 
-        return count($childs);
+        return count($children);
     }
 
     /**
@@ -903,9 +903,9 @@ class TestHelper
     public static function getDocumentCount()
     {
         $list = new Document\Listing();
-        $childs = $list->load();
+        $children = $list->load();
 
-        return count($childs);
+        return count($children);
     }
 
     /**

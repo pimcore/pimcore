@@ -355,7 +355,7 @@ class Service
 
                 if (method_exists($item, 'addChild')) { // allows children
                     $item->setValues($array, ['children', 'childs']);
-                    $children = $array['children'] ?? $array['childs'] ?? [];
+                    $children = $array['children'] ?? [];
 
                     if (!empty($children['datatype'])) {
                         $childO = self::generateLayoutTreeFromArray($children, $throwException, $insideLocalizedField);
