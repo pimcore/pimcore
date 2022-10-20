@@ -318,10 +318,6 @@
                              icon: Ext.MessageBox.QUESTION,
                              fn: function (action) {
                                  if (action === 'ok' || action === 'yes') {
-                                     let allowOverwrite = false;
-                                     if (action === 'ok') {
-                                         allowOverwrite = true;
-                                     }
                                      if (applyToAllCheckbox.getValue()) {
                                          applyToAllCheckbox.setValue(false); // prevent endless loop
                                          Ext.each(overwriteConfirmMessageBoxes, function(messageBox) {
@@ -331,7 +327,7 @@
                                          });
                                      }
 
-                                     uploadFunction(allowOverwrite); // currently visible message box if not visible anymore after clicking a button -> action for current message box gets executed here instead of in above loop
+                                     uploadFunction(action === 'ok'); // currently visible message box if not visible anymore after clicking a button -> action for current message box gets executed here instead of in above loop
                                  } else {
                                      finishedErrorHandler();
                                  }
