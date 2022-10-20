@@ -25,7 +25,7 @@ class AbstractElementImporter implements ImporterInterface
     /**
      * {@inheritdoc}
      */
-    public function import(AttributeSet $attributeSet, bool $saveElement = true)
+    public function import(AttributeSet $attributeSet, bool $saveElement = true): void
     {
         $translationItem = $attributeSet->getTranslationItem();
         $element = $translationItem->getElement();

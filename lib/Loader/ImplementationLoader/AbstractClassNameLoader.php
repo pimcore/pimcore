@@ -29,7 +29,7 @@ abstract class AbstractClassNameLoader implements LoaderInterface, ClassNameLoad
     /**
      * {@inheritdoc}
      */
-    public function build(string $name, array $params = [])
+    public function build(string $name, array $params = []): mixed
     {
         if (!$this->supports($name)) {
             throw new UnsupportedException(sprintf('"%s" is not supported', $name));

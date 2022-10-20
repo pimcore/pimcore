@@ -29,7 +29,7 @@ class ImporterService implements ImporterServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function import(AttributeSet $attributeSet, bool $saveElement = true)
+    public function import(AttributeSet $attributeSet, bool $saveElement = true): void
     {
         $this->getImporter($attributeSet->getTranslationItem()->getType())->import($attributeSet, $saveElement);
     }

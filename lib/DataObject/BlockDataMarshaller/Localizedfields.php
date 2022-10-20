@@ -39,7 +39,7 @@ class Localizedfields implements MarshallerInterface
     /**
      * {@inheritdoc}
      */
-    public function marshal(mixed $value, array $params = [])
+    public function marshal(mixed $value, array $params = []): mixed
     {
         $object = $params['object'] ?? null;
         /** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields $fieldDefinition */
@@ -73,7 +73,7 @@ class Localizedfields implements MarshallerInterface
     /**
      * {@inheritdoc}
      */
-    public function unmarshal(mixed $value, array $params = [])
+    public function unmarshal(mixed $value, array $params = []): mixed
     {
         $object = $params['object'] ?? null;
         /** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields $fieldDefinition */

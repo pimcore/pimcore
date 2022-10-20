@@ -67,7 +67,7 @@ class SelectClassificationStoreAttributes extends AbstractFilterType
     /**
      * {@inheritdoc}
      */
-    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList)
+    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList): void
     {
         $field = $this->getField($filterDefinition);
         $keysField = $field . '.keys';

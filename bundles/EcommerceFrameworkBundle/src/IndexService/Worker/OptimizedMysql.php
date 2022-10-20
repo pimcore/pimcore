@@ -42,13 +42,13 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
         $this->mySqlHelper = new Helper\MySql($tenantConfig, $db);
     }
 
-    public function createOrUpdateIndexStructures()
+    public function createOrUpdateIndexStructures(): void
     {
         $this->mySqlHelper->createOrUpdateIndexStructures();
         $this->createOrUpdateStoreTable();
     }
 
-    public function deleteFromIndex(IndexableInterface $object)
+    public function deleteFromIndex(IndexableInterface $object): void
     {
         if (!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
@@ -84,7 +84,7 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
         }
     }
 
-    public function updateIndex(IndexableInterface $object)
+    public function updateIndex(IndexableInterface $object): void
     {
         if (!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");

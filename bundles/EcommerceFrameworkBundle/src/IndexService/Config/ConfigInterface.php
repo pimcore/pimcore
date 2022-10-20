@@ -50,9 +50,9 @@ interface ConfigInterface
     /**
      * return all supported filter types for product index
      *
-     * @return array
+     * @return array|null
      */
-    public function getFilterTypeConfig(): array;
+    public function getFilterTypeConfig(): ?array;
 
     /**
      * returns if given product is active for this tenant

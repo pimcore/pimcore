@@ -346,9 +346,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @param int $id
      *
-     * @return AbstractObject|Concrete|null|static
+     * @return AbstractObject|null
      */
-    public static function getById(int $id): AbstractObject|Concrete|null|static
+    public static function getById(int $id): ?static
     {
         if (!is_numeric($id) || $id < 1) {
             return null;

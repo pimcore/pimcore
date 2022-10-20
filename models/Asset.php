@@ -220,7 +220,7 @@ class Asset extends Element\AbstractElement
         return true;
     }
 
-    public static function getById(int $id): Asset|static|null
+    public static function getById(int $id): ?static
     {
         if (!is_numeric($id) || $id < 1) {
             return null;
@@ -1060,7 +1060,7 @@ class Asset extends Element\AbstractElement
     }
 
 
-    public function setKey(string $key): Asset|ElementInterface|static
+    public function setKey(string $key): static
     {
         return $this->setFilename($key);
     }

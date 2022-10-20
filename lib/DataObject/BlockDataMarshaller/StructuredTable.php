@@ -26,7 +26,7 @@ class StructuredTable implements MarshallerInterface
     /**
      * @inheritDoc
      */
-    public function marshal(mixed $value, array $params = [])
+    public function marshal(mixed $value, array $params = []): mixed
     {
         if (is_array($value)) {
             $table = new \Pimcore\Model\DataObject\Data\StructuredTable();
@@ -41,7 +41,7 @@ class StructuredTable implements MarshallerInterface
     /**
      * @inheritDoc
      */
-    public function unmarshal(mixed $value, array $params = [])
+    public function unmarshal(mixed $value, array $params = []): mixed
     {
         if ($value instanceof \Pimcore\Model\DataObject\Data\StructuredTable) {
             return $value->getData();

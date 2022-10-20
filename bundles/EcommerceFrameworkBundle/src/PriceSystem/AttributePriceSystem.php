@@ -77,7 +77,7 @@ class AttributePriceSystem extends CachingPriceSystem implements PriceSystemInte
     /**
      * {@inheritdoc}
      */
-    public function createPriceInfoInstance(int|string|null $quantityScale, CheckoutableInterface $product, array $products): PriceInfoInterface
+    public function createPriceInfoInstance(int|string|null $quantityScale, CheckoutableInterface $product, array $products): AbstractPriceInfo
     {
         $taxClass = $this->getTaxClassForProduct($product);
 

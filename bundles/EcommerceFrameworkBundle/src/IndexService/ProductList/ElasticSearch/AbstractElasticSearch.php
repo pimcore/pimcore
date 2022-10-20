@@ -135,7 +135,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     }
 
     /** @inheritDoc */
-    public function getProducts(): ?array
+    public function getProducts(): array
     {
         if ($this->products === null) {
             $this->load();
@@ -181,7 +181,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      *
      * @param string $fieldname
      */
-    public function resetCondition(string $fieldname)
+    public function resetCondition(string $fieldname): void
     {
         unset($this->filterConditions[$fieldname]);
         $this->preparedGroupByValuesLoaded = false;
@@ -384,10 +384,10 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * loads search results from index and returns them
      *
-     * @return array|null
+     * @return array
      * @throws \Exception
      */
-    public function load(): ?array
+    public function load(): array
     {
         $objectRaws = [];
 
@@ -1244,7 +1244,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      *
      * @return array|null
      */
-    public function getItems(int $offset, int $itemCountPerPage): ?array
+    public function getItems(int $offset, int $itemCountPerPage): array
     {
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);

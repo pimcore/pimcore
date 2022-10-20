@@ -89,7 +89,7 @@ class ImplementationLoader implements LoaderInterface, ClassNameLoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function build(string $name, array $params = [])
+    public function build(string $name, array $params = []): mixed
     {
         $loader = $this->getLoader($name);
         if (null === $loader) {

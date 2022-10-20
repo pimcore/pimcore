@@ -74,7 +74,7 @@ abstract class AbstractWorker implements WorkerInterface
         return $this->indexColumns;
     }
 
-    public function getIndexAttributesByFilterGroup(string $filterGroup)
+    public function getIndexAttributesByFilterGroup(string $filterGroup): array
     {
         $this->getAllFilterGroups();
 
@@ -130,9 +130,9 @@ abstract class AbstractWorker implements WorkerInterface
      *
      * @param array|string $data
      *
-     * @return string
+     * @return array|string
      */
-    protected function convertArray(array|string $data): string
+    protected function convertArray(array|string $data): array|string
     {
         if (is_array($data)) {
             return WorkerInterface::MULTISELECT_DELIMITER . implode(WorkerInterface::MULTISELECT_DELIMITER, $data) . WorkerInterface::MULTISELECT_DELIMITER;

@@ -63,7 +63,7 @@ class DefaultMysql implements ProductListInterface
     }
 
     /** @inheritDoc */
-    public function getProducts(): ?array
+    public function getProducts(): array
     {
         if ($this->products === null) {
             $this->load();
@@ -94,7 +94,7 @@ class DefaultMysql implements ProductListInterface
         $this->conditions[$fieldname][] = $condition;
     }
 
-    public function resetCondition(string $fieldname)
+    public function resetCondition(string $fieldname): void
     {
         $this->products = null;
         unset($this->conditions[$fieldname]);
@@ -155,7 +155,7 @@ class DefaultMysql implements ProductListInterface
         $this->conditionPriceTo = $to;
     }
 
-    public function setInProductList(bool $inProductList)
+    public function setInProductList(bool $inProductList): void
     {
         $this->products = null;
         $this->inProductList = $inProductList;
@@ -251,7 +251,7 @@ class DefaultMysql implements ProductListInterface
         return $this->variantMode;
     }
 
-    public function load(): ?array
+    public function load(): array
     {
         $objectRaws = [];
 
@@ -703,9 +703,9 @@ class DefaultMysql implements ProductListInterface
      * @param int $offset Page offset
      * @param int $itemCountPerPage Number of items per page
      *
-     * @return array|null
+     * @return array
      */
-    public function getItems(int $offset, int $itemCountPerPage): ?array
+    public function getItems(int $offset, int $itemCountPerPage): array
     {
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);

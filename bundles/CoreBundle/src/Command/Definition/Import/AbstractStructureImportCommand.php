@@ -204,9 +204,9 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
      *
      * @param string $name
      *
-     * @return AbstractModel
+     * @return AbstractModel|null
      */
-    abstract protected function createDefinition(string $name): AbstractModel;
+    abstract protected function createDefinition(string $name): ?AbstractModel;
 
     /**
      * Process import

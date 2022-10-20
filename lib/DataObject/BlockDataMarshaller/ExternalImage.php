@@ -26,7 +26,7 @@ class ExternalImage implements MarshallerInterface
     /**
      * {@inheritdoc}
      */
-    public function marshal(mixed $value, array $params = [])
+    public function marshal(mixed $value, array $params = []): mixed
     {
         if (is_array($value)) {
             return new \Pimcore\Model\DataObject\Data\ExternalImage($value['url']);
@@ -38,7 +38,7 @@ class ExternalImage implements MarshallerInterface
     /**
      * {@inheritdoc}
      */
-    public function unmarshal(mixed $value, array $params = [])
+    public function unmarshal(mixed $value, array $params = []): mixed
     {
         if ($value instanceof \Pimcore\Model\DataObject\Data\ExternalImage) {
             return [

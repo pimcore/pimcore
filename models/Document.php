@@ -199,7 +199,7 @@ class Document extends Element\AbstractElement
         return true;
     }
 
-    public static function getById(int $id): Document|static|null
+    public static function getById(int $id): ?static
     {
         if (!is_numeric($id) || $id < 1) {
             return null;
@@ -863,7 +863,7 @@ class Document extends Element\AbstractElement
     }
 
 
-    public function getPath(): array|string|null
+    public function getPath(): ?string
     {
         // check for site, if so rewrite the path for output
         try {
@@ -901,7 +901,7 @@ class Document extends Element\AbstractElement
     }
 
 
-    public function setKey(string $key): Document|ElementInterface|static
+    public function setKey(string $key): static
     {
         $this->key = (string)$key;
 

@@ -26,7 +26,7 @@ class QuantityValue implements MarshallerInterface
     /**
      * {@inheritdoc}
      */
-    public function marshal(mixed $value, array $params = [])
+    public function marshal(mixed $value, array $params = []): mixed
     {
         if (is_array($value)) {
             return [
@@ -41,7 +41,7 @@ class QuantityValue implements MarshallerInterface
     /**
      * {@inheritdoc}
      */
-    public function unmarshal(mixed $value, array $params = [])
+    public function unmarshal(mixed $value, array $params = []): mixed
     {
         if (is_array($value) && ($value['value'] !== null || $value['value2'] !== null)) {
             return [

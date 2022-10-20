@@ -35,7 +35,7 @@ final class ReportAdapter implements AddressSourceAdapterInterface
      */
     protected array $emailAddresses;
 
-    protected ?int $elementsTotal;
+    protected int $elementsTotal = 0;
 
     protected ?Listing $list;
 
@@ -94,7 +94,7 @@ final class ReportAdapter implements AddressSourceAdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function getTotalRecordCount(): ?int
+    public function getTotalRecordCount(): int
     {
         if (!$this->list) {
             $this->getListing();

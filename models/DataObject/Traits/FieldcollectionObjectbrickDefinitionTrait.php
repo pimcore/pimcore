@@ -246,5 +246,5 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return mixed
      */
-    abstract protected function doEnrichFieldDefinition($fieldDefinition, $context = []): mixed;
+    abstract protected function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data;
 }

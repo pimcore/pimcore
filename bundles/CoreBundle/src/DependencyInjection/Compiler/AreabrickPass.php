@@ -224,7 +224,7 @@ final class AreabrickPass implements CompilerPassInterface
             $shortClassName = $classPath->getBasename('.php');
 
             // relative path in bundle path
-            $relativePath = str_replace($sourcePath, '', $classPath->getPathInfo());
+            $relativePath = str_replace($sourcePath, '', (string)$classPath->getPathInfo());
             $relativePath = trim($relativePath, DIRECTORY_SEPARATOR);
 
             // namespace starting from bundle path

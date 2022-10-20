@@ -21,7 +21,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
  */
 interface ProductInterface
 {
-    public function getId(): int;
+    public function getId(): ?int;
 
     /**
      * called by default CommitOrderProcessor to get the product name to store it in the order item

@@ -333,7 +333,7 @@ class GoogleTagManager extends Tracker implements
         return $this->trackedCodes;
     }
 
-    public function trackCode(string $code)
+    public function trackCode(string $code): void
     {
         $this->trackedCodes[] = $code;
     }

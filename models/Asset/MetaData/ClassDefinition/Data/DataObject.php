@@ -52,7 +52,7 @@ class DataObject extends Data
      *@deprecated use denormalize() instead, will be removed in Pimcore 11
      *
      */
-    public function unmarshal(mixed $value, array $params = []): string
+    public function unmarshal(mixed $value, array $params = []): mixed
     {
         trigger_deprecation(
             'pimcore/pimcore',

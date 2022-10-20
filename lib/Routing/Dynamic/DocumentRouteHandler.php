@@ -96,7 +96,7 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function getRouteByName(string $name): DocumentRoute|\Symfony\Component\Routing\Route|null
+    public function getRouteByName(string $name): ?DocumentRoute
     {
         if (preg_match('/^document_(\d+)$/', $name, $match)) {
             $document = Document::getById($match[1]);

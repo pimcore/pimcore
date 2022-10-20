@@ -87,9 +87,9 @@ interface ProductListInterface extends PaginateListingInterface
      *
      * @param string $fieldname
      *
-     * @return mixed
+     * @return void
      */
-    public function resetCondition(string $fieldname): mixed;
+    public function resetCondition(string $fieldname): void;
 
     /**
      * Reset query condition for fieldname
@@ -104,7 +104,7 @@ interface ProductListInterface extends PaginateListingInterface
      * @param string $fieldname
      * @param array $condition
      */
-    public function addRelationCondition(string $fieldname, array $condition);
+    public function addRelationCondition(string $fieldname, string $condition);
 
     /**
      * Resets all conditions of product list

@@ -391,7 +391,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
     /**
      * {@inheritdoc}
      */
-    public function resetPreparationQueue()
+    public function resetPreparationQueue(): void
     {
         Logger::info('Index-Actions - Resetting preparation queue');
         $className = (new \ReflectionClass($this))->getShortName();
@@ -409,7 +409,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
     /**
      * {@inheritdoc}
      */
-    public function resetIndexingQueue()
+    public function resetIndexingQueue(): void
     {
         Logger::info('Index-Actions - Resetting index queue');
         $className = (new \ReflectionClass($this))->getShortName();

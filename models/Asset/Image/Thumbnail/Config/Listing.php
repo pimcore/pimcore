@@ -65,9 +65,9 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
     /**
      * Alias of getThumbnails()
      *
-     * @return Model\Asset\Image\Thumbnail\Config[]|null
+     * @return Model\Asset\Image\Thumbnail\Config[]
      */
-    public function load(): ?array
+    public function load(): array
     {
         return $this->getThumbnails();
     }

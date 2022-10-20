@@ -259,7 +259,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
         return $this->trackedCodes;
     }
 
-    public function trackCode(string $code)
+    public function trackCode(string $code): void
     {
         $this->trackedCodes[] = $code;
         $this->tracker->addCodePart($code, GoogleTracker::BLOCK_BEFORE_TRACK);

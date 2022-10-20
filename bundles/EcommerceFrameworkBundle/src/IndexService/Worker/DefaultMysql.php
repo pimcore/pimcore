@@ -44,12 +44,12 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
         $this->mySqlHelper = new Helper\MySql($tenantConfig, $db);
     }
 
-    public function createOrUpdateIndexStructures()
+    public function createOrUpdateIndexStructures(): void
     {
         $this->mySqlHelper->createOrUpdateIndexStructures();
     }
 
-    public function deleteFromIndex(IndexableInterface $object)
+    public function deleteFromIndex(IndexableInterface $object): void
     {
         if (!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
@@ -76,7 +76,7 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
         }
     }
 
-    public function updateIndex(IndexableInterface $object)
+    public function updateIndex(IndexableInterface $object): void
     {
         if (!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");

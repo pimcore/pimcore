@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiRelation;
 
 class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelectRelation
 {
-    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList)
+    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList): void
     {
         if (!$filterDefinition instanceof FilterMultiRelation) {
             throw new InvalidConfigException('invalid configuration');

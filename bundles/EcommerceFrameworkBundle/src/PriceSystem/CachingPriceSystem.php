@@ -32,7 +32,7 @@ abstract class CachingPriceSystem extends AbstractPriceSystem implements Caching
     /**
      * {@inheritdoc}
      */
-    public function getPriceInfo(CheckoutableInterface $product, int|string $quantityScale = 1, array $products = null): PriceInfoInterface
+    public function getPriceInfo(CheckoutableInterface $product, int|string $quantityScale = null, array $products = null): PriceInfoInterface
     {
         $pId = $product->getId();
         if (!array_key_exists($pId, $this->priceInfos) || !is_array($this->priceInfos[$pId])) {
@@ -52,7 +52,7 @@ abstract class CachingPriceSystem extends AbstractPriceSystem implements Caching
     /**
      * {@inheritdoc}
      */
-    public function loadPriceInfos(array $productEntries, array $options)
+    public function loadPriceInfos(array $productEntries, array $options): mixed
     {
         throw new UnsupportedException(__METHOD__  . ' is not supported for ' . get_class($this));
     }
@@ -60,7 +60,7 @@ abstract class CachingPriceSystem extends AbstractPriceSystem implements Caching
     /**
      * {@inheritdoc}
      */
-    public function clearPriceInfos(array $productEntries, array $options)
+    public function clearPriceInfos(array $productEntries, array $options): mixed
     {
         throw new UnsupportedException(__METHOD__  . ' is not supported for ' . get_class($this));
     }

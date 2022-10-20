@@ -104,7 +104,7 @@ class OptionsProvider implements SelectOptionsProviderInterface
      *
      * @return null
      */
-    public function getDefaultValue(array $context, Data $fieldDefinition)
+    public function getDefaultValue(array $context, Data $fieldDefinition): ?string
     {
         return null;
     }

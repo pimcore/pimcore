@@ -21,7 +21,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
  */
 interface IndexableInterface
 {
-    public function getId(): int;
+    public function getId(): ?int;
 
     /**
      * defines if product is included into the product index. If false, product doesn't appear in product index.

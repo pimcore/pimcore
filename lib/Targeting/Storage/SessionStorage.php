@@ -76,7 +76,7 @@ class SessionStorage implements TargetingStorageInterface
     /**
      * {@inheritdoc }
      */
-    public function get(VisitorInfo $visitorInfo, string $scope, string $name, mixed $default = null)
+    public function get(VisitorInfo $visitorInfo, string $scope, string $name, mixed $default = null): mixed
     {
         $bag = $this->getSessionBag($visitorInfo, $scope, true);
         if (null === $bag) {
@@ -128,7 +128,7 @@ class SessionStorage implements TargetingStorageInterface
         );
     }
 
-    public function getCreatedAt(VisitorInfo $visitorInfo, string $scope): \DateTimeImmutable|bool|null
+    public function getCreatedAt(VisitorInfo $visitorInfo, string $scope): ?\DateTimeImmutable
     {
         $bag = $this->getSessionBag($visitorInfo, $scope);
         if (null === $bag || !$bag->has(self::STORAGE_KEY_CREATED_AT)) {
@@ -138,7 +138,7 @@ class SessionStorage implements TargetingStorageInterface
         return \DateTimeImmutable::createFromFormat('U', (string)$bag->get(self::STORAGE_KEY_CREATED_AT));
     }
 
-    public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope): \DateTimeImmutable|bool|null
+    public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope): ?\DateTimeImmutable
     {
         $bag = $this->getSessionBag($visitorInfo, $scope);
 

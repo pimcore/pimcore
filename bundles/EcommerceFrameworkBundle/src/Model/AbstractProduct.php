@@ -91,7 +91,7 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
      *
      * @return int|null
      */
-    public function getOSParentId(): ?int
+    public function getOSParentId(): int|null
     {
         return $this->getParentId();
     }

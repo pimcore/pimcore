@@ -30,7 +30,7 @@ interface FindologicConfigInterface extends ConfigInterface
      *
      * @return array|string
      */
-    public function getClientConfig(string $setting = null): array|string;
+    public function getClientConfig(string $setting = null): array|string|null;
 
     /**
      * returns condition for current subtenant

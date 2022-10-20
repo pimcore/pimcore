@@ -26,7 +26,7 @@ class BooleanSelect implements MarshallerInterface
     /**
      * {@inheritdoc}
      */
-    public function marshal(mixed $value, array $params = [])
+    public function marshal(mixed $value, array $params = []): mixed
     {
         if ($value === true) {
             return ['value' => \Pimcore\Model\DataObject\ClassDefinition\Data\BooleanSelect::YES_VALUE];
@@ -40,7 +40,7 @@ class BooleanSelect implements MarshallerInterface
     /**
      * {@inheritdoc}
      */
-    public function unmarshal(mixed $value, array $params = [])
+    public function unmarshal(mixed $value, array $params = []): mixed
     {
         if (is_array($value)) {
             if ($value['value'] == \Pimcore\Model\DataObject\ClassDefinition\Data\BooleanSelect::YES_VALUE) {

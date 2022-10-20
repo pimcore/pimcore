@@ -35,9 +35,9 @@ interface EnvironmentInterface extends ComponentInterface
      *
      * @param int $userId
      *
-     * @return void
+     * @return $this
      */
-    public function setCurrentUserId(int $userId): void;
+    public function setCurrentUserId(int $userId): static;
 
     /**
      * Checks if a user id is set
@@ -125,9 +125,9 @@ interface EnvironmentInterface extends ComponentInterface
     /**
      * Returns current assortment tenant which is used for cart and checkout manager
      *
-     * @return string
+     * @return string|null
      */
-    public function getCurrentCheckoutTenant(): string;
+    public function getCurrentCheckoutTenant(): ?string;
 
     /**
      * Set the default currency in a multi-currency environment.

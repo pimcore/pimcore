@@ -632,7 +632,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $redirect->save();
     }
 
-    protected function updateIndexesOfDocumentSiblings(Document $document, int $newIndex)
+    protected function updateIndexesOfDocumentSiblings(Document $document, int $newIndex): void
     {
         $updateLatestVersionIndex = function ($document, $newIndex) {
             if ($document instanceof Document\PageSnippet && $latestVersion = $document->getLatestVersion()) {

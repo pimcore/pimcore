@@ -1277,7 +1277,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
     }
 
-    protected function updateIndexesOfObjectSiblings(DataObject\AbstractObject $updatedObject, int $newIndex)
+    protected function updateIndexesOfObjectSiblings(DataObject\AbstractObject $updatedObject, int $newIndex): void
     {
         $fn = function () use ($updatedObject, $newIndex) {
             $list = new DataObject\Listing();

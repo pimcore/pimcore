@@ -97,7 +97,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     /**
      * {@inheritdoc}
      */
-    public function useSession(callable $callable)
+    public function useSession(callable $callable): mixed
     {
         $session = $this->loadSession();
 
@@ -113,7 +113,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     /**
      * {@inheritdoc}
      */
-    public function useSessionAttributeBag(callable $callable, string $name = 'pimcore_admin')
+    public function useSessionAttributeBag(callable $callable, string $name = 'pimcore_admin'): mixed
     {
         $session = $this->loadSession();
         $attributeBag = $this->loadAttributeBag($name, $session);

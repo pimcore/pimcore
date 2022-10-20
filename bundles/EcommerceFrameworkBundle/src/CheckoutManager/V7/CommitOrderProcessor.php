@@ -319,7 +319,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface, LoggerAware
     /**
      * @throws \Exception
      */
-    public function cleanUpPendingOrders()
+    public function cleanUpPendingOrders(): void
     {
         $dateTime = new \DateTime();
         $dateTime->sub(new \DateInterval('PT1H'));

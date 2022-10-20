@@ -316,7 +316,7 @@ class DefaultService implements ServiceInterface
         return $offer;
     }
 
-    public function getOffersForCart(CartInterface $cart)
+    public function getOffersForCart(CartInterface $cart): array
     {
         $offerListClass = $this->offerClass . '\Listing';
         $list = new $offerListClass();

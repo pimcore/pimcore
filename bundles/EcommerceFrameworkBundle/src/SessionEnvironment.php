@@ -99,11 +99,11 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
         $this->sessionLoaded = true;
     }
 
-    public function save()
+    public function save(): mixed
     {
         //if the session was not explicitly started in cli environment, do nothing
         if ('cli' === php_sapi_name() && !$this->checkSessionStartedInCli()) {
-            return;
+            return null;
         }
 
         $this->load();

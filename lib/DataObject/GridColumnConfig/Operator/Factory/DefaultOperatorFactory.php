@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator\Factory;
 
+use Pimcore\DataObject\GridColumnConfig\Operator\OperatorInterface;
 use Pimcore\Logger;
 
 class DefaultOperatorFactory implements OperatorFactoryInterface
@@ -29,7 +30,7 @@ class DefaultOperatorFactory implements OperatorFactoryInterface
     }
 
 
-    public function build(\stdClass $configElement, array $context = [])
+    public function build(\stdClass $configElement, array $context = []): ?OperatorInterface
     {
         if (class_exists($this->className)) {
             return new $this->className($configElement, $context);

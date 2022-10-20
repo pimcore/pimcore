@@ -102,7 +102,7 @@ trait Wrapper
         return $this->properties;
     }
 
-    public function getProperty(string $name, bool $asContainer = false)
+    public function getProperty(string $name, bool $asContainer = false): mixed
     {
         $result = parent::getProperty($name, $asContainer);
         if ($result instanceof Document) {

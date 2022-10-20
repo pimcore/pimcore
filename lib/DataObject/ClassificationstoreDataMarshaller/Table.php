@@ -27,7 +27,7 @@ class Table implements MarshallerInterface
     /**
      * {@inheritdoc}
      */
-    public function marshal(mixed $value, array $params = [])
+    public function marshal(mixed $value, array $params = []): mixed
     {
         if (!is_null($value)) {
             return ['value' => Serialize::serialize($value)];
@@ -39,7 +39,7 @@ class Table implements MarshallerInterface
     /**
      * {@inheritdoc}
      */
-    public function unmarshal(mixed $value, array $params = [])
+    public function unmarshal(mixed $value, array $params = []): mixed
     {
         if (is_array($value)) {
             return Serialize::unserialize($value['value']);

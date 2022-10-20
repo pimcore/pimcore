@@ -56,7 +56,7 @@ class DefaultFindologic extends AbstractConfig implements FindologicConfigInterf
      *
      * @return array|string
      */
-    public function getClientConfig(string $setting = null): array|string
+    public function getClientConfig(string $setting = null): array|string|null
     {
         return $setting
             ? $this->clientConfig[$setting]

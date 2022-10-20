@@ -84,7 +84,7 @@ class MockProduct extends Concrete implements ProductInterface, IndexableInterfa
         return null;
     }
 
-    public function getOSParentId()
+    public function getOSParentId(): int|null
     {
         return null;
     }

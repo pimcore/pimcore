@@ -91,7 +91,7 @@ class CookieStorage implements TargetingStorageInterface
     /**
      * {@inheritdoc}
      */
-    public function get(VisitorInfo $visitorInfo, string $scope, string $name, mixed $default = null)
+    public function get(VisitorInfo $visitorInfo, string $scope, string $name, mixed $default = null): mixed
     {
         $this->loadData($visitorInfo, $scope);
 
@@ -148,7 +148,7 @@ class CookieStorage implements TargetingStorageInterface
         $this->addSaveListener($visitorInfo);
     }
 
-    public function getCreatedAt(VisitorInfo $visitorInfo, string $scope): \DateTimeImmutable|bool|null
+    public function getCreatedAt(VisitorInfo $visitorInfo, string $scope): ?\DateTimeImmutable
     {
         $this->loadData($visitorInfo, $scope);
 
@@ -159,7 +159,7 @@ class CookieStorage implements TargetingStorageInterface
         return \DateTimeImmutable::createFromFormat('U', (string)$this->data[$scope][self::STORAGE_KEY_CREATED_AT]);
     }
 
-    public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope): \DateTimeImmutable|bool|null
+    public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope): ?\DateTimeImmutable
     {
         $this->loadData($visitorInfo, $scope);
 

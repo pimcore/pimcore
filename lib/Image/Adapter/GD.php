@@ -30,7 +30,7 @@ class GD extends Adapter
     /**
      * {@inheritdoc}
      */
-    public function load(string $imagePath, array $options = []): Adapter|bool|GD|static
+    public function load(string $imagePath, array $options = []): bool|static
     {
         $this->path = $imagePath;
         if (!$this->resource = @imagecreatefromstring(file_get_contents($this->path))) {
@@ -70,7 +70,7 @@ class GD extends Adapter
     /**
      * {@inheritdoc}
      */
-    public function save(string $path, string $format = null, int $quality = null): Adapter|GD|static
+    public function save(string $path, string $format = null, int $quality = null): static
     {
         if (!$format || $format == 'png32') {
             $format = 'png';
@@ -155,7 +155,7 @@ class GD extends Adapter
     }
 
 
-    public function resize(int $width, int $height): Adapter|GD|static
+    public function resize(int $width, int $height): static
     {
         $this->preModify();
 
@@ -172,7 +172,7 @@ class GD extends Adapter
     }
 
 
-    public function crop(int $x, int $y, int $width, int $height): Adapter|GD|static
+    public function crop(int $x, int $y, int $width, int $height): static
     {
         $this->preModify();
 
@@ -195,7 +195,7 @@ class GD extends Adapter
     }
 
 
-    public function frame(int $width, int $height, bool $forceResize = false): Adapter|GD|static
+    public function frame(int $width, int $height, bool $forceResize = false): static
     {
         $this->preModify();
 
@@ -219,7 +219,7 @@ class GD extends Adapter
     }
 
 
-    public function setBackgroundColor(string $color): Adapter|GD|static
+    public function setBackgroundColor(string $color): static
     {
         $this->preModify();
 
@@ -242,7 +242,7 @@ class GD extends Adapter
     }
 
 
-    public function setBackgroundImage(string $image): Adapter|GD|static
+    public function setBackgroundImage(string $image): static
     {
         $this->preModify();
 
@@ -277,7 +277,7 @@ class GD extends Adapter
     }
 
 
-    public function grayscale(): Adapter|GD|static
+    public function grayscale(): static
     {
         $this->preModify();
 
@@ -289,7 +289,7 @@ class GD extends Adapter
     }
 
 
-    public function sepia(): Adapter|GD|static
+    public function sepia(): static
     {
         $this->preModify();
 
@@ -304,7 +304,7 @@ class GD extends Adapter
     /**
      * {@inheritdoc}
      */
-    public function addOverlay(mixed $image, int $x = 0, int $y = 0, int $alpha = 100, string $composite = 'COMPOSITE_DEFAULT', string $origin = 'top-left'): Adapter|GD|static
+    public function addOverlay(mixed $image, int $x = 0, int $y = 0, int $alpha = 100, string $composite = 'COMPOSITE_DEFAULT', string $origin = 'top-left'): static
     {
         $this->preModify();
 
@@ -337,7 +337,7 @@ class GD extends Adapter
     }
 
 
-    public function mirror(string $mode): Adapter|GD|static
+    public function mirror(string $mode): static
     {
         $this->preModify();
 
@@ -353,7 +353,7 @@ class GD extends Adapter
     }
 
 
-    public function rotate(int $angle): Adapter|GD|static
+    public function rotate(int $angle): static
     {
         $this->preModify();
         $angle = 360 - $angle;
@@ -374,7 +374,7 @@ class GD extends Adapter
     /**
      * {@inheritdoc}
      */
-    public function supportsFormat(string $format, bool $force = false)
+    public function supportsFormat(string $format, bool $force = false): mixed
     {
         if (!isset(self::$supportedFormatsCache[$format]) || $force) {
             $info = gd_info();

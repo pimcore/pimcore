@@ -35,7 +35,7 @@ interface ElementInterface extends ModelInterface
 
     public function setPath(string $path): static;
 
-    public function getRealPath(): string;
+    public function getRealPath(): ?string;
 
     public function getFullPath(): string;
 

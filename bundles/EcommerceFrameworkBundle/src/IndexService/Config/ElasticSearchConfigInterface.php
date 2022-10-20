@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\SynonymProvider\SynonymProviderInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\AbstractElasticSearch;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 
 /**
  * Interface for IndexService Tenant Configurations using elastic search as index
@@ -41,9 +42,9 @@ interface ElasticSearchConfigInterface extends ConfigInterface
     /**
      * creates and returns tenant worker suitable for this tenant configuration
      *
-     * @return AbstractElasticSearch
+     * @return WorkerInterface
      */
-    public function getTenantWorker(): AbstractElasticSearch;
+    public function getTenantWorker(): WorkerInterface;
 
     /**
      * Get an associative array of configured synonym providers.
@@ -59,7 +60,7 @@ interface ElasticSearchConfigInterface extends ConfigInterface
      *
      * @return array|string
      */
-    public function getClientConfig(string $property = null): array|string;
+    public function getClientConfig(string $property = null): array|string|null;
 
     /**
      * returns the full field name

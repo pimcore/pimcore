@@ -80,7 +80,7 @@ final class DynamicRouteProvider implements RouteProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getRouteByName($name): Route
+    public function getRouteByName($name): ?Route
     {
         foreach ($this->handlers as $handler) {
             try {

@@ -265,7 +265,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * {@inheritdoc}
      */
-    public function setProperties(?array $properties): ElementInterface|AbstractElement|static
+    public function setProperties(?array $properties): static
     {
         $this->properties = $properties;
 
@@ -332,7 +332,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * {@inheritdoc}
      */
-    public function getProperty(string $name, bool $asContainer = false)
+    public function getProperty(string $name, bool $asContainer = false): mixed
     {
         $properties = $this->getProperties();
         if ($this->hasProperty($name)) {
@@ -628,7 +628,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
 
-    public function getDependencies(): ?Model\Dependency
+    public function getDependencies(): Model\Dependency
     {
         if (!$this->dependencies) {
             $this->dependencies = Model\Dependency::getBySourceId($this->getId(), Service::getElementType($this));

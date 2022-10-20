@@ -54,9 +54,9 @@ class Breadcrumbs extends AbstractRenderer
     /**
      * The minimum depth a page must have to be included when rendering
      *
-     * @var int
+     * @var int|null
      */
-    protected int $_minDepth = 1;
+    protected ?int $_minDepth = 1;
 
     /**
      * Whether last page in breadcrumb should be hyperlinked

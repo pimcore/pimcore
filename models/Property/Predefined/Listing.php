@@ -61,9 +61,9 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
     }
 
     /**
-     * @return Model\Property\Predefined[]|null
+     * @return Model\Property\Predefined[]
      */
-    public function load(): ?array
+    public function load(): array
     {
         return $this->getProperties();
     }

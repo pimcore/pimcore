@@ -569,7 +569,7 @@ class CheckoutManager implements CheckoutManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function cleanUpPendingOrders()
+    public function cleanUpPendingOrders(): void
     {
         $this->commitOrderProcessors->getCommitOrderProcessor()->cleanUpPendingOrders();
     }

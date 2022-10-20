@@ -45,7 +45,7 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function getRouteByName(string $name): DataObjectRoute|\Symfony\Component\Routing\Route
+    public function getRouteByName(string $name): ?DataObjectRoute
     {
         if (preg_match('/^data_object_(\d+)_(\d+)_(.*)$/', $name, $match)) {
             $slug = DataObject\Data\UrlSlug::resolveSlug($match[3], $match[2]);

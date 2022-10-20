@@ -20,6 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractMockupCa
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\OptimizedMysql as OptimizedMysqlWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\MockProduct;
 
 /**
  * Configuration for the optimized mysql product index implementation.
@@ -46,9 +47,9 @@ class OptimizedMysql extends DefaultMysql implements MockupConfigInterface
      *
      * @param int $objectId
      *
-     * @return DefaultMockup
+     * @return MockProduct
      */
-    public function getObjectMockupById(int $objectId): DefaultMockup
+    public function getObjectMockupById(int $objectId): MockProduct
     {
         /** @var AbstractMockupCacheWorker $worker */
         $worker = $this->getTenantWorker();

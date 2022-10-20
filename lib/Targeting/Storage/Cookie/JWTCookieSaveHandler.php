@@ -91,7 +91,7 @@ class JWTCookieSaveHandler extends AbstractCookieSaveHandler
     /**
      * {@inheritdoc}
      */
-    protected function prepareData(string $scope, string $name, \DateTimeInterface|int|string $expire, ?array $data): ?string
+    protected function prepareData(string $scope, string $name, \DateTimeInterface|int|string $expire, ?array $data): bool|string|null
     {
         if (empty($data)) {
             return null;

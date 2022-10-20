@@ -176,7 +176,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     }
 
     /** @inheritDoc */
-    public function getFieldNameMapped(string $fieldName, bool $considerSubFieldNames = false)
+    public function getFieldNameMapped(string $fieldName, bool $considerSubFieldNames = false): string
     {
         if (isset($this->fieldMapping[$fieldName])) {
             return $this->fieldMapping[$fieldName];

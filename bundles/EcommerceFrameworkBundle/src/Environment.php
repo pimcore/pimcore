@@ -29,7 +29,7 @@ class Environment implements EnvironmentInterface
 
     protected Currency $defaultCurrency;
 
-    protected ?array $customItems = [];
+    protected array $customItems = [];
 
     protected int $userId = self::USER_ID_NOT_SET;
 
@@ -77,18 +77,18 @@ class Environment implements EnvironmentInterface
     {
     }
 
-    public function save()
+    public function save(): mixed
     {
     }
 
-    public function getAllCustomItems(): ?array
+    public function getAllCustomItems(): array
     {
         $this->load();
 
         return $this->customItems;
     }
 
-    public function getCustomItem(string $key, mixed $defaultValue = null)
+    public function getCustomItem(string $key, mixed $defaultValue = null): mixed
     {
         $this->load();
 

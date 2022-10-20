@@ -102,7 +102,7 @@ class DefaultFindologic implements ProductListInterface
     }
 
     /** @inheritDoc */
-    public function getProducts(): ?array
+    public function getProducts(): array
     {
         if ($this->products === null) {
             $this->load();
@@ -177,7 +177,7 @@ class DefaultFindologic implements ProductListInterface
         $this->conditionPriceTo = $to;
     }
 
-    public function setInProductList(bool $inProductList)
+    public function setInProductList(bool $inProductList): void
     {
         $this->products = null;
         $this->inProductList = (bool)$inProductList;
@@ -466,7 +466,7 @@ class DefaultFindologic implements ProductListInterface
      *
      * @throws \Exception
      */
-    public function prepareGroupByValues(string $fieldname, bool $countValues = false, bool $fieldnameShouldBeExcluded = true)
+    public function prepareGroupByValues(string $fieldname, bool $countValues = false, bool $fieldnameShouldBeExcluded = true): void
     {
         // nothing todo
     }
@@ -720,9 +720,9 @@ class DefaultFindologic implements ProductListInterface
      * @param int $offset Page offset
      * @param int $itemCountPerPage Number of items per page
      *
-     * @return array|null
+     * @return array
      */
-    public function getItems(int $offset, int $itemCountPerPage): ?array
+    public function getItems(int $offset, int $itemCountPerPage): array
     {
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);

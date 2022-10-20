@@ -44,7 +44,7 @@ class EncryptedField implements MarshallerInterface
     /**
      * {@inheritdoc}
      */
-    public function marshal(mixed $value, array $params = [])
+    public function marshal(mixed $value, array $params = []): mixed
     {
         if ($value !== null) {
             $encryptedValue = null;
@@ -82,7 +82,7 @@ class EncryptedField implements MarshallerInterface
     /**
      * {@inheritdoc}
      */
-    public function unmarshal(mixed $value, array $params = [])
+    public function unmarshal(mixed $value, array $params = []): mixed
     {
         if (is_array($value)) {
             /** @var \Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField $fd */

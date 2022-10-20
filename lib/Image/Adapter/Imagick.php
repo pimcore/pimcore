@@ -43,7 +43,7 @@ class Imagick extends Adapter
     /**
      * {@inheritdoc}
      */
-    public function load(string $imagePath, array $options = []): Adapter|bool|Imagick|static
+    public function load(string $imagePath, array $options = []): bool|static
     {
         $this->initalOptions ??= $options;
 
@@ -184,7 +184,7 @@ class Imagick extends Adapter
     /**
      * {@inheritdoc}
      */
-    public function save(string $path, string $format = null, int $quality = null): Adapter|Imagick|static
+    public function save(string $path, string $format = null, int $quality = null): static
     {
         if (!$format) {
             $format = 'png32';
@@ -478,7 +478,7 @@ class Imagick extends Adapter
     }
 
 
-    public function resize(int $width, int $height): Adapter|Imagick|static
+    public function resize(int $width, int $height): static
     {
         $this->preModify();
 
@@ -539,7 +539,7 @@ class Imagick extends Adapter
     }
 
 
-    public function crop(int $x, int $y, int $width, int $height): Adapter|Imagick|static
+    public function crop(int $x, int $y, int $width, int $height): static
     {
         $this->preModify();
 
@@ -555,7 +555,7 @@ class Imagick extends Adapter
     }
 
 
-    public function frame(int $width, int $height, bool $forceResize = false): Adapter|Imagick|static
+    public function frame(int $width, int $height, bool $forceResize = false): static
     {
         $this->preModify();
 
@@ -578,7 +578,7 @@ class Imagick extends Adapter
     }
 
 
-    public function trim(int $tolerance): Adapter|Imagick|static
+    public function trim(int $tolerance): static
     {
         $this->preModify();
 
@@ -594,7 +594,7 @@ class Imagick extends Adapter
     }
 
 
-    public function setBackgroundColor(string $color): Adapter|Imagick|static
+    public function setBackgroundColor(string $color): static
     {
         $this->preModify();
         $newImage = $this->createCompositeImageFromResource($this->getWidth(), $this->getHeight(), 0, 0, $color);
@@ -638,7 +638,7 @@ class Imagick extends Adapter
     }
 
 
-    public function rotate(int $angle): Adapter|Imagick|static
+    public function rotate(int $angle): static
     {
         $this->preModify();
 
@@ -654,7 +654,7 @@ class Imagick extends Adapter
     }
 
 
-    public function roundCorners(int $width, int $height): Adapter|Imagick|static
+    public function roundCorners(int $width, int $height): static
     {
         $this->preModify();
 
@@ -687,7 +687,7 @@ class Imagick extends Adapter
     }
 
 
-    public function setBackgroundImage(string $image): Adapter|Imagick|static
+    public function setBackgroundImage(string $image): static
     {
         $this->preModify();
 
@@ -723,7 +723,7 @@ class Imagick extends Adapter
     /**
      * {@inheritdoc}
      */
-    public function addOverlay(mixed $image, int $x = 0, int $y = 0, int $alpha = 100, string $composite = 'COMPOSITE_DEFAULT', string $origin = 'top-left'): Adapter|Imagick|static
+    public function addOverlay(mixed $image, int $x = 0, int $y = 0, int $alpha = 100, string $composite = 'COMPOSITE_DEFAULT', string $origin = 'top-left'): static
     {
         $this->preModify();
 
@@ -784,7 +784,7 @@ class Imagick extends Adapter
     }
 
 
-    public function addOverlayFit(string $image, string $composite = 'COMPOSITE_DEFAULT'): Adapter|Imagick|static
+    public function addOverlayFit(string $image, string $composite = 'COMPOSITE_DEFAULT'): static
     {
         $asset = Asset\Image::getByPath($image);
         if ($asset instanceof Asset\Image) {
@@ -810,7 +810,7 @@ class Imagick extends Adapter
     }
 
 
-    public function applyMask(string $image): Adapter|Imagick|static
+    public function applyMask(string $image): static
     {
         $this->preModify();
         $image = ltrim($image, '/');
@@ -832,7 +832,7 @@ class Imagick extends Adapter
     }
 
 
-    public function grayscale(): Adapter|Imagick|static
+    public function grayscale(): static
     {
         $this->preModify();
         $this->resource->setImageType(\Imagick::IMGTYPE_GRAYSCALEMATTE);
@@ -842,7 +842,7 @@ class Imagick extends Adapter
     }
 
 
-    public function sepia(): Adapter|Imagick|static
+    public function sepia(): static
     {
         $this->preModify();
         $this->resource->sepiatoneimage(85);
@@ -852,7 +852,7 @@ class Imagick extends Adapter
     }
 
 
-    public function sharpen($radius = 0, $sigma = 1.0, $amount = 1.0, $threshold = 0.05): Adapter|Imagick|static
+    public function sharpen($radius = 0, $sigma = 1.0, $amount = 1.0, $threshold = 0.05): static
     {
         $this->preModify();
         $this->resource->normalizeImage();
@@ -863,7 +863,7 @@ class Imagick extends Adapter
     }
 
 
-    public function gaussianBlur(int $radius = 0, float $sigma = 1.0): Adapter|Imagick|static
+    public function gaussianBlur(int $radius = 0, float $sigma = 1.0): static
     {
         $this->preModify();
         $this->resource->gaussianBlurImage($radius, $sigma);
@@ -873,7 +873,7 @@ class Imagick extends Adapter
     }
 
 
-    public function brightnessSaturation(int $brightness = 100, int $saturation = 100, int $hue = 100): Adapter|Imagick|static
+    public function brightnessSaturation(int $brightness = 100, int $saturation = 100, int $hue = 100): static
     {
         $this->preModify();
         $this->resource->modulateImage($brightness, $saturation, $hue);
@@ -883,7 +883,7 @@ class Imagick extends Adapter
     }
 
 
-    public function mirror(string $mode): Adapter|Imagick|static
+    public function mirror(string $mode): static
     {
         $this->preModify();
 
@@ -993,7 +993,7 @@ class Imagick extends Adapter
     /**
      * {@inheritdoc}
      */
-    public function supportsFormat(string $format, bool $force = false)
+    public function supportsFormat(string $format, bool $force = false): mixed
     {
         if ($force) {
             return $this->checkFormatSupport($format);

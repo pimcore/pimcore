@@ -26,7 +26,7 @@ class Geopolygon implements MarshallerInterface
     /**
      * {@inheritdoc}
      */
-    public function marshal(mixed $value, array $params = [])
+    public function marshal(mixed $value, array $params = []): mixed
     {
         if (is_array($value)) {
             $resultItems = [];
@@ -45,7 +45,7 @@ class Geopolygon implements MarshallerInterface
     /**
      * {@inheritdoc}
      */
-    public function unmarshal(mixed $value, array $params = [])
+    public function unmarshal(mixed $value, array $params = []): mixed
     {
         if ($value['value'] ?? null) {
             $value = json_decode($value['value'], true);
