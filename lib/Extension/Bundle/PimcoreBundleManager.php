@@ -155,7 +155,7 @@ class PimcoreBundleManager
 
         if (!isset($manuallyRegisteredBundles[$bundleClass])) {
             throw new \InvalidArgumentException(sprintf('Bundle "%s" is not registered. 
-                Maybe you forgot to add it in the "Kernel::registerBundles()?', $bundleClass));
+                Maybe you forgot to add it in the "config/bundles.php" or "Kernel::registerBundles()?', $bundleClass));
         }
 
         return $manuallyRegisteredBundles[$bundleClass];

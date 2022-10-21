@@ -51,35 +51,38 @@ class ListCommand extends AbstractBundleCommand
         $returnData = [
             'headers' => [
                 'Bundle',
+                'Description',
+                'Version',
+                'Enabled',
                 'Installed',
                 $input->hasOption('json') ? 'Installable' : 'I?',
                 $input->hasOption('json') ? 'Uninstallable' : 'UI?',
+                'Priority'
             ],
             'rows' => [],
         ];
 
         foreach ($this->bundleManager->getAvailableBundles() as $bundleClass) {
+            $row = [];
+            $row[] = $input->getOption('fully-qualified-classnames') ? $bundleClass : $this->getShortClassName($bundleClass);
+
             try {
                 $bundle = $this->bundleManager->getActiveBundle($bundleClass, false);
-            } catch (BundleNotFoundException $e) {
-                $bundle = null;
-            }
-
-            if ($bundle) {
-                $row = [];
-
-                if ($input->getOption('fully-qualified-classnames')) {
-                    $row[] = $bundleClass;
-                } else {
-                    $row[] = $this->getShortClassName($bundleClass);
-                }
-
+                $row[] = $bundle->getDescription();
+                $row[] = $bundle->getVersion();
+                $row[] = true;
                 $row[] = $this->bundleManager->isInstalled($bundle);
                 $row[] = $this->bundleManager->canBeInstalled($bundle);
                 $row[] = $this->bundleManager->canBeUninstalled($bundle);
                 $row[] = $this->bundleManager->getManuallyRegisteredBundleState($bundleClass)['priority'];
-                $returnData['rows'][] = $row;
+            } catch (BundleNotFoundException $e) {
+                $row[] = '';
+                $row[] = '';
+                $row[] = $row[] = $row[] = $row[] = false;
+                $row[] = '';
             }
+
+            $returnData['rows'][] = $row;
         }
 
         if ($input->getOption('json')) {
@@ -93,7 +96,7 @@ class ListCommand extends AbstractBundleCommand
             $table->setHeaders($returnData['headers']);
 
             $returnData['rows'] = array_map(function ($row) {
-                for ($i = 1; $i <= 3; $i++) {
+                for ($i = 3; $i <= 6; $i++) {
                     $row[$i] = $this->formatBool($row[$i]);
                 }
 
