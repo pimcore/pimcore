@@ -533,9 +533,7 @@ class Data extends \Pimcore\Model\AbstractModel
         // replace all occurrences of @ to # because when using InnoDB @ is reserved for the @distance operator
         $this->data = str_replace('@', '#', $this->data);
 
-        $pathWords = str_replace([ '-', '_', '/', '.', '(', ')'], ' ', $this->getFullPath());
-        $this->data .= ' ' . $pathWords;
-        $this->data = 'ID: ' . $element->getId() . "  \nPath: " . $this->getFullPath() . "  \n"  . $this->cleanupData($this->data);
+        $this->data = 'ID: ' . $element->getId() . "  \nKey: " . $this->getKey() . "  \n"  . $this->cleanupData($this->data);
 
         return $this;
     }
