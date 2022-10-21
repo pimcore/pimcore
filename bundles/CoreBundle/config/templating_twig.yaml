@@ -83,5 +83,3 @@ services:
     Twig\DeferredExtension\DeferredExtension: ~
 
     Twig\Extra\String\StringExtension: ~
-
-    Pimcore\Twig\Extension\AdminExtension: ~

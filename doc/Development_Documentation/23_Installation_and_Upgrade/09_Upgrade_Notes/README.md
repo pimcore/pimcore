@@ -79,9 +79,14 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Areabricks] The default template location of `AbstractTemplateAreabrick` is now `TEMPLATE_LOCATION_GLOBAL`.
 - [Config] Rename config files from `*.yml` to `*.yaml`. Note that we now use `system.yaml` as config file and not `system.yml`
 - [Childs Compatibility] Removed `getChilds`, `setChilds` and `hasChild` use `getChildren`, `setChildren` and `hasChildren` instead.
+- [Config] The config node `pimcore.admin` and related parameters are moved to AdminBundle directly under `pimcore_admin` node. Please adapt your parameter usage accordingly eg. instead of `pimcore.admin.unauthenticated_routes`, it should be `pimcore_admin.unauthenticated_routes`
 - [DataObjects] Removed deprecated preview url in class editor.
 - [DataObjects] Removed sql filter functionality for data object grid
 - [Device Detector] Bumped `matomo/device-detector` to ^6.0.
+- [security] Removed support old authentication system (not setting `security.enable_authenticator_manager: true` in `security.yaml`).
+- Removed Pimcore Password Encoder factory, `pimcore_admin.security.password_encoder_factory` service and `pimcore.security.factory_type` config.
+- Removed BruteforceProtection
+- Removed PreAuthenticatedAdminToken
 - [Codeception] Bumped codeception version to 5.0
 
 ## 10.5.8
