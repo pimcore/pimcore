@@ -134,8 +134,6 @@ final class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-
-
     /**
      * @return \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
      */
@@ -277,7 +275,6 @@ final class Configuration implements ConfigurationInterface
      */
     private function addAdminNode(ArrayNodeDefinition $rootNode): void
     {
-
         // add session attribute bag config
         $this->addAdminSessionAttributeBags($rootNode);
 
@@ -415,5 +412,4 @@ final class Configuration implements ConfigurationInterface
                 ->end()
             ->end();
     }
-
 }

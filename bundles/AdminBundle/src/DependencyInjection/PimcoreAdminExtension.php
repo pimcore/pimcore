@@ -71,6 +71,5 @@ final class PimcoreAdminExtension extends Extension
         // unauthenticated routes do not double-check for authentication
         $container->setParameter('pimcore_admin.unauthenticated_routes', $config['unauthenticated_routes']);
         $container->setParameter('pimcore_admin.translations.path', $config['translations']['path']);
-
     }
 }

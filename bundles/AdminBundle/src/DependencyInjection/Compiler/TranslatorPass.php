@@ -36,7 +36,6 @@ final class TranslatorPass implements CompilerPassInterface
             ->addMethodCall('setAdminPath', [$translationPath])
             ->addMethodCall('setAdminTranslationMapping', [$translationMapping]);
 
-
         $editableHandlerDefinition = $container->getDefinition('Pimcore\\Document\\Editable\\EditableHandler');
         $adminUserTranslatorReference = new Reference('Pimcore\\Bundle\\AdminBundle\\Translation\\AdminUserTranslator');
         $editableHandlerDefinition->setArgument('$translator', $adminUserTranslatorReference);
