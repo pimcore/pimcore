@@ -914,7 +914,7 @@ final class ClassDefinition extends Model\AbstractModel
         return $this;
     }
 
-    private function extractDataDefinitions(ClassDefinition\Data|ClassDefinition\Layout $def): void
+    private function extractDataDefinitions(ClassDefinition\Data|ClassDefinition\Layout|null $def): void
     {
         if ($def instanceof DataObject\ClassDefinition\Layout) {
             if ($def->hasChildren()) {

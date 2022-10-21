@@ -93,51 +93,27 @@ For more information see [How to Create a custom User Provider](https://symfony.
 on the Symfony docs.
 
 
-## Password hashing (Former called Password encoding)
-The standard approach of hashing and verifying a user's password in Symfony is to delegate the logic to a `PasswordHasherInterface` (former. `PasswordEncodingInterface`)
+## Password hashing
+The standard approach of hashing and verifying a user's password in Symfony is to delegate the logic to a `PasswordHasherInterface`
 which is responsible for calculating and verifying password hashes. As Pimcore's `Password` field definition already provides
-this logic, the password encoder needs to be configured to delegate the logic to the user object.
+this logic, the password hasher needs to be configured to delegate the logic to the user object.
 
-Symfony builds and caches one encoder instance per user type (class). To be able to delegate the calculation to the user
-object it is necessary to build an encoder instance which is scoped to the user object and can access the user's properties
-at runtime. Pimcore adds this as additional layer of configuration which allows to specify an encoder factory per user
-type which in turn can decide if it needs to build dedicated instances of encoders per user.
-
-> Note:
-Starting with Pimcore 10.1, Password encoder factory has been deprecated and new Password Hasher factory has been introduced so as to align with Symfony authentication system.
-For BC reasons, Pimcore still uses Encoder factory by default. If you wish to move to new Passsword hasher Factory, then change the default factory type to `password_hasher` as follows:
-```yaml
-pimcore:
-    security:
-        factory_type: password_hasher
-```
+Symfony builds and caches one password hasher instance per user type (class). To be able to delegate the calculation to the user
+object it is necessary to build an password hasher instance which is scoped to the user object and can access the user's properties
+at runtime. Pimcore adds this as additional layer of configuration which allows to specify a password hasher factory per user
+type which in turn can decide if it needs to build dedicated instances of password hashers per user.
 
 To be able to integrate our user object, we need 2 integration points:
 
-* A `PasswordFieldhasher` (former. `PasswordFieldEncoder`) which has access to the user instance and delegates calculation and verification of the password
-  hash to the password field definition. The encoder needs to be configured with the name of the field it should operate 
+* A `PasswordFieldHasher` which has access to the user instance and delegates calculation and verification of the password
+  hash to the password field definition. The password hasher needs to be configured with the name of the field it should operate 
   on (`password` in our case).
-* A `UserAwareHasherFactory` (former. `UserAwareEncoderFactory`) which builds a dedicated instance of a `PasswordFieldhasher` per user object.
+* A `UserAwarePasswordHasherFactory` which builds a dedicated instance of a `PasswordFieldHasher` per user object.
 
-To achieve this, we define a factory service which builds `PasswordFieldhasher` instances as specified above:
-
-old way (deprecated):
-```yaml
-# The encoder factory is responsible for verifying the password hash for a given user. As we need some special
-# handling to be able to work with the password field, we use the UserAwareEncoderFactory to buiild a dedicated
-# encoder per user. This service is configured in pimcore.security.encoder_factories to handle our user model.
-services:
-    website_demo.security.password_encoder_factory:
-        class: Pimcore\Security\Encoder\Factory\UserAwarePasswordEncoderFactory
-        arguments:
-            - Pimcore\Security\Encoder\PasswordFieldEncoder
-            - ['password']
-```
-
-new way:
+To achieve this, we define a factory service which builds `PasswordFieldHasher` instances as specified above:
 ```yaml
 # The password hasher factory is responsible for verifying the password hash for a given user. As we need some special
-# handling to be able to work with the password field, we use the UserAwareHasherFactory to build a dedicated
+# handling to be able to work with the password field, we use the UserAwarePasswordHasherFactory  to build a dedicated
 # hasher per user. This service is configured in pimcore.security.password_hasher_factories to handle our user model.
 services:
     website_demo.security.password_hasher_factory:
@@ -147,20 +123,10 @@ services:
             - ['password']
 ```
 
-Now, instead of configuring the encoder in `security.encoders` as it is the standard Symfony way, configure your encoder
-factory service instead in `pimcore.security.encoder_factories`. This is just an additional way of building encoders - if 
+Now, instead of configuring the password hasher in `security.password_hashers` as it is the standard Symfony way, configure your password hasher
+factory service instead in `pimcore.security.password_hasher_factories`. This is just an additional way of building password hashers - if 
 you don't need any user specific handling, just stick to the standard Symfony way.
 
-old way (deprecated):
-```yaml
-pimcore:
-    security:
-        # the encoder factory as defined in services.yaml
-        encoder_factories:
-            App\Model\DataObject\User: website_demo.security.password_encoder_factory
-```
-
-new way:
 ```yaml
 pimcore:
     security:
@@ -169,8 +135,8 @@ pimcore:
             App\Model\DataObject\User: website_demo.security.password_hasher_factory
 ```
 
-When an encoder is loaded for a `App\Model\DataObject\User` object, the UserAwareEncoderFactory will build a dedicated
-instance of `PasswordFieldEncoder` instead of always returning the same instance for all users.
+When a password hasher is loaded for a `App\Model\DataObject\User` object, the UserAwarePasswordHasherFactory will build a dedicated
+instance of `PasswordFieldHasher` instead of always returning the same instance for all users.
 
 
 ## Configuring the firewall
@@ -181,8 +147,8 @@ configure a simple firewall which authenticates via HTTP basic auth. Our final c
 ```yaml
 pimcore:
     security:
-        # the encoder factory as defined in services.yaml
-        encoder_factories:
+        # the password hasher factory as defined in services.yaml
+        password_hasher_factories:
             App\Model\DataObject\User: website_demo.security.password_hasher_factory
 
 security:
