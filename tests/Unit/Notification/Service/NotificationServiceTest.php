@@ -19,7 +19,7 @@ namespace Pimcore\Tests\Unit\Notification\Service;
 
 use Pimcore\Model\Notification\Service\NotificationService;
 use Pimcore\Model\User;
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
 class NotificationServiceTest extends TestCase

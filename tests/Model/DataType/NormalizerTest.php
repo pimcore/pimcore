@@ -22,7 +22,7 @@ use Pimcore\Model\DataObject\Data\Link;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\User;
 use Pimcore\Normalizer\NormalizerInterface;
-use Pimcore\Tests\Test\ModelTestCase;
+use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 
 /**

@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests\Test;
+namespace Pimcore\Tests\Support\Test;
 
 use Codeception\Test\Unit;
 use Pimcore\Tests\Support\Util\TestHelper;

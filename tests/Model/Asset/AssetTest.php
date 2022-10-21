@@ -16,7 +16,7 @@
 namespace Pimcore\Tests\Model\Asset;
 
 use Pimcore\Model\Asset;
-use Pimcore\Tests\Test\ModelTestCase;
+use Pimcore\Tests\Support\Test\ModelTestCase;
 use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Storage;
 
