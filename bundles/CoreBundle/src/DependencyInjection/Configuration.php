@@ -158,7 +158,6 @@ final class Configuration implements ConfigurationInterface
         $this->addRoutingNode($rootNode);
         $this->addCacheNode($rootNode);
         $this->addContextNode($rootNode);
-        $this->addAdminNode($rootNode);
         $this->addWebProfilerNode($rootNode);
         $this->addSecurityNode($rootNode);
         $this->addEmailNode($rootNode);
@@ -1057,129 +1056,6 @@ final class Configuration implements ConfigurationInterface
 
         // define routes child on each context entry
         $this->addRoutesChild($prototype, 'routes');
-    }
-
-    /**
-     * Add admin config
-     */
-    private function addAdminNode(ArrayNodeDefinition $rootNode): void
-    {
-        $adminNode = $rootNode->children()
-            ->arrayNode('admin')
-            ->ignoreExtraKeys()
-            ->addDefaultsIfNotSet();
-
-        // add session attribute bag config
-        $this->addAdminSessionAttributeBags($adminNode);
-
-        // unauthenticated routes won't be double checked for authentication in AdminControllerListener
-        $this->addRoutesChild($adminNode, 'unauthenticated_routes');
-
-        $adminNode
-            ->children()
-                ->arrayNode('translations')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->scalarNode('path')->defaultNull()->end()
-                    ->end()
-                ->end()
-            ->end();
-    }
-
-    private function addAdminSessionAttributeBags(ArrayNodeDefinition $adminNode): void
-    {
-        // Normalizes session bag config. Allows the following formats (all formats will be
-        // normalized to the third format.
-        //
-        // attribute_bags:
-        //      - foo
-        //      - bar
-        //
-        // attribute_bags:
-        //      foo: _foo
-        //      bar: _bar
-        //
-        // attribute_bags:
-        //      foo:
-        //          storage_key: _foo
-        //      bar:
-        //          storage_key: _bar
-        $normalizers = [
-            'assoc' => function (array $array) {
-                $result = [];
-                foreach ($array as $name => $value) {
-                    if (null === $value) {
-                        $value = [
-                            'storage_key' => '_' . $name,
-                        ];
-                    }
-
-                    if (is_string($value)) {
-                        $value = [
-                            'storage_key' => $value,
-                        ];
-                    }
-
-                    $result[$name] = $value;
-                }
-
-                return $result;
-            },
-
-            'sequential' => function (array $array) {
-                $result = [];
-                foreach ($array as $name) {
-                    $result[$name] = [
-                        'storage_key' => '_' . $name,
-                    ];
-                }
-
-                return $result;
-            },
-        ];
-
-        $adminNode
-            ->children()
-                ->arrayNode('session')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('attribute_bags')
-                            ->useAttributeAsKey('name')
-                            ->beforeNormalization()
-                                ->ifArray()->then(function ($v) use ($normalizers) {
-                                    if (isAssocArray($v)) {
-                                        return $normalizers['assoc']($v);
-                                    } else {
-                                        return $normalizers['sequential']($v);
-                                    }
-                                })
-                            ->end()
-                            ->example([
-                                ['foo', 'bar'],
-                                [
-                                    'foo' => '_foo',
-                                    'bar' => '_bar',
-                                ],
-                                [
-                                    'foo' => [
-                                        'storage_key' => '_foo',
-                                    ],
-                                    'bar' => [
-                                        'storage_key' => '_bar',
-                                    ],
-                                ],
-                            ])
-                            ->prototype('array')
-                                ->children()
-                                    ->scalarNode('storage_key')
-                                        ->defaultNull()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
     }
 
     private function addSecurityNode(ArrayNodeDefinition $rootNode): void

@@ -1,5 +1,50 @@
 # Pimcore
+pimcore_admin:
+
+    session:
+        attribute_bags:
+            - pimcore_admin
+            - pimcore_objects
+            - pimcore_copy
+            - pimcore_gridconfig
+            - pimcore_importconfig
+
+    # the following routes won't be double checked for authentication
+    # this usually applies to login routes
+    unauthenticated_routes:
+        - { route: pimcore_settings_display_custom_logo }
+        - { route: pimcore_admin_login }
+        - { route: pimcore_admin_webdav }
+
+    translations:
+        path: "@PimcoreCoreBundle/translations"
+
+# adds support for admin related routes that will be used to determine the request context in PimcoreContextGuesser
 pimcore:
-  security:
-    password_hasher_factories:
-      Pimcore\Bundle\AdminBundle\Security\User\User: pimcore_admin.security.password_hasher_factory
+    web_profiler:
+        toolbar:
+            excluded_routes:
+                - { path: '^/admin/asset/image-editor' }
+    context:
+        admin:
+            routes:
+                - { path: ^/admin(/.*)?$ }
+                - { route: ^pimcore_admin_ }
+    security:
+        password_hasher_factories:
+            Pimcore\Bundle\AdminBundle\Security\User\User: pimcore_admin.security.password_hasher_factory
+
+
+flysystem:
+    storages:
+        pimcore.admin.storage:
+            # Storage for shared admin resources, such as the user avatar, custom logos, ...
+            adapter: 'local'
+            visibility: private
+            options:
+                directory: '%kernel.project_dir%/var/admin'
+
+twig:
+    globals:
+        pimcore_csrf: '@Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler'
+        pimcore_csp: '@Pimcore\Bundle\AdminBundle\Security\ContentSecurityPolicyHandler'
