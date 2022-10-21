@@ -354,6 +354,7 @@ class Service
                 $insideLocalizedField = $insideLocalizedField || $item instanceof DataObject\ClassDefinition\Data\Localizedfields;
 
                 if (method_exists($item, 'addChild')) { // allows children
+                    //TODO remove childs in Pimcore 12
                     $item->setValues($array, ['children', 'childs']);
                     $children = $array['children'] ?? [];
 

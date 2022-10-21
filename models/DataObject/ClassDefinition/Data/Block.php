@@ -727,11 +727,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      */
     public function getBlockedVarsForExport(): array
     {
+
         return [
             'fieldDefinitionsCache',
             'referencedFields',
             'blockedVarsForExport',
-            'childs',
+            'childs',         //TODO remove in Pimcore 12
+            'children',
         ];
     }
 

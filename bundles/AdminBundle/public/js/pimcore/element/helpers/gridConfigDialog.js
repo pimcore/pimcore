@@ -301,8 +301,8 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
                 if (configElement) {
                     var treenode = configElement.getConfigTreeNode(configuration[i]);
 
-                    if (configuration[i].childs) {
-                        var children = this.doBuildChannelConfigTree(configuration[i].childs);
+                    if (configuration[i].children) {
+                        var children = this.doBuildChannelConfigTree(configuration[i].children);
                         treenode.children = children;
                         if (children.length > 0) {
                             treenode.expandable = true;
@@ -330,7 +330,7 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
         var children = [];
         node.eachChild(function (child) {
             var attributes = child.data.configAttributes;
-            attributes.childs = this.doGetRecursiveData(child);
+            attributes.children = this.doGetRecursiveData(child);
             children.push(attributes);
         }.bind(this));
 

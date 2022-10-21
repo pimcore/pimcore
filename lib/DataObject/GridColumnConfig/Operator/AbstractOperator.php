@@ -39,7 +39,7 @@ abstract class AbstractOperator implements OperatorInterface
     public function __construct(\stdClass $config, array $context = [])
     {
         $this->label = $config->label;
-        $this->children = $config->childs;
+        $this->children = $config->children;
         $this->context = $context;
     }
 

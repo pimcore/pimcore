@@ -68,7 +68,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
 
                 if (child.data.isOperator) {
                     var attributes = child.data.configAttributes;
-                    attributes.childs = this.doGetRecursiveData(child);
+                    attributes.children = this.doGetRecursiveData(child);
                     operatorFound = true;
 
                     obj.isOperator = true;
