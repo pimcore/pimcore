@@ -158,11 +158,9 @@ class Video extends Data implements
     }
 
     /**
-     * @param string $uploadPath
-     *
      * @return $this
      */
-    public function setUploadPath($uploadPath): static
+    public function setUploadPath(string $uploadPath): static
     {
         $this->uploadPath = $uploadPath;
 
