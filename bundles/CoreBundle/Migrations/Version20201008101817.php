@@ -28,7 +28,9 @@ final class Version20201008101817 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        $this->addSql('DROP VIEW IF EXISTS documents_editables;');
+        try {
+            $this->addSql('DROP VIEW IF EXISTS documents_editables;');
+        } catch (Exception) {}
 
         if ($schema->hasTable('documents_elements')) {
             $this->addSql('RENAME TABLE documents_elements TO documents_editables;');
