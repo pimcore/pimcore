@@ -8,7 +8,7 @@ actor_suffix: Tester
 paths:
     tests: tests
     output: tests/_output
-    data: tests/Support/data
+    data: tests/Support/Data
     support: tests/Support
     envs: tests/_envs
 params:
