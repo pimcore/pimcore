@@ -22,7 +22,6 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Element;
-use Symfony\Component\Validator\Constraints\FileValidator;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()

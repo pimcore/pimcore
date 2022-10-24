@@ -15,7 +15,6 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Asset;
 
-use GuzzleHttp\Psr7\MimeType;
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
@@ -50,7 +49,6 @@ use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Mime\MimeTypes;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Constraints\FileValidator;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
