@@ -15,6 +15,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Asset;
 
+use GuzzleHttp\Psr7\MimeType;
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
@@ -49,6 +50,7 @@ use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Mime\MimeTypes;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\FileValidator;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -518,6 +520,15 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             throw new \Exception('File is empty!');
         } elseif (!is_file($sourcePath)) {
             throw new \Exception('Something went wrong, please check upload_max_filesize and post_max_size in your php.ini as well as the write permissions of your temporary directories.');
+        }
+
+        if($request->get('accept')) {
+            $mimetype = MimeTypes::getDefault()->guessMimeType($sourcePath);
+            $accept = $request->get('accept');
+            $acceptedMimeTypes = explode(',', $accept);
+            if(!$this->_assetService->validateMimeType($mimetype, $acceptedMimeTypes)) {
+                throw new \Exception("Mime type does not match, accepted types: $accept");
+            }
         }
 
         if ($request->get('allowOverwrite') && Asset\Service::pathExists($parentAsset->getRealFullPath().'/'.$filename)) {

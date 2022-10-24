@@ -22,6 +22,7 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Element;
+use Symfony\Component\Validator\Constraints\FileValidator;
 
 /**
  * @method \Pimcore\Model\Asset\Dao getDao()
@@ -499,4 +500,27 @@ class Service extends Model\Element\Service
 
         return $key;
     }
+
+    /**
+     * @param string $mime
+     * @param array $acceptedMimeTypes
+     *
+     * @return bool
+     *
+     */
+    public function validateMimeType(string $mime, array $acceptedMimeTypes) {
+        foreach ($acceptedMimeTypes as $mimeType) {
+            if ($mimeType === $mime) {
+                return true;
+            }
+
+            if ($discrete = strstr($mimeType, '/*', true)) {
+                if (strstr($mime, '/', true) === $discrete) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }

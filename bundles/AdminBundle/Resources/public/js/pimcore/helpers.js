@@ -949,7 +949,7 @@ pimcore.helpers.openMemorizedTabs = function () {
     }
 };
 
-pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success, failure, context) {
+pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success, failure, context, accept) {
 
     var params = {};
     params['parent' + ucfirst(parentType)] = parent;
@@ -959,7 +959,12 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
         url += "&context=" + Ext.encode(context);
     }
 
-    pimcore.helpers.uploadDialog(url, 'Filedata', success, failure);
+    if(accept) {
+        url += "&accept=" + accept;
+    }
+
+    // leave the description blank and add accept for upload dialog
+    pimcore.helpers.uploadDialog(url, 'Filedata', success, failure, '', accept);
 };
 
 /**
@@ -972,7 +977,7 @@ pimcore.helpers.addCsrfTokenToUrl = function (url) {
     return url;
 };
 
-pimcore.helpers.uploadDialog = function (url, filename, success, failure, description) {
+pimcore.helpers.uploadDialog = function (url, filename, success, failure, description, accept) {
 
     if (typeof success != "function") {
         success = function () {
@@ -1019,6 +1024,7 @@ pimcore.helpers.uploadDialog = function (url, filename, success, failure, descri
         buttonConfig: {
             iconCls: 'pimcore_icon_upload'
         },
+        accept: accept,
         listeners: {
             change: function () {
                 uploadForm.getForm().submit({
