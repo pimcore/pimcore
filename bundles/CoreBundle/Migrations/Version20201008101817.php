@@ -32,7 +32,7 @@ final class Version20201008101817 extends AbstractMigration
         try {
             $this->addSql('DROP VIEW IF EXISTS documents_editables;');
         } catch (Exception $e) {
-            $this->write("Could not drop view: " . $e->getMessage());
+            $this->write('Could not drop view: ' . $e->getMessage());
         }
 
         if ($schema->hasTable('documents_elements')) {
