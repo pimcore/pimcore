@@ -18,7 +18,6 @@ namespace Pimcore\Tests\Model\Element;
 use Codeception\Util\Stub;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Element\Service;
 use Pimcore\Model\Property;
 use Pimcore\Model\Search;
 use Pimcore\Model\User;

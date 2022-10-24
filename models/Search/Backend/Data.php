@@ -610,6 +610,7 @@ class Data extends \Pimcore\Model\AbstractModel
             $maxRetries = 5;
             for ($retries = 0; $retries < $maxRetries; $retries++) {
                 $this->beginTransaction();
+
                 try {
                     $this->getDao()->save();
 

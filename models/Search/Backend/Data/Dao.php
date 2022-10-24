@@ -59,13 +59,13 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
             'type' => $this->model->getId()->getType(),
         ]);
 
-        if($oldFullPath && $oldFullPath !== $this->model->getFullPath()) {
+        if ($oldFullPath && $oldFullPath !== $this->model->getFullPath()) {
             $this->db->executeQuery('UPDATE search_backend_data
                 SET fullpath = replace(fullpath,' . $this->db->quote($oldFullPath . '/') . ',' . $this->db->quote($this->model->getFullPath() . '/') . ')
                 WHERE fullpath LIKE ' . $this->db->quote(Helper::escapeLike($oldFullPath) . '/%') . ' AND maintype = :type',
-            [
-                'type' => $this->model->getId()->getType(),
-            ]);
+                [
+                    'type' => $this->model->getId()->getType(),
+                ]);
         }
 
         $data = [
