@@ -341,7 +341,7 @@ class GridHelperService
                                 $maxTime = $filter['value'] + (86400 - 1); //specifies the top point of the range used in the condition
                                 $conditionPartsFilters[] = $filterField . ' BETWEEN ' . $db->quote($filter['value']) . ' AND ' . $db->quote($maxTime);
                             } else {
-                                /* @see \Pimcore\Model\DataObject\ClassDefinition\Data\Checkbox::getFilterConditionExt() */
+                                // @see \Pimcore\Model\DataObject\ClassDefinition\Data\Checkbox::getFilterConditionExt()
                                 if ($filter['type'] === 'boolean') {
                                     $filterField = 'IFNULL(' . $filterField . ', 0)';
                                 }
