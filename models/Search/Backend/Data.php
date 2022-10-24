@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\Search\Backend;
 
+use Doctrine\DBAL\Exception\DeadlockException;
 use ForceUTF8\Encoding;
 use Pimcore\Event\Model\SearchBackendEvent;
 use Pimcore\Event\SearchBackendEvents;
@@ -422,7 +423,7 @@ class Data extends \Pimcore\Model\AbstractModel
             }
         }
 
-        $this->data = $element->getKey();
+        $this->data = '';
 
         if ($element instanceof Document) {
             if ($element instanceof Document\Folder) {
@@ -534,7 +535,7 @@ class Data extends \Pimcore\Model\AbstractModel
 
         $pathWords = str_replace([ '-', '_', '/', '.', '(', ')'], ' ', $this->getFullPath());
         $this->data .= ' ' . $pathWords;
-        $this->data = 'ID: ' . $element->getId() . "  \nPath: " . $this->getFullPath() . "  \n"  . $this->cleanupData($this->data);
+        $this->data = 'ID: ' . $element->getId() . "  \nPath: " . $this->getKey() . "  \n"  . $this->cleanupData($this->data);
 
         return $this;
     }
@@ -608,21 +609,30 @@ class Data extends \Pimcore\Model\AbstractModel
 
             $maxRetries = 5;
             for ($retries = 0; $retries < $maxRetries; $retries++) {
+                $this->beginTransaction();
                 try {
                     $this->getDao()->save();
-                    // successfully completed, so we cancel the loop here -> no restart required
-                    break;
+
+                    $this->commit();
+
+                    break; // transaction was successfully completed, so we cancel the loop here -> no restart required
                 } catch (\Exception $e) {
-                    // we try to start saving $maxRetries times again (deadlocks, ...)
-                    if ($retries < ($maxRetries - 1)) {
+                    try {
+                        $this->rollBack();
+                    } catch (\Exception $er) {
+                        // PDO adapter throws exceptions if rollback fails
+                        Logger::error((string) $er);
+                    }
+
+                    // we try to start the transaction $maxRetries times again (deadlocks, ...)
+                    if ($e instanceof DeadlockException && $retries < ($maxRetries - 1)) {
                         $run = $retries + 1;
-                        $waitTime = rand(1, 5) * 100000;
+                        $waitTime = rand(1, 5) * 100000; // microseconds
                         Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
 
-                        // wait specified time until we restart
-                        usleep($waitTime);
+                        usleep($waitTime); // wait specified time until we restart the transaction
                     } else {
-                        // if we fail after $maxRetries retries, we throw out the exception
+                        // if the transaction still fail after $maxRetries retries, we throw out the exception
                         throw $e;
                     }
                 }

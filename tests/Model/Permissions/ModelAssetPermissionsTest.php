@@ -18,6 +18,8 @@ namespace Pimcore\Tests\Model\Element;
 use Codeception\Util\Stub;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Element\Service;
+use Pimcore\Model\Property;
 use Pimcore\Model\Search;
 use Pimcore\Model\User;
 use Pimcore\Tests\Test\ModelTestCase;
@@ -145,7 +147,18 @@ class ModelAssetPermissionsTest extends ModelTestCase
         $this->permissionfoo = $this->createFolder('permissionfoo', 1);
         $this->permissionbar = $this->createFolder('permissionbar', 1);
         $this->foo = $this->createFolder('foo', $this->permissionbar->getId());
-        $this->bars = $this->createFolder('bars', $this->permissionfoo->getId());
+
+        $property = new Property();
+        $property->setType('input');
+        $property->setName('foobar');
+        $property->setData('bars');
+        $property->setInherited(false);
+        $property->setInheritable(true);
+
+        $this->bars = $this->createFolder('bars', $this->permissionfoo->getId(), [
+            'foobar' => $property,
+        ]);
+
         $this->userfolder = $this->createFolder('userfolder', $this->bars->getId());
         $this->groupfolder = $this->createFolder('groupfolder', $this->bars->getId());
 
@@ -155,11 +168,12 @@ class ModelAssetPermissionsTest extends ModelTestCase
         $this->grouptestobject = $this->createAsset('grouptestobject.gif', $this->groupfolder->getId());
     }
 
-    protected function createFolder(string $key, int $parentId): Asset\Folder
+    protected function createFolder(string $key, int $parentId, array $properties = []): Asset\Folder
     {
         $folder = new Asset\Folder();
         $folder->setKey($key);
         $folder->setParentId($parentId);
+        $folder->setProperties($properties);
         $folder->save();
 
         $searchEntry = new Search\Backend\Data($folder);
@@ -659,7 +673,10 @@ class ModelAssetPermissionsTest extends ModelTestCase
         $this->assertCount(
             count($expectedResultPaths),
             $responseData['data'],
-            'Assert number of expected result matches count of nodes array for `' . $searchText . '` for user `' . $user->getName() . '` (' . print_r($responsePaths, true) . ')'
+            'Assert number of expected result matches count of nodes array for `' . $searchText . '` for user `' . $user->getName() . '` (' . print_r([
+                'expectedValue' => $expectedResultPaths,
+                'actualValue' => $responseData['data'],
+            ], true) . ')'
         );
 
         foreach ($expectedResultPaths as $path) {
