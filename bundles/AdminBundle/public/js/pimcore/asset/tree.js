@@ -302,7 +302,7 @@
                              layout: {
                                  type: 'vbox',
                                  align: 'center'
-                             },
+                             }
                          });
                          overwriteConfirmMessageBoxes.push(messageBox);
                          messageBox.show({
@@ -331,8 +331,9 @@
                                  } else {
                                      finishedErrorHandler();
                                  }
-                             },
+                             }
                          });
+
                          messageBox.add(applyToAllCheckbox);
                      } else {
                          uploadFunction();
