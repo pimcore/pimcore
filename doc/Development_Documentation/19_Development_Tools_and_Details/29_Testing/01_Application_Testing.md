@@ -346,9 +346,9 @@ require_once PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
 
 // add the core pimcore test library to the autoloader - this could also be done in composer.json's autoload-dev section
 // but is done here for demonstration purpose
-require_once PIMCORE_PROJECT_ROOT . '/vendor/pimcore/pimcore/tests/_support/Util/Autoloader.php';
+require_once PIMCORE_PROJECT_ROOT . '/vendor/pimcore/pimcore/tests/Support/Util/Autoloader.php';
 
-Autoloader::addNamespace('Pimcore\Tests', PIMCORE_PROJECT_ROOT . '/vendor/pimcore/pimcore/tests/_support');
+Autoloader::addNamespace('Pimcore\Tests', PIMCORE_PROJECT_ROOT . '/vendor/pimcore/pimcore/tests/Support');
 ```
 
 The `tests/unit.suite.yml` should be fine for a standard unit testing setup without dependencies, but we need to alter the
