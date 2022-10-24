@@ -60,9 +60,9 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
-    public int $defaultValue;
+    public ?int $defaultValue = null;
 
     /**
      * @internal
@@ -429,7 +429,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
 
-    public function normalize(mixed $value, array $params = [])
+    public function normalize(mixed $value, array $params = []): mixed
     {
         if ($value instanceof Carbon) {
             return $value->getTimestamp();
@@ -439,7 +439,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
 
-    public function denormalize(mixed $value, array $params = [])
+    public function denormalize(mixed $value, array $params = []): mixed
     {
         if ($value !== null) {
             return $this->getDateFromTimestamp($value);

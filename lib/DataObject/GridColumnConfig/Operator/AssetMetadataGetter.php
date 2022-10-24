@@ -101,6 +101,8 @@ final class AssetMetadataGetter extends AbstractOperator
 
             return $metaValue;
         }
+
+        return null;
     }
 
     public function getMetaField(): mixed

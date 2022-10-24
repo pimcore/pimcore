@@ -274,9 +274,9 @@ class RgbaColor extends Data implements
      * @param null|Model\DataObject\Concrete $object
      * @param array $params
      *
-     * @return string|null
+     * @return string
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof  Model\DataObject\Data\RgbaColor) {
             $value = $data->getHex(true, true);
@@ -286,7 +286,7 @@ class RgbaColor extends Data implements
             return $result;
         }
 
-        return null;
+        return '';
     }
 
 
@@ -323,11 +323,11 @@ class RgbaColor extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): ?string
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
-        return $this->getDataForEditmode($data, $object, $params);
+        return $this->getDataForEditmode($data, $object, $params) ?? '';
     }
 
     /**
@@ -385,13 +385,13 @@ class RgbaColor extends Data implements
     }
 
     /** { @inheritdoc } */
-    public function marshalBeforeEncryption(mixed $value, /**  Concrete */ Concrete $object = null, array $params = []) /** : mixed */
+    public function marshalBeforeEncryption(mixed $value, Concrete $object = null, array $params = []): mixed
     {
         return Serialize::serialize($value);
     }
 
     /** { @inheritdoc } */
-    public function unmarshalAfterDecryption(mixed $value, /**  Concrete */ Concrete $object = null, array $params = []) /** : mixed */
+    public function unmarshalAfterDecryption(mixed $value, Concrete $object = null, array $params = []): mixed
     {
         return Serialize::unserialize($value);
     }

@@ -429,11 +429,11 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param null|Model\DataObject\Concrete $object
      * @param array $params
      *
-     * @return float|int|string
+     * @return string
      *@see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): float|int|string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return $data;
     }

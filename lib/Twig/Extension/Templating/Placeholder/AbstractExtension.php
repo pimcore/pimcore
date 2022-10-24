@@ -92,7 +92,7 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * @param bool $autoEscape whether or not to auto escape output
      *
-     * @return AbstractExtension
+     * @return $this
      */
     public function setAutoEscape(bool $autoEscape = true): static
     {
@@ -128,7 +128,7 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * @param  Container $container
      *
-     * @return AbstractExtension
+     * @return $this
      */
     public function setContainer(Container $container): static
     {

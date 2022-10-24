@@ -532,7 +532,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
 
-    public function denormalize(mixed $value, array $params = [])
+    public function denormalize(mixed $value, array $params = []): null|Model\Asset|Model\DataObject\AbstractObject|Model\Document
     {
         if (is_array($value)) {
             $type = $value['type'];

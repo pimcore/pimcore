@@ -27,5 +27,5 @@ interface BeforeEncryptionMarshallerInterface
      *
      * @return mixed
      */
-    public function marshalBeforeEncryption(mixed $value, /**  Concrete */ Concrete $object = null, array $params = []): mixed/** : mixed */;
+    public function marshalBeforeEncryption(mixed $value, /**  Concrete */ Concrete $object = null, array $params = []): mixed;
 }

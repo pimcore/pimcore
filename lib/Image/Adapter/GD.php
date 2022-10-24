@@ -242,7 +242,7 @@ class GD extends Adapter
     }
 
 
-    public function setBackgroundImage(string $image): static
+    public function setBackgroundImage(string $image, string $mode = null): static
     {
         $this->preModify();
 

@@ -426,7 +426,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
 
-    public function normalize(mixed $value, array $params = [])
+    public function normalize(mixed $value, array $params = []): ?int
     {
         if ($value instanceof Carbon) {
             return $value->getTimestamp();
@@ -436,7 +436,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
 
-    public function denormalize(mixed $value, array $params = [])
+    public function denormalize(mixed $value, array $params = []): ?Carbon
     {
         if ($value !== null) {
             return $this->getDateFromTimestamp($value);

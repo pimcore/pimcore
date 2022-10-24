@@ -333,17 +333,17 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
-     * @return string|null
+     * @return string
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof DataObject\Data\Hotspotimage && $data->getImage() instanceof Asset\Image) {
             return '<img src="/admin/asset/get-image-thumbnail?id=' . $data->getImage()->getId() . '&width=100&height=100&aspectratio=true" />';
         }
 
-        return null;
+        return '';
     }
 
     /**
@@ -365,8 +365,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         return '';
     }
 
-
-    public function getCacheTags(mixed $data, array $tags = [])
+    public function getCacheTags(mixed $data, array $tags = []): array
     {
         if ($data instanceof DataObject\Data\Hotspotimage && $data->getImage() instanceof Asset\Image) {
             if (!array_key_exists($data->getImage()->getCacheTag(), $tags)) {

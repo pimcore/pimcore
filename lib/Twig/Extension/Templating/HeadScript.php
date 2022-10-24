@@ -164,7 +164,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      * @param  array $attrs Array of script attributes
      * @param string $type Script type and/or array of script attributes
      *
-     * @return HeadScript
+     * @return $this
      */
     public function __invoke(string $mode = self::FILE, string $spec = null, string $placement = 'APPEND', array $attrs = [], string $type = 'text/javascript'): static
     {
@@ -429,7 +429,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      * @param bool $flag
      *
-     * @return HeadScript
+     * @return $this
      */
     public function setAllowArbitraryAttributes(bool $flag): static
     {

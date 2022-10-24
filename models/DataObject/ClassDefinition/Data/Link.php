@@ -412,7 +412,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
 
-    public function normalize(mixed $value, array $params = [])
+    public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof DataObject\Data\Link) {
             return $value->getObjectVars();
@@ -422,7 +422,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
 
-    public function denormalize(mixed $value, array $params = [])
+    public function denormalize(mixed $value, array $params = []): mixed
     {
         if (is_array($value)) {
             $link = new DataObject\Data\Link();

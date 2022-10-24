@@ -378,7 +378,7 @@ EOT;
     /**
      * {@inheritdoc}
      */
-    public function getCurrentIndex()
+    public function getCurrentIndex(): int
     {
         return $this->indices[$this->getCurrent()] ?? 0;
     }

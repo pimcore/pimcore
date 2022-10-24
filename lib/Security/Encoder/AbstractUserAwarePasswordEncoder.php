@@ -44,7 +44,7 @@ abstract class AbstractUserAwarePasswordEncoder extends BasePasswordEncoder impl
     /**
      * {@inheritdoc}
      */
-    public function getUser(): ?UserInterface
+    public function getUser(): UserInterface
     {
         if (!$this->user) {
             throw new RuntimeException('No user was set');

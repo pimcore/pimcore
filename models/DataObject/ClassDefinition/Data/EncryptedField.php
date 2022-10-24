@@ -492,7 +492,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
 
-    public function normalize(mixed $value, array $params = [])
+    public function normalize(mixed $value, array $params = []): mixed
     {
         if ($value instanceof Model\DataObject\Data\EncryptedField) {
             $plainValue = $value->getPlain();
@@ -502,6 +502,8 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
 
             return $plainValue;
         }
+
+        return null;
     }
 
 

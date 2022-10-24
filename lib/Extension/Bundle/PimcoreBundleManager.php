@@ -48,7 +48,7 @@ class PimcoreBundleManager
 
     protected RouterInterface $router;
 
-    protected array $availableBundles;
+    protected ?array $availableBundles = null;
 
     /**
      * @deprecated
@@ -57,7 +57,7 @@ class PimcoreBundleManager
      */
     protected array $enabledBundles;
 
-    protected array $manuallyRegisteredBundleState;
+    protected ?array $manuallyRegisteredBundleState = null;
 
     public function __construct(
         StateConfig $stateConfig,

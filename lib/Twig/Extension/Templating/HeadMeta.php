@@ -105,7 +105,7 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
      * @param array $modifiers
      * @param string $placement
      *
-     * @return HeadMeta
+     * @return $this
      */
     public function __invoke(string $content = null, string $keyValue = null, string $keyType = 'name', array $modifiers = [], string $placement = Container::APPEND): static
     {
@@ -150,6 +150,8 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
                 return $item->content;
             }
         }
+
+        return null;
     }
 
     /**

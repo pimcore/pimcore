@@ -376,7 +376,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * {@inheritdoc}
      */
-    final public function render()
+    final public function render(): mixed
     {
         if ($this->editmode) {
             if ($collector = $this->getEditableDefinitionCollector()) {

@@ -432,11 +432,12 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      * @param Concrete|null $object
      * @param array $params
      *
-     * @return bool|array|null
+     * @return array|null
      */
-    public function getDataForGrid(?array $data, Concrete $object = null, array $params = []): bool|array|null
+    public function getDataForGrid(?array $data, Concrete $object = null, array $params = []): ?array
     {
-        return $this->getDataForEditmode($data, $object, $params);
+        $ret = $this->getDataForEditmode($data, $object, $params);
+        return is_array($ret) ? $ret : null;
     }
 
     /**
@@ -444,11 +445,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
-     * @return string|null
+     * @return string
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         $items = [];
         if (is_array($data) && count($data) > 0) {
@@ -479,7 +480,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
             return implode('<br />', $items);
         }
 
-        return null;
+        return '';
     }
 
     /**

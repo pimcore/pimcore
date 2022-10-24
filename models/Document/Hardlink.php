@@ -135,7 +135,7 @@ class Hardlink extends Document
     /**
      * {@inheritdoc}
      */
-    public function getProperties(): ?array
+    public function getProperties(): array
     {
         if ($this->properties === null) {
             $properties = parent::getProperties();
@@ -168,7 +168,7 @@ class Hardlink extends Document
     /**
      * {@inheritdoc}
      */
-    public function getChildren(bool $includingUnpublished = false)
+    public function getChildren(bool $includingUnpublished = false): array
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
         if (!isset($this->children[$cacheKey])) {

@@ -39,13 +39,13 @@ class OptionsProvider implements SelectOptionsProviderInterface
 
     /**
      * @param array $context
-     * @param Data $fieldDefinition
+     * @param Select|Multiselect $fieldDefinition
      *
      * @return array
      *
      * @throws \Exception
      */
-    public function getOptions(array $context, Data $fieldDefinition): array
+    public function getOptions(array $context, Select|Multiselect $fieldDefinition): array
     {
         $workflowName = $fieldDefinition->getOptionsProviderData();
         if (!$workflowName) {

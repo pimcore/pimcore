@@ -154,7 +154,7 @@ class InputQuantityValue extends QuantityValue
     }
 
 
-    public function normalize(mixed $value, array $params = [])
+    public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof Model\DataObject\Data\InputQuantityValue) {
             return [
@@ -162,6 +162,8 @@ class InputQuantityValue extends QuantityValue
                 'unitId' => $value->getUnitId(),
             ];
         }
+
+        return null;
     }
 
 

@@ -550,7 +550,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * {@inheritdoc}
      */
-    public function resolveDependencies()
+    public function resolveDependencies(): array
     {
         $dependencies = [];
         $image = $this->getImage();

@@ -30,7 +30,7 @@ class PimcoreContextGuesser
     /**
      * @var RequestMatcherInterface[][]
      */
-    private array $matchers;
+    private ?array $matchers = null;
 
     private RequestMatcherFactory $requestMatcherFactory;
 

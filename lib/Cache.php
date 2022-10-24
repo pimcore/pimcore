@@ -25,7 +25,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class Cache
 {
-    protected static CoreCacheHandler $handler;
+    protected static ?CoreCacheHandler $handler = null;
 
     /**
      * Get the cache handler implementation

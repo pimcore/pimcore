@@ -148,7 +148,7 @@ class Container implements \RecursiveIterator, \Countable
     /**
      * Adds several pages at once
      *
-     * @param iterable<Page> $pages  pages to add
+     * @param Page[] $pages  pages to add
      *
      * @return $this fluent interface, returns self
      *
@@ -156,11 +156,6 @@ class Container implements \RecursiveIterator, \Countable
      */
     public function addPages(array $pages): static
     {
-        // This should be checked via parameter type in Pimcore 11
-        if (!$pages instanceof self && !is_array($pages)) {
-            throw new \Exception('Invalid argument: $pages must be an array or an instance of ' . self::class);
-        }
-
         foreach ($pages as $page) {
             $this->addPage($page);
         }

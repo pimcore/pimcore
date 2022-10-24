@@ -121,7 +121,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      * @param string $placement Append, prepend, or set
      * @param array|string $attributes Optional attributes to utilize
      *
-     * @return HeadStyle
+     * @return $this
      */
     public function __invoke(string $content = null, string $placement = 'APPEND', array|string $attributes = []): static
     {

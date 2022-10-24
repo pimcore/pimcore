@@ -249,7 +249,7 @@ abstract class Page extends Container
      *
      * @param  array $options             associative array of options to set
      *
-     * @return Page       fluent interface, returns self
+     * @return $this       fluent interface, returns self
      *
      * @throws \Exception  if invalid options are given
      */
@@ -269,7 +269,7 @@ abstract class Page extends Container
      *
      * @param string|null $label new page label
      *
-     * @return Page fluent interface, returns self
+     * @return $this fluent interface, returns self
      */
     public function setLabel(?string $label): static
     {
@@ -293,7 +293,7 @@ abstract class Page extends Container
      *
      * @param string|null $fragment new fragment identifier
      *
-     * @return Page fluent interface, returns self
+     * @return $this fluent interface, returns self
      */
     public function setFragment(?string $fragment): static
     {
@@ -317,7 +317,7 @@ abstract class Page extends Container
      *
      * @param  string|null $id id to set. Default is null, which sets no id.
      *
-     * @return Page fluent interface, returns self
+     * @return $this fluent interface, returns self
      */
     public function setId(?string $id = null): static
     {
@@ -341,7 +341,7 @@ abstract class Page extends Container
      *
      * @param  string|null $class CSS class to set. Default is null, which sets no CSS class.
      *
-     * @return Page fluent interface, returns self
+     * @return $this fluent interface, returns self
      */
     public function setClass(?string $class = null): static
     {
@@ -365,7 +365,7 @@ abstract class Page extends Container
      *
      * @param string|null $title page title. Default is null, which sets no title.
      *
-     * @return Page fluent interface, returns self
+     * @return $this fluent interface, returns self
      *
      * @throws \Exception  if not given string or null
      */
@@ -391,7 +391,7 @@ abstract class Page extends Container
      *
      * @param string|null $target target to set. Default is null, which sets no target.
      *
-     * @return Page fluent interface, returns self
+     * @return $this fluent interface, returns self
      */
     public function setTarget(?string $target = null): static
     {
@@ -415,7 +415,7 @@ abstract class Page extends Container
      *
      * @param string|null $character access key to set. Default is null, which sets no access key.
      *
-     * @return Page fluent interface, returns self
+     * @return $this fluent interface, returns self
      *
      * @throws \Exception if the string length not equal to one
      */
@@ -450,7 +450,7 @@ abstract class Page extends Container
      *
      * @param array|null $relations an associative array of forward links to other pages
      *
-     * @return Page fluent interface, returns self
+     * @return $this fluent interface, returns self
      */
     public function setRel(?array $relations = null): static
     {
@@ -498,7 +498,7 @@ abstract class Page extends Container
      *
      * @param array|null $relations an associative array of reverse links to other pages
      *
-     * @return Page fluent interface, returns self
+     * @return $this fluent interface, returns self
      *
      * @throws \Exception
      */
@@ -544,7 +544,7 @@ abstract class Page extends Container
      * @param string $name name of the HTML attribute
      * @param string|null $value value for the HTML attribute
      *
-     * @return Page fluent interface, returns self
+     * @return $this fluent interface, returns self
      */
     public function setCustomHtmlAttrib(string $name, ?string $value): static
     {
@@ -574,7 +574,7 @@ abstract class Page extends Container
      *
      * @param array $attribs        an associative array of html attributes
      *
-     * @return Page fluent interface, returns self
+     * @return $this fluent interface, returns self
      */
     public function setCustomHtmlAttribs(array $attribs): static
     {
@@ -600,7 +600,7 @@ abstract class Page extends Container
      *
      * @param string $name name of the custom HTML attribute
      *
-     * @return Page fluent interface, returns self
+     * @return $this fluent interface, returns self
      */
     public function removeCustomHtmlAttrib(string $name): static
     {
@@ -612,7 +612,7 @@ abstract class Page extends Container
     /**
      * Clear all custom HTML attributes
      *
-     * @return Page fluent interface, returns self
+     * @return $this fluent interface, returns self
      */
     public function clearCustomHtmlAttribs(): static
     {
@@ -628,7 +628,7 @@ abstract class Page extends Container
      *                                    Default is null, which sets no
      *                                    specific order.
      *
-     * @return Page       fluent interface, returns self
+     * @return $this       fluent interface, returns self
      *
      * @throws \Exception  if order is not integer or null
      */
@@ -672,7 +672,7 @@ abstract class Page extends Container
      * @param bool $active          [optional] whether page should be
      *                               considered active or not. Default is true.
      *
-     * @return Page  fluent interface, returns self
+     * @return $this  fluent interface, returns self
      */
     public function setActive(bool $active = true): static
     {
@@ -724,7 +724,7 @@ abstract class Page extends Container
      *
      * @param bool|string $visible whether page should be considered visible or not. Default is true.
      *
-     * @return Page  fluent interface, returns self
+     * @return $this  fluent interface, returns self
      */
     public function setVisible(bool|string $visible = true): static
     {
@@ -773,7 +773,7 @@ abstract class Page extends Container
      *
      * @param Container|null $parent new parent to set. Default is null which will set no parent.
      *
-     * @return Page fluent interface, returns self
+     * @return $this fluent interface, returns self
      *
      * @throws \Exception
      */
@@ -823,7 +823,7 @@ abstract class Page extends Container
      * @param  string $property           property name
      * @param  mixed  $value              value to set
      *
-     * @return Page       fluent interface, returns self
+     * @return $this       fluent interface, returns self
      *
      * @throws \Exception  if property name is invalid
      */
@@ -975,7 +975,7 @@ abstract class Page extends Container
      *                               canonical, etc)
      * @param  mixed  $value         value to set for relation
      *
-     * @return Page  fluent interface, returns self
+     * @return $this  fluent interface, returns self
      */
     public function addRel(string $relation, mixed $value): static
     {
@@ -993,7 +993,7 @@ abstract class Page extends Container
      *                               canonical, etc)
      * @param  mixed  $value         value to set for relation
      *
-     * @return Page  fluent interface, returns self
+     * @return $this  fluent interface, returns self
      */
     public function addRev(string $relation, mixed $value): static
     {
@@ -1009,7 +1009,7 @@ abstract class Page extends Container
      *
      * @param string $relation      name of relation to remove
      *
-     * @return Page  fluent interface, returns self
+     * @return $this  fluent interface, returns self
      */
     public function removeRel(string $relation): static
     {
@@ -1025,7 +1025,7 @@ abstract class Page extends Container
      *
      * @param string $relation      name of relation to remove
      *
-     * @return Page  fluent interface, returns self
+     * @return $this  fluent interface, returns self
      */
     public function removeRev(string $relation): static
     {

@@ -366,7 +366,7 @@ class ApplicationLogger implements LoggerInterface
      * @param LoggerInterface $logger
      * @param string $message
      * @param \Throwable $exception
-     * @param mixed|int $level
+     * @param mixed $level
      * @param \Pimcore\Model\DataObject\AbstractObject|null $relatedObject
      * @param array $context
      */
@@ -374,7 +374,7 @@ class ApplicationLogger implements LoggerInterface
         LoggerInterface                          $logger,
         string                                   $message,
         \Throwable                               $exception,
-        int                                $level = Logger::ALERT,
+        mixed                                $level = Logger::ALERT,
         \Pimcore\Model\DataObject\AbstractObject $relatedObject = null,
         array                                    $context = []
     ) {

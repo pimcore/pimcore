@@ -165,7 +165,7 @@ class LibreOffice extends Ghostscript
         return $storage->readStream($storagePath);
     }
 
-    public function getText(?int $page = null, ?Asset\Document $asset = null)
+    public function getText(?int $page = null, ?Asset\Document $asset = null): mixed
     {
         if (!$asset && $this->asset) {
             $asset = $this->asset;

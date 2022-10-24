@@ -834,7 +834,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
 
-    public function normalize(mixed $value, array $params = [])
+    public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof Model\DataObject\Data\QuantityValue) {
             return [
@@ -842,6 +842,8 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
                 'unitId' => $value->getUnitId(),
             ];
         }
+
+        return null;
     }
 
 

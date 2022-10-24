@@ -470,9 +470,9 @@ class Select extends Data implements
      * @param string $operator
      * @param array $params optional params used to change the behavior
      *
-     * @return string|null
+     * @return string
      */
-    public function getFilterConditionExt(mixed $value, string $operator, array $params = []): ?string
+    public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {
         $value = is_array($value) ? current($value) : $value;
         $name = $params['name'] ?: $this->name;
@@ -490,7 +490,7 @@ class Select extends Data implements
             return $key.' LIKE '."\"%$value%\"".' ';
         }
 
-        return null;
+        return '';
     }
 
     /**
@@ -501,7 +501,6 @@ class Select extends Data implements
         return true;
     }
 
-
     protected function doGetDefaultValue(Concrete $object, array $context = []): ?string
     {
         /** @var DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface|null $optionsProvider */
@@ -511,9 +510,7 @@ class Select extends Data implements
         );
         if ($optionsProvider) {
             $context['object'] = $object;
-            if ($object) {
-                $context['class'] = $object->getClass();
-            }
+            $context['class'] = $object->getClass();
 
             $context['fieldname'] = $this->getName();
             if (!isset($context['purpose'])) {

@@ -22,7 +22,7 @@ namespace Pimcore\Composer;
  */
 class PackageInfo
 {
-    private array $installedPackages;
+    private ?array $installedPackages = null;
 
     /**
      * Gets installed packages, optionally filtered by type

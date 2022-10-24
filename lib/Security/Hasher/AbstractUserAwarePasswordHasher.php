@@ -42,7 +42,7 @@ abstract class AbstractUserAwarePasswordHasher extends PlaintextPasswordHasher i
     /**
      * {@inheritdoc}
      */
-    public function getUser(): ?UserInterface
+    public function getUser(): UserInterface
     {
         if (!$this->user) {
             throw new RuntimeException('No user was set');

@@ -40,7 +40,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * @internal
      *
-     * @return User
+     * @return $this
      */
     protected function init(): static
     {

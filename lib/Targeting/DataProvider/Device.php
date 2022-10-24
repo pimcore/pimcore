@@ -38,9 +38,9 @@ class Device implements DataProviderInterface
     /**
      * The cache handler caching detected results
      *
-     * @var CoreCacheHandler
+     * @var CoreCacheHandler|null
      */
-    private CoreCacheHandler $cache;
+    private ?CoreCacheHandler $cache = null;
 
     /**
      * The cache pool which is passed to the DeviceDetector

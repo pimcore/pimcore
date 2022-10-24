@@ -140,7 +140,7 @@ class ContainerService
      * @param string $key
      * @param  Container $container
      *
-     * @return ContainerService
+     * @return $this
      */
     public function setContainer(string $key, Container $container): static
     {

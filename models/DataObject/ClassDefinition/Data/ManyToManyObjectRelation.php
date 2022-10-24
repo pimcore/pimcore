@@ -294,12 +294,12 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
-     * @return string|null
+     * @return string
      *
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if (is_array($data) && count($data) > 0) {
             $paths = [];
@@ -312,7 +312,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
             return implode('<br />', $paths);
         }
 
-        return null;
+        return '';
     }
 
     public function getWidth(): int|string

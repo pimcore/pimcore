@@ -38,7 +38,7 @@ abstract class AbstractHasherFactory implements PasswordHasherFactoryInterface
      */
     protected mixed $arguments = [];
 
-    protected \ReflectionClass $reflector;
+    protected ?\ReflectionClass $reflector = null;
 
     /**
      * @param string $className

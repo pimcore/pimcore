@@ -49,7 +49,7 @@ class Checkbox extends Model\Document\Editable
     }
 
 
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->getData();
     }

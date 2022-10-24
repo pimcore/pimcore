@@ -443,7 +443,7 @@ class NumericRange extends Data implements
     }
 
 
-    public function normalize(mixed $value, array $params = [])
+    public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof DataObject\Data\NumericRange) {
             return $value->toArray();

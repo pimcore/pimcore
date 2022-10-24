@@ -104,7 +104,7 @@ class FallbackStorage implements TargetingStorageInterface
     /**
      * {@inheritdoc }
      */
-    public function get(VisitorInfo $visitorInfo, string $scope, string $name, mixed $default = null)
+    public function get(VisitorInfo $visitorInfo, string $scope, string $name, mixed $default = null): mixed
     {
         if ($visitorInfo->hasVisitorId()) {
             if (!$this->primaryStorage->has($visitorInfo, $scope, $name)) {

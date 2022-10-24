@@ -237,7 +237,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, array $params = [])
+    public function getForCsvExport($object, array $params = []): string
     {
         return $this->getDataFromObjectParam($object, $params);
     }

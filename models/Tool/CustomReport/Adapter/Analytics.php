@@ -42,7 +42,7 @@ class Analytics extends AbstractAdapter
         }
 
         $results = $this->getDataHelper($fields, $drillDownFilters);
-        $data = $this->extractData($results);
+        $data = $this->extractData($results->getTotalsForAllResults());
 
         return [ 'data' => $data, 'total' => $results['totalResults'] ];
     }
@@ -274,7 +274,7 @@ class Analytics extends AbstractAdapter
         $this->setFilters($filters, $drillDownFilters);
         $results = $this->getDataHelper([], $drillDownFilters, false);
 
-        $data = $this->extractData($results);
+        $data = $this->extractData($results->getTotalsForAllResults());
 
         $return = [];
         foreach ($data as $row) {

@@ -458,13 +458,6 @@ class Service extends Model\Element\Service
         return $result;
     }
 
-    /**
-     * @param ElementInterface $element
-     *
-     * @return string
-     *
-     * @throws \Exception
-     */
     public static function getUniqueKey(ElementInterface $element, int $nr = 0): string
     {
         $list = new Listing();

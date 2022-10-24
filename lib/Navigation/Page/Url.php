@@ -53,7 +53,7 @@ class Url extends Page
      *
      * @param string|null $uri page URI, must a string or null
      *
-     * @return Url fluent interface, returns self
+     * @return $this fluent interface, returns self
      */
     public function setUri(?string $uri): static
     {
@@ -75,7 +75,7 @@ class Url extends Page
     /**
      * {@inheritdoc}
      */
-    public function getHref(): ?string
+    public function getHref(): string
     {
         $uri = $this->getUri();
 
@@ -88,7 +88,7 @@ class Url extends Page
             return $uri . '#' . $fragment;
         }
 
-        return $uri;
+        return $uri ?? '';
     }
 
     // Public methods:

@@ -125,7 +125,7 @@ class HeadLink extends CacheBusterAware
      * @param array|null $attributes
      * @param string $placement
      *
-     * @return HeadLink
+     * @return $this
      */
     public function __invoke(?array $attributes = null, string $placement = Container::APPEND): static
     {

@@ -25,7 +25,7 @@ abstract class AbstractTracker implements TrackerInterface
 {
     private SiteIdProvider $siteIdProvider;
 
-    private CodeCollector $codeCollector;
+    private ?CodeCollector $codeCollector = null;
 
     public function __construct(SiteIdProvider $siteIdProvider)
     {

@@ -299,7 +299,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     }
 
 
-    public function normalize(mixed $value, array $params = [])
+    public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof DataObject\Data\QuantityValueRange) {
             return $value->toArray();

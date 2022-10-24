@@ -325,17 +325,17 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
-     * @return string|null
+     * @return string
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof DataObject\Data\StructuredTable) {
             return $data->getHtmlTable($this->rows, $this->cols);
         }
 
-        return null;
+        return '';
     }
 
     /**
@@ -533,7 +533,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
 
-    public function normalize(mixed $value, array $params = [])
+    public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof DataObject\Data\StructuredTable) {
             $data = $value->getData();

@@ -351,17 +351,17 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
-     * @return string|null
+     * @return string
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof DataObject\Data\ImageGallery) {
             return count($data->getItems()) . ' items';
         }
 
-        return null;
+        return '';
     }
 
     /**

@@ -39,7 +39,7 @@ class IntlFormatter
 
     const TIME_LONG = 'time_long';
 
-    protected string $locale;
+    protected ?string $locale = null;
 
     private LocaleServiceInterface $localeService;
 

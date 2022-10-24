@@ -499,9 +499,9 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return null;
     }
 
-    public function getVersionPreview(mixed $data, Model\DataObject\Concrete $object = null, array $params = []): ?string
+    public function getVersionPreview(mixed $data, Model\DataObject\Concrete $object = null, array $params = []): string
     {
-        return $this->getPreviewData($data, $object, $params);
+        return $this->getPreviewData($data, $object, $params) ?? '';
     }
 
     /**

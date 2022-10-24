@@ -434,7 +434,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
                     $cacheService = \Pimcore::getContainer()->get(FullPageCacheListener::class);
                     $cacheService->disable('Video rendering in progress');
 
-                    return $this->getProgressCode($image);
+                    return $this->getProgressCode((string)$image);
                 }
 
                 return $this->getErrorCode('The video conversion failed, please see the log files in /var/log for more details.');

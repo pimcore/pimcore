@@ -222,7 +222,7 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function getCurrentIndex()
+    public function getCurrentIndex(): int
     {
         return $this->indices[$this->getCurrent()]['key'];
     }

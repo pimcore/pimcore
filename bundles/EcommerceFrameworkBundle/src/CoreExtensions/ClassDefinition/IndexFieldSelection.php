@@ -325,7 +325,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         return null;
     }
 
-    public function denormalize(mixed $value, array $params = [])
+    public function denormalize(mixed $value, array $params = []): mixed
     {
         if (is_array($value)) {
             $tenant = $value['tenant'];

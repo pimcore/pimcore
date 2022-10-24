@@ -279,7 +279,7 @@ class DateRange extends Data implements
     }
 
 
-    public function normalize(mixed $value, array $params = [])
+    public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof CarbonPeriod) {
             return $value->toArray();
@@ -289,7 +289,7 @@ class DateRange extends Data implements
     }
 
 
-    public function denormalize(mixed $value, array $params = [])
+    public function denormalize(mixed $value, array $params = []): ?CarbonPeriod
     {
         if (\is_array($value)) {
             return CarbonPeriod::create(\reset($value), \end($value));

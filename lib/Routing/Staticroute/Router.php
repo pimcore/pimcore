@@ -44,11 +44,11 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
     protected RequestContext $context;
 
     /**
-     * @var Staticroute[]
+     * @var Staticroute[]|null
      */
-    protected array $staticRoutes;
+    protected ?array $staticRoutes = null;
 
-    protected array $supportedNames;
+    protected ?array $supportedNames = null;
 
     /**
      * Params which are treated as _locale if no _locale attribute is set

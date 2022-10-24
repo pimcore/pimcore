@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 final class Session
 {
-    private static AdminSessionHandlerInterface $handler;
+    private static ?AdminSessionHandlerInterface $handler = null;
 
     public static function getHandler(): AdminSessionHandlerInterface
     {

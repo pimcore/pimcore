@@ -19,7 +19,7 @@ namespace Pimcore\Analytics\Google\Config;
 
 class ConfigProvider
 {
-    private Config $config;
+    private ?Config $config = null;
 
     private ?array $configObject;
 

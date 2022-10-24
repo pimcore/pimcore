@@ -323,11 +323,11 @@ class Multiselect extends Data implements
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
-     * @return string|null
+     * @return string
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if (is_array($data)) {
             return implode(',', array_map(function ($v) {
@@ -335,7 +335,7 @@ class Multiselect extends Data implements
             }, $data));
         }
 
-        return null;
+        return '';
     }
 
     /**
@@ -383,9 +383,9 @@ class Multiselect extends Data implements
      * @param string $operator
      * @param array $params
      *
-     * @return string|null
+     * @return string
      */
-    public function getFilterCondition(mixed $value, string $operator, array $params = []): ?string
+    public function getFilterCondition(mixed $value, string $operator, array $params = []): string
     {
         $params['name'] = $this->name;
 
@@ -403,9 +403,9 @@ class Multiselect extends Data implements
      * @param string $operator
      * @param array $params optional params used to change the behavior
      *
-     * @return string|null
+     * @return string
      */
-    public function getFilterConditionExt(mixed $value, string $operator, array $params = []): ?string
+    public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {
         if ($operator === '=') {
             $name = $params['name'] ? $params['name'] : $this->name;
@@ -429,7 +429,7 @@ class Multiselect extends Data implements
             return $key.' LIKE '.$value.' ';
         }
 
-        return null;
+        return '';
     }
 
     /**

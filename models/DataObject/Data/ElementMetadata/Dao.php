@@ -25,7 +25,7 @@ use Pimcore\Model\DataObject;
  */
 class Dao extends DataObject\Data\ObjectMetadata\Dao
 {
-    public function load(DataObject\Concrete $source, int $destinationId, string $fieldname, string $ownertype, string $ownername, string $position, int $index): ?DataObject\Data\ElementMetadata
+    public function load(DataObject\Concrete $source, int $destinationId, string $fieldname, string $ownertype, string $ownername, string $position, int $index, string $destinationType = 'object'): ?DataObject\Data\ElementMetadata
     {
         if ($destinationType == 'object') {
             $typeQuery = " AND (type = 'object' or type = '')";

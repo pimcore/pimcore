@@ -30,6 +30,7 @@ use Pimcore\Event\SystemEvents;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\Element;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -677,7 +678,8 @@ class Service extends Model\AbstractModel
             }
         }
         if (!$found) {
-            $target->setChildren(array_merge($target->getChildren(), [$new]));
+            $newElement = Element\Service::getElementById($new->getType(), $new->getId());
+            $target->setChildren(array_merge($target->getChildren(), [$newElement]));
         }
     }
 
@@ -1122,10 +1124,11 @@ class Service extends Model\AbstractModel
      * returns a unique key for an element
      *
      * @param ElementInterface $element
-     *
+     * @param int $nr
      * @return string|null
+     * @throws \Exception
      */
-    public static function getUniqueKey(ElementInterface $element): ?string
+    public static function getUniqueKey(ElementInterface $element, int $nr = 0): ?string
     {
         if ($element instanceof DataObject\AbstractObject) {
             return DataObject\Service::getUniqueKey($element);

@@ -319,7 +319,8 @@ class Link extends Model\Document
             'The Link::setObject() method is deprecated, use Link::setElement() instead.'
         );
 
-        return $this->setElement($object);
+        $this->setElement($object);
+        return $this;
     }
 
     private function setObjectFromId(): ?Model\Element\ElementInterface

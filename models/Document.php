@@ -604,7 +604,7 @@ class Document extends Element\AbstractElement
     /**
      * Returns true if the document has at least one child
      *
-     * @param bool|null $includingUnpublished
+     * @param bool $includingUnpublished
      *
      * @return bool
      */
@@ -913,7 +913,7 @@ class Document extends Element\AbstractElement
      *
      * @param int|null $id
      *
-     * @return Document
+     * @return $this
      */
     public function setParentId(?int $id): static
     {
@@ -940,7 +940,7 @@ class Document extends Element\AbstractElement
      *
      * @param int $index
      *
-     * @return Document
+     * @return $this
      */
     public function setIndex(int $index): static
     {
@@ -960,7 +960,7 @@ class Document extends Element\AbstractElement
      *
      * @param string $type
      *
-     * @return Document
+     * @return $this
      */
     public function setType(string $type): static
     {
@@ -987,7 +987,6 @@ class Document extends Element\AbstractElement
     }
 
     public function getParent(): ?Document
-        /** : ?Document */
     {
         $parent = parent::getParent();
 
@@ -999,10 +998,11 @@ class Document extends Element\AbstractElement
      *
      * @param ElementInterface|null $parent
      *
-     * @return Document
+     * @return $this
      */
     public function setParent(?ElementInterface $parent): static
     {
+        /** @var Document $parent */
         $this->parent = $parent;
         if ($parent instanceof Document) {
             $this->parentId = $parent->getId();

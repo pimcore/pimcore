@@ -854,7 +854,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     {
     }
 
-    public function load(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
+    public function load(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): mixed
     {
         $field = $this->getName();
         $db = Db::get();

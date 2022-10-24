@@ -178,7 +178,7 @@ class Ghostscript extends Adapter
     }
 
 
-    public function saveImage(string $imageTargetPath, int $page = 1, int $resolution = 200)
+    public function saveImage(string $imageTargetPath, int $page = 1, int $resolution = 200): mixed
     {
         try {
             $localFile = self::getLocalFileFromStream((string)$this->getPdf());
@@ -194,10 +194,11 @@ class Ghostscript extends Adapter
 
             return false;
         }
+
     }
 
 
-    public function getText(?int $page = null, ?Asset\Document $asset = null)
+    public function getText(?int $page = null, ?Asset\Document $asset = null): mixed
     {
         try {
             if (!$asset && $this->asset) {

@@ -114,14 +114,13 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     /**
      * @param mixed $data
-     * @param null|DataObject\AbstractObject $object
+     * @param Concrete|null $object
      * @param array $params
      *
      * @return array|null
      * @see Data::getDataForEditmode
-     *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
+    public function getDataForEditmode(mixed $data, Concrete $object = null, array $params = []): ?array
     {
         if ($data instanceof Asset\Image) {
             return $data->getObjectVars();
@@ -194,17 +193,17 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param null|Model\DataObject\Concrete $object
      * @param array $params
      *
-     * @return string|null
+     * @return string
      * @see Data::getVersionPreview
      *
      */
-    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof Asset\Image) {
             return '<img src="/admin/asset/get-image-thumbnail?id=' . $data->getId() . '&width=100&height=100&aspectratio=true" />';
         }
 
-        return null;
+        return '';
     }
 
     /**
@@ -364,7 +363,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
 
-    public function denormalize(mixed $value, array $params = [])
+    public function denormalize(mixed $value, array $params = []): ?Asset
     {
         if (isset($value['id'])) {
             return Asset\Image::getById($value['id']);

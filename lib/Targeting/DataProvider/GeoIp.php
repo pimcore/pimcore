@@ -36,7 +36,7 @@ class GeoIp implements DataProviderInterface
 
     private LoggerInterface $logger;
 
-    private CoreCacheHandler $cache;
+    private ?CoreCacheHandler $cache = null;
 
     public function __construct(
         ProviderInterface $geoIpProvider,

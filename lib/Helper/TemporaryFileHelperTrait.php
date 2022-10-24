@@ -27,15 +27,15 @@ trait TemporaryFileHelperTrait
     /**
      * Get local file path of the given file or URL
      *
-     * @param string $stream local path, wrapper or file handle
+     * @param string|resource $stream local path, wrapper or file handle
      *
      * @return string path to local file
      *
      * @throws \Exception
      */
-    protected static function getLocalFileFromStream(string $stream): string
+    protected static function getLocalFileFromStream(mixed $stream): string
     {
-        if (!stream_is_local($stream) || stream_get_meta_data($stream)['uri'] === 'php://temp') {
+        if (!stream_is_local($stream) || (is_resource($stream) && stream_get_meta_data($stream)['uri'] === 'php://temp')) {
             $stream = self::getTemporaryFileFromStream($stream);
         }
 
@@ -48,14 +48,14 @@ trait TemporaryFileHelperTrait
     }
 
     /**
-     * @param string $stream
+     * @param resource|string $stream
      * @param bool $keep whether to delete this file on shutdown or not
      *
      * @return string
      *
      * @throws \Exception
      */
-    protected static function getTemporaryFileFromStream(string $stream, bool $keep = false): string
+    protected static function getTemporaryFileFromStream(mixed $stream, bool $keep = false): string
     {
         if (is_string($stream)) {
             $src = fopen($stream, 'rb');

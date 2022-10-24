@@ -29,7 +29,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
  */
 class ControllerDataProvider
 {
-    private KernelInterface $kernel;
+    private ?KernelInterface $kernel = null;
 
     /**
      * id -> class mapping array of controllers defined as services
@@ -38,9 +38,9 @@ class ControllerDataProvider
      */
     private array $serviceControllers;
 
-    private array $bundles;
+    private ?array $bundles = null;
 
-    private array $templates;
+    private ?array $templates = null;
 
     private array $templateNamePatterns = [
         '*.twig',

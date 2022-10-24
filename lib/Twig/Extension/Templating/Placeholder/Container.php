@@ -107,9 +107,9 @@ class Container extends \ArrayObject
     /**
      * Key to which to capture content
      *
-     * @var string
+     * @var string|null
      */
-    protected string $_captureKey;
+    protected ?string $_captureKey = null;
 
     /**
      * Set a single value
@@ -162,7 +162,7 @@ class Container extends \ArrayObject
      *
      * @param string $prefix
      *
-     * @return Container
+     * @return $this
      */
     public function setPrefix(string $prefix): static
     {
@@ -186,7 +186,7 @@ class Container extends \ArrayObject
      *
      * @param string $postfix
      *
-     * @return Container
+     * @return $this
      */
     public function setPostfix(string $postfix): static
     {
@@ -212,7 +212,7 @@ class Container extends \ArrayObject
      *
      * @param string $separator
      *
-     * @return Container
+     * @return $this
      */
     public function setSeparator(string $separator): static
     {
@@ -237,7 +237,7 @@ class Container extends \ArrayObject
      *
      * @param int|string $indent
      *
-     * @return Container
+     * @return $this
      */
     public function setIndent(int|string $indent): static
     {

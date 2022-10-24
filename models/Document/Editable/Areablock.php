@@ -647,9 +647,9 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function getCurrentIndex()
+    public function getCurrentIndex(): int
     {
-        return $this->indices[$this->getCurrent()]['key'] ?? null;
+        return $this->indices[$this->getCurrent()]['key'] ?? 0;
     }
 
     public function getIndices(): array

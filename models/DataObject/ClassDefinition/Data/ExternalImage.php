@@ -236,7 +236,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): ?string
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Model\DataObject\Data\ExternalImage) {

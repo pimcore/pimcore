@@ -40,7 +40,7 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
         $this->editableRenderer = $editableRenderer;
     }
 
-    protected string $id;
+    protected ?string $id = null;
 
     /**
      * {@inheritdoc}

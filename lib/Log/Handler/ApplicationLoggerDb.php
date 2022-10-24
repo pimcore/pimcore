@@ -40,7 +40,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
      * @param bool $bubble
      *
      */
-    public function __construct(Connection $db, $level = Logger::DEBUG, bool $bubble = true)
+    public function __construct(Connection $db, int|string $level = Logger::DEBUG, bool $bubble = true)
     {
         $this->db = $db;
         parent::__construct($level, $bubble);

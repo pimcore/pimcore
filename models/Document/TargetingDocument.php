@@ -96,14 +96,15 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     /**
      * {@inheritdoc}
      */
-    public function setEditable(Editable $editable): TargetingDocument|PageSnippet
+    public function setEditable(Editable $editable): static
     {
         if ($this->getUseTargetGroup()) {
             $name = $this->getTargetGroupEditableName($editable->getName());
             $editable->setName($name);
         }
 
-        return parent::setEditable($editable);
+        parent::setEditable($editable);
+        return $this;
     }
 
     /**

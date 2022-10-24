@@ -21,7 +21,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class LocaleService implements LocaleServiceInterface
 {
-    protected string $locale;
+    protected ?string $locale = null;
 
     protected ?RequestStack $requestStack;
 

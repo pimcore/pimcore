@@ -49,9 +49,9 @@ class Csv
         'expiry',
     ];
 
-    private ArrayNormalizer $importNormalizer;
+    private ?ArrayNormalizer $importNormalizer = null;
 
-    private OptionsResolver $importResolver;
+    private ?OptionsResolver $importResolver = null;
 
     /**
      * @param Redirect\Listing $list

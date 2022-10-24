@@ -40,7 +40,7 @@ abstract class AbstractEncoderFactory implements EncoderFactoryInterface
      */
     protected mixed $arguments = [];
 
-    protected \ReflectionClass $reflector;
+    protected ?\ReflectionClass $reflector = null;
 
     /**
      * @param string $className

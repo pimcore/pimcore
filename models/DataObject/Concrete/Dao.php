@@ -412,7 +412,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     /**
      * Save object to database
      */
-    public function delete()
+    public function delete(): void
     {
         // delete fields which have their own delete algorithm
         if ($this->model->getClass()) {
