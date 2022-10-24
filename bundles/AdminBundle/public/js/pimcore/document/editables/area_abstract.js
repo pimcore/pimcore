@@ -111,11 +111,9 @@ pimcore.document.area_abstract = Class.create(pimcore.document.editable, {
                     };
                 } else {
                     var templateHTML = templateEl.innerHTML;
-                    if (editablesInBox[config['name']]['config'] 
-                        && editablesInBox[config['name']]['config']['description']) {
-                        
+                    if (config['description']) {
                         var descriptionHTML = '<div style="font-size: 14px; margin-bottom: 10px;">'
-                          + editablesInBox[config['name']]['config']['description']
+                          + config['description']
                           + '</div>';
 
                         templateHTML = descriptionHTML + templateHTML;
