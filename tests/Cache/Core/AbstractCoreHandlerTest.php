@@ -23,6 +23,7 @@ use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Cache\Core\WriteLock;
+use Pimcore\Tests\Support\Helper\Pimcore;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\Cache\CacheItem;
 
