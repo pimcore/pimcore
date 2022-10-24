@@ -733,7 +733,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             'referencedFields',
             'blockedVarsForExport',
             'childs',         //TODO remove in Pimcore 12
-            'children',
         ];
     }
 
