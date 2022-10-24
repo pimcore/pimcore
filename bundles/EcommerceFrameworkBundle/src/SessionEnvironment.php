@@ -115,6 +115,8 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
         $sessionBag->set(self::SESSION_KEY_ASSORTMENT_SUB_TENANT, $this->currentAssortmentSubTenant);
         $sessionBag->set(self::SESSION_KEY_CHECKOUT_TENANT, $this->currentCheckoutTenant);
         $sessionBag->set(self::SESSION_KEY_USE_GUEST_CART, $this->useGuestCart);
+
+        return $this;
     }
 
     public function clearEnvironment()

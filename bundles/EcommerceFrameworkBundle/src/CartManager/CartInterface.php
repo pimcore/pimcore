@@ -265,9 +265,9 @@ interface CartInterface
      *
      * @param int $id
      *
-     * @return CartInterface
+     * @return CartInterface|null
      */
-    public static function getById(int $id): CartInterface;
+    public static function getById(int $id): ?CartInterface;
 
     /**
      * returns all carts for given userId

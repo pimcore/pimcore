@@ -36,13 +36,13 @@ class SessionCartCheckoutData extends AbstractCartCheckoutData
         $checkoutDataItem->getCart()->checkoutData = [];
     }
 
-    public function setCart(CartInterface $cart)
+    public function setCart(SessionCart $cart)
     {
         $this->cart = $cart;
         $this->cartId = $cart->getId();
     }
 
-    public function getCart(): SessionCart|CartInterface|null
+    public function getCart(): ?SessionCart
     {
         if (empty($this->cart)) {
             $this->cart = SessionCart::getById($this->cartId);

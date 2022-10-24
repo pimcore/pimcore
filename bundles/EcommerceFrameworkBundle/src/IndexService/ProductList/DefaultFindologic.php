@@ -68,7 +68,7 @@ class DefaultFindologic implements ProductListInterface
     /**
      * @var array<string,\stdClass>
      */
-    protected array $groupedValues;
+    protected ?array $groupedValues = null;
 
     protected array $conditions = [];
 
@@ -160,7 +160,7 @@ class DefaultFindologic implements ProductListInterface
         $this->products = null;
     }
 
-    public function addRelationCondition(string $fieldname, string $condition)
+    public function addRelationCondition(string $fieldname, array|string $condition)
     {
         $this->products = null;
         $this->addCondition($condition, $fieldname);

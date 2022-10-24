@@ -150,9 +150,9 @@ class IndexUpdateService
      * @param string[]|null $tenantNameList optional list of tenant names for which the update should happen. If null, then the parameter
      *        will be ignored. If the array is empty, then no update will take place.
      */
-    public function resetIdsInPreparation(array $idList, string $triggerInfo, array $tenantNameList = null)
+    public function resetIdsInPreparation(array $idList, string $triggerInfo, array $tenantNameList = null): void
     {
-        return $this->resetIds($idList, $triggerInfo, false, $tenantNameList);
+        $this->resetIds($idList, $triggerInfo, false, $tenantNameList);
     }
 
     /**
@@ -164,9 +164,9 @@ class IndexUpdateService
      * @param string[]|null $tenantNameList optional list of tenant names for which the update should happen. If null, then the parameter
      *        will be ignored. If the array is empty, then no update will take place.
      */
-    public function resetIdsUpdateIndex(array $idList, string $triggerInfo, array $tenantNameList = null)
+    public function resetIdsUpdateIndex(array $idList, string $triggerInfo, array $tenantNameList = null): void
     {
-        return $this->resetIds($idList, $triggerInfo, true, $tenantNameList);
+        $this->resetIds($idList, $triggerInfo, true, $tenantNameList);
     }
 
     /**

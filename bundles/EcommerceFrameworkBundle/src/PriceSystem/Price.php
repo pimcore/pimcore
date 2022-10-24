@@ -130,7 +130,7 @@ class Price implements PriceInterface
     /**
      * {@inheritdoc}
      */
-    public function setGrossAmount(Decimal $grossAmount, bool $recalc = false)
+    public function setGrossAmount(Decimal $grossAmount, bool $recalc = false): void
     {
         $this->grossAmount = $grossAmount;
 
@@ -142,7 +142,7 @@ class Price implements PriceInterface
     /**
      * {@inheritdoc}
      */
-    public function setNetAmount(Decimal $netAmount, bool $recalc = false)
+    public function setNetAmount(Decimal $netAmount, bool $recalc = false): void
     {
         $this->netAmount = $netAmount;
 
@@ -154,7 +154,7 @@ class Price implements PriceInterface
     /**
      * {@inheritdoc}
      */
-    public function setTaxEntries(array $taxEntries)
+    public function setTaxEntries(array $taxEntries): void
     {
         $this->taxEntries = $taxEntries;
     }
@@ -162,7 +162,7 @@ class Price implements PriceInterface
     /**
      * {@inheritdoc}
      */
-    public function setTaxEntryCombinationMode(string $taxEntryCombinationMode)
+    public function setTaxEntryCombinationMode(string $taxEntryCombinationMode): void
     {
         $this->taxEntryCombinationMode = $taxEntryCombinationMode;
     }

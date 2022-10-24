@@ -56,7 +56,7 @@ class DeliveryDate extends AbstractStep implements CheckoutStepInterface
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         $data = new \stdClass();
         $data->instantly = $this->cart->getCheckoutData(self::INSTANTLY);

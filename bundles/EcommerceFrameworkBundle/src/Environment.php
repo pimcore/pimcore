@@ -79,6 +79,7 @@ class Environment implements EnvironmentInterface
 
     public function save(): mixed
     {
+        return $this;
     }
 
     public function getAllCustomItems(): array
@@ -140,7 +141,7 @@ class Environment implements EnvironmentInterface
     {
         $this->load();
 
-        $this->customItems = null;
+        $this->customItems = [];
         $this->userId = self::USER_ID_NOT_SET;
         $this->currentAssortmentTenant = null;
         $this->currentAssortmentSubTenant = null;

@@ -130,7 +130,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
     /**
      * @throws UnsupportedException
      */
-    public function calculate($ignorePricingRules = false)
+    public function calculate($ignorePricingRules = false): void
     {
         // sum up all item prices
         $subTotalNet = Decimal::zero();

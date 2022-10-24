@@ -52,11 +52,7 @@ class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
         if (empty($value) && !$isReload) {
             $o = $preSelect;
             if (!empty($o)) {
-                if (is_object($o)) {
-                    $value = $o->getId();
-                } else {
-                    $value = $o;
-                }
+                $value = $o;
             }
         } elseif ($value == AbstractFilterType::EMPTY_STRING) {
             $value = null;

@@ -23,9 +23,9 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 class SessionCart extends AbstractCart implements CartInterface
 {
     /**
-     * @var SessionCart[]
+     * @var SessionCart[]|null
      */
-    protected static array $unserializedCarts;
+    protected static ?array $unserializedCarts = null;
 
     protected function getCartItemClassName(): string
     {
@@ -58,7 +58,7 @@ class SessionCart extends AbstractCart implements CartInterface
         return $sessionBag;
     }
 
-    public function save()
+    public function save(): void
     {
         $session = static::getSessionBag();
 
@@ -105,9 +105,10 @@ class SessionCart extends AbstractCart implements CartInterface
     /**
      * {@inheritdoc}
      */
-    public function modified(): SessionCart|CartInterface|AbstractCart
+    public function modified(): static
     {
-        return parent::modified();
+        $modified = parent::modified();
+        return $this;
     }
 
     public static function getById(int $id): ?SessionCart

@@ -18,5 +18,5 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
 interface InterpreterInterface
 {
-    public function interpret($value, $config = null);
+    public function interpret(mixed $value, ?array $config = null): mixed;
 }

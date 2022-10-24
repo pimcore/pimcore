@@ -129,7 +129,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      * @param AbstractOrder $order
      *
      * @return bool|OnlineShopVoucherToken
-     *@throws VoucherServiceException
+     * @throws VoucherServiceException
      *
      */
     public function applyToken(string $code, CartInterface $cart, AbstractOrder $order): OnlineShopVoucherToken|bool

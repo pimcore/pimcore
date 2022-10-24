@@ -60,9 +60,6 @@ class TargetGroup implements ConditionInterface
         if ($this->targetGroupId) {
             $this->targetGroup = \Pimcore\Model\Tool\Targeting\TargetGroup::getById($this->targetGroupId);
         }
-        if ($this->threshold === null) {
-            $this->threshold = 0;
-        }
     }
 
     public function toJSON(): string

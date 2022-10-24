@@ -100,7 +100,7 @@ class DefaultMysql implements ProductListInterface
         unset($this->conditions[$fieldname]);
     }
 
-    public function addRelationCondition(string $fieldname, string $condition)
+    public function addRelationCondition(string $fieldname, string|array $condition)
     {
         $this->products = null;
         $this->relationConditions[$fieldname][] = '`fieldname` = ' . $this->quote($fieldname) . ' AND '  . $condition;

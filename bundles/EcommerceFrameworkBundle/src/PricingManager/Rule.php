@@ -88,11 +88,11 @@ class Rule extends AbstractModel implements RuleInterface
      * @param string $key
      * @param mixed $value
      *
-     * @return AbstractModel
+     * @return $this
      *
      * @internal
      */
-    public function setValue(string $key, mixed $value): AbstractModel
+    public function setValue(string $key, mixed $value): static
     {
         $method = 'set' . $key;
         if (method_exists($this, $method)) {
@@ -151,11 +151,11 @@ class Rule extends AbstractModel implements RuleInterface
     /**
      * @param string|null $locale
      *
-     * @return string|null
+     * @return string
      */
-    public function getLabel(string $locale = null): ?string
+    public function getLabel(string $locale = null): string
     {
-        return $this->label[$this->getLanguage($locale)] ?? null;
+        return $this->label[$this->getLanguage($locale)] ?? '';
     }
 
     public function getName(): string

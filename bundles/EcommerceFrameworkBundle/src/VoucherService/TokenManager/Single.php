@@ -56,7 +56,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
         return true;
     }
 
-    public function cleanupReservations(int $duration = 0): bool
+    public function cleanupReservations(int $duration = 0, ?string $seriesId = null): bool
     {
         return Reservation::cleanUpReservations($duration, $seriesId);
     }

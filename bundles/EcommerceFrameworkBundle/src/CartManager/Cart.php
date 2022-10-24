@@ -35,7 +35,7 @@ class Cart extends AbstractCart implements CartInterface
         return CartCheckoutData::class;
     }
 
-    public function save()
+    public function save(): void
     {
         //make sure the items have been loaded otherwise we might loose the products (e.g. when a voucher is added)
         $items = $this->getItems();
@@ -115,7 +115,7 @@ class Cart extends AbstractCart implements CartInterface
         return $cart;
     }
 
-    public function getItems(): ?array
+    public function getItems(): array
     {
         if ($this->items === null) {
             $itemList = new CartItem\Listing();
@@ -160,7 +160,7 @@ class Cart extends AbstractCart implements CartInterface
         }
     }
 
-    public function getItemAmount(string $countSubItems = self::COUNT_MAIN_ITEMS_ONLY): float|int|null
+    public function getItemAmount(string $countSubItems = self::COUNT_MAIN_ITEMS_ONLY): int
     {
         if ($countSubItems === self::COUNT_MAIN_ITEMS_ONLY) {
             if ($this->itemAmount == null) {

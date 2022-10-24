@@ -102,9 +102,9 @@ interface ProductListInterface extends PaginateListingInterface
      * Adds relation condition to product list
      *
      * @param string $fieldname
-     * @param array $condition
+     * @param string|array $condition
      */
-    public function addRelationCondition(string $fieldname, string $condition);
+    public function addRelationCondition(string $fieldname, string|array $condition);
 
     /**
      * Resets all conditions of product list

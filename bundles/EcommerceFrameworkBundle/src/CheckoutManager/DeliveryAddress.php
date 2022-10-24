@@ -47,7 +47,7 @@ class DeliveryAddress extends AbstractStep implements CheckoutStepInterface
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         $data = json_decode($this->cart->getCheckoutData(self::PRIVATE_NAMESPACE));
 

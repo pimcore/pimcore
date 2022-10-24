@@ -267,7 +267,7 @@ class DefaultService implements ServiceInterface
         //Add non existing cart items to offer
         $cartItems = $cart->getItems();
         foreach ($cartItems as $cartItem) {
-            if (!$newOfferItems[$cartItem->getItemKey()] && !$excludedItemKeys[$cartItem->getItemKey()]) {
+            if (!array_key_exists($cartItem->getItemKey(), $newOfferItems) && !array_key_exists($cartItem->getItemKey(), $excludedItemKeys)) {
                 $offerItem = $this->createOfferItem($cartItem, $offer);
                 $newOfferItems[$offerItem->getCartItemKey()] = $offerItem;
             }
@@ -275,7 +275,7 @@ class DefaultService implements ServiceInterface
 
         //Delete offer items which are not needed any more
         foreach ($offerItems as $offerItem) {
-            if (!$newOfferItems[$offerItem->getCartItemKey()]) {
+            if (!array_key_exists($offerItem->getCartItemKey(), $newOfferItems)) {
                 $offerItem->delete();
             }
         }

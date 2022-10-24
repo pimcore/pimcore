@@ -28,7 +28,7 @@ interface FindologicConfigInterface extends ConfigInterface
      *
      * @param string|null $setting
      *
-     * @return array|string
+     * @return array|string|null
      */
     public function getClientConfig(string $setting = null): array|string|null;
 

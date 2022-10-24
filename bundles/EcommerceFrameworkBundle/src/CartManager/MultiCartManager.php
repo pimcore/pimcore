@@ -156,6 +156,8 @@ class MultiCartManager implements CartManagerInterface
         foreach ($this->carts as $cart) {
             $cart->save();
         }
+
+        return $this;
     }
 
     /**

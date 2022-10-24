@@ -24,7 +24,7 @@ class DefaultStructuredTable implements InterpreterInterface
 {
     use OptionsResolverTrait;
 
-    public function interpret($value, $config = null)
+    public function interpret(mixed $value, ?array $config = null): mixed
     {
         $config = $this->resolveOptions($config ?? []);
 

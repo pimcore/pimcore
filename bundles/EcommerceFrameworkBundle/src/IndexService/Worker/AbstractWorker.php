@@ -29,9 +29,9 @@ abstract class AbstractWorker implements WorkerInterface
 
     protected string $name;
 
-    protected array $indexColumns;
+    protected ?array $indexColumns = null;
 
-    protected array $filterGroups;
+    protected ?array $filterGroups = null;
 
     protected EventDispatcherInterface $eventDispatcher;
 

@@ -22,14 +22,14 @@ abstract class AbstractCartCheckoutData extends \Pimcore\Model\AbstractModel
 
     protected array $data;
 
-    protected ?CartInterface $cart;
+    protected ?SessionCart $cart;
 
-    public function setCart(CartInterface $cart)
+    public function setCart(SessionCart $cart)
     {
         $this->cart = $cart;
     }
 
-    public function getCart(): ?CartInterface
+    public function getCart(): ?SessionCart
     {
         return $this->cart;
     }

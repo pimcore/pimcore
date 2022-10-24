@@ -47,9 +47,9 @@ class OptimizedMysql extends DefaultMysql implements MockupConfigInterface
      *
      * @param int $objectId
      *
-     * @return MockProduct
+     * @return DefaultMockup
      */
-    public function getObjectMockupById(int $objectId): MockProduct
+    public function getObjectMockupById(int $objectId): DefaultMockup
     {
         /** @var AbstractMockupCacheWorker $worker */
         $worker = $this->getTenantWorker();

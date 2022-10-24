@@ -82,12 +82,13 @@ abstract class AbstractSetProduct extends AbstractProduct
      * Delivers min price for given products or with default mandatory products of set product
      *
      * @param int|null $quantityScale
+     * @param array|null $products
      *
      * @return PriceInterface|null
      *@throws UnsupportedException
      *
      */
-    public function getOSPrice(int $quantityScale = null): ?PriceInterface
+    public function getOSPrice(int $quantityScale = null, array $products = null): ?PriceInterface
     {
         if ($this->getOSPriceInfo($quantityScale, $products)) {
             return $this->getOSPriceInfo($quantityScale, $products)->getPrice();
@@ -100,12 +101,13 @@ abstract class AbstractSetProduct extends AbstractProduct
      * Delivers priceinfo with min price for given products or with  default mandatory products of set product
      *
      * @param int|null $quantityScale
+     * @param array|null $products
      *
      * @return PriceInfoInterface|null
      *@throws UnsupportedException
      *
      */
-    public function getOSPriceInfo(int $quantityScale = null): ?PriceInfoInterface
+    public function getOSPriceInfo(int $quantityScale = null, ?array $products = null): ?PriceInfoInterface
     {
         if (!is_array($products)) {
             $products = $this->getMandatoryProductEntries();
@@ -116,10 +118,11 @@ abstract class AbstractSetProduct extends AbstractProduct
 
     /**
      * @param int|null $quantity
+     * @param AbstractSetProductEntry[]|null $products
      *
      * @return AvailabilityInterface|null
      */
-    public function getOSAvailabilityInfo(int $quantity = null): ?AvailabilityInterface
+    public function getOSAvailabilityInfo(int $quantity = null, ?array $products = null): ?AvailabilityInterface
     {
         if ($quantity === null) {
             $quantity = 1;

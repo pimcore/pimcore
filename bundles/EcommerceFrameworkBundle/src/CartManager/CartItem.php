@@ -49,7 +49,7 @@ class CartItem extends AbstractCartItem implements CartItemInterface
         return $this->cart;
     }
 
-    public function save()
+    public function save(): void
     {
         $items = $this->getSubItems();
         if (!empty($this->subItems)) {
@@ -60,7 +60,7 @@ class CartItem extends AbstractCartItem implements CartItemInterface
         $this->getDao()->save();
     }
 
-    public static function getByCartIdItemKey(int|string $cartId, string $itemKey, string $parentKey = '')
+    public static function getByCartIdItemKey(int|string $cartId, string $itemKey, string $parentKey = ''): ?CartItemInterface
     {
         $cacheKey = CartItem\Dao::TABLE_NAME . '_' . $cartId . '_' . $parentKey . $itemKey;
 

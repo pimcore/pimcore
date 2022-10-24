@@ -23,9 +23,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 // TODO use Decimal for amounts?
 class ProductDiscount implements ProductDiscountInterface
 {
-    protected int|float $amount = 0;
+    protected float $amount = 0;
 
-    protected int|float $percent = 0;
+    protected float $percent = 0;
 
     public function executeOnProduct(EnvironmentInterface $environment): ActionInterface
     {
@@ -74,22 +74,22 @@ class ProductDiscount implements ProductDiscountInterface
         return $this;
     }
 
-    public function setAmount(float $amount)
+    public function setAmount(float $amount): void
     {
         $this->amount = $amount;
     }
 
-    public function getAmount(): float|int
+    public function getAmount(): float
     {
         return $this->amount;
     }
 
-    public function setPercent(float $percent)
+    public function setPercent(float $percent): void
     {
         $this->percent = $percent;
     }
 
-    public function getPercent(): float|int
+    public function getPercent(): float
     {
         return $this->percent;
     }

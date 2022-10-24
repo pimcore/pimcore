@@ -192,9 +192,9 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * Adds relation condition to product list
      *
      * @param string $fieldname
-     * @param string $condition
+     * @param string|array $condition
      */
-    public function addRelationCondition(string $fieldname, string $condition)
+    public function addRelationCondition(string $fieldname, string|array $condition)
     {
         $this->relationConditions[$fieldname][] = $condition;
         $this->preparedGroupByValuesLoaded = false;
@@ -1169,7 +1169,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
         /**
          * @var \Elasticsearch\Client $esClient
          */
-        $esClient = $this->tenantConfig->getTenantWorker()->getElasticSearchClient();
+        $esClient = $this->tenantConfig->getElasticSearchClient();
         $result = [];
 
         if ($esClient instanceof \Elasticsearch\Client) {
@@ -1242,7 +1242,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * @param int $offset Page offset
      * @param int $itemCountPerPage Number of items per page
      *
-     * @return array|null
+     * @return array
      */
     public function getItems(int $offset, int $itemCountPerPage): array
     {

@@ -86,6 +86,7 @@ class DefaultFindologic extends AbstractConfig implements FindologicConfigInterf
      */
     public function prepareSubTenantEntries(IndexableInterface $object, int $subObjectId = null): mixed
     {
+        return null;
     }
 
     /**

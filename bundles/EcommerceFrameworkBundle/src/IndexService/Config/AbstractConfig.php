@@ -34,9 +34,9 @@ abstract class AbstractConfig implements ConfigInterface
     protected ?AttributeFactory $attributeFactory = null;
 
     /**
-     * @var Attribute[]
+     * @var Attribute[]|null
      */
-    protected array $attributes;
+    protected ?array $attributes = null;
 
     protected array $searchAttributes;
 
@@ -179,7 +179,7 @@ abstract class AbstractConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function getTenantWorker(): DefaultFindologicWorker
+    public function getTenantWorker(): WorkerInterface
     {
         // the worker is expected to call setTenantWorker as soon as possible
         if (null === $this->tenantWorker) {

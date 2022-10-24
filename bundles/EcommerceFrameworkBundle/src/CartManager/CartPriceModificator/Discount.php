@@ -56,9 +56,9 @@ class Discount implements DiscountInterface
      * @param PriceInterface $currentSubTotal
      * @param CartInterface $cart
      *
-     * @return ModificatedPrice|PriceInterface
+     * @return ModificatedPrice
      */
-    public function modify(PriceInterface $currentSubTotal, CartInterface $cart): ModificatedPrice|PriceInterface
+    public function modify(PriceInterface $currentSubTotal, CartInterface $cart): ModificatedPrice
     {
         $amount = $this->getAmount();
         if ($currentSubTotal->getAmount()->lessThan($amount->mul(-1))) {

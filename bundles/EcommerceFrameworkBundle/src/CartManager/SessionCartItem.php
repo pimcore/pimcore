@@ -27,7 +27,7 @@ class SessionCartItem extends AbstractCartItem implements CartItemInterface
         return $this->cart;
     }
 
-    public function save()
+    public function save(): void
     {
         throw new \Exception('Not implemented, should not be needed for this cart type.');
     }

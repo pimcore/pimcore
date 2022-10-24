@@ -76,7 +76,7 @@ class CheckoutManager implements CheckoutManagerInterface
      */
     protected array $checkoutStepOrder = [];
 
-    protected CheckoutStepInterface $currentStep;
+    protected ?CheckoutStepInterface $currentStep = null;
 
     protected bool $finished = false;
 
@@ -368,12 +368,12 @@ class CheckoutManager implements CheckoutManagerInterface
      * @param AbstractOrder $sourceOrder
      * @param string $customerId
      *
-     * @return null|AbstractOrder
+     * @return AbstractOrder
      *
      * @throws UnsupportedException
      * @throws \Exception
      */
-    public function startAndCommitRecurringOrderPayment(AbstractOrder $sourceOrder, string $customerId): ?AbstractOrder
+    public function startAndCommitRecurringOrderPayment(AbstractOrder $sourceOrder, string $customerId): AbstractOrder
     {
         $targetOrder = $this->checkIfPaymentIsPossible();
 

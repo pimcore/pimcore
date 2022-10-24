@@ -77,7 +77,7 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
 
         if ($value == AbstractFilterType::EMPTY_STRING) {
             $value = null;
-        } elseif (empty($value) && !$isReload) {
+        } elseif (empty($value) && !$isReload && $filterDefinition instanceof FilterCategory) {
             $value = $filterDefinition->getPreSelect();
             if (is_object($value)) {
                 $value = $value->getId();

@@ -41,9 +41,9 @@ interface CheckoutManagerInterface
      *
      * @param string $stepName
      *
-     * @return CheckoutStepInterface
+     * @return CheckoutStepInterface|null
      */
-    public function getCheckoutStep(string $stepName): CheckoutStepInterface;
+    public function getCheckoutStep(string $stepName): ?CheckoutStepInterface;
 
     /**
      * Returns current checkout step

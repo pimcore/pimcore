@@ -60,7 +60,7 @@ class OrderManager implements OrderManagerInterface
 
     protected VoucherServiceInterface $voucherService;
 
-    protected FactoryInterface $modelFactory;
+    protected ?FactoryInterface $modelFactory = null;
 
     protected array $options;
 

@@ -62,7 +62,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         $this->setAddedDate(new \DateTime());
     }
 
-    public function setCount(int $count)
+    public function setCount(int $count, bool $fireModified = true): void
     {
         if ($count < 0) {
             $count = 0;
@@ -79,7 +79,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         return $this->count;
     }
 
-    public function setProduct(CheckoutableInterface $product, bool $fireModified = true)
+    public function setProduct(CheckoutableInterface $product, bool $fireModified = true): void
     {
         if ($this->productId !== $product->getId() && !$this->isLoading && $this->getCart() && $fireModified) {
             $this->getCart()->modified();
@@ -88,7 +88,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         $this->productId = $product->getId();
     }
 
-    public function getProduct(): MockProduct|CheckoutableInterface|null
+    public function getProduct(): CheckoutableInterface
     {
         if ($this->product) {
             return $this->product;
@@ -108,7 +108,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         return $this->product;
     }
 
-    public function setCart(CartInterface $cart)
+    public function setCart(CartInterface $cart): void
     {
         $this->cart = $cart;
         $this->cartId = $cart->getId();
@@ -229,7 +229,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         return $products;
     }
 
-    public function setComment(string $comment)
+    public function setComment(string $comment): void
     {
         $this->comment = $comment;
     }
@@ -247,7 +247,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     /**
      * @param \DateTime|null $date
      */
-    public function setAddedDate(\DateTime $date = null)
+    public function setAddedDate(\DateTime $date = null): void
     {
         if ($date) {
             $this->addedDateTimestamp = intval($date->format('Uu'));
@@ -256,7 +256,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         }
     }
 
-    public function getAddedDate(): ?\DateTime
+    public function getAddedDate(): \DateTime
     {
         $datetime = null;
         if ($this->addedDateTimestamp) {
@@ -266,12 +266,12 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         return $datetime;
     }
 
-    public function getAddedDateTimestamp(): ?int
+    public function getAddedDateTimestamp(): int
     {
-        return $this->addedDateTimestamp;
+        return $this->addedDateTimestamp ?? 0;
     }
 
-    public function setAddedDateTimestamp(int $time)
+    public function setAddedDateTimestamp(int $time): void
     {
         $this->addedDateTimestamp = $time;
     }

@@ -234,7 +234,7 @@ class OrderAgent implements OrderAgentInterface
         return $this->environment->getDefaultCurrency();
     }
 
-    public function getPaymentProvider(): ?PaymentInterface
+    public function getPaymentProvider(): PaymentInterface
     {
         if (!$this->paymentProvider) {
             // init
@@ -371,7 +371,7 @@ class OrderAgent implements OrderAgentInterface
      * @throws PaymentNotAllowedException
      * @throws Exception
      */
-    public function initPayment()
+    public function initPayment(): PaymentInfo
     {
         $currentPaymentInformation = $this->getCurrentPendingPaymentInfo();
         $order = $this->getOrder();
@@ -414,12 +414,12 @@ class OrderAgent implements OrderAgentInterface
     }
 
     /**
-     * @return null|AbstractPaymentInformation|PaymentInfo
+     * @return PaymentInfo
      *
      * @throws Exception
      * @throws UnsupportedException
      */
-    public function startPayment(): AbstractPaymentInformation|PaymentInfo|null
+    public function startPayment(): PaymentInfo
     {
         //initialize payment (if not already done before)
         $currentPaymentInformation = $this->initPayment();

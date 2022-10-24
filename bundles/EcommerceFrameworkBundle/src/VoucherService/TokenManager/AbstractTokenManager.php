@@ -22,6 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherSeries;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
+use Pimcore\Model\DataObject\OnlineShopVoucherToken;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractTokenManager implements TokenManagerInterface, ExportableTokenManagerInterface
@@ -139,9 +140,9 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
      *
      * @param array $params
      *
-     * @return string|false
+     * @return string
      */
-    public function exportCsv(array $params): bool|string
+    public function exportCsv(array $params): string
     {
         $translator = \Pimcore::getContainer()->get(TranslatorInterface::class);
 
@@ -176,7 +177,9 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
         rewind($stream);
         $result = stream_get_contents($stream);
         fclose($stream);
-
+        if(is_bool($result)) {
+            return '';
+        }
         return $result;
     }
 
@@ -224,7 +227,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
 
     abstract public function reserveToken(string $code, CartInterface $cart): bool;
 
-    abstract public function applyToken(string $code, CartInterface $cart, \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order): bool;
+    abstract public function applyToken(string $code, CartInterface $cart, \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order): OnlineShopVoucherToken|bool;
 
     abstract public function releaseToken(string $code, CartInterface $cart): bool;
 
@@ -247,9 +250,9 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
     /**
      * Returns bool false if failed - otherwise an array or a string with the codes
      *
-     * @return bool | string | array
+     * @return bool | array
      */
-    abstract public function insertOrUpdateVoucherSeries(): bool|array|string;
+    abstract public function insertOrUpdateVoucherSeries(): bool|array;
 
     abstract public function getFinalTokenLength(): int;
 
