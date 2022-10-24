@@ -87,7 +87,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - Removed Pimcore Password Encoder factory, `pimcore_admin.security.password_encoder_factory` service and `pimcore.security.factory_type` config.
 - Removed BruteforceProtection
 - Removed PreAuthenticatedAdminToken
-- [Codeception] Bumped codeception version to 5.0
+- [Codeception] Bumped `codeception/codeception` version to ^5.0
 
 ## 10.5.8
 - [Nginx] Static pages nginx config has been updated to fix the issue for home static page generation. please adapt the following configuration:
