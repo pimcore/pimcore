@@ -40,6 +40,8 @@ class Pimcore extends Module
      */
     protected static $testServiceContainer = null;
 
+    protected array $groups = [];
+
     /**
      * {@inheritdoc}
      */
@@ -329,6 +331,8 @@ class Pimcore extends Module
     {
         parent::_before($test);
 
+        $this->groups = $test->getMetadata()->getGroups();
+
         // default pimcore state is non-admin
         $this->unsetAdminMode();
     }
@@ -360,5 +364,13 @@ class Pimcore extends Module
     public function makeHtmlSnapshot($name = null)
     {
         // TODO: Implement makeHtmlSnapshot() method.
+    }
+
+    /**
+     * @return array
+     */
+    public function getGroups(): array
+    {
+        return $this->groups;
     }
 }
