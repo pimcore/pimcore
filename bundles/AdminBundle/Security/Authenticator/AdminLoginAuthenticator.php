@@ -90,9 +90,9 @@ class AdminLoginAuthenticator extends AdminAbstractAuthenticator implements Auth
                     if ($event->hasUser()) {
                         $user = new User($event->getUser());
                         $this->saveUserToSession($user);
-                    } else {
-                        throw new AuthenticationException('Failed to authenticate with username and password');
                     }
+
+                    return false;
                 }
 
                 return true;
