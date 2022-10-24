@@ -280,7 +280,7 @@ actor_suffix: Tester
 paths:
     tests: .
     output: ./_output
-    data: ./Support/data
+    data: ./Support/Data
     support: ./Support
     envs: ./_envs
 settings:
