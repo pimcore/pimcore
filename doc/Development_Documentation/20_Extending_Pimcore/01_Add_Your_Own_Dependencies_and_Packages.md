@@ -59,10 +59,7 @@ You can read more about the bundle collection and handling of dependencies in [B
 
 For more information see [Pimcore Bundles](./13_Bundle_Developers_Guide/05_Pimcore_Bundles).
 
-Pimcore bundles can be registered on the kernel by enabling them in the extension manager. The extension manager also allows
-you to set a priority and environments to handle (as comma-separated string).
-
-You can also enable pimcore bundles manually by adding them via code as shown above. Bundles which are manually enabled
-can't be enabled or disabled through the extension manager. Instead, the extension manager will only expose functionality
-to interact with the bundle installer (install/uninstall/update). 
+Just like third party bundles, Pimcore bundles can be registered on the kernel by enabling them in the `config/bundles.php`
+or manually by adding them via code as shown above. You can use `pimcore:bundle:*` commands
+to list or interact with the bundle installer (install/uninstall/update). 
 

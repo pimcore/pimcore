@@ -24,10 +24,7 @@ use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Config\BundleConfigLocator;
 use Pimcore\Event\SystemEvents;
-use Pimcore\Extension\Bundle\Config\StateConfig;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
-use Pimcore\HttpKernel\BundleCollection\ItemInterface;
-use Pimcore\HttpKernel\BundleCollection\LazyLoadedItem;
 use Presta\SitemapBundle\PrestaSitemapBundle;
 use Scheb\TwoFactorBundle\SchebTwoFactorBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
@@ -40,9 +37,6 @@ use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Cmf\Bundle\RoutingBundle\CmfRoutingBundle;
 use Symfony\Component\Config\Loader\LoaderInterface;
-use Symfony\Component\Config\Resource\FileExistenceResource;
-use Symfony\Component\Config\Resource\FileResource;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -58,12 +52,6 @@ abstract class Kernel extends SymfonyKernel
         registerBundles as microKernelRegisterBundles;
     }
 
-    /**
-     * @deprecated will be removed in Pimcore 11
-     *
-     * @var Extension\Config
-     */
-    protected $extensionConfig;
 
     /**
      * @var BundleCollection
@@ -147,10 +135,6 @@ abstract class Kernel extends SymfonyKernel
      */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
-        $loader->load(function (ContainerBuilder $container) {
-            $this->registerExtensionConfigFileResources($container);
-        });
-
         $bundleConfigLocator = new BundleConfigLocator($this);
         foreach ($bundleConfigLocator->locate('config') as $bundleConfig) {
             $loader->load($bundleConfig);
@@ -222,34 +206,6 @@ abstract class Kernel extends SymfonyKernel
     }
 
     /**
-     * @deprecated Remove in Pimcore 11
-     */
-    private function registerExtensionConfigFileResources(ContainerBuilder $container): void
-    {
-        $filenames = [
-            'extensions.php',
-            sprintf('extensions_%s.php', $this->getEnvironment()),
-        ];
-
-        $directories = [
-            PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY,
-            PIMCORE_CONFIGURATION_DIRECTORY,
-        ];
-
-        // add possible extensions.php files as file existence resources (only for the current env)
-        foreach ($directories as $directory) {
-            foreach ($filenames as $filename) {
-                $container->addResource(new FileExistenceResource($directory . '/' . $filename));
-            }
-        }
-
-        // add extensions.php as container resource
-        if ($this->extensionConfig->configFileExists()) {
-            $container->addResource(new FileResource($this->extensionConfig->locateConfigFile()));
-        }
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function boot()
@@ -264,8 +220,6 @@ abstract class Kernel extends SymfonyKernel
         // handle system requirements
         $this->setSystemRequirements();
 
-        // initialize extension manager config
-        $this->extensionConfig = new Extension\Config();
 
         parent::boot();
     }
@@ -292,9 +246,6 @@ abstract class Kernel extends SymfonyKernel
 
         // initialize runtime cache (defined as synthetic service)
         RuntimeCache::getInstance();
-
-        // set the extension config on the container
-        $this->getContainer()->set(Extension\Config::class, $this->extensionConfig);
 
         \Pimcore::initLogger();
         \Pimcore\Cache::init();
@@ -335,9 +286,6 @@ abstract class Kernel extends SymfonyKernel
 
         // custom bundles
         $this->registerBundlesToCollection($collection);
-
-        // bundles registered in extensions.php
-        $this->registerExtensionManagerBundles($collection);
 
         $bundles = $collection->getBundles($this->getEnvironment());
 
@@ -408,37 +356,6 @@ abstract class Kernel extends SymfonyKernel
     protected function getEnvironmentsForDevBundles(): array
     {
         return ['dev', 'test'];
-    }
-
-    /**
-     * Registers bundles enabled via extension manager
-     *
-     * @deprecated will be removed in Pimcore 11
-     *
-     * @param BundleCollection $collection
-     */
-    protected function registerExtensionManagerBundles(BundleCollection $collection)
-    {
-        $stateConfig = new StateConfig($this->extensionConfig);
-
-        foreach ($stateConfig->getEnabledBundles() as $className => $options) {
-            if (!class_exists($className)) {
-                continue;
-            }
-
-            // do not register bundles twice - skip if it was already loaded manually
-            if ($collection->hasItem($className)) {
-                continue;
-            }
-
-            // use lazy loaded item to instantiate the bundle only if environment matches
-            $collection->add(new LazyLoadedItem(
-                $className,
-                $options['priority'],
-                $options['environments'],
-                ItemInterface::SOURCE_EXTENSION_MANAGER_CONFIG
-            ));
-        }
     }
 
     /**

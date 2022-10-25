@@ -149,21 +149,6 @@ class EditableHandler implements LoggerAwareInterface
     }
 
     /**
-     * @param Editable $editable
-     * @param AreabrickInterface|string|bool $brick
-     *
-     * @return bool
-     */
-    public function isBrickEnabled(Editable $editable, $brick)
-    {
-        if ($brick instanceof AreabrickInterface) {
-            $brick = $brick->getId();
-        }
-
-        return $this->brickManager->isEnabled($brick);
-    }
-
-    /**
      * @param Editable\Areablock $editable
      * @param array $options
      *
@@ -173,12 +158,6 @@ class EditableHandler implements LoggerAwareInterface
     {
         $areas = [];
         foreach ($this->brickManager->getBricks() as $brick) {
-            // don't show disabled bricks
-            if (!isset($options['dontCheckEnabled']) || !$options['dontCheckEnabled']) {
-                if (!$this->isBrickEnabled($editable, $brick)) {
-                    continue;
-                }
-            }
 
             if (!(empty($options['allowed']) || in_array($brick->getId(), $options['allowed']))) {
                 continue;

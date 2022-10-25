@@ -87,7 +87,11 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - Removed Pimcore Password Encoder factory, `pimcore_admin.security.password_encoder_factory` service and `pimcore.security.factory_type` config.
 - Removed BruteforceProtection
 - Removed PreAuthenticatedAdminToken
-- 
+- [Bundles] 
+  - Removed support for loading bundles through `extensions.php`.
+  - Removed Extension Manager(`Tools -> Bundles & Bricks` option) from Admin UI.
+  - Removed commands: `pimcore:bundle:enable`, `pimcore:bundle:disable`.
+  - Removed `dontCheckEnabled` config support from Areablock editable.
 
 ## 10.5.8
 - [Nginx] Static pages nginx config has been updated to fix the issue for home static page generation. please adapt the following configuration:

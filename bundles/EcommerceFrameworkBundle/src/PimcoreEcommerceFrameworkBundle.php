@@ -28,8 +28,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
 {
-    use StateHelperTrait;
-
     /**
      * {@inheritdoc}
      */

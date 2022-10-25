@@ -28,13 +28,6 @@ use Psr\Container\ContainerInterface;
 class AreabrickManager implements AreabrickManagerInterface
 {
     /**
-     * @deprecated
-     *
-     * @var Extension\Config
-     */
-    protected $config;
-
-    /**
      * @var ContainerInterface
      */
     protected $container;
@@ -50,12 +43,10 @@ class AreabrickManager implements AreabrickManagerInterface
     protected $brickServiceIds = [];
 
     /**
-     * @param Extension\Config $config
      * @param ContainerInterface $container
      */
-    public function __construct(Extension\Config $config, ContainerInterface $container)
+    public function __construct(ContainerInterface $container)
     {
-        $this->config = $config;
         $this->container = $container;
     }
 
@@ -206,88 +197,5 @@ class AreabrickManager implements AreabrickManagerInterface
         foreach ($this->brickServiceIds as $id => $serviceId) {
             $this->loadServiceBrick($id);
         }
-    }
-
-    /**
-     * @deprecated will be removed in Pimcore 11
-     *
-     * {@inheritdoc}
-     */
-    public function enable(string $id)
-    {
-        $this->setState($id, true);
-    }
-
-    /**
-     * @deprecated will be removed in Pimcore 11
-     *
-     * {@inheritdoc}
-     */
-    public function disable(string $id)
-    {
-        $this->setState($id, false);
-    }
-
-    /**
-     * @deprecated will be removed in Pimcore 11
-     *
-     * {@inheritdoc}
-     */
-    public function setState(string $id, bool $state)
-    {
-        // load the brick to make sure it exists
-        $brick = $this->getBrick($id);
-        $config = $this->getBrickConfig();
-
-        if ($state) {
-            if (isset($config[$brick->getId()])) {
-                unset($config[$brick->getId()]);
-            }
-        } else {
-            $config[$brick->getId()] = false;
-        }
-
-        $this->setBrickConfig($config);
-    }
-
-    /**
-     * @deprecated will be removed in Pimcore 11
-     *
-     * {@inheritdoc}
-     */
-    public function isEnabled(string $id): bool
-    {
-        $config = $this->getBrickConfig();
-
-        $enabled = true;
-        if (isset($config[$id]) && $config[$id] === false) {
-            $enabled = false;
-        }
-
-        return $enabled;
-    }
-
-    /**
-     * @deprecated
-     */
-    private function getBrickConfig(): array
-    {
-        $config = $this->config->loadConfig();
-        if (isset($config->areabrick)) {
-            return $config->areabrick->toArray();
-        }
-
-        return [];
-    }
-
-    /**
-     * @deprecated
-     */
-    private function setBrickConfig(array $config)
-    {
-        $cfg = $this->config->loadConfig();
-        $cfg->areabrick = $config;
-
-        $this->config->saveConfig($cfg);
     }
 }
