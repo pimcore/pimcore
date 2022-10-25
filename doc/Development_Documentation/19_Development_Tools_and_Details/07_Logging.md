@@ -53,6 +53,7 @@ function like this:
 
 ##### Custom log entry
 ```php
+// @todo \Pimcore\Log\Simple is marked as @internal so this sample need to be replaced with updated version
 \Pimcore\Log\Simple::log($name, $message);
 ```
 
