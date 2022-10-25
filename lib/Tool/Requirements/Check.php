@@ -49,7 +49,7 @@ final class Check implements \ArrayAccess
     /**
      * @param array{name: string, link?: string, state: int, message?: string} $data
      */
-    public function __construct(array $data = [])
+    public function __construct(array $data)
     {
         foreach ($data as $key => $value) {
             $this->$key = $value;
