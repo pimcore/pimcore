@@ -87,7 +87,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - Removed Pimcore Password Encoder factory, `pimcore_admin.security.password_encoder_factory` service and `pimcore.security.factory_type` config.
 - Removed BruteforceProtection
 - Removed PreAuthenticatedAdminToken
-- [Codeception] Bumped `codeception/codeception` version to ^5.0
+- [Codeception] Bumped `codeception/codeception` version to ^5.0. Now, Pimcore is using a new directory structure for tests (Codeception 5 directory structure). For details, please see [#13415](https://github.com/pimcore/pimcore/pull/13415)
 
 ## 10.5.8
 - [Nginx] Static pages nginx config has been updated to fix the issue for home static page generation. please adapt the following configuration:
