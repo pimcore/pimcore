@@ -6,7 +6,7 @@
     "useTraits": "",
     "listingUseTraits": "",
     "allowInherit": false,
-    "allowVariants": null,
+    "allowVariants": false,
     "showVariants": false,
     "layoutDefinitions": {
         "fieldtype": "panel",
@@ -102,7 +102,7 @@
                             "TaxEntry"
                         ],
                         "lazyLoading": false,
-                        "maxItems": "",
+                        "maxItems": null,
                         "disallowAddRemove": false,
                         "disallowReorder": false,
                         "collapsed": false,
@@ -136,7 +136,6 @@
         "labelAlign": "left"
     },
     "icon": "\/bundles\/pimcoreadmin\/img\/twemoji\/1f4b6.svg",
-    "previewUrl": "",
     "group": "E-Commerce",
     "showAppLoggerTab": false,
     "linkGeneratorReference": "",
