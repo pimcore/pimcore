@@ -42,7 +42,7 @@ class Analytics extends AbstractAdapter
         }
 
         $results = $this->getDataHelper($fields, $drillDownFilters);
-        $data = $this->extractData($results->getTotalsForAllResults());
+        $data = $this->extractData($results);
 
         return [ 'data' => $data, 'total' => $results['totalResults'] ];
     }
@@ -173,7 +173,7 @@ class Analytics extends AbstractAdapter
         return $service->data_ga->get('ga:'.$configuration->profileId, date('Y-m-d', $configuration->startDate), date('Y-m-d', $configuration->endDate), (is_array($configuration->metric) ? implode(',', $configuration->metric) : $configuration->metric), $options);
     }
 
-    protected function extractData(array $results): array
+    protected function extractData(\ArrayAccess $results): array
     {
         $data = [];
 
@@ -274,7 +274,7 @@ class Analytics extends AbstractAdapter
         $this->setFilters($filters, $drillDownFilters);
         $results = $this->getDataHelper([], $drillDownFilters, false);
 
-        $data = $this->extractData($results->getTotalsForAllResults());
+        $data = $this->extractData($results);
 
         $return = [];
         foreach ($data as $row) {

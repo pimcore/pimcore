@@ -39,6 +39,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
      * @param int|string $level
      * @param bool $bubble
      *
+     * @phpstan-param Level|LevelName|LogLevel::* $level
      */
     public function __construct(Connection $db, int|string $level = Logger::DEBUG, bool $bubble = true)
     {

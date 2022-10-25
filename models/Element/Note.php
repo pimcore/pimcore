@@ -152,7 +152,7 @@ final class Note extends Model\AbstractModel
         $this->getDao()->save();
 
         if (!$isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(new ElementEvent($this), ElementEvents::POST_ADD);
+            \Pimcore::getEventDispatcher()->dispatch(new ModelEvent($this), ElementEvents::POST_ADD);
         }
     }
 

@@ -22,14 +22,14 @@ abstract class AbstractCartCheckoutData extends \Pimcore\Model\AbstractModel
 
     protected array $data;
 
-    protected ?SessionCart $cart;
+    protected ?CartInterface $cart;
 
-    public function setCart(SessionCart $cart)
+    public function setCart(CartInterface $cart)
     {
         $this->cart = $cart;
     }
 
-    public function getCart(): ?SessionCart
+    public function getCart(): ?CartInterface
     {
         return $this->cart;
     }
@@ -51,7 +51,7 @@ abstract class AbstractCartCheckoutData extends \Pimcore\Model\AbstractModel
         throw new \Exception('Not implemented.');
     }
 
-    public function setKey($key)
+    public function setKey(string $key)
     {
         $this->key = $key;
     }

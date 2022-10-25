@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFil
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory;
+use Pimcore\Model\Element\ElementInterface;
 
 class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\SelectCategory
 {
@@ -69,7 +70,7 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
             $value = null;
         } elseif (empty($value) && !$isReload && method_exists($filterDefinition, 'getPreSelect')) {
             $value = $filterDefinition->getPreSelect();
-            if (is_object($value) && $value instanceof IndexFieldSelection) {
+            if ($value instanceof ElementInterface) {
                 $value = $value->getId();
             }
         }

@@ -18,7 +18,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
 class SessionCartItem extends AbstractCartItem implements CartItemInterface
 {
-    public function getCart(): SessionCart|CartInterface|null
+    public function getCart(): CartInterface|null
     {
         if (empty($this->cart)) {
             $this->cart = SessionCart::getById($this->cartId);

@@ -148,7 +148,7 @@ abstract class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concre
      *
      * @return AbstractOfferToolProduct|null
      */
-    public static function getById(int $id, array $params = []): ?AbstractOfferToolProduct
+    public static function getById(int $id, array $params = []): ?static
     {
         $object = DataObject::getById($id, $params);
 

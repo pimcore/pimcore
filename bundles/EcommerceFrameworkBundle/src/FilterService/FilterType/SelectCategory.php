@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory;
+use Pimcore\Model\Element\ElementInterface;
 
 class SelectCategory extends AbstractFilterType
 {
@@ -95,7 +96,7 @@ class SelectCategory extends AbstractFilterType
             $value = null;
         } elseif (empty($value) && !$isReload && method_exists($filterDefinition, 'getPreSelect')) {
             $value = $filterDefinition->getPreSelect();
-            if (is_object($value)) {
+            if ($value instanceof ElementInterface) {
                 $value = $value->getId();
             }
         }

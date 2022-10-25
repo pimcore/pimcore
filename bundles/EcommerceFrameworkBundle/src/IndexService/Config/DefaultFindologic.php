@@ -26,7 +26,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Default implementation for FINDOLOGIC as product index backend
  *
- * @method DefaultFindologicWorker getTenantWorker()
  */
 class DefaultFindologic extends AbstractConfig implements FindologicConfigInterface, MockupConfigInterface
 {
@@ -54,7 +53,7 @@ class DefaultFindologic extends AbstractConfig implements FindologicConfigInterf
     /**
      * @param string|null $setting
      *
-     * @return array|string
+     * @return array|string|null
      */
     public function getClientConfig(string $setting = null): array|string|null
     {
@@ -115,6 +114,21 @@ class DefaultFindologic extends AbstractConfig implements FindologicConfigInterf
         }
 
         parent::setTenantWorker($tenantWorker);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTenantWorker(): DefaultFindologicWorker
+    {
+        $tenantWorker = parent::getTenantWorker();
+        if (!$tenantWorker instanceof DefaultFindologicWorker) {
+            throw new \InvalidArgumentException(sprintf(
+                'Worker must be an instance of %s',
+                DefaultFindologicWorker::class
+            ));
+        }
+        return $tenantWorker;
     }
 
     /**

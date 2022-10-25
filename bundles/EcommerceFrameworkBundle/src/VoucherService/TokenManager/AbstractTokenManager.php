@@ -250,9 +250,9 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
     /**
      * Returns bool false if failed - otherwise an array or a string with the codes
      *
-     * @return bool | array
+     * @return bool | string | array
      */
-    abstract public function insertOrUpdateVoucherSeries(): bool|array;
+    abstract public function insertOrUpdateVoucherSeries(): bool|string|array;
 
     abstract public function getFinalTokenLength(): int;
 

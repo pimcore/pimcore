@@ -20,6 +20,7 @@ use Pimcore\Helper\ContrastColor;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
+use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
 use Pimcore\Workflow\Manager;
 use Pimcore\Workflow\MarkingStore\DataObjectSplittedStateMarkingStore;
@@ -47,7 +48,10 @@ class OptionsProvider implements SelectOptionsProviderInterface
      */
     public function getOptions(array $context, Data $fieldDefinition): array
     {
-        $workflowName = $fieldDefinition->getOptionsProviderData();
+        $workflowName = null;
+        if ($fieldDefinition instanceof Select || $fieldDefinition instanceof Multiselect) {
+            $workflowName = $fieldDefinition->getOptionsProviderData();
+        }
         if (!$workflowName) {
             throw new \Exception('setup workflow name as options provider data');
         }
