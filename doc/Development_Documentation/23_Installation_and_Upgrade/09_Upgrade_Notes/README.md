@@ -10,10 +10,6 @@
               sandbox_security_policy:
                 tags: ['if']
                 filters: ['upper']
-                methods:
-                    Article: ['getTitle', 'getBody']
-                properties:
-                    Article: ['title', 'body']
                 functions: ['include', 'path', 'range']
   ```
 

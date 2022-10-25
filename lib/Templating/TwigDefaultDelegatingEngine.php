@@ -21,7 +21,7 @@ use Symfony\Component\Templating\DelegatingEngine as BaseDelegatingEngine;
 use Symfony\Component\Templating\EngineInterface;
 use Twig\Environment;
 use Twig\Extension\SandboxExtension;
-use Twig\Sandbox\SecurityPolicy;
+use Pimcore\Twig\Sandbox\SecurityPolicy;
 
 /**
  * @internal
@@ -103,11 +103,9 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
 
                 $tags = $securityPolicy['tags'];
                 $filters = $securityPolicy['filters'];
-                $methods = $securityPolicy['methods'];
-                $properties = $securityPolicy['properties'];
                 $functions = $securityPolicy['functions'];
 
-                $policy = new SecurityPolicy($tags, $filters, $methods, $properties, $functions);
+                $policy = new SecurityPolicy($tags, $filters, $functions);
                 $sandbox = new SandboxExtension($policy);
                 $this->twig->addExtension($sandbox);
             }

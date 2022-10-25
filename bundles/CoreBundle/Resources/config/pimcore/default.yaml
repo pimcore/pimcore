@@ -298,8 +298,6 @@ pimcore:
             sandbox_security_policy:
                 tags: ['set']
                 filters: ['escape', 'trans']
-                methods: []
-                properties: []
                 functions: ['path', 'asset']
 presta_sitemap:
     # do not add properties by default
