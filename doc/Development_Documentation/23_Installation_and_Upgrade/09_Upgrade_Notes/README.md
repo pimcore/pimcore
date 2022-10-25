@@ -92,6 +92,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
   - Removed Extension Manager(`Tools -> Bundles & Bricks` option) from Admin UI.
   - Removed commands: `pimcore:bundle:enable`, `pimcore:bundle:disable`.
   - Removed `dontCheckEnabled` config support from Areablock editable.
+- [Codeception] Bumped `codeception/codeception` version to ^5.0. Now, Pimcore is using a new directory structure for tests (Codeception 5 directory structure). For details, please see [#13415](https://github.com/pimcore/pimcore/pull/13415)
 
 ## 10.5.8
 - [Nginx] Static pages nginx config has been updated to fix the issue for home static page generation. please adapt the following configuration:

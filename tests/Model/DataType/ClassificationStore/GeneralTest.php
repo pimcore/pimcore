@@ -28,7 +28,7 @@ use Pimcore\Model\DataObject\Data\QuantityValue;
 use Pimcore\Model\DataObject\Data\RgbaColor;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\User;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 class GeneralTest extends AbstractClassificationStoreTest
 {

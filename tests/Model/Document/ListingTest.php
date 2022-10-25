@@ -17,8 +17,8 @@ namespace Pimcore\Tests\Model\Document;
 
 use Pimcore\Db;
 use Pimcore\Model\Document;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class ListingTest

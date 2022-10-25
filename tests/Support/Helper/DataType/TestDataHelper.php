@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests\Helper\DataType;
+namespace Pimcore\Tests\Support\Helper\DataType;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection;
 use Pimcore\Cache;
@@ -27,8 +27,8 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Model\Property;
 use Pimcore\Model\User;
-use Pimcore\Tests\Helper\AbstractTestDataHelper;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Helper\AbstractTestDataHelper;
+use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Authentication;
 
 class TestDataHelper extends AbstractTestDataHelper

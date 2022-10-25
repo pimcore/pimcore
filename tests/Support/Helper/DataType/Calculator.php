@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests\Helper\DataType;
+namespace Pimcore\Tests\Support\Helper\DataType;
 
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\DataObject\ClassDefinition\CalculatorClassInterface;

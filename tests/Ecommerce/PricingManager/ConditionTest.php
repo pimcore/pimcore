@@ -15,7 +15,7 @@
 
 namespace Pimcore\Tests\Ecommerce\PricingManager;
 
-use Codeception\Util\Stub;
+use Codeception\Stub;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
@@ -31,7 +31,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\DateRange;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Environment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Pimcore\Tests\Test\EcommerceTestCase;
+use Pimcore\Tests\Support\Test\EcommerceTestCase;
 
 class ConditionTest extends EcommerceTestCase
 {

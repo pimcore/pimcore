@@ -17,8 +17,8 @@ namespace Pimcore\Tests\Model\Asset;
 
 use Pimcore\Bundle\CoreBundle\Controller\PublicServicesController;
 use Pimcore\Model\Asset;
-use Pimcore\Tests\Test\TestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\TestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Storage;
 use Symfony\Component\HttpFoundation\Request;
 

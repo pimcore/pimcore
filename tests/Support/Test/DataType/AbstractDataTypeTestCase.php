@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests\Test\DataType;
+namespace Pimcore\Tests\Support\Test\DataType;
 
 use Pimcore\Cache;
 use Pimcore\DataObject\Consent\Service;
@@ -24,9 +24,9 @@ use Pimcore\Model\DataObject\Data\Consent;
 use Pimcore\Model\DataObject\Data\UrlSlug;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Element\Note;
-use Pimcore\Tests\Helper\DataType\TestDataHelper;
-use Pimcore\Tests\Test\TestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Helper\DataType\TestDataHelper;
+use Pimcore\Tests\Support\Test\TestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 abstract class AbstractDataTypeTestCase extends TestCase
 {

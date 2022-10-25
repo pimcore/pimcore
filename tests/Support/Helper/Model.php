@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests\Helper;
+namespace Pimcore\Tests\Support\Helper;
 
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;

@@ -13,7 +13,7 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests\Helper\Document;
+namespace Pimcore\Tests\Support\Helper\Document;
 
 use Carbon\Carbon;
 use Pimcore\Model\Asset;
@@ -40,8 +40,8 @@ use Pimcore\Model\Document\Editable\Video;
 use Pimcore\Model\Document\Editable\Wysiwyg;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Document\PageSnippet;
-use Pimcore\Tests\Helper\AbstractTestDataHelper;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Helper\AbstractTestDataHelper;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 class TestDataHelper extends AbstractTestDataHelper
 {

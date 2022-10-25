@@ -13,10 +13,10 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests\Test;
+namespace Pimcore\Tests\Support\Test;
 
-use Pimcore\Tests\Helper\DataType\Calculator;
-use Pimcore\Tests\ModelTester;
+use Pimcore\Tests\Support\Helper\DataType\Calculator;
+use Pimcore\Tests\Support\ModelTester;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;

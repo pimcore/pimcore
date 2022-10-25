@@ -13,13 +13,13 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests\Test;
+namespace Pimcore\Tests\Support\Test;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
-use Pimcore\Tests\Helper\Element\PropertiesTestHelper;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Helper\Element\PropertiesTestHelper;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 abstract class AbstractPropertiesTest extends ModelTestCase
 {

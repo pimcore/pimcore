@@ -13,11 +13,10 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests\Helper;
+namespace Pimcore\Tests\Support\Helper\Element;
 
-// here you can define custom actions
-// all public methods declared in helper class will be available in $I
+use Codeception\Module;
 
-class Unit extends \Codeception\Module
+class PropertiesTestHelper extends Module
 {
 }

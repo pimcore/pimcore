@@ -15,7 +15,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests\Test;
+namespace Pimcore\Tests\Support\Test;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Environment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
