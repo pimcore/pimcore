@@ -27,7 +27,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class RequirementsCheckCommand extends AbstractCommand
 {
-    /** @var array $levelsToDisplay */
+    /** @var int[] $levelsToDisplay */
     protected $levelsToDisplay = [];
 
     /**
