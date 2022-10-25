@@ -1,6 +1,6 @@
 # Upgrade Notes
 ## 11.0.0
-- [Elements] Added `setParentId`, `setType` and `setParent` methods to `Pimcore\Model\Element\ElementInterface`
+- [Elements] Added `setParentId`, `setType` and `setParent` methods to `Pimcore\Model\Element\ElementInterface
 - [JSRouting Bundle] Bumped `friendsofsymfony/jsrouting-bundle` to version `^3.2.1`
 - [Installer] Changed the return type of `Pimcore\Extension\Bundle\Installer\InstallerInterface::getOutput` to `BufferedOutput | NullOutput`.
 - [Assets] Refactored `Pimcore\Model\Asset::getMetadata` method to allow listing of all metadata entries filtered by a specific language. Prior this version, the language filter was only available when a specific metadata name was defined in the parameters. Added native type hints and related tests.
@@ -87,6 +87,11 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - Removed Pimcore Password Encoder factory, `pimcore_admin.security.password_encoder_factory` service and `pimcore.security.factory_type` config.
 - Removed BruteforceProtection
 - Removed PreAuthenticatedAdminToken
+- [Bundles] 
+  - Removed support for loading bundles through `extensions.php`.
+  - Removed Extension Manager(`Tools -> Bundles & Bricks` option) from Admin UI.
+  - Removed commands: `pimcore:bundle:enable`, `pimcore:bundle:disable`.
+  - Removed `dontCheckEnabled` config support from Areablock editable.
 - [Codeception] Bumped `codeception/codeception` version to ^5.0. Now, Pimcore is using a new directory structure for tests (Codeception 5 directory structure). For details, please see [#13415](https://github.com/pimcore/pimcore/pull/13415)
 
 ## 10.5.8

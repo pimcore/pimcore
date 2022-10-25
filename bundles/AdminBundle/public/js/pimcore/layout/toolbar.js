@@ -349,15 +349,6 @@
                  });
              }
  
-             if (user.isAllowed("plugins") && perspectiveCfg.inToolbar("extras.plugins")) {
-                 extrasItems.push({
-                     text: t("bundles") + ' & ' + t('bricks'),
-                     iconCls: "pimcore_nav_icon_bundles",
-                     itemId: 'pimcore_menu_extras_bundles',
-                     handler: this.extensionAdmin
-                 });
-             }
- 
              if (user.isAllowed("notes_events") && perspectiveCfg.inToolbar("extras.notesEvents")) {
                  extrasItems.push({
                      text: t('notes_events'),
@@ -1629,15 +1620,6 @@
  
      showMaintenance: function () {
          new pimcore.settings.maintenance();
-     },
- 
-     extensionAdmin: function () {
-         try {
-             pimcore.globalmanager.get("extensionmanager_admin").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("extensionmanager_admin", new pimcore.extensionmanager.admin());
-         }
      },
  
      logAdmin: function () {

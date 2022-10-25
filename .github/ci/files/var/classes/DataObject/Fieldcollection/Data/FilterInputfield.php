@@ -1,12 +1,12 @@
 <?php
 
 /**
-Fields Summary:
-- label [input]
-- field [indexFieldSelection]
-- preSelect [input]
-- scriptPath [input]
-*/
+ * Fields Summary:
+ * - label [input]
+ * - field [indexFieldSelection]
+ * - preSelect [input]
+ * - scriptPath [input]
+ */
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 
@@ -39,9 +39,9 @@ public function getLabel(): ?string
 /**
 * Set label - Label
 * @param string|null $label
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterInputfield
+* @return $this
 */
-public function setLabel(?string $label)
+public function setLabel(?string $label): static
 {
 	$this->label = $label;
 
@@ -65,9 +65,9 @@ public function getField(): ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtens
 /**
 * Set field - Field
 * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection|null $field
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterInputfield
+* @return $this
 */
-public function setField(?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field)
+public function setField(?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field): static
 {
 	$this->field = $field;
 
@@ -91,9 +91,9 @@ public function getPreSelect(): ?string
 /**
 * Set preSelect - PreSelect
 * @param string|null $preSelect
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterInputfield
+* @return $this
 */
-public function setPreSelect(?string $preSelect)
+public function setPreSelect(?string $preSelect): static
 {
 	$this->preSelect = $preSelect;
 
@@ -117,9 +117,9 @@ public function getScriptPath(): ?string
 /**
 * Set scriptPath - Script Path
 * @param string|null $scriptPath
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterInputfield
+* @return $this
 */
-public function setScriptPath(?string $scriptPath)
+public function setScriptPath(?string $scriptPath): static
 {
 	$this->scriptPath = $scriptPath;
 
