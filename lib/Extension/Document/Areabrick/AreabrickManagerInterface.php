@@ -57,5 +57,4 @@ interface AreabrickManagerInterface
      * @return array
      */
     public function getBrickIds(): array;
-
 }

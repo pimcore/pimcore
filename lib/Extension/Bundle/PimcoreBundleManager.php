@@ -61,7 +61,6 @@ class PimcoreBundleManager
      */
     protected $availableBundles;
 
-
     /**
      * @var array
      */

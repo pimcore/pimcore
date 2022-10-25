@@ -57,7 +57,7 @@ class ListCommand extends AbstractBundleCommand
                 'Installed',
                 $input->hasOption('json') ? 'Installable' : 'I?',
                 $input->hasOption('json') ? 'Uninstallable' : 'UI?',
-                'Priority'
+                'Priority',
             ],
             'rows' => [],
         ];

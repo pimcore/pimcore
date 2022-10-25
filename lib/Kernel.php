@@ -52,7 +52,6 @@ abstract class Kernel extends SymfonyKernel
         registerBundles as microKernelRegisterBundles;
     }
 
-
     /**
      * @var BundleCollection
      */
@@ -219,7 +218,6 @@ abstract class Kernel extends SymfonyKernel
 
         // handle system requirements
         $this->setSystemRequirements();
-
 
         parent::boot();
     }

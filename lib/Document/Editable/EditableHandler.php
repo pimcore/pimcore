@@ -158,7 +158,6 @@ class EditableHandler implements LoggerAwareInterface
     {
         $areas = [];
         foreach ($this->brickManager->getBricks() as $brick) {
-
             if (!(empty($options['allowed']) || in_array($brick->getId(), $options['allowed']))) {
                 continue;
             }
