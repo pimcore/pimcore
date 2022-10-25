@@ -47,9 +47,7 @@ final class Check implements \ArrayAccess
     public $message;
 
     /**
-     * Check constructor.
-     *
-     * @param array $data
+     * @param array{name: string, link?: string, state: int, message?: string} $data
      */
     public function __construct(array $data = [])
     {
