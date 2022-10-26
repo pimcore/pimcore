@@ -114,7 +114,7 @@ class NotificationServiceFilterParser
 
         switch ($item[self::KEY_OPERATOR]) {
             case self::OPERATOR_LIKE:
-                $result = ["{$property} LIKE ?", ["%{$value}%"]];
+                $result = ["{$property} LIKE ?", "%{$value}%"];
 
                 break;
         }
