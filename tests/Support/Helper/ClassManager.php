@@ -88,10 +88,10 @@ class ClassManager extends Module
     /**
      * @param string $name
      *
-     * @return FieldcollectionDefinition
+     * @return FieldcollectionDefinition|null
      * @throws \Exception
      */
-    public function getFieldcollection(string $name):FieldcollectionDefinition
+    public function getFieldcollection(string $name):?FieldcollectionDefinition
     {
         $fc = FieldcollectionDefinition::getByKey($name);
 
