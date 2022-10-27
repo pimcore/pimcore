@@ -90,9 +90,9 @@ class AdminLoginAuthenticator extends AdminAbstractAuthenticator implements Auth
                     if ($event->hasUser()) {
                         $user = new User($event->getUser());
                         $this->saveUserToSession($user);
+                    } else {
+                        return false;
                     }
-
-                    return false;
                 }
 
                 return true;
