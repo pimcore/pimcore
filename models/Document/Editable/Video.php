@@ -268,7 +268,9 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         $data = $this->getData();
 
         $poster = Asset::getById($this->poster);
-        $data['poster'] = $poster->getRealFullPath();
+        if ($poster){
+            $data['poster'] = $poster->getRealFullPath();
+        }
 
         if ($this->type === self::TYPE_ASSET && ($video = Asset::getById($this->id))) {
             $data['path'] = $video->getRealFullPath();
