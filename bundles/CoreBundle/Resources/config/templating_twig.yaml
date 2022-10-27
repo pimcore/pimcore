@@ -91,7 +91,8 @@ services:
             $allowedFunctions: '%pimcore.templating.twig.sandbox_security_policy.functions%'
 
     Twig\Extension\SandboxExtension:
+        class: Twig\Extension\SandboxExtension
         arguments:
-            $policy: Pimcore\Twig\Sandbox\SecurityPolicy
+            $policy: '@Pimcore\Twig\Sandbox\SecurityPolicy'
 
     Pimcore\Twig\Extension\AdminExtension: ~
