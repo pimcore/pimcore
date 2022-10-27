@@ -29,6 +29,7 @@ class ClassManager extends Module
         if ($class = ClassDefinition::getByName($name)) {
             return $class;
         }
+        return null;
     }
 
     public function hasClass(string $name):bool
