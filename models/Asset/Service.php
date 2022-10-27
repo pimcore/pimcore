@@ -500,14 +500,8 @@ class Service extends Model\Element\Service
         return $key;
     }
 
-    /**
-     * @param string $mime
-     * @param array $acceptedMimeTypes
-     *
-     * @return bool
-     *
-     */
-    public function validateMimeType(string $mime, array $acceptedMimeTypes) {
+    public function validateMimeType(string $mime, array $acceptedMimeTypes): bool
+    {
         foreach ($acceptedMimeTypes as $mimeType) {
             if ($mimeType === $mime) {
                 return true;
