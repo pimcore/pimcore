@@ -245,6 +245,11 @@ input.cke_dialog_ui_input_tel {
     line-height: 38px;
     font-size: 10px;
     padding-left: 10px;
+
+    /* Hide overflowing text where surrounding area is too narrow to display it */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .pimcore_block_button_plus,
