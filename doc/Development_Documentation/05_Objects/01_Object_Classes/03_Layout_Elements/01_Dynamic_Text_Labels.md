@@ -70,8 +70,7 @@ Here is an example of Twig content in htmleditor source edit mode:
 
 ### Sandbox Restrictions
 Dynamic Text renders user controlled twig templates in a sandbox with restrictive
-security policies for tags, filters, functions and son on. Please use following configuration to allow more tags,
-filters, properties, methods in template rendering:
+security policies for tags, filters & functions. Please use following configuration to allow more in template rendering:
 
 ```yaml
     pimcore:
