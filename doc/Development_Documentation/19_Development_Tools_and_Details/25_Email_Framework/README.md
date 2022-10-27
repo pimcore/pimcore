@@ -98,3 +98,17 @@ $mail->bcc("bcc@pimcore.org");
 $mail->html("<b>some</b> rich text");
 $mail->send();
 ```
+
+## Sandbox Restrictions
+Sending mails renders user controlled twig templates in a sandbox with restrictive 
+security policies for tags, filters & functions. Please use following configuration to allow more in template rendering:
+
+```yaml
+    pimcore:
+          templating_engine:
+              twig:
+                sandbox_security_policy:
+                  tags: ['if']
+                  filters: ['upper']
+                  functions: ['include', 'path']
+```

@@ -28,6 +28,7 @@ use Symfony\Component\Mime\Email;
 use Symfony\Component\Mime\Header\Headers;
 use Symfony\Component\Mime\Header\MailboxListHeader;
 use Symfony\Component\Mime\Part\AbstractPart;
+use Twig\Sandbox\SecurityError;
 
 class Mail extends Email
 {
@@ -651,13 +652,22 @@ class Mail extends Email
      *
      * @return string
      */
-    private function renderParams(string $string): string
+    private function renderParams(string $string, string $context): string
     {
         $templatingEngine = \Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
-        $twig = $templatingEngine->getTwigEnvironment();
-        $template = $twig->createTemplate($string);
+        try {
+            $twig = $templatingEngine->getTwigEnvironment(true);
+            $template = $twig->createTemplate($string);
 
-        return $template->render($this->getParams());
+            return $template->render($this->getParams());
+        } catch (SecurityError $e) {
+            Logger::err((string) $e);
+
+            throw new \Exception(sprintf("Failed rendering the %s: %s. Please check your twig sandbox security policy or contact the administrator.",
+            $context, substr($e->getMessage(),0, strpos($e->getMessage(), ' in "__string'))));
+        } finally {
+            $templatingEngine->disableSandboxExtensionFromTwigEnvironment();
+        }
     }
 
     /**
@@ -676,7 +686,7 @@ class Mail extends Email
         }
 
         if ($subject) {
-            return $this->renderParams($subject);
+            return $this->renderParams($subject, 'subject');
         }
 
         return '';
@@ -707,7 +717,7 @@ class Mail extends Email
 
         $content = null;
         if ($html) {
-            $content = $this->renderParams($html);
+            $content = $this->renderParams($html, 'body');
 
             // modifying the content e.g set absolute urls...
             $content = MailHelper::embedAndModifyCss($content, $this->getDocument());
@@ -731,7 +741,7 @@ class Mail extends Email
 
         //if the content was manually set with $obj->text(); this content will be used
         if ($text) {
-            $content = $this->renderParams($text);
+            $content = $this->renderParams($text, 'body');
         } else {
             //creating text version from html email
             try {

@@ -1,6 +1,18 @@
 # Upgrade Notes
 
 ## 10.5.8
+- [Twig] Sending mails and Dataobject Text Layouts, which allow rendering user controlled twig templates are now executed in a sandbox with restrictive security policies for tags, filters, functions.
+         Please use following configuration to allow more in template rendering:
+  ```yaml
+  pimcore:
+        templating_engine:
+            twig:
+              sandbox_security_policy:
+                tags: ['if']
+                filters: ['upper']
+                functions: ['include', 'path', 'range']
+  ```
+
 - [Nginx] Static pages nginx config has been updated to fix the issue for home static page generation. please adapt the following configuration:
 ```nginx
 map $args $static_page_root {
