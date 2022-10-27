@@ -38,7 +38,7 @@ abstract class AbstractDefinitionHelper extends Module
     /**
      * {@inheritdoc}
      */
-    public function _beforeSuite($settings = [])
+    public function _beforeSuite(array $settings = [])
     {
         if ($this->config['initialize_definitions']) {
             if (TestHelper::supportsDbTests()) {

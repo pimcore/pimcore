@@ -43,7 +43,10 @@ class Ecommerce extends Module
         parent::__construct($moduleContainer, $config);
     }
 
-    public function _beforeSuite($settings = [])
+    /**
+     * {@inheritdoc}
+     */
+    public function _beforeSuite(array $settings = [])
     {
         if ($this->config['run_installer']) {
             /** @var Pimcore $pimcoreModule */

@@ -24,7 +24,7 @@ class Model extends AbstractDefinitionHelper
     /**
      * {@inheritdoc}
      */
-    public function _beforeSuite($settings = [])
+    public function _beforeSuite(array $settings = [])
     {
         DataObject::setHideUnpublished(false);
         parent::_beforeSuite($settings);
