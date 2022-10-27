@@ -634,7 +634,7 @@ class Mail extends Email
 
         return $recipients;
     }
-    
+
     private function renderParams(string $string, string $context): string
     {
         $templatingEngine = \Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
