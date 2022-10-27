@@ -256,9 +256,9 @@ class PublicServicesController extends Controller
         $params = $request->query->all();
 
         $url = match (true) {
-            isset($params['token']) => $this->generateUrl ('pimcore_admin_login_check', $params),
-            isset($params['deeplink']) => $this->generateUrl ('pimcore_admin_login_deeplink', $params),
-            default => $this->generateUrl ('pimcore_admin_login', $params)
+            isset($params['token']) => $this->generateUrl('pimcore_admin_login_check', $params),
+            isset($params['deeplink']) => $this->generateUrl('pimcore_admin_login_deeplink', $params),
+            default => $this->generateUrl('pimcore_admin_login', $params)
         };
 
         $redirect = new RedirectResponse($url);

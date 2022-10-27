@@ -27,7 +27,6 @@ use Pimcore\Event\Admin\IndexActionSettingsEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Maintenance\Executor;
 use Pimcore\Maintenance\ExecutorInterface;
-use Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
 use Pimcore\Model\Document\DocType;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Staticroute;
@@ -206,30 +205,30 @@ class IndexController extends AdminController implements KernelResponseEventInte
     {
         $config = $templateParams['config'];
         $dashboardHelper = new \Pimcore\Helper\Dashboard($user);
-        $customAdminEntrypoint = $this->getParameter ('pimcore_admin.custom_admin_route_name');
+        $customAdminEntrypoint = $this->getParameter('pimcore_admin.custom_admin_route_name');
 
         try {
-            $adminEntrypointUrl = $this->generateUrl ($customAdminEntrypoint, [], UrlGeneratorInterface::ABSOLUTE_URL);
+            $adminEntrypointUrl = $this->generateUrl($customAdminEntrypoint, [], UrlGeneratorInterface::ABSOLUTE_URL);
         } catch (Exception) {
             // if the custom admin entrypoint is not defined, return null in the settings
             $adminEntrypointUrl = null;
         }
 
         $settings = [
-            'instanceId' => $this->getInstanceId (),
-            'version' => Version::getVersion (),
-            'build' => Version::getRevision (),
-            'debug' => \Pimcore::inDebugMode (),
-            'devmode' => \Pimcore::inDevMode (),
-            'disableMinifyJs' => \Pimcore::disableMinifyJs (),
-            'environment' => $kernel->getEnvironment (),
-            'cached_environments' => Tool::getCachedSymfonyEnvironments (),
-            'sessionId' => htmlentities (Session::getSessionId (), ENT_QUOTES, 'UTF-8'),
+            'instanceId' => $this->getInstanceId(),
+            'version' => Version::getVersion(),
+            'build' => Version::getRevision(),
+            'debug' => \Pimcore::inDebugMode(),
+            'devmode' => \Pimcore::inDevMode(),
+            'disableMinifyJs' => \Pimcore::disableMinifyJs(),
+            'environment' => $kernel->getEnvironment(),
+            'cached_environments' => Tool::getCachedSymfonyEnvironments(),
+            'sessionId' => htmlentities(Session::getSessionId(), ENT_QUOTES, 'UTF-8'),
 
             // languages
-            'language' => $request->getLocale (),
-            'websiteLanguages' => Admin::reorderWebsiteLanguages (
-                $this->getAdminUser (),
+            'language' => $request->getLocale(),
+            'websiteLanguages' => Admin::reorderWebsiteLanguages(
+                $this->getAdminUser(),
                 $config['general']['valid_languages'],
                 true
             ),
@@ -239,9 +238,9 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'debug_admin_translations' => (bool)$config['general']['debug_admin_translations'],
             'document_generatepreviews' => (bool)$config['documents']['generate_preview'],
             'asset_disable_tree_preview' => (bool)$config['assets']['disable_tree_preview'],
-            'chromium' => \Pimcore\Image\Chromium::isSupported (),
-            'htmltoimage' => \Pimcore\Image\HtmlToImage::isSupported (),
-            'videoconverter' => \Pimcore\Video::isAvailable (),
+            'chromium' => \Pimcore\Image\Chromium::isSupported(),
+            'htmltoimage' => \Pimcore\Image\HtmlToImage::isSupported(),
+            'videoconverter' => \Pimcore\Video::isAvailable(),
             'asset_hide_edit' => (bool)$config['assets']['hide_edit_image'],
             'main_domain' => $config['general']['domain'],
             'custom_admin_entrypoint_url' => $adminEntrypointUrl,
@@ -252,31 +251,31 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'asset_tree_paging_limit' => $config['assets']['tree_paging_limit'],
             'document_tree_paging_limit' => $config['documents']['tree_paging_limit'],
             'object_tree_paging_limit' => $config['objects']['tree_paging_limit'],
-            'maxmind_geoip_installed' => (bool)$this->getParameter ('pimcore.geoip.db_file'),
-            'hostname' => htmlentities (\Pimcore\Tool::getHostname (), ENT_QUOTES, 'UTF-8'),
+            'maxmind_geoip_installed' => (bool)$this->getParameter('pimcore.geoip.db_file'),
+            'hostname' => htmlentities(\Pimcore\Tool::getHostname(), ENT_QUOTES, 'UTF-8'),
 
             'document_auto_save_interval' => $config['documents']['auto_save_interval'],
             'object_auto_save_interval' => $config['objects']['auto_save_interval'],
 
             // perspective and portlets
             'perspective' => $templateParams['runtimePerspective'],
-            'availablePerspectives' => \Pimcore\Perspective\Config::getAvailablePerspectives ($user),
-            'disabledPortlets' => $dashboardHelper->getDisabledPortlets (),
+            'availablePerspectives' => \Pimcore\Perspective\Config::getAvailablePerspectives($user),
+            'disabledPortlets' => $dashboardHelper->getDisabledPortlets(),
 
             // google analytics
-            'google_analytics_enabled' => (bool)$siteConfigProvider->isSiteReportingConfigured (),
+            'google_analytics_enabled' => (bool)$siteConfigProvider->isSiteReportingConfigured(),
 
             // this stuff is used to decide whether the "add" button should be grayed out or not
-            'image-thumbnails-writeable' => (new \Pimcore\Model\Asset\Image\Thumbnail\Config())->isWriteable (),
-            'video-thumbnails-writeable' => (new \Pimcore\Model\Asset\Video\Thumbnail\Config())->isWriteable (),
-            'custom-reports-writeable' => (new \Pimcore\Model\Tool\CustomReport\Config())->isWriteable (),
-            'document-types-writeable' => (new DocType())->isWriteable (),
-            'web2print-writeable' => \Pimcore\Web2Print\Config::isWriteable (),
-            'predefined-properties-writeable' => (new \Pimcore\Model\Property\Predefined())->isWriteable (),
-            'predefined-asset-metadata-writeable' => (new \Pimcore\Model\Metadata\Predefined())->isWriteable (),
-            'staticroutes-writeable' => (new Staticroute())->isWriteable (),
-            'perspectives-writeable' => \Pimcore\Perspective\Config::isWriteable (),
-            'custom-views-writeable' => \Pimcore\CustomView\Config::isWriteable (),
+            'image-thumbnails-writeable' => (new \Pimcore\Model\Asset\Image\Thumbnail\Config())->isWriteable(),
+            'video-thumbnails-writeable' => (new \Pimcore\Model\Asset\Video\Thumbnail\Config())->isWriteable(),
+            'custom-reports-writeable' => (new \Pimcore\Model\Tool\CustomReport\Config())->isWriteable(),
+            'document-types-writeable' => (new DocType())->isWriteable(),
+            'web2print-writeable' => \Pimcore\Web2Print\Config::isWriteable(),
+            'predefined-properties-writeable' => (new \Pimcore\Model\Property\Predefined())->isWriteable(),
+            'predefined-asset-metadata-writeable' => (new \Pimcore\Model\Metadata\Predefined())->isWriteable(),
+            'staticroutes-writeable' => (new Staticroute())->isWriteable(),
+            'perspectives-writeable' => \Pimcore\Perspective\Config::isWriteable(),
+            'custom-views-writeable' => \Pimcore\CustomView\Config::isWriteable(),
             'class-definition-writeable' => isset($_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE']) ? (bool)$_SERVER['PIMCORE_CLASS_DEFINITION_WRITABLE'] : true,
         ];
 
