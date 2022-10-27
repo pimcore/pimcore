@@ -259,7 +259,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
             'poster'       => $poster ? $poster->getFullPath() : '',
         ];
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -268,7 +268,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         $data = $this->getData();
 
         $poster = Asset::getById($this->poster);
-        if ($poster){
+        if ($poster) {
             $data['poster'] = $poster->getRealFullPath();
         }
 
@@ -278,7 +278,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
         return $data;
     }
-    
+
     /**
      * {@inheritdoc}
      */
