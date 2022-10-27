@@ -16,12 +16,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Event;
 
-final class ElementEvents
+final class NoteEvents
 {
     /**
-     * @Event("Pimcore\Event\Model\ElementEvent")^
+     * @Event("Pimcore\Event\Model\NoteEvents")^
      *
      * @var string
      */
-    const POST_ADD = 'pimcore.element.note.postAdd';
+    const POST_ADD = 'pimcore.model.note.postAdd';
 }

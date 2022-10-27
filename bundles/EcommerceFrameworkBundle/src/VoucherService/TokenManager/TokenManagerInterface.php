@@ -117,7 +117,7 @@ interface TokenManagerInterface
 
     public function getStatistics(?int $usagePeriod = null): bool|array;
 
-    public function insertOrUpdateVoucherSeries(): bool|array;
+    public function insertOrUpdateVoucherSeries(): bool|string|array;
 
     public function getFinalTokenLength(): int;
 

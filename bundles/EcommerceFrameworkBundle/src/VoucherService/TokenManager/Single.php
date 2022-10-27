@@ -125,9 +125,9 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
     }
 
     /**
-     * @return bool | string - bool if failed - string if successfully created
+     * @return bool | array | string - bool if failed - string if successfully created
      */
-    public function insertOrUpdateVoucherSeries(): bool|string
+    public function insertOrUpdateVoucherSeries(): bool|string|array
     {
         $db = \Pimcore\Db::get();
 

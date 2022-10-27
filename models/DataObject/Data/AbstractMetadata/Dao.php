@@ -14,7 +14,7 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\DataObject\Data\ObjectMetadata;
+namespace Pimcore\Model\DataObject\Data\AbstractMetadata;
 
 use Pimcore\Db\Helper;
 use Pimcore\Model;
@@ -23,9 +23,8 @@ use Pimcore\Model\DataObject;
 /**
  * @internal
  *
- * @property \Pimcore\Model\DataObject\Data\ObjectMetadata $model
  */
-class Dao extends DataObject\Data\AbstractMetadata\Dao
+class Dao extends Model\Dao\AbstractDao
 {
     use DataObject\ClassDefinition\Helper\Dao;
 
@@ -33,24 +32,7 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
 
     public function save(DataObject\Concrete $object, string $ownertype, string $ownername, string $position, int $index, string $type = 'object')
     {
-        $table = $this->getTablename($object);
-
-        $dataTemplate = ['o_id' => $object->getId(),
-            'dest_id' => $this->model->getElement()->getId(),
-            'fieldname' => $this->model->getFieldname(),
-            'ownertype' => $ownertype,
-            'ownername' => $ownername ? $ownername : '',
-            'index' => $index ? $index : '0',
-            'position' => $position ? $position : '0',
-            'type' => $type ? $type : 'object', ];
-
-        foreach ($this->model->getColumns() as $column) {
-            $getter = 'get' . ucfirst($column);
-            $data = $dataTemplate;
-            $data['column'] = $column;
-            $data['data'] = $this->model->$getter();
-            Helper::insertOrUpdate($this->db, $table, $data);
-        }
+        throw new \Exception("Needs to be implemented by child class");
     }
 
     protected function getTablename(DataObject\Concrete $object): string
@@ -58,27 +40,9 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
         return 'object_metadata_' . $object->getClassId();
     }
 
-    public function load(DataObject\Concrete $source, int $destinationId, string $fieldname, string $ownertype, string $ownername, string $position, int $index, string $destinationType = 'object'): ?DataObject\Data\ObjectMetadata
+    public function load(DataObject\Concrete $source, int $destinationId, string $fieldname, string $ownertype, string $ownername, string $position, int $index): ?Model\AbstractModel
     {
-        $typeQuery = " AND (type = 'object' or type = '')";
-
-        $query = 'SELECT * FROM ' . $this->getTablename($source) . ' WHERE o_id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? and `index` = ? ' . $typeQuery;
-        $dataRaw = $this->db->fetchAllAssociative($query, [$source->getId(), $destinationId, $fieldname, $ownertype, $ownername, $position, $index]);
-        if (!empty($dataRaw)) {
-            $this->model->setObjectId($destinationId);
-            $this->model->setFieldname($fieldname);
-            $columns = $this->model->getColumns();
-            foreach ($dataRaw as $row) {
-                if (in_array($row['column'], $columns)) {
-                    $setter = 'set' . ucfirst($row['column']);
-                    $this->model->$setter($row['data']);
-                }
-            }
-
-            return $this->model;
-        } else {
-            return null;
-        }
+        throw new \Exception("Needs to be implemented by child class");
     }
 
     public function createOrUpdateTable(DataObject\ClassDefinition $class)

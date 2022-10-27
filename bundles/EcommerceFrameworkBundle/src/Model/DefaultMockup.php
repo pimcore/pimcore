@@ -19,7 +19,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 
-class DefaultMockup implements ProductInterface, LinkGeneratorAwareInterface
+class DefaultMockup implements ProductInterface, LinkGeneratorAwareInterface, IndexableInterface
 {
     protected int $id;
 
@@ -178,14 +178,37 @@ class DefaultMockup implements ProductInterface, LinkGeneratorAwareInterface
         return $this->__call('getOSProductNumber', []);
     }
 
-    /**
-     * returns array of categories.
-     * has to be overwritten either in pimcore object or mapped sub class.
-     *
-     * @return array
-     */
-    public function getCategories(): array
+    public function getOSDoIndexProduct(): bool
     {
-        return $this->__call('getCategories', []);
+        return false;
+    }
+
+    public function getPriceSystemName(): ?string
+    {
+        return 'default';
+    }
+
+    public function isActive(bool $inProductList = false): bool
+    {
+        return false;
+    }
+
+    public function getOSIndexType(): ?string
+    {
+        return null;
+    }
+
+    public function getOSParentId(): int|null
+    {
+        return null;
+    }
+
+    public function getCategories(): ?array
+    {
+        return null;
+    }
+
+    public function getClassId(): ?string {
+        return null;
     }
 }

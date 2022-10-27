@@ -29,7 +29,7 @@ use Symfony\Component\Cache\CacheItem;
 
 abstract class AbstractCoreHandlerTest extends TestCase
 {
-    protected PimcoreCacheItemPoolInterface|TagAwareAdapterInterface $cache;
+    protected TagAwareAdapterInterface $cache;
 
     protected CoreCacheHandler|\PHPUnit_Framework_MockObject_MockObject $handler;
 
@@ -104,9 +104,9 @@ abstract class AbstractCoreHandlerTest extends TestCase
     /**
      * Initializes item pool
      *
-     * @return PimcoreCacheItemPoolInterface
+     * @return TagAwareAdapterInterface
      */
-    abstract protected function createCachePool(): PimcoreCacheItemPoolInterface;
+    abstract protected function createCachePool(): TagAwareAdapterInterface;
 
     protected function createWriteLock(): WriteLock
     {

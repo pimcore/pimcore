@@ -216,9 +216,9 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      * may be reached several queries are generated.
      * returns the generated voucher codes if it was successfully - otherwise false
      *
-     * @return bool | array  - bool failed - array if codes are generated
+     * @return bool | string | array  - bool failed - array if codes are generated
      */
-    public function insertOrUpdateVoucherSeries(): bool|array
+    public function insertOrUpdateVoucherSeries(): bool|string|array
     {
         $db = \Pimcore\Db::get();
 

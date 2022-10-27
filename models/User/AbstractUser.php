@@ -29,11 +29,11 @@ class AbstractUser extends Model\AbstractModel
 {
     use RecursionBlockingEventDispatchHelperTrait;
 
-    protected ?int $id;
+    protected ?int $id = null;
 
-    protected ?int $parentId;
+    protected ?int $parentId = null;
 
-    protected ?string $name;
+    protected ?string $name = null;
 
     protected string $type;
 
