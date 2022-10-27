@@ -21,7 +21,6 @@ use Symfony\Component\Templating\DelegatingEngine as BaseDelegatingEngine;
 use Symfony\Component\Templating\EngineInterface;
 use Twig\Environment;
 use Twig\Extension\SandboxExtension;
-use Pimcore\Twig\Sandbox\SecurityPolicy;
 
 /**
  * @internal
@@ -98,21 +97,9 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     public function getTwigEnvironment(bool $sandboxed = false): Environment
     {
         if ($sandboxed) {
-            if (!$this->twig->hasExtension(SandboxExtension::class)) {
-                $securityPolicy = $this->config['templating_engine']['twig']['sandbox_security_policy'];
-
-                $tags = $securityPolicy['tags'];
-                $filters = $securityPolicy['filters'];
-                $functions = $securityPolicy['functions'];
-
-                $policy = new SecurityPolicy($tags, $filters, $functions);
-                $sandbox = new SandboxExtension($policy);
-                $this->twig->addExtension($sandbox);
-            }
-
             /** @var SandboxExtension $sandbox */
-            $sandbox = $this->twig->getExtension(SandboxExtension::class);
-            $sandbox->enableSandbox();
+            $sandboxExtension = $this->twig->getExtension(SandboxExtension::class);
+            $sandboxExtension->enableSandbox();
         }
 
         return $this->twig;
@@ -120,11 +107,9 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
 
     public function disableSandboxExtensionFromTwigEnvironment(): void
     {
-        if ($this->twig->hasExtension(SandboxExtension::class)) {
-            /** @var SandboxExtension $sandbox */
-            $sandbox = $this->twig->getExtension(SandboxExtension::class);
-            $sandbox->disableSandbox();
-        }
+        /** @var SandboxExtension $sandbox */
+        $sandboxExtension = $this->twig->getExtension(SandboxExtension::class);
+        $sandboxExtension->disableSandbox();
     }
 
     /**
