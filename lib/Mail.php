@@ -655,6 +655,7 @@ class Mail extends Email
     private function renderParams(string $string, string $context): string
     {
         $templatingEngine = \Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
+
         try {
             $twig = $templatingEngine->getTwigEnvironment(true);
             $template = $twig->createTemplate($string);
@@ -663,8 +664,8 @@ class Mail extends Email
         } catch (SecurityError $e) {
             Logger::err((string) $e);
 
-            throw new \Exception(sprintf("Failed rendering the %s: %s. Please check your twig sandbox security policy or contact the administrator.",
-            $context, substr($e->getMessage(),0, strpos($e->getMessage(), ' in "__string'))));
+            throw new \Exception(sprintf('Failed rendering the %s: %s. Please check your twig sandbox security policy or contact the administrator.',
+                $context, substr($e->getMessage(), 0, strpos($e->getMessage(), ' in "__string'))));
         } finally {
             $templatingEngine->disableSandboxExtensionFromTwigEnvironment();
         }

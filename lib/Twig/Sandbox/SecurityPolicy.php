@@ -32,7 +32,9 @@ use Twig\Sandbox\SecurityPolicyInterface;
 final class SecurityPolicy implements SecurityPolicyInterface
 {
     private array $allowedTags;
+
     private array $allowedFilters;
+
     private array $allowedFunctions;
 
     public function __construct(array $allowedTags = [], array $allowedFilters = [], array $allowedFunctions = [])

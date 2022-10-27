@@ -145,6 +145,7 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
         }
 
         $templatingEngine = \Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
+
         try {
             $twig = $templatingEngine->getTwigEnvironment(true);
             $template = $twig->createTemplate($this->html);
@@ -156,9 +157,9 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
         } catch (SecurityError $e) {
             Logger::err((string) $e);
 
-            $this->html = sprintf("<h2>Error</h2>Failed rendering the template: <b>%s</b>.
-                Please check your twig sandbox security policy or contact the administrator.",
-                substr($e->getMessage(),0, strpos($e->getMessage(), ' in "__string')));
+            $this->html = sprintf('<h2>Error</h2>Failed rendering the template: <b>%s</b>.
+                Please check your twig sandbox security policy or contact the administrator.',
+                substr($e->getMessage(), 0, strpos($e->getMessage(), ' in "__string')));
         } finally {
             $templatingEngine->disableSandboxExtensionFromTwigEnvironment();
         }
