@@ -29,7 +29,7 @@ final class FilteredTableMetadataStorage implements MetadataStorage
 {
     private TableMetadataStorage $storage;
 
-    private ?string $prefix;
+    private ?string $prefix = null;
 
     public function __invoke(DependencyFactory $dependencyFactory): static
     {

@@ -57,7 +57,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @var int|null
      */
-    public ?int $maxLength;
+    public ?int $maxLength = null;
 
     /**
      * @internal

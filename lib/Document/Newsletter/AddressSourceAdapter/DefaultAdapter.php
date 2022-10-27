@@ -43,7 +43,7 @@ final class DefaultAdapter implements AddressSourceAdapterInterface
 
     protected int $elementsTotal;
 
-    protected ?Listing $list;
+    protected ?Listing $list = null;
 
     public function __construct(array $params)
     {

@@ -38,7 +38,7 @@ class ElementAdminStyleEvent extends Event
      */
     const CONTEXT_SEARCH = 3;
 
-    protected ?int $context;
+    protected ?int $context = null;
 
     protected ElementInterface $element;
 

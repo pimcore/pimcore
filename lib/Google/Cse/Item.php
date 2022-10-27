@@ -41,7 +41,7 @@ class Item
 
     public string|Model\Asset\Image|null $image;
 
-    public ?Model\Document $document;
+    public ?Model\Document $document = null;
 
     public string $type;
 

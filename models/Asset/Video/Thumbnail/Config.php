@@ -109,7 +109,7 @@ final class Config extends Model\AbstractModel
      *
      * @var string|null
      */
-    public ?string $filenameSuffix;
+    public ?string $filenameSuffix = null;
 
     /**
      * @param string $name

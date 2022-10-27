@@ -94,7 +94,7 @@ class Video extends Data implements
      *
      * @var array|null
      */
-    public ?array $allowedTypes;
+    public ?array $allowedTypes = null;
 
     /**
      * @internal

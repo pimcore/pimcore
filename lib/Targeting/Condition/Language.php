@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class Language extends AbstractVariableCondition implements ConditionInterface
 {
-    private ?string $language;
+    private ?string $language = null;
 
     /**
      * @param null|string $language

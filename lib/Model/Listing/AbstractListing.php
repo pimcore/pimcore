@@ -33,23 +33,17 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
 
     protected array $orderKey = [];
 
-    /**
-     * @var int|null
-     */
-    protected $limit;
+    protected ?int $limit = null;
 
-    /**
-     * @var int
-     */
-    protected $offset = 0;
+    protected int $offset = 0;
 
-    protected ?string $condition;
+    protected ?string $condition = null;
 
     protected array $conditionVariables = [];
 
-    protected ?array $conditionVariablesFromSetCondition;
+    protected ?array $conditionVariablesFromSetCondition = null;
 
-    protected ?string $groupBy;
+    protected ?string $groupBy = null;
 
     protected array $validOrders = [
         'ASC',
@@ -60,7 +54,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
 
     protected array $conditionVariableTypes = [];
 
-    protected ?array $data;
+    protected ?array $data = null;
 
     public function getConditionVariableTypes(): array
     {

@@ -105,7 +105,7 @@ class Mail extends Email
      *
      * @var array|null
      */
-    private ?array $originalData;
+    private ?array $originalData = null;
 
     private Model\Tool\Email\Log $lastLogEntry;
 

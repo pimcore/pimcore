@@ -45,14 +45,14 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      *
      * @var string|null
      */
-    public ?string $minValue;
+    public ?string $minValue = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    public ?string $maxValue;
+    public ?string $maxValue = null;
 
     /**
      * @internal

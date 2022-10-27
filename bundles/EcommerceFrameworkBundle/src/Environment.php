@@ -35,11 +35,11 @@ class Environment implements EnvironmentInterface
 
     protected bool $useGuestCart = false;
 
-    protected ?string $currentAssortmentTenant;
+    protected ?string $currentAssortmentTenant = null;
 
-    protected ?string $currentAssortmentSubTenant;
+    protected ?string $currentAssortmentSubTenant = null;
 
-    protected ?string $currentCheckoutTenant;
+    protected ?string $currentCheckoutTenant = null;
 
     /**
      * Current transient checkout tenant

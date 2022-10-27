@@ -55,7 +55,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      *
      * @var int|null
      */
-    public ?int $maxItems;
+    public ?int $maxItems = null;
 
     /**
      * @internal

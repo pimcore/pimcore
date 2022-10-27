@@ -41,21 +41,21 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @var int|null
      */
-    public ?int $previewWidth;
+    public ?int $previewWidth = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    public ?int $inputWidth;
+    public ?int $inputWidth = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    public ?int $previewHeight;
+    public ?int $previewHeight = null;
 
     /**
      * Type for the column to query

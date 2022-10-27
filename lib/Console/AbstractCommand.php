@@ -37,9 +37,9 @@ abstract class AbstractCommand extends Command
 
     protected OutputInterface $output;
 
-    private ?CliDumper $cliDumper;
+    private ?CliDumper $cliDumper = null;
 
-    private ?VarCloner $varCloner;
+    private ?VarCloner $varCloner = null;
 
     protected function initialize(InputInterface $input, OutputInterface $output)
     {

@@ -26,13 +26,13 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 class Reservation extends AbstractModel
 {
-    public ?int $id;
+    public ?int $id = null;
 
-    public ?string $token;
+    public ?string $token = null;
 
-    public ?int $timestamp;
+    public ?int $timestamp = null;
 
-    public ?string $cart_id;
+    public ?string $cart_id = null;
 
     /**
      * @param string $code

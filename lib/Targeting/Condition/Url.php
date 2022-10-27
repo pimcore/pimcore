@@ -21,7 +21,7 @@ use Pimcore\Targeting\Model\VisitorInfo;
 
 class Url extends AbstractVariableCondition implements ConditionInterface
 {
-    private ?string $pattern;
+    private ?string $pattern = null;
 
     /**
      * @param null|string $pattern

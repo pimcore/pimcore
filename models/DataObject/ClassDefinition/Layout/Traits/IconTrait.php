@@ -26,7 +26,7 @@ trait IconTrait
      *
      * @var string|null
      */
-    public ?string $icon;
+    public ?string $icon = null;
 
     public function getIcon(): ?string
     {

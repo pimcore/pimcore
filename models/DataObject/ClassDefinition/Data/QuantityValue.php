@@ -77,7 +77,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @var string|null
      */
-    public ?string $defaultUnit;
+    public ?string $defaultUnit = null;
 
     /**
      * @internal
@@ -105,14 +105,14 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @var float|null
      */
-    public ?float $minValue;
+    public ?float $minValue = null;
 
     /**
      * @internal
      *
      * @var float|null
      */
-    public ?float $maxValue;
+    public ?float $maxValue = null;
 
     /**
      * @internal
@@ -128,7 +128,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @var int|null
      */
-    public ?int $decimalSize;
+    public ?int $decimalSize = null;
 
     /**
      * This is the y part in DECIMAL(x, y) and denotes amount of digits after a comma. In MySQL this is called scale. See
@@ -138,7 +138,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @var int|null
      */
-    public ?int $decimalPrecision;
+    public ?int $decimalPrecision = null;
 
     /**
      * @internal

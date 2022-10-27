@@ -53,7 +53,7 @@ abstract class AbstractRelations extends Data implements
      *
      * @var null|string
      */
-    public ?string $pathFormatterClass;
+    public ?string $pathFormatterClass = null;
 
     /**
      * @return array[

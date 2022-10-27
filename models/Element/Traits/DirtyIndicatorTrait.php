@@ -21,7 +21,7 @@ namespace Pimcore\Model\Element\Traits;
  */
 trait DirtyIndicatorTrait
 {
-    protected ?array $o_dirtyFields;
+    protected ?array $o_dirtyFields = null;
 
     public function hasDirtyFields(): bool
     {

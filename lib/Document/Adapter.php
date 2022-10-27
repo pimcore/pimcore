@@ -23,7 +23,7 @@ use Pimcore\Model\Asset;
  */
 abstract class Adapter
 {
-    protected ?Asset\Document $asset;
+    protected ?Asset\Document $asset = null;
 
     protected array $tmpFiles = [];
 

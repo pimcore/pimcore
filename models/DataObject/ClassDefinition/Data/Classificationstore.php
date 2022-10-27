@@ -50,7 +50,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      *
      * @var string|null
      */
-    public ?string $name;
+    public ?string $name = null;
 
     /**
      * @internal
@@ -71,7 +71,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      *
      * @var string|null
      */
-    public ?string $title;
+    public ?string $title = null;
 
     /**
      * @internal
@@ -137,7 +137,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      *
      * @var array|null
      */
-    public ?array $fieldDefinitionsCache;
+    public ?array $fieldDefinitionsCache = null;
 
     /**
      * @internal
@@ -158,7 +158,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      *
      * @var int|null
      */
-    public ?int $maxItems;
+    public ?int $maxItems = null;
 
     /**
      * @internal

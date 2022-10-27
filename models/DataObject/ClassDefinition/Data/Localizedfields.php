@@ -54,7 +54,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      *
      * @var string|null
      */
-    public ?string $name;
+    public ?string $name = null;
 
     /**
      * @internal
@@ -75,7 +75,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      *
      * @var string|null
      */
-    public ?string $title;
+    public ?string $title = null;
 
     /**
      * @internal
@@ -136,21 +136,21 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      *
      * @var array|null
      */
-    public ?array $fieldDefinitionsCache;
+    public ?array $fieldDefinitionsCache = null;
 
     /**
      * @internal
      *
      * @var array|null
      */
-    public ?array $permissionView;
+    public ?array $permissionView = null;
 
     /**
      * @internal
      *
      * @var array|null
      */
-    public ?array $permissionEdit;
+    public ?array $permissionEdit = null;
 
     /**
      * @param mixed $data

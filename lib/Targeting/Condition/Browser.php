@@ -23,7 +23,7 @@ use Pimcore\Targeting\Model\VisitorInfo;
 
 class Browser extends AbstractVariableCondition implements DataProviderDependentInterface
 {
-    private ?string $browser;
+    private ?string $browser = null;
 
     public function __construct(string $browser = null)
     {

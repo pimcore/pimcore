@@ -55,7 +55,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      *
      * @var int|null
      */
-    public ?int $domainLabelWidth;
+    public ?int $domainLabelWidth = null;
 
     /**
      * @internal
@@ -69,7 +69,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      *
      * @var null|int[]
      */
-    public ?array $availableSites;
+    public ?array $availableSites = null;
 
     public function getWidth(): int|string
     {

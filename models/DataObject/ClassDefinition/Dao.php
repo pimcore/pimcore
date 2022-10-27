@@ -35,7 +35,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     protected $model;
 
-    protected mixed $tableDefinitions = null;
+    protected array $tableDefinitions = [];
 
     public function getNameById(string $id): ?string
     {
@@ -223,7 +223,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->updateCompositeIndices($objectDatastoreTable, 'store', $this->model->getCompositeIndices());
         $this->updateCompositeIndices($objectTable, 'query', $this->model->getCompositeIndices());
 
-        $this->tableDefinitions = null;
+        $this->tableDefinitions = [];
     }
 
     /**

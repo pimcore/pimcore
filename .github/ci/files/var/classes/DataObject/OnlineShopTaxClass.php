@@ -25,8 +25,8 @@ class OnlineShopTaxClass extends Concrete
 {
 protected $o_classId = "EF_OSTC";
 protected $o_className = "OnlineShopTaxClass";
-protected ?string $taxEntryCombinationType;
-protected ?Fieldcollection $taxEntries;
+protected ?string $taxEntryCombinationType = null;
+protected ?Fieldcollection $taxEntries = null;
 
 
     public static function create(array $values = array()): OnlineShopTaxClass

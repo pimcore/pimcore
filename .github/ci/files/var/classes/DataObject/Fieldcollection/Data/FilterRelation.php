@@ -17,9 +17,9 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 class FilterRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType
 {
 protected string $type = "FilterRelation";
-protected ?string $label;
-protected ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field;
-protected ?string $scriptPath;
+protected ?string $label = null;
+protected ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field = null;
+protected ?string $scriptPath = null;
 protected array $availableRelations;
 
 

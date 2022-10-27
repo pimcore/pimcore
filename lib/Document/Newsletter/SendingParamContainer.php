@@ -30,7 +30,7 @@ class SendingParamContainer
      *
      * @var array|null
      */
-    protected ?array $params;
+    protected ?array $params = null;
 
     /**
      * SendingParamContainer constructor.

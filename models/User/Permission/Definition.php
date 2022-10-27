@@ -25,9 +25,9 @@ use Pimcore\Model;
  */
 class Definition extends Model\AbstractModel
 {
-    protected ?string $key;
+    protected ?string $key = null;
 
-    protected ?string $category;
+    protected ?string $category = null;
 
     public function __construct(array $data = [])
     {

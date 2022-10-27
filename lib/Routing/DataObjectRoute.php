@@ -27,11 +27,11 @@ use Symfony\Component\Routing\Route;
  */
 final class DataObjectRoute extends Route implements RouteObjectInterface
 {
-    protected ?Concrete $object;
+    protected ?Concrete $object = null;
 
-    protected ?UrlSlug $slug;
+    protected ?UrlSlug $slug = null;
 
-    protected ?Site $site;
+    protected ?Site $site = null;
 
     public function getObject(): ?Concrete
     {

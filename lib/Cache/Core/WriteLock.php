@@ -43,7 +43,7 @@ class WriteLock implements LoggerAwareInterface
      *
      * @var int|null
      */
-    protected ?int $timestamp;
+    protected ?int $timestamp = null;
 
     protected bool $lockInitialized = false;
 

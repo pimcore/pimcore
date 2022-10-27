@@ -39,14 +39,14 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      *
      * @var string|null
      */
-    public ?string $allowedClassId;
+    public ?string $allowedClassId = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    public ?string $visibleFields;
+    public ?string $visibleFields = null;
 
     /**
      * @internal

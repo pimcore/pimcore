@@ -49,21 +49,21 @@ class FilterDefinition extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\Ab
 {
 protected $o_classId = "EF_FD";
 protected $o_className = "FilterDefinition";
-protected ?float $pageLimit;
-protected ?string $defaultOrderByInheritance;
-protected ?Fieldcollection $defaultOrderBy;
-protected ?string $orderByAsc;
-protected ?string $orderByDesc;
-protected ?bool $ajaxReload;
-protected ?bool $infiniteScroll;
-protected ?float $limitOnFirstLoad;
-protected ?string $conditionsInheritance;
-protected ?Fieldcollection $conditions;
-protected ?string $filtersInheritance;
-protected ?Fieldcollection $filters;
+protected ?float $pageLimit = null;
+protected ?string $defaultOrderByInheritance = null;
+protected ?Fieldcollection $defaultOrderBy = null;
+protected ?string $orderByAsc = null;
+protected ?string $orderByDesc = null;
+protected ?bool $ajaxReload = null;
+protected ?bool $infiniteScroll = null;
+protected ?float $limitOnFirstLoad = null;
+protected ?string $conditionsInheritance = null;
+protected ?Fieldcollection $conditions = null;
+protected ?string $filtersInheritance = null;
+protected ?Fieldcollection $filters = null;
 protected \Pimcore\Model\Element\AbstractElement|ProductCategory|null $crossSellingCategory;
-protected ?string $similarityFieldsInheritance;
-protected ?Fieldcollection $similarityFields;
+protected ?string $similarityFieldsInheritance = null;
+protected ?Fieldcollection $similarityFields = null;
 
 
     public static function create(array $values = array()): FilterDefinition

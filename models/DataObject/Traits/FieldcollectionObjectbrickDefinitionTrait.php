@@ -132,12 +132,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
         return $this;
     }
 
-    /**
-     * @param array $context additional contextual data
-     *
-     * @return Data[]
-     */
-    public function getFieldDefinitions($context = []): array
+    public function getFieldDefinitions(array $context = []): array
     {
         if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
             return $this->fieldDefinitions;

@@ -21,7 +21,7 @@ class ConfigProvider
 {
     private ?Config $config = null;
 
-    private ?array $configObject;
+    private ?array $configObject = null;
 
     /**
      * @param array|null $configObject

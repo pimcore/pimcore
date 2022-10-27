@@ -22,15 +22,15 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 class PaymentInfo extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation
 {
 protected string $type = "PaymentInfo";
-protected ?\Carbon\Carbon $paymentStart;
-protected ?\Carbon\Carbon $paymentFinish;
-protected ?string $paymentReference;
-protected ?string $paymentState;
-protected ?string $internalPaymentId;
-protected ?string $message;
-protected ?string $providerData;
-protected ?string $provider_unzer_amount;
-protected ?string $provider_unzer_PaymentType;
+protected ?\Carbon\Carbon $paymentStart = null;
+protected ?\Carbon\Carbon $paymentFinish = null;
+protected ?string $paymentReference = null;
+protected ?string $paymentState = null;
+protected ?string $internalPaymentId = null;
+protected ?string $message = null;
+protected ?string $providerData = null;
+protected ?string $provider_unzer_amount = null;
+protected ?string $provider_unzer_PaymentType = null;
 
 
 /**

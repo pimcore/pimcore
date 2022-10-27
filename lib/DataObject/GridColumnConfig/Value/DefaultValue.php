@@ -29,7 +29,7 @@ use Pimcore\Model\Element\ElementInterface;
  */
 final class DefaultValue extends AbstractValue
 {
-    protected ?LocaleServiceInterface $localeService;
+    protected ?LocaleServiceInterface $localeService = null;
 
     /**
      * {@inheritdoc}

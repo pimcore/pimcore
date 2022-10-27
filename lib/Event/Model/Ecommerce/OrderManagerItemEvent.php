@@ -32,7 +32,7 @@ class OrderManagerItemEvent extends Event
      */
     protected bool $isGiftItem;
 
-    protected ?AbstractOrderItem $orderItem;
+    protected ?AbstractOrderItem $orderItem = null;
 
     /**
      * OrderManagerItemEvent constructor.

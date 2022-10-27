@@ -29,7 +29,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class EditableUsageResolver
 {
-    protected ?UsageRecorderSubscriber $subscriber;
+    protected ?UsageRecorderSubscriber $subscriber = null;
 
     protected EventDispatcherInterface $dispatcher;
 

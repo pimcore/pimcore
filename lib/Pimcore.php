@@ -22,7 +22,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class Pimcore
 {
-    private static ?bool $adminMode;
+    private static bool $adminMode = false;
 
     private static bool $shutdownEnabled = true;
 

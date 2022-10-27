@@ -28,7 +28,7 @@ class OrderManagerEvent extends Event
 
     protected CartInterface $cart;
 
-    protected ?AbstractOrder $order;
+    protected ?AbstractOrder $order = null;
 
     protected OrderManagerInterface $orderManager;
 

@@ -28,9 +28,9 @@ use Symfony\Component\Process\Process;
  */
 class AssetsInstaller
 {
-    private ?\Closure $runCallback;
+    private ?\Closure $runCallback = null;
 
-    private ?string $composerJsonSetting;
+    private ?string $composerJsonSettin = null;
 
     /**
      * Runs this assets:install command

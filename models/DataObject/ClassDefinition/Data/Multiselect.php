@@ -58,7 +58,7 @@ class Multiselect extends Data implements
      *
      * @var array|null
      */
-    public ?array $options;
+    public ?array $options = null;
 
     /**
      * @internal
@@ -79,14 +79,14 @@ class Multiselect extends Data implements
      *
      * @var int|null
      */
-    public ?int $maxItems;
+    public ?int $maxItems = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    public ?string $renderType;
+    public ?string $renderType = null;
 
     /**
      * Options provider class
@@ -95,7 +95,7 @@ class Multiselect extends Data implements
      *
      * @var string|null
      */
-    public ?string $optionsProviderClass;
+    public ?string $optionsProviderClass = null;
 
     /**
      * Options provider data
@@ -104,7 +104,7 @@ class Multiselect extends Data implements
      *
      * @var string|null
      */
-    public ?string $optionsProviderData;
+    public ?string $optionsProviderData = null;
 
     /**
      * Type for the column to query

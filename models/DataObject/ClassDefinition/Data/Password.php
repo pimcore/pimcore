@@ -86,7 +86,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public string $saltlocation = '';
 
-    public ?int $minimumLength;
+    public ?int $minimumLength = null;
 
     public function getWidth(): int|string
     {

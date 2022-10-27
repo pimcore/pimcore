@@ -36,9 +36,9 @@ class ExpressionService
 
     private AuthenticationTrustResolverInterface $trustResolver;
 
-    private ?RoleHierarchyInterface $roleHierarchy;
+    private ?RoleHierarchyInterface $roleHierarchy = null;
 
-    private ?ValidatorInterface $validator;
+    private ?ValidatorInterface $validator = null;
 
     public function __construct(ExpressionLanguage $expressionLanguage, TokenStorageInterface $tokenStorage, AuthorizationCheckerInterface $authenticationChecker, AuthenticationTrustResolverInterface $trustResolver, RoleHierarchyInterface $roleHierarchy = null, ValidatorInterface $validator = null)
     {

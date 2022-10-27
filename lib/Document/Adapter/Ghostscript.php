@@ -32,7 +32,7 @@ class Ghostscript extends Adapter
 {
     use TemporaryFileHelperTrait;
 
-    private ?string $version;
+    private ?string $version = null;
 
     public function isAvailable(): bool
     {

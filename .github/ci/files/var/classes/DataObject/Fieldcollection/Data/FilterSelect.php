@@ -16,9 +16,9 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 class FilterSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType
 {
 protected string $type = "FilterSelect";
-protected ?string $label;
-protected ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field;
-protected ?string $scriptPath;
+protected ?string $label = null;
+protected ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field = null;
+protected ?string $scriptPath = null;
 
 
 /**

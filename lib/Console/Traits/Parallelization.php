@@ -26,7 +26,7 @@ use Symfony\Component\Lock\LockInterface;
 
 trait Parallelization
 {
-    private ?LockInterface $lock;
+    private ?LockInterface $lock = null;
 
     use ParallelizationBase;
 

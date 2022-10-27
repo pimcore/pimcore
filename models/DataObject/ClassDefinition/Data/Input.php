@@ -59,7 +59,7 @@ class Input extends Data implements
      *
      * @var string|null
      */
-    public ?string $defaultValue;
+    public ?string $defaultValue = null;
 
     /**
      * Type for the column to query

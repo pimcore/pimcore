@@ -25,8 +25,8 @@ class OnlineShopVoucherSeries extends \Pimcore\Bundle\EcommerceFrameworkBundle\M
 {
 protected $o_classId = "EF_OSVS";
 protected $o_className = "OnlineShopVoucherSeries";
-protected ?string $name;
-protected ?Fieldcollection $tokenSettings;
+protected ?string $name = null;
+protected ?Fieldcollection $tokenSettings = null;
 
 
     public static function create(array $values = array()): OnlineShopVoucherSeries

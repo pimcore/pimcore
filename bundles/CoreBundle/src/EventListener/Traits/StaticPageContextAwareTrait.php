@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 trait StaticPageContextAwareTrait
 {
-    private ?StaticPageResolver $staticPageResolver;
+    private ?StaticPageResolver $staticPageResolver = null;
 
     /**
      * @required

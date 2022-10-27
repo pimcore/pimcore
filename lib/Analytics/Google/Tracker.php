@@ -56,7 +56,7 @@ class Tracker extends AbstractTracker
 
     private Environment $twig;
 
-    private ?string $defaultPath;
+    private ?string $defaultPath = null;
 
     private array $blocks = [
         self::BLOCK_BEFORE_SCRIPT_TAG,

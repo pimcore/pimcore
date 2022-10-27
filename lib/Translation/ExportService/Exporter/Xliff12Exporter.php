@@ -26,7 +26,7 @@ class Xliff12Exporter implements ExporterInterface
 
     private Xliff12Escaper $xliffEscaper;
 
-    private ?\SimpleXMLElement $xliffFile;
+    private ?\SimpleXMLElement $xliffFile = null;
 
     public function __construct(Xliff12Escaper $xliffEscaper)
     {

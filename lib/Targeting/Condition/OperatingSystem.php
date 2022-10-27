@@ -23,7 +23,7 @@ use Pimcore\Targeting\Model\VisitorInfo;
 
 class OperatingSystem extends AbstractVariableCondition implements DataProviderDependentInterface
 {
-    private ?string $system;
+    private ?string $system = null;
 
     /**
      * Mapping from admin UI values to DeviceDetector results

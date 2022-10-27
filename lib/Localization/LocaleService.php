@@ -23,9 +23,9 @@ class LocaleService implements LocaleServiceInterface
 {
     protected ?string $locale = null;
 
-    protected ?RequestStack $requestStack;
+    protected ?RequestStack $requestStack = null;
 
-    protected ?Translator $translator;
+    protected ?Translator $translator = null;
 
     /**
      * @param RequestStack|null $requestStack

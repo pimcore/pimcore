@@ -95,12 +95,12 @@ class NumericRange extends Data implements
     /**
      * @internal
      */
-    public ?float $minValue;
+    public ?float $minValue = null;
 
     /**
      * @internal
      */
-    public ?float $maxValue;
+    public ?float $maxValue = null;
 
     /**
      * This is the x part in DECIMAL(x, y) and denotes the total amount of digits. In MySQL this is called precision
@@ -109,7 +109,7 @@ class NumericRange extends Data implements
      *
      * @internal
      */
-    public ?int $decimalSize;
+    public ?int $decimalSize = null;
 
     /**
      * This is the y part in DECIMAL(x, y) and denotes amount of digits after a comma. In MySQL this is called scale. See
@@ -117,7 +117,7 @@ class NumericRange extends Data implements
      *
      * @internal
      */
-    public ?int $decimalPrecision;
+    public ?int $decimalPrecision = null;
 
     public function getWidth(): int|string
     {

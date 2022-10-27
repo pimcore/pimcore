@@ -69,7 +69,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      *
      * @var Model\DataObject\ClassDefinition\Data|null
      */
-    public ?Data $delegate;
+    public ?Data $delegate = null;
 
     /**
      * Type for the column

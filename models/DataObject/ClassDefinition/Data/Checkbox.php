@@ -43,7 +43,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @var int|null
      */
-    public ?int $defaultValue;
+    public ?int $defaultValue = null;
 
     /**
      * Type for the column to query

@@ -27,7 +27,7 @@ final class Dashboard
 {
     protected User $user;
 
-    protected ?array $dashboards;
+    protected ?array $dashboards = null;
 
     public function __construct(User $user)
     {

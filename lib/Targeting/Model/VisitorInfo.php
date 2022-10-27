@@ -32,9 +32,9 @@ class VisitorInfo implements \IteratorAggregate
 
     private Request $request;
 
-    private ?string $visitorId;
+    private ?string $visitorId = null;
 
-    private ?string $sessionId;
+    private ?string $sessionId = null;
 
     /**
      * Matched targeting rules
@@ -55,14 +55,14 @@ class VisitorInfo implements \IteratorAggregate
      *
      * @var TargetGroupAssignment[]|null
      */
-    private ?array $sortedTargetGroupAssignments;
+    private ?array $sortedTargetGroupAssignments = null;
 
     /**
      * Plain list of assigned target groups
      *
      * @var TargetGroup[]|null
      */
-    private ?array $targetGroups;
+    private ?array $targetGroups = null;
 
     private array $data = [];
 

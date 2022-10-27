@@ -65,7 +65,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      *
      * @var int|null
      */
-    public ?int $maxItems;
+    public ?int $maxItems = null;
 
     /**
      * @internal

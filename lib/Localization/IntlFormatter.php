@@ -48,7 +48,7 @@ class IntlFormatter
      */
     protected array $dateFormatters = [];
 
-    protected ?\NumberFormatter $numberFormatter;
+    protected ?\NumberFormatter $numberFormatter = null;
 
     /**
      * @var \NumberFormatter[]

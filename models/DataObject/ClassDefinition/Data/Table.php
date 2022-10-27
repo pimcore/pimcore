@@ -59,7 +59,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @var int|null
      */
-    public ?int $cols;
+    public ?int $cols = null;
 
     /**
      * @internal
@@ -71,7 +71,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @var int|null
      */
-    public ?int $rows;
+    public ?int $rows = null;
 
     /**
      * @internal

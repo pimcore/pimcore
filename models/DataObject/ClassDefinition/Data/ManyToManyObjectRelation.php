@@ -61,7 +61,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      *
      * @var int|null
      */
-    public ?int $maxItems;
+    public ?int $maxItems = null;
 
     /**
      * Type for the column to query
@@ -82,7 +82,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      *
      * @var string|null
      */
-    public ?string $visibleFields;
+    public ?string $visibleFields = null;
 
     /**
      * @internal

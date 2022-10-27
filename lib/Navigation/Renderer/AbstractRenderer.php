@@ -52,14 +52,14 @@ abstract class AbstractRenderer implements RendererInterface
      *
      * @var int|null
      */
-    protected ?int $_minDepth;
+    protected ?int $_minDepth = null;
 
     /**
      * The maximum depth a page can have to be included when rendering
      *
      * @var int|null
      */
-    protected ?int $_maxDepth;
+    protected ?int $_maxDepth = null;
 
     /**
      * Indentation string

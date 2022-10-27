@@ -29,19 +29,19 @@ class Attribute
 
     private string $fieldName;
 
-    private ?string $type;
+    private ?string $type = null;
 
-    private ?string $locale;
+    private ?string $locale = null;
 
-    private ?string $filterGroup;
+    private ?string $filterGroup = null;
 
     private array $options = [];
 
-    private ?GetterInterface $getter;
+    private ?GetterInterface $getter = null;
 
     private array $getterOptions = [];
 
-    private ?InterpreterInterface $interpreter;
+    private ?InterpreterInterface $interpreter = null;
 
     private array $interpreterOptions = [];
 

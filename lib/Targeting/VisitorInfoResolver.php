@@ -58,7 +58,7 @@ class VisitorInfoResolver
     /**
      * @var Rule[]|null
      */
-    private ?array $targetingRules;
+    private ?array $targetingRules = null;
 
     private ?bool $targetingConfigured = null;
 

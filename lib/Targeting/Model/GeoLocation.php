@@ -23,7 +23,7 @@ class GeoLocation
 
     private float $longitude;
 
-    private ?float $altitude;
+    private ?float $altitude = null;
 
     public function __construct(float $latitude, float $longitude, float $altitude = null)
     {

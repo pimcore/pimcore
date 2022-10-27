@@ -51,7 +51,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
 
     protected array $readOnlySessionBagsCache = [];
 
-    private ?bool $canWriteAndClose;
+    private ?bool $canWriteAndClose = null;
 
     protected RequestHelper $requestHelper;
 

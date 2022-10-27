@@ -24,7 +24,7 @@ use Pimcore\Model\Element\ElementInterface;
  */
 final class DateFormatter extends AbstractOperator
 {
-    private ?string $format;
+    private ?string $format = null;
 
 
     public function __construct(\stdClass $config, $context = null)

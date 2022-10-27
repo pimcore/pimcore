@@ -74,7 +74,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @var int|null
      */
-    public ?int $maxItems;
+    public ?int $maxItems = null;
 
     /**
      * Type for the column
@@ -104,7 +104,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @var array|null
      */
-    public ?array $layout;
+    public ?array $layout = null;
 
     /**
      * contains further child field definitions if there are more than one localized fields in on class
@@ -120,7 +120,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      *
      * @var array|null
      */
-    public ?array $fieldDefinitionsCache;
+    public ?array $fieldDefinitionsCache = null;
 
     /**
      * @param mixed $data

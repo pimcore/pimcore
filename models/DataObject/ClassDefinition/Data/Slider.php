@@ -57,14 +57,14 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      *
      * @var float|null
      */
-    public ?float $minValue;
+    public ?float $minValue = null;
 
     /**
      * @internal
      *
      * @var float|null
      */
-    public ?float $maxValue;
+    public ?float $maxValue = null;
 
     /**
      * @internal
@@ -76,14 +76,14 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      *
      * @var float|null
      */
-    public ?float $increment;
+    public ?float $increment = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    public ?int $decimalPrecision;
+    public ?int $decimalPrecision = null;
 
     /**
      * Type for the column to query

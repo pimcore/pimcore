@@ -58,7 +58,7 @@ class Select extends Data implements
      *
      * @var array|null
      */
-    public ?array $options;
+    public ?array $options = null;
 
     /**
      * @internal
@@ -72,7 +72,7 @@ class Select extends Data implements
      *
      * @var string|null
      */
-    public ?string $defaultValue;
+    public ?string $defaultValue = null;
 
     /**
      * Options provider class
@@ -81,7 +81,7 @@ class Select extends Data implements
      *
      * @var string|null
      */
-    public ?string $optionsProviderClass;
+    public ?string $optionsProviderClass = null;
 
     /**
      * Options provider data
@@ -90,7 +90,7 @@ class Select extends Data implements
      *
      * @var string|null
      */
-    public ?string $optionsProviderData;
+    public ?string $optionsProviderData = null;
 
     /**
      * Type for the column to query

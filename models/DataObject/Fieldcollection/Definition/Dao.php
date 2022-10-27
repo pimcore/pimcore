@@ -28,7 +28,7 @@ class Dao extends Model\Dao\AbstractDao
 {
     use DataObject\ClassDefinition\Helper\Dao;
 
-    protected ?array $tableDefinitions = null;
+    protected array $tableDefinitions = [];
 
     public function getTableName(DataObject\ClassDefinition $class): string
     {
@@ -99,7 +99,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $this->removeUnusedColumns($table, $columnsToRemove, $protectedColums);
-        $this->tableDefinitions = null;
+        $this->tableDefinitions = [];
     }
 
     public function classSaved(DataObject\ClassDefinition $classDefinition)

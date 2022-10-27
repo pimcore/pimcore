@@ -44,14 +44,14 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @var string|null
      */
-    public ?string $id;
+    public ?string $id = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    public ?string $name;
+    public ?string $name = null;
 
     /**
      * @internal
@@ -72,28 +72,28 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @var int|null
      */
-    public ?int $creationDate;
+    public ?int $creationDate = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    public ?int $modificationDate;
+    public ?int $modificationDate = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    public ?int $userOwner;
+    public ?int $userOwner = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    public ?int $userModification;
+    public ?int $userModification = null;
 
     /**
      * @internal
@@ -109,7 +109,7 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @var string|null
      */
-    public ?string $implementsInterfaces;
+    public ?string $implementsInterfaces = null;
 
     /**
      * Name of the listing parent class if set
@@ -181,21 +181,21 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @var DataObject\ClassDefinition\Layout|null
      */
-    public ?ClassDefinition\Layout $layoutDefinitions;
+    public ?ClassDefinition\Layout $layoutDefinitions = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    public ?string $icon;
+    public ?string $icon = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    public ?string $group;
+    public ?string $group = null;
 
     /**
      * @internal
@@ -216,7 +216,7 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @var string|null
      */
-    public ?string $previewGeneratorReference;
+    public ?string $previewGeneratorReference = null;
 
     /**
      * @internal

@@ -29,7 +29,7 @@ final class FilteredMigrationsRepository implements \Doctrine\Migrations\Migrati
 {
     private FilesystemMigrationsRepository $filesystemRepo;
 
-    private ?string $prefix;
+    private ?string $prefix = null;
 
     public function __invoke(DependencyFactory $dependencyFactory): static
     {

@@ -25,7 +25,7 @@ use Pimcore\Model\Element\Service;
  */
 final class RequiredBy extends AbstractOperator
 {
-    private ?string $elementType;
+    private ?string $elementType = null;
 
     private bool $onlyCount;
 

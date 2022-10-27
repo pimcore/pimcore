@@ -44,18 +44,18 @@ class OnlineShopOrderItem extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model
 {
 protected $o_classId = "EF_OSOI";
 protected $o_className = "OnlineShopOrderItem";
-protected ?string $orderState;
-protected \Pimcore\Model\Element\AbstractElement|AbstractObject|null $product;
-protected ?string $productNumber;
-protected ?string $productName;
-protected ?float $amount;
-protected ?string $totalNetPrice;
-protected ?string $totalPrice;
+protected ?string $orderState = null;
+protected \Pimcore\Model\Element\AbstractElement|AbstractObject|null $product = null;
+protected ?string $productNumber = null;
+protected ?string $productName = null;
+protected ?float $amount = null;
+protected ?string $totalNetPrice = null;
+protected ?string $totalPrice = null;
 protected array $taxInfo;
-protected ?Fieldcollection $pricingRules;
-protected ?string $comment;
+protected ?Fieldcollection $pricingRules = null;
+protected ?string $comment = null;
 protected array $subItems;
-protected Objectbrick|null|OnlineShopOrderItem\Customized $customized;
+protected Objectbrick|null|OnlineShopOrderItem\Customized $customized = null;
 
 
     public static function create(array $values = array()): OnlineShopOrderItem

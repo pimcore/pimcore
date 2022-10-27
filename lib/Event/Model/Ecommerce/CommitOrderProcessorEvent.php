@@ -27,7 +27,7 @@ class CommitOrderProcessorEvent extends Event
 
     protected CommitOrderProcessorInterface $commitOrderProcessor;
 
-    protected ?AbstractOrder $order;
+    protected ?AbstractOrder $order = null;
 
     /**
      * CommitOrderProcessorEvent constructor.

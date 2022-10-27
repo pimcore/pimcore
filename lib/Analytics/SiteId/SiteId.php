@@ -30,7 +30,7 @@ class SiteId
 
     private string $configKey;
 
-    private ?Site $site;
+    private ?Site $site = null;
 
     private function __construct(string $configKey, Site $site = null)
     {

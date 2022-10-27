@@ -25,17 +25,17 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 {
     use DataObject\ClassDefinition\Helper\VarExport;
 
-    public ?string $name;
+    public ?string $name = null;
 
-    public ?string $title;
+    public ?string $title = null;
 
-    public ?string $tooltip;
+    public ?string $tooltip = null;
 
     public bool $mandatory = false;
 
     public bool $noteditable = false;
 
-    public ?int $index;
+    public ?int $index = null;
 
     public bool $locked = false;
 
@@ -203,10 +203,12 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public function setValues(array $data = [], array $blockedKeys = []): static
     {
         foreach ($data as $key => $value) {
-            if (!in_array($key, $blockedKeys)) {
-                $method = 'set' . $key;
-                if (method_exists($this, $method)) {
-                    $this->$method($value);
+            if(!empty($value)) {
+                if (!in_array($key, $blockedKeys)) {
+                    $method = 'set' . $key;
+                    if (method_exists($this, $method)) {
+                        $this->$method($value);
+                    }
                 }
             }
         }

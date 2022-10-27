@@ -38,7 +38,7 @@ class Dao extends Model\Dao\AbstractDao
     use DataObject\ClassDefinition\Helper\Dao;
     use DataObject\Traits\CompositeIndexTrait;
 
-    protected ?array $tableDefinitions = null;
+    protected array $tableDefinitions = [];
 
     protected DataObject\Concrete\Dao\InheritanceHelper $inheritanceHelper;
 
@@ -943,7 +943,7 @@ QUERY;
             $this->createLocalizedViews();
         }
 
-        $this->tableDefinitions = null;
+        $this->tableDefinitions = [];
     }
 
     public function getFieldDefinitionParams(string $fieldname, string $language, array $extraParams = []): array

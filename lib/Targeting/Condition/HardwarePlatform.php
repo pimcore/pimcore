@@ -23,7 +23,7 @@ use Pimcore\Targeting\Model\VisitorInfo;
 
 class HardwarePlatform extends AbstractVariableCondition implements DataProviderDependentInterface
 {
-    private ?string $platform;
+    private ?string $platform = null;
 
     /**
      * Mapping from admin UI values to DeviceDetector results. If value

@@ -25,7 +25,7 @@ use Symfony\Component\Routing\Route;
  */
 final class DocumentRoute extends Route implements RouteObjectInterface
 {
-    protected ?Document $document;
+    protected ?Document $document = null;
 
     public function getDocument(): ?Document
     {

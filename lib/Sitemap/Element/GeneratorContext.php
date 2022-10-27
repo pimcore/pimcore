@@ -23,7 +23,7 @@ class GeneratorContext implements GeneratorContextInterface
 {
     private UrlContainerInterface $urlContainer;
 
-    private ?string $section;
+    private ?string $section = null;
 
     private array $parameters = [];
 

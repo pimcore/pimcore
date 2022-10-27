@@ -62,9 +62,9 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
 
     public bool $considerTenants = false;
 
-    public bool $multiPreSelect = false;
+    public string $multiPreSelect = '';
 
-    public string $filterGroups = '';
+    public array $filterGroups = [];
 
     public array $predefinedPreSelectOptions = [];
 
@@ -82,22 +82,22 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         return $this->considerTenants;
     }
 
-    public function setFilterGroups($filterGroups)
+    public function setFilterGroups(array $filterGroups)
     {
         $this->filterGroups = $filterGroups;
     }
 
-    public function getFilterGroups(): string
+    public function getFilterGroups(): array
     {
         return $this->filterGroups;
     }
 
-    public function setMultiPreSelect(bool $multiPreSelect)
+    public function setMultiPreSelect(string $multiPreSelect)
     {
         $this->multiPreSelect = $multiPreSelect;
     }
 
-    public function getMultiPreSelect(): bool
+    public function getMultiPreSelect(): string
     {
         return $this->multiPreSelect;
     }

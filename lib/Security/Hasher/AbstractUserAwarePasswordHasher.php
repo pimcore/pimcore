@@ -25,7 +25,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 abstract class AbstractUserAwarePasswordHasher extends PlaintextPasswordHasher implements UserAwarePasswordHasherInterface
 {
-    protected ?UserInterface $user;
+    protected ?UserInterface $user = null;
 
     /**
      * {@inheritdoc}

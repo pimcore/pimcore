@@ -25,7 +25,7 @@ class CheckoutManagerStepsEvent extends Event
 {
     use ArgumentsAwareTrait;
 
-    protected ?CheckoutStepInterface $currentStep;
+    protected ?CheckoutStepInterface $currentStep = null;
 
     protected CheckoutManagerInterface $checkoutManager;
 

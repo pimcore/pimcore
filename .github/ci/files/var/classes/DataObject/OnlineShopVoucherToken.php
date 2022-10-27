@@ -29,8 +29,8 @@ class OnlineShopVoucherToken extends Concrete
 {
 protected $o_classId = "EF_OSVT";
 protected $o_className = "OnlineShopVoucherToken";
-protected ?float $tokenId;
-protected ?string $token;
+protected ?float $tokenId = null;
+protected ?string $token = null;
 protected \Pimcore\Model\Element\AbstractElement|null|OnlineShopVoucherSeries $voucherSeries;
 
 

@@ -27,7 +27,7 @@ final class PHPCode extends AbstractOperator
 
     private string $phpClass;
 
-    private ?OperatorInterface $instance;
+    private ?OperatorInterface $instance = null;
 
 
     public function __construct(\stdClass $config, $context = null)

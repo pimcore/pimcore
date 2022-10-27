@@ -32,7 +32,7 @@ class Dao extends Model\Dao\AbstractDao
 {
     use DataObject\ClassDefinition\Helper\Dao;
 
-    protected ?array $tableDefinitions = null;
+    protected array $tableDefinitions = [];
 
     public function getDataTableName(): string
     {
@@ -257,7 +257,7 @@ class Dao extends Model\Dao\AbstractDao
             CONSTRAINT `'.self::getForeignKeyName($dataTable, 'o_id').'` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
         ) DEFAULT CHARSET=utf8mb4;');
 
-        $this->tableDefinitions = null;
+        $this->tableDefinitions = [];
 
         $this->handleEncryption($this->model->getClass(), [$groupsTable, $dataTable]);
     }

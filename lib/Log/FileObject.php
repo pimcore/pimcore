@@ -23,7 +23,7 @@ use Pimcore\Tool\Storage;
 
 final class FileObject
 {
-    protected ?string $filename;
+    protected ?string $filename = null;
 
     protected string $data;
 

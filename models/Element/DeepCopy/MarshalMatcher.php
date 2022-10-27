@@ -25,9 +25,9 @@ use Pimcore\Model\Element\Service;
  */
 class MarshalMatcher extends TypeMatcher
 {
-    private ?string $sourceType;
+    private ?string $sourceType = null;
 
-    private ?int $sourceId;
+    private ?int $sourceId = null;
 
     /**
      * MarshalMatcher constructor.

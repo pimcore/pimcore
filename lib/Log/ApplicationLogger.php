@@ -25,7 +25,7 @@ use Psr\Log\LoggerInterface;
 
 class ApplicationLogger implements LoggerInterface
 {
-    protected ?string $component;
+    protected ?string $component = null;
 
     protected string|null|FileObject $fileObject;
 
