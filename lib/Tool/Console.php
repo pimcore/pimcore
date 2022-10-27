@@ -241,9 +241,7 @@ final class Console
         $cmd = self::buildPhpScriptCmd($script, $arguments);
         self::addLowProcessPriority($cmd);
         $process = new Process($cmd);
-        if ($timeout) {
-            $process->setTimeout($timeout);
-        }
+        $process->setTimeout($timeout);
         $process->start();
 
         if (!empty($outputFile)) {
