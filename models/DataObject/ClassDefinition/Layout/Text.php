@@ -15,8 +15,10 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Layout;
 
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\Concrete;
+use Twig\Sandbox\SecurityError;
 
 class Text extends Model\DataObject\ClassDefinition\Layout implements Model\DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface
 {
@@ -143,13 +145,24 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
         }
 
         $templatingEngine = \Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
-        $twig = $templatingEngine->getTwigEnvironment();
-        $template = $twig->createTemplate($this->html);
-        $this->html = $template->render(array_merge($context,
-            [
-                'object' => $object,
-            ]
-        ));
+
+        try {
+            $twig = $templatingEngine->getTwigEnvironment(true);
+            $template = $twig->createTemplate($this->html);
+            $this->html = $template->render(array_merge($context,
+                [
+                    'object' => $object,
+                ]
+            ));
+        } catch (SecurityError $e) {
+            Logger::err((string) $e);
+
+            $this->html = sprintf('<h2>Error</h2>Failed rendering the template: <b>%s</b>.
+                Please check your twig sandbox security policy or contact the administrator.',
+                substr($e->getMessage(), 0, strpos($e->getMessage(), ' in "__string')));
+        } finally {
+            $templatingEngine->disableSandboxExtensionFromTwigEnvironment();
+        }
 
         return $this;
     }
