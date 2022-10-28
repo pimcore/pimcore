@@ -45,10 +45,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
  */
 final class PimcoreCoreExtension extends ConfigurableExtension implements PrependExtensionInterface
 {
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return 'pimcore';
     }

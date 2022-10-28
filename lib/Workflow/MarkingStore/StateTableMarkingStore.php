@@ -39,7 +39,7 @@ class StateTableMarkingStore implements MarkingStoreInterface
      *
      * @return Marking
      */
-    public function getMarking($subject)// : Marking
+    public function getMarking($subject): Marking
     {
         $subject = $this->checkIfSubjectIsValid($subject);
 
