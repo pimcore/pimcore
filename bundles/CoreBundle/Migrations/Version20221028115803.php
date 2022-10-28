@@ -34,7 +34,7 @@ final class Version20221028115803 extends AbstractMigration
         foreach ($listing->getClasses() as $class) {
             $fds = $class->getFieldDefinitions();
             foreach ($fds as $fd) {
-                if ($fd instanceof \Pimcore\Model\DataObject\ClassDefinition\Data\FieldCollections) {
+                if ($fd instanceof \Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections) {
                     $this->write(sprintf('Saving php files for class: %s', $class->getName()));
                     $class->generateClassFiles(true);
                     continue 2;
