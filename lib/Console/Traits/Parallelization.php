@@ -78,9 +78,9 @@ trait Parallelization
     ): ParallelExecutorFactory {
         return ParallelExecutorFactory::create(...func_get_args())
             ->withSegmentSize($this->getSegmentSize())
-            ->withRunBeforeFirstCommand(Closure::fromCallable([$this, 'runBeforeFirstCommand']))
-            ->withRunAfterLastCommand(Closure::fromCallable([$this, 'runAfterLastCommand']))
-            ->withRunAfterBatch(Closure::fromCallable([$this, 'runAfterBatch']));
+            ->withRunBeforeFirstCommand($this->runBeforeFirstCommand(...))
+            ->withRunAfterLastCommand($this->runAfterLastCommand(...))
+            ->withRunAfterBatch($this->runAfterBatch(...));
     }
 
     /**
