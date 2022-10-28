@@ -184,7 +184,7 @@ final class DefaultValue extends AbstractValue
             }
             if (count($attributeParts) > 1) {
                 $json = json_decode(trim($attributeParts[0], '?'));
-            $brickType = $json ? $json->containerKey : $attributeParts[0];
+                $brickType = $json ? $json->containerKey : $attributeParts[0];
                 $brickKey = $attributeParts[1];
 
                 $getter = 'get' . Service::getFieldForBrickType($element->getClass(), $brickType);
