@@ -75,7 +75,7 @@ public function setName(?string $name): static
 /**
 * @return \Pimcore\Model\DataObject\Fieldcollection|null
 */
-public function getTokenSettings()
+public function getTokenSettings(): ?Fieldcollection
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("tokenSettings");

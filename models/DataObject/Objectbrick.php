@@ -57,7 +57,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      *
      * @var array
      */
-    protected $brickGetters = [];
+    protected array $brickGetters = [];
 
     /**
      * @param Concrete $object

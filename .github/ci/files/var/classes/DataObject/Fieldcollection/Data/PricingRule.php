@@ -47,7 +47,7 @@ public function setRuleId(?float $ruleId): static
 }
 
 /**
-* Get localizedfields - 
+* Get localizedfields -
 * @return \Pimcore\Model\DataObject\Localizedfield|null
 */
 public function getLocalizedfields(): ?\Pimcore\Model\DataObject\Localizedfield
@@ -67,7 +67,7 @@ public function getLocalizedfields(): ?\Pimcore\Model\DataObject\Localizedfield
 * Get name - Name
 * @return string|null
 */
-public function getName($language = null): ?string
+public function getName(?string $language = null): ?string
 {
 	$data = $this->getLocalizedfields()->getLocalizedValue("name", $language);
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
@@ -78,7 +78,7 @@ public function getName($language = null): ?string
 }
 
 /**
-* Set localizedfields - 
+* Set localizedfields -
 * @param \Pimcore\Model\DataObject\Localizedfield|null $localizedfields
 * @return $this
 */
@@ -96,10 +96,8 @@ public function setLocalizedfields(?\Pimcore\Model\DataObject\Localizedfield $lo
 
 /**
 * Set name - Name
-* @param string|null $name
-* @return $this
 */
-public function setName (?string $name, $language = null): static
+public function setName (?string $name, ?string $language = null): static
 {
 	$isEqual = false;
 	$this->getLocalizedfields()->setLocalizedValue("name", $name, $language, !$isEqual);

@@ -2,32 +2,24 @@
 
 namespace Pimcore\Model\DataObject\OnlineShopOrder;
 
-use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
-
-class PaymentProvider extends \Pimcore\Model\DataObject\Objectbrick {
-
-protected $brickGetters = ['PaymentProviderUnzer'];
-
-
-protected $PaymentProviderUnzer = null;
-
-/**
-* @return \Pimcore\Model\DataObject\Objectbrick\Data\PaymentProviderUnzer|null
-*/
-public function getPaymentProviderUnzer()
+class PaymentProvider extends \Pimcore\Model\DataObject\Objectbrick
 {
-	return $this->PaymentProviderUnzer;
-}
 
-/**
-* @param \Pimcore\Model\DataObject\Objectbrick\Data\PaymentProviderUnzer $PaymentProviderUnzer
-* @return \Pimcore\Model\DataObject\OnlineShopOrder\PaymentProvider
-*/
-public function setPaymentProviderUnzer($PaymentProviderUnzer)
-{
-	$this->PaymentProviderUnzer = $PaymentProviderUnzer;
-	return $this;
-}
+    protected array $brickGetters = ['PaymentProviderUnzer'];
+
+
+    protected ?\Pimcore\Model\DataObject\Objectbrick\Data\PaymentProviderUnzer $PaymentProviderUnzer = null;
+
+    public function getPaymentProviderUnzer(): ?\Pimcore\Model\DataObject\Objectbrick\Data\PaymentProviderUnzer
+    {
+        return $this->PaymentProviderUnzer;
+    }
+
+    public function setPaymentProviderUnzer(\Pimcore\Model\DataObject\Objectbrick\Data\PaymentProviderUnzer $PaymentProviderUnzer): static
+    {
+        $this->PaymentProviderUnzer = $PaymentProviderUnzer;
+        return $this;
+    }
 
 }
 

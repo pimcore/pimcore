@@ -159,10 +159,7 @@ public function setDefaultOrderByInheritance(?string $defaultOrderByInheritance)
 	return $this;
 }
 
-/**
-* @return \Pimcore\Model\DataObject\Fieldcollection|null
-*/
-public function getDefaultOrderBy()
+public function getDefaultOrderBy(): ?Fieldcollection
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("defaultOrderBy");
@@ -444,7 +441,7 @@ public function setConditionsInheritance(?string $conditionsInheritance): static
 /**
 * @return \Pimcore\Model\DataObject\Fieldcollection|null
 */
-public function getConditions()
+public function getConditions(): ?Fieldcollection
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("conditions");
@@ -515,7 +512,7 @@ public function setFiltersInheritance(?string $filtersInheritance): static
 /**
 * @return \Pimcore\Model\DataObject\Fieldcollection|null
 */
-public function getFilters()
+public function getFilters(): ?Fieldcollection
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("filters");

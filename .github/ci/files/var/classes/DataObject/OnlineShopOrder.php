@@ -444,7 +444,7 @@ public function setGiftItems(?array $giftItems): static
 /**
 * @return \Pimcore\Model\DataObject\Fieldcollection|null
 */
-public function getPriceModifications()
+public function getPriceModifications(): ?Fieldcollection
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("priceModifications");
@@ -1343,9 +1343,6 @@ public function setDeliveryCountry(?string $deliveryCountry): static
 	return $this;
 }
 
-/**
-* @return \Pimcore\Model\DataObject\OnlineShopOrder\PaymentProvider
-*/
 public function getPaymentProvider(): ?\Pimcore\Model\DataObject\Objectbrick
 {
 	$data = $this->paymentProvider;
@@ -1380,10 +1377,7 @@ public function setPaymentProvider(?\Pimcore\Model\DataObject\Objectbrick $payme
 	return $this;
 }
 
-/**
-* @return \Pimcore\Model\DataObject\Fieldcollection|null
-*/
-public function getPaymentInfo()
+public function getPaymentInfo(): ?Fieldcollection
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("paymentInfo");

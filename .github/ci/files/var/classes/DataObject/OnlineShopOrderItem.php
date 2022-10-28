@@ -353,7 +353,7 @@ public function setTaxInfo(?array $taxInfo): static
 /**
 * @return \Pimcore\Model\DataObject\Fieldcollection|null
 */
-public function getPricingRules()
+public function getPricingRules(): ?Fieldcollection
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("pricingRules");
@@ -456,9 +456,6 @@ public function setSubItems(?array $subItems): static
 	return $this;
 }
 
-/**
-* @return \Pimcore\Model\DataObject\OnlineShopOrderItem\Customized
-*/
 public function getCustomized(): ?\Pimcore\Model\DataObject\Objectbrick
 {
 	$data = $this->customized;

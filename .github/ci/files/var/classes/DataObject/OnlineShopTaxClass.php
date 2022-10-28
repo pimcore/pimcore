@@ -75,7 +75,7 @@ public function setTaxEntryCombinationType(?string $taxEntryCombinationType): st
 /**
 * @return \Pimcore\Model\DataObject\Fieldcollection|null
 */
-public function getTaxEntries()
+public function getTaxEntries(): ?Fieldcollection
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("taxEntries");
