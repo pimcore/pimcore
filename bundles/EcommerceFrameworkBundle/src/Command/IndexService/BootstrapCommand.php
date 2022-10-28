@@ -172,11 +172,8 @@ class BootstrapCommand extends AbstractIndexServiceCommand
         return $this->indexService;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getItemName(int $count): string
+    protected function getItemName(?int $count): string
     {
-        return $count == 1 ? 'Product' : 'Products';
+        return $count === 1 ? 'product' : 'products';
     }
 }

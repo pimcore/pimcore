@@ -154,7 +154,7 @@ class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
         return $workerList;
     }
 
-    protected function getItemName(int $count): string
+    protected function getItemName(?int $count): string
     {
         return 'combined product ID rows in store table index';
     }

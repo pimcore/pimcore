@@ -15,13 +15,17 @@
 
 namespace Pimcore\Console\Traits;
 
+use Closure;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
+use Webmozarts\Console\Parallelization\ErrorHandler\ErrorHandler;
+use Webmozarts\Console\Parallelization\ParallelExecutorFactory;
 
 trait Parallelization
 {
@@ -62,6 +66,21 @@ trait Parallelization
                 '50'
             )
         ;
+    }
+
+    protected function getParallelExecutableFactory(
+        callable $fetchItems,
+        callable $runSingleCommand,
+        callable $getItemName,
+        string $commandName,
+        InputDefinition $commandDefinition,
+        ErrorHandler $errorHandler
+    ): ParallelExecutorFactory {
+        return ParallelExecutorFactory::create(...func_get_args())
+            ->withSegmentSize($this->getSegmentSize())
+            ->withRunBeforeFirstCommand(Closure::fromCallable([$this, 'runBeforeFirstCommand']))
+            ->withRunAfterLastCommand(Closure::fromCallable([$this, 'runAfterLastCommand']))
+            ->withRunAfterBatch(Closure::fromCallable([$this, 'runAfterBatch']));
     }
 
     /**
@@ -107,17 +126,9 @@ trait Parallelization
     /**
      * {@inheritdoc}
      */
-    protected function getItemName(int $count): string
+    protected function getItemName(?int $count): string
     {
-        return $count <= 1 ? 'item' : 'items';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getContainer()
-    {
-        return \Pimcore::getKernel()->getContainer();
+        return $count === 1 ? 'item' : 'items';
     }
 
     /**
@@ -145,13 +156,5 @@ trait Parallelization
             $this->lock->release();
             $this->lock = null;
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getConsolePath(): string
-    {
-        return PIMCORE_PROJECT_ROOT . '/bin/console';
     }
 }
