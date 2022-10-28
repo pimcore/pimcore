@@ -107,7 +107,7 @@ trait Parallelization
     /**
      * {@inheritdoc}
      */
-    protected function getItemName(int $count): string
+    protected function getItemName(?int $count): string
     {
         return $count <= 1 ? 'item' : 'items';
     }
