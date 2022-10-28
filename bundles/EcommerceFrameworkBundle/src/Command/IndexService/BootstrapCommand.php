@@ -80,7 +80,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
     /**
      * {@inheritdoc}
      */
-    protected function fetchItems(InputInterface $input): array
+    protected function fetchItems(InputInterface $input, OutputInterface $output): array
     {
         $updateIndex = $input->getOption('update-index');
         $createOrUpdateIndexStructure = $input->getOption('create-or-update-index-structure');

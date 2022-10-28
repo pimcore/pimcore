@@ -96,7 +96,7 @@ class ThumbnailsImageCommand extends AbstractCommand
         }
     }
 
-    protected function fetchItems(InputInterface $input): array
+    protected function fetchItems(InputInterface $input, OutputInterface $output): array
     {
         $list = new Asset\Listing();
 

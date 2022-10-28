@@ -93,7 +93,7 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
     /**
      * {@inheritdoc}
      */
-    protected function fetchItems(InputInterface $input): array
+    protected function fetchItems(InputInterface $input, OutputInterface $output): array
     {
         $tenantNameFilterList = $input->getOption('tenant');
         $combinedRows = $this->indexUpdateService->fetchProductIdsForIndexUpdate($tenantNameFilterList);
