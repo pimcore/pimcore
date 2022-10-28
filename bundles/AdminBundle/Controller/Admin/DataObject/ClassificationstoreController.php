@@ -38,13 +38,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class ClassificationstoreController extends AdminController implements KernelControllerEventInterface
 {
     /**
-     * Delete collection with the group-relations
-     *
      * @Route("/delete-collection", name="deletecollection", methods={"DELETE"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
      */
     public function deleteCollectionAction(Request $request): JsonResponse
     {
