@@ -57,7 +57,7 @@ final class Version20210323082921 extends AbstractMigration
 
             foreach ($data as $row) {
                 if (!empty($row['id'])) {
-                    if ($row['language'] === null) {
+                    if (!array_key_exists('language',$row) || $row['language'] === null) {
                         $row['language'] = '';
                         $this->write("Language of setting id {$row['id']}: {$row['name']} for siteId {$row['siteId']} was NULL, converted to empty string");
                     }
