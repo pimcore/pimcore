@@ -109,6 +109,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
             }
             this.settings.shareGlobally = this.shareGlobally ? this.shareGlobally.getValue() : false;
             this.settings.setAsFavourite = this.setAsFavourite ? this.setAsFavourite.getValue() : false;
+            this.settings.saveFilters = this.saveFilters ? this.saveFilters.getValue() : false;
         } else {
             delete this.settings.sharedUserIds;
             delete this.settings.sharedRoleIds;

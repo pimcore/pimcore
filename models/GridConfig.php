@@ -73,6 +73,8 @@ class GridConfig extends AbstractModel
 
     protected bool $setAsFavourite = false;
 
+    protected bool $saveFilters = false;
+
     /**
      * @var string
      */
@@ -295,6 +297,22 @@ class GridConfig extends AbstractModel
     public function setSetAsFavourite($setAsFavourite)
     {
         $this->setAsFavourite = (bool) $setAsFavourite;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSaveFilters()
+    {
+        return $this->saveFilters;
+    }
+
+    /**
+     * @param bool $setSaveFilters
+     */
+    public function setSaveFilters($saveFilters)
+    {
+        $this->saveFilters = (bool) $saveFilters;
     }
 
     /**

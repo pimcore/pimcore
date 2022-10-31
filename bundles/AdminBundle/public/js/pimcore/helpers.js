@@ -2386,7 +2386,7 @@ pimcore.helpers.removeOtherConfigs = function (objectId, classId, gridConfigId, 
     });
 };
 
-pimcore.helpers.saveColumnConfig = function (objectId, classId, configuration, searchType, button, callback, settings, type, context) {
+pimcore.helpers.saveColumnConfig = function (objectId, classId, configuration, searchType, button, callback, settings, type, context, filter) {
 
     type = type || "object";
 
@@ -2413,7 +2413,8 @@ pimcore.helpers.saveColumnConfig = function (objectId, classId, configuration, s
             searchType: searchType,
             settings: Ext.encode(settings),
             context: Ext.encode(context),
-            type: type
+            type: type,
+            filter: Ext.encode(filter),
         };
 
         var url = Routing.generate(route);
