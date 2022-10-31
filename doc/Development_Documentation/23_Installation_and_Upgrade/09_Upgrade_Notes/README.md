@@ -93,6 +93,8 @@ Please make sure to set your preferred storage location ***before*** migration. 
   - Removed commands: `pimcore:bundle:enable`, `pimcore:bundle:disable`.
   - Removed `dontCheckEnabled` config support from Areablock editable.
 - [Codeception] Bumped `codeception/codeception` version to ^5.0. Now, Pimcore is using a new directory structure for tests (Codeception 5 directory structure). For details, please see [#13415](https://github.com/pimcore/pimcore/pull/13415)
+- `Element\Service::getValidKey()` strips all control/unassigned, invalid and some more special (e.g. tabs, line-breaks, form-feed & vertical whitespace) characters.
+
 
 ## 10.5.8
 - [Twig] Sending mails and Dataobject Text Layouts, which allow rendering user controlled twig templates are now executed in a sandbox with restrictive security policies for tags, filters, functions.
