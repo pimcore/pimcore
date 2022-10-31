@@ -57,12 +57,7 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
 
     protected function load()
     {
-        if ($this->sessionLoaded) {
-            return;
-        }
-
-        //if the session was not explicitly started in cli environment, do nothing
-        if ('cli' === php_sapi_name()) {
+        if ($this->sessionLoaded || $this->isCli()) {
             return;
         }
 
@@ -85,8 +80,7 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
 
     public function save()
     {
-        //if the session was not explicitly started in cli environment, do nothing
-        if ('cli' === php_sapi_name()) {
+        if ($this->isCli()) {
             return;
         }
 
@@ -105,8 +99,7 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
     {
         parent::clearEnvironment();
 
-        //if the session was not explicitly started in cli environment, do nothing
-        if ('cli' === php_sapi_name()) {
+        if ($this->isCli()) {
             return;
         }
 
@@ -136,5 +129,10 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
     private function getSession(): SessionInterface
     {
         return $this->requestStack->getSession();
+    }
+
+    private function isCli(): bool
+    {
+        return php_sapi_name() === 'cli';
     }
 }

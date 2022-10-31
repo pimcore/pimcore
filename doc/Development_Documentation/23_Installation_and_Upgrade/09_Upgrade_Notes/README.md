@@ -95,7 +95,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Codeception] Bumped `codeception/codeception` version to ^5.0. Now, Pimcore is using a new directory structure for tests (Codeception 5 directory structure). For details, please see [#13415](https://github.com/pimcore/pimcore/pull/13415)
 - [Session] 
   - `AdminSessionHandler` requires session from request stack.
-  - `EcommerceFrameworkBundle\SessionEnvironment` does not work in cli mode anymore.
+  - `EcommerceFrameworkBundle\SessionEnvironment` not supported in cli mode anymore.
   - `EcommerceFrameworkBundle\Tracking\TrackingManager` requires session from request stack.
 
 ## 10.5.8
