@@ -30,7 +30,7 @@ class AssetsInstaller
 {
     private ?\Closure $runCallback = null;
 
-    private ?string $composerJsonSettin = null;
+    private ?string $composerJsonSetting = null;
 
     /**
      * Runs this assets:install command

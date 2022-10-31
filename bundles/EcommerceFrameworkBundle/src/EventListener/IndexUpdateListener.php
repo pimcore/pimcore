@@ -24,8 +24,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class IndexUpdateListener implements EventSubscriberInterface
 {
-    #[\ReturnTypeWillChange]
-    public static function getSubscribedEvents(): array//: array
+
+    public static function getSubscribedEvents(): array
     {
         return [
             DataObjectEvents::POST_ADD => 'onObjectUpdate',

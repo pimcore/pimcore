@@ -88,8 +88,7 @@ class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multisel
         return $obj;
     }
 
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize(): static// : static
+    public function jsonSerialize(): static
     {
         if (Service::doRemoveDynamicOptions()) {
             $this->options = null;

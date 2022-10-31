@@ -394,7 +394,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return 'NOT SUPPORTED';
     }
 
-
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $dataString = '';
@@ -466,7 +465,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $this->fieldDefinitionsCache = null;
     }
 
-
     public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
         $localizedFields = $this->getDataFromObjectParam($object, $params);
@@ -504,7 +502,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
         return $localizedFields;
     }
-
 
     public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
@@ -716,7 +713,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
         return $fields;
     }
-
 
     public function getCacheTags(mixed $data, array $tags = []): array
     {
@@ -1156,7 +1152,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $this->provideSplitView = (bool) $provideSplitView;
     }
 
-
     public function supportsDirtyDetection(): bool
     {
         return true;
@@ -1180,30 +1175,25 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $this->tabPosition = $tabPosition;
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Localizedfield::class;
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Localizedfield::class;
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\'. DataObject\Localizedfield::class . '|null';
     }
 
-
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Localizedfield::class . '|null';
     }
-
 
     public function normalize(mixed $value, array $params = []): ?array
     {
@@ -1237,7 +1227,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
         return null;
     }
-
 
     public function denormalize(mixed $value, array $params = []): ?Localizedfield
     {

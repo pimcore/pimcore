@@ -29,7 +29,7 @@ class JsonResponse extends BaseJsonResponse
     /**
      * {@inheritdoc}
      */
-    public function setData($data = []): JsonResponse|BaseJsonResponse// : static
+    public function setData($data = []): static
     {
         $serializer = Serialize::getAdminSerializer();
 

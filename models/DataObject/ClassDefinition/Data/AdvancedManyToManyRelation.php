@@ -540,7 +540,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return '';
     }
 
-
     public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
         if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
@@ -673,7 +672,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         // instead, ask the database directly
         return Element\Service::filterUnpublishedAdvancedElements($data);
     }
-
 
     public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
@@ -821,7 +819,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
         return $dependencies;
     }
-
 
     public function normalize(mixed $value, array $params = []): ?array
     {
@@ -1020,12 +1017,10 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         $this->enableBatchEdit = (bool) $enableBatchEdit;
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\'.DataObject\Data\ElementMetadata::class.'[]';
     }
-
 
     public function getPhpdocReturnType(): ?string
     {

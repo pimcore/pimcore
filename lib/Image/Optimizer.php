@@ -81,7 +81,6 @@ class Optimizer implements ImageOptimizerInterface
         }
     }
 
-
     public function registerOptimizer(OptimizerInterface $optimizer)
     {
         if (in_array($optimizer, $this->optimizers)) {

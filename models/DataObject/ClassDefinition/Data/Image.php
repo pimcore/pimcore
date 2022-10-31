@@ -219,12 +219,10 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return '';
     }
 
-
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
-
 
     public function getCacheTags(mixed $data, array $tags = []): array
     {
@@ -325,30 +323,25 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $oldValue === $newValue;
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Asset\Image::class;
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Asset\Image::class;
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Asset\Image::class . '|null';
     }
 
-
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Asset\Image::class . '|null';
     }
-
 
     public function normalize(mixed $value, array $params = []): ?array
     {
@@ -361,7 +354,6 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
         return null;
     }
-
 
     public function denormalize(mixed $value, array $params = []): ?Asset
     {

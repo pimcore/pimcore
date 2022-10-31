@@ -36,7 +36,6 @@ abstract class AbstractValue implements ValueInterface
         $this->context = $context;
     }
 
-
     public function getLabel(): string
     {
         return $this->label;

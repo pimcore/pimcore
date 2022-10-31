@@ -277,7 +277,6 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $dependencies;
     }
 
-
     public function getCacheTags(mixed $data, array $tags = []): array
     {
         if ($data instanceof DataObject\Data\Link && $data->getInternal()) {
@@ -302,7 +301,6 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
         return '';
     }
-
 
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
@@ -387,30 +385,25 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $this->isEqualArray($oldValue, $newValue);
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\Link::class;
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\Link::class;
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\Link::class . '|null';
     }
 
-
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\Link::class . '|null';
     }
-
 
     public function normalize(mixed $value, array $params = []): ?array
     {
@@ -420,7 +413,6 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
         return null;
     }
-
 
     public function denormalize(mixed $value, array $params = []): mixed
     {

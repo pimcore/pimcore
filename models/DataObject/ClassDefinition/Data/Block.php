@@ -744,7 +744,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $dependencies;
     }
 
-
     public function getCacheTags(mixed $data, array $tags = []): array
     {
         if ($this->getLazyLoading()) {
@@ -849,7 +848,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $data;
     }
 
-
     public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
     }
@@ -905,7 +903,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
         return $data;
     }
-
 
     public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
@@ -1061,12 +1058,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         }
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?array';
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
@@ -1096,18 +1091,15 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         }
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\BlockElement::class . '[][]';
     }
 
-
     public function getPhpdocReturnType(): ?string
     {
         return '\\' .DataObject\Data\BlockElement::class . '[][]';
     }
-
 
     public function normalize(mixed $value, array $params = []): array
     {
@@ -1140,7 +1132,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
         return $result;
     }
-
 
     public function denormalize(mixed $value, array $params = []): ?array
     {

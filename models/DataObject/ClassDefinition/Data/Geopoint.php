@@ -211,7 +211,6 @@ class Geopoint extends AbstractGeo implements
         return '';
     }
 
-
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
@@ -225,7 +224,6 @@ class Geopoint extends AbstractGeo implements
         return true;
     }
 
-
     public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof DataObject\Data\GeoCoordinates) {
@@ -237,7 +235,6 @@ class Geopoint extends AbstractGeo implements
 
         return null;
     }
-
 
     public function denormalize(mixed $value, array $params = []): ?DataObject\Data\GeoCoordinates
     {
@@ -300,24 +297,20 @@ class Geopoint extends AbstractGeo implements
             && (abs($oldValue->getLatitude() - $newValue->getLatitude()) < 0.000000000001);
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\GeoCoordinates::class;
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\GeoCoordinates::class;
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\GeoCoordinates::class . '|null';
     }
-
 
     public function getPhpdocReturnType(): ?string
     {

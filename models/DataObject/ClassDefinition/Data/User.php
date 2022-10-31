@@ -145,7 +145,6 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         }
     }
 
-
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
@@ -178,8 +177,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         $this->init();
     }
 
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize(): static// : static
+    public function jsonSerialize(): static
     {
         if (Service::doRemoveDynamicOptions()) {
             $this->options = null;

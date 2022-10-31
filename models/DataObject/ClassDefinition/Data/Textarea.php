@@ -246,7 +246,6 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         }
     }
 
-
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         if ($this->isExcludeFromSearchIndex()) {
@@ -278,24 +277,20 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         return true;
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?string';
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?string';
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return 'string|null';
     }
-
 
     public function getPhpdocReturnType(): ?string
     {

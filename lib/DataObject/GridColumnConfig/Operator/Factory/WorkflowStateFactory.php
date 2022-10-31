@@ -33,7 +33,6 @@ final class WorkflowStateFactory implements OperatorFactoryInterface
         $this->workflowStatusInfo = $workflowStatusInfo;
     }
 
-
     public function build(\stdClass $configElement, $context = null): OperatorInterface
     {
         $operator = new WorkflowState($configElement, $context);

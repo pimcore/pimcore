@@ -213,7 +213,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $this;
     }
 
-
     public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
         if (isset($params['isUntouchable']) && $params['isUntouchable']) {
@@ -392,7 +391,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $result;
     }
 
-
     public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
         if (!isset($params['isUpdate']) || !$params['isUpdate']) {
@@ -413,7 +411,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     {
         $this->action = $masterDefinition->action;
     }
-
 
     public function getDataForSearchIndex(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): string
     {
@@ -448,7 +445,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
         return $oldData === $newData;
     }
-
 
     public function supportsDirtyDetection(): bool
     {
@@ -671,30 +667,25 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return false;
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?array';
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?array';
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Model\DataObject\Data\UrlSlug::class . '[]';
     }
 
-
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Model\DataObject\Data\UrlSlug::class . '[]';
     }
-
 
     public function normalize(mixed $value, array $params = []): ?array
     {
@@ -713,7 +704,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
         return null;
     }
-
 
     public function denormalize(mixed $value, array $params = []): ?array
     {

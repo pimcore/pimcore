@@ -77,7 +77,6 @@ class Xliff12Exporter implements ExporterInterface
         return $exportFile;
     }
 
-
     public function getExportFilePath(string $exportId): string
     {
         $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $exportId . '.xliff';
@@ -97,7 +96,6 @@ class Xliff12Exporter implements ExporterInterface
             $this->xliffFile = simplexml_import_dom($dom);
         }
     }
-
 
     public function getContentType(): string
     {

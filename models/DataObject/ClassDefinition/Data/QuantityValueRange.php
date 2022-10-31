@@ -298,7 +298,6 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
         return '';
     }
 
-
     public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof DataObject\Data\QuantityValueRange) {
@@ -307,7 +306,6 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
 
         return null;
     }
-
 
     public function denormalize(mixed $value, array $params = []): ?DataObject\Data\QuantityValueRange
     {
@@ -459,30 +457,25 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
             && (string) $oldValue->getUnitId() === (string) $newValue->getUnitId();
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\QuantityValueRange::class;
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\QuantityValueRange::class;
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\QuantityValueRange::class . '|null';
     }
 
-
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\QuantityValueRange::class . '|null';
     }
-
 
     public function isEmpty(mixed $data): bool
     {

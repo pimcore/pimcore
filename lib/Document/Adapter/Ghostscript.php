@@ -49,7 +49,6 @@ class Ghostscript extends Adapter
         return false;
     }
 
-
     public function isFileTypeSupported(string $fileType): bool
     {
         // it's also possible to pass a path or filename
@@ -79,7 +78,6 @@ class Ghostscript extends Adapter
     {
         return Console::getExecutable('pdftotext', true);
     }
-
 
     public function load(Asset\Document $asset): static
     {
@@ -177,7 +175,6 @@ class Ghostscript extends Adapter
         return $this->version;
     }
 
-
     public function saveImage(string $imageTargetPath, int $page = 1, int $resolution = 200): mixed
     {
         try {
@@ -196,7 +193,6 @@ class Ghostscript extends Adapter
         }
 
     }
-
 
     public function getText(?int $page = null, ?Asset\Document $asset = null): mixed
     {

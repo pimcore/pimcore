@@ -85,7 +85,7 @@ abstract class Controller extends AbstractController
     /**
      * @return string[]
      */
-    public static function getSubscribedServices(): array// : array
+    public static function getSubscribedServices(): array
     {
         $services = parent::getSubscribedServices();
         $services['pimcore.templating'] = '?'.EngineInterface::class;

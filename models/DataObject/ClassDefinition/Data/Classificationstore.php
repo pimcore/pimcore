@@ -430,7 +430,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return 'not supported';
     }
 
-
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $dataString = '';
@@ -518,7 +517,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $this->fieldDefinitionsCache = null;
     }
 
-
     public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
         $classificationStore = $this->getDataFromObjectParam($object);
@@ -537,7 +535,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         return $classificationStore;
     }
-
 
     public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
@@ -934,7 +931,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): static // : static
+    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): static
     {
         $this->activeGroupDefinitions = [];
         $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);
@@ -1098,30 +1095,25 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $this;
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Classificationstore::class;
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Classificationstore::class;
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Classificationstore::class . '|null';
     }
 
-
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Classificationstore::class . '|null';
     }
-
 
     public function normalize(mixed $value, array $params = []): ?array
     {
@@ -1165,7 +1157,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         return null;
     }
-
 
     public function denormalize(mixed $value, array $params = []): ?DataObject\Classificationstore
     {

@@ -350,7 +350,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         return '******';
     }
 
-
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
@@ -415,24 +414,20 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         $this->saltlocation = $masterDefinition->saltlocation;
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?string';
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?string';
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return 'string|null';
     }
-
 
     public function getPhpdocReturnType(): ?string
     {

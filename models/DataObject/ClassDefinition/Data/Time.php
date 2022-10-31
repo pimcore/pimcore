@@ -196,7 +196,6 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
         return $this->toTimestamp($subject, $baseTs) < $this->toTimestamp($comparison, $baseTs);
     }
 
-
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';

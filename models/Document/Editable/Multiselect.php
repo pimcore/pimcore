@@ -95,7 +95,6 @@ class Multiselect extends Model\Document\Editable implements EditmodeDataInterfa
         return $this;
     }
 
-
     public function isEmpty(): bool
     {
         return empty($this->values);

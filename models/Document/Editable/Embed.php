@@ -53,7 +53,6 @@ class Embed extends Model\Document\Editable
         return $this->url;
     }
 
-
     public function getDataForResource(): array
     {
         return [
@@ -132,7 +131,6 @@ class Embed extends Model\Document\Editable
 
         return $this;
     }
-
 
     public function isEmpty(): bool
     {

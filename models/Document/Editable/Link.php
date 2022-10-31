@@ -186,7 +186,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return '';
     }
 
-
     public function checkValidity(): bool
     {
         $sane = true;
@@ -418,7 +417,6 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
 
         return $this;
     }
-
 
     public function isEmpty(): bool
     {

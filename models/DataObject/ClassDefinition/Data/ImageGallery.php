@@ -377,12 +377,10 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return '';
     }
 
-
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
-
 
     public function getCacheTags(mixed $data, array $tags = []): array
     {
@@ -492,30 +490,25 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         return true;
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\ImageGallery::class;
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\ImageGallery::class;
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\ImageGallery::class . '|null';
     }
 
-
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\ImageGallery::class . '|null';
     }
-
 
     public function normalize(mixed $value, array $params = []): ?array
     {
@@ -536,7 +529,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
 
         return null;
     }
-
 
     public function denormalize(mixed $value, array $params = []): ?DataObject\Data\ImageGallery
     {

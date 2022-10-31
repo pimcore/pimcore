@@ -33,7 +33,6 @@ final class TranslateValueFactory implements OperatorFactoryInterface
         $this->translator = $translator;
     }
 
-
     public function build(\stdClass $configElement, $context = null): OperatorInterface
     {
         return new TranslateValue($this->translator, $configElement, $context);

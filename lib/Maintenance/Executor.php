@@ -96,7 +96,6 @@ final class Executor implements ExecutorInterface
         }
     }
 
-
     public function getTaskNames(): array
     {
         return array_keys($this->tasks);
@@ -115,7 +114,6 @@ final class Executor implements ExecutorInterface
         TmpStore::set($this->pidFileName, time());
     }
 
-
     public function getLastExecution(): int
     {
         $item = TmpStore::get($this->pidFileName);
@@ -126,7 +124,6 @@ final class Executor implements ExecutorInterface
 
         return 0;
     }
-
 
     public function registerTask(string $name, TaskInterface $task)
     {

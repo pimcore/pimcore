@@ -346,7 +346,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return null;
     }
 
-
     public function hasProperty(string $name): bool
     {
         $properties = $this->getProperties();
@@ -376,7 +375,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         return $this;
     }
 
-
     public function getCacheTag(): string
     {
         $elementType = Service::getElementType($this);
@@ -397,7 +395,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         return Service::getElementCacheTag($elementType, $id);
     }
-
 
     public function getCacheTags(array $tags = []): array
     {
@@ -571,7 +568,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $this->__dataVersionTimestamp = $_dataVersionTimestamp;
     }
 
-
     public function __isBasedOnLatestData(): bool
     {
         return $this->getDao()->__isBasedOnLatestData();
@@ -626,7 +622,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         return $version;
     }
-
 
     public function getDependencies(): Model\Dependency
     {

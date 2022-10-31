@@ -188,8 +188,8 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      * Methods for Iterator
      */
 
-    #[\ReturnTypeWillChange]
-    public function rewind(): void// : void
+
+    public function rewind(): void
     {
         reset($this->items);
     }
@@ -197,26 +197,23 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * @return TItem|false
      */
-    #[\ReturnTypeWillChange]
-    public function current()// : Model\DataObject\Fieldcollection\Data\AbstractData|false
+
+    public function current() : mixed
     {
         return current($this->items);
     }
 
-    #[\ReturnTypeWillChange]
-    public function key(): ?int// : int|null
+    public function key(): ?int
     {
         return key($this->items);
     }
 
-    #[\ReturnTypeWillChange]
-    public function next(): void// : void
+    public function next(): void
     {
         next($this->items);
     }
 
-    #[\ReturnTypeWillChange]
-    public function valid(): bool// : bool
+    public function valid(): bool
     {
         return $this->current() !== false;
     }

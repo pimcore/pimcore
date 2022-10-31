@@ -228,7 +228,6 @@ abstract class PageSnippet extends Model\Document
         parent::doDelete();
     }
 
-
     public function getCacheTags(array $tags = []): array
     {
         $tags = parent::getCacheTags($tags);

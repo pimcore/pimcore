@@ -443,7 +443,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $dependencies;
     }
 
-
     public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
         if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
@@ -576,7 +575,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         // instead, ask the database directly
         return Element\Service::filterUnpublishedAdvancedElements($data);
     }
-
 
     public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
@@ -743,7 +741,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): static // : static
+    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): static
     {
         $classId = $this->allowedClassId;
 
@@ -815,7 +813,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $this;
     }
 
-
     public function denormalize(mixed $value, array $params = []): ?array
     {
         if (is_array($value)) {
@@ -845,7 +842,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
 
         return null;
     }
-
 
     public function normalize(mixed $value, array $params = []): ?array
     {
@@ -959,12 +955,10 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $elementType . $id;
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\'.DataObject\Data\ObjectMetadata::class.'[]';
     }
-
 
     public function getPhpdocReturnType(): ?string
     {

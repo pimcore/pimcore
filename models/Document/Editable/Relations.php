@@ -79,7 +79,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return $this->elements;
     }
 
-
     public function getDataForResource(): mixed
     {
         return $this->elementIds;
@@ -174,7 +173,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
         return $elements;
     }
 
-
     public function isEmpty(): bool
     {
         $this->setElements();
@@ -256,8 +254,8 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
      * Methods for Iterator
      */
 
-    #[\ReturnTypeWillChange]
-    public function rewind(): void// : void
+
+    public function rewind(): void
     {
         $this->setElements();
         reset($this->elements);
@@ -266,31 +264,28 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * @return Element\ElementInterface|false
      */
-    #[\ReturnTypeWillChange]
-    public function current(): bool|Element\ElementInterface// : Element\ElementInterface|false
+
+    public function current(): bool|Element\ElementInterface
     {
         $this->setElements();
 
         return current($this->elements);
     }
 
-    #[\ReturnTypeWillChange]
-    public function key(): ?int// : int|null
+    public function key(): ?int
     {
         $this->setElements();
 
         return key($this->elements);
     }
 
-    #[\ReturnTypeWillChange]
-    public function next(): void// : void
+    public function next(): void
     {
         $this->setElements();
         next($this->elements);
     }
 
-    #[\ReturnTypeWillChange]
-    public function valid(): bool// : bool
+    public function valid(): bool
     {
         $this->setElements();
 

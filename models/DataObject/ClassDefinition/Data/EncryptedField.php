@@ -436,7 +436,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     /**
      * @inheritdoc
      */
-    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): static // : static
+    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): static
     {
         $delegate = $this->getDelegate();
 
@@ -446,7 +446,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
 
         return $this;
     }
-
 
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
@@ -467,30 +466,25 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         return false;
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return null;
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return null;
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return $this->delegate ? $this->delegate->getPhpdocInputType() . '|\\Pimcore\\Model\\DataObject\\Data\\EncryptedField' : null;
     }
 
-
     public function getPhpdocReturnType(): ?string
     {
         return $this->delegate ? $this->delegate->getPhpdocReturnType() . '|\\Pimcore\\Model\\DataObject\\Data\\EncryptedField' : null;
     }
-
 
     public function normalize(mixed $value, array $params = []): mixed
     {
@@ -505,7 +499,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
 
         return null;
     }
-
 
     public function denormalize(mixed $value, array $params = []): Model\DataObject\Data\EncryptedField
     {

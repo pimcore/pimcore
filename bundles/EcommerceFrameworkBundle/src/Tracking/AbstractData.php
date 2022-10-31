@@ -102,8 +102,8 @@ abstract class AbstractData implements \JsonSerializable
      *
      * @return array
      */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize(): array// : array
+
+    public function jsonSerialize(): array
     {
         $json = [];
         $vars = get_object_vars($this);

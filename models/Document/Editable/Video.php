@@ -216,7 +216,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         ];
     }
 
-
     public function getDataForResource(): array
     {
         return [
@@ -289,7 +288,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
         return $dependencies;
     }
-
 
     public function checkValidity(): bool
     {
@@ -975,7 +973,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     {
         return 'video_' . uniqid();
     }
-
 
     public function isEmpty(): bool
     {

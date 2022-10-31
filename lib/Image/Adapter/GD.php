@@ -56,7 +56,6 @@ class GD extends Adapter
         return $this;
     }
 
-
     public function getContentOptimizedFormat(): string
     {
         $format = 'pjpeg';
@@ -154,7 +153,6 @@ class GD extends Adapter
         return $newImg;
     }
 
-
     public function resize(int $width, int $height): static
     {
         $this->preModify();
@@ -170,7 +168,6 @@ class GD extends Adapter
 
         return $this;
     }
-
 
     public function crop(int $x, int $y, int $width, int $height): static
     {
@@ -193,7 +190,6 @@ class GD extends Adapter
 
         return $this;
     }
-
 
     public function frame(int $width, int $height, bool $forceResize = false): static
     {
@@ -218,7 +214,6 @@ class GD extends Adapter
         return $this;
     }
 
-
     public function setBackgroundColor(string $color): static
     {
         $this->preModify();
@@ -240,7 +235,6 @@ class GD extends Adapter
 
         return $this;
     }
-
 
     public function setBackgroundImage(string $image, string $mode = null): static
     {
@@ -276,7 +270,6 @@ class GD extends Adapter
         return $this;
     }
 
-
     public function grayscale(): static
     {
         $this->preModify();
@@ -287,7 +280,6 @@ class GD extends Adapter
 
         return $this;
     }
-
 
     public function sepia(): static
     {
@@ -336,7 +328,6 @@ class GD extends Adapter
         return $this;
     }
 
-
     public function mirror(string $mode): static
     {
         $this->preModify();
@@ -351,7 +342,6 @@ class GD extends Adapter
 
         return $this;
     }
-
 
     public function rotate(int $angle): static
     {

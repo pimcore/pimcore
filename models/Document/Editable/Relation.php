@@ -205,7 +205,6 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
         return null;
     }
 
-
     public function isEmpty(): bool
     {
         $this->setElement();
@@ -236,7 +235,6 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
 
         return $dependencies;
     }
-
 
     public function checkValidity(): bool
     {

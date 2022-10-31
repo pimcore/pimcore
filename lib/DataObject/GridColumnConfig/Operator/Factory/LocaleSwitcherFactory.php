@@ -33,7 +33,6 @@ final class LocaleSwitcherFactory implements OperatorFactoryInterface
         $this->localeService = $localeService;
     }
 
-
     public function build(\stdClass $configElement, $context = null): OperatorInterface
     {
         return new LocaleSwitcher($this->localeService, $configElement, $context);

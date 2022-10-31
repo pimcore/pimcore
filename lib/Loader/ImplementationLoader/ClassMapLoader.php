@@ -46,7 +46,6 @@ class ClassMapLoader extends AbstractClassNameLoader
         return $this->classMap;
     }
 
-
     protected function getClassName(string $name): string
     {
         return $this->classMap[$this->normalizeName($name)];

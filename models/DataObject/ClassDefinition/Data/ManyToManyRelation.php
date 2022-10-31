@@ -499,7 +499,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return '';
     }
 
-
     public function getCacheTags(mixed $data, array $tags = []): array
     {
         return $tags;
@@ -693,7 +692,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     {
         return implode(' | ', $this->getPhpDocClassString(true));
     }
-
 
     public function normalize(mixed $value, array $params = []): ?array
     {

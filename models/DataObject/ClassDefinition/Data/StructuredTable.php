@@ -508,30 +508,25 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return $this->isEqualArray($oldData, $newData);
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\StructuredTable::class;
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\StructuredTable::class;
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\StructuredTable::class . '|null';
     }
 
-
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\StructuredTable::class . '|null';
     }
-
 
     public function normalize(mixed $value, array $params = []): ?array
     {
@@ -543,7 +538,6 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
 
         return null;
     }
-
 
     public function denormalize(mixed $value, array $params = []): ?DataObject\Data\StructuredTable
     {

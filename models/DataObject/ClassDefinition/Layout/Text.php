@@ -103,7 +103,7 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): static // : static
+    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): static
     {
         $renderer = Model\DataObject\ClassDefinition\Helper\DynamicTextResolver::resolveRenderingClass(
             $this->getRenderingClass()

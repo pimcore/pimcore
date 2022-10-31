@@ -695,19 +695,18 @@ class DefaultFindologic implements ProductListInterface
         return $this->logger;
     }
 
-    #[\ReturnTypeWillChange]
-    public function count(): ?int// : int
+    public function count(): int
     {
         $this->getProducts();
 
-        return $this->totalCount;
+        return $this->totalCount ?? 0;
     }
 
     /**
      * @return IndexableInterface|false
      */
-    #[\ReturnTypeWillChange]
-    public function current(): bool|IndexableInterface// : IndexableInterface|false
+
+    public function current(): bool|IndexableInterface
     {
         $this->getProducts();
 
@@ -730,30 +729,26 @@ class DefaultFindologic implements ProductListInterface
         return $this->getProducts();
     }
 
-    #[\ReturnTypeWillChange]
-    public function key(): ?int// : int|null
+    public function key(): ?int
     {
         $this->getProducts();
 
         return key($this->products);
     }
 
-    #[\ReturnTypeWillChange]
-    public function next(): void// : void
+    public function next(): void
     {
         $this->getProducts();
         next($this->products);
     }
 
-    #[\ReturnTypeWillChange]
-    public function rewind(): void// : void
+    public function rewind(): void
     {
         $this->getProducts();
         reset($this->products);
     }
 
-    #[\ReturnTypeWillChange]
-    public function valid(): bool// : bool
+    public function valid(): bool
     {
         return $this->current() !== false;
     }

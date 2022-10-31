@@ -82,7 +82,6 @@ class Hardlink extends Document
         return $dependencies;
     }
 
-
     public function getCacheTags(array $tags = []): array
     {
         $tags = parent::getCacheTags($tags);

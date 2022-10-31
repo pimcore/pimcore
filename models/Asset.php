@@ -834,7 +834,6 @@ class Asset extends Element\AbstractElement
         }
     }
 
-
     public function getFullPath(): string
     {
         $path = $this->getPath() . $this->getFilename();
@@ -870,12 +869,10 @@ class Asset extends Element\AbstractElement
         return $event->getArgument('frontendPath');
     }
 
-
     public function getRealPath(): ?string
     {
         return $this->path;
     }
-
 
     public function getRealFullPath(): string
     {
@@ -942,7 +939,6 @@ class Asset extends Element\AbstractElement
             $storage->deleteDirectory($this->getRealFullPath());
         }
     }
-
 
     public function delete(bool $isNested = false)
     {
@@ -1022,7 +1018,6 @@ class Asset extends Element\AbstractElement
         $this->dispatchEvent(new AssetEvent($this), AssetEvents::POST_DELETE);
     }
 
-
     public function clearDependentCache(array $additionalTags = [])
     {
         try {
@@ -1040,12 +1035,10 @@ class Asset extends Element\AbstractElement
         return $this->filename;
     }
 
-
     public function getKey(): ?string
     {
         return $this->getFilename();
     }
-
 
     public function getType(): string
     {
@@ -1058,7 +1051,6 @@ class Asset extends Element\AbstractElement
 
         return $this;
     }
-
 
     public function setKey(string $key): static
     {

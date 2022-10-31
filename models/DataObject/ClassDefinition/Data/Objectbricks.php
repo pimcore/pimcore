@@ -336,7 +336,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return 'NOT SUPPORTED';
     }
 
-
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $dataString = '';
@@ -360,7 +359,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return $dataString;
     }
 
-
     public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
         $container = $this->getDataFromObjectParam($object);
@@ -382,7 +380,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
         return null;
     }
-
 
     public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
@@ -453,7 +450,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
         return $dependencies;
     }
-
 
     public function getCacheTags(mixed $data, array $tags = []): array
     {
@@ -851,30 +847,25 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         }
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Objectbrick::class;
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Objectbrick::class;
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Objectbrick::class . '|null';
     }
 
-
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Objectbrick::class . '|null';
     }
-
 
     public function normalize(mixed $value, array $params = []): ?array
     {
@@ -906,7 +897,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
         return null;
     }
-
 
     public function denormalize(mixed $value, array $params = []): ?array
     {

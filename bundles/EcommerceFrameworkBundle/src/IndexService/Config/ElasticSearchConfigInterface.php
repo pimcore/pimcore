@@ -58,7 +58,7 @@ interface ElasticSearchConfigInterface extends ConfigInterface
     /**
      * @param string|null $property
      *
-     * @return array|string
+     * @return array|string|null
      */
     public function getClientConfig(string $property = null): array|string|null;
 

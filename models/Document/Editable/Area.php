@@ -63,14 +63,12 @@ class Area extends Model\Document\Editable
         ];
     }
 
-
     public function getDataForResource(): array
     {
         return [
             'type' => $this->type,
         ];
     }
-
 
     public function getDataEditmode(): array
     {
@@ -234,7 +232,6 @@ class Area extends Model\Document\Editable
 
         return $this;
     }
-
 
     public function isEmpty(): bool
     {

@@ -101,7 +101,6 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
         return $this;
     }
 
-
     public function isEmpty(): bool
     {
         return empty($this->text);
@@ -114,7 +113,6 @@ class Wysiwyg extends Model\Document\Editable implements IdRewriterInterface, Ed
     {
         return Text::getDependenciesOfWysiwygText($this->text);
     }
-
 
     public function getCacheTags(Model\Document\PageSnippet $ownerDocument, array $tags = []): array
     {

@@ -101,7 +101,6 @@ class Textarea extends Model\Document\Editable implements EditmodeDataInterface
         return $this;
     }
 
-
     public function isEmpty(): bool
     {
         return empty($this->text);

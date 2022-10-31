@@ -289,7 +289,6 @@ class RgbaColor extends Data implements
         return '';
     }
 
-
     public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof Model\DataObject\Data\RgbaColor) {
@@ -303,7 +302,6 @@ class RgbaColor extends Data implements
 
         return null;
     }
-
 
     public function denormalize(mixed $value, array $params = []): ?Model\DataObject\Data\RgbaColor
     {
@@ -404,24 +402,20 @@ class RgbaColor extends Data implements
         return $oldValue === $newValue;
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\RgbaColor::class;
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\RgbaColor::class;
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Model\DataObject\Data\RgbaColor::class . '|null';
     }
-
 
     public function getPhpdocReturnType(): ?string
     {

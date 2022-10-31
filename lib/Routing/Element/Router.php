@@ -58,7 +58,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      *
      * @return RequestContext
      */
-    public function getContext(): RequestContext// : RequestContext
+    public function getContext(): RequestContext
     {
         return $this->context;
     }
@@ -68,7 +68,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      *
      * @return bool
      */
-    public function supports($name): bool// : bool
+    public function supports($name): bool
     {
         return $name === 'pimcore_element';
     }
@@ -78,7 +78,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      *
      * @return string
      */
-    public function getRouteDebugMessage($name, array $parameters = []): string// : string
+    public function getRouteDebugMessage($name, array $parameters = []): string
     {
         $element = $parameters['element'] ?? null;
         if ($element instanceof ElementInterface) {
@@ -93,7 +93,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      *
      * @return string
      */
-    public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH): string// : string
+    public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH): string
     {
         $element = $parameters['element'] ?? null;
         unset($parameters['element']);
@@ -182,7 +182,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      *
      * @return array
      */
-    public function matchRequest(Request $request): array// : array
+    public function matchRequest(Request $request): array
     {
         throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $request->getPathInfo()));
     }
@@ -192,7 +192,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      *
      * @return array
      */
-    public function match($pathinfo): array// : array
+    public function match($pathinfo): array
     {
         throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $pathinfo));
     }
@@ -202,7 +202,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      *
      * @return RouteCollection
      */
-    public function getRouteCollection(): RouteCollection// : RouteCollection
+    public function getRouteCollection(): RouteCollection
     {
         return new RouteCollection();
     }

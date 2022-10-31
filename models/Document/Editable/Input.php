@@ -97,7 +97,6 @@ class Input extends Model\Document\Editable implements EditmodeDataInterface
         return $this;
     }
 
-
     public function isEmpty(): bool
     {
         return !(bool) strlen($this->text);

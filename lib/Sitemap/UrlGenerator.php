@@ -71,7 +71,6 @@ class UrlGenerator implements UrlGeneratorInterface
         return $this->optionsResolver->resolve($options);
     }
 
-
     public function generateUrl(string $path, array $options = []): string
     {
         $options = $this->resolveOptions($options);

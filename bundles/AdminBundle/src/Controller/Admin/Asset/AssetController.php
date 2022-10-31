@@ -1488,7 +1488,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $video->save();
         }
 
-        /** @var Asset\Video $video */
         $thumb = $video->getImageThumbnail($thumbnail, $time, $image);
 
         if ($request->get('origin') === 'treeNode' && !$thumb->exists()) {

@@ -309,30 +309,25 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
         return $oldValue == $newValue;
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\ExternalImage::class;
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\ExternalImage::class;
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\ExternalImage::class . '|null';
     }
 
-
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\ExternalImage::class . '|null';
     }
-
 
     public function normalize(mixed $value, array $params = []): ?array
     {
@@ -344,7 +339,6 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
 
         return null;
     }
-
 
     public function denormalize(mixed $value, array $params = []): ?DataObject\Data\ExternalImage
     {

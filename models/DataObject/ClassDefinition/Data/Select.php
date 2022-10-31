@@ -418,7 +418,7 @@ class Select extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): static // : static
+    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): static
     {
         $this->doEnrichDefinitionDefinition($object, $this->getName(),
             'layout', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT, $context);
@@ -523,8 +523,7 @@ class Select extends Data implements
         return $this->getDefaultValue();
     }
 
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize(): static// : static
+    public function jsonSerialize(): static
     {
         if ($this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {
             $this->options = null;
@@ -547,24 +546,20 @@ class Select extends Data implements
         return $blockedVars;
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?string';
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?string';
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return 'string|null';
     }
-
 
     public function getPhpdocReturnType(): ?string
     {

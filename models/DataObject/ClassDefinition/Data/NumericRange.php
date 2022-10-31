@@ -428,7 +428,6 @@ class NumericRange extends Data implements
         return '';
     }
 
-
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
@@ -442,7 +441,6 @@ class NumericRange extends Data implements
         return true;
     }
 
-
     public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof DataObject\Data\NumericRange) {
@@ -451,7 +449,6 @@ class NumericRange extends Data implements
 
         return null;
     }
-
 
     public function denormalize(mixed $value, array $params = []): ?DataObject\Data\NumericRange
     {
@@ -562,24 +559,20 @@ class NumericRange extends Data implements
             && (abs($oldValue->getMaximum() - $newValue->getMaximum()) < 0.000000000001);
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\NumericRange::class;
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\NumericRange::class;
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\NumericRange::class . '|null';
     }
-
 
     public function getPhpdocReturnType(): ?string
     {

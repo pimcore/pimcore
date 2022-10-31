@@ -75,11 +75,7 @@ class Pimcore
      */
     public static function inAdmin(): bool
     {
-        if (self::$adminMode !== null) {
-            return self::$adminMode;
-        }
-
-        return false;
+        return self::$adminMode;
     }
 
     public static function isInstalled(): bool

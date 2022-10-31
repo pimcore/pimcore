@@ -288,7 +288,7 @@ class OrderAgent implements OrderAgentInterface
         // save provider data
         $order = $this->getOrder();
 
-        /** @var PaymentProvider $provider */
+        /** @var PaymentInterface $provider */
         $provider = $order->getPaymentProvider();
 
         // load existing

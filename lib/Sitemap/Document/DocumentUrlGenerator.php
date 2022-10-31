@@ -33,7 +33,6 @@ class DocumentUrlGenerator implements DocumentUrlGeneratorInterface
         $this->urlGenerator = $urlGenerator;
     }
 
-
     public function generateUrl(string $path, array $options = []): string
     {
         return $this->urlGenerator->generateUrl($path, $options);

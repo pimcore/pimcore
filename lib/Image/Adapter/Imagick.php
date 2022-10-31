@@ -170,7 +170,6 @@ class Imagick extends Adapter
         return false;
     }
 
-
     public function getContentOptimizedFormat(): string
     {
         $format = 'pjpeg';
@@ -477,7 +476,6 @@ class Imagick extends Adapter
         return self::$RGBColorProfile;
     }
 
-
     public function resize(int $width, int $height): static
     {
         $this->preModify();
@@ -538,7 +536,6 @@ class Imagick extends Adapter
         return $this;
     }
 
-
     public function crop(int $x, int $y, int $width, int $height): static
     {
         $this->preModify();
@@ -553,7 +550,6 @@ class Imagick extends Adapter
 
         return $this;
     }
-
 
     public function frame(int $width, int $height, bool $forceResize = false): static
     {
@@ -577,7 +573,6 @@ class Imagick extends Adapter
         return $this;
     }
 
-
     public function trim(int $tolerance): static
     {
         $this->preModify();
@@ -592,7 +587,6 @@ class Imagick extends Adapter
 
         return $this;
     }
-
 
     public function setBackgroundColor(string $color): static
     {
@@ -637,7 +631,6 @@ class Imagick extends Adapter
         return $newImage;
     }
 
-
     public function rotate(int $angle): static
     {
         $this->preModify();
@@ -652,7 +645,6 @@ class Imagick extends Adapter
 
         return $this;
     }
-
 
     public function roundCorners(int $width, int $height): static
     {
@@ -685,7 +677,6 @@ class Imagick extends Adapter
 
         $this->resource->compositeImage($mask, \Imagick::COMPOSITE_DSTIN, 0, 0);
     }
-
 
     public function setBackgroundImage(string $image, string $mode = null): static
     {
@@ -783,7 +774,6 @@ class Imagick extends Adapter
         return $this;
     }
 
-
     public function addOverlayFit(string $image, string $composite = 'COMPOSITE_DEFAULT'): static
     {
         $asset = Asset\Image::getByPath($image);
@@ -809,7 +799,6 @@ class Imagick extends Adapter
         return $this;
     }
 
-
     public function applyMask(string $image): static
     {
         $this->preModify();
@@ -831,7 +820,6 @@ class Imagick extends Adapter
         return $this;
     }
 
-
     public function grayscale(): static
     {
         $this->preModify();
@@ -841,7 +829,6 @@ class Imagick extends Adapter
         return $this;
     }
 
-
     public function sepia(): static
     {
         $this->preModify();
@@ -850,7 +837,6 @@ class Imagick extends Adapter
 
         return $this;
     }
-
 
     public function sharpen($radius = 0, $sigma = 1.0, $amount = 1.0, $threshold = 0.05): static
     {
@@ -862,7 +848,6 @@ class Imagick extends Adapter
         return $this;
     }
 
-
     public function gaussianBlur(int $radius = 0, float $sigma = 1.0): static
     {
         $this->preModify();
@@ -872,7 +857,6 @@ class Imagick extends Adapter
         return $this;
     }
 
-
     public function brightnessSaturation(int $brightness = 100, int $saturation = 100, int $hue = 100): static
     {
         $this->preModify();
@@ -881,7 +865,6 @@ class Imagick extends Adapter
 
         return $this;
     }
-
 
     public function mirror(string $mode): static
     {
@@ -897,7 +880,6 @@ class Imagick extends Adapter
 
         return $this;
     }
-
 
     public function isVectorGraphic($imagePath = null): bool
     {
@@ -979,7 +961,6 @@ class Imagick extends Adapter
 
         return null;
     }
-
 
     protected function getVectorRasterDimensions(): array
     {

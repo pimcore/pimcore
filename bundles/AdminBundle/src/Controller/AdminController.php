@@ -41,7 +41,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
     /**
      * @return string[]
      */
-    public static function getSubscribedServices(): array// : array
+    public static function getSubscribedServices(): array
     {
         $services = parent::getSubscribedServices();
         $services['translator'] = TranslatorInterface::class;

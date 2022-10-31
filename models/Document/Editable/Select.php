@@ -81,7 +81,6 @@ class Select extends Model\Document\Editable
         return $this;
     }
 
-
     public function isEmpty(): bool
     {
         return empty($this->text);

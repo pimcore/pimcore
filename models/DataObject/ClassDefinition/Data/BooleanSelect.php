@@ -452,24 +452,20 @@ class BooleanSelect extends Data implements
         return $value;
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?bool';
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?bool';
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return 'bool|null';
     }
-
 
     public function getPhpdocReturnType(): ?string
     {

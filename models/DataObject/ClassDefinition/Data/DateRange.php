@@ -264,7 +264,6 @@ class DateRange extends Data implements
         return '';
     }
 
-
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
@@ -278,7 +277,6 @@ class DateRange extends Data implements
         return true;
     }
 
-
     public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof CarbonPeriod) {
@@ -287,7 +285,6 @@ class DateRange extends Data implements
 
         return null;
     }
-
 
     public function denormalize(mixed $value, array $params = []): ?CarbonPeriod
     {
@@ -367,24 +364,20 @@ class DateRange extends Data implements
         return false;
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . CarbonPeriod::class;
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . CarbonPeriod::class;
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\' . CarbonPeriod::class . '|null';
     }
-
 
     public function getPhpdocReturnType(): ?string
     {

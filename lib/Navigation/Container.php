@@ -514,8 +514,8 @@ class Container implements \RecursiveIterator, \Countable
      *
      * @throws \Exception
      */
-    #[\ReturnTypeWillChange]
-    public function current(): Page// : Page
+
+    public function current(): Page
     {
         $this->_sort();
         $hash = key($this->_index);
@@ -527,44 +527,38 @@ class Container implements \RecursiveIterator, \Countable
         throw new \Exception('Corruption detected in container; invalid key found in internal iterator');
     }
 
-    #[\ReturnTypeWillChange]
-    public function key(): int|string|null// : mixed
+    public function key(): int|string|null
     {
         $this->_sort();
 
         return key($this->_index);
     }
 
-    #[\ReturnTypeWillChange]
-    public function next(): void// : void
+    public function next(): void
     {
         $this->_sort();
         next($this->_index);
     }
 
-    #[\ReturnTypeWillChange]
-    public function rewind(): void// : void
+    public function rewind(): void
     {
         $this->_sort();
         reset($this->_index);
     }
 
-    #[\ReturnTypeWillChange]
-    public function valid(): bool// : bool
+    public function valid(): bool
     {
         $this->_sort();
 
         return current($this->_index) !== false;
     }
 
-    #[\ReturnTypeWillChange]
-    public function hasChildren(): bool// : bool
+    public function hasChildren(): bool
     {
         return $this->hasPages();
     }
 
-    #[\ReturnTypeWillChange]
-    public function getChildren(): ?Page// : Page|null
+    public function getChildren(): ?Page
     {
         $hash = key($this->_index);
 
@@ -575,8 +569,7 @@ class Container implements \RecursiveIterator, \Countable
         return null;
     }
 
-    #[\ReturnTypeWillChange]
-    public function count(): int// : int
+    public function count(): int
     {
         return count($this->_index);
     }

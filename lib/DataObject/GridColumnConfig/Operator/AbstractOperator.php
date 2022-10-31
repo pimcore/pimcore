@@ -60,7 +60,6 @@ abstract class AbstractOperator implements OperatorInterface
         $this->context = $context;
     }
 
-
     public function getLabel(): string
     {
         return $this->label;

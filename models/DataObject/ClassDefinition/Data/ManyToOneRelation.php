@@ -515,7 +515,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return implode(' | ', $this->getPhpDocClassString(false));
     }
 
-
     public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value) {
@@ -530,7 +529,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
         return null;
     }
-
 
     public function denormalize(mixed $value, array $params = []): null|Model\Asset|Model\DataObject\AbstractObject|Model\Document
     {
@@ -560,12 +558,10 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return true;
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Element\AbstractElement::class;
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
@@ -597,7 +593,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         if ($phpdocType = $this->getPhpdocType()) {
@@ -606,7 +601,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
         return null;
     }
-
 
     public function getPhpdocReturnType(): ?string
     {

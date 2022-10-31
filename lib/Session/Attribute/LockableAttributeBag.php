@@ -72,8 +72,8 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
      *
      * @return mixed
      */
-    #[\ReturnTypeWillChange]
-    public function remove($name): mixed//: mixed
+
+    public function remove($name): mixed
     {
         $this->checkLock();
 
@@ -85,8 +85,8 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
      *
      * @return mixed
      */
-    #[\ReturnTypeWillChange]
-    public function clear(): mixed//: mixed
+
+    public function clear(): mixed
     {
         $this->checkLock();
 

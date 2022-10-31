@@ -453,7 +453,6 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return '';
     }
 
-
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -551,24 +550,20 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $this->isEqualArray($oldValue, $newValue);
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?array';
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return 'array';
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return 'array|null';
     }
-
 
     public function getPhpdocReturnType(): ?string
     {

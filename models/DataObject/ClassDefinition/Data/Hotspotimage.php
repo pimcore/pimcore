@@ -359,7 +359,6 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         return '';
     }
 
-
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
@@ -565,30 +564,25 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         return true;
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' .DataObject\Data\Hotspotimage::class;
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' .DataObject\Data\Hotspotimage::class;
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\Hotspotimage::class . '|null';
     }
 
-
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\Hotspotimage::class . '|null';
     }
-
 
     public function normalize(mixed $value, array $params = []): ?array
     {
@@ -613,7 +607,6 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
 
         return null;
     }
-
 
     public function denormalize(mixed $value, array $params = []): ?DataObject\Data\Hotspotimage
     {

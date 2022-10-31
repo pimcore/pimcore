@@ -55,7 +55,7 @@ class UserProvider implements UserProviderInterface
      *
      * @return UserInterface
      */
-    public function refreshUser(UserInterface $user): UserInterface|User//: UserInterface
+    public function refreshUser(UserInterface $user): UserInterface|User
     {
         if (!$user instanceof User) {
             // user is not supported - we only support pimcore users
@@ -78,7 +78,7 @@ class UserProvider implements UserProviderInterface
      *
      * @return bool
      */
-    public function supportsClass($class): bool//: bool
+    public function supportsClass($class): bool
     {
         return $class === User::class;
     }

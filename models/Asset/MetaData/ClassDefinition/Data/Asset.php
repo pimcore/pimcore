@@ -32,7 +32,6 @@ class Asset extends Data
         return null;
     }
 
-
     public function denormalize(mixed $value, array $params = []): mixed
     {
         $element = null;
@@ -108,7 +107,6 @@ class Asset extends Data
 
         return $data;
     }
-
 
     public function getDataForEditMode(mixed $data, array $params = []): mixed
     {

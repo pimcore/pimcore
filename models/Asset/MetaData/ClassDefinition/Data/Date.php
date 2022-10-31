@@ -24,7 +24,6 @@ class Date extends Data
         return $this->normalize($data, $params);
     }
 
-
     public function normalize(mixed $value, array $params = []): mixed
     {
         if ($value && !is_numeric($value)) {

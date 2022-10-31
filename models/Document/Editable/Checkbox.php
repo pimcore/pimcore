@@ -48,7 +48,6 @@ class Checkbox extends Model\Document\Editable
         return $this->value;
     }
 
-
     public function getValue(): mixed
     {
         return $this->getData();
@@ -81,7 +80,6 @@ class Checkbox extends Model\Document\Editable
 
         return $this;
     }
-
 
     public function isEmpty(): bool
     {

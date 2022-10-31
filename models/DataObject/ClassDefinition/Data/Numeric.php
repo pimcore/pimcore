@@ -567,7 +567,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return true;
     }
 
-
     protected function doGetDefaultValue(Concrete $object, array $context = []): float|int|string|null
     {
         return $this->getDefaultValue() ?? null;
@@ -578,24 +577,20 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this->toNumeric($oldValue) == $this->toNumeric($newValue);
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?' . $this->getPhpdocType();
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?' . $this->getPhpdocType();
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return $this->getPhpdocType() . '|null';
     }
-
 
     public function getPhpdocReturnType(): ?string
     {

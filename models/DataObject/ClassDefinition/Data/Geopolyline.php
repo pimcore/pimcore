@@ -222,7 +222,6 @@ class Geopolyline extends AbstractGeo implements
         return '';
     }
 
-
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
@@ -283,30 +282,25 @@ class Geopolyline extends AbstractGeo implements
         return true;
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?array';
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?array';
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\'.DataObject\Data\GeoCoordinates::class.'[]|null';
     }
 
-
     public function getPhpdocReturnType(): ?string
     {
         return '\\'.DataObject\Data\GeoCoordinates::class.'[]|null';
     }
-
 
     public function normalize(mixed $value, array $params = []): ?array
     {
@@ -322,7 +316,6 @@ class Geopolyline extends AbstractGeo implements
 
         return null;
     }
-
 
     public function denormalize(mixed $value, array $params = []): ?array
     {

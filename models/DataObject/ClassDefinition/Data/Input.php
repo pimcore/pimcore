@@ -310,7 +310,6 @@ class Input extends Data implements
         return true;
     }
 
-
     protected function doGetDefaultValue(Concrete $object, array $context = []): ?string
     {
         return $this->getDefaultValue();
@@ -330,24 +329,20 @@ class Input extends Data implements
         return $this;
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?string';
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?string';
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return 'string|null';
     }
-
 
     public function getPhpdocReturnType(): ?string
     {

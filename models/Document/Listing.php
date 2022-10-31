@@ -85,7 +85,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
         return $this;
     }
 
-
     public function getCondition(): string
     {
         $condition = parent::getCondition();
@@ -106,8 +105,8 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      * Methods for AdapterInterface
      */
 
-    #[\ReturnTypeWillChange]
-    public function count(): int// : int
+
+    public function count(): int
     {
         return $this->getTotalCount();
     }

@@ -118,7 +118,6 @@ class Block extends Model\Document\Editable implements BlockInterface
         return $this;
     }
 
-
     public function getIterator(): \Generator
     {
         while ($this->loop()) {
@@ -343,7 +342,6 @@ EOT;
         $this->outputEditmode($html);
     }
 
-
     public function setConfig(array $config): static
     {
         if (empty($config['limit'])) {
@@ -395,7 +393,6 @@ EOT;
     {
         $this->current = 0;
     }
-
 
     public function isEmpty(): bool
     {

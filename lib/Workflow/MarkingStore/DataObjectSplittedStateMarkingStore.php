@@ -53,7 +53,7 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
      *
      * @throws LogicException
      */
-    public function getMarking($subject): Marking// : Marking
+    public function getMarking($subject): Marking
     {
         $this->checkIfSubjectIsValid($subject);
 

@@ -248,7 +248,6 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         return null;
     }
 
-
     public function isEmpty(): bool
     {
         $this->load();
@@ -259,7 +258,6 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
 
         return true;
     }
-
 
     public function checkValidity(): bool
     {

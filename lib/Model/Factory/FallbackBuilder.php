@@ -32,7 +32,6 @@ final class FallbackBuilder extends AbstractClassNameLoader
         return class_exists($name);
     }
 
-
     protected function getClassName(string $name): string
     {
         return $name;

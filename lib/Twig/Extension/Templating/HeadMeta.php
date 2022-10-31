@@ -252,8 +252,8 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @throws Exception
      */
-    #[\ReturnTypeWillChange]
-    public function offsetSet($offset, mixed $value): void// : void
+
+    public function offsetSet($offset, mixed $value): void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('Invalid value passed to offsetSet; please use offsetSetName() or offsetSetHttpEquiv()');
@@ -271,8 +271,8 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @throws Exception
      */
-    #[\ReturnTypeWillChange]
-    public function offsetUnset($index): void// : void
+
+    public function offsetUnset($index): void
     {
         if (!in_array($index, $this->getContainer()->getKeys())) {
             throw new Exception('Invalid index passed to offsetUnset()');

@@ -217,7 +217,6 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
         return '';
     }
 
-
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
@@ -278,30 +277,25 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
         return true;
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?array';
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?array';
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\'.DataObject\Data\GeoCoordinates::class.'[]|null';
     }
 
-
     public function getPhpdocReturnType(): ?string
     {
         return '\\'.DataObject\Data\GeoCoordinates::class.'[]|null';
     }
-
 
     public function normalize(mixed $value, array $params = []): ?array
     {
@@ -317,7 +311,6 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
 
         return null;
     }
-
 
     public function denormalize(mixed $value, array $params = []): ?array
     {

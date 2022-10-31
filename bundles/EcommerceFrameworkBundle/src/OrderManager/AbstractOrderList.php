@@ -128,8 +128,8 @@ abstract class AbstractOrderList implements OrderListInterface
     /**
      * @return OrderListItemInterface|false
      */
-    #[\ReturnTypeWillChange]
-    public function current(): bool|OrderListItemInterface// : OrderListItemInterface|false
+
+    public function current(): bool|OrderListItemInterface
     {
         $this->load();
         if ($this->count() > 0) {
@@ -139,75 +139,65 @@ abstract class AbstractOrderList implements OrderListInterface
         return false;
     }
 
-    #[\ReturnTypeWillChange]
-    public function next(): void// : void
+    public function next(): void
     {
         $this->load();
         $this->list->next();
     }
 
-    #[\ReturnTypeWillChange]
-    public function key(): int|string|null// : string|int|null
+    public function key(): int|string|null
     {
         $this->load();
 
         return $this->list->key();
     }
 
-    #[\ReturnTypeWillChange]
-    public function valid(): bool// : bool
+    public function valid(): bool
     {
         $this->load();
 
         return $this->list->valid();
     }
 
-    #[\ReturnTypeWillChange]
-    public function rewind(): void// : void
+    public function rewind(): void
     {
         $this->load();
         $this->list->rewind();
     }
 
-    #[\ReturnTypeWillChange]
-    public function seek(int $position): void// : void
+    public function seek(int $position): void
     {
         $this->load();
         $this->list->seek($position);
     }
 
-    #[\ReturnTypeWillChange]
-    public function count(): int// : int
+    public function count(): int
     {
         $this->load();
 
         return $this->rowCount;
     }
 
-    #[\ReturnTypeWillChange]
-    public function offsetExists(mixed $offset): bool// : bool
+    public function offsetExists(mixed $offset): bool
     {
         $this->load();
 
         return $this->list->offsetExists($offset);
     }
 
-    #[\ReturnTypeWillChange]
-    public function offsetGet(mixed $offset): OrderListItemInterface// : OrderListItemInterface
+    public function offsetGet(mixed $offset): OrderListItemInterface
     {
         $this->load();
 
         return $this->createResultItem($this->list->offsetGet($offset));
     }
 
-    #[\ReturnTypeWillChange]
-    public function offsetSet(mixed $offset, mixed $value): void// : void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         // not allowed, read only
     }
 
-    #[\ReturnTypeWillChange]
-    public function offsetUnset(mixed $offset): void// : void
+    public function offsetUnset(mixed $offset): void
     {
         // not allowed, read only
     }

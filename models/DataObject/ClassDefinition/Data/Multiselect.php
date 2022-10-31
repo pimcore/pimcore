@@ -365,7 +365,6 @@ class Multiselect extends Data implements
         return '';
     }
 
-
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
@@ -542,8 +541,7 @@ class Multiselect extends Data implements
         return $this->isEqualArray($oldValue, $newValue);
     }
 
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize(): static// : static
+    public function jsonSerialize(): static
     {
         if ($this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {
             $this->options = null;
@@ -566,24 +564,20 @@ class Multiselect extends Data implements
         return $blockedVars;
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?array';
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?array';
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return 'string[]|null';
     }
-
 
     public function getPhpdocReturnType(): ?string
     {
@@ -643,7 +637,7 @@ class Multiselect extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): static // : static
+    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): static
     {
         $this->doEnrichDefinitionDefinition($object, $this->getName(),
             'layout', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_MULTISELECT, $context);

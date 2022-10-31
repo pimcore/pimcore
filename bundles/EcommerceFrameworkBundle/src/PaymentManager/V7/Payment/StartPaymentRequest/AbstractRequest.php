@@ -35,26 +35,22 @@ class AbstractRequest implements \ArrayAccess
         return $this->{$name};
     }
 
-    #[\ReturnTypeWillChange]
-    public function offsetGet(mixed $offset): mixed// : mixed
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->get($offset);
     }
 
-    #[\ReturnTypeWillChange]
-    public function offsetSet(mixed $offset, mixed $value): void// : void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->set($offset, $value);
     }
 
-    #[\ReturnTypeWillChange]
-    public function offsetExists(mixed $offset): bool// : bool
+    public function offsetExists(mixed $offset): bool
     {
         return isset($this->{$offset});
     }
 
-    #[\ReturnTypeWillChange]
-    public function offsetUnset(mixed $offset): void// : void
+    public function offsetUnset(mixed $offset): void
     {
         $this->{$offset} = null;
     }

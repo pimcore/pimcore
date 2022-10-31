@@ -534,7 +534,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): static // : static
+    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): static
     {
         if (!$this->visibleFields) {
             return $this;
@@ -616,7 +616,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return implode(' | ', $this->getPhpDocClassString(true));
     }
 
-
     public function normalize(mixed $value, array $params = []): ?array
     {
         if (is_array($value)) {
@@ -635,7 +634,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
         return null;
     }
-
 
     public function denormalize(mixed $value, array $params = []): ?array
     {

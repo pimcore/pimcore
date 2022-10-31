@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Definition;
 use Pimcore\Normalizer\NormalizerInterface;
 
@@ -182,12 +183,11 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
 
     /**
      * @param mixed $data
-     * @param DataObject\Concrete $object
+     * @param Concrete|null $object
      * @param array $params
      *
      * @return string|null
      * @see Data::getDataForEditmode
-     *
      */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
@@ -505,24 +505,20 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $oldValue === $newValue;
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\CalculatedValue::class;
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return 'mixed';
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\CalculatedValue::class . '|null';
     }
-
 
     public function getPhpdocReturnType(): ?string
     {

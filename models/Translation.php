@@ -74,7 +74,6 @@ final class Translation extends AbstractModel
         $this->type = $type;
     }
 
-
     public static function IsAValidLanguage(string $domain, string $locale): bool
     {
         return in_array($locale, (array)static::getValidLanguages($domain));

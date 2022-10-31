@@ -189,12 +189,10 @@ abstract class AbstractRenderer implements RendererInterface
         return $this;
     }
 
-
     public function getRenderInvisible(): bool
     {
         return $this->_renderInvisible;
     }
-
 
     public function setRenderInvisible(bool $renderInvisible = true): static
     {

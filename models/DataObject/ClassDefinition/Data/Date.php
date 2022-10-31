@@ -264,7 +264,6 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return '';
     }
 
-
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
@@ -381,7 +380,6 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return true;
     }
 
-
     protected function doGetDefaultValue(Concrete $object, array $context = []): ?Carbon
     {
         if ($this->getDefaultValue()) {
@@ -404,30 +402,25 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $oldValue === $newValue;
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Carbon::class;
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Carbon::class;
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Carbon::class . '|null';
     }
 
-
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Carbon::class . '|null';
     }
-
 
     public function normalize(mixed $value, array $params = []): mixed
     {
@@ -437,7 +430,6 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
         return null;
     }
-
 
     public function denormalize(mixed $value, array $params = []): mixed
     {

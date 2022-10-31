@@ -53,7 +53,6 @@ class Video extends Model\Asset
         parent::update($params);
     }
 
-
     public function clearThumbnails(bool $force = false)
     {
         if ($this->getDataChanged() || $force) {

@@ -713,7 +713,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         return (float) $value;
     }
 
-
     protected function doGetDefaultValue(Concrete $object, array $context = []): ?Model\DataObject\Data\QuantityValue
     {
         if ($this->getDefaultValue() || $this->getDefaultUnit()) {
@@ -809,30 +808,25 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         return $unitId;
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\QuantityValue::class;
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\QuantityValue::class;
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Model\DataObject\Data\QuantityValue::class . '|null';
     }
 
-
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Model\DataObject\Data\QuantityValue::class . '|null';
     }
-
 
     public function normalize(mixed $value, array $params = []): ?array
     {
@@ -846,7 +840,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         return null;
     }
 
-
     public function denormalize(mixed $value, array $params = []): ?Model\DataObject\Data\QuantityValue
     {
         if (is_array($value)) {
@@ -855,7 +848,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 
         return null;
     }
-
 
     public function isEmpty(mixed $data): bool
     {

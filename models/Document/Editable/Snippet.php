@@ -178,7 +178,6 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
         return $this;
     }
 
-
     public function isEmpty(): bool
     {
         $this->load();

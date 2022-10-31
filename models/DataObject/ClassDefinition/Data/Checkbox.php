@@ -250,12 +250,10 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
         return 'IFNULL(' . $brickPrefix . $key . ', 0) = ' . $value . ' ';
     }
 
-
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
-
 
     public function isEmpty(mixed $data): bool
     {
@@ -270,7 +268,6 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
         return true;
     }
 
-
     protected function doGetDefaultValue(Concrete $object, array $context = []): ?int
     {
         return $this->getDefaultValue() ?? null;
@@ -281,24 +278,20 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $oldValue === $newValue;
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?bool';
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?bool';
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return 'bool|null';
     }
-
 
     public function getPhpdocReturnType(): ?string
     {

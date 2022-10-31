@@ -29,7 +29,6 @@ class DefaultOperatorFactory implements OperatorFactoryInterface
         $this->className = $className;
     }
 
-
     public function build(\stdClass $configElement, array $context = []): ?OperatorInterface
     {
         if (class_exists($this->className)) {

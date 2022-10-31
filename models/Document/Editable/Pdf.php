@@ -50,7 +50,6 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
         ];
     }
 
-
     public function getDataForResource(): array
     {
         return [
@@ -74,7 +73,6 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
             'pageCount' => $pages,
         ];
     }
-
 
     public function getCacheTags(Model\Document\PageSnippet $ownerDocument, array $tags = []): array
     {
@@ -106,7 +104,6 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
 
         return $dependencies;
     }
-
 
     public function checkValidity(): bool
     {
@@ -196,7 +193,6 @@ HTML;
 
         return $code;
     }
-
 
     public function isEmpty(): bool
     {

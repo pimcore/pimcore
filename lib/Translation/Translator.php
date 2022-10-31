@@ -63,7 +63,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      *
      * @return string
      */
-    public function trans(string $id, array $parameters = [], string $domain = null, string $locale = null): string//: string
+    public function trans(string $id, array $parameters = [], string $domain = null, string $locale = null): string
     {
         $id = trim($id);
 
@@ -124,7 +124,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      *
      * @return string
      */
-    public function getLocale(): string//: string
+    public function getLocale(): string
     {
         if ($this->translator instanceof LocaleAwareInterface) {
             return $this->translator->getLocale();
@@ -138,7 +138,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      *
      * @return MessageCatalogueInterface
      */
-    public function getCatalogue(string $locale = null): MessageCatalogueInterface// : MessageCatalogueInterface
+    public function getCatalogue(string $locale = null): MessageCatalogueInterface
     {
         return $this->translator->getCatalogue($locale);
     }

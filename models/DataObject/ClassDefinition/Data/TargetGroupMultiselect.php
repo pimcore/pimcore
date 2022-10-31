@@ -70,8 +70,7 @@ class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multi
         return $obj;
     }
 
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize(): static// : static
+    public function jsonSerialize(): static
     {
         if (Service::doRemoveDynamicOptions()) {
             $this->options = null;

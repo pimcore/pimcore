@@ -172,7 +172,7 @@ class Dao
         }
     }
 
-    public function getCount($condition, $orderBy = null, $limit = null, $offset = null)
+    public function getCount($condition, $orderBy = null, $limit = null, $offset = null): int
     {
         if ($condition) {
             $condition = 'WHERE ' . $condition;
@@ -206,7 +206,7 @@ class Dao
         $result = $this->db->fetchOne($query);
         $this->logger->info('Query done.');
 
-        return $result;
+        return is_int($result) ? $result : 0;
     }
 
     public function quote($value)

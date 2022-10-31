@@ -186,7 +186,6 @@ class ReverseObjectRelation extends ManyToManyObjectRelation
         return $data['data'];
     }
 
-
     public function getCacheTags(mixed $data, array $tags = []): array
     {
         return $tags;

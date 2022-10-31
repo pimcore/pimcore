@@ -30,7 +30,6 @@ class CountryOptionsProvider implements SelectOptionsProviderInterface
         $this->localeService = $localeService;
     }
 
-
     public function getOptions(array $context, Data $fieldDefinition): array
     {
         $countries = $this->localeService->getDisplayRegions();
@@ -67,7 +66,6 @@ class CountryOptionsProvider implements SelectOptionsProviderInterface
     {
         return true;
     }
-
 
     public function getDefaultValue(array $context, Data $fieldDefinition): ?string
     {

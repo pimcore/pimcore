@@ -414,8 +414,8 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      * @return void
      */
-    #[\ReturnTypeWillChange]
-    public function offsetSet($offset, mixed $value): void// : void
+
+    public function offsetSet($offset, mixed $value): void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('Invalid argument passed to offsetSet(); please use one of the helper methods, offsetSetScript() or offsetSetFile()');

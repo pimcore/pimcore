@@ -246,7 +246,6 @@ class Geobounds extends AbstractGeo implements
         return '';
     }
 
-
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
@@ -259,7 +258,6 @@ class Geobounds extends AbstractGeo implements
     {
         return true;
     }
-
 
     public function normalize(mixed $value, array $params = []): ?array
     {
@@ -278,7 +276,6 @@ class Geobounds extends AbstractGeo implements
 
         return null;
     }
-
 
     public function denormalize(mixed $value, array $params = []): ?DataObject\Data\Geobounds
     {
@@ -331,24 +328,20 @@ class Geobounds extends AbstractGeo implements
         return true;
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\Geobounds::class;
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\Geobounds::class;
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\Geobounds::class . '|null';
     }
-
 
     public function getPhpdocReturnType(): ?string
     {

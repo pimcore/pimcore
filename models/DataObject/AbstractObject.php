@@ -900,7 +900,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         RuntimeCache::set(self::getCacheKey($this->getId()), $this);
     }
 
-
     public function clearDependentCache(array $additionalTags = [])
     {
         self::clearDependentCacheByObjectId($this->getId(), $additionalTags);

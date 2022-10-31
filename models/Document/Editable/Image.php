@@ -138,7 +138,6 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         ];
     }
 
-
     public function getDataForResource(): array
     {
         return [
@@ -211,7 +210,6 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
 
         return null;
     }
-
 
     public function getConfig(): array
     {
@@ -495,7 +493,6 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         }
     }
 
-
     public function isEmpty(): bool
     {
         $image = $this->getImage();
@@ -505,7 +502,6 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
 
         return true;
     }
-
 
     public function getCacheTags(Model\Document\PageSnippet $ownerDocument, array $tags = []): array
     {

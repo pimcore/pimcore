@@ -129,30 +129,25 @@ class InputQuantityValue extends QuantityValue
         return new InputQuantityValueDataObject($value, $unitId);
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\InputQuantityValue::class;
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\InputQuantityValue::class;
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Model\DataObject\Data\InputQuantityValue::class . '|null';
     }
 
-
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Model\DataObject\Data\InputQuantityValue::class . '|null';
     }
-
 
     public function normalize(mixed $value, array $params = []): ?array
     {
@@ -165,7 +160,6 @@ class InputQuantityValue extends QuantityValue
 
         return null;
     }
-
 
     public function denormalize(mixed $value, array $params = []): ?InputQuantityValueDataObject
     {

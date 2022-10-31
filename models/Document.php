@@ -538,7 +538,6 @@ class Document extends Element\AbstractElement
         $this->clearDependentCache();
     }
 
-
     public function clearDependentCache(array $additionalTags = [])
     {
         try {
@@ -701,7 +700,6 @@ class Document extends Element\AbstractElement
         $service->removeTranslation($this);
     }
 
-
     public function delete()
     {
         $this->dispatchEvent(new DocumentEvent($this), DocumentEvents::PRE_DELETE);
@@ -746,7 +744,6 @@ class Document extends Element\AbstractElement
 
         $this->dispatchEvent(new DocumentEvent($this), DocumentEvents::POST_DELETE);
     }
-
 
     public function getFullPath(bool $force = false): string
     {
@@ -856,12 +853,10 @@ class Document extends Element\AbstractElement
         return $path;
     }
 
-
     public function getKey(): ?string
     {
         return $this->key;
     }
-
 
     public function getPath(): ?string
     {
@@ -886,12 +881,10 @@ class Document extends Element\AbstractElement
         return $this->path;
     }
 
-
     public function getRealPath(): ?string
     {
         return $this->path;
     }
-
 
     public function getRealFullPath(): string
     {
@@ -899,7 +892,6 @@ class Document extends Element\AbstractElement
 
         return $path;
     }
-
 
     public function setKey(string $key): static
     {
@@ -948,7 +940,6 @@ class Document extends Element\AbstractElement
 
         return $this;
     }
-
 
     public function getType(): string
     {

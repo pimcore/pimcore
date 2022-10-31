@@ -91,7 +91,7 @@ abstract class AbstractCookieSaveHandler implements CookieSaveHandlerInterface
      * @param \DateTimeInterface|int|string $expire
      * @param array|null $data
      *
-     * @return string|null
+     * @return bool|string|null
      */
     abstract protected function prepareData(string $scope, string $name, \DateTimeInterface|int|string $expire, ?array $data): bool|string|null;
 }

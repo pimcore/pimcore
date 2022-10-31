@@ -250,7 +250,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return 'NOT SUPPORTED';
     }
 
-
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $dataString = '';
@@ -271,7 +270,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
         return $dataString;
     }
-
 
     public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
@@ -307,7 +305,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
         return $container;
     }
-
 
     public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
@@ -362,7 +359,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
         return $dependencies;
     }
-
 
     public function getCacheTags(mixed $data, array $tags = []): array
     {
@@ -723,30 +719,25 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return false;
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Fieldcollection::class;
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Fieldcollection::class;
     }
 
-
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Fieldcollection::class . '|null';
     }
 
-
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Fieldcollection::class . '|null';
     }
-
 
     public function normalize(mixed $value, array $params = []): ?array
     {
@@ -780,7 +771,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
         return null;
     }
-
 
     public function denormalize(mixed $value, array $params = []): ?DataObject\Fieldcollection
     {

@@ -72,12 +72,10 @@ abstract class AbstractRelations extends Data implements
         return $this;
     }
 
-
     public function getLazyLoading(): bool
     {
         return true;
     }
-
 
     public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
@@ -234,7 +232,6 @@ abstract class AbstractRelations extends Data implements
         return $data;
     }
 
-
     public function getPathFormatterClass(): ?string
     {
         return $this->pathFormatterClass;
@@ -245,12 +242,10 @@ abstract class AbstractRelations extends Data implements
         $this->pathFormatterClass = $pathFormatterClass;
     }
 
-
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
-
 
     public function appendData(?array $existingData, array $additionalData): ?array
     {
@@ -279,7 +274,6 @@ abstract class AbstractRelations extends Data implements
 
         return $newData;
     }
-
 
     public function removeData(mixed $existingData, mixed $removeData): array
     {
@@ -353,7 +347,6 @@ abstract class AbstractRelations extends Data implements
 
         return true;
     }
-
 
     public function supportsDirtyDetection(): bool
     {
@@ -446,12 +439,10 @@ abstract class AbstractRelations extends Data implements
         }
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?array';
     }
-
 
     public function getReturnTypeDeclaration(): ?string
     {
@@ -466,7 +457,6 @@ abstract class AbstractRelations extends Data implements
 
         return null;
     }
-
 
     public function getPhpdocReturnType(): ?string
     {

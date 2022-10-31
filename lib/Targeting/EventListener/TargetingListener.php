@@ -72,7 +72,7 @@ class TargetingListener implements EventSubscriberInterface
         $this->codeGenerator = $codeGenerator;
     }
 
-    public static function getSubscribedEvents(): array//: array
+    public static function getSubscribedEvents(): array
     {
         return [
             // needs to run before ElementListener to make sure there's a

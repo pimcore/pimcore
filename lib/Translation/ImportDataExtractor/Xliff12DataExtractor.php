@@ -84,7 +84,6 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
         return $attributeSet;
     }
 
-
     public function getImportFilePath(string $importId): string
     {
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $importId . '.xliff';
