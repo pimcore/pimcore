@@ -140,9 +140,6 @@ class Cse implements PaginateListingInterface
 
     public array $facets = [];
 
-    /**
-     * @param Search|null $googleResponse
-     */
     public function __construct(Search $googleResponse = null)
     {
         if ($googleResponse) {
@@ -332,8 +329,6 @@ class Cse implements PaginateListingInterface
     /**
      * Methods for PaginateListingInterface
      */
-
-    #[ReturnTypeWillChange]
     public function count(): int
     {
         $this->getResults();
@@ -361,16 +356,11 @@ class Cse implements PaginateListingInterface
      * Methods for Iterator
      */
 
-    #[ReturnTypeWillChange]
     public function rewind(): void
     {
         reset($this->results);
     }
 
-    /**
-     * @return Item|false
-     */
-    #[ReturnTypeWillChange]
     public function current(): Item|bool
     {
         $this->getResults();
@@ -378,7 +368,6 @@ class Cse implements PaginateListingInterface
         return current($this->results);
     }
 
-    #[ReturnTypeWillChange]
     public function key(): ?int
     {
         $this->getResults();
@@ -386,14 +375,12 @@ class Cse implements PaginateListingInterface
         return key($this->results);
     }
 
-    #[ReturnTypeWillChange]
     public function next(): void
     {
         $this->getResults();
         next($this->results);
     }
 
-    #[ReturnTypeWillChange]
     public function valid(): bool
     {
         $this->getResults();
