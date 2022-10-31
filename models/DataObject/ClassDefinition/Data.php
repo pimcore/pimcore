@@ -1092,7 +1092,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
             $code .= "\t" . '$hideUnpublished = \\Pimcore\\Model\\DataObject\\Concrete::getHideUnpublished();' . "\n";
             $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished(false);' . "\n";
-            $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '(string $language);' . "\n";
+            $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '($language);' . "\n";
             $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished($hideUnpublished);' . "\n";
 
             if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
