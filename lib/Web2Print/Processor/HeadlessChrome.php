@@ -39,6 +39,8 @@ class HeadlessChrome extends Processor
         $web2printConfig = $web2printConfig->get('headlessChromeSettings');
         $web2printConfig = json_decode($web2printConfig, true);
 
+        $config = (array) $config;
+
         $params = ['document' => $document];
         $this->updateStatus($document->getId(), 10, 'start_html_rendering');
         $html = $document->renderDocument($params);
@@ -46,19 +48,26 @@ class HeadlessChrome extends Processor
         $html = $this->processHtml($html, $params);
         $this->updateStatus($document->getId(), 40, 'finished_html_rendering');
 
-        if ($web2printConfig) {
+        if ($config) {
             foreach (['header', 'footer'] as $item) {
-                if (key_exists($item, $web2printConfig) && $web2printConfig[$item] &&
-                    $content = file_get_contents($web2printConfig[$item])) {
-                    $web2printConfig[$item . 'Template'] = $content;
+                if (key_exists($item, $config) && $config[$item] &&
+                    $content = file_get_contents($config[$item])) {
+                    $config[$item . 'Template'] = $content;
                 }
-                unset($web2printConfig[$item]);
+                unset($config[$item]);
+            }
+            foreach (['Top', 'Right', 'Bottom', 'Left'] as $item) {
+                $config['margin'][strtolower($item)] = $config['margin' . $item];
+                unset($config['margin' . $item]);
             }
         }
 
+        //Adds any other values that are not covered by the getProcessingOptions
+        $config = array_merge($config, array_diff_key($web2printConfig, $config));
+
         try {
             $this->updateStatus($document->getId(), 50, 'pdf_conversion');
-            $pdf = $this->getPdfFromString($html, $web2printConfig);
+            $pdf = $this->getPdfFromString($html, $config);
             $this->updateStatus($document->getId(), 100, 'saving_pdf_document');
         } catch (\Exception $e) {
             Logger::error((string) $e);
@@ -77,9 +86,26 @@ class HeadlessChrome extends Processor
      */
     public function getProcessingOptions()
     {
+        $web2printConfig = Config::getWeb2PrintConfig();
+        $web2printConfig = $web2printConfig->get('headlessChromeSettings');
+        $web2printConfig = json_decode($web2printConfig, true);
+
+        $options[] = ['name' => 'width', 'type' => 'text', 'default' => $web2printConfig['width'] ?? ''];
+        $options[] = ['name' => 'height', 'type' => 'text', 'default' => $web2printConfig['height'] ?? ''];
+        $options[] = ['name' => 'displayHeaderFooter', 'type' => 'bool', 'default' => $web2printConfig['displayHeaderFooter'] ?? false];
+        $options[] = ['name' => 'printBackground', 'type' => 'bool', 'default' => $web2printConfig['printBackground'] ?? false];
+        $options[] = ['name' => 'landscape', 'type' => 'bool', 'default' => $web2printConfig['landscape'] ?? true];
+        $options[] = ['name' => 'preferCSSPageSize', 'type' => 'bool', 'default' => $web2printConfig['preferCSSPageSize'] ?? false];
+        $options[] = ['name' => 'omitBackground', 'type' => 'bool', 'default' => $web2printConfig['omitBackground'] ?? false];
+        $options[] = ['name' => 'marginTop', 'type' => 'text', 'default' => $web2printConfig['margin']['top'] ?? ''];
+        $options[] = ['name' => 'marginRight', 'type' => 'text', 'default' => $web2printConfig['margin']['right'] ?? ''];
+        $options[] = ['name' => 'marginBottom', 'type' => 'text', 'default' => $web2printConfig['margin']['bottom'] ?? ''];
+        $options[] = ['name' => 'marginLeft', 'type' => 'text', 'default' => $web2printConfig['margin']['left'] ?? ''];
+
         $event = new PrintConfigEvent($this, [
-            'options' => [],
+            'options' => $options,
         ]);
+
         \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRINT_MODIFY_PROCESSING_OPTIONS);
 
         return (array)$event->getArgument('options');
