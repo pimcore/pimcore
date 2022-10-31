@@ -42,31 +42,31 @@ abstract class AbstractOrder extends Concrete
 
     abstract public function getOrdernumber(): ?string;
 
-    abstract public function setOrdernumber(?string $ordernumber);
+    abstract public function setOrdernumber(?string $ordernumber): static;
 
     abstract public function getSubTotalPrice(): ?string;
 
-    abstract public function setSubTotalPrice(?string $subTotalPrice);
+    abstract public function setSubTotalPrice(?string $subTotalPrice): static;
 
     abstract public function getSubTotalNetPrice(): ?string;
 
-    abstract public function setSubTotalNetPrice(?string $subTotalPrice);
+    abstract public function setSubTotalNetPrice(?string $subTotalPrice): static;
 
     abstract public function getTotalPrice(): ?string;
 
-    abstract public function setTotalPrice(?string $totalPrice);
+    abstract public function setTotalPrice(?string $totalPrice): static;
 
     abstract public function getTotalNetPrice(): ?string;
 
-    abstract public function setTotalNetPrice(?string $totalPrice);
+    abstract public function setTotalNetPrice(?string $totalPrice): static;
 
     abstract public function getTaxInfo(): array;
 
-    abstract public function setTaxInfo(?array $taxInfo);
+    abstract public function setTaxInfo(?array $taxInfo): static;
 
     abstract public function getOrderdate(): ?Carbon;
 
-    abstract public function setOrderdate(?Carbon $orderdate);
+    abstract public function setOrderdate(?Carbon $orderdate): static;
 
     /**
      * @return AbstractOrderItem[]
@@ -76,7 +76,7 @@ abstract class AbstractOrder extends Concrete
     /**
      * @param AbstractOrderItem[] $items
      */
-    abstract public function setItems(?array $items);
+    abstract public function setItems(?array $items): static;
 
     /**
      * @return AbstractOrderItem[]
@@ -86,15 +86,15 @@ abstract class AbstractOrder extends Concrete
     /**
      * @param AbstractOrderItem[] $giftItems
      */
-    abstract public function setGiftItems(?array $giftItems);
+    abstract public function setGiftItems(?array $giftItems): static;
 
     abstract public function getCustomer(): ?AbstractElement;
 
-    abstract public function setCustomer(?AbstractElement $customer);
+    abstract public function setCustomer(?AbstractElement $customer): static;
 
     abstract public function getPriceModifications(): ?Fieldcollection;
 
-    abstract public function setPriceModifications(?Fieldcollection $priceModifications);
+    abstract public function setPriceModifications(?Fieldcollection $priceModifications): static;
 
     abstract public function getOrderState(): ?string;
 
@@ -102,11 +102,11 @@ abstract class AbstractOrder extends Concrete
 
     abstract public function getCartId(): ?string;
 
-    abstract public function setCartId(?string $cartId): void;
+    abstract public function setCartId(?string $cartId): static;
 
     abstract public function getPaymentInfo(): ?Fieldcollection;
 
-    abstract public function setPaymentInfo(?\Pimcore\Model\DataObject\Fieldcollection $paymentInfo);
+    abstract public function setPaymentInfo(?\Pimcore\Model\DataObject\Fieldcollection $paymentInfo): static;
 
     abstract public function getPaymentProvider(): ?\Pimcore\Model\DataObject\Objectbrick;
 

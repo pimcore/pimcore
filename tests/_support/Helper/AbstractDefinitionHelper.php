@@ -22,11 +22,6 @@ use Pimcore\Tests\Util\TestHelper;
 
 abstract class AbstractDefinitionHelper extends Module
 {
-    protected array $config = [
-        'initialize_definitions' => true,
-        'cleanup' => true,
-    ];
-
     protected function getClassManager(): ClassManager|Module
     {
         return $this->getModule('\\' . ClassManager::class);

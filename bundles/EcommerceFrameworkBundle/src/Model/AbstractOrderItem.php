@@ -63,7 +63,7 @@ abstract class AbstractOrderItem extends Concrete
      */
     abstract public function setSubItems(?array $subItems);
 
-    abstract public function getPricingRules(): Fieldcollection;
+    abstract public function getPricingRules(): ?Fieldcollection;
 
     abstract public function setPricingRules(?Fieldcollection $pricingRules): static;
 
