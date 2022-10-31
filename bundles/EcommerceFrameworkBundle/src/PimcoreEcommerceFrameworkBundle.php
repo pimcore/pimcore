@@ -22,9 +22,6 @@ use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Version;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-/**
- * @internal
- */
 class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
 {
     /**

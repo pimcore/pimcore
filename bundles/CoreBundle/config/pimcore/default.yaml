@@ -261,6 +261,12 @@ pimcore:
               'abbr', 'option', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'
           ]
 
+    templating_engine:
+        twig:
+            sandbox_security_policy:
+                tags: ['set']
+                filters: ['escape', 'trans']
+                functions: ['path', 'asset']
 presta_sitemap:
     # do not add properties by default
     defaults:

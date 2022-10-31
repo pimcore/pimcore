@@ -16,6 +16,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
+use Pimcore\Db\Helper;
 use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\Exception\NotFoundException;
 
@@ -124,7 +125,7 @@ class Dao extends AbstractDao
             }
         }
 
-        $this->db->update(self::TABLE_NAME, $data, ['id' => $this->model->getId()]);
+        $this->db->update(self::TABLE_NAME, Helper::quoteDataIdentifiers($this->db, $data), ['id' => $this->model->getId()]);
     }
 
     /**

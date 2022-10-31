@@ -54,28 +54,38 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
 
     public function save()
     {
-        try {
-            $data = [
-                'id' => $this->model->getId()->getId(),
-                'key' => $this->model->getKey(),
-                'index' => $this->model->getIndex(),
-                'fullpath' => $this->model->getFullPath(),
-                'maintype' => $this->model->getId()->getType(),
-                'type' => $this->model->getType(),
-                'subtype' => $this->model->getSubtype(),
-                'published' => $this->model->isPublished(),
-                'creationDate' => $this->model->getCreationDate(),
-                'modificationDate' => $this->model->getmodificationDate(),
-                'userOwner' => $this->model->getUserOwner(),
-                'userModification' => $this->model->getUserModification(),
-                'data' => $this->model->getData(),
-                'properties' => $this->model->getProperties(),
-            ];
+        $oldFullPath = $this->db->fetchOne('SELECT fullpath FROM search_backend_data WHERE id = :id and maintype = :type FOR UPDATE', [
+            'id' => $this->model->getId()->getId(),
+            'type' => $this->model->getId()->getType(),
+        ]);
 
-            Helper::insertOrUpdate($this->db, 'search_backend_data', $data);
-        } catch (\Exception $e) {
-            Logger::error((string) $e);
+        if ($oldFullPath && $oldFullPath !== $this->model->getFullPath()) {
+            $this->db->executeQuery('UPDATE search_backend_data
+                SET fullpath = replace(fullpath,' . $this->db->quote($oldFullPath . '/') . ',' . $this->db->quote($this->model->getFullPath() . '/') . ')
+                WHERE fullpath LIKE ' . $this->db->quote(Helper::escapeLike($oldFullPath) . '/%') . ' AND maintype = :type',
+                [
+                    'type' => $this->model->getId()->getType(),
+                ]);
         }
+
+        $data = [
+            'id' => $this->model->getId()->getId(),
+            'key' => $this->model->getKey(),
+            'index' => $this->model->getIndex(),
+            'fullpath' => $this->model->getFullPath(),
+            'maintype' => $this->model->getId()->getType(),
+            'type' => $this->model->getType(),
+            'subtype' => $this->model->getSubtype(),
+            'published' => $this->model->isPublished(),
+            'creationDate' => $this->model->getCreationDate(),
+            'modificationDate' => $this->model->getmodificationDate(),
+            'userOwner' => $this->model->getUserOwner(),
+            'userModification' => $this->model->getUserModification(),
+            'data' => $this->model->getData(),
+            'properties' => $this->model->getProperties(),
+        ];
+
+        Helper::insertOrUpdate($this->db, 'search_backend_data', $data);
     }
 
     /**
