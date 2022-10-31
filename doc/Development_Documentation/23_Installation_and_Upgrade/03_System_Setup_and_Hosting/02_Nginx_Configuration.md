@@ -45,7 +45,7 @@ map $uri $static_page_uri {
 
 server {
     listen 80;
-    listen [::]:80
+    listen [::]:80;
     server_name YOUPROJECT.local;
     root /var/www/pimcore/public;
     index index.php;
