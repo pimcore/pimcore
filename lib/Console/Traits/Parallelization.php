@@ -78,6 +78,7 @@ trait Parallelization
     ): ParallelExecutorFactory {
         return ParallelExecutorFactory::create(...func_get_args())
             ->withSegmentSize($this->getSegmentSize())
+            ->withScriptPath($this->getConsolePath())
             ->withRunBeforeFirstCommand($this->runBeforeFirstCommand(...))
             ->withRunAfterLastCommand($this->runAfterLastCommand(...))
             ->withRunAfterBatch($this->runAfterBatch(...));
@@ -156,5 +157,13 @@ trait Parallelization
             $this->lock->release();
             $this->lock = null;
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getConsolePath(): string
+    {
+        return PIMCORE_PROJECT_ROOT . '/bin/console';
     }
 }
