@@ -557,7 +557,6 @@ class DataObjectHelperController extends AdminController
             'availableConfigs' => $availableConfigs,
             'sharedConfigs' => $sharedConfigs,
             'context' => $context,
-            'sqlFilter' => $gridConfig['sqlFilter'] ?? '',
             'searchFilter' => $gridConfig['searchFilter'] ?? '',
             'filter' => $gridConfig['filter'] ?? [],
         ];
@@ -1242,7 +1241,7 @@ class DataObjectHelperController extends AdminController
         return $response;
     }
 
-    private function getDataPreview($originalFile, $dialect)
+    private function getDataPreview($originalFile, $dialect): array
     {
         $count = 0;
         $data = [];
@@ -1275,7 +1274,7 @@ class DataObjectHelperController extends AdminController
     /**
      * @param Request $request
      *
-     * @return mixed|string
+     * @return string
      */
     protected function extractLanguage(Request $request)
     {

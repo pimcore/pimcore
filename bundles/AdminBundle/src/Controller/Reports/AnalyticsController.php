@@ -114,12 +114,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
         }
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return \Pimcore\Model\Site|null
-     */
-    private function getSite(Request $request)
+    private function getSite(Request $request): ?Site
     {
         $siteId = $request->get('site');
 

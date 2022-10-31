@@ -86,11 +86,6 @@ class MaintenanceCommand extends AbstractCommand
 
     /**
      * Get an array option value, but still support the value being comma-separated for backwards compatibility
-     *
-     * @param InputInterface $input
-     * @param string         $name
-     *
-     * @return array
      */
     private function getArrayOptionValue(InputInterface $input, string $name): array
     {

@@ -17,7 +17,7 @@ namespace Pimcore\Tests\Model\Tool;
 
 use Pimcore\Db;
 use Pimcore\Model\Tool\SettingsStore;
-use Pimcore\Tests\Test\ModelTestCase;
+use Pimcore\Tests\Support\Test\ModelTestCase;
 
 class SettingsStoreTest extends ModelTestCase
 {

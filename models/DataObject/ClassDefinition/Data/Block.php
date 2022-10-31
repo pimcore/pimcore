@@ -28,7 +28,6 @@ use Pimcore\Tool\Serialize;
 
 class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, VarExporterInterface, NormalizerInterface, DataContainerAwareInterface, PreGetDataInterface, PreSetDataInterface
 {
-    use Element\ChildsCompatibilityTrait;
     use Extension\ColumnType;
     use DataObject\Traits\ClassSavedTrait;
 
@@ -1170,7 +1169,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return '?array';
     }
 
-    private function setBlockElementOwner(DataObject\Data\BlockElement $blockElement, $params = [])
+    private function setBlockElementOwner(DataObject\Data\BlockElement $blockElement, $params = []): void
     {
         if (!isset($params['owner'])) {
             throw new \Error('owner missing');

@@ -173,7 +173,6 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
             this.onlyDirectChildren = response.onlyDirectChildren;
             this.searchFilter = response.searchFilter;
-            this.sqlFilter = response.sqlFilter;
             this.filter = response.filter;
         } else {
             itemsPerPage = this.gridPageSize;
@@ -411,7 +410,6 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         config.onlyDirectChildren = this.onlyDirectChildren;
         config.pageSize = this.pagingtoolbar.pageSize;
         config.searchFilter = this.searchField.getValue();
-        config.sqlFilter = this.sqlEditor.getValue();
         config.onlyDirectChildren = this.checkboxOnlyDirectChildren.getValue();
         config.filter = this.filter;
         return config;

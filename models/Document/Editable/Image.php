@@ -159,7 +159,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * {@inheritdoc}
      */
-    public function getDataEditmode() /** : mixed */
+    public function getDataEditmode(): ?array
     {
         $image = $this->getImage();
 
@@ -516,10 +516,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return '';
     }
 
-    /**
-     * @param Asset\Image\Thumbnail\Config $thumbConfig
-     */
-    private function applyCustomCropping($thumbConfig)
+    private function applyCustomCropping(Asset\Image\Thumbnail\Config $thumbConfig): void
     {
         $cropConfig = [
             'width' => $this->cropWidth,
@@ -777,7 +774,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds($idMapping) /** : void */
+    public function rewriteIds(array $idMapping): void
     {
         if (array_key_exists('asset', $idMapping) && array_key_exists($this->getId(), $idMapping['asset'])) {
             $this->setId($idMapping['asset'][$this->getId()]);

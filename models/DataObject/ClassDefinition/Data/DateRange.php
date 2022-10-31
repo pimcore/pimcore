@@ -142,11 +142,6 @@ class DateRange extends Data implements
 
             $startDate = $this->getDateFromTimestamp($data[$startDateKey]);
             $endDate = $this->getDateFromTimestamp($data[$endDateKey]);
-
-            if (!$startDate instanceof Carbon) {
-                return null;
-            }
-
             $period = CarbonPeriod::create()->setStartDate($startDate);
 
             if ($endDate instanceof Carbon) {
@@ -210,10 +205,6 @@ class DateRange extends Data implements
         if (\is_array($data) && isset($data['start_date'], $data['end_date'])) {
             $startDate = $this->getDateFromTimestamp($data['start_date'] / 1000);
             $endDate = $this->getDateFromTimestamp($data['end_date'] / 1000);
-
-            if (!$startDate instanceof Carbon || !$endDate instanceof Carbon) {
-                return null;
-            }
 
             return CarbonPeriod::create($startDate, $endDate);
         }
@@ -426,7 +417,7 @@ class DateRange extends Data implements
     /**
      * Returns a CarbonInterface for the given timestamp.
      */
-    private function getDateFromTimestamp(int $timestamp): CarbonInterface
+    private function getDateFromTimestamp(float|int|string $timestamp): Carbon
     {
         $date = new Carbon();
         $date->setTimestamp($timestamp);

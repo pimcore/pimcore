@@ -58,7 +58,7 @@ class AdminExtension extends AbstractExtension
             foreach ([PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/js/' . $path,
                         PIMCORE_WEB_ROOT . $path,
                     ] as $fullPath) {
-                if (file_exists($fullPath)) {
+                if (is_file($fullPath)) {
                     $scriptContents .= file_get_contents($fullPath) . "\n\n\n";
                     $found = true;
                 }
@@ -77,12 +77,7 @@ class AdminExtension extends AbstractExtension
         return $returnHtml;
     }
 
-    /**
-     * @param string $url
-     *
-     * @return string
-     */
-    private function getScriptTag($url): string
+    private function getScriptTag(string $url): string
     {
         return '<script src="' . $url . '"></script>' . "\n";
     }

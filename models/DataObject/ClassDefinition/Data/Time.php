@@ -71,7 +71,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      */
     public function setMinValue($minValue)
     {
-        if (strlen($minValue)) {
+        if (is_string($minValue) && strlen($minValue)) {
             $this->minValue = $this->toTime($minValue);
         } else {
             $this->minValue = null;
@@ -91,7 +91,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      */
     public function setMaxValue($maxValue)
     {
-        if (strlen($maxValue)) {
+        if (is_string($maxValue) && strlen($maxValue)) {
             $this->maxValue = $this->toTime($maxValue);
         } else {
             $this->maxValue = null;
@@ -105,21 +105,25 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
     {
         parent::checkValidity($data, $omitMandatoryCheck);
 
-        if ((is_string($data) && strlen($data) != 5 && !empty($data)) || (!empty($data) && !is_string($data))) {
+        if (is_string($data)) {
+            if (!preg_match('/^(2[0-3]|[01][0-9]):[0-5][0-9]$/', $data) && $data !== '') {
+                throw new Model\Element\ValidationException('Wrong time format given must be a 5 digit string (eg: 06:49) [ '.$this->getName().' ]');
+            }
+        } elseif (!empty($data)) {
             throw new Model\Element\ValidationException('Wrong time format given must be a 5 digit string (eg: 06:49) [ '.$this->getName().' ]');
         }
 
-        if (!$omitMandatoryCheck && strlen($data)) {
+        if (!$omitMandatoryCheck && $data) {
             if (!$this->toTime($data)) {
-                throw new \Exception('Wrong time format given must be a 5 digit string (eg: 06:49) [ '.$this->getName().' ]');
+                throw new Model\Element\ValidationException('Wrong time format given must be a 5 digit string (eg: 06:49) [ '.$this->getName().' ]');
             }
 
-            if (strlen($this->getMinValue()) && $this->isEarlier($this->getMinValue(), $data)) {
-                throw new \Exception('Value in field [ '.$this->getName().' ] is not at least ' . $this->getMinValue());
+            if ($this->getMinValue() && $this->isEarlier($this->getMinValue(), $data)) {
+                throw new Model\Element\ValidationException('Value in field [ '.$this->getName().' ] is not at least ' . $this->getMinValue());
             }
 
-            if (strlen($this->getMaxValue()) && $this->isLater($this->getMaxValue(), $data)) {
-                throw new \Exception('Value in field [ ' . $this->getName() . ' ] is bigger than ' . $this->getMaxValue());
+            if ($this->getMaxValue() && $this->isLater($this->getMaxValue(), $data)) {
+                throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . ' ] is bigger than ' . $this->getMaxValue());
             }
         }
     }
@@ -139,7 +143,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      */
     public function isEmpty($data)
     {
-        return strlen($data) !== 5;
+        return !is_string($data) || !preg_match('/^(2[0-3]|[01][0-9]):[0-5][0-9]$/', $data);
     }
 
     /**
@@ -149,7 +153,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      *
      * @return null|string
      */
-    private function toTime($timestamp)
+    private function toTime(string $timestamp): ?string
     {
         $timestamp = strtotime($timestamp);
         if (!$timestamp) {
@@ -167,7 +171,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      *
      * @return int
      */
-    private function toTimestamp($string, $baseTimestamp = null)
+    private function toTimestamp(string $string, int $baseTimestamp = null): int
     {
         if ($baseTimestamp === null) {
             $baseTimestamp = time();
@@ -184,7 +188,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      *
      * @return bool
      */
-    private function isEarlier($subject, $comparison)
+    private function isEarlier(string $subject, string $comparison): bool
     {
         $baseTs = time();
 
@@ -199,7 +203,7 @@ class Time extends Model\DataObject\ClassDefinition\Data\Input
      *
      * @return bool
      */
-    private function isLater($subject, $comparison)
+    private function isLater(string $subject, string $comparison): bool
     {
         $baseTs = time();
 

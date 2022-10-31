@@ -393,11 +393,6 @@ final class KeyConfig extends Model\AbstractModel
 
     /**
      * Calculate cache key
-     *
-     * @param int $id
-     * @param string|null $name
-     *
-     * @return string
      */
     private static function getCacheKey(int $id, string $name = null): string
     {
@@ -409,14 +404,11 @@ final class KeyConfig extends Model\AbstractModel
         return $cacheKey;
     }
 
-    /**
-     * @internal
-     */
     private function removeCache(): void
     {
         // Remove runtime cache
-        RuntimeCache::set(self::getCacheKey($this->getId()), null);
-        RuntimeCache::set(self::getCacheKey($this->getStoreId(), $this->getName()), null);
+        RuntimeCache::getInstance()->offsetUnset(self::getCacheKey($this->getId()));
+        RuntimeCache::getInstance()->offsetUnset(self::getCacheKey($this->getStoreId(), $this->getName()));
 
         // Remove persisted cache
         Cache::remove(self::getCacheKey($this->getId()));

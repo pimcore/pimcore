@@ -22,17 +22,13 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
-use Webmozarts\Console\Parallelization\Parallelization as WebmozartParallelization;
 
 trait Parallelization
 {
     /** @var LockInterface|null */
     private $lock;
 
-    use WebmozartParallelization
-    {
-        WebmozartParallelization::configureParallelization as parentConfigureParallelization;
-    }
+    use ParallelizationBase;
 
     protected static function configureParallelization(Command $command): void
     {
@@ -126,17 +122,12 @@ trait Parallelization
 
     /**
      * Locks a command.
-     *
-     * @param string|null $name
-     * @param bool|null $blocking
-     *
-     * @return bool
      */
-    private function lock($name = null, $blocking = false)
+    private function lock(): bool
     {
-        $this->lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($name ?: $this->getName(), 86400);
+        $this->lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($this->getName(), 86400);
 
-        if (!$this->lock->acquire($blocking)) {
+        if (!$this->lock->acquire()) {
             $this->lock = null;
 
             return false;
@@ -148,7 +139,7 @@ trait Parallelization
     /**
      * Releases the command lock if there is one.
      */
-    private function release()
+    private function release(): void
     {
         if ($this->lock) {
             $this->lock->release();

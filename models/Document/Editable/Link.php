@@ -56,7 +56,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * {@inheritdoc}
      */
-    public function getDataEditmode() /** : mixed */
+    public function getDataEditmode(): ?array
     {
         // update path if internal link
         $this->updatePathFromInternal(true, true);
@@ -250,11 +250,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $url;
     }
 
-    /**
-     * @param bool $realPath
-     * @param bool $editmode
-     */
-    private function updatePathFromInternal($realPath = false, $editmode = false)
+    private function updatePathFromInternal(bool $realPath = false, bool $editmode = false): void
     {
         $method = 'getFullPath';
         if ($realPath) {
@@ -506,7 +502,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds($idMapping) /** : void */
+    public function rewriteIds(array $idMapping): void
     {
         if (isset($this->data['internal']) && $this->data['internal']) {
             $type = $this->data['internalType'];

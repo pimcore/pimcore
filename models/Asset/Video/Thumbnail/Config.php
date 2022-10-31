@@ -166,10 +166,7 @@ final class Config extends Model\AbstractModel
         return $config;
     }
 
-    /**
-     * @param string $name
-     */
-    private function createMediaIfNotExists($name)
+    private function createMediaIfNotExists(string $name): void
     {
         if (!array_key_exists($name, $this->medias)) {
             $this->medias[$name] = [];

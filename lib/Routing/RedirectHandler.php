@@ -122,13 +122,6 @@ final class RedirectHandler implements LoggerAwareInterface
     }
 
     /**
-     * @param Redirect $redirect
-     * @param Request $request
-     * @param RedirectUrlPartResolver $partResolver
-     * @param Site|null $sourceSite
-     *
-     * @return RedirectResponse|null
-     *
      * @throws \Exception
      */
     private function matchRegexRedirect(
@@ -136,7 +129,7 @@ final class RedirectHandler implements LoggerAwareInterface
         Request $request,
         RedirectUrlPartResolver $partResolver,
         Site $sourceSite = null
-    ) {
+    ): ?RedirectResponse {
         if (empty($redirect->getType())) {
             return null;
         }
@@ -259,7 +252,7 @@ final class RedirectHandler implements LoggerAwareInterface
     /**
      * @return Redirect[]
      */
-    private function getRegexRedirects()
+    private function getRegexRedirects(): array
     {
         if (null !== $this->redirects && is_array($this->redirects)) {
             return $this->redirects;
@@ -301,11 +294,9 @@ final class RedirectHandler implements LoggerAwareInterface
     }
 
     /**
-     * @param bool $override
-     *
      * @return Redirect[]
      */
-    private function getRegexFilteredRedirects($override = false)
+    private function getRegexFilteredRedirects(bool $override = false): array
     {
         $now = time();
 

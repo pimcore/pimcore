@@ -49,9 +49,6 @@ class PackageInfo
         return $packages;
     }
 
-    /**
-     * @return array
-     */
     private function readInstalledPackages(): array
     {
         if (null !== $this->installedPackages) {
@@ -66,12 +63,7 @@ class PackageInfo
         return $this->installedPackages = [];
     }
 
-    /**
-     * @param string $path
-     *
-     * @return array|null
-     */
-    private function readComposerFile(string $path)
+    private function readComposerFile(string $path): ?array
     {
         if (is_file($path) && is_readable($path)) {
             try {

@@ -263,11 +263,9 @@ class Task extends Model\AbstractModel
     }
 
     /**
-     * @param int|null $userId
-     *
      * @return $this
      */
-    public function setUserId(?int $userId): self
+    public function setUserId(?int $userId): static
     {
         $this->userId = $userId;
 

@@ -169,13 +169,6 @@ trait DataObjectActionsTrait
     }
 
     /**
-     * @param array $data
-     * @param DataObject\Concrete $object
-     * @param string $requestedLanguage
-     * @param LocaleServiceInterface $localeService
-     *
-     * @return array
-     *
      * @throws \Exception
      */
     private function prepareObjectData(

@@ -180,10 +180,7 @@ class ControllerDataProvider
      * Finds templates in a certain path. If bundleName is null, the global notation (templates/)
      * will be used.
      *
-     * @param string $path
-     * @param string|null $bundleName
-     *
-     * @return array
+     * @return string[]
      */
     private function findTemplates(string $path, string $bundleName = null): array
     {

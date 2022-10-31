@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\UserNameTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Controller\KernelControllerEventInterface;
@@ -58,6 +59,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     use ElementEditLockHelperTrait;
     use ApplySchedulerDataTrait;
     use DataObjectActionsTrait;
+    use UserNameTrait;
 
     protected DataObject\Service $_objectService;
 
@@ -176,13 +178,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         return $this->adminJson($objects);
     }
 
-    /**
-     * @param DataObject\AbstractObject $object
-     * @param string|null $filter
-     * @param string|null $view
-     *
-     * @return string
-     */
     private function buildChildrenCondition(DataObject\AbstractObject $object, ?string $filter, ?string $view): string
     {
         $condition = "objects.o_parentId = '" . $object->getId() . "'";
@@ -399,7 +394,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $linkGeneratorReference = $objectFromDatabase->getClass()->getLinkGeneratorReference();
 
             $objectData['hasPreview'] = false;
-            if ($objectFromDatabase->getClass()->getPreviewUrl() || $linkGeneratorReference || $previewGenerator) {
+            if ($linkGeneratorReference || $previewGenerator) {
                 $objectData['hasPreview'] = true;
             }
 
@@ -413,7 +408,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             $objectData['general'] = [];
 
-            $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_creationDate', 'o_classId', 'o_className', 'o_type', 'o_parentId', 'o_userOwner'];
+            $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_creationDate', 'o_classId', 'o_className', 'o_type', 'o_parentId', 'o_userOwner', 'o_userModification'];
             foreach ($objectFromDatabase->getObjectVars() as $key => $value) {
                 if (in_array($key, $allowedKeys)) {
                     $objectData['general'][$key] = $value;
@@ -471,6 +466,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             // and for adding the published icon to version overview
             $objectData['general']['versionDate'] = $objectFromDatabase->getModificationDate();
             $objectData['general']['versionCount'] = $objectFromDatabase->getVersionCount();
+
+            $userOwnerName = $this->getUserName($objectData['general']['o_userOwner']);
+            $userModificationName = ($objectData['general']['o_userOwner'] == $objectData['general']['o_userModification']) ? $userOwnerName : $this->getUserName($objectData['general']['o_userModification']);
+            $objectData['general']['o_userOwnerUsername'] = $userOwnerName['userName'];
+            $objectData['general']['o_userOwnerFullname'] = $userOwnerName['fullName'];
+            $objectData['general']['o_userModificationUsername'] = $userModificationName['userName'];
+            $objectData['general']['o_userModificationFullname'] = $userModificationName['fullName'];
 
             $this->addAdminStyle($object, ElementAdminStyleEvent::CONTEXT_EDITOR, $objectData['general']);
 
@@ -565,39 +567,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
 
         if ($request->get('changedData')) {
-            $data = $this->decodeJson($request->get('changedData'));
-            foreach ($data as $key => $value) {
-                $fd = $object->getClass()->getFieldDefinition($key);
-                if ($fd) {
-                    if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                        $user = Tool\Admin::getCurrentUser();
-                        if (!$user->getAdmin()) {
-                            $allowedLanguages = DataObject\Service::getLanguagePermissions($object, $user, 'lEdit');
-                            if (!is_null($allowedLanguages)) {
-                                $allowedLanguages = array_keys($allowedLanguages);
-                                $submittedLanguages = array_keys($data[$key]);
-                                foreach ($submittedLanguages as $submittedLanguage) {
-                                    if (!in_array($submittedLanguage, $allowedLanguages)) {
-                                        unset($value[$submittedLanguage]);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if ($fd instanceof ReverseObjectRelation) {
-                        $remoteClass = DataObject\ClassDefinition::getByName($fd->getOwnerClassName());
-                        $relations = $object->getRelationData($fd->getOwnerFieldName(), false, $remoteClass->getId());
-                        $toAdd = $this->detectAddedRemoteOwnerRelations($relations, $value);
-                        $toDelete = $this->detectDeletedRemoteOwnerRelations($relations, $value);
-                        if (count($toAdd) > 0 || count($toDelete) > 0) {
-                            $this->processRemoteOwnerRelations($object, $toDelete, $toAdd, $fd->getOwnerFieldName());
-                        }
-                    } else {
-                        $object->setValue($key, $fd->getDataFromEditmode($value, $object));
-                    }
-                }
-            }
+            $this->applyChanges($object, $this->decodeJson($request->get('changedData')));
         }
 
         $fieldDefinitionConfig = json_decode($request->get('fieldDefinition'));
@@ -628,11 +598,43 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         return new JsonResponse(['success' => true, 'options' => $options]);
     }
 
-    /**
-     * @param DataObject\Concrete $object
-     * @param bool $objectFromVersion
-     */
-    private function getDataForObject(DataObject\Concrete $object, $objectFromVersion = false)
+    private function applyChanges(DataObject\Concrete $object, array $changes): void
+    {
+        foreach ($changes as $key => $value) {
+            $fd = $object->getClass()->getFieldDefinition($key);
+            if ($fd) {
+                if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                    $user = Tool\Admin::getCurrentUser();
+                    if (!$user->getAdmin()) {
+                        $allowedLanguages = DataObject\Service::getLanguagePermissions($object, $user, 'lEdit');
+                        if (!is_null($allowedLanguages)) {
+                            $allowedLanguages = array_keys($allowedLanguages);
+                            $submittedLanguages = array_keys($changes[$key]);
+                            foreach ($submittedLanguages as $submittedLanguage) {
+                                if (!in_array($submittedLanguage, $allowedLanguages)) {
+                                    unset($value[$submittedLanguage]);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if ($fd instanceof ReverseObjectRelation) {
+                    $remoteClass = DataObject\ClassDefinition::getByName($fd->getOwnerClassName());
+                    $relations = $object->getRelationData($fd->getOwnerFieldName(), false, $remoteClass->getId());
+                    $toAdd = $this->detectAddedRemoteOwnerRelations($relations, $value);
+                    $toDelete = $this->detectDeletedRemoteOwnerRelations($relations, $value);
+                    if (count($toAdd) > 0 || count($toDelete) > 0) {
+                        $this->processRemoteOwnerRelations($object, $toDelete, $toAdd, $fd->getOwnerFieldName());
+                    }
+                } else {
+                    $object->setValue($key, $fd->getDataFromEditmode($value, $object));
+                }
+            }
+        }
+    }
+
+    private function getDataForObject(DataObject\Concrete $object, bool $objectFromVersion = false): void
     {
         foreach ($object->getClass()->getFieldDefinitions(['object' => $object]) as $key => $def) {
             $this->getDataForField($object, $key, $def, $objectFromVersion);
@@ -640,15 +642,9 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     }
 
     /**
-     * gets recursively attribute data from parent and fills objectData and metaData
-     *
-     * @param DataObject\Concrete $object
-     * @param string $key
-     * @param DataObject\ClassDefinition\Data $fielddefinition
-     * @param bool $objectFromVersion
-     * @param int $level
+     * Gets recursively attribute data from parent and fills objectData and metaData
      */
-    private function getDataForField($object, $key, $fielddefinition, $objectFromVersion, $level = 0)
+    private function getDataForField(DataObject\Concrete $object, string $key, DataObject\ClassDefinition\Data $fielddefinition, bool $objectFromVersion, int $level = 0): void
     {
         $parent = DataObject\Service::hasInheritableParentObject($object);
         $getter = 'get' . ucfirst($key);
@@ -795,6 +791,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $objectData['properties'] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
             $objectData['userPermissions'] = $object->getUserPermissions($this->getAdminUser());
             $objectData['classes'] = $this->prepareChildClasses($object->getDao()->getClasses());
+
+            $userOwnerName = $this->getUserName($objectData['general']['o_userOwner']);
+            $userModificationName = ($objectData['general']['o_userOwner'] == $objectData['general']['o_userModification']) ? $userOwnerName : $this->getUserName($objectData['general']['o_userModification']);
+            $objectData['general']['o_userOwnerUsername'] = $userOwnerName['userName'];
+            $objectData['general']['o_userOwnerFullname'] = $userOwnerName['fullName'];
+            $objectData['general']['o_userModificationUsername'] = $userModificationName['userName'];
+            $objectData['general']['o_userModificationFullname'] = $userModificationName['fullName'];
 
             // grid-config
             $configFile = PIMCORE_CONFIGURATION_DIRECTORY . '/object/grid/' . $object->getId() . '-user_' . $this->getAdminUser()->getId() . '.psf';
@@ -1179,7 +1182,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         return ['success' => $success];
     }
 
-    private function executeInsideTransaction(callable $fn)
+    private function executeInsideTransaction(callable $fn): void
     {
         $maxRetries = 5;
         for ($retries = 0; $retries < $maxRetries; $retries++) {
@@ -1257,7 +1260,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $this->executeInsideTransaction($fn);
     }
 
-    private function updateLatestVersionIndex($objectId, $newIndex)
+    private function updateLatestVersionIndex(int $objectId, int $newIndex): void
     {
         $object = DataObject\Concrete::getById($objectId);
 
@@ -1354,7 +1357,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $object->setUserModification($this->getAdminUser()->getId());
 
         $objectFromVersion = $object !== $objectFromDatabase;
-        $originalModificationDate = $objectFromVersion ? $object->getModificationDate() : $objectFromDatabase->getModificationDate();
         if ($objectFromVersion) {
             if (method_exists($object, 'getLocalizedFields')) {
                 /** @var DataObject\Localizedfield $localizedFields */
@@ -1366,39 +1368,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         // data
         $data = [];
         if ($request->get('data')) {
-            $data = $this->decodeJson($request->get('data'));
-            foreach ($data as $key => $value) {
-                $fd = $object->getClass()->getFieldDefinition($key);
-                if ($fd) {
-                    if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                        $user = Tool\Admin::getCurrentUser();
-                        if (!$user->getAdmin()) {
-                            $allowedLanguages = DataObject\Service::getLanguagePermissions($object, $user, 'lEdit');
-                            if (!is_null($allowedLanguages)) {
-                                $allowedLanguages = array_keys($allowedLanguages);
-                                $submittedLanguages = array_keys($data[$key]);
-                                foreach ($submittedLanguages as $submittedLanguage) {
-                                    if (!in_array($submittedLanguage, $allowedLanguages)) {
-                                        unset($value[$submittedLanguage]);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if ($fd instanceof ReverseObjectRelation) {
-                        $remoteClass = DataObject\ClassDefinition::getByName($fd->getOwnerClassName());
-                        $relations = $object->getRelationData($fd->getOwnerFieldName(), false, $remoteClass->getId());
-                        $toAdd = $this->detectAddedRemoteOwnerRelations($relations, $value);
-                        $toDelete = $this->detectDeletedRemoteOwnerRelations($relations, $value);
-                        if (count($toAdd) > 0 || count($toDelete) > 0) {
-                            $this->processRemoteOwnerRelations($object, $toDelete, $toAdd, $fd->getOwnerFieldName());
-                        }
-                    } else {
-                        $object->setValue($key, $fd->getDataFromEditmode($value, $object, ['objectFromVersion' => $objectFromVersion]));
-                    }
-                }
-            }
+            $this->applyChanges($object, $this->decodeJson($request->get('data')));
         }
 
         // general settings
@@ -2017,21 +1987,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $object = DataObject\Service::getElementFromSession('object', $id);
 
         if ($object instanceof DataObject\Concrete) {
-            $url = $object->getClass()->getPreviewUrl();
-            if ($url) {
-                // replace named variables
-                $vars = $object->getObjectVars();
-                foreach ($vars as $key => $value) {
-                    if (!empty($value) && \is_scalar($value)) {
-                        $url = str_replace('%' . $key, urlencode($value), $url);
-                    } else {
-                        if (strpos($url, '%' . $key) !== false) {
-                            return new Response('No preview available, please ensure that all fields which are required for the preview are filled correctly.');
-                        }
-                    }
-                }
-                $url = str_replace('%_locale', $this->getAdminUser()->getLanguage(), $url);
-            } elseif ($previewService = $object->getClass()->getPreviewGenerator()) {
+            $url = null;
+            if ($previewService = $object->getClass()->getPreviewGenerator()) {
                 $url = $previewService->generatePreviewUrl($object, array_merge(['preview' => true, 'context' => $this], $request->query->all()));
             } elseif ($linkGenerator = $object->getClass()->getLinkGenerator()) {
                 $url = $linkGenerator->generate($object, ['preview' => true, 'context' => $this]);

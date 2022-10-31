@@ -42,10 +42,7 @@ class AdminUserTranslator implements TranslatorInterface, LocaleAwareInterface
         $this->userLoader = $userLoader;
     }
 
-    /**
-     * @return string|null
-     */
-    private function getUserLocale()
+    private function getUserLocale(): ?string
     {
         if (null !== $user = $this->userLoader->getUser()) {
             return $user->getLanguage();

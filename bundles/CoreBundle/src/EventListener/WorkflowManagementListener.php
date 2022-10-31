@@ -205,13 +205,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
         $e->setArgument('data', $data);
     }
 
-    /**
-     * @param DataObject\AbstractObject $object
-     * @param array $notes
-     *
-     * @return array
-     */
-    private function enrichNotes(DataObject\AbstractObject $object, array $notes)
+    private function enrichNotes(DataObject\AbstractObject $object, array $notes): array
     {
         if (!empty($notes['commentGetterFn'])) {
             $commentGetterFn = $notes['commentGetterFn'];
@@ -224,13 +218,9 @@ class WorkflowManagementListener implements EventSubscriberInterface
     }
 
     /**
-     * @param GenericEvent $e
-     *
-     * @return ElementInterface
-     *
      * @throws \Exception
      */
-    private static function extractElementFromEvent(GenericEvent $e)
+    private static function extractElementFromEvent(GenericEvent $e): ElementInterface
     {
         $element = null;
 

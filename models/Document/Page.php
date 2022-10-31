@@ -279,9 +279,9 @@ class Page extends TargetingDocument
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/document-page-previews/document-page-screenshot-' . $this->getId() . '@2x.jpg';
     }
 
-    public function save()
+    public function save(array $parameters = []): static
     {
-        $response = parent::save(...func_get_args());
+        $page = parent::save($parameters);
 
         // Dispatch page preview message, if preview is enabled.
         $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
@@ -291,6 +291,6 @@ class Page extends TargetingDocument
             );
         }
 
-        return $response;
+        return $page;
     }
 }

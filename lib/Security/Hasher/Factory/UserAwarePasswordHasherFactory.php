@@ -49,7 +49,7 @@ class UserAwarePasswordHasherFactory extends AbstractHasherFactory
     {
         if (!$user instanceof UserInterface) {
             throw new \RuntimeException(sprintf(
-                'Need an instance of UserInterface to build an encoder, "%s" given',
+                'Need an instance of UserInterface to build a password hasher, "%s" given',
                 is_object($user) ? get_class($user) : gettype($user)
             ));
         }
@@ -69,7 +69,7 @@ class UserAwarePasswordHasherFactory extends AbstractHasherFactory
 
         $reflector = $this->getReflector();
         if (!$reflector->implementsInterface(UserAwarePasswordHasherInterface::class)) {
-            throw new ConfigurationException('An encoder built by the UserAwarePasswordHasherFactory must implement UserAwarePasswordHasherInterface');
+            throw new ConfigurationException('A password hasher built by the UserAwarePasswordHasherFactory must implement UserAwarePasswordHasherInterface');
         }
 
         $hasher = $this->buildPasswordHasher($reflector);

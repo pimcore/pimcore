@@ -217,7 +217,7 @@ class RoutingListener implements EventSubscriberInterface
         }
     }
 
-    private function resolveConfigDomainRedirectHost(Request $request)
+    private function resolveConfigDomainRedirectHost(Request $request): ?string
     {
         $hostRedirect = null;
 

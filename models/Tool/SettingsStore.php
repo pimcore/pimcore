@@ -60,9 +60,6 @@ final class SettingsStore extends Model\AbstractModel
      */
     protected static ?self $instance = null;
 
-    /**
-     * @return self
-     */
     private static function getInstance(): self
     {
         if (!self::$instance) {
@@ -73,10 +70,6 @@ final class SettingsStore extends Model\AbstractModel
     }
 
     /**
-     * @param string $type
-     *
-     * @return bool
-     *
      * @throws \Exception
      */
     private static function validateType(string $type): bool

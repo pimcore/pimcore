@@ -55,10 +55,7 @@ final class FilteredMigrationsRepository implements \Doctrine\Migrations\Migrati
         return $this;
     }
 
-    /**
-     * @param FilesystemMigrationsRepository $repository
-     */
-    private function setFileSystemRepo(FilesystemMigrationsRepository $repository)
+    private function setFileSystemRepo(FilesystemMigrationsRepository $repository): void
     {
         $this->filesystemRepo = $repository;
     }

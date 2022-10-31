@@ -15,7 +15,7 @@
 
 namespace Pimcore\Tests\Ecommerce\PricingManager\Rule;
 
-use Codeception\Util\Stub;
+use Codeception\Stub;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Shipping;
@@ -40,8 +40,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\OnlineShopTaxClass;
-use Pimcore\Tests\Helper\Pimcore;
-use Pimcore\Tests\Test\EcommerceTestCase;
+use Pimcore\Tests\Support\Helper\Pimcore;
+use Pimcore\Tests\Support\Test\EcommerceTestCase;
 
 class AbstractRuleTest extends EcommerceTestCase
 {

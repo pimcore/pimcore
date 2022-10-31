@@ -172,13 +172,6 @@ final class Thumbnail
         return $this->getPath(true);
     }
 
-    /**
-     * @param string $path
-     * @param array $options
-     * @param Asset $asset
-     *
-     * @return string
-     */
     private function addCacheBuster(string $path, array $options, Asset $asset): string
     {
         if (isset($options['cacheBuster']) && $options['cacheBuster']) {
@@ -419,11 +412,9 @@ final class Thumbnail
      *
      * @param string|array|Thumbnail\Config $selector Name, array or object describing a thumbnail configuration.
      *
-     * @return Thumbnail\Config
-     *
      * @throws NotFoundException
      */
-    private function createConfig($selector)
+    private function createConfig(array|string|Thumbnail\Config $selector): Thumbnail\Config
     {
         $thumbnailConfig = Thumbnail\Config::getByAutoDetect($selector);
 
@@ -437,9 +428,6 @@ final class Thumbnail
     /**
      * Get value that can be directly used ina srcset HTML attribute for images.
      *
-     * @param Image\Thumbnail\Config $thumbConfig
-     * @param Image $image
-     * @param array $options
      * @param string|null $mediaQuery Can be empty string if no media queries are defined.
      *
      * @return string Relative paths to different thunbnail images with 1x and 2x resolution
