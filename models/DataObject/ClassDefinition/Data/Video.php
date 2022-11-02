@@ -414,7 +414,6 @@ class Video extends Data implements
      * { @inheritdoc }
      */
     public function enrichFieldDefinition(array $context = []): static
-        /** : static */
     {
         if (empty($this->getAllowedTypes()) && (isset($context['object']) || isset($context['containerType']))) {
             $this->setAllowedTypes($this->getSupportedTypes());

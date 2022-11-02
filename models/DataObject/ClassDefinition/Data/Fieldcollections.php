@@ -459,7 +459,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * { @inheritdoc }
      */
-    public function preSetData(mixed $container, /**  mixed */ mixed $data, array $params = []) : mixed
+    public function preSetData(mixed $container, mixed $data, array $params = []) : mixed
     {
         $this->markLazyloadedFieldAsLoaded($container);
 

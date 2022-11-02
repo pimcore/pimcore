@@ -625,7 +625,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     /**
      * { @inheritdoc }
      */
-    public function preSetData(mixed $container, /**  mixed */ mixed $data, array $params = []) : mixed
+    public function preSetData(mixed $container, mixed $data, array $params = []) : mixed
     {
         if ($data === null) {
             $data = [];

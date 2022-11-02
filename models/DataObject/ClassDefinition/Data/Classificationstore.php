@@ -931,7 +931,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): static
+    public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
     {
         $this->activeGroupDefinitions = [];
         $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);

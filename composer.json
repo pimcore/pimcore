@@ -75,7 +75,7 @@
     "nesbot/carbon": "^2.27",
     "pear/net_url2": "^2.2",
     "matomo/device-detector": "^4.0",
-    "presta/sitemap-bundle": "^3.3",
+    "presta/sitemap-bundle": "^2.1 || ^3.2",
     "sabre/dav": "^4.1.2",
     "sensio/framework-extra-bundle": "^6.1",
     "sensiolabs/ansi-to-html": "^1.1",
@@ -142,8 +142,7 @@
     "knplabs/knp-paginator-bundle": "^5.4.2",
     "masterminds/html5" : "^2.7",
     "league/flysystem-bundle" : "^3.0",
-    "spatie/image-optimizer": "^1.6.2",
-    "webmozarts/console-parallelization": "^1.2.0"
+    "spatie/image-optimizer": "^1.6.2"
   },
   "conflict": {
     "symfony/symfony": "*",
@@ -160,7 +159,8 @@
     "spiritix/php-chrome-html2pdf": "^1.6",
     "elasticsearch/elasticsearch": "^7.11",
     "composer/composer": "*",
-    "chrome-php/chrome": "^1.4.0"
+    "chrome-php/chrome": "^1.4.0",
+    "webmozarts/console-parallelization": "^1.2.0"
   },
   "suggest": {
     "ext-sockets": "*",

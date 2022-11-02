@@ -321,17 +321,17 @@ class Manager
      * Forces an initial place being set (and stored) if the current place is empty.
      * We cannot apply a regular transition b/c it would be considered invalid by the state machine.
      *
-     * As of Symfony 4.4.8 built-in implementations of @param string $workflowName
+     * As of Symfony 4.4.8 built-in implementations of @see \Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface
+     * use strict `null` comparison when retrieving the current marking and throw an exception otherwise.
+     *
+     * @param string $workflowName
      * @param object $subject
      *
      * @return bool true if initial state was applied
      *
      * @throws \Exception
-     *@see \Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface
-     * use strict `null` comparison when retrieving the current marking and throw an exception otherwise.
-     *
      */
-    public function ensureInitialPlace(string $workflowName, object $subject): bool
+    public function ensureInitialPlace(string $workflowName, $subject): bool
     {
         if (!$workflow = $this->getWorkflowIfExists($subject, $workflowName)) {
             return false;

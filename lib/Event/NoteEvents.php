@@ -23,5 +23,5 @@ final class NoteEvents
      *
      * @var string
      */
-    const POST_ADD = 'pimcore.model.note.postAdd';
+    const POST_ADD = 'pimcore.element.note.postAdd';
 }

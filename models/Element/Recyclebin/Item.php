@@ -317,24 +317,17 @@ class Item extends Model\AbstractModel
                     return $descriptor;
                 }
             ),
-            new class($this->element) extends TypeMatcher {
-
-                protected mixed $element;
-                public function __construct($element)
-                {
-                    $this->element = $element;
-                    parent::__construct($element);
-                }
+            new class((string)$this->element) extends TypeMatcher {
 
                 /**
-                 * @param mixed $element
                  *
+                 * @param mixed $element
                  * @return bool
                  */
-                public function matches($element): bool
+                public function matches(mixed $element): bool
                 {
                     //compress only elements with full_dump_state = false
-                    return $this->element instanceof Element\ElementInterface && $this->element instanceof Element\ElementDumpStateInterface && !($this->element->isInDumpState());
+                    return $element instanceof Element\ElementInterface && $element instanceof Element\ElementDumpStateInterface && !($element->isInDumpState());
                 }
             }
         );

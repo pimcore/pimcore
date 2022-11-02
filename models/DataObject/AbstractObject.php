@@ -1051,7 +1051,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     public function getParent(): ?AbstractObject
-        /** : ?self **/
     {
         $parent = parent::getParent();
 

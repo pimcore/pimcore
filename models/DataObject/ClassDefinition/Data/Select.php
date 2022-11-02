@@ -407,7 +407,6 @@ class Select extends Data implements
      * { @inheritdoc }
      */
     public function enrichFieldDefinition(array $context = []): static
-        /** : static */
     {
         $this->doEnrichDefinitionDefinition(null, $this->getName(),
             'fielddefinition', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT, $context);
@@ -418,7 +417,7 @@ class Select extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function enrichLayoutDefinition(/* ?Concrete */ ?Concrete $object, /* array */ array $context = []): static
+    public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
     {
         $this->doEnrichDefinitionDefinition($object, $this->getName(),
             'layout', DataObject\ClassDefinition\Helper\OptionsProviderResolver::MODE_SELECT, $context);

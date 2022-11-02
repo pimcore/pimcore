@@ -37,5 +37,5 @@ interface IdRewriterInterface
      *
      * @return mixed rewritten data based on data type
      */
-    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed/** :mixed */;
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed;
 }

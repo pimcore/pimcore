@@ -30,5 +30,5 @@ interface FieldDefinitionEnrichmentInterface
      *
      * @return $this
      */
-    public function enrichFieldDefinition(array $context = []): static/** : static */;
+    public function enrichFieldDefinition(array $context = []): static;
 }

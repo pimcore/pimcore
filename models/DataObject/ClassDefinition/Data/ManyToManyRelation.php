@@ -568,7 +568,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * { @inheritdoc }
      */
-    public function preSetData(mixed $container, /**  mixed */ mixed $data, array $params = []) : mixed
+    public function preSetData(mixed $container, mixed $data, array $params = []) : mixed
     {
         if ($data === null) {
             $data = [];
