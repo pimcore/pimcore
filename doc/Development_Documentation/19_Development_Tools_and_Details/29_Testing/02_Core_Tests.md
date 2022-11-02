@@ -32,7 +32,7 @@ After finishing, shutdown docker containers and cleanup volumes with `docker-com
 
 This will run all tests.
 ```
-docker-compose exec php-fpm vendor/bin/codecept run -c . -vvv
+docker-compose exec php vendor/bin/codecept run -c . -vvv
 ```
 
 #### Only run a specific suite
@@ -40,7 +40,7 @@ docker-compose exec php-fpm vendor/bin/codecept run -c . -vvv
 Only runs the `Model` tests. For a list of suites see the list below.
 
 ```
-docker-compose exec php-fpm vendor/bin/codecept run -c . Model -vvv
+docker-compose exec php vendor/bin/codecept run -c . Model -vvv
 ```
 
 #### Only run a specific test group
@@ -49,7 +49,7 @@ This can be a subset of a suite. You also have the option to provide a comma-sep
 For an overview of available groups see the table below.
 
 ```
-docker-compose exec php-fpm vendor/bin/codecept run -c . Model -vvv -g dataTypeLocal
+docker-compose exec php vendor/bin/codecept run -c . Model -vvv -g dataTypeLocal
 ```
 
 
@@ -59,7 +59,7 @@ For Redis, the `PIMCORE_TEST_REDIS_DSN` option is mandatory. If not using the Re
 to a value that does not conflict to any other Redis DBs on your system.
 
 ```
-docker-compose exec php-fpm vendor/bin/codecept run -c . Cache
+docker-compose exec php vendor/bin/codecept run -c . Cache
 ```
 
 

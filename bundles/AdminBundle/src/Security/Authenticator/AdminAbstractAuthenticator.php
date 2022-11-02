@@ -30,7 +30,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -70,7 +69,7 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         if ($exception instanceof TooManyLoginAttemptsAuthenticationException) {
-            throw new AccessDeniedHttpException(strtr($exception->getMessageKey(), $exception->getMessageData()));
+            return new Response(strtr($exception->getMessageKey(), $exception->getMessageData()));
         }
 
         $url = $this->router->generate(AdminLoginAuthenticator::PIMCORE_ADMIN_LOGIN, [
