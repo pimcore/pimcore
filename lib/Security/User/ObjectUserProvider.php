@@ -86,7 +86,7 @@ class ObjectUserProvider implements UserProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadUserByIdentifier(string $username)
+    public function loadUserByIdentifier(string $username): UserInterface
     {
         $getter = sprintf('getBy%s', ucfirst($this->usernameField));
 
