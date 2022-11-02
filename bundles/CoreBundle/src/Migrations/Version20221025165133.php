@@ -20,7 +20,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Pimcore\Config;
-use Pimcore\Log\Handler\ApplicationLoggerDb;
 
 final class Version20221025165133 extends AbstractMigration
 {
