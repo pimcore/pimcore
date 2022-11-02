@@ -21,10 +21,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\Frontend\TrackingCodeFlashMessageListener;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
-use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class TrackingManager implements TrackingManagerInterface
 {
@@ -54,55 +52,19 @@ class TrackingManager implements TrackingManagerInterface
     protected $enviroment = null;
 
     /**
-     *
-     * @deprecated will be removed in Pimcore 11
-     *
-     * @var Session
-     */
-    protected $session;
-
-    /**
      * @var RequestStack
      */
     protected RequestStack $requestStack;
 
-    /**
-     * @param TrackerInterface[] $trackers
-     * @param EnvironmentInterface $environment
-     */
-    public function __construct(EnvironmentInterface $environment, array $trackers = [])
+
+    public function __construct(RequestStack $requestStack, EnvironmentInterface $environment, array $trackers = [])
     {
         foreach ($trackers as $tracker) {
             $this->registerTracker($tracker);
         }
 
-        $this->enviroment = $environment;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param Session $session
-     *
-     * @required
-     */
-    public function setSession(SessionInterface $session)
-    {
-        $this->session = $session;
-    }
-
-    /**
-     * @TODO move to constructor injection in Pimcore 11
-     *
-     * @required
-     *
-     * @internal
-     *
-     * @param RequestStack $requestStack
-     */
-    public function setRequestStack(RequestStack $requestStack): void
-    {
         $this->requestStack = $requestStack;
+        $this->enviroment = $environment;
     }
 
     /**
@@ -330,15 +292,9 @@ class TrackingManager implements TrackingManagerInterface
             }
         }
 
-        try {
-            $session = $this->requestStack->getSession();
-        } catch (SessionNotFoundException $e) {
-            trigger_deprecation('pimcore/pimcore', '10.5',
-                sprintf('Session used with non existing request stack in %s, that will not be possible in Pimcore 11.', __CLASS__));
-            $session = $this->session;
-        }
+        /** @var Session $session */
+        $session = $this->requestStack->getSession();
 
-        // @phpstan-ignore-next-line
         $session->getFlashBag()->set(TrackingCodeFlashMessageListener::FLASH_MESSAGE_BAG_KEY, $trackedCodes);
 
         return $this;
