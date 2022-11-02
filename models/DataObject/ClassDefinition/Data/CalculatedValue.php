@@ -434,26 +434,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      */
     public function getSetterCode($class)
     {
-        $key = $this->getName();
-
-        if ($this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getParameterTypeDeclaration()) {
-            $typeDeclaration = $this->getParameterTypeDeclaration() . ' ';
-        } else {
-            $typeDeclaration = '';
-        }
-
-        $code = '/**' . "\n";
-        $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
-        $code .= '* @return $this' . "\n";
-        $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . '(' . $typeDeclaration . '$' . $key . '): static' . "\n";
-        $code .= '{' . "\n";
-
-        $code .= "\t" . 'return $this;' . "\n";
-        $code .= "}\n\n";
-
-        return $code;
+        return '';
     }
 
     /**
@@ -461,26 +442,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      */
     public function getSetterCodeObjectbrick($brickClass)
     {
-        $key = $this->getName();
-
-        if ($this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getParameterTypeDeclaration()) {
-            $typeDeclaration = $this->getParameterTypeDeclaration() . ' ';
-        } else {
-            $typeDeclaration = '';
-        }
-
-        $code = '';
-        $code .= '/**' . "\n";
-        $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
-        $code .= '* @return $this' . "\n";
-        $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . '(' . $typeDeclaration . '$' . $key . '): static' . "\n";
-        $code .= '{' . "\n";
-        $code .= "\t" . 'return $this;' . "\n";
-        $code .= "}\n\n";
-
-        return $code;
+        return '';
     }
 
     /**
@@ -488,25 +450,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      */
     public function getSetterCodeFieldcollection($fieldcollectionDefinition)
     {
-        $key = $this->getName();
-
-        if ($this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getParameterTypeDeclaration()) {
-            $typeDeclaration = $this->getParameterTypeDeclaration() . ' ';
-        } else {
-            $typeDeclaration = '';
-        }
-
-        $code = '/**' . "\n";
-        $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
-        $code .= '* @return $this' . "\n";
-        $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . '(' . $typeDeclaration . '$' . $key . '): static' . "\n";
-        $code .= '{' . "\n";
-        $code .= "\t" . 'return $this;' . "\n";
-        $code .= "}\n\n";
-
-        return $code;
+        return '';
     }
 
     /**
@@ -514,32 +458,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      */
     public function getSetterCodeLocalizedfields($class)
     {
-        $key = $this->getName();
-        if ($class instanceof DataObject\Objectbrick\Definition) {
-            $classname = 'Objectbrick\\Data\\' . ucfirst($class->getKey());
-        } elseif ($class instanceof DataObject\Fieldcollection\Definition) {
-            $classname = 'Fieldcollection\\Data\\' . ucfirst($class->getKey());
-        } else {
-            $classname = $class->getName();
-        }
-
-        if ($this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getParameterTypeDeclaration()) {
-            $typeDeclaration = $this->getParameterTypeDeclaration() . ' ';
-        } else {
-            $typeDeclaration = '';
-        }
-
-        $code = '/**' . "\n";
-        $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
-        $code .= '* @return $this' . "\n";
-        $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . '(' . $typeDeclaration . '$' . $key . ', ?string $language = null): static' . "\n";
-        $code .= '{' . "\n";
-        $code .= "\t" . 'return $this;' . "\n";
-        $code .= "}\n\n";
-
-        return $code;
+        return '';
     }
 
     /**
@@ -578,7 +497,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      */
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\\' . DataObject\Data\CalculatedValue::class;
+        return '';
     }
 
     /**
@@ -594,7 +513,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      */
     public function getPhpdocInputType(): ?string
     {
-        return '\\' . DataObject\Data\CalculatedValue::class . '|null';
+        return '';
     }
 
     /**
