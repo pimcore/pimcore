@@ -510,7 +510,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
         $code .= '* @return $this' . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . '(' . '$' . $key . ', ?string $language = null): static' . "\n";
+        $code .= 'public function set' . ucfirst($key) . '(' . $this->getParameterTypeDeclaration() . ' $' . $key . ', ?string $language = null): static' . "\n";
         $code .= '{' . "\n";
         $code .= "\t" . 'return $this;' . "\n";
         $code .= "}\n\n";
