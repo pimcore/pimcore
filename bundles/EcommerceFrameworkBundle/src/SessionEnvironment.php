@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\SessionBagListener;
 use Pimcore\Localization\LocaleServiceInterface;
-use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;

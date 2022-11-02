@@ -56,7 +56,6 @@ class TrackingManager implements TrackingManagerInterface
      */
     protected RequestStack $requestStack;
 
-
     public function __construct(RequestStack $requestStack, EnvironmentInterface $environment, array $trackers = [])
     {
         foreach ($trackers as $tracker) {
