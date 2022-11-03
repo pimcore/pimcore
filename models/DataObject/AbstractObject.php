@@ -520,7 +520,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             trigger_deprecation(
                 'pimcore/pimcore',
                 '10.5',
-                'Loading none Concrete objects with via the Concrete class will not possible in Pimcore 11'
+                'Loading none Concrete objects with the Concrete class will not possible in Pimcore 11'
             );
 
             return true;
