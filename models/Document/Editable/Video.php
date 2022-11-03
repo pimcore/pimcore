@@ -576,11 +576,17 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         // If contains at least one digit (0-9), then assume it is a value that can be calculated,
         // otherwise it is likely be `auto`,`inherit`,etc..
         if (preg_match('/[\d]/', $width)){
+
+            // when is numeric, therefore is without length units or %, then is px
+            if (is_numeric($width)) {
+                $width .= 'px';
+            }
             $width = 'calc(' . $width . ' - 1px)';
         }
 
         $height = $this->getHeight();
         if (preg_match('/[\d]/', $height)){
+
             if (is_numeric($height)) {
                 $height .= 'px';
             }
