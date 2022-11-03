@@ -1,7 +1,7 @@
 # Upgrade Notes
 
 ## 10.5.10
-- [DataObject] Deprecated: Loading none Concrete objects with the Concrete class will not possible in Pimcore 11.
+- [DataObject] Deprecated: Loading non-Concrete objects with the Concrete class will not be possible in Pimcore 11.
 
 ## 10.5.8
 - [Twig] Sending mails and Dataobject Text Layouts, which allow rendering user controlled twig templates are now executed in a sandbox with restrictive security policies for tags, filters, functions.
