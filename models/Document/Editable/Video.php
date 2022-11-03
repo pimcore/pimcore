@@ -577,7 +577,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         // otherwise it is likely be `auto`,`inherit`,etc..
         if (preg_match('/[\d]/', $width)){
 
-            // when is numeric, therefore is without length units or %, then is px
+            // when is numeric, assume there are no length units nor %, and considering the value as pixels
             if (is_numeric($width)) {
                 $width .= 'px';
             }
