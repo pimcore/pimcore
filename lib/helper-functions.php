@@ -336,9 +336,9 @@ function filesize2bytes($str)
 
 /**
  * @param string $base
- * @param array $data
+ * @param string[] $data
  *
- * @return array
+ * @return string[]
  */
 function rscandir($base = '', &$data = [])
 {
