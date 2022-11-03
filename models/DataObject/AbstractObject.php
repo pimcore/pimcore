@@ -516,7 +516,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     protected static function typeMatch(AbstractObject $object)
     {
-        return in_array(static::class, [Concrete::class, __CLASS__], true) || $object instanceof static;
+        return static::class === __CLASS__ || $object instanceof static;
     }
 
     /**
