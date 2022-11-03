@@ -165,13 +165,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $valueFromCalculator = $this->testObject->getCalculatedValue();
         $this->assertEquals($value, $valueFromCalculator, 'calculated value does not match');
 
-        // now call the setter and retry, shouldn't have any effect
-        $newValue = uniqid();
-        $this->testObject->setCalculatedValue($newValue);
-
-        $valueFromCalculator = $this->testObject->getCalculatedValue();
-        $this->assertEquals($value, $valueFromCalculator, 'calculated value does not match');
-
         //check if it got written to the query table
 
         $this->testObject->save();
@@ -194,13 +187,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
         ]);
 
         $this->testObject->setFirstname('Jane');
-
-        $value = $this->testObject->getCalculatedValueExpression();
-        $this->assertEquals('Jane some calc', $value, 'calculated value does not match');
-
-        // now call the setter and retry, shouldn't have any effect
-        $newValue = uniqid();
-        $this->testObject->setCalculatedValueExpression($newValue);
 
         $value = $this->testObject->getCalculatedValueExpression();
         $this->assertEquals('Jane some calc', $value, 'calculated value does not match');

@@ -145,26 +145,6 @@ public function setQuantityValue(?\Pimcore\Model\DataObject\Data\QuantityValue $
     /**
      * Verifies that the setter code gets created properly
      */
-    public function testCalculatedValueSetterCode()
-    {
-        $expectedSetterCode =
-            '/**
-* Set calculatedValue - calculatedValue
-* @param \Pimcore\Model\DataObject\Data\CalculatedValue|null $calculatedValue
-* @return $this
-*/
-public function setCalculatedValue($calculatedValue): static
-{
-	return $this;
-}
-
-';
-        $this->testSetterCode('calculatedValue', $expectedSetterCode);
-    }
-
-    /**
-     * Verifies that the setter code gets created properly
-     */
     public function testLocalizedFieldSetterCode()
     {
         $expectedSetterCode =

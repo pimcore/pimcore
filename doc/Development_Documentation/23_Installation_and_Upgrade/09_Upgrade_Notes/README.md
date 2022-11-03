@@ -98,6 +98,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
   - `EcommerceFrameworkBundle\SessionEnvironment` not loading from or storing into session in cli mode anymore.
   - `EcommerceFrameworkBundle\Tracking\TrackingManager` requires session from request stack.
 - `Element\Service::getValidKey()` strips all control/unassigned, invalid and some more special (e.g. tabs, line-breaks, form-feed & vertical whitespace) characters.
+- [Data Objects]: Removed setter functions for calculated values, since they weren´t used anyway.
 
 
 ## 10.5.8
