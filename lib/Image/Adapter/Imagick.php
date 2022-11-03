@@ -1025,8 +1025,8 @@ class Imagick extends Adapter
             while (($eps_line = fgets($epsFile)) && ($i < 100)) {
                 if (preg_match('/%ImageData: ([0-9]+) ([0-9]+)/i', $eps_line, $matches)) {
                     return [
-                        'width' => $matches[1],
-                        'height' => $matches[2],
+                        'width' => (int) $matches[1],
+                        'height' => (int) $matches[2],
                     ];
                 }
                 $i++;
