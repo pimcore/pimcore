@@ -59,7 +59,7 @@ class Text
                 $linkAttr = null;
                 $path = null;
                 $additionalAttributes = [];
-                $id = $idMatches[0];
+                $id = (int) $idMatches[0];
                 $type = $typeMatches[0];
                 $element = Element\Service::getElementById($type, $id);
                 $oldTag = $matches[0][$i];
