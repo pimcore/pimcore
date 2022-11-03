@@ -581,6 +581,9 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
         $height = $this->getHeight();
         if (preg_match('/[\d]/', $height)){
+            if (is_numeric($height)) {
+                $height .= 'px';
+            }
             $height = 'calc(' . $height . ' - 1px)';
         }
 
