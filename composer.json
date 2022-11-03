@@ -77,7 +77,7 @@
     "matomo/device-detector": "^6.0",
     "presta/sitemap-bundle": "^3.3",
     "sabre/dav": "^4.1.2",
-    "sensio/framework-extra-bundle": "^6.1",
+    "sensio/framework-extra-bundle": "^6.2",
     "sensiolabs/ansi-to-html": "^1.1",
     "symfony-cmf/routing-bundle": "^3.0",
     "symfony/contracts": "^2.3",
