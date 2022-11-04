@@ -30,6 +30,7 @@ use Pimcore\Web2Print\Processor\PdfReactor;
 use Pimcore\Web2Print\Processor\WkHtmlToPdf;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
+use Twig\Sandbox\SecurityError;
 
 abstract class Processor
 {
@@ -286,11 +287,21 @@ abstract class Processor
     {
         $document = $params['document'] ?? null;
         $hostUrl = $params['hostUrl'] ?? null;
-
         $templatingEngine = \Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
-        $twig = $templatingEngine->getTwigEnvironment();
-        $template = $twig->createTemplate((string) $html);
-        $html = $twig->render($template, $params);
+
+        try {
+            $twig = $templatingEngine->getTwigEnvironment(true);
+            $template = $twig->createTemplate((string) $html);
+
+            $html = $twig->render($template, $params);
+        } catch (SecurityError $e) {
+            Logger::err((string) $e);
+
+            throw new \Exception(sprintf("Failed rendering the print template: %s. Please check your twig sandbox security policy or contact the administrator."
+                , $e->getMessage()));
+        } finally {
+            $templatingEngine->disableSandboxExtensionFromTwigEnvironment();
+        }
 
         return Mail::setAbsolutePaths($html, $document, $hostUrl);
     }
