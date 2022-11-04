@@ -1,6 +1,6 @@
 # Upgrade Notes
 
-## 10.5.9
+## 10.5.10
 - [Web2Print] Print document twig templates are now executed in a sandbox with restrictive security policies (just like Sending mails and Dataobject Text Layouts introduced in 10.5.8).
 
 ## 10.5.8
