@@ -1,15 +1,15 @@
 <?php
 
 /**
-Fields Summary:
-- label [input]
-- field [indexFieldSelection]
-- rangeFrom [numeric]
-- rangeTo [numeric]
-- preSelectFrom [numeric]
-- preSelectTo [numeric]
-- scriptPath [input]
-*/
+ * Fields Summary:
+ * - label [input]
+ * - field [indexFieldSelection]
+ * - rangeFrom [numeric]
+ * - rangeTo [numeric]
+ * - preSelectFrom [numeric]
+ * - preSelectTo [numeric]
+ * - scriptPath [input]
+ */
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 
@@ -45,9 +45,9 @@ public function getLabel(): ?string
 /**
 * Set label - Label
 * @param string|null $label
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRange
+* @return $this
 */
-public function setLabel(?string $label)
+public function setLabel(?string $label): static
 {
 	$this->label = $label;
 
@@ -71,9 +71,9 @@ public function getField(): ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtens
 /**
 * Set field - Field
 * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection|null $field
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRange
+* @return $this
 */
-public function setField(?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field)
+public function setField(?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field): static
 {
 	$this->field = $field;
 
@@ -97,14 +97,13 @@ public function getRangeFrom(): ?float
 /**
 * Set rangeFrom - Range From
 * @param float|null $rangeFrom
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRange
+* @return $this
 */
-public function setRangeFrom(?float $rangeFrom)
+public function setRangeFrom(?float $rangeFrom): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("rangeFrom");
 	$this->rangeFrom = $fd->preSetData($this, $rangeFrom);
-
 	return $this;
 }
 
@@ -125,14 +124,13 @@ public function getRangeTo(): ?float
 /**
 * Set rangeTo - Range To
 * @param float|null $rangeTo
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRange
+* @return $this
 */
-public function setRangeTo(?float $rangeTo)
+public function setRangeTo(?float $rangeTo): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("rangeTo");
 	$this->rangeTo = $fd->preSetData($this, $rangeTo);
-
 	return $this;
 }
 
@@ -153,14 +151,13 @@ public function getPreSelectFrom(): ?float
 /**
 * Set preSelectFrom - Pre Select From
 * @param float|null $preSelectFrom
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRange
+* @return $this
 */
-public function setPreSelectFrom(?float $preSelectFrom)
+public function setPreSelectFrom(?float $preSelectFrom): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("preSelectFrom");
 	$this->preSelectFrom = $fd->preSetData($this, $preSelectFrom);
-
 	return $this;
 }
 
@@ -181,14 +178,13 @@ public function getPreSelectTo(): ?float
 /**
 * Set preSelectTo - Pre Select To
 * @param float|null $preSelectTo
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRange
+* @return $this
 */
-public function setPreSelectTo(?float $preSelectTo)
+public function setPreSelectTo(?float $preSelectTo): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("preSelectTo");
 	$this->preSelectTo = $fd->preSetData($this, $preSelectTo);
-
 	return $this;
 }
 
@@ -209,9 +205,9 @@ public function getScriptPath(): ?string
 /**
 * Set scriptPath - Script Path
 * @param string|null $scriptPath
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRange
+* @return $this
 */
-public function setScriptPath(?string $scriptPath)
+public function setScriptPath(?string $scriptPath): static
 {
 	$this->scriptPath = $scriptPath;
 

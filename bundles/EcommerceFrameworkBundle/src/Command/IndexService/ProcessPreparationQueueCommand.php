@@ -89,7 +89,7 @@ class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
     /**
      * {@inheritdoc}
      */
-    protected function fetchItems(InputInterface $input): array
+    protected function fetchItems(InputInterface $input, OutputInterface $output): array
     {
         $tenantNameFilterList = $input->getOption('tenant');
         $combinedRows = $this->indexUpdateService->fetchProductIdsForPreparation($tenantNameFilterList);
@@ -154,7 +154,7 @@ class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
         return $workerList;
     }
 
-    protected function getItemName(int $count): string
+    protected function getItemName(?int $count): string
     {
         return 'combined product ID rows in store table index';
     }

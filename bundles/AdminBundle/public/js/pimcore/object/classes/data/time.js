@@ -78,46 +78,50 @@ pimcore.object.classes.data.time = Class.create(pimcore.object.classes.data.data
                 items: [
                     {
                         xtype: "numberfield",
+                        itemId: 'increment',
                         fieldLabel: t("increment"),
                         width: 200,
                         name: "increment",
                         value: datax.increment ? datax.increment : 15
                     },
                     {
-                    xtype: 'timefield',
-                    itemId: 'minTime',
-                    fieldLabel: t('min_value'),
-                    format: pimcore.object.classes.data.time.prototype.dateFormat,
-                    editable: false,
-                    width: 200,
-                    value: datax.minValue,
-                    componentCls: "object_field",
-                    name: 'minValue',
-                    listeners: {
-                        change: onMinMaxValueChange
+                        xtype: 'timefield',
+                        itemId: 'minTime',
+                        fieldLabel: t('min_value'),
+                        format: pimcore.object.classes.data.time.prototype.dateFormat,
+                        editable: false,
+                        width: 200,
+                        value: datax.minValue,
+                        componentCls: "object_field",
+                        name: 'minValue',
+                        listeners: {
+                            change: onMinMaxValueChange
+                        }
+                    },
+                    {
+                        xtype: 'timefield',
+                        itemId: 'maxTime',
+                        fieldLabel: t('max_value'),
+                        format: pimcore.object.classes.data.time.prototype.dateFormat,
+                        editable: false,
+                        width: 200,
+                        value: datax.maxValue,
+                        componentCls: "object_field",
+                        name: 'maxValue',
+                        listeners: {
+                            change: onMinMaxValueChange
+                        }
+                    },
+                    {
+                        xtype: 'button',
+                        text: t('reset'),
+                        handler: function() {
+                            minmaxSet.getComponent('increment').setValue(15);
+                            minmaxSet.getComponent('minTime').setValue(null);
+                            minmaxSet.getComponent('maxTime').setValue(null);
+                        }
                     }
-                },{
-                    xtype: 'timefield',
-                    itemId: 'maxTime',
-                    fieldLabel: t('max_value'),
-                    format: pimcore.object.classes.data.time.prototype.dateFormat,
-                    editable: false,
-                    width: 200,
-                    value: datax.maxValue,
-                    componentCls: "object_field",
-                    name: 'maxValue',
-                    listeners: {
-                        change: onMinMaxValueChange
-                    }
-                },{
-                    xtype: 'button',
-                    text: t('reset'),
-                    handler: function() {
-                        minmaxSet.getComponent('increment').reset();
-                        minmaxSet.getComponent('minTime').reset();
-                        minmaxSet.getComponent('maxTime').reset();
-                    }
-                }]
+                ]
             });
 
             specificItems = [minmaxSet];

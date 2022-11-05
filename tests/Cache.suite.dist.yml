@@ -1,5 +1,5 @@
-class_name: CacheTester
+actor: CacheTester
 modules:
     enabled:
-        - \Pimcore\Tests\Helper\Pimcore:
+        - \Pimcore\Tests\Support\Helper\Pimcore:
             connect_db: true

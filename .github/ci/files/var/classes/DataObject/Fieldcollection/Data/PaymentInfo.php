@@ -1,17 +1,15 @@
 <?php
 
 /**
-Fields Summary:
-- paymentStart [datetime]
-- paymentFinish [datetime]
-- paymentReference [input]
-- paymentState [select]
-- internalPaymentId [input]
-- message [textarea]
-- providerData [textarea]
-- provider_unzer_amount [input]
-- provider_unzer_PaymentType [input]
-*/
+ * Fields Summary:
+ * - paymentStart [datetime]
+ * - paymentFinish [datetime]
+ * - paymentReference [input]
+ * - paymentState [select]
+ * - internalPaymentId [input]
+ * - message [textarea]
+ * - providerData [textarea]
+ */
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 
@@ -28,8 +26,6 @@ protected $paymentState;
 protected $internalPaymentId;
 protected $message;
 protected $providerData;
-protected $provider_unzer_amount;
-protected $provider_unzer_PaymentType;
 
 
 /**
@@ -49,9 +45,9 @@ public function getPaymentStart(): ?\Carbon\Carbon
 /**
 * Set paymentStart - Payment Start
 * @param \Carbon\Carbon|null $paymentStart
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo
+* @return $this
 */
-public function setPaymentStart(?\Carbon\Carbon $paymentStart)
+public function setPaymentStart(?\Carbon\Carbon $paymentStart): static
 {
 	$this->paymentStart = $paymentStart;
 
@@ -75,9 +71,9 @@ public function getPaymentFinish(): ?\Carbon\Carbon
 /**
 * Set paymentFinish - Payment Finish
 * @param \Carbon\Carbon|null $paymentFinish
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo
+* @return $this
 */
-public function setPaymentFinish(?\Carbon\Carbon $paymentFinish)
+public function setPaymentFinish(?\Carbon\Carbon $paymentFinish): static
 {
 	$this->paymentFinish = $paymentFinish;
 
@@ -101,9 +97,9 @@ public function getPaymentReference(): ?string
 /**
 * Set paymentReference - Payment Reference
 * @param string|null $paymentReference
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo
+* @return $this
 */
-public function setPaymentReference(?string $paymentReference)
+public function setPaymentReference(?string $paymentReference): static
 {
 	$this->paymentReference = $paymentReference;
 
@@ -127,9 +123,9 @@ public function getPaymentState(): ?string
 /**
 * Set paymentState - Payment State
 * @param string|null $paymentState
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo
+* @return $this
 */
-public function setPaymentState(?string $paymentState)
+public function setPaymentState(?string $paymentState): static
 {
 	$this->paymentState = $paymentState;
 
@@ -153,9 +149,9 @@ public function getInternalPaymentId(): ?string
 /**
 * Set internalPaymentId - Internal Payment ID
 * @param string|null $internalPaymentId
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo
+* @return $this
 */
-public function setInternalPaymentId(?string $internalPaymentId)
+public function setInternalPaymentId(?string $internalPaymentId): static
 {
 	$this->internalPaymentId = $internalPaymentId;
 
@@ -179,9 +175,9 @@ public function getMessage(): ?string
 /**
 * Set message - Message
 * @param string|null $message
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo
+* @return $this
 */
-public function setMessage(?string $message)
+public function setMessage(?string $message): static
 {
 	$this->message = $message;
 
@@ -205,63 +201,11 @@ public function getProviderData(): ?string
 /**
 * Set providerData - Provider Data
 * @param string|null $providerData
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo
+* @return $this
 */
-public function setProviderData(?string $providerData)
+public function setProviderData(?string $providerData): static
 {
 	$this->providerData = $providerData;
-
-	return $this;
-}
-
-/**
-* Get provider_unzer_amount - Amount
-* @return string|null
-*/
-public function getProvider_unzer_amount(): ?string
-{
-	$data = $this->provider_unzer_amount;
-	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
-		return $data->getPlain();
-	}
-
-	return $data;
-}
-
-/**
-* Set provider_unzer_amount - Amount
-* @param string|null $provider_unzer_amount
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo
-*/
-public function setProvider_unzer_amount(?string $provider_unzer_amount)
-{
-	$this->provider_unzer_amount = $provider_unzer_amount;
-
-	return $this;
-}
-
-/**
-* Get provider_unzer_PaymentType - Payment Type
-* @return string|null
-*/
-public function getProvider_unzer_PaymentType(): ?string
-{
-	$data = $this->provider_unzer_PaymentType;
-	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
-		return $data->getPlain();
-	}
-
-	return $data;
-}
-
-/**
-* Set provider_unzer_PaymentType - Payment Type
-* @param string|null $provider_unzer_PaymentType
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo
-*/
-public function setProvider_unzer_PaymentType(?string $provider_unzer_PaymentType)
-{
-	$this->provider_unzer_PaymentType = $provider_unzer_PaymentType;
 
 	return $this;
 }

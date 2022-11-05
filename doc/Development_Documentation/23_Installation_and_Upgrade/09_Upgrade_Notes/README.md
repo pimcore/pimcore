@@ -80,6 +80,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Config] Rename config files from `*.yml` to `*.yaml`. Note that we now use `system.yaml` as config file and not `system.yml`
 - [Video] It's now possible to drop a video asset directly into an video editable in class
 - [Childs Compatibility] Removed `getChilds`, `setChilds` and `hasChild` use `getChildren`, `setChildren` and `hasChildren` instead.
+- [Config] The config node `pimcore.admin` and related parameters are moved to AdminBundle directly under `pimcore_admin` node. Please adapt your parameter usage accordingly eg. instead of `pimcore.admin.unauthenticated_routes`, it should be `pimcore_admin.unauthenticated_routes`
 - [DataObjects] Removed deprecated preview url in class editor.
 - [DataObjects] Removed sql filter functionality for data object grid
 - [Device Detector] Bumped `matomo/device-detector` to ^6.0.
@@ -87,9 +88,33 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - Removed Pimcore Password Encoder factory, `pimcore_admin.security.password_encoder_factory` service and `pimcore.security.factory_type` config.
 - Removed BruteforceProtection
 - Removed PreAuthenticatedAdminToken
-- 
+- [Bundles] 
+  - Removed support for loading bundles through `extensions.php`.
+  - Removed Extension Manager(`Tools -> Bundles & Bricks` option) from Admin UI.
+  - Removed commands: `pimcore:bundle:enable`, `pimcore:bundle:disable`.
+  - Removed `dontCheckEnabled` config support from Areablock editable.
+- [Codeception] Bumped `codeception/codeception` version to ^5.0. Now, Pimcore is using a new directory structure for tests (Codeception 5 directory structure). For details, please see [#13415](https://github.com/pimcore/pimcore/pull/13415)
+- [Session] 
+  - `AdminSessionHandler` requires session from request stack.
+  - `EcommerceFrameworkBundle\SessionEnvironment` not loading from or storing into session in cli mode anymore.
+  - `EcommerceFrameworkBundle\Tracking\TrackingManager` requires session from request stack.
+- `Element\Service::getValidKey()` strips all control/unassigned, invalid and some more special (e.g. tabs, line-breaks, form-feed & vertical whitespace) characters.
+- [Data Objects]: Removed setter functions for calculated values, since they weren´t used anyway.
+
 
 ## 10.5.8
+- [Twig] Sending mails and Dataobject Text Layouts, which allow rendering user controlled twig templates are now executed in a sandbox with restrictive security policies for tags, filters, functions.
+         Please use following configuration to allow more in template rendering:
+  ```yaml
+  pimcore:
+        templating_engine:
+            twig:
+              sandbox_security_policy:
+                tags: ['if']
+                filters: ['upper']
+                functions: ['include', 'path', 'range']
+  ```
+
 - [Nginx] Static pages nginx config has been updated to fix the issue for home static page generation. please adapt the following configuration:
 ```nginx
 map $args $static_page_root {

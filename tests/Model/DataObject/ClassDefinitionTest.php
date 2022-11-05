@@ -17,7 +17,7 @@ namespace Pimcore\Tests\Model\DataObject;
 
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
-use Pimcore\Tests\Test\ModelTestCase;
+use Pimcore\Tests\Support\Test\ModelTestCase;
 
 /**
  * Class ObjectTest
@@ -140,26 +140,6 @@ public function setQuantityValue(?\Pimcore\Model\DataObject\Data\QuantityValue $
 
 ';
         $this->testSetterCode('quantityValue', $expectedSetterCode);
-    }
-
-    /**
-     * Verifies that the setter code gets created properly
-     */
-    public function testCalculatedValueSetterCode()
-    {
-        $expectedSetterCode =
-            '/**
-* Set calculatedValue - calculatedValue
-* @param \Pimcore\Model\DataObject\Data\CalculatedValue|null $calculatedValue
-* @return $this
-*/
-public function setCalculatedValue($calculatedValue): static
-{
-	return $this;
-}
-
-';
-        $this->testSetterCode('calculatedValue', $expectedSetterCode);
     }
 
     /**

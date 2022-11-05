@@ -263,6 +263,25 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     /**
      * {@inheritdoc}
      */
+    protected function getDataEditmode()
+    {
+        $data = $this->getData();
+
+        $poster = Asset::getById($this->poster);
+        if ($poster) {
+            $data['poster'] = $poster->getRealFullPath();
+        }
+
+        if ($this->type === self::TYPE_ASSET && ($video = Asset::getById($this->id))) {
+            $data['path'] = $video->getRealFullPath();
+        }
+
+        return $data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getDataForResource()
     {
         return [
