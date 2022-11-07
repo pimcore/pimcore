@@ -103,6 +103,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
             {
                 xtype: "button",
                 iconCls: "pimcore_icon_delete",
+                overflowText: t('delete'),
                 handler: this.empty.bind(this)
             }
         );
