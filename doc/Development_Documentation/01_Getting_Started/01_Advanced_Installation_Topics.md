@@ -5,8 +5,9 @@ To fully automate the installation process, options can be passed in the CLI as 
 The `--no-interaction` flag will prevent any interactive prompts:
 
 ```
-./vendor/bin/pimcore-install --admin-username admin --admin-password admin \
-  --mysql-username username --mysql-password password --mysql-database pimcore \
+./vendor/bin/pimcore-install --admin-username=admin --admin-password=admin \
+  --mysql-username=username --mysql-password=password --mysql-database=pimcore \
+  --mysql-host-socket=127.0.0.1 --mysql-port=3306 \
   --no-interaction
 ```
 
@@ -15,8 +16,8 @@ variable. See `./vendor/bin/pimcore-install` for details. Example:
 
 ```
 $ PIMCORE_INSTALL_MYSQL_USERNAME=username PIMCORE_INSTALL_MYSQL_PASSWORD=password ./vendor/bin/pimcore-install \
-  --admin-username admin --admin-password admin \
-  --mysql-database pimcore \
+  --admin-username=admin --admin-password=admin \
+  --mysql-database=pimcore \
   --no-interaction
 ```
 
