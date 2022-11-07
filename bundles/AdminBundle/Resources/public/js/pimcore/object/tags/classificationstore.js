@@ -101,8 +101,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         var wrapperConfig = {
             bodyCls: "pimcore_object_tag_classification_store",
             border: true,
-            style: "margin-bottom: 10px",
-            layout: "fit"
+            style: "margin-bottom: 10px"
         };
 
         if(this.fieldConfig.width) {
