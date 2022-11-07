@@ -1,5 +1,6 @@
 # Upgrade Notes
-
+## 10.6.0
+- [UrlSlug] Deprecated `$index` property and its getter and setter methods as they were not being used. These will be removed in Pimcore 11.
 ## 10.5.9
 - [Twig] Sending mails and Dataobject Text Layouts, which allow rendering user controlled twig templates are now executed in a sandbox with restrictive security policies for tags, filters, functions.
          Please use following configuration to allow more in template rendering:

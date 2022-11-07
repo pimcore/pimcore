@@ -62,6 +62,7 @@ class UrlSlug implements OwnerAwareFieldInterface
     protected $fieldname;
 
     /**
+     * @deprecated will be removed in Pimcore 11
      * @var int
      */
     protected $index;
@@ -199,6 +200,7 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
+     * @deprecated will be removed in Pimcore 11
      * @return int|null
      */
     public function getIndex(): ?int
@@ -207,6 +209,7 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
+     * @deprecated will be removed in Pimcore 11
      * @param int|null $index
      *
      * @return $this
