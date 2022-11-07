@@ -873,7 +873,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    public function assertVideo(Concrete $object, string $field, int $seed = 1, array $returnParams):void
+    public function assertVideo(Concrete $object, string $field, int $seed = 1, mixed $returnParams):void
     {
         $getter = 'get' . ucfirst($field);
 

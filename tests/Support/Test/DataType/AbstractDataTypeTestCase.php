@@ -66,11 +66,11 @@ abstract class AbstractDataTypeTestCase extends TestCase
     /**
      * Calls fill* methods on the object as needed in test
      *
-     * @param Concrete     $object
+     * @param Concrete $object
      * @param array|string $fields
-     * @param array $returnData
+     * @param mixed $returnData
      */
-    protected function fillObject(Concrete $object, $fields = [], &$returnData = [])
+    protected function fillObject(Concrete $object, array|string $fields = [], mixed &$returnData = [])
     {
         // allow to pass only a string (e.g. input) -> fillInput($object, "input", $seed)
         if (!is_array($fields)) {
@@ -99,7 +99,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
             $methodArguments = [$object, $field['field'], $this->seed];
 
-            $additionalArguments = isset($field['arguments']) ? $field['arguments'] : [];
+            $additionalArguments = $field['arguments'] ?? [];
             foreach ($additionalArguments as $aa) {
                 $methodArguments[] = $aa;
             }
@@ -128,11 +128,11 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
     /**
      * @param array $fields
-     * @param array $params
+     * @param mixed $params
      *
      * @return Unittest
      */
-    abstract protected function createTestObject($fields = [], &$params = []);
+    abstract protected function createTestObject($fields = [], mixed &$params = []);
 
     abstract public function refreshObject();
 
@@ -866,6 +866,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     public function testVideo()
     {
         $returnData = [];
+
         $this->createTestObject('video', $returnData);
 
         $this->refreshObject();

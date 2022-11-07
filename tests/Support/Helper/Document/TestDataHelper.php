@@ -408,7 +408,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $page->setEditable($editable);
     }
 
-    public function fillImage(Page $page, string $field, int $seed = 1, array &$returnData):void
+    public function fillImage(Page $page, string $field, int $seed = 1, ?array &$returnData):void
     {
         $asset = TestHelper::createImageAsset();
         $editable = new Image();
@@ -428,7 +428,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $page->setEditable($editable);
     }
 
-    public function fillLink(Page $page, string $field, int $seed = 1, array &$returnData):void
+    public function fillLink(Page $page, string $field, int $seed = 1, ?array &$returnData):void
     {
         $target = TestHelper::createImageAsset();
         $editable = new Link();
@@ -466,7 +466,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $page->setEditable($editable);
     }
 
-    public function fillPdf(Page $page, string $field, int $seed = 1, array &$returnData):void
+    public function fillPdf(Page $page, string $field, int $seed = 1, ?array &$returnData):void
     {
         $pdf = TestHelper::createDocumentAsset();
         $editable = new Pdf();
@@ -478,7 +478,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $page->setEditable($editable);
     }
 
-    public function fillRelation(Page $page, string $field, int $seed = 1, array &$returnData):void
+    public function fillRelation(Page $page, string $field, int $seed = 1, ?array &$returnData):void
     {
         $editable = new Relation();
         $editable->setName($field);
@@ -496,7 +496,7 @@ class TestDataHelper extends AbstractTestDataHelper
         ];
     }
 
-    public function fillRelations(Page $page, string $field, int $seed = 1, array &$returnData):void
+    public function fillRelations(Page $page, string $field, int $seed = 1, ?array &$returnData):void
     {
         $editable = new Relations();
         $editable->setName($field);
@@ -544,7 +544,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $page->setEditable($editable);
     }
 
-    public function fillVideo(Page $page, string $field, int $seed = 1, array &$returnData):void
+    public function fillVideo(Page $page, string $field, int $seed = 1, ?array &$returnData):void
     {
         $video = TestHelper::createVideoAsset();
         $poster = TestHelper::createImageAsset();
