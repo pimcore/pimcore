@@ -573,8 +573,24 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     private function getErrorCode($message = '')
     {
         $width = $this->getWidth();
-        if (strpos($this->getWidth(), '%') === false) {
-            $width = ((int)$this->getWidth() - 1) . 'px';
+        // If contains at least one digit (0-9), then assume it is a value that can be calculated,
+        // otherwise it is likely be `auto`,`inherit`,etc..
+        if (preg_match('/[\d]/', $width)){
+
+            // when is numeric, assume there are no length units nor %, and considering the value as pixels
+            if (is_numeric($width)) {
+                $width .= 'px';
+            }
+            $width = 'calc(' . $width . ' - 1px)';
+        }
+
+        $height = $this->getHeight();
+        if (preg_match('/[\d]/', $height)){
+
+            if (is_numeric($height)) {
+                $height .= 'px';
+            }
+            $height = 'calc(' . $height . ' - 1px)';
         }
 
         // only display error message in debug mode
@@ -584,7 +600,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
         $code = '
         <div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video">
-            <div class="pimcore_editable_video_error" style="text-align:center; width: ' . $width . '; height: ' . ($this->getHeight() - 1) . 'px; border:1px solid #000; background: url(/bundles/pimcoreadmin/img/filetype-not-supported.svg) no-repeat center center #fff;">
+            <div class="pimcore_editable_video_error" style="text-align:center; width: ' . $width . '; height: ' . $height . '; border:1px solid #000; background: url(/bundles/pimcoreadmin/img/filetype-not-supported.svg) no-repeat center center #fff;">
                 ' . $message . '
             </div>
         </div>';
