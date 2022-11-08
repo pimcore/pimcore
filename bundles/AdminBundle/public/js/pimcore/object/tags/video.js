@@ -121,7 +121,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
             style: "padding-bottom: 10px",
             tbar: {
                 overflowHandler: 'menu',
-                toolbarItems
+                items: toolbarItems
             },
             componentCls: this.getWrapperClassNames(),
             bodyCls: bodyClass
