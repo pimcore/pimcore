@@ -575,8 +575,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         $width = $this->getWidth();
         // If contains at least one digit (0-9), then assume it is a value that can be calculated,
         // otherwise it is likely be `auto`,`inherit`,etc..
-        if (preg_match('/[\d]/', $width)){
-
+        if (preg_match('/[\d]/', $width)) {
             // when is numeric, assume there are no length units nor %, and considering the value as pixels
             if (is_numeric($width)) {
                 $width .= 'px';
@@ -585,8 +584,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         }
 
         $height = $this->getHeight();
-        if (preg_match('/[\d]/', $height)){
-
+        if (preg_match('/[\d]/', $height)) {
             if (is_numeric($height)) {
                 $height .= 'px';
             }
