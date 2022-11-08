@@ -81,9 +81,9 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
         toolbarItems.push({
             xtype: "tbtext",
             text: "<b>" + this.fieldConfig.title + "</b>",
-            overflowText: this.fieldConfig.title
         }, "->", {
             xtype: "button",
+            overflowText: this.fieldConfig.title,
             iconCls: "pimcore_icon_video pimcore_icon_overlay_edit",
             handler: this.openEdit.bind(this)
         });
