@@ -27,6 +27,7 @@ use Pimcore\Db\Helper;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\AssetEvents;
+use Pimcore\Event\Model\Asset\ResolveUploadTargetEvent;
 use Pimcore\File;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
@@ -491,7 +492,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         if ($context) {
             $context = json_decode($context, true);
             $context = $context ? $context : [];
-            $event = new \Pimcore\Event\Model\Asset\ResolveUploadTargetEvent($parentId, $filename, $context);
+            $context['sourcePath'] = $sourcePath;
+            $event = new ResolveUploadTargetEvent($parentId, $filename, $context);
             \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::RESOLVE_UPLOAD_TARGET);
             $filename = Element\Service::getValidKey($event->getFilename(), 'asset');
             $parentId = $event->getParentId();
