@@ -29,7 +29,7 @@ class MaintenancePageListener
     use ResponseInjectionTrait;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $templateCode = null;
 
@@ -43,15 +43,15 @@ class MaintenancePageListener
     /**
      * @param string $code
      */
-    public function setTemplateCode($code)
+    public function setTemplateCode($code): void
     {
         $this->templateCode = $code;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getTemplateCode()
+    public function getTemplateCode(): ?string
     {
         return $this->templateCode;
     }
@@ -59,7 +59,18 @@ class MaintenancePageListener
     /**
      * @param string $path
      */
-    public function loadTemplateFromResource($path)
+    public function loadTemplateFromPath($path): void
+    {
+        $templateFile = PIMCORE_PROJECT_ROOT . $path;
+        if (file_exists($templateFile)) {
+            $this->setTemplateCode(file_get_contents($templateFile));
+        }
+    }
+
+    /**
+     * @param string $path
+     */
+    public function loadTemplateFromResource($path): void
     {
         $templateFile = $this->kernel->locateResource($path);
         if (file_exists($templateFile)) {
@@ -70,7 +81,7 @@ class MaintenancePageListener
     /**
      * @param RequestEvent $event
      */
-    public function onKernelRequest(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;
