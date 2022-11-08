@@ -563,7 +563,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             }
         }
 
-        $visibleFields =explode(',', $fieldConfig['visibleFields']);
+        $visibleFields = is_array($fieldConfig['visibleFields']) ? $fieldConfig['visibleFields'] : explode(',', $fieldConfig['visibleFields']);
 
         $searchRequest = $request;
         $searchRequest->request->set('type', 'object');
