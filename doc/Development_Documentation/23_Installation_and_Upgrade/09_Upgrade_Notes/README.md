@@ -52,6 +52,7 @@ location / {
     security:
         enable_authenticator_manager: true
     ```
+  `[Authentication] PreAuthenticatedAdminSessionListener` has been deprecated and will be removed in Pimcore 11.
 - [Elements] Calling the methods `getById` and `getByPath` on `Asset`,`Document`,`DataObject` with second boolean parameter `$force` and `Element\Service::getElementById` with third boolean  parameter `$force` is deprecated and will throw exception in Pimcore 11. Instead pass the parameter as associative array with `$force` value.
   e.g. Before 
    ```php
