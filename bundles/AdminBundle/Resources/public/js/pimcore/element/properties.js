@@ -642,7 +642,7 @@ pimcore.element.properties = Class.create({
         }
 
         // check for empty key & type
-        if (key.length < 2 || type.length < 1) {
+        if (key.length < 2 || !type ||type.length < 1) {
             Ext.MessageBox.alert(t("error"), t("name_and_key_must_be_defined"));
             return;
         }
