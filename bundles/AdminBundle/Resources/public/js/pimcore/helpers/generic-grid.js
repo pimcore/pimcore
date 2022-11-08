@@ -27,7 +27,8 @@ pimcore.helpers.grid.buildDefaultStore = function (url, fields, itemsPerPage, cu
         type: 'ajax',
         reader: {
             type: 'json',
-            rootProperty: 'data'
+            rootProperty: 'data',
+            messageProperty: 'message'
         },
         writer: {
             type: 'json',
@@ -46,17 +47,12 @@ pimcore.helpers.grid.buildDefaultStore = function (url, fields, itemsPerPage, cu
             read: 'POST',
             update: 'POST',
             destroy: 'POST'
-        }/*,
+        },
         listeners: {
             exception: function(proxy, response, operation){
-                Ext.MessageBox.show({
-                    title: 'REMOTE EXCEPTION',
-                    msg: operation.getError(),
-                    icon: Ext.MessageBox.ERROR,
-                    buttons: Ext.Msg.OK
-                });
+                pimcore.helpers.showNotification(t("error"), t(operation.getError()), "error");
             }
-        }*/
+        }
     });
 
     var config = {
