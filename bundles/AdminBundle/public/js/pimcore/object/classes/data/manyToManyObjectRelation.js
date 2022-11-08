@@ -155,7 +155,7 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
                 xtype: "combo",
                 fieldLabel: t("display_mode"),
                 name: "displayMode",
-                value: this.datax.displayMode,
+                value: this.datax.displayMode ?? 'grid',
                 labelWidth: 140,
                 forceSelection: true,
                 defaultValue: 'grid',
