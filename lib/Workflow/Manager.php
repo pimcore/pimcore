@@ -256,7 +256,7 @@ class Manager
     {
         $this->notesSubscriber->setAdditionalData($additionalData);
 
-        $marking = $workflow->apply($subject, $transition);
+        $marking = $workflow->apply($subject, $transition, $additionalData);
 
         $this->notesSubscriber->setAdditionalData([]);
 

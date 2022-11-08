@@ -98,7 +98,7 @@ class GeoIp implements DataProviderInterface
         return $result;
     }
 
-    private function handleOverrides(Request $request, array $result = null)
+    private function handleOverrides(Request $request, array $result = null): ?array
     {
         $overrides = OverrideAttributeResolver::getOverrideValue($request, 'location');
         if (empty($overrides)) {
@@ -123,7 +123,7 @@ class GeoIp implements DataProviderInterface
         return $result === $ip;
     }
 
-    private function resolveIp(string $ip)
+    private function resolveIp(string $ip): ?array
     {
         if (null === $this->cache) {
             return $this->doResolveIp($ip);
@@ -145,7 +145,7 @@ class GeoIp implements DataProviderInterface
         return $result;
     }
 
-    private function doResolveIp(string $ip)
+    private function doResolveIp(string $ip): ?array
     {
         try {
             $city = $this->geoIpProvider->city($ip);

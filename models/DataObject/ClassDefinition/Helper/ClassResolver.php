@@ -26,7 +26,7 @@ abstract class ClassResolver
      * @param string|null $class
      * @param callable|null $validationCallback
      *
-     * @return mixed|null
+     * @return object|null
      */
     protected static function resolve($class, callable $validationCallback = null)
     {
@@ -40,7 +40,7 @@ abstract class ClassResolver
         );
     }
 
-    private static function returnValidServiceOrNull($service, callable $validationCallback = null)
+    private static function returnValidServiceOrNull(object $service, callable $validationCallback = null): ?object
     {
         if ($validationCallback && !$validationCallback($service)) {
             return null;

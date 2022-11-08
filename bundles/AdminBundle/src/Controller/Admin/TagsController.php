@@ -319,11 +319,9 @@ class TagsController extends AdminController
     }
 
     /**
-     * @param \Pimcore\Model\DataObject\AbstractObject $object
-     *
      * @return int[]
      */
-    private function getSubObjectIds(\Pimcore\Model\DataObject\AbstractObject $object, EventDispatcherInterface $eventDispatcher)
+    private function getSubObjectIds(\Pimcore\Model\DataObject\AbstractObject $object, EventDispatcherInterface $eventDispatcher): array
     {
         $childsList = new \Pimcore\Model\DataObject\Listing();
         $condition = 'o_path LIKE ?';
@@ -351,11 +349,9 @@ class TagsController extends AdminController
     }
 
     /**
-     * @param \Pimcore\Model\Asset $asset
-     *
      * @return int[]
      */
-    private function getSubAssetIds(\Pimcore\Model\Asset $asset, EventDispatcherInterface $eventDispatcher)
+    private function getSubAssetIds(\Pimcore\Model\Asset $asset, EventDispatcherInterface $eventDispatcher): array
     {
         $childsList = new \Pimcore\Model\Asset\Listing();
         $condition = 'path LIKE ?';
@@ -383,11 +379,9 @@ class TagsController extends AdminController
     }
 
     /**
-     * @param \Pimcore\Model\Document $document
-     *
      * @return int[]
      */
-    private function getSubDocumentIds(\Pimcore\Model\Document $document, EventDispatcherInterface $eventDispatcher)
+    private function getSubDocumentIds(\Pimcore\Model\Document $document, EventDispatcherInterface $eventDispatcher): array
     {
         $childsList = new \Pimcore\Model\Document\Listing();
         $condition = 'path LIKE ?';

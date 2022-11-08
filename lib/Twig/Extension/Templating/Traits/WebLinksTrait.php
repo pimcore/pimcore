@@ -51,7 +51,10 @@ trait WebLinksTrait
         return $this->webLinksEnabled;
     }
 
-    public function enableWebLinks(): self
+    /**
+     * @return $this
+     */
+    public function enableWebLinks(): static
     {
         $this->webLinksEnabled(true);
 

@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Ecommerce\Type;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 
 /**
  * @covers \Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal
@@ -632,12 +632,8 @@ class DecimalTest extends TestCase
 
     /**
      * Pairs for price operations (add, sub)
-     *
-     * @param int $expected
-     *
-     * @return array
      */
-    private function buildPriceOperationInputPairs($expected): array
+    private function buildPriceOperationInputPairs(int $expected): array
     {
         $input = [
             [
@@ -659,12 +655,8 @@ class DecimalTest extends TestCase
 
     /**
      * Pairs for scalar operations (mul, div)
-     *
-     * @param int|float $expected
-     *
-     * @return array
      */
-    private function buildScalarOperationInputPairs($expected): array
+    private function buildScalarOperationInputPairs(float|int $expected): array
     {
         $input = [
             [
@@ -690,13 +682,8 @@ class DecimalTest extends TestCase
 
     /**
      * Mixes pairs (creates one pair per possible combination)
-     *
-     * @param array $input
-     * @param int|float $expected
-     *
-     * @return array
      */
-    private function mixPairs(array $input, $expected): array
+    private function mixPairs(array $input, float|int $expected): array
     {
         $data = [];
         $count = count($input);

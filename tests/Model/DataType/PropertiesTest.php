@@ -18,8 +18,8 @@ namespace Pimcore\Tests\Model\DataType;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Inheritance;
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Tests\Test\AbstractPropertiesTest;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\AbstractPropertiesTest;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * @group properties

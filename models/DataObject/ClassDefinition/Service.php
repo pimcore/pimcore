@@ -63,16 +63,12 @@ class Service
         self::setDoRemoveDynamicOptions(true);
         $data = json_decode(json_encode($class));
         self::setDoRemoveDynamicOptions(false);
-        unset($data->name);
-        unset($data->creationDate);
-        unset($data->userOwner);
-        unset($data->userModification);
-        unset($data->fieldDefinitions);
+        unset($data->name, $data->creationDate, $data->userOwner, $data->userModification, $data->fieldDefinitions);
 
         return json_encode($data, JSON_PRETTY_PRINT);
     }
 
-    private static function removeDynamicOptionsFromLayoutDefinition(&$layout)
+    private static function removeDynamicOptionsFromLayoutDefinition(mixed &$layout): void
     {
         if (method_exists($layout, 'resolveBlockedVars')) {
             $blockedVars = $layout->resolveBlockedVars();
@@ -147,7 +143,6 @@ class Service
             'listingParentClass',
             'useTraits',
             'listingUseTraits',
-            'previewUrl',
             'propertyVisibility',
             'linkGeneratorReference',
             'previewGeneratorReference',
@@ -176,10 +171,16 @@ class Service
     public static function generateFieldCollectionJson($fieldCollection)
     {
         $fieldCollection = clone $fieldCollection;
-        $fieldCollection->setKey(null);
-        $fieldCollection->setFieldDefinitions([]);
+        if ($fieldCollection->layoutDefinitions instanceof Layout) {
+            self::removeDynamicOptionsFromLayoutDefinition($fieldCollection->layoutDefinitions);
+        }
 
-        return json_encode($fieldCollection, JSON_PRETTY_PRINT);
+        self::setDoRemoveDynamicOptions(true);
+        $data = json_decode(json_encode($fieldCollection));
+        self::setDoRemoveDynamicOptions(false);
+        unset($data->key, $data->fieldDefinitions);
+
+        return json_encode($data, JSON_PRETTY_PRINT);
     }
 
     /**
@@ -224,8 +225,6 @@ class Service
     public static function generateObjectBrickJson($objectBrick)
     {
         $objectBrick = clone $objectBrick;
-        $objectBrick->setKey(null);
-        $objectBrick->setFieldDefinitions([]);
 
         // set classname attribute to the real class name not to the class ID
         // this will allow to import the brick on a different instance with identical class names but different class IDs
@@ -243,7 +242,31 @@ class Service
             }
         }
 
-        return json_encode($objectBrick, JSON_PRETTY_PRINT);
+        if ($objectBrick->layoutDefinitions instanceof Layout) {
+            self::removeDynamicOptionsFromLayoutDefinition($objectBrick->layoutDefinitions);
+        }
+        self::setDoRemoveDynamicOptions(true);
+        $data = json_decode(json_encode($objectBrick));
+        self::setDoRemoveDynamicOptions(false);
+        unset($data->key, $data->fieldDefinitions);
+
+        return json_encode($data, JSON_PRETTY_PRINT);
+    }
+
+    public static function generateCustomLayoutJson(CustomLayout $customLayout): string
+    {
+        if ($layoutDefinitions = $customLayout->getLayoutDefinitions()) {
+            self::removeDynamicOptionsFromLayoutDefinition($layoutDefinitions);
+        }
+        self::setDoRemoveDynamicOptions(true);
+        $data = [
+            'description' => $customLayout->getDescription(),
+            'layoutDefinitions' => json_decode(json_encode($layoutDefinitions)),
+            'default' => $customLayout->getDefault() ?: 0,
+        ];
+        self::setDoRemoveDynamicOptions(false);
+
+        return json_encode($data, JSON_PRETTY_PRINT);
     }
 
     /**
@@ -376,11 +399,7 @@ class Service
         return false;
     }
 
-    /**
-     * @param mixed $data
-     * @param array $blockedVars
-     */
-    private static function removeDynamicOptionsFromArray(&$data, $blockedVars)
+    private static function removeDynamicOptionsFromArray(array &$data, array $blockedVars): void
     {
         foreach ($blockedVars as $blockedVar) {
             if (isset($data[$blockedVar])) {

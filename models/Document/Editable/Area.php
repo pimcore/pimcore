@@ -77,7 +77,7 @@ class Area extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function getDataEditmode() /** : mixed */
+    public function getDataEditmode(): array
     {
         return [
             'type' => $this->type,
@@ -97,12 +97,7 @@ class Area extends Model\Document\Editable
         $this->outputEditmode('</div>');
     }
 
-    /**
-     * @param array $config
-     * @param EditableRenderer $editableRenderer
-     * @param string $dialogId
-     */
-    private function renderDialogBoxEditables(array $config, EditableRenderer $editableRenderer, string $dialogId)
+    private function renderDialogBoxEditables(array $config, EditableRenderer $editableRenderer, string $dialogId): void
     {
         if (isset($config['items']) && is_array($config['items'])) {
             // layout component
@@ -129,24 +124,18 @@ class Area extends Model\Document\Editable
     {
         $config = $this->getConfig();
         // create info object and assign it to the view
-        try {
-            $info = new Area\Info();
-            $info->setId($config['type']);
-            $info->setEditable($this);
-            $info->setIndex(0);
-        } catch (\Exception $e) {
-            $info = null;
-        }
+        $info = new Area\Info();
+        $info->setId($config['type']);
+        $info->setEditable($this);
+        $info->setIndex(0);
 
         $params = [];
-        if (isset($config['params']) && is_array($config['params']) && array_key_exists($config['type'], $config['params'])) {
-            if (is_array($config['params'][$config['type']])) {
-                $params = $config['params'][$config['type']];
-            }
+        if (is_array($config['params'][$config['type']] ?? null)) {
+            $params = $config['params'][$config['type']];
         }
 
-        if (isset($config['globalParams'])) {
-            $params = array_merge($config['globalParams'], (array)$params);
+        if (is_array($config['globalParams'] ?? null)) {
+            $params = array_merge($config['globalParams'], $params);
         }
 
         $info->setParams($params);
@@ -163,11 +152,6 @@ class Area extends Model\Document\Editable
 
         // TODO inject area handler via DI when editables are built by container
         $editableHandler = \Pimcore::getContainer()->get(EditableHandler::class);
-
-        // don't show disabled bricks
-        if (!$editableHandler->isBrickEnabled($this, $config['type'] && ($config['dontCheckEnabled'] ?? false) !== true)) {
-            return;
-        }
 
         // push current block name
         $blockState = $this->getBlockState();

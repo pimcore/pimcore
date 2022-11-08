@@ -83,6 +83,7 @@ class PageController extends DocumentControllerBase
 
         $this->addTranslationsData($page, $data);
         $this->minimizeProperties($page, $data);
+        $this->populateUsersNames($page, $data);
 
         if ($page->getContentMasterDocument()) {
             $data['contentMasterDocumentPath'] = $page->getContentMasterDocument()->getRealFullPath();

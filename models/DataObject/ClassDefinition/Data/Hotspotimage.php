@@ -369,8 +369,8 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof DataObject\Data\Hotspotimage) {
-            return base64_encode(Serialize::serialize($data));
+        if ($data instanceof DataObject\Data\Hotspotimage && $data->getImage() instanceof Asset\Image) {
+            return $data->getImage()->getFrontendFullPath();
         }
 
         return '';
@@ -517,13 +517,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
         return $data;
     }
 
-    /**
-     * @param array|null $dataArray
-     * @param array $idMapping
-     *
-     * @return array
-     */
-    private function rewriteIdsInDataEntries($dataArray, $idMapping)
+    private function rewriteIdsInDataEntries(?array $dataArray, array $idMapping): array
     {
         $newDataArray = [];
         if ($dataArray) {

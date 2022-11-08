@@ -1081,7 +1081,7 @@ class UserController extends AdminController implements KernelControllerEventInt
         $users = [];
 
         // get available user
-        $list = new \Pimcore\Model\User\Listing();
+        $list = new User\Listing();
 
         $conditions = [ 'type = "user"' ];
 
@@ -1116,7 +1116,7 @@ class UserController extends AdminController implements KernelControllerEventInt
     public function getRolesAction(Request $request)
     {
         $roles = [];
-        $list = new \Pimcore\Model\User\Role\Listing();
+        $list = new User\Role\Listing();
 
         $list->setCondition('type = "role"');
         $list->load();
@@ -1228,14 +1228,11 @@ class UserController extends AdminController implements KernelControllerEventInt
     }
 
     /**
-     *
-     * @param array $params
-     * @param string $fallbackUrl
      * @param int $referenceType //UrlGeneratorInterface::ABSOLUTE_URL, ABSOLUTE_PATH, RELATIVE_PATH, NETWORK_PATH
      *
      * @return string The generated URL
      */
-    private function generateCustomUrl(array $params, $fallbackUrl = 'pimcore_admin_login_check', $referenceType = UrlGeneratorInterface::ABSOLUTE_URL): string
+    private function generateCustomUrl(array $params, string $fallbackUrl = 'pimcore_admin_login_check', int $referenceType = UrlGeneratorInterface::ABSOLUTE_URL): string
     {
         try {
             $adminEntryPointRoute = $this->getParameter('pimcore_admin.custom_admin_route_name');

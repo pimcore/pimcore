@@ -125,7 +125,7 @@ class RenderletController extends AdminController
         return $element;
     }
 
-    private function configureElementTargeting(Request $request, ElementInterface $element)
+    private function configureElementTargeting(Request $request, ElementInterface $element): void
     {
         if (!$element instanceof Document\Targeting\TargetingDocumentInterface) {
             return;

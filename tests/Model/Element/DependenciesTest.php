@@ -23,8 +23,8 @@ use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Property;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class DependenciesTest
@@ -165,10 +165,9 @@ class DependenciesTest extends ModelTestCase
     }
 
     /**
-     * @param ElementInterface $source
      * @param Concrete[] $targets
      */
-    private function saveElementDependencies($source, $targets)
+    private function saveElementDependencies(ElementInterface $source, array $targets): void
     {
         $properties = [];
         foreach ($targets as $idx => $target) {

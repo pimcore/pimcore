@@ -206,13 +206,7 @@ class Authentication
         return $hash;
     }
 
-    /**
-     * @param string $username
-     * @param string $plainTextPassword
-     *
-     * @return string
-     */
-    private static function preparePlainTextPassword($username, $plainTextPassword)
+    private static function preparePlainTextPassword(string $username, string $plainTextPassword): string
     {
         // plaintext password is prepared as digest A1 hash, this is to be backward compatible because this was
         // the former hashing algorithm in pimcore (< version 2.1.1)
@@ -236,12 +230,7 @@ class Authentication
         return $token;
     }
 
-    /**
-     * @param string $token
-     *
-     * @return array
-     */
-    private static function tokenDecrypt($token)
+    private static function tokenDecrypt(string $token): array
     {
         $secret = \Pimcore::getContainer()->getParameter('secret');
         $decrypted = Crypto::decryptWithPassword($token, $secret);

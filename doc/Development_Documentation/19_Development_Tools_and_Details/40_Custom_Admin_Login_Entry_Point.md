@@ -11,7 +11,7 @@ pimcore_admin:
 > custom_admin_path_identifier should be at least 20 characters long
 > and must not start with `/admin` if Pimcore version <= 6.0.5 ! 
 
-Add custom entry for `PimcoreCoreBundle:PublicServices:customAdminEntryPoint` in your routing.yml:  
+Add custom entry for `PimcoreCoreBundle:PublicServices:customAdminEntryPoint` in your routing.yaml:  
 ```yaml
 my_custom_admin_entry_point:
     path: /my-custom-login-page

@@ -36,6 +36,20 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     const DECIMAL_PRECISION_DEFAULT = 0;
 
     /**
+     * @var array
+     */
+    public static $validFilterOperators = [
+        '=',
+        'IS',
+        'IS NOT',
+        '!=',
+        '<',
+        '>',
+        '>=',
+        '<=',
+    ];
+
+    /**
      * Static type of this element
      *
      * @internal
@@ -126,9 +140,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public $decimalPrecision;
 
-    /**
-     * @return string
-     */
     private function getPhpdocType(): string
     {
         if ($this->getInteger()) {
@@ -343,17 +354,11 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this->genericGetQueryColumnType();
     }
 
-    /**
-     * @return bool
-     */
     private function isDecimalType(): bool
     {
         return null !== $this->getDecimalSize() || null !== $this->getDecimalPrecision();
     }
 
-    /**
-     * @return string
-     */
     private function buildDecimalColumnType(): string
     {
         // decimalPrecision already existed in earlier versions to denote the amount of digits after the
@@ -540,6 +545,39 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
+     * returns sql query statement to filter according to this data types value(s)
+     *
+     * @param string $value
+     * @param string $operator
+     * @param array $params optional params used to change the behavior
+     *
+     * @return string
+     */
+    public function getFilterConditionExt($value, $operator, $params = [])
+    {
+        $db = \Pimcore\Db::get();
+        $name = $params['name'] ?: $this->name;
+        $key = $db->quoteIdentifier($name);
+        if (!empty($params['brickPrefix'])) {
+            $key = $params['brickPrefix'].$key;
+        }
+
+        if ($value === 'NULL') {
+            if ($operator === '=') {
+                $operator = 'IS';
+            } elseif ($operator === '!=') {
+                $operator = 'IS NOT';
+            }
+        }
+
+        if (is_numeric($value) && in_array($operator, self::$validFilterOperators)) {
+            return $key . ' ' . $operator . ' ' . $value . ' ';
+        }
+
+        return '';
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function isDiffChangeAllowed($object, $params = [])
@@ -557,12 +595,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return !is_numeric($data);
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @return float|int|string
-     */
-    private function toNumeric($value)
+    private function toNumeric(mixed $value): float|int|string
     {
         $value = str_replace(',', '.', (string) $value);
 

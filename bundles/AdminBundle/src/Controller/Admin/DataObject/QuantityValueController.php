@@ -151,12 +151,7 @@ class QuantityValueController extends AdminController
         return $this->adminJson(['success' => false]);
     }
 
-    /**
-     * @param string $comparison
-     *
-     * @return string
-     */
-    private function getOperator($comparison)
+    private function getOperator(string $comparison): string
     {
         $mapper = [
             'lt' => '<',

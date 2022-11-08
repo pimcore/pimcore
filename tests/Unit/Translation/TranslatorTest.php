@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Translation;
 
 use Pimcore\Model\Translation;
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Translation\Translator;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -81,7 +81,7 @@ class TranslatorTest extends TestCase
         parent::tearDown();
     }
 
-    private function addTranslations()
+    private function addTranslations(): void
     {
         foreach ($this->locales as $locale => $fallback) {
             foreach ($this->translations[$locale] as $transKey => $trans) {
@@ -92,7 +92,7 @@ class TranslatorTest extends TestCase
         }
     }
 
-    private function removeTranslations()
+    private function removeTranslations(): void
     {
         foreach ($this->locales as $locale => $fallback) {
             foreach ($this->translations[$locale] as $transKey => $trans) {

@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Unit\Tool;
 
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tool\ArrayNormalizer;
 
 class ArrayNormalizerTest extends TestCase

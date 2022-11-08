@@ -108,12 +108,6 @@ class LazyLoadedItem extends AbstractItem
         }
     }
 
-    /**
-     * @param string $className
-     * @param string $interfaceName
-     *
-     * @return bool
-     */
     private static function implementsInterface(string $className, string $interfaceName): bool
     {
         if (!isset(self::$classImplementsCache[$className])) {

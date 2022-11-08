@@ -88,7 +88,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     /**
      * {@inheritdoc}
      */
-    public function getDataEditmode() /** : mixed */
+    public function getDataEditmode(): ?array
     {
         if ($this->o instanceof Element\ElementInterface) {
             return [
@@ -232,14 +232,8 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
 
     /**
      * get correct type of object as string
-     *
-     * @param Element\ElementInterface|null $object
-     *
-     * @return string|null
-     *
-     * @internal param mixed $data
      */
-    private function getObjectType($object = null)
+    private function getObjectType(Element\ElementInterface $object = null): ?string
     {
         $this->load();
 
@@ -308,7 +302,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     /**
      * {@inheritdoc}
      */
-    public function load() /** : void */
+    public function load(): void
     {
         if (!$this->o) {
             $this->setElement();
@@ -378,7 +372,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds($idMapping) /** : void */
+    public function rewriteIds(array $idMapping): void
     {
         $type = (string) $this->type;
         if ($type && array_key_exists($this->type, $idMapping) && array_key_exists($this->getId(), $idMapping[$this->type])) {

@@ -84,8 +84,6 @@ final class PHPCode extends AbstractOperator
     }
 
     /**
-     * @return OperatorInterface
-     *
      * @throws \Exception
      */
     private function getInstance(): OperatorInterface
@@ -98,8 +96,6 @@ final class PHPCode extends AbstractOperator
     }
 
     /**
-     * @return OperatorInterface
-     *
      * @throws \Exception
      */
     private function buildInstance(): OperatorInterface

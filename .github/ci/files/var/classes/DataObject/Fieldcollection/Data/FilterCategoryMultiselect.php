@@ -1,14 +1,14 @@
 <?php
 
 /**
-Fields Summary:
-- label [input]
-- preSelect [manyToManyObjectRelation]
-- useAndCondition [checkbox]
-- includeParentCategories [checkbox]
-- scriptPath [input]
-- availableCategories [manyToManyObjectRelation]
-*/
+ * Fields Summary:
+ * - label [input]
+ * - preSelect [manyToManyObjectRelation]
+ * - useAndCondition [checkbox]
+ * - includeParentCategories [checkbox]
+ * - scriptPath [input]
+ * - availableCategories [manyToManyObjectRelation]
+ */
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 
@@ -43,9 +43,9 @@ public function getLabel(): ?string
 /**
 * Set label - Label
 * @param string|null $label
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategoryMultiselect
+* @return $this
 */
-public function setLabel(?string $label)
+public function setLabel(?string $label): static
 {
 	$this->label = $label;
 
@@ -72,9 +72,9 @@ public function getPreSelect(): array
 /**
 * Set preSelect - Pre Select
 * @param \Pimcore\Model\DataObject\ProductCategory[] $preSelect
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategoryMultiselect
+* @return $this
 */
-public function setPreSelect(?array $preSelect)
+public function setPreSelect(?array $preSelect): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("preSelect");
@@ -87,7 +87,6 @@ public function setPreSelect(?array $preSelect)
 		$this->markFieldDirty("preSelect", true);
 	}
 	$this->preSelect = $fd->preSetData($this, $preSelect);
-
 	return $this;
 }
 
@@ -108,9 +107,9 @@ public function getUseAndCondition(): ?bool
 /**
 * Set useAndCondition - Use And Condition
 * @param bool|null $useAndCondition
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategoryMultiselect
+* @return $this
 */
-public function setUseAndCondition(?bool $useAndCondition)
+public function setUseAndCondition(?bool $useAndCondition): static
 {
 	$this->useAndCondition = $useAndCondition;
 
@@ -134,9 +133,9 @@ public function getIncludeParentCategories(): ?bool
 /**
 * Set includeParentCategories - Include SubCategories
 * @param bool|null $includeParentCategories
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategoryMultiselect
+* @return $this
 */
-public function setIncludeParentCategories(?bool $includeParentCategories)
+public function setIncludeParentCategories(?bool $includeParentCategories): static
 {
 	$this->includeParentCategories = $includeParentCategories;
 
@@ -160,9 +159,9 @@ public function getScriptPath(): ?string
 /**
 * Set scriptPath - Script Path
 * @param string|null $scriptPath
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategoryMultiselect
+* @return $this
 */
-public function setScriptPath(?string $scriptPath)
+public function setScriptPath(?string $scriptPath): static
 {
 	$this->scriptPath = $scriptPath;
 
@@ -189,9 +188,9 @@ public function getAvailableCategories(): array
 /**
 * Set availableCategories - Available Categories
 * @param \Pimcore\Model\DataObject\ProductCategory[] $availableCategories
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategoryMultiselect
+* @return $this
 */
-public function setAvailableCategories(?array $availableCategories)
+public function setAvailableCategories(?array $availableCategories): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("availableCategories");
@@ -204,7 +203,6 @@ public function setAvailableCategories(?array $availableCategories)
 		$this->markFieldDirty("availableCategories", true);
 	}
 	$this->availableCategories = $fd->preSetData($this, $availableCategories);
-
 	return $this;
 }
 

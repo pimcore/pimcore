@@ -263,6 +263,25 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     /**
      * {@inheritdoc}
      */
+    protected function getDataEditmode()
+    {
+        $data = $this->getData();
+
+        $poster = Asset::getById($this->poster);
+        if ($poster) {
+            $data['poster'] = $poster->getRealFullPath();
+        }
+
+        if ($this->type === self::TYPE_ASSET && ($video = Asset::getById($this->id))) {
+            $data['path'] = $video->getRealFullPath();
+        }
+
+        return $data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getDataForResource()
     {
         return [
@@ -295,11 +314,11 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         } elseif ($this->type === self::TYPE_ASSET) {
             return $this->getAssetCode($inAdmin);
         } elseif ($this->type === self::TYPE_YOUTUBE) {
-            return $this->getYoutubeCode();
+            return $this->getYoutubeCode($inAdmin);
         } elseif ($this->type === self::TYPE_VIMEO) {
-            return $this->getVimeoCode();
+            return $this->getVimeoCode($inAdmin);
         } elseif ($this->type === self::TYPE_DAILYMOTION) {
-            return $this->getDailymotionCode();
+            return $this->getDailymotionCode($inAdmin);
         } elseif ($this->type === 'url') {
             return $this->getUrlCode();
         }
@@ -449,12 +468,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->getConfig()['height'] ?? 300;
     }
 
-    /**
-     * @param bool $inAdmin
-     *
-     * @return string
-     */
-    private function getAssetCode($inAdmin = false)
+    private function getAssetCode(bool $inAdmin = false): string
     {
         $asset = Asset::getById($this->id);
         $config = $this->getConfig();
@@ -505,12 +519,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->getEmptyCode();
     }
 
-    /**
-     * @param Asset\Video $asset
-     *
-     * @return Asset\Image\Thumbnail|Asset\Video\ImageThumbnail
-     */
-    private function getPosterThumbnailImage(Asset\Video $asset)
+    private function getPosterThumbnailImage(Asset\Video $asset): Asset\Video\ImageThumbnail|Asset\Image\Thumbnail
     {
         $config = $this->getConfig();
         if (!array_key_exists('imagethumbnail', $config) || empty($config['imagethumbnail'])) {
@@ -543,20 +552,12 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $asset->getImageThumbnail($imageThumbnailConf);
     }
 
-    /**
-     * @return string
-     */
-    private function getUrlCode()
+    private function getUrlCode(): string
     {
         return $this->getHtml5Code(['mp4' => (string) $this->id]);
     }
 
-    /**
-     * @param string $message
-     *
-     * @return string
-     */
-    private function getErrorCode($message = '')
+    private function getErrorCode(string $message = ''): string
     {
         $width = $this->getWidth();
         if (strpos($this->getWidth(), '%') === false) {
@@ -581,7 +582,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     /**
      * @return string
      */
-    private function parseYoutubeId()
+    private function parseYoutubeId(): string
     {
         $youtubeId = '';
         if ($this->type === self::TYPE_YOUTUBE) {
@@ -612,10 +613,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $youtubeId;
     }
 
-    /**
-     * @return string
-     */
-    private function getYoutubeCode()
+    private function getYoutubeCode(bool $inAdmin = false): string
     {
         if (!$this->id) {
             return $this->getEmptyCode();
@@ -627,6 +625,12 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         $youtubeId = $this->parseYoutubeId();
         if (!$youtubeId) {
             return $this->getEmptyCode();
+        }
+
+        if ($inAdmin && isset($config['editmodeImagePreview']) && $config['editmodeImagePreview'] === true) {
+            return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video '. ($config['class'] ?? '') .'">
+                <img src="https://img.youtube.com/vi/' . $youtubeId . '/0.jpg">
+            </div>';
         }
 
         $width = '100%';
@@ -707,10 +711,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $code;
     }
 
-    /**
-     * @return string
-     */
-    private function getVimeoCode()
+    private function getVimeoCode(bool $inAdmin = false): string
     {
         if (!$this->id) {
             return $this->getEmptyCode();
@@ -729,6 +730,12 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         }
 
         if (ctype_digit($vimeoId)) {
+            if ($inAdmin && isset($config['editmodeImagePreview']) && $config['editmodeImagePreview'] === true) {
+                return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video '. ($config['class'] ?? '') .'">
+                    <img src="https://vumbnail.com/' . $vimeoId . '.jpg">
+                </div>';
+            }
+
             $width = '100%';
             if (array_key_exists('width', $config)) {
                 $width = $config['width'];
@@ -786,10 +793,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->getEmptyCode();
     }
 
-    /**
-     * @return string
-     */
-    private function getDailymotionCode()
+    private function getDailymotionCode(bool $inAdmin = false): string
     {
         if (!$this->id) {
             return $this->getEmptyCode();
@@ -808,6 +812,11 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         }
 
         if ($dailymotionId) {
+            if ($inAdmin && isset($config['editmodeImagePreview']) && $config['editmodeImagePreview'] === true) {
+                return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video '. ($config['class'] ?? '') .'">
+                    <img src="https://www.dailymotion.com/thumbnail/video/' . $dailymotionId . '">
+                </div>';
+            }
             $width = $config['width'] ?? '100%';
 
             $height = $config['height'] ?? '300';
@@ -854,13 +863,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->getEmptyCode();
     }
 
-    /**
-     * @param array $urls
-     * @param Asset\Image\Thumbnail|Asset\Video\ImageThumbnail|null $thumbnail
-     *
-     * @return string
-     */
-    private function getHtml5Code($urls = [], $thumbnail = null)
+    private function getHtml5Code(array $urls = [], Asset\Video\ImageThumbnail|Asset\Image\Thumbnail $thumbnail = null): string
     {
         $code = '';
         $video = $this->getVideoAsset();
@@ -983,12 +986,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $code;
     }
 
-    /**
-     * @param string|null $thumbnail
-     *
-     * @return string
-     */
-    private function getProgressCode($thumbnail = null)
+    private function getProgressCode(string $thumbnail = null): string
     {
         $uid = $this->getUniqId();
         $code = '
@@ -1019,9 +1017,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $code;
     }
 
-    /**
-     * @return string
-     */
     private function getEmptyCode(): string
     {
         $uid = 'video_' . uniqid();
@@ -1138,7 +1133,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds($idMapping) /** : void */
+    public function rewriteIds(array $idMapping): void
     {
         if ($this->type == self::TYPE_ASSET && array_key_exists(self::TYPE_ASSET, $idMapping) && array_key_exists($this->getId(), $idMapping[self::TYPE_ASSET])) {
             $this->setId($idMapping[self::TYPE_ASSET][$this->getId()]);

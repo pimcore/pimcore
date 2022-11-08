@@ -59,11 +59,9 @@ class SanityCheckHandler implements BatchHandlerInterface
     }
 
     /**
-     * @param ElementInterface $element
-     *
      * @throws \Exception
      */
-    private function performSanityCheck(ElementInterface $element)
+    private function performSanityCheck(ElementInterface $element): void
     {
         if (!$element instanceof PageSnippet && !$element instanceof Concrete && !$element instanceof Asset) {
             return;

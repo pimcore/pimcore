@@ -1779,8 +1779,10 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
         enableKeyEvents: true,
         listeners: {
             keyup: function (el) {
-                if (el.getValue().match(/^www\./)) {
-                    el.setValue("http://" + el.getValue());
+                const value = el.getValue();
+                const pathRegex = new RegExp('^(/|(/[^/]+)+/?)$');
+
+                if(value && !value.match(pathRegex)) {
                     internalTypeField.setValue(null);
                     linkTypeField.setValue("direct");
                 }
@@ -2717,7 +2719,14 @@ pimcore.helpers.isValidPassword = function (pass) {
 };
 
 pimcore.helpers.getDeeplink = function (type, id, subtype) {
-    return Routing.generate('pimcore_admin_login_deeplink', {}, true) + '?' + type + "_" + id + "_" + subtype;
+    let target = type + "_" + id + "_" + subtype;
+    let url    = Routing.generate('pimcore_admin_login_deeplink', {}, true) + '?' + target;
+
+    if (pimcore.settings['custom_admin_entrypoint_url'] !== null) {
+        url = pimcore.settings['custom_admin_entrypoint_url'] + '?deeplink=' + target;
+    }
+
+    return url;
 };
 
 pimcore.helpers.showElementHistory = function() {

@@ -264,7 +264,7 @@ class AbstractUser extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    private function cleanupUserRoleRelations()
+    private function cleanupUserRoleRelations(): void
     {
         $userRoleListing = new Listing();
         $userRoleListing->setCondition('FIND_IN_SET(' . $this->getId() . ',roles)');

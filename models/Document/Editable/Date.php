@@ -58,7 +58,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * {@inheritdoc}
      */
-    public function getDataEditmode() /** : mixed */
+    public function getDataEditmode(): ?int
     {
         if ($this->date) {
             return $this->date->getTimestamp();
@@ -136,10 +136,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
         return true;
     }
 
-    /**
-     * @param int $timestamp
-     */
-    private function setDateFromTimestamp($timestamp)
+    private function setDateFromTimestamp(int $timestamp): void
     {
         $this->date = new \Carbon\Carbon();
         $this->date->setTimestamp($timestamp);

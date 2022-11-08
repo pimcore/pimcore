@@ -21,6 +21,7 @@ use function is_array;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToMoveFile;
+use League\Flysystem\UnableToRetrieveMetadata;
 use Pimcore;
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
@@ -407,21 +408,6 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @deprecated will be removed in Pimcore 11
-     *
-     * @param array $config
-     *
-     * @return int total count
-     */
-    public static function getTotalCount($config = [])
-    {
-        $list = static::getList($config);
-        $count = $list->getTotalCount();
-
-        return $count;
-    }
-
-    /**
      * @internal
      *
      * @param string $mimeType
@@ -472,19 +458,13 @@ class Asset extends Element\AbstractElement
     /**
      * {@inheritdoc}
      */
-    public function save()
+    public function save(array $parameters = []): static
     {
-        // additional parameters (e.g. "versionNote" for the version note)
-        $params = [];
-        if (func_num_args() && is_array(func_get_arg(0))) {
-            $params = func_get_arg(0);
-        }
-
         $isUpdate = false;
         $differentOldPath = null;
 
         try {
-            $preEvent = new AssetEvent($this, $params);
+            $preEvent = new AssetEvent($this, $parameters);
 
             if ($this->getId()) {
                 $isUpdate = true;
@@ -493,11 +473,11 @@ class Asset extends Element\AbstractElement
                 $this->dispatchEvent($preEvent, AssetEvents::PRE_ADD);
             }
 
-            $params = $preEvent->getArguments();
+            $parameters = $preEvent->getArguments();
 
             $this->correctPath();
 
-            $params['isUpdate'] = $isUpdate; // we need that in $this->update() for certain types (image, video, document)
+            $parameters['isUpdate'] = $isUpdate; // we need that in $this->update() for certain types (image, video, document)
 
             // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
             // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
@@ -517,7 +497,7 @@ class Asset extends Element\AbstractElement
                         $oldPath = $this->getDao()->getCurrentFullPath();
                     }
 
-                    $this->update($params);
+                    $this->update($parameters);
 
                     $storage = Storage::get('asset');
                     // if the old path is different from the new path, update all children
@@ -542,7 +522,7 @@ class Asset extends Element\AbstractElement
                     // this has to be after the registry update and the DB update, otherwise this would cause problem in the
                     // $this->__wakeUp() method which is called by $version->save(); (path correction for version restore)
                     if ($this->getType() != 'folder') {
-                        $this->saveVersion(false, false, isset($params['versionNote']) ? $params['versionNote'] : null);
+                        $this->saveVersion(false, false, $parameters['versionNote'] ?? null);
                     }
 
                     $this->commit();
@@ -590,7 +570,7 @@ class Asset extends Element\AbstractElement
 
             $this->setDataChanged(false);
 
-            $postEvent = new AssetEvent($this, $params);
+            $postEvent = new AssetEvent($this, $parameters);
             if ($isUpdate) {
                 if ($differentOldPath) {
                     $postEvent->setArgument('oldPath', $differentOldPath);
@@ -602,7 +582,7 @@ class Asset extends Element\AbstractElement
 
             return $this;
         } catch (Exception $e) {
-            $failureEvent = new AssetEvent($this, $params);
+            $failureEvent = new AssetEvent($this, $parameters);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
                 $this->dispatchEvent($failureEvent, AssetEvents::POST_UPDATE_FAILURE);
@@ -669,6 +649,7 @@ class Asset extends Element\AbstractElement
             if ($duplicate instanceof Asset && $duplicate->getId() != $this->getId()) {
                 $duplicateFullPathException = new DuplicateFullPathException('Duplicate full path [ ' . $this->getRealFullPath() . ' ] - cannot save asset');
                 $duplicateFullPathException->setDuplicateElement($duplicate);
+                $duplicateFullPathException->setCauseElement($this);
 
                 throw $duplicateFullPathException;
             }
@@ -724,7 +705,11 @@ class Asset extends Element\AbstractElement
 
                 $this->closeStream(); // set stream to null, so that the source stream isn't used anymore after saving
 
-                $mimeType = $storage->mimeType($path);
+                try {
+                    $mimeType = $storage->mimeType($path);
+                } catch(UnableToRetrieveMetadata $e) {
+                    $mimeType = 'application/octet-stream';
+                }
                 $this->setMimeType($mimeType);
 
                 // set type
@@ -980,7 +965,7 @@ class Asset extends Element\AbstractElement
     /**
      * @throws FilesystemException
      */
-    private function deletePhysicalFile()
+    private function deletePhysicalFile(): void
     {
         $storage = Storage::get('asset');
         if ($this->getType() != 'folder') {
@@ -1223,7 +1208,7 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    private function closeStream()
+    private function closeStream(): void
     {
         if (is_resource($this->stream)) {
             @fclose($this->stream);
@@ -1525,83 +1510,95 @@ class Asset extends Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @param string|null $name
-     * @param string|null $language
-     * @param bool $strictMatch
-     * @param bool $raw
-     *
-     * @return array|string|null
-     */
-    public function getMetadata($name = null, $language = null, $strictMatch = false, $raw = false)
+    public function getMetadata(?string $name = null, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): array|string|null
     {
         $preEvent = new AssetEvent($this);
         $preEvent->setArgument('metadata', $this->metadata);
         $this->dispatchEvent($preEvent, AssetEvents::PRE_GET_METADATA);
         $this->metadata = $preEvent->getArgument('metadata');
 
-        $convert = function ($metaData) {
-            $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
-            $transformedData = $metaData['data'];
-
-            try {
-                /** @var Data $instance */
-                $instance = $loader->build($metaData['type']);
-                $transformedData = $instance->transformGetterData($metaData['data'], $metaData);
-            } catch (UnsupportedException $e) {
-            }
-
-            return $transformedData;
-        };
-
         if ($name) {
-            if ($language === null) {
-                $language = Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
-            }
-
-            $data = null;
-            foreach ($this->metadata as $md) {
-                if ($md['name'] == $name) {
-                    if ($language == $md['language']) {
-                        if ($raw) {
-                            return $md;
-                        }
-
-                        return $convert($md);
-                    }
-                    if (empty($md['language']) && !$strictMatch) {
-                        if ($raw) {
-                            return $md;
-                        }
-                        $data = $md;
-                    }
-                }
-            }
-
-            if ($data) {
-                if ($raw) {
-                    return $data;
-                }
-
-                return $convert($data);
-            }
-
-            return null;
+            return $this->getMetadataByName($name, $language, $strictMatchLanguage, $raw);
         }
 
         $metaData = $this->getObjectVar('metadata');
         $result = [];
+        $metaDataWithLanguage = [];
         if (is_array($metaData)) {
             foreach ($metaData as $md) {
                 $md = (array)$md;
-                if (!$raw) {
-                    $md['data'] = $convert($md);
+
+                if ((empty($md['language']) && !$strictMatchLanguage) || ($language == $md['language']) || !$language) {
+                    if (!$raw) {
+                        $md['data'] = $this->transformMetadata($md);
+                    }
+                    $result[] = $md;
                 }
-                $result[] = $md;
+
+                if (!empty($md['language'])) {
+                    $metaDataWithLanguage[$md['language']][$md['name']] = $md;
+                }
+            }
+        }
+
+        if ($language && !$strictMatchLanguage) {
+            foreach ($result as $key => &$item) {
+                if (!$item['language'] && isset($metaDataWithLanguage[$language][$item['name']])) {
+                    $itemWithLanguage = $metaDataWithLanguage[$language][$item['name']];
+                    if (!in_array($itemWithLanguage, $result)) {
+                        $item = $itemWithLanguage;
+                    } else {
+                        unset($result[$key]);
+                    }
+                }
             }
         }
 
         return $result;
+    }
+
+    private function transformMetadata(array $metaData)
+    {
+        $loader = Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+        $transformedData = $metaData['data'];
+
+        try {
+            /** @var Data $instance */
+            $instance = $loader->build($metaData['type']);
+            $transformedData = $instance->transformGetterData($metaData['data'], $metaData);
+        } catch (UnsupportedException $e) {
+        }
+
+        return $transformedData;
+    }
+
+    protected function getMetadataByName(string $name, ?string $language = null, bool $strictMatchLanguage = false, bool $raw = false): array|string|null
+    {
+        if ($language === null) {
+            $language = Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
+        }
+
+        $data = null;
+        foreach ($this->metadata as $md) {
+            if ($md['name'] == $name) {
+                if (empty($md['language']) && !$strictMatchLanguage) {
+                    if ($raw) {
+                        return $md;
+                    }
+                    $data = $md;
+                } elseif ($language == $md['language']) {
+                    $data = $md;
+
+                    break;
+                }
+            }
+        }
+
+        if ($data) {
+            return $raw ? $data : $this->transformMetadata($data);
+        }
+
+        return null;
     }
 
     /**
@@ -1730,13 +1727,9 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param FilesystemOperator $storage
-     * @param string $oldPath
-     * @param string|null $newPath
-     *
      * @throws FilesystemException
      */
-    private function updateChildPaths(FilesystemOperator $storage, string $oldPath, string $newPath = null)
+    private function updateChildPaths(FilesystemOperator $storage, string $oldPath, string $newPath = null): void
     {
         if ($newPath === null) {
             $newPath = $this->getRealFullPath();
@@ -1759,11 +1752,9 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param string $oldPath
-     *
      * @throws FilesystemException
      */
-    private function relocateThumbnails(string $oldPath)
+    private function relocateThumbnails(string $oldPath): void
     {
         if ($this instanceof Folder) {
             $oldThumbnailsPath = $oldPath;
@@ -1799,9 +1790,6 @@ class Asset extends Element\AbstractElement
         }
     }
 
-    /**
-     * @param Asset $asset
-     */
     private function clearFolderThumbnails(Asset $asset): void
     {
         do {

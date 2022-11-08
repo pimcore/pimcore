@@ -22,8 +22,8 @@ use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\DataObject\Inheritance;
 use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 class GeneralTest extends ModelTestCase
 {

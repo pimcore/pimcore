@@ -57,10 +57,6 @@ class ChangePublishedStateSubscriber implements EventSubscriberInterface
 
     /**
      * check's if the event subscriber should be executed
-     *
-     * @param Event $event
-     *
-     * @return bool
      */
     private function checkEvent(Event $event): bool
     {
