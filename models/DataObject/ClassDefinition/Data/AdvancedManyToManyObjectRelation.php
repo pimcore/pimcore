@@ -857,14 +857,17 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                     $this->visibleFieldDefinitions[$field]['title'] = $translator->trans($field, [], 'admin');
                     $this->visibleFieldDefinitions[$field]['fieldtype'] = 'input';
                 }
-            } else {
+            }
+            else {
                 $this->visibleFieldDefinitions[$field]['name'] = $fd->getName();
                 $this->visibleFieldDefinitions[$field]['title'] = $fd->getTitle();
                 $this->visibleFieldDefinitions[$field]['fieldtype'] = $fd->getFieldType();
                 $this->visibleFieldDefinitions[$field]['noteditable'] = true;
 
-                if ($fd instanceof DataObject\ClassDefinition\Data\Select || $fd instanceof DataObject\ClassDefinition\Data\Multiselect) {
-                    if ($fd->getOptionsProviderClass()) {
+                if ($fd instanceof DataObject\ClassDefinition\Data\Select ||
+                    $fd instanceof DataObject\ClassDefinition\Data\Multiselect ||
+                    $fd instanceof DataObject\ClassDefinition\Data\BooleanSelect) {
+                    if (method_exists($fd, 'getOptionsProviderClass') && $fd->getOptionsProviderClass()) {
                         $this->visibleFieldDefinitions[$field]['optionsProviderClass'] = $fd->getOptionsProviderClass();
                     }
 
