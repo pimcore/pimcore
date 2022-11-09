@@ -623,8 +623,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                     $this->visibleFieldDefinitions[$field]['title'] = $translator->trans($field, [], 'admin');
                     $this->visibleFieldDefinitions[$field]['fieldtype'] = 'input';
                 }
-            }
-            else {
+            } else {
                 $this->visibleFieldDefinitions[$field]['name'] = $fd->getName();
                 $this->visibleFieldDefinitions[$field]['title'] = $fd->getTitle();
                 $this->visibleFieldDefinitions[$field]['fieldtype'] = $fd->getFieldType();
