@@ -97,6 +97,8 @@ role `myRole` and thereby inherits all workspace settings from the role.
 In case the editor has his own workspace settings on `/home/myPath`, these permissions are added to permissions from any 
 role they incorporate. A permission granted by any role can not be rescinded for a single user.
 
+Example: If you want to allow to move elements in tree then it is necessary to grant the create and settings access.
+
 
 It is also possible to restrict access to localized fields on a language-level. By default, a user can view and edit 
 (as long as they also have sufficient object permissions) all localized fields. This can now be restricted to a subset of 
