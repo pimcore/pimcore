@@ -188,7 +188,7 @@ class Dao extends Model\Dao\AbstractDao
         if (is_array($columnsToRemove) && count($columnsToRemove) > 0) {
             $indexPrefix = str_starts_with($table, 'object_brick_query_') ? 'p_index_' : 'u_index_';
             foreach ($columnsToRemove as $value) {
-                if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
+                if (!in_array(strtolower($value), $protectedColumns)) {
                     Helper::queryIgnoreError($this->db, 'ALTER TABLE `'.$table.'` DROP INDEX `' . $indexPrefix . $value . '`;');
                 }
             }
