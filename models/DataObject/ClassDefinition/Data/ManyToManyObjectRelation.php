@@ -630,15 +630,13 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                 $this->visibleFieldDefinitions[$field]['fieldtype'] = $fd->getFieldType();
                 $this->visibleFieldDefinitions[$field]['noteditable'] = true;
 
-                if ($fd instanceof DataObject\ClassDefinition\Data\Select || $fd instanceof DataObject\ClassDefinition\Data\Multiselect) {
-                    if ($fd->getOptionsProviderClass()) {
+                if ($fd instanceof DataObject\ClassDefinition\Data\Select ||
+                    $fd instanceof DataObject\ClassDefinition\Data\Multiselect ||
+                    $fd instanceof DataObject\ClassDefinition\Data\BooleanSelect) {
+                    if (method_exists($fd, 'getOptionsProviderClass') && $fd->getOptionsProviderClass()) {
                         $this->visibleFieldDefinitions[$field]['optionsProviderClass'] = $fd->getOptionsProviderClass();
                     }
 
-                    $this->visibleFieldDefinitions[$field]['options'] = $fd->getOptions();
-                }
-
-                if ($fd instanceof DataObject\ClassDefinition\Data\BooleanSelect){
                     $this->visibleFieldDefinitions[$field]['options'] = $fd->getOptions();
                 }
             }
