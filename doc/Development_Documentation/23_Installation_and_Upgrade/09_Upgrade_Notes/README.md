@@ -101,7 +101,10 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Data Objects]: Removed setter functions for calculated values, since they weren´t used anyway.
 
 
-## 10.5.8
+## 10.5.10
+- [DataObject] Deprecated: Loading non-Concrete objects with the Concrete class will not be possible in Pimcore 11.
+
+## 10.5.9
 - [Twig] Sending mails and Dataobject Text Layouts, which allow rendering user controlled twig templates are now executed in a sandbox with restrictive security policies for tags, filters, functions.
          Please use following configuration to allow more in template rendering:
   ```yaml
@@ -114,6 +117,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
                 functions: ['include', 'path', 'range']
   ```
 
+## 10.5.8
 - [Nginx] Static pages nginx config has been updated to fix the issue for home static page generation. please adapt the following configuration:
 ```nginx
 map $args $static_page_root {
@@ -149,6 +153,7 @@ location / {
     security:
         enable_authenticator_manager: true
     ```
+  `[Authentication] PreAuthenticatedAdminSessionListener` has been deprecated and will be removed in Pimcore 11.
 - [Elements] Calling the methods `getById` and `getByPath` on `Asset`,`Document`,`DataObject` with second boolean parameter `$force` and `Element\Service::getElementById` with third boolean  parameter `$force` is deprecated and will throw exception in Pimcore 11. Instead pass the parameter as associative array with `$force` value.
   e.g. Before 
    ```php

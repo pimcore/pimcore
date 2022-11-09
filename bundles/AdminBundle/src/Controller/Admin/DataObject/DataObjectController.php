@@ -476,7 +476,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             $this->addAdminStyle($object, ElementAdminStyleEvent::CONTEXT_EDITOR, $objectData['general']);
 
-            $currentLayoutId = $request->get('layoutId', 0);
+            $currentLayoutId = $request->get('layoutId');
 
             $validLayouts = DataObject\Service::getValidLayouts($object);
 
