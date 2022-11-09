@@ -117,7 +117,8 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
             title: t('grid_options'),
             layout: "fit",
             items: [this.tabPanel],
-            buttons: buttons
+            buttons: buttons,
+            constrainHeader: true
         });
 
         this.window.show();
