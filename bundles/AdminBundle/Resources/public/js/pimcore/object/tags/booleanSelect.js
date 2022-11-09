@@ -34,8 +34,8 @@ pimcore.object.tags.booleanSelect = Class.create(pimcore.object.tags.abstract, {
                 }
             }
 
-            if(field.layout.options !== undefined) {
-                for(var i = 0; i < field.layout.options.length; i++) {
+            if (field.layout.options !== undefined) {
+                for (var i = 0; i < field.layout.options.length; i++) {
                     if (field.layout.options[i]["value"] == value) {
                         return field.layout.options[i]["key"];
                     }
