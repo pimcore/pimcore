@@ -571,7 +571,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $searchRequest->request->set('type', 'object');
         $searchRequest->request->set('subtype', 'object,variant');
         $searchRequest->request->set('class', implode(',', $classes));
-        $searchRequest->request->set('sqlCondition', $fieldConfig['sqlCondition']);
         $searchRequest->request->set('fields', $visibleFields);
         $searchRequest->attributes->set('unsavedChanges', $request->get('unsavedChanges', ''));
         $res = $this->forward(SearchController::class.'::findAction', ['request' => $searchRequest]);
