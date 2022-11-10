@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Exception;
 
 /**
  * @internal
@@ -29,10 +28,8 @@ final class Version20201008101817 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        try {
+        if (array_key_exists('documents_editables', $this->connection->getSchemaManager()->listViews())) {
             $this->addSql('DROP VIEW IF EXISTS documents_editables;');
-        } catch (Exception $e) {
-            $this->write('Could not drop view: ' . $e->getMessage());
         }
 
         if ($schema->hasTable('documents_elements')) {

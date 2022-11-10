@@ -98,7 +98,7 @@ pimcore.object.tags.calculatedValue = Class.create(pimcore.object.tags.abstract,
                 console.log(e);
             }
 
-            if (value && this.fieldConfig.elementType !== 'html') {
+            if (value && (this.fieldConfig === undefined || this.fieldConfig.elementType !== 'html')) {
                 value = value.replace(/\n/g,"<br>");
                 value = strip_tags(value, '<br>');
             }
