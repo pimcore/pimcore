@@ -94,7 +94,6 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
         return $roles;
     }
 
-
     public function getPassword(): ?string
     {
         return $this->user->getPassword();
