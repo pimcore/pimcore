@@ -497,16 +497,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      */
     protected static function typeMatch(AbstractObject $object)
     {
-        if (static::class === Concrete::class && !$object instanceof static) {
-            trigger_deprecation(
-                'pimcore/pimcore',
-                '10.5',
-                'Loading non-Concrete objects with the Concrete class will not be possible in Pimcore 11'
-            );
-
-            return true;
-        }
-
         return static::class === self::class || $object instanceof static;
     }
 
