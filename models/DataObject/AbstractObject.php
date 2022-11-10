@@ -490,12 +490,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
-     *
-     * @param AbstractObject $object
-     *
-     * @return bool
      */
-    protected static function typeMatch(AbstractObject $object)
+    protected static function typeMatch(AbstractObject $object): bool
     {
         return static::class === self::class || $object instanceof static;
     }
