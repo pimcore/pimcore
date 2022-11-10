@@ -31,3 +31,5 @@ class Autoloader extends Autoload
         parent::addNamespace($prefix, $base_dir, $prepend);
     }
 }
+
+@class_alias(Autoloader::class, 'Pimcore\Tests\Util\Support\Autoloader');
