@@ -1128,7 +1128,7 @@ class TestDataHelper extends AbstractTestDataHelper
      * @param int $seed
      * @param array $returnParams
      */
-    public function assertVideo(Concrete $object, $field, $seed = 1, $returnParams)
+    public function assertVideo(Concrete $object, $field, $seed, $returnParams)
     {
         $getter = 'get' . ucfirst($field);
 

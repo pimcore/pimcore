@@ -33,11 +33,6 @@ $classAliases = [
     '\Pimcore\Tests\Support\Test\TestCase' => '\Pimcore\Tests\Test\TestCase',
     '\Pimcore\Tests\Support\Util\Autoloader' => '\Pimcore\Tests\Util\Autoloader',
     '\Pimcore\Tests\Support\Util\TestHelper' => '\Pimcore\Tests\Util\TestHelper',
-    '\Pimcore\Tests\Support\CacheTester' => '\Pimcore\Tests\CacheTester',
-    '\Pimcore\Tests\Support\EcommerceTester' => '\Pimcore\Tests\EcommerceTester',
-    '\Pimcore\Tests\Support\ModelTester' => '\Pimcore\Tests\ModelTester',
-    '\Pimcore\Tests\Support\ServiceTester' => '\Pimcore\Tests\ServiceTester',
-    '\Pimcore\Tests\Support\UnitTester' => '\Pimcore\Tests\UnitTester',
 ];
 
 foreach ($classAliases as $class => $alias) {
