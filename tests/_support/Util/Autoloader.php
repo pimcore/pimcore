@@ -32,4 +32,4 @@ class Autoloader extends Autoload
     }
 }
 
-@class_alias(Autoloader::class, 'Pimcore\Tests\Util\Support\Autoloader');
+@class_alias(Autoloader::class, 'Pimcore\Tests\Support\Util\Autoloader');
