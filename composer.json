@@ -172,8 +172,7 @@
   },
   "autoload": {
     "files": [
-      "lib/helper-functions.php",
-      "tests/class_aliases.php"
+      "lib/helper-functions.php"
     ],
     "psr-4": {
       "Pimcore\\Model\\": "models",
@@ -198,7 +197,8 @@
       "Pimcore\\Tests\\": "tests"
     },
     "files": [
-      "src/Kernel.php"
+      "src/Kernel.php",
+      "tests/class_aliases.php"
     ]
   },
   "scripts": {
