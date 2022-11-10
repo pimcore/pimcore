@@ -18,13 +18,14 @@ namespace Pimcore\Bundle\AdminBundle\Security\User;
 use Pimcore\Model\User as PimcoreUser;
 use Scheb\TwoFactorBundle\Model\Google\TwoFactorInterface as GoogleTwoFactorInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Proxy user to pimcore model and expose roles as ROLE_* array. If we can safely change the roles on the user model
  * this proxy can be removed and the UserInterface can directly be implemented on the model.
  */
-class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterface
+class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * @var PimcoreUser
@@ -48,7 +49,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     }
 
     /**
-     * {@inheritdoc}
+     * @deprecated use getUserIdentifier() instead.
      */
     public function getUsername()
     {
@@ -58,7 +59,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     /**
      * {@inheritdoc}
      */
-    public function getUserIdentifier()// : string
+    public function getUserIdentifier(): string
     {
         return $this->user->getName();
     }
@@ -66,7 +67,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     /**
      * @return PimcoreUser
      */
-    public function getUser()// : PimcoreUser
+    public function getUser(): PimcoreUser
     {
         return $this->user;
     }
@@ -74,7 +75,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     /**
      * {@inheritdoc}
      */
-    public function getRoles()// : array
+    public function getRoles(): array
     {
         $roles = [];
 
@@ -93,20 +94,10 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
         return $roles;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPassword()// : ?string
+
+    public function getPassword(): ?string
     {
         return $this->user->getPassword();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getSalt()// : ?string
-    {
-        return null;
     }
 
     /**
@@ -121,7 +112,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     /**
      * {@inheritdoc}
      */
-    public function isEqualTo(UserInterface $user)// : bool
+    public function isEqualTo(UserInterface $user): bool
     {
         return $user instanceof self && $user->getId() === $this->getId();
     }

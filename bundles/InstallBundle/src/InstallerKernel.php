@@ -47,7 +47,7 @@ class InstallerKernel extends Kernel
     /**
      * {@inheritdoc}
      */
-    public function getProjectDir()
+    public function getProjectDir(): string
     {
         return $this->projectRoot;
     }
@@ -55,7 +55,7 @@ class InstallerKernel extends Kernel
     /**
      * {@inheritdoc}
      */
-    public function getLogDir()
+    public function getLogDir(): string
     {
         return $this->projectRoot . '/var/log';
     }
@@ -63,7 +63,7 @@ class InstallerKernel extends Kernel
     /**
      * {@inheritdoc}
      */
-    public function getCacheDir()
+    public function getCacheDir(): string
     {
         return $this->projectRoot . '/var/installer/cache';
     }

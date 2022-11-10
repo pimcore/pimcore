@@ -162,13 +162,4 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
             return parent::createToken($passport, $firewallName);
         }
     }
-
-    /**
-     * @deprecated
-     */
-    public function createAuthenticatedToken(PassportInterface $passport, string $firewallName): TokenInterface
-    {
-        /** @var Passport $passport */
-        return $this->createToken($passport, $firewallName);
-    }
 }
