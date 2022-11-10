@@ -78,6 +78,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - Bumped `mjaschen/phpgeo` to "^4.0".
 - [Areabricks] The default template location of `AbstractTemplateAreabrick` is now `TEMPLATE_LOCATION_GLOBAL`.
 - [Config] Rename config files from `*.yml` to `*.yaml`. Note that we now use `system.yaml` as config file and not `system.yml`
+- [Video] It's now possible to drop a video asset directly into an video editable in class
 - [Childs Compatibility] Removed `getChilds`, `setChilds` and `hasChild` use `getChildren`, `setChildren` and `hasChildren` instead.
 - [Config] The config node `pimcore.admin` and related parameters are moved to AdminBundle directly under `pimcore_admin` node. Please adapt your parameter usage accordingly eg. instead of `pimcore.admin.unauthenticated_routes`, it should be `pimcore_admin.unauthenticated_routes`
 - [DataObjects] Removed deprecated preview url in class editor.
@@ -100,6 +101,9 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - `Element\Service::getValidKey()` strips all control/unassigned, invalid and some more special (e.g. tabs, line-breaks, form-feed & vertical whitespace) characters.
 - [Data Objects]: Removed setter functions for calculated values, since they weren´t used anyway.
 
+
+## 10.5.10
+- [DataObject] Deprecated: Loading non-Concrete objects with the Concrete class will not be possible in Pimcore 11.
 
 ## 10.5.9
 - [Twig] Sending mails and Dataobject Text Layouts, which allow rendering user controlled twig templates are now executed in a sandbox with restrictive security policies for tags, filters, functions.
@@ -150,6 +154,7 @@ location / {
     security:
         enable_authenticator_manager: true
     ```
+  `[Authentication] PreAuthenticatedAdminSessionListener` has been deprecated and will be removed in Pimcore 11.
 - [Elements] Calling the methods `getById` and `getByPath` on `Asset`,`Document`,`DataObject` with second boolean parameter `$force` and `Element\Service::getElementById` with third boolean  parameter `$force` is deprecated and will throw exception in Pimcore 11. Instead pass the parameter as associative array with `$force` value.
   e.g. Before 
    ```php
