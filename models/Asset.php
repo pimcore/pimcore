@@ -254,7 +254,7 @@ class Asset extends Element\AbstractElement
                 $asset->getDao()->getById($id);
                 $className = 'Pimcore\\Model\\Asset\\' . ucfirst($asset->getType());
 
-                if (get_class($asset) !== $className) {
+                if (self::getModelFactory()->supportsClassName($className)) {
                     /** @var Asset $asset */
                     $asset = self::getModelFactory()->build($className);
                     $asset->getDao()->getById($id);
