@@ -41,9 +41,6 @@ class Pimcore extends Module
 
     protected array $groups = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct(ModuleContainer $moduleContainer, $config = null)
     {
         // simple unit tests do not need a test DB and run
@@ -74,24 +71,21 @@ class Pimcore extends Module
         return $this->getModule('\\' . __CLASS__);
     }
 
-    public function getKernel():?KernelInterface
+    public function getKernel(): ?KernelInterface
     {
         return $this->kernel;
     }
 
-    public function getContainer():ContainerInterface
+    public function getContainer(): ContainerInterface
     {
         return $this->kernel->getContainer();
     }
 
     /**
-     * @param string $serviceId
-     *
-     * @return object|null
      *
      * @throws \Exception
      */
-    public function grabService(string $serviceId):?object
+    public function grabService(string $serviceId): ?object
     {
         if (empty(self::$testServiceContainer)) {
             $container = $this->getContainer();
@@ -121,7 +115,7 @@ class Pimcore extends Module
     /**
      * Initialize the kernel (see parent Symfony module)
      */
-    protected function initializeKernel():void
+    protected function initializeKernel(): void
     {
         $maxNestingLevel = 200; // Symfony may have very long nesting level
         $xdebugMaxLevelKey = 'xdebug.max_nesting_level';
@@ -142,7 +136,7 @@ class Pimcore extends Module
         $this->kernel->getContainer()->get('event_dispatcher')->dispatch(new GenericEvent(), TestEvents::KERNEL_BOOTED);
     }
 
-    protected function setupPimcoreDirectories():void
+    protected function setupPimcoreDirectories(): void
     {
         $directories = [
             PIMCORE_CLASS_DIRECTORY,
@@ -157,12 +151,12 @@ class Pimcore extends Module
         }
     }
 
-    protected function getDbConnection():Connection
+    protected function getDbConnection(): Connection
     {
         return $this->getContainer()->get('database_connection');
     }
 
-    protected function getDbName(Connection $connection):string
+    protected function getDbName(Connection $connection): string
     {
         return $connection->getParams()['dbname'];
     }
@@ -170,7 +164,7 @@ class Pimcore extends Module
     /**
      * Connect to DB and optionally initialize a new DB
      */
-    protected function setupDbConnection():void
+    protected function setupDbConnection(): void
     {
         if (!$this->config['connect_db']) {
             return;
@@ -209,13 +203,9 @@ class Pimcore extends Module
     /**
      * Initialize (drop, re-create and setup) the test DB
      *
-     * @param Connection $connection
-     *
-     * @return bool
-     *
      * @throws ModuleException
      */
-    protected function initializeDb(Connection $connection):bool
+    protected function initializeDb(Connection $connection): bool
     {
         $dbName = $this->getDbName($connection);
 
@@ -245,9 +235,8 @@ class Pimcore extends Module
     /**
      * Drop and re-create the DB
      *
-     * @param Connection $connection
      */
-    protected function dropAndCreateDb(Connection $connection):void
+    protected function dropAndCreateDb(Connection $connection): void
     {
         $dbName = $this->getDbName($connection);
         $params = $connection->getParams();
@@ -274,9 +263,8 @@ class Pimcore extends Module
     /**
      * Try to connect to the DB and set constant if connection was successful.
      *
-     * @param Connection $connection
      */
-    protected function connectDb(Connection $connection):void
+    protected function connectDb(Connection $connection): void
     {
         if (!$connection->isConnected()) {
             $connection->connect();
@@ -288,7 +276,7 @@ class Pimcore extends Module
     /**
      * Remove and re-create class directory
      */
-    protected function purgeClassDirectory():void
+    protected function purgeClassDirectory(): void
     {
         $directories = [
             PIMCORE_CLASS_DIRECTORY,
@@ -306,9 +294,6 @@ class Pimcore extends Module
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function _before(TestInterface $test): void
     {
         parent::_before($test);
@@ -322,7 +307,7 @@ class Pimcore extends Module
     /**
      * Set pimcore into admin state
      */
-    public function setAdminMode():void
+    public function setAdminMode(): void
     {
         \Pimcore::setAdminMode();
         Document::setHideUnpublished(false);
@@ -334,7 +319,7 @@ class Pimcore extends Module
     /**
      * Set pimcore into non-admin state
      */
-    public function unsetAdminMode():void
+    public function unsetAdminMode(): void
     {
         \Pimcore::unsetAdminMode();
         Document::setHideUnpublished(true);
@@ -348,9 +333,6 @@ class Pimcore extends Module
         // TODO: Implement makeHtmlSnapshot() method.
     }
 
-    /**
-     * @return array
-     */
     public function getGroups(): array
     {
         return $this->groups;

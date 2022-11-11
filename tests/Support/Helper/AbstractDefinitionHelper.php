@@ -35,9 +35,6 @@ abstract class AbstractDefinitionHelper extends Module
         return $this->getModule('\\' . ClassManager::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function _beforeSuite(array $settings = [])
     {
         if ($this->config['initialize_definitions']) {
@@ -52,9 +49,6 @@ abstract class AbstractDefinitionHelper extends Module
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function _afterSuite()
     {
         if ($this->config['cleanup']) {
@@ -62,7 +56,7 @@ abstract class AbstractDefinitionHelper extends Module
         }
     }
 
-    public function createDataChild(string $type, ?string $name = null, bool $mandatory = false, int $index = 0, bool $visibleInGridView = true, bool $visibleInSearchResult = true):Data
+    public function createDataChild(string $type, ?string $name = null, bool $mandatory = false, int $index = 0, bool $visibleInGridView = true, bool $visibleInSearchResult = true): Data
     {
         if (!$name) {
             $name = $type;

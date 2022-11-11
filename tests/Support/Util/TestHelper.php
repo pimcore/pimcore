@@ -41,9 +41,8 @@ class TestHelper
      * Constant will be defined upon suite initialization and will result to true
      * if we have a valid DB configuration.
      *
-     * @return bool
      */
-    public static function supportsDbTests():bool
+    public static function supportsDbTests(): bool
     {
         return defined('PIMCORE_TEST_DB_INITIALIZED') ? PIMCORE_TEST_DB_INITIALIZED : false;
     }
@@ -51,7 +50,7 @@ class TestHelper
     /**
      * Check DB support and mark test skipped if DB connection wasn't established
      */
-    public static function checkDbSupport():void
+    public static function checkDbSupport(): void
     {
         if (!static::supportsDbTests()) {
             throw new \PHPUnit\Framework\SkippedTestError('Not running test as DB is not connected');
@@ -60,8 +59,6 @@ class TestHelper
 
     /**
      * @param Property[] $properties
-     *
-     * @return array
      *
      * @throws Exception
      */
@@ -97,10 +94,6 @@ class TestHelper
     }
 
     /**
-     * @param Asset $asset
-     * @param bool $ignoreCopyDifferences
-     *
-     * @return string|null
      * @throws Exception
      */
     public static function createAssetComparisonString(Asset $asset, bool $ignoreCopyDifferences = false): ?string
@@ -140,12 +133,6 @@ class TestHelper
     }
 
     /**
-     * @param Asset $asset1
-     * @param Asset $asset2
-     * @param bool $ignoreCopyDifferences
-     * @param bool $id
-     *
-     * @return bool
      * @throws Exception
      */
     public static function assetsAreEqual(Asset $asset1, Asset $asset2, bool $ignoreCopyDifferences = false, bool $id = false): bool
@@ -161,13 +148,9 @@ class TestHelper
     }
 
     /**
-     * @param Document $document
-     * @param bool $ignoreCopyDifferences
-     *
-     * @return string|null
      * @throws Exception
      */
-    public static function createDocumentComparisonString(Document $document, bool $ignoreCopyDifferences = false):?string
+    public static function createDocumentComparisonString(Document $document, bool $ignoreCopyDifferences = false): ?string
     {
         if ($document instanceof Document) {
             $d = [];
@@ -224,14 +207,9 @@ class TestHelper
     }
 
     /**
-     * @param Document $doc1
-     * @param Document $doc2
-     * @param bool $ignoreCopyDifferences
-     *
-     * @return bool
      * @throws Exception
      */
-    public static function documentsAreEqual(Document $doc1, Document $doc2, bool $ignoreCopyDifferences = false):bool
+    public static function documentsAreEqual(Document $doc1, Document $doc2, bool $ignoreCopyDifferences = false): bool
     {
         if ($doc1 instanceof Document and $doc2 instanceof Document) {
             $d1Hash = self::createDocumentComparisonString($doc1, $ignoreCopyDifferences);
@@ -319,13 +297,9 @@ class TestHelper
     }
 
     /**
-     * @param AbstractObject $object
-     * @param bool $ignoreCopyDifferences
-     *
-     * @return string|null
      * @throws Exception
      */
-    public static function createObjectComparisonString(AbstractObject $object, bool $ignoreCopyDifferences = false):?string
+    public static function createObjectComparisonString(AbstractObject $object, bool $ignoreCopyDifferences = false): ?string
     {
         if ($object instanceof AbstractObject) {
             $o = [];
@@ -360,14 +334,9 @@ class TestHelper
     }
 
     /**
-     * @param AbstractObject $object1
-     * @param AbstractObject $object2
-     * @param bool $ignoreCopyDifferences
-     *
-     * @return bool
      * @throws Exception
      */
-    public static function objectsAreEqual(AbstractObject $object1, AbstractObject $object2, bool $ignoreCopyDifferences = false):bool
+    public static function objectsAreEqual(AbstractObject $object1, AbstractObject $object2, bool $ignoreCopyDifferences = false): bool
     {
         if ($object1 instanceof AbstractObject and $object2 instanceof AbstractObject) {
             $o1Hash = self::createObjectComparisonString($object1, $ignoreCopyDifferences);
@@ -382,15 +351,9 @@ class TestHelper
     }
 
     /**
-     * @param string $keyPrefix
-     * @param bool $save
-     * @param bool $publish
-     * @param string|null $type
-     *
-     * @return Concrete
      * @throws Exception
      */
-    public static function createEmptyObject(string $keyPrefix = '', bool $save = true, bool $publish = true, ?string $type = null):Concrete
+    public static function createEmptyObject(string $keyPrefix = '', bool $save = true, bool $publish = true, ?string $type = null): Concrete
     {
         if (null === $keyPrefix) {
             $keyPrefix = '';
@@ -421,13 +384,9 @@ class TestHelper
     }
 
     /**
-     * @param string $keyPrefix
-     * @param bool $save
-     *
-     * @return ObjectModel\Folder
      * @throws ValidationException
      */
-    public static function createObjectFolder(string $keyPrefix = '', bool $save = true):DataObject\Folder
+    public static function createObjectFolder(string $keyPrefix = '', bool $save = true): DataObject\Folder
     {
         if (null === $keyPrefix) {
             $keyPrefix = '';
@@ -448,10 +407,6 @@ class TestHelper
     }
 
     /**
-     * @param string $keyPrefix
-     * @param bool $save
-     * @param int $count
-     *
      * @return Unittest[]
      * @throws Exception
      */
@@ -466,16 +421,9 @@ class TestHelper
     }
 
     /**
-     * @param TestDataHelper $testDataHelper
-     * @param string $keyPrefix
-     * @param bool $save
-     * @param bool $publish
-     * @param int $seed
-     *
-     * @return Unittest
      * @throws Exception
      */
-    public static function createFullyFledgedObject(TestDataHelper $testDataHelper, string $keyPrefix = '', bool $save = true, bool $publish = true, int $seed = 1):Unittest
+    public static function createFullyFledgedObject(TestDataHelper $testDataHelper, string $keyPrefix = '', bool $save = true, bool $publish = true, int $seed = 1): Unittest
     {
         if (null === $keyPrefix) {
             $keyPrefix = '';
@@ -540,7 +488,7 @@ class TestHelper
         return $object;
     }
 
-    public static function createEmptyDocument(?string $keyPrefix = '', bool $save = true, bool $publish = true, string $type = '\\Pimcore\\Model\\Document\\Page'):Document
+    public static function createEmptyDocument(?string $keyPrefix = '', bool $save = true, bool $publish = true, string $type = '\\Pimcore\\Model\\Document\\Page'): Document
     {
         if (null === $keyPrefix) {
             $keyPrefix = '';
@@ -570,13 +518,9 @@ class TestHelper
     }
 
     /**
-     * @param string $keyPrefix
-     * @param bool $save
-     *
-     * @return Document\Folder
      * @throws Exception
      */
-    public static function createDocumentFolder(?string $keyPrefix = '', bool $save = true):Document\Folder
+    public static function createDocumentFolder(?string $keyPrefix = '', bool $save = true): Document\Folder
     {
         if (null === $keyPrefix) {
             $keyPrefix = '';
@@ -597,15 +541,9 @@ class TestHelper
     }
 
     /**
-     * @param string $keyPrefix
-     * @param string|null $data
-     * @param bool $save
-     * @param string $filePath
-     *
-     * @return Asset\Image
      * @throws Exception
      */
-    public static function createImageAsset(string $keyPrefix = '', ?string $data = null, bool $save = true, string $filePath = 'assets/images/image5.jpg'):Asset\Image
+    public static function createImageAsset(string $keyPrefix = '', ?string $data = null, bool $save = true, string $filePath = 'assets/images/image5.jpg'): Asset\Image
     {
         if (!$data) {
             $path = static::resolveFilePath($filePath);
@@ -642,14 +580,9 @@ class TestHelper
     }
 
     /**
-     * @param string $keyPrefix
-     * @param string|null $data
-     * @param bool $save
-     *
-     * @return Asset\Document
      * @throws Exception
      */
-    public static function createDocumentAsset(string $keyPrefix = '', ?string $data = null, bool $save = true):Asset\Document
+    public static function createDocumentAsset(string $keyPrefix = '', ?string $data = null, bool $save = true): Asset\Document
     {
         if (!$data) {
             $path = static::resolveFilePath('assets/document/sonnenblume.pdf');
@@ -686,11 +619,6 @@ class TestHelper
     }
 
     /**
-     * @param string $keyPrefix
-     * @param string|null $data
-     * @param bool $save
-     *
-     * @return Asset\Video
      * @throws Exception
      */
     public static function createVideoAsset(string $keyPrefix = '', ?string $data = null, bool $save = true): Asset\Video
@@ -730,13 +658,9 @@ class TestHelper
     }
 
     /**
-     * @param string $keyPrefix
-     * @param bool $save
-     *
-     * @return Asset\Folder
      * @throws Exception
      */
-    public static function createAssetFolder(string $keyPrefix = '', bool $save = true):Asset\Folder
+    public static function createAssetFolder(string $keyPrefix = '', bool $save = true): Asset\Folder
     {
         if (null === $keyPrefix) {
             $keyPrefix = '';
@@ -780,10 +704,8 @@ class TestHelper
 
     /**
      * Clean up directory, deleting files one by one
-     *
-     * @param string|\Traversable|Finder $directory
      */
-    public static function cleanupDirectory(string|\Traversable|Finder $directory):void
+    public static function cleanupDirectory(string|\Traversable|Finder $directory): void
     {
         $files = null;
         if ($directory instanceof \Traversable) {
@@ -835,11 +757,9 @@ class TestHelper
     }
 
     /**
-     * @param ElementInterface|null $root
-     * @param string $type
      * @throws Exception
      */
-    public static function cleanUpTree(?ElementInterface $root, string $type):void
+    public static function cleanUpTree(?ElementInterface $root, string $type): void
     {
         if (!($root instanceof AbstractObject || $root instanceof Document || $root instanceof Asset)) {
             throw new \InvalidArgumentException(sprintf('Cleanup root type for %s needs to be one of: AbstractObject, Document, Asset', $type));
@@ -870,10 +790,8 @@ class TestHelper
 
     /**
      * Returns the total number of objects.
-     *
-     * @return int
      */
-    public static function getObjectCount():int
+    public static function getObjectCount(): int
     {
         $list = new ObjectModel\Listing();
         $childs = $list->load();
@@ -883,10 +801,8 @@ class TestHelper
 
     /**
      * Returns the total number of assets.
-     *
-     * @return int
      */
-    public static function getAssetCount():int
+    public static function getAssetCount(): int
     {
         $list = new Asset\Listing();
         $children = $list->getAssets();
@@ -896,10 +812,8 @@ class TestHelper
 
     /**
      * Returns the total number of documents.
-     *
-     * @return int
      */
-    public static function getDocumentCount():int
+    public static function getDocumentCount(): int
     {
         $list = new Document\Listing();
         $childs = $list->load();
@@ -909,24 +823,15 @@ class TestHelper
 
     /**
      * Resolve path to resource path
-     *
-     * @param string $path
-     *
-     * @return string
      */
-    public static function resolveFilePath(string $path):string
+    public static function resolveFilePath(string $path): string
     {
         $path = __DIR__ . '/../Resources/' . ltrim($path, '/');
 
         return $path;
     }
 
-    /**
-     * @param int $length
-     *
-     * @return string
-     */
-    public static function generateRandomString(int $length = 10):string
+    public static function generateRandomString(int $length = 10): string
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
@@ -938,7 +843,7 @@ class TestHelper
         return $randomString;
     }
 
-    public static function clearThumbnailConfiguration($name):void
+    public static function clearThumbnailConfiguration($name): void
     {
         $pipe = Asset\Image\Thumbnail\Config::getByName($name);
         if ($pipe) {
@@ -946,7 +851,7 @@ class TestHelper
         }
     }
 
-    public static function clearThumbnailConfigurations():void
+    public static function clearThumbnailConfigurations(): void
     {
         foreach (self::$thumbnail_configs as $name) {
             static::clearThumbnailConfiguration($name);
@@ -954,13 +859,9 @@ class TestHelper
     }
 
     /**
-     * @param int $angle
-     *
-     * @return Asset\Image\Thumbnail\Config
-     *
      * @throws Exception
      */
-    public static function createThumbnailConfigurationRotate(int $angle = 90):Asset\Image\Thumbnail\Config
+    public static function createThumbnailConfigurationRotate(int $angle = 90): Asset\Image\Thumbnail\Config
     {
         $name = 'assettest_rotate_' . $angle;
         $pipe = Asset\Image\Thumbnail\Config::getByName($name);
@@ -976,14 +877,10 @@ class TestHelper
     }
 
     /**
-     * @param int $width
-     * @param false $forceResize
-     *
-     * @return Asset\Image\Thumbnail\Config
      *
      * @throws Exception
      */
-    public static function createThumbnailConfigurationScaleByWidth(int $width = 256, bool $forceResize = false):Asset\Image\Thumbnail\Config
+    public static function createThumbnailConfigurationScaleByWidth(int $width = 256, bool $forceResize = false): Asset\Image\Thumbnail\Config
     {
         $name = 'assettest_scaleByWidth_' . $width . '_' . $forceResize;
         $pipe = Asset\Image\Thumbnail\Config::getByName($name);
@@ -1001,15 +898,9 @@ class TestHelper
     /**
      * This function allows to call private and protected methods
      *
-     * @param object|string $obj
-     * @param string $name
-     * @param array $args
-     *
-     * @return mixed
-     *
      * @throws \ReflectionException
      */
-    public static function callMethod(object|string $obj, string $name, array $args):mixed
+    public static function callMethod(object|string $obj, string $name, array $args): mixed
     {
         $class = new \ReflectionClass($obj);
         $method = $class->getMethod($name);
