@@ -20,12 +20,7 @@ use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Level;
 use Monolog\LogRecord;
 use Pimcore\Db;
-use Psr\Log\LogLevel;
 
-/**
- * @phpstan-import-type Level from \Monolog\Logger
- * @phpstan-import-type LevelName from \Monolog\Logger
- */
 class ApplicationLoggerDb extends AbstractProcessingHandler
 {
     const TABLE_NAME = 'application_logs';
@@ -39,10 +34,8 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
 
     /**
      * @param Connection $db
-     * @param int|string $level
+     * @param int|string|Level $level
      * @param bool $bubble
-     *
-     * @phpstan-param Level|LevelName|LogLevel::* $level
      */
     public function __construct(Connection $db, $level = Level::Debug, $bubble = true)
     {
