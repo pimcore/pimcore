@@ -49,18 +49,6 @@ class Db
         return $db;
     }
 
-    /**
-     * @internal
-     *
-     * @return LoggerInterface
-     *
-     * @internal
-     */
-    public static function getLogger()
-    {
-        return \Pimcore::getContainer()->get('monolog.logger.doctrine');
-    }
-
     public static function close()
     {
         $db = \Pimcore::getContainer()->get('doctrine.dbal.default_connection');
