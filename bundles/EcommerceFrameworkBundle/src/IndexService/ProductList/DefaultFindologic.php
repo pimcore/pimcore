@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\FindologicConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
+use Psr\Log\LoggerInterface;
 
 class DefaultFindologic implements ProductListInterface
 {
@@ -144,13 +145,13 @@ class DefaultFindologic implements ProductListInterface
     /**
      * @param FindologicConfigInterface $tenantConfig
      */
-    public function __construct(FindologicConfigInterface $tenantConfig)
+    public function __construct(FindologicConfigInterface $tenantConfig, LoggerInterface $pimcoreEcommerceFindlogic)
     {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
 
         // init logger
-        $this->logger = \Pimcore::getContainer()->get('monolog.logger.pimcore_ecommerce_findologic');
+        $this->logger = $pimcoreEcommerceFindlogic;
 
         // set defaults for required params
         $this->userIp = $_SERVER['HTTP_X_FORWARDED_FOR'] ?: $_SERVER['REMOTE_ADDR'];
