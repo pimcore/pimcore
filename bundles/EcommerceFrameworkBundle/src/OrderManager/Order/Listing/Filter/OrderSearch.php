@@ -57,7 +57,7 @@ OR `order`.deliveryCountry like ?
 SQL;
 
         if ($this->getKeyword()) {
-            $queryBuilder->andWhere(str_replace('like ?', 'like :order_keyword', $condition))->setParameter(':order_keyword', $this->getKeyword());
+            $queryBuilder->andWhere(str_replace('like ?', 'like :order_keyword', $condition))->setParameter('order_keyword', $this->getKeyword());
         }
 
         return $this;
