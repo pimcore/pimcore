@@ -44,12 +44,6 @@ flysystem:
             visibility: private
             options:
                 directory: '%kernel.project_dir%/var/recyclebin'
-        pimcore.admin.storage:
-            # Storage for shared admin resources, such as the user avatar, custom logos, ...
-            adapter: 'local'
-            visibility: private
-            options:
-                directory: '%kernel.project_dir%/var/admin'
         pimcore.email_log.storage:
             # Storage for email logs
             adapter: 'local'

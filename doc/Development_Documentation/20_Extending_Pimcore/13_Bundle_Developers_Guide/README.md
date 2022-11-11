@@ -17,10 +17,9 @@ bundle directory layout.
 There is a special kind of bundle implementing `Pimcore\Extension\Bundle\PimcoreBundleInterface` which gives you additional
 possibilities. These bundles provide a similar API as plugins did in previous versions:
 
-* The bundle shows up in the extension manager and can be enabled/disabled from there. Normal bundles need to be registered
-  via code in your `Kernel.php`.
-* In the extension manager, you're able to trigger installation/uninstallation of bundles, for example to install/update 
-  database structure.
+* The bundle shows up in the `pimcore:bundle:list` command with info, if bundle can be installed or uninstalled.
+* The bundle can be installed with `pimcore:bundle:install` command or uninstall with `pimcore:bundle:uninstall` 
+command to trigger the installation/uninstallation, for example to install/update database structure.
 * The bundle adds methods to natively register JS and CSS files to be loaded with the admin interface and in editmode. 
 
 See the [Pimcore Bundles](./05_Pimcore_Bundles) documentation to getting started with Pimcore bundles.

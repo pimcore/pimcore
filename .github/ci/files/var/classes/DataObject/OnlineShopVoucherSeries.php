@@ -1,14 +1,13 @@
 <?php
 
 /**
-* Inheritance: no
-* Variants: no
-
-
-Fields Summary:
-- name [input]
-- tokenSettings [fieldcollections]
-*/
+ * Inheritance: no
+ * Variants: no
+ *
+ * Fields Summary:
+ * - name [input]
+ * - tokenSettings [fieldcollections]
+ */
 
 namespace Pimcore\Model\DataObject;
 
@@ -16,8 +15,8 @@ use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 /**
-* @method static \Pimcore\Model\DataObject\OnlineShopVoucherSeries\Listing getList()
-* @method static \Pimcore\Model\DataObject\OnlineShopVoucherSeries\Listing|\Pimcore\Model\DataObject\OnlineShopVoucherSeries|null getByName($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\OnlineShopVoucherSeries\Listing getList(array $config = [])
+* @method static \Pimcore\Model\DataObject\OnlineShopVoucherSeries\Listing|\Pimcore\Model\DataObject\OnlineShopVoucherSeries|null getByName(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)
 */
 
 class OnlineShopVoucherSeries extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherSeries
@@ -30,9 +29,10 @@ protected $tokenSettings;
 
 /**
 * @param array $values
-* @return \Pimcore\Model\DataObject\OnlineShopVoucherSeries
+* @return static
 */
-public static function create($values = array()) {
+public static function create(array $values = []): static
+{
 	$object = new static();
 	$object->setValues($values);
 	return $object;
@@ -63,9 +63,9 @@ public function getName(): ?string
 /**
 * Set name - Name
 * @param string|null $name
-* @return \Pimcore\Model\DataObject\OnlineShopVoucherSeries
+* @return $this
 */
-public function setName(?string $name)
+public function setName(?string $name): static
 {
 	$this->name = $name;
 
@@ -84,24 +84,20 @@ public function getTokenSettings()
 		}
 	}
 
-	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections $fd */
-	$fd = $this->getClass()->getFieldDefinition("tokenSettings");
-	$data = $fd->preGetData($this);
-
+	$data = $this->getClass()->getFieldDefinition("tokenSettings")->preGetData($this);
 	return $data;
 }
 
 /**
 * Set tokenSettings - Token Settings
 * @param \Pimcore\Model\DataObject\Fieldcollection|null $tokenSettings
-* @return \Pimcore\Model\DataObject\OnlineShopVoucherSeries
+* @return $this
 */
-public function setTokenSettings(?\Pimcore\Model\DataObject\Fieldcollection $tokenSettings)
+public function setTokenSettings(?\Pimcore\Model\DataObject\Fieldcollection $tokenSettings): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections $fd */
 	$fd = $this->getClass()->getFieldDefinition("tokenSettings");
 	$this->tokenSettings = $fd->preSetData($this, $tokenSettings);
-
 	return $this;
 }
 

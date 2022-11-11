@@ -21,6 +21,10 @@ use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LayoutDefinitionEnrichmentInterface;
 use Pimcore\Model\DataObject\Classificationstore;
+use Pimcore\Model\Translation;
+use Pimcore\Model\Translation\Listing;
+use Pimcore\Model\User;
+use Pimcore\Tool\Admin;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
@@ -34,13 +38,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class ClassificationstoreController extends AdminController implements KernelControllerEventInterface
 {
     /**
-     * Delete collection with the group-relations
-     *
      * @Route("/delete-collection", name="deletecollection", methods={"DELETE"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
      */
     public function deleteCollectionAction(Request $request): JsonResponse
     {
@@ -272,7 +270,14 @@ class ClassificationstoreController extends AdminController implements KernelCon
 
         $searchfilter = $request->get('searchfilter');
         if ($searchfilter) {
-            $conditionParts[] = '(name LIKE ' . $db->quote('%' . $searchfilter . '%') . ' OR description LIKE ' . $db->quote('%'. $searchfilter . '%') . ')';
+            $searchFilterConditions = [];
+
+            $searchTerms = array_merge([$searchfilter], $this->getTranslatedSearchFilterTerms($searchfilter));
+            foreach ($searchTerms as $searchFilterTerm) {
+                $searchFilterConditions[] = 'name LIKE '.$db->quote('%'.$searchFilterTerm.'%').' OR description LIKE '.$db->quote('%'.$searchFilterTerm.'%');
+            }
+
+            $conditionParts[] = '('.implode(' OR ', $searchFilterConditions).')';
         }
 
         $storeId = $request->get('storeId');
@@ -421,7 +426,14 @@ class ClassificationstoreController extends AdminController implements KernelCon
 
         $searchfilter = $request->get('searchfilter');
         if ($searchfilter) {
-            $conditionParts[] = '(name LIKE ' . $db->quote('%' . $searchfilter . '%') . ' OR description LIKE ' . $db->quote('%'. $searchfilter . '%') . ')';
+            $searchFilterConditions = [];
+
+            $searchTerms = array_merge([$searchfilter], $this->getTranslatedSearchFilterTerms($searchfilter));
+            foreach ($searchTerms as $searchFilterTerm) {
+                $searchFilterConditions[] = 'name LIKE '.$db->quote('%'.$searchFilterTerm.'%').' OR description LIKE '.$db->quote('%'.$searchFilterTerm.'%');
+            }
+
+            $conditionParts[] = '('.implode(' OR ', $searchFilterConditions).')';
         }
 
         if ($request->get('storeId')) {
@@ -758,11 +770,18 @@ class ClassificationstoreController extends AdminController implements KernelCon
 
         $searchfilter = $request->get('searchfilter');
         if ($searchfilter) {
-            $conditionParts[] = '('
-                . Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . '.name LIKE ' . $db->quote('%' . $searchfilter . '%')
-                . ' OR ' . Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . '.name LIKE ' . $db->quote('%' . $searchfilter . '%')
-                . ' OR ' . Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . '.description LIKE ' . $db->quote('%' . $searchfilter . '%') . ')';
+            $searchFilterConditions = [];
+
+            $searchTerms = array_merge([$searchfilter], $this->getTranslatedSearchFilterTerms($searchfilter));
+            foreach ($searchTerms as $searchFilterTerm) {
+                $searchFilterConditions[] = Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS.'.name LIKE '.$db->quote('%'.$searchFilterTerm.'%')
+                    .' OR '.Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS.'.name LIKE '.$db->quote('%'.$searchFilterTerm.'%')
+                    .' OR '.Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS.'.description LIKE '.$db->quote('%'.$searchFilterTerm.'%');
+            }
+
+            $conditionParts[] = '('.implode(' OR ', $searchFilterConditions).')';
         }
+
         $condition = implode(' AND ', $conditionParts);
         $list->setCondition($condition);
         $list->setResolveGroupName(true);
@@ -1575,5 +1594,26 @@ class ClassificationstoreController extends AdminController implements KernelCon
             'searchRelationsAction',
         ];
         $this->checkActionPermission($event, 'classes', $unrestrictedActions);
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getTranslatedSearchFilterTerms(string $searchTerm): array
+    {
+        $terms = [];
+
+        $user = Admin::getCurrentUser();
+        if ($user instanceof User) {
+            $translationListing = new Listing();
+            $translationListing->setDomain(Translation::DOMAIN_ADMIN);
+            $translationListing->setCondition('language=? AND text LIKE ?', [$user->getLanguage(), '%'.$searchTerm.'%']);
+
+            foreach ($translationListing as $translation) {
+                $terms[] = $translation->getKey();
+            }
+        }
+
+        return $terms;
     }
 }

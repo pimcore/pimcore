@@ -18,8 +18,8 @@ namespace Pimcore\Tests\Model\Element;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\Recyclebin\Item;
 use Pimcore\Model\User;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 use Pimcore\Tool\Storage;
 
 /**

@@ -182,10 +182,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
                 $disabled = true;
             }
 
-            if (!$this->getEditableHandler()->isBrickEnabled($this, $index['type']) && ($config['dontCheckEnabled'] ?? false) !== true) {
-                $disabled = true;
-            }
-
             $this->blockStarted = false;
             $info = $this->buildInfoObject();
 

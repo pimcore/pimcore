@@ -46,7 +46,6 @@ services:
         arguments:
             $tokenStorage: '@security.token_storage'
             $accessDecisionManager: '@security.access.decision_manager'
-            $alwaysAuthenticate: '%security.access.always_authenticate_before_granting%'
             $exceptionOnNoToken: false
 
     Pimcore\Workflow\ExpressionService:

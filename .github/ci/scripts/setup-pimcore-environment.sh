@@ -16,5 +16,3 @@ if [ ${PIMCORE_STORAGE:-local} = "minio" ]; then
     cp .github/ci/files/minio-flysystem.yaml config/local/
     composer require -n --no-update league/flysystem-aws-s3-v3
 fi
-
-composer require --no-update webmozarts/console-parallelization:^1.2.0

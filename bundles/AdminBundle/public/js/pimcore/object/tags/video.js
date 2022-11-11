@@ -63,31 +63,118 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
             this.fieldConfig.height = 300;
         }
 
+        const allowedTypes = this.fieldConfig.allowedTypes;
+
+        const toolbarItems = [];
+
+        if (allowedTypes.includes("asset")) {
+            toolbarItems.push(
+                {
+                    xtype: "tbspacer",
+                    width: 48,
+                    height: 24,
+                    cls: "pimcore_icon_droptarget_upload"
+                }
+            )
+        }
+
+        toolbarItems.push({
+            xtype: "tbtext",
+            text: "<b>" + this.fieldConfig.title + "</b>",
+        }, "->", {
+            xtype: "button",
+            overflowText: this.fieldConfig.title,
+            iconCls: "pimcore_icon_video pimcore_icon_overlay_edit",
+            handler: this.openEdit.bind(this)
+        });
+
+        if (allowedTypes.includes("asset")) {
+            toolbarItems.push(
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_upload",
+                    overflowText: t("upload"),
+                    cls: "pimcore_inline_upload",
+                    handler: this.uploadDialog.bind(this)
+                }
+            )
+        }
+
+        toolbarItems.push(
+            {
+                xtype: "button",
+                iconCls: "pimcore_icon_delete",
+                overflowText: t('delete'),
+                handler: this.empty.bind(this)
+            }
+        );
+
+        let bodyClass = "pimcore_video_container";
+
+        if (allowedTypes.includes("asset")) {
+            bodyClass = "pimcore_droptarget_image " + bodyClass;
+        }
+
         var conf = {
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             border: true,
             style: "padding-bottom: 10px",
-            tbar: [{
-                xtype: "tbtext",
-                text: "<b>" + this.fieldConfig.title + "</b>"
-            }, "->", {
-                xtype: "button",
-                iconCls: "pimcore_icon_video pimcore_icon_overlay_edit",
-                handler: this.openEdit.bind(this)
-            }, {
-                xtype: "button",
-                iconCls: "pimcore_icon_delete",
-                handler: this.empty.bind(this)
-            }],
+            tbar: {
+                overflowHandler: 'menu',
+                items: toolbarItems
+            },
             componentCls: this.getWrapperClassNames(),
-            bodyCls: "pimcore_video_container"
+            bodyCls: bodyClass
         };
 
         this.component = new Ext.Panel(conf);
 
 
         this.component.on("afterrender", function (el) {
+            if (allowedTypes.includes("asset")) {
+
+                // add drop zone
+                new Ext.dd.DropZone(el.getEl(), {
+                    reference: this,
+                    ddGroup: "element",
+                    getTargetFromEvent: function (e) {
+                        return this.reference.component.getEl();
+                    },
+
+                    onNodeOver: function (target, dd, e, data) {
+                        if (data.records.length === 1 && data.records[0].data.type === "video") {
+                            return Ext.dd.DropZone.prototype.dropAllowed;
+                        }
+                    },
+
+                    onNodeDrop: this.onNodeDrop.bind(this)
+                });
+
+                el.getEl().on("contextmenu", this.onContextMenu.bind(this));
+
+                pimcore.helpers.registerAssetDnDSingleUpload(el.getEl().dom, this.fieldConfig.uploadPath, 'path', function (e) {
+                    if (e['asset']['type'] === "video") {
+                        this.empty(true);
+                        this.dirty = true;
+
+                        this.data.type = "asset";
+                        this.data.id = e['asset']['id'];
+                        this.data.data = e['asset']['path'];
+
+                        this.data.poster = null;
+                        this.data.title = '';
+                        this.data.description = '';
+
+                        this.updateVideo();
+
+                        return true;
+                    } else {
+                        pimcore.helpers.showNotification(t("error"), t('unsupported_filetype'), "error");
+                    }
+                }.bind(this), null, this.context);
+            }
+
             if (this.data) {
                 this.updateVideo();
             }
@@ -133,6 +220,61 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
             this.fieldData.setValue(item.fullpath);
             return true;
         }
+    },
+
+    uploadDialog: function () {
+        pimcore.helpers.assetSingleUploadDialog(this.fieldConfig.uploadPath, "path", function (res) {
+                try {
+                    this.empty(true);
+
+                    var data = Ext.decode(res.response.responseText);
+                    if (data["id"] && data["type"] == "video") {
+                        this.data.id = data["id"];
+                        this.dirty = true;
+                    }
+                    this.updateVideo();
+                } catch (e) {
+                    console.log(e);
+                }
+            }.bind(this),
+            function (res) {
+                const response = Ext.decode(res.response.responseText);
+                if (response && response.success === false) {
+                    pimcore.helpers.showNotification(t("error"), response.message, "error",
+                        res.response.responseText);
+                } else {
+                    pimcore.helpers.showNotification(t("error"), res, "error",
+                        res.response.responseText);
+                }
+            }.bind(this), this.context);
+    },
+
+    onNodeDrop: function (target, dd, e, data) {
+
+        if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+            return false;
+        }
+
+        data = data.records[0].data;
+        if (data.type === "video") {
+            this.empty(true);
+
+            if (this.data.id !== data.id) {
+                this.dirty = true;
+            }
+            this.data.id = data.id;
+            this.data.type = "asset";
+            this.data.data = data.path;
+
+            this.data.poster = null;
+            this.data.title = '';
+            this.data.description = '';
+
+            this.updateVideo();
+            return true;
+        }
+
+        return false;
     },
 
     openEdit: function () {
@@ -188,11 +330,11 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
 
         if (this.data.type == "asset" && pimcore.settings.videoconverter) {
             var path = Routing.generate('pimcore_admin_asset_getvideothumbnail', {
-                    path: this.data.data,
-                    width: width,
-                    height: height,
-                    frame: true
-                });
+                path: this.data.data,
+                width: width,
+                height: height,
+                frame: true
+            });
 
             content = '<img src="'+path+'" />';
         } else if (this.data.type == "youtube") {
@@ -208,6 +350,50 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
         }
 
         this.component.setHtml(content);
+    },
+
+    onContextMenu: function (e) {
+
+        var menu = new Ext.menu.Menu();
+
+        if (this.data) {
+            if(!this.fieldConfig.noteditable) {
+                menu.add(new Ext.menu.Item({
+                    text: t('empty'),
+                    iconCls: "pimcore_icon_delete",
+                    handler: function (item) {
+                        item.parentMenu.destroy();
+
+                        this.empty();
+                    }.bind(this)
+                }));
+            }
+        }
+
+        if (!this.fieldConfig.noteditable) {
+            menu.add(new Ext.menu.Item({
+                text: t('search'),
+                iconCls: "pimcore_icon_search",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    this.openSearchEditor();
+                }.bind(this)
+            }));
+
+            menu.add(new Ext.menu.Item({
+                text: t('upload'),
+                cls: "pimcore_inline_upload",
+                iconCls: "pimcore_icon_upload",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    this.uploadDialog();
+                }.bind(this)
+            }));
+        }
+
+        menu.showAt(e.getXY());
+
+        e.stopEvent();
     },
 
     empty: function () {

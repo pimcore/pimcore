@@ -1097,10 +1097,15 @@ class Service extends Model\AbstractModel
         $key = $event->getArgument('key');
         $key = trim($key);
 
+        // replace all control/unassigned and invalid characters
+        $key = preg_replace('/[^\PCc^\PCn^\PCs]/u', '', $key);
         // replace all 4 byte unicode characters
         $key = preg_replace('/[\x{10000}-\x{10FFFF}]/u', '-', $key);
         // replace slashes with a hyphen
         $key = str_replace('/', '-', $key);
+
+        // replace some other special characters
+        $key = preg_replace('/[\t\n\r\f\v]/', '', $key);
 
         if ($type === 'object') {
             $key = preg_replace('/[<>]/', '-', $key);

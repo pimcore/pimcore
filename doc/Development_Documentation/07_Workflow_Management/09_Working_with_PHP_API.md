@@ -66,3 +66,70 @@ In addition to the Symfony events, Pimcore provides two additional events for gl
 - `pimcore.workflow.postGlobalAction`
 See [WorkflowEvents](https://github.com/pimcore/pimcore/blob/11.x/lib/Event/WorkflowEvents.php) for details. 
 
+### Using Additional Data in Events
+
+If additional data fields are defined in the transition configuration, it's possible to retrieve those data on event listener functions.
+
+See following example how to interact with additional data on transition events.
+
+Let's first define an additional field in the workflow configuration.
+
+```yaml
+transitions:
+    close_product:
+        from: open
+        to: closed
+        options:
+            label: close product
+            notes:
+                commentEnabled: 1
+                commentRequired: 1
+                additionalFields:
+                    -
+                        name: mySelect
+                        title: please select a type
+                        fieldType: select
+                        fieldTypeSettings:
+                            options:
+                                -
+                                    key: Option A
+                                    value: a
+                                -
+                                    key: Option B
+                                    value: b
+                                -
+                                    key: Option C
+                                    value: c
+```
+
+Then, we should define the transition event on `services.yaml`.
+
+```yaml
+services:
+    App\EventListener\WorkflowsEventListener:
+        tags:        
+            - { name: kernel.event_listener, event: workflow.projectWorkflow.transition.close_product, method: onCloseProduct }
+```
+
+The additional data will be then available in the transition event
+
+```php
+<?php
+
+namespace App\EventListener;
+
+use Symfony\Component\Workflow\Event\TransitionEvent;
+
+class WorkflowsEventListener
+{
+    public function onCloseProduct(TransitionEvent $event)
+    {
+        $context = $event->getContext();
+        $additionalData = $context["additional"];
+        
+        $mySelectValue = $additionalData["mySelect"];;
+        
+        // do something with the value
+    }
+}
+```

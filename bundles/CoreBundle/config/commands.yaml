@@ -33,20 +33,6 @@ services:
             - { name: console.command, command: 'pimcore:maintenance' }
             - { name: console.command, command: 'maintenance' }
 
-    Pimcore\Bundle\CoreBundle\Command\Bundle\DisableCommand:
-        arguments:
-            - '@Pimcore\Extension\Bundle\PimcoreBundleManager'
-            - '@Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange'
-        tags:
-            - { name: console.command, command: 'pimcore:bundle:disable' }
-
-    Pimcore\Bundle\CoreBundle\Command\Bundle\EnableCommand:
-        arguments:
-            - '@Pimcore\Extension\Bundle\PimcoreBundleManager'
-            - '@Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange'
-        tags:
-            - { name: console.command, command: 'pimcore:bundle:enable' }
-
     Pimcore\Bundle\CoreBundle\Command\Bundle\InstallCommand:
         arguments:
             - '@Pimcore\Extension\Bundle\PimcoreBundleManager'
