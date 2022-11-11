@@ -68,3 +68,5 @@ class Ecommerce extends Module
         }
     }
 }
+
+@class_alias(Ecommerce::class, 'Pimcore\Tests\Support\Helper\Ecommerce');

@@ -39,3 +39,5 @@ class UnitTester extends \Codeception\Actor
      * Define custom actions here
      */
 }
+
+@class_alias(UnitTester::class, 'Pimcore\Tests\Support\UnitTester');
