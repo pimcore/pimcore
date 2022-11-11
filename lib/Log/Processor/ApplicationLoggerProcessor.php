@@ -68,7 +68,7 @@ class ApplicationLoggerProcessor
             return $record->with(context: $context);
         }
 
-        $relatedObject = $context['relatedObject'] ?? null;
+        $relatedObject = $context['relatedObject'];
         $relatedObjectType = $context['relatedObjectType'] ?? null;
 
         if (null !== $relatedObject && is_object($relatedObject)) {
