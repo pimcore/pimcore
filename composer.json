@@ -210,8 +210,7 @@
       "Pimcore\\Tests\\": "tests"
     },
     "files": [
-      "src/Kernel.php",
-      "tests/class_aliases.php"
+      "src/Kernel.php"
     ]
   },
   "scripts": {
