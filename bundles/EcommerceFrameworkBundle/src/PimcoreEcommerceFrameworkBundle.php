@@ -20,17 +20,11 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\Compiler\Registe
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
-use Pimcore\Extension\Bundle\Traits\StateHelperTrait;
 use Pimcore\Version;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-/**
- * @internal
- */
 class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
 {
-    use StateHelperTrait;
-
     /**
      * {@inheritdoc}
      */

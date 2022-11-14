@@ -2762,6 +2762,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         if ($asset->isAllowed('publish')) {
             $asset->detectFaces();
+            $asset->detectFocalPoint();
             $asset->removeCustomSetting('disableImageFeatureAutoDetection');
             $asset->save();
 

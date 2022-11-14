@@ -92,16 +92,6 @@ class ObjectUserProvider implements UserProviderInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @deprecated use loadUserByIdentifier() instead.
-     */
-    public function loadUserByUsername($username): UserInterface
-    {
-        return $this->loadUserByIdentifier($username);
-    }
-
-    /**
-     * {@inheritdoc}
      */
     public function refreshUser(UserInterface $user)
     {

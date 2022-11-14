@@ -103,26 +103,10 @@ class EditableHandler implements LoggerAwareInterface
         $this->requestStack = $requestStack;
     }
 
-    public function isBrickEnabled(Editable $editable, bool|string|AreabrickInterface $brick): bool
-    {
-        if ($brick instanceof AreabrickInterface) {
-            $brick = $brick->getId();
-        }
-
-        return $this->brickManager->isEnabled($brick);
-    }
-
     public function getAvailableAreablockAreas(Editable\Areablock $editable, array $options): array
     {
         $areas = [];
         foreach ($this->brickManager->getBricks() as $brick) {
-            // don't show disabled bricks
-            if (!isset($options['dontCheckEnabled']) || !$options['dontCheckEnabled']) {
-                if (!$this->isBrickEnabled($editable, $brick)) {
-                    continue;
-                }
-            }
-
             if (!(empty($options['allowed']) || in_array($brick->getId(), $options['allowed']))) {
                 continue;
             }

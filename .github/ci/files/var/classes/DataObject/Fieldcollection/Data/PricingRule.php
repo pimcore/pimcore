@@ -2,11 +2,11 @@
 declare(strict_types=1);
 
 /**
-Fields Summary:
-- ruleId [numeric]
-- localizedfields [localizedfields]
--- name [input]
-*/
+ * Fields Summary:
+ * - ruleId [numeric]
+ * - localizedfields [localizedfields]
+ * -- name [input]
+ */
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 
@@ -37,14 +37,13 @@ public function getRuleId(): ?float
 /**
 * Set ruleId - Rule Id
 * @param float|null $ruleId
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\PricingRule
+* @return $this
 */
 public function setRuleId(?float $ruleId): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("ruleId");
 	$this->ruleId = $fd->preSetData($this, $ruleId);
-
 	return $this;
 }
 
@@ -81,7 +80,7 @@ public function getName($language = null): ?string
 /**
 * Set localizedfields -
 * @param \Pimcore\Model\DataObject\Localizedfield|null $localizedfields
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\PricingRule
+* @return $this
 */
 public function setLocalizedfields(?\Pimcore\Model\DataObject\Localizedfield $localizedfields): static
 {
@@ -97,7 +96,9 @@ public function setLocalizedfields(?\Pimcore\Model\DataObject\Localizedfield $lo
 
 /**
 * Set name - Name
- */
+* @param string|null $name
+* @return $this
+*/
 public function setName (?string $name, $language = null): static
 {
 	$isEqual = false;

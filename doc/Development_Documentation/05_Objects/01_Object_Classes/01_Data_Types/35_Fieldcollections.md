@@ -78,13 +78,18 @@ Nevertheless you can use inheritance for field collections for data maintenance 
 public function getFieldCollection () {
 	$data = parent::getFieldCollection();
 
-	if (\Pimcore\Model\DataObject::doGetInheritedValues() && $this->getClass()->getFieldDefinition("fieldCollection")->isEmpty($data)) {
+    $inheritanceEnabled = DataObject::getGetInheritedValues();
+    DataObject::setGetInheritedValues(true);
+    
+	if (\Pimcore\Model\DataObject::doGetInheritedValues($this) && $this->getClass()->getFieldDefinition("fieldCollection")->isEmpty($data)) {
 		try {
 			return $this->getValueFromParent("fieldCollection");
 		} catch (\Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException $e) {
 			// no data from parent available, continue ... 
 		}
 	}
+    
+    DataObject::setGetInheritedValues($inheritanceEnabled);
 
 	return $data;
 }

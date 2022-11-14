@@ -6,7 +6,7 @@
     "useTraits": "",
     "listingUseTraits": "",
     "allowInherit": false,
-    "allowVariants": null,
+    "allowVariants": false,
     "showVariants": false,
     "layoutDefinitions": {
         "fieldtype": "panel",
@@ -162,7 +162,6 @@
         "labelAlign": "left"
     },
     "icon": "",
-    "previewUrl": "",
     "group": "E-Commerce",
     "showAppLoggerTab": false,
     "linkGeneratorReference": "",

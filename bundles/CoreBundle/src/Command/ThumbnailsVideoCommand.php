@@ -60,7 +60,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
             );
     }
 
-    protected function fetchItems(InputInterface $input): array
+    protected function fetchItems(InputInterface $input, OutputInterface $output): array
     {
         $list = new Asset\Listing();
 
@@ -163,8 +163,8 @@ class ThumbnailsVideoCommand extends AbstractCommand
         }
     }
 
-    protected function getItemName(int $count): string
+    protected function getItemName(?int $count): string
     {
-        return $count == 1 ? 'thumbnail' : 'thumbnails';
+        return $count === 1 ? 'thumbnail' : 'thumbnails';
     }
 }

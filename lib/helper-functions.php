@@ -283,6 +283,12 @@ function filesize2bytes(string $str): int
     return $bytes;
 }
 
+/**
+ * @param string $base
+ * @param string[] $data
+ *
+ * @return string[]
+ */
 function rscandir(string $base = '', array &$data = []): array
 {
     if (substr($base, -1, 1) != DIRECTORY_SEPARATOR) { //add trailing slash if it doesn't exists

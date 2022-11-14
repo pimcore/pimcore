@@ -2,12 +2,12 @@
 declare(strict_types=1);
 
 /**
-Fields Summary:
-- label [input]
-- field [indexFieldSelection]
-- scriptPath [input]
-- UseAndCondition [checkbox]
-*/
+ * Fields Summary:
+ * - label [input]
+ * - field [indexFieldSelection]
+ * - scriptPath [input]
+ * - UseAndCondition [checkbox]
+ */
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 
@@ -40,7 +40,7 @@ public function getLabel(): ?string
 /**
 * Set label - Label
 * @param string|null $label
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelect
+* @return $this
 */
 public function setLabel(?string $label): static
 {
@@ -66,7 +66,7 @@ public function getField(): ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtens
 /**
 * Set field - Field
 * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection|null $field
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelect
+* @return $this
 */
 public function setField(?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field): static
 {
@@ -92,7 +92,7 @@ public function getScriptPath(): ?string
 /**
 * Set scriptPath - Script Path
 * @param string|null $scriptPath
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelect
+* @return $this
 */
 public function setScriptPath(?string $scriptPath): static
 {
@@ -118,7 +118,7 @@ public function getUseAndCondition(): ?bool
 /**
 * Set UseAndCondition - Use And Condition
 * @param bool|null $UseAndCondition
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelect
+* @return $this
 */
 public function setUseAndCondition(?bool $UseAndCondition): static
 {

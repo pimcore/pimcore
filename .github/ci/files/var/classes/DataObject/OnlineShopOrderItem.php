@@ -2,24 +2,23 @@
 declare(strict_types=1);
 
 /**
-* Inheritance: no
-* Variants: no
-
-
-Fields Summary:
-- orderState [select]
-- product [manyToOneRelation]
-- productNumber [input]
-- productName [input]
-- amount [numeric]
-- totalNetPrice [numeric]
-- totalPrice [numeric]
-- taxInfo [table]
-- pricingRules [fieldcollections]
-- comment [textarea]
-- subItems [manyToManyObjectRelation]
-- customized [objectbricks]
-*/
+ * Inheritance: no
+ * Variants: no
+ *
+ * Fields Summary:
+ * - orderState [select]
+ * - product [manyToOneRelation]
+ * - productNumber [input]
+ * - productName [input]
+ * - amount [numeric]
+ * - totalNetPrice [numeric]
+ * - totalPrice [numeric]
+ * - taxInfo [table]
+ * - pricingRules [fieldcollections]
+ * - comment [textarea]
+ * - subItems [manyToManyObjectRelation]
+ * - customized [objectbricks]
+ */
 
 namespace Pimcore\Model\DataObject;
 
@@ -28,16 +27,16 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 use Pimcore\Model\Element\AbstractElement;
 
 /**
-* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing getList()
-* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getByOrderState($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getByProduct($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getByProductNumber($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getByProductName($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getByAmount($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getByTotalNetPrice($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getByTotalPrice($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getByComment($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getBySubItems($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing getList(array $config = [])
+* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getByOrderState(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)
+* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getByProduct(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)
+* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getByProductNumber(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)
+* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getByProductName(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)
+* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getByAmount(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)
+* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getByTotalNetPrice(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)
+* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getByTotalPrice(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)
+* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getByComment(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)
+* @method static \Pimcore\Model\DataObject\OnlineShopOrderItem\Listing|\Pimcore\Model\DataObject\OnlineShopOrderItem|null getBySubItems(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)
 */
 
 class OnlineShopOrderItem extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem
@@ -58,7 +57,7 @@ protected array $subItems;
 protected Objectbrick|null|OnlineShopOrderItem\Customized $customized = null;
 
 
-    public static function create(array $values = array()): OnlineShopOrderItem
+public static function create(array $values = []): static
 {
 	$object = new static();
 	$object->setValues($values);
@@ -90,7 +89,7 @@ public function getOrderState(): ?string
 /**
 * Set orderState - Order Item State
 * @param string|null $orderState
-* @return \Pimcore\Model\DataObject\OnlineShopOrderItem
+* @return $this
 */
 public function setOrderState(?string $orderState): static
 {
@@ -112,9 +111,7 @@ public function getProduct(): AbstractObject|\Pimcore\Model\Element\ElementInter
 		}
 	}
 
-	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation $fd */
-	$fd = $this->getClass()->getFieldDefinition("product");
-	$data = $fd->preGetData($this);
+	$data = $this->getClass()->getFieldDefinition("product")->preGetData($this);
 
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
@@ -123,11 +120,11 @@ public function getProduct(): AbstractObject|\Pimcore\Model\Element\ElementInter
 	return $data;
 }
 
-    /**
-     * Set product - Produkt
-     * @param AbstractElement|null $product
-     * @return OnlineShopOrderItem
-     */
+/**
+* Set product - Produkt
+* @param \Pimcore\Model\DataObject\AbstractObject|null $product
+* @return $this
+*/
 public function setProduct(?\Pimcore\Model\Element\AbstractElement $product): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation $fd */
@@ -141,7 +138,6 @@ public function setProduct(?\Pimcore\Model\Element\AbstractElement $product): st
 		$this->markFieldDirty("product", true);
 	}
 	$this->product = $fd->preSetData($this, $product);
-
 	return $this;
 }
 
@@ -170,7 +166,7 @@ public function getProductNumber(): ?string
 /**
 * Set productNumber - Produktnummer
 * @param string|null $productNumber
-* @return \Pimcore\Model\DataObject\OnlineShopOrderItem
+* @return $this
 */
 public function setProductNumber(?string $productNumber): static
 {
@@ -204,7 +200,7 @@ public function getProductName(): ?string
 /**
 * Set productName - Produktname
 * @param string|null $productName
-* @return \Pimcore\Model\DataObject\OnlineShopOrderItem
+* @return $this
 */
 public function setProductName(?string $productName): static
 {
@@ -238,14 +234,13 @@ public function getAmount(): ?float
 /**
 * Set amount - Amount
 * @param float|null $amount
-* @return \Pimcore\Model\DataObject\OnlineShopOrderItem
+* @return $this
 */
 public function setAmount(?float $amount): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getClass()->getFieldDefinition("amount");
 	$this->amount = $fd->preSetData($this, $amount);
-
 	return $this;
 }
 
@@ -274,14 +269,13 @@ public function getTotalNetPrice(): ?string
 /**
 * Set totalNetPrice - NetPrice
 * @param string|null $totalNetPrice
-* @return \Pimcore\Model\DataObject\OnlineShopOrderItem
+* @return $this
 */
 public function setTotalNetPrice(?string $totalNetPrice): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getClass()->getFieldDefinition("totalNetPrice");
 	$this->totalNetPrice = $fd->preSetData($this, $totalNetPrice);
-
 	return $this;
 }
 
@@ -310,14 +304,13 @@ public function getTotalPrice(): ?string
 /**
 * Set totalPrice - Price
 * @param string|null $totalPrice
-* @return \Pimcore\Model\DataObject\OnlineShopOrderItem
+* @return $this
 */
 public function setTotalPrice(?string $totalPrice): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getClass()->getFieldDefinition("totalPrice");
 	$this->totalPrice = $fd->preSetData($this, $totalPrice);
-
 	return $this;
 }
 
@@ -346,7 +339,7 @@ public function getTaxInfo(): array
 /**
 * Set taxInfo - Tax Information
 * @param array|null $taxInfo
-* @return \Pimcore\Model\DataObject\OnlineShopOrderItem
+* @return $this
 */
 public function setTaxInfo(?array $taxInfo): static
 {
@@ -364,24 +357,20 @@ public function setTaxInfo(?array $taxInfo): static
 		}
 	}
 
-	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections $fd */
-	$fd = $this->getClass()->getFieldDefinition("pricingRules");
-	$data = $fd->preGetData($this);
-
+	$data = $this->getClass()->getFieldDefinition("pricingRules")->preGetData($this);
 	return $data;
 }
 
 /**
 * Set pricingRules - Pricing Rules
 * @param \Pimcore\Model\DataObject\Fieldcollection|null $pricingRules
-* @return \Pimcore\Model\DataObject\OnlineShopOrderItem
+* @return $this
 */
 public function setPricingRules(?\Pimcore\Model\DataObject\Fieldcollection $pricingRules): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections $fd */
 	$fd = $this->getClass()->getFieldDefinition("pricingRules");
 	$this->pricingRules = $fd->preSetData($this, $pricingRules);
-
 	return $this;
 }
 
@@ -410,7 +399,7 @@ public function getComment(): ?string
 /**
 * Set comment - Comment
 * @param string|null $comment
-* @return \Pimcore\Model\DataObject\OnlineShopOrderItem
+* @return $this
 */
 public function setComment(?string $comment): static
 {
@@ -432,9 +421,7 @@ public function getSubItems(): array
 		}
 	}
 
-	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation $fd */
-	$fd = $this->getClass()->getFieldDefinition("subItems");
-	$data = $fd->preGetData($this);
+	$data = $this->getClass()->getFieldDefinition("subItems")->preGetData($this);
 
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
@@ -446,7 +433,7 @@ public function getSubItems(): array
 /**
 * Set subItems - Subitems
 * @param \Pimcore\Model\DataObject\OnlineShopOrderItem[] $subItems
-* @return \Pimcore\Model\DataObject\OnlineShopOrderItem
+* @return $this
 */
 public function setSubItems(?array $subItems): static
 {
@@ -461,7 +448,6 @@ public function setSubItems(?array $subItems): static
 		$this->markFieldDirty("subItems", true);
 	}
 	$this->subItems = $fd->preSetData($this, $subItems);
-
 	return $this;
 }
 
@@ -489,14 +475,13 @@ public function setSubItems(?array $subItems): static
 /**
 * Set customized - Customized
 * @param \Pimcore\Model\DataObject\Objectbrick|null $customized
-* @return \Pimcore\Model\DataObject\OnlineShopOrderItem
+* @return $this
 */
 public function setCustomized(?\Pimcore\Model\DataObject\Objectbrick $customized): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks $fd */
 	$fd = $this->getClass()->getFieldDefinition("customized");
 	$this->customized = $fd->preSetData($this, $customized);
-
 	return $this;
 }
 

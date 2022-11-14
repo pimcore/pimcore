@@ -99,7 +99,7 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
     public function getRouteByName(string $name): ?DocumentRoute
     {
         if (preg_match('/^document_(\d+)$/', $name, $match)) {
-            $document = Document::getById($match[1]);
+            $document = Document::getById((int) $match[1]);
 
             if ($this->isDirectRouteDocument($document)) {
                 return $this->buildRouteForDocument($document);

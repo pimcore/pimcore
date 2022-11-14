@@ -16,28 +16,25 @@ declare(strict_types=1);
 
 namespace Pimcore\Templating;
 
+use Pimcore\Config;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Templating\DelegatingEngine as BaseDelegatingEngine;
 use Symfony\Component\Templating\EngineInterface;
 use Twig\Environment;
+use Twig\Extension\SandboxExtension;
 
 /**
  * @internal
  */
 class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
 {
-    protected Environment $twig;
-
     protected bool $delegate = false;
 
     /**
-     * @param Environment $twig
      * @param EngineInterface[] $engines
      */
-    public function __construct(Environment $twig, array $engines = [])
+    public function __construct(protected Environment $twig, protected Config $config, array $engines = [])
     {
-        $this->twig = $twig;
-
         parent::__construct($engines);
     }
 
@@ -92,9 +89,22 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
         return $this->delegate;
     }
 
-    public function getTwigEnvironment(): Environment
+    public function getTwigEnvironment(bool $sandboxed = false): Environment
     {
+        if ($sandboxed) {
+            /** @var SandboxExtension $sandboxExtension */
+            $sandboxExtension = $this->twig->getExtension(SandboxExtension::class);
+            $sandboxExtension->enableSandbox();
+        }
+
         return $this->twig;
+    }
+
+    public function disableSandboxExtensionFromTwigEnvironment(): void
+    {
+        /** @var SandboxExtension $sandboxExtension */
+        $sandboxExtension = $this->twig->getExtension(SandboxExtension::class);
+        $sandboxExtension->disableSandbox();
     }
 
     /**

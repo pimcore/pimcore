@@ -144,6 +144,14 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     }
 
     /**
+     * @return MessageCatalogueInterface[]
+     */
+    public function getCatalogues(): array
+    {
+        return $this->translator->getCatalogues();
+    }
+
+    /**
      * @internal
      *
      * @param string $domain

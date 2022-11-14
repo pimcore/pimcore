@@ -61,7 +61,7 @@ class AdminSessionBagListener implements EventSubscriberInterface
 
     public function configure(SessionInterface $session)
     {
-        foreach ($this->config['admin']['session']['attribute_bags'] as $name => $config) {
+        foreach ($this->config['session']['attribute_bags'] as $name => $config) {
             $bag = new LockableAttributeBag($config['storage_key']);
             $bag->setName($name);
 

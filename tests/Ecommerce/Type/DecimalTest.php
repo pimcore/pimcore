@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Ecommerce\Type;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 
 /**
  * @covers \Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal

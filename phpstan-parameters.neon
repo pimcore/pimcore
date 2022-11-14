@@ -16,7 +16,6 @@ parameters:
         - '**/External/AdminerController.php'
         - '**/Processor/PdfReactor.php'
         - '**/PDFreactor.class.php'
-        - '**/bundles/AdminBundle/src/Security/Guard/AdminAuthenticator.php'
         - '**/bundles/AdminBundle/src/Security/Authenticator/AdminAbstractAuthenticator.php'
 
     ignoreErrors:

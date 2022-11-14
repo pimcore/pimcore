@@ -29,18 +29,16 @@ final class Check implements \ArrayAccess
 
     public string $name;
 
-    public string $link;
+    public ?string $link = null;
 
-    public string $state;
+    public int $state;
 
-    public string $message;
+    public ?string $message = null;
 
     /**
-     * Check constructor.
-     *
-     * @param array $data
+     * @param array{name: string, link?: string, state: int, message?: string} $data
      */
-    public function __construct(array $data = [])
+    public function __construct(array $data)
     {
         foreach ($data as $key => $value) {
             $this->$key = $value;
@@ -57,7 +55,7 @@ final class Check implements \ArrayAccess
         $this->name = $name;
     }
 
-    public function getLink(): string
+    public function getLink(): ?string
     {
         return $this->link;
     }
@@ -67,12 +65,12 @@ final class Check implements \ArrayAccess
         $this->link = $link;
     }
 
-    public function getState(): string
+    public function getState(): int
     {
         return $this->state;
     }
 
-    public function setState(string $state)
+    public function setState(int $state)
     {
         $this->state = $state;
     }
@@ -91,39 +89,22 @@ final class Check implements \ArrayAccess
         $this->message = $message;
     }
 
-    /**
-     * @param string $offset
-     *
-     * @return bool
-     */
-    public function offsetExists($offset): bool
+    public function offsetExists(string $offset): bool
     {
         return isset($this->$offset);
     }
 
-    /**
-     * @param string $offset
-     *
-     * @return string
-     */
-    public function offsetGet($offset): string
+    public function offsetGet(string $offset): string|int|null
     {
         return $this->{'get'.$offset}();
     }
 
-    /**
-     * @param string $offset
-     * @param string $value
-     */
-    public function offsetSet($offset, $value): void
+    public function offsetSet(string $offset, string|int $value): void
     {
         $this->{'set'.$offset}($value);
     }
 
-    /**
-     * @param string $offset
-     */
-    public function offsetUnset($offset): void
+    public function offsetUnset(string $offset): void
     {
         unset($this->$offset);
     }

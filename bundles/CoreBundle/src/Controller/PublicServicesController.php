@@ -235,11 +235,12 @@ class PublicServicesController extends Controller
     public function customAdminEntryPointAction(Request $request): RedirectResponse
     {
         $params = $request->query->all();
-        if (isset($params['token'])) {
-            $url = $this->generateUrl('pimcore_admin_login_check', $params);
-        } else {
-            $url = $this->generateUrl('pimcore_admin_login', $params);
-        }
+
+        $url = match (true) {
+            isset($params['token'])    => $this->generateUrl('pimcore_admin_login_check', $params),
+            isset($params['deeplink']) => $this->generateUrl('pimcore_admin_login_deeplink', $params),
+            default                    => $this->generateUrl('pimcore_admin_login', $params)
+        };
 
         $redirect = new RedirectResponse($url);
 

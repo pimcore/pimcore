@@ -23,7 +23,7 @@ use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
 /**
- * {@internal}
+ * @internal
  */
 class Composer
 {

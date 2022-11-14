@@ -6,7 +6,7 @@
     "useTraits": "",
     "listingUseTraits": "",
     "allowInherit": false,
-    "allowVariants": null,
+    "allowVariants": false,
     "showVariants": false,
     "layoutDefinitions": {
         "fieldtype": "panel",
@@ -348,7 +348,7 @@
                                             "PricingRule"
                                         ],
                                         "lazyLoading": true,
-                                        "maxItems": "",
+                                        "maxItems": null,
                                         "disallowAddRemove": false,
                                         "disallowReorder": false,
                                         "collapsed": false,
@@ -379,7 +379,7 @@
                                 "width": 400,
                                 "height": "",
                                 "maxLength": null,
-                                "showCharCount": null,
+                                "showCharCount": false,
                                 "excludeFromSearchIndex": false,
                                 "queryColumnType": "longtext",
                                 "columnType": "longtext",
@@ -402,7 +402,7 @@
                                 "fieldtype": "manyToManyObjectRelation",
                                 "width": "",
                                 "height": "",
-                                "maxItems": "",
+                                "maxItems": null,
                                 "queryColumnType": "text",
                                 "relationType": true,
                                 "visibleFields": null,
@@ -474,7 +474,7 @@
                             {
                                 "fieldtype": "objectbricks",
                                 "allowedTypes": [],
-                                "maxItems": "",
+                                "maxItems": null,
                                 "border": false,
                                 "name": "customized",
                                 "title": "Customized",
@@ -507,7 +507,6 @@
         "labelAlign": "left"
     },
     "icon": "\/bundles\/pimcoreadmin\/img\/twemoji\/1f4e6.svg",
-    "previewUrl": "",
     "group": "E-Commerce",
     "showAppLoggerTab": false,
     "linkGeneratorReference": "",

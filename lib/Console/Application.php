@@ -97,7 +97,6 @@ final class Application extends \Symfony\Bundle\FrameworkBundle\Console\Applicat
     /**
      * Gets the default input definition.
      *
-     * @return InputDefinition An InputDefinition instance
      */
     protected function getDefaultInputDefinition(): InputDefinition
     {

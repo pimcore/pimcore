@@ -40,7 +40,7 @@ class Admin
      */
     public static function getLanguageFile(string $language): string
     {
-        $baseResource = \Pimcore::getContainer()->getParameter('pimcore.admin.translations.path');
+        $baseResource = \Pimcore::getContainer()->getParameter('pimcore_admin.translations.path');
         $languageFile = \Pimcore::getKernel()->locateResource($baseResource . '/' . $language . '.json');
 
         return $languageFile;
@@ -55,7 +55,7 @@ class Admin
      */
     public static function getLanguages(): array
     {
-        $baseResource = \Pimcore::getContainer()->getParameter('pimcore.admin.translations.path');
+        $baseResource = \Pimcore::getContainer()->getParameter('pimcore_admin.translations.path');
         $languageDir = \Pimcore::getKernel()->locateResource($baseResource);
         $adminLang = \Pimcore::getContainer()->getParameter('pimcore_admin.admin_languages');
         $appDefaultPath = \Pimcore::getContainer()->getParameter('translator.default_path');

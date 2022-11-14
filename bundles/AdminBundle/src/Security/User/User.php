@@ -19,13 +19,14 @@ namespace Pimcore\Bundle\AdminBundle\Security\User;
 use Pimcore\Model\User as PimcoreUser;
 use Scheb\TwoFactorBundle\Model\Google\TwoFactorInterface as GoogleTwoFactorInterface;
 use Symfony\Component\Security\Core\User\EquatableInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Proxy user to pimcore model and expose roles as ROLE_* array. If we can safely change the roles on the user model
  * this proxy can be removed and the UserInterface can directly be implemented on the model.
  */
-class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterface
+class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterface, PasswordAuthenticatedUserInterface
 {
     protected PimcoreUser $user;
 
@@ -40,7 +41,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     }
 
     /**
-     * {@inheritdoc}
+     * @deprecated use getUserIdentifier() instead.
      */
     public function getUsername(): ?string
     {
@@ -82,20 +83,9 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
         return $roles;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPassword(): ?string
     {
         return $this->user->getPassword();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getSalt(): ?string
-    {
-        return null;
     }
 
     /**

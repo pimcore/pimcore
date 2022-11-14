@@ -729,7 +729,6 @@ class Installer
             'http_errors',
             'notes_events',
             'objects',
-            'plugins', // TODO: to be removed in Pimcore 11
             'predefined_properties',
             'asset_metadata',
             'recyclebin',

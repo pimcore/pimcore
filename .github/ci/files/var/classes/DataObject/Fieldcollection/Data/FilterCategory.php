@@ -2,14 +2,14 @@
 declare(strict_types=1);
 
 /**
-Fields Summary:
-- label [input]
-- preSelect [manyToOneRelation]
-- rootCategory [manyToOneRelation]
-- includeParentCategories [checkbox]
-- scriptPath [input]
-- availableCategories [manyToManyObjectRelation]
-*/
+ * Fields Summary:
+ * - label [input]
+ * - preSelect [manyToOneRelation]
+ * - rootCategory [manyToOneRelation]
+ * - includeParentCategories [checkbox]
+ * - scriptPath [input]
+ * - availableCategories [manyToManyObjectRelation]
+ */
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 
@@ -45,7 +45,7 @@ public function getLabel(): ?string
 /**
 * Set label - Label
 * @param string|null $label
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory
+* @return $this
 */
 public function setLabel(?string $label): static
 {
@@ -71,11 +71,11 @@ public function getPreSelect(): DataObject\Category|\Pimcore\Model\Element\Eleme
 	return $data;
 }
 
-    /**
-     * Set preSelect - Pre Select
-     * @param AbstractElement|null $preSelect
-     * @return FilterCategory
-     */
+/**
+* Set preSelect - Pre Select
+* @param \Pimcore\Model\DataObject\Category|null $preSelect
+* @return $this
+*/
 public function setPreSelect(?\Pimcore\Model\Element\AbstractElement $preSelect): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation $fd */
@@ -89,7 +89,6 @@ public function setPreSelect(?\Pimcore\Model\Element\AbstractElement $preSelect)
 		$this->markFieldDirty("preSelect", true);
 	}
 	$this->preSelect = $fd->preSetData($this, $preSelect);
-
 	return $this;
 }
 
@@ -110,11 +109,11 @@ public function getRootCategory(): DataObject\Category|\Pimcore\Model\Element\El
 	return $data;
 }
 
-    /**
-     * Set rootCategory - Root Category
-     * @param AbstractElement|null $rootCategory
-     * @return FilterCategory
-     */
+/**
+* Set rootCategory - Root Category
+* @param \Pimcore\Model\DataObject\Category|null $rootCategory
+* @return $this
+*/
 public function setRootCategory(?\Pimcore\Model\Element\AbstractElement $rootCategory): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation $fd */
@@ -128,7 +127,6 @@ public function setRootCategory(?\Pimcore\Model\Element\AbstractElement $rootCat
 		$this->markFieldDirty("rootCategory", true);
 	}
 	$this->rootCategory = $fd->preSetData($this, $rootCategory);
-
 	return $this;
 }
 
@@ -149,7 +147,7 @@ public function getIncludeParentCategories(): ?bool
 /**
 * Set includeParentCategories - Include SubCategories
 * @param bool|null $includeParentCategories
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory
+* @return $this
 */
 public function setIncludeParentCategories(?bool $includeParentCategories): static
 {
@@ -175,7 +173,7 @@ public function getScriptPath(): ?string
 /**
 * Set scriptPath - Script Path
 * @param string|null $scriptPath
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory
+* @return $this
 */
 public function setScriptPath(?string $scriptPath): static
 {
@@ -204,7 +202,7 @@ public function getAvailableCategories(): array
 /**
 * Set availableCategories - Available Categories
 * @param \Pimcore\Model\DataObject\ProductCategory[] $availableCategories
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory
+* @return $this
 */
 public function setAvailableCategories(?array $availableCategories): static
 {
@@ -219,7 +217,6 @@ public function setAvailableCategories(?array $availableCategories): static
 		$this->markFieldDirty("availableCategories", true);
 	}
 	$this->availableCategories = $fd->preSetData($this, $availableCategories);
-
 	return $this;
 }
 

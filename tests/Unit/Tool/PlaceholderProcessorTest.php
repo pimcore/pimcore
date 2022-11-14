@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Tool;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 
 class PlaceholderProcessorTest extends TestCase
 {

@@ -2,15 +2,14 @@
 declare(strict_types=1);
 
 /**
-* Inheritance: no
-* Variants: no
-
-
-Fields Summary:
-- tokenId [numeric]
-- token [input]
-- voucherSeries [manyToOneRelation]
-*/
+ * Inheritance: no
+ * Variants: no
+ *
+ * Fields Summary:
+ * - tokenId [numeric]
+ * - token [input]
+ * - voucherSeries [manyToOneRelation]
+ */
 
 namespace Pimcore\Model\DataObject;
 
@@ -19,10 +18,10 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 use Pimcore\Model\Element\AbstractElement;
 
 /**
-* @method static \Pimcore\Model\DataObject\OnlineShopVoucherToken\Listing getList()
-* @method static \Pimcore\Model\DataObject\OnlineShopVoucherToken\Listing|\Pimcore\Model\DataObject\OnlineShopVoucherToken|null getByTokenId($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\OnlineShopVoucherToken\Listing|\Pimcore\Model\DataObject\OnlineShopVoucherToken|null getByToken($value, $limit = 0, $offset = 0)
-* @method static \Pimcore\Model\DataObject\OnlineShopVoucherToken\Listing|\Pimcore\Model\DataObject\OnlineShopVoucherToken|null getByVoucherSeries($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\OnlineShopVoucherToken\Listing getList(array $config = [])
+* @method static \Pimcore\Model\DataObject\OnlineShopVoucherToken\Listing|\Pimcore\Model\DataObject\OnlineShopVoucherToken|null getByTokenId(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)
+* @method static \Pimcore\Model\DataObject\OnlineShopVoucherToken\Listing|\Pimcore\Model\DataObject\OnlineShopVoucherToken|null getByToken(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)
+* @method static \Pimcore\Model\DataObject\OnlineShopVoucherToken\Listing|\Pimcore\Model\DataObject\OnlineShopVoucherToken|null getByVoucherSeries(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)
 */
 
 class OnlineShopVoucherToken extends Concrete
@@ -34,7 +33,7 @@ protected ?string $token = null;
 protected \Pimcore\Model\Element\AbstractElement|null|OnlineShopVoucherSeries $voucherSeries;
 
 
-    public static function create(array $values = array()): OnlineShopVoucherToken
+public static function create(array $values = []): static
 {
 	$object = new static();
 	$object->setValues($values);
@@ -66,14 +65,13 @@ public function getTokenId(): ?float
 /**
 * Set tokenId - Token ID
 * @param float|null $tokenId
-* @return \Pimcore\Model\DataObject\OnlineShopVoucherToken
+* @return $this
 */
 public function setTokenId(?float $tokenId): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getClass()->getFieldDefinition("tokenId");
 	$this->tokenId = $fd->preSetData($this, $tokenId);
-
 	return $this;
 }
 
@@ -102,7 +100,7 @@ public function getToken(): ?string
 /**
 * Set token - Token
 * @param string|null $token
-* @return \Pimcore\Model\DataObject\OnlineShopVoucherToken
+* @return $this
 */
 public function setToken(?string $token): static
 {
@@ -124,9 +122,7 @@ public function getVoucherSeries(): OnlineShopVoucherSeries|\Pimcore\Model\Eleme
 		}
 	}
 
-	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation $fd */
-	$fd = $this->getClass()->getFieldDefinition("voucherSeries");
-	$data = $fd->preGetData($this);
+	$data = $this->getClass()->getFieldDefinition("voucherSeries")->preGetData($this);
 
 	if ($data instanceof \Pimcore\Model\DataObject\Data\EncryptedField) {
 		return $data->getPlain();
@@ -135,11 +131,11 @@ public function getVoucherSeries(): OnlineShopVoucherSeries|\Pimcore\Model\Eleme
 	return $data;
 }
 
-    /**
-     * Set voucherSeries - Voucher Series
-     * @param AbstractElement|null $voucherSeries
-     * @return OnlineShopVoucherToken
-     */
+/**
+* Set voucherSeries - Voucher Series
+* @param \Pimcore\Model\DataObject\OnlineShopVoucherSeries|null $voucherSeries
+* @return $this
+*/
 public function setVoucherSeries(?\Pimcore\Model\Element\AbstractElement $voucherSeries): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation $fd */
@@ -153,7 +149,6 @@ public function setVoucherSeries(?\Pimcore\Model\Element\AbstractElement $vouche
 		$this->markFieldDirty("voucherSeries", true);
 	}
 	$this->voucherSeries = $fd->preSetData($this, $voucherSeries);
-
 	return $this;
 }
 

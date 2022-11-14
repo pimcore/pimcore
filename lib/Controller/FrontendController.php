@@ -126,7 +126,7 @@ abstract class FrontendController extends Controller
      *
      * @return Response
      */
-    public function renderTemplate(string $view, array $parameters = [], Response $response = null): Response
+    protected function renderTemplate(string $view, array $parameters = [], Response $response = null): Response
     {
         return $this->render($view, $parameters, $response);
     }

@@ -2,11 +2,11 @@
 declare(strict_types=1);
 
 /**
-Fields Summary:
-- localizedfields [localizedfields]
--- name [input]
-- percent [numeric]
-*/
+ * Fields Summary:
+ * - localizedfields [localizedfields]
+ * -- name [input]
+ * - percent [numeric]
+ */
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 
@@ -53,7 +53,7 @@ public function getName($language = null): ?string
 /**
 * Set localizedfields -
 * @param \Pimcore\Model\DataObject\Localizedfield|null $localizedfields
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\TaxEntry
+* @return $this
 */
 public function setLocalizedfields(?\Pimcore\Model\DataObject\Localizedfield $localizedfields): static
 {
@@ -69,7 +69,9 @@ public function setLocalizedfields(?\Pimcore\Model\DataObject\Localizedfield $lo
 
 /**
 * Set name - Name
- */
+* @param string|null $name
+* @return $this
+*/
 public function setName (?string $name, $language = null): static
 {
 	$isEqual = false;
@@ -95,14 +97,13 @@ public function getPercent(): ?float
 /**
 * Set percent - Tax Rate in Percent
 * @param float|null $percent
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\TaxEntry
+* @return $this
 */
 public function setPercent(?float $percent): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("percent");
 	$this->percent = $fd->preSetData($this, $percent);
-
 	return $this;
 }
 

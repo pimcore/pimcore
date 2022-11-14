@@ -69,14 +69,9 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.extensions.bundles.search_paths', $config['bundles']['search_paths']);
         $container->setParameter('pimcore.extensions.bundles.handle_composer', $config['bundles']['handle_composer']);
 
-        // unauthenticated routes do not double-check for authentication
-        $container->setParameter('pimcore.admin.unauthenticated_routes', $config['admin']['unauthenticated_routes']);
-
         if (!$container->hasParameter('pimcore.encryption.secret')) {
             $container->setParameter('pimcore.encryption.secret', $config['encryption']['secret']);
         }
-
-        $container->setParameter('pimcore.admin.translations.path', $config['admin']['translations']['path']);
 
         $container->setParameter('pimcore.translations.admin_translation_mapping', $config['translations']['admin_translation_mapping']);
 
@@ -91,6 +86,11 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.documents.default_controller', $config['documents']['default_controller']);
         $container->setParameter('pimcore.documents.web_to_print.default_controller_print_page', $config['documents']['web_to_print']['default_controller_print_page']);
         $container->setParameter('pimcore.documents.web_to_print.default_controller_print_container', $config['documents']['web_to_print']['default_controller_print_container']);
+
+        //twig security policy whitelist config
+        $container->setParameter('pimcore.templating.twig.sandbox_security_policy.tags', $config['templating_engine']['twig']['sandbox_security_policy']['tags']);
+        $container->setParameter('pimcore.templating.twig.sandbox_security_policy.filters', $config['templating_engine']['twig']['sandbox_security_policy']['filters']);
+        $container->setParameter('pimcore.templating.twig.sandbox_security_policy.functions', $config['templating_engine']['twig']['sandbox_security_policy']['functions']);
 
         // register pimcore config on container
         // TODO is this bad practice?
@@ -138,7 +138,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $this->configureRouting($container, $config['routing']);
         $this->configureTranslations($container, $config['translations']);
         $this->configureTargeting($container, $loader, $config['targeting']);
-        $this->configurePasswordEncoders($container, $config);
         $this->configurePasswordHashers($container, $config);
         $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories');
         $this->configureAdapterFactories($container, $config['custom_report']['adapters'], 'pimcore.custom_report.adapter.factories');
@@ -311,21 +310,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
     }
 
     /**
-     * Handle pimcore.security.encoder_factories mapping
-     */
-    private function configurePasswordEncoders(ContainerBuilder $container, array $config): void
-    {
-        $definition = $container->findDefinition('pimcore.security.encoder_factory');
-
-        $factoryMapping = [];
-        foreach ($config['security']['encoder_factories'] as $className => $factoryConfig) {
-            $factoryMapping[$className] = new Reference($factoryConfig['id']);
-        }
-
-        $definition->replaceArgument(1, $factoryMapping);
-    }
-
-    /**
      * Handle pimcore.security.password_hasher_factories mapping
      */
     private function configurePasswordHashers(ContainerBuilder $container, array $config): void
@@ -416,20 +400,11 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
      */
     public function prepend(ContainerBuilder $container)
     {
-        $securityConfigs = $container->getExtensionConfig('security');
+        /*$securityConfigs = $container->getExtensionConfig('security');
 
-        $loader = new YamlFileLoader(
-            $container,
-            new FileLocator(__DIR__ . '/../../config')
-        );
-
-        foreach ($securityConfigs as $config) {
-            if ($config['enable_authenticator_manager'] ?? false) {
-                $loader->load('authenticator_security.yaml');
-
-                $container->setParameter('security.authenticator.manager.enabled', true);
-            }
-        }
+        if (count($securityConfigs) > 1) {
+            $this->setExtensionConfig($container, 'security', $securityConfigs);
+        }*/
     }
 
     /**

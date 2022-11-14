@@ -28,6 +28,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class RequirementsCheckCommand extends AbstractCommand
 {
+    /** @var int[] $levelsToDisplay */
     protected array $levelsToDisplay = [];
 
     /**
@@ -76,9 +77,6 @@ class RequirementsCheckCommand extends AbstractCommand
 
     /**
      * @param Requirements\Check[] $checks
-     * @param string $title
-     *
-     * @return void
      */
     protected function display(array $checks, string $title = ''): void
     {
@@ -95,7 +93,7 @@ class RequirementsCheckCommand extends AbstractCommand
         }
     }
 
-    protected function displayState(string $state): string
+    protected function displayState(int $state): string
     {
         switch ($state) {
             case Requirements\Check::STATE_OK:

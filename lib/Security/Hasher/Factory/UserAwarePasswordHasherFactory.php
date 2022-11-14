@@ -50,27 +50,20 @@ class UserAwarePasswordHasherFactory extends AbstractHasherFactory
     {
         if (!$user instanceof UserInterface) {
             throw new \RuntimeException(sprintf(
-                'Need an instance of UserInterface to build an encoder, "%s" given',
+                'Need an instance of UserInterface to build a password hasher, "%s" given',
                 is_object($user) ? get_class($user) : gettype($user)
             ));
         }
 
-        $username = null;
-        if (method_exists($user, 'getUserIdentifier')) {
-            $username = $user->getUserIdentifier();
-        } elseif (method_exists($user, 'getUsername')) {
-            $username =  $user->getUsername();
-        } else {
-            throw new \RuntimeException('User class must implement either getUserIdentifier() or getUsername()');
-        }
+        $userIdentifier = $user->getUserIdentifier();
 
-        if (isset($this->hashers[$username])) {
-            return $this->hashers[$username];
+        if (isset($this->hashers[$userIdentifier])) {
+            return $this->hashers[$userIdentifier];
         }
 
         $reflector = $this->getReflector();
         if (!$reflector->implementsInterface(UserAwarePasswordHasherInterface::class)) {
-            throw new ConfigurationException('An encoder built by the UserAwarePasswordHasherFactory must implement UserAwarePasswordHasherInterface');
+            throw new ConfigurationException('A password hasher built by the UserAwarePasswordHasherFactory must implement UserAwarePasswordHasherInterface');
         }
 
         $hasher = $this->buildPasswordHasher($reflector);
@@ -79,7 +72,7 @@ class UserAwarePasswordHasherFactory extends AbstractHasherFactory
             $hasher->setUser($user);
         }
 
-        $this->hashers[$username] = $hasher;
+        $this->hashers[$userIdentifier] = $hasher;
 
         return $hasher;
     }

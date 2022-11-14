@@ -16,18 +16,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Cache\Core;
 
+use Codeception\Test\Unit;
 use Monolog\Handler\BufferHandler;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
-use PHPUnit\Framework\TestCase;
 use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Cache\Core\WriteLock;
+use Pimcore\Tests\Support\Helper\Pimcore;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\Cache\CacheItem;
 
-abstract class AbstractCoreHandlerTest extends TestCase
+abstract class AbstractCoreHandlerTest extends Unit
 {
     protected TagAwareAdapterInterface $cache;
 
@@ -132,9 +133,11 @@ abstract class AbstractCoreHandlerTest extends TestCase
 
         $handler->setLogger(static::$logger);
 
+        $pimcoreModule = $this->getModule('\\' . Pimcore::class);
+
         // mock handler to work in normal (non-cli mode) besides in tests which
         // explicitely define the cache-cli group
-        if (in_array('cache-cli', $this->getGroups())) {
+        if (in_array('cache-cli', $pimcoreModule->getGroups())) {
             $handler->method('isCli')
                 ->willReturn(true);
         } else {

@@ -19,7 +19,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\SessionBagListener;
 use Pimcore\Localization\LocaleServiceInterface;
-use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -38,47 +37,20 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
 
     const SESSION_KEY_CHECKOUT_TENANT = 'currentcheckouttenant';
 
-    /**
-     *
-     * @deprecated will be removed in Pimcore 11
-     *
-     * @var SessionInterface
-     */
-    protected SessionInterface $session;
-
     protected RequestStack $requestStack;
 
     protected bool $sessionLoaded = false;
 
-    public function __construct(SessionInterface $session, LocaleServiceInterface $localeService, array $options = [])
+    public function __construct(RequestStack $requestStack, LocaleServiceInterface $localeService, array $options = [])
     {
         parent::__construct($localeService, $options);
 
-        $this->session = $session;
-    }
-
-    /**
-     * @TODO move to constructor injection in Pimcore 11
-     *
-     * @required
-     *
-     * @internal
-     *
-     * @param RequestStack $requestStack
-     */
-    public function setRequestStack(RequestStack $requestStack): void
-    {
         $this->requestStack = $requestStack;
     }
 
     protected function load()
     {
-        if ($this->sessionLoaded) {
-            return;
-        }
-
-        //if the session was not explicitly started in cli environment, do nothing
-        if ('cli' === php_sapi_name() && !$this->checkSessionStartedInCli()) {
+        if ($this->sessionLoaded || $this->isCli()) {
             return;
         }
 
@@ -101,8 +73,7 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
 
     public function save(): mixed
     {
-        //if the session was not explicitly started in cli environment, do nothing
-        if ('cli' === php_sapi_name() && !$this->checkSessionStartedInCli()) {
+        if ($this->isCli()) {
             return null;
         }
 
@@ -123,8 +94,7 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
     {
         parent::clearEnvironment();
 
-        //if the session was not explicitly started in cli environment, do nothing
-        if ('cli' === php_sapi_name() && !$this->checkSessionStartedInCli()) {
+        if ($this->isCli()) {
             return;
         }
 
@@ -148,35 +118,13 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
         return $sessionBag;
     }
 
-    private function getSession(bool $preventDeprecationWarning = false): SessionInterface
+    private function getSession(): SessionInterface
     {
-        try {
-            return $this->requestStack->getSession();
-        } catch (SessionNotFoundException $e) {
-            if (!$preventDeprecationWarning) {
-                trigger_deprecation('pimcore/pimcore', '10.5',
-                    sprintf('Session used with non existing request stack in %s, that will not be possible in Pimcore 11.', SessionEnvironment::class));
-            }
-
-            return \Pimcore::getContainer()->get('session');
-        }
+        return $this->requestStack->getSession();
     }
 
-    /**
-     * @deprecated
-     *
-     * @todo Remove in Pimcore 11
-     */
-    private function checkSessionStartedInCli(): bool
+    private function isCli(): bool
     {
-        $session = $this->getSession(true);
-        if ($session->isStarted()) {
-            trigger_deprecation('pimcore/pimcore', '10.5',
-                sprintf('Do not depend on started session in CLI mode for %s, that will not be possible in Pimcore 11.', SessionEnvironment::class));
-
-            return true;
-        }
-
-        return false;
+        return php_sapi_name() === 'cli';
     }
 }

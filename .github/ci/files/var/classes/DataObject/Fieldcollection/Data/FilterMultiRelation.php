@@ -2,13 +2,13 @@
 declare(strict_types=1);
 
 /**
-Fields Summary:
-- label [input]
-- field [indexFieldSelection]
-- useAndCondition [checkbox]
-- scriptPath [input]
-- availableRelations [manyToManyObjectRelation]
-*/
+ * Fields Summary:
+ * - label [input]
+ * - field [indexFieldSelection]
+ * - useAndCondition [checkbox]
+ * - scriptPath [input]
+ * - availableRelations [manyToManyObjectRelation]
+ */
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 
@@ -42,7 +42,7 @@ public function getLabel(): ?string
 /**
 * Set label - Label
 * @param string|null $label
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiRelation
+* @return $this
 */
 public function setLabel(?string $label): static
 {
@@ -68,7 +68,7 @@ public function getField(): ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtens
 /**
 * Set field - Field
 * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection|null $field
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiRelation
+* @return $this
 */
 public function setField(?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field): static
 {
@@ -94,7 +94,7 @@ public function getUseAndCondition(): ?bool
 /**
 * Set useAndCondition - Use And Condition
 * @param bool|null $useAndCondition
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiRelation
+* @return $this
 */
 public function setUseAndCondition(?bool $useAndCondition): static
 {
@@ -120,7 +120,7 @@ public function getScriptPath(): ?string
 /**
 * Set scriptPath - Script Path
 * @param string|null $scriptPath
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiRelation
+* @return $this
 */
 public function setScriptPath(?string $scriptPath): static
 {
@@ -149,7 +149,7 @@ public function getAvailableRelations(): array
 /**
 * Set availableRelations - Available Relations
 * @param \Pimcore\Model\DataObject\AbstractObject[] $availableRelations
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiRelation
+* @return $this
 */
 public function setAvailableRelations(?array $availableRelations): static
 {
@@ -164,7 +164,6 @@ public function setAvailableRelations(?array $availableRelations): static
 		$this->markFieldDirty("availableRelations", true);
 	}
 	$this->availableRelations = $fd->preSetData($this, $availableRelations);
-
 	return $this;
 }
 

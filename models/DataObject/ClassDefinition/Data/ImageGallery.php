@@ -447,7 +447,10 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
     {
-        if ($this->getMandatory() && !$omitMandatoryCheck && ($data === null || empty($data->getItems()) || $data->getItems()[0]->getImage() === null)) {
+        if (
+            $this->getMandatory() && !$omitMandatoryCheck &&
+            ($data === null || empty($data->getItems()) || $data->hasValidImages() === false)
+        ) {
             throw new Model\Element\ValidationException('[ ' . $this->getName() . ' ] At least 1 image should be uploaded!');
         }
 

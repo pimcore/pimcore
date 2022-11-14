@@ -21,7 +21,7 @@ use Pimcore\Targeting\Condition\GeoPoint;
 use Pimcore\Targeting\DataProvider\GeoLocation;
 use Pimcore\Targeting\Model\GeoLocation as GeoLocationModel;
 use Pimcore\Targeting\Model\VisitorInfo;
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
 /**

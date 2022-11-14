@@ -2,16 +2,16 @@
 declare(strict_types=1);
 
 /**
-Fields Summary:
-- count [numeric]
-- prefix [input]
-- length [numeric]
-- characterType [select]
-- separator [input]
-- separatorCount [numeric]
-- allowOncePerCart [checkbox]
-- onlyTokenPerCart [checkbox]
-*/
+ * Fields Summary:
+ * - count [numeric]
+ * - prefix [input]
+ * - length [numeric]
+ * - characterType [select]
+ * - separator [input]
+ * - separatorCount [numeric]
+ * - allowOncePerCart [checkbox]
+ * - onlyTokenPerCart [checkbox]
+ */
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 
@@ -48,14 +48,13 @@ public function getCount(): ?int
 /**
 * Set count - Token Count
 * @param int|null $count
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern
+* @return $this
 */
 public function setCount(?int $count): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("count");
 	$this->count = $fd->preSetData($this, $count);
-
 	return $this;
 }
 
@@ -76,7 +75,7 @@ public function getPrefix(): ?string
 /**
 * Set prefix - Prefix
 * @param string|null $prefix
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern
+* @return $this
 */
 public function setPrefix(?string $prefix): static
 {
@@ -102,14 +101,13 @@ public function getLength(): ?int
 /**
 * Set length - Length
 * @param int|null $length
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern
+* @return $this
 */
 public function setLength(?int $length): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("length");
 	$this->length = $fd->preSetData($this, $length);
-
 	return $this;
 }
 
@@ -130,7 +128,7 @@ public function getCharacterType(): ?string
 /**
 * Set characterType - Character Type
 * @param string|null $characterType
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern
+* @return $this
 */
 public function setCharacterType(?string $characterType): static
 {
@@ -156,7 +154,7 @@ public function getSeparator(): ?string
 /**
 * Set separator - Separator
 * @param string|null $separator
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern
+* @return $this
 */
 public function setSeparator(?string $separator): static
 {
@@ -182,14 +180,13 @@ public function getSeparatorCount(): ?int
 /**
 * Set separatorCount - Every x character
 * @param int|null $separatorCount
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern
+* @return $this
 */
 public function setSeparatorCount(?int $separatorCount): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("separatorCount");
 	$this->separatorCount = $fd->preSetData($this, $separatorCount);
-
 	return $this;
 }
 
@@ -210,7 +207,7 @@ public function getAllowOncePerCart(): ?bool
 /**
 * Set allowOncePerCart - Only allow one token of this type per cart
 * @param bool|null $allowOncePerCart
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern
+* @return $this
 */
 public function setAllowOncePerCart(?bool $allowOncePerCart): static
 {
@@ -236,7 +233,7 @@ public function getOnlyTokenPerCart(): ?bool
 /**
 * Set onlyTokenPerCart - Only token of a cart
 * @param bool|null $onlyTokenPerCart
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern
+* @return $this
 */
 public function setOnlyTokenPerCart(?bool $onlyTokenPerCart): static
 {

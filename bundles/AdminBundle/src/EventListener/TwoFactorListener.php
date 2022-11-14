@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\EventListener;
 
-use Pimcore\Bundle\AdminBundle\Security\Authentication\Token\LegacyTwoFactorRequiredToken;
 use Pimcore\Bundle\AdminBundle\Security\Authentication\Token\TwoFactorRequiredToken;
 use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareTrait;
@@ -45,8 +44,7 @@ class TwoFactorListener
 
     public function onAuthenticationComplete(TwoFactorAuthenticationEvent $event): void
     {
-        // this session flag is set in \Pimcore\Bundle\AdminBundle\Security\AdminAuthenticator
-        // or \Pimcore\Bundle\AdminBundle\Security\AdminAuthenticator (Authenticator Based Security)
+        // this session flag is set in \Pimcore\Bundle\AdminBundle\Security\Authenticator\AdminAbstractAuthenticator
         // @TODO: check if there's a nicer way of doing this, actually it feels a bit like a hack :)
         Session::useSession(function (AttributeBagInterface $adminSession) {
             $adminSession->set('2fa_required', false);
@@ -66,7 +64,7 @@ class TwoFactorListener
         }
 
         $twoFactorToken->setTwoFactorProviderPrepared($providerName);
-        /** @var LegacyTwoFactorRequiredToken|TwoFactorRequiredToken $twoFactorAuthenticatedToken */
+        /** @var TwoFactorRequiredToken $twoFactorAuthenticatedToken */
         $twoFactorAuthenticatedToken = $twoFactorToken->getAuthenticatedToken();
         $firewallName = $twoFactorAuthenticatedToken->getFirewallName();
 

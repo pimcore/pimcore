@@ -18,6 +18,7 @@ namespace Pimcore\Bundle\AdminBundle\DependencyInjection;
 
 use Pimcore\Bundle\AdminBundle\Security\ContentSecurityPolicyHandler;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -41,6 +42,7 @@ final class Configuration implements ConfigurationInterface
         $rootNode->append($this->buildObjectsNode());
         $rootNode->append($this->buildAssetsNode());
         $rootNode->append($this->buildDocumentsNode());
+        $rootNode->append($this->addNotificationsNode());
 
         $rootNode->children()
             ->arrayNode('admin_languages')
@@ -130,10 +132,12 @@ final class Configuration implements ConfigurationInterface
             ->end()
         ;
 
+        $this->addAdminNode($rootNode);
+
         return $treeBuilder;
     }
 
-    protected function buildGdprDataExtractorNode(): ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
+    protected function buildGdprDataExtractorNode(): ArrayNodeDefinition|NodeDefinition
     {
         $treeBuilder = new TreeBuilder('gdpr_data_extractor');
 
@@ -199,7 +203,7 @@ final class Configuration implements ConfigurationInterface
         return $gdprDataExtractor;
     }
 
-    protected function buildEventsNode(): ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
+    protected function buildEventsNode(): ArrayNodeDefinition|NodeDefinition
     {
         $treeBuilder = new TreeBuilder('notes_events');
         $notesEvents = $treeBuilder->getRootNode();
@@ -218,7 +222,7 @@ final class Configuration implements ConfigurationInterface
         return $notesEvents;
     }
 
-    protected function buildObjectsNode(): ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
+    protected function buildObjectsNode(): ArrayNodeDefinition|NodeDefinition
     {
         $treeBuilder = new TreeBuilder('objects');
         $objectsNode = $treeBuilder->getRootNode();
@@ -230,7 +234,7 @@ final class Configuration implements ConfigurationInterface
         return $objectsNode;
     }
 
-    protected function buildAssetsNode(): ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
+    protected function buildAssetsNode(): ArrayNodeDefinition|NodeDefinition
     {
         $treeBuilder = new TreeBuilder('assets');
         $assetsNode = $treeBuilder->getRootNode();
@@ -242,7 +246,7 @@ final class Configuration implements ConfigurationInterface
         return $assetsNode;
     }
 
-    protected function buildDocumentsNode(): ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
+    protected function buildDocumentsNode(): ArrayNodeDefinition|NodeDefinition
     {
         $treeBuilder = new TreeBuilder('documents');
         $documentsNode = $treeBuilder->getRootNode();
@@ -252,5 +256,173 @@ final class Configuration implements ConfigurationInterface
             ->append($this->buildEventsNode());
 
         return $documentsNode;
+    }
+
+    /**
+     * Add admin config
+     */
+    private function addAdminNode(ArrayNodeDefinition $rootNode): void
+    {
+        // add session attribute bag config
+        $this->addAdminSessionAttributeBags($rootNode);
+
+        // unauthenticated routes won't be double checked for authentication in AdminControllerListener
+        $this->addRoutesChild($rootNode, 'unauthenticated_routes');
+
+        $rootNode
+            ->children()
+                ->arrayNode('translations')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('path')->defaultNull()->end()
+                    ->end()
+                ->end()
+            ->end();
+    }
+
+    private function addAdminSessionAttributeBags(ArrayNodeDefinition $adminNode): void
+    {
+        // Normalizes session bag config. Allows the following formats (all formats will be
+        // normalized to the third format.
+        //
+        // attribute_bags:
+        //      - foo
+        //      - bar
+        //
+        // attribute_bags:
+        //      foo: _foo
+        //      bar: _bar
+        //
+        // attribute_bags:
+        //      foo:
+        //          storage_key: _foo
+        //      bar:
+        //          storage_key: _bar
+        $normalizers = [
+            'assoc' => function (array $array) {
+                $result = [];
+                foreach ($array as $name => $value) {
+                    if (null === $value) {
+                        $value = [
+                            'storage_key' => '_' . $name,
+                        ];
+                    }
+
+                    if (is_string($value)) {
+                        $value = [
+                            'storage_key' => $value,
+                        ];
+                    }
+
+                    $result[$name] = $value;
+                }
+
+                return $result;
+            },
+
+            'sequential' => function (array $array) {
+                $result = [];
+                foreach ($array as $name) {
+                    $result[$name] = [
+                        'storage_key' => '_' . $name,
+                    ];
+                }
+
+                return $result;
+            },
+        ];
+
+        $adminNode
+            ->children()
+                ->arrayNode('session')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('attribute_bags')
+                            ->useAttributeAsKey('name')
+                            ->beforeNormalization()
+                                ->ifArray()->then(function ($v) use ($normalizers) {
+                                    if (isAssocArray($v)) {
+                                        return $normalizers['assoc']($v);
+                                    } else {
+                                        return $normalizers['sequential']($v);
+                                    }
+                                })
+                            ->end()
+                            ->example([
+                                ['foo', 'bar'],
+                                [
+                                    'foo' => '_foo',
+                                    'bar' => '_bar',
+                                ],
+                                [
+                                    'foo' => [
+                                        'storage_key' => '_foo',
+                                    ],
+                                    'bar' => [
+                                        'storage_key' => '_bar',
+                                    ],
+                                ],
+                            ])
+                            ->prototype('array')
+                                ->children()
+                                    ->scalarNode('storage_key')
+                                        ->defaultNull()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+    }
+
+    /**
+     * Add a route prototype child
+     */
+    private function addRoutesChild(ArrayNodeDefinition $parent, string $name): void
+    {
+        $node = $parent->children()->arrayNode($name);
+
+        /** @var ArrayNodeDefinition $prototype */
+        $prototype = $node->prototype('array');
+        $prototype
+            ->beforeNormalization()
+                ->ifNull()->then(function () {
+                    return [];
+                })
+            ->end()
+            ->children()
+                ->scalarNode('path')->defaultFalse()->end()
+                ->scalarNode('route')->defaultFalse()->end()
+                ->scalarNode('host')->defaultFalse()->end()
+                ->arrayNode('methods')
+                    ->prototype('scalar')->end()
+                ->end()
+            ->end();
+    }
+
+    protected function addNotificationsNode(): ArrayNodeDefinition|NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder('notifications');
+        $notificationsNode = $treeBuilder->getRootNode();
+
+        $notificationsNode
+            ->addDefaultsIfNotSet()
+            ->canBeDisabled()
+            ->children()
+                ->arrayNode('check_new_notification')
+                    ->canBeDisabled()
+                    ->info('Can be used to enable or disable the check of new notifications (url: /admin/notification/find-last-unread).')
+                    ->children()
+                        ->integerNode('interval')
+                            ->info('Interval in seconds to check new notifications')
+                            ->defaultValue(30)
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ;
+
+        return $notificationsNode;
     }
 }

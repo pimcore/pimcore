@@ -32,7 +32,7 @@ class HeadlessChrome extends Processor
     private string $nodePath = '';
 
     /**
-     * {@internal}
+     * @internal
      */
     protected function buildPdf(Document\PrintAbstract $document, object $config): string
     {
@@ -74,7 +74,7 @@ class HeadlessChrome extends Processor
     }
 
     /**
-     * {@internal}
+     * @internal
      */
     public function getProcessingOptions(): array
     {
@@ -87,7 +87,7 @@ class HeadlessChrome extends Processor
     }
 
     /**
-     * {@internal}
+     * @internal
      */
     public function getPdfFromString(string $html, array $params = [], bool $returnFilePath = false): string
     {

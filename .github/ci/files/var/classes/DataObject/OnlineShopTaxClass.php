@@ -2,14 +2,13 @@
 declare(strict_types=1);
 
 /**
-* Inheritance: no
-* Variants: no
-
-
-Fields Summary:
-- taxEntryCombinationType [select]
-- taxEntries [fieldcollections]
-*/
+ * Inheritance: no
+ * Variants: no
+ *
+ * Fields Summary:
+ * - taxEntryCombinationType [select]
+ * - taxEntries [fieldcollections]
+ */
 
 namespace Pimcore\Model\DataObject;
 
@@ -17,8 +16,8 @@ use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 /**
-* @method static \Pimcore\Model\DataObject\OnlineShopTaxClass\Listing getList()
-* @method static \Pimcore\Model\DataObject\OnlineShopTaxClass\Listing|\Pimcore\Model\DataObject\OnlineShopTaxClass|null getByTaxEntryCombinationType($value, $limit = 0, $offset = 0)
+* @method static \Pimcore\Model\DataObject\OnlineShopTaxClass\Listing getList(array $config = [])
+* @method static \Pimcore\Model\DataObject\OnlineShopTaxClass\Listing|\Pimcore\Model\DataObject\OnlineShopTaxClass|null getByTaxEntryCombinationType(mixed $value, ?int $limit = null, int $offset = 0, ?array $objectTypes = null)
 */
 
 class OnlineShopTaxClass extends Concrete
@@ -29,7 +28,7 @@ protected ?string $taxEntryCombinationType = null;
 protected ?Fieldcollection $taxEntries = null;
 
 
-    public static function create(array $values = array()): OnlineShopTaxClass
+public static function create(array $values = []): static
 {
 	$object = new static();
 	$object->setValues($values);
@@ -61,7 +60,7 @@ public function getTaxEntryCombinationType(): ?string
 /**
 * Set taxEntryCombinationType - Tax Entry Combination Type
 * @param string|null $taxEntryCombinationType
-* @return \Pimcore\Model\DataObject\OnlineShopTaxClass
+* @return $this
 */
 public function setTaxEntryCombinationType(?string $taxEntryCombinationType): static
 {
@@ -79,24 +78,20 @@ public function setTaxEntryCombinationType(?string $taxEntryCombinationType): st
 		}
 	}
 
-	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections $fd */
-	$fd = $this->getClass()->getFieldDefinition("taxEntries");
-	$data = $fd->preGetData($this);
-
+	$data = $this->getClass()->getFieldDefinition("taxEntries")->preGetData($this);
 	return $data;
 }
 
 /**
 * Set taxEntries - Tax Entries
 * @param \Pimcore\Model\DataObject\Fieldcollection|null $taxEntries
-* @return \Pimcore\Model\DataObject\OnlineShopTaxClass
+* @return $this
 */
 public function setTaxEntries(?\Pimcore\Model\DataObject\Fieldcollection $taxEntries): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections $fd */
 	$fd = $this->getClass()->getFieldDefinition("taxEntries");
 	$this->taxEntries = $fd->preSetData($this, $taxEntries);
-
 	return $this;
 }
 
