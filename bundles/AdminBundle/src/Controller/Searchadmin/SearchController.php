@@ -430,22 +430,13 @@ class SearchController extends AdminController
 
         $query = str_replace(['<', '>', '(', ')', '~'], ' ', $query);
 
+        $query = preg_replace('/(?!\B"[^"]*)([\p{L}\p{Nd}_]+)(?![^"]*"\B)/u', '$1*', $query);
+
         // it is not allowed to have * behind another *
         $query = preg_replace('#\*+#', '*', $query);
 
         // no boolean operators at the end of the query
         $query = rtrim($query, '+- ');
-
-        $terms = str_getcsv($query, ' ');
-        $fulltextSearchTerms = array_map(static function ($term) {
-            if(str_contains($term, ' ')) {
-                // term was wrapped in quotes -> do not change
-                return '"'.$term.'"';
-            }
-
-            return preg_replace('/([\p{L}\p{Nd}_]+)([\s\)]|$)/u', '$1*$2', $term);
-        }, $terms);
-        $query = implode(' ', $fulltextSearchTerms);
 
         return $query;
     }
