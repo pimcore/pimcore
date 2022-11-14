@@ -308,7 +308,7 @@ class GridConfig extends AbstractModel
     }
 
     /**
-     * @param bool $setSaveFilters
+     * @param bool $saveFilters
      */
     public function setSaveFilters($saveFilters)
     {
