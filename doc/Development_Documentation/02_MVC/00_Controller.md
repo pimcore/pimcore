@@ -23,7 +23,7 @@ In controllers, for every action there exists a separate method ending with the 
 The `DefaultController` comes with Pimcore. When you create an empty page in Pimcore it will call 
 the `defaultAction` in the `DefaultController` which uses the view `/templates/default/default.html.twig`. 
 
-You can render templates just the [standard Symfony way](https://symfony.com/doc/5.2/templates.html#rendering-a-template-in-emails), by either using `$this->render('foo.html.twig')` or using the `@Template()` [annotation](https://symfony.com/doc/5.2/bundles/SensioFrameworkExtraBundle/annotations/view.html). 
+You can render templates just the [standard Symfony way](https://symfony.com/doc/current/templates.html#rendering-a-template-in-emails), by either using `$this->render('foo.html.twig')` or using the `@Template()` [annotation](https://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/annotations/view.html). 
 
 
 ### Examples

@@ -284,7 +284,8 @@ class IndexController extends AdminController implements KernelResponseEventInte
             ->addSystemVarSettings($settings)
             ->addMaintenanceSettings($settings, $maintenanceExecutor)
             ->addMailSettings($settings, $config)
-            ->addCustomViewSettings($settings);
+            ->addCustomViewSettings($settings)
+            ->addNotificationSettings($settings, $config);
 
         $settings['csrfToken'] = $csrfProtection->getCsrfToken();
 
@@ -412,6 +413,22 @@ class IndexController extends AdminController implements KernelResponseEventInte
         }
 
         $settings['customviews'] = $cvData;
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    protected function addNotificationSettings(array &$settings, Config $config): static
+    {
+        $enabled = (bool)$config['notifications']['enabled'];
+
+        $settings['notifications_enabled'] = $enabled;
+        $settings['checknewnotification_enabled'] = $enabled && (bool) $config['notifications']['check_new_notification']['enabled'];
+
+        // convert the config parameter interval (seconds) in milliseconds
+        $settings['checknewnotification_interval'] = $config['notifications']['check_new_notification']['interval'] * 1000;
 
         return $this;
     }
