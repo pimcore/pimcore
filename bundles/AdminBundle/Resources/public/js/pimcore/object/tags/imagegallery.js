@@ -130,87 +130,34 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
     },
 
     getLayoutShow: function() {
-        var layout = this.getLayoutEdit();
-        layout.disable();
-        return layout;
+        this.component = this.getImageGalleryPanel();
+
+        return this.component;
     },
 
     getLayoutEdit: function () {
+        this.component = this.getImageGalleryPanel();
 
-        var items = [];
+        return this.component;
+    },
 
-        for (var i = 0; i < this.data.length; i++) {
-            var itemData = this.data[i];
-            var fieldConfig = this.getDefaultFieldConfig();
-            var hotspotImage = new pimcore.object.tags.hotspotimage(itemData, fieldConfig, this.hotspotConfig);
-            hotspotImage.updateContext(this.context);
-            var draggableComponent = this.wrap(hotspotImage);
-            items.push(draggableComponent);
+    getImageGalleryPanel: function () {
+        const fieldConfig = this.getDefaultFieldConfig();
 
-        }
-        // var items = this.getFakeItems();
+        const fieldConfigTitle = this.fieldConfig.noteditable ? fieldConfig.title : '';
 
-        var fieldConfig = this.getDefaultFieldConfig();
-
-        var placeholderComponent = this.createPlaceholder(fieldConfig);
-        items.push(placeholderComponent);
-
-        var toolbarCfg = {
-            region: "north",
-            border: false,
-            items: [
-                {
-                    xtype: "tbtext",
-                    text: "<b>" + this.fieldConfig.title + "</b>"
-                },
-                {
-                    xtype: "button",
-                    tooltip: t("add"),
-                    overflowText: t('add'),
-                    iconCls: "pimcore_icon_add",
-
-                    handler: function () {
-                        this.add(null);
-                    }.bind(this)
-                },
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_search",
-                    handler: function () {
-                        this.openSearchEditor();
-                    }.bind(this)
-                },
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_delete",
-                    overflowText: t('empty'),
-                    handler: function() {
-                        Ext.suspendLayouts();
-                        while (this.component.items.length > 1) {
-                            var item = this.component.items.getAt(0);
-                            this.component.remove(item);
-                            this.markDirty();
-                        }
-                        Ext.resumeLayouts();
-                        this.component.updateLayout();
-                    }.bind(this)
-                }
-            ]
-        };
-
-        var toolbar = new Ext.Toolbar(toolbarCfg);
-
-        var conf = {
+        return new pimcore.object.helpers.ImageGalleryPanel({
             border: true,
             layout: {
                 type: 'column',
                 columns: 1
             },
-            // title: this.fieldConfig.title,
-            items: items,
+            title: fieldConfigTitle,
+            items: this.getImageItems(fieldConfig),
             proxyConfig: {
                 width: fieldConfig.width,
                 height: fieldConfig.height,
+                noteditable: fieldConfig.noteditable,
                 respectPlaceholder: true,
                 callback: this
             },
@@ -218,12 +165,79 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
             style: {
                 margin: '0 0 10px 0',
             },
-            tbar: toolbar
-        };
+            tbar: this.getToolbar()
+        });
+    },
 
-        this.component = new pimcore.object.helpers.ImageGalleryPanel(conf);
+    getImageItems: function (fieldConfig) {
+        let items = [];
+        for (let i = 0; i < this.data.length; i++) {
+            let itemData = this.data[i];
+            let hotspotImage = new pimcore.object.tags.hotspotimage(itemData, fieldConfig, this.hotspotConfig);
+            hotspotImage.updateContext(this.context);
 
-        return this.component;
+            let draggableComponent = this.wrap(hotspotImage);
+            items.push(draggableComponent);
+        }
+
+        if (!this.fieldConfig.noteditable) {
+            items.push(this.createPlaceholder(fieldConfig));
+        }
+        return items;
+    },
+
+    getToolbar: function () {
+        return new Ext.Toolbar({
+            region: "north",
+            border: false,
+            items: this.getToolbarItems()
+        });
+    },
+
+    getToolbarItems: function () {
+        if (this.fieldConfig.noteditable) {
+            return [];
+        }
+
+        let toolBarItems = [];
+        toolBarItems.push({
+            xtype: "tbtext",
+            text: "<b>" + this.fieldConfig.title + "</b>"
+        });
+        toolBarItems.push({
+            xtype: "button",
+            tooltip: t("add"),
+            overflowText: t('add'),
+            iconCls: "pimcore_icon_add",
+
+            handler: function () {
+                this.add(null);
+            }.bind(this)
+        });
+        toolBarItems.push({
+            xtype: "button",
+            iconCls: "pimcore_icon_search",
+            handler: function () {
+                this.openSearchEditor();
+            }.bind(this)
+        });
+        toolBarItems.push({
+            xtype: "button",
+            iconCls: "pimcore_icon_delete",
+            overflowText: t('empty'),
+            handler: function () {
+                Ext.suspendLayouts();
+                while (this.component.items.length > 1) {
+                    var item = this.component.items.getAt(0);
+                    this.component.remove(item);
+                    this.markDirty();
+                }
+                Ext.resumeLayouts();
+                this.component.updateLayout();
+            }.bind(this)
+        });
+
+        return toolBarItems;
     },
 
     createPlaceholder: function (fieldConfig) {
