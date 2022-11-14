@@ -39,8 +39,6 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
-use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
-use Twig\Extra\String\StringExtension;
 
 /**
  * @internal
@@ -156,7 +154,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $this->configureGoogleAnalyticsFallbackServiceLocator($container);
         $this->configureSitemaps($container, $config['sitemaps']);
         $this->configureGlossary($container, $config['glossary']);
-        $this->configureTemplating($container);
 
         $container->setParameter('pimcore.workflow', $config['workflows']);
 
@@ -490,14 +487,5 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
     private function configureGlossary(ContainerBuilder $container, array $config)
     {
         $container->setParameter('pimcore.glossary.blocked_tags', $config['blocked_tags']);
-    }
-
-    private function configureTemplating(ContainerBuilder $container): void
-    {
-        // If "twig/extra-bundle" is enabled, it takes care of registering extra Twig extensions,
-        // otherwise we have to do it manually for the ones we need.
-        if (!in_array(TwigExtraBundle::class, $container->getParameter('kernel.bundles'), true)) {
-            $container->register(StringExtension::class, StringExtension::class);
-        }
     }
 }
