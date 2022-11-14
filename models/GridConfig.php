@@ -299,20 +299,14 @@ class GridConfig extends AbstractModel
         $this->setAsFavourite = (bool) $setAsFavourite;
     }
 
-    /**
-     * @return bool
-     */
-    public function isSaveFilters()
+    public function isSaveFilters(): bool
     {
         return $this->saveFilters;
     }
 
-    /**
-     * @param bool $saveFilters
-     */
-    public function setSaveFilters($saveFilters)
+    public function setSaveFilters(bool $saveFilters): void
     {
-        $this->saveFilters = (bool) $saveFilters;
+        $this->saveFilters = $saveFilters;
     }
 
     /**
