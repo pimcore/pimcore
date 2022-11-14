@@ -374,7 +374,7 @@ class FullPageCacheListener
                     // add expire header
                     $date = new \DateTime('now');
                     $date->add(new \DateInterval('PT' . $this->lifetime . 'S'));
-                    $response->headers->set('Expires', $date->format(\DateTime::RFC1123), true);
+                    $response->headers->set('Expires', $date->format(\DateTimeInterface::RFC1123), true);
                 }
 
                 $now = new \DateTime('now');
