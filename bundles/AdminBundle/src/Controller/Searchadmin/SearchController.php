@@ -421,22 +421,22 @@ class SearchController extends AdminController
      */
     protected function filterQueryParam(string $query)
     {
-        if ($query == '*') {
+        if ($query === '*') {
             $query = '';
         }
 
-        $query = str_replace('&quot;', '"', $query);
-        $query = str_replace('%', '*', $query);
-        $query = str_replace('@', '#', $query);
+        $query = str_replace(['&quot;', '%', '@'], ['"', '*', '#'], $query);
         $query = preg_replace("@([^ ])\-@", '$1 ', $query);
 
         $query = str_replace(['<', '>', '(', ')', '~'], ' ', $query);
 
         // it is not allowed to have * behind another *
-        $query = preg_replace('#[*]+#', '*', $query);
+        $query = preg_replace('#\*+#', '*', $query);
 
         // no boolean operators at the end of the query
         $query = rtrim($query, '+- ');
+
+        $query = preg_replace('/([\p{L}\p{Nd}_]+)([\s\)]|$)/u', '$1*$2', $query);
 
         return $query;
     }
