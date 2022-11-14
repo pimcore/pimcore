@@ -1,5 +1,7 @@
 # Upgrade Notes
 ## 11.0.0
+- Bumped Symfony packages to "^6.1". Pimcore 11 will only support Symfony 6.
+- `FrontendController::renderTemplate()`: Changed the visibility to `protected`.
 - [Elements] Added `setParentId`, `setType` and `setParent` methods to `Pimcore\Model\Element\ElementInterface`
 - [JSRouting Bundle] Bumped `friendsofsymfony/jsrouting-bundle` to version `^3.2.1`
 - [Installer] Changed the return type of `Pimcore\Extension\Bundle\Installer\InstallerInterface::getOutput` to `BufferedOutput | NullOutput`.
