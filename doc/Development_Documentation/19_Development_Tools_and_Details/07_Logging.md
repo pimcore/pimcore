@@ -7,7 +7,7 @@ as well as compressed automatically on every day (7 days retention) by the maint
 This is definitely one of the most important logs and also the default logging location. 
 
 Pimcore uses Symfony default monolog logging with following channels: `pimcore`, `pimcore_api`, `session`. 
-For details see [Symfonys monolog docs](https://symfony.com/doc/5.2/logging.html).
+For details see [Symfonys monolog docs](https://symfony.com/doc/current/logging.html).
 
 ## php.log
 By default Pimcore writes PHP-Engine Log Messages to the file `php.log`.
