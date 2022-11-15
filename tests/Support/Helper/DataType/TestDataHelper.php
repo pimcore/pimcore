@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -431,7 +432,6 @@ class TestDataHelper extends AbstractTestDataHelper
         /** @var DataObject\Data\ImageGallery $value */
         $value = $object->$getter();
         $this->assertInstanceOf(DataObject\Data\ImageGallery::class, $value);
-        /** @var DataObject\Data\Hotspotimage[] $items */
         $items = $value->getItems();
 
         $this->assertCount(2, $items);

@@ -53,9 +53,6 @@ abstract class Kernel extends SymfonyKernel
         registerBundles as microKernelRegisterBundles;
     }
 
-    /**
-     * @var BundleCollection
-     */
     private BundleCollection $bundleCollection;
 
     /**

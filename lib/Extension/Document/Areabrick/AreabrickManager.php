@@ -27,9 +27,6 @@ use Psr\Container\ContainerInterface;
 class AreabrickManager implements AreabrickManagerInterface
 {
 
-    /**
-     * @var ContainerInterface
-     */
     protected ContainerInterface $container;
 
     /**

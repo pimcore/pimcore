@@ -35,9 +35,6 @@ final class Check implements \ArrayAccess
 
     public ?string $message = null;
 
-    /**
-     * @param array{name: string, link?: string, state: int, message?: string} $data
-     */
     public function __construct(array $data)
     {
         foreach ($data as $key => $value) {

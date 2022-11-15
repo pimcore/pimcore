@@ -65,13 +65,6 @@ class InputQuantityValue extends QuantityValue
         'unit' => 'varchar(50)',
     ];
 
-    /**
-     * @param mixed $data
-     * @param Model\DataObject\Concrete|null $object
-     * @param array $params
-     *
-     * @return InputQuantityValueDataObject|null
-     */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?InputQuantityValueDataObject
     {
         if ($data[$this->getName() . '__value'] || $data[$this->getName() . '__unit']) {

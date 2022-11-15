@@ -87,9 +87,6 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @return bool
-     */
     public function hasValidImages(): bool
     {
         foreach ($this->getItems() as $item) {

@@ -158,11 +158,6 @@ class Video extends Data implements
         return $this->uploadPath;
     }
 
-    /**
-     * @param array|null $allowedTypes
-     *
-     * @return $this
-     */
     public function setAllowedTypes(?array $allowedTypes): static
     {
         $this->allowedTypes = $allowedTypes;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -67,6 +68,7 @@ class ClassManager extends Module
             $this->debug(sprintf('[CLASSMANAGER] Setting up class %s DONE', $name));
 
             $class = ClassDefinition::getById($class->getId());
+
             $class->setUserModification(1);
             $class->setModificationDate(time());
 

@@ -31,7 +31,7 @@ class Unit extends Model\AbstractModel
 
     const CACHE_KEY = 'quantityvalue_units_table';
 
-    protected string $id;
+    protected ?string $id = null;
 
     protected string $abbreviation;
 
