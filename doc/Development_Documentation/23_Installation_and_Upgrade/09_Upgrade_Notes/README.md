@@ -85,6 +85,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Config] The config node `pimcore.admin` and related parameters are moved to AdminBundle directly under `pimcore_admin` node. Please adapt your parameter usage accordingly eg. instead of `pimcore.admin.unauthenticated_routes`, it should be `pimcore_admin.unauthenticated_routes`
 - [DataObjects] Removed deprecated preview url in class editor.
 - [DataObjects] Removed sql filter functionality for data object grid
+- [DataObjects] Loading non-Concrete objects with the Concrete class is no longer possible
 - [Device Detector] Bumped `matomo/device-detector` to ^6.0.
 - [security] Removed support old authentication system (not setting `security.enable_authenticator_manager: true` in `security.yaml`).
 - Removed Pimcore Password Encoder factory, `pimcore_admin.security.password_encoder_factory` service and `pimcore.security.factory_type` config.
