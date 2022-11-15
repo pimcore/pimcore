@@ -27,14 +27,15 @@ class DataTypeTest extends AbstractDataTypeTestCase
 {
     /**
      * Creates and saves object locally without testing against a comparison object
-     *
-     * {@inheritdoc}
      */
-    protected function createTestObject($fields = [], &$returnData = [])
+    protected function createTestObject($fields = [], &$returnData = []): Unittest
     {
         $object = TestHelper::createEmptyObject('local', true, true);
         if ($fields) {
-            $this->fillObject($object, $fields, $returnData);
+            if(isset(func_get_args()[1]))
+                $this->fillObject($object, $fields, $returnData);
+            else
+                $this->fillObject ($object, $fields);
         }
 
         $object->save();

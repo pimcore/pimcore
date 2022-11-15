@@ -39,12 +39,7 @@ class TestDataHelper extends AbstractTestDataHelper
 
     const HOTSPOT_IMAGE = 'hotspot.jpg';
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertBooleanSelect(Concrete $object, $field, $seed = 1)
+    public function assertBooleanSelect(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -53,12 +48,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertBricks(Concrete $object, $field, $seed = 1)
+    public function assertBricks(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
 
@@ -90,12 +80,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals(15, count($fieldLazyRelation), 'expected 15 items');
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertCountry(Concrete $object, $field, $seed = 1)
+    public function assertCountry(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -105,14 +90,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param mixed $expected
-     * @param mixed $value
-     *
-     */
-    public function assertIsEqual($object, $field, $expected, $value)
+    public function assertIsEqual(Concrete $object, string $field, mixed $expected, mixed $value): void
     {
         $fd = $object->getClass()->getFieldDefinition($field);
         if ($fd instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
@@ -120,12 +98,7 @@ class TestDataHelper extends AbstractTestDataHelper
         }
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertCountryMultiSelect(Concrete $object, $field, $seed = 1)
+    public function assertCountryMultiSelect(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -134,12 +107,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertDate(Concrete $object, $field, $seed = 1)
+    public function assertDate(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
 
@@ -161,12 +129,7 @@ class TestDataHelper extends AbstractTestDataHelper
         );
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertEmail(Concrete $object, $field, $seed = 1)
+    public function assertEmail(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -176,13 +139,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     * @param string|null $language
-     */
-    public function assertEncrypted(Concrete $object, $field, $seed = 1, $language = null)
+    public function assertEncrypted(Concrete $object, string $field, int $seed = 1, ?string $language = null): void
     {
         $getter = 'get' . ucfirst($field);
         if ($language) {
@@ -197,12 +154,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertExternalImage(Concrete $object, $field, $seed = 1)
+    public function assertExternalImage(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         /** @var DataObject\Data\ExternalImage $container */
@@ -216,12 +168,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertFieldCollection(Concrete $object, $field, $seed = 1)
+    public function assertFieldCollection(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
 
@@ -268,24 +215,12 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals(15, count($fieldLazyRelation), 'expected 15 items');
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     * @param string|null $language
-     */
-    public function assertFirstname(Concrete $object, $field, $seed = 1, $language = null)
+    public function assertFirstname(Concrete $object, string $field, int $seed = 1, ?string $language = null): void
     {
         $this->assertInput($object, $field, $seed, $language);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     * @param string|null $language
-     */
-    public function assertInput(Concrete $object, $field, $seed = 1, $language = null)
+    public function assertInput(Concrete $object, string $field, int $seed = 1, ?string $language = null): void
     {
         $getter = 'get' . ucfirst($field);
         if ($language) {
@@ -300,12 +235,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertGender(Concrete $object, $field, $seed = 1)
+    public function assertGender(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -315,12 +245,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertGeobounds(Concrete $object, $field, $seed = 1)
+    public function assertGeobounds(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
 
@@ -336,10 +261,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value, 'Objects are equal');
     }
 
-    /**
-     * @return DataObject\Data\Geobounds
-     */
-    protected function getGeoboundsFixture()
+    protected function getGeoboundsFixture(): DataObject\Data\Geobounds
     {
         return new DataObject\Data\Geobounds(
             new DataObject\Data\GeoCoordinates(-33.704920213014, 150.60333251953),
@@ -347,12 +269,7 @@ class TestDataHelper extends AbstractTestDataHelper
         );
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertGeoCoordinates(Concrete $object, $field, $seed = 1)
+    public function assertGeoCoordinates(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
 
@@ -368,10 +285,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value, 'Objects are equal');
     }
 
-    /**
-     * @return DataObject\Data\GeoCoordinates
-     */
-    protected function getGeoCoordinatesFixture()
+    protected function getGeoCoordinatesFixture(): DataObject\Data\GeoCoordinates
     {
         $longitude = 2.2008440814678;
         $latitude = 102.25112915039;
@@ -380,12 +294,7 @@ class TestDataHelper extends AbstractTestDataHelper
         return $point;
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertGeopolygon(Concrete $object, $field, $seed = 1)
+    public function assertGeopolygon(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
 
@@ -411,7 +320,7 @@ class TestDataHelper extends AbstractTestDataHelper
     /**
      * @return DataObject\Data\GeoCoordinates[]
      */
-    protected function getGeopolygonFixture()
+    protected function getGeopolygonFixture(): array
     {
         return [
             new DataObject\Data\GeoCoordinates(-33.464671118242684, 150.54428100585938),
@@ -420,12 +329,7 @@ class TestDataHelper extends AbstractTestDataHelper
         ];
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertHotspotImage(Concrete $object, $field, $seed = 1)
+    public function assertHotspotImage(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
 
@@ -471,7 +375,7 @@ class TestDataHelper extends AbstractTestDataHelper
         return $result;
     }
 
-    public function assertAssetsEqual(Asset $asset1, Asset $asset2)
+    public function assertAssetsEqual(Asset $asset1, Asset $asset2): void
     {
         $this->assertElementsEqual($asset1, $asset2);
 
@@ -484,7 +388,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($str1, $str2);
     }
 
-    public function assertElementsEqual(ElementInterface $e1, ElementInterface $e2)
+    public function assertElementsEqual(ElementInterface $e1, ElementInterface $e2): void
     {
         $this->assertEquals(get_class($e1), get_class($e2));
         $this->assertEquals($e1->getId(), $e2->getId());
@@ -492,12 +396,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($e1->getFullPath(), $e2->getFullPath());
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertHref(Concrete $object, $field, $seed = 1)
+    public function assertHref(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -510,12 +409,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertObjectsEqual($expected, $value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertImage(Concrete $object, $field, $seed = 1)
+    public function assertImage(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -530,12 +424,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertAssetsEqual($expected, $value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertImageGallery(Concrete $object, $field, $seed = 1)
+    public function assertImageGallery(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
 
@@ -556,12 +445,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals('hotspot_2_' . $seed, $hotspots[0]['name']);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertInputQuantityValue(Concrete $object, $field, $seed = 1)
+    public function assertInputQuantityValue(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         /** @var DataObject\Data\InputQuantityValue $qv */
@@ -575,12 +459,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals('abc' . $seed, $qv->getValue());
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertLanguage(Concrete $object, $field, $seed = 1)
+    public function assertLanguage(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -590,12 +469,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertLanguageMultiSelect(Concrete $object, $field, $seed = 1)
+    public function assertLanguageMultiSelect(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -604,23 +478,12 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     * @param string|null $language
-     */
-    public function assertLastname(Concrete $object, $field, $seed = 1, $language = null)
+    public function assertLastname(Concrete $object, string $field, int $seed = 1, ?string $language = null): void
     {
         $this->assertInput($object, $field, $seed, $language);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertLink(Concrete $object, $field, $seed = 1)
+    public function assertLink(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
 
@@ -641,7 +504,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertDocumentsEqual($expected, $document);
     }
 
-    public function assertDocumentsEqual(Document $doc1, Document $doc2)
+    public function assertDocumentsEqual(Document $doc1, Document $doc2): void
     {
         $this->assertElementsEqual($doc1, $doc2);
 
@@ -654,12 +517,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($str1, $str2);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertMultiSelect(Concrete $object, $field, $seed = 1)
+    public function assertMultiSelect(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -669,12 +527,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertMultihref(Concrete $object, $field, $seed = 1)
+    public function assertMultihref(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -691,22 +544,12 @@ class TestDataHelper extends AbstractTestDataHelper
         }
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertNewsletterActive(Concrete $object, $field, $seed = 1)
+    public function assertNewsletterActive(Concrete $object, string $field, int $seed = 1): void
     {
         $this->assertCheckbox($object, $field, $seed);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertCheckbox(Concrete $object, $field, $seed = 1)
+    public function assertCheckbox(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -716,22 +559,12 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertNewsletterConfirmed(Concrete $object, $field, $seed = 1)
+    public function assertNewsletterConfirmed(Concrete $object, string $field, int $seed = 1): void
     {
         $this->assertCheckbox($object, $field, $seed);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertNumber(Concrete $object, $field, $seed = 1)
+    public function assertNumber(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -741,13 +574,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    /**
-     * @param Concrete|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData $object
-     * @param string $field
-     * @param int $seed
-     * @param string|null $language
-     */
-    public function assertObjects($object, $field, $seed = 1, $language = null)
+    public function assertObjects(Concrete|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData $object, string $field, int $seed = 1, ?string $language = null): void
     {
         $getter = 'get' . ucfirst($field);
 
@@ -804,12 +631,7 @@ class TestDataHelper extends AbstractTestDataHelper
         return $paths;
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertObjectsWithMetadata(Concrete $object, $field, $seed = 1)
+    public function assertObjectsWithMetadata(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -821,12 +643,10 @@ class TestDataHelper extends AbstractTestDataHelper
     }
 
     /**
-     * @param string $field
-     * @param int $seed
      *
      * @return DataObject\Data\ObjectMetadata[]
      */
-    public function getObjectsWithMetadataFixture($field, $seed)
+    public function getObjectsWithMetadataFixture(string $field, int $seed): array
     {
         $objects = $this->getObjectList("o_type = 'object' AND o_className = 'unittest'");
         $objects = array_slice($objects, 0, 4);
@@ -846,7 +666,7 @@ class TestDataHelper extends AbstractTestDataHelper
      * @param DataObject\Data\ObjectMetadata[] $expected
      * @param DataObject\Data\ObjectMetadata[] $value
      */
-    protected function assertObjectMetadataEqual($expected, $value)
+    protected function assertObjectMetadataEqual(array $expected, array $value): void
     {
         // see https://github.com/sebastianbergmann/phpunit/commit/50ad7e1c4e74dce3beff17bf9c9f5a458cbe9958
         $this->assertTrue(is_array($expected), 'expected an array');
@@ -867,12 +687,7 @@ class TestDataHelper extends AbstractTestDataHelper
         }
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertPassword(Concrete $object, $field, $seed = 1)
+    public function assertPassword(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -886,12 +701,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertNotNull($info['algo'], 'Not properly encrypted');
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertQuantityValue(Concrete $object, $field, $seed = 1)
+    public function assertQuantityValue(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         /** @var DataObject\Data\QuantityValue $qv */
@@ -905,12 +715,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals(1000 + $seed, $qv->getValue());
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertRgbaColor(Concrete $object, $field, $seed = 1)
+    public function assertRgbaColor(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         /** @var DataObject\Data\RgbaColor $value */
@@ -930,12 +735,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertIsEqual($object, $field, $expectedValue, $value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertSelect(Concrete $object, $field, $seed = 1)
+    public function assertSelect(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -945,12 +745,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertIndexFieldSelectionCombo(Concrete $object, $field, $seed = 1)
+    public function assertIndexFieldSelectionCombo(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -958,12 +753,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertIsEqual($object, $field, 'carClass', $value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertIndexFieldSelection(Concrete $object, $field, $seed = 1)
+    public function assertIndexFieldSelection(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         /** @var IndexFieldSelection $value */
@@ -974,12 +764,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertIsEqual($object, $field, 'carClass', $value->getField());
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertIndexFieldSelectionField(Concrete $object, $field, $seed = 1)
+    public function assertIndexFieldSelectionField(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -987,12 +772,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertIsEqual($object, $field, 'carClass,color', $value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertSlider(Concrete $object, $field, $seed = 1)
+    public function assertSlider(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -1002,12 +782,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertStructuredTable(Concrete $object, $field, $seed = 1)
+    public function assertStructuredTable(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
 
@@ -1039,12 +814,7 @@ class TestDataHelper extends AbstractTestDataHelper
         return $st;
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertTable(Concrete $object, $field, $seed = 1)
+    public function assertTable(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -1054,22 +824,12 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    /**
-     * @param int $seed
-     *
-     * @return array
-     */
-    protected function getTableDataFixture($seed)
+    protected function getTableDataFixture(int $seed): array
     {
         return [['eins', 'zwei', 'drei'], [$seed, 2, 3], ['a', 'b', 'c']];
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertTime(Concrete $object, $field, $seed = 1)
+    public function assertTime(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -1079,13 +839,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     * @param string|null $language
-     */
-    public function assertUrlSlug(Concrete $object, $field, $seed = 1, $language = null)
+    public function assertUrlSlug(Concrete $object, string $field, int $seed = 1, ?string $language = null): void
     {
         $getter = 'get' . ucfirst($field);
         if ($language) {
@@ -1106,12 +860,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertUser(Concrete $object, $field, $seed = 1)
+    public function assertUser(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -1122,13 +871,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     * @param array $returnParams
-     */
-    public function assertVideo(Concrete $object, $field, $seed = 1, $returnParams)
+    public function assertVideo(Concrete $object, string $field, int $seed = 1, mixed $returnParams): void
     {
         $getter = 'get' . ucfirst($field);
 
@@ -1144,22 +887,13 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($returnParams['video']->getId(), $value->getData()->getId());
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertWysiwyg(Concrete $object, $field, $seed = 1)
+    /* @todo */
+    public function assertWysiwyg(Concrete $object, string $field, int $seed = 1)
     {
         return $this->assertTextarea($object, $field, $seed);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function assertTextarea(Concrete $object, $field, $seed = 1)
+    public function assertTextarea(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -1169,12 +903,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function checkValidityGeobounds(Concrete $object, $field, $seed = 1)
+    public function checkValidityGeobounds(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
 
@@ -1185,12 +914,7 @@ class TestDataHelper extends AbstractTestDataHelper
         }
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function checkValidityGeoCoordinates(Concrete $object, $field, $seed = 1)
+    public function checkValidityGeoCoordinates(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
 
@@ -1201,22 +925,12 @@ class TestDataHelper extends AbstractTestDataHelper
         }
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function checkValidityGeopolyline(Concrete $object, $field, $seed = 1)
+    public function checkValidityGeopolyline(Concrete $object, string $field, int $seed = 1): void
     {
         $this->checkValidityGeopolygon($object, $field, $seed);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function checkValidityGeopolygon(Concrete $object, $field, $seed = 1)
+    public function checkValidityGeopolygon(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
 
@@ -1230,12 +944,7 @@ class TestDataHelper extends AbstractTestDataHelper
         }
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function checkValidityQuantityValue(Concrete $object, $field, $seed = 1)
+    public function checkValidityQuantityValue(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
 
@@ -1249,12 +958,7 @@ class TestDataHelper extends AbstractTestDataHelper
         }
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function checkValidityRgbaColor(Concrete $object, $field, $seed = 1)
+    public function checkValidityRgbaColor(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
 
@@ -1274,23 +978,13 @@ class TestDataHelper extends AbstractTestDataHelper
         }
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillBooleanSelect(Concrete $object, $field, $seed = 1)
+    public function fillBooleanSelect(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter(($seed % 2) == true);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillBricks(Concrete $object, $field, $seed = 1)
+    public function fillBricks(Concrete $object, string $field, int $seed = 1): void
     {
         $getter = 'get' . ucfirst($field);
 
@@ -1306,44 +1000,24 @@ class TestDataHelper extends AbstractTestDataHelper
         $objectbricks->setUnittestBrick($brick);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillCalculatedValue(Concrete $object, $field, $seed = 1)
+    public function fillCalculatedValue(Concrete $object, string $field, int $seed = 1): void
     {
         // nothing to do
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillCountry(Concrete $object, $field, $seed = 1)
+    public function fillCountry(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter('AU');
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillCountryMultiSelect(Concrete $object, $field, $seed = 1)
+    public function fillCountryMultiSelect(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter(['1', '2']);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillDate(Concrete $object, $field, $seed = 1)
+    public function fillDate(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
 
@@ -1353,24 +1027,13 @@ class TestDataHelper extends AbstractTestDataHelper
         $object->$setter($date);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillEmail(Concrete $object, $field, $seed = 1)
+    public function fillEmail(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter('john@doe.com' . $seed);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     * @param string|null $language
-     */
-    public function fillEncryptedField(Concrete $object, $field, $seed = 1, $language = null)
+    public function fillEncryptedField(Concrete $object, string $field, int $seed = 1, ?string $language = null): void
     {
         $setter = 'set' . ucfirst($field);
         if ($language) {
@@ -1380,24 +1043,14 @@ class TestDataHelper extends AbstractTestDataHelper
         }
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillExternalImage(Concrete $object, $field, $seed = 1)
+    public function fillExternalImage(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $value = new DataObject\Data\ExternalImage('someUrl' . $seed);
         $object->$setter($value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillFieldCollection(Concrete $object, $field, $seed = 1)
+    public function fillFieldCollection(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
 
@@ -1413,24 +1066,12 @@ class TestDataHelper extends AbstractTestDataHelper
         $object->$setter($items);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     * @param string|null $language
-     */
-    public function fillFirstname(Concrete $object, $field, $seed = 1, $language = null)
+    public function fillFirstname(Concrete $object, string $field, int $seed = 1, ?string $language = null): void
     {
         $this->fillInput($object, $field, $seed, $language);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     * @param string|null $language
-     */
-    public function fillInput(Concrete $object, $field, $seed = 1, $language = null)
+    public function fillInput(Concrete $object, string $field, int $seed = 1, ?string $language = null): void
     {
         $setter = 'set' . ucfirst($field);
         if ($language) {
@@ -1440,68 +1081,38 @@ class TestDataHelper extends AbstractTestDataHelper
         }
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillGender(Concrete $object, $field, $seed = 1)
+    public function fillGender(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $value = $seed % 2 == 0 ? 'male' : 'female';
         $object->$setter($value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillGeobounds(Concrete $object, $field, $seed = 1)
+    public function fillGeobounds(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter($this->getGeoboundsFixture());
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillGeoCoordinates(Concrete $object, $field, $seed = 1)
+    public function fillGeoCoordinates(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter($this->getGeoCoordinatesFixture());
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillGeopolygon(Concrete $object, $field, $seed = 1)
+    public function fillGeopolygon(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter($this->getGeopolygonFixture());
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillGeopolyline(Concrete $object, $field, $seed = 1)
+    public function fillGeopolyline(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter($this->getGeopolygonFixture());
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillHotspotImage(Concrete $object, $field, $seed = 1)
+    public function fillHotspotImage(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
 
@@ -1517,24 +1128,14 @@ class TestDataHelper extends AbstractTestDataHelper
         $object->$setter($hotspotImage);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillHref(Concrete $object, $field, $seed = 1)
+    public function fillHref(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $objects = $this->getObjectList();
         $object->$setter($objects[0]);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillImage(Concrete $object, $field, $seed = 1)
+    public function fillImage(Concrete $object, string $field, int $seed = 1):void
     {
         $setter = 'set' . ucfirst($field);
 
@@ -1548,12 +1149,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $object->$setter($asset);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillImageGallery(Concrete $object, $field, $seed = 1)
+    public function fillImageGallery(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
 
@@ -1585,12 +1181,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $object->$setter($gallery);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillInputQuantityValue(Concrete $object, $field, $seed = 1)
+    public function fillInputQuantityValue(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
 
@@ -1602,45 +1193,24 @@ class TestDataHelper extends AbstractTestDataHelper
         $object->$setter($qv);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillLanguage(Concrete $object, $field, $seed = 1)
+    public function fillLanguage(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter('de');
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillLanguageMultiSelect(Concrete $object, $field, $seed = 1)
+    public function fillLanguageMultiSelect(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter(['1', '2']);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     * @param string|null $language
-     */
-    public function fillLastname(Concrete $object, $field, $seed = 1, $language = null)
+    public function fillLastname(Concrete $object, string $field, int $seed = 1, ?string $language = null): void
     {
         $this->fillInput($object, $field, $seed, $language);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillLink(Concrete $object, $field, $seed = 1)
+    public function fillLink(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
 
@@ -1677,23 +1247,13 @@ class TestDataHelper extends AbstractTestDataHelper
         return $properties;
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillMultiSelect(Concrete $object, $field, $seed = 1)
+    public function fillMultiSelect(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter(['1', '2']);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillMultihref(Concrete $object, $field, $seed = 1)
+    public function fillMultihref(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $objects = $this->getObjectList();
@@ -1702,55 +1262,29 @@ class TestDataHelper extends AbstractTestDataHelper
         $object->$setter($objects);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillNewsletterActive(Concrete $object, $field, $seed = 1)
+    public function fillNewsletterActive(Concrete $object, string $field, int $seed = 1): void
     {
         $this->fillCheckbox($object, $field, $seed);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillCheckbox(Concrete $object, $field, $seed = 1)
+    public function fillCheckbox(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter(($seed % 2) == true);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillNewsletterConfirmed(Concrete $object, $field, $seed = 1)
+    public function fillNewsletterConfirmed(Concrete $object, string $field, int $seed = 1): void
     {
         $this->fillCheckbox($object, $field, $seed);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillNumber(Concrete $object, $field, $seed = 1)
+    public function fillNumber(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter(123 + $seed);
     }
 
-    /**
-     * @param Concrete|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData $object
-     * @param string $field
-     * @param int $seed
-     * @param string|null $language
-     */
-    public function fillObjects($object, $field, $seed = 1, $language = null)
+    public function fillObjects(Concrete|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData $object, string $field, int $seed = 1, ?string $language = null): void
     {
         $setter = 'set' . ucfirst($field);
         $objects = $this->getObjectList("o_type = 'object'");
@@ -1768,34 +1302,19 @@ class TestDataHelper extends AbstractTestDataHelper
         }
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillObjectsWithMetadata(Concrete $object, $field, $seed = 1)
+    public function fillObjectsWithMetadata(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter($this->getObjectsWithMetadataFixture($field, $seed));
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillPassword(Concrete $object, $field, $seed = 1)
+    public function fillPassword(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter('sEcret$%!' . $seed);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillQuantityValue(Concrete $object, $field, $seed = 1)
+    public function fillQuantityValue(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
 
@@ -1807,7 +1326,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $object->$setter($qv);
     }
 
-    public function mapUnit($seed)
+    public function mapUnit(int $seed): string
     {
         $map = ['mm', 'cm', 'dm', 'm', 'km'];
         $seed = $seed % 5;
@@ -1815,12 +1334,7 @@ class TestDataHelper extends AbstractTestDataHelper
         return $map[$seed];
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillRgbaColor(Concrete $object, $field, $seed = 1)
+    public function fillRgbaColor(Concrete $object, string $field, int $seed = 1): void
     {
         $seed = (int) $seed;
         $value = $seed % 200;
@@ -1830,102 +1344,56 @@ class TestDataHelper extends AbstractTestDataHelper
         $object->$setter($value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillSelect(Concrete $object, $field, $seed = 1)
+    public function fillSelect(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter(1 + ($seed % 2));
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillIndexFieldSelectionCombo(Concrete $object, $field, $seed = 1)
+    public function fillIndexFieldSelectionCombo(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter('carClass');
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillIndexFieldSelectionField(Concrete $object, $field, $seed = 1)
+    public function fillIndexFieldSelectionField(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter('carClass,color');
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillIndexFieldSelection(Concrete $object, $field, $seed = 1)
+    public function fillIndexFieldSelection(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $value = new IndexFieldSelection(null, 'carClass', null);
         $object->$setter($value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillSlider(Concrete $object, $field, $seed = 1)
+    public function fillSlider(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter(7 + ($seed % 3));
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillStructuredtable(Concrete $object, $field, $seed = 1)
+    public function fillStructuredtable(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter($this->getStructuredTableData($seed));
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillTable(Concrete $object, $field, $seed = 1)
+    public function fillTable(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter($this->getTableDataFixture($seed));
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillTime(Concrete $object, $field, $seed = 1)
+    public function fillTime(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter('06:4' . $seed % 10);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     * @param string|null $language
-     */
-    public function fillUrlSlug(Concrete $object, $field, $seed = 1, $language = null)
+    public function fillUrlSlug(Concrete $object, string $field, int $seed = 1, ?string $language = null): void
     {
         $setter = 'set' . ucfirst($field);
         if ($language) {
@@ -1937,12 +1405,7 @@ class TestDataHelper extends AbstractTestDataHelper
         }
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillUser(Concrete $object, $field, $seed = 1)
+    public function fillUser(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
 
@@ -1964,13 +1427,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $object->$setter($user->getId());
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     * @param array $returnData
-     */
-    public function fillVideo(Concrete $object, $field, $seed = 1, &$returnData = [])
+    public function fillVideo(Concrete $object, string $field, int $seed = 1, array &$returnData = []): void
     {
         $setter = 'set' . ucfirst($field);
 
@@ -1993,22 +1450,12 @@ class TestDataHelper extends AbstractTestDataHelper
         $object->$setter($value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillWysiwyg(Concrete $object, $field, $seed = 1)
+    public function fillWysiwyg(Concrete $object, string $field, int $seed = 1): void
     {
         $this->fillTextarea($object, $field, $seed);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param int $seed
-     */
-    public function fillTextarea(Concrete $object, $field, $seed = 1)
+    public function fillTextarea(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
         $object->$setter('sometext<br>' . $seed);

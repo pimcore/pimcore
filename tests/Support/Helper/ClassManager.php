@@ -16,31 +16,28 @@
 namespace Pimcore\Tests\Support\Helper;
 
 use Codeception\Module;
+use Exception;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\Exception\DefinitionWriteException;
 use Pimcore\Model\DataObject\Fieldcollection\Definition as FieldcollectionDefinition;
 use Pimcore\Model\DataObject\Objectbrick\Definition as ObjectbrickDefinition;
 use Symfony\Component\Filesystem\Filesystem;
 
 class ClassManager extends Module
 {
+
     /**
-     * @param string $name
-     *
-     * @return ClassDefinition|null
+     * @throws Exception
      */
-    public function getClass($name)
+    public function getClass(string $name): ?ClassDefinition
     {
         if ($class = ClassDefinition::getByName($name)) {
             return $class;
         }
+        return null;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function hasClass($name)
+    public function hasClass(string $name): bool
     {
         return null !== $this->getClass($name);
     }
@@ -48,12 +45,9 @@ class ClassManager extends Module
     /**
      * Create or load a class definition
      *
-     * @param string $name
-     * @param string $filename
-     *
-     * @return ClassDefinition
+     * @throws DefinitionWriteException
      */
-    public function setupClass($name, $filename)
+    public function setupClass(string $name, string $filename): ClassDefinition
     {
         // class either already exists or it must be created
         if (!$this->hasClass($name)) {
@@ -94,11 +88,9 @@ class ClassManager extends Module
     }
 
     /**
-     * @param string $name
-     *
-     * @return FieldcollectionDefinition
+     * @throws Exception
      */
-    public function getFieldcollection($name)
+    public function getFieldcollection(string $name): ?FieldcollectionDefinition
     {
         $fc = FieldcollectionDefinition::getByKey($name);
 
@@ -106,11 +98,10 @@ class ClassManager extends Module
     }
 
     /**
-     * @param string $name
      *
-     * @return bool
+     * @throws Exception
      */
-    public function hasFieldCollection($name)
+    public function hasFieldCollection(string $name): bool
     {
         return null !== $this->getFieldcollection($name);
     }
@@ -118,12 +109,9 @@ class ClassManager extends Module
     /**
      * Create or load a fieldcollection
      *
-     * @param string $name
-     * @param string $filename
-     *
-     * @return FieldcollectionDefinition
+     * @throws Exception
      */
-    public function setupFieldcollection($name, $filename)
+    public function setupFieldcollection(string $name, string $filename): ?FieldcollectionDefinition
     {
         if (!$this->hasFieldCollection($name)) {
             $this->debug(sprintf('[CLASSMANAGER] Setting up fieldcollection %s', $name));
@@ -144,24 +132,14 @@ class ClassManager extends Module
         return $fieldCollection;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return ObjectbrickDefinition|null
-     */
-    public function getObjectbrick($name)
+    public function getObjectbrick(string $name): ?ObjectbrickDefinition
     {
         $ob = ObjectbrickDefinition::getByKey($name);
 
         return $ob;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function hasObjectbrick($name)
+    public function hasObjectbrick(string $name): bool
     {
         return null !== $this->getObjectbrick($name);
     }
@@ -170,12 +148,8 @@ class ClassManager extends Module
      * Create or load a fieldcollection. Needs an array of class IDs which are mapped to the classDefinitions
      * field in the export file.
      *
-     * @param string $name
-     * @param string $filename
-     *
-     * @return ObjectbrickDefinition
      */
-    public function setupObjectbrick($name, $filename)
+    public function setupObjectbrick(string $name, string $filename): ObjectbrickDefinition
     {
         if (!$this->hasObjectbrick($name)) {
             $this->debug(sprintf('[CLASSMANAGER] Setting up objectbrick %s', $name));
@@ -198,12 +172,8 @@ class ClassManager extends Module
 
     /**
      * Load JSON for file
-     *
-     * @param string $filename
-     *
-     * @return string
      */
-    protected function loadJson($filename)
+    protected function loadJson(string $filename): string
     {
         $path = $this->resolveFilePath($filename);
         $json = file_get_contents($path);
@@ -215,13 +185,8 @@ class ClassManager extends Module
 
     /**
      * Saves JSON to file
-     *
-     * @param string $filename
-     * @param string $json
-     *
-     * @return string
      */
-    public function saveJson($filename, $json)
+    public function saveJson(string $filename, string $json): string
     {
         $this->assertNotEmpty($json);
 
@@ -239,13 +204,8 @@ class ClassManager extends Module
 
     /**
      * Resolve filename to resource path
-     *
-     * @param string $filename
-     * @param bool $assert
-     *
-     * @return string
      */
-    protected function resolveFilePath($filename, $assert = true)
+    protected function resolveFilePath(string $filename, bool $assert = true): string
     {
         $fs = new Filesystem();
         $path = $filename;
