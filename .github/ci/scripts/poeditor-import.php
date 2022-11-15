@@ -28,7 +28,7 @@ $getPostValues = function ($url, array $params) {
 };
 
 $getFile = function ($projectId, $language) {
-    return sprintf('bundles/CoreBundle/Resources/translations/%s.%sjson',
+    return sprintf('bundles/CoreBundle/translations/%s.%sjson',
         $language,
         ($projectId === 197253) ? 'extended.' : ''
     );

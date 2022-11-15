@@ -8,8 +8,8 @@
 $apiToken = getenv('POEDITOR_TOKEN');
 
 $projects = [
-    38068 => "bundles/CoreBundle/Resources/translations/en.json",
-    197253 => "bundles/CoreBundle/Resources/translations/en.extended.json"
+    38068 => "bundles/CoreBundle/translations/en.json",
+    197253 => "bundles/CoreBundle/translations/en.extended.json"
 ];
 
 $getPostValues = function ($url, array $params) {
