@@ -225,7 +225,7 @@ class ObjectTest extends ModelTestCase
      */
     public function testConcreteLoading()
     {
-        $concreteObject = TestHelper::createEmptyObject(type: DataObject\Concrete::class);
+        $concreteObject = TestHelper::createEmptyObject();
         $loadedConcrete = DataObject\Concrete::getById($concreteObject->getId(), ['force' => true]);
 
         $this->assertIsObject($loadedConcrete, 'Loaded Concrete should be an object.');
