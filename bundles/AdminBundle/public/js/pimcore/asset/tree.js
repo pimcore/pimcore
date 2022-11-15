@@ -317,16 +317,16 @@
                              prompt: false,
                              icon: Ext.MessageBox.QUESTION,
                              fn: function (action) {
-                                 if (action === 'ok' || action === 'yes') {
-                                     if (applyToAllCheckbox.getValue()) {
-                                         applyToAllCheckbox.setValue(false); // prevent endless loop
-                                         Ext.each(overwriteConfirmMessageBoxes, function(messageBox) {
-                                             if (messageBox.isVisible()) {
-                                                 messageBox.down('button[itemId='+action+']').fireHandler();
-                                             }
-                                         });
-                                     }
+                                 if (applyToAllCheckbox.getValue()) {
+                                     applyToAllCheckbox.setValue(false); // prevent endless loop
+                                     Ext.each(overwriteConfirmMessageBoxes, function (messageBox) {
+                                         if (messageBox.isVisible()) {
+                                             messageBox.down('button[itemId=' + action + ']').fireHandler();
+                                         }
+                                     });
+                                 }
 
+                                 if (action === 'ok' || action === 'yes') {
                                      uploadFunction(action === 'ok'); // currently visible message box if not visible anymore after clicking a button -> action for current message box gets executed here instead of in above loop
                                  } else {
                                      finishedErrorHandler();
