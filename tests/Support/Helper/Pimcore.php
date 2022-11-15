@@ -36,7 +36,6 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class Pimcore extends Module
 {
-
     protected static ?ContainerInterface $testServiceContainer = null;
 
     protected array $groups = [];

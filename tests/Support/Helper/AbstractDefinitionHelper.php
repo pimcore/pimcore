@@ -21,7 +21,6 @@ use Pimcore\Tests\Support\Util\TestHelper;
 
 abstract class AbstractDefinitionHelper extends Module
 {
-
     protected array $config = [
         'initialize_definitions' => true,
         'cleanup' => true,

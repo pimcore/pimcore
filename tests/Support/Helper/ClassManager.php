@@ -25,7 +25,6 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class ClassManager extends Module
 {
-
     /**
      * @throws Exception
      */
@@ -34,6 +33,7 @@ class ClassManager extends Module
         if ($class = ClassDefinition::getByName($name)) {
             return $class;
         }
+
         return null;
     }
 

@@ -16,7 +16,6 @@
 namespace Pimcore\Tests\Support\Helper\Document;
 
 use Carbon\Carbon;
-use JetBrains\PhpStorm\ArrayShape;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Document;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -46,7 +45,6 @@ use Pimcore\Tests\Support\Util\TestHelper;
 
 class TestDataHelper extends AbstractTestDataHelper
 {
-
     public function assertAreablock(PageSnippet $pagesnippet, string $field, int $seed = 1): void
     {
         /** @var Areablock $editable */

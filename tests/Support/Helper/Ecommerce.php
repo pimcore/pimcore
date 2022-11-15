@@ -31,7 +31,6 @@ use Pimcore\Tests\Support\Util\Autoloader;
 
 class Ecommerce extends Module
 {
-
     public function __construct(ModuleContainer $moduleContainer, $config = null)
     {
         $this->config = array_merge($this->config, [

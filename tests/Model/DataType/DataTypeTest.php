@@ -32,10 +32,11 @@ class DataTypeTest extends AbstractDataTypeTestCase
     {
         $object = TestHelper::createEmptyObject('local', true, true);
         if ($fields) {
-            if(isset(func_get_args()[1]))
+            if (isset(func_get_args()[1])) {
                 $this->fillObject($object, $fields, $returnData);
-            else
-                $this->fillObject ($object, $fields);
+            } else {
+                $this->fillObject($object, $fields);
+            }
         }
 
         $object->save();

@@ -887,7 +887,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($returnParams['video']->getId(), $value->getData()->getId());
     }
 
-    /* @todo */
+    // @todo
     public function assertWysiwyg(Concrete $object, string $field, int $seed = 1)
     {
         return $this->assertTextarea($object, $field, $seed);
@@ -1135,7 +1135,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $object->$setter($objects[0]);
     }
 
-    public function fillImage(Concrete $object, string $field, int $seed = 1):void
+    public function fillImage(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
 

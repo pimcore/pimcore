@@ -100,8 +100,8 @@ abstract class AbstractDataTypeTestCase extends TestCase
             foreach ($additionalArguments as $aa) {
                 $methodArguments[] = $aa;
             }
-           if (isset(func_get_args()[2])) {
-               $methodArguments[] = &$returnData;
+            if (isset(func_get_args()[2])) {
+                $methodArguments[] = &$returnData;
             }
 
             call_user_func_array([$this->testDataHelper, $method], $methodArguments);

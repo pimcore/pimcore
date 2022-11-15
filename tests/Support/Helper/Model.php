@@ -22,7 +22,6 @@ use Pimcore\Model\DataObject\Fieldcollection\Definition;
 
 class Model extends AbstractDefinitionHelper
 {
-
     public function _beforeSuite(array $settings = [])
     {
         DataObject::setHideUnpublished(false);
@@ -206,6 +205,7 @@ class Model extends AbstractDefinitionHelper
 
     /**
      * Set up a class used for relation tests.
+     *
      * @throws Exception
      */
     public function setupPimcoreClass_RelationTest(string $name = 'RelationTest', string $filename = 'relations/class_RelationTest_export.json'): ?ClassDefinition

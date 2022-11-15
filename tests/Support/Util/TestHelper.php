@@ -221,7 +221,6 @@ class TestHelper
         }
     }
 
-
     public static function getComparisonDataForField(string $key, ObjectModel\ClassDefinition\Data $fd, AbstractObject $object): string|array|null
     {
         // omit password, this one we don't get through WS,
@@ -293,6 +292,7 @@ class TestHelper
         } elseif (method_exists($object, $getter) && !$fd instanceof ObjectModel\ClassDefinition\Data\Password && !$fd instanceof ObjectModel\ClassDefinition\Data\ReverseObjectRelation) {
             return $fd->getForCsvExport($object);
         }
+
         return null;
     }
 
@@ -408,6 +408,7 @@ class TestHelper
 
     /**
      * @return Unittest[]
+     *
      * @throws Exception
      */
     public static function createEmptyObjects(string $keyPrefix = '', bool $save = true, int $count = 10): array
@@ -512,7 +513,7 @@ class TestHelper
         return $document;
     }
 
-    public static function createEmptyDocumentPage(?string $keyPrefix = '', bool $save = true, bool $publish = true):Document\Page
+    public static function createEmptyDocumentPage(?string $keyPrefix = '', bool $save = true, bool $publish = true): Document\Page
     {
         return self::createEmptyDocument($keyPrefix, $save, $publish);
     }
