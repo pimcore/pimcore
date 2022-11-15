@@ -27,7 +27,7 @@ For server side debugging, standard php and Symfony framework debugging tools li
 
 * Reading log files as described [here](07_Logging.md)
 * Using Symfony profiler console depending on the active environment. 
-  Details see [Symfony docs](https://symfony.com/doc/5.2/reference/configuration/web_profiler.html)
+  Details see [Symfony docs](https://symfony.com/doc/current/reference/configuration/web_profiler.html)
 * Using Xdebug and a proper IDE for stepwise debugging, more information see [Xdebug docs](https://xdebug.org/)
 
 

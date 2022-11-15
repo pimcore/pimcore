@@ -101,4 +101,18 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
         $this->rewind();
         $this->markMeDirty();
     }
+
+    /**
+     * @return bool
+     */
+    public function hasValidImages(): bool
+    {
+        foreach ($this->getItems() as $item) {
+            if ($item instanceof \Pimcore\Model\DataObject\Data\Hotspotimage) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

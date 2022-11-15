@@ -8,7 +8,7 @@ but [Symfony-style locations](https://symfony.com/doc/4.4/best_practices.html#us
 Pimcore uses the Twig templating engine, you can use Twig exactly as documented in:
 
 * [Twig Documentation](https://twig.symfony.com/doc/3.x/)
-* [Symfony Templating Documentation](https://symfony.com/doc/5.2/templating.html)
+* [Symfony Templating Documentation](https://symfony.com/doc/current/templating.html)
 * Check also our [Demo](https://github.com/pimcore/demo) as starting point
 
 Just use annotations or render the view directly to use Twig:

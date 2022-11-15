@@ -17,7 +17,7 @@ namespace Pimcore\Tests\Model\DataObject;
 
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\DefinitionModifier;
-use Pimcore\Tests\Test\ModelTestCase;
+use Pimcore\Tests\Support\Test\ModelTestCase;
 
 class DefinitionModifierTest extends ModelTestCase
 {

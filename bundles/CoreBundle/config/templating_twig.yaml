@@ -84,4 +84,15 @@ services:
 
     Twig\Extra\String\StringExtension: ~
 
+    Pimcore\Twig\Sandbox\SecurityPolicy:
+        arguments:
+            $allowedTags: '%pimcore.templating.twig.sandbox_security_policy.tags%'
+            $allowedFilters: '%pimcore.templating.twig.sandbox_security_policy.filters%'
+            $allowedFunctions: '%pimcore.templating.twig.sandbox_security_policy.functions%'
+
+    Twig\Extension\SandboxExtension:
+        class: Twig\Extension\SandboxExtension
+        arguments:
+            $policy: '@Pimcore\Twig\Sandbox\SecurityPolicy'
+
     Pimcore\Twig\Extension\AdminExtension: ~

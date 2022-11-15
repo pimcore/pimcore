@@ -61,7 +61,7 @@ Pimcore uses by default Symfony Twig engine, so you have the full power of Symfo
 For details concerning editables (like `pimcore_input`, `pimcore_block`, ...) see [Editables](../03_Documents/01_Editables/README.md). 
 
 ### Add a Layout
-We can use Symfony`s [template inheritance and layout](https://symfony.com/doc/5.2/templates.html#template-inheritance-and-layouts) functionality 
+We can use Symfony`s [template inheritance and layout](https://symfony.com/doc/current/templates.html#template-inheritance-and-layouts) functionality 
 to wrap our content page with another template which contains the main navigation, a sidebar, … using the following code:
 
 ```twig

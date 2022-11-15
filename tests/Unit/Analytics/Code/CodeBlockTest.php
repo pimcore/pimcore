@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Analytics\Code;
 
 use Pimcore\Analytics\Code\CodeBlock;
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 
 class CodeBlockTest extends TestCase
 {

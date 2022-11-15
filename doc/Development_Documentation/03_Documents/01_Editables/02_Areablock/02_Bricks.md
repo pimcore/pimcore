@@ -273,6 +273,7 @@ class WysiwygWithImages extends AbstractAreabrick implements EditableDialogBoxIn
                 'type' => 'checkbox',
                 'name' => 'myDialogCheckbox',
                 'label' => 'This is the checkbox label',
+                'description' => 'This is a description for myDialogCheckbox' // descriptions are optional
             ],
             [
                 'type' => 'date',

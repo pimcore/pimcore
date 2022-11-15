@@ -16,6 +16,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData;
+use Pimcore\Db\Helper;
 use Pimcore\Model\Exception\NotFoundException;
 
 /**
@@ -90,9 +91,9 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         }
 
         try {
-            $this->db->insert(self::TABLE_NAME, $data);
+            $this->db->insert(self::TABLE_NAME, Helper::quoteDataIdentifiers($this->db, $data));
         } catch (\Exception $e) {
-            $this->db->update(self::TABLE_NAME, $data, ['key' => $this->db->quote($this->model->getKey()), 'cartId' => $this->db->quote($this->model->getCartId())]);
+            $this->db->update(self::TABLE_NAME, Helper::quoteDataIdentifiers($this->db, $data), ['key' => $this->db->quote($this->model->getKey()), 'cartId' => $this->db->quote($this->model->getCartId())]);
         }
     }
 

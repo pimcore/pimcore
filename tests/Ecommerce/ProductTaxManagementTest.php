@@ -15,7 +15,7 @@
 
 namespace Pimcore\Tests\Ecommerce;
 
-use Codeception\Util\Stub;
+use Codeception\Stub;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
@@ -26,7 +26,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\OnlineShopTaxClass;
-use Pimcore\Tests\Test\EcommerceTestCase;
+use Pimcore\Tests\Support\Test\EcommerceTestCase;
 
 class ProductTaxManagementTest extends EcommerceTestCase
 {

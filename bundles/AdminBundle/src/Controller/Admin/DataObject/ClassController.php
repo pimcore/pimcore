@@ -1425,9 +1425,14 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $event = new GenericEvent($this, [
             'list' => $definitions,
             'objectId' => $request->get('object_id'),
+            'forObjectEditor' => $forObjectEditor,
+            'layoutDefinitions' => $layoutDefinitions,
+            'fieldName' => $request->get('field_name'),
+            'object' => $object,
         ]);
         $eventDispatcher->dispatch($event, AdminEvents::CLASS_OBJECTBRICK_LIST_PRE_SEND_DATA);
         $definitions = $event->getArgument('list');
+        $layoutDefinitions = $event->getArgument('layoutDefinitions');
 
         if ($forObjectEditor) {
             return $this->adminJson(['objectbricks' => $definitions, 'layoutDefinitions' => $layoutDefinitions]);

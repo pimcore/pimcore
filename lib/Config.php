@@ -521,7 +521,7 @@ final class Config implements ArrayAccess
     {
         $fileType = pathinfo($file, PATHINFO_EXTENSION);
         if (file_exists($file)) {
-            if ($fileType == 'yml') {
+            if ($fileType == 'yaml') {
                 $content = Yaml::parseFile($file);
             } else {
                 $content = include($file);
