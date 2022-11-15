@@ -1040,7 +1040,8 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
             var toolbar = new Ext.Window({
                 title: areaBlockToolbarSettings.title,
                 width: areaBlockToolbarSettings.width,
-                height: Ext.getBody().getViewSize().height - 15,
+                maxHeight: Ext.getBody().getViewSize().height - 15,
+                layout: "auto",
                 border:false,
                 shadow: false,
                 resizable: false,
