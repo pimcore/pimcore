@@ -66,11 +66,8 @@ abstract class AbstractDataTypeTestCase extends TestCase
     /**
      * Calls fill* methods on the object as needed in test
      *
-     * @param Concrete $object
-     * @param array|string $fields
-     * @param mixed $returnData
      */
-    protected function fillObject(Concrete $object, array|string $fields = [], mixed &$returnData = [])
+    protected function fillObject(Concrete $object, array|string $fields = [], ?array &$returnData = [])
     {
         // allow to pass only a string (e.g. input) -> fillInput($object, "input", $seed)
         if (!is_array($fields)) {
@@ -103,8 +100,9 @@ abstract class AbstractDataTypeTestCase extends TestCase
             foreach ($additionalArguments as $aa) {
                 $methodArguments[] = $aa;
             }
-
-            $methodArguments[] = &$returnData;
+           if (isset(func_get_args()[2])) {
+               $methodArguments[] = &$returnData;
+            }
 
             call_user_func_array([$this->testDataHelper, $method], $methodArguments);
         }
