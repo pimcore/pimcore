@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject\Data;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Concrete;
 
 /**
  * @method \Pimcore\Model\DataObject\Data\ObjectMetadata\Dao getDao()
@@ -29,20 +30,20 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
 
     protected ?DataObject\AbstractObject $object;
 
-    protected int $objectId;
+    protected ?int $objectId = null;
 
-    protected string $fieldname;
+    protected ?string $fieldname = null;
 
     protected array $columns = [];
 
     protected array $data = [];
 
     /**
-     * @param string $fieldname
+     * @param string|null $fieldname
      * @param array $columns
-     * @param DataObject\Concrete|null $object
+     * @param Concrete|null $object
      */
-    public function __construct(string $fieldname, array $columns = [], DataObject\Concrete $object = null)
+    public function __construct(?string $fieldname, array $columns = [], DataObject\Concrete $object = null)
     {
         $this->fieldname = $fieldname;
         $this->columns = $columns;
@@ -122,7 +123,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         return $this;
     }
 
-    public function getFieldname(): string
+    public function getFieldname(): ?string
     {
         return $this->fieldname;
     }

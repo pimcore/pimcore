@@ -77,7 +77,7 @@ abstract class AbstractRelations extends Data implements
         return true;
     }
 
-    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
+    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
         if (isset($params['isUntouchable']) && $params['isUntouchable']) {
             return;

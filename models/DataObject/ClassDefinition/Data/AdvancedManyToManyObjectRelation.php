@@ -443,7 +443,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $dependencies;
     }
 
-    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
+    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
         if (!DataObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
             if ($object instanceof DataObject\Localizedfield) {
@@ -550,7 +550,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * {@inheritdoc}
      */
-    public function preGetData(mixed $container, array $params = []): mixed
+    public function preGetData(mixed $container, array $params = []): array
     {
         $data = null;
         if ($container instanceof DataObject\Concrete) {

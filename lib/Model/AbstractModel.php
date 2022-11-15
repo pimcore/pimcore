@@ -175,7 +175,8 @@ abstract class AbstractModel implements ModelInterface
     public function setValue(string $key, mixed $value): static
     {
         $method = 'set' . $key;
-        if (strcasecmp($method, __FUNCTION__) !== 0) {
+        if (strcasecmp($method, __FUNCTION__) !== 0
+            && !empty($value)) {
             if (method_exists($this, $method)) {
                 $this->$method($value);
             } elseif (method_exists($this, 'set' . preg_replace('/^o_/', '', $key))) {

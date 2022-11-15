@@ -359,7 +359,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return $dataString;
     }
 
-    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
+    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
         $container = $this->getDataFromObjectParam($object);
         if ($container instanceof DataObject\Objectbrick) {

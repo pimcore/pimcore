@@ -245,7 +245,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, array $params = []): string
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return 'NOT SUPPORTED';
     }
@@ -271,7 +271,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $dataString;
     }
 
-    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
+    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
         $container = $this->getDataFromObjectParam($object);
 

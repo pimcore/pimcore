@@ -213,7 +213,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $this;
     }
 
-    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
+    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
         if (isset($params['isUntouchable']) && $params['isUntouchable']) {
             return;
@@ -644,7 +644,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, array $params = []): string
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $result = [];
         $data = $this->getDataFromObjectParam($object, $params);

@@ -24,11 +24,11 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
  */
 trait OwnerAwareFieldTrait
 {
-    protected mixed $_owner;
+    protected mixed $_owner = null;
 
     protected string $_fieldname;
 
-    protected ?string $_language;
+    protected ?string $_language = null;
 
     /**
      * @param mixed $owner

@@ -173,7 +173,7 @@ final class User extends User\UserRole
 
     public function setAdmin(bool $admin): static
     {
-        $this->admin = (bool)$admin;
+        $this->admin = $admin;
 
         return $this;
     }

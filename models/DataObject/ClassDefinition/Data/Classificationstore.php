@@ -517,7 +517,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $this->fieldDefinitionsCache = null;
     }
 
-    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
+    public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
         $classificationStore = $this->getDataFromObjectParam($object);
         if ($classificationStore instanceof DataObject\Classificationstore) {
