@@ -430,6 +430,7 @@ class SearchController extends AdminController
 
         $query = str_replace(['<', '>', '(', ')', '~'], ' ', $query);
 
+        // expand search terms with * to get prefix search. Terms within quotes do not get expanded to allow for exact searches
         $query = preg_replace('/(?!\B"[^"]*)([\p{L}\p{Nd}_]+)(?![^"]*"\B)/u', '$1*', $query);
 
         // it is not allowed to have * behind another *
