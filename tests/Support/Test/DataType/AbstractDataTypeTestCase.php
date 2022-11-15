@@ -124,13 +124,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertBooleanSelect($this->testObject, 'booleanSelect', $this->seed);
     }
 
-    /**
-     * @param array $fields
-     * @param mixed $params
-     *
-     * @return Unittest
-     */
-    abstract protected function createTestObject($fields = [], mixed &$params = []);
+    abstract protected function createTestObject(array $fields = [], ?array &$params = []): Unittest;
 
     abstract public function refreshObject();
 
