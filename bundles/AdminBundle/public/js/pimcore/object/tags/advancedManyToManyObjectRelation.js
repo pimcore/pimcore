@@ -69,29 +69,29 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             });
         }
 
-        var storeConfig = {
+        let storeConfig = {
             data: this.data,
             listeners: {
                 add: function () {
-                    this.dataChanged = true;
+                    this.dataChanged = true
                 }.bind(this),
                 remove: function () {
-                    this.dataChanged = true;
+                    this.dataChanged = true
                 }.bind(this),
                 clear: function () {
-                    this.dataChanged = true;
+                    this.dataChanged = true
                 }.bind(this),
                 update: function (store) {
                     if (store.ignoreDataChanged) {
-                        return;
+                        return
                     }
-                    this.dataChanged = true;
+                    this.dataChanged = true
                 }.bind(this)
             },
             model: modelName
-        };
+        }
 
-        if (this.fieldConfig.displayMode == 'combo') {
+        if (this.fieldConfig.displayMode === 'combo') {
             storeConfig.proxy = {
                 type: 'ajax',
                 url: Routing.generate('pimcore_admin_dataobject_dataobject_relation_objects_list'),
@@ -127,7 +127,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             autoHeight = true;
         }
 
-        if (this.fieldConfig.displayMode == 'combo') {
+        if (this.fieldConfig.displayMode === 'combo') {
             this.component = Ext.create('Ext.form.field.Tag', {
                 store: this.store,
                 autoLoadOnValue: true,
@@ -158,11 +158,9 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 }
             });
         } else {
-            var i;
+            let visibleFields = this.visibleFields || [];
 
-            var visibleFields = this.visibleFields || [];
-
-            var columns = [];
+            let columns = [];
 
             if (visibleFields.length === 0) {
                 columns.push(
@@ -176,11 +174,11 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 );
             }
 
-            for (i = 0; i < visibleFields.length; i++) {
+            for (let i = 0; i < visibleFields.length; i++) {
                 if (!empty(this.fieldConfig.visibleFieldDefinitions) && !empty(visibleFields[i])) {
-                    var layout = this.fieldConfig.visibleFieldDefinitions[visibleFields[i]];
+                    let layout = this.fieldConfig.visibleFieldDefinitions[visibleFields[i]];
 
-                    var field = {
+                    let field = {
                         key: visibleFields[i],
                         label: layout.title == "fullpath" ? t("reference") : layout.title,
                         layout: layout,
@@ -188,7 +186,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                         type: layout.fieldtype
                     };
 
-                    var fc = pimcore.object.tags[layout.fieldtype].prototype.getGridColumnConfig(field);
+                    let fc = pimcore.object.tags[layout.fieldtype].prototype.getGridColumnConfig(field);
 
                     fc.flex = 1;
                     fc.hidden = false;
@@ -211,25 +209,25 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             }
 
             for (i = 0; i < this.fieldConfig.columns.length; i++) {
-                var width = 100;
+                let width = 100;
                 if (this.fieldConfig.columns[i].width) {
                     width = this.fieldConfig.columns[i].width;
                 }
 
-                var cellEditor = null;
-                var renderer = null;
-                var listeners = null;
+                let cellEditor = null;
+                let renderer = null;
+                let listeners = null;
 
                 if (this.fieldConfig.columns[i].type == "number" && !readOnly) {
-                    cellEditor = function () {
+                cellEditor = function() {
                         return new Ext.form.NumberField({});
                     }.bind();
                 } else if (this.fieldConfig.columns[i].type == "text" && !readOnly) {
-                    cellEditor = function () {
+                cellEditor = function() {
                         return new Ext.form.TextField({});
                     };
                 } else if (this.fieldConfig.columns[i].type == "select") {
-                    if (!readOnly) {
+                    if(!readOnly) {
                         var selectData = [];
 
                         if (this.fieldConfig.columns[i].value) {
@@ -240,7 +238,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                             }
                         }
 
-                        cellEditor = function (selectData) {
+                        cellEditor = function(selectData) {
                             return new Ext.form.ComboBox({
                                 typeAhead: true,
                                 queryDelay: 0,
@@ -407,8 +405,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             });
         }
 
-            var toolbarItems = this.getEditToolbarItems(readOnly);
-
+            let toolbarItems = this.getEditToolbarItems(readOnly);
 
             this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit: 1,
@@ -570,10 +567,10 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                     });
 
                     if (this.fieldConfig.enableBatchEdit) {
-                        var grid = this.component;
-                        var menu = grid.headerCt.getMenu();
+                        let grid = this.component;
+                        let menu = grid.headerCt.getMenu();
 
-                        var batchAllMenu = new Ext.menu.Item({
+                        let batchAllMenu = new Ext.menu.Item({
                             text: t("batch_change"),
                             iconCls: "pimcore_icon_table pimcore_icon_overlay_go",
                             handler: function (grid) {
@@ -584,7 +581,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
                         menu.add(batchAllMenu);
 
-                        var batchSelectedMenu = new Ext.menu.Item({
+                        let batchSelectedMenu = new Ext.menu.Item({
                             text: t("batch_change_selected"),
                             iconCls: "pimcore_icon_structuredTable pimcore_icon_overlay_go",
                             handler: function (grid) {
@@ -595,9 +592,9 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                         });
                         menu.add(batchSelectedMenu);
                         menu.on('beforeshow', function (batchAllMenu, batchSelectedMenu, grid) {
-                            var menu = grid.headerCt.getMenu();
-                            var columnDataIndex = menu.activeHeader.dataIndex;
-                            var metaIndex = this.fieldConfig.columnKeys.indexOf(columnDataIndex);
+                            let menu = grid.headerCt.getMenu();
+                            let columnDataIndex = menu.activeHeader.dataIndex;
+                            let metaIndex = this.fieldConfig.columnKeys.indexOf(columnDataIndex);
 
                             if (metaIndex < 0) {
                                 batchSelectedMenu.hide();

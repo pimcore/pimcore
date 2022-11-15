@@ -44,7 +44,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             }
         }
 
-        var storeConfig = {
+        let storeConfig = {
             data: this.data,
             listeners: {
                 add: function () {
@@ -426,8 +426,8 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 }
             });
         } else {
-            var columns = this.getVisibleColumns();
-            var toolbarItems = this.getEditToolbarItems();
+            let columns = this.getVisibleColumns();
+            let toolbarItems = this.getEditToolbarItems();
 
             columns.push({
                 xtype: 'actioncolumn',
@@ -557,9 +557,8 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             this.component.reference = this;
 
             this.component.on("afterrender", function () {
-
-                var dropTargetEl = this.component.getEl();
-                var gridDropTarget = new Ext.dd.DropZone(dropTargetEl, {
+                let dropTargetEl = this.component.getEl();
+                let gridDropTarget = new Ext.dd.DropZone(dropTargetEl, {
                     ddGroup: 'element',
                     getTargetFromEvent: function (e) {
                         return this.component.getEl().dom;
@@ -568,7 +567,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
 
                     onNodeOver: function (overHtmlNode, ddSource, e, data) {
                         try {
-                            var returnValue = Ext.dd.DropZone.prototype.dropAllowed;
+                            let returnValue = Ext.dd.DropZone.prototype.dropAllowed;
                             data.records.forEach(function (record) {
                                 var fromTree = this.isFromTree(ddSource);
                                 if (!this.dndAllowed(record.data, fromTree)) {
@@ -586,11 +585,11 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                     onNodeDrop: function (target, dd, e, data) {
 
                         this.nodeElement = data;
-                        var fromTree = this.isFromTree(dd);
-                        var toBeRequested = new Ext.util.Collection();
+                        let fromTree = this.isFromTree(dd);
+                        let toBeRequested = new Ext.util.Collection();
 
                         data.records.forEach(function (record) {
-                            var data = record.data;
+                            let data = record.data;
                             if (this.dndAllowed(data, fromTree)) {
                                 if (data["grid"] && data["grid"] == this.component) {
                                     var rowIndex = this.component.getView().findRowIndex(e.target);
@@ -601,7 +600,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                                         this.requestNicePathData(toBeRequested);
                                     }
                                 } else {
-                                    var initData = {
+                                    let initData = {
                                         id: data.id,
                                         metadata: '',
                                         inheritedFields: {},
@@ -793,13 +792,11 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
     removeObject: function (index, item) {
         this.getStore().removeAt(index);
         item.parentMenu.destroy();
-    }
-    ,
+    },
 
     empty: function () {
         this.store.removeAll();
-    }
-    ,
+    },
 
     addDataFromSelector: function (items) {
 
@@ -814,12 +811,11 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             }
             this.requestNicePathData(toBeRequested);
         }
-    }
-    ,
+    },
+
     getCellEditValue: function () {
         return this.getValue();
-    }
-    ,
+    },
 
     objectAlreadyExists: function (id) {
 
@@ -838,14 +834,13 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             return false;
         }
         return true;
-    }
-    ,
+    },
 
     getValue: function () {
 
         var tmData = [];
 
-        if (this.fieldConfig.displayMode == 'combo') {
+        if (this.fieldConfig.displayMode === 'combo') {
             return this.component.getValue().map(function(value) {
                 return {id: value}
             });
@@ -860,14 +855,11 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             tmData.push(data.items[i].data);
         }
         return tmData;
-    }
-    ,
+    },
 
     getName: function () {
         return this.fieldConfig.name;
-    }
-    ,
-
+    },
 
     dndAllowed: function (data, fromTree) {
 
