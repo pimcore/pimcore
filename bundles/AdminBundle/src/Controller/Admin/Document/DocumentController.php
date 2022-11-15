@@ -572,7 +572,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         return $this->adminJson(['success' => $success]);
     }
 
-    private function createRedirectForFormerPath(Request $request, Document $document, string $oldPath, Document $oldDocument)
+    private function createRedirectForFormerPath(Request $request, Document $document, string $oldPath, Document $oldDocument): void
     {
         if ($document instanceof Document\Page || $document instanceof Document\Hardlink) {
             if ($request->get('create_redirects') === 'true' && $this->getAdminUser()->isAllowed('redirects')) {
@@ -617,7 +617,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         }
     }
 
-    private function doCreateRedirectForFormerPath(string $source, int $targetId, ?Site $sourceSite, ?Site $targetSite)
+    private function doCreateRedirectForFormerPath(string $source, int $targetId, ?Site $sourceSite, ?Site $targetSite): void
     {
         $redirect = new Redirect();
         $redirect->setType(Redirect::TYPE_AUTO_CREATE);
@@ -1420,7 +1420,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         ]);
     }
 
-    private function getTranslationTreeNodeConfig($document, array $languages, array $translations = null)
+    private function getTranslationTreeNodeConfig(Document $document, array $languages, array $translations = null): array
     {
         $service = new Document\Service();
 
@@ -1608,12 +1608,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         ]);
     }
 
-    /**
-     * @param Document $document
-     *
-     * @return array
-     */
-    private function getSeoNodeConfig($document)
+    private function getSeoNodeConfig(Document $document): array
     {
         $nodeConfig = $this->getTreeNodeConfig($document);
 

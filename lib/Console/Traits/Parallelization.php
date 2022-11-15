@@ -17,11 +17,14 @@ namespace Pimcore\Console\Traits;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
+use Webmozarts\Console\Parallelization\ErrorHandler\ErrorHandler;
+use Webmozarts\Console\Parallelization\ParallelExecutorFactory;
 
 trait Parallelization
 {
@@ -62,6 +65,22 @@ trait Parallelization
                 '50'
             )
         ;
+    }
+
+    protected function getParallelExecutableFactory(
+        callable $fetchItems,
+        callable $runSingleCommand,
+        callable $getItemName,
+        string $commandName,
+        InputDefinition $commandDefinition,
+        ErrorHandler $errorHandler
+    ): ParallelExecutorFactory {
+        return ParallelExecutorFactory::create(...func_get_args())
+            ->withSegmentSize($this->getSegmentSize())
+            ->withScriptPath($this->getConsolePath())
+            ->withRunBeforeFirstCommand($this->runBeforeFirstCommand(...))
+            ->withRunAfterLastCommand($this->runAfterLastCommand(...))
+            ->withRunAfterBatch($this->runAfterBatch(...));
     }
 
     /**
@@ -107,32 +126,19 @@ trait Parallelization
     /**
      * {@inheritdoc}
      */
-    protected function getItemName(int $count): string
+    protected function getItemName(?int $count): string
     {
-        return $count <= 1 ? 'item' : 'items';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getContainer()
-    {
-        return \Pimcore::getKernel()->getContainer();
+        return $count === 1 ? 'item' : 'items';
     }
 
     /**
      * Locks a command.
-     *
-     * @param string|null $name
-     * @param bool|null $blocking
-     *
-     * @return bool
      */
-    private function lock($name = null, $blocking = false)
+    private function lock(): bool
     {
-        $this->lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($name ?: $this->getName(), 86400);
+        $this->lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($this->getName(), 86400);
 
-        if (!$this->lock->acquire($blocking)) {
+        if (!$this->lock->acquire()) {
             $this->lock = null;
 
             return false;
@@ -144,7 +150,7 @@ trait Parallelization
     /**
      * Releases the command lock if there is one.
      */
-    private function release()
+    private function release(): void
     {
         if ($this->lock) {
             $this->lock->release();

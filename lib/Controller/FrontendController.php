@@ -32,7 +32,7 @@ abstract class FrontendController extends Controller
     /**
      * @return string[]
      */
-    public static function getSubscribedServices()// : array
+    public static function getSubscribedServices(): array
     {
         $services = parent::getSubscribedServices();
         $services[EditmodeResolver::class] = '?'.EditmodeResolver::class;
@@ -129,7 +129,7 @@ abstract class FrontendController extends Controller
      *
      * @return Response
      */
-    public function renderTemplate($view, array $parameters = [], Response $response = null)
+    protected function renderTemplate($view, array $parameters = [], Response $response = null)
     {
         return $this->render($view, $parameters, $response);
     }

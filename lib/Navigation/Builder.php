@@ -401,7 +401,7 @@ class Builder
                 continue;
             }
 
-            if (($child instanceof Document\Folder || $child instanceof Document\Page || $child instanceof Document\Link) && $child->getProperty('navigation_name')) {
+            if ($child instanceof Document\Folder || $child instanceof Document\Page || $child instanceof Document\Link) {
                 $path = $child->getFullPath();
                 if ($child instanceof Document\Link) {
                     $path = $child->getHref();
@@ -423,7 +423,7 @@ class Builder
                 $page->setRelation($child->getProperty('navigation_relation'));
                 $page->setDocument($child);
 
-                if ($child->getProperty('navigation_exclude') || !$child->getPublished()) {
+                if (trim((string)$child->getProperty('navigation_name')) === '' || $child->getProperty('navigation_exclude') || !$child->getPublished()) {
                     $page->setVisible(false);
                 }
 

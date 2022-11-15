@@ -17,8 +17,8 @@ namespace Pimcore\Tests\Model\Document;
 
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Tests\Test\AbstractPropertiesTest;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\AbstractPropertiesTest;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * @group properties

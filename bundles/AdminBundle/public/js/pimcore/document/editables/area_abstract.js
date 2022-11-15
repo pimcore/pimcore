@@ -45,6 +45,7 @@ pimcore.document.area_abstract = Class.create(pimcore.document.editable, {
                                 } else {
                                     editablesInBox[editableName].render();
                                 }
+                                editablesInBox[editableName].setInherited(editablesInBox[editableName].inherited);
                             });
                         }, 200);
                     }
@@ -101,19 +102,29 @@ pimcore.document.area_abstract = Class.create(pimcore.document.editable, {
             let templateId = 'template__' + editablesInBox[config['name']].getId();
             var templateEl = document.getElementById(templateId);
             if(templateEl) {
+                var templateHTML = templateEl.innerHTML;
+
+                if (config['description']) {
+                    var descriptionHTML = '<div style="font-size: 14px; margin-bottom: 10px;">'
+                        + config['description']
+                        + '</div>';
+
+                    templateHTML = descriptionHTML + templateHTML;
+                }
+
                 if(typeof editablesInBox[config['name']]['renderInDialogBox'] === "function") {
                     if (editablesInBox[config['name']]['config']) {
                         editablesInBox[config['name']]['config']['label'] = config['label'] ?? config['name'];
                     }
                     return {
                         xtype: 'container',
-                        html: templateEl.innerHTML
+                        html: templateHTML
                     };
                 } else {
                     return {
                         xtype: 'fieldset',
                         title: config['label'] ?? config['name'],
-                        html: templateEl.innerHTML
+                        html: templateHTML
                     };
                 }
             }

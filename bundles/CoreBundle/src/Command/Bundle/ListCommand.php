@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
 
+use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -50,6 +51,8 @@ class ListCommand extends AbstractBundleCommand
         $returnData = [
             'headers' => [
                 'Bundle',
+                'Description',
+                'Version',
                 'Enabled',
                 'Installed',
                 $input->hasOption('json') ? 'Installable' : 'I?',
@@ -60,35 +63,23 @@ class ListCommand extends AbstractBundleCommand
         ];
 
         foreach ($this->bundleManager->getAvailableBundles() as $bundleClass) {
-            $enabled = $this->bundleManager->isEnabled($bundleClass);
-
-            $bundle = null;
-            if ($enabled) {
-                $bundle = $this->bundleManager->getActiveBundle($bundleClass, false);
-            }
-
             $row = [];
+            $row[] = $input->getOption('fully-qualified-classnames') ? $bundleClass : $this->getShortClassName($bundleClass);
 
-            if ($input->getOption('fully-qualified-classnames')) {
-                $row[] = $bundleClass;
-            } else {
-                $row[] = $this->getShortClassName($bundleClass);
-            }
-
-            $row[] = $enabled;
-
-            if ($enabled) {
+            try {
+                $bundle = $this->bundleManager->getActiveBundle($bundleClass, false);
+                $row[] = $bundle->getDescription();
+                $row[] = $bundle->getVersion();
+                $row[] = true;
                 $row[] = $this->bundleManager->isInstalled($bundle);
                 $row[] = $this->bundleManager->canBeInstalled($bundle);
                 $row[] = $this->bundleManager->canBeUninstalled($bundle);
-
-                $bundleState = $this->bundleManager->getState($bundle);
-                $row[] = $bundleState['priority'];
-            } else {
-                $row[] = false;
-                $row[] = false;
-                $row[] = false;
-                $row[] = 0;
+                $row[] = $this->bundleManager->getManuallyRegisteredBundleState($bundleClass)['priority'];
+            } catch (BundleNotFoundException $e) {
+                $row[] = '';
+                $row[] = '';
+                $row[] = $row[] = $row[] = $row[] = false;
+                $row[] = '';
             }
 
             $returnData['rows'][] = $row;
@@ -105,7 +96,7 @@ class ListCommand extends AbstractBundleCommand
             $table->setHeaders($returnData['headers']);
 
             $returnData['rows'] = array_map(function ($row) {
-                for ($i = 1; $i <= 5; $i++) {
+                for ($i = 3; $i <= 6; $i++) {
                     $row[$i] = $this->formatBool($row[$i]);
                 }
 
@@ -128,7 +119,7 @@ class ListCommand extends AbstractBundleCommand
         return 0;
     }
 
-    private function formatBool($state): string
+    private function formatBool(bool $state): string
     {
         $decorated = $this->io->getOutput()->isDecorated();
 

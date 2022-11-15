@@ -172,7 +172,7 @@ class ToolbarListener implements EventSubscriberInterface
         return true;
     }
 
-    private function collectTemplateData(VisitorInfo $visitorInfo, Document $document = null)
+    private function collectTemplateData(VisitorInfo $visitorInfo, Document $document = null): array
     {
         $token = substr(hash('sha256', uniqid((string)mt_rand(), true)), 0, 6);
 
@@ -191,7 +191,7 @@ class ToolbarListener implements EventSubscriberInterface
         return $data;
     }
 
-    private function injectToolbar(Response $response, array $data)
+    private function injectToolbar(Response $response, array $data): void
     {
         $event = new RenderToolbarEvent('@PimcoreCore/Targeting/toolbar/toolbar.html.twig', $data);
 

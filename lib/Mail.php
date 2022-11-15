@@ -28,6 +28,7 @@ use Symfony\Component\Mime\Email;
 use Symfony\Component\Mime\Header\Headers;
 use Symfony\Component\Mime\Header\MailboxListHeader;
 use Symfony\Component\Mime\Part\AbstractPart;
+use Twig\Sandbox\SecurityError;
 
 class Mail extends Email
 {
@@ -414,7 +415,7 @@ class Mail extends Email
      *
      * @return $this Provides fluent interface
      */
-    private function setDocumentSettings()
+    private function setDocumentSettings(): static
     {
         $document = $this->getDocument();
 
@@ -591,11 +592,6 @@ class Mail extends Email
         return $this;
     }
 
-    /**
-     * @param array $addresses
-     *
-     * @return array
-     */
     private function filterLogAddresses(array $addresses): array
     {
         foreach ($addresses as $addrKey => $address) {
@@ -615,11 +611,6 @@ class Mail extends Email
         return $addresses;
     }
 
-    /**
-     * @param array $recipients
-     *
-     * @return array
-     */
     private function getDebugMailRecipients(array $recipients): array
     {
         $headers = $this->getHeaders();
@@ -644,18 +635,23 @@ class Mail extends Email
         return $recipients;
     }
 
-    /**
-     * @param string $string
-     *
-     * @return string
-     */
-    private function renderParams(string $string): string
+    private function renderParams(string $string, string $context): string
     {
         $templatingEngine = \Pimcore::getContainer()->get('pimcore.templating.engine.delegating');
-        $twig = $templatingEngine->getTwigEnvironment();
-        $template = $twig->createTemplate($string);
 
-        return $template->render($this->getParams());
+        try {
+            $twig = $templatingEngine->getTwigEnvironment(true);
+            $template = $twig->createTemplate($string);
+
+            return $template->render($this->getParams());
+        } catch (SecurityError $e) {
+            Logger::err((string) $e);
+
+            throw new \Exception(sprintf('Failed rendering the %s: %s. Please check your twig sandbox security policy or contact the administrator.',
+                $context, substr($e->getMessage(), 0, strpos($e->getMessage(), ' in "__string'))));
+        } finally {
+            $templatingEngine->disableSandboxExtensionFromTwigEnvironment();
+        }
     }
 
     /**
@@ -674,7 +670,7 @@ class Mail extends Email
         }
 
         if ($subject) {
-            return $this->renderParams($subject);
+            return $this->renderParams($subject, 'subject');
         }
 
         return '';
@@ -705,7 +701,7 @@ class Mail extends Email
 
         $content = null;
         if ($html) {
-            $content = $this->renderParams($html);
+            $content = $this->renderParams($html, 'body');
 
             // modifying the content e.g set absolute urls...
             $content = MailHelper::embedAndModifyCss($content, $this->getDocument());
@@ -729,7 +725,7 @@ class Mail extends Email
 
         //if the content was manually set with $obj->text(); this content will be used
         if ($text) {
-            $content = $this->renderParams($text);
+            $content = $this->renderParams($text, 'body');
         } else {
             //creating text version from html email
             try {
@@ -838,12 +834,7 @@ class Mail extends Email
         return $this->preventDebugInformationAppending;
     }
 
-    /**
-     * @param string $htmlContent
-     *
-     * @return string
-     */
-    private function html2Text($htmlContent)
+    private function html2Text(string $htmlContent): string
     {
         $content = '';
 
@@ -904,12 +895,8 @@ class Mail extends Email
 
     /**
      * format Address from old params(string $address, string $name)
-     *
-     * @param string|array $addresses
-     *
-     * @return array
      */
-    private function formatAddress(...$addresses)
+    private function formatAddress(string|array ...$addresses): array
     {
         //old param style with string name as second param
         if (isset($addresses[1]) && is_string($addresses[1])) {
@@ -924,8 +911,7 @@ class Mail extends Email
      *
      * @return $this
      */
-    #[\ReturnTypeWillChange]
-    public function addTo(...$addresses)//: static
+    public function addTo(...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
 
@@ -937,8 +923,7 @@ class Mail extends Email
      *
      * @return $this
      */
-    #[\ReturnTypeWillChange]
-    public function addCc(...$addresses)//: static
+    public function addCc(...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
 
@@ -950,8 +935,7 @@ class Mail extends Email
      *
      * @return $this
      */
-    #[\ReturnTypeWillChange]
-    public function addBcc(...$addresses)//: static
+    public function addBcc(...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
 
@@ -963,8 +947,7 @@ class Mail extends Email
      *
      * @return $this
      */
-    #[\ReturnTypeWillChange]
-    public function addFrom(...$addresses)//: static
+    public function addFrom(...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
 
@@ -976,8 +959,7 @@ class Mail extends Email
      *
      * @return $this
      */
-    #[\ReturnTypeWillChange]
-    public function addReplyTo(...$addresses)//: static
+    public function addReplyTo(...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
 

@@ -32,26 +32,24 @@ final class Check implements \ArrayAccess
     public $name;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $link;
 
     /**
-     * @var string
+     * @var int
      */
     public $state;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $message;
 
     /**
-     * Check constructor.
-     *
-     * @param array $data
+     * @param array{name: string, link?: string, state: int, message?: string} $data
      */
-    public function __construct(array $data = [])
+    public function __construct(array $data)
     {
         foreach ($data as $key => $value) {
             $this->$key = $value;
@@ -75,7 +73,7 @@ final class Check implements \ArrayAccess
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getLink()
     {
@@ -91,7 +89,7 @@ final class Check implements \ArrayAccess
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getState()
     {
@@ -99,7 +97,7 @@ final class Check implements \ArrayAccess
     }
 
     /**
-     * @param string $state
+     * @param int $state
      */
     public function setState($state)
     {
@@ -139,16 +137,16 @@ final class Check implements \ArrayAccess
     /**
      * @param string $offset
      *
-     * @return string
+     * @return string|int|null
      */
-    public function offsetGet($offset): string
+    public function offsetGet($offset): string|int|null
     {
         return $this->{'get'.$offset}();
     }
 
     /**
      * @param string $offset
-     * @param string $value
+     * @param string|int $value
      */
     public function offsetSet($offset, $value): void
     {

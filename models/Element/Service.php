@@ -230,12 +230,7 @@ class Service extends Model\AbstractModel
         return $dependencies;
     }
 
-    /**
-     * @param ElementInterface $element
-     *
-     * @return array
-     */
-    private static function getDependencyForFrontend($element)
+    private static function getDependencyForFrontend(ElementInterface $element): array
     {
         return [
             'id' => $element->getId(),
@@ -246,12 +241,7 @@ class Service extends Model\AbstractModel
         ];
     }
 
-    /**
-     * @param array $config
-     *
-     * @return DataObject\AbstractObject|Document|Asset|null
-     */
-    private static function getDependedElement($config)
+    private static function getDependedElement(array $config): Asset|Document|AbstractObject|null
     {
         if ($config['type'] == 'object') {
             return DataObject::getById($config['id']);
@@ -931,12 +921,14 @@ class Service extends Model\AbstractModel
         return $element;
     }
 
-    /** Callback for array_filter function.
+    /**
+     * Callback for array_filter function.
+     *
      * @param string $var value
      *
      * @return bool true if value is accepted
      */
-    private static function filterNullValues($var)
+    private static function filterNullValues(string $var): bool
     {
         return strlen($var) > 0;
     }
@@ -1105,10 +1097,15 @@ class Service extends Model\AbstractModel
         $key = $event->getArgument('key');
         $key = trim($key);
 
+        // replace all control/unassigned and invalid characters
+        $key = preg_replace('/[^\PCc^\PCn^\PCs]/u', '', $key);
         // replace all 4 byte unicode characters
         $key = preg_replace('/[\x{10000}-\x{10FFFF}]/u', '-', $key);
         // replace slashes with a hyphen
         $key = str_replace('/', '-', $key);
+
+        // replace some other special characters
+        $key = preg_replace('/[\t\n\r\f\v]/', '', $key);
 
         if ($type === 'object') {
             $key = preg_replace('/[<>]/', '-', $key);

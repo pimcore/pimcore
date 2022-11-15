@@ -17,8 +17,8 @@ namespace Pimcore\Tests\Model\Inheritance;
 
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Inheritance;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class ObjectbrickTest

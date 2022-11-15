@@ -99,12 +99,7 @@ trait EmbeddedMetaDataTrait
         return $embeddedMetaData;
     }
 
-    /**
-     * @param array $tempArray
-     *
-     * @return array
-     */
-    private function flattenArray(array $tempArray)
+    private function flattenArray(array $tempArray): array
     {
         array_walk($tempArray, function (&$value) {
             if (is_array($value)) {

@@ -91,7 +91,11 @@ final class ObjectFieldGetter extends AbstractOperator
                     if ($o instanceof Concrete) {
                         if ($this->attribute && method_exists($o, $getter)) {
                             $targetValue = $o->$getter();
-                            $newValues[] = $targetValue;
+                            if (is_array($targetValue)) {
+                                $newValues = array_merge($newValues, $targetValue);
+                            } else {
+                                $newValues[] = $targetValue;
+                            }
                         }
                     }
                 }

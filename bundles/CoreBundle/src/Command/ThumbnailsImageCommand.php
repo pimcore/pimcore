@@ -96,7 +96,7 @@ class ThumbnailsImageCommand extends AbstractCommand
         }
     }
 
-    protected function fetchItems(InputInterface $input): array
+    protected function fetchItems(InputInterface $input, OutputInterface $output): array
     {
         $list = new Asset\Listing();
 
@@ -198,9 +198,6 @@ class ThumbnailsImageCommand extends AbstractCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param string $thumbnailConfigName
-     *
      * @return Asset\Image\Thumbnail\Config[]
      */
     private function fetchThumbnailConfigs(InputInterface $input, string $thumbnailConfigName): array
@@ -243,8 +240,8 @@ class ThumbnailsImageCommand extends AbstractCommand
         return $thumbnailsToGenerate;
     }
 
-    protected function getItemName(int $count): string
+    protected function getItemName(?int $count): string
     {
-        return $count == 1 ? 'thumbnail' : 'thumbnails';
+        return $count === 1 ? 'thumbnail' : 'thumbnails';
     }
 }

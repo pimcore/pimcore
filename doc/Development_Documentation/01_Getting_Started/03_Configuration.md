@@ -9,7 +9,7 @@ Pimcore's configuration can be found in several places:
 
 ## Symfony Configuration
 
-Many aspects of Pimcore can be configured through the [Symfony Config](https://symfony.com/doc/5.2/bundles/configuration.html)
+Many aspects of Pimcore can be configured through the [Symfony Config](https://symfony.com/doc/current/bundles/configuration.html)
 tree defined under the `pimcore` and `pimcore_admin` extension. These values can be changed through config files in `config` (e.g. `config/config.yaml)`).
 
 Pimcore additionally includes a set of standard configuration files which, in contrast to a standard Symfony project, are
@@ -93,7 +93,7 @@ bootstrapping (loading the autoloader, parsing constants, ...) is done, but **be
 This gives you the possibility to reconfigure environment settings before they are used and to configure the system for
 your needs. Examples:
 
-* Defining the [Trusted Proxies](https://symfony.com/doc/5.2/deployment/proxies.html) configuration on the `Request` object
+* Defining the [Trusted Proxies](https://symfony.com/doc/current/deployment/proxies.html) configuration on the `Request` object
 * Influencing the default [environment handling](../21_Deployment/03_Configuration_Environments.md)
 
 ```php

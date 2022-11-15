@@ -60,7 +60,7 @@ class Navigation implements RuntimeExtensionInterface
 
     /**
      * Builds a navigation container by passing params
-     * Possible config params are: 'root', 'htmlMenuPrefix', 'pageCallback', 'cache', 'maxDepth', 'active'
+     * Possible config params are: 'root', 'htmlMenuPrefix', 'pageCallback', 'cache', 'cacheLifetime', 'maxDepth', 'active', 'markActiveTrail'
      *
      * @param array $params
      *

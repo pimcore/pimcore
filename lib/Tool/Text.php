@@ -59,7 +59,7 @@ class Text
                 $linkAttr = null;
                 $path = null;
                 $additionalAttributes = [];
-                $id = $idMatches[0];
+                $id = (int) $idMatches[0];
                 $type = $typeMatches[0];
                 $element = Element\Service::getElementById($type, $id);
                 $oldTag = $matches[0][$i];
@@ -185,12 +185,7 @@ class Text
         return $text;
     }
 
-    /**
-     * @param string $text
-     *
-     * @return array
-     */
-    private static function getElementsTagsInWysiwyg($text)
+    private static function getElementsTagsInWysiwyg(string $text): array
     {
         if (!is_string($text) || strlen($text) < 1) {
             return [];
@@ -209,12 +204,7 @@ class Text
         return $matches;
     }
 
-    /**
-     * @param string $text
-     *
-     * @return array
-     */
-    private static function getElementsInWysiwyg($text)
+    private static function getElementsInWysiwyg(string $text): array
     {
         $hash = 'elements_wysiwyg_text_' . md5($text);
         if (RuntimeCache::isRegistered($hash)) {

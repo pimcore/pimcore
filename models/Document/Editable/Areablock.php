@@ -182,10 +182,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
                 $disabled = true;
             }
 
-            if (!$this->getEditableHandler()->isBrickEnabled($this, $index['type']) && ($config['dontCheckEnabled'] ?? false) !== true) {
-                $disabled = true;
-            }
-
             $this->blockStarted = false;
             $info = $this->buildInfoObject();
 
@@ -320,10 +316,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         $this->getBlockState()->popIndex();
     }
 
-    /**
-     * @return array
-     */
-    private function getToolBarDefaultConfig()
+    private function getToolBarDefaultConfig(): array
     {
         return [
             'areablock_toolbar' => [
@@ -580,13 +573,8 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
     /**
      * Sorts areas by index (sorting option) first, then by name
-     *
-     * @param array $areas
-     * @param array $config
-     *
-     * @return array
      */
-    private function sortAvailableAreas(array $areas, array $config)
+    private function sortAvailableAreas(array $areas, array $config): array
     {
         if (isset($config['sorting']) && is_array($config['sorting']) && count($config['sorting'])) {
             $sorting = $config['sorting'];

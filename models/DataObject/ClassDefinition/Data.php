@@ -1016,7 +1016,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . '($language = null)' . $typeDeclaration . "\n";
+        $code .= 'public function get' . ucfirst($key) . '(?string $language = null)' . $typeDeclaration . "\n";
         $code .= '{' . "\n";
 
         $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
@@ -1069,7 +1069,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
         $code .= '* @return $this' . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . ', $language = null): static' . "\n";
+        $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . ', ?string $language = null): static' . "\n";
         $code .= '{' . "\n";
 
         if ($this->supportsDirtyDetection()) {
@@ -1330,7 +1330,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
                                     $items = $container->getItems();
                                 }
 
-                                if ($items && count($items) > $originalIndex) {
+                                if ($items && (count($items) > $originalIndex || count($items) > --$originalIndex)) {
                                     $item = $items[$originalIndex];
 
                                     if ($context['containerType'] === 'block') {

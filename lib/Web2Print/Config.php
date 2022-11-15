@@ -30,10 +30,7 @@ final class Config
      */
     private static ?LocationAwareConfigRepository $locationAwareConfigRepository = null;
 
-    /**
-     * @return LocationAwareConfigRepository
-     */
-    private static function getRepository()
+    private static function getRepository(): LocationAwareConfigRepository
     {
         if (!self::$locationAwareConfigRepository) {
             $config = [];

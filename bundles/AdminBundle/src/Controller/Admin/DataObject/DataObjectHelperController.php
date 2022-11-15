@@ -555,7 +555,6 @@ class DataObjectHelperController extends AdminController
             'availableConfigs' => $availableConfigs,
             'sharedConfigs' => $sharedConfigs,
             'context' => $context,
-            'sqlFilter' => $gridConfig['sqlFilter'] ?? '',
             'searchFilter' => $gridConfig['searchFilter'] ?? '',
         ];
     }
@@ -1237,7 +1236,7 @@ class DataObjectHelperController extends AdminController
         return $response;
     }
 
-    private function getDataPreview($originalFile, $dialect)
+    private function getDataPreview($originalFile, $dialect): array
     {
         $count = 0;
         $data = [];

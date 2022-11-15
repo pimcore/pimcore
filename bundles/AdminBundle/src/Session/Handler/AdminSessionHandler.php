@@ -41,13 +41,6 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      */
     private $openedSessions = 0;
 
-    /**
-     * @deprecated
-     *
-     * @var SessionInterface
-     */
-    protected $session;
-
     protected $readOnlySessionBagsCache = [];
 
     /**
@@ -80,21 +73,9 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
         return $this->getSession()->getId();
     }
 
-    /**
-     * @return SessionInterface
-     */
-    private function getSession()
+    private function getSession(): SessionInterface
     {
-        try {
-            return $this->requestHelper->getSession();
-        } catch (\LogicException $e) {
-            $this->logger->debug('Error while getting the admin session: {exception}', ['exception' => $e->getMessage()]);
-        }
-
-        trigger_deprecation('pimcore/pimcore', '10.5',
-            sprintf('Session used with non existing request stack in %s, that will not be possible in Pimcore 11.', __CLASS__));
-
-        return \Pimcore::getContainer()->get('session');
+        return $this->requestHelper->getSession();
     }
 
     /**
@@ -292,17 +273,11 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
         }
     }
 
-    /**
-     * @return bool
-     */
     private function shouldWriteAndClose(): bool
     {
         return $this->canWriteAndClose ??= $this->isAdminRequest($this->requestHelper->getMainRequest());
     }
 
-    /**
-     * @return bool
-     */
     private function isAdminRequest(Request $request): bool
     {
         return $this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN)

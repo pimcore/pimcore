@@ -263,6 +263,25 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     /**
      * {@inheritdoc}
      */
+    protected function getDataEditmode()
+    {
+        $data = $this->getData();
+
+        $poster = Asset::getById($this->poster);
+        if ($poster) {
+            $data['poster'] = $poster->getRealFullPath();
+        }
+
+        if ($this->type === self::TYPE_ASSET && ($video = Asset::getById($this->id))) {
+            $data['path'] = $video->getRealFullPath();
+        }
+
+        return $data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getDataForResource()
     {
         return [
@@ -500,12 +519,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->getEmptyCode();
     }
 
-    /**
-     * @param Asset\Video $asset
-     *
-     * @return Asset\Image\Thumbnail|Asset\Video\ImageThumbnail
-     */
-    private function getPosterThumbnailImage(Asset\Video $asset)
+    private function getPosterThumbnailImage(Asset\Video $asset): Asset\Video\ImageThumbnail|Asset\Image\Thumbnail
     {
         $config = $this->getConfig();
         if (!array_key_exists('imagethumbnail', $config) || empty($config['imagethumbnail'])) {
@@ -538,24 +552,30 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $asset->getImageThumbnail($imageThumbnailConf);
     }
 
-    /**
-     * @return string
-     */
-    private function getUrlCode()
+    private function getUrlCode(): string
     {
         return $this->getHtml5Code(['mp4' => (string) $this->id]);
     }
 
-    /**
-     * @param string $message
-     *
-     * @return string
-     */
-    private function getErrorCode($message = '')
+    private function getErrorCode(string $message = ''): string
     {
         $width = $this->getWidth();
-        if (strpos($this->getWidth(), '%') === false) {
-            $width = ((int)$this->getWidth() - 1) . 'px';
+        // If contains at least one digit (0-9), then assume it is a value that can be calculated,
+        // otherwise it is likely be `auto`,`inherit`,etc..
+        if (preg_match('/[\d]/', $width)) {
+            // when is numeric, assume there are no length units nor %, and considering the value as pixels
+            if (is_numeric($width)) {
+                $width .= 'px';
+            }
+            $width = 'calc(' . $width . ' - 1px)';
+        }
+
+        $height = $this->getHeight();
+        if (preg_match('/[\d]/', $height)) {
+            if (is_numeric($height)) {
+                $height .= 'px';
+            }
+            $height = 'calc(' . $height . ' - 1px)';
         }
 
         // only display error message in debug mode
@@ -565,7 +585,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
         $code = '
         <div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video">
-            <div class="pimcore_editable_video_error" style="text-align:center; width: ' . $width . '; height: ' . ($this->getHeight() - 1) . 'px; border:1px solid #000; background: url(/bundles/pimcoreadmin/img/filetype-not-supported.svg) no-repeat center center #fff;">
+            <div class="pimcore_editable_video_error" style="text-align:center; width: ' . $width . '; height: ' . $height . '; border:1px solid #000; background: url(/bundles/pimcoreadmin/img/filetype-not-supported.svg) no-repeat center center #fff;">
                 ' . $message . '
             </div>
         </div>';
@@ -576,7 +596,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     /**
      * @return string
      */
-    private function parseYoutubeId()
+    private function parseYoutubeId(): string
     {
         $youtubeId = '';
         if ($this->type === self::TYPE_YOUTUBE) {
@@ -857,13 +877,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->getEmptyCode();
     }
 
-    /**
-     * @param array $urls
-     * @param Asset\Image\Thumbnail|Asset\Video\ImageThumbnail|null $thumbnail
-     *
-     * @return string
-     */
-    private function getHtml5Code($urls = [], $thumbnail = null)
+    private function getHtml5Code(array $urls = [], Asset\Video\ImageThumbnail|Asset\Image\Thumbnail $thumbnail = null): string
     {
         $code = '';
         $video = $this->getVideoAsset();
@@ -986,12 +1000,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $code;
     }
 
-    /**
-     * @param string|null $thumbnail
-     *
-     * @return string
-     */
-    private function getProgressCode($thumbnail = null)
+    private function getProgressCode(string $thumbnail = null): string
     {
         $uid = $this->getUniqId();
         $code = '
@@ -1022,9 +1031,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $code;
     }
 
-    /**
-     * @return string
-     */
     private function getEmptyCode(): string
     {
         $uid = 'video_' . uniqid();

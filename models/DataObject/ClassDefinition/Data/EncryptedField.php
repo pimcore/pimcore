@@ -85,7 +85,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      *
      * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return mixed
      */
@@ -109,16 +109,10 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /**
-     * @param mixed $data
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
-     *
      * @throws \Defuse\Crypto\Exception\BadFormatException
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
-    private function encrypt($data, $object, $params = [])
+    private function encrypt(mixed $data, Model\DataObject\Concrete $object, array $params): string
     {
         if (!is_null($data)) {
             $key = \Pimcore::getContainer()->getParameter('pimcore.encryption.secret');
@@ -142,15 +136,9 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /**
-     * @param string|null $data
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string|null
-     *
      * @throws \Exception
      */
-    private function decrypt($data, $object, $params = [])
+    private function decrypt(?string $data, Model\DataObject\Concrete $object, array $params): ?string
     {
         if ($data) {
             try {
@@ -195,7 +183,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      *
      * @param string $data
      * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return Model\DataObject\Data\EncryptedField|null
      */

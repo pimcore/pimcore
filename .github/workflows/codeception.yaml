@@ -9,16 +9,16 @@ on:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"
         paths-ignore:
-            - 'docs/**'
-            - 'bundles/**/Resources/public/**'
+            - 'doc/**'
+            - 'bundles/**/public/**'
     push:
         branches:
             - "[0-9]+.[0-9]+"
             - "[0-9]+.x"
             - "*_actions"
         paths-ignore:
-            - 'docs/**'
-            - 'bundles/**/Resources/public/**'
+            - 'doc/**'
+            - 'bundles/**/public/**'
 
 env:
     PIMCORE_PROJECT_ROOT: ${{ github.workspace }}
@@ -40,7 +40,7 @@ jobs:
         strategy:
             matrix:
                 include:
-                    - { php-version: 8.1, database: "mariadb:10.6", dependencies: highest, experimental: true, storage: local, symfony: "5.4.x-dev", composer-options: "" }
+                    - { php-version: 8.1, database: "mariadb:10.6", dependencies: highest, experimental: true, storage: local, symfony: "6.2.x-dev", composer-options: "" }
                     - { php-version: 8.1, database: "mariadb:10.7", dependencies: highest, experimental: false, storage: local, symfony: "", composer-options: "" }
                     - { php-version: 8.1, database: "mariadb:10.3", dependencies: lowest, experimental: false, storage: local, symfony: "", composer-options: "" }
                     - { php-version: 8.1, database: "mysql:8.0", dependencies: lowest, experimental: false, storage: local, symfony: "", composer-options: "" }
@@ -121,4 +121,4 @@ jobs:
                   ./bin/console debug:config flysystem
 
             - name: "Run Codeception"
-              run: "vendor/bin/codecept run -c . -vvv --json"
+              run: "vendor/bin/codecept run -c . -vvv --xml"
