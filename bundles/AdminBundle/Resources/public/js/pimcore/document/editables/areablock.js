@@ -1057,6 +1057,22 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
                 items: buttons
             });
 
+            Ext.on('resize', function() {
+                var winH = 0;
+                if (document.body && document.body.offsetHeight) {
+                    winH = document.body.offsetHeight;
+                }
+                if (document.compatMode=='CSS1Compat' && document.documentElement && document.documentElement.offsetHeight ) {
+                    winH = document.documentElement.offsetHeight;
+                }
+                if (window.innerHeight) {
+                    winH = window.innerHeight;
+                }   
+                winH -= 15;
+    
+                toolbar.setMaxHeight(winH);
+            }, this);
+
             toolbar.show();
 
             pimcore.document.editables[this.toolbarGlobalVar] = {
