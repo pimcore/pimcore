@@ -147,7 +147,6 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
                 this.window.setWidth(size.width);
             }
             this.window.center();
-            // console.log(this.getHeight() + "hello" + this.getWidth());
         }, this);
     },
 
