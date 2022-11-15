@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,16 +30,34 @@ use Pimcore\Tests\Support\Util\TestHelper;
 
 abstract class AbstractDataTypeTestCase extends TestCase
 {
-    protected bool $cleanupDbInSetup = true;
+    /**
+     * @var bool
+     */
+    protected $cleanupDbInSetup = true;
 
-    protected TestDataHelper $testDataHelper;
+    /**
+     * @var TestDataHelper
+     */
+    protected $testDataHelper;
 
-    protected int $seed = 1;
+    /**
+     * @var int
+     */
+    protected $seed = 1;
 
-    protected Unittest $testObject;
+    /**
+     * @var Unittest
+     */
+    protected $testObject;
 
-    protected Unittest $comparisonObject;
+    /**
+     * @var Unittest
+     */
+    protected $comparisonObject;
 
+    /**
+     * @param TestDataHelper $testData
+     */
     public function _inject(TestDataHelper $testData)
     {
         $this->testDataHelper = $testData;
@@ -49,11 +66,8 @@ abstract class AbstractDataTypeTestCase extends TestCase
     /**
      * Calls fill* methods on the object as needed in test
      *
-     * @param Concrete     $object
-     * @param array|string $fields
-     * @param array $returnData
      */
-    protected function fillObject(Concrete $object, array|string $fields = [], array &$returnData = [])
+    protected function fillObject(Concrete $object, array|string $fields = [], ?array &$returnData = [])
     {
         // allow to pass only a string (e.g. input) -> fillInput($object, "input", $seed)
         if (!is_array($fields)) {
@@ -82,12 +96,13 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
             $methodArguments = [$object, $field['field'], $this->seed];
 
-            $additionalArguments = isset($field['arguments']) ? $field['arguments'] : [];
+            $additionalArguments = $field['arguments'] ?? [];
             foreach ($additionalArguments as $aa) {
                 $methodArguments[] = $aa;
             }
-
-            $methodArguments[] = &$returnData;
+            if (isset(func_get_args()[2])) {
+                $methodArguments[] = &$returnData;
+            }
 
             call_user_func_array([$this->testDataHelper, $method], $methodArguments);
         }
@@ -96,7 +111,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function needsDb(): bool
+    protected function needsDb()
     {
         return true;
     }
@@ -109,7 +124,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertBooleanSelect($this->testObject, 'booleanSelect', $this->seed);
     }
 
-    abstract protected function createTestObject(array $fields = [], array &$params = []): Unittest;
+    abstract protected function createTestObject(array $fields = [], ?array &$params = []): Unittest;
 
     abstract public function refreshObject();
 
@@ -713,7 +728,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
     public function testQuantityValue()
     {
-        $returnData = [];
         $this->createTestObject('quantityValue', $returnData);
 
         $this->refreshObject();
@@ -830,6 +844,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     public function testVideo()
     {
         $returnData = [];
+
         $this->createTestObject('video', $returnData);
 
         $this->refreshObject();

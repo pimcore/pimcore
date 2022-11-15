@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,6 +15,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Support\Util;
 
+use Exception;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -26,6 +26,7 @@ use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Tag;
+use Pimcore\Model\Element\ValidationException;
 use Pimcore\Model\Property;
 use Pimcore\Tests\Support\Helper\DataType\TestDataHelper;
 use Pimcore\Tool;
@@ -40,7 +41,6 @@ class TestHelper
      * Constant will be defined upon suite initialization and will result to true
      * if we have a valid DB configuration.
      *
-     * @return bool
      */
     public static function supportsDbTests(): bool
     {
@@ -58,11 +58,9 @@ class TestHelper
     }
 
     /**
-     * @param \Pimcore\Model\Property[] $properties
+     * @param Property[] $properties
      *
-     * @return array
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     protected static function createPropertiesComparisonString(array $properties): array
     {
@@ -87,7 +85,7 @@ class TestHelper
                 } elseif (in_array($value->getType(), ['text', 'select'])) {
                     $propertiesStringArray['property_' . $key . '_' . $value->getType()] = 'property_' . $key . '_' . $value->getType() . ':' . $value->getData();
                 } else {
-                    throw new \Exception('Unknown property of type [ ' . $value->getType() . ' ]');
+                    throw new Exception('Unknown property of type [ ' . $value->getType() . ' ]');
                 }
             }
         }
@@ -95,6 +93,9 @@ class TestHelper
         return $propertiesStringArray;
     }
 
+    /**
+     * @throws Exception
+     */
     public static function createAssetComparisonString(Asset $asset, bool $ignoreCopyDifferences = false): ?string
     {
         if ($asset instanceof Asset) {
@@ -131,6 +132,9 @@ class TestHelper
         return null;
     }
 
+    /**
+     * @throws Exception
+     */
     public static function assetsAreEqual(Asset $asset1, Asset $asset2, bool $ignoreCopyDifferences = false, bool $id = false): bool
     {
         if ($asset1 instanceof Asset and $asset2 instanceof Asset) {
@@ -143,6 +147,9 @@ class TestHelper
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public static function createDocumentComparisonString(Document $document, bool $ignoreCopyDifferences = false): ?string
     {
         if ($document instanceof Document) {
@@ -199,6 +206,9 @@ class TestHelper
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public static function documentsAreEqual(Document $doc1, Document $doc2, bool $ignoreCopyDifferences = false): bool
     {
         if ($doc1 instanceof Document and $doc2 instanceof Document) {
@@ -211,7 +221,7 @@ class TestHelper
         }
     }
 
-    public static function getComparisonDataForField(string $key, ObjectModel\ClassDefinition\Data $fd, AbstractObject $object): array|string
+    public static function getComparisonDataForField(string $key, ObjectModel\ClassDefinition\Data $fd, AbstractObject $object): string|array|null
     {
         // omit password, this one we don't get through WS,
         // omit non owner objects, they don't get through WS,
@@ -282,8 +292,13 @@ class TestHelper
         } elseif (method_exists($object, $getter) && !$fd instanceof ObjectModel\ClassDefinition\Data\Password && !$fd instanceof ObjectModel\ClassDefinition\Data\ReverseObjectRelation) {
             return $fd->getForCsvExport($object);
         }
+
+        return null;
     }
 
+    /**
+     * @throws Exception
+     */
     public static function createObjectComparisonString(AbstractObject $object, bool $ignoreCopyDifferences = false): ?string
     {
         if ($object instanceof AbstractObject) {
@@ -318,6 +333,9 @@ class TestHelper
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public static function objectsAreEqual(AbstractObject $object1, AbstractObject $object2, bool $ignoreCopyDifferences = false): bool
     {
         if ($object1 instanceof AbstractObject and $object2 instanceof AbstractObject) {
@@ -333,14 +351,9 @@ class TestHelper
     }
 
     /**
-     * @param string $keyPrefix
-     * @param bool $save
-     * @param bool $publish
-     * @param string|null $type
-     *
-     * @return Concrete
+     * @throws Exception
      */
-    public static function createEmptyObject(string $keyPrefix = '', bool $save = true, bool $publish = true, string $type = null): Concrete
+    public static function createEmptyObject(string $keyPrefix = '', bool $save = true, bool $publish = true, ?string $type = null): Concrete
     {
         if (null === $keyPrefix) {
             $keyPrefix = '';
@@ -370,6 +383,9 @@ class TestHelper
         return $emptyObject;
     }
 
+    /**
+     * @throws ValidationException
+     */
     public static function createObjectFolder(string $keyPrefix = '', bool $save = true): DataObject\Folder
     {
         if (null === $keyPrefix) {
@@ -391,11 +407,9 @@ class TestHelper
     }
 
     /**
-     * @param string $keyPrefix
-     * @param bool $save
-     * @param int $count
-     *
      * @return Unittest[]
+     *
+     * @throws Exception
      */
     public static function createEmptyObjects(string $keyPrefix = '', bool $save = true, int $count = 10): array
     {
@@ -407,6 +421,9 @@ class TestHelper
         return $result;
     }
 
+    /**
+     * @throws Exception
+     */
     public static function createFullyFledgedObject(TestDataHelper $testDataHelper, string $keyPrefix = '', bool $save = true, bool $publish = true, int $seed = 1): Unittest
     {
         if (null === $keyPrefix) {
@@ -472,7 +489,7 @@ class TestHelper
         return $object;
     }
 
-    public static function createEmptyDocument(string $keyPrefix = '', bool $save = true, bool $publish = true, $type = '\\Pimcore\\Model\\Document\\Page'): Document
+    public static function createEmptyDocument(?string $keyPrefix = '', bool $save = true, bool $publish = true, string $type = '\\Pimcore\\Model\\Document\\Page'): Document
     {
         if (null === $keyPrefix) {
             $keyPrefix = '';
@@ -496,12 +513,15 @@ class TestHelper
         return $document;
     }
 
-    public static function createEmptyDocumentPage(string $keyPrefix = '', bool $save = true, bool $publish = true): Document\Page|Document
+    public static function createEmptyDocumentPage(?string $keyPrefix = '', bool $save = true, bool $publish = true): Document\Page
     {
         return self::createEmptyDocument($keyPrefix, $save, $publish);
     }
 
-    public static function createDocumentFolder(string $keyPrefix = '', bool $save = true): Document\Folder
+    /**
+     * @throws Exception
+     */
+    public static function createDocumentFolder(?string $keyPrefix = '', bool $save = true): Document\Folder
     {
         if (null === $keyPrefix) {
             $keyPrefix = '';
@@ -522,14 +542,9 @@ class TestHelper
     }
 
     /**
-     * @param string $keyPrefix
-     * @param string|null $data
-     * @param bool $save
-     * @param string $filePath
-     *
-     * @return Asset\Image
+     * @throws Exception
      */
-    public static function createImageAsset(string $keyPrefix = '', string $data = null, bool $save = true, string $filePath = 'assets/images/image5.jpg'): Asset\Image
+    public static function createImageAsset(string $keyPrefix = '', ?string $data = null, bool $save = true, string $filePath = 'assets/images/image5.jpg'): Asset\Image
     {
         if (!$data) {
             $path = static::resolveFilePath($filePath);
@@ -566,13 +581,9 @@ class TestHelper
     }
 
     /**
-     * @param string $keyPrefix
-     * @param string|null $data
-     * @param bool $save
-     *
-     * @return Asset\Document
+     * @throws Exception
      */
-    public static function createDocumentAsset(string $keyPrefix = '', string $data = null, bool $save = true): Asset\Document
+    public static function createDocumentAsset(string $keyPrefix = '', ?string $data = null, bool $save = true): Asset\Document
     {
         if (!$data) {
             $path = static::resolveFilePath('assets/document/sonnenblume.pdf');
@@ -609,13 +620,9 @@ class TestHelper
     }
 
     /**
-     * @param string $keyPrefix
-     * @param string|null $data
-     * @param bool $save
-     *
-     * @return Asset\Video
+     * @throws Exception
      */
-    public static function createVideoAsset(string $keyPrefix = '', string $data = null, bool $save = true): Asset\Video
+    public static function createVideoAsset(string $keyPrefix = '', ?string $data = null, bool $save = true): Asset\Video
     {
         if (!$data) {
             $path = static::resolveFilePath('assets/video/example.mp4');
@@ -651,6 +658,9 @@ class TestHelper
         return $asset;
     }
 
+    /**
+     * @throws Exception
+     */
     public static function createAssetFolder(string $keyPrefix = '', bool $save = true): Asset\Folder
     {
         if (null === $keyPrefix) {
@@ -695,10 +705,8 @@ class TestHelper
 
     /**
      * Clean up directory, deleting files one by one
-     *
-     * @param \Traversable|string|Finder $directory
      */
-    public static function cleanupDirectory(\Traversable|string|Finder $directory): void
+    public static function cleanupDirectory(string|\Traversable|Finder $directory): void
     {
         $files = null;
         if ($directory instanceof \Traversable) {
@@ -749,6 +757,9 @@ class TestHelper
         \Pimcore::collectGarbage();
     }
 
+    /**
+     * @throws Exception
+     */
     public static function cleanUpTree(?ElementInterface $root, string $type): void
     {
         if (!($root instanceof AbstractObject || $root instanceof Document || $root instanceof Asset)) {
@@ -780,8 +791,6 @@ class TestHelper
 
     /**
      * Returns the total number of objects.
-     *
-     * @return int
      */
     public static function getObjectCount(): int
     {
@@ -793,8 +802,6 @@ class TestHelper
 
     /**
      * Returns the total number of assets.
-     *
-     * @return int
      */
     public static function getAssetCount(): int
     {
@@ -806,8 +813,6 @@ class TestHelper
 
     /**
      * Returns the total number of documents.
-     *
-     * @return int
      */
     public static function getDocumentCount(): int
     {
@@ -819,10 +824,6 @@ class TestHelper
 
     /**
      * Resolve path to resource path
-     *
-     * @param string $path
-     *
-     * @return string
      */
     public static function resolveFilePath(string $path): string
     {
@@ -859,11 +860,7 @@ class TestHelper
     }
 
     /**
-     * @param int $angle
-     *
-     * @return Asset\Image\Thumbnail\Config
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function createThumbnailConfigurationRotate(int $angle = 90): Asset\Image\Thumbnail\Config
     {
@@ -881,12 +878,8 @@ class TestHelper
     }
 
     /**
-     * @param int $width
-     * @param false $forceResize
      *
-     * @return Asset\Image\Thumbnail\Config
-     *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function createThumbnailConfigurationScaleByWidth(int $width = 256, bool $forceResize = false): Asset\Image\Thumbnail\Config
     {
@@ -905,12 +898,6 @@ class TestHelper
 
     /**
      * This function allows to call private and protected methods
-     *
-     * @param object|string $obj
-     * @param string $name
-     * @param array $args
-     *
-     * @return mixed
      *
      * @throws \ReflectionException
      */

@@ -152,8 +152,9 @@ trait Dao
     protected function removeIndices(string $table, array $columnsToRemove, array $protectedColumns): void
     {
         if (is_array($columnsToRemove) && count($columnsToRemove) > 0) {
+            $lowerCaseColumns = array_map('strtolower', $protectedColumns);
             foreach ($columnsToRemove as $value) {
-                if (!in_array(strtolower($value), array_map('strtolower', $protectedColumns))) {
+                if (!in_array(strtolower($value), $lowerCaseColumns)) {
                     Helper::queryIgnoreError($this->db, 'ALTER TABLE `'.$table.'` DROP INDEX `u_index_'. $value . '`;');
                 }
             }

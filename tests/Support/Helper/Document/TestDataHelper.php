@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * Pimcore
@@ -46,7 +45,7 @@ use Pimcore\Tests\Support\Util\TestHelper;
 
 class TestDataHelper extends AbstractTestDataHelper
 {
-    public function assertAreablock(PageSnippet $pagesnippet, string $field, int $seed = 1)
+    public function assertAreablock(PageSnippet $pagesnippet, string $field, int $seed = 1): void
     {
         /** @var Areablock $editable */
         $editable = $pagesnippet->getEditable($field);
@@ -58,11 +57,6 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    /**
-     * @param int $seed
-     *
-     * @return array[]
-     */
     public function createAreablockData(int $seed = 1): array
     {
         return [
@@ -79,7 +73,7 @@ class TestDataHelper extends AbstractTestDataHelper
         ];
     }
 
-    public function assertCheckbox(PageSnippet $pagesnippet, string $field, int $seed = 1)
+    public function assertCheckbox(PageSnippet $pagesnippet, string $field, int $seed = 1): void
     {
         /** @var Checkbox $editable */
         $editable = $pagesnippet->getEditable($field);
@@ -90,7 +84,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    public function assertDate(PageSnippet $pagesnippet, string $field, int $seed = 1)
+    public function assertDate(PageSnippet $pagesnippet, string $field, int $seed = 1): void
     {
         /** @var Date $editable */
         $editable = $pagesnippet->getEditable($field);
@@ -102,7 +96,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value->getTimestamp());
     }
 
-    public function assertEmbed(Page $page, string $field, int $seed = 1)
+    public function assertEmbed(Page $page, string $field, int $seed = 1): void
     {
         /** @var Embed $editable */
         $editable = $page->getEditable($field);
@@ -112,7 +106,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals('http://someurl' . $seed, $value);
     }
 
-    public function assertImage(PageSnippet $pagesnippet, string $field, int $seed = 1, array $params = [])
+    public function assertImage(PageSnippet $pagesnippet, string $field, int $seed = 1, array $params = []): void
     {
         /** @var Image $editable */
         $editable = $pagesnippet->getEditable($field);
@@ -124,7 +118,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expectedImage->getId(), $value->getId());
     }
 
-    public function assertInput(PageSnippet $pagesnippet, string $field, int $seed = 1)
+    public function assertInput(PageSnippet $pagesnippet, string $field, int $seed = 1): void
     {
         /** @var Input $editable */
         $editable = $pagesnippet->getEditable($field);
@@ -134,7 +128,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals('content' . $seed, $value);
     }
 
-    public function assertLink(PageSnippet $pagesnippet, string $field, int $seed = 1, $params = [])
+    public function assertLink(PageSnippet $pagesnippet, string $field, int $seed = 1, array $params = []): void
     {
         /** @var Link $editable */
         $editable = $pagesnippet->getEditable($field);
@@ -152,7 +146,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals('_blank', $editable->getTarget());
     }
 
-    public function assertMultiselect(PageSnippet $pagesnippet, string $field, int $seed = 1)
+    public function assertMultiselect(PageSnippet $pagesnippet, string $field, int $seed = 1): void
     {
         /** @var Select $editable */
         $editable = $pagesnippet->getEditable($field);
@@ -163,7 +157,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $editable->getValue());
     }
 
-    public function assertNumeric(PageSnippet $pagesnippet, string $field, int $seed = 1)
+    public function assertNumeric(PageSnippet $pagesnippet, string $field, int $seed = 1): void
     {
         /** @var Numeric $editable */
         $editable = $pagesnippet->getEditable($field);
@@ -173,7 +167,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals(123 + $seed, $value);
     }
 
-    public function assertPdf(PageSnippet $pagesnippet, string $field, int $seed = 1, array $params = [])
+    public function assertPdf(PageSnippet $pagesnippet, string $field, int $seed = 1, array $params = []): void
     {
         /** @var Pdf $editable */
         $editable = $pagesnippet->getEditable($field);
@@ -185,7 +179,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expectedPdf->getId(), $value->getId());
     }
 
-    public function assertRelation(PageSnippet $pagesnippet, string $field, int $seed = 1, $params = [])
+    public function assertRelation(PageSnippet $pagesnippet, string $field, int $seed = 1, array $params = []): void
     {
         /** @var Relation $editable */
         $editable = $pagesnippet->getEditable($field);
@@ -198,7 +192,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expectedTarget->getType(), $value->getType());
     }
 
-    public function assertRelations(PageSnippet $pagesnippet, string $field, int $seed = 1, $params = [])
+    public function assertRelations(PageSnippet $pagesnippet, string $field, int $seed = 1, array $params = []): void
     {
         /** @var Relations $editable */
         $editable = $pagesnippet->getEditable($field);
@@ -215,7 +209,7 @@ class TestDataHelper extends AbstractTestDataHelper
         }
     }
 
-    public function assertScheduledblock(Page $page, string $field, int $seed = 1)
+    public function assertScheduledblock(Page $page, string $field, int $seed = 1): void
     {
         /** @var Scheduledblock $editable */
         $editable = $page->getEditable($field);
@@ -227,11 +221,6 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    /**
-     * @param int $seed
-     *
-     * @return array[]
-     */
     public function createScheduledblockData(int $seed = 1): array
     {
         return [
@@ -246,7 +235,7 @@ class TestDataHelper extends AbstractTestDataHelper
         ];
     }
 
-    public function assertSelect(PageSnippet $pagesnippet, string $field, int $seed = 1)
+    public function assertSelect(PageSnippet $pagesnippet, string $field, int $seed = 1): void
     {
         /** @var Select $editable */
         $editable = $pagesnippet->getEditable($field);
@@ -257,7 +246,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $editable->getValue());
     }
 
-    public function assertTable(PageSnippet $pagesnippet, string $field, int $seed = 1)
+    public function assertTable(PageSnippet $pagesnippet, string $field, int $seed = 1): void
     {
         /** @var Table $editable */
         $editable = $pagesnippet->getEditable($field);
@@ -275,7 +264,7 @@ class TestDataHelper extends AbstractTestDataHelper
         ];
     }
 
-    public function assertVideo(PageSnippet $pagesnippet, string $field, int $seed = 1, array $params = [])
+    public function assertVideo(PageSnippet $pagesnippet, string $field, int $seed = 1, array $params = []): void
     {
         /** @var Video $editable */
         $editable = $pagesnippet->getEditable($field);
@@ -300,7 +289,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals('some description ' . $seed, $editable->getDescription());
     }
 
-    public function assertWysiwyg(PageSnippet $pagesnippet, string $field, int $seed = 1)
+    public function assertWysiwyg(PageSnippet $pagesnippet, string $field, int $seed = 1): void
     {
         /** @var Wysiwyg $editable */
         $editable = $pagesnippet->getEditable($field);
@@ -310,7 +299,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals('content<br>' . $seed, $value);
     }
 
-    public function assertTextarea(PageSnippet $pagesnippet, string $field, int $seed = 1)
+    public function assertTextarea(PageSnippet $pagesnippet, string $field, int $seed = 1): void
     {
         /** @var Textarea $editable */
         $editable = $pagesnippet->getEditable($field);
@@ -320,7 +309,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals('content<br>' . $seed, $value);
     }
 
-    public function assertBlock(PageSnippet $pagesnippet, string $field, int $seed = 1)
+    public function assertBlock(PageSnippet $pagesnippet, string $field, int $seed = 1): void
     {
         /** @var Block $editable */
         $editable = $pagesnippet->getEditable($field);
@@ -353,13 +342,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertInstanceOf(Asset\Image::class, $blockImage2->getImage());
     }
 
-    /**
-     * @param Page|null $page
-     * @param string|null $blockName
-     *
-     * @return array[]
-     */
-    public function createBlockData(Page $page = null, string $blockName = null): array
+    public function createBlockData(?Page $page = null, ?string $blockName = null): array
     {
         $asset = TestHelper::createImageAsset('blockimage-');
         $blockIndices =  [
@@ -389,7 +372,7 @@ class TestDataHelper extends AbstractTestDataHelper
         return $blockIndices;
     }
 
-    public function fillAreablock(Page $page, string $field, int $seed = 1)
+    public function fillAreablock(Page $page, string $field, int $seed = 1): void
     {
         $editable = new Areablock();
         $editable->setName($field);
@@ -398,7 +381,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $page->setEditable($editable);
     }
 
-    public function fillCheckbox(Page $page, string $field, int $seed = 1)
+    public function fillCheckbox(Page $page, string $field, int $seed = 1): void
     {
         $editable = new Checkbox();
         $editable->setName($field);
@@ -406,7 +389,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $page->setEditable($editable);
     }
 
-    public function fillDate(Page $page, string $field, int $seed = 1)
+    public function fillDate(Page $page, string $field, int $seed = 1): void
     {
         $editable = new Date();
         $editable->setName($field);
@@ -415,7 +398,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $page->setEditable($editable);
     }
 
-    public function fillEmbed(Page $page, string $field, int $seed = 1)
+    public function fillEmbed(Page $page, string $field, int $seed = 1): void
     {
         $editable = new Embed();
         $editable->setName($field);
@@ -423,7 +406,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $page->setEditable($editable);
     }
 
-    public function fillImage(Page $page, string $field, int $seed = 1, array &$returnData)
+    public function fillImage(Page $page, string $field, int $seed = 1, ?array &$returnData): void
     {
         $asset = TestHelper::createImageAsset();
         $editable = new Image();
@@ -435,7 +418,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $page->setEditable($editable);
     }
 
-    public function fillInput(Page $page, string $field, int $seed = 1)
+    public function fillInput(Page $page, string $field, int $seed = 1): void
     {
         $editable = new Input();
         $editable->setName($field);
@@ -443,7 +426,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $page->setEditable($editable);
     }
 
-    public function fillLink(Page $page, string $field, int $seed = 1, &$returnData)
+    public function fillLink(Page $page, string $field, int $seed = 1, ?array &$returnData): void
     {
         $target = TestHelper::createImageAsset();
         $editable = new Link();
@@ -465,27 +448,23 @@ class TestDataHelper extends AbstractTestDataHelper
         ];
     }
 
-    public function fillMultiselect(Page $page, string $field, int $seed = 1)
+    public function fillMultiselect(Page $page, string $field, int $seed = 1): void
     {
-        $setter = 'set' . ucfirst($field);
-
         $editable = new Multiselect();
         $editable->setName($field);
         $editable->setDataFromEditmode(['1', '2']);
         $page->setEditable($editable);
     }
 
-    public function fillNumeric(Page $page, string $field, int $seed = 1)
+    public function fillNumeric(Page $page, string $field, int $seed = 1): void
     {
-        $setter = 'set' . ucfirst($field);
-
         $editable = new Numeric();
         $editable->setName($field);
         $editable->setDataFromEditmode(123 + $seed);
         $page->setEditable($editable);
     }
 
-    public function fillPdf(Page $page, string $field, int $seed = 1, array &$returnData)
+    public function fillPdf(Page $page, string $field, int $seed = 1, ?array &$returnData): void
     {
         $pdf = TestHelper::createDocumentAsset();
         $editable = new Pdf();
@@ -497,7 +476,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $page->setEditable($editable);
     }
 
-    public function fillRelation(Page $page, string $field, int $seed = 1, &$returnData)
+    public function fillRelation(Page $page, string $field, int $seed = 1, ?array &$returnData): void
     {
         $editable = new Relation();
         $editable->setName($field);
@@ -515,7 +494,7 @@ class TestDataHelper extends AbstractTestDataHelper
         ];
     }
 
-    public function fillRelations(Page $page, string $field, int $seed = 1, &$returnData)
+    public function fillRelations(Page $page, string $field, int $seed = 1, ?array &$returnData): void
     {
         $editable = new Relations();
         $editable->setName($field);
@@ -536,7 +515,7 @@ class TestDataHelper extends AbstractTestDataHelper
         ];
     }
 
-    public function fillScheduledblock(Page $page, string $field, int $seed = 1)
+    public function fillScheduledblock(Page $page, string $field, int $seed = 1): void
     {
         $editable = new Scheduledblock();
         $editable->setName($field);
@@ -545,7 +524,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $page->setEditable($editable);
     }
 
-    public function fillSelect(Page $page, string $field, int $seed = 1)
+    public function fillSelect(Page $page, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
 
@@ -555,7 +534,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $page->setEditable($editable);
     }
 
-    public function fillTable(Page $page, string $field, int $seed = 1)
+    public function fillTable(Page $page, string $field, int $seed = 1): void
     {
         $editable = new Table();
         $editable->setName($field);
@@ -563,7 +542,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $page->setEditable($editable);
     }
 
-    public function fillVideo(Page $page, string $field, int $seed = 1, array &$returnData)
+    public function fillVideo(Page $page, string $field, int $seed = 1, ?array &$returnData): void
     {
         $video = TestHelper::createVideoAsset();
         $poster = TestHelper::createImageAsset();
@@ -585,7 +564,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $page->setEditable($editable);
     }
 
-    public function fillWysiwyg(Page $page, string $field, int $seed = 1)
+    public function fillWysiwyg(Page $page, string $field, int $seed = 1): void
     {
         $editable = new Wysiwyg();
         $editable->setName($field);
@@ -593,7 +572,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $page->setEditable($editable);
     }
 
-    public function fillTextarea(Page $page, string $field, int $seed = 1)
+    public function fillTextarea(Page $page, string $field, int $seed = 1): void
     {
         $editable = new Textarea();
         $editable->setName($field);
@@ -601,7 +580,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $page->setEditable($editable);
     }
 
-    public function fillBlock(Page $page, string $field, int $seed = 1)
+    public function fillBlock(Page $page, string $field, int $seed = 1): void
     {
         $editable = new Block();
         $editable->setName($field);

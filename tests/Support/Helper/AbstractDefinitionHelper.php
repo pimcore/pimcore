@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,15 +26,12 @@ abstract class AbstractDefinitionHelper extends Module
         'cleanup' => true,
     ];
 
-    protected function getClassManager(): ClassManager|Module
+    protected function getClassManager(): Module|ClassManager
     {
         return $this->getModule('\\' . ClassManager::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function _beforeSuite($settings = [])
+    public function _beforeSuite(array $settings = [])
     {
         if ($this->config['initialize_definitions']) {
             if (TestHelper::supportsDbTests()) {
@@ -49,9 +45,6 @@ abstract class AbstractDefinitionHelper extends Module
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function _afterSuite()
     {
         if ($this->config['cleanup']) {
@@ -59,17 +52,7 @@ abstract class AbstractDefinitionHelper extends Module
         }
     }
 
-    /**
-     * @param string $type
-     * @param string|null $name
-     * @param bool $mandatory
-     * @param int $index
-     * @param bool $visibleInGridView
-     * @param bool $visibleInSearchResult
-     *
-     * @return Data
-     */
-    public function createDataChild(string $type, string $name = null, bool $mandatory = false, int $index = 0, bool $visibleInGridView = true, bool $visibleInSearchResult = true): Data
+    public function createDataChild(string $type, ?string $name = null, bool $mandatory = false, int $index = 0, bool $visibleInGridView = true, bool $visibleInSearchResult = true): Data
     {
         if (!$name) {
             $name = $type;
