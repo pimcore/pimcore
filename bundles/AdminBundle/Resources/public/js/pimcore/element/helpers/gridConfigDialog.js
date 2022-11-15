@@ -110,9 +110,12 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
             });
         }
 
+        var windowWidth = 950;
         this.window = new Ext.Window({
-            width: 950,
+            width: windowWidth,
+            maxWidth: Ext.getBody().getViewSize().width,
             height: '95%',
+            maxHeight: Ext.getBody().getViewSize().height,
             modal: true,
             title: t('grid_options'),
             layout: "fit",
@@ -124,30 +127,12 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
         this.window.show();
         this.updatePreview();
 
-        Ext.on('resize', function() {
-            var winW = 0, winH = 0;
-            if (document.body && document.body.offsetWidth) {
-                winW = document.body.offsetWidth;
-                winH = document.body.offsetHeight;
-            }
-            if (document.compatMode=='CSS1Compat' && document.documentElement && document.documentElement.offsetWidth ) {
-                winW = document.documentElement.offsetWidth;
-                winH = document.documentElement.offsetHeight;
-            }
-            if (window.innerWidth && window.innerHeight) {
-                winW = window.innerWidth;
-                winH = window.innerHeight;
-            }   
-            var size = { width: winW, height: winH };
-
-            if (size.height < this.window.height) {
-                this.window.setHeight(size.height);
-            }
-            if (size.width < this.window.width) {
-                this.window.setWidth(size.width);
-            }
+        window.addEventListener('resize', () => {
+            this.window.setWidth(windowWidth);
+            this.window.setMaxWidth(Ext.getBody().getViewSize().width);
+            this.window.setMaxHeight(Ext.getBody().getViewSize().height);
             this.window.center();
-        }, this);
+        });
     },
 
     getConfigPanel: function() {
