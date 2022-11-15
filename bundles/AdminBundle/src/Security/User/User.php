@@ -51,9 +51,9 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
     /**
      * {@inheritdoc}
      */
-    public function getUserIdentifier(): ?string
+    public function getUserIdentifier(): string
     {
-        return $this->user->getName();
+        return $this->user->getName() ?? '';
     }
 
     public function getUser(): PimcoreUser

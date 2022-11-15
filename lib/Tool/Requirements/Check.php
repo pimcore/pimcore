@@ -89,22 +89,39 @@ final class Check implements \ArrayAccess
         $this->message = $message;
     }
 
-    public function offsetExists(string $offset): bool
+    /**
+     * @param string $offset
+     *
+     * @return bool
+     */
+    public function offsetExists($offset): bool
     {
         return isset($this->$offset);
     }
 
-    public function offsetGet(string $offset): string|int|null
+    /**
+     * @param string $offset
+     *
+     * @return string|int|null
+     */
+    public function offsetGet($offset): string|int|null
     {
         return $this->{'get'.$offset}();
     }
 
-    public function offsetSet(string $offset, string|int $value): void
+    /**
+     * @param string $offset
+     * @param string|int $value
+     */
+    public function offsetSet($offset, $value): void
     {
         $this->{'set'.$offset}($value);
     }
 
-    public function offsetUnset(string $offset): void
+    /**
+     * @param string $offset
+     */
+    public function offsetUnset($offset): void
     {
         unset($this->$offset);
     }

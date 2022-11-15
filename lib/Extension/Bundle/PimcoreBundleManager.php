@@ -46,7 +46,7 @@ class PimcoreBundleManager
 
     protected ?array $availableBundles = null;
 
-    protected array $manuallyRegisteredBundles;
+    protected ?array $manuallyRegisteredBundles = null;
 
     public function __construct(
         PimcoreBundleLocator $bundleLocator,
