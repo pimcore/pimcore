@@ -27,10 +27,7 @@ abstract class AbstractDefinitionHelper extends Module
         'cleanup' => true,
     ];
 
-    /**
-     * @return Module|ClassManager
-     */
-    protected function getClassManager()
+    protected function getClassManager(): Module|ClassManager
     {
         return $this->getModule('\\' . ClassManager::class);
     }
