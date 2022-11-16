@@ -788,6 +788,12 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
     },
 
     uploadDialog: function () {
+        if (!this.fieldConfig.allowMultipleAssignments || (this.fieldConfig["maxItems"] && this.fieldConfig["maxItems"] >= 1)) {
+            if ((this.store.getData().getSource() || this.store.getData()).count() >= this.fieldConfig.maxItems) {
+                Ext.Msg.alert(t("error"), t("limit_reached"));
+                return true;
+            }
+        }
         pimcore.helpers.assetSingleUploadDialog(this.fieldConfig.assetUploadPath, "path", function (res) {
             try {
                 var data = Ext.decode(res.response.responseText);
