@@ -180,9 +180,22 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                     }
                 }
             } else if (this.fieldConfig.columns[i].type === "bool" || this.fieldConfig.columns[i].type === "columnbool") {
+                
+                let defaultVal = this.fieldConfig.columns[i].value;
+                let keyType = this.fieldConfig.columns[i].type;
+
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
                     if (this.fieldConfig.noteditable) {
                         metaData.tdCls += ' grid_cbx_noteditable';
+                    }
+
+                    if(value == null) {
+                        if(defaultVal == 'true')
+                            value = true;
+                        else
+                            value = false;
+                       
+                        record.set(keyType, value);
                     }
 
                     return Ext.String.format('<div style="text-align: center"><div role="button" class="x-grid-checkcolumn {0}" style=""></div></div>', value ? 'x-grid-checkcolumn-checked' : '');
