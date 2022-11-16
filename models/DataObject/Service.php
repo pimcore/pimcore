@@ -1270,7 +1270,7 @@ class Service extends Model\Element\Service
 
             foreach ($customFieldDefinitions as $key => $def) {
                 if ($def instanceof ClassDefinition\Data\Localizedfields) {
-                    if (!$mergedFieldDefinition[$key]) {
+                    if (empty($mergedFieldDefinition[$key])) {
                         continue;
                     }
                     $customLocalizedFieldDefinitions = $def->getFieldDefinitions();
