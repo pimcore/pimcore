@@ -10,7 +10,7 @@ on:
             - "[0-9]+.x"
         paths-ignore:
             - 'doc/**'
-            - 'bundles/**/Resources/public/**'
+            - 'bundles/**/public/**'
     push:
         branches:
             - "[0-9]+.[0-9]+"
@@ -18,7 +18,7 @@ on:
             - "*_actions"
         paths-ignore:
             - 'doc/**'
-            - 'bundles/**/Resources/public/**'
+            - 'bundles/**/public/**'
 
 env:
     PIMCORE_PROJECT_ROOT: ${{ github.workspace }}

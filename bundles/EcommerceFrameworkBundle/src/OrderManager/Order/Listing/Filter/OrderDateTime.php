@@ -46,11 +46,11 @@ class OrderDateTime implements OrderListFilterInterface
         $queryBuilder = $orderList->getQueryBuilder();
 
         if ($this->getFrom()) {
-            $queryBuilder->andWhere($this->getColumn() . ' >= :from_date')->setParameter(':from_date', $this->getFrom()->getTimestamp());
+            $queryBuilder->andWhere($this->getColumn() . ' >= :from_date')->setParameter('from_date', $this->getFrom()->getTimestamp());
         }
 
         if ($this->getTill()) {
-            $queryBuilder->andWhere($this->getColumn() . ' <= :till_date')->setParameter(':till_date', $this->getTill()->getTimestamp());
+            $queryBuilder->andWhere($this->getColumn() . ' <= :till_date')->setParameter('till_date', $this->getTill()->getTimestamp());
         }
 
         return $this;

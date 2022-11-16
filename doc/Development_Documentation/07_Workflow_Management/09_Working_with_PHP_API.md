@@ -5,7 +5,7 @@ The Pimcore workflow management can also be used via PHP API.
 ## Using Workflow API to modify Places of Elements
 
 Since the Pimcore workflow management is based on the Symfony workflow component, also its API can be 
-used the same way. For details see [Symfony docs](https://symfony.com/doc/5.2/workflow/usage.html).
+used the same way. For details see [Symfony docs](https://symfony.com/doc/current/workflow/usage.html).
 
 Additionally Pimcore provides the `\Pimcore\Workflow\Manager`, which provides additional functionality for working
 with the workflow management - like additional methods for apply places with additional data (`applyWithAdditionalData()`)
@@ -58,7 +58,7 @@ if($workflow->can($object, 'publish')) {
 ## Using Events for Additional Functionality
 
 Symfony workflow module comes with a bunch of events that can be used for customizing and extending 
-default workflow functionality. See [Symfony docs](https://symfony.com/doc/5.2/workflow/usage.html#using-events)
+default workflow functionality. See [Symfony docs](https://symfony.com/doc/current/workflow/usage.html#using-events)
 for details. 
 
 In addition to the Symfony events, Pimcore provides two additional events for global actions: 

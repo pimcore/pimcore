@@ -21,26 +21,17 @@ use Pimcore\Tests\Support\Util\TestHelper;
 
 abstract class AbstractDefinitionHelper extends Module
 {
-    /**
-     * @var array
-     */
     protected array $config = [
         'initialize_definitions' => true,
         'cleanup' => true,
     ];
 
-    /**
-     * @return Module|ClassManager
-     */
-    protected function getClassManager()
+    protected function getClassManager(): Module|ClassManager
     {
         return $this->getModule('\\' . ClassManager::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function _beforeSuite($settings = [])
+    public function _beforeSuite(array $settings = [])
     {
         if ($this->config['initialize_definitions']) {
             if (TestHelper::supportsDbTests()) {
@@ -54,9 +45,6 @@ abstract class AbstractDefinitionHelper extends Module
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function _afterSuite()
     {
         if ($this->config['cleanup']) {
@@ -64,17 +52,7 @@ abstract class AbstractDefinitionHelper extends Module
         }
     }
 
-    /**
-     * @param string $type
-     * @param string|null $name
-     * @param bool $mandatory
-     * @param int $index
-     * @param bool $visibleInGridView
-     * @param bool $visibleInSearchResult
-     *
-     * @return Data
-     */
-    public function createDataChild($type, $name = null, $mandatory = false, $index = 0, $visibleInGridView = true, $visibleInSearchResult = true)
+    public function createDataChild(string $type, ?string $name = null, bool $mandatory = false, int $index = 0, bool $visibleInGridView = true, bool $visibleInSearchResult = true): Data
     {
         if (!$name) {
             $name = $type;

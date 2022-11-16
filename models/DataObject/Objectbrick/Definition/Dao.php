@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Objectbrick\Definition;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
@@ -111,6 +112,9 @@ class Dao extends Model\Dao\AbstractDao
 
         DataObject\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, ([$tableStore, $tableQuery]));
 
+        $this->removeIndices($tableStore, $columnsToRemoveStore, $protectedColumnsStore);
+        $this->removeIndices($tableQuery, $columnsToRemoveQuery, $protectedColumnsQuery);
+
         foreach ($this->model->getFieldDefinitions() as $value) {
             $key = $value->getName();
 
@@ -172,5 +176,23 @@ class Dao extends Model\Dao\AbstractDao
         $tableQuery = $this->getTableName($classDefinition, true);
 
         $this->handleEncryption($classDefinition, [$tableQuery, $tableStore]);
+    }
+
+    /**
+     * @param string $table
+     * @param array $columnsToRemove
+     * @param array $protectedColumns
+     */
+    protected function removeIndices($table, $columnsToRemove, $protectedColumns)
+    {
+        if (is_array($columnsToRemove) && count($columnsToRemove) > 0) {
+            $indexPrefix = str_starts_with($table, 'object_brick_query_') ? 'p_index_' : 'u_index_';
+            foreach ($columnsToRemove as $value) {
+                if (!in_array(strtolower($value), $protectedColumns)) {
+                    Helper::queryIgnoreError($this->db, 'ALTER TABLE `'.$table.'` DROP INDEX `' . $indexPrefix . $value . '`;');
+                }
+            }
+            $this->resetValidTableColumnsCache($table);
+        }
     }
 }
