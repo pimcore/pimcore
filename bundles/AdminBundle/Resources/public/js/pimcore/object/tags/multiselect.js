@@ -81,13 +81,6 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
     },
 
     getGridColumnFilter: function(field) {
-        if (field.layout.dynamicOptions) {
-            return {
-                type: 'string',
-                dataIndex: field.key
-            };
-        }
-
         var storeData = this.prepareStoreDataAndFilterLabels(field.layout);
 
         var store = Ext.create('Ext.data.JsonStore', {
