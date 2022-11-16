@@ -77,7 +77,7 @@ pimcore.notification.helper.showNotifications = function (notifications) {
         var notification = Ext.create('Ext.window.Toast', {
             iconCls: 'pimcore_icon_' + row.type,
             title: Ext.util.Format.htmlEncode(row.title),
-            html: Ext.util.Format.htmlEncode(row.message),
+            html: row.message,
             autoShow: true,
             width: 400,
             height: 150,
@@ -137,7 +137,7 @@ pimcore.notification.helper.openDetailsWindow = function (id, title, message, ty
         modal: true,
         iconCls: 'pimcore_icon_' + type,
         title: Ext.util.Format.htmlEncode(title),
-        html: Ext.util.Format.htmlEncode(message),
+        html: message,
         autoShow: true,
         width: 700,
         height: 350,
