@@ -490,14 +490,10 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @internal
-     *
-     * @param AbstractObject $object
-     *
-     * @return bool
      */
-    protected static function typeMatch(AbstractObject $object)
+    protected static function typeMatch(AbstractObject $object): bool
     {
-        return in_array(static::class, [Concrete::class, __CLASS__], true) || $object instanceof static;
+        return static::class === self::class || $object instanceof static;
     }
 
     /**

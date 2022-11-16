@@ -7,7 +7,7 @@ on:
         branches:
             - "[0-9]+.x"
         paths:
-            - 'bundles/CoreBundle/Resources/translations/en.*json'
+            - 'bundles/CoreBundle/translations/en.*json'
 
 permissions:
   contents: read

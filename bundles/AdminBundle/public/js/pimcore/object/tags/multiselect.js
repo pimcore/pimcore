@@ -236,6 +236,7 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
         if (this.fieldConfig.renderType == "tags") {
             options.queryMode = 'local';
             options.editable = true;
+            options.anyMatch = true;
             if(hasHTMLContent) {
                 options.labelTpl = '{[Ext.util.Format.stripTags(values.text)]}';
             }

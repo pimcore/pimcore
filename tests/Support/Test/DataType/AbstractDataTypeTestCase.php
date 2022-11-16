@@ -66,11 +66,8 @@ abstract class AbstractDataTypeTestCase extends TestCase
     /**
      * Calls fill* methods on the object as needed in test
      *
-     * @param Concrete     $object
-     * @param array|string $fields
-     * @param array $returnData
      */
-    protected function fillObject(Concrete $object, $fields = [], &$returnData = [])
+    protected function fillObject(Concrete $object, array|string $fields = [], ?array &$returnData = [])
     {
         // allow to pass only a string (e.g. input) -> fillInput($object, "input", $seed)
         if (!is_array($fields)) {
@@ -99,12 +96,13 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
             $methodArguments = [$object, $field['field'], $this->seed];
 
-            $additionalArguments = isset($field['arguments']) ? $field['arguments'] : [];
+            $additionalArguments = $field['arguments'] ?? [];
             foreach ($additionalArguments as $aa) {
                 $methodArguments[] = $aa;
             }
-
-            $methodArguments[] = &$returnData;
+            if (isset(func_get_args()[2])) {
+                $methodArguments[] = &$returnData;
+            }
 
             call_user_func_array([$this->testDataHelper, $method], $methodArguments);
         }
@@ -126,13 +124,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertBooleanSelect($this->testObject, 'booleanSelect', $this->seed);
     }
 
-    /**
-     * @param array $fields
-     * @param array $params
-     *
-     * @return Unittest
-     */
-    abstract protected function createTestObject($fields = [], &$params = []);
+    abstract protected function createTestObject(array $fields = [], ?array &$params = []): Unittest;
 
     abstract public function refreshObject();
 
@@ -165,13 +157,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $valueFromCalculator = $this->testObject->getCalculatedValue();
         $this->assertEquals($value, $valueFromCalculator, 'calculated value does not match');
 
-        // now call the setter and retry, shouldn't have any effect
-        $newValue = uniqid();
-        $this->testObject->setCalculatedValue($newValue);
-
-        $valueFromCalculator = $this->testObject->getCalculatedValue();
-        $this->assertEquals($value, $valueFromCalculator, 'calculated value does not match');
-
         //check if it got written to the query table
 
         $this->testObject->save();
@@ -194,13 +179,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
         ]);
 
         $this->testObject->setFirstname('Jane');
-
-        $value = $this->testObject->getCalculatedValueExpression();
-        $this->assertEquals('Jane some calc', $value, 'calculated value does not match');
-
-        // now call the setter and retry, shouldn't have any effect
-        $newValue = uniqid();
-        $this->testObject->setCalculatedValueExpression($newValue);
 
         $value = $this->testObject->getCalculatedValueExpression();
         $this->assertEquals('Jane some calc', $value, 'calculated value does not match');
@@ -866,6 +844,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     public function testVideo()
     {
         $returnData = [];
+
         $this->createTestObject('video', $returnData);
 
         $this->refreshObject();

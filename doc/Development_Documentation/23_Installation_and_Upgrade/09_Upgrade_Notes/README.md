@@ -1,5 +1,8 @@
 # Upgrade Notes
 ## 11.0.0
+- [UrlSlug] Removed `index` column and `index` index from `object_url_slugs` table as it was not being used anywhere.
+- Bumped Symfony packages to "^6.1". Pimcore 11 will only support Symfony 6.
+- `FrontendController::renderTemplate()`: Changed the visibility to `protected`.
 - [Elements] Added `setParentId`, `setType` and `setParent` methods to `Pimcore\Model\Element\ElementInterface`
 - [JSRouting Bundle] Bumped `friendsofsymfony/jsrouting-bundle` to version `^3.2.1`
 - [Installer] Changed the return type of `Pimcore\Extension\Bundle\Installer\InstallerInterface::getOutput` to `BufferedOutput | NullOutput`.
@@ -78,10 +81,12 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - Bumped `mjaschen/phpgeo` to "^4.0".
 - [Areabricks] The default template location of `AbstractTemplateAreabrick` is now `TEMPLATE_LOCATION_GLOBAL`.
 - [Config] Rename config files from `*.yml` to `*.yaml`. Note that we now use `system.yaml` as config file and not `system.yml`
+- [Video] It's now possible to drop a video asset directly into an video editable in class
 - [Childs Compatibility] Removed `getChilds`, `setChilds` and `hasChild` use `getChildren`, `setChildren` and `hasChildren` instead.
 - [Config] The config node `pimcore.admin` and related parameters are moved to AdminBundle directly under `pimcore_admin` node. Please adapt your parameter usage accordingly eg. instead of `pimcore.admin.unauthenticated_routes`, it should be `pimcore_admin.unauthenticated_routes`
 - [DataObjects] Removed deprecated preview url in class editor.
 - [DataObjects] Removed sql filter functionality for data object grid
+- [DataObjects] Loading non-Concrete objects with the Concrete class is no longer possible
 - [Device Detector] Bumped `matomo/device-detector` to ^6.0.
 - [security] Removed support old authentication system (not setting `security.enable_authenticator_manager: true` in `security.yaml`).
 - Removed Pimcore Password Encoder factory, `pimcore_admin.security.password_encoder_factory` service and `pimcore.security.factory_type` config.
@@ -98,9 +103,13 @@ Please make sure to set your preferred storage location ***before*** migration. 
   - `EcommerceFrameworkBundle\SessionEnvironment` not loading from or storing into session in cli mode anymore.
   - `EcommerceFrameworkBundle\Tracking\TrackingManager` requires session from request stack.
 - `Element\Service::getValidKey()` strips all control/unassigned, invalid and some more special (e.g. tabs, line-breaks, form-feed & vertical whitespace) characters.
+- [Data Objects]: Removed setter functions for calculated values, since they weren´t used anyway.
 
 
-## 10.5.8
+## 10.5.10
+- [DataObject] Deprecated: Loading non-Concrete objects with the Concrete class will not be possible in Pimcore 11.
+
+## 10.5.9
 - [Twig] Sending mails and Dataobject Text Layouts, which allow rendering user controlled twig templates are now executed in a sandbox with restrictive security policies for tags, filters, functions.
          Please use following configuration to allow more in template rendering:
   ```yaml
@@ -113,6 +122,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
                 functions: ['include', 'path', 'range']
   ```
 
+## 10.5.8
 - [Nginx] Static pages nginx config has been updated to fix the issue for home static page generation. please adapt the following configuration:
 ```nginx
 map $args $static_page_root {
@@ -148,6 +158,7 @@ location / {
     security:
         enable_authenticator_manager: true
     ```
+  `[Authentication] PreAuthenticatedAdminSessionListener` has been deprecated and will be removed in Pimcore 11.
 - [Elements] Calling the methods `getById` and `getByPath` on `Asset`,`Document`,`DataObject` with second boolean parameter `$force` and `Element\Service::getElementById` with third boolean  parameter `$force` is deprecated and will throw exception in Pimcore 11. Instead pass the parameter as associative array with `$force` value.
   e.g. Before 
    ```php

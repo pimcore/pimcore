@@ -33,7 +33,7 @@ To dump the sitemaps to static files, use the `presta:sitemaps:dump` command:
 ### Configuring the scheme and host to be used by sitemaps
 
 As the command-line context does not know what scheme (http/https) and host to use for the absolute URLs of your sitemap,
-those values need to be configured. Symfony allows to set those parameters on the [Request Context](https://symfony.com/doc/5.2/routing.html#generating-urls-in-commands).
+those values need to be configured. Symfony allows to set those parameters on the [Request Context](https://symfony.com/doc/current/routing.html#generating-urls-in-commands).
 If configured, Pimcore will set the domain configured as main domain in system settings as default host. Those parameters
 will be overridden from the current request in the web context when using the on-the-fly method by adding the route. When
 using the `presta:sitemaps:dump` command, you can override those parameters by passing the `--base-url` option:
@@ -43,7 +43,7 @@ using the `presta:sitemaps:dump` command, you can override those parameters by p
 For details see:
 
 * [Bundle Documentation](https://github.com/prestaconcept/PrestaSitemapBundle/blob/3.x/doc/2-configuration.md#configuring-your-application-base-url)
-* [Symfony Documentation on the Request Context](https://symfony.com/doc/5.2/routing.html#generating-urls-in-commands)
+* [Symfony Documentation on the Request Context](https://symfony.com/doc/current/routing.html#generating-urls-in-commands)
 * [`UrlGenerator`](https://github.com/pimcore/pimcore/blob/11.x/lib/Sitemap/UrlGenerator.php)
 
 
@@ -382,7 +382,7 @@ services:
 ### Generating absolute URLs
 
 To generate absolute URLs, Pimcore defines an [url generator](https://github.com/pimcore/pimcore/blob/11.x/lib/Sitemap/UrlGenerator.php) which, given a path, takes care of creating an absolute URL
-based on the [Request Context](https://symfony.com/doc/5.2/routing.html#generating-urls-in-commands).
+based on the [Request Context](https://symfony.com/doc/current/routing.html#generating-urls-in-commands).
 See core processors/generators and [demo](https://github.com/pimcore/demo/tree/11.x/src/Sitemaps)
 for details. As example how to use the URL generator in a processor:
 

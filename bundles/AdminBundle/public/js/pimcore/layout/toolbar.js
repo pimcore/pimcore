@@ -1201,7 +1201,7 @@
          if (this.searchMenu) {
              Ext.get("pimcore_menu_search").on("mousedown", this.showSubMenu.bind(this.searchMenu));
          }
-         if (this.notificationMenu) {
+         if (pimcore.settings.notifications_enabled && this.notificationMenu) {
              Ext.get('pimcore_notification').show();
              Ext.get("pimcore_notification").on("mousedown", this.showSubMenu.bind(this.notificationMenu));
              pimcore.notification.helper.updateFromServer();

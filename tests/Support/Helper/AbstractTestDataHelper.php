@@ -23,7 +23,7 @@ use Pimcore\Tests\Support\Util\TestHelper;
 
 abstract class AbstractTestDataHelper extends Module
 {
-    public function assertElementsEqual(ElementInterface $e1, ElementInterface $e2)
+    public function assertElementsEqual(ElementInterface $e1, ElementInterface $e2): void
     {
         $this->assertEquals(get_class($e1), get_class($e2));
         $this->assertEquals($e1->getId(), $e2->getId());
@@ -31,7 +31,7 @@ abstract class AbstractTestDataHelper extends Module
         $this->assertEquals($e1->getFullPath(), $e2->getFullPath());
     }
 
-    public function assertObjectsEqual(AbstractObject $obj1, AbstractObject $obj2)
+    public function assertObjectsEqual(AbstractObject $obj1, AbstractObject $obj2): void
     {
         $this->assertElementsEqual($obj1, $obj2);
 
@@ -44,12 +44,7 @@ abstract class AbstractTestDataHelper extends Module
         $this->assertEquals($str1, $str2);
     }
 
-    /**
-     * @param string|null $condition
-     *
-     * @return DataObject[]
-     */
-    protected function getObjectList($condition = null)
+    protected function getObjectList(?string $condition = null): array
     {
         $list = new DataObject\Listing();
         $list->setOrderKey('o_id');

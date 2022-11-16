@@ -219,4 +219,20 @@ class ObjectTest extends ModelTestCase
         $otherClone = clone $object;
         $this->assertEquals(123, $otherClone->getId(), 'Shallow clone should copy the o_* fields');
     }
+
+    /**
+     * Verifies that loading only Concrete object from Concrete::getById().
+     */
+    public function testConcreteLoading()
+    {
+        $concreteObject = TestHelper::createEmptyObject();
+        $loadedConcrete = DataObject\Concrete::getById($concreteObject->getId(), ['force' => true]);
+
+        $this->assertIsObject($loadedConcrete, 'Loaded Concrete should be an object.');
+
+        $nonConcreteObject = TestHelper::createObjectFolder();
+        $loadedNonConcrete = DataObject\Concrete::getById($nonConcreteObject->getId(), ['force' => true]);
+
+        $this->assertNull($loadedNonConcrete, 'Loaded Concrete should be null.');
+    }
 }

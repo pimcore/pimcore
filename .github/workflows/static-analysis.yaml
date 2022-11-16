@@ -11,7 +11,7 @@ on:
             - "[0-9]+.x"
         paths-ignore:
             - 'doc/**'
-            - 'bundles/**/Resources/public/**'
+            - 'bundles/**/public/**'
     push:
         branches:
             - "[0-9]+.[0-9]+"
@@ -19,7 +19,7 @@ on:
             - "*_actions"
         paths-ignore:
             - 'doc/**'
-            - 'bundles/**/Resources/public/**'
+            - 'bundles/**/public/**'
 
 env:
     PIMCORE_PROJECT_ROOT: ${{ github.workspace }}
@@ -40,7 +40,7 @@ jobs:
                 include:
                     - { php-version: "8.1", dependencies: "lowest", experimental: false, symfony: "", composer-options: "" }
                     - { php-version: "8.1", dependencies: "highest", experimental: false, symfony: "", composer-options: "" }
-                    - { php-version: "8.1", dependencies: "highest", experimental: true, symfony: "5.4.x-dev", composer-options: "" }
+                    - { php-version: "8.1", dependencies: "highest", experimental: true, symfony: "6.2.x-dev", composer-options: "" }
 
         steps:
             - name: "Checkout code"

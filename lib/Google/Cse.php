@@ -208,7 +208,7 @@ class Cse implements PaginateListingInterface
 
                             foreach ($regexes as $regex) {
                                 if (preg_match($regex, $item['pagemap']['cse_image'][0]['src'], $matches)) {
-                                    if ($id = $matches[1]) {
+                                    if ($id = (int) $matches[1]) {
                                         break;
                                     }
                                 }

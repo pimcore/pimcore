@@ -170,7 +170,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
 
             //apply filter on PriceModifications
             $list->joinPriceModifications();
-            $list->getQueryBuilder()->andWhere('pricingRule.ruleId = :pricingRuleId OR OrderPriceModifications.pricingRuleId = :pricingRuleId')->setParameter(':pricingRuleId', $pricingRuleId);
+            $list->getQueryBuilder()->andWhere('pricingRule.ruleId = :pricingRuleId OR OrderPriceModifications.pricingRuleId = :pricingRuleId')->setParameter('pricingRuleId', $pricingRuleId);
         }
 
         // set default order
@@ -304,7 +304,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
                         $orderList = $this->orderManager->createOrderList();
                         $orderList->joinCustomer($class::classId());
 
-                        $orderList->getQueryBuilder()->andWhere('customer.o_id = :customer_oid')->setParameter(':customer_oid', $customer->getId());
+                        $orderList->getQueryBuilder()->andWhere('customer.o_id = :customer_oid')->setParameter('customer_oid', $customer->getId());
 
                         $arrCustomerAccount['orderCount'] = $orderList->count();
                     }

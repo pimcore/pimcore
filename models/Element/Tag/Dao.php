@@ -255,7 +255,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $select = $this->db->createQueryBuilder()->select(['*'])
                            ->from('tags_assignment')
-                           ->andWhere('tags_assignment.ctype = :ctype')->setParameter(':ctype', $type);
+                           ->andWhere('tags_assignment.ctype = :ctype')->setParameter('ctype', $type);
 
         if (true === $considerChildTags) {
             $select->innerJoin('tags_assignment', 'tags', 'tags', 'tags.id = tags_assignment.tagid');
@@ -266,7 +266,7 @@ class Dao extends Model\Dao\AbstractDao
                 . ')'
             );
         } else {
-            $select->andWhere('tags_assignment.tagid = :tagId')->setParameter(':tagId', $tag->getId());
+            $select->andWhere('tags_assignment.tagid = :tagId')->setParameter('tagId', $tag->getId());
         }
 
         $select->innerJoin('tags_assignment', $map[$type][0], 'el', 'tags_assignment.cId = el.' . $map[$type][1]);

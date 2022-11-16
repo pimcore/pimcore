@@ -54,17 +54,10 @@ class UserAwarePasswordHasherFactory extends AbstractHasherFactory
             ));
         }
 
-        $username = null;
-        if (method_exists($user, 'getUserIdentifier')) {
-            $username = $user->getUserIdentifier();
-        } elseif (method_exists($user, 'getUsername')) {
-            $username =  $user->getUsername();
-        } else {
-            throw new \RuntimeException('User class must implement either getUserIdentifier() or getUsername()');
-        }
+        $userIdentifier = $user->getUserIdentifier();
 
-        if (isset($this->hashers[$username])) {
-            return $this->hashers[$username];
+        if (isset($this->hashers[$userIdentifier])) {
+            return $this->hashers[$userIdentifier];
         }
 
         $reflector = $this->getReflector();
@@ -78,7 +71,7 @@ class UserAwarePasswordHasherFactory extends AbstractHasherFactory
             $hasher->setUser($user);
         }
 
-        $this->hashers[$username] = $hasher;
+        $this->hashers[$userIdentifier] = $hasher;
 
         return $hasher;
     }

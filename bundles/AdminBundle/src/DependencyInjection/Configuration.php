@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\DependencyInjection;
 
 use Pimcore\Bundle\AdminBundle\Security\ContentSecurityPolicyHandler;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -40,6 +41,7 @@ final class Configuration implements ConfigurationInterface
         $rootNode->append($this->buildObjectsNode());
         $rootNode->append($this->buildAssetsNode());
         $rootNode->append($this->buildDocumentsNode());
+        $rootNode->append($this->addNotificationsNode());
 
         $rootNode->children()
             ->arrayNode('admin_languages')
@@ -134,10 +136,7 @@ final class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    /**
-     * @return \Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
-     */
-    protected function buildGdprDataExtractorNode()
+    protected function buildGdprDataExtractorNode(): ArrayNodeDefinition|NodeDefinition
     {
         $treeBuilder = new TreeBuilder('gdpr_data_extractor');
 
@@ -203,10 +202,7 @@ final class Configuration implements ConfigurationInterface
         return $gdprDataExtractor;
     }
 
-    /**
-     * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
-     */
-    protected function buildEventsNode()
+    protected function buildEventsNode(): ArrayNodeDefinition|NodeDefinition
     {
         $treeBuilder = new TreeBuilder('notes_events');
         $notesEvents = $treeBuilder->getRootNode();
@@ -225,10 +221,7 @@ final class Configuration implements ConfigurationInterface
         return $notesEvents;
     }
 
-    /**
-     * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
-     */
-    protected function buildObjectsNode()
+    protected function buildObjectsNode(): ArrayNodeDefinition|NodeDefinition
     {
         $treeBuilder = new TreeBuilder('objects');
         $objectsNode = $treeBuilder->getRootNode();
@@ -240,10 +233,7 @@ final class Configuration implements ConfigurationInterface
         return $objectsNode;
     }
 
-    /**
-     * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
-     */
-    protected function buildAssetsNode()
+    protected function buildAssetsNode(): ArrayNodeDefinition|NodeDefinition
     {
         $treeBuilder = new TreeBuilder('assets');
         $assetsNode = $treeBuilder->getRootNode();
@@ -255,10 +245,7 @@ final class Configuration implements ConfigurationInterface
         return $assetsNode;
     }
 
-    /**
-     * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
-     */
-    protected function buildDocumentsNode()
+    protected function buildDocumentsNode(): ArrayNodeDefinition|NodeDefinition
     {
         $treeBuilder = new TreeBuilder('documents');
         $documentsNode = $treeBuilder->getRootNode();
@@ -411,5 +398,30 @@ final class Configuration implements ConfigurationInterface
                     ->prototype('scalar')->end()
                 ->end()
             ->end();
+    }
+
+    protected function addNotificationsNode(): ArrayNodeDefinition|NodeDefinition
+    {
+        $treeBuilder = new TreeBuilder('notifications');
+        $notificationsNode = $treeBuilder->getRootNode();
+
+        $notificationsNode
+            ->addDefaultsIfNotSet()
+            ->canBeDisabled()
+            ->children()
+                ->arrayNode('check_new_notification')
+                    ->canBeDisabled()
+                    ->info('Can be used to enable or disable the check of new notifications (url: /admin/notification/find-last-unread).')
+                    ->children()
+                        ->integerNode('interval')
+                            ->info('Interval in seconds to check new notifications')
+                            ->defaultValue(30)
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ;
+
+        return $notificationsNode;
     }
 }

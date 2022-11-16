@@ -76,11 +76,12 @@ class ObjectBrickContainerClassBuilder implements ObjectBrickContainerClassBuild
 
             $cd .= "}\n\n";
 
+            $typeDeclaration = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickKey);
             $cd .= '/**' . "\n";
-            $cd .= '* @param \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickKey) . ' $' . $brickKey . "\n";
+            $cd .= '* @param ' . $typeDeclaration  . ' $' . $brickKey . "\n";
             $cd .= '* @return $this' . "\n";
             $cd .= '*/' . "\n";
-            $cd .= 'public function set' . ucfirst($brickKey) . '(' . '$' . $brickKey . '): static' . "\n";
+            $cd .= 'public function set' . ucfirst($brickKey) . '(' . $typeDeclaration . ' $' . $brickKey . '): static' . "\n";
             $cd .= '{' . "\n";
             $cd .= "\t" . '$this->' . $brickKey . ' = ' . '$' . $brickKey . ";\n";
             $cd .= "\t" . 'return $this' . ";\n";

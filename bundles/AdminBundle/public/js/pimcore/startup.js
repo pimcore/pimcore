@@ -267,10 +267,12 @@ Ext.onReady(function () {
                 pimcore.helpers.showNotification(t("error"), t("config_not_writeable"), "error", errorMessage);
             } else if (response.status === 403) {
                 pimcore.helpers.showNotification(t("access_denied"), t("access_denied_description"), "error");
+            } else if (response.status === 500) {
+                pimcore.helpers.showNotification(t("error"), t("error_general"), "error", errorMessage);
             } else {
-                var message = t("error_general");
-                if(jsonData && jsonData['message']) {
-                    message = jsonData['message'] + "<br><br>" + t("error_general");
+                let message = t("error");
+                if (jsonData && jsonData['message']) {
+                    message = jsonData['message'];
                 }
 
                 pimcore.helpers.showNotification(t("error"), message, "error", errorMessage);
@@ -1100,9 +1102,11 @@ pimcore["intervals"]["ping"] = window.setInterval(function () {
 }, (pimcore.settings.session_gc_maxlifetime - 60) * 1000);
 
 
-pimcore["intervals"]["checkNewNotification"] = window.setInterval(function (elt) {
-    pimcore.notification.helper.updateFromServer();
-}, 30000);
+if (pimcore.settings.checknewnotification_enabled) {
+    pimcore["intervals"]["checkNewNotification"] = window.setInterval(function (elt) {
+        pimcore.notification.helper.updateFromServer();
+    }, pimcore.settings.checknewnotification_interval);
+}
 
 // refreshes the layout
 pimcore.registerNS("pimcore.layout.refresh");

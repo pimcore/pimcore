@@ -416,7 +416,7 @@ final class User extends User\UserRole
     /**
      * @return array
      */
-    public function getRoles()
+    public function getRoles(): array
     {
         if (empty($this->roles)) {
             return [];
