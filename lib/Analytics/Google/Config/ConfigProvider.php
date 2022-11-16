@@ -59,11 +59,6 @@ class ConfigProvider
     {
         $reportConfig = \Pimcore\Config::getReportConfig();
 
-        $config = $reportConfig['analytics'];
-        if (!is_array($config)) {
-            $config = [];
-        }
-
-        return $config;
+        return $reportConfig['analytics'] ?? [];
     }
 }
