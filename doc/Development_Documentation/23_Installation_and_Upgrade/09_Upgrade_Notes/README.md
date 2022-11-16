@@ -101,7 +101,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
   - `EcommerceFrameworkBundle\Tracking\TrackingManager` requires session from request stack.
 - `Element\Service::getValidKey()` strips all control/unassigned, invalid and some more special (e.g. tabs, line-breaks, form-feed & vertical whitespace) characters.
 - [Data Objects]: Removed setter functions for calculated values, since they weren´t used anyway.
-
+- [Ecommerce] Index service `DefaultFindologic`,`DefaultMysql` and `AbstractElasticSearch` worker constructors were changed to dependency inject the monolog logger, please adapt your custom implementation.
 
 ## 10.5.10
 - [DataObject] Deprecated: Loading non-Concrete objects with the Concrete class will not be possible in Pimcore 11.

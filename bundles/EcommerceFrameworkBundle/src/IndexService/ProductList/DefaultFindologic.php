@@ -128,7 +128,7 @@ class DefaultFindologic implements ProductListInterface
     protected $orderKey;
 
     /**
-     * @var Logger
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -145,13 +145,13 @@ class DefaultFindologic implements ProductListInterface
     /**
      * @param FindologicConfigInterface $tenantConfig
      */
-    public function __construct(FindologicConfigInterface $tenantConfig, LoggerInterface $pimcoreEcommerceFindlogic)
+    public function __construct(FindologicConfigInterface $tenantConfig, LoggerInterface $pimcoreEcommerceFindlogicLogger)
     {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
 
         // init logger
-        $this->logger = $pimcoreEcommerceFindlogic;
+        $this->logger = $pimcoreEcommerceFindlogicLogger;
 
         // set defaults for required params
         $this->userIp = $_SERVER['HTTP_X_FORWARDED_FOR'] ?: $_SERVER['REMOTE_ADDR'];

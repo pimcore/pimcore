@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\Concrete;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -50,8 +51,14 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
      */
     protected $batchData;
 
-    public function __construct(FindologicConfigInterface $tenantConfig, Connection $db, EventDispatcherInterface $eventDispatcher)
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    public function __construct(FindologicConfigInterface $tenantConfig, Connection $db, EventDispatcherInterface $eventDispatcher, LoggerInterface $pimcoreEcommerceFindlogic)
     {
+        $this->logger = $pimcoreEcommerceFindlogic;
         parent::__construct($tenantConfig, $db, $eventDispatcher);
     }
 
@@ -331,6 +338,6 @@ SQL;
      */
     public function getProductList()
     {
-        return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultFindologic($this->getTenantConfig());
+        return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultFindologic($this->getTenantConfig(), $this->logger);
     }
 }

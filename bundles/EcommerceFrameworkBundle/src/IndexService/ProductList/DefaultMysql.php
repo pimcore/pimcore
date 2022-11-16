@@ -78,16 +78,16 @@ class DefaultMysql implements ProductListInterface
     protected $inProductList = true;
 
     /**
-     * @var Logger
+     * @var LoggerInterface
      */
     protected $logger;
 
-    public function __construct(MysqlConfigInterface $tenantConfig)
+    public function __construct(MysqlConfigInterface $tenantConfig, LoggerInterface $pimcoreEcommerceSqlLogger)
     {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
 
-        $this->logger = \Pimcore::getContainer()->get('monolog.logger.pimcore_ecommerce_sql');
+        $this->logger = $pimcoreEcommerceSqlLogger;
         $this->resource = new DefaultMysql\Dao($this, $this->logger);
     }
 
@@ -841,7 +841,6 @@ class DefaultMysql implements ProductListInterface
     public function __wakeup()
     {
         if (empty($this->resource)) {
-            $this->logger = \Pimcore::getContainer()->get('monolog.logger.pimcore_ecommerce_sql');
             $this->resource = new DefaultMysql\Dao($this, $this->logger);
         }
     }

@@ -27,6 +27,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Logger;
 use Pimcore\Model\Tool\TmpStore;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -94,14 +95,20 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     protected $routingParamName = 'routing';
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * @param ElasticSearchConfigInterface $tenantConfig
      * @param Connection $db
      * @param EventDispatcherInterface $eventDispatcher
+     * @param LoggerInterface $pimcoreEcommerceEsLogger
      */
-    public function __construct(ElasticSearchConfigInterface $tenantConfig, Connection $db, EventDispatcherInterface $eventDispatcher)
+    public function __construct(ElasticSearchConfigInterface $tenantConfig, Connection $db, EventDispatcherInterface $eventDispatcher, LoggerInterface $pimcoreEcommerceEsLogger)
     {
         parent::__construct($tenantConfig, $db, $eventDispatcher);
-
+        $this->logger = $pimcoreEcommerceEsLogger;
         $this->indexName = ($tenantConfig->getClientConfig('indexName')) ? strtolower($tenantConfig->getClientConfig('indexName')) : strtolower($this->name);
     }
 
@@ -191,8 +198,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         if (empty($this->elasticSearchClient)) {
             $builder = \Elasticsearch\ClientBuilder::create();
             if ($this->tenantConfig->getClientConfig('logging')) {
-                $logger = \Pimcore::getContainer()->get('monolog.logger.pimcore_ecommerce_es');
-                $builder->setLogger($logger);
+                $builder->setLogger($this->logger);
             }
 
             $esSearchParams = $this->tenantConfig->getElasticSearchClientParams();

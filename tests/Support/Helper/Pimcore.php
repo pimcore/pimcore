@@ -43,9 +43,14 @@ class Pimcore extends Module
     protected array $groups = [];
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * {@inheritdoc}
      */
-    public function __construct(ModuleContainer $moduleContainer, $config = null)
+    public function __construct(ModuleContainer $moduleContainer, $config = null, LoggerInterface $pimcoreLogger)
     {
         // simple unit tests do not need a test DB and run
         // way faster if no DB has to be initialized first, so
@@ -66,6 +71,8 @@ class Pimcore extends Module
             // initializes objects from definitions, only if connect_db and initialize_db
             'setup_objects' => false,
         ]);
+
+        $this->logger = $pimcoreLogger;
 
         parent::__construct($moduleContainer, $config);
     }
@@ -244,7 +251,7 @@ class Pimcore extends Module
 
         $this->connectDb($connection);
 
-        $installer = new Installer($this->getContainer()->get('monolog.logger.pimcore'), $this->getContainer()->get('event_dispatcher'));
+        $installer = new Installer($this->logger, $this->getContainer()->get('event_dispatcher'));
         $installer->setImportDatabaseDataDump(false);
         $errors = $installer->setupDatabase([
             'username' => 'admin',
