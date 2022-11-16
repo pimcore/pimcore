@@ -34,9 +34,9 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      */
     protected bool $isLoading = false;
 
-    protected ?CheckoutableInterface $product;
+    protected ?CheckoutableInterface $product = null;
 
-    protected ?int $productId;
+    protected ?int $productId = null;
 
     protected string $itemKey;
 
@@ -48,14 +48,14 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
 
     protected ?array $subItems = null;
 
-    protected ?CartInterface $cart;
+    protected ?CartInterface $cart = null;
 
     protected string|int|null $cartId;
 
     /**
      * @var int|null unix timestamp
      */
-    protected ?int $addedDateTimestamp;
+    protected ?int $addedDateTimestamp = null;
 
     public function __construct()
     {

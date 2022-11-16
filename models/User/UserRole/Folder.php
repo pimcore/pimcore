@@ -29,14 +29,14 @@ class Folder extends Model\User\AbstractUser
      *
      * @var array|null
      */
-    protected ?array $children;
+    protected ?array $children = null;
 
     /**
      * @internal
      *
      * @var bool|null
      */
-    protected ?bool $hasChildren;
+    protected ?bool $hasChildren = null;
 
     /**
      * Returns true if the document has at least one child

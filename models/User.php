@@ -30,13 +30,13 @@ final class User extends User\UserRole
 
     protected string $type = 'user';
 
-    protected ?string $password;
+    protected ?string $password = null;
 
-    protected ?string $firstname;
+    protected ?string $firstname = null;
 
-    protected ?string $lastname;
+    protected ?string $lastname = null;
 
-    protected ?string $email;
+    protected ?string $email = null;
 
     protected string $language = 'en';
 
@@ -54,9 +54,9 @@ final class User extends User\UserRole
 
     protected bool $allowDirtyClose = false;
 
-    protected ?string $contentLanguages;
+    protected ?string $contentLanguages = null;
 
-    protected ?string $activePerspective;
+    protected ?string $activePerspective = null;
 
     protected ?array $mergedPerspectives = null;
 
@@ -171,9 +171,9 @@ final class User extends User\UserRole
         return $this->admin;
     }
 
-    public function setAdmin(bool $admin): static
+    public function setAdmin(bool|int $admin): static
     {
-        $this->admin = $admin;
+        $this->admin =(bool)$admin;
 
         return $this;
     }
@@ -183,7 +183,7 @@ final class User extends User\UserRole
         return $this->active;
     }
 
-    public function setActive(bool $active): static
+    public function setActive(bool|int $active): static
     {
         $this->active = (bool)$active;
 
@@ -291,7 +291,7 @@ final class User extends User\UserRole
         return $this->welcomescreen;
     }
 
-    public function setCloseWarning(bool $closeWarning): static
+    public function setCloseWarning(bool|int $closeWarning): static
     {
         $this->closeWarning = (bool)$closeWarning;
 
@@ -303,7 +303,7 @@ final class User extends User\UserRole
         return $this->closeWarning;
     }
 
-    public function setMemorizeTabs(bool $memorizeTabs): static
+    public function setMemorizeTabs(bool|int $memorizeTabs): static
     {
         $this->memorizeTabs = (bool)$memorizeTabs;
 
@@ -315,7 +315,7 @@ final class User extends User\UserRole
         return $this->memorizeTabs;
     }
 
-    public function setAllowDirtyClose(bool $allowDirtyClose): static
+    public function setAllowDirtyClose(bool|int $allowDirtyClose): static
     {
         $this->allowDirtyClose = (bool)$allowDirtyClose;
 

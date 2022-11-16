@@ -37,7 +37,7 @@ class DocumentTargetingConfigurator
 
     private array $targetGroupMapping = [];
 
-    private ?TargetGroup $overrideTargetGroup;
+    private ?TargetGroup $overrideTargetGroup = null;
 
     public function __construct(
         VisitorInfoStorageInterface $visitorInfoStorage,

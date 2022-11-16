@@ -54,15 +54,15 @@ class InheritanceHelper
 
     protected static array $runtimeCache = [];
 
-    protected ?string $storetable;
+    protected ?string $storetable = null;
 
-    protected ?string $querytable;
+    protected ?string $querytable = null;
 
-    protected ?string $relationtable;
+    protected ?string $relationtable = null;
 
-    protected ?string $idField;
+    protected ?string $idField = null;
 
-    protected ?string $queryIdField;
+    protected ?string $queryIdField = null;
 
     /**
      * @param string $classId

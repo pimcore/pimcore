@@ -29,7 +29,7 @@ class LocaleListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
-    protected ?string $lastLocale;
+    protected ?string $lastLocale = null;
 
     /**
      * {@inheritdoc}

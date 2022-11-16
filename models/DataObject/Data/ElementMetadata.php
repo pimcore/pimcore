@@ -27,9 +27,9 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
 {
     use DataObject\Traits\OwnerAwareFieldTrait;
 
-    protected ?string $elementType;
+    protected ?string $elementType = null;
 
-    protected ?int $elementId;
+    protected ?int $elementId = null;
 
     protected string $fieldname;
 

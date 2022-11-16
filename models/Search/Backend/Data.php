@@ -82,14 +82,14 @@ class Data extends \Pimcore\Model\AbstractModel
      *
      * @var int|null
      */
-    protected ?int $creationDate;
+    protected ?int $creationDate = null;
 
     /**
      * timestamp of modification date
      *
      * @var int|null
      */
-    protected ?int $modificationDate;
+    protected ?int $modificationDate = null;
 
     /**
      * User-ID of the owner
@@ -103,9 +103,9 @@ class Data extends \Pimcore\Model\AbstractModel
      *
      * @var int|null
      */
-    protected ?int $userModification;
+    protected ?int $userModification = null;
 
-    protected ?string $data;
+    protected ?string $data = null;
 
     protected string $properties;
 
@@ -249,7 +249,7 @@ class Data extends \Pimcore\Model\AbstractModel
         return (bool) $this->published;
     }
 
-    public function setPublished(bool $published): static
+    public function setPublished(bool|int $published): static
     {
         $this->published = (bool) $published;
 

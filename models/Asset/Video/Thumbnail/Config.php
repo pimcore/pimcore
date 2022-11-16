@@ -81,28 +81,28 @@ final class Config extends Model\AbstractModel
      *
      * @var int|null
      */
-    protected ?int $videoBitrate;
+    protected ?int $videoBitrate = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected ?int $audioBitrate;
+    protected ?int $audioBitrate = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected ?int $modificationDate;
+    protected ?int $modificationDate = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected ?int $creationDate;
+    protected ?int $creationDate = null;
 
     /**
      * @internal

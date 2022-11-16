@@ -30,7 +30,7 @@ final class CollectionConfig extends Model\AbstractModel
 {
     use RecursionBlockingEventDispatchHelperTrait;
 
-    protected ?int $id;
+    protected ?int $id = null;
 
     /**
      * Store ID
@@ -48,9 +48,9 @@ final class CollectionConfig extends Model\AbstractModel
      */
     protected string $description;
 
-    protected ?int $creationDate;
+    protected ?int $creationDate = null;
 
-    protected ?int $modificationDate;
+    protected ?int $modificationDate = null;
 
     public static function getById(int $id, ?bool $force = false): ?CollectionConfig
     {

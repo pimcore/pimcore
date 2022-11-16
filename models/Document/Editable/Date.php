@@ -30,7 +30,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
      *
      * @var \Carbon\Carbon|null
      */
-    protected ?\Carbon\Carbon $date;
+    protected ?\Carbon\Carbon $date = null;
 
     /**
      * {@inheritdoc}

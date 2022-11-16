@@ -50,7 +50,7 @@ final class Tag extends Model\AbstractModel
      *
      * @var string
      */
-    protected string $idPath;
+    protected string $idPath = '';
 
     /**
      * @internal
@@ -64,7 +64,7 @@ final class Tag extends Model\AbstractModel
      *
      * @var Tag|null
      */
-    protected ?Tag $parent;
+    protected ?Tag $parent = null;
 
     /**
      * @static

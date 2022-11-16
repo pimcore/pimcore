@@ -36,7 +36,7 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     protected $className;
 
-    protected ?string $locale;
+    protected ?string $locale = null;
 
     /**
      * do not use the localized views for this list (in the case the class contains localized fields),

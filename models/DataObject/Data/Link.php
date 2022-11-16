@@ -33,13 +33,13 @@ class Link implements OwnerAwareFieldInterface
 
     protected string $text;
 
-    protected ?string $internalType;
+    protected ?string $internalType = null;
 
-    protected ?int $internal;
+    protected ?int $internal = null;
 
     protected string $direct;
 
-    protected ?string $linktype;
+    protected ?string $linktype = null;
 
     protected string $target;
 

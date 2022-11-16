@@ -20,23 +20,25 @@ use Pimcore\Model\DataObject\QuantityValue\Unit;
 
 class InputQuantityValue extends QuantityValue
 {
+    protected float|int|string|null $value = null;
+
     /**
      * @param string|null $value
      * @param string|Unit|null $unit
      */
-    public function __construct($value = null, Unit|string $unit = null)
+    public function __construct(?string $value = null, Unit|string $unit = null)
     {
         $this->value = $value;
         parent::__construct($unit);
     }
 
-    public function setValue(float|int|null $value)
+    public function setValue(float|int|string|null $value)
     {
         $this->value = $value;
         $this->markMeDirty();
     }
 
-    public function getValue(): float|int|null
+    public function getValue(): float|int|string|null
     {
         return $this->value;
     }

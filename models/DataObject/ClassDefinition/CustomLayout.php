@@ -36,15 +36,15 @@ class CustomLayout extends Model\AbstractModel
     use DataObject\ClassDefinition\Helper\VarExport;
     use RecursionBlockingEventDispatchHelperTrait;
 
-    protected ?string $id;
+    protected ?string $id = null;
 
     protected string $name;
 
     protected string $description;
 
-    protected ?int $creationDate;
+    protected ?int $creationDate = null;
 
-    protected ?int $modificationDate;
+    protected ?int $modificationDate = null;
 
     protected int $userOwner;
 
@@ -52,7 +52,7 @@ class CustomLayout extends Model\AbstractModel
 
     protected string $classId;
 
-    protected ?Layout $layoutDefinitions;
+    protected ?Layout $layoutDefinitions = null;
 
     protected int $default = 0;
 

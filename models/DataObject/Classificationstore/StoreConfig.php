@@ -28,21 +28,21 @@ final class StoreConfig extends Model\AbstractModel
 {
     use RecursionBlockingEventDispatchHelperTrait;
 
-    protected ?int $id;
+    protected ?int $id = null;
 
     /**
      * The store name.
      *
      * @var string|null
      */
-    protected ?string $name;
+    protected ?string $name = null;
 
     /**
      * The store description.
      *
      * @var string|null
      */
-    protected ?string $description;
+    protected ?string $description = null;
 
     public static function getById(int $id): ?StoreConfig
     {

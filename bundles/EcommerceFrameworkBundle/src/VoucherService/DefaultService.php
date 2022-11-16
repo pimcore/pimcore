@@ -34,7 +34,7 @@ class DefaultService implements VoucherServiceInterface
 
     protected int $statisticsDaysThreshold;
 
-    protected ?string $currentLocale;
+    protected ?string $currentLocale = null;
 
     public function __construct(LocaleServiceInterface $localeService, array $options = [])
     {

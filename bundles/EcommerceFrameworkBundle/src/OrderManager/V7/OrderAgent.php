@@ -54,14 +54,14 @@ class OrderAgent implements OrderAgentInterface
 
     protected PaymentManagerInterface $paymentManager;
 
-    protected ?PaymentInterface $paymentProvider;
+    protected ?PaymentInterface $paymentProvider = null;
 
     protected EventDispatcherInterface $eventDispatcher;
 
     /**
      * @var Note[]|null
      */
-    protected ?array $fullChangeLog;
+    protected ?array $fullChangeLog = null;
 
     public function __construct(
         AbstractOrder $order,

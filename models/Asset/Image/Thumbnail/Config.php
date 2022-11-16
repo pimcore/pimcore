@@ -102,7 +102,7 @@ final class Config extends Model\AbstractModel
      *
      * @var float|null
      */
-    protected ?float $highResolution;
+    protected ?float $highResolution = null;
 
     /**
      * @internal
@@ -137,21 +137,21 @@ final class Config extends Model\AbstractModel
      *
      * @var int|null
      */
-    protected ?int $modificationDate;
+    protected ?int $modificationDate = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected ?int $creationDate;
+    protected ?int $creationDate = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected ?string $filenameSuffix;
+    protected ?string $filenameSuffix = null;
 
     /**
      * @internal

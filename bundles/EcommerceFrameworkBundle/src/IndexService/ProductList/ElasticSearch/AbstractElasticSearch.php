@@ -69,7 +69,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
 
     protected int $offset = 0;
 
-    protected ?AbstractCategory $category;
+    protected ?AbstractCategory $category = null;
 
     protected bool $inProductList = false;
 
@@ -79,9 +79,9 @@ abstract class AbstractElasticSearch implements ProductListInterface
 
     protected array $relationConditions = [];
 
-    protected ?float $conditionPriceFrom;
+    protected ?float $conditionPriceFrom = null;
 
-    protected ?float $conditionPriceTo;
+    protected ?float $conditionPriceTo = null;
 
     protected array $preparedGroupByValues = [];
 

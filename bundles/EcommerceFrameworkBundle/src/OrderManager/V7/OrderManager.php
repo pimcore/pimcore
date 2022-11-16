@@ -64,7 +64,7 @@ class OrderManager implements OrderManagerInterface
 
     protected array $options;
 
-    protected ?Folder $orderParentFolder;
+    protected ?Folder $orderParentFolder = null;
 
     protected string $customerClassName;
 

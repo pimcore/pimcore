@@ -484,7 +484,7 @@ class Service extends Model\AbstractModel
         return false;
     }
 
-    public static function getElementById(string $type, int $id, array $params = []): Asset|Document|AbstractObject|null
+    public static function getElementById(string $type, int|string $id, array $params = []): Asset|Document|AbstractObject|null
     {
         $element = null;
         $params = self::prepareGetByIdParams($params);
@@ -1589,14 +1589,14 @@ class Service extends Model\AbstractModel
 
     /**
      * @param string $type
-     * @param int|string $id
+     * @param int|string|null $id
      *
      * @return string
      *@internal
      *
      */
-    public static function getElementCacheTag(string $type, int|string $id): string
+    public static function getElementCacheTag(string $type, int|string|null $id): string
     {
-        return $type . '_' . $id;
+        return $type . '_' . $id ?? '';
     }
 }

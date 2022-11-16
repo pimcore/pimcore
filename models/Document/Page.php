@@ -60,7 +60,7 @@ class Page extends TargetingDocument
      *
      * @var string|null
      */
-    protected ?string $prettyUrl;
+    protected ?string $prettyUrl = null;
 
     /**
      * Comma separated IDs of target groups

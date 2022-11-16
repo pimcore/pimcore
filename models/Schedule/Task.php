@@ -36,11 +36,11 @@ class Task extends Model\AbstractModel
 
     protected string $action;
 
-    protected ?int $version;
+    protected ?int $version = null;
 
     protected bool $active = false;
 
-    protected ?int $userId;
+    protected ?int $userId = null;
 
     public static function getById(int $id): ?Task
     {

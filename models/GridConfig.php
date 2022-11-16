@@ -25,9 +25,9 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 class GridConfig extends AbstractModel
 {
-    protected ?int $id;
+    protected ?int $id = null;
 
-    protected ?int $ownerId;
+    protected ?int $ownerId = null;
 
     protected string $classId;
 
@@ -37,11 +37,11 @@ class GridConfig extends AbstractModel
 
     protected string $config;
 
-    protected ?string $description;
+    protected ?string $description = null;
 
-    protected ?int $creationDate;
+    protected ?int $creationDate = null;
 
-    protected ?int $modificationDate;
+    protected ?int $modificationDate = null;
 
     protected bool $shareGlobally = false;
 

@@ -31,7 +31,7 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 class Rule extends AbstractModel implements RuleInterface
 {
-    protected ?int $id;
+    protected ?int $id = null;
 
     protected string $name;
 

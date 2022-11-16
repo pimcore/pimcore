@@ -33,7 +33,7 @@ class AdminStyle
 
     protected string|bool|null $elementIconClass;
 
-    protected ?array $elementQtipConfig;
+    protected ?array $elementQtipConfig = null;
 
     public function __construct(ElementInterface $element)
     {

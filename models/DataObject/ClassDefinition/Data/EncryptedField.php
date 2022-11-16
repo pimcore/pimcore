@@ -67,9 +67,9 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     /**
      * @internal
      *
-     * @var Model\DataObject\ClassDefinition\Data|null
+     * @var Model\DataObject\ClassDefinition\Data|array|null
      */
-    public ?Data $delegate = null;
+    public Data|array|null $delegate = null;
 
     /**
      * Type for the column
@@ -386,7 +386,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         $this->delegateDatatype = $delegateDatatype;
     }
 
-    public function getDelegateDatatypeDefinition(): ?Data
+    public function getDelegateDatatypeDefinition(): Data|array|null
     {
         return $this->getDelegate();
     }
@@ -423,12 +423,12 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         self::$strictMode = $strictMode;
     }
 
-    public function getDelegate(): ?Data
+    public function getDelegate(): Data|array|null
     {
         return $this->delegate;
     }
 
-    public function setDelegate(?Data $delegate)
+    public function setDelegate(Data|array|null $delegate)
     {
         $this->delegate = $delegate;
     }

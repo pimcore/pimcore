@@ -32,7 +32,7 @@ final class Note extends Model\AbstractModel
      *
      * @var int|null
      */
-    protected ?int $id;
+    protected ?int $id = null;
 
     /**
      * @internal
@@ -67,7 +67,7 @@ final class Note extends Model\AbstractModel
      *
      * @var int|null
      */
-    protected ?int $user;
+    protected ?int $user = null;
 
     /**
      * @internal

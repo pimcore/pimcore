@@ -47,7 +47,7 @@ class Document extends Element\AbstractElement
      *
      * @var string|null
      */
-    protected ?string $fullPathCache;
+    protected ?string $fullPathCache = null;
 
     /**
      * @internal
@@ -59,14 +59,14 @@ class Document extends Element\AbstractElement
      *
      * @var string|null
      */
-    protected ?string $key;
+    protected ?string $key = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected ?string $path;
+    protected ?string $path = null;
 
     /**
      * @internal
@@ -199,7 +199,7 @@ class Document extends Element\AbstractElement
         return true;
     }
 
-    public static function getById(int $id, array $params = []): ?static
+    public static function getById(int|string $id, array $params = []): ?static
     {
         if (!is_numeric($id) || $id < 1) {
             return null;
@@ -248,7 +248,9 @@ class Document extends Element\AbstractElement
             }
 
             RuntimeCache::set($cacheKey, $document);
-            $document->__setDataVersionTimestamp($document->getModificationDate());
+            if($document->getModificationDate()) {
+                $document->__setDataVersionTimestamp($document->getModificationDate());
+            }
 
             $document->resetDirtyMap();
 
@@ -971,7 +973,7 @@ class Document extends Element\AbstractElement
         return (bool) $this->published;
     }
 
-    public function setPublished(bool $published): static
+    public function setPublished(bool|int $published): static
     {
         $this->published = (bool) $published;
 

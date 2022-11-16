@@ -23,7 +23,7 @@ class ExternalImage implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    protected ?string $url;
+    protected ?string $url = null;
 
     /**
      * @param string|null $url

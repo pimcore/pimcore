@@ -49,7 +49,7 @@ class Environment implements EnvironmentInterface
      *
      * @var string|null
      */
-    protected ?string $currentTransientCheckoutTenant;
+    protected ?string $currentTransientCheckoutTenant = null;
 
     public function __construct(LocaleServiceInterface $localeService, array $options = [])
     {

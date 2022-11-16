@@ -28,13 +28,13 @@ class TaxEntry
 
     const CALCULATION_MODE_FIXED = 'fixed';
 
-    protected ?TaxEntryFieldcollection $entry;
+    protected ?TaxEntryFieldcollection $entry = null;
 
     protected float $percent;
 
     protected Decimal $amount;
 
-    protected ?string $taxId;
+    protected ?string $taxId = null;
 
     /**
      * @param float $percent

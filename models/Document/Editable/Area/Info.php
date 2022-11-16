@@ -27,14 +27,14 @@ class Info
      *
      * @var string|null
      */
-    protected ?string $id;
+    protected ?string $id = null;
 
     /**
      * @internal
      *
      * @var Editable|null
      */
-    protected ?Editable $editable;
+    protected ?Editable $editable = null;
 
     /**
      * @internal
@@ -48,21 +48,21 @@ class Info
      *
      * @var Request|null
      */
-    protected ?Request $request;
+    protected ?Request $request = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected ?string $type;
+    protected ?string $type = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected ?int $index;
+    protected ?int $index = null;
 
     public function getId(): ?string
     {

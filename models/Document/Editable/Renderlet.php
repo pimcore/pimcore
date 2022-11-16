@@ -37,7 +37,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
      *
      * @var int|null
      */
-    protected ?int $id;
+    protected ?int $id = null;
 
     /**
      * Contains the object
@@ -55,7 +55,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
      *
      * @var string|null
      */
-    protected ?string $type;
+    protected ?string $type = null;
 
     /**
      * Contains the subtype
@@ -64,7 +64,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
      *
      * @var string|null
      */
-    protected ?string $subtype;
+    protected ?string $subtype = null;
 
     /**
      * {@inheritdoc}

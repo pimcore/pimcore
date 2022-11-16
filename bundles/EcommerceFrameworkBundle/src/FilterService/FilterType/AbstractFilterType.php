@@ -35,7 +35,7 @@ abstract class AbstractFilterType
 
     protected string $template;
 
-    protected ?Request $request;
+    protected ?Request $request = null;
 
     /**
      * @param string $template for rendering the filter frontend

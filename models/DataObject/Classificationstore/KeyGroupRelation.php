@@ -63,7 +63,7 @@ final class KeyGroupRelation extends Model\AbstractModel
      */
     protected string $groupName;
 
-    protected bool $mandatory;
+    protected bool $mandatory = false;
 
     protected bool $enabled;
 
@@ -157,9 +157,9 @@ final class KeyGroupRelation extends Model\AbstractModel
         return $this->enabled;
     }
 
-    public function setEnabled(bool $enabled)
+    public function setEnabled(bool|int $enabled)
     {
-        $this->enabled = $enabled;
+        $this->enabled = (bool)$enabled;
     }
 
     public static function getByGroupAndKeyId(int $groupId, int $keyId): ?KeyGroupRelation

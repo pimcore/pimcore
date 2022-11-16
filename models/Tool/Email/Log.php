@@ -41,7 +41,7 @@ class Log extends Model\AbstractModel
      *
      * @var int | null
      */
-    protected ?int $documentId;
+    protected ?int $documentId = null;
 
     /**
      * Parameters passed for replacement
@@ -83,21 +83,21 @@ class Log extends Model\AbstractModel
      *
      * @var string|null
      */
-    protected ?string $to;
+    protected ?string $to = null;
 
     /**
      * The carbon copy recipients (multiple recipients are separated by a ",")
      *
      * @var string|null
      */
-    protected ?string $cc;
+    protected ?string $cc = null;
 
     /**
      * The blind carbon copy recipients (multiple recipients are separated by a ",")
      *
      * @var string|null
      */
-    protected ?string $bcc;
+    protected ?string $bcc = null;
 
     /**
      * Contains 1 if a html logfile exists and 0 if no html logfile exists
@@ -146,7 +146,7 @@ class Log extends Model\AbstractModel
      *
      * @var ?string
      */
-    protected ?string $error;
+    protected ?string $error = null;
 
     public function setDocumentId(int $id): static
     {

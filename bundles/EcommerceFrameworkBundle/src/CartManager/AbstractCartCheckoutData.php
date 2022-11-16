@@ -22,7 +22,7 @@ abstract class AbstractCartCheckoutData extends \Pimcore\Model\AbstractModel
 
     protected array $data;
 
-    protected ?CartInterface $cart;
+    protected ?CartInterface $cart = null;
 
     public function setCart(CartInterface $cart)
     {

@@ -38,14 +38,14 @@ final class ImageThumbnail
      *
      * @var int|null
      */
-    protected ?int $timeOffset;
+    protected ?int $timeOffset = null;
 
     /**
      * @internal
      *
      * @var Image|null
      */
-    protected ?Image $imageAsset;
+    protected ?Image $imageAsset = null;
 
     /**
      * @param Model\Asset\Video|null $asset

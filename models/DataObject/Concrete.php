@@ -98,7 +98,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @var bool|null
      */
-    protected ?bool $omitMandatoryCheck;
+    protected ?bool $omitMandatoryCheck = null;
 
     /**
      * @internal
@@ -425,7 +425,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return (bool) $this->getPublished();
     }
 
-    public function setPublished(bool $o_published): static
+    public function setPublished(bool|int $o_published): static
     {
         $this->o_published = (bool) $o_published;
 

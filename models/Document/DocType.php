@@ -34,7 +34,7 @@ class DocType extends Model\AbstractModel
      *
      * @var string|null
      */
-    protected ?string $id;
+    protected ?string $id = null;
 
     /**
      * Name of the document-type
@@ -70,7 +70,7 @@ class DocType extends Model\AbstractModel
      *
      * @var string|null
      */
-    protected ?string $template;
+    protected ?string $template = null;
 
     /**
      * Type, must be one of the following: page,snippet,email
@@ -93,14 +93,14 @@ class DocType extends Model\AbstractModel
      *
      * @var int|null
      */
-    protected ?int $creationDate;
+    protected ?int $creationDate = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected ?int $modificationDate;
+    protected ?int $modificationDate = null;
 
     /**
      * @internal

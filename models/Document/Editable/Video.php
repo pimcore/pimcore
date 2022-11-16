@@ -58,7 +58,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      *
      * @var string|null
      */
-    protected ?string $type;
+    protected ?string $type = null;
 
     /**
      * asset ID of poster image
@@ -67,7 +67,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      *
      * @var int|null
      */
-    protected ?int $poster;
+    protected ?int $poster = null;
 
     /**
      * @internal
@@ -88,7 +88,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      *
      * @var array|null
      */
-    protected ?array $allowedTypes;
+    protected ?array $allowedTypes = null;
 
     public function setId(int|string|null $id): static
     {

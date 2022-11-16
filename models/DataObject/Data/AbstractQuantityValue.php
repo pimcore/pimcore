@@ -27,9 +27,9 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    protected string|null $unitId;
+    protected string|null $unitId = null;
 
-    protected ?Unit $unit;
+    protected ?Unit $unit = null;
 
     /**
      * @param string|Unit|null $unit

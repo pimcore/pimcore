@@ -30,7 +30,7 @@ class Shipping implements ShippingInterface
 {
     protected Decimal $charge;
 
-    protected ?OnlineShopTaxClass $taxClass;
+    protected ?OnlineShopTaxClass $taxClass = null;
 
     public function __construct(array $options = [])
     {

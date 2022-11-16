@@ -49,9 +49,9 @@ final class Staticroute extends AbstractModel
 
     protected int $priority = 1;
 
-    protected ?int $creationDate;
+    protected ?int $creationDate = null;
 
-    protected ?int $modificationDate;
+    protected ?int $modificationDate = null;
 
     /**
      * Associative array filled on match() that holds matched path values

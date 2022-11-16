@@ -105,11 +105,11 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): bool
     {
-        if (!is_null($data)) {
-            $data = (bool) $data;
+        if(!is_bool($data)) {
+            return false;
         }
 
-        return $data;
+        return (bool)$data;
     }
 
     /**

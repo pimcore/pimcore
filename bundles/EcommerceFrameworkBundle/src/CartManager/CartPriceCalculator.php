@@ -67,7 +67,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
      */
     protected array $appliedPricingRules = [];
 
-    protected ?PricingManagerInterface $pricingManager;
+    protected ?PricingManagerInterface $pricingManager = null;
 
     public function __construct(EnvironmentInterface $environment, CartInterface $cart, array $modificatorConfig = [])
     {

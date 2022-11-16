@@ -31,13 +31,13 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
 
     protected int $index;
 
-    protected ?string $fieldname;
+    protected ?string $fieldname = null;
 
     protected Concrete|Model\Element\ElementDescriptor|null $object;
 
     protected ?int $objectId = null;
 
-    protected string $type;
+    protected string $type = '';
 
     public function getIndex(): int
     {

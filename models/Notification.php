@@ -42,28 +42,28 @@ class Notification extends AbstractModel
      *
      * @var string|null
      */
-    protected ?string $creationDate;
+    protected ?string $creationDate = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected ?string $modificationDate;
+    protected ?string $modificationDate = null;
 
     /**
      * @internal
      *
      * @var User|null
      */
-    protected ?User $sender;
+    protected ?User $sender = null;
 
     /**
      * @internal
      *
      * @var User|null
      */
-    protected ?User $recipient;
+    protected ?User $recipient = null;
 
     /**
      * @internal
@@ -77,28 +77,28 @@ class Notification extends AbstractModel
      *
      * @var string|null
      */
-    protected ?string $type;
+    protected ?string $type = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected ?string $message;
+    protected ?string $message = null;
 
     /**
      * @internal
      *
      * @var Element\ElementInterface|null
      */
-    protected ?Element\ElementInterface $linkedElement;
+    protected ?Element\ElementInterface $linkedElement = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected ?string $linkedElementType;
+    protected ?string $linkedElementType = null;
 
     /**
      * @internal

@@ -49,7 +49,7 @@ class FullPageCacheListener
 
     protected bool $addExpireHeader = true;
 
-    protected ?string $disableReason;
+    protected ?string $disableReason = null;
 
     protected string $defaultCacheKey;
 

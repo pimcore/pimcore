@@ -70,7 +70,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @var float|int|string|null
      */
-    public string|int|null|float $defaultValue;
+    public string|int|null|float $defaultValue = null;
 
     /**
      * Type for the column to query

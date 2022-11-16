@@ -58,9 +58,9 @@ class Config extends Model\AbstractModel implements \JsonSerializable
 
     protected string|array $yAxis = [];
 
-    protected ?int $modificationDate;
+    protected ?int $modificationDate = null;
 
-    protected ?int $creationDate;
+    protected ?int $creationDate = null;
 
     protected bool $shareGlobally = true;
 

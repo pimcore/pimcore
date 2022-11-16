@@ -52,27 +52,27 @@ final class Redirect extends AbstractModel
 
     protected string $source;
 
-    protected ?int $sourceSite;
+    protected ?int $sourceSite = null;
 
     protected bool $passThroughParameters = false;
 
     protected string $target;
 
-    protected ?int $targetSite;
+    protected ?int $targetSite = null;
 
     protected int $statusCode = 301;
 
     protected int $priority = 1;
 
-    protected ?bool $regex;
+    protected ?bool $regex = null;
 
     protected bool $active = true;
 
-    protected ?int $expiry;
+    protected ?int $expiry = null;
 
-    protected ?int $creationDate;
+    protected ?int $creationDate = null;
 
-    protected ?int $modificationDate;
+    protected ?int $modificationDate = null;
 
     /**
      * ID of the owner user
@@ -84,7 +84,7 @@ final class Redirect extends AbstractModel
      *
      * @var int|null
      */
-    protected ?int $userModification;
+    protected ?int $userModification = null;
 
     public static function getById(int $id): ?Redirect
     {

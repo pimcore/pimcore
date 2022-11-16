@@ -28,7 +28,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
 {
     use DataObject\Traits\OwnerAwareFieldTrait;
 
-    protected ?DataObject\AbstractObject $object;
+    protected ?DataObject\AbstractObject $object = null;
 
     protected ?int $objectId = null;
 

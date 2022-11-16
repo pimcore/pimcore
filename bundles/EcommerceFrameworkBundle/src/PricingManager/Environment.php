@@ -25,24 +25,24 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class Environment implements EnvironmentInterface
 {
-    protected ?CartInterface $cart;
+    protected ?CartInterface $cart = null;
 
-    protected ?CartItemInterface $cartItem;
+    protected ?CartItemInterface $cartItem = null;
 
-    protected ?CheckoutableInterface $product;
+    protected ?CheckoutableInterface $product = null;
 
-    protected ?VisitorInfo $visitorInfo;
+    protected ?VisitorInfo $visitorInfo = null;
 
-    protected ?RuleInterface $rule;
+    protected ?RuleInterface $rule = null;
 
-    protected ?PriceInfoInterface $priceInfo;
+    protected ?PriceInfoInterface $priceInfo = null;
 
     /**
      * @var AbstractCategory[]
      */
     protected array $categories = [];
 
-    protected ?AttributeBagInterface $session;
+    protected ?AttributeBagInterface $session = null;
 
     /**
      * Execution mode of system - either product or cart

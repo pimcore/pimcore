@@ -70,7 +70,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @var float|int|string|null
      */
-    public string|int|null|float $defaultValue;
+    public string|int|null|float $defaultValue = null;
 
     /**
      * @internal

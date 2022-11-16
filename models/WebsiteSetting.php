@@ -26,7 +26,7 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 final class WebsiteSetting extends AbstractModel
 {
-    protected ?int $id;
+    protected ?int $id = null;
 
     protected string $name;
 
@@ -36,11 +36,11 @@ final class WebsiteSetting extends AbstractModel
 
     protected mixed $data;
 
-    protected ?int $siteId;
+    protected ?int $siteId = null;
 
-    protected ?int $creationDate;
+    protected ?int $creationDate = null;
 
-    protected ?int $modificationDate;
+    protected ?int $modificationDate = null;
 
     /**
      * this is a small per request cache to know which website setting is which is, this info is used in self::getByName()

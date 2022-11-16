@@ -38,9 +38,9 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      *
      * @var string
      */
-    protected $type;
+    protected string $type = '';
 
-    protected ?string $fieldname;
+    protected ?string $fieldname = null;
 
     protected bool $doDelete = false;
 

@@ -29,7 +29,7 @@ class Dao extends Model\Dao\AbstractDao
 {
     use DataObject\ClassDefinition\Helper\Dao;
 
-    protected ?array $tableDefinitions = null;
+    protected array $tableDefinitions = [];
 
     public function getTableName(DataObject\ClassDefinition $class, bool $query = false): string
     {

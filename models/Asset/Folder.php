@@ -38,14 +38,14 @@ class Folder extends Model\Asset
      *
      * @var Asset[]|null
      */
-    protected ?array $children;
+    protected ?array $children = null;
 
     /**
      * @internal
      *
      * @var bool|null
      */
-    protected ?bool $hasChildren;
+    protected ?bool $hasChildren = null;
 
     /**
      * set the children of the document

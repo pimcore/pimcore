@@ -21,9 +21,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListInterface;
 
 class OrderDateTime implements OrderListFilterInterface
 {
-    protected ?\DateTime $from;
+    protected ?\DateTime $from = null;
 
-    protected ?\DateTime $till;
+    protected ?\DateTime $till = null;
 
     protected string $column = 'order.orderDate';
 

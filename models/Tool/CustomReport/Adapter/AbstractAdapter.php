@@ -22,7 +22,7 @@ abstract class AbstractAdapter implements CustomReportAdapterInterface
 {
     protected \stdClass $config;
 
-    protected ?Config $fullConfig;
+    protected ?Config $fullConfig = null;
 
     /**
      * @param \stdClass $config

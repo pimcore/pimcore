@@ -31,17 +31,17 @@ class Hotspotimage implements OwnerAwareFieldInterface
     /**
      * @var array[]|null
      */
-    protected ?array $hotspots;
+    protected ?array $hotspots = null;
 
     /**
      * @var array[]|null
      */
-    protected ?array $marker;
+    protected ?array $marker = null;
 
     /**
      * @var array[]|null
      */
-    protected ?array $crop;
+    protected ?array $crop = null;
 
     /**
      * @param Asset\Image|int|null $image

@@ -49,7 +49,7 @@ class PricingManager implements PricingManagerInterface
     /**
      * @var RuleInterface[]|null
      */
-    protected ?array $rules;
+    protected ?array $rules = null;
 
     public function __construct(
         array $conditionMapping,
@@ -84,9 +84,9 @@ class PricingManager implements PricingManagerInterface
         }
     }
 
-    public function setEnabled(bool $enabled)
+    public function setEnabled(bool|int $enabled)
     {
-        $this->enabled = $enabled;
+        $this->enabled = (bool)$enabled;
     }
 
     public function isEnabled(): bool

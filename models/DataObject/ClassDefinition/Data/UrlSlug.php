@@ -221,53 +221,55 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
         $data = $this->getDataFromObjectParam($object, $params);
 
-        $slugs = $this->prepareDataForPersistence($data, $object, $params);
-        $db = Db::get();
+        if($data !== null) {
+            $slugs = $this->prepareDataForPersistence($data, $object, $params);
+            $db = Db::get();
 
-        // delete rows first
-        $deleteDescriptor = [
-            'fieldname' => $this->getName(),
-        ];
-        $this->enrichDataRow($object, $params, $classId, $deleteDescriptor, 'objectId');
-        $conditionParts = Model\DataObject\Service::buildConditionPartsFromDescriptor($deleteDescriptor);
-        $db->executeQuery('DELETE FROM ' . Model\DataObject\Data\UrlSlug::TABLE_NAME . ' WHERE ' . implode(' AND ', $conditionParts));
-        // now save the new data
-        if (is_array($slugs) && !empty($slugs)) {
-            /** @var Model\DataObject\Data\UrlSlug $slug */
-            foreach ($slugs as $slug) {
-                if (!$slug['slug']) {
-                    continue;
-                }
-
-                $this->enrichDataRow($object, $params, $classId, $slug, 'objectId');
-
-                // relation needs to be an array with src_id, dest_id, type, fieldname
-                try {
-                    $db->insert(Model\DataObject\Data\UrlSlug::TABLE_NAME, $slug);
-                } catch (\Exception $e) {
-                    Logger::error((string) $e);
-                    if ($e instanceof UniqueConstraintViolationException) {
-                        // check if the slug action can be resolved.
-
-                        $existingSlug = Model\DataObject\Data\UrlSlug::resolveSlug($slug['slug'], $slug['siteId']);
-                        if ($existingSlug) {
-                            // this will also remove an invalid slug and throw an exception.
-                            // retrying the transaction should success the next time
-                            try {
-                                $existingSlug->getAction();
-                            } catch (\Exception $e) {
-                                $db->insert(Model\DataObject\Data\UrlSlug::TABLE_NAME, $slug);
-
-                                return;
-                            }
-
-                            // if now exception is thrown then the slug is owned by a diffrent object/field
-                            throw new \Exception('Unique constraint violated. Slug alreay used by object '
-                                . $existingSlug->getFieldname() . ', fieldname: ' . $existingSlug->getFieldname());
-                        }
+            // delete rows first
+            $deleteDescriptor = [
+                'fieldname' => $this->getName(),
+            ];
+            $this->enrichDataRow($object, $params, $classId, $deleteDescriptor, 'objectId');
+            $conditionParts = Model\DataObject\Service::buildConditionPartsFromDescriptor($deleteDescriptor);
+            $db->executeQuery('DELETE FROM ' . Model\DataObject\Data\UrlSlug::TABLE_NAME . ' WHERE ' . implode(' AND ', $conditionParts));
+            // now save the new data
+            if (is_array($slugs) && !empty($slugs)) {
+                /** @var Model\DataObject\Data\UrlSlug $slug */
+                foreach ($slugs as $slug) {
+                    if (!$slug['slug']) {
+                        continue;
                     }
 
-                    throw $e;
+                    $this->enrichDataRow($object, $params, $classId, $slug, 'objectId');
+
+                    // relation needs to be an array with src_id, dest_id, type, fieldname
+                    try {
+                        $db->insert(Model\DataObject\Data\UrlSlug::TABLE_NAME, $slug);
+                    } catch (\Exception $e) {
+                        Logger::error((string)$e);
+                        if ($e instanceof UniqueConstraintViolationException) {
+                            // check if the slug action can be resolved.
+
+                            $existingSlug = Model\DataObject\Data\UrlSlug::resolveSlug($slug['slug'], $slug['siteId']);
+                            if ($existingSlug) {
+                                // this will also remove an invalid slug and throw an exception.
+                                // retrying the transaction should success the next time
+                                try {
+                                    $existingSlug->getAction();
+                                } catch (\Exception $e) {
+                                    $db->insert(Model\DataObject\Data\UrlSlug::TABLE_NAME, $slug);
+
+                                    return;
+                                }
+
+                                // if now exception is thrown then the slug is owned by a diffrent object/field
+                                throw new \Exception('Unique constraint violated. Slug alreay used by object '
+                                    . $existingSlug->getFieldname() . ', fieldname: ' . $existingSlug->getFieldname());
+                            }
+                        }
+
+                        throw $e;
+                    }
                 }
             }
         }

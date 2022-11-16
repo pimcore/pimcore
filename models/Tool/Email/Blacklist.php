@@ -27,11 +27,11 @@ use Pimcore\Model;
  */
 class Blacklist extends Model\AbstractModel
 {
-    protected ?string $address;
+    protected ?string $address = null;
 
-    protected ?int $creationDate;
+    protected ?int $creationDate = null;
 
-    protected ?int $modificationDate;
+    protected ?int $modificationDate = null;
 
     public static function getByAddress(string $addr): ?Blacklist
     {

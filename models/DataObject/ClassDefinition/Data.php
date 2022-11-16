@@ -19,7 +19,10 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
+use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
+use Pimcore\Model\DataObject\Localizedfield;
 
 abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface
 {
@@ -203,7 +206,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public function setValues(array $data = [], array $blockedKeys = []): static
     {
         foreach ($data as $key => $value) {
-            if(!empty($value)) {
+            if($value !== null) {
                 if (!in_array($key, $blockedKeys)) {
                     $method = 'set' . $key;
                     if (method_exists($this, $method)) {
@@ -1272,7 +1275,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return false;
     }
 
-    public function markLazyloadedFieldAsLoaded(DataObject\Concrete $object)
+    public function markLazyloadedFieldAsLoaded(Localizedfield|AbstractData|Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object)
     {
         if ($object instanceof DataObject\LazyLoadedFieldsInterface) {
             $object->markLazyKeyAsLoaded($this->getName());

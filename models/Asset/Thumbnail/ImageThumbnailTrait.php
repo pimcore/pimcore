@@ -33,14 +33,14 @@ trait ImageThumbnailTrait
      *
      * @var Asset|null
      */
-    protected ?Asset $asset;
+    protected ?Asset $asset = null;
 
     /**
      * @internal
      *
      * @var Config|null
      */
-    protected ?Config $config;
+    protected ?Config $config = null;
 
     /**
      * @internal
@@ -54,28 +54,28 @@ trait ImageThumbnailTrait
      *
      * @var int|null
      */
-    protected ?int $width;
+    protected ?int $width = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected ?int $height;
+    protected ?int $height = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected ?int $realWidth;
+    protected ?int $realWidth = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected ?int $realHeight;
+    protected ?int $realHeight = null;
 
     /**
      * @internal

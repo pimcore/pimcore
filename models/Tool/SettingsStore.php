@@ -45,7 +45,7 @@ final class SettingsStore extends Model\AbstractModel
      *
      * @var string
      */
-    protected string $type;
+    protected string $type = '';
 
     /**
      * @internal

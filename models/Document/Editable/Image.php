@@ -51,7 +51,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @var Asset\Image|null
      */
-    protected ?Asset\Image $image;
+    protected ?Asset\Image $image = null;
 
     /**
      * @internal

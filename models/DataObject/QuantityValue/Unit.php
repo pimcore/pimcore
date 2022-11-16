@@ -43,9 +43,9 @@ class Unit extends Model\AbstractModel
 
     protected string $reference;
 
-    protected ?float $factor;
+    protected ?float $factor = null;
 
-    protected ?float $conversionOffset;
+    protected ?float $conversionOffset = null;
 
     protected string $converter;
 

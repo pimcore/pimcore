@@ -101,26 +101,28 @@ abstract class AbstractRelations extends Data implements
         }
 
         $data = $this->getDataFromObjectParam($object, $params);
-        $relations = $this->prepareDataForPersistence($data, $object, $params);
+        if($data !== null) {
+            $relations = $this->prepareDataForPersistence($data, $object, $params);
 
-        if (is_array($relations) && !empty($relations)) {
-            $db = Db::get();
+            if (is_array($relations) && !empty($relations)) {
+                $db = Db::get();
 
-            foreach ($relations as $relation) {
-                $this->enrichDataRow($object, $params, $classId, $relation);
+                foreach ($relations as $relation) {
+                    $this->enrichDataRow($object, $params, $classId, $relation);
 
-                // relation needs to be an array with src_id, dest_id, type, fieldname
-                try {
-                    $db->insert('object_relations_' . $classId, Db\Helper::quoteDataIdentifiers($db, $relation));
-                } catch (\Exception $e) {
-                    Logger::error('It seems that the relation ' . $relation['src_id'] . ' => ' . $relation['dest_id']
-                        . ' (fieldname: ' . $this->getName() . ') already exist -> please check immediately!');
-                    Logger::error((string) $e);
+                    // relation needs to be an array with src_id, dest_id, type, fieldname
+                    try {
+                        $db->insert('object_relations_' . $classId, Db\Helper::quoteDataIdentifiers($db, $relation));
+                    } catch (\Exception $e) {
+                        Logger::error('It seems that the relation ' . $relation['src_id'] . ' => ' . $relation['dest_id']
+                            . ' (fieldname: ' . $this->getName() . ') already exist -> please check immediately!');
+                        Logger::error((string)$e);
 
-                    // try it again with an update if the insert fails, shouldn't be the case, but it seems that
-                    // sometimes the insert throws an exception
+                        // try it again with an update if the insert fails, shouldn't be the case, but it seems that
+                        // sometimes the insert throws an exception
 
-                    throw $e;
+                        throw $e;
+                    }
                 }
             }
         }
@@ -173,14 +175,14 @@ abstract class AbstractRelations extends Data implements
 
     /**
      * @param array $data
-     * @param DataObject\Concrete|null $object
+     * @param Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete|null $object
      * @param array $params
      *
      * @return mixed
      *@internal
      *
      */
-    abstract protected function loadData(array $data, Concrete $object = null, array $params = []): mixed;
+    abstract protected function loadData(array $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed;
 
     /**
      * @param array|Element\ElementInterface $data
@@ -191,7 +193,7 @@ abstract class AbstractRelations extends Data implements
      *@internal
      *
      */
-    abstract protected function prepareDataForPersistence(array|Element\ElementInterface $data, Concrete $object = null, array $params = []): mixed;
+    abstract protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed;
 
 
     public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])

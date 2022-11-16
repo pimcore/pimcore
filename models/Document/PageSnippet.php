@@ -39,14 +39,14 @@ abstract class PageSnippet extends Model\Document
      *
      * @var string|null
      */
-    protected ?string $controller;
+    protected ?string $controller = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected ?string $template;
+    protected ?string $template = null;
 
     /**
      * Contains all content-editables of the document
@@ -72,7 +72,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @var null|int
      */
-    protected ?int $contentMasterDocumentId;
+    protected ?int $contentMasterDocumentId = null;
 
     /**
      * @internal

@@ -31,7 +31,7 @@ trait ScheduledTasksTrait
      *
      * @var Task[]|null
      */
-    protected ?array $scheduledTasks;
+    protected ?array $scheduledTasks = null;
 
     /**
      * @return Task[] the $scheduledTasks

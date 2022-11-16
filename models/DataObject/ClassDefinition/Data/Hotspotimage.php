@@ -159,6 +159,9 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Hotspotimage
     {
         $imageId = $data[$this->getName() . '__image'];
+        if($imageId === null) {
+            return null;
+        }
         $image = Asset::getById($imageId);
         if ($image) {
             $metaData = $data[$this->getName() . '__hotspots'];

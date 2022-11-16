@@ -36,7 +36,7 @@ class PriceInfo implements PriceInfoInterface
     /**
      * @var RuleInterface[]|null
      */
-    protected ?array $validRules;
+    protected ?array $validRules = null;
 
     protected bool $rulesApplied = false;
 

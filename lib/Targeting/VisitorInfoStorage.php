@@ -21,7 +21,7 @@ use Pimcore\Targeting\Model\VisitorInfo;
 
 class VisitorInfoStorage implements VisitorInfoStorageInterface
 {
-    private VisitorInfo $visitorInfo;
+    private ?VisitorInfo $visitorInfo = null;
 
     public function getVisitorInfo(): VisitorInfo
     {

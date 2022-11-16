@@ -30,14 +30,14 @@ abstract class PrintAbstract extends Document\PageSnippet
      *
      * @var int|null
      */
-    protected ?int $lastGenerated;
+    protected ?int $lastGenerated = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected ?string $lastGenerateMessage;
+    protected ?string $lastGenerateMessage = null;
 
     /**
      * @internal

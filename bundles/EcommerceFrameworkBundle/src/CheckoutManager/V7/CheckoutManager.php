@@ -60,7 +60,7 @@ class CheckoutManager implements CheckoutManagerInterface
      *
      * @var PaymentInterface|null
      */
-    protected ?PaymentInterface $payment;
+    protected ?PaymentInterface $payment = null;
 
     /**
      * Needed for effective access to one specific checkout step

@@ -22,9 +22,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 
 class DateRange implements DateRangeInterface
 {
-    protected ?\DateTime $starting;
+    protected ?\DateTime $starting = null;
 
-    protected ?\DateTime $ending;
+    protected ?\DateTime $ending = null;
 
     public function check(EnvironmentInterface $environment): bool
     {

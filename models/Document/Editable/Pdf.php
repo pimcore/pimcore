@@ -30,7 +30,7 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
      *
      * @var int|null
      */
-    protected ?int $id;
+    protected ?int $id = null;
 
     /**
      * {@inheritdoc}

@@ -203,7 +203,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @var string
      */
-    protected string $o_locked;
+    protected ?string $o_locked = null;
 
     /**
      * @internal
@@ -352,7 +352,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * Static helper to get an object by the passed ID
      *
      */
-    public static function getById(int $id, array $params = []): ?static
+    public static function getById(int|string $id, array $params = []): ?static
     {
         if (!is_numeric($id) || $id < 1) {
             return null;

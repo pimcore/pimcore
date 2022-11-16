@@ -47,7 +47,9 @@ class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDao
                 WHERE documents.id = ?", [$this->model->getId()]);
 
         if (!empty($data['id'])) {
-            $data['metaData'] = @unserialize($data['metaData']);
+            if(is_string($data['metaData'])) {
+                $data['metaData'] = @unserialize($data['metaData']);
+            }
             if (!is_array($data['metaData'])) {
                 $data['metaData'] = [];
             }

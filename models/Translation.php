@@ -39,16 +39,16 @@ final class Translation extends AbstractModel
 
     const DOMAIN_ADMIN = 'admin';
 
-    protected ?string $key;
+    protected ?string $key = null;
 
     /**
      * @var string[]
      */
     protected array $translations = [];
 
-    protected ?int $creationDate;
+    protected ?int $creationDate = null;
 
-    protected ?int $modificationDate;
+    protected ?int $modificationDate = null;
 
     protected string $domain = self::DOMAIN_DEFAULT;
 

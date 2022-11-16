@@ -23,9 +23,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 class ModificatedPrice extends Price implements ModificatedPriceInterface
 {
-    protected ?string $description;
+    protected ?string $description = null;
 
-    protected ?RuleInterface $rule;
+    protected ?RuleInterface $rule = null;
 
     public function __construct(Decimal $amount, Currency $currency, bool $minPrice = false, string $description = null)
     {

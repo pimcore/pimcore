@@ -39,7 +39,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @var Model\Dependency|null
      */
-    protected ?Model\Dependency $dependencies;
+    protected ?Model\Dependency $dependencies = null;
 
     /**
      * @internal
@@ -53,7 +53,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @var string|null
      */
-    protected ?string $path;
+    protected ?string $path = null;
 
     /**
      * @internal
@@ -80,7 +80,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      *
      * @var int|null
      */
-    protected ?int $modificationDate;
+    protected ?int $modificationDate = null;
 
     /**
      * @internal
@@ -230,7 +230,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     public function getParent(): ?AbstractElement
     {
-        if ($this->parent === null) {
+        if ($this->parent === null && $this->getParentId() !== null) {
             $parent = Service::getElementById(Service::getElementType($this), $this->getParentId());
             $this->setParent($parent);
         }
@@ -606,7 +606,9 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $version->setDate($this->getModificationDate());
         $version->setUserId($this->getUserModification());
         $version->setData($this);
-        $version->setNote($versionNote);
+        if($versionNote !== null) {
+            $version->setNote($versionNote);
+        }
         $version->setGenerateStackTrace($saveStackTrace);
         $version->setAutoSave($isAutoSave);
 

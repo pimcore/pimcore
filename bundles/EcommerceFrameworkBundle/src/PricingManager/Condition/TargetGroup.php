@@ -21,9 +21,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 
 class TargetGroup implements ConditionInterface
 {
-    protected ?int $targetGroupId;
+    protected ?int $targetGroupId = null;
 
-    protected ?\Pimcore\Model\Tool\Targeting\TargetGroup $targetGroup;
+    protected ?\Pimcore\Model\Tool\Targeting\TargetGroup $targetGroup = null;
 
     protected int $threshold = 0;
 

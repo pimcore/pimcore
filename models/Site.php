@@ -45,7 +45,7 @@ final class Site extends AbstractModel
 
     protected ?Document\Page $rootDocument = null;
 
-    protected ?string $rootPath;
+    protected ?string $rootPath = null;
 
     protected string $mainDomain = '';
 
@@ -55,9 +55,9 @@ final class Site extends AbstractModel
 
     protected bool $redirectToMainDomain = false;
 
-    protected ?int $creationDate;
+    protected ?int $creationDate = null;
 
-    protected ?int $modificationDate;
+    protected ?int $modificationDate = null;
 
     /**
      * @param int $id

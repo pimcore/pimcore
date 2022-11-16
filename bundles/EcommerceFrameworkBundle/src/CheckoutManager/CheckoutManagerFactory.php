@@ -43,14 +43,14 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
      */
     protected array $checkoutStepDefinitions = [];
 
-    protected ?PaymentInterface $paymentProvider;
+    protected ?PaymentInterface $paymentProvider = null;
 
     /**
      * @var CheckoutManagerInterface[]
      */
     protected array $checkoutManagers = [];
 
-    protected ?ServiceLocator $handlePendingPaymentStrategyLocator;
+    protected ?ServiceLocator $handlePendingPaymentStrategyLocator = null;
 
     protected string $className = CheckoutManager::class;
 

@@ -27,15 +27,15 @@ class CalculatedValue implements OwnerAwareFieldInterface
 
     protected string $ownerType = 'object';
 
-    protected ?string $ownerName;
+    protected ?string $ownerName = null;
 
     protected string|int|null $index;
 
-    protected ?string $position;
+    protected ?string $position = null;
 
-    protected ?int $groupId;
+    protected ?int $groupId = null;
 
-    protected ?int $keyId;
+    protected ?int $keyId = null;
 
     protected mixed $keyDefinition;
 

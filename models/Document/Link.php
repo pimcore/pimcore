@@ -35,7 +35,7 @@ class Link extends Model\Document
      *
      * @var int|null
      */
-    protected ?int $internal;
+    protected ?int $internal = null;
 
     /**
      * Contains the type of the internal ID
@@ -44,7 +44,7 @@ class Link extends Model\Document
      *
      * @var string|null
      */
-    protected ?string $internalType;
+    protected ?string $internalType = null;
 
     /**
      * Contains object of linked Document|Asset|DataObject
@@ -53,7 +53,7 @@ class Link extends Model\Document
      *
      * @var Model\Element\ElementInterface|null
      */
-    protected ?Model\Element\ElementInterface $object;
+    protected ?Model\Element\ElementInterface $object = null;
 
     /**
      * Contains the direct link as plain text

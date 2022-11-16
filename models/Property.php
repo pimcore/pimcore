@@ -27,13 +27,13 @@ final class Property extends AbstractModel
 {
     protected string $name;
 
-    protected mixed $data;
+    protected mixed $data = null;
 
     protected string $type;
 
     protected string $ctype;
 
-    protected ?string $cpath;
+    protected ?string $cpath = null;
 
     protected int $cid;
 

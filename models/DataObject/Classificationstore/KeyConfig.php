@@ -30,7 +30,7 @@ final class KeyConfig extends Model\AbstractModel
 {
     use RecursionBlockingEventDispatchHelperTrait;
 
-    protected ?int $id;
+    protected ?int $id = null;
 
     /**
      * Store ID
@@ -47,7 +47,7 @@ final class KeyConfig extends Model\AbstractModel
     /** Pseudo column for title
      * @var string|null
      */
-    protected ?string $title;
+    protected ?string $title = null;
 
     /**
      * The key description.
@@ -63,9 +63,9 @@ final class KeyConfig extends Model\AbstractModel
      */
     protected string $type;
 
-    protected ?int $creationDate;
+    protected ?int $creationDate = null;
 
-    protected ?int $modificationDate;
+    protected ?int $modificationDate = null;
 
     protected string $definition;
 
@@ -287,9 +287,9 @@ final class KeyConfig extends Model\AbstractModel
         return $this->enabled;
     }
 
-    public function setEnabled(bool $enabled)
+    public function setEnabled(bool|int $enabled)
     {
-        $this->enabled = $enabled;
+        $this->enabled = (bool)$enabled;
     }
 
     public function getTitle(): ?string

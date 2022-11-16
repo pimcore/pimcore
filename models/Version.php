@@ -40,7 +40,7 @@ final class Version extends AbstractModel
 {
     use RecursionBlockingEventDispatchHelperTrait;
 
-    protected ?int $id;
+    protected ?int $id = null;
 
     protected int $cid;
 
@@ -66,9 +66,9 @@ final class Version extends AbstractModel
 
     protected int $versionCount = 0;
 
-    protected ?string $binaryFileHash;
+    protected ?string $binaryFileHash = null;
 
-    protected ?int $binaryFileId;
+    protected ?int $binaryFileId = null;
 
     public static bool $disabled = false;
 

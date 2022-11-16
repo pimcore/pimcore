@@ -35,7 +35,7 @@ final class Predefined extends Model\AbstractModel
 
     protected string $description;
 
-    protected ?string $key;
+    protected ?string $key = null;
 
     protected string $type;
 
@@ -47,9 +47,9 @@ final class Predefined extends Model\AbstractModel
 
     protected bool $inheritable = false;
 
-    protected ?int $creationDate;
+    protected ?int $creationDate = null;
 
-    protected ?int $modificationDate;
+    protected ?int $modificationDate = null;
 
     public static function getById(string $id): ?Predefined
     {

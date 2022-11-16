@@ -25,7 +25,7 @@ final class Serialize
         return serialize($data);
     }
 
-    public static function unserialize(string $data): mixed
+    public static function unserialize(?string $data = null): mixed
     {
         if (!empty($data) && is_string($data)) {
             $data = unserialize($data);

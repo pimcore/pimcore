@@ -32,7 +32,7 @@ class Imagick extends Adapter
     /**
      * @var \Imagick|null
      */
-    protected mixed $resource;
+    protected mixed $resource = null;
 
     protected string $imagePath;
 

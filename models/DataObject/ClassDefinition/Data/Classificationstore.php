@@ -709,7 +709,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                                 $value = $items[$activeGroupId][$keyId][$validLanguage] ?? null;
                             }
 
-                            $keyDef = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition()), $keyGroupRelation->getType());
+                            $keyDef = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition(), true), $keyGroupRelation->getType());
 
                             if ($keyGroupRelation->isMandatory()) {
                                 $keyDef->setMandatory(true);

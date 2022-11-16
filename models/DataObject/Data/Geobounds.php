@@ -23,9 +23,9 @@ class Geobounds implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    protected ?GeoCoordinates $northEast;
+    protected ?GeoCoordinates $northEast = null;
 
-    protected ?GeoCoordinates $southWest;
+    protected ?GeoCoordinates $southWest = null;
 
     /**
      * @param GeoCoordinates|null $northEast

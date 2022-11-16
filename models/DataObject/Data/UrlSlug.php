@@ -41,9 +41,9 @@ class UrlSlug implements OwnerAwareFieldInterface
 
     protected string $classId;
 
-    protected ?string $slug;
+    protected ?string $slug = null;
 
-    protected ?int $siteId;
+    protected ?int $siteId = null;
 
     protected string $fieldname;
 
@@ -55,7 +55,7 @@ class UrlSlug implements OwnerAwareFieldInterface
 
     protected string $position;
 
-    protected ?string $previousSlug;
+    protected ?string $previousSlug = null;
 
     /**
      * UrlSlug constructor.

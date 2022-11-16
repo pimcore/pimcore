@@ -47,7 +47,7 @@ class DefaultMysql implements ProductListInterface
 
     protected AbstractCategory $category;
 
-    protected ?DefaultMysql\Dao $resource;
+    protected ?DefaultMysql\Dao $resource = null;
 
     protected bool $inProductList = true;
 

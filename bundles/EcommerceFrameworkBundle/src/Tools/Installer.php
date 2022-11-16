@@ -132,7 +132,7 @@ class Installer extends AbstractInstaller
 
     protected Connection $db;
 
-    protected ?Schema $schema;
+    protected ?Schema $schema = null;
 
     public function __construct(
         BundleInterface $bundle,

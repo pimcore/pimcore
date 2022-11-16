@@ -30,35 +30,35 @@ class Glossary extends AbstractModel
      *
      * @var int|null
      */
-    protected ?int $id;
+    protected ?int $id = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected ?string $text;
+    protected ?string $text = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected ?string $link;
+    protected ?string $link = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected ?string $abbr;
+    protected ?string $abbr = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected ?string $language;
+    protected ?string $language = null;
 
     /**
      * @internal
@@ -79,21 +79,21 @@ class Glossary extends AbstractModel
      *
      * @var int|null
      */
-    protected ?int $site;
+    protected ?int $site = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected ?int $creationDate;
+    protected ?int $creationDate = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected ?int $modificationDate;
+    protected ?int $modificationDate = null;
 
     public static function getById(int $id): ?Glossary
     {

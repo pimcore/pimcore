@@ -87,14 +87,14 @@ class Asset extends Element\AbstractElement
      *
      * @var string|null
      */
-    protected ?string $filename;
+    protected ?string $filename = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected ?string $mimetype;
+    protected ?string $mimetype = null;
 
     /**
      * @internal
@@ -139,14 +139,14 @@ class Asset extends Element\AbstractElement
      *
      * @var array|null
      */
-    protected ?array $siblings;
+    protected ?array $siblings = null;
 
     /**
      * @internal
      *
      * @var bool|null
      */
-    protected ?bool $hasSiblings;
+    protected ?bool $hasSiblings = null;
 
     /**
      * @internal
@@ -220,7 +220,7 @@ class Asset extends Element\AbstractElement
         return true;
     }
 
-    public static function getById(int $id, array $params = []): ?static
+    public static function getById(int|string $id, array $params = []): ?static
     {
         if (!is_numeric($id) || $id < 1) {
             return null;
@@ -1312,7 +1312,7 @@ class Asset extends Element\AbstractElement
         return $this->hasMetaData;
     }
 
-    public function setHasMetaData(bool $hasMetaData): static
+    public function setHasMetaData(bool|int $hasMetaData): static
     {
         $this->hasMetaData = (bool)$hasMetaData;
 

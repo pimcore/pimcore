@@ -35,7 +35,7 @@ final class Predefined extends Model\AbstractModel
 
     protected string $name;
 
-    protected ?string $description;
+    protected ?string $description = null;
 
     /**
      * @TODO if required?
@@ -46,11 +46,11 @@ final class Predefined extends Model\AbstractModel
 
     protected string $type;
 
-    protected ?string $targetSubtype;
+    protected ?string $targetSubtype = null;
 
     protected mixed $data;
 
-    protected ?string $config;
+    protected ?string $config = null;
 
     /**
      * @TODO if required?
@@ -59,13 +59,13 @@ final class Predefined extends Model\AbstractModel
      */
     protected string $ctype;
 
-    protected ?string $language;
+    protected ?string $language = null;
 
-    protected ?string $group;
+    protected ?string $group = null;
 
-    protected ?int $creationDate;
+    protected ?int $creationDate = null;
 
-    protected ?int $modificationDate;
+    protected ?int $modificationDate = null;
 
     public static function getById(string $id): ?Predefined
     {

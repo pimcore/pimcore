@@ -23,9 +23,9 @@ class PaymentNotAllowedException extends AbstractEcommerceException
 {
     protected AbstractOrder $order;
 
-    protected ?CartInterface $cart;
+    protected ?CartInterface $cart = null;
 
-    protected ?bool $orderNeedsUpdate;
+    protected ?bool $orderNeedsUpdate = null;
 
     /**
      * PaymentNotAllowedException constructor.

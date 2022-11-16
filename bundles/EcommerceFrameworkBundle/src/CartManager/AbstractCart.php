@@ -35,19 +35,19 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     /**
      * @var CartItemInterface[]|null
      */
-    protected ?array $items;
+    protected ?array $items = null;
 
     public array $checkoutData = [];
 
     protected string $name;
 
-    protected ?\DateTime $creationDate;
+    protected ?\DateTime $creationDate = null;
 
-    protected ?int $creationDateTimestamp;
+    protected ?int $creationDateTimestamp = null;
 
-    protected ?\DateTime $modificationDate;
+    protected ?\DateTime $modificationDate = null;
 
-    protected ?int $modificationDateTimestamp;
+    protected ?int $modificationDateTimestamp = null;
 
     protected string|int|null $id;
 
@@ -56,19 +56,19 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      */
     protected array $giftItems = [];
 
-    protected ?CartPriceCalculatorInterface $priceCalculator;
+    protected ?CartPriceCalculatorInterface $priceCalculator = null;
 
-    protected ?int $itemAmount;
+    protected ?int $itemAmount = null;
 
-    protected ?int $subItemAmount;
+    protected ?int $subItemAmount = null;
 
-    protected ?int $mainAndSubItemAmount;
+    protected ?int $mainAndSubItemAmount = null;
 
-    protected ?int $itemCount;
+    protected ?int $itemCount = null;
 
-    protected ?int $subItemCount;
+    protected ?int $subItemCount = null;
 
-    protected ?int $mainAndSubItemCount;
+    protected ?int $mainAndSubItemCount = null;
 
     public function __construct()
     {

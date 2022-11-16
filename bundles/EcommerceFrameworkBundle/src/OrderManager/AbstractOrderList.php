@@ -30,7 +30,7 @@ abstract class AbstractOrderList implements OrderListInterface
 
     protected string $orderState = AbstractOrder::ORDER_STATE_COMMITTED;
 
-    protected ?\ArrayIterator $list;
+    protected ?\ArrayIterator $list = null;
 
     protected string $itemClassName;
 
