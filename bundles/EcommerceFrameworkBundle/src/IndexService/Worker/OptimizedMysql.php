@@ -19,6 +19,7 @@ use Doctrine\DBAL\Connection;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\OptimizedMysql as OptimizedMysqlConfig;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Logger;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -38,14 +39,15 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
     protected $mySqlHelper;
 
     /**
-     * @param OptimizedMysqlConfig $tenantConfig
-     * @param Connection $db
-     * @param EventDispatcherInterface $eventDispatcher
+     * @var LoggerInterface
      */
-    public function __construct(OptimizedMysqlConfig $tenantConfig, Connection $db, EventDispatcherInterface $eventDispatcher)
+    protected $logger;
+
+    public function __construct(OptimizedMysqlConfig $tenantConfig, Connection $db, EventDispatcherInterface $eventDispatcher, LoggerInterface $pimcoreEcommerceSqlLogger)
     {
         parent::__construct($tenantConfig, $db, $eventDispatcher);
 
+        $this->logger = $pimcoreEcommerceSqlLogger;
         $this->mySqlHelper = new Helper\MySql($tenantConfig, $db);
     }
 
@@ -181,6 +183,6 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
      */
     public function getProductList()
     {
-        return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql($this->getTenantConfig());
+        return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql($this->getTenantConfig(), $this->logger));
     }
 }

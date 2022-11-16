@@ -796,7 +796,7 @@ class DefaultFindologic implements ProductListInterface
     }
 
     /**
-     * @return Logger
+     * @return LoggerInterface
      */
     protected function getLogger()
     {

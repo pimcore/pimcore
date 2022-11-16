@@ -23,6 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -42,10 +43,16 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
      */
     protected $mySqlHelper;
 
-    public function __construct(MysqlConfigInterface $tenantConfig, Connection $db, EventDispatcherInterface $eventDispatcher)
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    public function __construct(MysqlConfigInterface $tenantConfig, Connection $db, EventDispatcherInterface $eventDispatcher, LoggerInterface $pimcoreEcommerceSqlLogger)
     {
         parent::__construct($tenantConfig, $db, $eventDispatcher);
 
+        $this->logger = $pimcoreEcommerceSqlLogger;
         $this->mySqlHelper = new Helper\MySql($tenantConfig, $db);
     }
 
@@ -253,6 +260,6 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
      */
     public function getProductList()
     {
-        return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql($this->getTenantConfig());
+        return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql($this->getTenantConfig(), $this->logger);
     }
 }
