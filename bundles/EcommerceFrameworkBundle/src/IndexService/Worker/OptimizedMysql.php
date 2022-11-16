@@ -183,6 +183,6 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
      */
     public function getProductList()
     {
-        return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql($this->getTenantConfig(), $this->logger));
+        return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql($this->getTenantConfig(), $this->logger);
     }
 }
