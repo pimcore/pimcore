@@ -34,7 +34,7 @@
                 "collapsed": false,
                 "bodyStyle": "",
                 "datatype": "layout",
-                "permissions": "",
+                "permissions": null,
                 "children": [
                     {
                         "fieldtype": "text",
@@ -74,7 +74,7 @@
                         "index": null,
                         "locked": false,
                         "style": "",
-                        "permissions": "",
+                        "permissions": null,
                         "datatype": "data",
                         "relationType": false,
                         "invisible": false,
