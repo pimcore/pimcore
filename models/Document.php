@@ -973,9 +973,9 @@ class Document extends Element\AbstractElement
         return (bool) $this->published;
     }
 
-    public function setPublished(bool|int $published): static
+    public function setPublished(bool $published): static
     {
-        $this->published = (bool) $published;
+        $this->published = $published;
 
         return $this;
     }

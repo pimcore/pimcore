@@ -157,9 +157,9 @@ final class KeyGroupRelation extends Model\AbstractModel
         return $this->enabled;
     }
 
-    public function setEnabled(bool|int $enabled)
+    public function setEnabled(bool $enabled)
     {
-        $this->enabled = (bool)$enabled;
+        $this->enabled = $enabled;
     }
 
     public static function getByGroupAndKeyId(int $groupId, int $keyId): ?KeyGroupRelation

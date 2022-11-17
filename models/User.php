@@ -171,9 +171,9 @@ final class User extends User\UserRole
         return $this->admin;
     }
 
-    public function setAdmin(bool|int $admin): static
+    public function setAdmin(bool $admin): static
     {
-        $this->admin =(bool)$admin;
+        $this->admin = $admin;
 
         return $this;
     }
@@ -183,9 +183,9 @@ final class User extends User\UserRole
         return $this->active;
     }
 
-    public function setActive(bool|int $active): static
+    public function setActive(bool $active): static
     {
-        $this->active = (bool)$active;
+        $this->active = $active;
 
         return $this;
     }
@@ -291,9 +291,9 @@ final class User extends User\UserRole
         return $this->welcomescreen;
     }
 
-    public function setCloseWarning(bool|int $closeWarning): static
+    public function setCloseWarning(bool $closeWarning): static
     {
-        $this->closeWarning = (bool)$closeWarning;
+        $this->closeWarning = $closeWarning;
 
         return $this;
     }
@@ -303,9 +303,9 @@ final class User extends User\UserRole
         return $this->closeWarning;
     }
 
-    public function setMemorizeTabs(bool|int $memorizeTabs): static
+    public function setMemorizeTabs(bool $memorizeTabs): static
     {
-        $this->memorizeTabs = (bool)$memorizeTabs;
+        $this->memorizeTabs = $memorizeTabs;
 
         return $this;
     }
@@ -315,9 +315,9 @@ final class User extends User\UserRole
         return $this->memorizeTabs;
     }
 
-    public function setAllowDirtyClose(bool|int $allowDirtyClose): static
+    public function setAllowDirtyClose(bool $allowDirtyClose): static
     {
-        $this->allowDirtyClose = (bool)$allowDirtyClose;
+        $this->allowDirtyClose = $allowDirtyClose;
 
         return $this;
     }

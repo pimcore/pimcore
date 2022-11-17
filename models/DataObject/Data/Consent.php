@@ -34,9 +34,9 @@ class Consent implements OwnerAwareFieldInterface
      * @param bool $consent
      * @param int|null $noteId
      */
-    public function __construct(bool|int $consent = false, int $noteId = null)
+    public function __construct(bool $consent = false, int $noteId = null)
     {
-        $this->consent = (bool)$consent;
+        $this->consent = $consent;
         $this->noteId = $noteId;
         $this->markMeDirty();
     }
@@ -46,10 +46,10 @@ class Consent implements OwnerAwareFieldInterface
         return $this->consent;
     }
 
-    public function setConsent(bool|int $consent): void
+    public function setConsent(bool $consent): void
     {
         if ($consent != $this->consent) {
-            $this->consent = (bool)$consent;
+            $this->consent = $consent;
             $this->markMeDirty();
         }
     }

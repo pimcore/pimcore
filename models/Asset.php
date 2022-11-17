@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+
 
 /**
  * Pimcore
@@ -1312,9 +1312,9 @@ class Asset extends Element\AbstractElement
         return $this->hasMetaData;
     }
 
-    public function setHasMetaData(bool|int $hasMetaData): static
+    public function setHasMetaData(bool $hasMetaData): static
     {
-        $this->hasMetaData = (bool)$hasMetaData;
+        $this->hasMetaData = $hasMetaData;
 
         return $this;
     }

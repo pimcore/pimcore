@@ -84,9 +84,9 @@ class PricingManager implements PricingManagerInterface
         }
     }
 
-    public function setEnabled(bool|int $enabled)
+    public function setEnabled(bool $enabled)
     {
-        $this->enabled = (bool)$enabled;
+        $this->enabled = $enabled;
     }
 
     public function isEnabled(): bool

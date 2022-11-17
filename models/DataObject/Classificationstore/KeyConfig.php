@@ -287,9 +287,9 @@ final class KeyConfig extends Model\AbstractModel
         return $this->enabled;
     }
 
-    public function setEnabled(bool|int $enabled)
+    public function setEnabled(bool $enabled)
     {
-        $this->enabled = (bool)$enabled;
+        $this->enabled = $enabled;
     }
 
     public function getTitle(): ?string

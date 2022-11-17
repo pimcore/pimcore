@@ -190,9 +190,9 @@ class NotesSubscriber implements EventSubscriberInterface
         return $this->enabled;
     }
 
-    public function setEnabled(bool|int $enabled): void
+    public function setEnabled(bool $enabled): void
     {
-        $this->enabled = (bool)$enabled;
+        $this->enabled = $enabled;
     }
 
     public function getAdditionalData(): array

@@ -425,9 +425,9 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return (bool) $this->getPublished();
     }
 
-    public function setPublished(bool|int $o_published): static
+    public function setPublished(bool $o_published): static
     {
-        $this->o_published = (bool) $o_published;
+        $this->o_published = $o_published;
 
         return $this;
     }
