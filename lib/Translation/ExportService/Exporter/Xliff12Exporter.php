@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Translation\ExportService\Exporter;
 
+use Pimcore\Event\Model\TranslationXliffEvent;
+use Pimcore\Event\TranslationEvents;
 use Pimcore\File;
 use Pimcore\Translation\AttributeSet\AttributeSet;
 use Pimcore\Translation\Escaper\Xliff12Escaper;
@@ -39,8 +41,12 @@ class Xliff12Exporter implements ExporterInterface
     public function export(AttributeSet $attributeSet, string $exportId = null): string
     {
         $exportId = $exportId ?: uniqid();
-
         $exportFile = $this->getExportFilePath($exportId);
+
+        $event = new TranslationXliffEvent($attributeSet);
+        \Pimcore::getEventDispatcher()->dispatch($event, TranslationEvents::XLIFF_ATTRIBUTE_SET_EXPORT);
+
+        $attributeSet = $event->getAttributeSet();
 
         if ($attributeSet->isEmpty()) {
             return $exportFile;
