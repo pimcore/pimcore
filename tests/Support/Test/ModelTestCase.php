@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Support\Test;
 
-use Pimcore\Tests\Support\Helper\DataType\Calculator;
 use Pimcore\Tests\Support\ModelTester;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -36,8 +35,6 @@ abstract class ModelTestCase extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        \Pimcore::getContainer()->set('test.calculatorservice', new Calculator());
 
         if ($this->needsDb()) {
             $this->setUpTestClasses();

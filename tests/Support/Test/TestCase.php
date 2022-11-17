@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Support\Test;
 
 use Codeception\Test\Unit;
+use Pimcore\Tests\Support\Helper\DataType\Calculator;
 use Pimcore\Tests\Support\Util\TestHelper;
 
 abstract class TestCase extends Unit
@@ -39,6 +40,8 @@ abstract class TestCase extends Unit
     protected function setUp(): void
     {
         parent::setUp();
+
+        \Pimcore::getContainer()->set('test.calculatorservice', new Calculator());
 
         if ($this->needsDb()) {
             TestHelper::checkDbSupport();
