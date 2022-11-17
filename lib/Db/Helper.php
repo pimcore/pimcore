@@ -21,7 +21,7 @@ use Pimcore\Model\Element\ValidationException;
 
 class Helper
 {    
-    public static function upsert(ConnectionInterface|\Doctrine\DBAL\Connection $connection, $table, array $data, array $keys)
+    public static function upsert(Connection $connection, $table, array $data, array $keys)
     {
         try {
             return $connection->insert($table, $data);
