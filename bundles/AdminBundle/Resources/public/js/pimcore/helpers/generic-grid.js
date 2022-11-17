@@ -51,6 +51,7 @@ pimcore.helpers.grid.buildDefaultStore = function (url, fields, itemsPerPage, cu
         listeners: {
             exception: function(proxy, response, operation){
                 pimcore.helpers.showNotification(t("error"), t(operation.getError()), "error");
+                store.load();
             }
         }
     });
