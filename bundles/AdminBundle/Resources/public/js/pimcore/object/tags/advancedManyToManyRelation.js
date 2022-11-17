@@ -183,19 +183,27 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 
                 let defaultVal = this.fieldConfig.columns[i].value;
                 let keyType = this.fieldConfig.columns[i].type;
-
+                let keyName = this.fieldConfig.columns[i].key;
+                 
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
                     if (this.fieldConfig.noteditable) {
                         metaData.tdCls += ' grid_cbx_noteditable';
                     }
-
-                    if(value == null) {
-                        if(defaultVal == 'true')
-                            value = true;
-                        else
-                            value = false;
-                       
-                        record.set(keyType, value);
+                    
+                    //Check to see if the "value" variable has had a value assigned 
+                    //to it. If not, it means that this is the first time the variable
+                    //is being used, and therefore we will look to see if there was
+                    //a default value assigned, and if so, take the appropriate action.
+                    if(value != false && value != true) {
+                        if(defaultVal == 'true' || defaultVal == 'false') {
+                            if(defaultVal == 'true')
+                                value = true;
+                            else
+                                value = false; 
+                        
+                            record.set(keyType, value);
+                            record.set(keyName, value);
+                        }
                     }
 
                     return Ext.String.format('<div style="text-align: center"><div role="button" class="x-grid-checkcolumn {0}" style=""></div></div>', value ? 'x-grid-checkcolumn-checked' : '');
