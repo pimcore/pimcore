@@ -166,7 +166,7 @@ class RequestHelper
             return false;
         }
 
-        if (preg_match("@^/admin.*@", $request->getRequestUri())) {
+        if (preg_match('@^/admin.*@', $request->getRequestUri())) {
             return false;
         }
 
