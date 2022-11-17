@@ -258,12 +258,10 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     public function setValues(array $data = [], array $blockedKeys = []): static
     {
         foreach ($data as $key => $value) {
-            if(!empty($value)) {
-                if (!in_array($key, $blockedKeys)) {
-                    $method = 'set' . ucfirst($key);
-                    if (method_exists($this, $method)) {
-                        $this->$method($value);
-                    }
+            if (isset($value) && !in_array($key, $blockedKeys)) {
+                $method = 'set' . ucfirst($key);
+                if (method_exists($this, $method)) {
+                    $this->$method($value);
                 }
             }
         }

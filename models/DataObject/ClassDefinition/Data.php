@@ -206,12 +206,10 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     public function setValues(array $data = [], array $blockedKeys = []): static
     {
         foreach ($data as $key => $value) {
-            if($value !== null) {
-                if (!in_array($key, $blockedKeys)) {
-                    $method = 'set' . $key;
-                    if (method_exists($this, $method)) {
-                        $this->$method($value);
-                    }
+            if (isset($value) && !in_array($key, $blockedKeys)) {
+                $method = 'set' . $key;
+                if (method_exists($this, $method)) {
+                    $this->$method($value);
                 }
             }
         }

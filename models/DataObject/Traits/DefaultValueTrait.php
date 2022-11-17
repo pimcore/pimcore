@@ -37,9 +37,9 @@ trait DefaultValueTrait
      * @param Concrete|null $object
      * @param array $params
      *
-     * @return \Carbon\Carbon|float|int|\Pimcore\Model\DataObject\Data\QuantityValue|string|null modified data
+     * @return mixed $data
      */
-    protected function handleDefaultValue(mixed $data, Concrete $object = null, array $params = []): float|\Pimcore\Model\DataObject\Data\QuantityValue|int|\Carbon\Carbon|string|null
+    protected function handleDefaultValue(mixed $data, Concrete $object = null, array $params = []): mixed
     {
         $context = isset($params['context']) ? $params['context'] : [];
         $isUpdate = isset($params['isUpdate']) ? $params['isUpdate'] : true;
