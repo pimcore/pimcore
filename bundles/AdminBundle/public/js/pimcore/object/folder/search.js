@@ -182,7 +182,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             if (settings.saveFilters) {
                 this.filter = [];
                 this.store.getFilters().items.forEach(item => {
-                    if (!item.config.value) {
+                    if (!item.config.value || item.config.value.length === 0) {
                         item.config.value = item._value;
                     }
                     this.filter.push(item.config);
