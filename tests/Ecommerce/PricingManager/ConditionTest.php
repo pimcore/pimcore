@@ -211,8 +211,6 @@ class ConditionTest extends EcommerceTestCase
             'isCartReadOnly' => function () {
                 return false;
             },
-            'modified' => function () {
-            },
         ]);
 
         $cart->addItem($this->mockProduct(451, 450), 2);

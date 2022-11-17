@@ -19,7 +19,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\ServiceLoc
 
 abstract class CheckoutTenantAwareServiceLocator extends TenantAwareServiceLocator
 {
-    protected function getEnvironmentTenant(): string
+    protected function getEnvironmentTenant(): ?string
     {
         return $this->environment->getCurrentCheckoutTenant();
     }

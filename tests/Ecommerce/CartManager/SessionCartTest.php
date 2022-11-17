@@ -21,11 +21,12 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
+use Pimcore\Tests\Support\EcommerceTester;
 use Pimcore\Tests\Support\Test\TestCase;
 
 class SessionCartTest extends TestCase
 {
-    protected \EcommerceFramework\UnitTester $tester;
+    protected EcommerceTester $tester;
 
     // tests
 
@@ -37,8 +38,6 @@ class SessionCartTest extends TestCase
             },
             'isCartReadOnly' => function () {
                 return false;
-            },
-            'modified' => function () {
             },
         ]);
 

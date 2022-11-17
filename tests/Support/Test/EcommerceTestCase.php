@@ -28,9 +28,9 @@ use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
 abstract class EcommerceTestCase extends TestCase
 {
-    private EnvironmentInterface $environment;
+    private ?EnvironmentInterface $environment = null;
 
-    private SessionInterface $session;
+    private ?SessionInterface $session = null;
 
     protected function buildEnvironment(): EnvironmentInterface
     {

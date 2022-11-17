@@ -102,15 +102,6 @@ class SessionCart extends AbstractCart implements CartInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function modified(): static
-    {
-        $modified = parent::modified();
-        return $this;
-    }
-
     public static function getById(int $id): ?SessionCart
     {
         $carts = static::getAllCartsForUser(-1);

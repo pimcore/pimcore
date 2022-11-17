@@ -49,7 +49,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
 
     protected ?int $modificationDateTimestamp = null;
 
-    protected string|int|null $id;
+    protected string|int|null $id = null;
 
     /**
      * @var CartItemInterface[]
@@ -93,7 +93,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     public function addItem(CheckoutableInterface $product, int $count, string $itemKey = null, bool $replace = false, array $params = [], array $subProducts = [], string $comment = null): string
     {
         if (empty($itemKey)) {
-            $itemKey = $product->getId();
+            $itemKey = (string) $product->getId();
 
             if (!empty($subProducts)) {
                 $itemKey = $itemKey . '_' . uniqid();
@@ -146,12 +146,13 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
                     $subItem->setCount($subItem->getCount() + $subProduct->getQuantity());
                 } else {
                     $className = $this->getCartItemClassName();
+                    $subItemKey = (string)$subProduct->getProduct()->getId();
                     $subItem = new $className();
                     $subItem->setCart($this);
-                    $subItem->setItemKey($subProduct->getProduct()->getId());
+                    $subItem->setItemKey($subItemKey);
                     $subItem->setProduct($subProduct->getProduct());
                     $subItem->setCount($subProduct->getQuantity());
-                    $subItems[$subProduct->getProduct()->getId()] = $subItem;
+                    $subItems[$subItemKey] = $subItem;
                 }
             }
             $item->setSubItems($subItems);

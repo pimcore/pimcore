@@ -117,8 +117,6 @@ class CartTaxManagementTest extends EcommerceTestCase
             'isCartReadOnly' => function () {
                 return false;
             },
-            'modified' => function () {
-            },
         ]);
 
         return $cart;
