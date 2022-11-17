@@ -806,14 +806,16 @@
                              handler: this.editFieldcollections
                          });
                      }
- 
-                     if (perspectiveCfg.inToolbar("settings.objects.objectbricks")) {
-                         objectMenu.menu.items.push({
-                             text: t("objectbricks"),
-                             iconCls: "pimcore_nav_icon_objectbricks",
-                             itemId: 'pimcore_menu_settings_data_objects_objectbricks',
-                             handler: this.editObjectBricks
-                         });
+
+                     if (user.isAllowed("objectbricks")) {
+                         if (perspectiveCfg.inToolbar("settings.objects.objectbricks")) {
+                             objectMenu.menu.items.push({
+                                 text: t("objectbricks"),
+                                 iconCls: "pimcore_nav_icon_objectbricks",
+                                 itemId: 'pimcore_menu_settings_data_objects_objectbricks',
+                                 handler: this.editObjectBricks
+                             });
+                         }
                      }
  
                      if (perspectiveCfg.inToolbar("settings.objects.quantityValue")) {
