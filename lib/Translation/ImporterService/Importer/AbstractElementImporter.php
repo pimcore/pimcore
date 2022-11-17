@@ -16,6 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Translation\ImporterService\Importer;
 
+use Pimcore\Event\Model\TranslationXliffEvent;
+use Pimcore\Event\TranslationEvents;
 use Pimcore\Model\Element;
 use Pimcore\Translation\AttributeSet\Attribute;
 use Pimcore\Translation\AttributeSet\AttributeSet;
@@ -29,6 +31,11 @@ class AbstractElementImporter implements ImporterInterface
     {
         $translationItem = $attributeSet->getTranslationItem();
         $element = $translationItem->getElement();
+
+        $event = new TranslationXliffEvent($attributeSet);
+        \Pimcore::getEventDispatcher()->dispatch($event, TranslationEvents::XLIFF_ATTRIBUTE_SET_IMPORT);
+
+        $attributeSet = $event->getAttributeSet();
 
         if (!$element instanceof Element\ElementInterface || $attributeSet->isEmpty()) {
             return;
