@@ -567,7 +567,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         $visibleFields = is_array($fieldConfig['visibleFields']) ? $fieldConfig['visibleFields'] : explode(',', $fieldConfig['visibleFields']);
 
-        if(!$visibleFields) {
+        if (!$visibleFields) {
             $visibleFields = ['id', 'fullpath', 'classname'];
         }
 
@@ -580,20 +580,19 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $res = $this->forward(SearchController::class.'::findAction', ['request' => $searchRequest]);
         $objects = json_decode($res->getContent(), true)['data'];
 
-        if($request->get('data')) {
-            foreach(explode(',', $request->get('data')) as $preSelectedElementId) {
+        if ($request->get('data')) {
+            foreach (explode(',', $request->get('data')) as $preSelectedElementId) {
                 $objects[] = ['id' => $preSelectedElementId];
             }
         }
 
         foreach ($objects as $objectData) {
-
             $option = [
                 'id' => $objectData['id'],
             ];
 
             $visibleFieldValues = [];
-            foreach($visibleFields as $visibleField) {
+            foreach ($visibleFields as $visibleField) {
                 if (isset($objectData[$visibleField])) {
                     $visibleFieldValues[] = $objectData[$visibleField];
                 } else {
@@ -611,7 +610,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     $getter = 'get'.ucfirst($visibleField);
                     $visibleFieldValue = $object->$getter();
                     if (count($classes) > 1 && $visibleField == 'key') {
-                        $visibleFieldValue .= " (".$object->getClassName().")";
+                        $visibleFieldValue .= ' ('.$object->getClassName().')';
                     }
                     $visibleFieldValues[] = $visibleFieldValue;
 
