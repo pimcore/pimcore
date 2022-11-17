@@ -166,16 +166,8 @@ class RequestHelper
             return false;
         }
 
-        $excludePatterns = [
-            "/^\/admin.*/",
-            "/^\/install.*/",
-            "/^\/plugin.*/",
-        ];
-
-        foreach ($excludePatterns as $pattern) {
-            if (preg_match($pattern, $request->getRequestUri())) {
-                return false;
-            }
+        if (preg_match("@^/admin.*@", $request->getRequestUri())) {
+            return false;
         }
 
         return true;
