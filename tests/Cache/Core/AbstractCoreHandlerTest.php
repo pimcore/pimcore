@@ -551,14 +551,14 @@ abstract class AbstractCoreHandlerTest extends Unit
 
     public function tagsEntriesProvider(): array
     {
-        return array_merge($this->tagEntriesProvider(), [
+        return [
             [['tag_a', 'tag_b'], ['A', 'B']],
             [['tag_a', 'tag_c'], ['A', 'C']],
             [['tag_b', 'tag_c'], ['B', 'C']],
             [['tag_ab', 'tag_bc'], ['A', 'B', 'C']],
             [['tag_a', 'tag_bc'], ['A', 'B', 'C']],
             [['tag_c', 'tag_ab'], ['A', 'B', 'C']],
-        ]);
+        ];
     }
 
     protected function runClearedTagEntryAssertions(array $expectedRemoveEntries)
@@ -596,10 +596,6 @@ abstract class AbstractCoreHandlerTest extends Unit
     public function testClearTags(array $tags, array $expectedRemoveEntries)
     {
         $this->buildSampleEntries();
-
-        if (!is_array($tags)) {
-            $tags = [$tags];
-        }
 
         $this->handler->clearTags($tags);
         $this->runClearedTagEntryAssertions($expectedRemoveEntries);
@@ -736,11 +732,6 @@ abstract class AbstractCoreHandlerTest extends Unit
     public static function invalidKeys(): array
     {
         return [
-            [true],
-            [false],
-            [null],
-            [2],
-            [2.5],
             ['{str'],
             ['rand{'],
             ['rand{str'],
@@ -751,8 +742,6 @@ abstract class AbstractCoreHandlerTest extends Unit
             ['rand\\str'],
             ['rand@str'],
             ['rand:str'],
-            [new \stdClass()],
-            [['array']],
         ];
     }
 }
