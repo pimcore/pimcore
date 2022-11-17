@@ -33,7 +33,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
 
     protected ?string $fieldname = null;
 
-    protected Concrete|Model\Element\ElementDescriptor|null $object;
+    protected Concrete|Model\Element\ElementDescriptor|null $object = null;
 
     protected ?int $objectId = null;
 
@@ -75,7 +75,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
 
     public function setObject(?Concrete $object): static
     {
-        $this->objectId = $object ? $object->getId() : null;
+        $this->objectId = $object?->getId();
         $this->object = $object;
 
         return $this;

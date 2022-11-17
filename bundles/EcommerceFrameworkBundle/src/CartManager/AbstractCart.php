@@ -200,7 +200,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     public function addGiftItem(CheckoutableInterface $product, int $count, string $itemKey = null, bool $replace = false, array $params = [], array $subProducts = [], string $comment = null): string
     {
         if (empty($itemKey)) {
-            $itemKey = $product->getId();
+            $itemKey = (string) $product->getId();
 
             if (!empty($subProducts)) {
                 $itemKey = $itemKey . '_' . uniqid();
@@ -235,7 +235,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
         // update item
         $item->setProduct($product, false);
         $item->setItemKey($itemKey);
-        $item->setComment($comment);
+        $item->setComment((string)$comment);
         if ($replace) {
             $item->setCount($count, false);
         } else {

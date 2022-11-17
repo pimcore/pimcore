@@ -26,7 +26,7 @@ class AbstractPriceInfo implements PriceInfoInterface
 
     protected int $quantity;
 
-    protected CheckoutableInterface $product;
+    protected ?CheckoutableInterface $product = null;
 
     /**
      * @var CheckoutableInterface[]

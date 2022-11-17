@@ -74,14 +74,15 @@ class ConditionTest extends EcommerceTestCase
 
         $this->assertFalse($cartAmount->check($environment), 'check with limit 300 vs. value 200');
 
+        $mockProduct1 = $this->mockProduct(1);
         /** @var Environment $environment */
         $environment = Stub::make(Environment::class, [
             'getCart' => function () use ($cart) {
                 return $cart;
             },
 
-            'getProduct' => function () {
-                return 'notnull';
+            'getProduct' => function () use ($mockProduct1) {
+                return $mockProduct1;
             },
         ]);
 
@@ -96,8 +97,8 @@ class ConditionTest extends EcommerceTestCase
                 return null;
             },
 
-            'getProduct' => function () {
-                return 'notnull';
+            'getProduct' => function () use ($mockProduct1) {
+                return $mockProduct1;
             },
         ]);
 

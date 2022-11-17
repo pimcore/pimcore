@@ -668,10 +668,6 @@ class DecimalTest extends TestCase
                 2.00,
             ],
             [
-                '15.00',
-                '2',
-            ],
-            [
                 Decimal::fromRawValue(150000),
                 Decimal::fromRawValue(20000),
             ],

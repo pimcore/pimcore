@@ -95,7 +95,7 @@ class ProductTaxManagementTest extends EcommerceTestCase
 
     public function testPriceWithTaxEntriesCombine()
     {
-        $product = $this->setUpProduct(100, [1 => 10, 2 => 15], TaxEntry::CALCULATION_MODE_COMBINE);
+        $product = $this->setUpProduct(100, ['tax_1' => 10, 'tax_2' => 15]);
         $price = $product->getOSPrice();
 
         $this->assertSame('100.0000', $price->getGrossAmount()->asString(), 'Get gross amount with tax 10% + 15% combine');
@@ -104,7 +104,7 @@ class ProductTaxManagementTest extends EcommerceTestCase
 
     public function testPriceWithTaxEntriesOneAfterAnother()
     {
-        $product = $this->setUpProduct(100, [1 => 10, 2 => 15], TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER);
+        $product = $this->setUpProduct(100, ['tax_1' => 10, 'tax_2' => 15], TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER);
         $price = $product->getOSPrice();
 
         $this->assertSame('100.0000', $price->getGrossAmount()->asString(), 'Get gross amount with tax 10% + 15% one-after-another');

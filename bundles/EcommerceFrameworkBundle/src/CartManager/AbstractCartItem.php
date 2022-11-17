@@ -38,11 +38,11 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
 
     protected ?int $productId = null;
 
-    protected string $itemKey;
+    protected string $itemKey = '';
 
     protected int $count = 0;
 
-    protected string $comment;
+    protected string $comment = '';
 
     protected string $parentItemKey = '';
 

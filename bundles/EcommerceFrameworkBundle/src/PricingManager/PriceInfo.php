@@ -40,7 +40,7 @@ class PriceInfo implements PriceInfoInterface
 
     protected bool $rulesApplied = false;
 
-    protected string $priceEnvironmentHash;
+    protected string $priceEnvironmentHash = '';
 
     protected EnvironmentInterface $environment;
 
@@ -105,7 +105,7 @@ class PriceInfo implements PriceInfoInterface
                     $this->validRules[] = $rule;
 
                     // is this a stop rule?
-                    if ($rule->getBehavior() == 'stopExecute') {
+                    if ($rule->getBehavior() == Rule::ATTRIBUTE_BEHAVIOR_LASTRULE) {
                         break;
                     }
                 }

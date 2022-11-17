@@ -172,7 +172,7 @@ class PricingManager implements PricingManagerInterface
             $appliedRules[] = $rule;
 
             // is this a stop rule?
-            if ($rule->getBehavior() === 'stopExecute') {
+            if ($rule->getBehavior() === Rule::ATTRIBUTE_BEHAVIOR_LASTRULE) {
                 break;
             }
         }

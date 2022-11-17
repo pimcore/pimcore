@@ -294,7 +294,7 @@ class AbstractRuleTest extends EcommerceTestCase
         return $elements;
     }
 
-    protected function buildConditions(mixed $conditionDefinitions): ConditionInterface|Bracket
+    protected function buildConditions(mixed $conditionDefinitions): mixed
     {
         if ($conditionDefinitions instanceof ConditionInterface) {
             return $conditionDefinitions;
