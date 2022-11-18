@@ -111,7 +111,9 @@ class Notification extends AbstractModel
         return $this->id;
     }
 
-
+    /**
+     * @return $this
+     */
     public function setId(int $id): static
     {
         $this->id = $id;
@@ -124,6 +126,9 @@ class Notification extends AbstractModel
         return $this->creationDate;
     }
 
+    /**
+     * @return $this
+     */
     public function setCreationDate(string $creationDate): static
     {
         $this->creationDate = $creationDate;
@@ -136,6 +141,9 @@ class Notification extends AbstractModel
         return $this->modificationDate;
     }
 
+    /**
+     * @return $this
+     */
     public function setModificationDate(string $modificationDate): static
     {
         $this->modificationDate = $modificationDate;
@@ -148,6 +156,9 @@ class Notification extends AbstractModel
         return $this->sender;
     }
 
+    /**
+     * @return $this
+     */
     public function setSender(?User $sender): static
     {
         $this->sender = $sender;
@@ -160,6 +171,9 @@ class Notification extends AbstractModel
         return $this->recipient;
     }
 
+    /**
+     * @return $this
+     */
     public function setRecipient(?User $recipient): static
     {
         $this->recipient = $recipient;
@@ -172,6 +186,9 @@ class Notification extends AbstractModel
         return $this->title;
     }
 
+    /**
+     * @return $this
+     */
     public function setTitle(?string $title): static
     {
         $this->title = $title;
@@ -184,6 +201,9 @@ class Notification extends AbstractModel
         return $this->type;
     }
 
+    /**
+     * @return $this
+     */
     public function setType(?string $type): static
     {
         $this->type = $type;
@@ -196,6 +216,9 @@ class Notification extends AbstractModel
         return $this->message;
     }
 
+    /**
+     * @return $this
+     */
     public function setMessage(?string $message): static
     {
         $this->message = $message;
@@ -208,6 +231,9 @@ class Notification extends AbstractModel
         return $this->linkedElement;
     }
 
+    /**
+     * @return $this
+     */
     public function setLinkedElement(?Element\ElementInterface $linkedElement): static
     {
         $this->linkedElement = $linkedElement;
@@ -231,6 +257,9 @@ class Notification extends AbstractModel
         return $this->read;
     }
 
+    /**
+     * @return $this
+     */
     public function setRead(bool $read): static
     {
         $this->read = $read;
