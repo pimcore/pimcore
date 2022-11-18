@@ -33,7 +33,7 @@ class Environment implements EnvironmentInterface
 
     protected int $userId = self::USER_ID_NOT_SET;
 
-    protected bool $useGuestCart = false;
+    protected ?bool $useGuestCart = null;
 
     protected ?string $currentAssortmentTenant = null;
 
@@ -162,7 +162,9 @@ class Environment implements EnvironmentInterface
 
     public function getUseGuestCart(): bool
     {
-        $this->load();
+        if (null === $this->useGuestCart) {
+            return !$this->hasCurrentUserId();
+        }
 
         return $this->useGuestCart;
     }
