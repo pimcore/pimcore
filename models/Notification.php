@@ -33,77 +33,57 @@ class Notification extends AbstractModel
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
-    protected int $id;
+    protected ?int $id = null;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     protected ?string $creationDate = null;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     protected ?string $modificationDate = null;
 
     /**
      * @internal
-     *
-     * @var User|null
      */
     protected ?User $sender = null;
 
     /**
      * @internal
-     *
-     * @var User|null
      */
     protected ?User $recipient = null;
 
     /**
      * @internal
-     *
-     * @var string
      */
     protected string $title;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     protected ?string $type = null;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     protected ?string $message = null;
 
     /**
      * @internal
-     *
-     * @var Element\ElementInterface|null
      */
     protected ?Element\ElementInterface $linkedElement = null;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     protected ?string $linkedElementType = null;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     protected bool $read = false;
 
@@ -131,9 +111,7 @@ class Notification extends AbstractModel
         return $this->id;
     }
 
-    /**
-     * @return $this
-     */
+
     public function setId(int $id): static
     {
         $this->id = $id;
@@ -146,9 +124,6 @@ class Notification extends AbstractModel
         return $this->creationDate;
     }
 
-    /**
-     * @return $this
-     */
     public function setCreationDate(string $creationDate): static
     {
         $this->creationDate = $creationDate;
@@ -161,9 +136,6 @@ class Notification extends AbstractModel
         return $this->modificationDate;
     }
 
-    /**
-     * @return $this
-     */
     public function setModificationDate(string $modificationDate): static
     {
         $this->modificationDate = $modificationDate;
@@ -176,9 +148,6 @@ class Notification extends AbstractModel
         return $this->sender;
     }
 
-    /**
-     * @return $this
-     */
     public function setSender(?User $sender): static
     {
         $this->sender = $sender;
@@ -191,9 +160,6 @@ class Notification extends AbstractModel
         return $this->recipient;
     }
 
-    /**
-     * @return $this
-     */
     public function setRecipient(?User $recipient): static
     {
         $this->recipient = $recipient;
@@ -206,9 +172,6 @@ class Notification extends AbstractModel
         return $this->title;
     }
 
-    /**
-     * @return $this
-     */
     public function setTitle(?string $title): static
     {
         $this->title = $title;
@@ -221,9 +184,6 @@ class Notification extends AbstractModel
         return $this->type;
     }
 
-    /**
-     * @return $this
-     */
     public function setType(?string $type): static
     {
         $this->type = $type;
@@ -236,9 +196,6 @@ class Notification extends AbstractModel
         return $this->message;
     }
 
-    /**
-     * @return $this
-     */
     public function setMessage(?string $message): static
     {
         $this->message = $message;
@@ -251,13 +208,10 @@ class Notification extends AbstractModel
         return $this->linkedElement;
     }
 
-    /**
-     * @return $this
-     */
     public function setLinkedElement(?Element\ElementInterface $linkedElement): static
     {
         $this->linkedElement = $linkedElement;
-        $this->linkedElementType = Element\Service::getElementType($linkedElement);
+        $this->linkedElementType = $linkedElement instanceof Element\ElementInterface ? Element\Service::getElementType($linkedElement): null;
 
         return $this;
     }
@@ -277,9 +231,6 @@ class Notification extends AbstractModel
         return $this->read;
     }
 
-    /**
-     * @return $this
-     */
     public function setRead(bool $read): static
     {
         $this->read = $read;
@@ -287,9 +238,6 @@ class Notification extends AbstractModel
         return $this;
     }
 
-    /**
-     * Save notification
-     */
     public function save(): void
     {
         $this->dispatchEvent(new NotificationEvent($this), NotificationEvents::PRE_SAVE);
@@ -297,9 +245,6 @@ class Notification extends AbstractModel
         $this->dispatchEvent(new NotificationEvent($this), NotificationEvents::POST_SAVE);
     }
 
-    /**
-     * Delete notification
-     */
     public function delete(): void
     {
         $this->dispatchEvent(new NotificationEvent($this), NotificationEvents::PRE_DELETE);

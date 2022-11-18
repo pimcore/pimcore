@@ -47,7 +47,7 @@ class Mail extends Email
      *
      * @var Model\Document\Email|Model\Document\Newsletter|null
      */
-    private Model\Document\Newsletter|Model\Document\Email|null $document;
+    private Model\Document\Newsletter|Model\Document\Email|null $document = null;
 
     /**
      * Contains the email document Id

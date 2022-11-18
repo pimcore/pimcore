@@ -206,7 +206,7 @@ final class User extends User\UserRole
                 // check roles
                 foreach ($this->getRoles() as $roleId) {
                     /** @var Role $role */
-                    $role = User\Role::getById($roleId);
+                    $role = User\Role::getById((int)$roleId);
                     if ($role->getPermission($key)) {
                         return true;
                     }

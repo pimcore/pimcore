@@ -27,7 +27,7 @@ use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
  */
 abstract class ModelTestCase extends TestCase
 {
-    private SessionInterface $session;
+    private ?SessionInterface $session = null;
 
     /**
      * {@inheritdoc}
