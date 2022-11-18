@@ -27,7 +27,7 @@ abstract class AbstractValue implements ValueInterface
 
     /**
      * @param \stdClass $config
-     * @param mixed|null $context
+     * @param mixed $context
      */
     public function __construct(\stdClass $config, mixed $context = null)
     {

@@ -828,7 +828,7 @@ final class User extends User\UserRole
      * You can either pass an array for setting the entire 2fa settings, or a key and a value as the second argument
      *
      * @param array|string $key
-     * @param mixed|null $value
+     * @param mixed $value
      */
     public function setTwoFactorAuthentication(array|string $key, mixed $value = null)
     {

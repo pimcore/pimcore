@@ -67,7 +67,7 @@ interface EnvironmentInterface extends ComponentInterface
      * Returns custom saved item from environment
      *
      * @param string $key
-     * @param mixed|null $defaultValue
+     * @param mixed $defaultValue
      *
      * @return mixed
      */

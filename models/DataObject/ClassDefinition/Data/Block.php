@@ -568,7 +568,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param mixed|null $def
+     * @param mixed $def
      * @param array $fields
      *
      * @return array

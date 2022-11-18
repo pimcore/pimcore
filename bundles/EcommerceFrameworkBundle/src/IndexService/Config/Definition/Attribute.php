@@ -142,7 +142,7 @@ class Attribute
      * @param IndexableInterface $object
      * @param int|null $subObjectId
      * @param ConfigInterface|null $tenantConfig
-     * @param mixed|null $default
+     * @param mixed $default
      *
      * @return mixed
      */

@@ -450,7 +450,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     /**
      * @param string $key
-     * @param mixed|null $params
+     * @param mixed $params
      *
      * @return mixed
      *

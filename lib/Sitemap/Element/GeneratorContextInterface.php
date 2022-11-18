@@ -34,7 +34,7 @@ interface GeneratorContextInterface extends \IteratorAggregate, \Countable
 
     /**
      * @param int|string $key
-     * @param mixed|null $default
+     * @param mixed $default
      *
      * @return mixed
      */
