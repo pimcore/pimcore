@@ -130,7 +130,7 @@ final class Version20211018104331 extends AbstractMigration
             $column = $tableSchema->getColumn($localForeignKeyColumn);
 
             if ($column->getPrecision() !== 10 || !($column->getType() instanceof IntegerType)) {
-                $tableSchema->changeColumn($localForeignKeyColumn, [
+                $tableSchema->modifyColumn($localForeignKeyColumn, [
                     'type' => new IntegerType(),
                     'precision' => 10,
                     'unsigned' => true,
@@ -138,7 +138,7 @@ final class Version20211018104331 extends AbstractMigration
             }
 
             if (!$column->hasCustomSchemaOption('unsigned') || $column->getCustomSchemaOption('unsigned') === false) {
-                $tableSchema->changeColumn($localForeignKeyColumn, ['unsigned' => true]);
+                $tableSchema->modifyColumn($localForeignKeyColumn, ['unsigned' => true]);
             }
 
             $tableSchema->addForeignKeyConstraint('objects', [$localForeignKeyColumn], ['o_id'], ['onDelete' => 'CASCADE'], $fkName);
