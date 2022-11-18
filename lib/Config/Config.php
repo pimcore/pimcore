@@ -94,7 +94,7 @@ final class Config implements Countable, Iterator, ArrayAccess
      * Retrieve a value and return $default if there is no element set.
      *
      * @param string $name
-     * @param mixed|null $default
+     * @param mixed $default
      *
      * @return mixed
      */

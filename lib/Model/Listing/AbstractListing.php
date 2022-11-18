@@ -167,7 +167,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
 
     /**
      * @param string $condition
-     * @param mixed|null $value
+     * @param mixed $value
      * @param string $concatenator
      *
      * @return $this

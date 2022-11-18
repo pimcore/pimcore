@@ -38,7 +38,7 @@ abstract class Adapter
 
     protected bool $preserveMetaData = false;
 
-    protected string $sourceImageFormat;
+    protected ?string $sourceImageFormat = null;
 
     protected mixed $resource = null;
 
@@ -99,7 +99,7 @@ abstract class Adapter
     {
         if ($forceResize || $width <= $this->getWidth() || $this->isVectorGraphic()) {
             $height = floor(($width / $this->getWidth()) * $this->getHeight());
-            $this->resize(max(1, $width), max(1, $height));
+            $this->resize((int)max(1, $width), (int)max(1, $height));
         }
 
         return $this;

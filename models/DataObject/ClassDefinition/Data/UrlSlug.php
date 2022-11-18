@@ -219,11 +219,11 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
             return;
         }
 
+        $db = Db::get();
         $data = $this->getDataFromObjectParam($object, $params);
 
         if($data !== null) {
             $slugs = $this->prepareDataForPersistence($data, $object, $params);
-            $db = Db::get();
 
             // delete rows first
             $deleteDescriptor = [

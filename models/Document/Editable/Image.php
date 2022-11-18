@@ -19,6 +19,8 @@ namespace Pimcore\Model\Document\Editable;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\ElementDescriptor;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool\Serialize;
 
 /**
@@ -49,7 +51,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @internal
      *
-     * @var Asset\Image|ElementInterface|null
+     * @var Asset\Image|ElementInterface|Element\ElementDescriptor|null
      */
     protected Asset\Image|ElementInterface|Element\ElementDescriptor|null $image = null;
 
@@ -242,7 +244,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
 
         $image = $this->getImage();
 
-        if ($image instanceof Asset) {
+        if ($image instanceof Asset\Image) {
             $thumbnailName = $this->config['thumbnail'] ?? null;
             if ($thumbnailName || $this->cropPercent) {
                 // create a thumbnail first
@@ -425,7 +427,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return '';
     }
 
-    public function getImage(): ?Asset\Image
+    public function getImage(): Asset\Image|ElementDescriptor|ElementInterface|null
     {
         if (!$this->image) {
             $this->image = Asset\Image::getById($this->getId());
@@ -434,7 +436,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->image;
     }
 
-    public function setImage(?Asset\Image $image): static
+    public function setImage(Asset\Image|ElementDescriptor|ElementInterface|null $image): static
     {
         $this->image = $image;
 
@@ -460,7 +462,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     public function getThumbnail(array|string|Asset\Image\Thumbnail\Config $conf, bool $deferred = true): Asset\Image\Thumbnail|string
     {
         $image = $this->getImage();
-        if ($image instanceof Asset) {
+        if ($image instanceof Asset\Image) {
             $thumbConfig = $image->getThumbnailConfig($conf);
             if ($thumbConfig && $this->cropPercent) {
                 $this->applyCustomCropping($thumbConfig);

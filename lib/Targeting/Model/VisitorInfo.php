@@ -297,7 +297,7 @@ class VisitorInfo implements \IteratorAggregate
 
     /**
      * @param int|string $key
-     * @param mixed|null $default
+     * @param mixed $default
      *
      * @return mixed
      */

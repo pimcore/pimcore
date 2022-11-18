@@ -33,7 +33,7 @@ class OverrideAttributeResolver
     /**
      * @param Request $request
      * @param string $key
-     * @param mixed|null $default
+     * @param mixed $default
      *
      * @return mixed
      */

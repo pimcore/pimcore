@@ -98,7 +98,7 @@ interface ConfigInterface
      *
      * @param mixed $objectId
      * @param mixed $subTenantData
-     * @param mixed|null $subObjectId
+     * @param mixed $subObjectId
      *
      * @return void
      */

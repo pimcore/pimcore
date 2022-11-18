@@ -80,9 +80,9 @@ trait ImageThumbnailTrait
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
-    protected string $mimetype;
+    protected ?string $mimetype = null;
 
     /**
      * @internal
@@ -344,7 +344,7 @@ trait ImageThumbnailTrait
             return null;
         }
 
-        return self::getLocalFileFromStream((string)$stream);
+        return self::getLocalFileFromStream($stream);
     }
 
     public function exists(): bool

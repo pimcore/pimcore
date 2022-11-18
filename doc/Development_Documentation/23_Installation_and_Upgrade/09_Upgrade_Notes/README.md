@@ -1,5 +1,6 @@
 # Upgrade Notes
 ## 11.0.0
+- [UrlSlug] Removed `index` column and `index` index from `object_url_slugs` table as it was not being used anywhere.
 - Bumped Symfony packages to "^6.1". Pimcore 11 will only support Symfony 6.
 - `FrontendController::renderTemplate()`: Changed the visibility to `protected`.
 - [Elements] Added `setParentId`, `setType` and `setParent` methods to `Pimcore\Model\Element\ElementInterface`

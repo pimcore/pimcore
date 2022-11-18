@@ -568,7 +568,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param mixed|null $def
+     * @param mixed $def
      * @param array $fields
      *
      * @return array
@@ -699,7 +699,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             'fieldDefinitionsCache',
             'referencedFields',
             'blockedVarsForExport',
-            'childs',
+            'childs',         //TODO remove in Pimcore 12
         ];
     }
 

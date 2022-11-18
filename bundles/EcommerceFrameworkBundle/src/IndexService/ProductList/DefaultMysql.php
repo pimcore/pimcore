@@ -148,7 +148,7 @@ class DefaultMysql implements ProductListInterface
      * @param float|null $from
      * @param float|null $to
      */
-    public function addPriceCondition(float $from = null, float $to = null)
+    public function addPriceCondition(?float $from = null, ?float $to = null)
     {
         $this->products = null;
         $this->conditionPriceFrom = $from;

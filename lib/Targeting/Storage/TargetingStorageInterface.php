@@ -52,7 +52,7 @@ interface TargetingStorageInterface
      * @param VisitorInfo $visitorInfo
      * @param string $scope
      * @param string $name
-     * @param mixed|null $default
+     * @param mixed $default
      *
      * @return mixed
      */

@@ -51,9 +51,9 @@ final class TranslateValue extends AbstractOperator
      */
     public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
-        $childs = $this->getChilds();
-        if (isset($childs[0])) {
-            $value = $childs[0]->getLabeledValue($element);
+        $children = $this->getChildren();
+        if (isset($children[0])) {
+            $value = $children[0]->getLabeledValue($element);
             if ((string)$value->value != '') {
                 $currentLocale = $this->translator->getLocale();
                 if (null != $this->locale) {

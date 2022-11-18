@@ -561,11 +561,11 @@ public function getCrossSellingCategory(): Fieldcollection|ProductCategory|\Pimc
 	return $data;
 }
 
-/**
-* Set crossSellingCategory - Base category for recommendations
-* @param \Pimcore\Model\DataObject\ProductCategory|null $crossSellingCategory
-* @return $this
-*/
+    /**
+     * Set crossSellingCategory - Base category for recommendations
+     * @param AbstractElement|null $crossSellingCategory
+     * @return $this
+     */
 public function setCrossSellingCategory(?\Pimcore\Model\Element\AbstractElement $crossSellingCategory): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation $fd */

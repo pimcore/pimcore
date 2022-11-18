@@ -144,7 +144,7 @@ class Rule extends AbstractModel implements RuleInterface
      *
      * @return $this
      */
-    public function setLabel(string $label, string $locale = null): static
+    public function setLabel(string $label, ?string $locale = null): static
     {
         $this->label[$this->getLanguage($locale)] = $label;
 
@@ -156,7 +156,7 @@ class Rule extends AbstractModel implements RuleInterface
      *
      * @return string
      */
-    public function getLabel(string $locale = null): string
+    public function getLabel(?string $locale = null): string
     {
         return $this->label[$this->getLanguage($locale)] ?? '';
     }
@@ -179,7 +179,7 @@ class Rule extends AbstractModel implements RuleInterface
      *
      * @return $this
      */
-    public function setDescription(string $description, string $locale = null): static
+    public function setDescription(string $description, ?string $locale = null): static
     {
         $this->description[$this->getLanguage($locale)] = $description;
 
@@ -191,7 +191,7 @@ class Rule extends AbstractModel implements RuleInterface
      *
      * @return string|null
      */
-    public function getDescription(string $locale = null): ?string
+    public function getDescription(?string $locale = null): ?string
     {
         return $this->description[$this->getLanguage($locale)] ?? null;
     }
@@ -264,6 +264,9 @@ class Rule extends AbstractModel implements RuleInterface
         return $this->prio;
     }
 
+    /**
+     * @return $this
+     */
     public function save(): static
     {
         $this->getDao()->save();

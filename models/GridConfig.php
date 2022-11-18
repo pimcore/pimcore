@@ -47,6 +47,8 @@ class GridConfig extends AbstractModel
 
     protected bool $setAsFavourite = false;
 
+    protected bool $saveFilters = false;
+
     protected string $type = 'object';
 
     public static function getById(int $id): ?GridConfig
@@ -195,6 +197,16 @@ class GridConfig extends AbstractModel
     public function setSetAsFavourite(bool $setAsFavourite)
     {
         $this->setAsFavourite = (bool) $setAsFavourite;
+    }
+
+    public function isSaveFilters(): bool
+    {
+        return $this->saveFilters;
+    }
+
+    public function setSaveFilters(bool $saveFilters): void
+    {
+        $this->saveFilters = $saveFilters;
     }
 
     /**

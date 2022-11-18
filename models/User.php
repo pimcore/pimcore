@@ -106,6 +106,9 @@ final class User extends User\UserRole
         return $this->firstname;
     }
 
+    /**
+     * @return $this
+     */
     public function setFirstname(?string $firstname): static
     {
         $this->firstname = $firstname;
@@ -118,6 +121,9 @@ final class User extends User\UserRole
         return $this->lastname;
     }
 
+    /**
+     * @return $this
+     */
     public function setLastname(?string $lastname): static
     {
         $this->lastname = $lastname;
@@ -135,6 +141,9 @@ final class User extends User\UserRole
         return $this->email;
     }
 
+    /**
+     * @return $this
+     */
     public function setEmail(?string $email): static
     {
         $this->email = $email;
@@ -147,6 +156,9 @@ final class User extends User\UserRole
         return $this->language;
     }
 
+    /**
+     * @return $this
+     */
     public function setLanguage(string $language): static
     {
         if ($language) {
@@ -171,6 +183,9 @@ final class User extends User\UserRole
         return $this->admin;
     }
 
+    /**
+     * @return $this
+     */
     public function setAdmin(bool $admin): static
     {
         $this->admin = $admin;
@@ -183,6 +198,9 @@ final class User extends User\UserRole
         return $this->active;
     }
 
+    /**
+     * @return $this
+     */
     public function setActive(bool $active): static
     {
         $this->active = $active;
@@ -257,6 +275,9 @@ final class User extends User\UserRole
         return parent::getPermission($permissionName);
     }
 
+    /**
+     * @return $this
+     */
     public function setRoles(array|string $roles): static
     {
         if (is_string($roles) && $roles !== '') {
@@ -279,6 +300,9 @@ final class User extends User\UserRole
         return $this->roles;
     }
 
+    /**
+     * @return $this
+     */
     public function setWelcomescreen(bool $welcomescreen): static
     {
         $this->welcomescreen = (bool)$welcomescreen;
@@ -291,6 +315,9 @@ final class User extends User\UserRole
         return $this->welcomescreen;
     }
 
+    /**
+     * @return $this
+     */
     public function setCloseWarning(bool $closeWarning): static
     {
         $this->closeWarning = $closeWarning;
@@ -303,6 +330,9 @@ final class User extends User\UserRole
         return $this->closeWarning;
     }
 
+    /**
+     * @return $this
+     */
     public function setMemorizeTabs(bool $memorizeTabs): static
     {
         $this->memorizeTabs = $memorizeTabs;
@@ -315,6 +345,9 @@ final class User extends User\UserRole
         return $this->memorizeTabs;
     }
 
+    /**
+     * @return $this
+     */
     public function setAllowDirtyClose(bool $allowDirtyClose): static
     {
         $this->allowDirtyClose = $allowDirtyClose;
@@ -565,6 +598,9 @@ final class User extends User\UserRole
         return (int)$this->lastLogin;
     }
 
+    /**
+     * @return $this
+     */
     public function setLastLogin(int $lastLogin): static
     {
         $this->lastLogin = (int)$lastLogin;
@@ -828,7 +864,7 @@ final class User extends User\UserRole
      * You can either pass an array for setting the entire 2fa settings, or a key and a value as the second argument
      *
      * @param array|string $key
-     * @param mixed|null $value
+     * @param mixed $value
      */
     public function setTwoFactorAuthentication(array|string $key, mixed $value = null)
     {

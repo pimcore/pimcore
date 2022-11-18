@@ -1130,7 +1130,7 @@ class Asset extends Element\AbstractElement
             $isRewindable = @rewind($this->stream);
 
             if (!$isRewindable) {
-                $tempFile = $this->getLocalFileFromStream((string)$this->stream);
+                $tempFile = $this->getLocalFileFromStream($this->stream);
                 $dest = fopen($tempFile, 'rb', false, File::getContext());
                 $this->stream = $dest;
             }
@@ -1196,7 +1196,7 @@ class Asset extends Element\AbstractElement
      */
     public function getTemporaryFile(bool $keep = false): string
     {
-        return self::getTemporaryFileFromStream((string)$this->getStream(), $keep);
+        return self::getTemporaryFileFromStream($this->getStream(), $keep);
     }
 
     /**
@@ -1208,7 +1208,7 @@ class Asset extends Element\AbstractElement
      */
     public function getLocalFile(): string
     {
-        return self::getLocalFileFromStream((string)$this->getStream());
+        return self::getLocalFileFromStream($this->getStream());
     }
 
     public function setCustomSetting(string $key, mixed $value): static
@@ -1322,7 +1322,7 @@ class Asset extends Element\AbstractElement
     /**
      * @param string $name
      * @param string $type can be "asset", "checkbox", "date", "document", "input", "object", "select" or "textarea"
-     * @param mixed|null $data
+     * @param mixed $data
      * @param string|null $language
      *
      * @return $this

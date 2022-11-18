@@ -37,7 +37,7 @@ class LoginFailedEvent extends Event
 
     /**
      * @param string $name
-     * @param mixed|null $default
+     * @param mixed $default
      *
      * @return mixed
      */

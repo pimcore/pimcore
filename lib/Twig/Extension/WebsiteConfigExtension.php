@@ -37,7 +37,7 @@ class WebsiteConfigExtension extends AbstractExtension
      * Returns website config for the current site
      *
      * @param string|null $key  Config key to directly load. If null, the whole config will be returned
-     * @param mixed|null $default    Default value to use if the key is not set
+     * @param mixed $default    Default value to use if the key is not set
      * @param string|null $language
      *
      * @return mixed

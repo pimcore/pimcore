@@ -75,7 +75,7 @@ class DefaultMysql extends AbstractConfig implements MysqlConfigInterface
      *
      * @param mixed $objectId
      * @param mixed $subTenantData
-     * @param mixed|null $subObjectId
+     * @param mixed $subObjectId
      *
      * @return void
      */
