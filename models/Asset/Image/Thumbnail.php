@@ -49,13 +49,31 @@ final class Thumbnail
     }
 
     /**
-     * @param bool $deferredAllowed
-     * @param bool $cacheBuster
+     * @param mixed $args,...
      *
      * @return string
      */
-    public function getPath($deferredAllowed = true, $cacheBuster = false)
+    public function getPath(...$args)
     {
+        $deferredAllowed = true;
+        $cacheBuster = false;
+        $forceFrontend = false;
+
+        if ($args) {
+            if (is_array($args[0])) {
+                $args = $args[0];
+                $deferredAllowed = array_key_exists('deferredAllowed', $args) ? $args['deferredAllowed'] : true;
+                $cacheBuster = array_key_exists('cacheBuster', $args) ? $args['cacheBuster'] : false;
+                $forceFrontend = array_key_exists('forceFrontend', $args) ? $args['forceFrontend'] : false;
+            } else {
+                if (count($args) == 1) {
+                    [$deferredAllowed] = $args;
+                } elseif (count($args) == 2) {
+                    [$deferredAllowed, $cacheBuster] = $args;
+                }
+            }
+        }
+
         $pathReference = null;
         if ($this->getConfig()) {
             if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
@@ -72,7 +90,8 @@ final class Thumbnail
             $pathReference = $this->getPathReference($deferredAllowed);
         }
 
-        $path = $this->convertToWebPath($pathReference);
+        $frontend = \Pimcore\Tool::isFrontend() || $forceFrontend;
+        $path = $this->convertToWebPath($pathReference, $frontend);
 
         if ($cacheBuster) {
             $path = $this->addCacheBuster($path, ['cacheBuster' => true], $this->getAsset());

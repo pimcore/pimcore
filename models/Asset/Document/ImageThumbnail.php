@@ -57,14 +57,31 @@ final class ImageThumbnail
     }
 
     /**
-     * @param bool $deferredAllowed
+     * @param mixed $args,...
      *
      * @return string
      */
-    public function getPath($deferredAllowed = true)
+    public function getPath(...$args)
     {
+        $deferredAllowed = true;
+        $forceFrontend = false;
+
+        if ($args) {
+            if (is_array($args[0])) {
+                $args = $args[0];
+                $deferredAllowed = array_key_exists('deferredAllowed', $args) ? $args['deferredAllowed'] : true;
+                $forceFrontend = array_key_exists('forceFrontend', $args) ? $args['forceFrontend'] : false;
+            } else {
+                if (count($args) == 1) {
+                    [$deferredAllowed] = $args;
+                }
+            }
+        }
+
         $pathReference = $this->getPathReference($deferredAllowed);
-        $path = $this->convertToWebPath($pathReference);
+
+        $frontend = \Pimcore\Tool::isFrontend() || $forceFrontend;
+        $path = $this->convertToWebPath($pathReference, $frontend);
 
         $event = new GenericEvent($this, [
             'pathReference' => $pathReference,

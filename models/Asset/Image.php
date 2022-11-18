@@ -18,7 +18,6 @@ namespace Pimcore\Model\Asset;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\File;
 use Pimcore\Model;
-use Pimcore\Tool;
 use Pimcore\Tool\Console;
 use Pimcore\Tool\Storage;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -225,7 +224,7 @@ EOT;
         $storagePath = $this->getLowQualityPreviewStoragePath();
         $path = $storagePath;
 
-        if (Tool::isFrontend()) {
+        if (\Pimcore\Tool::isFrontend()) {
             $path = urlencode_ignore_slash($storagePath);
             $prefix = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['frontend_prefixes']['thumbnail'];
             $path = $prefix . $path;
