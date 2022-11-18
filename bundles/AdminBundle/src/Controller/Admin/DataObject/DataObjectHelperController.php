@@ -356,6 +356,7 @@ class DataObjectHelperController extends AdminController
                 $gridConfigDescription = $savedGridConfig->getDescription();
                 $sharedGlobally = $savedGridConfig->isShareGlobally();
                 $setAsFavourite = $savedGridConfig->isSetAsFavourite();
+                $saveFilters = $savedGridConfig->isSaveFilters();
             }
         }
 
@@ -538,6 +539,7 @@ class DataObjectHelperController extends AdminController
         $settings['modificationDate'] = $modificationDate ?? null;
         $settings['shareGlobally'] = $sharedGlobally ?? null;
         $settings['setAsFavourite'] = $setAsFavourite ?? null;
+        $settings['saveFilters'] = $saveFilters ?? null;
         $settings['isShared'] = !$gridConfigId || ($shared ?? null);
 
         $context = $gridConfig['context'] ?? null;
@@ -556,6 +558,7 @@ class DataObjectHelperController extends AdminController
             'sharedConfigs' => $sharedConfigs,
             'context' => $context,
             'searchFilter' => $gridConfig['searchFilter'] ?? '',
+            'filter' => $gridConfig['filter'] ?? [],
         ];
     }
 
@@ -947,6 +950,7 @@ class DataObjectHelperController extends AdminController
                     $gridConfig->setDescription($metadata['gridConfigDescription']);
                     $gridConfig->setShareGlobally($metadata['shareGlobally'] && $this->getAdminUser()->isAdmin());
                     $gridConfig->setSetAsFavourite($metadata['setAsFavourite'] && $this->getAdminUser()->isAdmin());
+                    $gridConfig->setSaveFilters($metadata['saveFilters'] && $this->getAdminUser()->isAdmin());
                 }
 
                 $gridConfigData = json_encode($gridConfigData);
@@ -964,6 +968,7 @@ class DataObjectHelperController extends AdminController
                 $settings['gridConfigDescription'] = $gridConfig->getDescription();
                 $settings['shareGlobally'] = $gridConfig->isShareGlobally();
                 $settings['setAsFavourite'] = $gridConfig->isSetAsFavourite();
+                $settings['saveFilters'] = $gridConfig->isSaveFilters();
                 $settings['isShared'] = $gridConfig->getOwnerId() != $this->getAdminUser()->getId() && !$this->getAdminUser()->isAdmin();
 
                 return $this->adminJson([
