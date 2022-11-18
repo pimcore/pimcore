@@ -30,7 +30,7 @@ abstract class AbstractOperator implements OperatorInterface
     /**
      * @var ConfigElementInterface[]
      */
-    protected $childs;
+    protected $children;
 
     /**
      * @param \stdClass $config
@@ -39,16 +39,16 @@ abstract class AbstractOperator implements OperatorInterface
     public function __construct(\stdClass $config, array $context = [])
     {
         $this->label = $config->label;
-        $this->childs = $config->childs;
+        $this->children = $config->children;
         $this->context = $context;
     }
 
     /**
      * @return ConfigElementInterface[]
      */
-    public function getChilds()
+    public function getChildren()
     {
-        return $this->childs;
+        return $this->children;
     }
 
     /**

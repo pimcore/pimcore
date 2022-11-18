@@ -68,8 +68,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
 
                 if (child.data.isOperator) {
                     var attributes = child.data.configAttributes;
-                    var operatorChilds = this.doGetRecursiveData(child);
-                    attributes.childs = operatorChilds;
+                    attributes.children = this.doGetRecursiveData(child);
                     operatorFound = true;
 
                     obj.isOperator = true;
@@ -205,7 +204,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
     getSelectionPanel: function () {
         if (!this.selectionPanel) {
 
-            var childs = [];
+            var children = [];
             for (var i = 0; i < this.config.selectedGridColumns.length; i++) {
                 var nodeConf = this.config.selectedGridColumns[i];
 
@@ -241,7 +240,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                     child.locked = nodeConf.locked;
                 }
 
-                childs.push(child);
+                children.push(child);
             }
 
             this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
@@ -264,7 +263,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                     leaf: false,
                     isTarget: true,
                     expanded: true,
-                    children: childs
+                    children: children
                 }
             });
 

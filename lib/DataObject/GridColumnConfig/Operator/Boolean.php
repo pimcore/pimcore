@@ -46,17 +46,17 @@ final class Boolean extends AbstractOperator
         $result = new \stdClass();
         $result->label = $this->label;
 
-        $childs = $this->getChilds();
+        $children = $this->getChildren();
 
         if ($this->getOperator() !== 'and' && $this->getOperator() !== 'or') {
             return $result;
         }
 
-        if (!$childs) {
+        if (!$children) {
             return $result;
         } else {
             $valueArray = [];
-            foreach ($childs as $c) {
+            foreach ($children as $c) {
                 $childResult = $c->getLabeledValue($element);
                 $isArrayType = $childResult->isArrayType ?? false;
                 $childValues = $childResult->value ?? null;

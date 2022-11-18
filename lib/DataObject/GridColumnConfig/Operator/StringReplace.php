@@ -53,12 +53,12 @@ final class StringReplace extends AbstractOperator
         $result->label = $this->label;
         $result->value = null;
 
-        $childs = $this->getChilds();
+        $children = $this->getChildren();
 
-        if ($childs) {
-            $newChildsResult = [];
+        if ($children) {
+            $newChildrenResult = [];
 
-            foreach ($childs as $c) {
+            foreach ($children as $c) {
                 $childResult = $c->getLabeledValue($element);
 
                 $childValues = $childResult->value;
@@ -83,10 +83,10 @@ final class StringReplace extends AbstractOperator
                     }
                 }
 
-                $newChildsResult[] = $newValue;
+                $newChildrenResult[] = $newValue;
             }
 
-            $result->value = $newChildsResult;
+            $result->value = $newChildrenResult;
         }
 
         return $result;

@@ -51,10 +51,10 @@ final class Concatenator extends AbstractOperator
             $hasValue = false;
         }
 
-        $childs = $this->getChilds();
+        $children = $this->getChildren();
         $valueArray = [];
 
-        foreach ($childs as $c) {
+        foreach ($children as $c) {
             $childResult = $c->getLabeledValue($element);
             $childValues = (array)($childResult->value ?? []);
 

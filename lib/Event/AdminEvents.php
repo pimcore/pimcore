@@ -344,7 +344,7 @@ final class AdminEvents
      *
      * @var string
      */
-    const ASSET_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = 'pimcore.admin.asset.treeGetChildsById.preSendData';
+    const ASSET_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = 'pimcore.admin.asset.treeGetChildrenById.preSendData';
 
     /**
      * Fired before the request params are parsed.
@@ -369,7 +369,7 @@ final class AdminEvents
      *
      * @var string
      */
-    const DOCUMENT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = 'pimcore.admin.document.treeGetChildsById.preSendData';
+    const DOCUMENT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = 'pimcore.admin.document.treeGetChildrenById.preSendData';
 
     /**
      * Fired before the request params are parsed.
@@ -408,7 +408,7 @@ final class AdminEvents
      *
      * @var string
      */
-    const OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = 'pimcore.admin.dataobject.treeGetChildsById.preSendData';
+    const OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = 'pimcore.admin.dataobject.treeGetChildrenById.preSendData';
 
     /**
      * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\ClassController

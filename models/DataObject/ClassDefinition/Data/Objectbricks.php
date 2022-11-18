@@ -167,10 +167,10 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             }
         }
 
-        $calculatedChilds = [];
-        self::collectCalculatedValueItems($collectionDef->getFieldDefinitions(), $calculatedChilds);
+        $calculatedChildren = [];
+        self::collectCalculatedValueItems($collectionDef->getFieldDefinitions(), $calculatedChildren);
 
-        foreach ($calculatedChilds as $fd) {
+        foreach ($calculatedChildren as $fd) {
             $fieldData = new DataObject\Data\CalculatedValue($fd->getName());
             $fieldData->setContextualData('objectbrick', $this->getName(), $allowedBrickType, $fd->getName(), null, null, $fd);
             $fieldData = $fd->getDataForEditmode($fieldData, $data->getObject(), $params);

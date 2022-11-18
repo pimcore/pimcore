@@ -49,11 +49,11 @@ final class BooleanFormatter extends AbstractOperator
         $result = new \stdClass();
         $result->label = $this->label;
 
-        $childs = $this->getChilds();
+        $children = $this->getChildren();
 
         $booleanResult = null;
 
-        foreach ($childs as $c) {
+        foreach ($children as $c) {
             $childResult = $c->getLabeledValue($element);
             $childValues = $childResult->value;
             if ($childValues && !is_array($childValues)) {

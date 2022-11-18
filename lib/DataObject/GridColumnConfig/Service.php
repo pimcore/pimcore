@@ -72,8 +72,8 @@ final class Service
             if ('value' === $configElement->type) {
                 $config[] = $this->buildValue($configElement->class, $configElement, $context);
             } elseif ('operator' === $configElement->type) {
-                if (!empty($configElement->childs)) {
-                    $configElement->childs = $this->doBuildConfig($configElement->childs, [], $context);
+                if (!empty($configElement->children)) {
+                    $configElement->children = $this->doBuildConfig($configElement->children, [], $context);
                 }
 
                 $operator = $this->buildOperator($configElement->class, $configElement, $context);

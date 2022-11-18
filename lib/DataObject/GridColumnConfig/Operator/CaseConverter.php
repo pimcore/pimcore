@@ -43,12 +43,12 @@ final class CaseConverter extends AbstractOperator
         $result = new \stdClass();
         $result->label = $this->label;
 
-        $childs = $this->getChilds();
+        $children = $this->getChildren();
 
-        if (!$childs) {
+        if (!$children) {
             return $result;
         } else {
-            $c = $childs[0];
+            $c = $children[0];
 
             $valueArray = [];
 

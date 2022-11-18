@@ -53,12 +53,12 @@ final class AssetMetadataGetter extends AbstractOperator
         $result->label = $this->label;
         $result->value = null;
 
-        $childs = $this->getChilds();
+        $children = $this->getChildren();
 
-        if ($childs) {
-            $newChildsResult = [];
+        if ($children) {
+            $newChildrenResult = [];
 
-            foreach ($childs as $c) {
+            foreach ($children as $c) {
                 $childResult = $c->getLabeledValue($element);
                 $childValues = $childResult->value ?? null;
                 if ($childValues && !is_array($childValues)) {
@@ -82,13 +82,13 @@ final class AssetMetadataGetter extends AbstractOperator
                     }
                 }
 
-                $newChildsResult[] = $newValue;
+                $newChildrenResult[] = $newValue;
             }
 
-            if (count($childs) > 1) {
-                $result->value = $newChildsResult;
+            if (count($children) > 1) {
+                $result->value = $newChildrenResult;
             } else {
-                $result->value = $newChildsResult[0];
+                $result->value = $newChildrenResult[0];
             }
         }
 

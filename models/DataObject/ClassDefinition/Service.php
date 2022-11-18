@@ -353,8 +353,9 @@ class Service
                 $insideLocalizedField = $insideLocalizedField || $item instanceof DataObject\ClassDefinition\Data\Localizedfields;
 
                 if (method_exists($item, 'addChild')) { // allows children
+                    //TODO remove childs in Pimcore 12
                     $item->setValues($array, ['children', 'childs']);
-                    $children = $array['children'] ?? $array['childs'] ?? [];
+                    $children = $array['children'] ?? [];
 
                     if (!empty($children['datatype'])) {
                         $childO = self::generateLayoutTreeFromArray($children, $throwException, $insideLocalizedField);

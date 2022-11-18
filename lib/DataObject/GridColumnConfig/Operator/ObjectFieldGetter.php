@@ -52,11 +52,11 @@ final class ObjectFieldGetter extends AbstractOperator
         $result = new \stdClass();
         $result->label = $this->label;
 
-        $childs = $this->getChilds();
+        $children = $this->getChildren();
 
         $getter = 'get' . ucfirst($this->attribute);
 
-        if (!$childs) {
+        if (!$children) {
             if ($this->attribute && method_exists($element, $getter)) {
                 $result->value = $element->$getter();
                 if ($result->value instanceof ElementInterface) {
@@ -66,7 +66,7 @@ final class ObjectFieldGetter extends AbstractOperator
                 return $result;
             }
         } else {
-            $c = $childs[0];
+            $c = $children[0];
             $forwardObject = $element;
 
             if ($this->forwardAttribute) {

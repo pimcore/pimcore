@@ -48,13 +48,13 @@ class Folder extends DAV\Collection
     {
         $children = [];
 
-        $childsList = new Asset\Listing();
+        $childrenList = new Asset\Listing();
 
-        $childsList->addConditionParam('parentId = ?', [$this->asset->getId()]);
+        $childrenList->addConditionParam('parentId = ?', [$this->asset->getId()]);
         $user = \Pimcore\Tool\Admin::getCurrentUser();
-        $childsList->filterAccessibleByUser($user, $this->asset);
+        $childrenList->filterAccessibleByUser($user, $this->asset);
 
-        foreach ($childsList as $child) {
+        foreach ($childrenList as $child) {
             try {
                 $children[] = $this->getChild($child);
             } catch (\Exception $e) {

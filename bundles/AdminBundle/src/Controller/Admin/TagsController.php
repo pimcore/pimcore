@@ -323,7 +323,7 @@ class TagsController extends AdminController
      */
     private function getSubObjectIds(\Pimcore\Model\DataObject\AbstractObject $object, EventDispatcherInterface $eventDispatcher): array
     {
-        $childsList = new \Pimcore\Model\DataObject\Listing();
+        $childrenList = new \Pimcore\Model\DataObject\Listing();
         $condition = 'o_path LIKE ?';
         if (!$this->getAdminUser()->isAdmin()) {
             $userIds = $this->getAdminUser()->getRoles();
@@ -335,17 +335,17 @@ class TagsController extends AdminController
              )';
         }
 
-        $childsList->setCondition($condition, $childsList->escapeLike($object->getRealFullPath()) . '/%');
+        $childrenList->setCondition($condition, $childrenList->escapeLike($object->getRealFullPath()) . '/%');
 
         $beforeListLoadEvent = new GenericEvent($this, [
-            'list' => $childsList,
+            'list' => $childrenList,
             'context' => [],
         ]);
         $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD);
-        /** @var \Pimcore\Model\DataObject\Listing $childsList */
-        $childsList = $beforeListLoadEvent->getArgument('list');
+        /** @var \Pimcore\Model\DataObject\Listing $childrenList */
+        $childrenList = $beforeListLoadEvent->getArgument('list');
 
-        return $childsList->loadIdList();
+        return $childrenList->loadIdList();
     }
 
     /**
@@ -353,7 +353,7 @@ class TagsController extends AdminController
      */
     private function getSubAssetIds(\Pimcore\Model\Asset $asset, EventDispatcherInterface $eventDispatcher): array
     {
-        $childsList = new \Pimcore\Model\Asset\Listing();
+        $childrenList = new \Pimcore\Model\Asset\Listing();
         $condition = 'path LIKE ?';
         if (!$this->getAdminUser()->isAdmin()) {
             $userIds = $this->getAdminUser()->getRoles();
@@ -365,17 +365,17 @@ class TagsController extends AdminController
             )';
         }
 
-        $childsList->setCondition($condition, $childsList->escapeLike($asset->getRealFullPath()) . '/%');
+        $childrenList->setCondition($condition, $childrenList->escapeLike($asset->getRealFullPath()) . '/%');
 
         $beforeListLoadEvent = new GenericEvent($this, [
-            'list' => $childsList,
+            'list' => $childrenList,
             'context' => [],
         ]);
         $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD);
-        /** @var \Pimcore\Model\Asset\Listing $childsList */
-        $childsList = $beforeListLoadEvent->getArgument('list');
+        /** @var \Pimcore\Model\Asset\Listing $childrenList */
+        $childrenList = $beforeListLoadEvent->getArgument('list');
 
-        return $childsList->loadIdList();
+        return $childrenList->loadIdList();
     }
 
     /**
@@ -383,7 +383,7 @@ class TagsController extends AdminController
      */
     private function getSubDocumentIds(\Pimcore\Model\Document $document, EventDispatcherInterface $eventDispatcher): array
     {
-        $childsList = new \Pimcore\Model\Document\Listing();
+        $childrenList = new \Pimcore\Model\Document\Listing();
         $condition = 'path LIKE ?';
         if (!$this->getAdminUser()->isAdmin()) {
             $userIds = $this->getAdminUser()->getRoles();
@@ -395,17 +395,17 @@ class TagsController extends AdminController
             )';
         }
 
-        $childsList->setCondition($condition, $childsList->escapeLike($document->getRealFullPath()) . '/%');
+        $childrenList->setCondition($condition, $childrenList->escapeLike($document->getRealFullPath()) . '/%');
 
         $beforeListLoadEvent = new GenericEvent($this, [
-            'list' => $childsList,
+            'list' => $childrenList,
             'context' => [],
         ]);
         $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD);
-        /** @var \Pimcore\Model\Document\Listing $childsList */
-        $childsList = $beforeListLoadEvent->getArgument('list');
+        /** @var \Pimcore\Model\Document\Listing $childrenList */
+        $childrenList = $beforeListLoadEvent->getArgument('list');
 
-        return $childsList->loadIdList();
+        return $childrenList->loadIdList();
     }
 
     /**

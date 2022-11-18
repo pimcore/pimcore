@@ -1023,12 +1023,12 @@ class Service extends Model\AbstractModel
      * @internal
      *
      * @param array $cv
-     * @param Model\Asset\Listing|Model\DataObject\Listing|Model\Document\Listing $childsList
+     * @param Model\Asset\Listing|Model\DataObject\Listing|Model\Document\Listing $childrenList
      */
-    public static function addTreeFilterJoins($cv, $childsList)
+    public static function addTreeFilterJoins($cv, $childrenList)
     {
         if ($cv) {
-            $childsList->onCreateQueryBuilder(static function (DoctrineQueryBuilder $select) use ($cv) {
+            $childrenList->onCreateQueryBuilder(static function (DoctrineQueryBuilder $select) use ($cv) {
                 $where = $cv['where'] ?? null;
                 if ($where) {
                     $select->andWhere($where);

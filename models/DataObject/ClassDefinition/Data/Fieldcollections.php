@@ -129,11 +129,11 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                         }
                     }
 
-                    $calculatedChilds = [];
-                    self::collectCalculatedValueItems($collectionDef->getFieldDefinitions(), $calculatedChilds);
+                    $calculatedChildren = [];
+                    self::collectCalculatedValueItems($collectionDef->getFieldDefinitions(), $calculatedChildren);
 
-                    if ($calculatedChilds) {
-                        foreach ($calculatedChilds as $fd) {
+                    if ($calculatedChildren) {
+                        foreach ($calculatedChildren as $fd) {
                             $data = new DataObject\Data\CalculatedValue($fd->getName());
                             $data->setContextualData('fieldcollection', $this->getName(), $idx, null, null, null, $fd);
                             $data = $fd->getDataForEditmode($data, $object, $params);

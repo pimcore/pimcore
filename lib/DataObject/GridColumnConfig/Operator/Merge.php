@@ -44,10 +44,10 @@ final class Merge extends AbstractOperator
         $result->label = $this->label;
         $result->isArrayType = true;
 
-        $childs = $this->getChilds();
+        $children = $this->getChildren();
         $resultItems = [];
 
-        foreach ($childs as $c) {
+        foreach ($children as $c) {
             $childResult = $c->getLabeledValue($element);
             $childValues = $childResult->value ?? null;
 

@@ -111,22 +111,22 @@ class PermissionChecker
 
                     // exception for list permission
                     if (false === $permissionsParent && $columnName === 'list') {
-                        // check for childs with permissions
+                        // check for children with permissions
                         $path = $element->getRealFullPath().'/';
                         if ($element->getId() == 1) {
                             $path = '/';
                         }
 
-                        $permissionsChilds = $db->fetchAssociative(
+                        $permissionsChildren = $db->fetchAssociative(
                             'SELECT list FROM users_workspaces_'.$type.', users u WHERE userId = u.id AND cpath LIKE ? AND userId IN ('.implode(
                                 ',',
                                 $userIds
                             ).') AND list = 1 LIMIT 1',
                             [Helper::escapeLike($path) .'%']
                         );
-                        if ($permissionsChilds) {
-                            $result[$columnName] = $permissionsChilds[$columnName] ? true : false;
-                            $details[] = self::createDetail($user, $columnName, $result[$columnName], $permissionsChilds['type'], $permissionsChilds['name'], $permissionsChilds['cpath']);
+                        if ($permissionsChildren) {
+                            $result[$columnName] = $permissionsChildren[$columnName] ? true : false;
+                            $details[] = self::createDetail($user, $columnName, $result[$columnName], $permissionsChildren['type'], $permissionsChildren['name'], $permissionsChildren['cpath']);
 
                             continue;
                         }

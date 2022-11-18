@@ -69,14 +69,14 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     private array $metaData = [];
 
     /**
-     * @Route("/tree-get-childs-by-id", name="treegetchildsbyid", methods={"GET"})
+     * @Route("/tree-get-children-by-id", name="treegetchildrenbyid", methods={"GET"})
      *
      * @param Request $request
      * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function treeGetChildsByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function treeGetChildrenByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
         $filter = $request->get('filter');

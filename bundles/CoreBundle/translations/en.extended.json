@@ -632,7 +632,7 @@
   "admin_translations": "Admin Translations",
   "lock": "Lock",
   "unlock": "Unlock",
-  "lock_and_propagate_to_childs": "Lock and propagate to children",
+  "lock_and_propagate_to_children": "Lock and propagate to children",
   "unlock_and_propagate_to_children": "Unlock and propagate to children",
   "data_cache": "Data Cache",
   "listing_use_traits": "Listing Use (traits)",

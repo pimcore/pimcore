@@ -738,9 +738,9 @@ class TranslationController extends AdminController
                         ($el instanceof DataObject ? 'o_' : '') . 'path LIKE ?',
                         [$list->escapeLike($el->getRealFullPath() . ($el->getRealFullPath() != '/' ? '/' : '')) . '%']
                     );
-                    $childs = $list->load();
+                    $children = $list->load();
 
-                    foreach ($childs as $child) {
+                    foreach ($children as $child) {
                         $childId = $child->getId();
                         $elements[$element['type'] . '_' . $childId] = [
                             'id' => $childId,
