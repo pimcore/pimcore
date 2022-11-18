@@ -18,6 +18,7 @@ namespace Pimcore\Tests\Model\Element;
 
 use Codeception\Stub;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
+use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Property;
 use Pimcore\Model\Search;
@@ -426,7 +427,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
                 return $user;
             },
             'adminJson' => function ($data) {
-                return $data;
+                return new JsonResponse($data);
             },
             'getThumbnailUrl' => function ($asset) {
                 return '';
@@ -452,6 +453,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
             $eventDispatcher
         );
 
+        $responseData = json_decode($responseData->getContent(), true);
         $responsePaths = [];
         foreach ($responseData['nodes'] as $node) {
             $responsePaths[] = $node['path'];
@@ -614,6 +616,7 @@ class ModelAssetPermissionsTest extends ModelTestCase
             new GridHelperService()
         );
 
+        $responseData = json_decode($responseData->getContent(), true);
         $responsePaths = [];
         foreach ($responseData['data'] as $node) {
             $responsePaths[] = $node['fullpath'];

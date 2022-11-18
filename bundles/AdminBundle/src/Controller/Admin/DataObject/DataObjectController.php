@@ -84,7 +84,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $object = DataObject::getById((int) $request->get('node'));
         $objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER];
         $objects = [];
-        $cv = false;
+        $cv = [];
         $offset = $total = $limit = $filteredTotalCount = 0;
 
         if ($object instanceof DataObject\Concrete) {

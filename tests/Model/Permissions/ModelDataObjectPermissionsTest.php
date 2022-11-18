@@ -604,6 +604,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         }
 
         $responsePaths = [];
+        $responseData = json_decode($responseData->getContent(), true);
         foreach ($responseData['nodes'] as $node) {
             $responsePaths[] = $node['path'];
         }
@@ -905,6 +906,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             new GridHelperService()
         );
 
+        $responseData = json_decode($responseData->getContent(), true);
         $responsePaths = [];
         foreach ($responseData['data'] as $node) {
             $responsePaths[] = $node['fullpath'];
@@ -1059,6 +1061,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             new EventDispatcher(),
         );
 
+        $responseData = json_decode($responseData->getContent(), true);
         $responsePaths = [];
         foreach ($responseData['data'] as $node) {
             $responsePaths[] = $node['fullpathList'];

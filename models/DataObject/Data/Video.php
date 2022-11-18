@@ -28,9 +28,9 @@ class Video implements OwnerAwareFieldInterface
 
     protected string $type;
 
-    protected string|int|ElementInterface|Asset $data;
+    protected string|int|ElementInterface|Asset|\Pimcore\Model\Element\ElementDescriptor $data;
 
-    protected string|int|Asset $poster;
+    protected string|int|Asset|\Pimcore\Model\Element\ElementDescriptor $poster;
 
     protected string $title;
 

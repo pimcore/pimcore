@@ -18,6 +18,7 @@ namespace Pimcore\Tests\Model\Element;
 
 use Codeception\Stub;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
+use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
 use Pimcore\Model\Search;
@@ -419,7 +420,7 @@ class ModelDocumentPermissionsTest extends ModelTestCase
                 return $user;
             },
             'adminJson' => function ($data) {
-                return $data;
+                return new JsonResponse($data);
             },
         ]);
 
@@ -442,6 +443,7 @@ class ModelDocumentPermissionsTest extends ModelTestCase
             $eventDispatcher
         );
 
+        $responseData = json_decode($responseData->getContent(), true);
         $responsePaths = [];
         foreach ($responseData['nodes'] as $node) {
             $responsePaths[] = $node['path'];
@@ -604,6 +606,7 @@ class ModelDocumentPermissionsTest extends ModelTestCase
             new GridHelperService()
         );
 
+        $responseData = json_decode($responseData->getContent(), true);
         $responsePaths = [];
         foreach ($responseData['data'] as $node) {
             $responsePaths[] = $node['fullpath'];
