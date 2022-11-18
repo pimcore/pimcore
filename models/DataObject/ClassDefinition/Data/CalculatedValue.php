@@ -101,6 +101,9 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $this->elementType;
     }
 
+    /**
+     * @return $this
+     */
     public function setElementType(string $elementType): static
     {
         if ($elementType) {
@@ -128,6 +131,9 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         return $this->columnLength;
     }
 
+    /**
+     * @return $this
+     */
     public function setColumnLength(?int $columnLength): static
     {
         if ($columnLength) {

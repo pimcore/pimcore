@@ -50,6 +50,9 @@ abstract class AbstractModel implements ModelInterface
         return $this->dao;
     }
 
+    /**
+     * @return $this
+     */
     public function setDao(?AbstractDao $dao): static
     {
         $this->dao = $dao;
@@ -161,6 +164,9 @@ abstract class AbstractModel implements ModelInterface
         return null;
     }
 
+    /**
+     * @return $this
+     */
     public function setValues(array $data = []): static
     {
         if (is_array($data) && count($data) > 0) {
@@ -172,6 +178,9 @@ abstract class AbstractModel implements ModelInterface
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setValue(string $key, mixed $value): static
     {
         $method = 'set' . $key;
