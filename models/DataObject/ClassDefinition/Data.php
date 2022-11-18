@@ -94,7 +94,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         '<=',
     ];
 
-
     //TODO remove childs in Pimcore 12
     /**
      * @var array

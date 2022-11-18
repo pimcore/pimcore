@@ -727,7 +727,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      */
     public function getBlockedVarsForExport(): array
     {
-
         return [
             'fieldDefinitionsCache',
             'referencedFields',
