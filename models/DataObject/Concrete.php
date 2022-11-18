@@ -375,6 +375,9 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return array_merge(...$dependencies);
     }
 
+    /**
+     * @return $this
+     */
     public function setClass(?ClassDefinition $o_class): static
     {
         $this->o_class = $o_class;
@@ -396,6 +399,9 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $this->o_classId;
     }
 
+    /**
+     * @return $this
+     */
     public function setClassId(string $o_classId): static
     {
         $this->o_classId = $o_classId;
@@ -408,6 +414,9 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $this->o_className;
     }
 
+    /**
+     * @return $this
+     */
     public function setClassName(string $o_className): static
     {
         $this->o_className = $o_className;
@@ -425,6 +434,9 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return (bool) $this->getPublished();
     }
 
+    /**
+     * @return $this
+     */
     public function setPublished(bool $o_published): static
     {
         $this->o_published = $o_published;

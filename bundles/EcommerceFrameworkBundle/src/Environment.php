@@ -114,6 +114,9 @@ class Environment implements EnvironmentInterface
         return $this->userId;
     }
 
+    /**
+     * @return $this
+     */
     public function setCurrentUserId(int $userId): static
     {
         $this->load();

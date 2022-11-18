@@ -55,6 +55,9 @@ class LoginFailedEvent extends Event
         return $this->user;
     }
 
+    /**
+     * @return $this
+     */
     public function setUser(User $user): static
     {
         $this->user = $user;

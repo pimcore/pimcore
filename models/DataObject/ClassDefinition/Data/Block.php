@@ -797,6 +797,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $this->styleElement;
     }
 
+    /**
+     * @return $this
+     */
     public function setStyleElement(string $styleElement): static
     {
         $this->styleElement = $styleElement;
@@ -809,6 +812,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $this->lazyLoading;
     }
 
+    /**
+     * @return $this
+     */
     public function setLazyLoading(bool $lazyLoading): static
     {
         $this->lazyLoading = (bool) $lazyLoading;

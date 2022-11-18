@@ -90,6 +90,9 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         return $this->order;
     }
 
+    /**
+     * @return $this
+     */
     public function setLimit(?int $limit): static
     {
         $this->setData(null);
@@ -103,6 +106,9 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setOffset(int $offset): static
     {
         $this->setData(null);
@@ -112,6 +118,9 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setOrder(array|string $order): static
     {
         $this->setData(null);
@@ -142,6 +151,9 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         return $this->orderKey;
     }
 
+    /**
+     * @return $this
+     */
     public function setOrderKey(array|string $orderKey, bool $quote = true): static
     {
         $this->setData(null);
@@ -197,6 +209,9 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         return $this->conditionParams;
     }
 
+    /**
+     * @return $this
+     */
     public function resetConditionParams(): static
     {
         $this->setData(null);
@@ -302,6 +317,9 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         return $this->validOrders;
     }
 
+    /**
+     * @return $this
+     */
     public function setGroupBy(string $groupBy, bool $qoute = true): static
     {
         $this->setData(null);
@@ -323,6 +341,9 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function setValidOrders(array $validOrders): static
     {
         $this->validOrders = $validOrders;
@@ -355,6 +376,9 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         return Helper::escapeLike($value);
     }
 
+    /**
+     * @return $this
+     */
     public function setConditionVariables(array $conditionVariables): static
     {
         $this->conditionVariables = $conditionVariables;
@@ -371,6 +395,9 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         return $this->conditionVariables;
     }
 
+    /**
+     * @return $this
+     */
     public function setConditionVariablesFromSetCondition(array $conditionVariables): static
     {
         $this->setData(null);
