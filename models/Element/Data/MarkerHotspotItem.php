@@ -27,7 +27,7 @@ class MarkerHotspotItem implements \ArrayAccess
 
     public string $type = '';
 
-    public mixed $value;
+    public mixed $value = null;
 
     public function __construct(array $data)
     {

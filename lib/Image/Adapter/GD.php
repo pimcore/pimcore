@@ -25,7 +25,7 @@ class GD extends Adapter
     /**
      * @var resource|\GdImage|false
      */
-    protected mixed $resource;
+    protected mixed $resource = null;
 
     /**
      * {@inheritdoc}

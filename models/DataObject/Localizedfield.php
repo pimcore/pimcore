@@ -65,7 +65,7 @@ final class Localizedfield extends Model\AbstractModel implements
      *
      * @var Concrete|Model\Element\ElementDescriptor|null
      */
-    protected Concrete|Model\Element\ElementDescriptor|null $object;
+    protected Concrete|Model\Element\ElementDescriptor|null $object = null;
 
     /**
      * @internal
@@ -281,7 +281,7 @@ final class Localizedfield extends Model\AbstractModel implements
         try {
             $locale = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->getLocale();
 
-            if (Tool::isValidLanguage($locale)) {
+            if (isset($locale) && Tool::isValidLanguage($locale)) {
                 return $locale;
             }
 

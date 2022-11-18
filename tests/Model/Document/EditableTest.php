@@ -76,6 +76,7 @@ class EditableTest extends ModelTestCase
 
     public function testImage()
     {
+        $returnData = [];
         $this->createTestPage('image', $returnData);
 
         $this->reloadPage();
@@ -92,6 +93,7 @@ class EditableTest extends ModelTestCase
 
     public function testLink()
     {
+        $returnData = [];
         TestHelper::createEmptyObjects();
         $this->createTestPage('link', $returnData);
 
@@ -117,6 +119,7 @@ class EditableTest extends ModelTestCase
 
     public function testPdf()
     {
+        $returnData = [];
         $this->createTestPage('pdf', $returnData);
 
         $this->reloadPage();
@@ -125,6 +128,7 @@ class EditableTest extends ModelTestCase
 
     public function testRelation()
     {
+        $returnData = [];
         TestHelper::createEmptyObjects();
         $this->createTestPage('relation', $returnData);
 
@@ -134,6 +138,7 @@ class EditableTest extends ModelTestCase
 
     public function testRelations()
     {
+        $returnData = [];
         TestHelper::createEmptyObjects();
         $this->createTestPage('relations', $returnData);
 
@@ -240,6 +245,7 @@ class EditableTest extends ModelTestCase
 
     public function testVideo()
     {
+        $returnData = [];
         TestHelper::createEmptyObjects();
         $this->createTestPage('video', $returnData);
 

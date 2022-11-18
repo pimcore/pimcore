@@ -23,9 +23,9 @@ class GeoCoordinates implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    protected float $longitude;
+    protected ?float $longitude = null;
 
-    protected float $latitude;
+    protected ?float $latitude = null;
 
     /**
      * @param float|null $latitude

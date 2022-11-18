@@ -65,7 +65,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @var bool
      */
-    protected bool $o_published;
+    protected bool $o_published = false;
 
     /**
      * @internal
@@ -417,7 +417,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     public function getPublished(): bool
     {
-        return (bool) $this->o_published;
+        return $this->o_published;
     }
 
     public function isPublished(): bool

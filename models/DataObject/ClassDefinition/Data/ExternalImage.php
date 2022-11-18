@@ -240,10 +240,10 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Model\DataObject\Data\ExternalImage) {
-            return $data->getUrl();
+            $return = $data->getUrl();
         }
 
-        return '';
+        return $return ?? '';
     }
 
     /**

@@ -23,7 +23,7 @@ final class ResultContainer
 {
     public string $label;
 
-    public mixed $value;
+    public mixed $value = null;
 
     public bool $isEmpty = false;
 

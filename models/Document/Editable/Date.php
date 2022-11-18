@@ -100,7 +100,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
     public function setDataFromResource(mixed $data): static
     {
         if ($data) {
-            $this->setDateFromTimestamp($data);
+            $this->setDateFromTimestamp((int)$data);
         }
 
         return $this;

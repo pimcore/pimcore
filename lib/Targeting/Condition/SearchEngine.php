@@ -24,7 +24,7 @@ class SearchEngine extends AbstractVariableCondition implements ConditionInterfa
     /**
      * @var string|null
      */
-    private mixed $engine;
+    private mixed $engine = null;
 
     private array $validEngines = ['google', 'bing', 'yahoo'];
 

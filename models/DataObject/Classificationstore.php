@@ -172,7 +172,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         $language = $this->getLanguage($language);
 
         // treat value "0" nonempty
-        $nonEmpty = (is_string($value) || is_numeric($value)) && strlen($value) > 0;
+        $nonEmpty = is_string($value) ? is_numeric($value) && strlen($value) >0 : isset($value);
 
         // Workaround for booleanSelect
         // @TODO Find a better solution for using isEmpty() in all ClassDefintion DataTypes

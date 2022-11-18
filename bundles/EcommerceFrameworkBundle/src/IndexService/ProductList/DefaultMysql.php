@@ -51,7 +51,7 @@ class DefaultMysql implements ProductListInterface
 
     protected bool $inProductList = true;
 
-    protected \Symfony\Bridge\Monolog\Logger|null|Logger $logger;
+    protected \Symfony\Bridge\Monolog\Logger|null|Logger $logger = null;
 
     public function __construct(MysqlConfigInterface $tenantConfig)
     {

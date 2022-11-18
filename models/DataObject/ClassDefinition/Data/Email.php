@@ -34,7 +34,7 @@ class Email extends Model\DataObject\ClassDefinition\Data\Input
      */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
     {
-        if (!$omitMandatoryCheck && strlen($data) > 0) {
+        if (!$omitMandatoryCheck && is_string($data) && strlen($data) > 0) {
             $validator = new EmailValidator();
             if (!$validator->isValid($data, new RFCValidation())) {
                 throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . " ] isn't a valid email address");

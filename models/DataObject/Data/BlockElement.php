@@ -40,7 +40,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
 
     protected string $type;
 
-    protected mixed $data;
+    protected mixed $data = null;
 
     /**
      * @internal

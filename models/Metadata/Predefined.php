@@ -48,7 +48,7 @@ final class Predefined extends Model\AbstractModel
 
     protected ?string $targetSubtype = null;
 
-    protected mixed $data;
+    protected mixed $data = null;
 
     protected ?string $config = null;
 

@@ -36,7 +36,7 @@ use Pimcore\Tests\Support\Util\TestHelper;
  */
 class DocumentTest extends ModelTestCase
 {
-    protected Page $testPage;
+    protected ?Page $testPage = null;
 
     public function testCRUD()
     {

@@ -536,8 +536,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
 
             $counter = 1;
             foreach ($objectsMetadata as $mkey => $meta) {
-                $ownerName = isset($relation['ownername']) ? $relation['ownername'] : null;
-                $ownerType = isset($relation['ownertype']) ? $relation['ownertype'] : null;
+                $ownerName = isset($relation['ownername']) ? $relation['ownername'] : '';
+                $ownerType = isset($relation['ownertype']) ? $relation['ownertype'] : '';
                 $meta->save($objectConcrete, $ownerType, $ownerName, $position, $counter);
 
                 $counter++;

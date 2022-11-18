@@ -389,7 +389,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
             $data['path'] = $data['id'];
         }
 
-        $video = Asset::getByPath($data['path']);
+        $video = Asset::getByPath((string)$data['path']);
         if ($video instanceof Asset\Video) {
             $this->id = $video->getId();
         } else {

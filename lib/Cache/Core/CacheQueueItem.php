@@ -23,7 +23,7 @@ class CacheQueueItem
 {
     protected string $key;
 
-    protected mixed $data;
+    protected mixed $data = null;
 
     protected array $tags = [];
 

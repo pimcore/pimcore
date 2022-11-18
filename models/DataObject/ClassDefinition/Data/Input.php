@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+
 
 /**
  * Pimcore
@@ -285,7 +285,7 @@ class Input extends Data implements
      */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
     {
-        if (!$omitMandatoryCheck && $this->getRegex() && strlen($data) > 0) {
+        if (!$omitMandatoryCheck && $this->getRegex() && is_string($data) && strlen($data) > 0) {
             if (!preg_match('#' . $this->getRegex() . '#' . implode('', $this->getRegexFlags()), $data)) {
                 throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . " ] doesn't match input validation '" . $this->getRegex() . "'");
             }

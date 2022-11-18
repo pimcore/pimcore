@@ -49,9 +49,9 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @internal
      *
-     * @var Asset\Image|null
+     * @var Asset\Image|ElementInterface|null
      */
-    protected ?Asset\Image $image = null;
+    protected Asset\Image|ElementInterface|null $image = null;
 
     /**
      * @internal
@@ -381,15 +381,15 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
             }
 
             $this->id = $data['id'] ?? null;
-            $this->alt = $data['alt'] ?? null;
-            $this->cropPercent = $data['cropPercent'] ?? null;
-            $this->cropWidth = $data['cropWidth'] ?? null;
-            $this->cropHeight = $data['cropHeight'] ?? null;
-            $this->cropTop = $data['cropTop'] ?? null;
-            $this->cropLeft = $data['cropLeft'] ?? null;
-            $this->marker = $data['marker'] ?? null;
-            $this->hotspots = $data['hotspots'] ?? null;
-            $this->thumbnail = $data['thumbnail'] ?? null;
+            $this->alt = (string)($data['alt'] ?? '');
+            $this->cropPercent = $data['cropPercent'] ?? false;
+            $this->cropWidth = $data['cropWidth'] ?? 0;
+            $this->cropHeight = $data['cropHeight'] ?? 0;
+            $this->cropTop = $data['cropTop'] ?? 0;
+            $this->cropLeft = $data['cropLeft'] ?? 0;
+            $this->marker = $data['marker'] ?? [];
+            $this->hotspots = $data['hotspots'] ?? [];
+            $this->thumbnail = (string)($data['thumbnail'] ?? '');
         }
 
         return $this;

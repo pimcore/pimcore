@@ -27,9 +27,9 @@ class ApplicationLogger implements LoggerInterface
 {
     protected ?string $component = null;
 
-    protected string|null|FileObject $fileObject;
+    protected string|null|FileObject $fileObject = null;
 
-    protected \Pimcore\Model\DataObject\AbstractObject|\Pimcore\Model\Document|int|\Pimcore\Model\Asset|null $relatedObject;
+    protected \Pimcore\Model\DataObject\AbstractObject|\Pimcore\Model\Document|int|\Pimcore\Model\Asset|null $relatedObject = null;
 
     protected string $relatedObjectType = 'object';
 

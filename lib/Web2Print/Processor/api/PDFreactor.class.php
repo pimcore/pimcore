@@ -21,7 +21,7 @@ namespace com\realobjects\pdfreactor\webservice\client;
  */
 class PDFreactor
 {
-    public mixed $url;
+    public mixed $url = null;
 
     public function __construct($url = 'http://localhost:9423/service/rest')
     {
@@ -987,7 +987,7 @@ class PDFreactor
 }
 class PDFreactorWebserviceException extends \Exception
 {
-    public mixed $result;
+    public mixed $result = null;
 
     public function __construct($message)
     {

@@ -174,9 +174,9 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
                 $md['hotspots'] = $md;
             }
 
-            $hotspots = empty($md['hotspots']) ? null : $md['hotspots'];
-            $marker = empty($md['marker']) ? null : $md['marker'];
-            $crop = empty($md['crop']) ? null : $md['crop'];
+            $hotspots = empty($md['hotspots']) ? [] : $md['hotspots'];
+            $marker = empty($md['marker']) ? [] : $md['marker'];
+            $crop = empty($md['crop']) ? [] : $md['crop'];
 
             $rewritePath = function ($data) {
                 if (!is_array($data)) {
@@ -200,7 +200,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
             $hotspots = $rewritePath($hotspots);
             $marker = $rewritePath($marker);
 
-            $value = new DataObject\Data\Hotspotimage($imageId, $hotspots, $marker, $crop);
+            $value = new DataObject\Data\Hotspotimage((int)$imageId, $hotspots, $marker, $crop);
 
             if (isset($params['owner'])) {
                 $value->_setOwner($params['owner']);

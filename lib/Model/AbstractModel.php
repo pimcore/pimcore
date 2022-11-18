@@ -17,6 +17,7 @@ namespace Pimcore\Model;
 
 use Pimcore\Logger;
 use Pimcore\Model\Dao\AbstractDao;
+use Pimcore\Model\Dao\DaoInterface;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 
 /**
@@ -40,7 +41,7 @@ abstract class AbstractModel implements ModelInterface
 
     private static ?array $daoClassMap = null;
 
-    public function getDao(): AbstractDao
+    public function getDao(): DaoInterface
     {
         if (!$this->dao) {
             $this->initDao();

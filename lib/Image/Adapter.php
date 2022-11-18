@@ -40,7 +40,7 @@ abstract class Adapter
 
     protected string $sourceImageFormat;
 
-    protected mixed $resource;
+    protected mixed $resource = null;
 
     public function setHeight(int $height): static
     {

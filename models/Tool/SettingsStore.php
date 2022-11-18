@@ -36,9 +36,9 @@ final class SettingsStore extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
-    protected string $scope;
+    protected ?string $scope = null;
 
     /**
      * @internal
@@ -52,7 +52,7 @@ final class SettingsStore extends Model\AbstractModel
      *
      * @var mixed
      */
-    protected mixed $data;
+    protected mixed $data = null;
 
     /**
      * @internal

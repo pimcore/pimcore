@@ -29,7 +29,7 @@ class InputQuantityValue extends QuantityValue
     public function __construct(?string $value = null, Unit|string $unit = null)
     {
         $this->value = $value;
-        parent::__construct($unit);
+        parent::__construct($value, $unit);
     }
 
     public function setValue(float|int|string|null $value)

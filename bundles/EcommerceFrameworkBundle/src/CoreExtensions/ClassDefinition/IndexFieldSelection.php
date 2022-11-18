@@ -58,7 +58,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         'preSelect' => 'text',
     ];
 
-    public mixed $width;
+    public mixed $width = null;
 
     public bool $considerTenants = false;
 

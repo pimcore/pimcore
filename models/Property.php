@@ -53,7 +53,7 @@ final class Property extends AbstractModel
         // IMPORTANT: if you use this method be sure that the type of the property is already set
 
         if (in_array($this->getType(), ['document', 'asset', 'object'])) {
-            $el = Element\Service::getElementByPath($this->getType(), $data);
+            $el = Element\Service::getElementByPath($this->getType(), (string)$data);
             $this->data = null;
             if ($el) {
                 $this->data = $el->getId();

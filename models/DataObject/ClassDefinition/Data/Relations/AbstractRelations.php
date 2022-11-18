@@ -387,11 +387,14 @@ abstract class AbstractRelations extends Data implements
     {
         if ($item->getObject()) {
             /** @var DataObject\Objectbrick|null $container */
-            $container = $item->getObject()->getObjectVar($item->getFieldname());
-            if ($container) {
-                $container->loadLazyField($item->getType(), $item->getFieldname(), $this->getName());
-            } else {
-                $item->markLazyKeyAsLoaded($this->getName());
+            $fieldName = $item->getFieldName();
+            if(isset($fieldName)) {
+                $container = $item->getObject()->getObjectVar($fieldName);
+                if ($container) {
+                    $container->loadLazyField($item->getType(), $fieldName, $this->getName());
+                } else {
+                    $item->markLazyKeyAsLoaded($this->getName());
+                }
             }
         }
     }

@@ -82,7 +82,7 @@ class DefaultFindologic implements ProductListInterface
 
     protected string|array $orderKey;
 
-    protected \Symfony\Bridge\Monolog\Logger|null|Logger $logger;
+    protected \Symfony\Bridge\Monolog\Logger|null|Logger $logger = null;
 
     protected array $supportedOrderKeys = ['label', 'price', 'salesFrequency', 'dateAdded'];
 

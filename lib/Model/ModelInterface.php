@@ -16,9 +16,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Model;
 
+use Pimcore\Model\Dao\DaoInterface;
+
 interface ModelInterface
 {
-    public function getDao(): Dao\AbstractDao;
+    public function getDao(): DaoInterface;
 
     public function setDao(Dao\AbstractDao $dao): static;
 

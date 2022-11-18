@@ -61,7 +61,7 @@ class Relation extends Model\Document\Editable implements IdRewriterInterface, E
      *
      * @var mixed
      */
-    protected mixed $element;
+    protected mixed $element = null;
 
     /**
      * {@inheritdoc}

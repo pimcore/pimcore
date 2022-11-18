@@ -29,12 +29,12 @@ final class DefaultAdapter implements AddressSourceAdapterInterface
     /**
      * @var string
      */
-    protected mixed $class;
+    protected mixed $class = null;
 
     /**
      * @var string
      */
-    protected mixed $condition;
+    protected mixed $condition = null;
 
     /**
      * @var int[]

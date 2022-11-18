@@ -34,7 +34,7 @@ final class WebsiteSetting extends AbstractModel
 
     protected string $type;
 
-    protected mixed $data;
+    protected mixed $data = null;
 
     protected ?int $siteId = null;
 

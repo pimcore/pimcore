@@ -24,7 +24,7 @@ class AbstractSetProductEntry
     /**
      * @var int
      */
-    private mixed $quantity;
+    private mixed $quantity = null;
 
     private CheckoutableInterface $product;
 

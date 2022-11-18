@@ -81,7 +81,7 @@ class Numeric extends Model\Document\Editable
      */
     public function setDataFromEditmode(mixed $data): static
     {
-        $this->number = $data;
+        $this->number = (string)$data;
 
         return $this;
     }

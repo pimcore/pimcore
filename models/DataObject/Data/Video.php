@@ -28,7 +28,7 @@ class Video implements OwnerAwareFieldInterface
 
     protected string $type;
 
-    protected string|int|Asset $data;
+    protected string|int|ElementInterface|Asset $data;
 
     protected string|int|Asset $poster;
 

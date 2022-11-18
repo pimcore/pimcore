@@ -59,7 +59,7 @@ final class UUID extends Model\AbstractModel
      *
      * @var mixed
      */
-    protected mixed $item;
+    protected mixed $item = null;
 
     public function setInstanceIdentifier(string $instanceIdentifier): static
     {

@@ -30,9 +30,9 @@ class EncryptedField implements OwnerAwareFieldInterface
 
     protected Data $delegate;
 
-    protected mixed $plain;
+    protected mixed $plain = null;
 
-    protected mixed $encrypted;
+    protected mixed $encrypted = null;
 
     /**
      * @param mixed $plain

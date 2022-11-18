@@ -43,7 +43,7 @@ final class TmpStore extends Model\AbstractModel
      *
      * @var mixed
      */
-    protected mixed $data;
+    protected mixed $data = null;
 
     /**
      * @internal

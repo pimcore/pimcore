@@ -239,7 +239,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      */
     public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
-        return $this->getDataFromObjectParam($object, $params);
+        return $this->getDataFromObjectParam($object, $params) ?? '';
     }
 
     /**

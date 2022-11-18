@@ -443,7 +443,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
     {
-        if (!$omitMandatoryCheck && ($this->getMinimumLength() && strlen($data) < $this->getMinimumLength())) {
+        if (!$omitMandatoryCheck && ($this->getMinimumLength() && is_string($data) && strlen($data) < $this->getMinimumLength())) {
             throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . ' ] is not at least ' . $this->getMinimumLength() . ' characters');
         }
 

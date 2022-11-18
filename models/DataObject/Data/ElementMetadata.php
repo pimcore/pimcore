@@ -31,20 +31,20 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
 
     protected ?int $elementId = null;
 
-    protected string $fieldname;
+    protected ?string $fieldname = null;
 
     protected array $columns = [];
 
     protected array $data = [];
 
     /**
-     * @param string $fieldname
+     * @param string|null $fieldname
      * @param array $columns
      * @param Model\Element\ElementInterface|null $element
      *
      * @throws \Exception
      */
-    public function __construct(string $fieldname, array $columns = [], Model\Element\ElementInterface $element = null)
+    public function __construct(?string $fieldname = null, array $columns = [], Model\Element\ElementInterface $element = null)
     {
         $this->fieldname = $fieldname;
         $this->columns = $columns;

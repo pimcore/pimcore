@@ -138,7 +138,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         }
 
         if (!empty($data)) {
-            $user = Model\User::getById($data);
+            $user = Model\User::getById((int)$data);
             if (!$user instanceof Model\User) {
                 throw new Model\Element\ValidationException('Invalid user reference');
             }

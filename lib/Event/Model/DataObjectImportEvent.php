@@ -26,17 +26,17 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class DataObjectImportEvent extends Event
 {
-    protected mixed $config;
+    protected mixed $config = null;
 
     protected string $originalFile;
 
     protected Concrete $object;
 
-    protected mixed $rowData;
+    protected mixed $rowData = null;
 
-    protected mixed $additionalData;
+    protected mixed $additionalData = null;
 
-    protected mixed $context;
+    protected mixed $context = null;
 
     /**
      * DataObjectImportEvent constructor.

@@ -76,7 +76,7 @@ class Select extends Model\Document\Editable
      */
     public function setDataFromEditmode(mixed $data): static
     {
-        $this->text = $data;
+        $this->text = (string)$data;
 
         return $this;
     }

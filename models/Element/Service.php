@@ -68,10 +68,12 @@ class Service extends Model\AbstractModel
         $path = '';
         $elementType = self::getElementType($element);
         $parentId = $element->getParentId();
-        $parentElement = self::getElementById($elementType, $parentId);
+        if(isset($parentId)) {
+            $parentElement = self::getElementById($elementType, $parentId);
 
-        if ($parentElement) {
-            $path = self::getIdPath($parentElement);
+            if ($parentElement) {
+                $path = self::getIdPath($parentElement);
+            }
         }
 
         $path .= '/' . $element->getId();
@@ -809,7 +811,7 @@ class Service extends Model\AbstractModel
 
         if (is_array($data)) {
             foreach ($data as $dataKey => &$value) {
-                $value = self::renewReferences($value, false, $dataKey);
+                $value = self::renewReferences($value, false, (string)$dataKey);
             }
 
             return $data;

@@ -44,7 +44,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
 
     protected bool $doDelete = false;
 
-    protected Concrete|Model\Element\ElementDescriptor|null $object;
+    protected Concrete|Model\Element\ElementDescriptor|null $object = null;
 
     protected ?int $objectId = null;
 

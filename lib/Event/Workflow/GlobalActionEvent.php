@@ -27,7 +27,7 @@ class GlobalActionEvent extends Event
 
     protected Workflow $workflow;
 
-    protected mixed $subject;
+    protected mixed $subject = null;
 
     protected GlobalAction $globalAction;
 

@@ -54,7 +54,7 @@ final class Version extends AbstractModel
 
     protected int $date;
 
-    protected mixed $data;
+    protected mixed $data = null;
 
     protected bool $public = false;
 

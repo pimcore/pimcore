@@ -84,7 +84,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @var int|null
      */
-    protected ?int $o_id;
+    protected ?int $o_id = null;
 
     /**
      * @internal
@@ -93,14 +93,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @var int|null
      */
-    protected ?int $o_parentId;
+    protected ?int $o_parentId = null;
 
     /**
      * @internal
      *
      * @deprecated
      */
-    protected ?Element\AbstractElement $o_parent;
+    protected ?Element\AbstractElement $o_parent = null;
 
     /**
      * @internal
@@ -114,7 +114,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @var string|null
      */
-    protected ?string $o_key;
+    protected ?string $o_key = null;
 
     /**
      * @internal
@@ -123,7 +123,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @var string|null
      */
-    protected ?string $o_path;
+    protected ?string $o_path = null;
 
     /**
      * @internal
@@ -139,7 +139,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @var int|null
      */
-    protected ?int $o_creationDate;
+    protected ?int $o_creationDate = null;
 
     /**
      * @internal
@@ -148,7 +148,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @var int|null
      */
-    protected ?int $o_modificationDate;
+    protected ?int $o_modificationDate = null;
 
     /**
      * @internal
@@ -210,14 +210,14 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @var string|null
      */
-    protected ?string $o_childrenSortBy;
+    protected ?string $o_childrenSortBy = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected ?string $o_childrenSortOrder;
+    protected ?string $o_childrenSortOrder = null;
 
     /**
      * @internal

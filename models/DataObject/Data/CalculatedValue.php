@@ -37,7 +37,7 @@ class CalculatedValue implements OwnerAwareFieldInterface
 
     protected ?int $keyId = null;
 
-    protected mixed $keyDefinition;
+    protected mixed $keyDefinition = null;
 
     /**
      * CalculatedValue constructor.

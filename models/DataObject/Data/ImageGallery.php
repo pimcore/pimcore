@@ -37,13 +37,9 @@ class ImageGallery implements \Iterator, OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @return Hotspotimage|false
-     */
-
     public function current(): Hotspotimage|bool
     {
-        return current($this->items);
+        return current($this->items) ?? false;
     }
 
     public function next(): void
