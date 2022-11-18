@@ -1600,6 +1600,11 @@ class Service extends Model\AbstractModel
      */
     public static function getElementCacheTag(string $type, int|string|null $id): string
     {
-        return $type . '_' . $id ?? '';
+        if(isset($id)) {
+            return $type . '_' . $id;
+        }
+        else {
+            return $type . '_';
+        }
     }
 }

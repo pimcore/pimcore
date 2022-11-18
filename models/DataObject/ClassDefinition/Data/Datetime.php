@@ -74,11 +74,11 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null|Model\DataObject\Concrete $object
      * @param array $params
      *
-     * @return int|null
+     * @return int|string|null
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
-    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): int|string|null
     {
         $data = $this->handleDefaultValue($data, $object, $params);
 

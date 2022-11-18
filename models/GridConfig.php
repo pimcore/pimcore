@@ -47,6 +47,8 @@ class GridConfig extends AbstractModel
 
     protected bool $setAsFavourite = false;
 
+    protected bool $saveFilters = false;
+
     protected string $type = 'object';
 
     public static function getById(int $id): ?GridConfig

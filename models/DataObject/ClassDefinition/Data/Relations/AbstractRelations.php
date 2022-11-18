@@ -25,6 +25,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\ElementInterface;
 
 abstract class AbstractRelations extends Data implements
     CustomResourcePersistingInterface,
@@ -207,13 +208,12 @@ abstract class AbstractRelations extends Data implements
     abstract protected function loadData(array $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed;
 
     /**
-     * @param array|Element\ElementInterface $data
-     * @param DataObject\Concrete|null $object
+     * @param array|ElementInterface $data
+     * @param Localizedfield|AbstractData|DataObject\Objectbrick\Data\AbstractData|Concrete|null $object
      * @param array $params
      *
      * @return mixed
-     *@internal
-     *
+     * @internal
      */
     abstract protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed;
 
@@ -408,9 +408,9 @@ abstract class AbstractRelations extends Data implements
     protected function loadLazyBrickField(DataObject\Objectbrick\Data\AbstractData $item)
     {
         if ($item->getObject()) {
-            /** @var DataObject\Objectbrick|null $container */
             $fieldName = $item->getFieldName();
             if(isset($fieldName)) {
+                /** @var DataObject\Objectbrick|null $container */
                 $container = $item->getObject()->getObjectVar($fieldName);
                 if ($container) {
                     $container->loadLazyField($item->getType(), $fieldName, $this->getName());

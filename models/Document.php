@@ -248,7 +248,7 @@ class Document extends Element\AbstractElement
             }
 
             RuntimeCache::set($cacheKey, $document);
-            if($document->getModificationDate()) {
+            if($document->getModificationDate() !== null) {
                 $document->__setDataVersionTimestamp($document->getModificationDate());
             }
 

@@ -176,7 +176,7 @@ abstract class AbstractModel implements ModelInterface
     {
         $method = 'set' . $key;
         if (strcasecmp($method, __FUNCTION__) !== 0
-            && !empty($value)) {
+            && isset($value)) {
             if (method_exists($this, $method)) {
                 $this->$method($value);
             } elseif (method_exists($this, 'set' . preg_replace('/^o_/', '', $key))) {
