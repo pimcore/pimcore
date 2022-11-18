@@ -33,9 +33,9 @@ class Builder
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
-    protected string $htmlMenuIdPrefix;
+    protected ?string $htmlMenuIdPrefix = null;
 
     /**
      * @internal

@@ -175,7 +175,7 @@ abstract class AbstractRenderer implements RendererInterface
         if (null === $this->_prefixForId) {
             $prefix = get_class($this);
             $this->_prefixForId = str_replace('\\', '-', strtolower(
-                trim(substr($prefix, strrpos($prefix, '_')), '_')
+                trim(substr($prefix, (int) strrpos($prefix, '_')), '_')
             )) . '-';
         }
 

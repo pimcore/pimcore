@@ -26,15 +26,15 @@ class Document extends Url
 
     protected ?string $_relation = null;
 
-    protected int $_documentId;
+    protected int $_documentId = 0;
 
-    protected string $documentType;
+    protected string $documentType = '';
 
     protected string $realFullPath;
 
     protected array $customSettings = [];
 
-    public function setTabindex(string $tabindex): static
+    public function setTabindex(?string $tabindex): static
     {
         $this->_tabindex = $tabindex;
 
@@ -58,7 +58,7 @@ class Document extends Url
         return $this->_accesskey;
     }
 
-    public function setRelation(string $relation): static
+    public function setRelation(?string $relation): static
     {
         $this->_relation = $relation;
 

@@ -153,7 +153,7 @@ trait Wrapper
         return $this->children[$cacheKey];
     }
 
-    public function hasChildren(bool $includingUnpublished = null): bool
+    public function hasChildren(bool $includingUnpublished = false): bool
     {
         $hardLink = $this->getHardLinkSource();
 

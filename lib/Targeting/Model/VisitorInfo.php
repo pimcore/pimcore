@@ -75,7 +75,7 @@ class VisitorInfo implements \IteratorAggregate
      */
     private array $frontendDataProviders = [];
 
-    private Response $response;
+    private ?Response $response = null;
 
     public function __construct(Request $request, string $visitorId = null, string $sessionId = null)
     {

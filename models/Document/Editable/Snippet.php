@@ -157,7 +157,8 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
      */
     public function setDataFromResource(mixed $data): static
     {
-        if ((int)$data > 0) {
+        $data = (int) $data;
+        if ($data > 0) {
             $this->id = $data;
             $this->snippet = Document\Snippet::getById($this->id);
         }

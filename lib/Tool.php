@@ -28,9 +28,9 @@ final class Tool
      * Sets the current request to use when resolving request at early
      * stages (before container is loaded)
      *
-     * @var Request
+     * @var Request|null
      */
-    private static Request $currentRequest;
+    private static ?Request $currentRequest = null;
 
     protected static array $notFoundClassNames = [];
 
@@ -43,7 +43,7 @@ final class Tool
      *
      * @internal
      */
-    public static function setCurrentRequest(Request $request = null): void
+    public static function setCurrentRequest(?Request $request = null): void
     {
         self::$currentRequest = $request;
     }

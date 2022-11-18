@@ -51,9 +51,9 @@ final class RedirectHandler implements LoggerAwareInterface
     private SiteResolver $siteResolver;
 
     /**
-     * @var Redirect[]
+     * @var Redirect[]|null
      */
-    private array $redirects;
+    private ?array $redirects = null;
 
     private Config $config;
 
