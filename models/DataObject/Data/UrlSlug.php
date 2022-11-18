@@ -47,8 +47,6 @@ class UrlSlug implements OwnerAwareFieldInterface
 
     protected string $fieldname;
 
-    protected int $index;
-
     protected string $ownertype;
 
     protected string $ownername;
@@ -137,18 +135,6 @@ class UrlSlug implements OwnerAwareFieldInterface
         return $this;
     }
 
-    public function getIndex(): ?int
-    {
-        return $this->index;
-    }
-
-    public function setIndex(?int $index): static
-    {
-        $this->index = $index;
-
-        return $this;
-    }
-
     public function getOwnertype(): ?string
     {
         return $this->ownertype;
@@ -203,7 +189,6 @@ class UrlSlug implements OwnerAwareFieldInterface
         $slug->setObjectId($rawItem['objectId']);
         $slug->setClassId($rawItem['classId']);
         $slug->setFieldname($rawItem['fieldname']);
-        $slug->setIndex($rawItem['index']);
         $slug->setOwnertype($rawItem['ownertype']);
         $slug->setOwnername($rawItem['ownername']);
         $slug->setPosition($rawItem['position']);
@@ -353,7 +338,8 @@ class UrlSlug implements OwnerAwareFieldInterface
                 if (method_exists($object, $getter)) {
                     $fcValue = $object->$getter();
                     if ($fcValue instanceof Fieldcollection) {
-                        $item = $fcValue->get($this->getIndex());
+                        // https://github.com/pimcore/pimcore/issues/13435#issuecomment-1287052907
+                        $item = $fcValue->get(0);
                         $fcType = $item->getType();
                         if ($fcDef = Fieldcollection\Definition::getByKey($fcType)) {
                             $fd = $fcDef->getFieldDefinition($this->getFieldname());

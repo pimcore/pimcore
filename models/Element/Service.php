@@ -1009,14 +1009,15 @@ class Service extends Model\AbstractModel
      * Changes the query according to the custom view config
      *
      * @param array $cv
-     * @param Model\Asset\Listing|Model\DataObject\Listing|Model\Document\Listing $childsList
-     *@internal
+     * @param Model\Asset\Listing|Model\DataObject\Listing|Model\Document\Listing $childrenList
+     *
+     * @internal
      *
      */
-    public static function addTreeFilterJoins(array $cv, Asset\Listing|DataObject\Listing|Document\Listing $childsList)
+    public static function addTreeFilterJoins(array $cv, Asset\Listing|DataObject\Listing|Document\Listing $childrenList)
     {
         if ($cv) {
-            $childsList->onCreateQueryBuilder(static function (DoctrineQueryBuilder $select) use ($cv) {
+            $childrenList->onCreateQueryBuilder(static function (DoctrineQueryBuilder $select) use ($cv) {
                 $where = $cv['where'] ?? null;
                 if ($where) {
                     $select->andWhere($where);

@@ -47,6 +47,13 @@ abstract class AbstractRelations extends Data implements
     public array $classes = [];
 
     /**
+     * Optional display mode
+     *
+     * @internal
+     */
+    public ?string $displayMode = null;
+
+    /**
      * Optional path formatter class
      *
      * @internal
@@ -68,6 +75,21 @@ abstract class AbstractRelations extends Data implements
     public function setClasses(array $classes): static
     {
         $this->classes = Element\Service::fixAllowedTypes($classes, 'classes');
+
+        return $this;
+    }
+
+    public function getDisplayMode(): ?string
+    {
+        return $this->displayMode;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setDisplayMode(?string $displayMode): static
+    {
+        $this->displayMode = $displayMode;
 
         return $this;
     }

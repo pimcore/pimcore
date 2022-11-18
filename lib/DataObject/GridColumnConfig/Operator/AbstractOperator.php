@@ -28,21 +28,21 @@ abstract class AbstractOperator implements OperatorInterface
     /**
      * @var ConfigElementInterface[]
      */
-    protected array $childs;
+    protected array $children;
 
     public function __construct(\stdClass $config, array $context = [])
     {
         $this->label = $config->label;
-        $this->childs = $config->childs;
+        $this->children = $config->children;
         $this->context = $context;
     }
 
     /**
      * @return ConfigElementInterface[]
      */
-    public function getChilds(): array
+    public function getChildren(): array
     {
-        return $this->childs;
+        return $this->children;
     }
 
     public function expandLocales(): bool

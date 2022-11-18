@@ -245,11 +245,11 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     }
 
     /**
-     * @Route("/tree-get-childs-by-id", name="pimcore_admin_asset_treegetchildsbyid", methods={"GET"})
+     * @Route("/tree-get-children-by-id", name="pimcore_admin_asset_treegetchildrenbyid", methods={"GET"})
      *
      *
      */
-    public function treeGetChildsByIdAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
+    public function treeGetChildrenByIdAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
@@ -1860,7 +1860,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 $filenameDisplay = substr($filenameDisplay, 0, 25) . '...' . \Pimcore\File::getFileExtension($filenameDisplay);
             }
 
-            // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
+            // Like for treeGetChildrenByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
             if ($asset->isAllowed('list')) {
                 $assets[] = [
                     'id' => $asset->getId(),
@@ -2696,7 +2696,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
             $assets = [];
             foreach ($list->getAssets() as $index => $asset) {
-                // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
+                // Like for treeGetChildrenByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
                 if ($asset->isAllowed('list')) {
                     $a = Asset\Service::gridAssetData($asset, $allParams['fields'], $allParams['language'] ?? '');
                     $assets[] = $a;

@@ -197,6 +197,16 @@ class GridConfig extends AbstractModel
         $this->setAsFavourite = (bool) $setAsFavourite;
     }
 
+    public function isSaveFilters(): bool
+    {
+        return $this->saveFilters;
+    }
+
+    public function setSaveFilters(bool $saveFilters): void
+    {
+        $this->saveFilters = $saveFilters;
+    }
+
     /**
      * enum('asset','object')
      *
