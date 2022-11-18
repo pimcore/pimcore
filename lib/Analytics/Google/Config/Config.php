@@ -31,14 +31,7 @@ class Config
 
     public static function fromReportConfig(array $reportConfig): self
     {
-        $config = null;
-        if ($reportConfig['analytics']) {
-            $config = $reportConfig['analytics'];
-        } else {
-            $config = [];
-        }
-
-        return new self($config);
+        return new self($reportConfig['analytics'] ?? []);
     }
 
     public function getConfig(): array
