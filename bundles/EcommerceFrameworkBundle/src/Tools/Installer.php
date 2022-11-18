@@ -409,6 +409,6 @@ class Installer extends AbstractInstaller
      */
     protected function getSchema(): Schema
     {
-        return $this->schema ??= $this->db->createSchemaManager()->createSchema();
+        return $this->schema ??= $this->db->createSchemaManager()->introspectSchema();
     }
 }
