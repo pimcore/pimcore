@@ -236,14 +236,14 @@ final class Console
      *
      * @return string
      */
-    public static function runPhpScript($script, $arguments = [], $outputFile = null, $timeout = null)
+    public static function runPhpScript($script, $arguments = [], $outputFile = null, $timeout = 60)
     {
         $cmd = self::buildPhpScriptCmd($script, $arguments);
         self::addLowProcessPriority($cmd);
         $process = new Process($cmd);
-        if ($timeout) {
-            $process->setTimeout($timeout);
-        }
+
+        $process->setTimeout($timeout);
+
         $process->start();
 
         if (!empty($outputFile)) {
