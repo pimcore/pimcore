@@ -65,7 +65,7 @@ monolog:
     channels: [custom_log, some_other_channel]
 
 ```
-Now, when injecting the `Psr\Log\LoggerInterface` instead of using the name `$logger` like in previous examples, something like `$customLogLogger` needs to be used. Symfony will automatically figure out which channel to log into by the name of the variable.
+It is possible to inject the `Psr\Log\LoggerInterface` by changing the variable name eg. `$customLogLogger` (camel case channel name + `Logger`) and Symfony will automatically wire the specified channel.
 
 ```php
 class SomeService {
