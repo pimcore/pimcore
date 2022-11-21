@@ -2,7 +2,6 @@
 
 ## 10.5.10
 - [DataObject] Deprecated: Loading non-Concrete objects with the Concrete class will not be possible in Pimcore 11.
-- [Console] Default value of the timeout for the process is set to 60 seconds.
 
 ## 10.5.9
 - [Twig] Sending mails and Dataobject Text Layouts, which allow rendering user controlled twig templates are now executed in a sandbox with restrictive security policies for tags, filters, functions.
