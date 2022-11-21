@@ -48,10 +48,6 @@ In this log you can see every request where a redirect takes action.
 ```
 
 ## Writing your own log files
-You can add your own logging functionality using Pimcore's log writer. You can call a static 
-function like this:
-
-##### Custom log entry
 To create a custom log entry, we need to create the monolog log channels and log handlers configuration. Here is an example on how to log in a custom filename called `custom.log`
 
 ```yaml
