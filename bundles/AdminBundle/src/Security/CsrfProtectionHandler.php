@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,28 +31,18 @@ class CsrfProtectionHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    protected $excludedRoutes = [];
+    protected array $excludedRoutes = [];
 
-    protected $csrfToken = null;
+    protected ?string $csrfToken = null;
 
-    /**
-     * @var Environment
-     */
-    protected $twig;
+    protected Environment $twig;
 
-    /**
-     * @param array $excludedRoutes
-     * @param Environment $twig
-     */
-    public function __construct($excludedRoutes, Environment $twig)
+    public function __construct(array $excludedRoutes, Environment $twig)
     {
         $this->excludedRoutes = $excludedRoutes;
         $this->twig = $twig;
     }
 
-    /**
-     * @param Request $request
-     */
     public function checkCsrfToken(Request $request)
     {
         $csrfToken = $this->getCsrfToken();
@@ -69,10 +60,7 @@ class CsrfProtectionHandler implements LoggerAwareInterface
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getCsrfToken()
+    public function getCsrfToken(): ?string
     {
         if (!$this->csrfToken) {
             $this->csrfToken = Session::getReadOnly()->get('csrfToken');
@@ -102,9 +90,6 @@ class CsrfProtectionHandler implements LoggerAwareInterface
         $this->twig->addGlobal('csrfToken', $this->getCsrfToken());
     }
 
-    /**
-     * @return array
-     */
     public function getExcludedRoutes(): array
     {
         return $this->excludedRoutes;

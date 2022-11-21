@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,14 +32,14 @@ interface WorkerInterface
      *
      * @return array
      */
-    public function getGeneralSearchAttributes();
+    public function getGeneralSearchAttributes(): array;
 
     /**
      * creates or updates necessary index structures (like database tables and so on)
      *
      * @return void
      */
-    public function createOrUpdateIndexStructures();
+    public function createOrUpdateIndexStructures(): void;
 
     /**
      * deletes given element from index
@@ -47,7 +48,7 @@ interface WorkerInterface
      *
      * @return void
      */
-    public function deleteFromIndex(IndexableInterface $object);
+    public function deleteFromIndex(IndexableInterface $object): void;
 
     /**
      * updates given element in index
@@ -56,7 +57,7 @@ interface WorkerInterface
      *
      * @return void
      */
-    public function updateIndex(IndexableInterface $object);
+    public function updateIndex(IndexableInterface $object): void;
 
     /**
      * returns all index attributes
@@ -65,14 +66,14 @@ interface WorkerInterface
      *
      * @return array
      */
-    public function getIndexAttributes($considerHideInFieldList = false);
+    public function getIndexAttributes(bool $considerHideInFieldList = false): array;
 
     /**
      * returns all filter groups
      *
      * @return array
      */
-    public function getAllFilterGroups();
+    public function getAllFilterGroups(): array;
 
     /**
      * retruns all index attributes for a given filter group
@@ -81,19 +82,19 @@ interface WorkerInterface
      *
      * @return array
      */
-    public function getIndexAttributesByFilterGroup($filterGroup);
+    public function getIndexAttributesByFilterGroup(string $filterGroup): array;
 
     /**
      * returns current tenant configuration
      *
      * @return ConfigInterface
      */
-    public function getTenantConfig();
+    public function getTenantConfig(): ConfigInterface;
 
     /**
      * returns product list implementation valid and configured for this worker/tenant
      *
      * @return ProductListInterface
      */
-    public function getProductList();
+    public function getProductList(): ProductListInterface;
 }

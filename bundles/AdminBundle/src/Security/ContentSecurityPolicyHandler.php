@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -77,9 +78,6 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
         ]);
     }
 
-    /**
-     * @return string
-     */
     public function getCspHeader(): string
     {
         $cspHeaderOptions = array_map(function ($k, $v) {
@@ -124,10 +122,6 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
         return $this;
     }
 
-    /**
-     *
-     * @return string
-     */
     public function getNonceHtmlAttribute(): string
     {
         return $this->config['admin_csp_header']['enabled'] ? ' nonce="' . $this->getNonce() . '"' : '';

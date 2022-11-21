@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,20 +28,12 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
     protected bool $validate = false;
 
-    /**
-     * @param bool $state
-     */
-    public function setValidation($state)
+    public function setValidation(bool $state)
     {
         $this->validate = (bool)$state;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
+    public function isValidOrderKey(string $key): bool
     {
         return in_array($key, ['prio', 'name']);
     }
@@ -48,7 +41,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     /**
      * @return RuleInterface[]
      */
-    public function getRules()
+    public function getRules(): array
     {
         return $this->getData();
     }
@@ -58,7 +51,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
      *
      * @return $this
      */
-    public function setRules(array $rules)
+    public function setRules(array $rules): static
     {
         return $this->setData($rules);
     }

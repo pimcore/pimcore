@@ -22,7 +22,7 @@ use Pimcore\Tool\HtmlUtils;
 
 class HtmlUtilsTest extends TestCase
 {
-    private $attributes = [
+    private array $attributes = [
         'foo' => 'bar',
         'baz' => 'inga',
         'noop' => null,

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -34,7 +35,7 @@ class OptimizedMysql extends DefaultMysql implements MockupConfigInterface
      *
      * @return DefaultMockup
      */
-    public function createMockupObject($objectId, $data, $relations)
+    public function createMockupObject(int $objectId, mixed $data, array $relations): DefaultMockup
     {
         return new DefaultMockup($objectId, $data, $relations);
     }
@@ -47,7 +48,7 @@ class OptimizedMysql extends DefaultMysql implements MockupConfigInterface
      *
      * @return DefaultMockup
      */
-    public function getObjectMockupById($objectId)
+    public function getObjectMockupById(int $objectId): DefaultMockup
     {
         /** @var AbstractMockupCacheWorker $worker */
         $worker = $this->getTenantWorker();

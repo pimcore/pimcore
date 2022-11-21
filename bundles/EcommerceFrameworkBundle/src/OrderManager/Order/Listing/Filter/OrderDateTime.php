@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,94 +21,58 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListInterface;
 
 class OrderDateTime implements OrderListFilterInterface
 {
-    /**
-     * @var \DateTime|null
-     */
-    protected $from;
+    protected ?\DateTime $from = null;
 
-    /**
-     * @var \DateTime|null
-     */
-    protected $till;
+    protected ?\DateTime $till = null;
 
-    /**
-     * @var string
-     */
-    protected $column = 'order.orderDate';
+    protected string $column = 'order.orderDate';
 
-    /**
-     * @param OrderListInterface $orderList
-     *
-     * @return OrderListFilterInterface
-     */
-    public function apply(OrderListInterface $orderList)
+    public function apply(OrderListInterface $orderList): OrderListFilterInterface
     {
         // init
         $queryBuilder = $orderList->getQueryBuilder();
 
         if ($this->getFrom()) {
-            $queryBuilder->andWhere($this->getColumn() . ' >= :from_date')->setParameter(':from_date', $this->getFrom()->getTimestamp());
+            $queryBuilder->andWhere($this->getColumn() . ' >= :from_date')->setParameter('from_date', $this->getFrom()->getTimestamp());
         }
 
         if ($this->getTill()) {
-            $queryBuilder->andWhere($this->getColumn() . ' <= :till_date')->setParameter(':till_date', $this->getTill()->getTimestamp());
+            $queryBuilder->andWhere($this->getColumn() . ' <= :till_date')->setParameter('till_date', $this->getTill()->getTimestamp());
         }
 
         return $this;
     }
 
-    /**
-     * @return \DateTime|null
-     */
-    public function getFrom()
+    public function getFrom(): ?\DateTime
     {
         return $this->from;
     }
 
-    /**
-     * @param \DateTime $from
-     *
-     * @return $this
-     */
-    public function setFrom(\DateTime $from)
+    public function setFrom(\DateTime $from): static
     {
         $this->from = $from;
 
         return $this;
     }
 
-    /**
-     * @return \DateTime|null
-     */
-    public function getTill()
+    public function getTill(): ?\DateTime
     {
         return $this->till;
     }
 
-    /**
-     * @param \DateTime $till
-     *
-     * @return $this
-     */
-    public function setTill(\DateTime $till)
+    public function setTill(\DateTime $till): static
     {
         $this->till = $till;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getColumn()
+    public function getColumn(): string
     {
         return $this->column;
     }
 
-    /**
-     * @param string $column
-     */
-    public function setColumn($column)
+    public function setColumn(string $column)
     {
         $this->column = $column;
     }

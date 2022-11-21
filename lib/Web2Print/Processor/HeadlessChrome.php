@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,12 +29,12 @@ use Spiritix\Html2Pdf\Output\StringOutput;
 
 class HeadlessChrome extends Processor
 {
-    private $nodePath = '';
+    private string $nodePath = '';
 
     /**
      * @internal
      */
-    protected function buildPdf(Document\PrintAbstract $document, $config)
+    protected function buildPdf(Document\PrintAbstract $document, object $config): string
     {
         $web2printConfig = Config::getWeb2PrintConfig();
         $web2printConfig = $web2printConfig['headlessChromeSettings'];
@@ -75,7 +76,7 @@ class HeadlessChrome extends Processor
     /**
      * @internal
      */
-    public function getProcessingOptions()
+    public function getProcessingOptions(): array
     {
         $event = new PrintConfigEvent($this, [
             'options' => [],
@@ -88,7 +89,7 @@ class HeadlessChrome extends Processor
     /**
      * @internal
      */
-    public function getPdfFromString($html, $params = [], $returnFilePath = false)
+    public function getPdfFromString(string $html, array $params = [], bool $returnFilePath = false): string
     {
         $params = $params ?: $this->getDefaultOptions();
         $input = new StringInput();

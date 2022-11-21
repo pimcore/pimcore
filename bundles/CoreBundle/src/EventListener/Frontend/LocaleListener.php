@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,7 +29,7 @@ class LocaleListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
-    protected $lastLocale = null;
+    protected ?string $lastLocale = null;
 
     /**
      * {@inheritdoc}
@@ -41,9 +42,6 @@ class LocaleListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param RequestEvent $event
-     */
     public function onKernelRequest(RequestEvent $event)
     {
         $request = $event->getRequest();

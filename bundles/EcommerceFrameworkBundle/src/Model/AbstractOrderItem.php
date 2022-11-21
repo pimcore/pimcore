@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,76 +25,32 @@ use Pimcore\Model\Element\AbstractElement;
  */
 abstract class AbstractOrderItem extends Concrete
 {
-    /**
-     * @return AbstractElement|null
-     */
     abstract public function getProduct(): ?AbstractElement;
 
-    /**
-     * @param AbstractElement|null $product
-     */
     abstract public function setProduct(?AbstractElement $product);
 
-    /**
-     * @return string|null
-     */
     abstract public function getProductNumber(): ?string;
 
-    /**
-     * @param string|null $productNumber
-     */
     abstract public function setProductNumber(?string $productNumber);
 
-    /**
-     * @return string|null
-     */
     abstract public function getProductName(): ?string;
 
-    /**
-     * @param string|null $productName
-     */
     abstract public function setProductName(?string $productName);
 
-    /**
-     * @return float|null
-     */
     abstract public function getAmount(): ?float;
 
-    /**
-     * @param float|null $amount
-     *
-     * @return mixed
-     */
-    abstract public function setAmount(?float $amount);
+    abstract public function setAmount(?float $amount): mixed;
 
-    /**
-     * @return string|null
-     */
     abstract public function getTotalPrice(): ?string;
 
-    /**
-     * @param string|null $totalPrice
-     */
     abstract public function setTotalPrice(?string $totalPrice);
 
-    /**
-     * @return string|null
-     */
     abstract public function getTotalNetPrice(): ?string;
 
-    /**
-     * @param string|null $totalNetPrice
-     */
     abstract public function setTotalNetPrice(?string $totalNetPrice);
 
-    /**
-     * @return array
-     */
     abstract public function getTaxInfo(): array;
 
-    /**
-     * @param array|null $taxInfo
-     */
     abstract public function setTaxInfo(?array $taxInfo);
 
     /**
@@ -106,41 +63,17 @@ abstract class AbstractOrderItem extends Concrete
      */
     abstract public function setSubItems(?array $subItems);
 
-    /**
-     * @return Fieldcollection
-     */
-    abstract public function getPricingRules();
+    abstract public function getPricingRules(): ?Fieldcollection;
 
-    /**
-     * @param Fieldcollection|null $pricingRules
-     *
-     * @return $this
-     */
-    abstract public function setPricingRules(?Fieldcollection $pricingRules);
+    abstract public function setPricingRules(?Fieldcollection $pricingRules): static;
 
-    /**
-     * @return string|null
-     */
     abstract public function getOrderState(): ?string;
 
-    /**
-     * @param string|null $orderState
-     *
-     * @return $this
-     */
-    abstract public function setOrderState(?string $orderState);
+    abstract public function setOrderState(?string $orderState): static;
 
-    /**
-     * @return string|null
-     */
     abstract public function getComment(): ?string;
 
-    /**
-     * @param string|null $comment
-     *
-     * @return $this
-     */
-    abstract public function setComment(?string $comment);
+    abstract public function setComment(?string $comment): static;
 
     /**
      * is the order item cancel able
@@ -172,17 +105,11 @@ abstract class AbstractOrderItem extends Concrete
         return true;
     }
 
-    /**
-     * @return bool
-     */
     public function isCanceled(): bool
     {
         return $this->getOrderState() == AbstractOrder::ORDER_STATE_CANCELLED;
     }
 
-    /**
-     * @return AbstractOrder|null
-     */
     public function getOrder(): ?AbstractOrder
     {
         $possibleOrderObject = $this;

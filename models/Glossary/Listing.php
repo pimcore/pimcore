@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,7 +30,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @return Model\Glossary[]
      */
-    public function getGlossary()
+    public function getGlossary(): array
     {
         return $this->getData();
     }
@@ -39,7 +40,7 @@ class Listing extends Model\Listing\AbstractListing
      *
      * @return $this
      */
-    public function setGlossary($glossary)
+    public function setGlossary(?array $glossary): static
     {
         return $this->setData($glossary);
     }

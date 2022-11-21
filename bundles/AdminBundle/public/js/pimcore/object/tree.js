@@ -23,7 +23,7 @@
      },
  
      initialize: function (config, perspectiveCfg) {
-         this.treeDataUrl = Routing.generate('pimcore_admin_dataobject_dataobject_treegetchildsbyid');
+         this.treeDataUrl = Routing.generate('pimcore_admin_dataobject_dataobject_treegetchildrenbyid');
          this.perspectiveCfg = perspectiveCfg;
          if (!perspectiveCfg) {
              this.perspectiveCfg = {
@@ -537,7 +537,7 @@
                      if (perspectiveCfg.inTreeContextMenu("object.paste")) {
                          if (pimcore.cachedObjectId && record.data.permissions.create) {
                              pasteMenu.push({
-                                 text: t("paste_recursive_as_childs"),
+                                 text: t("paste_recursive_as_child"),
                                  iconCls: "pimcore_icon_paste",
                                  handler: this.pasteInfo.bind(this, tree, record, "recursive")
                              });
@@ -686,7 +686,7 @@
  
                      if (perspectiveCfg.inTreeContextMenu("object.lockAndPropagate")) {
                          lockMenu.push({
-                             text: t('lock_and_propagate_to_childs'),
+                             text: t('lock_and_propagate_to_children'),
                              iconCls: "pimcore_icon_lock pimcore_icon_overlay_go",
                              handler: function () {
                                  pimcore.elementservice.lockElement({

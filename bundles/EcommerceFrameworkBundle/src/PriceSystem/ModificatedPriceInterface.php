@@ -24,13 +24,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
  */
 interface ModificatedPriceInterface extends PriceInterface
 {
-    /**
-     * @return string
-     */
-    public function getDescription();
+    public function getDescription(): string;
 
-    /**
-     * @return RuleInterface|null
-     */
-    public function getRule();
+    public function getRule(): ?RuleInterface;
 }

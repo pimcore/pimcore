@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -39,7 +40,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
      *
      * @return string
      */
-    abstract protected function getStoreTableName();
+    abstract protected function getStoreTableName(): string;
 
     public function getBatchProcessingStoreTableName(): string
     {
@@ -51,7 +52,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
      * @param array|null $data
      * @param array|null $metadata
      */
-    abstract protected function doUpdateIndex($objectId, $data = null, $metadata = null);
+    abstract protected function doUpdateIndex(int $objectId, array $data = null, array $metadata = null);
 
     public function updateItemInIndex($objectId): void
     {
@@ -98,7 +99,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
      * @param array $data
      * @param int $subObjectId
      */
-    protected function insertDataToIndex($data, $subObjectId)
+    protected function insertDataToIndex(array $data, int $subObjectId)
     {
         $currentEntry = $this->db->fetchAssociative('SELECT crc_current, in_preparation_queue FROM ' . $this->getStoreTableName() . ' WHERE o_id = ? AND tenant = ?', [$subObjectId, $this->name]);
         if (!$currentEntry) {
@@ -115,7 +116,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
         }
     }
 
-    protected function getWorkerTimeout()
+    protected function getWorkerTimeout(): int
     {
         return 300;
     }
@@ -125,7 +126,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
      *
      * @param int $objectId
      */
-    protected function deleteFromStoreTable($objectId)
+    protected function deleteFromStoreTable(int $objectId)
     {
         $this->db->delete($this->getStoreTableName(), ['o_id' => (string)$objectId, 'tenant' => $this->name]);
     }
@@ -159,7 +160,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
      *
      * @return array
      */
-    protected function getDefaultDataForIndex(IndexableInterface $object, $subObjectId)
+    protected function getDefaultDataForIndex(IndexableInterface $object, int $subObjectId): array
     {
         $categories = $this->tenantConfig->getCategories($object, $subObjectId);
         $categoryIds = [];
@@ -236,7 +237,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
     /**
      * {@inheritdoc}
      */
-    public function prepareDataForIndex(IndexableInterface $object)
+    public function prepareDataForIndex(IndexableInterface $object): array
     {
         $subObjectIds = $this->tenantConfig->createSubIdsForObject($object);
         $processedSubObjects = [];
@@ -390,7 +391,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
     /**
      * {@inheritdoc}
      */
-    public function resetPreparationQueue()
+    public function resetPreparationQueue(): void
     {
         Logger::info('Index-Actions - Resetting preparation queue');
         $className = (new \ReflectionClass($this))->getShortName();
@@ -408,7 +409,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
     /**
      * {@inheritdoc}
      */
-    public function resetIndexingQueue()
+    public function resetIndexingQueue(): void
     {
         Logger::info('Index-Actions - Resetting index queue');
         $className = (new \ReflectionClass($this))->getShortName();
@@ -430,7 +431,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
      *
      * @throws \Exception
      */
-    protected function executeTransactionalQuery(\Closure $fn, int $maxTries = 3, float $sleep = .5)
+    protected function executeTransactionalQuery(\Closure $fn, int $maxTries = 3, float $sleep = .5): bool
     {
         for ($i = 1; $i <= $maxTries; $i++) {
             $this->db->beginTransaction();

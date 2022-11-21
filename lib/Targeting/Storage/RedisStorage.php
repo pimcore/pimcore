@@ -28,19 +28,13 @@ class RedisStorage implements TargetingStorageInterface
 
     const STORAGE_KEY_UPDATED_AT = '_u';
 
-    /**
-     * @var \Credis_Client
-     */
-    private $redis;
+    private \Credis_Client $redis;
 
     public function __construct(\Credis_Client $redis)
     {
         $this->redis = $redis;
     }
 
-    /**
-     * {@inheritdoc }
-     */
     public function all(VisitorInfo $visitorInfo, string $scope): array
     {
         if (!$visitorInfo->hasVisitorId()) {
@@ -69,9 +63,6 @@ class RedisStorage implements TargetingStorageInterface
         return $data;
     }
 
-    /**
-     * {@inheritdoc }
-     */
     public function has(VisitorInfo $visitorInfo, string $scope, string $name): bool
     {
         if (!$visitorInfo->hasVisitorId()) {
@@ -84,10 +75,7 @@ class RedisStorage implements TargetingStorageInterface
         return (bool)$result;
     }
 
-    /**
-     * {@inheritdoc }
-     */
-    public function set(VisitorInfo $visitorInfo, string $scope, string $name, $value)
+    public function set(VisitorInfo $visitorInfo, string $scope, string $name, mixed $value)
     {
         if (!$visitorInfo->hasVisitorId()) {
             return false;
@@ -111,7 +99,7 @@ class RedisStorage implements TargetingStorageInterface
     /**
      * {@inheritdoc }
      */
-    public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null)
+    public function get(VisitorInfo $visitorInfo, string $scope, string $name, mixed $default = null): mixed
     {
         if (!$visitorInfo->hasVisitorId()) {
             return $default;
@@ -150,9 +138,6 @@ class RedisStorage implements TargetingStorageInterface
         }
     }
 
-    /**
-     * {@inheritdoc }
-     */
     public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope)
     {
         // only allow migration if a visitor ID is available as otherwise the fallback
@@ -199,18 +184,12 @@ class RedisStorage implements TargetingStorageInterface
         $multi->exec();
     }
 
-    /**
-     * {@inheritdoc }
-     */
-    public function getCreatedAt(VisitorInfo $visitorInfo, string $scope)
+    public function getCreatedAt(VisitorInfo $visitorInfo, string $scope): ?\DateTimeImmutable
     {
         return $this->loadDate($visitorInfo, $scope, self::STORAGE_KEY_CREATED_AT);
     }
 
-    /**
-     * {@inheritdoc }
-     */
-    public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope)
+    public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope): ?\DateTimeImmutable
     {
         return $this->loadDate($visitorInfo, $scope, self::STORAGE_KEY_UPDATED_AT);
     }

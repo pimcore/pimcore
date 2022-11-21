@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,7 +28,7 @@ class QueryParams
      *
      * @return array  [orderKey => null|string, order => null|string]
      */
-    public static function extractSortingSettings($params)
+    public static function extractSortingSettings(array $params): array
     {
         $orderKey = null;
         $order = null;
@@ -59,12 +60,7 @@ class QueryParams
         return ['orderKey' => $orderKey, 'order' => $order];
     }
 
-    /**
-     * @param string $param
-     *
-     * @return int
-     */
-    public static function getRecordIdForGridRequest($param)
+    public static function getRecordIdForGridRequest(string $param): int
     {
         $param = json_decode($param, true);
 
@@ -83,7 +79,7 @@ class QueryParams
      *
      * @throws \Exception
      */
-    public static function getFilterCondition($filterString, $matchExact = ['id', 'o_id'], $returnString = true, $callbacks = [])
+    public static function getFilterCondition(string $filterString, array $matchExact = ['id', 'o_id'], bool $returnString = true, array $callbacks = []): array|string
     {
         if (!$filterString) {
             return '';

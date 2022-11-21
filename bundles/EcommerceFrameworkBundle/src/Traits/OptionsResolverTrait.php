@@ -24,7 +24,7 @@ trait OptionsResolverTrait
     /**
      * @var OptionsResolver[]
      */
-    protected $optionsResolvers = [];
+    protected array $optionsResolvers = [];
 
     /**
      * Runs options through options resolver. Supports multiple options resolvers identified

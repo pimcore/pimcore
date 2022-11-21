@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -58,7 +59,7 @@ abstract class AbstractFilterDefinition extends DataObject\Concrete implements D
      *
      * @return Fieldcollection<AbstractFilterDefinitionType>|null
      */
-    abstract public function getConditions();
+    abstract public function getConditions(): ?Fieldcollection;
 
     /**
      * return array of field collections for filters
@@ -67,7 +68,7 @@ abstract class AbstractFilterDefinition extends DataObject\Concrete implements D
      *
      * @return Fieldcollection<AbstractFilterDefinitionType>|null
      */
-    abstract public function getFilters();
+    abstract public function getFilters(): ?Fieldcollection;
 
     /**
      * enables inheritance for field collections, if xxxInheritance field is available and set to string 'true'
@@ -76,7 +77,7 @@ abstract class AbstractFilterDefinition extends DataObject\Concrete implements D
      *
      * @return Fieldcollection|null
      */
-    public function preGetValue(string $key)
+    public function preGetValue(string $key): ?Fieldcollection
     {
         if ($this->getClass()->getAllowInherit()
             && DataObject::doGetInheritedValues()

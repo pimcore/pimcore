@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,36 +26,30 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PricingManager implements PricingManagerInterface
 {
-    /**
-     * @var bool
-     */
-    protected $enabled = true;
+    protected bool $enabled = true;
 
     /**
      * Condition name => class mapping
      *
      * @var array
      */
-    protected $conditionMapping = [];
+    protected array $conditionMapping = [];
 
     /**
      * Action name => class mapping
      *
      * @var array
      */
-    protected $actionMapping = [];
+    protected array $actionMapping = [];
 
-    /**
-     * @var array
-     */
-    protected $options;
+    protected array $options;
 
     protected ?VisitorInfoStorageInterface $visitorInfoStorage = null;
 
     /**
      * @var RuleInterface[]|null
      */
-    protected $rules;
+    protected ?array $rules = null;
 
     public function __construct(
         array $conditionMapping,
@@ -99,12 +94,7 @@ class PricingManager implements PricingManagerInterface
         return $this->enabled;
     }
 
-    /**
-     * @param PriceSystemPriceInfoInterface $priceInfo
-     *
-     * @return PriceSystemPriceInfoInterface
-     */
-    public function applyProductRules(PriceSystemPriceInfoInterface $priceInfo)
+    public function applyProductRules(PriceSystemPriceInfoInterface $priceInfo): PriceInfoInterface|PriceSystemPriceInfoInterface
     {
         if (!$this->enabled) {
             return $priceInfo;
@@ -182,7 +172,7 @@ class PricingManager implements PricingManagerInterface
             $appliedRules[] = $rule;
 
             // is this a stop rule?
-            if ($rule->getBehavior() === 'stopExecute') {
+            if ($rule->getBehavior() === Rule::ATTRIBUTE_BEHAVIOR_LASTRULE) {
                 break;
             }
         }
@@ -193,7 +183,7 @@ class PricingManager implements PricingManagerInterface
     /**
      * @return RuleInterface[]
      */
-    public function getValidRules()
+    public function getValidRules(): array
     {
         if (is_null($this->rules)) {
             $rules = $this->getRuleListing();
@@ -209,10 +199,7 @@ class PricingManager implements PricingManagerInterface
         return $this->rules;
     }
 
-    /**
-     * @return EnvironmentInterface
-     */
-    public function getEnvironment()
+    public function getEnvironment(): EnvironmentInterface
     {
         $class = $this->options['environment_class'];
 
@@ -222,27 +209,18 @@ class PricingManager implements PricingManagerInterface
         return $environment;
     }
 
-    /**
-     * @return Rule\Listing
-     */
-    public function getRuleListing()
+    public function getRuleListing(): Rule\Listing
     {
         $class = $this->options['rule_class'] . '\\Listing';
 
         return new $class;
     }
 
-    /**
-     * @return array
-     */
     public function getConditionMapping(): array
     {
         return $this->conditionMapping;
     }
 
-    /**
-     * @return array
-     */
     public function getActionMapping(): array
     {
         return $this->actionMapping;
@@ -257,7 +235,7 @@ class PricingManager implements PricingManagerInterface
      *
      * @throws InvalidConfigException
      */
-    public function getCondition($type)
+    public function getCondition(string $type): ConditionInterface
     {
         if (!isset($this->conditionMapping[$type])) {
             throw new InvalidConfigException(sprintf('ConditionInterface for type "%s" is not registered', $type));
@@ -277,7 +255,7 @@ class PricingManager implements PricingManagerInterface
      *
      * @throws InvalidConfigException
      */
-    public function getAction($type)
+    public function getAction(string $type): ActionInterface
     {
         if (!isset($this->actionMapping[$type])) {
             throw new InvalidConfigException(sprintf('ActionInterface for type "%s" is not registered', $type));
@@ -295,7 +273,7 @@ class PricingManager implements PricingManagerInterface
      *
      * @throws InvalidConfigException
      */
-    public function getPriceInfo(PriceSystemPriceInfoInterface $priceInfo)
+    public function getPriceInfo(PriceSystemPriceInfoInterface $priceInfo): PriceInfoInterface
     {
         // TODO make getPriceInfo private as this call is only used internally where the enabled check is alread applied?
         if (!$this->enabled) {

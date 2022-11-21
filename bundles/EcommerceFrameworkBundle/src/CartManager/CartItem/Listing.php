@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,22 +27,11 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
  */
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
-    /**
-     * @var array
-     */
-    protected $order = ['ASC'];
+    protected array $order = ['ASC'];
 
-    /**
-     * @var array
-     */
-    protected $orderKey = ['`sortIndex`', '`addedDateTimestamp`'];
+    protected array $orderKey = ['`sortIndex`', '`addedDateTimestamp`'];
 
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
+    public function isValidOrderKey(string $key): bool
     {
         if (in_array($key, ['productId', 'cartId', 'count', 'itemKey', 'addedDateTimestamp', 'sortIndex'])) {
             return true;
@@ -53,7 +43,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     /**
      * @return CartItemInterface[]
      */
-    public function getCartItems()
+    public function getCartItems(): array
     {
         return $this->getData();
     }
@@ -63,15 +53,12 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
      *
      * @return $this
      */
-    public function setCartItems($cartItems)
+    public function setCartItems(array $cartItems): static
     {
         return $this->setData($cartItems);
     }
 
-    /**
-     * @param string $className
-     */
-    public function setCartItemClassName($className)
+    public function setCartItemClassName(string $className)
     {
         $this->getDao()->setClassName($className);
     }

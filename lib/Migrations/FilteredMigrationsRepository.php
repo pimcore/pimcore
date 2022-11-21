@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,22 +27,11 @@ use Doctrine\Migrations\Version\Version;
  */
 final class FilteredMigrationsRepository implements \Doctrine\Migrations\MigrationsRepository
 {
-    /**
-     * @var FilesystemMigrationsRepository
-     */
-    private $filesystemRepo;
+    private FilesystemMigrationsRepository $filesystemRepo;
 
-    /**
-     * @var null|string
-     */
-    private $prefix;
+    private ?string $prefix = null;
 
-    /**
-     * @param DependencyFactory $dependencyFactory
-     *
-     * @return $this
-     */
-    public function __invoke(DependencyFactory $dependencyFactory)
+    public function __invoke(DependencyFactory $dependencyFactory): static
     {
         $filesystemRepo = new FilesystemMigrationsRepository(
             $dependencyFactory->getConfiguration()->getMigrationClasses(),
@@ -60,33 +50,21 @@ final class FilteredMigrationsRepository implements \Doctrine\Migrations\Migrati
         $this->filesystemRepo = $repository;
     }
 
-    /**
-     * @param string|null $prefix
-     */
     public function setPrefix(?string $prefix): void
     {
         $this->prefix = $prefix;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasMigration(string $version): bool
     {
         return $this->filesystemRepo->hasMigration($version);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getMigration(Version $version): AvailableMigration
     {
         return $this->filesystemRepo->getMigration($version);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getMigrations(): AvailableMigrationsSet
     {
         $migrations = $this->filesystemRepo->getMigrations();

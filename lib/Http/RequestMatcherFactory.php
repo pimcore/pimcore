@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,7 +32,7 @@ class RequestMatcherFactory
      *
      * @return RequestMatcherInterface[]
      */
-    public function buildRequestMatchers(array $entries)
+    public function buildRequestMatchers(array $entries): array
     {
         $matchers = [];
         foreach ($entries as $entry) {
@@ -48,7 +49,7 @@ class RequestMatcherFactory
      *
      * @return RequestMatcher
      */
-    public function buildRequestMatcher(array $entry)
+    public function buildRequestMatcher(array $entry): RequestMatcher
     {
         // TODO add support for IPs, attributes and schemes if necessary
         $matcher = new RequestMatcher();

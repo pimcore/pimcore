@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Fields Summary:
@@ -14,10 +15,10 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class FilterSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType
 {
-protected $type = "FilterSelectFromMultiSelect";
-protected $label;
-protected $field;
-protected $scriptPath;
+protected string $type = "FilterSelectFromMultiSelect";
+protected ?string $label;
+protected ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field;
+protected ?string $scriptPath;
 
 
 /**

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -36,10 +37,7 @@ class GlobalTemplateVariablesListener implements EventSubscriberInterface, Logge
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;
 
-    /**
-     * @var array
-     */
-    protected $globalsStack = [];
+    protected array $globalsStack = [];
 
     public function __construct(
         protected DocumentResolver $documentResolver,
@@ -92,9 +90,6 @@ class GlobalTemplateVariablesListener implements EventSubscriberInterface, Logge
         }
     }
 
-    /**
-     * @param ResponseEvent $event
-     */
     public function onKernelResponse(ResponseEvent $event)
     {
         if (count($this->globalsStack)) {

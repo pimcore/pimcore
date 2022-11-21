@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,7 +33,7 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick
     /**
      * {@inheritdoc}
      */
-    public function getTemplate()
+    public function getTemplate(): ?string
     {
         // return null by default = auto-discover
         return null;
@@ -41,7 +42,7 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick
     /**
      * {@inheritdoc}
      */
-    public function getTemplateLocation()
+    public function getTemplateLocation(): string
     {
         return static::TEMPLATE_LOCATION_GLOBAL;
     }
@@ -49,7 +50,7 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick
     /**
      * {@inheritdoc}
      */
-    public function getTemplateSuffix()
+    public function getTemplateSuffix(): string
     {
         return static::TEMPLATE_SUFFIX_TWIG;
     }

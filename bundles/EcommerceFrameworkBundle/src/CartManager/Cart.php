@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,23 +25,17 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 class Cart extends AbstractCart implements CartInterface
 {
-    /**
-     * @return string
-     */
-    protected function getCartItemClassName()
+    protected function getCartItemClassName(): string
     {
         return CartItem::class;
     }
 
-    /**
-     * @return string
-     */
-    protected function getCartCheckoutDataClassName()
+    protected function getCartCheckoutDataClassName(): string
     {
         return CartCheckoutData::class;
     }
 
-    public function save()
+    public function save(): void
     {
         //make sure the items have been loaded otherwise we might loose the products (e.g. when a voucher is added)
         $items = $this->getItems();
@@ -57,10 +52,7 @@ class Cart extends AbstractCart implements CartInterface
         }
     }
 
-    /**
-     * @return void
-     */
-    public function delete()
+    public function delete(): void
     {
         $cacheKey = Cart\Dao::TABLE_NAME . '_' . $this->getId();
         RuntimeCache::set($cacheKey, null);
@@ -72,12 +64,7 @@ class Cart extends AbstractCart implements CartInterface
         $this->getDao()->delete();
     }
 
-    /**
-     * @param callable $value_compare_func
-     *
-     * @return $this
-     */
-    public function sortItems(callable $value_compare_func)
+    public function sortItems(callable $value_compare_func): static
     {
         //call get items to lazy load items
         $this->getItems();
@@ -94,12 +81,7 @@ class Cart extends AbstractCart implements CartInterface
         return $this;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return Cart|null
-     */
-    public static function getById($id)
+    public static function getById(int $id): ?Cart
     {
         $cacheKey = Cart\Dao::TABLE_NAME . '_' . $id;
 
@@ -133,7 +115,7 @@ class Cart extends AbstractCart implements CartInterface
         return $cart;
     }
 
-    public function getItems()
+    public function getItems(): array
     {
         if ($this->items === null) {
             $itemList = new CartItem\Listing();
@@ -162,7 +144,7 @@ class Cart extends AbstractCart implements CartInterface
      *
      * @return int
      */
-    public function getItemCount(string $countSubItems = self::COUNT_MAIN_ITEMS_ONLY)
+    public function getItemCount(string $countSubItems = self::COUNT_MAIN_ITEMS_ONLY): int
     {
         if ($countSubItems === self::COUNT_MAIN_ITEMS_ONLY) {
             if ($this->itemCount == null) {
@@ -178,7 +160,7 @@ class Cart extends AbstractCart implements CartInterface
         }
     }
 
-    public function getItemAmount(string $countSubItems = self::COUNT_MAIN_ITEMS_ONLY)
+    public function getItemAmount(string $countSubItems = self::COUNT_MAIN_ITEMS_ONLY): int
     {
         if ($countSubItems === self::COUNT_MAIN_ITEMS_ONLY) {
             if ($this->itemAmount == null) {
@@ -201,7 +183,7 @@ class Cart extends AbstractCart implements CartInterface
      *
      * @return array
      */
-    public static function getAllCartsForUser($userId)
+    public static function getAllCartsForUser(int $userId): array
     {
         $list = new Cart\Listing();
         $db = \Pimcore\Db::get();

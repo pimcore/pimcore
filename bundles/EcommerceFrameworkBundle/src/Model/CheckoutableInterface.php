@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -47,7 +48,6 @@ interface CheckoutableInterface extends ProductInterface
     /**
      * checks if product is bookable
      *
-     * @return bool
      */
     public function getOSIsBookable($quantityScale = 1): bool;
 
@@ -72,7 +72,7 @@ interface CheckoutableInterface extends ProductInterface
      *
      * @return PriceInterface|null
      */
-    public function getOSPrice($quantityScale = 1): ?PriceInterface;
+    public function getOSPrice(int $quantityScale = 1): ?PriceInterface;
 
     /**
      * returns price info for given quantity scale.
@@ -82,14 +82,14 @@ interface CheckoutableInterface extends ProductInterface
      *
      * @return PriceInfoInterface|null
      */
-    public function getOSPriceInfo($quantityScale = 1): ?PriceInfoInterface;
+    public function getOSPriceInfo(int $quantityScale = 1): ?PriceInfoInterface;
 
     /**
      * returns availability info based on given quantity
      *
-     * @param int $quantity
+     * @param int|null $quantity
      *
      * @return AvailabilityInterface|null
      */
-    public function getOSAvailabilityInfo($quantity = null): ?AvailabilityInterface;
+    public function getOSAvailabilityInfo(int $quantity = null): ?AvailabilityInterface;
 }

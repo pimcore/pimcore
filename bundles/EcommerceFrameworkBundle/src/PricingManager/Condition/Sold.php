@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,27 +25,16 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
 
 class Sold extends AbstractOrder implements ConditionInterface
 {
-    /**
-     * @var int
-     */
-    protected $count;
+    protected int $count;
 
     /**
      * @var int[]
      */
-    protected $currentSoldCount = [];
+    protected array $currentSoldCount = [];
 
-    /**
-     * @var bool
-     */
-    protected $countCart = false;
+    protected bool $countCart = false;
 
-    /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return bool
-     */
-    public function check(EnvironmentInterface $environment)
+    public function check(EnvironmentInterface $environment): bool
     {
         $rule = $environment->getRule();
         if ($rule) {
@@ -67,10 +57,7 @@ class Sold extends AbstractOrder implements ConditionInterface
         }
     }
 
-    /**
-     * @return string
-     */
-    public function toJSON()
+    public function toJSON(): string
     {
         // basic
         $json = [
@@ -80,12 +67,7 @@ class Sold extends AbstractOrder implements ConditionInterface
         return json_encode($json);
     }
 
-    /**
-     * @param string $string
-     *
-     * @return ConditionInterface
-     */
-    public function fromJSON($string)
+    public function fromJSON(string $string): ConditionInterface
     {
         $json = json_decode($string);
 
@@ -95,46 +77,29 @@ class Sold extends AbstractOrder implements ConditionInterface
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getCount()
+    public function getCount(): int
     {
         return $this->count;
     }
 
-    /**
-     * @param int $count
-     */
-    public function setCount($count)
+    public function setCount(int $count)
     {
         $this->count = (int)$count;
     }
 
-    /**
-     * @return bool
-     */
-    public function isCountCart()
+    public function isCountCart(): bool
     {
         return $this->countCart;
     }
 
-    /**
-     * @param bool $countCart
-     *
-     * @return $this
-     */
-    public function setCountCart($countCart)
+    public function setCountCart(bool $countCart): static
     {
         $this->countCart = (bool)$countCart;
 
         return $this;
     }
 
-    /**
-     * @return CartInterface|null
-     */
-    protected function getCart()
+    protected function getCart(): ?CartInterface
     {
         // use this in your own implementation
         return null;
@@ -149,7 +114,7 @@ class Sold extends AbstractOrder implements ConditionInterface
      *
      * @return int
      */
-    protected function getCartRuleCount(CartInterface $cart, RuleInterface $rule, CartItemInterface $cartItem = null)
+    protected function getCartRuleCount(CartInterface $cart, RuleInterface $rule, CartItemInterface $cartItem = null): int
     {
         // init
         $counter = 0;

@@ -43,7 +43,7 @@ class CartTaxManagementTest extends EcommerceTestCase
     private function buildTaxClass(array $taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): OnlineShopTaxClass
     {
         $taxClass = new OnlineShopTaxClass();
-        $taxClass->setId(md5(serialize($taxes)));
+        $taxClass->setId((int)md5(serialize($taxes)));
 
         $taxEntries = new Fieldcollection();
         foreach ($taxes as $name => $tax) {
@@ -116,8 +116,6 @@ class CartTaxManagementTest extends EcommerceTestCase
             },
             'isCartReadOnly' => function () {
                 return false;
-            },
-            'modified' => function () {
             },
         ]);
 

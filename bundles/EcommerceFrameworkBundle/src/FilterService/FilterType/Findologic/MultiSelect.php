@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -80,7 +81,7 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
      *
      * @return array
      */
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter, array $params, bool $isPrecondition = false): array
     {
         // init
         $field = $this->getField($filterDefinition);

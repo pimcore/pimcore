@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,20 +25,14 @@ use Symfony\Component\Workflow\WorkflowInterface;
  */
 class ExpressionSupportStrategy implements WorkflowSupportStrategyInterface
 {
-    /**
-     * @var ExpressionService
-     */
-    private $expressionService;
+    private ExpressionService $expressionService;
 
     /**
      * @var string|string[]
      */
-    private $className;
+    private string|array $className;
 
-    /**
-     * @var string
-     */
-    private $expression;
+    private string $expression;
 
     /**
      * ExpressionSupportStrategy constructor.
@@ -46,16 +41,13 @@ class ExpressionSupportStrategy implements WorkflowSupportStrategyInterface
      * @param string|string[] $className a FQCN
      * @param string $expression
      */
-    public function __construct(ExpressionService $expressionService, $className, string $expression)
+    public function __construct(ExpressionService $expressionService, array|string $className, string $expression)
     {
         $this->expressionService = $expressionService;
         $this->className = $className;
         $this->expression = $expression;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supports(WorkflowInterface $workflow, $subject): bool
     {
         if (!$this->supportsClass($subject)) {
@@ -82,10 +74,7 @@ class ExpressionSupportStrategy implements WorkflowSupportStrategyInterface
         return false;
     }
 
-    /**
-     * @return string
-     */
-    public function getClassName()
+    public function getClassName(): array|string
     {
         return $this->className;
     }

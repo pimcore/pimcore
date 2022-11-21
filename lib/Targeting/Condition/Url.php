@@ -21,10 +21,7 @@ use Pimcore\Targeting\Model\VisitorInfo;
 
 class Url extends AbstractVariableCondition implements ConditionInterface
 {
-    /**
-     * @var string|null
-     */
-    private $pattern;
+    private ?string $pattern = null;
 
     /**
      * @param null|string $pattern
@@ -37,7 +34,7 @@ class Url extends AbstractVariableCondition implements ConditionInterface
     /**
      * {@inheritdoc}
      */
-    public static function fromConfig(array $config)
+    public static function fromConfig(array $config): static
     {
         return new static($config['url'] ?? null);
     }

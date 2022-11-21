@@ -33,24 +33,21 @@ class Device implements DataProviderInterface
 {
     const PROVIDER_KEY = 'device';
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     /**
      * The cache handler caching detected results
      *
-     * @var CoreCacheHandler
+     * @var CoreCacheHandler|null
      */
-    private $cache;
+    private ?CoreCacheHandler $cache = null;
 
     /**
      * The cache pool which is passed to the DeviceDetector
      *
      * @var TagAwareAdapterInterface
      */
-    private $cachePool;
+    private TagAwareAdapterInterface $cachePool;
 
     public function __construct(LoggerInterface $logger)
     {

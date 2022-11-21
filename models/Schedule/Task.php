@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,49 +26,23 @@ use Pimcore\Model;
  */
 class Task extends Model\AbstractModel
 {
-    /**
-     * @var int
-     */
-    protected $id;
+    protected int $id;
 
-    /**
-     * @var int
-     */
-    protected $cid;
+    protected int $cid;
 
-    /**
-     * @var string
-     */
-    protected $ctype;
+    protected string $ctype;
 
-    /**
-     * @var int
-     */
-    protected $date;
+    protected int $date;
 
-    /**
-     * @var string
-     */
-    protected $action;
+    protected string $action;
 
-    /**
-     * @var int|null
-     */
-    protected $version;
+    protected ?int $version = null;
 
     protected bool $active = false;
 
-    /**
-     * @var int|null
-     */
-    protected $userId;
+    protected ?int $userId = null;
 
-    /**
-     * @param int $id
-     *
-     * @return self|null
-     */
-    public static function getById($id)
+    public static function getById(int $id): ?Task
     {
         $cacheKey = 'scheduled_task_' . $id;
 
@@ -89,12 +64,7 @@ class Task extends Model\AbstractModel
         return $task;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return self
-     */
-    public static function create($data)
+    public static function create(array $data): Task
     {
         $task = new self();
         self::checkCreateData($data);
@@ -103,148 +73,89 @@ class Task extends Model\AbstractModel
         return $task;
     }
 
-    /**
-     * @param array $data
-     */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         $this->setValues($data);
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return int
-     */
-    public function getCid()
+    public function getCid(): int
     {
         return $this->cid;
     }
 
-    /**
-     * @return string
-     */
-    public function getCtype()
+    public function getCtype(): string
     {
         return $this->ctype;
     }
 
-    /**
-     * @return int
-     */
-    public function getDate()
+    public function getDate(): int
     {
         return $this->date;
     }
 
-    /**
-     * @return string
-     */
-    public function getAction()
+    public function getAction(): string
     {
         return $this->action;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getVersion()
+    public function getVersion(): ?int
     {
         return $this->version;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(int $id): static
     {
         $this->id = (int) $id;
 
         return $this;
     }
 
-    /**
-     * @param int $cid
-     *
-     * @return $this
-     */
-    public function setCid($cid)
+    public function setCid(int $cid): static
     {
         $this->cid = (int) $cid;
 
         return $this;
     }
 
-    /**
-     * @param string $ctype
-     *
-     * @return $this
-     */
-    public function setCtype($ctype)
+    public function setCtype(string $ctype): static
     {
         $this->ctype = $ctype;
 
         return $this;
     }
 
-    /**
-     * @param int $date
-     *
-     * @return $this
-     */
-    public function setDate($date)
+    public function setDate(int $date): static
     {
         $this->date = (int) $date;
 
         return $this;
     }
 
-    /**
-     * @param string $action
-     *
-     * @return $this
-     */
-    public function setAction($action)
+    public function setAction(string $action): static
     {
         $this->action = $action;
 
         return $this;
     }
 
-    /**
-     * @param int|null $version
-     *
-     * @return $this
-     */
-    public function setVersion($version)
+    public function setVersion(?int $version): static
     {
         $this->version = $version;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getActive()
+    public function getActive(): bool
     {
         return $this->active;
     }
 
-    /**
-     * @param bool $active
-     *
-     * @return $this
-     */
-    public function setActive($active)
+    public function setActive(bool $active): static
     {
         if (empty($active)) {
             $active = false;
@@ -254,9 +165,6 @@ class Task extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getUserId(): ?int
     {
         return $this->userId;

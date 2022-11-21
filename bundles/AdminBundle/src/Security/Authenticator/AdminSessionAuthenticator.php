@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,7 +32,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPasspor
  */
 class AdminSessionAuthenticator extends AdminAbstractAuthenticator
 {
-    protected ?User $user;
+    protected ?User $user = null;
 
     /**
      * {@inheritdoc}

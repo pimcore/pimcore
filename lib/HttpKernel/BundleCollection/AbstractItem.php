@@ -19,20 +19,11 @@ namespace Pimcore\HttpKernel\BundleCollection;
 
 abstract class AbstractItem implements ItemInterface
 {
-    /**
-     * @var int
-     */
-    private $priority;
+    private int $priority;
 
-    /**
-     * @var array
-     */
-    private $environments = [];
+    private array $environments = [];
 
-    /**
-     * @var string
-     */
-    private $source;
+    private string $source;
 
     public function __construct(int $priority = 0, array $environments = [], string $source = self::SOURCE_PROGRAMATICALLY)
     {

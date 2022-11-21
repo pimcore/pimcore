@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,13 +23,7 @@ use Pimcore\Model\DataObject\Data\CalculatedValue;
 
 class Calculator implements CalculatorClassInterface
 {
-    /**
-     * @param Concrete $object
-     * @param \Pimcore\Model\DataObject\Data\CalculatedValue $context
-     *
-     * @return string
-     */
-    public function compute($object, $context): string
+    public function compute(Concrete $object, CalculatedValue $context): string
     {
         $value = '';
         if (RuntimeCache::isRegistered('modeltest.testCalculatedValue.value')) {

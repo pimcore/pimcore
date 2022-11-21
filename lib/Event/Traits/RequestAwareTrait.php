@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,15 +20,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 trait RequestAwareTrait
 {
-    /**
-     * @var Request
-     */
-    protected $request;
+    protected Request $request;
 
-    /**
-     * @return Request
-     */
-    public function getRequest()
+    public function getRequest(): Request
     {
         return $this->request;
     }

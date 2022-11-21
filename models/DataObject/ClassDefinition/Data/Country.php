@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,6 +18,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\CountryOptionsProvider;
+use Pimcore\Model\DataObject\Concrete;
 
 class Country extends Model\DataObject\ClassDefinition\Data\Select
 {
@@ -27,14 +29,14 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
      *
      * @var string
      */
-    public $fieldtype = 'country';
+    public string $fieldtype = 'country';
 
     /**
      * @internal
      *
      * @var string|int
      */
-    public $width = 0;
+    public string|int $width = 0;
 
     /**
      * Restrict selection to comma-separated list of countries.
@@ -43,30 +45,22 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
      *
      * @var string|null
      */
-    public $restrictTo = null;
+    public ?string $restrictTo = null;
 
     /**
      * {@inheritdoc}
      */
-    public function isDiffChangeAllowed($object, $params = [])
+    public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
 
-    /**
-     * @return string|int
-     */
-    public function getWidth()
+    public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @param string|int $width
-     *
-     * @return $this
-     */
-    public function setWidth($width)
+    public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
             $width = (int)$width;
@@ -76,10 +70,7 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
         return $this;
     }
 
-    /**
-     * @param array|string|null $restrictTo
-     */
-    public function setRestrictTo($restrictTo)
+    public function setRestrictTo(array|string|null $restrictTo)
     {
         /**
          * @extjs6
@@ -91,10 +82,7 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
         $this->restrictTo = $restrictTo;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getRestrictTo()
+    public function getRestrictTo(): ?string
     {
         return $this->restrictTo;
     }
@@ -107,10 +95,7 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
         return true;
     }
 
-    /**
-     * @return string
-     */
-    public function getOptionsProviderClass()
+    public function getOptionsProviderClass(): string
     {
         return '@' . CountryOptionsProvider::class;
     }

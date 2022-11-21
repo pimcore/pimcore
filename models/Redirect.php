@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -45,75 +46,33 @@ final class Redirect extends AbstractModel
         self::TYPE_AUTO_CREATE,
     ];
 
-    /**
-     * @var int
-     */
-    protected $id;
+    protected int $id;
 
-    /**
-     * @var string
-     */
-    protected $type;
+    protected string $type;
 
-    /**
-     * @var string
-     */
-    protected $source;
+    protected string $source;
 
-    /**
-     * @var int|null
-     */
-    protected $sourceSite;
+    protected ?int $sourceSite = null;
 
-    /**
-     * @var bool
-     */
-    protected $passThroughParameters = false;
+    protected bool $passThroughParameters = false;
 
-    /**
-     * @var string
-     */
-    protected $target;
+    protected string $target;
 
-    /**
-     * @var int|null
-     */
-    protected $targetSite;
+    protected ?int $targetSite = null;
 
-    /**
-     * @var int
-     */
-    protected $statusCode = 301;
+    protected int $statusCode = 301;
 
-    /**
-     * @var int
-     */
-    protected $priority = 1;
+    protected int $priority = 1;
 
-    /**
-     * @var bool|null
-     */
-    protected $regex;
+    protected ?bool $regex = null;
 
-    /**
-     * @var bool
-     */
-    protected $active = true;
+    protected bool $active = true;
 
-    /**
-     * @var int|null
-     */
-    protected $expiry;
+    protected ?int $expiry = null;
 
-    /**
-     * @var int|null
-     */
-    protected $creationDate;
+    protected ?int $creationDate = null;
 
-    /**
-     * @var int|null
-     */
-    protected $modificationDate;
+    protected ?int $modificationDate = null;
 
     /**
      * ID of the owner user
@@ -125,14 +84,9 @@ final class Redirect extends AbstractModel
      *
      * @var int|null
      */
-    protected $userModification;
+    protected ?int $userModification = null;
 
-    /**
-     * @param int $id
-     *
-     * @return self|null
-     */
-    public static function getById($id)
+    public static function getById(int $id): ?Redirect
     {
         try {
             $redirect = new self();
@@ -165,10 +119,7 @@ final class Redirect extends AbstractModel
         }
     }
 
-    /**
-     * @return Redirect
-     */
-    public static function create()
+    public static function create(): Redirect
     {
         $redirect = new self();
         $redirect->save();
@@ -176,36 +127,22 @@ final class Redirect extends AbstractModel
         return $redirect;
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
-    public function getSource()
+    public function getSource(): string
     {
         return $this->source;
     }
 
-    /**
-     * @return string
-     */
-    public function getTarget()
+    public function getTarget(): string
     {
         return $this->target;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(int $id): static
     {
         $this->id = (int) $id;
 
@@ -217,7 +154,7 @@ final class Redirect extends AbstractModel
      *
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -227,7 +164,7 @@ final class Redirect extends AbstractModel
      *
      * @param string $type
      */
-    public function setType($type)
+    public function setType(string $type)
     {
         if (!empty($type) && !in_array($type, self::TYPES)) {
             throw new \InvalidArgumentException(sprintf('Invalid type "%s"', $type));
@@ -236,36 +173,21 @@ final class Redirect extends AbstractModel
         $this->type = $type;
     }
 
-    /**
-     * @param string $source
-     *
-     * @return $this
-     */
-    public function setSource($source)
+    public function setSource(string $source): static
     {
         $this->source = $source;
 
         return $this;
     }
 
-    /**
-     * @param string $target
-     *
-     * @return $this
-     */
-    public function setTarget($target)
+    public function setTarget(string $target): static
     {
         $this->target = $target;
 
         return $this;
     }
 
-    /**
-     * @param int $priority
-     *
-     * @return $this
-     */
-    public function setPriority($priority)
+    public function setPriority(int $priority): static
     {
         if ($priority) {
             $this->priority = $priority;
@@ -274,20 +196,12 @@ final class Redirect extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getPriority()
+    public function getPriority(): int
     {
         return $this->priority;
     }
 
-    /**
-     * @param int $statusCode
-     *
-     * @return $this
-     */
-    public function setStatusCode($statusCode)
+    public function setStatusCode(int $statusCode): static
     {
         if ($statusCode) {
             $this->statusCode = $statusCode;
@@ -296,18 +210,12 @@ final class Redirect extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getStatusCode()
+    public function getStatusCode(): int
     {
         return $this->statusCode;
     }
 
-    /**
-     * @return string
-     */
-    public function getHttpStatus()
+    public function getHttpStatus(): string
     {
         $statusCode = $this->getStatusCode();
         if (empty($statusCode)) {
@@ -327,12 +235,7 @@ final class Redirect extends AbstractModel
         }
     }
 
-    /**
-     * @param int|string|null $expiry
-     *
-     * @return $this
-     */
-    public function setExpiry($expiry)
+    public function setExpiry(int|string|null $expiry): static
     {
         if (is_string($expiry) && !is_numeric($expiry)) {
             $expiry = strtotime($expiry);
@@ -342,18 +245,12 @@ final class Redirect extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getExpiry()
+    public function getExpiry(): ?int
     {
         return $this->expiry;
     }
 
-    /**
-     * @return bool|null
-     */
-    public function getRegex()
+    public function getRegex(): ?bool
     {
         return $this->regex;
     }
@@ -363,44 +260,26 @@ final class Redirect extends AbstractModel
         return (bool)$this->regex;
     }
 
-    /**
-     * @param bool|null $regex
-     *
-     * @return $this
-     */
-    public function setRegex($regex)
+    public function setRegex(?bool $regex): static
     {
         $this->regex = $regex ? (bool) $regex : null;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getActive()
+    public function getActive(): bool
     {
         return $this->active;
     }
 
-    /**
-     * @param bool $active
-     *
-     * @return $this
-     */
-    public function setActive($active)
+    public function setActive(bool $active): static
     {
         $this->active = (bool) $active;
 
         return $this;
     }
 
-    /**
-     * @param int $sourceSite
-     *
-     * @return $this
-     */
-    public function setSourceSite($sourceSite)
+    public function setSourceSite(int $sourceSite): static
     {
         if ($sourceSite) {
             $this->sourceSite = (int) $sourceSite;
@@ -411,20 +290,12 @@ final class Redirect extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getSourceSite()
+    public function getSourceSite(): ?int
     {
         return $this->sourceSite;
     }
 
-    /**
-     * @param int $targetSite
-     *
-     * @return $this
-     */
-    public function setTargetSite($targetSite)
+    public function setTargetSite(int $targetSite): static
     {
         if ($targetSite) {
             $this->targetSite = (int) $targetSite;
@@ -435,102 +306,63 @@ final class Redirect extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getTargetSite()
+    public function getTargetSite(): ?int
     {
         return $this->targetSite;
     }
 
-    /**
-     * @param bool $passThroughParameters
-     *
-     * @return Redirect
-     */
-    public function setPassThroughParameters($passThroughParameters)
+    public function setPassThroughParameters(bool $passThroughParameters): static
     {
         $this->passThroughParameters = (bool) $passThroughParameters;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getPassThroughParameters()
+    public function getPassThroughParameters(): bool
     {
         return $this->passThroughParameters;
     }
 
-    /**
-     * @param int $modificationDate
-     *
-     * @return $this
-     */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = (int) $modificationDate;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getModificationDate()
+    public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
-    /**
-     * @param int $creationDate
-     *
-     * @return $this
-     */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = (int) $creationDate;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getCreationDate()
+    public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }
 
-    /**
-     * @return int|null
-     */
     public function getUserOwner(): ?int
     {
         return $this->userOwner;
     }
 
-    /**
-     * @param int|null $userOwner
-     */
     public function setUserOwner(?int $userOwner)
     {
         $this->userOwner = $userOwner;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getUserModification()
+    public function getUserModification(): ?int
     {
         return $this->userModification;
     }
 
-    /**
-     * @param int $userModification
-     */
-    public function setUserModification($userModification)
+    public function setUserModification(int $userModification)
     {
         $this->userModification = $userModification;
     }

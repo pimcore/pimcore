@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,22 +18,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
 interface ConditionInterface
 {
-    /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return bool
-     */
-    public function check(EnvironmentInterface $environment);
+    public function check(EnvironmentInterface $environment): bool;
 
-    /**
-     * @return string
-     */
-    public function toJSON();
+    public function toJSON(): string;
 
-    /**
-     * @param string $string
-     *
-     * @return ConditionInterface
-     */
-    public function fromJSON($string);
+    public function fromJSON(string $string): ConditionInterface;
 }

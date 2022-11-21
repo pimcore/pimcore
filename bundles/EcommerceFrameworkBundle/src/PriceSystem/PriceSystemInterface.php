@@ -28,12 +28,12 @@ interface PriceSystemInterface
      * Creates price info object for given product and quantity scale
      *
      * @param CheckoutableInterface&Concrete $product
-     * @param null|int|string $quantityScale - Numeric or string (allowed values: PriceInfoInterface::MIN_PRICE)
-     * @param CheckoutableInterface[] $products
+     * @param int|string|null $quantityScale - Numeric or string (allowed values: PriceInfoInterface::MIN_PRICE)
+     * @param CheckoutableInterface[]|null $products
      *
      * @return PriceInfoInterface
      */
-    public function getPriceInfo(CheckoutableInterface $product, $quantityScale = null, $products = null): PriceInfoInterface;
+    public function getPriceInfo(CheckoutableInterface $product, int|string $quantityScale = null, array $products = null): PriceInfoInterface;
 
     /**
      * Filters and orders given product IDs based on price information
@@ -47,7 +47,7 @@ interface PriceSystemInterface
      *
      * @return array
      */
-    public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit);
+    public function filterProductIds(array $productIds, ?float $fromPrice, ?float $toPrice, string $order, int $offset, int $limit): array;
 
     /**
      * Returns OnlineShopTaxClass for given CheckoutableInterface
@@ -58,7 +58,7 @@ interface PriceSystemInterface
      *
      * @return OnlineShopTaxClass
      */
-    public function getTaxClassForProduct(CheckoutableInterface $product);
+    public function getTaxClassForProduct(CheckoutableInterface $product): OnlineShopTaxClass;
 
     /**
      * Returns OnlineShopTaxClass for given CartPriceModificatorInterface
@@ -69,5 +69,5 @@ interface PriceSystemInterface
      *
      * @return OnlineShopTaxClass
      */
-    public function getTaxClassForPriceModification(CartPriceModificatorInterface $modificator);
+    public function getTaxClassForPriceModification(CartPriceModificatorInterface $modificator): OnlineShopTaxClass;
 }

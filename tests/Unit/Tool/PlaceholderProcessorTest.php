@@ -22,10 +22,7 @@ use Pimcore\Tests\Support\Test\TestCase;
 
 class PlaceholderProcessorTest extends TestCase
 {
-    /**
-     * @var PlaceholderProcessor
-     */
-    private $processor;
+    private PlaceholderProcessor $processor;
 
     /**
      * {@inheritdoc}

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,15 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
 
 interface CartAmountInterface extends ConditionInterface
 {
-    /**
-     * @param float $limit
-     *
-     * @return CartAmountInterface
-     */
-    public function setLimit($limit);
+    public function setLimit(float $limit): CartAmountInterface;
 
-    /**
-     * @return float
-     */
-    public function getLimit();
+    public function getLimit(): float;
 }

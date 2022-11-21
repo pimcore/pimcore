@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,19 +33,16 @@ class Printcontainer extends Document\PrintAbstract
      *
      * @var string
      */
-    protected $action = 'container';
+    protected string $action = 'container';
 
-    /**
-     * @var array
-     */
-    private $allChildren = [];
+    private array $allChildren = [];
 
     /**
      * @return array
      *
      * @internal
      */
-    public function getTreeNodeConfig()
+    public function getTreeNodeConfig(): array
     {
         $tmpDocument = [];
         $tmpDocument['leaf'] = false;
@@ -62,10 +60,7 @@ class Printcontainer extends Document\PrintAbstract
         return $tmpDocument;
     }
 
-    /**
-     * @return array
-     */
-    public function getAllChildren()
+    public function getAllChildren(): array
     {
         $this->allChildren = [];
         $this->doGetChildren($this);
@@ -95,10 +90,7 @@ class Printcontainer extends Document\PrintAbstract
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function pdfIsDirty()
+    public function pdfIsDirty(): bool
     {
         $dirty = parent::pdfIsDirty();
         if (!$dirty) {

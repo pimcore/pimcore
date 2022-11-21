@@ -32,20 +32,11 @@ class GeoIp implements DataProviderInterface
 {
     const PROVIDER_KEY = 'geoip';
 
-    /**
-     * @var ProviderInterface
-     */
-    private $geoIpProvider;
+    private ProviderInterface $geoIpProvider;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @var CoreCacheHandler
-     */
-    private $cache;
+    private ?CoreCacheHandler $cache = null;
 
     public function __construct(
         ProviderInterface $geoIpProvider,
@@ -77,12 +68,7 @@ class GeoIp implements DataProviderInterface
         );
     }
 
-    /**
-     * @param VisitorInfo $visitorInfo
-     *
-     * @return array|null
-     */
-    public function loadData(VisitorInfo $visitorInfo)
+    public function loadData(VisitorInfo $visitorInfo): ?array
     {
         $result = null;
         $request = $visitorInfo->getRequest();

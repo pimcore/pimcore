@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,15 +23,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PimcoreNotificationService extends AbstractNotificationService
 {
-    /**
-     * @var NotificationService
-     */
-    protected $notificationService;
+    protected NotificationService $notificationService;
 
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    protected TranslatorInterface $translator;
 
     /**
      * PimcoreNotificationService constructor.

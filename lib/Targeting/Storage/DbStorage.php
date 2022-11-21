@@ -29,15 +29,9 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
 {
     use TimestampsTrait;
 
-    /**
-     * @var Connection
-     */
-    private $db;
+    private Connection $db;
 
-    /**
-     * @var string
-     */
-    private $tableName = 'targeting_storage';
+    private string $tableName = 'targeting_storage';
 
     public function __construct(Connection $db, array $options = [])
     {
@@ -64,9 +58,6 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
         $resolver->setAllowedTypes('tableName', 'string');
     }
 
-    /**
-     * {@inheritdoc }
-     */
     public function all(VisitorInfo $visitorInfo, string $scope): array
     {
         if (!$visitorInfo->hasVisitorId()) {
@@ -101,9 +92,6 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
         return $data;
     }
 
-    /**
-     * {@inheritdoc }
-     */
     public function has(VisitorInfo $visitorInfo, string $scope, string $name): bool
     {
         if (!$visitorInfo->hasVisitorId()) {
@@ -136,10 +124,7 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
         return 1 === $result;
     }
 
-    /**
-     * {@inheritdoc }
-     */
-    public function set(VisitorInfo $visitorInfo, string $scope, string $name, $value)
+    public function set(VisitorInfo $visitorInfo, string $scope, string $name, mixed $value)
     {
         if (!$visitorInfo->hasVisitorId()) {
             return;
@@ -172,7 +157,7 @@ EOF;
     /**
      * {@inheritdoc}
      */
-    public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null)
+    public function get(VisitorInfo $visitorInfo, string $scope, string $name, mixed $default = null): mixed
     {
         if (!$visitorInfo->hasVisitorId()) {
             return $default;
@@ -240,9 +225,6 @@ EOF;
         }
     }
 
-    /**
-     * {@inheritdoc }
-     */
     public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope)
     {
         // only allow migration if a visitor ID is available as otherwise the fallback
@@ -277,18 +259,12 @@ EOF;
         }
     }
 
-    /**
-     * {@inheritdoc }
-     */
-    public function getCreatedAt(VisitorInfo $visitorInfo, string $scope)
+    public function getCreatedAt(VisitorInfo $visitorInfo, string $scope): ?\DateTimeImmutable
     {
         return $this->loadDate($visitorInfo, $scope, 'MIN(creationDate)');
     }
 
-    /**
-     * {@inheritdoc }
-     */
-    public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope)
+    public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope): ?\DateTimeImmutable
     {
         return $this->loadDate($visitorInfo, $scope, 'MAX(modificationDate)');
     }

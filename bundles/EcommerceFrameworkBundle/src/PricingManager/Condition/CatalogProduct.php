@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,21 +27,16 @@ class CatalogProduct extends AbstractObjectListCondition implements CatalogProdu
     /**
      * @var AbstractProduct[]
      */
-    protected $products = [];
+    protected array $products = [];
 
     /**
      * Serialized product IDs
      *
      * @var array
      */
-    protected $productIds = [];
+    protected array $productIds = [];
 
-    /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return bool
-     */
-    public function check(EnvironmentInterface $environment)
+    public function check(EnvironmentInterface $environment): bool
     {
         // init
         $productsPool = [];
@@ -75,10 +71,7 @@ class CatalogProduct extends AbstractObjectListCondition implements CatalogProdu
         return false;
     }
 
-    /**
-     * @return string
-     */
-    public function toJSON()
+    public function toJSON(): string
     {
         // basic
         $json = [
@@ -97,12 +90,7 @@ class CatalogProduct extends AbstractObjectListCondition implements CatalogProdu
         return json_encode($json);
     }
 
-    /**
-     * @param string $string
-     *
-     * @return ConditionInterface
-     */
-    public function fromJSON($string)
+    public function fromJSON(string $string): ConditionInterface
     {
         $json = json_decode($string);
 
@@ -143,7 +131,7 @@ class CatalogProduct extends AbstractObjectListCondition implements CatalogProdu
      *
      * @return CatalogProductInterface
      */
-    public function setProducts(array $products)
+    public function setProducts(array $products): CatalogProductInterface
     {
         $this->products = $products;
 
@@ -151,7 +139,7 @@ class CatalogProduct extends AbstractObjectListCondition implements CatalogProdu
     }
 
     /** @inheritDoc */
-    public function getProducts()
+    public function getProducts(): array
     {
         return $this->products;
     }

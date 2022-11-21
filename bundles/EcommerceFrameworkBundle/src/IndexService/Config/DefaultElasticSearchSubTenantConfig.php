@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,7 +30,7 @@ class DefaultElasticSearchSubTenantConfig extends ElasticSearch
      *
      * @return bool
      */
-    public function inIndex(IndexableInterface $object)
+    public function inIndex(IndexableInterface $object): bool
     {
         $tenants = null;
         if (method_exists($object, 'getTenants')) {
@@ -50,7 +51,7 @@ class DefaultElasticSearchSubTenantConfig extends ElasticSearch
      *
      * @return array $subTenantData
      */
-    public function prepareSubTenantEntries(IndexableInterface $object, $subObjectId = null)
+    public function prepareSubTenantEntries(IndexableInterface $object, int $subObjectId = null): array
     {
         $subTenantData = [];
         if ($this->inIndex($object)) {

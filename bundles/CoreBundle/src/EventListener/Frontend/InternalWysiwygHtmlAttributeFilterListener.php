@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -40,9 +41,6 @@ class InternalWysiwygHtmlAttributeFilterListener implements EventSubscriberInter
         ];
     }
 
-    /**
-     * @param ResponseEvent $event
-     */
     public function onKernelResponse(ResponseEvent $event)
     {
         $request = $event->getRequest();

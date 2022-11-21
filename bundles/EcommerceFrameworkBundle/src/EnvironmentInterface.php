@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,23 +28,23 @@ interface EnvironmentInterface extends ComponentInterface
      *
      * @return int
      */
-    public function getCurrentUserId();
+    public function getCurrentUserId(): int;
 
     /**
      * Sets current user id
      *
      * @param int $userId
      *
-     * @return void
+     * @return $this
      */
-    public function setCurrentUserId($userId);
+    public function setCurrentUserId(int $userId): static;
 
     /**
      * Checks if a user id is set
      *
      * @return bool
      */
-    public function hasCurrentUserId();
+    public function hasCurrentUserId(): bool;
 
     /**
      * Sets custom item to environment - which is saved to the session then
@@ -52,7 +53,7 @@ interface EnvironmentInterface extends ComponentInterface
      * @param string $key
      * @param mixed $value
      */
-    public function setCustomItem($key, $value);
+    public function setCustomItem(string $key, mixed $value);
 
     /**
      * Removes custom item from the environment
@@ -60,7 +61,7 @@ interface EnvironmentInterface extends ComponentInterface
      *
      * @param string $key
      */
-    public function removeCustomItem($key);
+    public function removeCustomItem(string $key);
 
     /**
      * Returns custom saved item from environment
@@ -70,14 +71,14 @@ interface EnvironmentInterface extends ComponentInterface
      *
      * @return mixed
      */
-    public function getCustomItem($key, $defaultValue = null);
+    public function getCustomItem(string $key, mixed $defaultValue = null): mixed;
 
     /**
      * Returns all custom items from environment
      *
      * @return array
      */
-    public function getAllCustomItems();
+    public function getAllCustomItems(): array;
 
     /**
      * Resets environment
@@ -90,28 +91,28 @@ interface EnvironmentInterface extends ComponentInterface
      *
      * @param string|null $tenant
      */
-    public function setCurrentAssortmentTenant($tenant);
+    public function setCurrentAssortmentTenant(?string $tenant);
 
     /**
      * Returns current assortment tenant which is used for indexing and product lists
      *
      * @return string|null
      */
-    public function getCurrentAssortmentTenant();
+    public function getCurrentAssortmentTenant(): ?string;
 
     /**
      * Sets current assortment sub tenant which is used for indexing and product lists
      *
      * @param string|null $subTenant
      */
-    public function setCurrentAssortmentSubTenant($subTenant);
+    public function setCurrentAssortmentSubTenant(?string $subTenant);
 
     /**
      * Returns current sub assortment tenant which is used for indexing and product lists
      *
      * @return string|null
      */
-    public function getCurrentAssortmentSubTenant();
+    public function getCurrentAssortmentSubTenant(): ?string;
 
     /**
      * Sets current checkout tenant which is used for cart and checkout manager
@@ -119,14 +120,14 @@ interface EnvironmentInterface extends ComponentInterface
      * @param string $tenant
      * @param bool $persistent - if set to false, tenant is not stored to session and only valid for current process
      */
-    public function setCurrentCheckoutTenant($tenant, $persistent = true);
+    public function setCurrentCheckoutTenant(string $tenant, bool $persistent = true);
 
     /**
      * Returns current assortment tenant which is used for cart and checkout manager
      *
-     * @return string
+     * @return string|null
      */
-    public function getCurrentCheckoutTenant();
+    public function getCurrentCheckoutTenant(): ?string;
 
     /**
      * Set the default currency in a multi-currency environment.
@@ -140,22 +141,16 @@ interface EnvironmentInterface extends ComponentInterface
      *
      * @return Currency
      */
-    public function getDefaultCurrency();
+    public function getDefaultCurrency(): Currency;
 
-    /**
-     * @return bool
-     */
-    public function getUseGuestCart();
+    public function getUseGuestCart(): bool;
 
-    /**
-     * @param bool $useGuestCart
-     */
-    public function setUseGuestCart($useGuestCart);
+    public function setUseGuestCart(bool $useGuestCart);
 
     /**
      * Returns current system locale
      *
      * @return null|string
      */
-    public function getSystemLocale();
+    public function getSystemLocale(): ?string;
 }

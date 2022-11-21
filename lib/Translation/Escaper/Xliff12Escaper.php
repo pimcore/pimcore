@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,11 +22,6 @@ class Xliff12Escaper
 {
     const SELFCLOSING_TAGS = ['area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
 
-    /**
-     * @param string $content
-     *
-     * @return string
-     */
     public function escapeXliff(string $content): string
     {
         $count = 1;
@@ -80,11 +76,6 @@ class Xliff12Escaper
         return $content;
     }
 
-    /**
-     * @param string $content
-     *
-     * @return string
-     */
     public function unescapeXliff(string $content): string
     {
         $content = $this->parseInnerXml($content);

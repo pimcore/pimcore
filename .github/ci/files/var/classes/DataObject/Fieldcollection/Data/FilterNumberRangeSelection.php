@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Fields Summary:
@@ -18,14 +19,14 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class FilterNumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType
 {
-protected $type = "FilterNumberRangeSelection";
-protected $label;
-protected $field;
-protected $ranges;
-protected $preSelectFrom;
-protected $preSelectTo;
-protected $scriptPath;
-protected $unit;
+protected string $type = "FilterNumberRangeSelection";
+protected ?string $label;
+protected ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field;
+protected ?DataObject\Data\StructuredTable $ranges;
+protected ?float $preSelectFrom;
+protected ?float $preSelectTo;
+protected ?string $scriptPath;
+protected ?string $unit;
 
 
 /**

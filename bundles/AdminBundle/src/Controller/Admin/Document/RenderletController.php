@@ -52,7 +52,7 @@ class RenderletController extends AdminController
         ActionRenderer $actionRenderer,
         EditableHandler $editableHandler,
         LocaleServiceInterface $localeService
-    ) {
+    ): Response {
         $query = $request->query->all();
         $attributes = [];
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,20 +27,14 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    /**
-     * @var string|null
-     */
-    protected $unitId;
+    protected string|null $unitId = null;
+
+    protected ?Unit $unit = null;
 
     /**
-     * @var Unit|null
+     * @param string|Unit|null $unit
      */
-    protected $unit;
-
-    /**
-     * @param Unit|string|null $unit
-     */
-    public function __construct($unit = null)
+    public function __construct(Unit|string $unit = null)
     {
         if ($unit instanceof Unit) {
             $this->unit = $unit;
@@ -50,28 +45,19 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @param string $unitId
-     */
-    public function setUnitId($unitId)
+    public function setUnitId(string $unitId)
     {
         $this->unitId = $unitId;
         $this->unit = null;
         $this->markMeDirty();
     }
 
-    /**
-     * @return string|null
-     */
-    public function getUnitId()
+    public function getUnitId(): string|null
     {
         return $this->unitId;
     }
 
-    /**
-     * @return Unit|null
-     */
-    public function getUnit()
+    public function getUnit(): ?Unit
     {
         if (empty($this->unit)) {
             $this->unit = Unit::getById($this->unitId);
@@ -81,13 +67,13 @@ abstract class AbstractQuantityValue implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param Unit|string $unit target unit. if string provided, unit is tried to be found by abbreviation
+     * @param string|Unit $unit target unit. if string provided, unit is tried to be found by abbreviation
      *
      * @return self
      *
      * @throws \Exception
      */
-    public function convertTo($unit)
+    public function convertTo(Unit|string $unit): AbstractQuantityValue
     {
         if (is_string($unit)) {
             $unitObject = Unit::getByAbbreviation($unit);

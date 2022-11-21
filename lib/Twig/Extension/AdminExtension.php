@@ -39,10 +39,7 @@ class AdminExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('pimcore_inline_icon', [$this, 'inlineIcon']),
@@ -82,12 +79,7 @@ class AdminExtension extends AbstractExtension
         return '<script src="' . $url . '"></script>' . "\n";
     }
 
-    /**
-     * @param string $icon
-     *
-     * @return string
-     */
-    public function inlineIcon(string $icon)
+    public function inlineIcon(string $icon): string
     {
         $content = file_get_contents($icon);
 

@@ -25,25 +25,13 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductList
  */
 class Dao
 {
-    /**
-     * @var Connection
-     */
-    private $db;
+    private Connection $db;
 
-    /**
-     * @var DefaultMysql
-     */
-    private $model;
+    private DefaultMysql $model;
 
-    /**
-     * @var int
-     */
-    private $lastRecordCount;
+    private int $lastRecordCount;
 
-    /**
-     * @var Logger
-     */
-    protected $logger;
+    protected Logger $logger;
 
     public function __construct(DefaultMysql $model, Logger $logger)
     {
@@ -53,7 +41,7 @@ class Dao
         $this->logger = $logger;
     }
 
-    public function load($condition, $orderBy = null, $limit = null, $offset = null)
+    public function load($condition, $orderBy = null, $limit = null, $offset = null): array
     {
         if ($condition) {
             $condition = 'WHERE ' . $condition;
@@ -97,7 +85,7 @@ class Dao
         return $result;
     }
 
-    public function loadGroupByValues($fieldname, $condition, $countValues = false)
+    public function loadGroupByValues($fieldname, $condition, $countValues = false): array
     {
         if ($condition) {
             $condition = 'WHERE ' . $condition;
@@ -135,7 +123,7 @@ class Dao
         }
     }
 
-    public function loadGroupByRelationValues($fieldname, $condition, $countValues = false)
+    public function loadGroupByRelationValues($fieldname, $condition, $countValues = false): array
     {
         if ($condition) {
             $condition = 'WHERE ' . $condition;
@@ -183,7 +171,7 @@ class Dao
         }
     }
 
-    public function getCount($condition, $orderBy = null, $limit = null, $offset = null)
+    public function getCount($condition, $orderBy = null, $limit = null, $offset = null): int
     {
         if ($condition) {
             $condition = 'WHERE ' . $condition;
@@ -217,7 +205,7 @@ class Dao
         $result = $this->db->fetchOne($query);
         $this->logger->info('Query done.');
 
-        return $result;
+        return is_int($result) ? $result : 0;
     }
 
     public function quote($value)
@@ -233,7 +221,7 @@ class Dao
      *
      * @return string
      */
-    public function buildSimularityOrderBy($fields, $objectId)
+    public function buildSimularityOrderBy(array $fields, int $objectId): string
     {
         try {
             $fieldString = '';
@@ -292,7 +280,7 @@ class Dao
      *
      * @return string
      */
-    public function buildFulltextSearchWhere($fields, $searchstring)
+    public function buildFulltextSearchWhere(array $fields, string $searchstring): string
     {
         $columnNames = [];
         foreach ($fields as $c) {
@@ -307,7 +295,7 @@ class Dao
      *
      * @return int
      */
-    public function getLastRecordCount()
+    public function getLastRecordCount(): int
     {
         return $this->lastRecordCount;
     }

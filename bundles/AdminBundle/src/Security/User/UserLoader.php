@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,35 +27,19 @@ use Pimcore\Tool\Authentication;
  */
 class UserLoader
 {
-    /**
-     * @var UserModel
-     */
-    protected $user;
+    protected ?UserModel $user = null;
 
-    /**
-     * @var TokenStorageUserResolver
-     */
-    protected $userResolver;
+    protected TokenStorageUserResolver $userResolver;
 
-    /**
-     * @var RequestHelper
-     */
-    protected $requestHelper;
+    protected RequestHelper $requestHelper;
 
-    /**
-     * @param TokenStorageUserResolver $userResolver
-     * @param RequestHelper $requestHelper
-     */
     public function __construct(TokenStorageUserResolver $userResolver, RequestHelper $requestHelper)
     {
         $this->userResolver = $userResolver;
         $this->requestHelper = $requestHelper;
     }
 
-    /**
-     * @return UserModel|null
-     */
-    public function getUser()
+    public function getUser(): ?UserModel
     {
         if (null === $this->user) {
             $user = $this->loadUser();
@@ -67,18 +52,12 @@ class UserLoader
         return $this->user;
     }
 
-    /**
-     * @param UserModel $user
-     */
-    public function setUser(UserModel $user)
+    public function setUser(UserModel $user): void
     {
         $this->user = $user;
     }
 
-    /**
-     * @return UserModel|null
-     */
-    protected function loadUser()
+    protected function loadUser(): ?UserModel
     {
         // authenticated admin user inside admin firewall and set on token storage
         if ($user = $this->userResolver->getUser()) {

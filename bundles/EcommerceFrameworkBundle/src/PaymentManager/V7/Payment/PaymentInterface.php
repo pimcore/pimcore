@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,10 +24,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 
 interface PaymentInterface
 {
-    /**
-     * @return string
-     */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Starts payment
@@ -46,14 +44,14 @@ interface PaymentInterface
      *
      * @return StatusInterface
      */
-    public function handleResponse($response);
+    public function handleResponse(StatusInterface $response): StatusInterface;
 
     /**
      * Returns the authorized data from payment provider
      *
      * @return array
      */
-    public function getAuthorizedData();
+    public function getAuthorizedData(): array;
 
     /**
      * Set authorized data from payment provider
@@ -70,7 +68,7 @@ interface PaymentInterface
      *
      * @return StatusInterface
      */
-    public function executeDebit(PriceInterface $price = null, $reference = null);
+    public function executeDebit(PriceInterface $price = null, string $reference = null): StatusInterface;
 
     /**
      * Executes credit
@@ -81,12 +79,12 @@ interface PaymentInterface
      *
      * @return StatusInterface
      */
-    public function executeCredit(PriceInterface $price, $reference, $transactionId);
+    public function executeCredit(PriceInterface $price, string $reference, string $transactionId): StatusInterface;
 
     /**
      * returns configuration key in yml configuration file
      *
      * @return string
      */
-    public function getConfigurationKey();
+    public function getConfigurationKey(): string;
 }

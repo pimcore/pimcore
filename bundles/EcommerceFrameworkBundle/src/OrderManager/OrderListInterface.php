@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,76 +32,29 @@ interface OrderListInterface extends SeekableIterator, ArrayAccess, PaginateList
 
     const LIST_TYPE_ORDER_ITEM = 'item';
 
-    /**
-     * @return DoctrineQueryBuilder
-     */
     public function getQueryBuilder(): DoctrineQueryBuilder;
 
-    /**
-     * @return OrderListInterface
-     */
-    public function load();
+    public function load(): OrderListInterface;
 
-    /**
-     * @param int $limit
-     * @param int $offset
-     *
-     * @return OrderListInterface
-     */
-    public function setLimit($limit, $offset = 0);
+    public function setLimit(int $limit, int $offset = 0): OrderListInterface;
 
-    /**
-     * @return int
-     */
-    public function getLimit();
+    public function getLimit(): int;
 
-    /**
-     * @return int
-     */
-    public function getOffset();
+    public function getOffset(): int;
 
-    /**
-     * @param string $order
-     *
-     * @return OrderListInterface
-     */
-    public function setOrder($order);
+    public function setOrder(string $order): OrderListInterface;
 
-    /**
-     * @param string $state
-     *
-     * @return OrderListInterface
-     */
-    public function setOrderState($state);
+    public function setOrderState(string $state): OrderListInterface;
 
-    /**
-     * @return string
-     */
-    public function getOrderState();
+    public function getOrderState(): string;
 
-    /**
-     * @param string $type
-     *
-     * @return OrderListInterface
-     */
-    public function setListType($type);
+    public function setListType(string $type): OrderListInterface;
 
-    /**
-     * @return string
-     */
-    public function getListType();
+    public function getListType(): string;
 
-    /**
-     * @return string
-     */
-    public function getItemClassName();
+    public function getItemClassName(): string;
 
-    /**
-     * @param string $className
-     *
-     * @return $this
-     */
-    public function setItemClassName($className);
+    public function setItemClassName(string $className): static;
 
     /**
      * enable payment info query
@@ -108,7 +62,7 @@ interface OrderListInterface extends SeekableIterator, ArrayAccess, PaginateList
      *
      * @return $this
      */
-    public function joinPaymentInfo();
+    public function joinPaymentInfo(): static;
 
     /**
      * enable order item objects query
@@ -116,7 +70,7 @@ interface OrderListInterface extends SeekableIterator, ArrayAccess, PaginateList
      *
      * @return $this
      */
-    public function joinOrderItemObjects();
+    public function joinOrderItemObjects(): static;
 
     /**
      * enable product query
@@ -126,7 +80,7 @@ interface OrderListInterface extends SeekableIterator, ArrayAccess, PaginateList
      *
      * @return $this
      */
-    public function joinProduct($classId);
+    public function joinProduct(string $classId): static;
 
     /**
      * enable customer query
@@ -136,7 +90,7 @@ interface OrderListInterface extends SeekableIterator, ArrayAccess, PaginateList
      *
      * @return $this
      */
-    public function joinCustomer($classId);
+    public function joinCustomer(string $classId): static;
 
     /**
      * enable pricing rule query
@@ -144,39 +98,21 @@ interface OrderListInterface extends SeekableIterator, ArrayAccess, PaginateList
      *
      * @return $this
      */
-    public function joinPricingRule();
+    public function joinPricingRule(): static;
 
     /**
      * @param string $condition
-     * @param string $value
+     * @param string|null $value
      *
      * @return $this
      */
-    public function addCondition($condition, $value = null);
+    public function addCondition(string $condition, string $value = null): static;
 
-    /**
-     * @param string $field
-     *
-     * @return $this
-     */
-    public function addSelectField($field);
+    public function addSelectField(string $field): static;
 
-    /**
-     * @param OrderListFilterInterface $filter
-     *
-     * @return $this
-     */
-    public function addFilter(OrderListFilterInterface $filter);
+    public function addFilter(OrderListFilterInterface $filter): static;
 
-    /**
-     * @return bool
-     */
-    public function useSubItems();
+    public function useSubItems(): bool;
 
-    /**
-     * @param bool $useSubItems
-     *
-     * @return $this
-     */
-    public function setUseSubItems($useSubItems);
+    public function setUseSubItems(bool $useSubItems): static;
 }

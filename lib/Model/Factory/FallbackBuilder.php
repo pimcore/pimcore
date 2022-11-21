@@ -32,10 +32,7 @@ final class FallbackBuilder extends AbstractClassNameLoader
         return class_exists($name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getClassName(string $name)
+    protected function getClassName(string $name): string
     {
         return $name;
     }

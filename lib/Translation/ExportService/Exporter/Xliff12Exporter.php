@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,15 +24,9 @@ class Xliff12Exporter implements ExporterInterface
 {
     const DELIMITER = '~-~';
 
-    /**
-     * @var Xliff12Escaper
-     */
-    private $xliffEscaper;
+    private Xliff12Escaper $xliffEscaper;
 
-    /**
-     * @var \SimpleXMLElement|null
-     */
-    private $xliffFile;
+    private ?\SimpleXMLElement $xliffFile = null;
 
     public function __construct(Xliff12Escaper $xliffEscaper)
     {
@@ -82,9 +77,6 @@ class Xliff12Exporter implements ExporterInterface
         return $exportFile;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getExportFilePath(string $exportId): string
     {
         $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $exportId . '.xliff';
@@ -96,10 +88,6 @@ class Xliff12Exporter implements ExporterInterface
         return $exportFile;
     }
 
-    /**
-     * @param string $exportFilePath
-     *
-     */
     protected function prepareExportFile(string $exportFilePath)
     {
         if ($this->xliffFile === null) {
@@ -109,23 +97,12 @@ class Xliff12Exporter implements ExporterInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getContentType(): string
     {
         return 'application/x-xliff+xml';
     }
 
-    /**
-     * @param \SimpleXMLElement $xml
-     * @param string $name
-     * @param string $sourceContent
-     * @param string $sourceLang
-     * @param string $targetContent
-     * @param string $targetLang
-     */
-    protected function addTransUnitNode(\SimpleXMLElement $xml, $name, $sourceContent, $sourceLang, $targetContent, $targetLang)
+    protected function addTransUnitNode(\SimpleXMLElement $xml, string $name, string $sourceContent, string $sourceLang, string $targetContent, string $targetLang)
     {
         $transUnit = $xml->addChild('trans-unit');
         $transUnit->addAttribute('id', htmlentities($name));

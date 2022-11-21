@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,17 +21,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListInterface;
 
 class OrderSearch implements OrderListFilterInterface
 {
-    /**
-     * @var string
-     */
-    protected $keyword;
+    protected string $keyword;
 
-    /**
-     * @param OrderListInterface $orderList
-     *
-     * @return OrderListFilterInterface
-     */
-    public function apply(OrderListInterface $orderList)
+    public function apply(OrderListInterface $orderList): OrderListFilterInterface
     {
         // init
         $queryBuilder = $orderList->getQueryBuilder();
@@ -57,26 +50,18 @@ OR `order`.deliveryCountry like ?
 SQL;
 
         if ($this->getKeyword()) {
-            $queryBuilder->andWhere(str_replace('like ?', 'like :order_keyword', $condition))->setParameter(':order_keyword', $this->getKeyword());
+            $queryBuilder->andWhere(str_replace('like ?', 'like :order_keyword', $condition))->setParameter('order_keyword', $this->getKeyword());
         }
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getKeyword()
+    public function getKeyword(): string
     {
         return $this->keyword;
     }
 
-    /**
-     * @param string $keyword
-     *
-     * @return $this
-     */
-    public function setKeyword($keyword)
+    public function setKeyword(string $keyword): static
     {
         $this->keyword = $keyword;
 

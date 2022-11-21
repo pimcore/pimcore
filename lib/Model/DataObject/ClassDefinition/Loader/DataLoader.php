@@ -25,12 +25,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
  */
 final class DataLoader extends ImplementationLoader implements DataLoaderInterface
 {
-    /**
-     * @param string $name
-     * @param array $params
-     *
-     * @return Data
-     */
     public function build(string $name, array $params = []): Data
     {
         return parent::build($name, $params);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,47 +27,21 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 class Token extends AbstractModel
 {
-    /**
-     * @var int
-     */
-    public $id;
+    public int $id;
 
-    /**
-     * @var int
-     */
-    public $voucherSeriesId;
+    public int $voucherSeriesId;
 
-    /**
-     * @var string
-     */
-    public $token;
+    public string $token;
 
-    /**
-     * @var int
-     */
-    public $length;
+    public int $length;
 
-    /**
-     * @var string
-     */
-    public $type;
+    public string $type;
 
-    /**
-     * @var int
-     */
-    public $usages;
+    public int $usages;
 
-    /**
-     * @var int
-     */
-    public $timestamp;
+    public int $timestamp;
 
-    /**
-     * @param string $code
-     *
-     * @return Token|null
-     */
-    public static function getByCode($code)
+    public static function getByCode(string $code): ?Token
     {
         try {
             $config = new self();
@@ -78,12 +53,7 @@ class Token extends AbstractModel
         }
     }
 
-    /**
-     * @param int $maxUsages
-     *
-     * @return bool
-     */
-    public function isUsed($maxUsages = 1)
+    public function isUsed(int $maxUsages = 1): bool
     {
         if ($this->usages >= $maxUsages) {
             return true;
@@ -92,7 +62,7 @@ class Token extends AbstractModel
         return false;
     }
 
-    public static function isUsedToken($code, $maxUsages = 1)
+    public static function isUsedToken($code, $maxUsages = 1): bool
     {
         $db = Db::get();
         $query = 'SELECT usages FROM ' . Dao::TABLE_NAME . ' WHERE token = ? ';
@@ -109,12 +79,12 @@ class Token extends AbstractModel
     }
 
     /**
-     * @param null|int $maxUsages
+     * @param int|null $maxUsages
      * @param bool $isCheckout In the checkout there is one reservation more, the one of the current order.
      *
      * @return bool
      */
-    public function check($maxUsages = null, $isCheckout = false)
+    public function check(int $maxUsages = null, bool $isCheckout = false): bool
     {
         if (isset($maxUsages)) {
             if ($this->getUsages() + Reservation::getReservationCount($this->getToken()) - (int)$isCheckout <= $maxUsages) {
@@ -127,12 +97,7 @@ class Token extends AbstractModel
         }
     }
 
-    /**
-     * @param string $code
-     *
-     * @return bool
-     */
-    public static function tokenExists($code)
+    public static function tokenExists(string $code): bool
     {
         $db = Db::get();
         $query = 'SELECT EXISTS(SELECT id FROM ' . Dao::TABLE_NAME . ' WHERE token = ?)';
@@ -145,12 +110,12 @@ class Token extends AbstractModel
         return true;
     }
 
-    public function release($cart)
+    public function release($cart): bool
     {
         return Reservation::releaseToken($this->getToken(), $cart);
     }
 
-    public function apply()
+    public function apply(): bool
     {
         if ($this->getDao()->apply()) {
             Statistic::increaseUsageStatistic($this->getVoucherSeriesId());
@@ -161,7 +126,7 @@ class Token extends AbstractModel
         return false;
     }
 
-    public function unuse()
+    public function unuse(): bool
     {
         if ($this->getDao()->unuse()) {
             return true;
@@ -170,106 +135,67 @@ class Token extends AbstractModel
         return false;
     }
 
-    /**
-     * @return int
-     */
-    public function getTimestamp()
+    public function getTimestamp(): int
     {
         return $this->timestamp;
     }
 
-    /**
-     * @param int $timestamp
-     */
-    public function setTimestamp($timestamp)
+    public function setTimestamp(int $timestamp)
     {
         $this->timestamp = $timestamp;
     }
 
-    /**
-     * @return int
-     */
-    public function getVoucherSeriesId()
+    public function getVoucherSeriesId(): int
     {
         return $this->voucherSeriesId;
     }
 
-    /**
-     * @param int $voucherSeriesId
-     */
-    public function setVoucherSeriesId($voucherSeriesId)
+    public function setVoucherSeriesId(int $voucherSeriesId)
     {
         $this->voucherSeriesId = $voucherSeriesId;
     }
 
-    /**
-     * @return string
-     */
-    public function getToken()
+    public function getToken(): string
     {
         return $this->token;
     }
 
-    /**
-     * @param string $token
-     */
-    public function setToken($token)
+    public function setToken(string $token)
     {
         $this->token = $token;
     }
 
-    /**
-     * @return int
-     */
-    public function getLength()
+    public function getLength(): int
     {
         return $this->length;
     }
 
-    /**
-     * @param int $length
-     */
-    public function setLength($length)
+    public function setLength(int $length)
     {
         $this->length = $length;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     */
-    public function setType($type)
+    public function setType(string $type)
     {
         $this->type = $type;
     }
 
-    /**
-     * @return int
-     */
-    public function getUsages()
+    public function getUsages(): int
     {
         return $this->usages;
     }
 
-    /**
-     * @param int $usages
-     */
-    public function setUsages($usages)
+    public function setUsages(int $usages)
     {
         $this->usages = $usages;
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }

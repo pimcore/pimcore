@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,28 +21,16 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class LoginFailedEvent extends Event
 {
-    /**
-     * @var array
-     */
-    protected $credentials;
+    protected array $credentials;
 
-    /**
-     * @var User
-     */
-    protected $user;
+    protected User $user;
 
-    /**
-     * @param array $credentials
-     */
     public function __construct(array $credentials)
     {
         $this->credentials = $credentials;
     }
 
-    /**
-     * @return array
-     */
-    public function getCredentials()
+    public function getCredentials(): array
     {
         return $this->credentials;
     }
@@ -52,7 +41,7 @@ class LoginFailedEvent extends Event
      *
      * @return mixed
      */
-    public function getCredential($name, $default = null)
+    public function getCredential(string $name, mixed $default = null): mixed
     {
         if (isset($this->credentials[$name])) {
             return $this->credentials[$name];
@@ -61,30 +50,22 @@ class LoginFailedEvent extends Event
         return $default;
     }
 
-    /**
-     * @return User
-     */
-    public function getUser()
+    public function getUser(): User
     {
         return $this->user;
     }
 
     /**
-     * @param User $user
-     *
      * @return $this
      */
-    public function setUser(User $user)
+    public function setUser(User $user): static
     {
         $this->user = $user;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasUser()
+    public function hasUser(): bool
     {
         return null !== $this->user;
     }

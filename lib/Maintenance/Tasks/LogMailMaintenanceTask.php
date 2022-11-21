@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,19 +27,10 @@ use Symfony\Component\Mime\Address;
  */
 class LogMailMaintenanceTask implements TaskInterface
 {
-    /**
-     * @var Connection
-     */
-    private $db;
+    private Connection $db;
 
-    /**
-     * @var Config
-     */
-    private $config;
+    private Config $config;
 
-    /**
-     * @param Connection $db
-     */
     public function __construct(Connection $db, Config $config)
     {
         $this->db = $db;

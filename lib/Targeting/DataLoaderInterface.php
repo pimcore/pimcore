@@ -29,7 +29,7 @@ interface DataLoaderInterface
      * @param VisitorInfo $visitorInfo
      * @param array|string $providerKeys
      */
-    public function loadDataFromProviders(VisitorInfo $visitorInfo, $providerKeys);
+    public function loadDataFromProviders(VisitorInfo $visitorInfo, array|string $providerKeys);
 
     /**
      * Checks if a data provider is registered

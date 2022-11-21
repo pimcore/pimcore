@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -38,15 +39,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class VoucherController extends FrontendController implements KernelControllerEventInterface
 {
-    /**
-     * @var TokenStorageUserResolver
-     */
-    protected $tokenResolver;
+    protected TokenStorageUserResolver $tokenResolver;
 
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    protected TranslatorInterface $translator;
 
     /**
      * AdminController constructor.
@@ -60,9 +55,6 @@ class VoucherController extends FrontendController implements KernelControllerEv
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         // set language
@@ -85,7 +77,7 @@ class VoucherController extends FrontendController implements KernelControllerEv
      *
      * @Route("/voucher-code-tab", name="pimcore_ecommerce_backend_voucher_voucher-code-tab", methods={"GET"})
      */
-    public function voucherCodeTabAction(Request $request)
+    public function voucherCodeTabAction(Request $request): Response
     {
         $onlineShopVoucherSeries = OnlineShopVoucherSeries::getById((int) $request->get('id'));
 
@@ -117,7 +109,7 @@ class VoucherController extends FrontendController implements KernelControllerEv
      *
      * @Route("/export-tokens", name="pimcore_ecommerce_backend_voucher_export-tokens", methods={"GET"})
      */
-    public function exportTokensAction(Request $request)
+    public function exportTokensAction(Request $request): Response
     {
         $onlineShopVoucherSeries = OnlineShopVoucherSeries::getById((int) $request->get('id'));
 
@@ -235,9 +227,8 @@ class VoucherController extends FrontendController implements KernelControllerEv
      *
      * @Route("/cleanup-reservations", name="pimcore_ecommerce_backend_voucher_cleanup-reservations", methods={"POST"})
      *
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
      */
-    public function cleanupReservationsAction(Request $request)
+    public function cleanupReservationsAction(Request $request): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         $duration = $request->get('duration');
         $id = $request->get('id');

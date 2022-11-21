@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,8 +25,7 @@ use Symfony\Component\Lock\LockFactory;
  */
 class FullTextIndexOptimizeTask implements TaskInterface
 {
-    /** @var \Symfony\Component\Lock\LockInterface */
-    private $lock;
+    private \Symfony\Component\Lock\LockInterface $lock;
 
     public function __construct(LockFactory $lockFactory)
     {

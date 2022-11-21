@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,25 +29,13 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
  */
 final class DocumentValueResolver implements ArgumentValueResolverInterface
 {
-    /**
-     * @var DocumentResolver
-     */
-    protected $documentResolver;
+    protected DocumentResolver $documentResolver;
 
-    /**
-     * @param DocumentResolver $documentResolver
-     */
     public function __construct(DocumentResolver $documentResolver)
     {
         $this->documentResolver = $documentResolver;
     }
 
-    /**
-     * @param Request $request
-     * @param ArgumentMetadata $argument
-     *
-     * @return bool
-     */
     public function supports(Request $request, ArgumentMetadata $argument): bool
     {
         if ($argument->getType() !== Document::class) {
@@ -62,12 +51,6 @@ final class DocumentValueResolver implements ArgumentValueResolverInterface
         return $document && $document instanceof Document;
     }
 
-    /**
-     * @param Request $request
-     * @param ArgumentMetadata $argument
-     *
-     * @return iterable
-     */
     public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
         yield $this->documentResolver->getDocument($request);

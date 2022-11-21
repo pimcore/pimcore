@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,12 +28,12 @@ interface DoubleAuthenticationControllerInterface
      *
      * @return bool
      */
-    public function needsSessionDoubleAuthenticationCheck();
+    public function needsSessionDoubleAuthenticationCheck(): bool;
 
     /**
      * Determines if token storage should be checked for a valid user in authentication double check
      *
      * @return bool
      */
-    public function needsStorageDoubleAuthenticationCheck();
+    public function needsStorageDoubleAuthenticationCheck(): bool;
 }

@@ -31,7 +31,7 @@ abstract class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function getParentIds()
+    public function getParentIds(): array
     {
         // collect properties via parent - ids
         $parentIds = [1];
@@ -54,12 +54,7 @@ abstract class Dao extends Model\Dao\AbstractDao
         return $parentIds;
     }
 
-    /**
-     * @param string $fullpath
-     *
-     * @return array
-     */
-    protected function extractKeyAndPath($fullpath)
+    protected function extractKeyAndPath(string $fullpath): array
     {
         $key = '';
         $path = $fullpath;
@@ -75,9 +70,6 @@ abstract class Dao extends Model\Dao\AbstractDao
         ];
     }
 
-    /**
-     * @return int
-     */
     abstract public function getVersionCountForUpdate(): int;
 
     /**
@@ -114,7 +106,7 @@ abstract class Dao extends Model\Dao\AbstractDao
      *
      * @internal
      */
-    protected function permissionByTypes(array $columns, User $user, string $tableSuffix)
+    protected function permissionByTypes(array $columns, User $user, string $tableSuffix): array
     {
         $permissions = [];
         foreach ($columns as $type) {

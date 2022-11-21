@@ -51,10 +51,7 @@ trait PackageVersionTrait
         return '';
     }
 
-    /**
-     * @return string
-     */
-    public function getVersion()
+    public function getVersion(): string
     {
         $version = InstalledVersions::getPrettyVersion($this->getComposerPackageName());
 
@@ -64,10 +61,7 @@ trait PackageVersionTrait
         return $version;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         $packageInfo = new PackageInfo();
 

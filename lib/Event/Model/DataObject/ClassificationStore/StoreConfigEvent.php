@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,10 +21,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class StoreConfigEvent extends Event
 {
-    /**
-     * @var StoreConfig
-     */
-    protected $storeConfig;
+    protected StoreConfig $storeConfig;
 
     /**
      * DocumentEvent constructor.
@@ -35,18 +33,12 @@ class StoreConfigEvent extends Event
         $this->storeConfig = $storeConfig;
     }
 
-    /**
-     * @return StoreConfig
-     */
-    public function getStoreConfig()
+    public function getStoreConfig(): StoreConfig
     {
         return $this->storeConfig;
     }
 
-    /**
-     * @param StoreConfig $storeConfig
-     */
-    public function setStoreConfig($storeConfig)
+    public function setStoreConfig(StoreConfig $storeConfig)
     {
         $this->storeConfig = $storeConfig;
     }

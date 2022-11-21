@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,22 +23,11 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 // TODO use Decimal for amounts?
 class ProductDiscount implements ProductDiscountInterface
 {
-    /**
-     * @var float
-     */
-    protected $amount = 0;
+    protected float $amount = 0;
 
-    /**
-     * @var float
-     */
-    protected $percent = 0;
+    protected float $percent = 0;
 
-    /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return ActionInterface
-     */
-    public function executeOnProduct(EnvironmentInterface $environment)
+    public function executeOnProduct(EnvironmentInterface $environment): ActionInterface
     {
         $priceinfo = $environment->getPriceInfo();
 
@@ -54,10 +44,7 @@ class ProductDiscount implements ProductDiscountInterface
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function toJSON()
+    public function toJSON(): string
     {
         return json_encode([
             'type' => 'ProductDiscount',
@@ -66,12 +53,7 @@ class ProductDiscount implements ProductDiscountInterface
         ]);
     }
 
-    /**
-     * @param string $string
-     *
-     * @return ActionInterface
-     */
-    public function fromJSON($string)
+    public function fromJSON(string $string): ActionInterface
     {
         $json = json_decode($string);
         if ($json->amount) {
@@ -92,34 +74,22 @@ class ProductDiscount implements ProductDiscountInterface
         return $this;
     }
 
-    /**
-     * @param float $amount
-     */
-    public function setAmount($amount)
+    public function setAmount(float $amount): void
     {
         $this->amount = $amount;
     }
 
-    /**
-     * @return float
-     */
-    public function getAmount()
+    public function getAmount(): float
     {
         return $this->amount;
     }
 
-    /**
-     * @param float $percent
-     */
-    public function setPercent($percent)
+    public function setPercent(float $percent): void
     {
         $this->percent = $percent;
     }
 
-    /**
-     * @return float
-     */
-    public function getPercent()
+    public function getPercent(): float
     {
         return $this->percent;
     }

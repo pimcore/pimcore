@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,15 +24,12 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 
 class FilterService
 {
-    /**
-     * @var FilterGroupHelper
-     */
-    protected $filterGroupHelper;
+    protected FilterGroupHelper $filterGroupHelper;
 
     /**
      * @var AbstractFilterType[]
      */
-    protected $filterTypes = [];
+    protected array $filterTypes = [];
 
     /**
      * @param FilterGroupHelper $filterGroupHelper
@@ -46,7 +44,7 @@ class FilterService
         }
     }
 
-    protected function registerFilterType(string $name, AbstractFilterType $filterType)
+    protected function registerFilterType(string $name, AbstractFilterType $filterType): void
     {
         $this->filterTypes[$name] = $filterType;
     }
@@ -75,7 +73,7 @@ class FilterService
      *
      * @return array returns set filters
      */
-    public function initFilterService(AbstractFilterDefinition $filterObject, ProductListInterface $productList, $params = [])
+    public function initFilterService(AbstractFilterDefinition $filterObject, ProductListInterface $productList, array $params = []): array
     {
         $currentFilter = [];
 
@@ -108,7 +106,7 @@ class FilterService
      *
      * @return string view snippet
      */
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): string
     {
         return $this
             ->getFilterType($filterDefinition->getType())
@@ -142,7 +140,7 @@ class FilterService
      *
      * @return array updated currentFilter array
      */
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter, array $params, bool $isPrecondition = false): array
     {
         return $this
             ->getFilterType($filterDefinition->getType())

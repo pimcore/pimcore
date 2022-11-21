@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,50 +18,28 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
 class ProductAction extends AbstractProductData
 {
-    /**
-     * @var int
-     */
-    protected $quantity = 1;
+    protected int $quantity = 1;
 
-    /**
-     * @var string
-     */
-    protected $coupon;
+    protected string $coupon;
 
-    /**
-     * @return int|float
-     */
-    public function getQuantity()
+    public function getQuantity(): float|int
     {
         return $this->quantity;
     }
 
-    /**
-     * @param int|float $quantity
-     *
-     * @return ProductAction
-     */
-    public function setQuantity($quantity)
+    public function setQuantity(float|int $quantity): static
     {
         $this->quantity = $quantity;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getCoupon()
+    public function getCoupon(): string
     {
         return $this->coupon;
     }
 
-    /**
-     * @param string $coupon
-     *
-     * @return ProductAction
-     */
-    public function setCoupon($coupon)
+    public function setCoupon(string $coupon): static
     {
         $this->coupon = $coupon;
 

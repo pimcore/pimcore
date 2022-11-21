@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,6 +19,8 @@ namespace Pimcore\Model\Document\Editable;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\ElementDescriptor;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool\Serialize;
 
 /**
@@ -32,7 +35,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @var int
      */
-    protected $id;
+    protected int $id;
 
     /**
      * The ALT text of the image
@@ -41,65 +44,65 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @var string
      */
-    protected $alt;
+    protected string $alt;
 
     /**
      * Contains the imageobject itself
      *
      * @internal
      *
-     * @var Asset\Image|null
+     * @var Asset\Image|ElementInterface|Element\ElementDescriptor|null
      */
-    protected $image;
+    protected Asset\Image|ElementInterface|Element\ElementDescriptor|null $image = null;
 
     /**
      * @internal
      *
      * @var bool
      */
-    protected $cropPercent = false;
+    protected bool $cropPercent = false;
 
     /**
      * @internal
      *
      * @var float
      */
-    protected $cropWidth;
+    protected float $cropWidth;
 
     /**
      * @internal
      *
      * @var float
      */
-    protected $cropHeight;
+    protected float $cropHeight;
 
     /**
      * @internal
      *
      * @var float
      */
-    protected $cropTop;
+    protected float $cropTop;
 
     /**
      * @internal
      *
      * @var float
      */
-    protected $cropLeft;
+    protected float $cropLeft;
 
     /**
      * @internal
      *
      * @var array
      */
-    protected $hotspots = [];
+    protected array $hotspots = [];
 
     /**
      * @internal
      *
      * @var array
      */
-    protected $marker = [];
+    protected array $marker = [];
 
     /**
      * The Thumbnail config of the image
@@ -108,12 +111,12 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @var string
      */
-    protected $thumbnail;
+    protected string $thumbnail;
 
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return 'image';
     }
@@ -121,7 +124,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         return [
             'id' => $this->id,
@@ -137,10 +140,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForResource()
+    public function getDataForResource(): array
     {
         return [
             'id' => $this->id,
@@ -213,10 +213,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfig()
+    public function getConfig(): array
     {
         $config = parent::getConfig();
         if (isset($config['thumbnail']) && !isset($config['focal_point_context_menu_item'])) {
@@ -247,7 +244,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
 
         $image = $this->getImage();
 
-        if ($image instanceof Asset) {
+        if ($image instanceof Asset\Image) {
             $thumbnailName = $this->config['thumbnail'] ?? null;
             if ($thumbnailName || $this->cropPercent) {
                 // create a thumbnail first
@@ -304,7 +301,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): static
     {
         if (strlen($data) > 2) {
             $data = Serialize::unserialize($data);
@@ -337,16 +334,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
             $data['hotspots'] = $rewritePath($data['hotspots']);
         }
 
-        $this->id = $data['id'] ?? null;
-        $this->alt = $data['alt'] ?? null;
-        $this->cropPercent = $data['cropPercent'] ?? null;
-        $this->cropWidth = $data['cropWidth'] ?? null;
-        $this->cropHeight = $data['cropHeight'] ?? null;
-        $this->cropTop = $data['cropTop'] ?? null;
-        $this->cropLeft = $data['cropLeft'] ?? null;
-        $this->marker = $data['marker'] ?? null;
-        $this->hotspots = $data['hotspots'] ?? null;
-        $this->thumbnail = $data['thumbnail'] ?? null;
+        $this->setData($data);
 
         return $this;
     }
@@ -354,7 +342,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): static
     {
         $rewritePath = function ($data) {
             if (!is_array($data)) {
@@ -385,57 +373,47 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
                 $data['hotspots'] = $rewritePath($data['hotspots']);
             }
 
-            $this->id = $data['id'] ?? null;
-            $this->alt = $data['alt'] ?? null;
-            $this->cropPercent = $data['cropPercent'] ?? null;
-            $this->cropWidth = $data['cropWidth'] ?? null;
-            $this->cropHeight = $data['cropHeight'] ?? null;
-            $this->cropTop = $data['cropTop'] ?? null;
-            $this->cropLeft = $data['cropLeft'] ?? null;
-            $this->marker = $data['marker'] ?? null;
-            $this->hotspots = $data['hotspots'] ?? null;
-            $this->thumbnail = $data['thumbnail'] ?? null;
+            $this->setData($data);
         }
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getText()
+    private function setData(array $data)
+    {
+        $this->id = $data['id'] ?? null;
+        $this->alt = (string)($data['alt'] ?? '');
+        $this->cropPercent = $data['cropPercent'] ?? false;
+        $this->cropWidth = $data['cropWidth'] ?? 0;
+        $this->cropHeight = $data['cropHeight'] ?? 0;
+        $this->cropTop = $data['cropTop'] ?? 0;
+        $this->cropLeft = $data['cropLeft'] ?? 0;
+        $this->marker = $data['marker'] ?? [];
+        $this->hotspots = $data['hotspots'] ?? [];
+        $this->thumbnail = (string)($data['thumbnail'] ?? '');
+    }
+
+    public function getText(): string
     {
         return $this->alt;
     }
 
-    /**
-     * @param string $text
-     */
-    public function setText($text)
+    public function setText(string $text)
     {
         $this->alt = $text;
     }
 
-    /**
-     * @return string
-     */
-    public function getAlt()
+    public function getAlt(): string
     {
         return $this->getText();
     }
 
-    /**
-     * @return string|null
-     */
-    public function getThumbnailConfig()
+    public function getThumbnailConfig(): ?string
     {
         return $this->thumbnail;
     }
 
-    /**
-     * @return string
-     */
-    public function getSrc()
+    public function getSrc(): string
     {
         $image = $this->getImage();
         if ($image instanceof Asset) {
@@ -445,10 +423,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return '';
     }
 
-    /**
-     * @return Asset\Image|null
-     */
-    public function getImage()
+    public function getImage(): Asset\Image|ElementDescriptor|ElementInterface|null
     {
         if (!$this->image) {
             $this->image = Asset\Image::getById($this->getId());
@@ -457,12 +432,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this->image;
     }
 
-    /**
-     * @param Asset\Image|null $image
-     *
-     * @return Model\Document\Editable\Image
-     */
-    public function setImage($image)
+    public function setImage(Asset\Image|ElementDescriptor|ElementInterface|null $image): static
     {
         $this->image = $image;
 
@@ -473,36 +443,22 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return Model\Document\Editable\Image
-     */
-    public function setId($id)
+    public function setId(int $id): static
     {
         $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): int
     {
         return (int) $this->id;
     }
 
-    /**
-     * @param string|array|Asset\Image\Thumbnail\Config $conf
-     * @param bool $deferred
-     *
-     * @return Asset\Image\Thumbnail|string
-     */
-    public function getThumbnail($conf, $deferred = true)
+    public function getThumbnail(array|string|Asset\Image\Thumbnail\Config $conf, bool $deferred = true): Asset\Image\Thumbnail|string
     {
         $image = $this->getImage();
-        if ($image instanceof Asset) {
+        if ($image instanceof Asset\Image) {
             $thumbConfig = $image->getThumbnailConfig($conf);
             if ($thumbConfig && $this->cropPercent) {
                 $this->applyCustomCropping($thumbConfig);
@@ -535,10 +491,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         $image = $this->getImage();
         if ($image instanceof Asset\Image) {
@@ -548,9 +501,6 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCacheTags(Model\Document\PageSnippet $ownerDocument, array $tags = []): array
     {
         $image = $this->getImage();
@@ -594,7 +544,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     /**
      * {@inheritdoc}
      */
-    public function resolveDependencies()
+    public function resolveDependencies(): array
     {
         $dependencies = [];
         $image = $this->getImage();
@@ -639,134 +589,82 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $dependencies;
     }
 
-    /**
-     * @param float $cropHeight
-     *
-     * @return $this
-     */
-    public function setCropHeight($cropHeight)
+    public function setCropHeight(float $cropHeight): static
     {
         $this->cropHeight = $cropHeight;
 
         return $this;
     }
 
-    /**
-     * @return float
-     */
-    public function getCropHeight()
+    public function getCropHeight(): float
     {
         return $this->cropHeight;
     }
 
-    /**
-     * @param float $cropLeft
-     *
-     * @return $this
-     */
-    public function setCropLeft($cropLeft)
+    public function setCropLeft(float $cropLeft): static
     {
         $this->cropLeft = $cropLeft;
 
         return $this;
     }
 
-    /**
-     * @return float
-     */
-    public function getCropLeft()
+    public function getCropLeft(): float
     {
         return $this->cropLeft;
     }
 
-    /**
-     * @param bool $cropPercent
-     *
-     * @return $this
-     */
-    public function setCropPercent($cropPercent)
+    public function setCropPercent(bool $cropPercent): static
     {
         $this->cropPercent = $cropPercent;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getCropPercent()
+    public function getCropPercent(): bool
     {
         return $this->cropPercent;
     }
 
-    /**
-     * @param float $cropTop
-     *
-     * @return $this
-     */
-    public function setCropTop($cropTop)
+    public function setCropTop(float $cropTop): static
     {
         $this->cropTop = $cropTop;
 
         return $this;
     }
 
-    /**
-     * @return float
-     */
-    public function getCropTop()
+    public function getCropTop(): float
     {
         return $this->cropTop;
     }
 
-    /**
-     * @param float $cropWidth
-     *
-     * @return $this
-     */
-    public function setCropWidth($cropWidth)
+    public function setCropWidth(float $cropWidth): static
     {
         $this->cropWidth = $cropWidth;
 
         return $this;
     }
 
-    /**
-     * @return float
-     */
-    public function getCropWidth()
+    public function getCropWidth(): float
     {
         return $this->cropWidth;
     }
 
-    /**
-     * @param array $hotspots
-     */
-    public function setHotspots($hotspots)
+    public function setHotspots(array $hotspots)
     {
         $this->hotspots = $hotspots;
     }
 
-    /**
-     * @return array
-     */
-    public function getHotspots()
+    public function getHotspots(): array
     {
         return $this->hotspots;
     }
 
-    /**
-     * @param array $marker
-     */
-    public function setMarker($marker)
+    public function setMarker(array $marker)
     {
         $this->marker = $marker;
     }
 
-    /**
-     * @return array
-     */
-    public function getMarker()
+    public function getMarker(): array
     {
         return $this->marker;
     }

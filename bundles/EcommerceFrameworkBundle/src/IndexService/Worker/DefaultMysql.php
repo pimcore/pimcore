@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,15 +33,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class DefaultMysql extends AbstractWorker implements WorkerInterface
 {
-    /**
-     * @var array
-     */
-    protected $_sqlChangeLog = [];
+    protected array $_sqlChangeLog = [];
 
-    /**
-     * @var Helper\MySql
-     */
-    protected $mySqlHelper;
+    protected Helper\MySql $mySqlHelper;
 
     public function __construct(MysqlConfigInterface $tenantConfig, Connection $db, EventDispatcherInterface $eventDispatcher)
     {
@@ -49,12 +44,12 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
         $this->mySqlHelper = new Helper\MySql($tenantConfig, $db);
     }
 
-    public function createOrUpdateIndexStructures()
+    public function createOrUpdateIndexStructures(): void
     {
         $this->mySqlHelper->createOrUpdateIndexStructures();
     }
 
-    public function deleteFromIndex(IndexableInterface $object)
+    public function deleteFromIndex(IndexableInterface $object): void
     {
         if (!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
@@ -72,7 +67,7 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
         $this->doCleanupOldZombieData($object, $subObjectIds);
     }
 
-    protected function doDeleteFromIndex($subObjectId, IndexableInterface $object = null)
+    protected function doDeleteFromIndex(int $subObjectId, IndexableInterface $object = null)
     {
         $this->db->delete($this->tenantConfig->getTablename(), ['o_id' => $subObjectId]);
         $this->db->delete($this->tenantConfig->getRelationTablename(), ['src' => $subObjectId]);
@@ -81,7 +76,7 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
         }
     }
 
-    public function updateIndex(IndexableInterface $object)
+    public function updateIndex(IndexableInterface $object): void
     {
         if (!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
@@ -238,7 +233,7 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
         return $this->mySqlHelper->getValidTableColumns($table);
     }
 
-    protected function getSystemAttributes()
+    protected function getSystemAttributes(): array
     {
         return $this->mySqlHelper->getSystemAttributes();
     }
@@ -248,10 +243,7 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
         $this->mySqlHelper->__destruct();
     }
 
-    /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql
-     */
-    public function getProductList()
+    public function getProductList(): \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql
     {
         return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql($this->getTenantConfig());
     }

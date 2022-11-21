@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -38,9 +39,6 @@ class HardlinkCanonicalListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
-    /**
-     * @param DocumentResolver $documentResolver
-     */
     public function __construct(protected DocumentResolver $documentResolver)
     {
     }
@@ -77,11 +75,6 @@ class HardlinkCanonicalListener implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param Request $request
-     * @param Response $response
-     * @param Document $document
-     */
     protected function handleHardlink(Request $request, Response $response, Document $document)
     {
         $canonical = null;

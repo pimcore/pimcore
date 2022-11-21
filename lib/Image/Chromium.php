@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,17 +28,11 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
  */
 class Chromium
 {
-    /**
-     * @return bool
-     */
     public static function isSupported(): bool
     {
         return self::getChromiumBinary() && class_exists(BrowserFactory::class);
     }
 
-    /**
-     * @return string|null
-     */
     public static function getChromiumBinary(): ?string
     {
         foreach (['chromium', 'chrome'] as $app) {

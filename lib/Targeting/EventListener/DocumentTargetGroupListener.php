@@ -36,20 +36,11 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 class DocumentTargetGroupListener implements EventSubscriberInterface
 {
-    /**
-     * @var DocumentResolver
-     */
-    private $documentResolver;
+    private DocumentResolver $documentResolver;
 
-    /**
-     * @var ActionHandlerInterface|DelegatingActionHandler
-     */
-    private $actionHandler;
+    private ActionHandlerInterface|DelegatingActionHandler $actionHandler;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
     public function __construct(
         DocumentResolver $documentResolver,
@@ -64,7 +55,7 @@ class DocumentTargetGroupListener implements EventSubscriberInterface
     /**
      * @return string[]
      */
-    public static function getSubscribedEvents()// : array
+    public static function getSubscribedEvents(): array
     {
         return [
             TargetingEvents::PRE_RESOLVE => 'onVisitorInfoResolve',

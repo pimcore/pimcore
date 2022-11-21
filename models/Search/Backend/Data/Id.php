@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,26 +27,17 @@ class Id
 
     protected string $type;
 
-    /**
-     * @param Element\ElementInterface $webResource
-     */
     public function __construct(Element\ElementInterface $webResource)
     {
         $this->id = $webResource->getId();
         $this->type = Element\Service::getElementType($webResource) ?: 'unknown';
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,136 +25,62 @@ use Pimcore\Model\Version;
 
 interface ElementInterface extends ModelInterface
 {
-    /**
-     * @return int|null
-     */
-    public function getId();
+    public function getId(): ?int;
 
-    /**
-     * @return string|null
-     */
-    public function getKey();
+    public function getKey(): ?string;
 
-    /**
-     * @param string $key
-     *
-     * @return $this
-     */
-    public function setKey($key);
+    public function setKey(string $key): static;
 
-    /**
-     * @return string|null
-     */
-    public function getPath();
+    public function getPath(): ?string;
 
-    /**
-     * @param string $path
-     *
-     * @return $this
-     */
-    public function setPath($path);
+    public function setPath(string $path): static;
 
-    /**
-     * @return string
-     */
-    public function getRealPath();
+    public function getRealPath(): ?string;
 
-    /**
-     * @return string
-     */
-    public function getFullPath();
+    public function getFullPath(): string;
 
-    /**
-     * @return string
-     */
-    public function getRealFullPath();
+    public function getRealFullPath(): string;
 
-    /**
-     * @return string
-     */
-    public function getType();
+    public function getType(): string;
 
-    /**
-     * @param string $type
-     *
-     * @return $this
-     */
-    public function setType($type);
+    public function setType(string $type): static;
 
-    /**
-     * @return int|null
-     */
-    public function getCreationDate();
+    public function getCreationDate(): ?int;
 
-    /**
-     * @param int $creationDate
-     *
-     * @return $this
-     */
-    public function setCreationDate($creationDate);
+    public function setCreationDate(int $creationDate): static;
 
-    /**
-     * @return int|null
-     */
-    public function getModificationDate();
+    public function getModificationDate(): ?int;
 
-    /**
-     * @param int $modificationDate
-     *
-     * @return $this
-     */
-    public function setModificationDate($modificationDate);
+    public function setModificationDate(int $modificationDate): static;
 
-    /**
-     * @return int|null
-     */
-    public function getUserOwner();
+    public function getUserOwner(): ?int;
 
-    /**
-     * @param int $userOwner
-     *
-     * @return $this
-     */
-    public function setUserOwner($userOwner);
+    public function setUserOwner(int $userOwner): static;
 
-    /**
-     * @return int|null
-     */
-    public function getUserModification();
+    public function getUserModification(): ?int;
 
-    /**
-     * @param int $userModification
-     *
-     * @return $this
-     */
-    public function setUserModification($userModification);
+    public function setUserModification(int $userModification): static;
 
-    /**
-     *
-     * @param int $id
-     *
-     * @return static|null
-     */
-    public static function getById($id);
+    public static function getById(int $id): ?static;
 
     /**
      * get possible types
      *
      * @return array
      */
-    public static function getTypes();
+    public static function getTypes(): array;
 
     /**
      * @return Property[]
      */
-    public function getProperties();
+    public function getProperties(): array;
 
     /**
      * @param Property[]|null $properties
      *
      * @return $this
      */
-    public function setProperties(?array $properties);
+    public function setProperties(?array $properties): static;
 
     /**
      * Get specific property data or the property object itself ($asContainer=true) by its name, if the
@@ -164,32 +91,18 @@ interface ElementInterface extends ModelInterface
      *
      * @return mixed
      */
-    public function getProperty($name, $asContainer = false);
+    public function getProperty(string $name, bool $asContainer = false): mixed;
 
-    /**
-     * @param string $name
-     * @param string $type
-     * @param mixed $data
-     * @param bool $inherited
-     * @param bool $inheritable
-     *
-     * @return $this
-     */
-    public function setProperty($name, $type, $data, $inherited = false, $inheritable = false);
+    public function setProperty(string $name, string $type, mixed $data, bool $inherited = false, bool $inheritable = false): static;
 
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function hasProperty($name);
+    public function hasProperty(string $name): bool;
 
     /**
      * returns true if the element is locked
      *
      * @return bool
      */
-    public function isLocked();
+    public function isLocked(): bool;
 
     /**
      * enum('self','propagate') nullable
@@ -198,64 +111,34 @@ interface ElementInterface extends ModelInterface
      *
      * @return $this
      */
-    public function setLocked($locked);
+    public function setLocked(?string $locked): static;
 
     /**
      * enum('self','propagate') nullable
      *
      * @return string|null
      */
-    public function getLocked();
+    public function getLocked(): ?string;
 
-    /**
-     * @return int|null
-     */
-    public function getParentId();
+    public function getParentId(): ?int;
 
-    /**
-     * @param int|null $id
-     *
-     * @return $this
-     */
-    public function setParentId($id);
+    public function setParentId(?int $id): static;
 
-    /**
-     * @return self|null
-     */
-    public function getParent();
+    public function getParent(): ?ElementInterface;
 
-    /**
-     * @param ElementInterface|null $parent
-     *
-     * @return $this
-     */
-    public function setParent($parent);
+    public function setParent(?ElementInterface $parent): static;
 
-    /**
-     * @return string
-     */
-    public function getCacheTag();
+    public function getCacheTag(): string;
 
-    /**
-     * @param array $tags
-     *
-     * @return array
-     */
     public function getCacheTags(array $tags = []): array;
 
-    /**
-     * @return bool
-     */
-    public function __isBasedOnLatestData();
+    public function __isBasedOnLatestData(): bool;
 
     /**
      * @return $this
      */
     public function setVersionCount(?int $versionCount): static;
 
-    /**
-     * @return int
-     */
     public function getVersionCount(): int;
 
     /**
@@ -272,17 +155,9 @@ interface ElementInterface extends ModelInterface
 
     public function delete();
 
-    /**
-     * @param array $additionalTags
-     */
-    public function clearDependentCache($additionalTags = []);
+    public function clearDependentCache(array $additionalTags = []);
 
-    /**
-     * @param int|null $id
-     *
-     * @return $this
-     */
-    public function setId($id);
+    public function setId(?int $id): static;
 
     /**
      * This is used for user-permissions, pass a permission type (eg. list, view, save) an you know if the current user is allowed to perform the requested action
@@ -292,22 +167,19 @@ interface ElementInterface extends ModelInterface
      *
      * @return bool
      */
-    public function isAllowed($type, ?User $user = null);
+    public function isAllowed(string $type, ?User $user = null): bool;
 
     /**
      * @return Task[]
      */
-    public function getScheduledTasks();
+    public function getScheduledTasks(): array;
 
     /**
      * @return Version[]
      */
-    public function getVersions();
+    public function getVersions(): array;
 
-    /**
-     * @return Dependency
-     */
-    public function getDependencies();
+    public function getDependencies(): Dependency;
 
     /**
      * @return string

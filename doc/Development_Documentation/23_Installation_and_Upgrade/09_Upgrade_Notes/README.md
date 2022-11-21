@@ -1,5 +1,8 @@
 # Upgrade Notes
 ## 11.0.0
+- [General] **Attention:** Added native php types for argument types, property types, return types and strict type declaration where possible. 
+ This results in **various bc breaks**. Please make sure to add the corresponding types to your implementation.
+- [UrlSlug] Removed `index` column and `index` index from `object_url_slugs` table as it was not being used anywhere.
 - Bumped Symfony packages to "^6.1". Pimcore 11 will only support Symfony 6.
 - `FrontendController::renderTemplate()`: Changed the visibility to `protected`.
 - [Elements] Added `setParentId`, `setType` and `setParent` methods to `Pimcore\Model\Element\ElementInterface`
@@ -85,6 +88,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [Config] The config node `pimcore.admin` and related parameters are moved to AdminBundle directly under `pimcore_admin` node. Please adapt your parameter usage accordingly eg. instead of `pimcore.admin.unauthenticated_routes`, it should be `pimcore_admin.unauthenticated_routes`
 - [DataObjects] Removed deprecated preview url in class editor.
 - [DataObjects] Removed sql filter functionality for data object grid
+- [DataObjects] Loading non-Concrete objects with the Concrete class is no longer possible
 - [Device Detector] Bumped `matomo/device-detector` to ^6.0.
 - [security] Removed support old authentication system (not setting `security.enable_authenticator_manager: true` in `security.yaml`).
 - Removed Pimcore Password Encoder factory, `pimcore_admin.security.password_encoder_factory` service and `pimcore.security.factory_type` config.
@@ -102,7 +106,6 @@ Please make sure to set your preferred storage location ***before*** migration. 
   - `EcommerceFrameworkBundle\Tracking\TrackingManager` requires session from request stack.
 - `Element\Service::getValidKey()` strips all control/unassigned, invalid and some more special (e.g. tabs, line-breaks, form-feed & vertical whitespace) characters.
 - [Data Objects]: Removed setter functions for calculated values, since they weren´t used anyway.
-
 
 ## 10.5.10
 - [DataObject] Deprecated: Loading non-Concrete objects with the Concrete class will not be possible in Pimcore 11.

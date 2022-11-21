@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -38,7 +39,7 @@ class IndexController extends AdminController
      *
      * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
      */
-    public function getFilterGroupsAction()
+    public function getFilterGroupsAction(): \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
     {
         $indexService = Factory::getInstance()->getIndexService();
         $tenants = Factory::getInstance()->getAllTenants();
@@ -64,7 +65,7 @@ class IndexController extends AdminController
     /**
      * @Route("/get-values-for-filter-field", name="pimcore_ecommerceframework_index_getvaluesforfilterfield", methods={"GET"})
      */
-    public function getValuesForFilterFieldAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function getValuesForFilterFieldAction(Request $request, EventDispatcherInterface $eventDispatcher): \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
     {
         try {
             $data = [];
@@ -115,7 +116,7 @@ class IndexController extends AdminController
      *
      * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
      */
-    public function getFieldsAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function getFieldsAction(Request $request, EventDispatcherInterface $eventDispatcher): \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
     {
         $indexService = Factory::getInstance()->getIndexService();
 
@@ -169,7 +170,7 @@ class IndexController extends AdminController
      *
      * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
      */
-    public function getAllTenantsAction()
+    public function getAllTenantsAction(): \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
     {
         $tenants = Factory::getInstance()->getAllTenants();
         $data = [];

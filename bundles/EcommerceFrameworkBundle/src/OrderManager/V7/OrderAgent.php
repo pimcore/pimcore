@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -38,7 +39,6 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo;
 use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
-use Pimcore\Model\DataObject\OnlineShopOrder\PaymentProvider;
 use Pimcore\Model\Element\Note;
 use Pimcore\Model\Element\Note\Listing as NoteListing;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -47,35 +47,20 @@ class OrderAgent implements OrderAgentInterface
 {
     public const PAYMENT_PROVIDER_BRICK_PREFIX = 'PaymentProvider';
 
-    /**
-     * @var AbstractOrder
-     */
-    protected $order;
+    protected AbstractOrder $order;
 
-    /**
-     * @var EnvironmentInterface
-     */
-    protected $environment;
+    protected EnvironmentInterface $environment;
 
-    /**
-     * @var PaymentManagerInterface
-     */
-    protected $paymentManager;
+    protected PaymentManagerInterface $paymentManager;
 
-    /**
-     * @var PaymentInterface|null
-     */
-    protected $paymentProvider;
+    protected ?PaymentInterface $paymentProvider = null;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
+    protected EventDispatcherInterface $eventDispatcher;
 
     /**
      * @var Note[]|null
      */
-    protected $fullChangeLog;
+    protected ?array $fullChangeLog = null;
 
     public function __construct(
         AbstractOrder $order,
@@ -89,10 +74,7 @@ class OrderAgent implements OrderAgentInterface
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * @return AbstractOrder
-     */
-    public function getOrder()
+    public function getOrder(): AbstractOrder
     {
         return $this->order;
     }
@@ -106,7 +88,7 @@ class OrderAgent implements OrderAgentInterface
      *
      * @throws \Exception
      */
-    public function itemCancel(AbstractOrderItem $item)
+    public function itemCancel(AbstractOrderItem $item): Note
     {
         // add log note
         $note = $this->createNote($item);
@@ -151,7 +133,7 @@ class OrderAgent implements OrderAgentInterface
      *
      * @throws Exception
      */
-    public function itemChangeAmount(AbstractOrderItem $item, $amount)
+    public function itemChangeAmount(AbstractOrderItem $item, float $amount): Note
     {
         // init
         $amount = (float)$amount;
@@ -177,11 +159,11 @@ class OrderAgent implements OrderAgentInterface
      * start item complaint
      *
      * @param AbstractOrderItem $item
-     * @param float     $quantity
+     * @param float $quantity
      *
      * @return Note
      */
-    public function itemComplaint(AbstractOrderItem $item, $quantity)
+    public function itemComplaint(AbstractOrderItem $item, float $quantity): Note
     {
         // add log note
         $note = $this->createNote($item);
@@ -204,7 +186,7 @@ class OrderAgent implements OrderAgentInterface
      *
      * @throws Exception
      */
-    public function itemSetState(AbstractOrderItem $item, $state)
+    public function itemSetState(AbstractOrderItem $item, string $state): Note
     {
         // add log note
         $note = $this->createNote($item);
@@ -224,12 +206,7 @@ class OrderAgent implements OrderAgentInterface
         return $note;
     }
 
-    /**
-     * @param Concrete $object
-     *
-     * @return Note
-     */
-    protected function createNote(Concrete $object)
+    protected function createNote(Concrete $object): Note
     {
         // general
         $note = new Note();
@@ -241,10 +218,7 @@ class OrderAgent implements OrderAgentInterface
         return $note;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasPayment()
+    public function hasPayment(): bool
     {
         $paymentInfo = $this->getOrder()->getPaymentInfo();
         if (!$paymentInfo || empty($paymentInfo->getItems())) {
@@ -254,18 +228,12 @@ class OrderAgent implements OrderAgentInterface
         }
     }
 
-    /**
-     * @return Currency
-     */
-    public function getCurrency()
+    public function getCurrency(): Currency
     {
         return $this->environment->getDefaultCurrency();
     }
 
-    /**
-     * @return PaymentInterface
-     */
-    public function getPaymentProvider()
+    public function getPaymentProvider(): PaymentInterface
     {
         if (!$this->paymentProvider) {
             // init
@@ -312,14 +280,14 @@ class OrderAgent implements OrderAgentInterface
      *
      * @throws Exception
      */
-    public function setPaymentProvider(PaymentInterface $paymentProvider, AbstractOrder $sourceOrder = null)
+    public function setPaymentProvider(PaymentInterface $paymentProvider, AbstractOrder $sourceOrder = null): static
     {
         $this->paymentProvider = $paymentProvider;
 
         // save provider data
         $order = $this->getOrder();
 
-        /** @var PaymentProvider $provider */
+        /** @var PaymentInterface $provider */
         $provider = $order->getPaymentProvider();
 
         // load existing
@@ -360,10 +328,7 @@ class OrderAgent implements OrderAgentInterface
         return $this;
     }
 
-    /**
-     * @return null|AbstractPaymentInformation
-     */
-    public function getCurrentPendingPaymentInfo()
+    public function getCurrentPendingPaymentInfo(): ?AbstractPaymentInformation
     {
         $order = $this->getOrder();
 
@@ -381,13 +346,7 @@ class OrderAgent implements OrderAgentInterface
         return null;
     }
 
-    /**
-     * @param AbstractOrder $order
-     * @param string $paymentState
-     *
-     * @return PaymentInfo
-     */
-    protected function createNewOrderInformation(AbstractOrder $order, string $paymentState)
+    protected function createNewOrderInformation(AbstractOrder $order, string $paymentState): PaymentInfo
     {
         $paymentInformationCollection = $order->getPaymentInfo();
         if (empty($paymentInformationCollection)) {
@@ -411,7 +370,7 @@ class OrderAgent implements OrderAgentInterface
      * @throws PaymentNotAllowedException
      * @throws Exception
      */
-    public function initPayment()
+    public function initPayment(): PaymentInfo
     {
         $currentPaymentInformation = $this->getCurrentPendingPaymentInfo();
         $order = $this->getOrder();
@@ -454,12 +413,12 @@ class OrderAgent implements OrderAgentInterface
     }
 
     /**
-     * @return null|AbstractPaymentInformation|PaymentInfo
+     * @return PaymentInfo
      *
      * @throws Exception
      * @throws UnsupportedException
      */
-    public function startPayment()
+    public function startPayment(): PaymentInfo
     {
         //initialize payment (if not already done before)
         $currentPaymentInformation = $this->initPayment();
@@ -486,7 +445,7 @@ class OrderAgent implements OrderAgentInterface
      *
      * @return string
      */
-    protected function generateInternalPaymentId($paymentInfoCount = null)
+    protected function generateInternalPaymentId(int $paymentInfoCount = null): string
     {
         $order = $this->getOrder();
         if ($paymentInfoCount === null) {
@@ -505,7 +464,7 @@ class OrderAgent implements OrderAgentInterface
      *
      * @return int
      */
-    protected function getFingerprintOfOrder()
+    protected function getFingerprintOfOrder(): int
     {
         $order = $this->getOrder();
         $fingerprintParts = [];
@@ -531,7 +490,7 @@ class OrderAgent implements OrderAgentInterface
      * @throws Exception
      * @throws UnsupportedException
      */
-    public function cancelStartedOrderPayment()
+    public function cancelStartedOrderPayment(): AbstractOrder
     {
         $order = $this->getOrder();
         $currentPaymentInformation = $this->getCurrentPendingPaymentInfo();
@@ -562,7 +521,7 @@ class OrderAgent implements OrderAgentInterface
      * @throws Exception
      * @throws UnsupportedException
      */
-    public function updatePayment(StatusInterface $status)
+    public function updatePayment(StatusInterface $status): static
     {
         //log this for documentation
         Simple::log('update-payment', 'Update payment called with status: ' . print_r($status, true));
@@ -676,7 +635,7 @@ class OrderAgent implements OrderAgentInterface
     /**
      * @return Note[]
      */
-    public function getFullChangeLog()
+    public function getFullChangeLog(): array
     {
         if (!$this->fullChangeLog) {
             // init

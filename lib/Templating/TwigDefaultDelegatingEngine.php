@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,10 +28,7 @@ use Twig\Extension\SandboxExtension;
  */
 class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
 {
-    /**
-     * @var bool
-     */
-    protected $delegate = false;
+    protected bool $delegate = false;
 
     /**
      * @param EngineInterface[] $engines
@@ -78,9 +76,6 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
         }
     }
 
-    /**
-     * @param bool $delegate
-     */
     public function setDelegate(bool $delegate)
     {
         $this->delegate = $delegate;
@@ -89,7 +84,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     /**
      * @return bool $delegate
      */
-    public function isDelegate()
+    public function isDelegate(): bool
     {
         return $this->delegate;
     }
@@ -121,7 +116,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
      *
      * @throws \Exception
      */
-    public function renderResponse($view, array $parameters = [], Response $response = null)
+    public function renderResponse(string $view, array $parameters = [], Response $response = null): Response
     {
         if (null === $response) {
             $response = new Response();

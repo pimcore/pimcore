@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,15 +28,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Shipping implements ShippingInterface
 {
-    /**
-     * @var Decimal
-     */
-    protected $charge;
+    protected Decimal $charge;
 
-    /**
-     * @var OnlineShopTaxClass|null
-     */
-    protected $taxClass;
+    protected ?OnlineShopTaxClass $taxClass = null;
 
     public function __construct(array $options = [])
     {
@@ -57,21 +52,12 @@ class Shipping implements ShippingInterface
         ]);
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return 'shipping';
     }
 
-    /**
-     * @param PriceInterface $currentSubTotal
-     * @param CartInterface $cart
-     *
-     * @return ModificatedPriceInterface
-     */
-    public function modify(PriceInterface $currentSubTotal, CartInterface $cart)
+    public function modify(PriceInterface $currentSubTotal, CartInterface $cart): ModificatedPrice|ModificatedPriceInterface
     {
         $modificatedPrice = new ModificatedPrice($this->getCharge(), $currentSubTotal->getCurrency());
 
@@ -86,30 +72,19 @@ class Shipping implements ShippingInterface
         return $modificatedPrice;
     }
 
-    /**
-     * @param Decimal $charge
-     *
-     * @return CartPriceModificatorInterface
-     */
-    public function setCharge(Decimal $charge)
+    public function setCharge(Decimal $charge): CartPriceModificatorInterface
     {
         $this->charge = $charge;
 
         return $this;
     }
 
-    /**
-     * @return Decimal
-     */
     public function getCharge(): Decimal
     {
         return $this->charge;
     }
 
-    /**
-     * @return OnlineShopTaxClass
-     */
-    public function getTaxClass()
+    public function getTaxClass(): ?OnlineShopTaxClass
     {
         if (empty($this->taxClass)) {
             $this->taxClass = Factory::getInstance()->getPriceSystem('default')->getTaxClassForPriceModification($this);
@@ -118,10 +93,7 @@ class Shipping implements ShippingInterface
         return $this->taxClass;
     }
 
-    /**
-     * @param OnlineShopTaxClass $taxClass
-     */
-    public function setTaxClass($taxClass)
+    public function setTaxClass(OnlineShopTaxClass $taxClass)
     {
         $this->taxClass = $taxClass;
     }

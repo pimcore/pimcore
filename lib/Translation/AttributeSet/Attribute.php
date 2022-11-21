@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,25 +36,16 @@ class Attribute
 
     const TYPE_ELEMENT_KEY = 'key';
 
-    /**
-     * @var string
-     */
-    private $type;
+    private string $type;
 
-    /**
-     * @var string
-     */
-    private $name;
+    private string $name;
 
-    /**
-     * @var string
-     */
-    private $content;
+    private string $content;
 
     /**
      * @var string[]
      */
-    private $targetContent;
+    private array $targetContent;
 
     private bool $isReadonly;
 
@@ -75,25 +67,16 @@ class Attribute
         $this->targetContent = $targetContent;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
     public function getContent(): string
     {
         return $this->content;

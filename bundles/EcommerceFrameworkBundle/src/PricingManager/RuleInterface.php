@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,44 +18,28 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
 interface RuleInterface
 {
-    /**
-     * @return int|null
-     */
-    public function getId();
+    public function getId(): ?int;
 
-    /**
-     * @param int|null $id
-     *
-     * @return $this
-     */
-    public function setId($id);
+    public function setId(?int $id): static;
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function setName($name);
+    public function setName(string $name): static;
 
-    /**
-     * @return string
-     */
-    public function getName();
+    public function getName(): string;
 
     /**
      * @param string $label
-     * @param string $locale
+     * @param string|null $locale
      *
      * @return $this
      */
-    public function setLabel($label, $locale = null);
+    public function setLabel(string $label, string $locale = null): static;
 
     /**
-     * @param string $locale
+     * @param string|null $locale
      *
      * @return string
      */
-    public function getLabel($locale = null);
+    public function getLabel(string $locale = null): string;
 
     /**
      * @param string $description
@@ -62,62 +47,33 @@ interface RuleInterface
      *
      * @return $this
      */
-    public function setDescription($description, $locale = null);
+    public function setDescription(string $description, string $locale = null): static;
 
     /**
      * @param string|null $locale
      *
      * @return string|null
      */
-    public function getDescription($locale = null);
+    public function getDescription(string $locale = null): ?string;
 
-    /**
-     * @param ConditionInterface $condition
-     *
-     * @return $this
-     */
-    public function setCondition(ConditionInterface $condition);
+    public function setCondition(ConditionInterface $condition): static;
 
-    /**
-     * @return ConditionInterface|null
-     */
-    public function getCondition();
+    public function getCondition(): ?ConditionInterface;
 
-    /**
-     * @param array $action
-     *
-     * @return $this
-     */
-    public function setActions(array $action);
+    public function setActions(array $action): static;
 
     /**
      * @return ActionInterface[]
      */
-    public function getActions();
+    public function getActions(): array;
 
-    /**
-     * @param bool $active
-     *
-     * @return $this
-     */
-    public function setActive($active);
+    public function setActive(bool $active): static;
 
-    /**
-     * @return bool
-     */
-    public function getActive();
+    public function getActive(): bool;
 
-    /**
-     * @param string $behavior
-     *
-     * @return $this
-     */
-    public function setBehavior($behavior);
+    public function setBehavior(string $behavior): static;
 
-    /**
-     * @return string
-     */
-    public function getBehavior();
+    public function getBehavior(): string;
 
     /**
      * test all conditions if this rule is valid
@@ -126,21 +82,21 @@ interface RuleInterface
      *
      * @return bool
      */
-    public function check(EnvironmentInterface $environment);
+    public function check(EnvironmentInterface $environment): bool;
 
     /**
      * checks if rule has at least one action that changes product price (and not cart price)
      *
      * @return bool
      */
-    public function hasProductActions();
+    public function hasProductActions(): bool;
 
     /**
      * checks if rule has at least one action that changes cart price
      *
      * @return bool
      */
-    public function hasCartActions();
+    public function hasCartActions(): bool;
 
     /**
      * execute rule actions based on current product
@@ -149,7 +105,7 @@ interface RuleInterface
      *
      * @return $this
      */
-    public function executeOnProduct(EnvironmentInterface $environment);
+    public function executeOnProduct(EnvironmentInterface $environment): static;
 
     /**
      * execute rule actions based on current cart
@@ -158,7 +114,7 @@ interface RuleInterface
      *
      * @return RuleInterface
      */
-    public function executeOnCart(EnvironmentInterface $environment);
+    public function executeOnCart(EnvironmentInterface $environment): RuleInterface;
 
     /**
      * @param string $typeClass
@@ -167,22 +123,11 @@ interface RuleInterface
      */
     public function getConditionsByType(string $typeClass): array;
 
-    /**
-     * @param int $prio
-     *
-     * @return $this
-     */
-    public function setPrio($prio);
+    public function setPrio(int $prio): static;
 
-    /**
-     * @return int
-     */
-    public function getPrio();
+    public function getPrio(): int;
 
-    /**
-     * @return $this
-     */
-    public function save();
+    public function save(): static;
 
     /**
      * delete item

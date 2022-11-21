@@ -23,15 +23,9 @@ use Pimcore\Targeting\Model\VisitorInfo;
 
 class AssignDocumentTargetGroupEvent extends TargetingEvent
 {
-    /**
-     * @var Document
-     */
-    private $document;
+    private Document $document;
 
-    /**
-     * @var TargetGroup
-     */
-    private $targetGroup;
+    private TargetGroup $targetGroup;
 
     public function __construct(VisitorInfo $visitorInfo, Document $document, TargetGroup $targetGroup)
     {

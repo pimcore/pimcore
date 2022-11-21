@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,52 +26,24 @@ use Pimcore\Model\DataObject\Folder;
 
 interface OrderManagerInterface
 {
-    /**
-     * @return OrderListInterface
-     */
-    public function createOrderList();
+    public function createOrderList(): OrderListInterface;
 
-    /**
-     * @param AbstractOrder $order
-     *
-     * @return OrderAgentInterface
-     */
-    public function createOrderAgent(AbstractOrder $order);
+    public function createOrderAgent(AbstractOrder $order): OrderAgentInterface;
 
-    /**
-     * @param int|Folder $orderParentFolder
-     */
-    public function setParentOrderFolder($orderParentFolder);
+    public function setParentOrderFolder(int|Folder $orderParentFolder);
 
-    /**
-     * @param string $classname
-     */
-    public function setOrderClass($classname);
+    public function setOrderClass(string $classname);
 
-    /**
-     * @param string $classname
-     */
-    public function setOrderItemClass($classname);
+    public function setOrderItemClass(string $classname);
 
     /**
      * Looks if order object for given cart already exists, otherwise creates it
      *
-     * @return AbstractOrder
      */
-    public function getOrCreateOrderFromCart(CartInterface $cart);
+    public function getOrCreateOrderFromCart(CartInterface $cart): AbstractOrder;
 
-    /**
-     * @param CartInterface $cart
-     *
-     * @return AbstractOrder
-     */
     public function recreateOrder(CartInterface $cart): AbstractOrder;
 
-    /**
-     * @param AbstractOrder $sourceOrder
-     *
-     * @return AbstractOrder
-     */
     public function recreateOrderBasedOnSourceOrder(AbstractOrder $sourceOrder): AbstractOrder;
 
     /**
@@ -80,7 +53,7 @@ interface OrderManagerInterface
      *
      * @return AbstractOrder|null
      */
-    public function getOrderFromCart(CartInterface $cart);
+    public function getOrderFromCart(CartInterface $cart): ?AbstractOrder;
 
     /**
      * Returns order based on given payment status
@@ -89,7 +62,7 @@ interface OrderManagerInterface
      *
      * @return AbstractOrder|null
      */
-    public function getOrderByPaymentStatus(StatusInterface $paymentStatus);
+    public function getOrderByPaymentStatus(StatusInterface $paymentStatus): ?AbstractOrder;
 
     /**
      * Builds order listing
@@ -98,7 +71,7 @@ interface OrderManagerInterface
      *
      * @throws \Exception
      */
-    public function buildOrderList();
+    public function buildOrderList(): \Pimcore\Model\DataObject\Listing\Concrete;
 
     /**
      * Build order item listing
@@ -107,13 +80,8 @@ interface OrderManagerInterface
      *
      * @throws \Exception
      */
-    public function buildOrderItemList();
+    public function buildOrderItemList(): \Pimcore\Model\DataObject\Listing\Concrete;
 
-    /**
-     * @param CartInterface $cart
-     *
-     * @return bool
-     */
     public function cartHasPendingPayments(CartInterface $cart): bool;
 
     /**
