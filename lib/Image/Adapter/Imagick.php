@@ -325,7 +325,8 @@ class Imagick extends Adapter
             for ($i = 0; $i < $width; $i++) {
                 for ($j = 0; $j < $height; $j++) {
                     $pixel = $this->resource->getImagePixelColor($i, $j);
-                    $color = $pixel->getColor(true); // get the real alpha not just 1/0
+                    /* @phpstan-ignore-next-line - phpstan expects bool, but actually doc says int */
+                    $color = $pixel->getColor(1); // get the real alpha not just 1/0
                     if ($color['a'] < 1) { // if there's an alpha pixel, return true
                         return true;
                     }
