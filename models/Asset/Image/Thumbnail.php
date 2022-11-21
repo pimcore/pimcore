@@ -107,6 +107,7 @@ final class Thumbnail
 
     /**
      * @param bool $deferredAllowed
+     *
      * @internal
      *
      */

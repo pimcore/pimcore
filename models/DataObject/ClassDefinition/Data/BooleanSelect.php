@@ -161,6 +161,7 @@ class BooleanSelect extends Data implements
      * @param array $params
      *
      * @return bool|null
+     *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -185,6 +186,7 @@ class BooleanSelect extends Data implements
      * @param array $params
      *
      * @return int|null
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -199,6 +201,7 @@ class BooleanSelect extends Data implements
      * @param array $params
      *
      * @return int|null
+     *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -222,6 +225,7 @@ class BooleanSelect extends Data implements
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */
@@ -383,6 +387,7 @@ class BooleanSelect extends Data implements
      * @param array $params
      *
      * @return int
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -416,6 +421,7 @@ class BooleanSelect extends Data implements
      * @param array $params
      *
      * @return bool|null
+     *
      * @see Data::getDataFromEditmode
      *
      */

@@ -84,6 +84,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      * @param CartInterface $cart
      *
      * @return bool
+     *
      *@throws VoucherServiceException
      *
      */
@@ -107,6 +108,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      * @param CartInterface $cart
      *
      * @return bool
+     *
      *@throws VoucherServiceException
      *
      */
@@ -129,6 +131,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      * @param AbstractOrder $order
      *
      * @return bool|OnlineShopVoucherToken
+     *
      * @throws VoucherServiceException
      *
      */
@@ -625,7 +628,6 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     /**
      * Getters and Setters
      */
-
     public function getConfiguration(): VoucherTokenTypePattern
     {
         return $this->configuration;

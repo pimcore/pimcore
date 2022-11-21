@@ -177,9 +177,10 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
         rewind($stream);
         $result = stream_get_contents($stream);
         fclose($stream);
-        if(is_bool($result)) {
+        if (is_bool($result)) {
             return '';
         }
+
         return $result;
     }
 

@@ -24,7 +24,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class IndexUpdateListener implements EventSubscriberInterface
 {
-
     public static function getSubscribedEvents(): array
     {
         return [

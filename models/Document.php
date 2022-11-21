@@ -248,7 +248,7 @@ class Document extends Element\AbstractElement
             }
 
             RuntimeCache::set($cacheKey, $document);
-            if($document->getModificationDate() !== null) {
+            if ($document->getModificationDate() !== null) {
                 $document->__setDataVersionTimestamp($document->getModificationDate());
             }
 
@@ -479,6 +479,7 @@ class Document extends Element\AbstractElement
      * @param array $params additional parameters (e.g. "versionNote" for the version note)
      *
      * @throws \Exception
+     *
      *@internal
      *
      */
@@ -532,8 +533,9 @@ class Document extends Element\AbstractElement
 
     /**
      * @param int $index
+     *
      *@internal
-          *
+     *
      */
     public function saveIndex(int $index)
     {

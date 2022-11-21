@@ -72,7 +72,6 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
      *
      * @return mixed
      */
-
     public function remove($name): mixed
     {
         $this->checkLock();
@@ -85,7 +84,6 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
      *
      * @return mixed
      */
-
     public function clear(): mixed
     {
         $this->checkLock();

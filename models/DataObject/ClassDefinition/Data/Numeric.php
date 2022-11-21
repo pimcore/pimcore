@@ -347,6 +347,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param array $params
      *
      * @return float|int|string|null
+     *
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -386,6 +387,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param array $params
      *
      * @return float|int|string|null
+     *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -402,6 +404,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param array $params
      *
      * @return float|int|string|null
+     *
      *@see Data::getDataForEditmode
      *
      */
@@ -416,6 +419,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param array $params
      *
      * @return float|int|string|null
+     *
      *@see Data::getDataFromEditmode
      *
      */
@@ -430,6 +434,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param array $params
      *
      * @return string
+     *
      *@see Data::getVersionPreview
      *
      */
@@ -550,7 +555,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * { @inheritdoc }
      */
-    public function preSetData(mixed $container, mixed $data, array $params = []) : mixed
+    public function preSetData(mixed $container, mixed $data, array $params = []): mixed
     {
         if (!is_null($data) && $this->getDecimalPrecision()) {
             $data = round((int)$data, $this->getDecimalPrecision());

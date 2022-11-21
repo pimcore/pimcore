@@ -75,6 +75,7 @@ class Reservation extends AbstractModel
      * @param int $cart_id
      *
      * @return bool
+     *
      *@deprecated
      *
      */

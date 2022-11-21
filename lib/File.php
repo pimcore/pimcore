@@ -51,7 +51,8 @@ class File
      * @param string|null $language
      * @param string $replacement
      *
-          * @return string
+     * @return string
+     *
      *@internal
      *
      */
@@ -106,6 +107,7 @@ class File
      * @param string $data
      *
      * @return int|false
+     *
      *@internal
      *
      */

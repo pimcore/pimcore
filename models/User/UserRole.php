@@ -327,6 +327,7 @@ class UserRole extends AbstractUser
      * @param array|string $array
      *
      * @return array|string
+     *
      * @internal
      */
     protected function prepareArray(array|string $array): array|string

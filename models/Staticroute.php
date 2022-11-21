@@ -334,6 +334,7 @@ final class Staticroute extends AbstractModel
      * @param bool $encode
      *
      * @return string
+     *
      *@internal
      *
      */
@@ -434,6 +435,7 @@ final class Staticroute extends AbstractModel
      * @return array|bool
      *
      * @throws \Exception
+     *
      *@internal
      *
      */

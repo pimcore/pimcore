@@ -458,7 +458,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * { @inheritdoc }
      */
-    public function preSetData(mixed $container, mixed $data, array $params = []) : mixed
+    public function preSetData(mixed $container, mixed $data, array $params = []): mixed
     {
         if ($data === null) {
             $data = [];
@@ -515,8 +515,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(mixed $container, array $idMapping, array $params = [])
-   : mixed
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
         $data = $this->rewriteIdsService($data, $idMapping);

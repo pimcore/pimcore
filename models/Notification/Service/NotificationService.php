@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Notification\Service;
 
-use Doctrine\DBAL\Exception;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Notification;
 use Pimcore\Model\Notification\Listing;
@@ -56,8 +55,7 @@ class NotificationService
         string $title,
         string $message,
         ?ElementInterface $element = null
-    ): void
-    {
+    ): void {
         $this->beginTransaction();
 
         $sender = User::getById($fromUser);
@@ -101,8 +99,7 @@ class NotificationService
         string $title,
         string $message,
         ?ElementInterface $element = null
-    ): void
-    {
+    ): void {
         $group = User\Role::getById($groupId);
 
         if (!$group instanceof User\Role) {

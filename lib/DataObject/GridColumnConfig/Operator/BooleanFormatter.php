@@ -27,7 +27,6 @@ final class BooleanFormatter extends AbstractOperator
 
     private string $noValue;
 
-
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);

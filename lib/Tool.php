@@ -112,6 +112,7 @@ final class Tool
      * @param string $language
      *
      * @return array
+     *
      *@internal
      *
      */
@@ -196,7 +197,8 @@ final class Tool
      * @param string $language
      * @param bool $absolutePath
      *
-          * @return string
+     * @return string
+     *
      *@internal
      *
      */
@@ -575,6 +577,7 @@ final class Tool
      * @param string $class
      *
      * @return bool
+     *
      *@internal
      *
      */
@@ -587,6 +590,7 @@ final class Tool
      * @param string $class
      *
      * @return bool
+     *
      *@internal
      *
      */
@@ -599,6 +603,7 @@ final class Tool
      * @param string $class
      *
      * @return bool
+     *
      *@internal
      *
      */
@@ -669,6 +674,7 @@ final class Tool
 
     /**
      * @param string $message
+     *
      *@internal
      *
      */

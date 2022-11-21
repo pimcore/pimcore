@@ -18,7 +18,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Db;
 use Pimcore\Logger;
-use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
@@ -221,6 +220,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      * @param array $params
      *
      * @return array
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -265,6 +265,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      * @param array $params
      *
      * @return array|null
+     *
      * @see Data::getDataFromEditmode
      *
      */
@@ -333,6 +334,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */
@@ -951,6 +953,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      * @param ElementInterface $item
      *
      * @return string
+     *
      *@internal
      *
      */

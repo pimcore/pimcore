@@ -45,8 +45,7 @@ final class Key
         ?string $language = 'default',
         bool $ignoreFallbackLanguage = false,
         bool $ignoreDefaultLanguage = false
-    ): mixed
-    {
+    ): mixed {
         $classificationstore = $this->group->getClassificationStore();
 
         return $classificationstore->getLocalizedKeyValue(

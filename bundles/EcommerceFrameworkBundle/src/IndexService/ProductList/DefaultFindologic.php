@@ -705,7 +705,6 @@ class DefaultFindologic implements ProductListInterface
     /**
      * @return IndexableInterface|false
      */
-
     public function current(): bool|IndexableInterface
     {
         $this->getProducts();

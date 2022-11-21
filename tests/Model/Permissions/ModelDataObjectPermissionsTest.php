@@ -62,7 +62,6 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
      * /manyElements/manyelement X --> allowed
      *
      */
-
     protected DataObject\Folder $permissionfoo;
 
     protected DataObject\Folder $permissionbar;

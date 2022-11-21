@@ -273,6 +273,7 @@ class Builder
      * @param bool $isActive
      *
      * @throws \Exception
+     *
      *@internal
      *
      */
@@ -339,9 +340,10 @@ class Builder
      * @param array $parents
      * @param int|null $maxDepth
      *
-          * @return Page[]
+     * @return Page[]
      *
      * @throws \Exception
+     *
      *@internal
      *
      */

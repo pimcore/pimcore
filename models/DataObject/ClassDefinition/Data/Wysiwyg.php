@@ -158,6 +158,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param array $params
      *
      * @return string|null
+     *
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -172,6 +173,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param array $params
      *
      * @return string|null
+     *
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -186,6 +188,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param array $params
      *
      * @return string|null
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -220,6 +223,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param array $params
      *
      * @return string|null
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -234,6 +238,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getDataFromEditmode
      *
      */

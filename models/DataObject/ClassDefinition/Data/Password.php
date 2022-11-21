@@ -149,6 +149,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param array $params
      *
      * @return string|null
+     *
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -207,6 +208,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param string $data
      *
      * @return string
+     *
      *@internal
      *
      */
@@ -242,6 +244,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param bool|true $updateHash
      *
      * @return bool
+     *
      *@internal
      *
      */
@@ -281,6 +284,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param array $params
      *
      * @return string|null
+     *
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -295,6 +299,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param array $params
      *
      * @return string|null
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -309,6 +314,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -323,6 +329,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getDataFromEditmode
      *
      */
@@ -337,6 +344,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */

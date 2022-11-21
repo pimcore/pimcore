@@ -34,7 +34,7 @@ class SessionCartCheckoutData extends AbstractCartCheckoutData
     {
         $checkoutDataItem = new self();
         $cart = $checkoutDataItem->getCart();
-        if($cart instanceof SessionCart) {
+        if ($cart instanceof SessionCart) {
             $cart->checkoutData = [];
         }
     }

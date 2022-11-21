@@ -142,6 +142,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
      * @param array $params
      *
      * @return string
+     *
      *@internal
      *
      */

@@ -737,6 +737,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      * @param string $tag
      *
      * @return $this
+     *
      *@internal
      *
      */
@@ -754,6 +755,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      * @param string $tag
      *
      * @return $this
+     *
      *@internal
      *
      */
@@ -769,6 +771,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      * @param string $tag
      *
      * @return $this
+     *
      *@internal
      *
      */
@@ -785,6 +788,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      * @param string $tag
      *
      * @return $this
+     *
      *@internal
      *
      */
@@ -800,6 +804,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      * @param string $tag
      *
      * @return $this
+     *
      *@internal
      *
      */
@@ -887,6 +892,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      * @param bool $forceWrite
      *
      * @return $this
+     *
      *@internal
      *
      */

@@ -284,6 +284,7 @@ interface CartInterface
      * @param string $token
      *
      * @return bool
+     *
      *@throws \Exception
      *
      */

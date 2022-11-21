@@ -264,6 +264,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @param array $params
      *
      * @return string|null
+     *
      *@throws \Exception
      *
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
@@ -298,6 +299,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @param array $params
      *
      * @return array|null
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -333,6 +335,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @param array $params
      *
      * @return array|null
+     *
      * @see Data::getDataFromEditmode
      *
      */
@@ -396,6 +399,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */
@@ -528,7 +532,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * { @inheritdoc }
      */
-    public function preGetData(mixed $container, array $params = []) : mixed
+    public function preGetData(mixed $container, array $params = []): mixed
     {
         $data = null;
         if ($container instanceof DataObject\Concrete) {
@@ -570,7 +574,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * { @inheritdoc }
      */
-    public function preSetData(mixed $container, mixed $data, array $params = []) : mixed
+    public function preSetData(mixed $container, mixed $data, array $params = []): mixed
     {
         if ($data === null) {
             $data = [];

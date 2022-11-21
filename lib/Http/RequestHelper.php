@@ -187,6 +187,7 @@ class RequestHelper
      * @param string $uri
      *
      * @return Request
+     *
      *@internal
      *
      */

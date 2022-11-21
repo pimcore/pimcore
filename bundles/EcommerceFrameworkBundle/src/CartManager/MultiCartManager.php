@@ -126,15 +126,14 @@ class MultiCartManager implements CartManagerInterface
      */
     public function addToCart(
         CheckoutableInterface $product,
-        int                   $count,
-        string                $key = null,
-        string                $itemKey = null,
-        bool                  $replace = false,
-        array                 $params = [],
-        array                 $subProducts = [],
-        string                $comment = null
-    ): string
-    {
+        int $count,
+        string $key = null,
+        string $itemKey = null,
+        bool $replace = false,
+        array $params = [],
+        array $subProducts = [],
+        string $comment = null
+    ): string {
         $this->checkForInit();
 
         if (empty($key) || !array_key_exists($key, $this->carts)) {

@@ -23,6 +23,5 @@ use Pimcore\Model;
  */
 class Folder extends Model\User\UserRole\Folder
 {
-
     protected string $type = 'rolefolder';
 }

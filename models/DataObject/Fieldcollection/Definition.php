@@ -21,8 +21,8 @@ use Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface;
 use Pimcore\DataObject\ClassBuilder\PHPFieldCollectionClassDumperInterface;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
 
 /**
  * @method \Pimcore\Model\DataObject\Fieldcollection\Definition\Dao getDao()
@@ -82,6 +82,7 @@ class Definition extends Model\AbstractModel
      * @param string $key
      *
      * @return self|null
+     *
      *@throws \Exception
      *
      */
@@ -170,6 +171,7 @@ class Definition extends Model\AbstractModel
      *
      * @throws \Exception
      * @throws DataObject\Exception\DefinitionWriteException
+     *
      *@internal
      *
      */
@@ -247,6 +249,7 @@ class Definition extends Model\AbstractModel
      * @param string|null $key
      *
      * @return string
+     *
      *@internal
      *
      */

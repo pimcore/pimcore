@@ -128,6 +128,7 @@ class DefaultFindologic extends AbstractConfig implements FindologicConfigInterf
                 DefaultFindologicWorker::class
             ));
         }
+
         return $tenantWorker;
     }
 

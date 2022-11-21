@@ -240,6 +240,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      * @param array $params
      *
      * @return array|null
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -365,6 +366,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      * @param array $params
      *
      * @return array|null
+     *
      * @see Data::getDataFromEditmode
      *
      */
@@ -434,6 +436,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     public function getDataForGrid(?array $data, Concrete $object = null, array $params = []): ?array
     {
         $ret = $this->getDataForEditmode($data, $object, $params);
+
         return is_array($ret) ? $ret : null;
     }
 
@@ -443,6 +446,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */
@@ -644,7 +648,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
     /**
      * { @inheritdoc }
      */
-    public function preGetData(mixed $container, array $params = []) : mixed
+    public function preGetData(mixed $container, array $params = []): mixed
     {
         $data = null;
         if ($container instanceof DataObject\Concrete) {
@@ -968,6 +972,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
      * @param ElementInterface $item
      *
      * @return string
+     *
      *@internal
      *
      */

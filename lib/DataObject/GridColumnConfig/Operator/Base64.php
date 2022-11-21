@@ -25,7 +25,6 @@ final class Base64 extends AbstractOperator
 {
     private string $mode;
 
-
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);

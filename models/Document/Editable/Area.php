@@ -39,7 +39,6 @@ class Area extends Model\Document\Editable
      */
     protected ?string $type = null;
 
-
     public function getBrickType(): ?string
     {
         return $this->type;

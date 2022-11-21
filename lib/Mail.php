@@ -839,6 +839,7 @@ class Mail extends Email
 
     /**
      * @param array|null $originalData
+     *
      *@internal
      *
      */
@@ -884,7 +885,6 @@ class Mail extends Email
      *
      * @return $this
      */
-
     public function addTo(...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
@@ -897,7 +897,6 @@ class Mail extends Email
      *
      * @return $this
      */
-
     public function addCc(...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
@@ -910,7 +909,6 @@ class Mail extends Email
      *
      * @return $this
      */
-
     public function addBcc(...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
@@ -923,7 +921,6 @@ class Mail extends Email
      *
      * @return $this
      */
-
     public function addFrom(...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);
@@ -936,7 +933,6 @@ class Mail extends Email
      *
      * @return $this
      */
-
     public function addReplyTo(...$addresses): static
     {
         $addresses = $this->formatAddress(...$addresses);

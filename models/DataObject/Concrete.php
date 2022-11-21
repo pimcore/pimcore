@@ -787,6 +787,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      * @param array $descriptor
      *
      * @return array
+     *
      *@internal
      *
      */
@@ -801,6 +802,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      * @param array $descriptor
      *
      * @return array
+     *
      *@internal
      *
      */

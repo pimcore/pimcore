@@ -27,7 +27,6 @@ final class Concatenator extends AbstractOperator
 
     private bool $forceValue;
 
-
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);

@@ -18,7 +18,6 @@ namespace Pimcore\Google;
 
 use Exception;
 use Google\Service\CustomSearchAPI;
-use Google\Service\CustomSearchAPI\Result;
 use Google\Service\CustomSearchAPI\Search;
 use Pimcore;
 use Pimcore\Cache;
@@ -27,7 +26,6 @@ use Pimcore\Google\Cse\Item;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 use Pimcore\Model\Paginator\PaginateListingInterface;
-use ReturnTypeWillChange;
 
 class Cse implements PaginateListingInterface
 {
@@ -355,7 +353,6 @@ class Cse implements PaginateListingInterface
     /**
      * Methods for Iterator
      */
-
     public function rewind(): void
     {
         reset($this->results);

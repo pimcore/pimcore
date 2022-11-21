@@ -28,8 +28,9 @@ trait AllowObjectRelationTrait
      * Checks if an object is an allowed relation
      *
      * @param DataObject\AbstractObject $object
-          *
-          * @return bool
+     *
+     * @return bool
+     *
      *@internal
      *
      */

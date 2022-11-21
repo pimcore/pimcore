@@ -307,6 +307,7 @@ class Link extends Model\Document
      * @param Model\Element\ElementInterface $object
      *
      * @return $this
+     *
      *@deprecated use getElement() instead, will be removed in Pimcore 11
      *
      */
@@ -319,6 +320,7 @@ class Link extends Model\Document
         );
 
         $this->setElement($object);
+
         return $this;
     }
 

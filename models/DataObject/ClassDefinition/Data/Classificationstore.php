@@ -180,7 +180,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * @param array $params
      *
      * @return array
+     *
      * @throws \Exception
+     *
      * @see Data::getDataForEditmode
      */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
@@ -335,6 +337,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * @param array $params
      *
      * @return DataObject\Classificationstore
+     *
      *@see Data::getDataFromEditmode
      *
      */
@@ -412,6 +415,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */
@@ -563,7 +567,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * { @inheritdoc }
      */
-    public function preGetData(mixed $container, array $params = []) : mixed
+    public function preGetData(mixed $container, array $params = []): mixed
     {
         if (!$container instanceof DataObject\Concrete) {
             throw new \Exception('Classification store fields are only valid in Objects');
@@ -896,7 +900,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * @param DataObject\Concrete|null $object
      * @param array $activeGroups
      *
-          * @return array|null
+     * @return array|null
+     *
      *@internal
      *
      */

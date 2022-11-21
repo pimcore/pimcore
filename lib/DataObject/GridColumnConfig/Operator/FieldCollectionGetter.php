@@ -30,7 +30,6 @@ final class FieldCollectionGetter extends AbstractOperator
 
     private string $colAttr;
 
-
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);

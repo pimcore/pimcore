@@ -87,6 +87,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      * @param array $params
      *
      * @return array
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -257,7 +258,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      * @param array $params
      *
      * @return Objectbrick\Data\AbstractData
+     *
      * @throws \Exception
+     *
      * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): Objectbrick\Data\AbstractData
@@ -318,6 +321,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */
@@ -418,7 +422,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     /**
      * { @inheritdoc }
      */
-    public function preSetData(mixed $container, mixed $data, array $params = []) : mixed
+    public function preSetData(mixed $container, mixed $data, array $params = []): mixed
     {
         if ($data instanceof DataObject\Objectbrick) {
             $data->setFieldname($this->getName());

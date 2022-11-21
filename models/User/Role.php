@@ -21,6 +21,5 @@ namespace Pimcore\Model\User;
  */
 class Role extends UserRole
 {
-
     protected string $type = 'role';
 }

@@ -183,6 +183,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * @param array $params
      *
      * @return array
+     *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -209,6 +210,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * @param array $params
      *
      * @return DataObject\Data\StructuredTable
+     *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -239,6 +241,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * @param array $params
      *
      * @return array
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -253,6 +256,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * @param array $params
      *
      * @return array
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -285,6 +289,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * @param array $params
      *
      * @return DataObject\Data\StructuredTable
+     *
      *@see Data::getDataFromEditmode
      *
      */
@@ -326,6 +331,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */

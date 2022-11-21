@@ -179,6 +179,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @param array $params
      *
      * @return string|null
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -193,6 +194,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @param array $params
      *
      * @return string|null
+     *
      * @see Data::getDataForEditmode
      */
     public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
@@ -210,6 +212,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @param array $params
      *
      * @return null
+     *
      * @see Data::getDataFromEditmode
      *
      */
@@ -224,6 +227,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */

@@ -79,8 +79,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         Executor $maintenanceExecutor,
         CsrfProtectionHandler $csrfProtection,
         Config $config
-    ): Response
-    {
+    ): Response {
         $user = $this->getAdminUser();
         $perspectiveConfig = new \Pimcore\Perspective\Config();
         $templateParams = [

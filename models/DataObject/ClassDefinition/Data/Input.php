@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Pimcore
  *
@@ -19,7 +18,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
-use Pimcore\Model\DataObject\ClassDefinition\Data\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 
@@ -133,6 +131,7 @@ class Input extends Data implements
      * @param array $params
      *
      * @return string|null
+     *
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -149,6 +148,7 @@ class Input extends Data implements
      * @param array $params
      *
      * @return string|null
+     *
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -163,6 +163,7 @@ class Input extends Data implements
      * @param array $params
      *
      * @return string|null
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -177,6 +178,7 @@ class Input extends Data implements
      * @param array $params
      *
      * @return string|null
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -191,6 +193,7 @@ class Input extends Data implements
      * @param array $params
      *
      * @return string|null
+     *
      * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string

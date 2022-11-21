@@ -25,7 +25,6 @@ final class PropertyGetter extends AbstractOperator
 {
     private string $propertyName;
 
-
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);

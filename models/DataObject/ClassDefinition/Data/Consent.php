@@ -79,6 +79,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param array $params
      *
      * @return array
+     *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -103,6 +104,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param array $params
      *
      * @return DataObject\Data\Consent
+     *
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -129,6 +131,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param array $params
      *
      * @return bool
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -147,6 +150,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param array $params
      *
      * @return array|null
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -170,6 +174,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param array $params
      *
      * @return DataObject\Data\Consent
+     *
      *@see Data::getDataFromEditmode
      *
      */
@@ -283,6 +288,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */

@@ -27,7 +27,6 @@ final class Arithmetic extends AbstractOperator
 
     private string $operator;
 
-
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);

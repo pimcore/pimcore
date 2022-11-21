@@ -20,10 +20,10 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
-use Pimcore\Model\DataObject;
 
 /**
  * Class EncryptedField
@@ -86,6 +86,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      * @param array $params
      *
      * @return mixed
+     *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -183,6 +184,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      * @param array $params
      *
      * @return Model\DataObject\Data\EncryptedField|null
+     *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -214,6 +216,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      * @param array $params
      *
      * @return string|null
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -236,6 +239,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      * @param array $params
      *
      * @return Model\DataObject\Data\EncryptedField|null
+     *
      *@see Data::getDataFromEditmode
      *
      */

@@ -514,7 +514,6 @@ class Container implements \RecursiveIterator, \Countable
      *
      * @throws \Exception
      */
-
     public function current(): Page
     {
         $this->_sort();

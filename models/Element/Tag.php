@@ -172,13 +172,12 @@ final class Tag extends Model\AbstractModel
      * @return array
      */
     public static function getElementsForTag(
-        Tag    $tag,
+        Tag $tag,
         string $type,
-        array  $subtypes = [],
-        array  $classNames = [],
-        bool   $considerChildTags = false
-    ): array
-    {
+        array $subtypes = [],
+        array $classNames = [],
+        bool $considerChildTags = false
+    ): array {
         return $tag->getDao()->getElementsForTag($tag, $type, $subtypes, $classNames, $considerChildTags);
     }
 

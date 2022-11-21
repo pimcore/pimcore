@@ -29,7 +29,8 @@ trait AllowDocumentRelationTrait
      *
      * @param Document $document
      *
-          * @return bool
+     * @return bool
+     *
      *@internal
      *
      */

@@ -18,7 +18,6 @@ namespace Pimcore\Model\DataObject;
 
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
-use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface;
 use Pimcore\DataObject\ClassBuilder\PHPClassDumperInterface;
 use Pimcore\Db;
@@ -28,6 +27,7 @@ use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
 
 /**
@@ -343,8 +343,9 @@ final class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param string $name
+     *
      *@internal
-          *
+     *
      */
     public function rename(string $name)
     {
@@ -649,6 +650,7 @@ final class ClassDefinition extends Model\AbstractModel
      * @param string|null $name
      *
      * @return string
+     *
      *@internal
      *
      */
@@ -1124,6 +1126,7 @@ final class ClassDefinition extends Model\AbstractModel
     {
         /** @var ClassDefinition\LinkGeneratorInterface $interface */
         $interface = DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
+
         return $interface;
     }
 
@@ -1141,6 +1144,7 @@ final class ClassDefinition extends Model\AbstractModel
     {
         /** @var ClassDefinition\PreviewGeneratorInterface $interface */
         $interface = DataObject\ClassDefinition\Helper\PreviewGeneratorResolver::resolveGenerator($this->getPreviewGeneratorReference());
+
         return $interface;
     }
 

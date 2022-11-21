@@ -158,6 +158,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      * @param array $params
      *
      * @return array
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -310,6 +311,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      * @param array $params
      *
      * @return DataObject\Localizedfield
+     *
      *@see Data::getDataFromEditmode
      *
      */
@@ -376,6 +378,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */
@@ -541,7 +544,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     /**
      * { @inheritdoc }
      */
-    public function preGetData(mixed $container, array $params = []) : mixed
+    public function preGetData(mixed $container, array $params = []): mixed
     {
         if (
             !$container instanceof DataObject\Concrete &&

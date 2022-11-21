@@ -28,13 +28,12 @@ class ListHelper
 {
     public function setupProductList(
         \Pimcore\Model\DataObject\FilterDefinition $filterDefinition,
-        ProductListInterface                       $productList,
-        array                                      &$params,
-        FilterService                              $filterService,
-        bool                                       $loadFullPage,
-        bool                                       $excludeLimitOfFirstpage = false
-    ): void
-    {
+        ProductListInterface $productList,
+        array &$params,
+        FilterService $filterService,
+        bool $loadFullPage,
+        bool $excludeLimitOfFirstpage = false
+    ): void {
         $orderByOptions = [];
         $orderKeysAsc = explode(',', $filterDefinition->getOrderByAsc());
         foreach ($orderKeysAsc as $orderByEntry) {

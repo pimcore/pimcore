@@ -21,9 +21,7 @@ namespace Pimcore\Model\User;
  */
 class Folder extends UserRole\Folder
 {
-
     protected string $type = 'userfolder';
-
 
     public function getChildren(): array
     {

@@ -18,11 +18,11 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
-use Pimcore\Model\DataObject;
 
 class Image extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
 {
@@ -64,6 +64,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param array $params
      *
      * @return int|null
+     *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -82,6 +83,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param array $params
      *
      * @return Asset|null
+     *
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -100,6 +102,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param array $params
      *
      * @return int|null
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -118,6 +121,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param array $params
      *
      * @return array|null
+     *
      * @see Data::getDataForEditmode
      */
     public function getDataForEditmode(mixed $data, Concrete $object = null, array $params = []): ?array
@@ -147,6 +151,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param array $params
      *
      * @return Asset\Image|null
+     *
      *@see Data::getDataFromEditmode
      *
      */
@@ -194,6 +199,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */

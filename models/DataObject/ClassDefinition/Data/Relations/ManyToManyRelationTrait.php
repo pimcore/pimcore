@@ -24,7 +24,6 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 trait ManyToManyRelationTrait
 {
-
     public function save(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
         if (!isset($params['forceSave']) || $params['forceSave'] !== true) {

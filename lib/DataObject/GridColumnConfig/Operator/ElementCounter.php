@@ -25,7 +25,6 @@ final class ElementCounter extends AbstractOperator
 {
     private bool $countEmpty;
 
-
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);

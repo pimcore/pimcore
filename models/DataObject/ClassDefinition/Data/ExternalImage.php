@@ -111,6 +111,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      * @param array $params
      *
      * @return string|null
+     *
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -129,6 +130,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      * @param array $params
      *
      * @return Model\DataObject\Data\ExternalImage
+     *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -151,6 +153,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      * @param array $params
      *
      * @return string|null
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -165,6 +168,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      * @param array $params
      *
      * @return string|null
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -195,6 +199,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      * @param array $params
      *
      * @return Model\DataObject\Data\ExternalImage
+     *
      *@see Data::getDataFromEditmode
      *
      */
@@ -221,6 +226,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */

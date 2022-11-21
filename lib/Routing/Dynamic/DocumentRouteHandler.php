@@ -83,8 +83,9 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
 
     /**
      * @param string $type
+     *
      *@deprecated will be removed in Pimcore 11
-          *
+     *
      */
     public function addDirectRouteDocumentType(string $type)
     {

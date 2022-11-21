@@ -75,6 +75,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param array $params
      *
      * @return int|string|null
+     *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -100,6 +101,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param array $params
      *
      * @return \Carbon\Carbon|null
+     *
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -127,6 +129,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param array $params
      *
      * @return int|null
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -141,6 +144,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param array $params
      *
      * @return int|null
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -167,6 +171,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param array $params
      *
      * @return \Carbon\Carbon|null
+     *
      *@see Data::getDataFromEditmode
      *
      */
@@ -217,6 +222,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */

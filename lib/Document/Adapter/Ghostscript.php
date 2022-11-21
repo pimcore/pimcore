@@ -191,7 +191,6 @@ class Ghostscript extends Adapter
 
             return false;
         }
-
     }
 
     public function getText(?int $page = null, ?Asset\Document $asset = null): mixed

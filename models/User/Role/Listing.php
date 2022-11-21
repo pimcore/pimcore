@@ -23,7 +23,6 @@ use Pimcore\Model;
  */
 class Listing extends Model\User\Listing\AbstractListing
 {
-
     protected string $type = 'role';
 
     /**

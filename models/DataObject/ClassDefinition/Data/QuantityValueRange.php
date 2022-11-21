@@ -21,7 +21,6 @@ use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
@@ -162,6 +161,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
 
     /**
      * @param DataObject\Concrete|null $object
+     *
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -184,6 +184,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
 
     /**
      * @param DataObject\Concrete|null $object
+     *
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -210,6 +211,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
 
     /**
      * @param DataObject\Concrete|null $object
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -220,6 +222,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
 
     /**
      * @param DataObject\Concrete|null $object
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -240,7 +243,9 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
      * @param mixed $data
      * @param DataObject\Concrete|null $object
      * @param array $params
+     *
      * @return DataObject\Data\QuantityValueRange|null
+     *
      * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\QuantityValueRange
@@ -263,6 +268,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
 
     /**
      * @param DataObject\Concrete|null $object
+     *
      * @see Data::getVersionPreview
      *
      */

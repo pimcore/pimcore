@@ -30,7 +30,6 @@ use Pimcore\Event\SystemEvents;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
-use Pimcore\Model\Element;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -38,6 +37,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Dependency;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element;
 use Pimcore\Model\Element\DeepCopy\MarshalMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
 use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
@@ -68,7 +68,7 @@ class Service extends Model\AbstractModel
         $path = '';
         $elementType = self::getElementType($element);
         $parentId = $element->getParentId();
-        if(isset($parentId)) {
+        if (isset($parentId)) {
             $parentElement = self::getElementById($elementType, $parentId);
 
             if ($parentElement) {
@@ -149,6 +149,7 @@ class Service extends Model\AbstractModel
      * @param string $idGetter
      *
      * @return int[]
+     *
      *@internal
      *
      */
@@ -269,8 +270,9 @@ class Service extends Model\AbstractModel
      * determines whether an element is published
      *
      * @param  ElementInterface|null $element
-          *
-          * @return bool
+     *
+     * @return bool
+     *
      *@internal
      *
      */
@@ -293,6 +295,7 @@ class Service extends Model\AbstractModel
      * @return array
      *
      * @throws \Exception
+     *
      *@internal
      *
      */
@@ -393,10 +396,11 @@ class Service extends Model\AbstractModel
 
     /**
      * @param string|ElementInterface $element
-          *
-          * @return string
+     *
+     * @return string
      *
      * @throws \Exception
+     *
      *@internal
      *
      */
@@ -424,6 +428,7 @@ class Service extends Model\AbstractModel
      * @param ElementInterface $target
      *
      * @return string
+     *
      *@deprecated will be removed in Pimcore 11, use getSafeCopyName() instead
      *
      */
@@ -590,6 +595,7 @@ class Service extends Model\AbstractModel
      * @param  ElementInterface $element
      *
      * @return string|null
+     *
      *@deprecated use getElementType() instead, will be removed in Pimcore 11
      *
      */
@@ -608,6 +614,7 @@ class Service extends Model\AbstractModel
      * @param array $props
      *
      * @return array
+     *
      *@internal
      *
      */
@@ -665,6 +672,7 @@ class Service extends Model\AbstractModel
     /**
      * @param DataObject|Document|Asset\Folder $target the parent element
      * @param ElementInterface $new the newly inserted child
+     *
      *@internal
      *
      */
@@ -721,6 +729,7 @@ class Service extends Model\AbstractModel
      * @param Model\User $user
      *
      * @return array{forbidden: array, allowed: array}
+     *
      *@internal
      *
      */
@@ -798,6 +807,7 @@ class Service extends Model\AbstractModel
      * @param string|null $key
      *
      * @return mixed
+     *
      *@internal
      *
      */
@@ -1053,6 +1063,7 @@ class Service extends Model\AbstractModel
      * @param string $id
      *
      * @return array|null
+     *
      *@internal
      *
      */
@@ -1133,7 +1144,9 @@ class Service extends Model\AbstractModel
      *
      * @param ElementInterface $element
      * @param int $nr
+     *
      * @return string|null
+     *
      * @throws \Exception
      */
     public static function getUniqueKey(ElementInterface $element, int $nr = 0): ?string
@@ -1158,6 +1171,7 @@ class Service extends Model\AbstractModel
      * @param string $type
      *
      * @return array
+     *
      *@internal
      *
      */
@@ -1197,8 +1211,9 @@ class Service extends Model\AbstractModel
 
     /**
      * @param Model\Version[] $versions
-          *
-          * @return array
+     *
+     * @return array
+     *
      *@internal
      *
      */
@@ -1395,7 +1410,8 @@ class Service extends Model\AbstractModel
      * @param int $elementId
      * @param string|null $postfix
      *
-          * @return string
+     * @return string
+     *
      *@internal
      *
      */
@@ -1451,6 +1467,7 @@ class Service extends Model\AbstractModel
      * @param ElementInterface $element
      * @param string $postfix
      * @param bool $clone save a copy
+     *
      *@internal
      *
      */
@@ -1496,6 +1513,7 @@ class Service extends Model\AbstractModel
      * @param string $type
      * @param int $elementId
      * @param string $postfix
+     *
      *@internal
      *
      */
@@ -1595,15 +1613,15 @@ class Service extends Model\AbstractModel
      * @param int|string|null $id
      *
      * @return string
+     *
      *@internal
      *
      */
     public static function getElementCacheTag(string $type, int|string|null $id): string
     {
-        if(isset($id)) {
+        if (isset($id)) {
             return $type . '_' . $id;
-        }
-        else {
+        } else {
             return $type . '_';
         }
     }

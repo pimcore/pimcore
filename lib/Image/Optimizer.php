@@ -28,7 +28,6 @@ class Optimizer implements ImageOptimizerInterface
      */
     private array $optimizers = [];
 
-
     public function optimizeImage(string $path)
     {
         $extension = File::getFileExtension($path);

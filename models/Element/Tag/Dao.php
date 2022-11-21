@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Pimcore
  *
@@ -221,13 +220,12 @@ class Dao extends Model\Dao\AbstractDao
      * @return array
      */
     public function getElementsForTag(
-        Tag    $tag,
+        Tag $tag,
         string $type,
-        array  $subtypes = [],
-        array  $classNames = [],
-        bool   $considerChildTags = false
-    ): array
-    {
+        array $subtypes = [],
+        array $classNames = [],
+        bool $considerChildTags = false
+    ): array {
         $elements = [];
 
         $map = [

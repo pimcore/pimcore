@@ -25,7 +25,6 @@ final class IsEqual extends AbstractOperator
 {
     private bool $skipNull;
 
-
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);

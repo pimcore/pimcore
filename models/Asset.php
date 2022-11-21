@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Pimcore
  *
@@ -396,6 +395,7 @@ class Asset extends Element\AbstractElement
      * @param string $filename
      *
      * @return string
+     *
      *@internal
      *
      */
@@ -646,6 +646,7 @@ class Asset extends Element\AbstractElement
      * @param array $params additional parameters (e.g. "versionNote" for the version note)
      *
      * @throws Exception
+     *
      *@internal
      *
      */

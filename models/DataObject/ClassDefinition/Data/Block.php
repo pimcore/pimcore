@@ -128,6 +128,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @param array $params
      *
      * @return string
+     *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -192,6 +193,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @param array $params
      *
      * @return array|null
+     *
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -285,6 +287,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @param array $params
      *
      * @return array
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -333,6 +336,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @param array $params
      *
      * @return array
+     *
      * @see Data::getDataFromEditmode
      *
      */
@@ -469,6 +473,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */
@@ -662,7 +667,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return null;
     }
 
-    protected function doEnrichFieldDefinition(Data $fieldDefinition, array$context = []): Data
+    protected function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data
     {
         if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
             $context['containerType'] = 'block';
@@ -825,7 +830,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * { @inheritdoc }
      */
-    public function preSetData(mixed $container, mixed $data, array $params = []) : mixed
+    public function preSetData(mixed $container, mixed $data, array $params = []): mixed
     {
         $this->markLazyloadedFieldAsLoaded($container);
 
@@ -917,7 +922,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * {@inheritdoc}
      */
-    public function preGetData(mixed $container, array $params = []) : mixed
+    public function preGetData(mixed $container, array $params = []): mixed
     {
         $data = null;
         $params['owner'] = $container;

@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Pimcore
  *
@@ -188,6 +187,7 @@ class Dao extends Model\Element\Dao
      * @param string $oldPath
      *
      * @return array
+     *
      *@internal
      *
      */

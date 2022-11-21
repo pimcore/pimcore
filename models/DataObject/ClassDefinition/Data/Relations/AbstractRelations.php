@@ -124,7 +124,7 @@ abstract class AbstractRelations extends Data implements
         }
 
         $data = $this->getDataFromObjectParam($object, $params);
-        if($data !== null) {
+        if ($data !== null) {
             $relations = $this->prepareDataForPersistence($data, $object, $params);
 
             if (is_array($relations) && !empty($relations)) {
@@ -202,6 +202,7 @@ abstract class AbstractRelations extends Data implements
      * @param array $params
      *
      * @return mixed
+     *
      *@internal
      *
      */
@@ -213,10 +214,10 @@ abstract class AbstractRelations extends Data implements
      * @param array $params
      *
      * @return mixed
+     *
      * @internal
      */
     abstract protected function prepareDataForPersistence(array|Element\ElementInterface $data, Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object = null, array $params = []): mixed;
-
 
     public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
     {
@@ -237,6 +238,7 @@ abstract class AbstractRelations extends Data implements
      * @param array $idMapping
      *
      * @return array
+     *
      *@internal
      *
      */
@@ -329,8 +331,9 @@ abstract class AbstractRelations extends Data implements
 
     /**
      * @param Element\ElementInterface $item
-          *
-          * @return string
+     *
+     * @return string
+     *
      *@internal
      *
      */
@@ -409,7 +412,7 @@ abstract class AbstractRelations extends Data implements
     {
         if ($item->getObject()) {
             $fieldName = $item->getFieldName();
-            if(isset($fieldName)) {
+            if (isset($fieldName)) {
                 /** @var DataObject\Objectbrick|null $container */
                 $container = $item->getObject()->getObjectVar($fieldName);
                 if ($container) {
@@ -427,6 +430,7 @@ abstract class AbstractRelations extends Data implements
      * @param array|null $data
      *
      * @throws Element\ValidationException
+     *
      *@internal
      *
      */

@@ -243,7 +243,6 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @return void
      */
-
     public function offsetSet($offset, mixed $value): void
     {
         if (!$this->_isValid($value)) {

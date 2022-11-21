@@ -26,7 +26,6 @@ final class DateFormatter extends AbstractOperator
 {
     private ?string $format = null;
 
-
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);

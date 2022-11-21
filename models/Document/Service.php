@@ -163,6 +163,7 @@ class Service extends Model\Element\Service
      * @param bool $enableInheritance
      * @param bool $resetIndex
      * @param bool $language
+     *
      * @return Page|Document|PageSnippet
      *
      * @throws ValidationException
@@ -301,6 +302,7 @@ class Service extends Model\Element\Service
      * @param Document $doc
      *
      * @return Document
+     *
      *@internal
      *
      */
@@ -370,6 +372,7 @@ class Service extends Model\Element\Service
      * @param array $params
      *
      * @return Document|PageSnippet
+     *
      * @internal
      */
     public static function rewriteIds(Document $document, array $rewriteConfig, array $params = []): Document|PageSnippet
@@ -431,6 +434,7 @@ class Service extends Model\Element\Service
      * @param string $url
      *
      * @return Document|null
+     *
      *@internal
      *
      */
@@ -499,6 +503,7 @@ class Service extends Model\Element\Service
      * @param array $types
      *
      * @return Document|null
+     *
      *@internal
      *
      */

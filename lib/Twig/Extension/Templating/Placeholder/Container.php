@@ -279,6 +279,7 @@ class Container extends \ArrayObject
      * @param mixed $key
      *
      * @return void
+     *
      *@throws Exception
      *
      */

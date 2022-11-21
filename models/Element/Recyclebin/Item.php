@@ -318,7 +318,6 @@ class Item extends Model\AbstractModel
                 }
             ),
             new class((string)$this->element) extends TypeMatcher {
-
                 public function matches(mixed $element): bool
                 {
                     //compress only elements with full_dump_state = false

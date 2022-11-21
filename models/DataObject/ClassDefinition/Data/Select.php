@@ -219,6 +219,7 @@ class Select extends Data implements
      * @param array $params
      *
      * @return string|null
+     *
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -235,6 +236,7 @@ class Select extends Data implements
      * @param array $params
      *
      * @return string|null
+     *
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -249,6 +251,7 @@ class Select extends Data implements
      * @param array $params
      *
      * @return string|null
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -263,6 +266,7 @@ class Select extends Data implements
      * @param array $params
      *
      * @return string|null
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -277,6 +281,7 @@ class Select extends Data implements
      * @param array $params
      *
      * @return string|null
+     *
      * @see Data::getDataFromEditmode
      *
      */
@@ -291,6 +296,7 @@ class Select extends Data implements
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */

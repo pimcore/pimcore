@@ -164,8 +164,9 @@ final class Localizedfield extends Model\AbstractModel implements
 
     /**
      * @param bool $mark
+     *
      *@internal
-          *
+     *
      */
     public function setLoadedAllLazyData(bool $mark = true)
     {

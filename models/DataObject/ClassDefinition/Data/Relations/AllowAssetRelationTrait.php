@@ -30,6 +30,7 @@ trait AllowAssetRelationTrait
      * @param Asset $asset
      *
      * @return bool
+     *
      *@internal
      *
      */

@@ -23,7 +23,6 @@ use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Fieldcollection\Data\FilterRelation;
 use Pimcore\Model\DataObject\Folder;
-use Pimcore\Model\Element\ElementInterface;
 
 class SelectRelation extends AbstractFilterType
 {

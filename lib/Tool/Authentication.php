@@ -167,10 +167,11 @@ class Authentication
     /**
      * @param string $username
      * @param string $plainTextPassword
-          *
+     *
      * @return string
      *
      * @throws \Exception
+     *
      *@internal
      *
      */
@@ -195,6 +196,7 @@ class Authentication
      * @param string $username
      *
      * @return string
+     *
      *@internal
      *
      */

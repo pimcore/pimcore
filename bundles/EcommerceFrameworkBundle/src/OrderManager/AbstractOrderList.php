@@ -128,7 +128,6 @@ abstract class AbstractOrderList implements OrderListInterface
     /**
      * @return OrderListItemInterface|false
      */
-
     public function current(): bool|OrderListItemInterface
     {
         $this->load();

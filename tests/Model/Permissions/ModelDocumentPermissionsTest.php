@@ -60,7 +60,6 @@ class ModelDocumentPermissionsTest extends ModelTestCase
      * /manyElements/manyelement X --> allowed
      *
      */
-
     protected Document\Folder $permissionfoo;
 
     protected Document\Folder $permissionbar;

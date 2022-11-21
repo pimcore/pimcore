@@ -17,8 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
-Use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\ClassDefinition\Data\DataObject\Concrete;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Model\Tool;
 
@@ -39,6 +38,7 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
      * @param array $params
      *
      * @return string|null
+     *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      */
     public function getDataFromResource(mixed $data, Dataobject\Concrete $object = null, array $params = []): ?string
@@ -60,6 +60,7 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
      * @param array $params
      *
      * @return null|string
+     *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      */
     public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string

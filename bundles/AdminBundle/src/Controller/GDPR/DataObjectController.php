@@ -33,7 +33,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
 {
-
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         if (!$event->isMainRequest()) {
@@ -67,8 +66,6 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
 
     /**
      * @Route("/export", name="pimcore_admin_gdpr_dataobject_exportdataobject", methods={"GET"})
-     *
-     *
      *
      * @throws \Exception
      */

@@ -29,7 +29,6 @@ final class AssetMetadataGetter extends AbstractOperator
 
     private ?string $locale = null;
 
-
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);

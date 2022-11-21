@@ -162,8 +162,9 @@ final class Config extends Model\AbstractModel
 
     /**
      * @param array|string|self $config
-          *
+     *
      * @return self|null
+     *
      *@internal
      *
      */
@@ -300,7 +301,8 @@ final class Config extends Model\AbstractModel
      * @param array $parameters
      * @param string|null $media
      *
-          * @return bool
+     * @return bool
+     *
      *@internal
      *
      */
@@ -328,7 +330,8 @@ final class Config extends Model\AbstractModel
      * @param array $parameters
      * @param string|null $media
      *
-          * @return bool
+     * @return bool
+     *
      *@internal
      *
      */
@@ -480,6 +483,7 @@ final class Config extends Model\AbstractModel
      * @param array $config
      *
      * @return self
+     *
      *@internal
      *
      */
@@ -514,6 +518,7 @@ final class Config extends Model\AbstractModel
      * @param array $config
      *
      * @return self
+     *
      *@internal
      *
      */
@@ -598,7 +603,8 @@ final class Config extends Model\AbstractModel
     /**
      * @param Model\Asset\Image $asset
      *
-          * @return array
+     * @return array
+     *
      *@internal
      *
      */

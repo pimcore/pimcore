@@ -45,9 +45,6 @@ class SearchController extends AdminController
 
     /**
      * @Route("/find", name="pimcore_admin_searchadmin_search_find", methods={"GET", "POST"})
-     *
-     *
-     *
      * @todo: $conditionTypeParts could be undefined
      * @todo: $conditionSubtypeParts could be undefined
      * @todo: $conditionClassnameParts could be undefined
@@ -352,6 +349,7 @@ class SearchController extends AdminController
      * @param array $types
      *
      * @return string
+     *
      *@internal
      *
      */

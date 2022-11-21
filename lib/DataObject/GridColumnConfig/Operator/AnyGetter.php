@@ -37,7 +37,6 @@ final class AnyGetter extends AbstractOperator
 
     private bool $returnLastResult;
 
-
     public function __construct(\stdClass $config, $context = null)
     {
         if (!Admin::getCurrentUser()->isAdmin()) {

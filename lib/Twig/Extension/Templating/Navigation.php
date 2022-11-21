@@ -100,8 +100,7 @@ class Navigation implements RuntimeExtensionInterface
         string $rendererName = 'menu',
         string $renderMethod = 'render',
         ...$rendererArguments
-    ): string
-    {
+    ): string {
         $renderer = $this->getRenderer($rendererName);
 
         if (!method_exists($renderer, $renderMethod)) {

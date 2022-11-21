@@ -668,8 +668,9 @@ class Decimal
      *
      * @param float|int|Decimal $discount
      * @param int|null $roundingMode
-          *
-               * @return Decimal
+     *
+     * @return Decimal
+     *
      *@example Decimal::create(100)->discount(15) = 85
      *
      */

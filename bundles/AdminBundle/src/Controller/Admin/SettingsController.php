@@ -439,8 +439,7 @@ class SettingsController extends AdminController
         CoreCacheHandler $cache,
         Filesystem $filesystem,
         CacheClearer $symfonyCacheClearer
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $this->checkPermission('system_settings');
 
         $values = $this->decodeJson($request->get('data'));
@@ -640,8 +639,7 @@ class SettingsController extends AdminController
         CoreCacheHandler $cache,
         Filesystem $filesystem,
         CacheClearer $symfonyCacheClearer
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $this->checkPermissionsHasOneOf(['clear_cache', 'system_settings']);
 
         $result = [

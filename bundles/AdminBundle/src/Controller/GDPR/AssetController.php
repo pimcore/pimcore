@@ -36,7 +36,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class AssetController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
 {
-
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         if (!$event->isMainRequest()) {

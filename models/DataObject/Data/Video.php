@@ -17,10 +17,10 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\Data;
 
 use Pimcore\Model\Asset;
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+use Pimcore\Model\Element\ElementInterface;
 
 class Video implements OwnerAwareFieldInterface
 {

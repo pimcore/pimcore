@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Pimcore
  *
@@ -26,7 +25,6 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
-
     public function configure()
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');

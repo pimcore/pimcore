@@ -202,6 +202,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      * @param int $siteId
      *
      * @return UrlSlug|null
+     *
      *@internal
      *
      */
@@ -397,6 +398,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      * @param int $siteId
      *
      * @return string
+     *
      *@internal
      *
      */

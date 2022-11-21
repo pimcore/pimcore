@@ -854,6 +854,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @param array $params
      *
      * @throws \Exception
+     *
      *@internal
      *
      */
@@ -905,6 +906,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * @param int $objectId
      * @param array $additionalTags
+     *
      *@internal
      *
      */
@@ -926,8 +928,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @param int $index
+     *
      *@internal
-          *
+     *
      */
     public function saveIndex(int $index)
     {
@@ -1058,7 +1061,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     {
         $newParentId = $parent instanceof self ? $parent->getId() : 0;
         $this->setParentId($newParentId);
-        /** @var Element\AbstractElement $parent  */
+        /** @var Element\AbstractElement $parent */
         $this->parent = $parent;
 
         return $this;
@@ -1107,6 +1110,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @param string|null $language
      *
      * @return mixed
+     *
      *@throws \Exception
      *
      */
@@ -1125,6 +1129,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @param string|null $language
      *
      * @return mixed
+     *
      *@throws \Exception
      *
      */

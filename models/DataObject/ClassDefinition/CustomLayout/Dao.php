@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Pimcore
  *
@@ -125,6 +124,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      * @param string $classId
      *
      * @return string|null
+     *
      *@deprecated
      *
      */

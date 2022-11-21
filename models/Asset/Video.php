@@ -216,6 +216,7 @@ class Video extends Model\Asset
 
     /**
      * @return float|int|null
+     *
      * @throws \Exception
      */
     public function getDuration(): float|int|null

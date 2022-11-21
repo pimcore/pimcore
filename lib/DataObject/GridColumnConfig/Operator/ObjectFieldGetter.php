@@ -28,7 +28,6 @@ final class ObjectFieldGetter extends AbstractOperator
 
     private string $forwardAttribute;
 
-
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);

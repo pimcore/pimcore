@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Element;
 
-use Pimcore\Event\ElementEvents;
 use Pimcore\Event\Model\ModelEvent;
 use Pimcore\Event\NoteEvents;
 use Pimcore\Model;

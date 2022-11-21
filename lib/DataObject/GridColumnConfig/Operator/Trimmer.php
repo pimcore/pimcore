@@ -31,7 +31,6 @@ final class Trimmer extends AbstractOperator
 
     private int $trim;
 
-
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);

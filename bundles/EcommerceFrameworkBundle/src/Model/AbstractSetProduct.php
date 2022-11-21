@@ -85,6 +85,7 @@ abstract class AbstractSetProduct extends AbstractProduct
      * @param array|null $products
      *
      * @return PriceInterface|null
+     *
      *@throws UnsupportedException
      *
      */
@@ -104,6 +105,7 @@ abstract class AbstractSetProduct extends AbstractProduct
      * @param array|null $products
      *
      * @return PriceInfoInterface|null
+     *
      *@throws UnsupportedException
      *
      */
@@ -141,7 +143,8 @@ abstract class AbstractSetProduct extends AbstractProduct
      * @param  AbstractSetProductEntry[] $products
      *
      * @return void
-          *@throws UnsupportedException
+     *
+     *@throws UnsupportedException
      *
      */
     protected function checkMandatoryProducts(array $products): void

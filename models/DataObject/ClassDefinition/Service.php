@@ -292,6 +292,7 @@ class Service
      * @return EncryptedField|bool|Data|Layout
      *
      * @throws \Exception
+     *
      * @internal
      */
     public static function generateLayoutTreeFromArray(array $array, bool $throwException = false, bool $insideLocalizedField = false): Data\EncryptedField|bool|Data|Layout
@@ -372,6 +373,7 @@ class Service
     /**
      * @param array $tableDefinitions
      * @param array $tableNames
+     *
      *@internal
      *
      */
@@ -409,6 +411,7 @@ class Service
      * @param string $null
      *
      * @return bool
+     *
      *@internal
      *
      */
@@ -440,6 +443,7 @@ class Service
      * @return string
      *
      * @throws \Exception
+     *
      *@internal
      *
      */
@@ -471,6 +475,7 @@ class Service
      * @return string
      *
      * @throws \Exception
+     *
      *@internal
      *
      */
@@ -501,6 +506,7 @@ class Service
      * @return string
      *
      * @throws \Exception
+     *
      *@internal
      *
      */

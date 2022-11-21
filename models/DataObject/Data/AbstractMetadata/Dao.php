@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Pimcore
  *
@@ -16,7 +15,6 @@
 
 namespace Pimcore\Model\DataObject\Data\AbstractMetadata;
 
-use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
@@ -32,7 +30,7 @@ class Dao extends Model\Dao\AbstractDao
 
     public function save(DataObject\Concrete $object, string $ownertype, string $ownername, string $position, int $index, string $type = 'object')
     {
-        throw new \Exception("Needs to be implemented by child class");
+        throw new \Exception('Needs to be implemented by child class');
     }
 
     protected function getTablename(DataObject\Concrete $object): string
@@ -42,7 +40,7 @@ class Dao extends Model\Dao\AbstractDao
 
     public function load(DataObject\Concrete $source, int $destinationId, string $fieldname, string $ownertype, string $ownername, string $position, int $index): ?Model\AbstractModel
     {
-        throw new \Exception("Needs to be implemented by child class");
+        throw new \Exception('Needs to be implemented by child class');
     }
 
     public function createOrUpdateTable(DataObject\ClassDefinition $class)

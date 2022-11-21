@@ -29,7 +29,6 @@ final class StringReplace extends AbstractOperator
 
     private bool $insensitive;
 
-
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);

@@ -389,8 +389,7 @@ class PortalController extends AdminController implements KernelControllerEventI
     public function portletAnalyticsSitesAction(
         TranslatorInterface $translator,
         SiteConfigProvider $siteConfigProvider
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $sites = new Site\Listing();
         $data = [
             [

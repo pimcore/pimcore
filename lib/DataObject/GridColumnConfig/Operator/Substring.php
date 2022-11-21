@@ -29,7 +29,6 @@ final class Substring extends AbstractOperator
 
     private bool $ellipses;
 
-
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);

@@ -31,7 +31,6 @@ use Pimcore\Tests\Support\Util\TestHelper;
 
 abstract class AbstractDataTypeTestCase extends TestCase
 {
-
     protected bool $cleanupDbInSetup = true;
 
     protected TestDataHelper $testDataHelper;

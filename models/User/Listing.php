@@ -24,7 +24,6 @@ use Pimcore\Model\User;
  */
 class Listing extends Listing\AbstractListing
 {
-
     protected string $type = 'user';
 
     /**

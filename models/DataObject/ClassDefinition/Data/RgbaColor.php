@@ -19,7 +19,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
-use Pimcore\Model\DataObject\ClassDefinition\Data\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
@@ -97,6 +96,7 @@ class RgbaColor extends Data implements
      * @param array $params
      *
      * @return array
+     *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -124,6 +124,7 @@ class RgbaColor extends Data implements
      * @param array $params
      *
      * @return Model\DataObject\Data\RgbaColor|null
+     *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -154,6 +155,7 @@ class RgbaColor extends Data implements
      * @param array $params
      *
      * @return array
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -168,6 +170,7 @@ class RgbaColor extends Data implements
      * @param array $params
      *
      * @return string|null
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -188,6 +191,7 @@ class RgbaColor extends Data implements
      * @param array $params
      *
      * @return Model\DataObject\Data\RgbaColor|null
+     *
      * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\RgbaColor

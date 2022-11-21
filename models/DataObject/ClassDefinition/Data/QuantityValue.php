@@ -23,7 +23,6 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
-use Pimcore\Model\DataObject\ClassDefinition\Data\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
 use Pimcore\Normalizer\NormalizerInterface;
@@ -416,6 +415,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @param array $params
      *
      * @return array
+     *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -442,6 +442,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @param array $params
      *
      * @return Model\DataObject\Data\QuantityValue|null
+     *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -473,6 +474,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @param array $params
      *
      * @return array
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -487,6 +489,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @param array $params
      *
      * @return array|null
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -520,6 +523,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @param array $params
      *
      * @return Model\DataObject\Data\QuantityValue|null
+     *
      * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\QuantityValue
@@ -541,6 +545,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */

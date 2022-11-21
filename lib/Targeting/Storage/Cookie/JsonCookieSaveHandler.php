@@ -49,6 +49,7 @@ class JsonCookieSaveHandler extends AbstractCookieSaveHandler
             return null;
         }
         $preparedData = json_encode($data);
+
         return json_encode($data);
     }
 }

@@ -34,6 +34,7 @@ trait OwnerAwareFieldTrait
      * @param mixed $owner
      *
      * @return $this;
+     *
      *@internal
      *
      */

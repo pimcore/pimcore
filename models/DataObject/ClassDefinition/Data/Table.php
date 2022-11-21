@@ -247,6 +247,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param array $params
      *
      * @return string|null
+     *
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -271,6 +272,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param array $params
      *
      * @return array
+     *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -314,6 +316,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param array $params
      *
      * @return string
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -341,6 +344,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param array $params
      *
      * @return array|null
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -372,6 +376,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param array $params
      *
      * @return array|null
+     *
      * @see Data::getDataFromEditmode
      *
      */
@@ -413,6 +418,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */

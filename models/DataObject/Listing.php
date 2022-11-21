@@ -92,8 +92,6 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      *
      * Methods for AdapterInterface
      */
-
-
     public function count(): int
     {
         return $this->getDao()->getTotalCount();
@@ -126,6 +124,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      * @param float|array|int|string $data comparison data, can be scalar or array (if operator is e.g. "IN (?)")
      *
      * @return $this
+     *
      *@internal
      *
      */

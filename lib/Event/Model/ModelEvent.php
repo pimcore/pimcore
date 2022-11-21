@@ -17,8 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Event\Model;
 
 use Pimcore\Event\Traits\ArgumentsAwareTrait;
-use Pimcore\Model\AbstractModel;
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\ModelInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 

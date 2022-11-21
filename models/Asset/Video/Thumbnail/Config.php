@@ -179,7 +179,8 @@ final class Config extends Model\AbstractModel
      * @param array $parameters
      * @param string|null $media
      *
-          * @return bool
+     * @return bool
+     *
      *@internal
      *
      */

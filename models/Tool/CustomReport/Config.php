@@ -129,6 +129,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
      * @param Config|null $fullConfig
      *
      * @return Model\Tool\CustomReport\Adapter\CustomReportAdapterInterface
+     *
      *@deprecated Use ServiceLocator with id 'pimcore.custom_report.adapter.factories' to determine the factory for the adapter instead
      *
      */

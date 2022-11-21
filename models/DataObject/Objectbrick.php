@@ -309,6 +309,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      * @param string $field
      *
      * @throws \Exception
+     *
      *@internal
      *
      */

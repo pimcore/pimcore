@@ -18,7 +18,6 @@ namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
 class Date extends Data
 {
-
     public function getDataFromEditMode(mixed $data, array $params = []): mixed
     {
         return $this->normalize($data, $params);

@@ -256,7 +256,6 @@ class HeadLink extends CacheBusterAware
      *
      * @return void
      */
-
     public function offsetSet($offset, mixed $value): void
     {
         if (!$this->_isValid($value)) {

@@ -162,9 +162,10 @@ class Image extends Model\Asset
     /**
      * @param string|null $generator
      *
-          * @return bool|string
+     * @return bool|string
      *
      * @throws \Exception
+     *
      *@internal
      *
      */

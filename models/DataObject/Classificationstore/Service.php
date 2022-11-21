@@ -42,6 +42,7 @@ class Service
      * @param KeyConfig|KeyGroupRelation $keyConfig
      *
      * @return EncryptedField|Data|null
+     *
      * @throws \Exception
      */
     public static function getFieldDefinitionFromKeyConfig(KeyConfig|KeyGroupRelation $keyConfig): DataObject\ClassDefinition\Data\EncryptedField|DataObject\ClassDefinition\Data|null

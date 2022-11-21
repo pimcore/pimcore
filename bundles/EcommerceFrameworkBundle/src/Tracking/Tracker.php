@@ -42,10 +42,10 @@ abstract class Tracker implements TrackerInterface
      */
     public function __construct(
         TrackingItemBuilderInterface $trackingItemBuilder,
-        Environment                  $twig,
-        array                        $options = [],
-        array                        $assortmentTenants = [],
-        array                        $checkoutTenants = []
+        Environment $twig,
+        array $options = [],
+        array $assortmentTenants = [],
+        array $checkoutTenants = []
     ) {
         $this->trackingItemBuilder = $trackingItemBuilder;
         $this->twig = $twig;

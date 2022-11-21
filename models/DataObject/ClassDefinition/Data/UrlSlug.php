@@ -22,7 +22,6 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
-use Pimcore\Model\DataObject\ClassDefinition\Data\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
@@ -92,6 +91,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      * @param array $params
      *
      * @return array
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -128,6 +128,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      * @param array $params
      *
      * @return Model\DataObject\Data\UrlSlug[]
+     *
      * @see Data::getDataFromEditmode
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
@@ -222,7 +223,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         $db = Db::get();
         $data = $this->getDataFromObjectParam($object, $params);
 
-        if($data !== null) {
+        if ($data !== null) {
             $slugs = $this->prepareDataForPersistence($data, $object, $params);
 
             // delete rows first
@@ -578,7 +579,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     /**
      * { @inheritdoc }
      */
-    public function preGetData(mixed $container, array $params = []) : mixed
+    public function preGetData(mixed $container, array $params = []): mixed
     {
         $data = null;
         if ($container instanceof Model\DataObject\Concrete) {
@@ -627,7 +628,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     /**
      * { @inheritdoc }
      */
-    public function preSetData(mixed $container, mixed $data, array $params = []) : mixed
+    public function preSetData(mixed $container, mixed $data, array $params = []): mixed
     {
         if ($data === null) {
             $data = [];

@@ -55,6 +55,7 @@ interface TokenManagerInterface
      * @param CartInterface $cart
      *
      * @return bool
+     *
      *@throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException
      *
      */
@@ -67,6 +68,7 @@ interface TokenManagerInterface
      * @param CartInterface $cart
      *
      * @return bool
+     *
      *@throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException
      *
      */
@@ -81,6 +83,7 @@ interface TokenManagerInterface
      * @param AbstractOrder $order
      *
      * @return bool|\Pimcore\Model\DataObject\OnlineShopVoucherToken
+     *
      *@throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException
      *
      */

@@ -61,6 +61,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      * @param array $params
      *
      * @return string
+     *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -109,6 +110,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      * @param array $params
      *
      * @return array|null
+     *
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -123,6 +125,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      * @param array $params
      *
      * @return string
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -137,6 +140,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      * @param array $params
      *
      * @return array|null
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -165,6 +169,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      * @param array $params
      *
      * @return DataObject\Data\GeoCoordinates[]|null
+     *
      *@see Data::getDataFromEditmode
      *
      */
@@ -188,6 +193,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */

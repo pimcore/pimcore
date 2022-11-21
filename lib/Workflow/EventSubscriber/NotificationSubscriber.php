@@ -19,7 +19,6 @@ namespace Pimcore\Workflow\EventSubscriber;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Element\ValidationException;
 use Pimcore\Workflow;
 use Pimcore\Workflow\Notification\NotificationEmailService;
 use Pimcore\Workflow\Transition;

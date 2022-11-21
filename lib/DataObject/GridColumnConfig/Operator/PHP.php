@@ -26,7 +26,6 @@ final class PHP extends AbstractOperator
 {
     private string $mode;
 
-
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);

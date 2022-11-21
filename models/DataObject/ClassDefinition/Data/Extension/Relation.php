@@ -22,6 +22,7 @@ trait Relation
      * @param bool $asArray
      *
      * @return string[]
+     *
      *@internal
      *
      */

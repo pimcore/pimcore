@@ -386,6 +386,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * loads search results from index and returns them
      *
      * @return array
+     *
      * @throws \Exception
      */
     public function load(): array
@@ -1168,8 +1169,8 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected function sendRequest(array $params): array
     {
         $tenantWorker = $this->tenantConfig->getTenantWorker();
-        if(!($tenantWorker instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\AbstractElasticSearch)) {
-            throw new InvalidConfigException("Invalid tenant worker configured. Should be instance of AbstractElasticSearch.");
+        if (!($tenantWorker instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\AbstractElasticSearch)) {
+            throw new InvalidConfigException('Invalid tenant worker configured. Should be instance of AbstractElasticSearch.');
         }
 
         /**
@@ -1222,8 +1223,6 @@ abstract class AbstractElasticSearch implements ProductListInterface
      *   Methods for Iterator
      *  -----------------------------------------------------------------------------------------
      */
-
-
     public function count(): int
     {
         $this->getProducts();
@@ -1234,7 +1233,6 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * @return IndexableInterface|false
      */
-
     public function current(): bool|IndexableInterface
     {
         $this->getProducts();

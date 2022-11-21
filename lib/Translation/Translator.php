@@ -373,6 +373,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
     /**
      * @param string $adminPath
+     *
      *@internal
      *
      */
@@ -413,6 +414,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
     /**
      * @param Kernel $kernel
+     *
      *@internal
      *
      */

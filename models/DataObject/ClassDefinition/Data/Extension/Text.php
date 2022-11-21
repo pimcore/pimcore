@@ -50,6 +50,7 @@ trait Text
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */

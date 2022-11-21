@@ -190,6 +190,7 @@ class Cache
      * Write and clean up cache
      *
      * @param bool $forceWrite
+     *
      *@internal
      *
      */

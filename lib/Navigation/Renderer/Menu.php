@@ -615,18 +615,17 @@ class Menu extends AbstractRenderer
      */
     protected function _renderDeepestMenu(
         Container $container,
-        string    $ulClass,
-        string    $indent,
-        string    $innerIndent,
-        ?int      $minDepth,
-        ?int      $maxDepth,
-        ?string   $ulId,
-        bool      $addPageClassToLi,
-        ?string   $activeClass,
-        string    $parentClass,
-        bool      $renderParentClass
-    ): string
-    {
+        string $ulClass,
+        string $indent,
+        string $innerIndent,
+        ?int $minDepth,
+        ?int $maxDepth,
+        ?string $ulId,
+        bool $addPageClassToLi,
+        ?string $activeClass,
+        string $parentClass,
+        bool $renderParentClass
+    ): string {
         if (!$active = $this->findActive($container, $minDepth - 1, $maxDepth)) {
             return '';
         }
@@ -715,21 +714,20 @@ class Menu extends AbstractRenderer
      * @return string                                       rendered menu (HTML)
      */
     protected function _renderMenu(
-        Container    $container,
+        Container $container,
         array|string $ulClasses,
-        string       $indent,
-        string       $innerIndent,
-        ?int         $minDepth,
-        ?int         $maxDepth,
-        bool         $onlyActive,
-        bool         $expandSibs,
-        ?string      $ulId,
-        bool         $addPageClassToLi,
-        ?string      $activeClass,
-        string       $parentClass,
-        bool      $renderParentClass
-    ): string
-    {
+        string $indent,
+        string $innerIndent,
+        ?int $minDepth,
+        ?int $maxDepth,
+        bool $onlyActive,
+        bool $expandSibs,
+        ?string $ulId,
+        bool $addPageClassToLi,
+        ?string $activeClass,
+        string $parentClass,
+        bool $renderParentClass
+    ): string {
         $html = '';
 
         // find deepest active
@@ -976,14 +974,13 @@ class Menu extends AbstractRenderer
      * @return string                                   rendered content
      */
     public function renderSubMenu(
-        Container  $container,
-        string     $ulClass = null,
+        Container $container,
+        string $ulClass = null,
         int|string $indent = null,
-        string     $ulId = null,
-        bool       $addPageClassToLi = false,
+        string $ulId = null,
+        bool $addPageClassToLi = false,
         int|string $innerIndent = null
-    ): string
-    {
+    ): string {
         return $this->renderMenu($container, [
             'indent' => $indent,
             'innerIndent' => $innerIndent,

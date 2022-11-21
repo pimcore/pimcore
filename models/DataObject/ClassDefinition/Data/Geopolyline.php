@@ -66,6 +66,7 @@ class Geopolyline extends AbstractGeo implements
      * @param array $params
      *
      * @return string
+     *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -80,6 +81,7 @@ class Geopolyline extends AbstractGeo implements
      * @param array $params
      *
      * @return array|null
+     *
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -94,6 +96,7 @@ class Geopolyline extends AbstractGeo implements
      * @param array $params
      *
      * @return string
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -142,6 +145,7 @@ class Geopolyline extends AbstractGeo implements
      * @param array $params
      *
      * @return array|null
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -170,6 +174,7 @@ class Geopolyline extends AbstractGeo implements
      * @param array $params
      *
      * @return DataObject\Data\GeoCoordinates[]|null
+     *
      *@see Data::getDataFromEditmode
      *
      */
@@ -193,6 +198,7 @@ class Geopolyline extends AbstractGeo implements
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */

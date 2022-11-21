@@ -756,7 +756,6 @@ class TestHelper
             if ($cleanTags) {
                 static::cleanUpTags();
             }
-
         } catch (\Exception $e) {
             Logger::error((string) $e);
         }

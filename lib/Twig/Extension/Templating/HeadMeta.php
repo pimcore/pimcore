@@ -252,7 +252,6 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @throws Exception
      */
-
     public function offsetSet($offset, mixed $value): void
     {
         if (!$this->_isValid($value)) {
@@ -271,7 +270,6 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @throws Exception
      */
-
     public function offsetUnset($index): void
     {
         if (!in_array($index, $this->getContainer()->getKeys())) {

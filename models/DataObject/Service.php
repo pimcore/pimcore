@@ -1653,6 +1653,7 @@ class Service extends Model\Element\Service
      * @param array $descriptor
      *
      * @return array
+     *
      *@internal
      *
      */

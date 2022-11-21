@@ -223,6 +223,7 @@ class CustomLayout extends Model\AbstractModel
      * @param string $classId
      *
      * @return UuidV4|null
+     *
      *@internal
      *
      */

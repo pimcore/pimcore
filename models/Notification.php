@@ -237,7 +237,7 @@ class Notification extends AbstractModel
     public function setLinkedElement(?Element\ElementInterface $linkedElement): static
     {
         $this->linkedElement = $linkedElement;
-        $this->linkedElementType = $linkedElement instanceof Element\ElementInterface ? Element\Service::getElementType($linkedElement): null;
+        $this->linkedElementType = $linkedElement instanceof Element\ElementInterface ? Element\Service::getElementType($linkedElement) : null;
 
         return $this;
     }

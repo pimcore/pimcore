@@ -124,6 +124,7 @@ final class Config implements ArrayAccess
     /**
      * @param array|null $configuration
      * @param string|null $offset
+     *
      *@internal ONLY FOR TESTING PURPOSES IF NEEDED FOR SPECIFIC TEST CASES
      *
      */
@@ -140,7 +141,8 @@ final class Config implements ArrayAccess
     /**
      * @param string|null $offset
      *
-          * @return null|array
+     * @return null|array
+     *
      *@internal
      *
      */
@@ -163,7 +165,8 @@ final class Config implements ArrayAccess
     /**
      * @param string|null $languange
      *
-          * @return string
+     * @return string
+     *
      *@internal
      *
      */
@@ -292,6 +295,7 @@ final class Config implements ArrayAccess
     /**
      * @param array|null $config
      * @param string|null $language
+     *
      *@internal
      *
      */
@@ -455,6 +459,7 @@ final class Config implements ArrayAccess
      * @param string $key
      *
      * @return bool
+     *
      *@internal
      *
      */
@@ -503,6 +508,7 @@ final class Config implements ArrayAccess
      * @return array
      *
      * @throws Exception
+     *
      *@internal
      *
      */

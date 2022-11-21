@@ -63,6 +63,7 @@ final class Site extends AbstractModel
      * @param int $id
      *
      * @return Site|string|null
+     *
      * @throws \Exception
      */
     public static function getById(int $id): Site|string|null
@@ -107,6 +108,7 @@ final class Site extends AbstractModel
      * @param string $domain
      *
      * @return Site|string|null
+     *
      * @throws \Exception
      */
     public static function getByDomain(string $domain): Site|string|null
@@ -140,6 +142,7 @@ final class Site extends AbstractModel
      * @param mixed $mixed
      *
      * @return Site|string|null
+     *
      * @throws \Exception
      */
     public static function getBy(mixed $mixed): Site|string|null

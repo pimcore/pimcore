@@ -252,6 +252,7 @@ final class Config
      * @param string $name
      *
      * @return array
+     *
      *@internal
      *
      */

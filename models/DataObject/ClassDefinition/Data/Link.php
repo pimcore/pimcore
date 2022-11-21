@@ -65,6 +65,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param array $params
      *
      * @return string|null
+     *
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -103,6 +104,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param array $params
      *
      * @return DataObject\Data\Link|null
+     *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -136,6 +138,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param array $params
      *
      * @return string|null
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -150,6 +153,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param array $params
      *
      * @return array|null
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -182,6 +186,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param array $params
      *
      * @return DataObject\Data\Link|null
+     *
      *@see Data::getDataFromEditmode
      *
      */
@@ -215,6 +220,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */

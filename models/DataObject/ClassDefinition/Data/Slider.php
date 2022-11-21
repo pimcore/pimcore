@@ -207,6 +207,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @param array $params
      *
      * @return float|null
+     *
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -225,6 +226,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @param array $params
      *
      * @return float|null
+     *
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -243,6 +245,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @param array $params
      *
      * @return float|null
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -257,6 +260,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @param array $params
      *
      * @return float|null
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -271,6 +275,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @param array $params
      *
      * @return float|null
+     *
      * @see Data::getDataFromEditmode
      *
      */
@@ -297,6 +302,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */

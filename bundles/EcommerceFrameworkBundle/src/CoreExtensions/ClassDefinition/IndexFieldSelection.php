@@ -118,6 +118,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      * @param array $params
      *
      * @return array
+     *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -144,6 +145,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      * @param array $params
      *
      * @return ObjectData\IndexFieldSelection|null
+     *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -162,6 +164,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      * @param array $params
      *
      * @return array
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -176,6 +179,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      * @param array $params
      *
      * @return array|null
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -198,6 +202,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      * @param array $params
      *
      * @return ObjectData\IndexFieldSelection|null
+     *
      *@see Data::getDataFromEditmode
      *
      */
@@ -220,6 +225,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */
@@ -250,6 +256,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      * @param array $params
      *
      * @return string
+     *
      *@internal
      *
      */

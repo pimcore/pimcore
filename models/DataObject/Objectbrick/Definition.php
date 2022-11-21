@@ -23,9 +23,9 @@ use Pimcore\DataObject\ClassBuilder\PHPObjectBrickContainerClassDumperInterface;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\FieldDefinitionEnrichmentInterface;
 use Pimcore\Tool;
-use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Definition\Dao getDao()
@@ -446,6 +446,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      * @param string $fieldname
      *
      * @return string
+     *
      *@internal
      *
      */
@@ -459,6 +460,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      * @param string $fieldname
      *
      * @return string
+     *
      *@internal
      *
      */
@@ -471,6 +473,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      * @param string $classname
      *
      * @return string
+     *
      *@internal
      *
      */
@@ -559,6 +562,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      * @param string|null $key
      *
      * @return string
+     *
      *@internal
      *
      */

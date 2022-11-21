@@ -198,8 +198,6 @@ class WorkflowController extends AdminController implements KernelControllerEven
      *
      * @Route("/get-workflow-details", name="pimcore_admin_workflow_getworkflowdetailsstore")
      *
-     *
-     *
      * @throws \Exception
      */
     public function getWorkflowDetailsStore(Request $request, Manager $workflowManager, StatusInfo $placeStatusInfo, RouterInterface $router, ActionsButtonService $actionsButtonService): JsonResponse

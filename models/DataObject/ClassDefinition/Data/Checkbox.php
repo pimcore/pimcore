@@ -84,6 +84,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param array $params
      *
      * @return int|null
+     *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -100,6 +101,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param array $params
      *
      * @return bool|null
+     *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -118,6 +120,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param array $params
      *
      * @return int|null
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -132,6 +135,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param array $params
      *
      * @return int|null
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -146,6 +150,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param array $params
      *
      * @return bool
+     *
      * @see Data::getDataFromEditmode
      *
      */
@@ -160,6 +165,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */

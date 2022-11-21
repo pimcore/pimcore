@@ -21,7 +21,6 @@ use Pimcore\Model\Element\Service;
 
 class Asset extends Data
 {
-
     public function normalize(mixed $value, array $params = []): mixed
     {
         $element = Service::getElementByPath('asset', $value);
@@ -47,6 +46,7 @@ class Asset extends Data
      * @param array $params
      *
      * @return string
+     *
      *@deprecated use denormalize() instead, will be removed in Pimcore 11
      *
      */

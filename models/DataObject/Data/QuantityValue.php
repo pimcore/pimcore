@@ -32,7 +32,7 @@ class QuantityValue extends AbstractQuantityValue
      */
     public function __construct(float|int|string|null $value = null, Unit|string $unit = null)
     {
-       $this->value = $value;
+        $this->value = $value;
         parent::__construct($unit);
     }
 

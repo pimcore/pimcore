@@ -88,7 +88,9 @@ class Service
      * @param string $path
      *
      * @return WrapperInterface|Hardlink|null
+     *
      * @throws \Exception
+     *
      * @internal
      *
      * this is used to get children below a hardlink by a path
@@ -122,7 +124,9 @@ class Service
      * @param string $path
      *
      * @return WrapperInterface|Hardlink|null
+     *
      * @throws \Exception
+     *
      * @internal
      */
     public static function getNearestChildByPath(Document\Hardlink $hardlink, string $path): Wrapper\WrapperInterface|Wrapper\Hardlink|null

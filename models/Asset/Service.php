@@ -365,7 +365,8 @@ class Service extends Model\Element\Service
      * @param Asset $asset
      * @param array $rewriteConfig
      *
-          * @return Asset
+     * @return Asset
+     *
      *@internal
      *
      */
@@ -386,6 +387,7 @@ class Service extends Model\Element\Service
      * @param string $mode
      *
      * @return array
+     *
      *@internal
      *
      */

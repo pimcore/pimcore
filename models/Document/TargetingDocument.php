@@ -104,6 +104,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
         }
 
         parent::setEditable($editable);
+
         return $this;
     }
 

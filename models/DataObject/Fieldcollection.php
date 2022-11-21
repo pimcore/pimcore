@@ -187,8 +187,6 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * Methods for Iterator
      */
-
-
     public function rewind(): void
     {
         reset($this->items);
@@ -197,8 +195,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * @return TItem|false
      */
-
-    public function current() : mixed
+    public function current(): mixed
     {
         return current($this->items);
     }

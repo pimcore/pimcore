@@ -1264,8 +1264,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         Request $request,
         EventDispatcherInterface $eventDispatcher,
         DocumentRouteHandler $documentRouteHandler
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $filterPrepareEvent = new GenericEvent($this, [

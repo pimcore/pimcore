@@ -116,6 +116,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      * @param array $params
      *
      * @return array
+     *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -153,13 +154,14 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      * @param array $params
      *
      * @return DataObject\Data\Hotspotimage|null
+     *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
     public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Hotspotimage
     {
         $imageId = $data[$this->getName() . '__image'];
-        if($imageId === null) {
+        if ($imageId === null) {
             return null;
         }
         $image = Asset::getById($imageId);
@@ -220,6 +222,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      * @param array $params
      *
      * @return array
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -234,6 +237,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      * @param array $params
      *
      * @return array|null
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -283,6 +287,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      * @param array $params
      *
      * @return DataObject\Data\Hotspotimage
+     *
      *@see Data::getDataFromEditmode
      *
      */
@@ -337,6 +342,7 @@ class Hotspotimage extends Data implements ResourcePersistenceAwareInterface, Qu
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */

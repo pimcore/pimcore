@@ -230,6 +230,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @param array $params
      *
      * @return array
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -237,9 +238,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     {
         $return = [];
 
-        if($data != null) {
+        if ($data != null) {
             $rData = $this->prepareDataForPersistence($data, $object, $params);
-
 
             $return[$this->getName() . '__id'] = isset($rData[0]['dest_id']) ? $rData[0]['dest_id'] : null;
             $return[$this->getName() . '__type'] = isset($rData[0]['type']) ? $rData[0]['type'] : null;
@@ -254,6 +254,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @param array $params
      *
      * @return array|null
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -280,6 +281,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @param array $params
      *
      * @return Asset|Document|DataObject\AbstractObject|null
+     *
      *@see Data::getDataFromEditmode
      *
      */
@@ -322,6 +324,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */
@@ -438,7 +441,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * { @inheritdoc }
      */
-    public function preSetData(mixed $container, mixed $data, array $params = []) : mixed
+    public function preSetData(mixed $container, mixed $data, array $params = []): mixed
     {
         $this->markLazyloadedFieldAsLoaded($container);
 

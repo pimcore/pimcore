@@ -116,8 +116,7 @@ final class AreabrickPass implements CompilerPassInterface
         Definition $areaManagerDefinition,
         array $locatorMapping,
         array $excludedClasses
-    ): array
-    {
+    ): array {
         $bundles = $container->getParameter('kernel.bundles_metadata');
         //Find bricks from /src since AppBundle is removed
         $bundles['App'] = [

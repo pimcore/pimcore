@@ -27,7 +27,6 @@ final class Merge extends AbstractOperator
 
     private bool $unique;
 
-
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);

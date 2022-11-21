@@ -19,9 +19,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Carbon\Carbon;
 use Pimcore\Db;
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\DataObject;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
@@ -75,6 +75,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param array $params
      *
      * @return int|string|null
+     *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -100,6 +101,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param array $params
      *
      * @return Carbon|null
+     *
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -127,6 +129,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param array $params
      *
      * @return int|null
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -141,6 +144,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param array $params
      *
      * @return int|null
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -167,6 +171,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param array $params
      *
      * @return Carbon|null
+     *
      * @see Data::getDataFromEditmode
      *
      */
@@ -217,6 +222,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */

@@ -181,6 +181,7 @@ class Video extends Data implements
      * @param array $params
      *
      * @return string|null
+     *
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -211,6 +212,7 @@ class Video extends Data implements
      * @param array $params
      *
      * @return DataObject\Data\Video|null
+     *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -257,6 +259,7 @@ class Video extends Data implements
      * @param array $params
      *
      * @return string|null
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -271,6 +274,7 @@ class Video extends Data implements
      * @param array $params
      *
      * @return array|null
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -297,6 +301,7 @@ class Video extends Data implements
      * @param array $params
      *
      * @return DataObject\Data\Video|null
+     *
      *@see Data::getDataFromEditmode
      *
      */
@@ -371,6 +376,7 @@ class Video extends Data implements
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */

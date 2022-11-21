@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Normalizer\NormalizerInterface;
-use Pimcore\Model\DataObject;
 
 class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
@@ -155,6 +155,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param array $params
      *
      * @return string|null
+     *
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -169,6 +170,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param array $params
      *
      * @return string|null
+     *
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -183,6 +185,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param array $params
      *
      * @return string|null
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -197,6 +200,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param array $params
      *
      * @return string|null
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -211,6 +215,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getDataFromEditmode
      *
      */

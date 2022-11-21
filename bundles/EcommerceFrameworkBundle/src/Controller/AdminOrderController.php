@@ -203,8 +203,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
         ClientInterface $client,
         IntlFormatter $formatter,
         LocaleServiceInterface $localeService
-    ): Response
-    {
+    ): Response {
         $pimcoreSymfonyConfig = $this->getParameter('pimcore.config');
 
         // init

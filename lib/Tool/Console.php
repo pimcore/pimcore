@@ -244,6 +244,7 @@ final class Console
      * @param string|null $outputFile
      *
      * @return int
+     *
      *@deprecated since v6.9. For long running background tasks switch to a queue implementation.
      *
      */
@@ -261,6 +262,7 @@ final class Console
      * @param string|null $outputFile
      *
      * @return int
+     *
      *@deprecated since v.6.9. Use Symfony\Component\Process\Process instead. For long running background tasks use queues.
      *
      * @static
@@ -284,6 +286,7 @@ final class Console
      * @param bool $useNohup
      *
      * @return int
+     *
      *@deprecated since v.6.9. For long running background tasks use queues.
      *
      * @static
@@ -334,6 +337,7 @@ final class Console
      * @param string $outputFile
      *
      * @return int
+     *
      *@deprecated since v.6.9. For long running background tasks use queues.
      *
      * @static
@@ -359,6 +363,7 @@ final class Console
      * @param array|string $cmd
      *
      * @return void
+     *
      *@internal
      *
      */

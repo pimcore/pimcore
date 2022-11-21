@@ -224,7 +224,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $csField = $o->getCsstore();
         $groupConfig = Classificationstore\GroupConfig::getByName('testgroupQvalue');
         $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName('qValue', $store->getId());
-        $value = new \Pimcore\Model\DataObject\Data\QuantityValue(123, "1");
+        $value = new \Pimcore\Model\DataObject\Data\QuantityValue(123, '1');
         $csField->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $value);
         $o->save();
 
@@ -238,7 +238,7 @@ class GeneralTest extends AbstractClassificationStoreTest
         $this->assertEquals($value->getUnit(), $value1->getUnit());
 
         //clear value
-        $value = new \Pimcore\Model\DataObject\Data\QuantityValue(null, "1");
+        $value = new \Pimcore\Model\DataObject\Data\QuantityValue(null, '1');
         $o->getCsstore()->setLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $value);
         $o->save();
 

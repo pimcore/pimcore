@@ -18,8 +18,8 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
@@ -172,6 +172,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      * @param array $params
      *
      * @return array
+     *
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -212,6 +213,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      * @param array $params
      *
      * @return DataObject\Data\ImageGallery
+     *
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -279,6 +281,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      * @param array $params
      *
      * @return array
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -293,6 +296,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      * @param array $params
      *
      * @return array
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -316,6 +320,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      * @param array $params
      *
      * @return DataObject\Data\ImageGallery
+     *
      *@see Data::getDataFromEditmode
      *
      */
@@ -352,6 +357,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */

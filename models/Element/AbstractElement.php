@@ -386,6 +386,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * @param int|string $id
      *
      * @return string
+     *
      *@internal
      *
      */
@@ -582,6 +583,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      * @return Model\Version
      *
      * @throws \Exception
+     *
      * @internal
      *
      */
@@ -606,7 +608,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $version->setDate($this->getModificationDate());
         $version->setUserId($this->getUserModification());
         $version->setData($this);
-        if($versionNote !== null) {
+        if ($versionNote !== null) {
             $version->setNote($versionNote);
         }
         $version->setGenerateStackTrace($saveStackTrace);
@@ -701,6 +703,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * @param int|null $userId
+     *
      *@internal
      *
      */

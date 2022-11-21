@@ -253,8 +253,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * Methods for Iterator
      */
-
-
     public function rewind(): void
     {
         $this->setElements();
@@ -264,7 +262,6 @@ class Relations extends Model\Document\Editable implements \Iterator, IdRewriter
     /**
      * @return Element\ElementInterface|false
      */
-
     public function current(): bool|Element\ElementInterface
     {
         $this->setElements();

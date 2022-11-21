@@ -32,6 +32,7 @@ use Pimcore\Model\Exception\NotFoundException;
 class Rule extends AbstractModel implements RuleInterface
 {
     const ATTRIBUTE_BEHAVIOR_ADDITIVE = 'additiv';
+
     const ATTRIBUTE_BEHAVIOR_LASTRULE = 'stopExecute';
 
     protected ?int $id = null;

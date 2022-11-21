@@ -127,6 +127,7 @@ class Bracket implements BracketInterface
      * @param string $string
      *
      * @return $this
+     *
      *@throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
      *
      */

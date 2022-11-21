@@ -675,8 +675,6 @@ class DefaultMysql implements ProductListInterface
      *   Methods for Iterator
      *  -----------------------------------------------------------------------------------------
      */
-
-
     public function count(): int
     {
         if ($this->totalCount === null) {
@@ -689,7 +687,6 @@ class DefaultMysql implements ProductListInterface
     /**
      * @return IndexableInterface|false
      */
-
     public function current(): bool|IndexableInterface
     {
         $this->getProducts();

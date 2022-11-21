@@ -100,6 +100,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @param array $params
      *
      * @return array
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -156,6 +157,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @param array $params
      *
      * @return DataObject\Fieldcollection
+     *
      *@see Data::getDataFromEditmode
      *
      */
@@ -234,6 +236,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */
@@ -433,7 +436,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * { @inheritdoc }
      */
-    public function preGetData(mixed $container, array $params = []) : mixed
+    public function preGetData(mixed $container, array $params = []): mixed
     {
         if (!$container instanceof DataObject\Concrete) {
             throw new \Exception('Field Collections are only valid in Objects');
@@ -459,7 +462,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * { @inheritdoc }
      */
-    public function preSetData(mixed $container, mixed $data, array $params = []) : mixed
+    public function preSetData(mixed $container, mixed $data, array $params = []): mixed
     {
         $this->markLazyloadedFieldAsLoaded($container);
 

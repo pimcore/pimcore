@@ -34,7 +34,6 @@ final class TranslateValue extends AbstractOperator
      */
     private mixed $locale = null;
 
-
     public function __construct(TranslatorInterface $translator, \stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);

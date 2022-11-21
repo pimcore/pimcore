@@ -208,7 +208,8 @@ class DefaultMockup implements ProductInterface, LinkGeneratorAwareInterface, In
         return null;
     }
 
-    public function getClassId(): ?string {
+    public function getClassId(): ?string
+    {
         return null;
     }
 }

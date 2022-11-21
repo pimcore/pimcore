@@ -201,6 +201,7 @@ class Multiselect extends Data implements
      * @param array $params
      *
      * @return string|null
+     *
      *@see ResourcePersistenceAwareInterface::getDataForResource
      *
      */
@@ -219,6 +220,7 @@ class Multiselect extends Data implements
      * @param array $params
      *
      * @return array|null
+     *
      *@see ResourcePersistenceAwareInterface::getDataFromResource
      *
      */
@@ -237,6 +239,7 @@ class Multiselect extends Data implements
      * @param array $params
      *
      * @return string|null
+     *
      *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      */
@@ -255,6 +258,7 @@ class Multiselect extends Data implements
      * @param array $params
      *
      * @return string|null
+     *
      * @see Data::getDataForEditmode
      *
      */
@@ -310,6 +314,7 @@ class Multiselect extends Data implements
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getDataFromEditmode
      *
      */
@@ -324,6 +329,7 @@ class Multiselect extends Data implements
      * @param array $params
      *
      * @return string
+     *
      * @see Data::getVersionPreview
      *
      */

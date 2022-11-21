@@ -48,13 +48,13 @@ interface CartManagerInterface extends ComponentInterface
      */
     public function addToCart(
         CheckoutableInterface $product,
-        int                   $count,
-        string                $key = null,
-        string                $itemKey = null,
-        bool                  $replace = false,
-        array                 $params = [],
-        array                 $subProducts = [],
-        string                $comment = null
+        int $count,
+        string $key = null,
+        string $itemKey = null,
+        bool $replace = false,
+        array $params = [],
+        array $subProducts = [],
+        string $comment = null
     ): string;
 
     /**

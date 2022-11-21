@@ -142,6 +142,7 @@ class Breadcrumbs extends AbstractRenderer
     public function setPartial(string $partial): static
     {
         $this->setTemplate($partial);
+
         return $this;
     }
 

@@ -364,9 +364,10 @@ final class Translation extends AbstractModel
      * @param array|null $languages
      * @param array|null $dialect
      *
-          * @return array
+     * @return array
      *
      * @throws \Exception
+     *
      *@internal
      *
      */

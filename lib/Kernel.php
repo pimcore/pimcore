@@ -60,7 +60,6 @@ abstract class Kernel extends SymfonyKernel
      *
      * @return string
      */
-
     public function getProjectDir(): string
     {
         return PIMCORE_PROJECT_ROOT;
@@ -71,7 +70,6 @@ abstract class Kernel extends SymfonyKernel
      *
      * @return string
      */
-
     public function getCacheDir(): string
     {
         if (isset($_SERVER['APP_CACHE_DIR'])) {
@@ -86,7 +84,6 @@ abstract class Kernel extends SymfonyKernel
      *
      * @return string
      */
-
     public function getLogDir(): string
     {
         return PIMCORE_LOG_DIRECTORY;
