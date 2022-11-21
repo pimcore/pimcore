@@ -54,7 +54,7 @@ class InddPreviewGenerationHelper
 
             unlink($tmpPath);
             unlink($tmpPathPng);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
 
         }
     }
