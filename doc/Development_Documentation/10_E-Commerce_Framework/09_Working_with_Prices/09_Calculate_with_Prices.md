@@ -13,7 +13,7 @@ An example: Given a scale of 4, a `Decimal` will internally represent a number o
  
 To calculate with these values, the `Decimal` class exposes methods like `add()`, `sub()`, `mul()`, `div()` and others
 to run calculations without having to deal with the internal scale representation. For details see the [Decimal class definition](https://github.com/pimcore/pimcore/blob/10.5/bundles/EcommerceFrameworkBundle/Type/Decimal.php)
-and the corresponding [test](https://github.com/pimcore/pimcore/blob/10.x/tests/ecommerce/Type/DecimalTest.php)
+and the corresponding [test](https://github.com/pimcore/pimcore/blob/10.5/tests/Ecommerce/Type/DecimalTest.php)
 which contains a lot of usage examples and describes the `Decimal` behaviour quite well.
 
 > **Important**: The `Decimal` is designed as *immutable* value object. Every operation yields a *new* instance of a `Decimal`

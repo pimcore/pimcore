@@ -14,9 +14,9 @@ To accomplish that, you need to create your own price system implementation.
 ##### Implementation of Custom Price Systems
 
 To implement custom price systems, you need to implement the interface 
-[`PriceSystemInterface`](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/PriceSystem/PriceSystemInterface.php) 
+[`PriceSystemInterface`](https://github.com/pimcore/pimcore/blob/10.5/bundles/EcommerceFrameworkBundle/PriceSystem/PriceSystemInterface.php) 
 or extend any shipped implementation from the framework like for example the 
-[`AttributePriceSystem`](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/PriceSystem/AttributePriceSystem.php). 
+[`AttributePriceSystem`](https://github.com/pimcore/pimcore/blob/10.5/bundles/EcommerceFrameworkBundle/PriceSystem/AttributePriceSystem.php). 
 
 
 Following example implements a price system that retrieves prices from an extra price table. 

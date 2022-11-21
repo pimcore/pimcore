@@ -110,7 +110,7 @@ To ensure maximum security, it is advisable to combine this with an object DI to
 ### Hook into the Open Document|Asset|Data Object dialog
 
 By the default, Pimcore tries to a resolve an element by its ID or path.
-You can change this behavior by handling the [AdminEvents::RESOLVE_ELEMENT](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/AdminEvents.php) event
+You can change this behavior by handling the [AdminEvents::RESOLVE_ELEMENT](https://github.com/pimcore/pimcore/blob/10.5/lib/Event/AdminEvents.php) event
 and implement your own logic.
 
 ```php
@@ -138,7 +138,7 @@ and implement your own logic.
 Certain data types (like image, relations, etc ...) allow you to specify a dedicated upload path which defaults 
 to '/_default_upload_bucket' if not otherwise specified in the config yml file or in the class definition.
 
-The [AssetEvents::RESOLVE_UPLOAD_TARGET](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/AssetEvents.php) event
+The [AssetEvents::RESOLVE_UPLOAD_TARGET](https://github.com/pimcore/pimcore/blob/10.5/lib/Event/AssetEvents.php) event
 allows you to dynamically modify the target path depending on the object it will be assigned to. 
 Additional contextual information (like fieldname, fieldcollection index number, etc... ) could be utilized to
 support the decision.
