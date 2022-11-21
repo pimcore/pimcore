@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,62 +36,27 @@ class CustomLayout extends Model\AbstractModel
     use DataObject\ClassDefinition\Helper\VarExport;
     use RecursionBlockingEventDispatchHelperTrait;
 
-    /**
-     * @var string|null
-     */
-    protected $id;
+    protected ?string $id = null;
 
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $name;
 
-    /**
-     * @var string
-     */
-    protected $description;
+    protected string $description;
 
-    /**
-     * @var int|null
-     */
-    protected $creationDate;
+    protected ?int $creationDate = null;
 
-    /**
-     * @var int|null
-     */
-    protected $modificationDate;
+    protected ?int $modificationDate = null;
 
-    /**
-     * @var int
-     */
-    protected $userOwner;
+    protected int $userOwner;
 
-    /**
-     * @var int
-     */
-    protected $userModification;
+    protected int $userModification;
 
-    /**
-     * @var string
-     */
-    protected $classId;
+    protected string $classId;
 
-    /**
-     * @var Layout|null
-     */
-    protected $layoutDefinitions;
+    protected ?Layout $layoutDefinitions = null;
 
-    /**
-     * @var int
-     */
-    protected $default = 0;
+    protected int $default = 0;
 
-    /**
-     * @param string $id
-     *
-     * @return null|CustomLayout
-     */
-    public static function getById($id)
+    public static function getById(string $id): ?CustomLayout
     {
         $cacheKey = 'customlayout_' . $id;
 
@@ -119,7 +85,7 @@ class CustomLayout extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public static function getByName(string $name)
+    public static function getByName(string $name): ?CustomLayout
     {
         $cacheKey = 'customlayout_' . $name;
 
@@ -149,7 +115,7 @@ class CustomLayout extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public static function getByNameAndClassId(string $name, $classId)
+    public static function getByNameAndClassId(string $name, string $classId): ?CustomLayout
     {
         try {
             $customLayout = new self();
@@ -166,12 +132,7 @@ class CustomLayout extends Model\AbstractModel
         return null;
     }
 
-    /**
-     * @param string $field
-     *
-     * @return Data|null
-     */
-    public function getFieldDefinition($field)
+    public function getFieldDefinition(string $field): Data|Layout|null
     {
         /**
          * @param string $key
@@ -179,7 +140,7 @@ class CustomLayout extends Model\AbstractModel
          *
          * @return Data|null
          */
-        $findElement = static function ($key, $definition) use (&$findElement) {
+        $findElement = static function (string $key, Data|Layout $definition) use (&$findElement) {
             if ($definition->getName() === $key) {
                 return $definition;
             }
@@ -197,12 +158,7 @@ class CustomLayout extends Model\AbstractModel
         return $findElement($field, $this->getLayoutDefinitions());
     }
 
-    /**
-     * @param array $values
-     *
-     * @return CustomLayout
-     */
-    public static function create($values = [])
+    public static function create(array $values = []): CustomLayout
     {
         $class = new self();
         $class->setValues($values);
@@ -248,7 +204,7 @@ class CustomLayout extends Model\AbstractModel
      *
      * @return string
      */
-    protected function getInfoDocBlock()
+    protected function getInfoDocBlock(): string
     {
         $cd = '/**' . "\n";
 
@@ -264,13 +220,13 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param string $classId
      *
      * @return UuidV4|null
+     *@internal
+     *
      */
-    public static function getIdentifier($classId)
+    public static function getIdentifier(string $classId): ?UuidV4
     {
         try {
             $customLayout = new self();
@@ -300,10 +256,7 @@ class CustomLayout extends Model\AbstractModel
         $this->getDao()->delete();
     }
 
-    /**
-     * @return bool
-     */
-    public function exists()
+    public function exists(): bool
     {
         if (is_null($this->getId())) {
             return false;
@@ -313,194 +266,118 @@ class CustomLayout extends Model\AbstractModel
         return is_string($name);
     }
 
-    /**
-     * @return string|null
-     */
-    public function getId()
+    public function getId(): ?string
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getCreationDate()
+    public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getModificationDate()
+    public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
-    /**
-     * @return int
-     */
-    public function getUserOwner()
+    public function getUserOwner(): int
     {
         return $this->userOwner;
     }
 
-    /**
-     * @return int
-     */
-    public function getUserModification()
+    public function getUserModification(): int
     {
         return $this->userModification;
     }
 
-    /**
-     * @param string $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(string $id): static
     {
         $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getDefault()
+    public function getDefault(): int
     {
         return $this->default;
     }
 
-    /**
-     * @param int $default
-     *
-     * @return $this
-     */
-    public function setDefault($default)
+    public function setDefault(int $default): static
     {
         $this->default = (int)$default;
 
         return $this;
     }
 
-    /**
-     * @param int $creationDate
-     *
-     * @return $this
-     */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = (int) $creationDate;
 
         return $this;
     }
 
-    /**
-     * @param int $modificationDate
-     *
-     * @return $this
-     */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = (int) $modificationDate;
 
         return $this;
     }
 
-    /**
-     * @param int $userOwner
-     *
-     * @return $this
-     */
-    public function setUserOwner($userOwner)
+    public function setUserOwner(int $userOwner): static
     {
         $this->userOwner = (int) $userOwner;
 
         return $this;
     }
 
-    /**
-     * @param int $userModification
-     *
-     * @return $this
-     */
-    public function setUserModification($userModification)
+    public function setUserModification(int $userModification): static
     {
         $this->userModification = (int) $userModification;
 
         return $this;
     }
 
-    /**
-     * @param string $description
-     *
-     * @return $this
-     */
-    public function setDescription($description)
+    public function setDescription(string $description): static
     {
         $this->description = $description;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @param Layout|null $layoutDefinitions
-     */
-    public function setLayoutDefinitions($layoutDefinitions)
+    public function setLayoutDefinitions(?Layout $layoutDefinitions)
     {
         $this->layoutDefinitions = $layoutDefinitions;
     }
 
-    /**
-     * @return Layout|null
-     */
-    public function getLayoutDefinitions()
+    public function getLayoutDefinitions(): ?Layout
     {
         return $this->layoutDefinitions;
     }
 
-    /**
-     * @param string $classId
-     */
-    public function setClassId($classId)
+    public function setClassId(string $classId)
     {
         $this->classId = $classId;
     }
 
-    /**
-     * @return string
-     */
-    public function getClassId()
+    public function getClassId(): string
     {
         return $this->classId;
     }

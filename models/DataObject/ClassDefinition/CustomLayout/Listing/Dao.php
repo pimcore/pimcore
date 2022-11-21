@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -29,7 +30,7 @@ class Dao extends Model\DataObject\ClassDefinition\CustomLayout\Dao
      *
      * @return array
      */
-    public function load()
+    public function load(): array
     {
         $layouts = [];
 
@@ -50,10 +51,7 @@ class Dao extends Model\DataObject\ClassDefinition\CustomLayout\Dao
         return $layouts;
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         try {
             $layouts = [];

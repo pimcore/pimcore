@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -62,22 +63,16 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
 {
     use HelperCharsetTrait;
 
-    /**
-     * @var ContainerService
-     */
-    protected $containerService;
+    protected ContainerService $containerService;
 
-    /**
-     * @var Container
-     */
-    protected $_container;
+    protected Container $_container;
 
     /**
      * Registry key under which container registers itself
      *
      * @var string
      */
-    protected $_regKey;
+    protected string $_regKey;
 
     /**
      * Flag whether to automatically escape output, must also be
@@ -85,7 +80,7 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * @var bool
      */
-    protected $_autoEscape = true;
+    protected bool $_autoEscape = true;
 
     public function __construct(ContainerService $containerService)
     {
@@ -95,11 +90,11 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
     /**
      * Set whether or not auto escaping should be used
      *
-     * @param  bool $autoEscape whether or not to auto escape output
+     * @param bool $autoEscape whether or not to auto escape output
      *
-     * @return AbstractExtension
+     * @return $this
      */
-    public function setAutoEscape($autoEscape = true)
+    public function setAutoEscape(bool $autoEscape = true): static
     {
         $this->_autoEscape = ($autoEscape) ? true : false;
 
@@ -111,7 +106,7 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * return bool
      */
-    public function getAutoEscape()
+    public function getAutoEscape(): bool
     {
         return $this->_autoEscape;
     }
@@ -119,11 +114,11 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
     /**
      * Escape a string
      *
-     * @param  string $string
+     * @param string $string
      *
      * @return string
      */
-    protected function _escape($string)
+    protected function _escape(string $string): string
     {
         return htmlspecialchars((string) $string);
     }
@@ -133,9 +128,9 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * @param  Container $container
      *
-     * @return AbstractExtension
+     * @return $this
      */
-    public function setContainer(Container $container)
+    public function setContainer(Container $container): static
     {
         $this->containerService->setContainer($this->_regKey, $container);
 
@@ -147,7 +142,7 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * @return Container
      */
-    public function getContainer()
+    public function getContainer(): Container
     {
         return $this->containerService->getContainer($this->_regKey);
     }
@@ -155,12 +150,12 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
     /**
      * Overloading: set property value
      *
-     * @param  string $key
+     * @param string $key
      * @param  mixed $value
      *
      * @return void
      */
-    public function __set($key, $value)
+    public function __set(string $key, mixed $value)
     {
         $container = $this->getContainer();
         $container[$key] = $value;
@@ -169,11 +164,11 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
     /**
      * Overloading: retrieve property
      *
-     * @param  string $key
+     * @param string $key
      *
      * @return mixed
      */
-    public function __get($key)
+    public function __get(string $key)
     {
         $container = $this->getContainer();
         if (isset($container[$key])) {
@@ -186,11 +181,11 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
     /**
      * Overloading: check if property is set
      *
-     * @param  string $key
+     * @param string $key
      *
      * @return bool
      */
-    public function __isset($key)
+    public function __isset(string $key)
     {
         $container = $this->getContainer();
 
@@ -200,11 +195,11 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
     /**
      * Overloading: unset property
      *
-     * @param  string $key
+     * @param string $key
      *
      * @return void
      */
-    public function __unset($key)
+    public function __unset(string $key)
     {
         $container = $this->getContainer();
         if (isset($container[$key])) {
@@ -217,12 +212,12 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * Proxy to container methods
      *
-     * @param  string $method
-     * @param  array $args
+     * @param string $method
+     * @param array $args
      *
      * @return mixed
      */
-    public function __call($method, $args)
+    public function __call(string $method, array $args)
     {
         $container = $this->getContainer();
         if (method_exists($container, $method)) {
@@ -243,7 +238,7 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return $this->getContainer()->toString();
     }
@@ -263,8 +258,8 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * @return int
      */
-    #[\ReturnTypeWillChange]
-    public function count()// : int
+
+    public function count(): int
     {
         $container = $this->getContainer();
 
@@ -278,8 +273,8 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * @return bool
      */
-    #[\ReturnTypeWillChange]
-    public function offsetExists($offset)// : bool
+
+    public function offsetExists($offset): bool
     {
         return $this->getContainer()->offsetExists($offset);
     }
@@ -291,8 +286,8 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * @return mixed
      */
-    #[\ReturnTypeWillChange]
-    public function offsetGet($offset)// : mixed
+
+    public function offsetGet($offset): mixed
     {
         return $this->getContainer()->offsetGet($offset);
     }
@@ -305,8 +300,8 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * @return void
      */
-    #[\ReturnTypeWillChange]
-    public function offsetSet($offset, $value)// : void
+
+    public function offsetSet($offset, mixed $value): void
     {
         $this->getContainer()->offsetSet($offset, $value);
     }
@@ -318,8 +313,8 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * @return void
      */
-    #[\ReturnTypeWillChange]
-    public function offsetUnset($offset)// : void
+
+    public function offsetUnset($offset): void
     {
         $this->getContainer()->offsetUnset($offset);
     }
@@ -329,8 +324,8 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      *
      * @return \Traversable
      */
-    #[\ReturnTypeWillChange]
-    public function getIterator()// : \Traversable
+
+    public function getIterator(): \Traversable
     {
         return $this->getContainer()->getIterator();
     }

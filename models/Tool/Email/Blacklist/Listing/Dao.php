@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -29,7 +30,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @return array
      */
-    public function load()
+    public function load(): array
     {
         $addressData = $this->db->fetchFirstColumn('SELECT address FROM email_blacklist' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
@@ -45,10 +46,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $addresses;
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM email_blacklist ' . $this->getCondition(), $this->model->getConditionVariables());

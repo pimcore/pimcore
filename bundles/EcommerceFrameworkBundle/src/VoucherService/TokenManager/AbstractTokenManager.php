@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,28 +22,17 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherSeries;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
+use Pimcore\Model\DataObject\OnlineShopVoucherToken;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractTokenManager implements TokenManagerInterface, ExportableTokenManagerInterface
 {
-    /**
-     * @var AbstractVoucherTokenType
-     */
-    public $configuration;
+    public AbstractVoucherTokenType $configuration;
 
-    /**
-     * @var string|int|null
-     */
-    public $seriesId;
+    public string|int|null $seriesId;
 
-    /**
-     * @var AbstractVoucherSeries
-     */
-    public $series;
+    public AbstractVoucherSeries $series;
 
-    /**
-     * @param AbstractVoucherTokenType $configuration
-     */
     public function __construct(AbstractVoucherTokenType $configuration)
     {
         $this->configuration = $configuration;
@@ -52,17 +42,9 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
         $this->series = $series;
     }
 
-    /**
-     * @return bool
-     */
-    abstract public function isValidSetting();
+    abstract public function isValidSetting(): bool;
 
-    /**
-     * @param array $filter
-     *
-     * @return bool
-     */
-    abstract public function cleanUpCodes($filter = []);
+    abstract public function cleanUpCodes(?array $filter = []): bool;
 
     /**
      * @param string $code
@@ -72,7 +54,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
      *
      * @throws VoucherServiceException When validation fails for any reason
      */
-    public function checkToken($code, CartInterface $cart)
+    public function checkToken(string $code, CartInterface $cart): bool
     {
         $this->checkVoucherSeriesIsPublished($code);
         $this->checkAllowOncePerCart($code, $cart);
@@ -88,7 +70,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
      *
      * @throws VoucherServiceException When token for $code can't be found, series of token can't be found or if series isn't published.
      */
-    protected function checkVoucherSeriesIsPublished($code)
+    protected function checkVoucherSeriesIsPublished(string $code)
     {
         $token = Token::getByCode($code);
         if (!$token) {
@@ -112,7 +94,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
      *
      * @throws VoucherServiceException
      */
-    protected function checkAllowOncePerCart($code, CartInterface $cart)
+    protected function checkAllowOncePerCart(string $code, CartInterface $cart)
     {
         $cartCodes = $cart->getVoucherTokenCodes();
         if (method_exists($this->configuration, 'getAllowOncePerCart') && $this->configuration->getAllowOncePerCart()) {
@@ -158,9 +140,9 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
      *
      * @param array $params
      *
-     * @return string|false
+     * @return string
      */
-    public function exportCsv(array $params)
+    public function exportCsv(array $params): string
     {
         $translator = \Pimcore::getContainer()->get(TranslatorInterface::class);
 
@@ -195,7 +177,9 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
         rewind($stream);
         $result = stream_get_contents($stream);
         fclose($stream);
-
+        if(is_bool($result)) {
+            return '';
+        }
         return $result;
     }
 
@@ -206,7 +190,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
      *
      * @return string
      */
-    public function exportPlain(array $params)
+    public function exportPlain(array $params): string
     {
         $result = [];
         $data = null;
@@ -236,71 +220,46 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
      *
      * @throws \Exception
      */
-    protected function getExportData(array $params)
+    protected function getExportData(array $params): array
     {
         return [];
     }
 
-    /**
-     * @param string $code
-     * @param CartInterface $cart
-     *
-     * @return bool
-     */
-    abstract public function reserveToken($code, CartInterface $cart);
+    abstract public function reserveToken(string $code, CartInterface $cart): bool;
 
-    /**
-     * @param string $code
-     * @param CartInterface $cart
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order
-     *
-     * @return bool
-     */
-    abstract public function applyToken($code, CartInterface $cart, \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order);
+    abstract public function applyToken(string $code, CartInterface $cart, \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order): OnlineShopVoucherToken|bool;
 
-    /**
-     * @param string $code
-     * @param CartInterface $cart
-     *
-     * @return bool
-     */
-    abstract public function releaseToken($code, CartInterface $cart);
+    abstract public function releaseToken(string $code, CartInterface $cart): bool;
 
     /**
      * @param array|null $filter
      *
      * @return array|bool
      */
-    abstract public function getCodes($filter = null);
+    abstract public function getCodes(array $filter = null): bool|array;
 
     /**
-     * @param null|int $usagePeriod
+     * @param int|null $usagePeriod
      *
      * @return bool|array
      */
-    abstract public function getStatistics($usagePeriod = null);
+    abstract public function getStatistics(int $usagePeriod = null): bool|array;
 
-    /**
-     * @return AbstractVoucherTokenType
-     */
-    abstract public function getConfiguration();
+    abstract public function getConfiguration(): AbstractVoucherTokenType;
 
     /**
      * Returns bool false if failed - otherwise an array or a string with the codes
      *
      * @return bool | string | array
      */
-    abstract public function insertOrUpdateVoucherSeries();
+    abstract public function insertOrUpdateVoucherSeries(): bool|string|array;
 
-    /**
-     * @return  int
-     */
-    abstract public function getFinalTokenLength();
+    abstract public function getFinalTokenLength(): int;
 
     /**
      * {@inheritdoc}
      */
-    abstract public function cleanUpReservations($duration = 0);
+    abstract public function cleanUpReservations(int $duration = 0): bool;
 
     /**
      * @param array $viewParamsBag
@@ -308,5 +267,5 @@ abstract class AbstractTokenManager implements TokenManagerInterface, Exportable
      *
      * @return string The path of the template to display
      */
-    abstract public function prepareConfigurationView(&$viewParamsBag, $params);
+    abstract public function prepareConfigurationView(array &$viewParamsBag, array $params): string;
 }

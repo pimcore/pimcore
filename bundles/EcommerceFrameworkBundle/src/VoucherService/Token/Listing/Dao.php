@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -24,7 +25,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Listing;
  */
 class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
 {
-    public function load()
+    public function load(): array
     {
         $tokens = [];
 
@@ -45,10 +46,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
         return $tokens;
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         try {
             return (int)$this->db->fetchOne(

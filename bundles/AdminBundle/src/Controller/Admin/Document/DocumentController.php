@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -61,10 +62,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
     use DocumentTreeConfigTrait;
     use UserNameTrait;
 
-    /**
-     * @var Document\Service
-     */
-    protected $_documentService;
+    protected Document\Service $_documentService;
 
     /**
      * @Route("/tree-get-root", name="pimcore_admin_document_document_treegetroot", methods={"GET"})
@@ -73,7 +71,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return JsonResponse
      */
-    public function treeGetRootAction(Request $request)
+    public function treeGetRootAction(Request $request): JsonResponse
     {
         return parent::treeGetRootAction($request);
     }
@@ -86,7 +84,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return JsonResponse
      */
-    public function deleteInfoAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function deleteInfoAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
         return parent::deleteInfoAction($request, $eventDispatcher);
     }
@@ -94,11 +92,9 @@ class DocumentController extends ElementControllerBase implements KernelControll
     /**
      * @Route("/get-data-by-id", name="pimcore_admin_document_document_getdatabyid", methods={"GET"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
-    public function getDataByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function getDataByIdAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
         $document = Document::getById((int) $request->get('id'));
 
@@ -141,11 +137,9 @@ class DocumentController extends ElementControllerBase implements KernelControll
     /**
      * @Route("/tree-get-children-by-id", name="pimcore_admin_document_document_treegetchildrenbyid", methods={"GET"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
-    public function treeGetChildrenByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function treeGetChildrenByIdAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
@@ -168,7 +162,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         }
 
         $documents = [];
-        $cv = false;
+        $cv = [];
         if ($document->hasChildren()) {
             if ($allParams['view']) {
                 $cv = Service::getCustomViewById($allParams['view']);
@@ -256,7 +250,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return JsonResponse
      */
-    public function addAction(Request $request)
+    public function addAction(Request $request): JsonResponse
     {
         $success = false;
         $errorMessage = '';
@@ -413,7 +407,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return JsonResponse
      */
-    public function deleteAction(Request $request)
+    public function deleteAction(Request $request): JsonResponse
     {
         $type = $request->get('type');
 
@@ -468,7 +462,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @throws Exception
      */
-    public function updateAction(Request $request)
+    public function updateAction(Request $request): JsonResponse
     {
         $success = false;
         $allowUpdate = true;
@@ -597,7 +591,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                         $count = 0;
 
                         foreach ($childrenList as $child) {
-                            $source = preg_replace('@^' . preg_quote($document->getRealFullPath(), '@') . '@', $oldDocument, $child['path']);
+                            $source = preg_replace('@^' . preg_quote($document->getRealFullPath(), '@') . '@', $oldDocument->getRealFullPath(), $child['path']);
                             if ($sourceSite) {
                                 $source = preg_replace('@^' . preg_quote($sourceSite->getRootPath(), '@') . '@', '', $source);
                             }
@@ -638,11 +632,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $redirect->save();
     }
 
-    /**
-     * @param Document $document
-     * @param int $newIndex
-     */
-    protected function updateIndexesOfDocumentSiblings(Document $document, $newIndex)
+    protected function updateIndexesOfDocumentSiblings(Document $document, int $newIndex): void
     {
         $updateLatestVersionIndex = function ($document, $newIndex) {
             if ($document instanceof Document\PageSnippet && $latestVersion = $document->getLatestVersion()) {
@@ -680,7 +670,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return JsonResponse
      */
-    public function docTypesGetAction(Request $request)
+    public function docTypesGetAction(Request $request): JsonResponse
     {
         // get list of types
         $list = new Document\DocType\Listing();
@@ -705,7 +695,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return JsonResponse
      */
-    public function docTypesAction(Request $request)
+    public function docTypesAction(Request $request): JsonResponse
     {
         if ($request->get('data')) {
             $this->checkPermission('document_types');
@@ -767,7 +757,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return JsonResponse
      */
-    public function getDocTypesAction(Request $request)
+    public function getDocTypesAction(Request $request): JsonResponse
     {
         $list = new Document\DocType\Listing();
         if ($type = $request->get('type')) {
@@ -794,7 +784,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return Response
      */
-    public function versionToSessionAction(Request $request)
+    public function versionToSessionAction(Request $request): Response
     {
         $version = Version::getById((int) $request->get('id'));
         if (!$version) {
@@ -813,7 +803,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return JsonResponse
      */
-    public function publishVersionAction(Request $request)
+    public function publishVersionAction(Request $request): JsonResponse
     {
         $this->versionToSessionAction($request);
 
@@ -838,6 +828,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
             }
         }
 
+        $treeData = [];
         $this->addAdminStyle($document, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
 
         return $this->adminJson(['success' => true, 'treeData' => $treeData]);
@@ -850,7 +841,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return JsonResponse
      */
-    public function updateSiteAction(Request $request)
+    public function updateSiteAction(Request $request): JsonResponse
     {
         $domains = $request->get('domains');
         $domains = str_replace(' ', '', $domains);
@@ -893,7 +884,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return JsonResponse
      */
-    public function removeSiteAction(Request $request)
+    public function removeSiteAction(Request $request): JsonResponse
     {
         $site = Site::getByRootId((int)$request->get('id'));
         $site->delete();
@@ -908,7 +899,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return JsonResponse
      */
-    public function copyInfoAction(Request $request)
+    public function copyInfoAction(Request $request): JsonResponse
     {
         $transactionId = time();
         $pasteJobs = [];
@@ -1007,7 +998,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return JsonResponse
      */
-    public function copyRewriteIdsAction(Request $request)
+    public function copyRewriteIdsAction(Request $request): JsonResponse
     {
         $transactionId = $request->get('transactionId');
 
@@ -1052,7 +1043,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return JsonResponse
      */
-    public function copyAction(Request $request)
+    public function copyAction(Request $request): JsonResponse
     {
         $success = false;
         $sourceId = (int)$request->get('sourceId');
@@ -1134,7 +1125,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return Response
      */
-    public function diffVersionsAction(Request $request, $from, $to)
+    public function diffVersionsAction(Request $request, int $from, int $to): Response
     {
         // return with error if prerequisites do not match
         if (!Chromium::isSupported() || !class_exists('Imagick')) {
@@ -1199,7 +1190,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return BinaryFileResponse
      */
-    public function diffVersionsImageAction(Request $request)
+    public function diffVersionsImageAction(Request $request): BinaryFileResponse
     {
         $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/version-diff-tmp-' . $request->get('id') . '.png';
         if (file_exists($file)) {
@@ -1219,7 +1210,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return JsonResponse
      */
-    public function getIdForPathAction(Request $request)
+    public function getIdForPathAction(Request $request): JsonResponse
     {
         if ($doc = Document::getByPath($request->get('path'))) {
             return $this->adminJson([
@@ -1242,7 +1233,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return JsonResponse
      */
-    public function seopanelTreeRootAction(DocumentRouteHandler $documentRouteHandler)
+    public function seopanelTreeRootAction(DocumentRouteHandler $documentRouteHandler): JsonResponse
     {
         $this->checkPermission('seo_document_editor');
 
@@ -1273,7 +1264,8 @@ class DocumentController extends ElementControllerBase implements KernelControll
         Request $request,
         EventDispatcherInterface $eventDispatcher,
         DocumentRouteHandler $documentRouteHandler
-    ) {
+    ): JsonResponse
+    {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $filterPrepareEvent = new GenericEvent($this, [
@@ -1339,7 +1331,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return JsonResponse
      */
-    public function languageTreeAction(Request $request)
+    public function languageTreeAction(Request $request): JsonResponse
     {
         $document = Document::getById((int) $request->query->get('node'));
 
@@ -1362,7 +1354,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @throws Exception
      */
-    public function languageTreeRootAction(Request $request)
+    public function languageTreeRootAction(Request $request): JsonResponse
     {
         $document = Document::getById((int) $request->query->get('id'));
 
@@ -1458,7 +1450,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return JsonResponse
      */
-    public function convertAction(Request $request)
+    public function convertAction(Request $request): JsonResponse
     {
         $document = Document::getById((int) $request->get('id'));
         if (!$document) {
@@ -1499,7 +1491,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return JsonResponse
      */
-    public function translationDetermineParentAction(Request $request)
+    public function translationDetermineParentAction(Request $request): JsonResponse
     {
         $success = false;
         $targetDocument = null;
@@ -1530,7 +1522,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return JsonResponse
      */
-    public function translationAddAction(Request $request)
+    public function translationAddAction(Request $request): JsonResponse
     {
         $sourceDocument = Document::getById((int) $request->get('sourceId'));
         $targetDocument = Document::getByPath($request->get('targetPath'));
@@ -1563,7 +1555,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return JsonResponse
      */
-    public function translationRemoveAction(Request $request)
+    public function translationRemoveAction(Request $request): JsonResponse
     {
         $sourceDocument = Document::getById((int) $request->get('sourceId'));
         $targetDocument = Document::getById((int) $request->get('targetId'));
@@ -1584,7 +1576,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      *
      * @return JsonResponse
      */
-    public function translationCheckLanguageAction(Request $request)
+    public function translationCheckLanguageAction(Request $request): JsonResponse
     {
         $success = false;
         $language = null;
@@ -1629,9 +1621,6 @@ class DocumentController extends ElementControllerBase implements KernelControll
         return $nodeConfig;
     }
 
-    /**
-     * @param ControllerEvent $event
-     */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         if (!$event->isMainRequest()) {

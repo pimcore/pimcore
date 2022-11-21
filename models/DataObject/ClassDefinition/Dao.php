@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -34,17 +35,9 @@ class Dao extends Model\Dao\AbstractDao
      */
     protected $model;
 
-    /**
-     * @var mixed
-     */
-    protected $tableDefinitions = null;
+    protected array $tableDefinitions = [];
 
-    /**
-     * @param string $id
-     *
-     * @return string|null
-     */
-    public function getNameById($id)
+    public function getNameById(string $id): ?string
     {
         try {
             if (!empty($id)) {
@@ -65,7 +58,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getIdByName($name)
+    public function getIdByName(string $name): string
     {
         $id = null;
 
@@ -90,7 +83,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function save($isUpdate = true)
+    public function save(bool $isUpdate = true)
     {
         if (!$this->model->getId() || !$isUpdate) {
             $this->create();
@@ -230,7 +223,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->updateCompositeIndices($objectDatastoreTable, 'store', $this->model->getCompositeIndices());
         $this->updateCompositeIndices($objectTable, 'query', $this->model->getCompositeIndices());
 
-        $this->tableDefinitions = null;
+        $this->tableDefinitions = [];
     }
 
     /**
@@ -238,7 +231,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return void
      */
-    public function create()
+    public function create(): void
     {
         $this->db->insert('classes', ['name' => $this->model->getName(), 'id' => $this->model->getId()]);
     }
@@ -303,7 +296,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @param string $newName
      */
-    public function updateClassNameInObjects($newName)
+    public function updateClassNameInObjects(string $newName)
     {
         $this->db->update('objects', ['o_className' => $newName], ['o_classId' => $this->model->getId()]);
 

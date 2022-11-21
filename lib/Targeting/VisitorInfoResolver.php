@@ -43,40 +43,22 @@ class VisitorInfoResolver
 
     const STORAGE_KEY_MATCHED_VISITOR_RULES = 'vi:vru'; // visitorInfo:visitorRules
 
-    /**
-     * @var TargetingStorageInterface
-     */
-    private $targetingStorage;
+    private TargetingStorageInterface $targetingStorage;
 
-    /**
-     * @var VisitorInfoStorageInterface
-     */
-    private $visitorInfoStorage;
+    private VisitorInfoStorageInterface $visitorInfoStorage;
 
-    /**
-     * @var ConditionMatcherInterface
-     */
-    private $conditionMatcher;
+    private ConditionMatcherInterface $conditionMatcher;
 
-    /**
-     * @var DelegatingActionHandler|ActionHandlerInterface
-     */
-    private $actionHandler;
+    private ActionHandlerInterface|DelegatingActionHandler $actionHandler;
 
-    /**
-     * @var Connection
-     */
-    private $db;
+    private Connection $db;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
     /**
      * @var Rule[]|null
      */
-    private $targetingRules;
+    private ?array $targetingRules = null;
 
     private ?bool $targetingConfigured = null;
 

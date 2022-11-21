@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,22 +21,15 @@ use Pimcore\Tool;
 
 abstract class AbstractOperator implements OperatorInterface
 {
-    /**
-     * @var string
-     */
-    protected $label;
+    protected string $label;
 
     protected array $context = [];
 
     /**
      * @var ConfigElementInterface[]
      */
-    protected $children;
+    protected array $children;
 
-    /**
-     * @param \stdClass $config
-     * @param array $context
-     */
     public function __construct(\stdClass $config, array $context = [])
     {
         $this->label = $config->label;
@@ -46,47 +40,32 @@ abstract class AbstractOperator implements OperatorInterface
     /**
      * @return ConfigElementInterface[]
      */
-    public function getChildren()
+    public function getChildren(): array
     {
         return $this->children;
     }
 
-    /**
-     * @return bool
-     */
-    public function expandLocales()
+    public function expandLocales(): bool
     {
         return false;
     }
 
-    /**
-     * @return array
-     */
-    public function getContext()
+    public function getContext(): array
     {
         return $this->context;
     }
 
-    /**
-     * @param array $context
-     */
-    public function setContext($context)
+    public function setContext(array $context)
     {
         $this->context = $context;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }
 
-    /**
-     * @param string $label
-     */
-    public function setLabel($label)
+    public function setLabel(string $label)
     {
         $this->label = $label;
     }
@@ -94,7 +73,7 @@ abstract class AbstractOperator implements OperatorInterface
     /**
      * @return string[]
      */
-    public function getValidLanguages()
+    public function getValidLanguages(): array
     {
         return Tool::getValidLanguages();
     }

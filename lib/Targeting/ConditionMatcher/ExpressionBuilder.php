@@ -19,20 +19,11 @@ namespace Pimcore\Targeting\ConditionMatcher;
 
 class ExpressionBuilder
 {
-    /**
-     * @var array
-     */
-    private $parts = [];
+    private array $parts = [];
 
-    /**
-     * @var array
-     */
-    private $values = [];
+    private array $values = [];
 
-    /**
-     * @var int
-     */
-    private $valueIndex = 1;
+    private int $valueIndex = 1;
 
     public function getExpression(): string
     {
@@ -44,7 +35,7 @@ class ExpressionBuilder
         return $this->values;
     }
 
-    public function addCondition(array $config, bool $result)
+    public function addCondition(array $config, bool $result): void
     {
         if (!empty($this->parts)) {
             $this->parts[] = $this->normalizeOperator($config['operator']);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,48 +25,23 @@ use Psr\Log\LoggerInterface;
 
 class MultiCartManager implements CartManagerInterface
 {
-    /**
-     * @var EnvironmentInterface
-     */
-    protected $environment;
+    protected EnvironmentInterface $environment;
 
-    /**
-     * @var CartFactoryInterface
-     */
-    protected $cartFactory;
+    protected CartFactoryInterface $cartFactory;
 
-    /**
-     * @var CartPriceCalculatorFactoryInterface
-     */
-    protected $cartPriceCalculatorFactory;
+    protected CartPriceCalculatorFactoryInterface $cartPriceCalculatorFactory;
 
-    /**
-     * @var OrderManagerLocatorInterface
-     */
-    protected $orderManagers;
+    protected OrderManagerLocatorInterface $orderManagers;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
 
     /**
      * @var CartInterface[]
      */
-    protected $carts = [];
+    protected array $carts = [];
 
-    /**
-     * @var bool
-     */
-    protected $initialized = false;
+    protected bool $initialized = false;
 
-    /**
-     * @param EnvironmentInterface $environment
-     * @param CartFactoryInterface $cartFactory
-     * @param CartPriceCalculatorFactoryInterface $cartPriceCalculatorFactory
-     * @param OrderManagerLocatorInterface $orderManagers
-     * @param LoggerInterface $logger
-     */
     public function __construct(
         EnvironmentInterface $environment,
         CartFactoryInterface $cartFactory,
@@ -127,7 +103,7 @@ class MultiCartManager implements CartManagerInterface
     /**
      * @return CartInterface[]|null
      */
-    protected function getAllCartsForCurrentUser()
+    protected function getAllCartsForCurrentUser(): ?array
     {
         $classname = $this->getCartClassName();
 
@@ -144,20 +120,21 @@ class MultiCartManager implements CartManagerInterface
      * @param array $subProducts
      * @param string|null $comment
      *
-     * @return null|string
+     * @return string
      *
      * @throws InvalidConfigException
      */
     public function addToCart(
         CheckoutableInterface $product,
-        $count,
-        $key = null,
-        $itemKey = null,
-        $replace = false,
-        array $params = [],
-        array $subProducts = [],
-        $comment = null
-    ) {
+        int                   $count,
+        string                $key = null,
+        string                $itemKey = null,
+        bool                  $replace = false,
+        array                 $params = [],
+        array                 $subProducts = [],
+        string                $comment = null
+    ): string
+    {
         $this->checkForInit();
 
         if (empty($key) || !array_key_exists($key, $this->carts)) {
@@ -172,22 +149,21 @@ class MultiCartManager implements CartManagerInterface
         return $itemKey;
     }
 
-    /**
-     * @return void
-     */
-    public function save()
+    public function save(): mixed
     {
         $this->checkForInit();
 
         foreach ($this->carts as $cart) {
             $cart->save();
         }
+
+        return $this;
     }
 
     /**
      * @param string|null $key
      */
-    public function deleteCart($key = null)
+    public function deleteCart(string $key = null): void
     {
         $this->checkForInit();
 
@@ -202,7 +178,7 @@ class MultiCartManager implements CartManagerInterface
      *
      * @throws InvalidConfigException
      */
-    public function createCart(array $params)
+    public function createCart(array $params): int|string
     {
         $this->checkForInit();
 
@@ -229,7 +205,7 @@ class MultiCartManager implements CartManagerInterface
      *
      * @throws InvalidConfigException
      */
-    public function clearCart($key = null)
+    public function clearCart(string $key = null): void
     {
         $this->checkForInit();
 
@@ -250,7 +226,7 @@ class MultiCartManager implements CartManagerInterface
      *
      * @throws InvalidConfigException
      */
-    public function getCart($key = null)
+    public function getCart(string $key = null): CartInterface
     {
         $this->checkForInit();
 
@@ -261,12 +237,7 @@ class MultiCartManager implements CartManagerInterface
         return $this->carts[$key];
     }
 
-    /**
-     * @param string $name
-     *
-     * @return null|CartInterface
-     */
-    public function getCartByName($name)
+    public function getCartByName(string $name): ?CartInterface
     {
         $this->checkForInit();
 
@@ -286,7 +257,7 @@ class MultiCartManager implements CartManagerInterface
      *
      * @throws InvalidConfigException
      */
-    public function getOrCreateCartByName($name)
+    public function getOrCreateCartByName(string $name): CartInterface
     {
         $cart = $this->getCartByName($name);
 
@@ -316,7 +287,7 @@ class MultiCartManager implements CartManagerInterface
      *
      * @throws InvalidConfigException
      */
-    public function removeFromCart($itemKey, $key = null)
+    public function removeFromCart(string $itemKey, string $key = null): void
     {
         $this->checkForInit();
 
@@ -328,17 +299,12 @@ class MultiCartManager implements CartManagerInterface
         $cart->removeItem($itemKey);
     }
 
-    /**
-     * @param CartInterface $cart
-     *
-     * @return CartPriceCalculatorInterface
-     */
     public function getCartPriceCalculator(CartInterface $cart): CartPriceCalculatorInterface
     {
         return $this->cartPriceCalculatorFactory->create($this->environment, $cart);
     }
 
-    public function reset()
+    public function reset(): void
     {
         $this->carts = [];
         $this->initialized = false;

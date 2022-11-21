@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,25 +25,19 @@ class Payment implements OrderListFilterInterface
 
     const PAYMENT_STATE_FAIL = 'fail';
 
-    /**
-     * @var string
-     */
-    protected $value;
+    protected string $value;
 
     /**
      * Allowed origin values
      *
      * @var array
      */
-    protected $allowedValues = [
+    protected array $allowedValues = [
         self::PAYMENT_STATE_OK,
         self::PAYMENT_STATE_FAIL,
     ];
 
-    /**
-     * @param string $paymentState
-     */
-    public function __construct($paymentState)
+    public function __construct(string $paymentState)
     {
         if (!in_array($paymentState, $this->allowedValues)) {
             throw new \InvalidArgumentException('Invalid filter value');
@@ -51,12 +46,7 @@ class Payment implements OrderListFilterInterface
         $this->value = $paymentState;
     }
 
-    /**
-     * @param OrderListInterface $orderList
-     *
-     * @return OrderListFilterInterface
-     */
-    public function apply(OrderListInterface $orderList)
+    public function apply(OrderListInterface $orderList): OrderListFilterInterface
     {
         switch ($this->value) {
             case self::PAYMENT_STATE_OK:

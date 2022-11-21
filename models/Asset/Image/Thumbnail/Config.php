@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -52,121 +53,121 @@ final class Config extends Model\AbstractModel
      *
      * @var array
      */
-    protected $items = [];
+    protected array $items = [];
 
     /**
      * @internal
      *
      * @var array
      */
-    protected $medias = [];
+    protected array $medias = [];
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $name = '';
+    protected string $name = '';
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $description = '';
+    protected string $description = '';
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $group = '';
+    protected string $group = '';
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $format = 'SOURCE';
+    protected string $format = 'SOURCE';
 
     /**
      * @internal
      *
      * @var int
      */
-    protected $quality = 85;
+    protected int $quality = 85;
 
     /**
      * @internal
      *
      * @var float|null
      */
-    protected $highResolution;
+    protected ?float $highResolution = null;
 
     /**
      * @internal
      *
      * @var bool
      */
-    protected $preserveColor = false;
+    protected bool $preserveColor = false;
 
     /**
      * @internal
      *
      * @var bool
      */
-    protected $preserveMetaData = false;
+    protected bool $preserveMetaData = false;
 
     /**
      * @internal
      *
      * @var bool
      */
-    protected $rasterizeSVG = false;
+    protected bool $rasterizeSVG = false;
 
     /**
      * @internal
      *
      * @var bool
      */
-    protected $downloadable = false;
+    protected bool $downloadable = false;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected $modificationDate;
+    protected ?int $modificationDate = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected $creationDate;
+    protected ?int $creationDate = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected $filenameSuffix;
+    protected ?string $filenameSuffix = null;
 
     /**
      * @internal
      *
      * @var bool
      */
-    protected $preserveAnimation = false;
+    protected bool $preserveAnimation = false;
 
     /**
-     * @internal
-     *
-     * @param string|array|self $config
-     *
+     * @param array|string|self $config
+          *
      * @return self|null
+     *@internal
+     *
      */
-    public static function getByAutoDetect($config)
+    public static function getByAutoDetect(array|string|Config $config): ?Config
     {
         $thumbnail = null;
 
@@ -199,7 +200,7 @@ final class Config extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public static function getByName($name)
+    public static function getByName(string $name): ?Config
     {
         $cacheKey = self::getCacheKey($name);
 
@@ -235,21 +236,11 @@ final class Config extends Model\AbstractModel
         return $clone;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
     protected static function getCacheKey(string $name): string
     {
         return 'imagethumb_' . crc32($name);
     }
 
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
     public static function exists(string $name): bool
     {
         $cacheKey = self::getCacheKey($name);
@@ -269,7 +260,7 @@ final class Config extends Model\AbstractModel
      *
      * @return Config
      */
-    public static function getPreviewConfig()
+    public static function getPreviewConfig(): Config
     {
         $customPreviewImageThumbnail = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['preview_image_thumbnail'];
         $thumbnail = null;
@@ -297,10 +288,7 @@ final class Config extends Model\AbstractModel
         return $thumbnail;
     }
 
-    /**
-     * @param string $name
-     */
-    protected function createMediaIfNotExists($name)
+    protected function createMediaIfNotExists(string $name)
     {
         if (!array_key_exists($name, $this->medias)) {
             $this->medias[$name] = [];
@@ -308,15 +296,15 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param string $name
      * @param array $parameters
-     * @param string $media
+     * @param string|null $media
      *
-     * @return bool
+          * @return bool
+     *@internal
+     *
      */
-    public function addItem($name, $parameters, $media = null)
+    public function addItem(string $name, array $parameters, string $media = null): bool
     {
         $item = [
             'method' => $name,
@@ -335,16 +323,16 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param int $position
      * @param string $name
      * @param array $parameters
-     * @param string $media
+     * @param string|null $media
      *
-     * @return bool
+          * @return bool
+     *@internal
+     *
      */
-    public function addItemAt($position, $name, $parameters, $media = null)
+    public function addItemAt(int $position, string $name, array $parameters, string $media = null): bool
     {
         if (!$media || $media == 'default') {
             $itemContainer = &$this->items;
@@ -370,12 +358,7 @@ final class Config extends Model\AbstractModel
         $this->medias = [];
     }
 
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function selectMedia($name)
+    public function selectMedia(string $name): bool
     {
         if (preg_match('/^[0-9a-f]{8}$/', $name)) {
             $hash = $name;
@@ -396,92 +379,55 @@ final class Config extends Model\AbstractModel
         return false;
     }
 
-    /**
-     * @param string $description
-     *
-     * @return $this
-     */
-    public function setDescription($description)
+    public function setDescription(string $description): static
     {
         $this->description = $description;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @param array $items
-     *
-     * @return $this
-     */
-    public function setItems($items)
+    public function setItems(array $items): static
     {
         $this->items = $items;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getItems()
+    public function getItems(): array
     {
         return $this->items;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $format
-     *
-     * @return $this
-     */
-    public function setFormat($format)
+    public function setFormat(string $format): static
     {
         $this->format = $format;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getFormat()
+    public function getFormat(): string
     {
         return $this->format;
     }
 
-    /**
-     * @param int $quality
-     *
-     * @return $this
-     */
-    public function setQuality($quality)
+    public function setQuality(int $quality): static
     {
         if ($quality) {
             $this->quality = (int) $quality;
@@ -490,78 +436,54 @@ final class Config extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getQuality()
+    public function getQuality(): int
     {
         return $this->quality;
     }
 
-    /**
-     * @param float $highResolution
-     */
-    public function setHighResolution($highResolution)
+    public function setHighResolution(float $highResolution)
     {
         $this->highResolution = (float) $highResolution;
     }
 
-    /**
-     * @return float|null
-     */
-    public function getHighResolution()
+    public function getHighResolution(): ?float
     {
         return $this->highResolution;
     }
 
-    /**
-     * @param array $medias
-     */
-    public function setMedias($medias)
+    public function setMedias(array $medias)
     {
         $this->medias = $medias;
     }
 
-    /**
-     * @return array
-     */
-    public function getMedias()
+    public function getMedias(): array
     {
         return $this->medias;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasMedias()
+    public function hasMedias(): bool
     {
         return !empty($this->medias);
     }
 
-    /**
-     * @param string $filenameSuffix
-     */
-    public function setFilenameSuffix($filenameSuffix)
+    public function setFilenameSuffix(string $filenameSuffix)
     {
         $this->filenameSuffix = $filenameSuffix;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getFilenameSuffix()
+    public function getFilenameSuffix(): ?string
     {
         return $this->filenameSuffix;
     }
 
     /**
-     * @internal
-     *
      * @param array $config
      *
      * @return self
+     *@internal
+     *
      */
-    public static function getByArrayConfig($config)
+    public static function getByArrayConfig(array $config): Config
     {
         $pipe = new self();
 
@@ -589,13 +511,13 @@ final class Config extends Model\AbstractModel
     /**
      * This is mainly here for backward compatibility
      *
-     * @internal
-     *
      * @param array $config
      *
      * @return self
+     *@internal
+     *
      */
-    public static function getByLegacyConfig($config)
+    public static function getByLegacyConfig(array $config): Config
     {
         $pipe = new self();
 
@@ -674,13 +596,13 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param Model\Asset\Image $asset
      *
-     * @return array
+          * @return array
+     *@internal
+     *
      */
-    public function getEstimatedDimensions($asset)
+    public function getEstimatedDimensions(Model\Asset\Image $asset): array
     {
         $originalWidth = $asset->getWidth();
         $originalHeight = $asset->getHeight();
@@ -769,90 +691,57 @@ final class Config extends Model\AbstractModel
         return $dimensions;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getModificationDate()
+    public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
-    /**
-     * @param int $modificationDate
-     */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate)
     {
         $this->modificationDate = $modificationDate;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getCreationDate()
+    public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }
 
-    /**
-     * @param int $creationDate
-     */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate)
     {
         $this->creationDate = $creationDate;
     }
 
-    /**
-     * @return bool
-     */
-    public function isPreserveColor()
+    public function isPreserveColor(): bool
     {
         return $this->preserveColor;
     }
 
-    /**
-     * @param bool $preserveColor
-     */
-    public function setPreserveColor($preserveColor)
+    public function setPreserveColor(bool $preserveColor)
     {
         $this->preserveColor = $preserveColor;
     }
 
-    /**
-     * @return bool
-     */
-    public function isPreserveMetaData()
+    public function isPreserveMetaData(): bool
     {
         return $this->preserveMetaData;
     }
 
-    /**
-     * @param bool $preserveMetaData
-     */
-    public function setPreserveMetaData($preserveMetaData)
+    public function setPreserveMetaData(bool $preserveMetaData)
     {
         $this->preserveMetaData = $preserveMetaData;
     }
 
-    /**
-     * @return bool
-     */
     public function isRasterizeSVG(): bool
     {
         return $this->rasterizeSVG;
     }
 
-    /**
-     * @param bool $rasterizeSVG
-     */
     public function setRasterizeSVG(bool $rasterizeSVG): void
     {
         $this->rasterizeSVG = $rasterizeSVG;
     }
 
-    /**
-     * @return bool
-     */
-    public function isSvgTargetFormatPossible()
+    public function isSvgTargetFormatPossible(): bool
     {
         $supportedTransformations = ['resize', 'scaleByWidth', 'scaleByHeight'];
         foreach ($this->getItems() as $item) {
@@ -864,49 +753,31 @@ final class Config extends Model\AbstractModel
         return true;
     }
 
-    /**
-     * @return string
-     */
     public function getGroup(): string
     {
         return $this->group;
     }
 
-    /**
-     * @param string $group
-     */
     public function setGroup(string $group): void
     {
         $this->group = $group;
     }
 
-    /**
-     * @return bool
-     */
     public function getPreserveAnimation(): bool
     {
         return $this->preserveAnimation;
     }
 
-    /**
-     * @param bool $preserveAnimation
-     */
     public function setPreserveAnimation(bool $preserveAnimation): void
     {
         $this->preserveAnimation = $preserveAnimation;
     }
 
-    /**
-     * @return bool
-     */
     public function isDownloadable(): bool
     {
         return $this->downloadable;
     }
 
-    /**
-     * @param bool $downloadable
-     */
     public function setDownloadable(bool $downloadable): void
     {
         $this->downloadable = $downloadable;

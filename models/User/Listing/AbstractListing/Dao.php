@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -29,7 +30,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @return array
      */
-    public function load()
+    public function load(): array
     {
         $items = [];
         $usersData = $this->db->fetchAllAssociative('SELECT id,type FROM users' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
@@ -47,10 +48,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $items;
     }
 
-    /**
-     * @return string
-     */
-    protected function getCondition()
+    protected function getCondition(): string
     {
         $condition = parent::getCondition();
         if (!empty($condition)) {
@@ -65,10 +63,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $condition;
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM users ' . $this->getCondition(), $this->model->getConditionVariables());

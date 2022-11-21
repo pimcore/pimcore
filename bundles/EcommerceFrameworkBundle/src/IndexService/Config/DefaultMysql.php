@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,52 +27,32 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
  */
 class DefaultMysql extends AbstractConfig implements MysqlConfigInterface
 {
-    /**
-     * @return string
-     */
-    public function getTablename()
+    public function getTablename(): string
     {
         return 'ecommerceframework_productindex';
     }
 
-    /**
-     * @return string
-     */
-    public function getRelationTablename()
+    public function getRelationTablename(): string
     {
         return 'ecommerceframework_productindex_relations';
     }
 
-    /**
-     * @return string
-     */
-    public function getTenantRelationTablename()
+    public function getTenantRelationTablename(): string
     {
         return '';
     }
 
-    /**
-     * @return string
-     */
-    public function getJoins()
+    public function getJoins(): string
     {
         return '';
     }
 
-    /**
-     * @return string
-     */
-    public function getCondition()
+    public function getCondition(): string
     {
         return '';
     }
 
-    /**
-     * @param IndexableInterface $object
-     *
-     * @return bool
-     */
-    public function inIndex(IndexableInterface $object)
+    public function inIndex(IndexableInterface $object): bool
     {
         return true;
     }
@@ -84,7 +65,7 @@ class DefaultMysql extends AbstractConfig implements MysqlConfigInterface
      *
      * @return mixed $subTenantData
      */
-    public function prepareSubTenantEntries(IndexableInterface $object, $subObjectId = null)
+    public function prepareSubTenantEntries(IndexableInterface $object, int $subObjectId = null): mixed
     {
         return null;
     }
@@ -98,7 +79,7 @@ class DefaultMysql extends AbstractConfig implements MysqlConfigInterface
      *
      * @return void
      */
-    public function updateSubTenantEntries($objectId, $subTenantData, $subObjectId = null)
+    public function updateSubTenantEntries(mixed $objectId, mixed $subTenantData, mixed $subObjectId = null): void
     {
         return;
     }

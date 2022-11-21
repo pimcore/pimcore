@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -28,18 +29,9 @@ class Dao extends Model\Dao\AbstractDao
 {
     use DataObject\ClassDefinition\Helper\Dao;
 
-    /**
-     * @var array|null
-     */
-    protected $tableDefinitions = null;
+    protected array $tableDefinitions = [];
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     * @param bool $query
-     *
-     * @return string
-     */
-    public function getTableName(DataObject\ClassDefinition $class, $query = false)
+    public function getTableName(DataObject\ClassDefinition $class, bool $query = false): string
     {
         if ($query) {
             return 'object_brick_query_' . $this->model->getKey() . '_' . $class->getId();
@@ -48,14 +40,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     * @param bool $query
-     * @param string $language
-     *
-     * @return string
-     */
-    public function getLocalizedTableName(DataObject\ClassDefinition $class, $query = false, $language = 'en')
+    public function getLocalizedTableName(DataObject\ClassDefinition $class, bool $query = false, string $language = 'en'): string
     {
         if ($query) {
             return 'object_brick_localized_query_' . $this->model->getKey() . '_' . $class->getId() . '_' . $language;
@@ -64,9 +49,6 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     */
     public function delete(DataObject\ClassDefinition $class)
     {
         $table = $this->getTableName($class, false);
@@ -76,9 +58,6 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->executeQuery('DROP TABLE IF EXISTS `' . $table . '`');
     }
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     */
     public function createUpdateTable(DataObject\ClassDefinition $class)
     {
         $tableStore = $this->getTableName($class, false);
@@ -167,9 +146,6 @@ class Dao extends Model\Dao\AbstractDao
         $this->removeUnusedColumns($tableQuery, $columnsToRemoveQuery, $protectedColumnsQuery);
     }
 
-    /**
-     * @param DataObject\ClassDefinition $classDefinition
-     */
     public function classSaved(DataObject\ClassDefinition $classDefinition)
     {
         $tableStore = $this->getTableName($classDefinition, false);

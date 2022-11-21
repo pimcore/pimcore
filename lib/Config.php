@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,20 +29,11 @@ use Symfony\Component\Yaml\Yaml;
 
 final class Config implements ArrayAccess
 {
-    /**
-     * @var array
-     */
-    protected static $configFileCache = [];
+    protected static array $configFileCache = [];
 
-    /**
-     * @var string
-     */
-    protected static $environment = null;
+    protected static ?string $environment = null;
 
-    /**
-     * @var array|null
-     */
-    protected static $systemConfig = null;
+    protected static ?array $systemConfig = null;
 
     /**
      * {@inheritdoc}
@@ -130,12 +122,12 @@ final class Config implements ArrayAccess
     }
 
     /**
-     * @internal ONLY FOR TESTING PURPOSES IF NEEDED FOR SPECIFIC TEST CASES
-     *
-     * @param null|array $configuration
+     * @param array|null $configuration
      * @param string|null $offset
+     *@internal ONLY FOR TESTING PURPOSES IF NEEDED FOR SPECIFIC TEST CASES
+     *
      */
-    public static function setSystemConfiguration($configuration, $offset = null)
+    public static function setSystemConfiguration(?array $configuration, string $offset = null)
     {
         if (null !== $offset) {
             self::getSystemConfiguration();
@@ -146,13 +138,13 @@ final class Config implements ArrayAccess
     }
 
     /**
-     * @internal
-     *
      * @param string|null $offset
      *
-     * @return null|array
+          * @return null|array
+     *@internal
+     *
      */
-    public static function getSystemConfiguration($offset = null)
+    public static function getSystemConfiguration(string $offset = null): ?array
     {
         if (null === static::$systemConfig && $container = Pimcore::getContainer()) {
             $config = $container->getParameter('pimcore.config');
@@ -169,13 +161,13 @@ final class Config implements ArrayAccess
     }
 
     /**
-     * @internal
-     *
      * @param string|null $languange
      *
-     * @return string
+          * @return string
+     *@internal
+     *
      */
-    public static function getWebsiteConfigRuntimeCacheKey($languange = null)
+    public static function getWebsiteConfigRuntimeCacheKey(string $languange = null): string
     {
         $cacheKey = 'pimcore_config_website';
         if ($languange) {
@@ -192,7 +184,7 @@ final class Config implements ArrayAccess
      *
      * @return array
      */
-    public static function getWebsiteConfig($language = null)
+    public static function getWebsiteConfig(string $language = null): array
     {
         if (RuntimeCache::isRegistered(self::getWebsiteConfigRuntimeCacheKey($language))) {
             $config = RuntimeCache::get(self::getWebsiteConfigRuntimeCacheKey($language));
@@ -298,12 +290,12 @@ final class Config implements ArrayAccess
     }
 
     /**
-     * @internal
-     *
      * @param array|null $config
      * @param string|null $language
+     *@internal
+     *
      */
-    public static function setWebsiteConfig(?array $config, $language = null)
+    public static function setWebsiteConfig(?array $config, string $language = null)
     {
         RuntimeCache::set(self::getWebsiteConfigRuntimeCacheKey($language), $config);
     }
@@ -317,7 +309,7 @@ final class Config implements ArrayAccess
      *
      * @return mixed
      */
-    public static function getWebsiteConfigValue($key = null, $default = null, $language = null)
+    public static function getWebsiteConfigValue(string $key = null, mixed $default = null, string $language = null): mixed
     {
         $config = self::getWebsiteConfig($language);
         if (null !== $key) {
@@ -379,7 +371,7 @@ final class Config implements ArrayAccess
      *
      * @internal
      */
-    public static function getRobotsConfig()
+    public static function getRobotsConfig(): array
     {
         $config = [];
         if (RuntimeCache::isRegistered('pimcore_config_robots')) {
@@ -422,7 +414,7 @@ final class Config implements ArrayAccess
      *
      * @internal
      */
-    public static function getWeb2PrintConfig()
+    public static function getWeb2PrintConfig(): array
     {
         if (RuntimeCache::isRegistered('pimcore_config_web2print')) {
             $config = RuntimeCache::get('pimcore_config_web2print');
@@ -453,20 +445,20 @@ final class Config implements ArrayAccess
      *
      * @internal
      */
-    public static function setModelClassMappingConfig($config)
+    public static function setModelClassMappingConfig(array $config)
     {
         RuntimeCache::set('pimcore_config_model_classmapping', $config);
     }
 
     /**
-     * @internal
-     *
      * @param array $runtimeConfig
      * @param string $key
      *
      * @return bool
+     *@internal
+     *
      */
-    public static function inPerspective($runtimeConfig, $key)
+    public static function inPerspective(array $runtimeConfig, string $key): bool
     {
         if (!isset($runtimeConfig['toolbar']) || !$runtimeConfig['toolbar']) {
             return true;
@@ -500,24 +492,21 @@ final class Config implements ArrayAccess
         return true;
     }
 
-    /**
-     * @return string
-     */
     public static function getEnvironment(): string
     {
         return $_SERVER['APP_ENV'];
     }
 
     /**
-     * @internal
-     *
      * @param string $file
      *
      * @return array
      *
      * @throws Exception
+     *@internal
+     *
      */
-    public static function getConfigInstance($file)
+    public static function getConfigInstance(string $file): array
     {
         $fileType = pathinfo($file, PATHINFO_EXTENSION);
         if (file_exists($file)) {

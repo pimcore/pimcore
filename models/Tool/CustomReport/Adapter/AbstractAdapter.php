@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,21 +20,15 @@ use Pimcore\Model\Tool\CustomReport\Config;
 
 abstract class AbstractAdapter implements CustomReportAdapterInterface
 {
-    /**
-     * @var \stdClass
-     */
-    protected $config;
+    protected \stdClass $config;
 
-    /**
-     * @var Config|null
-     */
-    protected $fullConfig;
+    protected ?Config $fullConfig = null;
 
     /**
      * @param \stdClass $config
      * @param Config|null $fullConfig
      */
-    public function __construct($config, $fullConfig = null)
+    public function __construct(\stdClass $config, Config $fullConfig = null)
     {
         $this->config = $config;
         $this->fullConfig = $fullConfig;
@@ -42,15 +37,15 @@ abstract class AbstractAdapter implements CustomReportAdapterInterface
     /**
      * {@inheritdoc}
      */
-    abstract public function getData($filters, $sort, $dir, $offset, $limit, $fields = null, $drillDownFilters = null);
+    abstract public function getData(?array $filters, ?string $sort, ?string $dir, ?int $offset, ?int $limit, array $fields = null, array $drillDownFilters = null): array;
 
     /**
      * {@inheritdoc}
      */
-    abstract public function getColumns($configuration);
+    abstract public function getColumns(?\stdClass $configuration): array;
 
     /**
      * {@inheritdoc}
      */
-    abstract public function getAvailableOptions($filters, $field, $drillDownFilters);
+    abstract public function getAvailableOptions(array $filters, string $field, array $drillDownFilters): array;
 }

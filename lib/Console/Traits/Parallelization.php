@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,8 +29,7 @@ use Webmozarts\Console\Parallelization\ParallelExecutorFactory;
 
 trait Parallelization
 {
-    /** @var LockInterface|null */
-    private $lock;
+    private ?LockInterface $lock = null;
 
     use ParallelizationBase;
 
@@ -91,9 +91,6 @@ trait Parallelization
         return (int)$this->input->getOption('batch-size');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
     {
         if (!$this->lock()) {
@@ -102,9 +99,6 @@ trait Parallelization
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function runAfterBatch(InputInterface $input, OutputInterface $output, array $items): void
     {
         if ((int)$this->input->getOption('processes') <= 1) {
@@ -115,17 +109,11 @@ trait Parallelization
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function runAfterLastCommand(InputInterface $input, OutputInterface $output): void
     {
         $this->release(); //release the lock
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getItemName(?int $count): string
     {
         return $count === 1 ? 'item' : 'items';
@@ -158,9 +146,6 @@ trait Parallelization
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getConsolePath(): string
     {
         return PIMCORE_PROJECT_ROOT . '/bin/console';

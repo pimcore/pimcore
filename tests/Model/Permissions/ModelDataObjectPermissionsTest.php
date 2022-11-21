@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,6 +19,7 @@ namespace Pimcore\Tests\Model\Element;
 use Codeception\Stub;
 use Pimcore\Bundle\AdminBundle\Controller\Searchadmin\SearchController;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
+use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Search;
@@ -61,90 +63,39 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
      *
      */
 
-    /**
-     * @var DataObject\Folder
-     */
-    protected $permissionfoo;
+    protected DataObject\Folder $permissionfoo;
 
-    /**
-     * @var DataObject\Folder
-     */
-    protected $permissionbar;
+    protected DataObject\Folder $permissionbar;
 
-    /**
-     * @var DataObject\Folder
-     */
-    protected $permissioncpath;
+    protected DataObject\Folder $permissioncpath;
 
-    /**
-     * @var DataObject\Folder
-     */
-    protected $foo;
+    protected DataObject\Folder $foo;
 
-    /**
-     * @var DataObject\Folder
-     */
-    protected $bar;
+    protected DataObject\Folder $bar;
 
-    /**
-     * @var DataObject\Folder
-     */
-    protected $bars;
+    protected DataObject\Folder $bars;
 
-    /**
-     * @var DataObject\Folder
-     */
-    protected $userfolder;
+    protected DataObject\Folder $userfolder;
 
-    /**
-     * @var DataObject\Folder
-     */
-    protected $groupfolder;
+    protected DataObject\Folder $groupfolder;
 
-    /**
-     * @var DataObject\AbstractObject
-     */
-    protected $hiddenobject;
+    protected DataObject\AbstractObject $hiddenobject;
 
-    /**
-     * @var DataObject\AbstractObject
-     */
-    protected $hugo;
+    protected DataObject\AbstractObject $hugo;
 
-    /**
-     * @var DataObject\AbstractObject
-     */
-    protected $usertestobject;
+    protected DataObject\AbstractObject $usertestobject;
 
-    /**
-     * @var DataObject\AbstractObject
-     */
-    protected $grouptestobject;
+    protected DataObject\AbstractObject $grouptestobject;
 
-    /**
-     * @var DataObject\Folder
-     */
-    protected $a;
+    protected DataObject\Folder $a;
 
-    /**
-     * @var DataObject\Folder
-     */
-    protected $b;
+    protected DataObject\Folder $b;
 
-    /**
-     * @var DataObject\AbstractObject
-     */
-    protected $c;
+    protected DataObject\AbstractObject $c;
 
-    /**
-     * @var DataObject\AbstractObject
-     */
-    protected $abcdefghjkl;
+    protected DataObject\AbstractObject $abcdefghjkl;
 
-    /**
-     * @var Asset
-     */
-    protected $assetElement;
+    protected Asset $assetElement;
 
     protected function prepareObjectTree()
     {
@@ -615,7 +566,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
                 return $user;
             },
             'adminJson' => function ($data) {
-                return $data;
+                return new JsonResponse($data);
             },
         ]);
 
@@ -653,6 +604,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
         }
 
         $responsePaths = [];
+        $responseData = json_decode($responseData->getContent(), true);
         foreach ($responseData['nodes'] as $node) {
             $responsePaths[] = $node['path'];
         }
@@ -954,6 +906,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             new GridHelperService()
         );
 
+        $responseData = json_decode($responseData->getContent(), true);
         $responsePaths = [];
         foreach ($responseData['data'] as $node) {
             $responsePaths[] = $node['fullpath'];
@@ -1108,6 +1061,7 @@ class ModelDataObjectPermissionsTest extends ModelTestCase
             new EventDispatcher(),
         );
 
+        $responseData = json_decode($responseData->getContent(), true);
         $responsePaths = [];
         foreach ($responseData['data'] as $node) {
             $responsePaths[] = $node['fullpathList'];

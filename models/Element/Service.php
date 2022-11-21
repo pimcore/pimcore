@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,6 +30,7 @@ use Pimcore\Event\SystemEvents;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\Element;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -52,9 +54,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class Service extends Model\AbstractModel
 {
-    /**
-     * @var EscapeFormula|null
-     */
     private static ?EscapeFormula $formatter = null;
 
     /**
@@ -69,10 +68,12 @@ class Service extends Model\AbstractModel
         $path = '';
         $elementType = self::getElementType($element);
         $parentId = $element->getParentId();
-        $parentElement = self::getElementById($elementType, $parentId);
+        if(isset($parentId)) {
+            $parentElement = self::getElementById($elementType, $parentId);
 
-        if ($parentElement) {
-            $path = self::getIdPath($parentElement);
+            if ($parentElement) {
+                $path = self::getIdPath($parentElement);
+            }
         }
 
         $path .= '/' . $element->getId();
@@ -144,14 +145,14 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param array|Model\Listing\AbstractListing $list
      * @param string $idGetter
      *
      * @return int[]
+     *@internal
+     *
      */
-    public static function getIdList($list, $idGetter = 'getId')
+    public static function getIdList(Model\Listing\AbstractListing|array $list, string $idGetter = 'getId'): array
     {
         $ids = [];
         if (is_array($list)) {
@@ -182,7 +183,7 @@ class Service extends Model\AbstractModel
      * @internal
      *
      */
-    public static function getRequiredByDependenciesForFrontend(Dependency $d, $offset, $limit)
+    public static function getRequiredByDependenciesForFrontend(Dependency $d, ?int $offset, ?int $limit): array
     {
         $dependencies['hasHidden'] = false;
         $dependencies['requiredBy'] = [];
@@ -211,7 +212,7 @@ class Service extends Model\AbstractModel
      * @internal
      *
      */
-    public static function getRequiresDependenciesForFrontend(Dependency $d, $offset, $limit)
+    public static function getRequiresDependenciesForFrontend(Dependency $d, ?int $offset, ?int $limit): array
     {
         $dependencies['hasHidden'] = false;
         $dependencies['requires'] = [];
@@ -257,9 +258,8 @@ class Service extends Model\AbstractModel
     /**
      * @static
      *
-     * @return bool
      */
-    public static function doHideUnpublished($element)
+    public static function doHideUnpublished($element): bool
     {
         return ($element instanceof AbstractObject && DataObject::doHideUnpublished())
             || ($element instanceof Document && Document::doHideUnpublished());
@@ -268,13 +268,13 @@ class Service extends Model\AbstractModel
     /**
      * determines whether an element is published
      *
-     * @internal
+     * @param  ElementInterface|null $element
+          *
+          * @return bool
+     *@internal
      *
-     * @param  ElementInterface $element
-     *
-     * @return bool
      */
-    public static function isPublished($element = null)
+    public static function isPublished(ElementInterface $element = null): bool
     {
         if ($element instanceof ElementInterface) {
             if (method_exists($element, 'isPublished')) {
@@ -288,15 +288,15 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param array|null $data
      *
      * @return array
      *
      * @throws \Exception
+     *@internal
+     *
      */
-    public static function filterUnpublishedAdvancedElements($data): array
+    public static function filterUnpublishedAdvancedElements(?array $data): array
     {
         if (DataObject::doHideUnpublished() && is_array($data)) {
             $publishedList = [];
@@ -376,13 +376,7 @@ class Service extends Model\AbstractModel
         return is_array($data) ? $data : [];
     }
 
-    /**
-     * @param  string $type
-     * @param  string $path
-     *
-     * @return ElementInterface|null
-     */
-    public static function getElementByPath($type, $path)
+    public static function getElementByPath(string $type, string $path): ?ElementInterface
     {
         $element = null;
 
@@ -398,15 +392,15 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param string|ElementInterface $element
-     *
-     * @return string
+          *
+          * @return string
      *
      * @throws \Exception
+     *@internal
+     *
      */
-    public static function getBaseClassNameForElement($element)
+    public static function getBaseClassNameForElement(string|ElementInterface $element): string
     {
         if ($element instanceof ElementInterface) {
             $elementType = self::getElementType($element);
@@ -425,15 +419,15 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @deprecated will be removed in Pimcore 11, use getSafeCopyName() instead
-     *
      * @param string $type
      * @param string $sourceKey
      * @param ElementInterface $target
      *
      * @return string
+     *@deprecated will be removed in Pimcore 11, use getSafeCopyName() instead
+     *
      */
-    public static function getSaveCopyName($type, $sourceKey, $target)
+    public static function getSaveCopyName(string $type, string $sourceKey, ElementInterface $target): string
     {
         return self::getSafeCopyName($sourceKey, $target);
     }
@@ -446,7 +440,7 @@ class Service extends Model\AbstractModel
      * @param string $sourceKey
      * @param ElementInterface $target
      */
-    public static function getSafeCopyName(string $sourceKey, ElementInterface $target)
+    public static function getSafeCopyName(string $sourceKey, ElementInterface $target): string
     {
         $type = self::getElementType($target);
         if (self::pathExists($target->getRealFullPath() . '/' . $sourceKey, $type)) {
@@ -479,7 +473,7 @@ class Service extends Model\AbstractModel
      *
      * @return bool
      */
-    public static function pathExists($path, $type = null)
+    public static function pathExists(string $path, string $type = null): bool
     {
         if ($type == 'asset') {
             return Asset\Service::pathExists($path);
@@ -492,14 +486,7 @@ class Service extends Model\AbstractModel
         return false;
     }
 
-    /**
-     * @param  string $type
-     * @param  int $id
-     * @param  array $params
-     *
-     * @return Asset|AbstractObject|Document|null
-     */
-    public static function getElementById($type, $id, array $params = [])
+    public static function getElementById(string $type, int|string $id, array $params = []): Asset|Document|AbstractObject|null
     {
         $element = null;
         $params = self::prepareGetByIdParams($params);
@@ -540,7 +527,7 @@ class Service extends Model\AbstractModel
      *
      * @return string|null
      */
-    public static function getElementType($element): ?string
+    public static function getElementType(ElementInterface $element): ?string
     {
         if ($element instanceof DataObject\AbstractObject) {
             return 'object';
@@ -600,13 +587,13 @@ class Service extends Model\AbstractModel
     /**
      * determines the type of an element (object,asset,document)
      *
-     * @deprecated use getElementType() instead, will be removed in Pimcore 11
-     *
      * @param  ElementInterface $element
      *
-     * @return string
+     * @return string|null
+     *@deprecated use getElementType() instead, will be removed in Pimcore 11
+     *
      */
-    public static function getType($element)
+    public static function getType(ElementInterface $element): ?string
     {
         trigger_deprecation(
             'pimcore/pimcore',
@@ -618,13 +605,13 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param array $props
      *
      * @return array
+     *@internal
+     *
      */
-    public static function minimizePropertiesForEditmode($props)
+    public static function minimizePropertiesForEditmode(array $props): array
     {
         $properties = [];
         foreach ($props as $key => $p) {
@@ -676,12 +663,12 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param DataObject|Document|Asset\Folder $target the parent element
      * @param ElementInterface $new the newly inserted child
+     *@internal
+     *
      */
-    protected function updateChildren($target, $new)
+    protected function updateChildren(DataObject|Document|Asset\Folder $target, ElementInterface $new)
     {
         //check in case of recursion
         $found = false;
@@ -693,7 +680,8 @@ class Service extends Model\AbstractModel
             }
         }
         if (!$found) {
-            $target->setChildren(array_merge($target->getChildren(), [$new]));
+            $newElement = Element\Service::getElementById($new->getType(), $new->getId());
+            $target->setChildren(array_merge($target->getChildren(), [$newElement]));
         }
     }
 
@@ -704,7 +692,7 @@ class Service extends Model\AbstractModel
      *
      * @return array
      */
-    public static function gridElementData(ElementInterface $element)
+    public static function gridElementData(ElementInterface $element): array
     {
         $data = [
             'id' => $element->getId(),
@@ -729,14 +717,14 @@ class Service extends Model\AbstractModel
      * find all elements which the user may not list and therefore may never be shown to the user.
      * A user may have custom workspaces and/or may inherit those from their role(s), if any.
      *
-     * @internal
-     *
      * @param string $type asset|object|document
      * @param Model\User $user
      *
      * @return array{forbidden: array, allowed: array}
+     *@internal
+     *
      */
-    public static function findForbiddenPaths($type, $user)
+    public static function findForbiddenPaths(string $type, Model\User $user): array
     {
         $db = Db::get();
 
@@ -805,15 +793,15 @@ class Service extends Model\AbstractModel
     /**
      * renews all references, for example after unserializing an ElementInterface
      *
-     * @internal
-     *
      * @param mixed $data
      * @param bool $initial
-     * @param string $key
+     * @param string|null $key
      *
      * @return mixed
+     *@internal
+     *
      */
-    public static function renewReferences($data, $initial = true, $key = null)
+    public static function renewReferences(mixed $data, bool $initial = true, string $key = null): mixed
     {
         if ($data instanceof \__PHP_Incomplete_Class) {
             Logger::err(sprintf('Renew References: Cannot read data (%s) of incomplete class.', is_null($key) ? 'not available' : $key));
@@ -823,7 +811,7 @@ class Service extends Model\AbstractModel
 
         if (is_array($data)) {
             foreach ($data as $dataKey => &$value) {
-                $value = self::renewReferences($value, false, $dataKey);
+                $value = self::renewReferences($value, false, (string)$dataKey);
             }
 
             return $data;
@@ -937,11 +925,11 @@ class Service extends Model\AbstractModel
      * @param string $path
      * @param array $options
      *
-     * @return Asset\Folder|Document\Folder|DataObject\Folder
+     * @return Asset\Folder|DataObject\Folder|Document\Folder|null
      *
      * @throws \Exception
      */
-    public static function createFolderByPath($path, $options = [])
+    public static function createFolderByPath(string $path, array $options = []): Asset\Folder|DataObject\Folder|Document\Folder|null
     {
         $calledClass = static::class;
         if ($calledClass === __CLASS__) {
@@ -1020,12 +1008,13 @@ class Service extends Model\AbstractModel
     /**
      * Changes the query according to the custom view config
      *
-     * @internal
-     *
      * @param array $cv
      * @param Model\Asset\Listing|Model\DataObject\Listing|Model\Document\Listing $childrenList
+     *
+     * @internal
+     *
      */
-    public static function addTreeFilterJoins($cv, $childrenList)
+    public static function addTreeFilterJoins(array $cv, Asset\Listing|DataObject\Listing|Document\Listing $childrenList)
     {
         if ($cv) {
             $childrenList->onCreateQueryBuilder(static function (DoctrineQueryBuilder $select) use ($cv) {
@@ -1061,13 +1050,13 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param string $id
      *
      * @return array|null
+     *@internal
+     *
      */
-    public static function getCustomViewById($id)
+    public static function getCustomViewById(string $id): ?array
     {
         $customViews = \Pimcore\CustomView\Config::get();
         if ($customViews) {
@@ -1081,13 +1070,7 @@ class Service extends Model\AbstractModel
         return null;
     }
 
-    /**
-     * @param string $key
-     * @param string $type
-     *
-     * @return string
-     */
-    public static function getValidKey($key, $type)
+    public static function getValidKey(string $key, string $type): string
     {
         $event = new GenericEvent(null, [
             'key' => $key,
@@ -1128,24 +1111,12 @@ class Service extends Model\AbstractModel
         return $key;
     }
 
-    /**
-     * @param string $key
-     * @param string $type
-     *
-     * @return bool
-     */
-    public static function isValidKey($key, $type)
+    public static function isValidKey(string $key, string $type): bool
     {
         return self::getValidKey($key, $type) == $key;
     }
 
-    /**
-     * @param string $path
-     * @param string $type
-     *
-     * @return bool
-     */
-    public static function isValidPath($path, $type)
+    public static function isValidPath(string $path, string $type): bool
     {
         $parts = explode('/', $path);
         foreach ($parts as $part) {
@@ -1161,10 +1132,11 @@ class Service extends Model\AbstractModel
      * returns a unique key for an element
      *
      * @param ElementInterface $element
-     *
+     * @param int $nr
      * @return string|null
+     * @throws \Exception
      */
-    public static function getUniqueKey($element)
+    public static function getUniqueKey(ElementInterface $element, int $nr = 0): ?string
     {
         if ($element instanceof DataObject\AbstractObject) {
             return DataObject\Service::getUniqueKey($element);
@@ -1182,14 +1154,14 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param array $data
      * @param string $type
      *
      * @return array
+     *@internal
+     *
      */
-    public static function fixAllowedTypes($data, $type)
+    public static function fixAllowedTypes(array $data, string $type): array
     {
         // this is the new method with Ext.form.MultiSelect
         if (is_array($data) && count($data)) {
@@ -1224,13 +1196,13 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param Model\Version[] $versions
+          *
+          * @return array
+     *@internal
      *
-     * @return array
      */
-    public static function getSafeVersionInfo($versions)
+    public static function getSafeVersionInfo(array $versions): array
     {
         $indexMap = [];
         $result = [];
@@ -1270,19 +1242,14 @@ class Service extends Model\AbstractModel
         return $result;
     }
 
-    /**
-     * @param ElementInterface $element
-     *
-     * @return ElementInterface
-     */
-    public static function cloneMe(ElementInterface $element)
+    public static function cloneMe(ElementInterface $element): ElementInterface
     {
         $deepCopy = new \DeepCopy\DeepCopy();
         $deepCopy->addFilter(new \DeepCopy\Filter\KeepFilter(), new class() implements \DeepCopy\Matcher\Matcher {
             /**
              * {@inheritdoc}
              */
-            public function matches($object, $property)
+            public function matches($object, $property): bool
             {
                 try {
                     $reflectionProperty = new \ReflectionProperty($object, $property);
@@ -1353,7 +1320,7 @@ class Service extends Model\AbstractModel
      *
      * @return array
      */
-    public static function getNoteData(Note $note)
+    public static function getNoteData(Note $note): array
     {
         $cpath = '';
         if ($note->getCid() && $note->getCtype()) {
@@ -1424,15 +1391,15 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param string $type
      * @param int $elementId
-     * @param null|string $postfix
+     * @param string|null $postfix
      *
-     * @return string
+          * @return string
+     *@internal
+     *
      */
-    public static function getSessionKey($type, $elementId, $postfix = '')
+    public static function getSessionKey(string $type, int $elementId, ?string $postfix = ''): string
     {
         $sessionId = Session::getSessionId();
         $tmpStoreKey = $type . '_session_' . $elementId . '_' . $sessionId . $postfix;
@@ -1440,15 +1407,7 @@ class Service extends Model\AbstractModel
         return $tmpStoreKey;
     }
 
-    /**
-     *
-     * @param string $type
-     * @param int $elementId
-     * @param null|string $postfix
-     *
-     * @return AbstractObject|Document|Asset|null
-     */
-    public static function getElementFromSession($type, $elementId, $postfix = '')
+    public static function getElementFromSession(string $type, int $elementId, ?string $postfix = ''): Asset|Document|AbstractObject|null
     {
         $element = null;
         $tmpStoreKey = self::getSessionKey($type, $elementId, $postfix);
@@ -1489,13 +1448,13 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param ElementInterface $element
      * @param string $postfix
      * @param bool $clone save a copy
+     *@internal
+     *
      */
-    public static function saveElementToSession($element, $postfix = '', $clone = true)
+    public static function saveElementToSession(ElementInterface $element, string $postfix = '', bool $clone = true)
     {
         if ($clone) {
             $context = [
@@ -1534,13 +1493,13 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param string $type
      * @param int $elementId
      * @param string $postfix
+     *@internal
+     *
      */
-    public static function removeElementFromSession($type, $elementId, $postfix = '')
+    public static function removeElementFromSession(string $type, int $elementId, string $postfix = '')
     {
         $tmpStoreKey = self::getSessionKey($type, $elementId, $postfix);
         TmpStore::delete($tmpStoreKey);
@@ -1554,7 +1513,7 @@ class Service extends Model\AbstractModel
      *
      * @return DeepCopy
      */
-    public static function getDeepCopyInstance($element, ?array $context = []): DeepCopy
+    public static function getDeepCopyInstance(mixed $element, ?array $context = []): DeepCopy
     {
         $copier = new DeepCopy();
         $copier->skipUncloneable(true);
@@ -1632,15 +1591,20 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param string $type
-     * @param int|string $id
+     * @param int|string|null $id
      *
      * @return string
+     *@internal
+     *
      */
-    public static function getElementCacheTag(string $type, $id): string
+    public static function getElementCacheTag(string $type, int|string|null $id): string
     {
-        return $type . '_' . $id;
+        if(isset($id)) {
+            return $type . '_' . $id;
+        }
+        else {
+            return $type . '_';
+        }
     }
 }

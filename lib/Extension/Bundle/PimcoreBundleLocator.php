@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,27 +27,13 @@ use Symfony\Component\Finder\SplFileInfo;
  */
 class PimcoreBundleLocator
 {
-    /**
-     * @var Composer\PackageInfo
-     */
-    private $composerPackageInfo;
+    private Composer\PackageInfo $composerPackageInfo;
 
-    /**
-     * @var array
-     */
-    private $paths = [];
+    private array $paths = [];
 
-    /**
-     * @var bool
-     */
-    private $handleComposer = true;
+    private bool $handleComposer = true;
 
-    /**
-     * @param Composer\PackageInfo $composerPackageInfo
-     * @param array $paths
-     * @param bool $handleComposer
-     */
-    public function __construct(Composer\PackageInfo $composerPackageInfo, array $paths = [], $handleComposer = true)
+    public function __construct(Composer\PackageInfo $composerPackageInfo, array $paths = [], bool $handleComposer = true)
     {
         $this->setPaths($paths);
 
@@ -74,7 +61,7 @@ class PimcoreBundleLocator
      *
      * @return array A list of found bundle class names
      */
-    public function findBundles()
+    public function findBundles(): array
     {
         $result = $this->findBundlesInPaths($this->paths);
         if ($this->handleComposer) {

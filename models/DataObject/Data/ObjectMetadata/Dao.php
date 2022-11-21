@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -24,26 +25,13 @@ use Pimcore\Model\DataObject;
  *
  * @property \Pimcore\Model\DataObject\Data\ObjectMetadata $model
  */
-class Dao extends Model\Dao\AbstractDao
+class Dao extends DataObject\Data\AbstractMetadata\Dao
 {
     use DataObject\ClassDefinition\Helper\Dao;
 
-    /**
-     * @var array|null
-     */
-    protected $tableDefinitions = null;
+    protected ?array $tableDefinitions = null;
 
-    /**
-     * @param DataObject\Concrete $object
-     * @param string $ownertype
-     * @param string $ownername
-     * @param string $position
-     * @param int $index
-     * @param string $type
-     *
-     * @throws \Exception
-     */
-    public function save(DataObject\Concrete $object, $ownertype, $ownername, $position, $index, $type = 'object')
+    public function save(DataObject\Concrete $object, string $ownertype, string $ownername, string $position, int $index, string $type = 'object')
     {
         $table = $this->getTablename($object);
 
@@ -65,28 +53,12 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @param DataObject\Concrete $object
-     *
-     * @return string
-     */
-    protected function getTablename($object)
+    protected function getTablename(DataObject\Concrete $object): string
     {
         return 'object_metadata_' . $object->getClassId();
     }
 
-    /**
-     * @param DataObject\Concrete $source
-     * @param int $destinationId
-     * @param string $fieldname
-     * @param string $ownertype
-     * @param string $ownername
-     * @param string $position
-     * @param int $index
-     *
-     * @return null|DataObject\Data\ObjectMetadata
-     */
-    public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index)
+    public function load(DataObject\Concrete $source, int $destinationId, string $fieldname, string $ownertype, string $ownername, string $position, int $index, string $destinationType = 'object'): ?DataObject\Data\ObjectMetadata
     {
         $typeQuery = " AND (type = 'object' or type = '')";
 
@@ -109,9 +81,6 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     */
     public function createOrUpdateTable(DataObject\ClassDefinition $class)
     {
         $classId = $class->getId();

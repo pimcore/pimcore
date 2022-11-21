@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -30,7 +31,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @return array
      */
-    public function load()
+    public function load(): array
     {
         $sql = 'SELECT ' . DataObject\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . '.*,'
             . DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . '.*';
@@ -58,18 +59,12 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $configData;
     }
 
-    /**
-     * @return array
-     */
-    public function getDataArray()
+    public function getDataArray(): array
     {
         return $this->db->fetchAllAssociative('SELECT *' . $this->getFrom() . $this->getWhere() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         return (int) $this->db->fetchOne('SELECT COUNT(*)' . $this->getFrom() . $this->getWhere(), $this->model->getConditionVariables());
     }

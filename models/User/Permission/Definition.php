@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,59 +25,34 @@ use Pimcore\Model;
  */
 class Definition extends Model\AbstractModel
 {
-    /**
-     * @var string|null
-     */
-    protected $key;
+    protected ?string $key = null;
 
-    /**
-     * @var string|null
-     */
-    protected $category;
+    protected ?string $category = null;
 
-    /**
-     * @param array $data
-     */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         if (is_array($data) && !empty($data)) {
             $this->setValues($data);
         }
     }
 
-    /**
-     * @return string|null
-     */
-    public function getKey()
+    public function getKey(): ?string
     {
         return $this->key;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return $this
-     */
-    public function setKey($key)
+    public function setKey(string $key): static
     {
         $this->key = $key;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getCategory(): ?string
     {
         return $this->category;
     }
 
-    /**
-     * @param string $category
-     *
-     * @return Definition
-     */
     public function setCategory(string $category): Definition
     {
         $this->category = $category;
@@ -91,7 +67,7 @@ class Definition extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public static function getByKey($permission)
+    public static function getByKey(string $permission): ?Definition
     {
         if (!$permission) {
             throw new \Exception('No permisson defined.');
@@ -115,7 +91,7 @@ class Definition extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public static function create($permission)
+    public static function create(string $permission): self|static
     {
         if (!$permission) {
             throw new \Exception('No permisson defined.');

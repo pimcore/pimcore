@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,12 +26,7 @@ class Gift implements GiftInterface
 
     protected string $productPath = '';
 
-    /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return GiftInterface
-     */
-    public function executeOnCart(EnvironmentInterface $environment)
+    public function executeOnCart(EnvironmentInterface $environment): GiftInterface
     {
         $comment = $environment->getRule()->getDescription();
         $environment->getCart()->addGiftItem($this->getProduct(), 1, null, true, [], [], $comment);
@@ -45,25 +41,19 @@ class Gift implements GiftInterface
      *
      * @return GiftInterface
      */
-    public function setProduct(AbstractProduct $product)
+    public function setProduct(AbstractProduct $product): GiftInterface
     {
         $this->product = $product;
 
         return $this;
     }
 
-    /**
-     * @return AbstractProduct|null
-     */
-    public function getProduct()
+    public function getProduct(): ?AbstractProduct
     {
         return $this->product;
     }
 
-    /**
-     * @return string
-     */
-    public function toJSON()
+    public function toJSON(): string
     {
         return json_encode([
             'type' => 'Gift',
@@ -71,12 +61,7 @@ class Gift implements GiftInterface
         ]);
     }
 
-    /**
-     * @param string $string
-     *
-     * @return ActionInterface
-     */
-    public function fromJSON($string)
+    public function fromJSON(string $string): ActionInterface
     {
         $json = json_decode($string);
         $product = AbstractProduct::getByPath($json->product);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,71 +30,42 @@ final class Site extends AbstractModel
 {
     use RecursionBlockingEventDispatchHelperTrait;
 
-    /**
-     * @var Site|null
-     */
     protected static ?Site $currentSite = null;
 
-    /**
-     * @var int
-     */
-    protected $id;
+    protected int $id;
 
-    /**
-     * @var array
-     */
-    protected $domains;
+    protected array $domains;
 
     /**
      * Contains the ID to the Root-Document
      *
      * @var int
      */
-    protected $rootId;
+    protected int $rootId;
 
     protected ?Document\Page $rootDocument = null;
 
-    /**
-     * @var string|null
-     */
-    protected $rootPath;
+    protected ?string $rootPath = null;
 
-    /**
-     * @var string
-     */
-    protected $mainDomain = '';
+    protected string $mainDomain = '';
 
-    /**
-     * @var string
-     */
-    protected $errorDocument = '';
+    protected string $errorDocument = '';
 
-    /**
-     * @var array
-     */
-    protected $localizedErrorDocuments;
+    protected array $localizedErrorDocuments;
 
-    /**
-     * @var bool
-     */
-    protected $redirectToMainDomain = false;
+    protected bool $redirectToMainDomain = false;
 
-    /**
-     * @var int|null
-     */
-    protected $creationDate;
+    protected ?int $creationDate = null;
 
-    /**
-     * @var int|null
-     */
-    protected $modificationDate;
+    protected ?int $modificationDate = null;
 
     /**
      * @param int $id
      *
-     * @return Site|null
+     * @return Site|string|null
+     * @throws \Exception
      */
-    public static function getById($id)
+    public static function getById(int $id): Site|string|null
     {
         $cacheKey = 'site_id_'. $id;
 
@@ -119,12 +91,7 @@ final class Site extends AbstractModel
         return $site;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return Site|null
-     */
-    public static function getByRootId($id)
+    public static function getByRootId(int $id): ?Site
     {
         try {
             $site = new self();
@@ -139,9 +106,10 @@ final class Site extends AbstractModel
     /**
      * @param string $domain
      *
-     * @return Site|null
+     * @return Site|string|null
+     * @throws \Exception
      */
-    public static function getByDomain($domain)
+    public static function getByDomain(string $domain): Site|string|null
     {
         // cached because this is called in the route
         $cacheKey = 'site_domain_'. md5($domain);
@@ -171,9 +139,10 @@ final class Site extends AbstractModel
     /**
      * @param mixed $mixed
      *
-     * @return Site|null
+     * @return Site|string|null
+     * @throws \Exception
      */
-    public static function getBy($mixed)
+    public static function getBy(mixed $mixed): Site|string|null
     {
         $site = null;
 
@@ -188,12 +157,7 @@ final class Site extends AbstractModel
         return $site;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return Site
-     */
-    public static function create($data)
+    public static function create(array $data): Site
     {
         $site = new self();
         self::checkCreateData($data);
@@ -207,7 +171,7 @@ final class Site extends AbstractModel
      *
      * @return bool
      */
-    public static function isSiteRequest()
+    public static function isSiteRequest(): bool
     {
         if (null !== self::$currentSite) {
             return true;
@@ -221,7 +185,7 @@ final class Site extends AbstractModel
      *
      * @throws \Exception
      */
-    public static function getCurrentSite()
+    public static function getCurrentSite(): Site
     {
         if (null !== self::$currentSite) {
             return self::$currentSite;
@@ -240,56 +204,34 @@ final class Site extends AbstractModel
         self::$currentSite = $site;
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return array
-     */
-    public function getDomains()
+    public function getDomains(): array
     {
         return $this->domains;
     }
 
-    /**
-     * @return int
-     */
-    public function getRootId()
+    public function getRootId(): int
     {
         return $this->rootId;
     }
 
-    /**
-     * @return Document\Page|null
-     */
     public function getRootDocument(): ?Document\Page
     {
         return $this->rootDocument;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(int $id): static
     {
         $this->id = (int) $id;
 
         return $this;
     }
 
-    /**
-     * @param mixed $domains
-     *
-     * @return $this
-     */
-    public function setDomains($domains)
+    public function setDomains(mixed $domains): static
     {
         if (is_string($domains)) {
             $domains = \Pimcore\Tool\Serialize::unserialize($domains);
@@ -299,12 +241,7 @@ final class Site extends AbstractModel
         return $this;
     }
 
-    /**
-     * @param int $rootId
-     *
-     * @return $this
-     */
-    public function setRootId($rootId)
+    public function setRootId(int $rootId): static
     {
         $this->rootId = (int) $rootId;
 
@@ -314,34 +251,21 @@ final class Site extends AbstractModel
         return $this;
     }
 
-    /**
-     * @param Document\Page|null $rootDocument
-     *
-     * @return $this
-     */
-    public function setRootDocument($rootDocument)
+    public function setRootDocument(?Document\Page $rootDocument): static
     {
         $this->rootDocument = $rootDocument;
 
         return $this;
     }
 
-    /**
-     * @param string|null $path
-     *
-     * @return $this
-     */
-    public function setRootPath($path)
+    public function setRootPath(?string $path): static
     {
         $this->rootPath = $path;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getRootPath()
+    public function getRootPath(): ?string
     {
         if (!$this->rootPath && $this->getRootDocument()) {
             return $this->getRootDocument()->getRealFullPath();
@@ -350,28 +274,17 @@ final class Site extends AbstractModel
         return $this->rootPath;
     }
 
-    /**
-     * @param string $errorDocument
-     */
-    public function setErrorDocument($errorDocument)
+    public function setErrorDocument(string $errorDocument)
     {
         $this->errorDocument = $errorDocument;
     }
 
-    /**
-     * @return string
-     */
-    public function getErrorDocument()
+    public function getErrorDocument(): string
     {
         return $this->errorDocument;
     }
 
-    /**
-     * @param mixed $localizedErrorDocuments
-     *
-     * @return $this
-     */
-    public function setLocalizedErrorDocuments($localizedErrorDocuments)
+    public function setLocalizedErrorDocuments(mixed $localizedErrorDocuments): static
     {
         if (is_string($localizedErrorDocuments)) {
             $localizedErrorDocuments = \Pimcore\Tool\Serialize::unserialize($localizedErrorDocuments);
@@ -381,42 +294,27 @@ final class Site extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getLocalizedErrorDocuments()
+    public function getLocalizedErrorDocuments(): array
     {
         return $this->localizedErrorDocuments;
     }
 
-    /**
-     * @param string $mainDomain
-     */
-    public function setMainDomain($mainDomain)
+    public function setMainDomain(string $mainDomain)
     {
         $this->mainDomain = $mainDomain;
     }
 
-    /**
-     * @return string
-     */
-    public function getMainDomain()
+    public function getMainDomain(): string
     {
         return $this->mainDomain;
     }
 
-    /**
-     * @param bool $redirectToMainDomain
-     */
-    public function setRedirectToMainDomain($redirectToMainDomain)
+    public function setRedirectToMainDomain(bool $redirectToMainDomain)
     {
         $this->redirectToMainDomain = (bool) $redirectToMainDomain;
     }
 
-    /**
-     * @return bool
-     */
-    public function getRedirectToMainDomain()
+    public function getRedirectToMainDomain(): bool
     {
         return $this->redirectToMainDomain;
     }
@@ -434,42 +332,26 @@ final class Site extends AbstractModel
         }
     }
 
-    /**
-     * @param int $modificationDate
-     *
-     * @return $this
-     */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = (int) $modificationDate;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getModificationDate()
+    public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
-    /**
-     * @param int $creationDate
-     *
-     * @return $this
-     */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = (int) $creationDate;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getCreationDate()
+    public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }

@@ -29,7 +29,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class GeoPointTest extends TestCase
 {
-    private $points = [
+    private array $points = [
         // sbg - muc = ~118 km
         // sbg - ber = ~521 km
         // sbg - bkk = ~8689 km

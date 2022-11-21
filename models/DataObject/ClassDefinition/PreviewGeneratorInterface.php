@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,12 +20,6 @@ use Pimcore\Model\DataObject\Concrete;
 
 interface PreviewGeneratorInterface
 {
-    /**
-     * @param Concrete $object
-     * @param array $params
-     *
-     * @return string
-     */
     public function generatePreviewUrl(Concrete $object, array $params): string;
 
     /**

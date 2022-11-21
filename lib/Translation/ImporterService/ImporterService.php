@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,12 +24,12 @@ class ImporterService implements ImporterServiceInterface
     /**
      * @var ImporterInterface[]
      */
-    private $importers = [];
+    private array $importers = [];
 
     /**
      * {@inheritdoc}
      */
-    public function import(AttributeSet $attributeSet, bool $saveElement = true)
+    public function import(AttributeSet $attributeSet, bool $saveElement = true): void
     {
         $this->getImporter($attributeSet->getTranslationItem()->getType())->import($attributeSet, $saveElement);
     }

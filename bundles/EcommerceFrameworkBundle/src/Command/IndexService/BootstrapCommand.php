@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -38,10 +39,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
         Parallelization::runAfterBatch as parentRunAfterBatch;
     }
 
-    /**
-     * @var IndexService
-     */
-    protected $indexService;
+    protected IndexService $indexService;
 
     public function __construct(IndexService $indexService, string $name = null)
     {
@@ -68,18 +66,12 @@ class BootstrapCommand extends AbstractIndexServiceCommand
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
     {
         $this->parentRunBeforeFirstCommand($input, $output);
         $this->initTimeout($input);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function fetchItems(InputInterface $input, OutputInterface $output): array
     {
         $updateIndex = $input->getOption('update-index');
@@ -113,9 +105,6 @@ class BootstrapCommand extends AbstractIndexServiceCommand
         return $fullIdList;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function runSingleCommand(string $productId, InputInterface $input, OutputInterface $output): void
     {
         $productId = (int)$productId;
@@ -140,9 +129,6 @@ class BootstrapCommand extends AbstractIndexServiceCommand
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function runAfterBatch(InputInterface $input, OutputInterface $output, array $items): void
     {
         $this->parentRunAfterBatch($input, $output, $items);
@@ -152,11 +138,6 @@ class BootstrapCommand extends AbstractIndexServiceCommand
         });
     }
 
-    /**
-     * @param InputInterface $input
-     *
-     * @return IndexService
-     */
     protected function initIndexService(InputInterface $input): IndexService
     {
         //set active tenant workers.

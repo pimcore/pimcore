@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,6 +25,7 @@ use Pimcore\Logger;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Element\DuplicateFullPathException;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
@@ -38,17 +40,14 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class Document extends Element\AbstractElement
 {
-    /**
-     * @var bool
-     */
-    private static $hideUnpublished = false;
+    private static bool $hideUnpublished = false;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected $fullPathCache;
+    protected ?string $fullPathCache = null;
 
     /**
      * @internal
@@ -60,14 +59,14 @@ class Document extends Element\AbstractElement
      *
      * @var string|null
      */
-    protected $key;
+    protected ?string $key = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected $path;
+    protected ?string $path = null;
 
     /**
      * @internal
@@ -89,28 +88,28 @@ class Document extends Element\AbstractElement
      *
      * @var array
      */
-    protected $children = [];
+    protected array $children = [];
 
     /**
      * @internal
      *
      * @var bool[]
      */
-    protected $hasChildren = [];
+    protected array $hasChildren = [];
 
     /**
      * @internal
      *
      * @var array
      */
-    protected $siblings = [];
+    protected array $siblings = [];
 
     /**
      * @internal
      *
      * @var bool[]
      */
-    protected $hasSiblings = [];
+    protected array $hasSiblings = [];
 
     /**
      * {@inheritdoc}
@@ -132,7 +131,7 @@ class Document extends Element\AbstractElement
      *
      * @return array
      */
-    public static function getTypes()
+    public static function getTypes(): array
     {
         $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
 
@@ -151,13 +150,7 @@ class Document extends Element\AbstractElement
         return 'document_path_' . md5($path);
     }
 
-    /**
-     * @param string $path
-     * @param array $params
-     *
-     * @return static|null
-     */
-    public static function getByPath($path, array $params = [])
+    public static function getByPath(string $path, array $params = []): static|null
     {
         if (!$path) {
             return null;
@@ -194,7 +187,7 @@ class Document extends Element\AbstractElement
      *
      * @return bool
      */
-    protected static function typeMatch(Document $document)
+    protected static function typeMatch(Document $document): bool
     {
         $staticType = static::class;
         if ($staticType !== Document::class) {
@@ -206,13 +199,7 @@ class Document extends Element\AbstractElement
         return true;
     }
 
-    /**
-     * @param int $id
-     * @param array $params
-     *
-     * @return static|null
-     */
-    public static function getById($id, array $params = [])
+    public static function getById(int|string $id, array $params = []): ?static
     {
         if (!is_numeric($id) || $id < 1) {
             return null;
@@ -261,7 +248,9 @@ class Document extends Element\AbstractElement
             }
 
             RuntimeCache::set($cacheKey, $document);
-            $document->__setDataVersionTimestamp($document->getModificationDate());
+            if($document->getModificationDate() !== null) {
+                $document->__setDataVersionTimestamp($document->getModificationDate());
+            }
 
             $document->resetDirtyMap();
 
@@ -282,14 +271,7 @@ class Document extends Element\AbstractElement
         return $document;
     }
 
-    /**
-     * @param int $parentId
-     * @param array $data
-     * @param bool $save
-     *
-     * @return static
-     */
-    public static function create($parentId, $data = [], $save = true)
+    public static function create(int $parentId, array $data = [], bool $save = true): static
     {
         $document = new static();
         $document->setParentId($parentId);
@@ -494,13 +476,13 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @internal
-     *
      * @param array $params additional parameters (e.g. "versionNote" for the version note)
      *
      * @throws \Exception
+     *@internal
+     *
      */
-    protected function update($params = [])
+    protected function update(array $params = [])
     {
         $disallowedKeysInFirstLevel = ['install', 'admin', 'plugin'];
         if ($this->getParentId() == 1 && in_array($this->getKey(), $disallowedKeysInFirstLevel)) {
@@ -549,20 +531,17 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @internal
-     *
      * @param int $index
+     *@internal
+          *
      */
-    public function saveIndex($index)
+    public function saveIndex(int $index)
     {
         $this->getDao()->saveIndex($index);
         $this->clearDependentCache();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function clearDependentCache($additionalTags = [])
+    public function clearDependentCache(array $additionalTags = [])
     {
         try {
             $tags = [$this->getCacheTag(), 'document_properties', 'output'];
@@ -582,7 +561,7 @@ class Document extends Element\AbstractElement
      *
      * @return $this
      */
-    public function setChildren($children, $includingUnpublished = false)
+    public function setChildren(?array $children, bool $includingUnpublished = false): static
     {
         if ($children === null) {
             // unset all cached children
@@ -604,7 +583,7 @@ class Document extends Element\AbstractElement
      *
      * @return self[]
      */
-    public function getChildren($includingUnpublished = false)
+    public function getChildren(bool $includingUnpublished = false): array
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
@@ -631,7 +610,7 @@ class Document extends Element\AbstractElement
      *
      * @return bool
      */
-    public function hasChildren($includingUnpublished = null)
+    public function hasChildren(bool $includingUnpublished = false): bool
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
@@ -649,7 +628,7 @@ class Document extends Element\AbstractElement
      *
      * @return array
      */
-    public function getSiblings($includingUnpublished = false)
+    public function getSiblings(bool $includingUnpublished = false): array
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
@@ -681,7 +660,7 @@ class Document extends Element\AbstractElement
      *
      * @return bool
      */
-    public function hasSiblings($includingUnpublished = null)
+    public function hasSiblings(bool $includingUnpublished = null): bool
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
@@ -724,9 +703,6 @@ class Document extends Element\AbstractElement
         $service->removeTranslation($this);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function delete()
     {
         $this->dispatchEvent(new DocumentEvent($this), DocumentEvents::PRE_DELETE);
@@ -772,10 +748,7 @@ class Document extends Element\AbstractElement
         $this->dispatchEvent(new DocumentEvent($this), DocumentEvents::POST_DELETE);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFullPath(bool $force = false)
+    public function getFullPath(bool $force = false): string
     {
         $link = $force ? null : $this->fullPathCache;
 
@@ -883,18 +856,12 @@ class Document extends Element\AbstractElement
         return $path;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getKey()
+    public function getKey(): ?string
     {
         return $this->key;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPath()
+    public function getPath(): ?string
     {
         // check for site, if so rewrite the path for output
         try {
@@ -917,28 +884,19 @@ class Document extends Element\AbstractElement
         return $this->path;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRealPath()
+    public function getRealPath(): ?string
     {
         return $this->path;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRealFullPath()
+    public function getRealFullPath(): string
     {
         $path = $this->getRealPath() . $this->getKey();
 
         return $path;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setKey($key)
+    public function setKey(string $key): static
     {
         $this->key = (string)$key;
 
@@ -948,13 +906,13 @@ class Document extends Element\AbstractElement
     /**
      * Set the parent id of the document.
      *
-     * @param int $parentId
+     * @param int|null $id
      *
-     * @return Document
+     * @return $this
      */
-    public function setParentId($parentId)
+    public function setParentId(?int $id): static
     {
-        parent::setParentId($parentId);
+        parent::setParentId($id);
 
         $this->siblings = [];
         $this->hasSiblings = [];
@@ -977,19 +935,16 @@ class Document extends Element\AbstractElement
      *
      * @param int $index
      *
-     * @return Document
+     * @return $this
      */
-    public function setIndex($index)
+    public function setIndex(int $index): static
     {
         $this->index = (int) $index;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -999,47 +954,33 @@ class Document extends Element\AbstractElement
      *
      * @param string $type
      *
-     * @return Document
+     * @return $this
      */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isPublished()
+    public function isPublished(): bool
     {
         return $this->getPublished();
     }
 
-    /**
-     * @return bool
-     */
-    public function getPublished()
+    public function getPublished(): bool
     {
         return (bool) $this->published;
     }
 
-    /**
-     * @param bool $published
-     *
-     * @return Document
-     */
-    public function setPublished($published)
+    public function setPublished(bool $published): static
     {
-        $this->published = (bool) $published;
+        $this->published = $published;
 
         return $this;
     }
 
-    /**
-     * @return Document|null
-     */
-    public function getParent() /** : ?Document */
+    public function getParent(): ?Document
     {
         $parent = parent::getParent();
 
@@ -1049,12 +990,13 @@ class Document extends Element\AbstractElement
     /**
      * Set the parent document instance.
      *
-     * @param Document|null $parent
+     * @param ElementInterface|null $parent
      *
-     * @return Document
+     * @return $this
      */
-    public function setParent($parent)
+    public function setParent(?ElementInterface $parent): static
     {
+        /** @var Document $parent */
         $this->parent = $parent;
         if ($parent instanceof Document) {
             $this->parentId = $parent->getId();
@@ -1068,7 +1010,7 @@ class Document extends Element\AbstractElement
      *
      * @param bool $hideUnpublished
      */
-    public static function setHideUnpublished($hideUnpublished)
+    public static function setHideUnpublished(bool $hideUnpublished)
     {
         self::$hideUnpublished = $hideUnpublished;
     }
@@ -1078,7 +1020,7 @@ class Document extends Element\AbstractElement
      *
      * @return bool
      */
-    public static function doHideUnpublished()
+    public static function doHideUnpublished(): bool
     {
         return self::$hideUnpublished;
     }
@@ -1090,7 +1032,7 @@ class Document extends Element\AbstractElement
      *
      * @return string
      */
-    protected function getListingCacheKey(array $args = [])
+    protected function getListingCacheKey(array $args = []): string
     {
         $includingUnpublished = (bool)($args[0] ?? false);
 

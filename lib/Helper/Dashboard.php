@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,52 +25,31 @@ use Pimcore\Tool\Serialize;
  */
 final class Dashboard
 {
-    /**
-     * @var User
-     */
-    protected $user;
+    protected User $user;
 
-    /**
-     * @var array|null
-     */
-    protected $dashboards;
+    protected ?array $dashboards = null;
 
-    /**
-     * @param User $user
-     */
     public function __construct(User $user)
     {
         $this->user = $user;
     }
 
-    /**
-     * @return User
-     */
-    public function getUser()
+    public function getUser(): User
     {
         return $this->user;
     }
 
-    /**
-     * @return string
-     */
-    protected function getConfigDir()
+    protected function getConfigDir(): string
     {
         return PIMCORE_CONFIGURATION_DIRECTORY.'/portal';
     }
 
-    /**
-     * @return string
-     */
-    protected function getConfigFile()
+    protected function getConfigFile(): string
     {
         return $this->getConfigDir().'/dashboards_'.$this->getUser()->getId().'.psf';
     }
 
-    /**
-     * @return array
-     */
-    protected function loadFile()
+    protected function loadFile(): ?array
     {
         if (!is_dir($this->getConfigDir())) {
             File::mkdir($this->getConfigDir());
@@ -101,20 +81,12 @@ final class Dashboard
         return $this->dashboards;
     }
 
-    /**
-     * @return array
-     */
-    public function getAllDashboards()
+    public function getAllDashboards(): ?array
     {
         return $this->loadFile();
     }
 
-    /**
-     * @param string $key
-     *
-     * @return array
-     */
-    public function getDashboard($key = 'welcome')
+    public function getDashboard(string $key = 'welcome'): array
     {
         $dashboards = $this->loadFile();
         $dashboard = $dashboards[$key] ?? null;
@@ -143,7 +115,7 @@ final class Dashboard
      * @param string $key
      * @param array|null $configuration
      */
-    public function saveDashboard($key, $configuration = null)
+    public function saveDashboard(string $key, array $configuration = null): void
     {
         $this->loadFile();
 
@@ -155,20 +127,14 @@ final class Dashboard
         File::put($this->getConfigFile(), Serialize::serialize($this->dashboards));
     }
 
-    /**
-     * @param string $key
-     */
-    public function deleteDashboard($key)
+    public function deleteDashboard(string $key): void
     {
         $this->loadFile();
         unset($this->dashboards[$key]);
         File::put($this->getConfigFile(), Serialize::serialize($this->dashboards));
     }
 
-    /**
-     * @return array
-     */
-    public function getDisabledPortlets()
+    public function getDisabledPortlets(): array
     {
         $perspectiveCfg = \Pimcore\Perspective\Config::getRuntimePerspective($this->user);
         $dashboardCfg = $perspectiveCfg['dashboards'] ?? [];

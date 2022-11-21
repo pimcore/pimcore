@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,13 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem
 
 interface OrderListItemInterface
 {
-    /**
-     * @return int
-     */
-    public function getId();
+    public function getId(): int;
 
-    /**
-     * @return Order|OrderItem|null
-     */
-    public function reference();
+    public function reference(): OrderItem|Order|null;
 }

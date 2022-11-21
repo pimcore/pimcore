@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,17 +26,13 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 class Reservation extends AbstractModel
 {
-    /** @var int|null */
-    public $id;
+    public ?int $id = null;
 
-    /** @var string|null */
-    public $token;
+    public ?string $token = null;
 
-    /** @var int|null */
-    public $timestamp;
+    public ?int $timestamp = null;
 
-    /** @var string|null */
-    public $cart_id;
+    public ?string $cart_id = null;
 
     /**
      * @param string $code
@@ -43,7 +40,7 @@ class Reservation extends AbstractModel
      *
      * @return self|null
      */
-    public static function get($code, CartInterface $cart = null): ?self
+    public static function get(string $code, CartInterface $cart = null): ?self
     {
         try {
             $config = new self();
@@ -61,7 +58,7 @@ class Reservation extends AbstractModel
      *
      * @return bool
      */
-    public function exists()
+    public function exists(): bool
     {
         trigger_deprecation(
             'pimcore/pimcore',
@@ -75,13 +72,13 @@ class Reservation extends AbstractModel
     /**
      * Check whether the reservation object contains a reservations.
      *
-     * @deprecated
-     *
      * @param int $cart_id
      *
      * @return bool
+     *@deprecated
+     *
      */
-    public function check($cart_id)
+    public function check(int $cart_id): bool
     {
         trigger_deprecation(
             'pimcore/pimcore',
@@ -92,13 +89,7 @@ class Reservation extends AbstractModel
         return $cart_id == $this->getCartId();
     }
 
-    /**
-     * @param string $code
-     * @param CartInterface $cart
-     *
-     * @return self|null
-     */
-    public static function create($code, $cart): ?self
+    public static function create(string $code, CartInterface $cart): ?self
     {
         try {
             $config = new self();
@@ -117,7 +108,7 @@ class Reservation extends AbstractModel
      *
      * @return bool
      */
-    public static function releaseToken($code, CartInterface $cart = null): bool
+    public static function releaseToken(string $code, CartInterface $cart = null): bool
     {
         $db = \Pimcore\Db::get();
 
@@ -138,9 +129,6 @@ class Reservation extends AbstractModel
         }
     }
 
-    /**
-     * @return bool
-     */
     public function remove(): bool
     {
         return $this->getDao()->remove();
@@ -152,7 +140,7 @@ class Reservation extends AbstractModel
      *
      * @return bool
      */
-    public static function cleanUpReservations($duration, $seriesId = null): bool
+    public static function cleanUpReservations(int $duration, string $seriesId = null): bool
     {
         $query = 'DELETE FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation\Dao::TABLE_NAME . ' WHERE TIMESTAMPDIFF(MINUTE, timestamp , NOW())  >= ?';
         $params[] = $duration;
@@ -173,13 +161,7 @@ class Reservation extends AbstractModel
         }
     }
 
-    /**
-     * @param string $code
-     * @param CartInterface $cart
-     *
-     * @return bool
-     */
-    public static function reservationExists($code, $cart): bool
+    public static function reservationExists(string $code, CartInterface $cart): bool
     {
         $db = \Pimcore\Db::get();
         $query = 'SELECT EXISTS(SELECT id FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation\Dao::TABLE_NAME . ' WHERE token = ? and cart_id = ?)';
@@ -191,12 +173,7 @@ class Reservation extends AbstractModel
         }
     }
 
-    /**
-     * @param string $code
-     *
-     * @return bool|int
-     */
-    public static function getReservationCount($code)
+    public static function getReservationCount(string $code): bool|int
     {
         $db = \Pimcore\Db::get();
         $query = 'SELECT COUNT(*) FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation\Dao::TABLE_NAME . ' WHERE token = ? ';
@@ -210,66 +187,42 @@ class Reservation extends AbstractModel
         }
     }
 
-    /**
-     * @return string|null
-     */
-    public function getToken()
+    public function getToken(): ?string
     {
         return $this->token;
     }
 
-    /**
-     * @param string|null $token
-     */
-    public function setToken($token): void
+    public function setToken(?string $token): void
     {
         $this->token = $token;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getCartId()
+    public function getCartId(): ?string
     {
         return $this->cart_id;
     }
 
-    /**
-     * @param string|null $cart_id
-     */
-    public function setCartId($cart_id)
+    public function setCartId(?string $cart_id)
     {
         $this->cart_id = $cart_id;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param int|null $id
-     */
-    public function setId($id)
+    public function setId(?int $id)
     {
         $this->id = $id;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getTimestamp()
+    public function getTimestamp(): ?int
     {
         return $this->timestamp;
     }
 
-    /**
-     * @param int|null $timestamp
-     */
-    public function setTimestamp($timestamp): void
+    public function setTimestamp(?int $timestamp): void
     {
         $this->timestamp = $timestamp;
     }

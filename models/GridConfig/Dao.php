@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -31,7 +32,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws NotFoundException
      */
-    public function getById($id)
+    public function getById(int $id)
     {
         $data = $this->db->fetchAssociative('SELECT * FROM gridconfigs WHERE id = ?', [$id]);
 
@@ -47,7 +48,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return int
      */
-    public function save()
+    public function save(): int
     {
         $gridconfigs = $this->model->getObjectVars();
         $data = [];

@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -22,15 +23,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem\Listing;
  */
 class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
 {
-    /**
-     * @var string
-     */
-    protected $className = '\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem';
+    protected string $className = '\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem';
 
-    /**
-     * @return array
-     */
-    public function load()
+    public function load(): array
     {
         $items = [];
         $cartItems = $this->db->fetchAllAssociative('SELECT cartid, itemKey, parentItemKey FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem\Dao::TABLE_NAME .
@@ -44,7 +39,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
         return $items;
     }
 
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         try {
             return (int)$this->db->fetchOne('SELECT COUNT(*) FROM `' . \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem\Dao::TABLE_NAME . '`' . $this->getCondition());
@@ -53,23 +48,17 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
         }
     }
 
-    public function getTotalAmount()
+    public function getTotalAmount(): int
     {
         return (int)$this->db->fetchOne('SELECT SUM(count) FROM `' . \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem\Dao::TABLE_NAME . '`' . $this->getCondition());
     }
 
-    /**
-     * @param string $className
-     */
-    public function setClassName($className)
+    public function setClassName(string $className)
     {
         $this->className = $className;
     }
 
-    /**
-     * @return string
-     */
-    public function getClassName()
+    public function getClassName(): string
     {
         return $this->className;
     }

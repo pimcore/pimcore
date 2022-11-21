@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,19 +26,15 @@ class Search extends AbstractSearch
      *
      * @var string
      */
-    protected $column;
+    protected string $column;
 
-    /**
-     * @param string $value
-     * @param string $column
-     */
-    public function __construct($value, $column)
+    public function __construct(string $value, string $column)
     {
         parent::__construct($value);
         $this->column = $column;
     }
 
-    protected function getConditionColumn()
+    protected function getConditionColumn(): string
     {
         return $this->column;
     }

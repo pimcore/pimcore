@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -51,7 +52,7 @@ abstract class FrontendController extends Controller
      *
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         if ('document' === $name) {
             return $this->container->get(DocumentResolver::class)->getDocument();
@@ -64,11 +65,7 @@ abstract class FrontendController extends Controller
         throw new \RuntimeException(sprintf('Trying to read undefined property "%s"', $name));
     }
 
-    /**
-     * @param string $name
-     * @param mixed $value
-     */
-    public function __set($name, $value)
+    public function __set(string $name, mixed $value)
     {
         $requestAttributes = ['document', 'editmode'];
         if (in_array($name, $requestAttributes)) {
@@ -90,7 +87,7 @@ abstract class FrontendController extends Controller
      * @param bool $replace
      * @param Request|null $request
      */
-    protected function addResponseHeader(string $key, $values, bool $replace = false, Request $request = null)
+    protected function addResponseHeader(string $key, array|string $values, bool $replace = false, Request $request = null)
     {
         if (null === $request) {
             $request = $this->container->get('request_stack')->getCurrentRequest();
@@ -113,7 +110,7 @@ abstract class FrontendController extends Controller
      *
      * @throws \Exception
      */
-    public function getDocumentEditable($type, $inputName, array $options = [], Document\PageSnippet $document = null)
+    public function getDocumentEditable(string $type, string $inputName, array $options = [], Document\PageSnippet $document = null): Document\Editable\EditableInterface
     {
         if (null === $document) {
             $document = $this->document;
@@ -129,7 +126,7 @@ abstract class FrontendController extends Controller
      *
      * @return Response
      */
-    protected function renderTemplate($view, array $parameters = [], Response $response = null)
+    protected function renderTemplate(string $view, array $parameters = [], Response $response = null): Response
     {
         return $this->render($view, $parameters, $response);
     }

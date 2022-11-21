@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -33,7 +34,7 @@ interface CommitOrderProcessorInterface
      * @throws \Exception
      * @throws UnsupportedException
      */
-    public function committedOrderWithSamePaymentExists($paymentResponseParams, PaymentInterface $paymentProvider);
+    public function committedOrderWithSamePaymentExists(StatusInterface|array $paymentResponseParams, PaymentInterface $paymentProvider): ?AbstractOrder;
 
     /**
      * Facade method for
@@ -48,7 +49,7 @@ interface CommitOrderProcessorInterface
      *
      * @return AbstractOrder
      */
-    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, PaymentInterface $paymentProvider);
+    public function handlePaymentResponseAndCommitOrderPayment(StatusInterface|array $paymentResponseParams, PaymentInterface $paymentProvider): AbstractOrder;
 
     /**
      * Commits order payment
@@ -64,7 +65,7 @@ interface CommitOrderProcessorInterface
      *
      * @return AbstractOrder
      */
-    public function commitOrderPayment(StatusInterface $paymentStatus, PaymentInterface $paymentProvider, AbstractOrder $sourceOrder = null);
+    public function commitOrderPayment(StatusInterface $paymentStatus, PaymentInterface $paymentProvider, AbstractOrder $sourceOrder = null): AbstractOrder;
 
     /**
      * Commits order
@@ -73,12 +74,12 @@ interface CommitOrderProcessorInterface
      *
      * @return AbstractOrder
      */
-    public function commitOrder(AbstractOrder $order);
+    public function commitOrder(AbstractOrder $order): AbstractOrder;
 
     /**
      * Cleans up orders with state pending payment after 1h
      *
      * @return void
      */
-    public function cleanUpPendingOrders();
+    public function cleanUpPendingOrders(): void;
 }

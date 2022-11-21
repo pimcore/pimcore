@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,22 +23,16 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 class SessionCart extends AbstractCart implements CartInterface
 {
     /**
-     * @var SessionCart[]
+     * @var SessionCart[]|null
      */
-    protected static $unserializedCarts;
+    protected static ?array $unserializedCarts = null;
 
-    /**
-     * @return string
-     */
-    protected function getCartItemClassName()
+    protected function getCartItemClassName(): string
     {
         return SessionCartItem::class;
     }
 
-    /**
-     * @return string
-     */
-    protected function getCartCheckoutDataClassName()
+    protected function getCartCheckoutDataClassName(): string
     {
         return SessionCartCheckoutData::class;
     }
@@ -63,7 +58,7 @@ class SessionCart extends AbstractCart implements CartInterface
         return $sessionBag;
     }
 
-    public function save()
+    public function save(): void
     {
         $session = static::getSessionBag();
 
@@ -82,7 +77,7 @@ class SessionCart extends AbstractCart implements CartInterface
      *
      * @throws \Exception if the cart is not yet saved.
      */
-    public function delete()
+    public function delete(): void
     {
         $session = static::getSessionBag();
 
@@ -98,12 +93,7 @@ class SessionCart extends AbstractCart implements CartInterface
         $session->set('carts', $carts);
     }
 
-    /**
-     * @param callable $value_compare_func
-     *
-     * @return $this
-     */
-    public function sortItems(callable $value_compare_func)
+    public function sortItems(callable $value_compare_func): static
     {
         if (is_array($this->items)) {
             uasort($this->items, $value_compare_func);
@@ -112,20 +102,7 @@ class SessionCart extends AbstractCart implements CartInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function modified()
-    {
-        return parent::modified();
-    }
-
-    /**
-     * @param int $id
-     *
-     * @return SessionCart|null
-     */
-    public static function getById($id)
+    public static function getById(int $id): ?SessionCart
     {
         $carts = static::getAllCartsForUser(-1);
 
@@ -139,7 +116,7 @@ class SessionCart extends AbstractCart implements CartInterface
      *
      * @return SessionCart[]
      */
-    public static function getAllCartsForUser($userId)
+    public static function getAllCartsForUser(int $userId): array
     {
         if (null === static::$unserializedCarts) {
             static::$unserializedCarts = [];

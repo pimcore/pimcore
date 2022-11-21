@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -69,7 +70,7 @@ class SettingsController extends AdminController
      *
      * @return StreamedResponse
      */
-    public function displayCustomLogoAction(Request $request)
+    public function displayCustomLogoAction(Request $request): StreamedResponse
     {
         $mime = 'image/svg+xml';
         if ($request->get('white')) {
@@ -107,7 +108,7 @@ class SettingsController extends AdminController
      *
      * @throws \Exception
      */
-    public function uploadCustomLogoAction(Request $request)
+    public function uploadCustomLogoAction(Request $request): JsonResponse
     {
         $logoFile = $request->files->get('Filedata');
 
@@ -136,7 +137,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function deleteCustomLogoAction(Request $request)
+    public function deleteCustomLogoAction(Request $request): JsonResponse
     {
         if (Tool\Storage::get('admin')->fileExists(self::CUSTOM_LOGO_PATH)) {
             Tool\Storage::get('admin')->delete(self::CUSTOM_LOGO_PATH);
@@ -154,7 +155,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function metadataAction(Request $request)
+    public function metadataAction(Request $request): JsonResponse
     {
         $this->checkPermission('asset_metadata');
 
@@ -253,7 +254,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function getPredefinedMetadataAction(Request $request)
+    public function getPredefinedMetadataAction(Request $request): JsonResponse
     {
         $type = $request->get('type');
         $subType = $request->get('subType');
@@ -280,7 +281,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function propertiesAction(Request $request)
+    public function propertiesAction(Request $request): JsonResponse
     {
         if ($request->get('data')) {
             $this->checkPermission('predefined_properties');
@@ -375,7 +376,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function getSystemAction(Request $request, Config $config)
+    public function getSystemAction(Request $request, Config $config): JsonResponse
     {
         $this->checkPermission('system_settings');
 
@@ -428,10 +429,7 @@ class SettingsController extends AdminController
     /**
      * @Route("/set-system", name="pimcore_admin_settings_setsystem", methods={"PUT"})
      *
-     * @param Request $request
-     * @param LocaleServiceInterface $localeService
      *
-     * @return JsonResponse
      */
     public function setSystemAction(
         LocaleServiceInterface $localeService,
@@ -441,7 +439,8 @@ class SettingsController extends AdminController
         CoreCacheHandler $cache,
         Filesystem $filesystem,
         CacheClearer $symfonyCacheClearer
-    ) {
+    ): JsonResponse
+    {
         $this->checkPermission('system_settings');
 
         $values = $this->decodeJson($request->get('data'));
@@ -560,7 +559,7 @@ class SettingsController extends AdminController
      *
      * @throws \Exception
      */
-    protected function checkFallbackLanguageLoop($source, $definitions, $fallbacks = [])
+    protected function checkFallbackLanguageLoop(string $source, array $definitions, array $fallbacks = [])
     {
         if (isset($definitions[$source])) {
             $targets = explode(',', $definitions[$source]);
@@ -587,7 +586,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function getWeb2printAction(Request $request)
+    public function getWeb2printAction(Request $request): JsonResponse
     {
         $this->checkPermission('web2print_settings');
 
@@ -607,7 +606,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function setWeb2printAction(Request $request)
+    public function setWeb2printAction(Request $request): JsonResponse
     {
         $this->checkPermission('web2print_settings');
 
@@ -641,7 +640,8 @@ class SettingsController extends AdminController
         CoreCacheHandler $cache,
         Filesystem $filesystem,
         CacheClearer $symfonyCacheClearer
-    ) {
+    ): JsonResponse
+    {
         $this->checkPermissionsHasOneOf(['clear_cache', 'system_settings']);
 
         $result = [
@@ -750,7 +750,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function clearOutputCacheAction(EventDispatcherInterface $eventDispatcher)
+    public function clearOutputCacheAction(EventDispatcherInterface $eventDispatcher): JsonResponse
     {
         $this->checkPermission('clear_fullpage_cache');
 
@@ -772,7 +772,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function clearTemporaryFilesAction(EventDispatcherInterface $eventDispatcher)
+    public function clearTemporaryFilesAction(EventDispatcherInterface $eventDispatcher): JsonResponse
     {
         $this->checkPermission('clear_temp_files');
 
@@ -797,7 +797,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function staticroutesAction(Request $request)
+    public function staticroutesAction(Request $request): JsonResponse
     {
         if ($request->get('data')) {
             $this->checkPermission('routes');
@@ -894,7 +894,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function getAvailableAdminLanguagesAction(Request $request)
+    public function getAvailableAdminLanguagesAction(Request $request): JsonResponse
     {
         $langs = [];
         $availableLanguages = Tool\Admin::getLanguages();
@@ -923,7 +923,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function glossaryAction(Request $request)
+    public function glossaryAction(Request $request): JsonResponse
     {
         if ($request->get('data')) {
             $this->checkPermission('glossary');
@@ -1034,7 +1034,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function getAvailableSitesAction(Request $request)
+    public function getAvailableSitesAction(Request $request): JsonResponse
     {
         $excludeMainSite = $request->get('excludeMainSite');
 
@@ -1078,7 +1078,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function getAvailableCountriesAction(LocaleServiceInterface $localeService)
+    public function getAvailableCountriesAction(LocaleServiceInterface $localeService): JsonResponse
     {
         $countries = $localeService->getDisplayRegions();
         asort($countries);
@@ -1106,7 +1106,7 @@ class SettingsController extends AdminController
      *
      * @return Response
      */
-    public function thumbnailAdapterCheckAction(Request $request)
+    public function thumbnailAdapterCheckAction(Request $request): Response
     {
         $content = '';
 
@@ -1125,7 +1125,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function thumbnailTreeAction()
+    public function thumbnailTreeAction(): JsonResponse
     {
         $this->checkPermission('thumbnails');
 
@@ -1181,7 +1181,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function thumbnailDownloadableAction()
+    public function thumbnailDownloadableAction(): JsonResponse
     {
         $thumbnails = [];
 
@@ -1207,7 +1207,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function thumbnailAddAction(Request $request)
+    public function thumbnailAddAction(Request $request): JsonResponse
     {
         $this->checkPermission('thumbnails');
 
@@ -1241,7 +1241,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function thumbnailDeleteAction(Request $request)
+    public function thumbnailDeleteAction(Request $request): JsonResponse
     {
         $this->checkPermission('thumbnails');
 
@@ -1263,7 +1263,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function thumbnailGetAction(Request $request)
+    public function thumbnailGetAction(Request $request): JsonResponse
     {
         $this->checkPermission('thumbnails');
 
@@ -1281,7 +1281,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function thumbnailUpdateAction(Request $request)
+    public function thumbnailUpdateAction(Request $request): JsonResponse
     {
         $this->checkPermission('thumbnails');
 
@@ -1337,7 +1337,7 @@ class SettingsController extends AdminController
      *
      * @return Response
      */
-    public function videoThumbnailAdapterCheckAction(Request $request)
+    public function videoThumbnailAdapterCheckAction(Request $request): Response
     {
         $content = '';
 
@@ -1355,7 +1355,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function videoThumbnailTreeAction()
+    public function videoThumbnailTreeAction(): JsonResponse
     {
         $this->checkPermission('thumbnails');
 
@@ -1435,7 +1435,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function videoThumbnailAddAction(Request $request)
+    public function videoThumbnailAddAction(Request $request): JsonResponse
     {
         $this->checkPermission('thumbnails');
 
@@ -1469,7 +1469,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function videoThumbnailDeleteAction(Request $request)
+    public function videoThumbnailDeleteAction(Request $request): JsonResponse
     {
         $this->checkPermission('thumbnails');
 
@@ -1491,7 +1491,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function videoThumbnailGetAction(Request $request)
+    public function videoThumbnailGetAction(Request $request): JsonResponse
     {
         $this->checkPermission('thumbnails');
 
@@ -1510,7 +1510,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function videoThumbnailUpdateAction(Request $request)
+    public function videoThumbnailUpdateAction(Request $request): JsonResponse
     {
         $this->checkPermission('thumbnails');
 
@@ -1560,7 +1560,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function robotsTxtGetAction()
+    public function robotsTxtGetAction(): JsonResponse
     {
         $this->checkPermission('robots.txt');
 
@@ -1580,7 +1580,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function robotsTxtPutAction(Request $request)
+    public function robotsTxtPutAction(Request $request): JsonResponse
     {
         $this->checkPermission('robots.txt');
 
@@ -1607,7 +1607,7 @@ class SettingsController extends AdminController
      *
      * @throws \Exception
      */
-    public function websiteSettingsAction(Request $request)
+    public function websiteSettingsAction(Request $request): JsonResponse
     {
         $this->checkPermission('website_settings');
 
@@ -1735,7 +1735,7 @@ class SettingsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function getAvailableAlgorithmsAction(Request $request)
+    public function getAvailableAlgorithmsAction(Request $request): JsonResponse
     {
         $options = [
             [
@@ -1765,7 +1765,7 @@ class SettingsController extends AdminController
      * @param string $language
      * @param string $dbName
      */
-    protected function deleteViews($language, $dbName)
+    protected function deleteViews(string $language, string $dbName)
     {
         $db = \Pimcore\Db::get();
         $views = $db->fetchAllAssociative('SHOW FULL TABLES IN ' . $db->quoteIdentifier($dbName) . " WHERE TABLE_TYPE LIKE 'VIEW'");
@@ -1785,7 +1785,7 @@ class SettingsController extends AdminController
      *
      * @return Response
      */
-    public function testWeb2printAction(Request $request)
+    public function testWeb2printAction(Request $request): Response
     {
         $this->checkPermission('web2print_settings');
 

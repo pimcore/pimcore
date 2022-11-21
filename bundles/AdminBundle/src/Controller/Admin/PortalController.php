@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,26 +36,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class PortalController extends AdminController implements KernelControllerEventInterface
 {
-    /**
-     * @var \Pimcore\Helper\Dashboard
-     */
-    protected $dashboardHelper = null;
+    protected ?\Pimcore\Helper\Dashboard $dashboardHelper = null;
 
-    /**
-     * @param Request $request
-     *
-     * @return mixed
-     */
-    protected function getCurrentConfiguration(Request $request)
+    protected function getCurrentConfiguration(Request $request): array
     {
         return $this->dashboardHelper->getDashboard($request->get('key'));
     }
 
-    /**
-     * @param Request $request
-     * @param array $config
-     */
-    protected function saveConfiguration(Request $request, $config)
+    protected function saveConfiguration(Request $request, array $config)
     {
         $this->dashboardHelper->saveDashboard($request->get('key'), $config);
     }
@@ -66,7 +55,7 @@ class PortalController extends AdminController implements KernelControllerEventI
      *
      * @return JsonResponse
      */
-    public function dashboardListAction(Request $request)
+    public function dashboardListAction(Request $request): JsonResponse
     {
         $dashboards = $this->dashboardHelper->getAllDashboards();
 
@@ -87,7 +76,7 @@ class PortalController extends AdminController implements KernelControllerEventI
      *
      * @return JsonResponse
      */
-    public function createDashboardAction(Request $request)
+    public function createDashboardAction(Request $request): JsonResponse
     {
         $dashboards = $this->dashboardHelper->getAllDashboards();
         $key = trim($request->get('key'));
@@ -110,7 +99,7 @@ class PortalController extends AdminController implements KernelControllerEventI
      *
      * @return JsonResponse
      */
-    public function deleteDashboardAction(Request $request)
+    public function deleteDashboardAction(Request $request): JsonResponse
     {
         $key = $request->get('key');
         $this->dashboardHelper->deleteDashboard($key);
@@ -125,7 +114,7 @@ class PortalController extends AdminController implements KernelControllerEventI
      *
      * @return JsonResponse
      */
-    public function getConfigurationAction(Request $request)
+    public function getConfigurationAction(Request $request): JsonResponse
     {
         return $this->adminJson($this->getCurrentConfiguration($request));
     }
@@ -137,7 +126,7 @@ class PortalController extends AdminController implements KernelControllerEventI
      *
      * @return JsonResponse
      */
-    public function removeWidgetAction(Request $request)
+    public function removeWidgetAction(Request $request): JsonResponse
     {
         $config = $this->getCurrentConfiguration($request);
         $newConfig = [[], []];
@@ -165,7 +154,7 @@ class PortalController extends AdminController implements KernelControllerEventI
      *
      * @return JsonResponse
      */
-    public function addWidgetAction(Request $request)
+    public function addWidgetAction(Request $request): JsonResponse
     {
         $config = $this->getCurrentConfiguration($request);
 
@@ -191,7 +180,7 @@ class PortalController extends AdminController implements KernelControllerEventI
      *
      * @return JsonResponse
      */
-    public function reorderWidgetAction(Request $request)
+    public function reorderWidgetAction(Request $request): JsonResponse
     {
         $config = $this->getCurrentConfiguration($request);
         $newConfig = [[], []];
@@ -224,7 +213,7 @@ class PortalController extends AdminController implements KernelControllerEventI
      *
      * @return JsonResponse
      */
-    public function updatePortletConfigAction(Request $request)
+    public function updatePortletConfigAction(Request $request): JsonResponse
     {
         $key = $request->get('key');
         $id = $request->get('id');
@@ -252,7 +241,7 @@ class PortalController extends AdminController implements KernelControllerEventI
      *
      * @return JsonResponse
      */
-    public function portletModifiedDocumentsAction(Request $request)
+    public function portletModifiedDocumentsAction(Request $request): JsonResponse
     {
         $list = Document::getList([
             'limit' => 10,
@@ -285,7 +274,7 @@ class PortalController extends AdminController implements KernelControllerEventI
      *
      * @return JsonResponse
      */
-    public function portletModifiedAssetsAction(Request $request)
+    public function portletModifiedAssetsAction(Request $request): JsonResponse
     {
         $list = Asset::getList([
             'limit' => 10,
@@ -321,7 +310,7 @@ class PortalController extends AdminController implements KernelControllerEventI
      *
      * @return JsonResponse
      */
-    public function portletModifiedObjectsAction(Request $request)
+    public function portletModifiedObjectsAction(Request $request): JsonResponse
     {
         $list = DataObject::getList([
             'limit' => 10,
@@ -354,7 +343,7 @@ class PortalController extends AdminController implements KernelControllerEventI
      *
      * @return JsonResponse
      */
-    public function portletModificationStatisticsAction(Request $request)
+    public function portletModificationStatisticsAction(Request $request): JsonResponse
     {
         $db = \Pimcore\Db::get();
 
@@ -400,7 +389,8 @@ class PortalController extends AdminController implements KernelControllerEventI
     public function portletAnalyticsSitesAction(
         TranslatorInterface $translator,
         SiteConfigProvider $siteConfigProvider
-    ) {
+    ): JsonResponse
+    {
         $sites = new Site\Listing();
         $data = [
             [
@@ -421,9 +411,6 @@ class PortalController extends AdminController implements KernelControllerEventI
         return $this->adminJson(['data' => $data]);
     }
 
-    /**
-     * @param ControllerEvent $event
-     */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         if (!$event->isMainRequest()) {

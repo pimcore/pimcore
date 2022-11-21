@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,6 +18,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
@@ -38,7 +40,7 @@ class Geopolyline extends AbstractGeo implements
      *
      * @var string
      */
-    public $fieldtype = 'geopolyline';
+    public string $fieldtype = 'geopolyline';
 
     /**
      * Type for the column to query
@@ -59,43 +61,43 @@ class Geopolyline extends AbstractGeo implements
     public $columnType = 'longtext';
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param array|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
+     * @see ResourcePersistenceAwareInterface::getDataForResource
+     *
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return Serialize::serialize($data);
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param string|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array|null
+     *@see ResourcePersistenceAwareInterface::getDataFromResource
+     *
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         return Serialize::unserialize($data);
     }
 
     /**
-     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
-     * @param array|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
+     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
+     *
      */
-    public function getDataForQueryResource($data, $object = null, $params = [])
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return $this->getDataForResource($data, $object, $params);
     }
@@ -103,7 +105,7 @@ class Geopolyline extends AbstractGeo implements
     /**
      * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
     {
         $isEmpty = true;
 
@@ -135,15 +137,15 @@ class Geopolyline extends AbstractGeo implements
     }
 
     /**
-     * @see Data::getDataForEditmode
-     *
-     * @param array|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array|null
+     * @see Data::getDataForEditmode
+     *
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if (!empty($data)) {
             if (is_array($data)) {
@@ -163,15 +165,15 @@ class Geopolyline extends AbstractGeo implements
     }
 
     /**
-     * @see Data::getDataFromEditmode
-     *
-     * @param array|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return DataObject\Data\GeoCoordinates[]|null
+     *@see Data::getDataFromEditmode
+     *
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if (is_array($data)) {
             $points = [];
@@ -186,15 +188,15 @@ class Geopolyline extends AbstractGeo implements
     }
 
     /**
-     * @see Data::getVersionPreview
-     *
-     * @param array|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
+     * @see Data::getVersionPreview
+     *
      */
-    public function getVersionPreview($data, $object = null, $params = [])
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         return $this->getDiffVersionPreview($data, $object, $params);
     }
@@ -202,7 +204,7 @@ class Geopolyline extends AbstractGeo implements
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, $params = [])
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if (!empty($data)) {
@@ -220,10 +222,7 @@ class Geopolyline extends AbstractGeo implements
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForSearchIndex($object, $params = [])
+    public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
@@ -231,7 +230,7 @@ class Geopolyline extends AbstractGeo implements
     /**
      * {@inheritdoc}
      */
-    public function isDiffChangeAllowed($object, $params = [])
+    public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
@@ -241,11 +240,11 @@ class Geopolyline extends AbstractGeo implements
      *
      * @param array|null $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
      */
-    public function getDiffVersionPreview($data, $object = null, $params = [])
+    public function getDiffVersionPreview(?array $data, Concrete $object = null, array $params = []): string
     {
         $line = [];
 
@@ -258,14 +257,7 @@ class Geopolyline extends AbstractGeo implements
         return implode(' ', $line);
     }
 
-    /**
-     *
-     * @param DataObject\Data\GeoCoordinates[]|null $oldValue
-     * @param DataObject\Data\GeoCoordinates[]|null $newValue
-     *
-     * @return bool
-     */
-    public function isEqual($oldValue, $newValue): bool
+    public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
         if ($oldValue === null && $newValue === null) {
             return true;
@@ -290,42 +282,27 @@ class Geopolyline extends AbstractGeo implements
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?array';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?array';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocInputType(): ?string
     {
         return '\\'.DataObject\Data\GeoCoordinates::class.'[]|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\'.DataObject\Data\GeoCoordinates::class.'[]|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+    public function normalize(mixed $value, array $params = []): ?array
     {
         if (is_array($value)) {
             $points = [];
@@ -340,10 +317,7 @@ class Geopolyline extends AbstractGeo implements
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+    public function denormalize(mixed $value, array $params = []): ?array
     {
         if (is_array($value)) {
             $result = [];

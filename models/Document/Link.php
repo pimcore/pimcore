@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -34,7 +35,7 @@ class Link extends Model\Document
      *
      * @var int|null
      */
-    protected $internal;
+    protected ?int $internal = null;
 
     /**
      * Contains the type of the internal ID
@@ -43,7 +44,7 @@ class Link extends Model\Document
      *
      * @var string|null
      */
-    protected $internalType;
+    protected ?string $internalType = null;
 
     /**
      * Contains object of linked Document|Asset|DataObject
@@ -52,7 +53,7 @@ class Link extends Model\Document
      *
      * @var Model\Element\ElementInterface|null
      */
-    protected $object;
+    protected ?Model\Element\ElementInterface $object = null;
 
     /**
      * Contains the direct link as plain text
@@ -103,9 +104,6 @@ class Link extends Model\Document
         return $dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCacheTags(array $tags = []): array
     {
         $tags = parent::getCacheTags($tags);
@@ -127,7 +125,7 @@ class Link extends Model\Document
      *
      * @return string
      */
-    public function getHref()
+    public function getHref(): string
     {
         $path = '';
         if ($this->getLinktype() === 'internal') {
@@ -161,7 +159,7 @@ class Link extends Model\Document
      *
      * @return string
      */
-    public function getRawHref()
+    public function getRawHref(): string
     {
         $rawHref = '';
         if ($this->getLinktype() === 'internal') {
@@ -185,7 +183,7 @@ class Link extends Model\Document
      *
      * @return string
      */
-    public function getLink()
+    public function getLink(): string
     {
         $path = $this->getHref();
 
@@ -205,9 +203,9 @@ class Link extends Model\Document
     /**
      * Returns the id of the internal document|asset which is linked
      *
-     * @return int
+     * @return int|null
      */
-    public function getInternal()
+    public function getInternal(): ?int
     {
         return $this->internal;
     }
@@ -217,7 +215,7 @@ class Link extends Model\Document
      *
      * @return string
      */
-    public function getDirect()
+    public function getDirect(): string
     {
         return $this->direct;
     }
@@ -227,17 +225,12 @@ class Link extends Model\Document
      *
      * @return string
      */
-    public function getLinktype()
+    public function getLinktype(): string
     {
         return $this->linktype;
     }
 
-    /**
-     * @param int $internal
-     *
-     * @return $this
-     */
-    public function setInternal($internal)
+    public function setInternal(int $internal): static
     {
         if (!empty($internal)) {
             $this->internal = (int) $internal;
@@ -249,54 +242,33 @@ class Link extends Model\Document
         return $this;
     }
 
-    /**
-     * @param string $direct
-     *
-     * @return $this
-     */
-    public function setDirect($direct)
+    public function setDirect(string $direct): static
     {
         $this->direct = $direct;
 
         return $this;
     }
 
-    /**
-     * @param string $linktype
-     *
-     * @return $this
-     */
-    public function setLinktype($linktype)
+    public function setLinktype(string $linktype): static
     {
         $this->linktype = $linktype;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getInternalType()
+    public function getInternalType(): ?string
     {
         return $this->internalType;
     }
 
-    /**
-     * @param string|null $type
-     *
-     * @return $this
-     */
-    public function setInternalType($type)
+    public function setInternalType(?string $type): static
     {
         $this->internalType = $type;
 
         return $this;
     }
 
-    /**
-     * @return Model\Element\ElementInterface|null
-     */
-    public function getElement()
+    public function getElement(): ?Model\Element\ElementInterface
     {
         if ($this->object instanceof Model\Element\ElementInterface) {
             return $this->object;
@@ -308,12 +280,7 @@ class Link extends Model\Document
         return null;
     }
 
-    /**
-     * @param Model\Element\ElementInterface|null $element
-     *
-     * @return $this
-     */
-    public function setElement($element)
+    public function setElement(?Model\Element\ElementInterface $element): static
     {
         $this->object = $element;
 
@@ -325,7 +292,7 @@ class Link extends Model\Document
      *
      * @return Model\Element\ElementInterface|null
      */
-    public function getObject()
+    public function getObject(): ?Model\Element\ElementInterface
     {
         trigger_deprecation(
             'pimcore/pimcore',
@@ -337,13 +304,13 @@ class Link extends Model\Document
     }
 
     /**
-     * @deprecated use getElement() instead, will be removed in Pimcore 11
-     *
      * @param Model\Element\ElementInterface $object
      *
      * @return $this
+     *@deprecated use getElement() instead, will be removed in Pimcore 11
+     *
      */
-    public function setObject($object)
+    public function setObject(Model\Element\ElementInterface $object): static
     {
         trigger_deprecation(
             'pimcore/pimcore',
@@ -351,7 +318,8 @@ class Link extends Model\Document
             'The Link::setObject() method is deprecated, use Link::setElement() instead.'
         );
 
-        return $this->setElement($object);
+        $this->setElement($object);
+        return $this;
     }
 
     private function setObjectFromId(): ?Model\Element\ElementInterface
@@ -384,7 +352,7 @@ class Link extends Model\Document
      *
      * @return string
      */
-    public function getHtml()
+    public function getHtml(): string
     {
         $attributes = [
             'class',
@@ -413,7 +381,7 @@ class Link extends Model\Document
     /**
      * {@inheritdoc}
      */
-    protected function update($params = [])
+    protected function update(array $params = [])
     {
         parent::update($params);
 

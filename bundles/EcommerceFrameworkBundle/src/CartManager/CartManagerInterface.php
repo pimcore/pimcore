@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,51 +30,51 @@ interface CartManagerInterface extends ComponentInterface
      *
      * @return string
      */
-    public function getCartClassName();
+    public function getCartClassName(): string;
 
     /**
      * Adds item to given cart
      *
      * @param CheckoutableInterface $product - product to add
      * @param int $count
-     * @param string $key            - optional key of cart where the item should be added to
-     * @param null|string $itemKey   - optional item key
+     * @param string|null $key            - optional key of cart where the item should be added to
+     * @param string|null $itemKey   - optional item key
      * @param bool $replace          - replace item if same key already exists
      * @param array $params          - optional addtional item information
      * @param AbstractSetProductEntry[] $subProducts
-     * @param null|string $comment
+     * @param string|null $comment
      *
      * @return string - item key
      */
     public function addToCart(
         CheckoutableInterface $product,
-        $count,
-        $key = null,
-        $itemKey = null,
-        $replace = false,
-        array $params = [],
-        array $subProducts = [],
-        $comment = null
-    );
+        int                   $count,
+        string                $key = null,
+        string                $itemKey = null,
+        bool                  $replace = false,
+        array                 $params = [],
+        array                 $subProducts = [],
+        string                $comment = null
+    ): string;
 
     /**
      * Removes item from given cart
      *
-     * @param string      $itemKey
-     * @param null|string $key     - optional identification of cart in case of multi cart
+     * @param string $itemKey
+     * @param string|null $key     - optional identification of cart in case of multi cart
      *
      * @return void
      */
-    public function removeFromCart($itemKey, $key = null);
+    public function removeFromCart(string $itemKey, string $key = null): void;
 
     /**
      * Returns cart
      *
-     * @param null|string $key - optional identification of cart in case of multi cart
+     * @param string|null $key - optional identification of cart in case of multi cart
      *
      * @return CartInterface
      */
-    public function getCart($key = null);
+    public function getCart(string $key = null): CartInterface;
 
     /**
      * Returns cart by name
@@ -82,7 +83,7 @@ interface CartManagerInterface extends ComponentInterface
      *
      * @return null|CartInterface
      */
-    public function getCartByName($name);
+    public function getCartByName(string $name): ?CartInterface;
 
     /**
      * Returns cart by name, if it does not exist, it will be created
@@ -91,23 +92,23 @@ interface CartManagerInterface extends ComponentInterface
      *
      * @return CartInterface
      */
-    public function getOrCreateCartByName($name);
+    public function getOrCreateCartByName(string $name): CartInterface;
 
     /**
      * Returns all carts
      *
      * @return CartInterface[]
      */
-    public function getCarts();
+    public function getCarts(): array;
 
     /**
      * Clears given cart
      *
-     * @param null|string  $key - optional identification of cart in case of multi cart
+     * @param string|null $key - optional identification of cart in case of multi cart
      *
      * @return void
      */
-    public function clearCart($key = null);
+    public function clearCart(string $key = null): void;
 
     /**
      * Creates new cart
@@ -116,28 +117,27 @@ interface CartManagerInterface extends ComponentInterface
      *
      * @return string|int key of new created cart
      */
-    public function createCart(array $params);
+    public function createCart(array $params): int|string;
 
     /**
      * Deletes cart
      *
-     * @param null|string $key - optional identification of cart in case of multi cart
+     * @param string|null $key - optional identification of cart in case of multi cart
      *
      * @return void
      */
-    public function deleteCart($key = null);
+    public function deleteCart(string $key = null): void;
 
     /**
      * Creates price calculator for given cart
      *
-     * @return CartPriceCalculatorInterface
      */
-    public function getCartPriceCalculator(CartInterface $cart);
+    public function getCartPriceCalculator(CartInterface $cart): CartPriceCalculatorInterface;
 
     /**
      * Resets cart manager - carts need to be reloaded after reset() is called
      *
      * @return void
      */
-    public function reset();
+    public function reset(): void;
 }

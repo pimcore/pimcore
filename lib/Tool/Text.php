@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,12 +25,7 @@ use Pimcore\Model\Element;
 
 class Text
 {
-    /**
-     * @param string $text
-     *
-     * @return string
-     */
-    public static function removeLineBreaks($text = '')
+    public static function removeLineBreaks(string $text = ''): string
     {
         $text = str_replace(["\r\n", "\n", "\r", "\t"], ' ', $text);
         $text = preg_replace('#[ ]+#', ' ', $text);
@@ -37,13 +33,7 @@ class Text
         return $text;
     }
 
-    /**
-     * @param string|null $text
-     * @param array $params
-     *
-     * @return string|null
-     */
-    public static function wysiwygText($text, $params = [])
+    public static function wysiwygText(?string $text, array $params = []): ?string
     {
         if (empty($text)) {
             return $text;
@@ -239,11 +229,11 @@ class Text
     /**
      * extracts all dependencies to other elements from wysiwyg text
      *
-     * @param  string $text
+     * @param string|null $text
      *
      * @return array
      */
-    public static function getDependenciesOfWysiwygText($text)
+    public static function getDependenciesOfWysiwygText(?string $text): array
     {
         $dependencies = [];
 
@@ -261,13 +251,7 @@ class Text
         return $dependencies;
     }
 
-    /**
-     * @param string $text
-     * @param array $tags
-     *
-     * @return array
-     */
-    public static function getCacheTagsOfWysiwygText($text, array $tags = []): array
+    public static function getCacheTagsOfWysiwygText(string $text, array $tags = []): array
     {
         if (!empty($text)) {
             $elements = self::getElementsInWysiwyg($text);
@@ -280,12 +264,7 @@ class Text
         return $tags;
     }
 
-    /**
-     * @param string $text
-     *
-     * @return string
-     */
-    public static function convertToUTF8($text)
+    public static function convertToUTF8(string $text): string
     {
         $encoding = self::detectEncoding($text);
         if ($encoding) {
@@ -295,12 +274,7 @@ class Text
         return $text;
     }
 
-    /**
-     * @param string $text
-     *
-     * @return string
-     */
-    public static function detectEncoding($text)
+    public static function detectEncoding(string $text): string
     {
         // Detect UTF-8, UTF-16 and UTF-32 by BOM
         $utf32_big_endian_bom = chr(0x00) . chr(0x00) . chr(0xFE) . chr(0xFF);
@@ -335,12 +309,7 @@ class Text
         return $encoding;
     }
 
-    /**
-     * @param string $string
-     *
-     * @return string
-     */
-    public static function getStringAsOneLine($string)
+    public static function getStringAsOneLine(string $string): string
     {
         $string = str_replace("\r\n", ' ', $string);
         $string = str_replace("\n", ' ', $string);
@@ -351,13 +320,7 @@ class Text
         return $string;
     }
 
-    /**
-     * @param string $string
-     * @param int $length
-     *
-     * @return string
-     */
-    public static function cutStringRespectingWhitespace($string, $length)
+    public static function cutStringRespectingWhitespace(string $string, int $length): string
     {
         if ($length < strlen($string)) {
             $text = substr($string, 0, $length);

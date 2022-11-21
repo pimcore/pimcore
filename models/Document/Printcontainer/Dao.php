@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -25,10 +26,7 @@ use Pimcore\Model\Document;
  */
 class Dao extends Document\PrintAbstract\Dao
 {
-    /**
-     * @return string
-     */
-    public function getLastedChildModificationDate()
+    public function getLastedChildModificationDate(): string
     {
         $path = $this->model->getFullPath();
 

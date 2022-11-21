@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -33,12 +34,12 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Loads the relations for the given sourceId and type
      *
-     * @param int $id
-     * @param string $type
+     * @param int|null $id
+     * @param string|null $type
      *
      * @return void
      */
-    public function getBySourceId($id = null, $type = null)
+    public function getBySourceId(int $id = null, string $type = null): void
     {
         if ($id && $type) {
             $this->model->setSourceId($id);
@@ -69,7 +70,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return void
      */
-    public function cleanAllForElement($element)
+    public function cleanAllForElement(Element\ElementInterface $element): void
     {
         try {
             $id = $element->getId();
@@ -96,7 +97,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return void
      */
-    public function clear()
+    public function clear(): void
     {
         try {
             Helper::selectAndDeleteWhere($this->db, 'dependencies', 'id', Helper::quoteInto($this->db, 'sourceid = ?', $this->model->getSourceId()) . ' AND  ' . Helper::quoteInto($this->db, 'sourcetype = ?', $this->model->getSourceType()));
@@ -110,7 +111,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return void
      */
-    public function save()
+    public function save(): void
     {
         // get existing dependencies
         $existingDependenciesRaw = $this->db->fetchAllAssociative('SELECT id, targetType, targetId FROM dependencies WHERE sourceType= ? AND sourceId = ?',
@@ -176,12 +177,12 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Loads the relations that need the given source element
      *
-     * @param int $offset
-     * @param int $limit
+     * @param int|null $offset
+     * @param int|null $limit
      *
      * @return array
      */
-    public function getRequiredBy($offset = null, $limit = null)
+    public function getRequiredBy(int $offset = null, int $limit = null): array
     {
         $query = '
             SELECT dependencies.sourceid, dependencies.sourcetype FROM dependencies
@@ -220,7 +221,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return array
      */
-    public function getRequiredByWithPath($offset = null, $limit = null, $orderBy = null, $orderDirection = null)
+    public function getRequiredByWithPath(int $offset = null, int $limit = null, string $orderBy = null, string $orderDirection = null): array
     {
         $targetId = (int)$this->model->getSourceId();
 
@@ -276,7 +277,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return int
      */
-    public function getRequiredByTotalCount()
+    public function getRequiredByTotalCount(): int
     {
         return (int) $this->db->fetchOne('SELECT COUNT(*) FROM dependencies WHERE targettype = ? AND targetid = ?', [$this->model->getSourceType(), $this->model->getSourceId()]);
     }

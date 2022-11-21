@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,15 +31,9 @@ use Pimcore\Tool\Frontend;
  */
 class IncludeRenderer
 {
-    /**
-     * @var ActionRenderer
-     */
-    protected $actionRenderer;
+    protected ActionRenderer $actionRenderer;
 
-    /**
-     * @var DocumentTargetingConfigurator
-     */
-    private $targetingConfigurator;
+    private DocumentTargetingConfigurator $targetingConfigurator;
 
     public function __construct(
         ActionRenderer $actionRenderer,
@@ -58,7 +53,7 @@ class IncludeRenderer
      *
      * @return string
      */
-    public function render($include, array $params = [], $editmode = false, $cacheEnabled = true)
+    public function render(mixed $include, array $params = [], bool $editmode = false, bool $cacheEnabled = true): string
     {
         if (!is_array($params)) {
             $params = [];
@@ -139,13 +134,7 @@ class IncludeRenderer
         return $content;
     }
 
-    /**
-     * @param PageSnippet $include
-     * @param array $params
-     *
-     * @return string
-     */
-    protected function renderAction(PageSnippet $include, $params)
+    protected function renderAction(PageSnippet $include, array $params): string
     {
         return $this->actionRenderer->render($include, $params);
     }
@@ -160,7 +149,7 @@ class IncludeRenderer
      *
      * @return string
      */
-    protected function modifyEditmodeContent(PageSnippet $include, $content)
+    protected function modifyEditmodeContent(PageSnippet $include, string $content): string
     {
         $editmodeClass = ' pimcore_editable pimcore_editable_inc ';
 

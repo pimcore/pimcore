@@ -38,7 +38,7 @@ class PostStateChange
     ) {
     }
 
-    public static function configureStateChangeCommandOptions(Command $command)
+    public static function configureStateChangeCommandOptions(Command $command): void
     {
         $command->addOption(
             'no-post-change-commands',
@@ -62,7 +62,7 @@ class PostStateChange
         );
     }
 
-    public function runPostStateChangeCommands(PimcoreStyle $io, string $environment)
+    public function runPostStateChangeCommands(PimcoreStyle $io, string $environment): void
     {
         $input = $io->getInput();
 

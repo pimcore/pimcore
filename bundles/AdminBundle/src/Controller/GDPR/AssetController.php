@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,9 +36,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class AssetController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         if (!$event->isMainRequest()) {
@@ -50,11 +49,9 @@ class AssetController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
     /**
      * @Route("/search-assets", name="pimcore_admin_gdpr_asset_searchasset", methods={"GET"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
-    public function searchAssetAction(Request $request, Assets $service)
+    public function searchAssetAction(Request $request, Assets $service): JsonResponse
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
@@ -81,7 +78,7 @@ class AssetController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
      *
      * @throws \Exception
      */
-    public function exportAssetsAction(Request $request, Assets $service)
+    public function exportAssetsAction(Request $request, Assets $service): Response
     {
         $asset = Asset::getById((int) $request->get('id'));
         if (!$asset) {

@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -34,7 +35,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function save(Model\DataObject\Concrete $object, $params = [], $saveRelationalData = true)
+    public function save(Model\DataObject\Concrete $object, array $params = [], bool|array $saveRelationalData = true)
     {
         $tableName = $this->model->getDefinition()->getTableName($object->getClass());
         $data = [

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,6 +17,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\Definition\Attribute;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFindologic as DefaultFindologicWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
@@ -23,55 +25,28 @@ use Pimcore\Model\DataObject;
 
 abstract class AbstractConfig implements ConfigInterface
 {
-    /**
-     * @var string
-     */
-    protected $tenantName;
+    protected string $tenantName;
+
+    protected array $attributeConfig;
+
+    protected array $searchAttributeConfig;
+
+    protected ?AttributeFactory $attributeFactory = null;
 
     /**
-     * @var array
+     * @var Attribute[]|null
      */
-    protected $attributeConfig;
+    protected ?array $attributes = null;
 
-    /**
-     * @var array
-     */
-    protected $searchAttributeConfig;
+    protected array $searchAttributes;
 
-    /**
-     * @var AttributeFactory
-     */
-    protected $attributeFactory;
+    protected array $filterTypes;
 
-    /**
-     * @var Attribute[]
-     */
-    protected $attributes;
+    protected ?WorkerInterface $tenantWorker = null;
 
-    /**
-     * @var array
-     */
-    protected $searchAttributes;
+    protected ?array $filterTypeConfig = null;
 
-    /**
-     * @var array
-     */
-    protected $filterTypes;
-
-    /**
-     * @var WorkerInterface
-     */
-    protected $tenantWorker;
-
-    /**
-     * @var array|null
-     */
-    protected $filterTypeConfig;
-
-    /**
-     * @var array
-     */
-    protected $options;
+    protected array $options;
 
     /**
      * @param string $tenantName
@@ -101,7 +76,7 @@ abstract class AbstractConfig implements ConfigInterface
      *
      * @return array
      */
-    public function getAttributeConfig()
+    public function getAttributeConfig(): array
     {
         return $this->attributeConfig;
     }
@@ -204,7 +179,7 @@ abstract class AbstractConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function getTenantWorker()
+    public function getTenantWorker(): WorkerInterface
     {
         // the worker is expected to call setTenantWorker as soon as possible
         if (null === $this->tenantWorker) {
@@ -214,10 +189,7 @@ abstract class AbstractConfig implements ConfigInterface
         return $this->tenantWorker;
     }
 
-    /**
-     * @return string
-     */
-    public function getTenantName()
+    public function getTenantName(): string
     {
         return $this->tenantName;
     }
@@ -257,17 +229,12 @@ abstract class AbstractConfig implements ConfigInterface
      *
      * @return array|null
      */
-    public function getFilterTypeConfig()
+    public function getFilterTypeConfig(): ?array
     {
         return $this->filterTypeConfig;
     }
 
-    /**
-     * @param IndexableInterface $object
-     *
-     * @return bool
-     */
-    public function isActive(IndexableInterface $object)
+    public function isActive(IndexableInterface $object): bool
     {
         return true;
     }
@@ -278,7 +245,7 @@ abstract class AbstractConfig implements ConfigInterface
      *
      * @return AbstractCategory[]
      */
-    public function getCategories(IndexableInterface $object, $subObjectId = null)
+    public function getCategories(IndexableInterface $object, int $subObjectId = null): array
     {
         return $object->getCategories();
     }
@@ -291,7 +258,7 @@ abstract class AbstractConfig implements ConfigInterface
      *
      * @return IndexableInterface[]
      */
-    public function createSubIdsForObject(IndexableInterface $object)
+    public function createSubIdsForObject(IndexableInterface $object): array
     {
         return [$object->getId() => $object];
     }
@@ -304,7 +271,7 @@ abstract class AbstractConfig implements ConfigInterface
      *
      * @return array
      */
-    public function getSubIdsToCleanup(IndexableInterface $object, array $subIds)
+    public function getSubIdsToCleanup(IndexableInterface $object, array $subIds): array
     {
         return [];
     }
@@ -318,7 +285,7 @@ abstract class AbstractConfig implements ConfigInterface
      *
      * @return int|string|null
      */
-    public function createVirtualParentIdForSubId(IndexableInterface $object, $subId)
+    public function createVirtualParentIdForSubId(IndexableInterface $object, int $subId): int|string|null
     {
         return $object->getOSParentId();
     }
@@ -332,7 +299,7 @@ abstract class AbstractConfig implements ConfigInterface
      *
      * @return DataObject|null
      */
-    public function getObjectById($objectId, $onlyMainObject = false)
+    public function getObjectById(int $objectId, bool $onlyMainObject = false): ?DataObject
     {
         return DataObject::getById($objectId);
     }
@@ -345,7 +312,7 @@ abstract class AbstractConfig implements ConfigInterface
      *
      * @return IndexableInterface|null
      */
-    public function getObjectMockupById($objectId)
+    public function getObjectMockupById(int $objectId): ?IndexableInterface
     {
         $object = $this->getObjectById($objectId);
         if ($object instanceof IndexableInterface) {
@@ -362,7 +329,7 @@ abstract class AbstractConfig implements ConfigInterface
      *
      * @return string
      */
-    public function getIdColumnType($isPrimary)
+    public function getIdColumnType(bool $isPrimary): string
     {
         if ($isPrimary) {
             return "int(11) NOT NULL default '0'";

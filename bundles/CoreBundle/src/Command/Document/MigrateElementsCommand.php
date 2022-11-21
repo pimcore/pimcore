@@ -27,10 +27,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class MigrateElementsCommand extends AbstractCommand
 {
-    /**
-     * @var bool
-     */
-    private $runCommand = true;
+    private bool $runCommand = true;
 
     protected function configure()
     {
@@ -39,10 +36,7 @@ class MigrateElementsCommand extends AbstractCommand
             ->setDescription('Migrates document elements to editables. See issue https://github.com/pimcore/pimcore/issues/7384 first');
     }
 
-    /**
-     * @return int
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)// :int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if (!$this->runCommand) {
             return 0;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -34,7 +35,7 @@ class WebDebugToolbarListener implements EventSubscriberInterface
     /**
      * @var RequestMatcherInterface[]
      */
-    protected $excludeMatchers;
+    protected ?array $excludeMatchers = null;
 
     public function __construct(
         protected RequestHelper $requestHelper,
@@ -55,9 +56,6 @@ class WebDebugToolbarListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param RequestEvent $event
-     */
     public function onKernelResponse(RequestEvent $event)
     {
         if (!$event->isMainRequest()) {
@@ -82,7 +80,7 @@ class WebDebugToolbarListener implements EventSubscriberInterface
     /**
      * @return RequestMatcherInterface[]
      */
-    protected function getExcludeMatchers()
+    protected function getExcludeMatchers(): array
     {
         if (null === $this->excludeMatchers) {
             $this->excludeMatchers = $this->requestMatcherFactory->buildRequestMatchers($this->excludeRoutes);

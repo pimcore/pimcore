@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -39,49 +40,30 @@ interface CartInterface
      */
     const COUNT_MAIN_AND_SUB_ITEMS = 'main_and_sub';
 
-    /**
-     * @return string|int|null
-     */
-    public function getId();
+    public function getId(): int|string|null;
 
-    /**
-     * @param string|int $id
-     */
-    public function setId($id);
+    public function setId(int|string $id);
 
     /**
      * @return CartItemInterface[]
      */
-    public function getItems();
+    public function getItems(): array;
 
     /**
      * @param CartItemInterface[]|null $items
      */
-    public function setItems($items);
+    public function setItems(?array $items);
 
-    /**
-     * @return bool
-     */
-    public function isEmpty();
+    public function isEmpty(): bool;
 
-    /**
-     * @param string $itemKey
-     *
-     * @return CartItemInterface|null
-     */
-    public function getItem($itemKey);
+    public function getItem(string $itemKey): ?CartItemInterface;
 
     /**
      * @return CartItemInterface[]
      */
-    public function getGiftItems();
+    public function getGiftItems(): array;
 
-    /**
-     * @param string $itemKey
-     *
-     * @return CartItemInterface|null
-     */
-    public function getGiftItem($itemKey);
+    public function getGiftItem(string $itemKey): ?CartItemInterface;
 
     /**
      * @param CheckoutableInterface $product
@@ -94,7 +76,7 @@ interface CartInterface
      *
      * @return string $itemKey
      */
-    public function addItem(CheckoutableInterface $product, $count, $itemKey = null, $replace = false, $params = [], $subProducts = [], $comment = null);
+    public function addItem(CheckoutableInterface $product, int $count, string $itemKey = null, bool $replace = false, array $params = [], array $subProducts = [], string $comment = null): string;
 
     /**
      * @param string $itemKey
@@ -107,7 +89,7 @@ interface CartInterface
      *
      * @return string $itemKey
      */
-    public function updateItem($itemKey, CheckoutableInterface $product, $count, $replace = false, $params = [], $subProducts = [], $comment = null);
+    public function updateItem(string $itemKey, CheckoutableInterface $product, int $count, bool $replace = false, array $params = [], array $subProducts = [], string $comment = null): string;
 
     /**
      * updates count of specific cart item
@@ -117,7 +99,7 @@ interface CartInterface
      *
      * @return mixed
      */
-    public function updateItemCount($itemKey, $count);
+    public function updateItemCount(string $itemKey, int $count): mixed;
 
     /**
      * @param CheckoutableInterface $product
@@ -130,7 +112,7 @@ interface CartInterface
      *
      * @return string $itemKey
      */
-    public function addGiftItem(CheckoutableInterface $product, $count, $itemKey = null, $replace = false, $params = [], $subProducts = [], $comment = null);
+    public function addGiftItem(CheckoutableInterface $product, int $count, string $itemKey = null, bool $replace = false, array $params = [], array $subProducts = [], string $comment = null): string;
 
     /**
      * @param string $itemKey
@@ -143,21 +125,16 @@ interface CartInterface
      *
      * @return string $itemKey
      */
-    public function updateGiftItem($itemKey, CheckoutableInterface $product, $count, $replace = false, $params = [], $subProducts = [], $comment = null);
+    public function updateGiftItem(string $itemKey, CheckoutableInterface $product, int $count, bool $replace = false, array $params = [], array $subProducts = [], string $comment = null): string;
 
-    /**
-     * @param string $itemKey
-     *
-     * @return void
-     */
-    public function removeItem($itemKey);
+    public function removeItem(string $itemKey): void;
 
     /**
      * clears all items of cart
      *
      * @return void
      */
-    public function clear();
+    public function clear(): void;
 
     /**
      * calculates amount of items in cart
@@ -166,7 +143,7 @@ interface CartInterface
      *
      * @return int
      */
-    public function getItemAmount(string $countSubItems = self::COUNT_MAIN_ITEMS_ONLY);
+    public function getItemAmount(string $countSubItems = self::COUNT_MAIN_ITEMS_ONLY): int;
 
     /**
      * counts items in cart (does not consider item amount)
@@ -175,21 +152,21 @@ interface CartInterface
      *
      * @return int
      */
-    public function getItemCount(string $countSubItems = self::COUNT_MAIN_ITEMS_ONLY);
+    public function getItemCount(string $countSubItems = self::COUNT_MAIN_ITEMS_ONLY): int;
 
     /**
      * @param int $count
      *
      * @return CartItemInterface[]
      */
-    public function getRecentlyAddedItems($count);
+    public function getRecentlyAddedItems(int $count): array;
 
     /**
      * returns price calculator of cart
      *
      * @return CartPriceCalculatorInterface
      */
-    public function getPriceCalculator();
+    public function getPriceCalculator(): CartPriceCalculatorInterface;
 
     /**
      * executes necessary steps when cart is modified - e.g. updating modification timestamp, resetting cart price calculator etc.
@@ -198,7 +175,7 @@ interface CartInterface
      *
      * @return $this
      */
-    public function modified();
+    public function modified(): static;
 
     /**
      * Set custom checkout data for cart.
@@ -207,7 +184,7 @@ interface CartInterface
      * @param string $key
      * @param string $data
      */
-    public function setCheckoutData($key, $data);
+    public function setCheckoutData(string $key, string $data);
 
     /**
      * Get custom checkout data for cart with given key.
@@ -216,14 +193,14 @@ interface CartInterface
      *
      * @return string|null
      */
-    public function getCheckoutData($key);
+    public function getCheckoutData(string $key): ?string;
 
     /**
      * get name of cart.
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * set name of cart.
@@ -232,7 +209,7 @@ interface CartInterface
      *
      * @return void
      */
-    public function setName($name);
+    public function setName(string $name): void;
 
     /**
      * returns if cart is bookable.
@@ -240,31 +217,25 @@ interface CartInterface
      *
      * @return bool
      */
-    public function getIsBookable();
+    public function getIsBookable(): bool;
 
-    /**
-     * @return \DateTime
-     */
-    public function getCreationDate();
+    public function getCreationDate(): \DateTime;
 
     /**
      * @param null|\DateTime $creationDate
      *
      * @return void
      */
-    public function setCreationDate(\DateTime $creationDate = null);
+    public function setCreationDate(\DateTime $creationDate = null): void;
 
-    /**
-     * @return \DateTime|null
-     */
-    public function getModificationDate();
+    public function getModificationDate(): ?\DateTime;
 
     /**
      * @param null|\DateTime $modificationDate
      *
      * @return void
      */
-    public function setModificationDate(\DateTime $modificationDate = null);
+    public function setModificationDate(\DateTime $modificationDate = null): void;
 
     /**
      * sorts all items in cart according to a given callback function
@@ -273,30 +244,30 @@ interface CartInterface
      *
      * @return CartInterface
      */
-    public function sortItems(callable $value_compare_func);
+    public function sortItems(callable $value_compare_func): CartInterface;
 
     /**
      * saves cart
      *
      * @return void
      */
-    public function save();
+    public function save(): void;
 
     /**
      * deletes cart
      *
      * @return void
      */
-    public function delete();
+    public function delete(): void;
 
     /**
      * @static
      *
      * @param int $id
      *
-     * @return CartInterface
+     * @return CartInterface|null
      */
-    public static function getById($id);
+    public static function getById(int $id): ?CartInterface;
 
     /**
      * returns all carts for given userId
@@ -307,28 +278,23 @@ interface CartInterface
      *
      * @return CartInterface[]
      */
-    public static function getAllCartsForUser($userId);
-
-    /**
-     * @param string $token
-     *
-     * @throws \Exception
-     *
-     * @return bool
-     */
-    public function addVoucherToken($token);
+    public static function getAllCartsForUser(int $userId): array;
 
     /**
      * @param string $token
      *
      * @return bool
+     *@throws \Exception
+     *
      */
-    public function removeVoucherToken($token);
+    public function addVoucherToken(string $token): bool;
+
+    public function removeVoucherToken(string $token): bool;
 
     /**
      * @return string[]
      */
-    public function getVoucherTokenCodes();
+    public function getVoucherTokenCodes(): array;
 
     /**
      * Returns detail information of added voucher codes and if they are considered by pricing rules
@@ -337,8 +303,5 @@ interface CartInterface
      */
     public function getPricingManagerTokenInformationDetails(): array;
 
-    /**
-     * @return bool
-     */
-    public function isVoucherErrorCode($errorCode);
+    public function isVoucherErrorCode($errorCode): bool;
 }

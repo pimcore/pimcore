@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -42,21 +43,10 @@ class EditmodeListener implements EventSubscriberInterface
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;
 
-    /**
-     * @var array
-     */
-    protected $contentTypes = [
+    protected array $contentTypes = [
         'text/html',
     ];
 
-    /**
-     * @param EditmodeResolver $editmodeResolver
-     * @param DocumentResolver $documentResolver
-     * @param UserLoader $userLoader
-     * @param PimcoreBundleManager $bundleManager
-     * @param RouterInterface $router
-     * @param EditmodeEditableDefinitionCollector $editableConfigCollector
-     */
     public function __construct(
         protected EditmodeResolver $editmodeResolver,
         protected DocumentResolver $documentResolver,
@@ -131,12 +121,7 @@ class EditmodeListener implements EventSubscriberInterface
         $response->headers->set('X-Frame-Options', 'SAMEORIGIN', true);
     }
 
-    /**
-     * @param Response $response
-     *
-     * @return bool
-     */
-    protected function contentTypeMatches(Response $response)
+    protected function contentTypeMatches(Response $response): bool
     {
         $contentType = $response->headers->get('Content-Type');
         if (!$contentType) {
@@ -211,13 +196,7 @@ class EditmodeListener implements EventSubscriberInterface
         return $code;
     }
 
-    /**
-     * @param Document $document
-     * @param string $language
-     *
-     * @return string
-     */
-    protected function buildHeadHtml(Document $document, $language)
+    protected function buildHeadHtml(Document $document, string $language): string
     {
         $libraries = $this->getEditmodeLibraries();
         $scripts = $this->getEditmodeScripts();
@@ -275,10 +254,7 @@ class EditmodeListener implements EventSubscriberInterface
         return $headHtml;
     }
 
-    /**
-     * @return array
-     */
-    protected function getEditmodeLibraries()
+    protected function getEditmodeLibraries(): array
     {
         $disableMinifyJs = \Pimcore::disableMinifyJs();
 
@@ -290,10 +266,7 @@ class EditmodeListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @return array
-     */
-    protected function getEditmodeScripts()
+    protected function getEditmodeScripts(): array
     {
         return array_merge(
             [
@@ -337,10 +310,7 @@ class EditmodeListener implements EventSubscriberInterface
         );
     }
 
-    /**
-     * @return array
-     */
-    protected function getEditmodeStylesheets()
+    protected function getEditmodeStylesheets(): array
     {
         return array_merge(
             [

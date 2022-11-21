@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,12 +27,12 @@ abstract class CachingPriceSystem extends AbstractPriceSystem implements Caching
     /**
      * @var PriceInfoInterface[][] $priceInfos
      */
-    protected $priceInfos = [];
+    protected array $priceInfos = [];
 
     /**
      * {@inheritdoc}
      */
-    public function getPriceInfo(CheckoutableInterface $product, $quantityScale = 1, $products = null): PriceInfoInterface
+    public function getPriceInfo(CheckoutableInterface $product, int|string $quantityScale = null, array $products = null): PriceInfoInterface
     {
         $pId = $product->getId();
         if (!array_key_exists($pId, $this->priceInfos) || !is_array($this->priceInfos[$pId])) {
@@ -41,7 +42,7 @@ abstract class CachingPriceSystem extends AbstractPriceSystem implements Caching
         $quantityScaleKey = (string) $quantityScale;
 
         if (empty($this->priceInfos[$pId][$quantityScaleKey])) {
-            $priceInfo = $this->initPriceInfoInstance($quantityScale, $product, $products);
+            $priceInfo = $this->initPriceInfoInstance($quantityScale, $product, $products ?? []);
             $this->priceInfos[$pId][$quantityScaleKey] = $priceInfo;
         }
 
@@ -51,7 +52,7 @@ abstract class CachingPriceSystem extends AbstractPriceSystem implements Caching
     /**
      * {@inheritdoc}
      */
-    public function loadPriceInfos($productEntries, $options)
+    public function loadPriceInfos(array $productEntries, array $options): mixed
     {
         throw new UnsupportedException(__METHOD__  . ' is not supported for ' . get_class($this));
     }
@@ -59,7 +60,7 @@ abstract class CachingPriceSystem extends AbstractPriceSystem implements Caching
     /**
      * {@inheritdoc}
      */
-    public function clearPriceInfos($productEntries, $options)
+    public function clearPriceInfos(array $productEntries, array $options): mixed
     {
         throw new UnsupportedException(__METHOD__  . ' is not supported for ' . get_class($this));
     }
@@ -67,7 +68,7 @@ abstract class CachingPriceSystem extends AbstractPriceSystem implements Caching
     /**
      * {@inheritdoc}
      */
-    public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit)
+    public function filterProductIds(array $productIds, ?float $fromPrice, ?float $toPrice, string $order, int $offset, int $limit): array
     {
         throw new UnsupportedException(__METHOD__  . ' is not supported for ' . get_class($this));
     }

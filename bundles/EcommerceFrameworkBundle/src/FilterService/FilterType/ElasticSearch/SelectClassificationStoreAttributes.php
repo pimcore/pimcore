@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -44,7 +45,7 @@ class SelectClassificationStoreAttributes extends AbstractFilterType
     /**
      * {@inheritdoc}
      */
-    protected function sortResult(AbstractFilterDefinitionType $filterDefinition, array $keyCollection)
+    protected function sortResult(AbstractFilterDefinitionType $filterDefinition, array $keyCollection): array
     {
         if (!method_exists($filterDefinition, 'getKeyIdPriorityOrder') || empty($filterDefinition->getKeyIdPriorityOrder())) {
             return $keyCollection;
@@ -66,7 +67,7 @@ class SelectClassificationStoreAttributes extends AbstractFilterType
     /**
      * {@inheritdoc}
      */
-    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList)
+    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList): void
     {
         $field = $this->getField($filterDefinition);
         $keysField = $field . '.keys';
@@ -128,7 +129,7 @@ class SelectClassificationStoreAttributes extends AbstractFilterType
     /**
      * {@inheritdoc}
      */
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter, array $params, bool $isPrecondition = false): array
     {
         $field = $this->getField($filterDefinition);
         $nestedPath = $field . '.values';

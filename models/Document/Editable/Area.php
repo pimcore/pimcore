@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -36,12 +37,10 @@ class Area extends Model\Document\Editable
      *
      * @var string|null
      */
-    protected $type;
+    protected ?string $type = null;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBrickType()
+
+    public function getBrickType(): ?string
     {
         return $this->type;
     }
@@ -49,7 +48,7 @@ class Area extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return 'area';
     }
@@ -57,26 +56,20 @@ class Area extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         return [
             'type' => $this->type,
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForResource()
+    public function getDataForResource(): array
     {
         return [
             'type' => $this->type,
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDataEditmode(): array
     {
         return [
@@ -212,7 +205,7 @@ class Area extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): static
     {
         if (strlen($data) > 2) {
             $data = Serialize::unserialize($data);
@@ -226,7 +219,7 @@ class Area extends Model\Document\Editable
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): static
     {
         if (is_array($data)) {
             $this->type = $data['type'] ?? null;
@@ -235,10 +228,7 @@ class Area extends Model\Document\Editable
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return false;
     }
@@ -252,7 +242,7 @@ class Area extends Model\Document\Editable
      *
      * @return Model\Document\Editable
      */
-    public function getElement(string $name)
+    public function getElement(string $name): Model\Document\Editable
     {
         $document = $this->getDocument();
         $parentBlockNames = $this->getParentBlockNames();

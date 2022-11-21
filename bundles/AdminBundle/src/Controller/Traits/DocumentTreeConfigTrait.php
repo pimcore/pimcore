@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,6 +19,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Traits;
 use Pimcore\Config;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Site;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\Frontend;
@@ -30,15 +32,16 @@ trait DocumentTreeConfigTrait
     use AdminStyleTrait;
 
     /**
-     * @param Document $element
+     * @param ElementInterface $element
      *
      * @return array
      *
      * @throws \Exception
      */
-    public function getTreeNodeConfig($element)
+    public function getTreeNodeConfig(ElementInterface $element): array
     {
         $site = null;
+        /** @var Document $childDocument */
         $childDocument = $element;
         $container = \Pimcore::getContainer();
 
@@ -48,7 +51,7 @@ trait DocumentTreeConfigTrait
         $tmpDocument = [
             'id' => $childDocument->getId(),
             'key' => $childDocument->getKey(),
-            'idx' => (int)$childDocument->getIndex(),
+            'idx' => $childDocument->getIndex(),
             'text' => $childDocument->getKey(),
             'type' => $childDocument->getType(),
             'path' => $childDocument->getRealFullPath(),

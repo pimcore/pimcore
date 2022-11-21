@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,6 +22,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Extension\ColumnType;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Extension\QueryColumnType;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
 
@@ -49,7 +51,7 @@ class NumericRange extends Data implements
      *
      * @var string
      */
-    public $fieldtype = 'numericRange';
+    public string $fieldtype = 'numericRange';
 
     /**
      * Type for the column to query
@@ -93,12 +95,12 @@ class NumericRange extends Data implements
     /**
      * @internal
      */
-    public ?float $minValue;
+    public ?float $minValue = null;
 
     /**
      * @internal
      */
-    public ?float $maxValue;
+    public ?float $maxValue = null;
 
     /**
      * This is the x part in DECIMAL(x, y) and denotes the total amount of digits. In MySQL this is called precision
@@ -107,7 +109,7 @@ class NumericRange extends Data implements
      *
      * @internal
      */
-    public ?int $decimalSize;
+    public ?int $decimalSize = null;
 
     /**
      * This is the y part in DECIMAL(x, y) and denotes amount of digits after a comma. In MySQL this is called scale. See
@@ -115,7 +117,7 @@ class NumericRange extends Data implements
      *
      * @internal
      */
-    public ?int $decimalPrecision;
+    public ?int $decimalPrecision = null;
 
     public function getWidth(): int|string
     {
@@ -282,15 +284,15 @@ class NumericRange extends Data implements
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param DataObject\Data\NumericRange|null $data
+     * @param mixed $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
+     * @see ResourcePersistenceAwareInterface::getDataForResource
+     *
      */
-    public function getDataForResource($data, $object = null, $params = []): array
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         if ($data instanceof DataObject\Data\NumericRange) {
             return [
@@ -306,15 +308,15 @@ class NumericRange extends Data implements
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param array $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return DataObject\Data\NumericRange|null
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
+     *
      */
-    public function getDataFromResource($data, $object = null, $params = []): ?DataObject\Data\NumericRange
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\NumericRange
     {
         if (isset($data[$this->getName() . '__minimum'], $data[$this->getName() . '__maximum'])) {
             $numericRange = new DataObject\Data\NumericRange(
@@ -335,29 +337,29 @@ class NumericRange extends Data implements
     }
 
     /**
-     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
-     * @param DataObject\Data\NumericRange|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
+     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
+     *
      */
-    public function getDataForQueryResource($data, $object = null, $params = []): array
+    public function getDataForQueryResource(mixed $data, Concrete $object = null, array $params = []): array
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
     /**
-     * @see Data::getDataForEditmode
-     *
-     * @param DataObject\Data\NumericRange|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array|null
+     * @see Data::getDataForEditmode
+     *
      */
-    public function getDataForEditmode($data, $object = null, $params = []): ?array
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data instanceof DataObject\Data\NumericRange) {
             return [
@@ -370,15 +372,15 @@ class NumericRange extends Data implements
     }
 
     /**
-     * @see Data::getDataFromEditmode
-     *
-     * @param array|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return DataObject\Data\NumericRange|null
+     *@see Data::getDataFromEditmode
+     *
      */
-    public function getDataFromEditmode($data, $object = null, $params = []): ?DataObject\Data\NumericRange
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\NumericRange
     {
         if (\is_array($data) && (isset($data['minimum']) || isset($data['maximum']))) {
             return new DataObject\Data\NumericRange($data['minimum'], $data['maximum']);
@@ -393,15 +395,15 @@ class NumericRange extends Data implements
     }
 
     /**
-     * @see Data::getVersionPreview
-     *
-     * @param DataObject\Data\NumericRange|null $data
+     * @param mixed $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
+     * @see Data::getVersionPreview
+     *
      */
-    public function getVersionPreview($data, $object = null, $params = []): string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof DataObject\Data\NumericRange) {
             return $data->__toString();
@@ -415,7 +417,7 @@ class NumericRange extends Data implements
      *
      * @throws Exception
      */
-    public function getForCsvExport($object, $params = []): string
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
@@ -426,10 +428,7 @@ class NumericRange extends Data implements
         return '';
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getDataForSearchIndex($object, $params = []): string
+    public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
@@ -437,15 +436,12 @@ class NumericRange extends Data implements
     /**
      * {@inheritDoc}
      */
-    public function isDiffChangeAllowed($object, $params = []): bool
+    public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function normalize($value, $params = [])
+    public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof DataObject\Data\NumericRange) {
             return $value->toArray();
@@ -454,10 +450,7 @@ class NumericRange extends Data implements
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function denormalize($value, $params = [])
+    public function denormalize(mixed $value, array $params = []): ?DataObject\Data\NumericRange
     {
         if (\is_array($value)) {
             return new DataObject\Data\NumericRange($value['minimum'], $value['maximum']);
@@ -477,7 +470,7 @@ class NumericRange extends Data implements
     /**
      * {@inheritDoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = []): void
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $isEmpty = true;
 
@@ -551,14 +544,7 @@ class NumericRange extends Data implements
         }
     }
 
-    /**
-     *
-     * @param DataObject\Data\NumericRange|null $oldValue
-     * @param DataObject\Data\NumericRange|null $newValue
-     *
-     * @return bool
-     */
-    public function isEqual($oldValue, $newValue): bool
+    public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
         if ($oldValue === null && $newValue === null) {
             return true;
@@ -573,33 +559,21 @@ class NumericRange extends Data implements
             && (abs($oldValue->getMaximum() - $newValue->getMaximum()) < 0.000000000001);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\NumericRange::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\NumericRange::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\NumericRange::class . '|null';
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\NumericRange::class . '|null';

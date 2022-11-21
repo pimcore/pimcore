@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,20 +30,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DefaultService implements VoucherServiceInterface
 {
-    /**
-     * @var int
-     */
-    protected $reservationMinutesThreshold;
+    protected int $reservationMinutesThreshold;
 
-    /**
-     * @var int
-     */
-    protected $statisticsDaysThreshold;
+    protected int $statisticsDaysThreshold;
 
-    /**
-     * @var string
-     */
-    protected $currentLocale;
+    protected ?string $currentLocale = null;
 
     public function __construct(LocaleServiceInterface $localeService, array $options = [])
     {
@@ -84,7 +76,7 @@ class DefaultService implements VoucherServiceInterface
      *
      * @throws VoucherServiceException
      */
-    public function checkToken($code, CartInterface $cart)
+    public function checkToken(string $code, CartInterface $cart): bool
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             return $tokenManager->checkToken($code, $cart);
@@ -93,13 +85,7 @@ class DefaultService implements VoucherServiceInterface
         throw new VoucherServiceException('No Token for code ' .$code . ' exists.', VoucherServiceException::ERROR_CODE_NO_TOKEN_FOR_THIS_CODE_EXISTS);
     }
 
-    /**
-     * @param string $code
-     * @param CartInterface  $cart
-     *
-     * @return bool
-     */
-    public function reserveToken($code, CartInterface $cart)
+    public function reserveToken(string $code, CartInterface $cart): bool
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             return $tokenManager->reserveToken($code, $cart);
@@ -108,13 +94,7 @@ class DefaultService implements VoucherServiceInterface
         return false;
     }
 
-    /**
-     * @param string $code
-     * @param CartInterface  $cart
-     *
-     * @return bool
-     */
-    public function releaseToken($code, CartInterface $cart)
+    public function releaseToken(string $code, CartInterface $cart): bool
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             return $tokenManager->releaseToken($code, $cart);
@@ -123,14 +103,7 @@ class DefaultService implements VoucherServiceInterface
         return false;
     }
 
-    /**
-     * @param string $code
-     * @param CartInterface  $cart
-     * @param AbstractOrder $order
-     *
-     * @return bool
-     */
-    public function applyToken($code, CartInterface $cart, AbstractOrder $order)
+    public function applyToken(string $code, CartInterface $cart, AbstractOrder $order): bool
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             if ($orderToken = $tokenManager->applyToken($code, $cart, $order)) {
@@ -156,7 +129,7 @@ class DefaultService implements VoucherServiceInterface
      *
      * @return bool
      */
-    public function removeAppliedTokenFromOrder(\Pimcore\Model\DataObject\OnlineShopVoucherToken $tokenObject, AbstractOrder $order)
+    public function removeAppliedTokenFromOrder(\Pimcore\Model\DataObject\OnlineShopVoucherToken $tokenObject, AbstractOrder $order): bool
     {
         /** @var AbstractVoucherSeries $series */
         $series = $tokenObject->getVoucherSeries();
@@ -285,7 +258,7 @@ class DefaultService implements VoucherServiceInterface
      *
      * @return bool
      */
-    public function cleanUpReservations($seriesId = null)
+    public function cleanUpReservations(string $seriesId = null): bool
     {
         if (isset($seriesId)) {
             return Reservation::cleanUpReservations($this->reservationMinutesThreshold, $seriesId);
@@ -294,22 +267,17 @@ class DefaultService implements VoucherServiceInterface
         }
     }
 
-    /**
-     * @param \Pimcore\Model\DataObject\OnlineShopVoucherSeries $series
-     *
-     * @return bool
-     */
-    public function cleanUpVoucherSeries(\Pimcore\Model\DataObject\OnlineShopVoucherSeries $series)
+    public function cleanUpVoucherSeries(\Pimcore\Model\DataObject\OnlineShopVoucherSeries $series): bool
     {
-        return Token\Listing::cleanUpAllTokens($series->getId());
+        return Token\Listing::cleanUpAllTokens((string)$series->getId());
     }
 
     /**
-     * @param null|string $seriesId
+     * @param string|null $seriesId
      *
      * @return bool
      */
-    public function cleanUpStatistics($seriesId = null)
+    public function cleanUpStatistics(string $seriesId = null): bool
     {
         if (isset($seriesId)) {
             return Statistic::cleanUpStatistics($this->statisticsDaysThreshold, $seriesId);
@@ -318,12 +286,7 @@ class DefaultService implements VoucherServiceInterface
         }
     }
 
-    /**
-     * @param string $code
-     *
-     * @return TokenManager\TokenManagerInterface|null
-     */
-    public function getTokenManager($code)
+    public function getTokenManager(string $code): ?TokenManager\TokenManagerInterface
     {
         if ($token = Token::getByCode($code)) {
             if ($series = \Pimcore\Model\DataObject\OnlineShopVoucherSeries::getById($token->getVoucherSeriesId())) {

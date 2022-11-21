@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,8 +18,5 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
 interface ComponentInterface
 {
-    /**
-     * @return mixed
-     */
-    public function save();
+    public function save(): mixed;
 }

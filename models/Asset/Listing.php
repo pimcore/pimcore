@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,7 +33,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
     /**
      * @return Model\Asset[]
      */
-    public function getAssets()
+    public function getAssets(): array
     {
         return $this->getData();
     }
@@ -42,7 +43,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      *
      * @return $this
      */
-    public function setAssets($assets)
+    public function setAssets(array $assets): static
     {
         return $this->setData($assets);
     }
@@ -52,11 +53,8 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      * Methods for AdapterInterface
      */
 
-    /**
-     * @return int
-     */
-    #[\ReturnTypeWillChange]
-    public function count()// : int
+
+    public function count(): int
     {
         return $this->getTotalCount();
     }
@@ -67,7 +65,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      *
      * @return Model\Asset[]
      */
-    public function getItems($offset, $itemCountPerPage)
+    public function getItems(int $offset, int $itemCountPerPage): array
     {
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);
@@ -84,7 +82,7 @@ class Listing extends Model\Listing\AbstractListing implements PaginateListingIn
      *
      * @return $this
      */
-    public function filterAccessibleByUser(Model\User $user, Model\Asset $asset)
+    public function filterAccessibleByUser(Model\User $user, Model\Asset $asset): static
     {
         if (!$user->isAdmin()) {
             $userIds = $user->getRoles();

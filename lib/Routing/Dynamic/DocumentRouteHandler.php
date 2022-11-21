@@ -32,20 +32,11 @@ use Symfony\Component\Routing\RouteCollection;
  */
 final class DocumentRouteHandler implements DynamicRouteHandlerInterface
 {
-    /**
-     * @var Document\Service
-     */
-    private $documentService;
+    private Document\Service $documentService;
 
-    /**
-     * @var SiteResolver
-     */
-    private $siteResolver;
+    private SiteResolver $siteResolver;
 
-    /**
-     * @var RequestHelper
-     */
-    private $requestHelper;
+    private RequestHelper $requestHelper;
 
     /**
      * Determines if unpublished documents should be matched, even when not in admin mode. This
@@ -53,30 +44,14 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
      *
      * @var bool
      */
-    private $forceHandleUnpublishedDocuments = false;
+    private bool $forceHandleUnpublishedDocuments = false;
 
-    /**
-     * @var array
-     */
-    private $directRouteDocumentTypes = [];
+    private array $directRouteDocumentTypes = [];
 
-    /**
-     * @var Config
-     */
-    private $config;
+    private Config $config;
 
-    /**
-     * @var StaticPageResolver
-     */
     private StaticPageResolver $staticPageResolver;
 
-    /**
-     * @param Document\Service $documentService
-     * @param SiteResolver $siteResolver
-     * @param RequestHelper $requestHelper
-     * @param Config $config
-     * @param StaticPageResolver $staticPageResolver
-     */
     public function __construct(
         Document\Service $documentService,
         SiteResolver $siteResolver,
@@ -96,10 +71,7 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
         $this->forceHandleUnpublishedDocuments = $handle;
     }
 
-    /**
-     * @return array
-     */
-    public function getDirectRouteDocumentTypes()
+    public function getDirectRouteDocumentTypes(): array
     {
         if (empty($this->directRouteDocumentTypes)) {
             $routingConfig = \Pimcore\Config::getSystemConfiguration('routing');
@@ -110,11 +82,11 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
     }
 
     /**
-     * @deprecated will be removed in Pimcore 11
-     *
      * @param string $type
+     *@deprecated will be removed in Pimcore 11
+          *
      */
-    public function addDirectRouteDocumentType($type)
+    public function addDirectRouteDocumentType(string $type)
     {
         if (!in_array($type, $this->getDirectRouteDocumentTypes())) {
             $this->directRouteDocumentTypes[] = $type;
@@ -124,7 +96,7 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function getRouteByName(string $name)
+    public function getRouteByName(string $name): ?DocumentRoute
     {
         if (preg_match('/^document_(\d+)$/', $name, $match)) {
             $document = Document::getById((int) $match[1]);
@@ -187,7 +159,7 @@ final class DocumentRouteHandler implements DynamicRouteHandlerInterface
      *
      * @return DocumentRoute|null
      */
-    public function buildRouteForDocument(Document $document, DynamicRequestContext $context = null)
+    public function buildRouteForDocument(Document $document, DynamicRequestContext $context = null): ?DocumentRoute
     {
         // check for direct hardlink
         if ($document instanceof Document\Hardlink) {

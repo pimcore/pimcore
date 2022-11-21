@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,9 +28,6 @@ use Pimcore\Model\DataObject\OnlineShopVoucherToken;
  */
 interface TokenManagerInterface
 {
-    /**
-     * @param AbstractVoucherTokenType $configuration
-     */
     public function __construct(AbstractVoucherTokenType $configuration);
 
     /**
@@ -38,7 +36,7 @@ interface TokenManagerInterface
      *
      * @return bool
      */
-    public function isValidSetting();
+    public function isValidSetting(): bool;
 
     /**
      * Removes tokens of series, if no parameters are passed, all tokens get removed from series.
@@ -47,7 +45,7 @@ interface TokenManagerInterface
      *
      * @return bool
      */
-    public function cleanUpCodes($filter = []);
+    public function cleanUpCodes(?array $filter = []): bool;
 
     /**
      * Checks a token code, if it is available for putting into cart
@@ -56,11 +54,11 @@ interface TokenManagerInterface
      * @param string $code
      * @param CartInterface $cart
      *
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException
-     *
      * @return bool
+     *@throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException
+     *
      */
-    public function checkToken($code, CartInterface $cart);
+    public function checkToken(string $code, CartInterface $cart): bool;
 
     /**
      * Adds a reservation to a specific token code.
@@ -68,11 +66,11 @@ interface TokenManagerInterface
      * @param string $code
      * @param CartInterface $cart
      *
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException
-     *
      * @return bool
+     *@throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException
+     *
      */
-    public function reserveToken($code, CartInterface $cart);
+    public function reserveToken(string $code, CartInterface $cart): bool;
 
     /**
      * Creates token object and adds it to order, increases token usage and
@@ -82,11 +80,11 @@ interface TokenManagerInterface
      * @param CartInterface $cart
      * @param AbstractOrder $order
      *
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException
-     *
      * @return bool|\Pimcore\Model\DataObject\OnlineShopVoucherToken
+     *@throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException
+     *
      */
-    public function applyToken($code, CartInterface $cart, AbstractOrder $order);
+    public function applyToken(string $code, CartInterface $cart, AbstractOrder $order): OnlineShopVoucherToken|bool;
 
     /**
      * Removes the reservation of a token code.
@@ -96,7 +94,7 @@ interface TokenManagerInterface
      *
      * @return bool
      */
-    public function releaseToken($code, CartInterface $cart);
+    public function releaseToken(string $code, CartInterface $cart): bool;
 
     /**
      * cleans up the token usage and the ordered token object if necessary
@@ -106,7 +104,7 @@ interface TokenManagerInterface
      *
      * @return bool
      */
-    public function removeAppliedTokenFromOrder(OnlineShopVoucherToken $tokenObject, AbstractOrder $order);
+    public function removeAppliedTokenFromOrder(OnlineShopVoucherToken $tokenObject, AbstractOrder $order): bool;
 
     /**
      * Get the codes of a voucher series, optionally a filter array can be passed.
@@ -115,24 +113,13 @@ interface TokenManagerInterface
      *
      * @return array|bool
      */
-    public function getCodes($filter = null);
+    public function getCodes(array $filter = null): bool|array;
 
-    /**
-     * @param null|int $usagePeriod
-     *
-     * @return bool|array
-     */
-    public function getStatistics($usagePeriod = null);
+    public function getStatistics(?int $usagePeriod = null): bool|array;
 
-    /**
-     * @return bool
-     */
-    public function insertOrUpdateVoucherSeries();
+    public function insertOrUpdateVoucherSeries(): bool|string|array;
 
-    /**
-     * @return int
-     */
-    public function getFinalTokenLength();
+    public function getFinalTokenLength(): int;
 
     /**
      * Removes reservations
@@ -141,7 +128,7 @@ interface TokenManagerInterface
      *
      * @return bool
      */
-    public function cleanUpReservations($duration = 0);
+    public function cleanUpReservations(int $duration = 0): bool;
 
     /**
      * Prepares the view and returns the according template for rendering.
@@ -153,10 +140,7 @@ interface TokenManagerInterface
      *
      * @return string The path of the template to display.
      */
-    public function prepareConfigurationView(&$viewParamsBag, $params);
+    public function prepareConfigurationView(array &$viewParamsBag, array $params): string;
 
-    /**
-     * @return AbstractVoucherTokenType
-     */
-    public function getConfiguration();
+    public function getConfiguration(): AbstractVoucherTokenType;
 }

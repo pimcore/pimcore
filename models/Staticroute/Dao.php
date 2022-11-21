@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -51,7 +52,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @return Model\Staticroute[]
      */
-    public function getAll()
+    public function getAll(): array
     {
         $list = new Model\Staticroute\Listing();
         $list = $list->load();
@@ -66,7 +67,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws NotFoundException
      */
-    public function getById($id = null)
+    public function getById(string $id = null)
     {
         if ($id != null) {
             $this->model->setId($id);
@@ -94,7 +95,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws NotFoundException
      */
-    public function getByName($name = null, $siteId = null)
+    public function getByName(string $name = null, int $siteId = null)
     {
         if ($name != null) {
             $this->model->setName($name);
@@ -136,7 +137,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * {@inheritdoc}
      */
-    protected function prepareDataStructureForYaml(string $id, $data)
+    protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [
             'pimcore' => [
@@ -155,7 +156,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     public function save()
     {
         if (!$this->model->getId()) {
-            $this->model->setId(Uid::v4());
+            $this->model->setId((string)Uid::v4());
         }
 
         $ts = time();

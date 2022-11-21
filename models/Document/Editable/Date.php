@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,12 +30,12 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
      *
      * @var \Carbon\Carbon|null
      */
-    protected $date;
+    protected ?\Carbon\Carbon $date = null;
 
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return 'date';
     }
@@ -42,15 +43,12 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->date;
     }
 
-    /**
-     * @return \Carbon\Carbon|null
-     */
-    public function getDate()
+    public function getDate(): ?\Carbon\Carbon
     {
         return $this->getData();
     }
@@ -87,10 +85,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForResource()
+    public function getDataForResource(): mixed
     {
         if ($this->date) {
             return $this->date->getTimestamp();
@@ -102,10 +97,10 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): static
     {
         if ($data) {
-            $this->setDateFromTimestamp($data);
+            $this->setDateFromTimestamp((int)$data);
         }
 
         return $this;
@@ -114,7 +109,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): static
     {
         if (strlen($data) > 5) {
             $timestamp = strtotime($data);
@@ -124,10 +119,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         if ($this->date) {
             return false;

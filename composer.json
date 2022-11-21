@@ -70,7 +70,7 @@
     "mjaschen/phpgeo": "^4.0",
     "monolog/monolog": "^2.3",
     "mpratt/embera": "^2.0.14",
-    "myclabs/deep-copy": "^1.10.1",
+    "myclabs/deep-copy": "^1.11",
     "neitanod/forceutf8": "^2.0.4",
     "nesbot/carbon": "^2.27",
     "pear/net_url2": "^2.2",

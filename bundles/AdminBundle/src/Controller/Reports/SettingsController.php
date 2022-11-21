@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,7 +36,7 @@ class SettingsController extends ReportsControllerBase
      *
      * @return JsonResponse
      */
-    public function getAction(Request $request)
+    public function getAction(Request $request): JsonResponse
     {
         $this->checkPermission('system_settings');
         $config = $this->getConfig();
@@ -56,7 +57,7 @@ class SettingsController extends ReportsControllerBase
      *
      * @return JsonResponse
      */
-    public function saveAction(Request $request, ReportConfigWriter $configWriter)
+    public function saveAction(Request $request, ReportConfigWriter $configWriter): JsonResponse
     {
         $this->checkPermission('system_settings');
 

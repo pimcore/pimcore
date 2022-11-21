@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,6 +18,7 @@ namespace Pimcore\Model\DataObject;
 
 use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\DataObject\ClassBuilder\FieldDefinitionDocBlockBuilderInterface;
 use Pimcore\DataObject\ClassBuilder\PHPClassDumperInterface;
 use Pimcore\Db;
@@ -42,14 +44,14 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @var string|null
      */
-    public $id;
+    public ?string $id = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    public $name;
+    public ?string $name = null;
 
     /**
      * @internal
@@ -63,42 +65,42 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @var string
      */
-    public $description = '';
+    public string $description = '';
 
     /**
      * @internal
      *
      * @var int|null
      */
-    public $creationDate;
+    public ?int $creationDate = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    public $modificationDate;
+    public ?int $modificationDate = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    public $userOwner;
+    public ?int $userOwner = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    public $userModification;
+    public ?int $userModification = null;
 
     /**
      * @internal
      *
      * @var string
      */
-    public $parentClass = '';
+    public string $parentClass = '';
 
     /**
      * Comma separated list of interfaces
@@ -107,7 +109,7 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @var string|null
      */
-    public $implementsInterfaces;
+    public ?string $implementsInterfaces = null;
 
     /**
      * Name of the listing parent class if set
@@ -116,56 +118,56 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @var string
      */
-    public $listingParentClass = '';
+    public string $listingParentClass = '';
 
     /**
      * @internal
      *
      * @var string
      */
-    public $useTraits = '';
+    public string $useTraits = '';
 
     /**
      * @internal
      *
      * @var string
      */
-    public $listingUseTraits = '';
+    public string $listingUseTraits = '';
 
     /**
      * @internal
      *
      * @var bool
      */
-    protected $encryption = false;
+    protected bool $encryption = false;
 
     /**
      * @internal
      *
      * @var array
      */
-    protected $encryptedTables = [];
+    protected array $encryptedTables = [];
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $allowInherit = false;
+    public bool $allowInherit = false;
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $allowVariants = false;
+    public bool $allowVariants = false;
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $showVariants = false;
+    public bool $showVariants = false;
 
     /**
      * @internal
@@ -179,63 +181,63 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @var DataObject\ClassDefinition\Layout|null
      */
-    public $layoutDefinitions;
+    public ?ClassDefinition\Layout $layoutDefinitions = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    public $icon;
+    public ?string $icon = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    public $group;
+    public ?string $group = null;
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $showAppLoggerTab = false;
+    public bool $showAppLoggerTab = false;
 
     /**
      * @internal
      *
      * @var string
      */
-    public $linkGeneratorReference;
+    public string $linkGeneratorReference;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    public $previewGeneratorReference;
+    public ?string $previewGeneratorReference = null;
 
     /**
      * @internal
      *
      * @var array
      */
-    public $compositeIndices = [];
+    public array $compositeIndices = [];
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $showFieldLookup = false;
+    public bool $showFieldLookup = false;
 
     /**
      * @internal
      *
      * @var array
      */
-    public $propertyVisibility = [
+    public array $propertyVisibility = [
         'grid' => [
             'id' => true,
             'path' => true,
@@ -257,7 +259,7 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @var bool
      */
-    public $enableGridLocking = false;
+    public bool $enableGridLocking = false;
 
     /**
      * @var ClassDefinition\Data[]
@@ -272,7 +274,7 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public static function getById(string $id, $force = false)
+    public static function getById(string $id, bool $force = false): ?ClassDefinition
     {
         $cacheKey = 'class_' . $id;
 
@@ -319,7 +321,7 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public static function getByName($name)
+    public static function getByName(string $name): ?ClassDefinition
     {
         try {
             $class = new self();
@@ -331,12 +333,7 @@ final class ClassDefinition extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param array $values
-     *
-     * @return self
-     */
-    public static function create($values = [])
+    public static function create(array $values = []): ClassDefinition
     {
         $class = new self();
         $class->setValues($values);
@@ -345,11 +342,11 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param string $name
+     *@internal
+          *
      */
-    public function rename($name)
+    public function rename(string $name)
     {
         $this->deletePhpClasses();
         $this->getDao()->updateClassNameInObjects($name);
@@ -363,7 +360,7 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @internal
      */
-    public static function cleanupForExport(&$data)
+    public static function cleanupForExport(mixed &$data)
     {
         if (!is_object($data)) {
             return;
@@ -405,7 +402,7 @@ final class ClassDefinition extends Model\AbstractModel
      * @throws \Exception
      * @throws DataObject\Exception\DefinitionWriteException
      */
-    public function save($saveDefinitionFile = true)
+    public function save(bool $saveDefinitionFile = true)
     {
         if ($saveDefinitionFile && !$this->isWritable()) {
             throw new DataObject\Exception\DefinitionWriteException();
@@ -495,7 +492,7 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @internal
      */
-    public function generateClassFiles($generateDefinitionFile = true)
+    public function generateClassFiles(bool $generateDefinitionFile = true)
     {
         \Pimcore::getContainer()->get(PHPClassDumperInterface::class)->dumpPHPClasses($this);
 
@@ -649,13 +646,13 @@ final class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param string|null $name
      *
      * @return string
+     *@internal
+     *
      */
-    public function getDefinitionFile($name = null)
+    public function getDefinitionFile(string $name = null): string
     {
         return $this->locateDefinitionFile($name ?? $this->getName(), 'definition_%s.php');
     }
@@ -676,120 +673,72 @@ final class ClassDefinition extends Model\AbstractModel
         return $this->locateFile(ucfirst($this->getName()), 'DataObject/%s/Listing.php');
     }
 
-    /**
-     * @return string|null
-     */
-    public function getId()
+    public function getId(): ?string
     {
         return $this->id;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getCreationDate()
+    public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getModificationDate()
+    public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getUserOwner()
+    public function getUserOwner(): ?int
     {
         return $this->userOwner;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getUserModification()
+    public function getUserModification(): ?int
     {
         return $this->userModification;
     }
 
-    /**
-     * @param string $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(string $id): static
     {
         $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * @param int $creationDate
-     *
-     * @return $this
-     */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = (int)$creationDate;
 
         return $this;
     }
 
-    /**
-     * @param int $modificationDate
-     *
-     * @return $this
-     */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = (int)$modificationDate;
 
         return $this;
     }
 
-    /**
-     * @param int $userOwner
-     *
-     * @return $this
-     */
-    public function setUserOwner($userOwner)
+    public function setUserOwner(int $userOwner): static
     {
         $this->userOwner = (int)$userOwner;
 
         return $this;
     }
 
-    /**
-     * @param int $userModification
-     *
-     * @return $this
-     */
-    public function setUserModification($userModification)
+    public function setUserModification(int $userModification): static
     {
         $this->userModification = (int)$userModification;
 
@@ -801,7 +750,7 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @return DataObject\ClassDefinition\Data[]
      */
-    public function getFieldDefinitions($context = [])
+    public function getFieldDefinitions(array $context = []): array
     {
         if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
             return $this->fieldDefinitions;
@@ -819,7 +768,7 @@ final class ClassDefinition extends Model\AbstractModel
     /**
      * @internal
      */
-    protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
+    protected function doEnrichFieldDefinition(Data $fieldDefinition, array $context = []): Data
     {
         if ($fieldDefinition instanceof FieldDefinitionEnrichmentInterface) {
             $context['class'] = $this;
@@ -829,10 +778,7 @@ final class ClassDefinition extends Model\AbstractModel
         return $fieldDefinition;
     }
 
-    /**
-     * @return DataObject\ClassDefinition\Layout|null
-     */
-    public function getLayoutDefinitions()
+    public function getLayoutDefinitions(): ?ClassDefinition\Layout
     {
         return $this->layoutDefinitions;
     }
@@ -842,33 +788,21 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setFieldDefinitions(array $fieldDefinitions)
+    public function setFieldDefinitions(array $fieldDefinitions): static
     {
         $this->fieldDefinitions = $fieldDefinitions;
 
         return $this;
     }
 
-    /**
-     * @param string $key
-     * @param DataObject\ClassDefinition\Data $data
-     *
-     * @return $this
-     */
-    public function addFieldDefinition($key, $data)
+    public function addFieldDefinition(string $key, ClassDefinition\Data $data): static
     {
         $this->fieldDefinitions[$key] = $data;
 
         return $this;
     }
 
-    /**
-     * @param string $key
-     * @param array $context
-     *
-     * @return DataObject\ClassDefinition\Data|null
-     */
-    public function getFieldDefinition($key, $context = [])
+    public function getFieldDefinition(string $key, array $context = []): ?ClassDefinition\Data
     {
         if (array_key_exists($key, $this->fieldDefinitions)) {
             if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
@@ -882,12 +816,7 @@ final class ClassDefinition extends Model\AbstractModel
         return null;
     }
 
-    /**
-     * @param DataObject\ClassDefinition\Layout|null $layoutDefinitions
-     *
-     * @return $this
-     */
-    public function setLayoutDefinitions($layoutDefinitions)
+    public function setLayoutDefinitions(?ClassDefinition\Layout $layoutDefinitions): static
     {
         $oldFieldDefinitions = null;
         if ($this->layoutDefinitions !== null) {
@@ -942,116 +871,70 @@ final class ClassDefinition extends Model\AbstractModel
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getParentClass()
+    public function getParentClass(): string
     {
         return $this->parentClass;
     }
 
-    /**
-     * @return string
-     */
-    public function getListingParentClass()
+    public function getListingParentClass(): string
     {
         return $this->listingParentClass;
     }
 
-    /**
-     * @return string
-     */
-    public function getUseTraits()
+    public function getUseTraits(): string
     {
         return $this->useTraits;
     }
 
-    /**
-     * @param string $useTraits
-     *
-     * @return ClassDefinition
-     */
-    public function setUseTraits($useTraits)
+    public function setUseTraits(string $useTraits): static
     {
         $this->useTraits = (string) $useTraits;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getListingUseTraits()
+    public function getListingUseTraits(): string
     {
         return $this->listingUseTraits;
     }
 
-    /**
-     * @param string $listingUseTraits
-     *
-     * @return ClassDefinition
-     */
-    public function setListingUseTraits($listingUseTraits)
+    public function setListingUseTraits(string $listingUseTraits): static
     {
         $this->listingUseTraits = (string) $listingUseTraits;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getAllowInherit()
+    public function getAllowInherit(): bool
     {
         return $this->allowInherit;
     }
 
-    /**
-     * @return bool
-     */
-    public function getAllowVariants()
+    public function getAllowVariants(): bool
     {
         return $this->allowVariants;
     }
 
-    /**
-     * @param string $parentClass
-     *
-     * @return $this
-     */
-    public function setParentClass($parentClass)
+    public function setParentClass(string $parentClass): static
     {
         $this->parentClass = $parentClass;
 
         return $this;
     }
 
-    /**
-     * @param string $listingParentClass
-     *
-     * @return $this
-     */
-    public function setListingParentClass($listingParentClass)
+    public function setListingParentClass(string $listingParentClass): static
     {
         $this->listingParentClass = (string) $listingParentClass;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getEncryption(): bool
     {
         return $this->encryption;
     }
 
-    /**
-     * @param bool $encryption
-     *
-     * @return $this
-     */
-    public function setEncryption(bool $encryption)
+    public function setEncryption(bool $encryption): static
     {
         $this->encryption = $encryption;
 
@@ -1094,9 +977,6 @@ final class ClassDefinition extends Model\AbstractModel
         return (array_search($table, $this->encryptedTables) === false) ? false : true;
     }
 
-    /**
-     * @return bool
-     */
     public function hasEncryptedTables(): bool
     {
         return (bool) count($this->encryptedTables);
@@ -1109,71 +989,45 @@ final class ClassDefinition extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setEncryptedTables(array $encryptedTables)
+    public function setEncryptedTables(array $encryptedTables): static
     {
         $this->encryptedTables = $encryptedTables;
 
         return $this;
     }
 
-    /**
-     * @param bool $allowInherit
-     *
-     * @return $this
-     */
-    public function setAllowInherit($allowInherit)
+    public function setAllowInherit(bool $allowInherit): static
     {
         $this->allowInherit = (bool)$allowInherit;
 
         return $this;
     }
 
-    /**
-     * @param bool $allowVariants
-     *
-     * @return $this
-     */
-    public function setAllowVariants($allowVariants)
+    public function setAllowVariants(bool $allowVariants): static
     {
         $this->allowVariants = (bool)$allowVariants;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getIcon()
+    public function getIcon(): ?string
     {
         return $this->icon;
     }
 
-    /**
-     * @param string|null $icon
-     *
-     * @return $this
-     */
-    public function setIcon($icon)
+    public function setIcon(?string $icon): static
     {
         $this->icon = $icon;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getPropertyVisibility()
+    public function getPropertyVisibility(): array
     {
         return $this->propertyVisibility;
     }
 
-    /**
-     * @param array $propertyVisibility
-     *
-     * @return $this
-     */
-    public function setPropertyVisibility($propertyVisibility)
+    public function setPropertyVisibility(array $propertyVisibility): static
     {
         if (is_array($propertyVisibility)) {
             $this->propertyVisibility = $propertyVisibility;
@@ -1182,51 +1036,30 @@ final class ClassDefinition extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getGroup()
+    public function getGroup(): ?string
     {
         return $this->group;
     }
 
-    /**
-     * @param string|null $group
-     *
-     * @return $this
-     */
-    public function setGroup($group)
+    public function setGroup(?string $group): static
     {
         $this->group = $group;
 
         return $this;
     }
 
-    /**
-     * @param string $description
-     *
-     * @return $this
-     */
-    public function setDescription($description)
+    public function setDescription(string $description): static
     {
         $this->description = $description;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @param string $title
-     *
-     * @return $this
-     */
     public function setTitle(string $title): static
     {
         $this->title = $title;
@@ -1234,176 +1067,111 @@ final class ClassDefinition extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
         return $this->title;
     }
 
-    /**
-     * @param bool $showVariants
-     *
-     * @return $this
-     */
-    public function setShowVariants($showVariants)
+    public function setShowVariants(bool $showVariants): static
     {
         $this->showVariants = (bool)$showVariants;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getShowVariants()
+    public function getShowVariants(): bool
     {
         return $this->showVariants;
     }
 
-    /**
-     * @return bool
-     */
-    public function getShowAppLoggerTab()
+    public function getShowAppLoggerTab(): bool
     {
         return $this->showAppLoggerTab;
     }
 
-    /**
-     * @param bool $showAppLoggerTab
-     *
-     * @return $this
-     */
-    public function setShowAppLoggerTab($showAppLoggerTab)
+    public function setShowAppLoggerTab(bool $showAppLoggerTab): static
     {
         $this->showAppLoggerTab = (bool) $showAppLoggerTab;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getShowFieldLookup()
+    public function getShowFieldLookup(): bool
     {
         return $this->showFieldLookup;
     }
 
-    /**
-     * @param bool $showFieldLookup
-     *
-     * @return $this
-     */
-    public function setShowFieldLookup($showFieldLookup)
+    public function setShowFieldLookup(bool $showFieldLookup): static
     {
         $this->showFieldLookup = (bool) $showFieldLookup;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getLinkGeneratorReference()
+    public function getLinkGeneratorReference(): string
     {
         return $this->linkGeneratorReference;
     }
 
-    /**
-     * @param string $linkGeneratorReference
-     *
-     * @return $this
-     */
-    public function setLinkGeneratorReference($linkGeneratorReference)
+    public function setLinkGeneratorReference(string $linkGeneratorReference): static
     {
         $this->linkGeneratorReference = $linkGeneratorReference;
 
         return $this;
     }
 
-    /**
-     * @return DataObject\ClassDefinition\LinkGeneratorInterface|null
-     */
-    public function getLinkGenerator()
+    public function getLinkGenerator(): ?ClassDefinition\LinkGeneratorInterface
     {
-        return DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
+        /** @var ClassDefinition\LinkGeneratorInterface $interface */
+        $interface = DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
+        return $interface;
     }
 
-    /**
-     * @return string|null
-     */
     public function getPreviewGeneratorReference(): ?string
     {
         return $this->previewGeneratorReference;
     }
 
-    /**
-     * @param string|null $previewGeneratorReference
-     */
     public function setPreviewGeneratorReference(?string $previewGeneratorReference): void
     {
         $this->previewGeneratorReference = $previewGeneratorReference;
     }
 
-    /**
-     * @return DataObject\ClassDefinition\PreviewGeneratorInterface|null
-     */
-    public function getPreviewGenerator()
+    public function getPreviewGenerator(): ?ClassDefinition\PreviewGeneratorInterface
     {
-        return DataObject\ClassDefinition\Helper\PreviewGeneratorResolver::resolveGenerator($this->getPreviewGeneratorReference());
+        /** @var ClassDefinition\PreviewGeneratorInterface $interface */
+        $interface = DataObject\ClassDefinition\Helper\PreviewGeneratorResolver::resolveGenerator($this->getPreviewGeneratorReference());
+        return $interface;
     }
 
-    /**
-     * @return bool
-     */
     public function isEnableGridLocking(): bool
     {
         return $this->enableGridLocking;
     }
 
-    /**
-     * @param bool $enableGridLocking
-     */
     public function setEnableGridLocking(bool $enableGridLocking): void
     {
         $this->enableGridLocking = $enableGridLocking;
     }
 
-    /**
-     * @return string|null
-     */
     public function getImplementsInterfaces(): ?string
     {
         return $this->implementsInterfaces;
     }
 
-    /**
-     * @param string|null $implementsInterfaces
-     *
-     * @return $this
-     */
-    public function setImplementsInterfaces(?string $implementsInterfaces)
+    public function setImplementsInterfaces(?string $implementsInterfaces): static
     {
         $this->implementsInterfaces = $implementsInterfaces;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getCompositeIndices(): array
     {
         return $this->compositeIndices;
     }
 
-    /**
-     * @param array|null $compositeIndices
-     *
-     * @return $this
-     */
-    public function setCompositeIndices($compositeIndices)
+    public function setCompositeIndices(?array $compositeIndices): static
     {
         $this->compositeIndices = $compositeIndices ?? [];
 
@@ -1413,7 +1181,7 @@ final class ClassDefinition extends Model\AbstractModel
     /**
      * @return ClassDefinition\Data[]
      */
-    public function getDeletedDataComponents()
+    public function getDeletedDataComponents(): array
     {
         return $this->deletedDataComponents;
     }

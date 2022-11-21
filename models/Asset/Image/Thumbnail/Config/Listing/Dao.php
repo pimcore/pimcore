@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -24,10 +25,7 @@ use Pimcore\Model\Asset\Image\Thumbnail\Config;
  */
 class Dao extends Config\Dao
 {
-    /**
-     * @return array
-     */
-    public function loadList()
+    public function loadList(): array
     {
         $configs = [];
 
@@ -46,10 +44,7 @@ class Dao extends Config\Dao
         return $configs;
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         return count($this->loadList());
     }

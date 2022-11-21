@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -22,12 +23,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart\Listing;
  */
 class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
 {
-    protected $cartClass = '\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart';
+    protected string $cartClass = '\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart';
 
-    /**
-     * @return array
-     */
-    public function load()
+    public function load(): array
     {
         $carts = [];
         $cartIds = $this->db->fetchFirstColumn('SELECT id FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart\Dao::TABLE_NAME .
@@ -42,7 +40,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
         return $carts;
     }
 
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM `' . \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart\Dao::TABLE_NAME . '`' . $this->getCondition());
@@ -56,7 +54,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
         $this->cartClass = $cartClass;
     }
 
-    public function getCartClass()
+    public function getCartClass(): string
     {
         return $this->cartClass;
     }

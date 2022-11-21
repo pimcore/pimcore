@@ -415,7 +415,7 @@ class Dao extends Listing\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    protected function getTableName()
+    protected function getTableName(): string
     {
         return $this->tableName;
     }

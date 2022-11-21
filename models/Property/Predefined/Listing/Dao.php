@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -30,7 +31,7 @@ class Dao extends Model\Property\Predefined\Dao
      *
      * @return Model\Property\Predefined[]
      */
-    public function loadList()
+    public function loadList(): array
     {
         $properties = [];
 
@@ -49,10 +50,7 @@ class Dao extends Model\Property\Predefined\Dao
         return $properties;
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         return count($this->loadList());
     }

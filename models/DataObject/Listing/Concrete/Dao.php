@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -28,27 +29,18 @@ use Pimcore\Tool;
  */
 class Dao extends Model\DataObject\Listing\Dao
 {
-    /**
-     * @var bool
-     */
-    protected $firstException = true;
+    protected bool $firstException = true;
 
-    /**
-     * @var string
-     */
-    private $tableName = null;
+    private ?string $tableName = null;
 
-    /**
-     * @var int
-     */
-    protected $totalCount = 0;
+    protected int $totalCount = 0;
 
     /**
      * @return int[]
      *
      * @throws \Exception
      */
-    public function loadIdList()
+    public function loadIdList(): array
     {
         try {
             return parent::loadIdList();
@@ -64,7 +56,7 @@ class Dao extends Model\DataObject\Listing\Dao
      *
      * @throws \Exception
      */
-    protected function exceptionHandler($e)
+    protected function exceptionHandler(\Exception $e): array
     {
         // create view if it doesn't exist already // HACK
         $pdoMySQL = preg_match('/Base table or view not found/', $e->getMessage());
@@ -84,11 +76,11 @@ class Dao extends Model\DataObject\Listing\Dao
     }
 
     /**
-     * @return string
+     * @return string|null
      *
      * @throws \Exception
      */
-    public function getLocalizedBrickLanguage()
+    public function getLocalizedBrickLanguage(): ?string
     {
         $language = null;
 
@@ -119,7 +111,7 @@ class Dao extends Model\DataObject\Listing\Dao
      *
      * @throws \Exception
      */
-    public function getTableName()
+    public function getTableName(): string
     {
         if (empty($this->tableName)) {
             // default
@@ -167,7 +159,7 @@ class Dao extends Model\DataObject\Listing\Dao
      *
      * @throws \Exception
      */
-    protected function applyJoins(DoctrineQueryBuilder $queryBuilder)
+    protected function applyJoins(DoctrineQueryBuilder $queryBuilder): static
     {
         // add fielcollection's
         $fieldCollections = $this->model->getFieldCollections();

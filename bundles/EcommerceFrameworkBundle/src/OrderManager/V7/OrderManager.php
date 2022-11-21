@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -53,55 +54,25 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class OrderManager implements OrderManagerInterface
 {
-    /**
-     * @var EnvironmentInterface
-     */
-    protected $environment;
+    protected EnvironmentInterface $environment;
 
-    /**
-     * @var OrderAgentFactoryInterface
-     */
-    protected $orderAgentFactory;
+    protected OrderAgentFactoryInterface $orderAgentFactory;
 
-    /**
-     * @var VoucherServiceInterface
-     */
-    protected $voucherService;
+    protected VoucherServiceInterface $voucherService;
 
-    /**
-     * @var FactoryInterface
-     */
-    protected $modelFactory;
+    protected ?FactoryInterface $modelFactory = null;
 
-    /**
-     * @var array
-     */
-    protected $options;
+    protected array $options;
 
-    /**
-     * @var Folder|null
-     */
-    protected $orderParentFolder;
+    protected ?Folder $orderParentFolder = null;
 
-    /**
-     * @var string
-     */
-    protected $customerClassName;
+    protected string $customerClassName;
 
-    /**
-     * @var string
-     */
-    protected $orderClassName;
+    protected string $orderClassName;
 
-    /**
-     * @var string
-     */
-    protected $orderItemClassName;
+    protected string $orderItemClassName;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
+    protected EventDispatcherInterface $eventDispatcher;
 
     public function __construct(
         EnvironmentInterface $environment,
@@ -160,7 +131,7 @@ class OrderManager implements OrderManagerInterface
      * @throws \Exception
      *
      */
-    public function getOrCreateOrderFromCart(CartInterface $cart)
+    public function getOrCreateOrderFromCart(CartInterface $cart): AbstractOrder
     {
         $order = $this->getOrderFromCart($cart);
 
@@ -266,22 +237,11 @@ class OrderManager implements OrderManagerInterface
         return $order;
     }
 
-    /**
-     * @param CartInterface $cart
-     * @param AbstractOrder $order
-     *
-     * @return bool
-     */
     public function orderNeedsUpdate(CartInterface $cart, AbstractOrder $order): bool
     {
         return $this->calculateCartHash($cart) !== $order->getCartHash();
     }
 
-    /**
-     * @param CartInterface $cart
-     *
-     * @return int
-     */
     protected function calculateCartHash(CartInterface $cart): int
     {
         $hashString = '';
@@ -302,7 +262,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @throws \Exception
      */
-    public function getOrderFromCart(CartInterface $cart)
+    public function getOrderFromCart(CartInterface $cart): ?AbstractOrder
     {
         $cartId = $this->createCartId($cart);
 
@@ -390,12 +350,6 @@ class OrderManager implements OrderManagerInterface
         return $order;
     }
 
-    /**
-     * @param array $sourceItems
-     * @param AbstractOrder $newOrder
-     *
-     * @return array
-     */
     protected function cloneItems(array $sourceItems, AbstractOrder $newOrder): array
     {
         $items = [];
@@ -450,7 +404,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @throws \Exception
      */
-    protected function createOrderItem(CartItemInterface $item, $parent, $isGiftItem = false)
+    protected function createOrderItem(CartItemInterface $item, AbstractObject $parent, bool $isGiftItem = false): AbstractOrderItem
     {
         $key = $this->buildOrderItemKey($item, $isGiftItem);
 
@@ -547,10 +501,7 @@ class OrderManager implements OrderManagerInterface
         return $this->modelFactory->build($className, $params);
     }
 
-    /**
-     * @return OrderListInterface
-     */
-    public function createOrderList()
+    public function createOrderList(): OrderListInterface
     {
         /** @var OrderListInterface $orderList */
         $orderList = new $this->options['list_class'];
@@ -559,20 +510,12 @@ class OrderManager implements OrderManagerInterface
         return $orderList;
     }
 
-    /**
-     * @param AbstractOrder $order
-     *
-     * @return OrderAgentInterface
-     */
-    public function createOrderAgent(AbstractOrder $order)
+    public function createOrderAgent(AbstractOrder $order): OrderAgentInterface
     {
         return $this->orderAgentFactory->createAgent($order);
     }
 
-    /**
-     * @param string $classname
-     */
-    public function setCustomerClass($classname)
+    public function setCustomerClass(string $classname)
     {
         $this->customerClassName = $classname;
     }
@@ -580,39 +523,27 @@ class OrderManager implements OrderManagerInterface
     /**
      * @return string $classname
      */
-    protected function getCustomerClassName()
+    protected function getCustomerClassName(): string
     {
         return $this->customerClassName;
     }
 
-    /**
-     * @param string $classname
-     */
-    public function setOrderClass($classname)
+    public function setOrderClass(string $classname)
     {
         $this->orderClassName = $classname;
     }
 
-    /**
-     * @return string
-     */
-    protected function getOrderClassName()
+    protected function getOrderClassName(): string
     {
         return $this->orderClassName;
     }
 
-    /**
-     * @param string $classname
-     */
-    public function setOrderItemClass($classname)
+    public function setOrderItemClass(string $classname)
     {
         $this->orderItemClassName = $classname;
     }
 
-    /**
-     * @return string
-     */
-    protected function getOrderItemClassName()
+    protected function getOrderItemClassName(): string
     {
         return $this->orderItemClassName;
     }
@@ -622,7 +553,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @throws \Exception
      */
-    public function setParentOrderFolder($orderParentFolder)
+    public function setParentOrderFolder(int|Folder $orderParentFolder)
     {
         if ($orderParentFolder instanceof Folder) {
             $this->orderParentFolder = $orderParentFolder;
@@ -647,7 +578,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @throws \Exception
      */
-    protected function getOrderParentFolder()
+    protected function getOrderParentFolder(): Folder
     {
         if (empty($this->orderParentFolder)) {
             // processing config and setting options
@@ -674,7 +605,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @return string
      */
-    protected function createCartId(CartInterface $cart)
+    protected function createCartId(CartInterface $cart): string
     {
         return get_class($cart) . '_' . $cart->getId();
     }
@@ -717,7 +648,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @throws \Exception
      */
-    protected function applyOrderItems(array $items, AbstractOrder $order, $giftItems = false)
+    protected function applyOrderItems(array $items, AbstractOrder $order, bool $giftItems = false): array
     {
         $orderItems = [];
         foreach ($items as $item) {
@@ -777,7 +708,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @return AbstractOrder
      */
-    protected function applyCustomCheckoutDataToOrder(CartInterface $cart, AbstractOrder $order)
+    protected function applyCustomCheckoutDataToOrder(CartInterface $cart, AbstractOrder $order): AbstractOrder
     {
         return $order;
     }
@@ -790,7 +721,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @return AbstractOrder
      */
-    protected function setCurrentCustomerToOrder(AbstractOrder $order)
+    protected function setCurrentCustomerToOrder(AbstractOrder $order): AbstractOrder
     {
         // sets customer to order - if available
         $customerClassName = $this->getCustomerClassName();
@@ -807,7 +738,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @return string
      */
-    protected function createOrderNumber()
+    protected function createOrderNumber(): string
     {
         return uniqid('ord_');
     }
@@ -817,7 +748,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @throws \Exception
      */
-    protected function getNewOrderObject()
+    protected function getNewOrderObject(): AbstractOrder
     {
         $orderClassName = $this->getOrderClassName();
         if (!Tool::classExists($orderClassName)) {
@@ -835,12 +766,12 @@ class OrderManager implements OrderManagerInterface
      * @param string|null $paymentMethod
      * @param string $orderId
      *
-     * @throws ProviderNotFoundException
-     * @throws \Exception
-     *
      * @return Concrete
+     *@throws \Exception
+     *
+     * @throws ProviderNotFoundException
      */
-    public function getRecurringPaymentSourceOrderList(string $customerId, RecurringPaymentInterface $paymentProvider, $paymentMethod = null, $orderId = '')
+    public function getRecurringPaymentSourceOrderList(string $customerId, RecurringPaymentInterface $paymentProvider, string $paymentMethod = null, string $orderId = ''): Concrete
     {
         $orders = $this->buildOrderList();
         $orders->addConditionParam('customer__id = ?', $customerId);
@@ -876,7 +807,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @throws \Exception
      */
-    public function getRecurringPaymentSourceOrder(string $customerId, RecurringPaymentInterface $paymentProvider, $paymentMethod = null)
+    public function getRecurringPaymentSourceOrder(string $customerId, RecurringPaymentInterface $paymentProvider, string $paymentMethod = null): bool|\Pimcore\Model\DataObject\Concrete|null
     {
         if (!$paymentProvider->isRecurringPaymentEnabled()) {
             return null;
@@ -897,9 +828,9 @@ class OrderManager implements OrderManagerInterface
      *
      * @throws \Exception
      */
-    public function isValidOrderForRecurringPayment(AbstractOrder $order, RecurringPaymentInterface $payment, $customerId = '')
+    public function isValidOrderForRecurringPayment(AbstractOrder $order, RecurringPaymentInterface $payment, string $customerId = ''): bool
     {
-        $orders = $this->getRecurringPaymentSourceOrderList($customerId, $payment, null, $order->getId());
+        $orders = $this->getRecurringPaymentSourceOrderList($customerId, $payment, null, (string)$order->getId());
 
         return !empty($orders->current());
     }
@@ -909,7 +840,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @throws \Exception
      */
-    protected function getNewOrderItemObject()
+    protected function getNewOrderItemObject(): AbstractOrderItem
     {
         $orderItemClassName = $this->getOrderItemClassName();
         if (!Tool::classExists($orderItemClassName)) {
@@ -924,7 +855,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @return array
      */
-    protected function buildTaxArray(array $taxItems)
+    protected function buildTaxArray(array $taxItems): array
     {
         $taxArray = [];
         foreach ($taxItems as $taxEntry) {
@@ -947,7 +878,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @throws \Exception
      */
-    protected function buildListClassName($className)
+    protected function buildListClassName(string $className): string
     {
         $listClassName = sprintf('%s\\Listing', $className);
         if (!Tool::classExists($listClassName)) {
@@ -967,7 +898,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @throws \Exception
      */
-    protected function buildOrderListClassName()
+    protected function buildOrderListClassName(): string
     {
         return $this->buildListClassName($this->getOrderClassName());
     }
@@ -979,7 +910,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @throws \Exception
      */
-    protected function buildOrderItemListClassName()
+    protected function buildOrderItemListClassName(): string
     {
         return $this->buildListClassName($this->getOrderItemClassName());
     }
@@ -991,7 +922,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @throws \Exception
      */
-    public function buildOrderList()
+    public function buildOrderList(): Concrete
     {
         $orderListClass = $this->buildOrderListClassName();
 
@@ -1005,19 +936,14 @@ class OrderManager implements OrderManagerInterface
      *
      * @throws \Exception
      */
-    public function buildOrderItemList()
+    public function buildOrderItemList(): Concrete
     {
         $orderItemListClass = $this->buildOrderItemListClassName();
 
         return $this->buildModelClass($orderItemListClass);
     }
 
-    /**
-     * @param StatusInterface $paymentStatus
-     *
-     * @return AbstractOrder|null
-     */
-    public function getOrderByPaymentStatus(StatusInterface $paymentStatus)
+    public function getOrderByPaymentStatus(StatusInterface $paymentStatus): ?AbstractOrder
     {
         //this call is needed in order to really load most updated object from cache or DB (otherwise it could be loaded from process)
         \Pimcore::collectGarbage();

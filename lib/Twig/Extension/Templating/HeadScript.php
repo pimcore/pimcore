@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -79,26 +80,26 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      * @var string
      */
-    protected $_regKey = 'HeadScript';
+    protected string $_regKey = 'HeadScript';
 
     /**
      * Are arbitrary attributes allowed?
      *
      * @var bool
      */
-    protected $_arbitraryAttributes = false;
+    protected bool $_arbitraryAttributes = false;
 
     /**#@+
      * Capture type and/or attributes (used for hinting during capture)
-     * @var string
+     * @var bool
      */
-    protected $_captureLock;
+    protected bool $_captureLock;
 
-    protected $_captureScriptType = null;
+    protected ?string $_captureScriptType = null;
 
-    protected $_captureScriptAttrs = null;
+    protected ?array $_captureScriptAttrs = null;
 
-    protected $_captureType;
+    protected string $_captureType;
 
     // #@-
 
@@ -107,7 +108,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      * @var array
      */
-    protected $_optionalAttributes = [
+    protected array $_optionalAttributes = [
         'charset', 'defer', 'language', 'src', 'type', 'async',
     ];
 
@@ -116,7 +117,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      * @var array
      */
-    protected $_requiredAttributes = ['type'];
+    protected array $_requiredAttributes = ['type'];
 
     /**
      * Whether or not to format scripts using CDATA; used only if doctype
@@ -124,7 +125,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      * @var bool
      */
-    public $useCdata = false;
+    public bool $useCdata = false;
 
     /**
      * Default attributes for generated WebLinks (HTTP/2 push).
@@ -157,15 +158,15 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      * Returns headScript helper object; optionally, allows specifying a script
      * or script file to include.
      *
-     * @param  string $mode Script or file
-     * @param  null|string $spec Script/url
-     * @param  string $placement Append, prepend, or set
+     * @param string $mode Script or file
+     * @param string|null $spec Script/url
+     * @param string $placement Append, prepend, or set
      * @param  array $attrs Array of script attributes
-     * @param  string $type Script type and/or array of script attributes
+     * @param string $type Script type and/or array of script attributes
      *
-     * @return HeadScript
+     * @return $this
      */
-    public function __invoke($mode = self::FILE, $spec = null, $placement = 'APPEND', array $attrs = [], $type = 'text/javascript')
+    public function __invoke(string $mode = self::FILE, string $spec = null, string $placement = 'APPEND', array $attrs = [], string $type = 'text/javascript'): static
     {
         if ((null !== $spec) && is_string($spec)) {
             $action = ucfirst(strtolower($mode));
@@ -197,7 +198,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      * @return void
      */
-    public function captureStart($captureType = Container::APPEND, $type = 'text/javascript', $attrs = [])
+    public function captureStart($captureType = Container::APPEND, $type = 'text/javascript', array $attrs = []): void
     {
         if ($this->_captureLock) {
             throw new Exception('Cannot nest headScript captures');
@@ -215,7 +216,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      * @return void
      */
-    public function captureEnd()
+    public function captureEnd(): void
     {
         $content = ob_get_clean();
         $type = $this->_captureScriptType;
@@ -252,14 +253,14 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      * - prependScript($script, $type = 'text/javascript', $attrs = array())
      * - setScript($script, $type = 'text/javascript', $attrs = array())
      *
-     * @param  string $method
-     * @param  array $args
+     * @param string $method
+     * @param array $args
      *
      * @return HeadScript
      *
      * @throws Exception if too few arguments or invalid method
      */
-    public function __call($method, $args)
+    public function __call(string $method, array $args)
     {
         if (preg_match('/^(?P<action>set|(ap|pre)pend|offsetSet)(?P<mode>File|Script)$/', $method, $matches)) {
             if (1 > count($args)) {
@@ -322,11 +323,11 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
     /**
      * Is the file specified a duplicate?
      *
-     * @param  string $file
+     * @param string $file
      *
      * @return bool
      */
-    protected function _isDuplicate($file)
+    protected function _isDuplicate(string $file): bool
     {
         foreach ($this->getContainer() as $item) {
             if (($item->source === null)
@@ -346,7 +347,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      * @return bool
      */
-    protected function _isValid($value)
+    protected function _isValid(mixed $value): bool
     {
         if ((!$value instanceof \stdClass)
             || !isset($value->type)
@@ -364,7 +365,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      * @return void
      */
-    public function append($value)
+    public function append($value): void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('Invalid argument passed to append(); please use one of the helper methods, appendScript() or appendFile()');
@@ -380,7 +381,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      * @return void
      */
-    public function prepend($value)
+    public function prepend($value): void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('Invalid argument passed to prepend(); please use one of the helper methods, prependScript() or prependFile()');
@@ -396,7 +397,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      * @return void
      */
-    public function set($value)
+    public function set($value): void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('Invalid argument passed to set(); please use one of the helper methods, setScript() or setFile()');
@@ -408,29 +409,29 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
     /**
      * Override offsetSet
      *
-     * @param  string|int $index
-     * @param  mixed $value
+     * @param  string|int $offset
+     * @param mixed $value
      *
      * @return void
      */
-    #[\ReturnTypeWillChange]
-    public function offsetSet($index, $value)// : void
+
+    public function offsetSet($offset, mixed $value): void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('Invalid argument passed to offsetSet(); please use one of the helper methods, offsetSetScript() or offsetSetFile()');
         }
 
-        $this->getContainer()->offsetSet($index, $value);
+        $this->getContainer()->offsetSet($offset, $value);
     }
 
     /**
      * Set flag indicating if arbitrary attributes are allowed
      *
-     * @param  bool $flag
+     * @param bool $flag
      *
-     * @return HeadScript
+     * @return $this
      */
-    public function setAllowArbitraryAttributes($flag)
+    public function setAllowArbitraryAttributes(bool $flag): static
     {
         $this->_arbitraryAttributes = (bool) $flag;
 
@@ -442,7 +443,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      * @return bool
      */
-    public function arbitraryAttributesAllowed()
+    public function arbitraryAttributesAllowed(): bool
     {
         return $this->_arbitraryAttributes;
     }
@@ -457,7 +458,7 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
      *
      * @return string
      */
-    public function itemToString($item, $indent, $escapeStart, $escapeEnd)
+    public function itemToString(\stdClass $item, string $indent, string $escapeStart, string $escapeEnd): string
     {
         $attrString = '';
 
@@ -524,11 +525,11 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
     /**
      * Retrieve string representation
      *
-     * @param  null|string|int $indent
+     * @param int|string|null $indent
      *
      * @return string
      */
-    public function toString($indent = null)
+    public function toString(int|string $indent = null): string
     {
         $this->prepareEntries();
 
@@ -597,13 +598,13 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
     /**
      * Create data item containing all necessary components of script
      *
-     * @param  string $type
+     * @param string $type
      * @param  array $attributes
-     * @param  null|string $content
+     * @param string|null $content
      *
      * @return \stdClass
      */
-    public function createData($type, array $attributes, $content = null)
+    public function createData(string $type, array $attributes, string $content = null): \stdClass
     {
         $data = new \stdClass();
         $data->type = $type;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,6 +20,7 @@ use Pimcore\Helper\ContrastColor;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
+use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\MultiSelectOptionsProviderInterface;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
 use Pimcore\Workflow\Manager;
 use Pimcore\Workflow\MarkingStore\DataObjectSplittedStateMarkingStore;
@@ -26,15 +28,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class OptionsProvider implements SelectOptionsProviderInterface
 {
-    /**
-     * @var Manager
-     */
-    private $workflowManager;
+    private Manager $workflowManager;
 
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
+    private TranslatorInterface $translator;
 
     public function __construct(Manager $workflowManager, TranslatorInterface $translator)
     {
@@ -44,15 +40,18 @@ class OptionsProvider implements SelectOptionsProviderInterface
 
     /**
      * @param array $context
-     * @param Select|Multiselect $fieldDefinition
+     * @param Data $fieldDefinition
      *
      * @return array
      *
      * @throws \Exception
      */
-    public function getOptions($context, $fieldDefinition)
+    public function getOptions(array $context, Data $fieldDefinition): array
     {
-        $workflowName = $fieldDefinition->getOptionsProviderData();
+        $workflowName = null;
+        if ($fieldDefinition instanceof Select || $fieldDefinition instanceof Multiselect) {
+            $workflowName = $fieldDefinition->getOptionsProviderData();
+        }
         if (!$workflowName) {
             throw new \Exception('setup workflow name as options provider data');
         }
@@ -98,24 +97,12 @@ class OptionsProvider implements SelectOptionsProviderInterface
         );
     }
 
-    /**
-     * @param array $context
-     * @param Data $fieldDefinition
-     *
-     * @return bool
-     */
-    public function hasStaticOptions($context, $fieldDefinition)
+    public function hasStaticOptions(array $context, Data $fieldDefinition): bool
     {
         return true;
     }
 
-    /**
-     * @param array $context
-     * @param Data $fieldDefinition
-     *
-     * @return null
-     */
-    public function getDefaultValue($context, $fieldDefinition)
+    public function getDefaultValue(array $context, Data $fieldDefinition): ?string
     {
         return null;
     }

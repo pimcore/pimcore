@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,8 +21,5 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
  */
 final class HotspotimageRenderer extends AbstractRenderer
 {
-    /**
-     * @var string
-     */
-    public $renderer = 'hotspotimage';
+    public string $renderer = 'hotspotimage';
 }

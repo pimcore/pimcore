@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,7 +30,7 @@ final class DefinitionModifier
      *
      * @return bool
      */
-    public function appendFields(Layout $layoutDefinition, string $nameToFind, $fieldsToAdd): bool
+    public function appendFields(Layout $layoutDefinition, string $nameToFind, array|Data|Layout $fieldsToAdd): bool
     {
         $callable = function () use ($fieldsToAdd) {
             return $this->add($fieldsToAdd, true, func_get_args());
@@ -47,7 +48,7 @@ final class DefinitionModifier
      *
      * @return bool
      */
-    public function prependFields(Layout $layoutDefinition, string $nameToFind, $fieldsToAdd): bool
+    public function prependFields(Layout $layoutDefinition, string $nameToFind, array|Data|Layout $fieldsToAdd): bool
     {
         $callable = function () use ($fieldsToAdd) {
             return $this->add($fieldsToAdd, false, func_get_args());
@@ -65,7 +66,7 @@ final class DefinitionModifier
      *
      * @return bool
      */
-    public function insertFieldsFront(Layout $layoutDefinition, string $nameToFind, $fieldsToInsert): bool
+    public function insertFieldsFront(Layout $layoutDefinition, string $nameToFind, array|Data|Layout $fieldsToInsert): bool
     {
         $callable = function () use ($fieldsToInsert) {
             return $this->insert($fieldsToInsert, false, func_get_args());
@@ -83,7 +84,7 @@ final class DefinitionModifier
      *
      * @return bool
      */
-    public function insertFieldsBack(Layout $layoutDefinition, string $nameToFind, $fieldsToInsert): bool
+    public function insertFieldsBack(Layout $layoutDefinition, string $nameToFind, array|Data|Layout $fieldsToInsert): bool
     {
         $callable = function () use ($fieldsToInsert) {
             return $this->insert($fieldsToInsert, true, func_get_args());
@@ -101,7 +102,7 @@ final class DefinitionModifier
      *
      * @return bool
      */
-    public function replaceField(Layout $layoutDefinition, string $nameToFind, $fieldReplacements): bool
+    public function replaceField(Layout $layoutDefinition, string $nameToFind, array|Data|Layout $fieldReplacements): bool
     {
         $callable = function () use ($fieldReplacements) {
             return $this->replace($fieldReplacements, func_get_args());
@@ -110,12 +111,6 @@ final class DefinitionModifier
         return $this->findField($layoutDefinition, $nameToFind, $callable);
     }
 
-    /**
-     * @param Layout $layoutDefinition
-     * @param string $nameToFind
-     *
-     * @return bool
-     */
     public function removeField(Layout $layoutDefinition, string $nameToFind): bool
     {
         $callable = function () {
@@ -136,7 +131,7 @@ final class DefinitionModifier
      *
      * @return bool
      */
-    public function findField($layoutDefinition, string $nameToFind, callable $callback): bool
+    public function findField(Data\Localizedfields|Layout $layoutDefinition, string $nameToFind, callable $callback): bool
     {
         $found = false;
         $index = null;

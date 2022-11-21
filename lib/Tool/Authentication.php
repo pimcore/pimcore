@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,13 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class Authentication
 {
-    /**
-     * @param string $username
-     * @param string $password
-     *
-     * @return null|User
-     */
-    public static function authenticatePlaintext($username, $password)
+    public static function authenticatePlaintext(string $username, string $password): ?User
     {
         /** @var User $user */
         $user = User::getByName($username);
@@ -52,7 +47,7 @@ class Authentication
      *
      * @return User|null
      */
-    public static function authenticateSession(Request $request = null)
+    public static function authenticateSession(Request $request = null): ?User
     {
         if (null === $request) {
             $request = \Pimcore::getContainer()->get('request_stack')->getCurrentRequest();
@@ -87,7 +82,7 @@ class Authentication
      *
      * @return User
      */
-    public static function authenticateHttpBasic()
+    public static function authenticateHttpBasic(): User
     {
         // we're using Sabre\HTTP for basic auth
         $request = \Sabre\HTTP\Sapi::getRequest();
@@ -110,13 +105,7 @@ class Authentication
         die();
     }
 
-    /**
-     * @param string $token
-     * @param bool $adminRequired
-     *
-     * @return null|User
-     */
-    public static function authenticateToken($token, $adminRequired = false)
+    public static function authenticateToken(string $token, bool $adminRequired = false): ?User
     {
         $username = null;
         $timestamp = null;
@@ -148,13 +137,7 @@ class Authentication
         return null;
     }
 
-    /**
-     * @param User $user
-     * @param string $password
-     *
-     * @return bool
-     */
-    public static function verifyPassword($user, $password)
+    public static function verifyPassword(User $user, string $password): bool
     {
         $password = self::preparePlainTextPassword($user->getName(), $password);
 
@@ -172,12 +155,7 @@ class Authentication
         return false;
     }
 
-    /**
-     * @param User|null $user
-     *
-     * @return bool
-     */
-    public static function isValidUser($user)
+    public static function isValidUser(?User $user): bool
     {
         if ($user instanceof User && $user->isActive() && $user->getId() && $user->getPassword()) {
             return true;
@@ -187,16 +165,16 @@ class Authentication
     }
 
     /**
-     * @internal
-     *
      * @param string $username
      * @param string $plainTextPassword
-     *
+          *
      * @return string
      *
      * @throws \Exception
+     *@internal
+     *
      */
-    public static function getPasswordHash($username, $plainTextPassword)
+    public static function getPasswordHash(string $username, string $plainTextPassword): string
     {
         $hash = password_hash(self::preparePlainTextPassword($username, $plainTextPassword), PASSWORD_DEFAULT);
         if (!$hash) {
@@ -214,13 +192,13 @@ class Authentication
     }
 
     /**
-     * @internal
-     *
      * @param string $username
      *
      * @return string
+     *@internal
+     *
      */
-    public static function generateToken($username)
+    public static function generateToken(string $username): string
     {
         $secret = \Pimcore::getContainer()->getParameter('secret');
 

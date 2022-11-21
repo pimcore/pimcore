@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,16 +26,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Default implementation for FINDOLOGIC as product index backend
  *
- * @method DefaultFindologicWorker getTenantWorker()
  */
 class DefaultFindologic extends AbstractConfig implements FindologicConfigInterface, MockupConfigInterface
 {
     use OptionsResolverTrait;
 
-    /**
-     * @var array
-     */
-    protected $clientConfig;
+    protected array $clientConfig;
 
     protected function processOptions(array $options)
     {
@@ -54,14 +51,14 @@ class DefaultFindologic extends AbstractConfig implements FindologicConfigInterf
     }
 
     /**
-     * @param string $property
+     * @param string|null $setting
      *
-     * @return array|string
+     * @return array|string|null
      */
-    public function getClientConfig($property = null)
+    public function getClientConfig(string $setting = null): array|string|null
     {
-        return $property
-            ? $this->clientConfig[$property]
+        return $setting
+            ? $this->clientConfig[$setting]
             : $this->clientConfig
         ;
     }
@@ -73,7 +70,7 @@ class DefaultFindologic extends AbstractConfig implements FindologicConfigInterf
      *
      * @return bool
      */
-    public function inIndex(IndexableInterface $object)
+    public function inIndex(IndexableInterface $object): bool
     {
         return true;
     }
@@ -86,8 +83,9 @@ class DefaultFindologic extends AbstractConfig implements FindologicConfigInterf
      *
      * @return mixed $subTenantData
      */
-    public function prepareSubTenantEntries(IndexableInterface $object, $subObjectId = null)
+    public function prepareSubTenantEntries(IndexableInterface $object, int $subObjectId = null): mixed
     {
+        return null;
     }
 
     /**
@@ -99,7 +97,7 @@ class DefaultFindologic extends AbstractConfig implements FindologicConfigInterf
      *
      * @return void
      */
-    public function updateSubTenantEntries($objectId, $subTenantData, $subObjectId = null)
+    public function updateSubTenantEntries(mixed $objectId, mixed $subTenantData, mixed $subObjectId = null): void
     {
     }
 
@@ -119,11 +117,26 @@ class DefaultFindologic extends AbstractConfig implements FindologicConfigInterf
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getTenantWorker(): DefaultFindologicWorker
+    {
+        $tenantWorker = parent::getTenantWorker();
+        if (!$tenantWorker instanceof DefaultFindologicWorker) {
+            throw new \InvalidArgumentException(sprintf(
+                'Worker must be an instance of %s',
+                DefaultFindologicWorker::class
+            ));
+        }
+        return $tenantWorker;
+    }
+
+    /**
      * returns condition for current subtenant
      *
      * @return array
      */
-    public function getSubTenantCondition()
+    public function getSubTenantCondition(): array
     {
         return [];
     }
@@ -137,7 +150,7 @@ class DefaultFindologic extends AbstractConfig implements FindologicConfigInterf
      *
      * @return DefaultMockup
      */
-    public function createMockupObject($objectId, $data, $relations)
+    public function createMockupObject(int $objectId, mixed $data, array $relations): DefaultMockup
     {
         return new DefaultMockup($objectId, $data, $relations);
     }

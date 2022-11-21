@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -29,18 +30,12 @@ class Dao extends Model\Listing\Dao\AbstractDao
 {
     use QueryBuilderHelperTrait;
 
-    /**
-     * @return string
-     */
     public function getDatabaseTableName(): string
     {
         return Model\Translation\Dao::TABLE_PREFIX . $this->model->getDomain();
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         $queryBuilder = $this->getQueryBuilder([$this->getDatabaseTableName() . '.key']);
         $queryBuilder->resetQueryPart('orderBy');
@@ -53,10 +48,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $amount;
     }
 
-    /**
-     * @return int
-     */
-    public function getCount()
+    public function getCount(): int
     {
         if (count($this->model->load()) > 0) {
             return count($this->model->load());
@@ -70,10 +62,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $amount;
     }
 
-    /**
-     * @return array
-     */
-    public function getAllTranslations()
+    public function getAllTranslations(): array
     {
         $queryBuilder = $this->getQueryBuilder(['*']);
         $cacheKey = $this->getDatabaseTableName().'_data_' . md5((string)$queryBuilder);
@@ -109,10 +98,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $translations;
     }
 
-    /**
-     * @return array
-     */
-    public function loadRaw()
+    public function loadRaw(): array
     {
         $queryBuilder = $this->getQueryBuilder(['*']);
         $translationsData = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables());
@@ -120,10 +106,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $translationsData;
     }
 
-    /**
-     * @return array
-     */
-    public function load()
+    public function load(): array
     {
         //$allTranslations = $this->getAllTranslations();
         $translations = [];
@@ -145,10 +128,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $translations;
     }
 
-    /**
-     * @return bool
-     */
-    public function isCacheable()
+    public function isCacheable(): bool
     {
         $count = $this->db->fetchOne('SELECT COUNT(*) FROM ' . $this->getDatabaseTableName());
         $cacheLimit = Model\Translation\Listing::getCacheLimit();

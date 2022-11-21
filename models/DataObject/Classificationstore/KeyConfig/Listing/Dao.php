@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -30,7 +31,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @return array
      */
-    public function load()
+    public function load(): array
     {
         $sql = 'SELECT * FROM ' . DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit();
         $configsData = $this->db->fetchAllAssociative($sql, $this->model->getConditionVariables());
@@ -47,20 +48,14 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $configList;
     }
 
-    /**
-     * @return array
-     */
-    public function getDataArray()
+    public function getDataArray(): array
     {
         $configsData = $this->db->fetchAllAssociative('SELECT * FROM ' . DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         return $configsData;
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM ' . DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . ' '. $this->getCondition(), $this->model->getConditionVariables());
@@ -69,10 +64,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
     }
 
-    /**
-     * @return string
-     */
-    protected function getCondition()
+    protected function getCondition(): string
     {
         $condition = $this->model->getIncludeDisabled() ? '(enabled is null or enabled = 0)' : 'enabled = 1';
 

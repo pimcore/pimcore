@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,6 +26,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManagerInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\RecurringPaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentRequest\AbstractRequest;
@@ -45,71 +47,44 @@ class CheckoutManager implements CheckoutManagerInterface
 
     const FINISHED = 'checkout_finished';
 
-    /**
-     * @var CartInterface
-     */
-    protected $cart;
+    protected CartInterface $cart;
 
-    /**
-     * @var EnvironmentInterface
-     */
-    protected $environment;
+    protected EnvironmentInterface $environment;
 
-    /**
-     * @var OrderManagerLocatorInterface
-     */
-    protected $orderManagers;
+    protected OrderManagerLocatorInterface $orderManagers;
 
-    /**
-     * @var CommitOrderProcessorLocatorInterface
-     */
-    protected $commitOrderProcessors;
+    protected CommitOrderProcessorLocatorInterface $commitOrderProcessors;
 
     /**
      * Payment Provider
      *
      * @var PaymentInterface|null
      */
-    protected $payment;
+    protected ?PaymentInterface $payment = null;
 
     /**
      * Needed for effective access to one specific checkout step
      *
      * @var CheckoutStepInterface[]
      */
-    protected $checkoutSteps = [];
+    protected array $checkoutSteps = [];
 
     /**
      * Needed for preserving order of checkout steps
      *
      * @var CheckoutStepInterface[]
      */
-    protected $checkoutStepOrder = [];
+    protected array $checkoutStepOrder = [];
 
-    /**
-     * @var CheckoutStepInterface
-     */
-    protected $currentStep;
+    protected ?CheckoutStepInterface $currentStep = null;
 
-    /**
-     * @var bool
-     */
-    protected $finished = false;
+    protected bool $finished = false;
 
-    /**
-     * @var bool
-     */
-    protected $paid = true;
+    protected bool $paid = true;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
+    protected EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @var HandlePendingPaymentsStrategyInterface
-     */
-    protected $handlePendingPaymentsStrategy = null;
+    protected ?HandlePendingPaymentsStrategyInterface $handlePendingPaymentsStrategy = null;
 
     public function __construct(
         CartInterface $cart,
@@ -184,7 +159,7 @@ class CheckoutManager implements CheckoutManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function hasActivePayment()
+    public function hasActivePayment(): bool
     {
         $orderManager = $this->orderManagers->getOrderManager();
         $order = $orderManager->getOrderFromCart($this->cart);
@@ -203,7 +178,7 @@ class CheckoutManager implements CheckoutManagerInterface
      *
      * @throws UnsupportedException
      */
-    protected function checkIfPaymentIsPossible()
+    protected function checkIfPaymentIsPossible(): AbstractOrder
     {
         if (!$this->isFinished()) {
             throw new UnsupportedException('Checkout is not finished yet.');
@@ -213,7 +188,6 @@ class CheckoutManager implements CheckoutManagerInterface
             throw new UnsupportedException('Payment is not activated');
         }
 
-        /** @var OrderManagerInterface $orderManager */
         $orderManager = $this->orderManagers->getOrderManager();
 
         // create order
@@ -242,7 +216,7 @@ class CheckoutManager implements CheckoutManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function initOrderPayment()
+    public function initOrderPayment(): \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation
     {
         $order = $this->checkIfPaymentIsPossible();
 
@@ -282,7 +256,7 @@ class CheckoutManager implements CheckoutManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function cancelStartedOrderPayment()
+    public function cancelStartedOrderPayment(): ?AbstractOrder
     {
         $orderManager = $this->orderManagers->getOrderManager();
         $order = $orderManager->getOrderFromCart($this->cart);
@@ -299,7 +273,7 @@ class CheckoutManager implements CheckoutManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getOrder()
+    public function getOrder(): AbstractOrder
     {
         return $this->orderManagers->getOrderManager()->getOrCreateOrderFromCart($this->cart);
     }
@@ -333,7 +307,7 @@ class CheckoutManager implements CheckoutManagerInterface
      * @throws UnsupportedException
      * @throws \Exception
      */
-    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams)
+    public function handlePaymentResponseAndCommitOrderPayment(StatusInterface|array $paymentResponseParams): AbstractOrder
     {
         $this->validateCheckoutSteps();
 
@@ -394,12 +368,12 @@ class CheckoutManager implements CheckoutManagerInterface
      * @param AbstractOrder $sourceOrder
      * @param string $customerId
      *
-     * @return null|AbstractOrder
+     * @return AbstractOrder
      *
      * @throws UnsupportedException
      * @throws \Exception
      */
-    public function startAndCommitRecurringOrderPayment(AbstractOrder $sourceOrder, string $customerId)
+    public function startAndCommitRecurringOrderPayment(AbstractOrder $sourceOrder, string $customerId): AbstractOrder
     {
         $targetOrder = $this->checkIfPaymentIsPossible();
 
@@ -445,7 +419,7 @@ class CheckoutManager implements CheckoutManagerInterface
      *
      * @throws UnsupportedException
      */
-    public function commitOrder()
+    public function commitOrder(): AbstractOrder
     {
         $this->validateCheckoutSteps();
 
@@ -471,7 +445,7 @@ class CheckoutManager implements CheckoutManagerInterface
      *
      * @throws UnsupportedException
      */
-    public function commitStep(CheckoutStepInterface $step, $data)
+    public function commitStep(CheckoutStepInterface $step, mixed $data): bool
     {
         $this->validateCheckoutSteps();
 
@@ -528,7 +502,7 @@ class CheckoutManager implements CheckoutManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getCart()
+    public function getCart(): CartInterface
     {
         return $this->cart;
     }
@@ -536,7 +510,7 @@ class CheckoutManager implements CheckoutManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getCheckoutStep($stepName)
+    public function getCheckoutStep(string $stepName): ?CheckoutStepInterface
     {
         return $this->checkoutSteps[$stepName] ?? null;
     }
@@ -544,7 +518,7 @@ class CheckoutManager implements CheckoutManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getCheckoutSteps()
+    public function getCheckoutSteps(): array
     {
         return $this->checkoutStepOrder;
     }
@@ -552,7 +526,7 @@ class CheckoutManager implements CheckoutManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getCurrentStep()
+    public function getCurrentStep(): CheckoutStepInterface
     {
         $this->validateCheckoutSteps();
 
@@ -569,7 +543,7 @@ class CheckoutManager implements CheckoutManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function isFinished()
+    public function isFinished(): bool
     {
         return $this->finished;
     }
@@ -577,7 +551,7 @@ class CheckoutManager implements CheckoutManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function isCommitted()
+    public function isCommitted(): bool
     {
         $order = $this->orderManagers->getOrderManager()->getOrderFromCart($this->cart);
 
@@ -587,7 +561,7 @@ class CheckoutManager implements CheckoutManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getPayment()
+    public function getPayment(): ?PaymentInterface
     {
         return $this->payment;
     }
@@ -595,22 +569,16 @@ class CheckoutManager implements CheckoutManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function cleanUpPendingOrders()
+    public function cleanUpPendingOrders(): void
     {
         $this->commitOrderProcessors->getCommitOrderProcessor()->cleanUpPendingOrders();
     }
 
-    /**
-     * @return HandlePendingPaymentsStrategyInterface
-     */
     public function getHandlePendingPaymentsStrategy(): HandlePendingPaymentsStrategyInterface
     {
         return $this->handlePendingPaymentsStrategy;
     }
 
-    /**
-     * @param HandlePendingPaymentsStrategyInterface $handlePendingPaymentsStrategy
-     */
     public function setHandlePendingPaymentsStrategy(HandlePendingPaymentsStrategyInterface $handlePendingPaymentsStrategy): void
     {
         $this->handlePendingPaymentsStrategy = $handlePendingPaymentsStrategy;

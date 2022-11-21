@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,37 +26,21 @@ class RequestHelper
 {
     const ATTRIBUTE_FRONTEND_REQUEST = '_pimcore_frontend_request';
 
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
+    protected RequestStack $requestStack;
 
-    /**
-     * @var requestContext
-     */
-    protected $requestContext;
+    protected RequestContext $requestContext;
 
-    /**
-     * @param RequestStack $requestStack
-     * @param RequestContext $requestContext
-     */
     public function __construct(RequestStack $requestStack, RequestContext $requestContext)
     {
         $this->requestStack = $requestStack;
         $this->requestContext = $requestContext;
     }
 
-    /**
-     * @return bool
-     */
     public function hasCurrentRequest(): bool
     {
         return null !== $this->requestStack->getCurrentRequest();
     }
 
-    /**
-     * @return Request
-     */
     public function getCurrentRequest(): Request
     {
         if (!$this->requestStack->getCurrentRequest()) {
@@ -70,7 +55,7 @@ class RequestHelper
      *
      * @return Request
      */
-    public function getRequest(Request $request = null)
+    public function getRequest(Request $request = null): Request
     {
         if (null === $request) {
             $request = $this->getCurrentRequest();
@@ -79,17 +64,11 @@ class RequestHelper
         return $request;
     }
 
-    /**
-     * @return bool
-     */
     public function hasMainRequest(): bool
     {
         return null !== $this->requestStack->getMainRequest();
     }
 
-    /**
-     * @return Request
-     */
     public function getMainRequest(): Request
     {
         $mainRequest = $this->requestStack->getMainRequest();
@@ -186,7 +165,7 @@ class RequestHelper
      *
      * @return string
      */
-    public function getAnonymizedClientIp(Request $request = null)
+    public function getAnonymizedClientIp(Request $request = null): string
     {
         $request = $this->getRequest($request);
 
@@ -205,13 +184,13 @@ class RequestHelper
     }
 
     /**
-     * @internal
-     *
      * @param string $uri
      *
      * @return Request
+     *@internal
+     *
      */
-    public function createRequestWithContext($uri = '/')
+    public function createRequestWithContext(string $uri = '/'): Request
     {
         $port = '';
         $scheme = $this->requestContext->getScheme();

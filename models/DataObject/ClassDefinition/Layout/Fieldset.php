@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,5 +30,5 @@ class Fieldset extends Model\DataObject\ClassDefinition\Layout
      *
      * @var string
      */
-    public $fieldtype = 'fieldset';
+    public string $fieldtype = 'fieldset';
 }

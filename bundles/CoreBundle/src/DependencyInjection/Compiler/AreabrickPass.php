@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,10 +36,7 @@ use Symfony\Component\Finder\Finder;
  */
 final class AreabrickPass implements CompilerPassInterface
 {
-    /**
-     * @var Inflector
-     */
-    private $inflector;
+    private Inflector $inflector;
 
     public function __construct()
     {
@@ -118,7 +116,8 @@ final class AreabrickPass implements CompilerPassInterface
         Definition $areaManagerDefinition,
         array $locatorMapping,
         array $excludedClasses
-    ) {
+    ): array
+    {
         $bundles = $container->getParameter('kernel.bundles_metadata');
         //Find bricks from /src since AppBundle is removed
         $bundles['App'] = [
@@ -225,7 +224,7 @@ final class AreabrickPass implements CompilerPassInterface
             $shortClassName = $classPath->getBasename('.php');
 
             // relative path in bundle path
-            $relativePath = str_replace($sourcePath, '', $classPath->getPathInfo());
+            $relativePath = str_replace($sourcePath, '', (string)$classPath->getPathInfo());
             $relativePath = trim($relativePath, DIRECTORY_SEPARATOR);
 
             // namespace starting from bundle path
@@ -268,7 +267,7 @@ final class AreabrickPass implements CompilerPassInterface
      *
      * @return string
      */
-    protected function generateBrickId(\ReflectionClass $reflector)
+    protected function generateBrickId(\ReflectionClass $reflector): string
     {
         $id = $this->inflector->tableize($reflector->getShortName());
         $id = str_replace('_', '-', $id);
@@ -288,7 +287,7 @@ final class AreabrickPass implements CompilerPassInterface
      *
      * @return string
      */
-    protected function generateServiceId($bundleName, $subNamespace, $className)
+    protected function generateServiceId(string $bundleName, string $subNamespace, string $className): string
     {
         $bundleName = str_replace('Bundle', '', $bundleName);
         $bundleName = $this->inflector->tableize($bundleName);

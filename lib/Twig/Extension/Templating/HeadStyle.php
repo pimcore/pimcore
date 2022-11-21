@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -58,21 +59,21 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @var string
      */
-    protected $_regKey = 'HeadStyle';
+    protected string $_regKey = 'HeadStyle';
 
     /**
      * Allowed optional attributes
      *
      * @var array
      */
-    protected $_optionalAttributes = ['lang', 'title', 'media', 'dir'];
+    protected array $_optionalAttributes = ['lang', 'title', 'media', 'dir'];
 
     /**
      * Allowed media types
      *
      * @var array
      */
-    protected $_mediaTypes = [
+    protected array $_mediaTypes = [
         'all', 'aural', 'braille', 'handheld', 'print',
         'projection', 'screen', 'tty', 'tv',
     ];
@@ -82,21 +83,21 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @var array|null
      */
-    protected $_captureAttrs = null;
+    protected ?array $_captureAttrs = null;
 
     /**
      * Capture lock
      *
      * @var bool
      */
-    protected $_captureLock;
+    protected bool $_captureLock;
 
     /**
      * Capture type (append, prepend, set)
      *
      * @var string
      */
-    protected $_captureType;
+    protected string $_captureType;
 
     /**
      * HeadStyle constructor.
@@ -116,13 +117,13 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      *
      * Returns headStyle helper object; optionally, allows specifying
      *
-     * @param  string $content Stylesheet contents
-     * @param  string $placement Append, prepend, or set
-     * @param  string|array $attributes Optional attributes to utilize
+     * @param string|null $content Stylesheet contents
+     * @param string $placement Append, prepend, or set
+     * @param array|string $attributes Optional attributes to utilize
      *
-     * @return HeadStyle
+     * @return $this
      */
-    public function __invoke($content = null, $placement = 'APPEND', $attributes = [])
+    public function __invoke(string $content = null, string $placement = 'APPEND', array|string $attributes = []): static
     {
         if ((null !== $content) && is_string($content)) {
             switch (strtoupper($placement)) {
@@ -155,14 +156,14 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      * - prependStyle($content, $attributes = array())
      * - setStyle($content, $attributes = array())
      *
-     * @param  string $method
-     * @param  array $args
+     * @param string $method
+     * @param array $args
      *
      * @return mixed
      *
      * @throws Exception When no $content provided or invalid method
      */
-    public function __call($method, $args)
+    public function __call(string $method, array $args)
     {
         if (preg_match('/^(?P<action>set|(ap|pre)pend|offsetSet)(Style)$/', $method, $matches)) {
             $index = null;
@@ -207,7 +208,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @return bool
      */
-    protected function _isValid($value)
+    protected function _isValid(mixed $value): bool
     {
         if ((!$value instanceof \stdClass)
             || !isset($value->content)
@@ -225,7 +226,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @return void
      */
-    public function append($value)
+    public function append(mixed $value): void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('Invalid value passed to append; please use appendStyle()');
@@ -237,19 +238,19 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Override offsetSet to enforce style creation
      *
-     * @param  string|int $index
-     * @param  mixed $value
+     * @param  string|int $offset
+     * @param mixed $value
      *
      * @return void
      */
-    #[\ReturnTypeWillChange]
-    public function offsetSet($index, $value)// : void
+
+    public function offsetSet($offset, mixed $value): void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('Invalid value passed to offsetSet; please use offsetSetStyle()');
         }
 
-        $this->getContainer()->offsetSet($index, $value);
+        $this->getContainer()->offsetSet($offset, $value);
     }
 
     /**
@@ -259,7 +260,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @return void
      */
-    public function prepend($value)
+    public function prepend(mixed $value): void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('Invalid value passed to prepend; please use prependStyle()');
@@ -275,7 +276,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @return void
      */
-    public function set($value)
+    public function set(mixed $value): void
     {
         if (!$this->_isValid($value)) {
             throw new Exception('Invalid value passed to set; please use setStyle()');
@@ -292,7 +293,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @return void
      */
-    public function captureStart($type = Container::APPEND, $attrs = null)
+    public function captureStart($type = Container::APPEND, $attrs = null): void
     {
         if ($this->_captureLock) {
             throw new Exception('Cannot nest headStyle captures');
@@ -309,7 +310,7 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      *
      * @return void
      */
-    public function captureEnd()
+    public function captureEnd(): void
     {
         $content = ob_get_clean();
         $attrs = $this->_captureAttrs;
@@ -337,11 +338,11 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
      * Convert content and attributes into valid style tag
      *
      * @param  \stdClass $item Item to render
-     * @param  null|string $indent Indentation to use
+     * @param string|null $indent Indentation to use
      *
      * @return string
      */
-    public function itemToString(\stdClass $item, $indent)
+    public function itemToString(\stdClass $item, ?string $indent): string
     {
         $attrString = '';
         if (!empty($item->attributes)) {
@@ -398,11 +399,11 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Create string representation of placeholder
      *
-     * @param  null|string|int $indent
+     * @param int|string|null $indent
      *
      * @return string
      */
-    public function toString($indent = null)
+    public function toString(int|string $indent = null): string
     {
         $indent = (null !== $indent)
             ? $this->getWhitespace($indent)
@@ -426,12 +427,12 @@ class HeadStyle extends AbstractExtension implements RuntimeExtensionInterface
     /**
      * Create data item for use in stack
      *
-     * @param  string $content
+     * @param string $content
      * @param  array $attributes
      *
      * @return \stdClass
      */
-    public function createData($content, array $attributes)
+    public function createData(string $content, array $attributes): \stdClass
     {
         if (!isset($attributes['media'])) {
             $attributes['media'] = 'screen';

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,20 +17,16 @@
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Carbon\Carbon;
+use Pimcore\Model\Element\ElementInterface;
 
 /**
  * @internal
  */
 final class DateFormatter extends AbstractOperator
 {
-    /**
-     * @var string|null
-     */
-    private $format;
+    private ?string $format = null;
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -40,7 +37,7 @@ final class DateFormatter extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         $result = new \stdClass();
         $result->label = $this->label;
@@ -92,12 +89,7 @@ final class DateFormatter extends AbstractOperator
         return $result;
     }
 
-    /**
-     * @param mixed $theValue
-     *
-     * @return string
-     */
-    public function format($theValue)
+    public function format(mixed $theValue): string
     {
         $timestamp = null;
         if (is_int($theValue)) {

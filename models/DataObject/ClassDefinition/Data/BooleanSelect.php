@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,6 +19,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class BooleanSelect extends Data implements
@@ -72,42 +74,42 @@ class BooleanSelect extends Data implements
      *
      * @var string
      */
-    public $fieldtype = 'booleanSelect';
+    public string $fieldtype = 'booleanSelect';
 
     /**
      * @internal
      *
      * @var string
      */
-    public $yesLabel;
+    public string $yesLabel;
 
     /**
      * @internal
      *
      * @var string
      */
-    public $noLabel;
+    public string $noLabel;
 
     /**
      * @internal
      *
      * @var string
      */
-    public $emptyLabel;
+    public string $emptyLabel;
 
     /**
      * @internal
      *
      * @var array|array[]
      */
-    public $options = self::DEFAULT_OPTIONS;
+    public array $options = self::DEFAULT_OPTIONS;
 
     /**
      * @internal
      *
      * @var string|int
      */
-    public $width = 0;
+    public string|int $width = 0;
 
     /**
      * Type for the column to query
@@ -127,39 +129,23 @@ class BooleanSelect extends Data implements
      */
     public $columnType = 'tinyint(1) null';
 
-    /**
-     * @return array
-     */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }
 
-    /**
-     * @param array $options
-     *
-     * @return $this
-     */
-    public function setOptions($options)
+    public function setOptions(array $options): static
     {
         // nothing to do
         return $this;
     }
 
-    /**
-     * @return string|int
-     */
-    public function getWidth()
+    public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @param string|int $width
-     *
-     * @return $this
-     */
-    public function setWidth($width)
+    public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
             $width = (int)$width;
@@ -170,15 +156,15 @@ class BooleanSelect extends Data implements
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param int|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return bool|null
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
+     *
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?bool
     {
         if (is_numeric($data)) {
             $data = (int) $data;
@@ -194,29 +180,29 @@ class BooleanSelect extends Data implements
     }
 
     /**
-     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
-     * @param int|bool|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return int|null
+     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
+     *
      */
-    public function getDataForQueryResource($data, $object = null, $params = [])
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param int|bool|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return int|null
+     * @see ResourcePersistenceAwareInterface::getDataForResource
+     *
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?int
     {
         if (is_numeric($data)) {
             $data = (bool) $data;
@@ -231,15 +217,15 @@ class BooleanSelect extends Data implements
     }
 
     /**
-     * @see Data::getVersionPreview
-     *
-     * @param bool|null $data
+     * @param mixed $data
      * @param DataObject\Concrete|null $object
      * @param array $params
      *
      * @return string
+     * @see Data::getVersionPreview
+     *
      */
-    public function getVersionPreview($data, $object = null, $params = [])
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data === true) {
             return $this->getYesLabel();
@@ -254,7 +240,7 @@ class BooleanSelect extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function isDiffChangeAllowed($object, $params = [])
+    public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
@@ -262,11 +248,11 @@ class BooleanSelect extends Data implements
     /** See parent class.
      * @param mixed $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array|null
      */
-    public function getDiffDataForEditMode($data, $object = null, $params = [])
+    public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         $result = [];
 
@@ -297,7 +283,7 @@ class BooleanSelect extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
     {
         //TODO mandatory probably doesn't make much sense
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
@@ -305,12 +291,7 @@ class BooleanSelect extends Data implements
         }
     }
 
-    /**
-     * @param bool|null $data
-     *
-     * @return bool
-     */
-    public function isEmpty($data)
+    public function isEmpty(mixed $data): bool
     {
         return $data !== true && $data !== false;
     }
@@ -324,20 +305,12 @@ class BooleanSelect extends Data implements
         $this->width = $masterDefinition->width;
     }
 
-    /**
-     * @return string
-     */
-    public function getYesLabel()
+    public function getYesLabel(): string
     {
         return $this->yesLabel;
     }
 
-    /**
-     * @param string|null $yesLabel
-     *
-     * @return $this
-     */
-    public function setYesLabel($yesLabel)
+    public function setYesLabel(?string $yesLabel): static
     {
         $this->yesLabel = $yesLabel;
         $this->setOptionsEntry(self::YES_VALUE, $yesLabel);
@@ -366,15 +339,12 @@ class BooleanSelect extends Data implements
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getNoLabel()
+    public function getNoLabel(): string
     {
         return $this->noLabel;
     }
 
-    public function setNoLabel($noLabel)
+    public function setNoLabel($noLabel): static
     {
         $this->noLabel = $noLabel;
         $this->setOptionsEntry(self::NO_VALUE, $noLabel);
@@ -382,15 +352,12 @@ class BooleanSelect extends Data implements
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getEmptyLabel()
+    public function getEmptyLabel(): string
     {
         return $this->emptyLabel;
     }
 
-    public function setEmptyLabel($emptyLabel)
+    public function setEmptyLabel($emptyLabel): static
     {
         $this->emptyLabel = $emptyLabel;
         $this->setOptionsEntry(self::EMPTY_VALUE_EDITMODE, $emptyLabel);
@@ -401,25 +368,25 @@ class BooleanSelect extends Data implements
     /**
      * @param bool|null $data
      * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return int
      */
-    public function getDataForGrid($data, $object = null, $params = [])
+    public function getDataForGrid(?bool $data, Concrete $object = null, array $params = []): int
     {
         return $this->getDataForEditmode($data, $object, $params);
     }
 
     /**
-     * @see Data::getDataForEditmode
-     *
-     * @param bool|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return int
+     * @see Data::getDataForEditmode
+     *
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): int
     {
         if ($data === true) {
             return self::YES_VALUE;
@@ -438,21 +405,21 @@ class BooleanSelect extends Data implements
      *
      * @return bool|null
      */
-    public function getDataFromGridEditor($data, $object = null, $params = [])
+    public function getDataFromGridEditor(string $data, Concrete $object = null, array $params = []): ?bool
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
     /**
-     * @see Data::getDataFromEditmode
-     *
-     * @param string $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return bool|null
+     * @see Data::getDataFromEditmode
+     *
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?bool
     {
         if ((int)$data === 1) {
             return true;
@@ -463,13 +430,7 @@ class BooleanSelect extends Data implements
         return null;
     }
 
-    /**
-     * @param mixed $oldValue
-     * @param mixed $newValue
-     *
-     * @return bool
-     */
-    public function isEqual($oldValue, $newValue): bool
+    public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
         return $oldValue === $newValue;
     }
@@ -477,7 +438,7 @@ class BooleanSelect extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, $params = [])
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $value = $this->getDataFromObjectParam($object, $params);
         if ($value === null) {
@@ -491,33 +452,21 @@ class BooleanSelect extends Data implements
         return $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?bool';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?bool';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocInputType(): ?string
     {
         return 'bool|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         return 'bool|null';

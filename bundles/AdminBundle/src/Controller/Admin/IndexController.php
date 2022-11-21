@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -50,14 +51,8 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 class IndexController extends AdminController implements KernelResponseEventInterface
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
@@ -84,7 +79,8 @@ class IndexController extends AdminController implements KernelResponseEventInte
         Executor $maintenanceExecutor,
         CsrfProtectionHandler $csrfProtection,
         Config $config
-    ) {
+    ): Response
+    {
         $user = $this->getAdminUser();
         $perspectiveConfig = new \Pimcore\Perspective\Config();
         $templateParams = [
@@ -130,7 +126,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
      *
      * @throws \Exception
      */
-    public function statisticsAction(Request $request, Connection $db, KernelInterface $kernel)
+    public function statisticsAction(Request $request, Connection $db, KernelInterface $kernel): JsonResponse
     {
         // DB
         try {
@@ -164,13 +160,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         return $this->adminJson($data);
     }
 
-    /**
-     * @param array $templateParams
-     * @param User $user
-     *
-     * @return $this
-     */
-    protected function addRuntimePerspective(array &$templateParams, User $user)
+    protected function addRuntimePerspective(array &$templateParams, User $user): static
     {
         $runtimePerspective = \Pimcore\Perspective\Config::getRuntimePerspective($user);
         $templateParams['runtimePerspective'] = $runtimePerspective;
@@ -178,12 +168,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         return $this;
     }
 
-    /**
-     * @param array $templateParams
-     *
-     * @return $this
-     */
-    protected function addPluginAssets(array &$templateParams)
+    protected function addPluginAssets(array &$templateParams): static
     {
         $templateParams['pluginJsPaths'] = $this->getBundleManager()->getJsPaths();
         $templateParams['pluginCssPaths'] = $this->getBundleManager()->getCssPaths();
@@ -191,18 +176,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         return $this;
     }
 
-    /**
-     * @param Request $request
-     * @param array $templateParams
-     * @param User $user
-     * @param KernelInterface $kernel
-     * @param ExecutorInterface $maintenanceExecutor
-     * @param CsrfProtectionHandler $csrfProtection
-     * @param SiteConfigProvider $siteConfigProvider
-     *
-     * @return $this
-     */
-    protected function buildPimcoreSettings(Request $request, array &$templateParams, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor, CsrfProtectionHandler $csrfProtection, SiteConfigProvider $siteConfigProvider)
+    protected function buildPimcoreSettings(Request $request, array &$templateParams, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor, CsrfProtectionHandler $csrfProtection, SiteConfigProvider $siteConfigProvider): static
     {
         $config                = $templateParams['config'];
         $dashboardHelper       = new \Pimcore\Helper\Dashboard($user);
@@ -308,12 +282,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         return $instanceId;
     }
 
-    /**
-     * @param array $settings
-     *
-     * @return $this
-     */
-    protected function addSystemVarSettings(array &$settings)
+    protected function addSystemVarSettings(array &$settings): static
     {
         // upload limit
         $max_upload = filesize2bytes(ini_get('upload_max_filesize') . 'B');
@@ -333,13 +302,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         return $this;
     }
 
-    /**
-     * @param array $settings
-     * @param ExecutorInterface $maintenanceExecutor
-     *
-     * @return $this
-     */
-    protected function addMaintenanceSettings(array &$settings, ExecutorInterface $maintenanceExecutor)
+    protected function addMaintenanceSettings(array &$settings, ExecutorInterface $maintenanceExecutor): static
     {
         // check maintenance
         $maintenance_active = false;
@@ -355,13 +318,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         return $this;
     }
 
-    /**
-     * @param array $settings
-     * @param Config $config
-     *
-     * @return $this
-     */
-    protected function addMailSettings(array &$settings, $config)
+    protected function addMailSettings(array &$settings, Config $config): static
     {
         //mail settings
         $mailIncomplete = false;
@@ -380,12 +337,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         return $this;
     }
 
-    /**
-     * @param array $settings
-     *
-     * @return $this
-     */
-    protected function addCustomViewSettings(array &$settings)
+    protected function addCustomViewSettings(array &$settings): static
     {
         $cvData = [];
 
@@ -433,9 +385,6 @@ class IndexController extends AdminController implements KernelResponseEventInte
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function onKernelResponseEvent(ResponseEvent $event)
     {
         $event->getResponse()->headers->set('X-Frame-Options', 'deny', true);

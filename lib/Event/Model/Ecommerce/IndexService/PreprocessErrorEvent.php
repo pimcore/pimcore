@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,17 +20,11 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class PreprocessErrorEvent extends Event
 {
-    /**
-     * @var \Throwable
-     */
-    protected $exception;
+    protected \Throwable $exception;
 
     protected bool $throwException;
 
-    /**
-     * @var int
-     */
-    protected $subObjectId;
+    protected int $subObjectId;
 
     /**
      * PreprocessErrorEvent constructor.
@@ -45,41 +40,26 @@ class PreprocessErrorEvent extends Event
         $this->subObjectId = $subObjectId;
     }
 
-    /**
-     * @return \Throwable
-     */
     public function getException(): \Throwable
     {
         return $this->exception;
     }
 
-    /**
-     * @param bool $throwException
-     */
     public function setThrowException(bool $throwException): void
     {
         $this->throwException = $throwException;
     }
 
-    /**
-     * @return bool
-     */
     public function doThrowException(): bool
     {
         return $this->throwException;
     }
 
-    /**
-     * @return int
-     */
     public function getSubObjectId(): int
     {
         return $this->subObjectId;
     }
 
-    /**
-     * @param int $subObjectId
-     */
     public function setSubObjectId(int $subObjectId): void
     {
         $this->subObjectId = $subObjectId;

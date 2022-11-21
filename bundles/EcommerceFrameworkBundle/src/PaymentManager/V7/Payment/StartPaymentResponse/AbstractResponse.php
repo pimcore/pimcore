@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,10 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 
 abstract class AbstractResponse implements StartPaymentResponseInterface
 {
-    /**
-     * @var AbstractOrder
-     */
-    protected $order;
+    protected AbstractOrder $order;
 
     /**
      * AbstractResponse constructor.
@@ -34,9 +32,6 @@ abstract class AbstractResponse implements StartPaymentResponseInterface
         $this->order = $order;
     }
 
-    /**
-     * @return AbstractOrder
-     */
     public function getOrder(): AbstractOrder
     {
         return $this->order;

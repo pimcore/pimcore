@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,26 +16,20 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
+use Pimcore\Model\Element\ElementInterface;
+
 /**
  * @internal
  */
 final class Substring extends AbstractOperator
 {
-    /**
-     * @var int
-     */
-    private $start;
+    private int $start;
 
-    /**
-     * @var int
-     */
-    private $length;
+    private int $length;
 
     private bool $ellipses;
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -47,7 +42,7 @@ final class Substring extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         $result = new \stdClass();
         $result->label = $this->label;
@@ -102,50 +97,32 @@ final class Substring extends AbstractOperator
         return $result;
     }
 
-    /**
-     * @return int
-     */
-    public function getStart()
+    public function getStart(): int
     {
         return $this->start;
     }
 
-    /**
-     * @param int $start
-     */
-    public function setStart($start)
+    public function setStart(int $start)
     {
         $this->start = $start;
     }
 
-    /**
-     * @return int
-     */
-    public function getLength()
+    public function getLength(): int
     {
         return $this->length;
     }
 
-    /**
-     * @param int $length
-     */
-    public function setLength($length)
+    public function setLength(int $length)
     {
         $this->length = $length;
     }
 
-    /**
-     * @return bool
-     */
-    public function getEllipses()
+    public function getEllipses(): bool
     {
         return $this->ellipses;
     }
 
-    /**
-     * @param bool $ellipses
-     */
-    public function setEllipses($ellipses)
+    public function setEllipses(bool $ellipses)
     {
         $this->ellipses = $ellipses;
     }

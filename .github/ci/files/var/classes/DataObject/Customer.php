@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Inheritance: yes
@@ -21,10 +22,6 @@ class Customer extends Concrete
 protected $o_classId = "CU";
 protected $o_className = "Customer";
 
-/**
-* @param array $values
-* @return static
-*/
 public static function create(array $values = []): static
 {
 	$object = new static();

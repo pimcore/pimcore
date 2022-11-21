@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -44,56 +45,50 @@ use Symfony\Component\Templating\EngineInterface;
 
 abstract class AbstractRenderer implements RendererInterface
 {
-    /**
-     * @var EngineInterface
-     */
-    protected $templatingEngine;
+    protected EngineInterface $templatingEngine;
 
     /**
      * The minimum depth a page must have to be included when rendering
      *
      * @var int|null
      */
-    protected $_minDepth;
+    protected ?int $_minDepth = null;
 
     /**
      * The maximum depth a page can have to be included when rendering
      *
      * @var int|null
      */
-    protected $_maxDepth;
+    protected ?int $_maxDepth = null;
 
     /**
      * Indentation string
      *
      * @var string
      */
-    protected $_indent = '';
+    protected string $_indent = '';
 
     /**
      * Prefix for IDs when they are normalized
      *
      * @var string|null
      */
-    protected $_prefixForId = null;
+    protected ?string $_prefixForId = null;
 
     /**
      * Skip current prefix for IDs when they are normalized (flag)
      *
      * @var bool
      */
-    protected $_skipPrefixForId = false;
+    protected bool $_skipPrefixForId = false;
 
     /**
      * Whether invisible items should be rendered by this helper
      *
      * @var bool
      */
-    protected $_renderInvisible = false;
+    protected bool $_renderInvisible = false;
 
-    /**
-     * @param EngineInterface $templatingEngine
-     */
     public function __construct(EngineInterface $templatingEngine)
     {
         $this->templatingEngine = $templatingEngine;
@@ -108,7 +103,7 @@ abstract class AbstractRenderer implements RendererInterface
      *
      * @return $this
      */
-    public function setMinDepth($minDepth = null)
+    public function setMinDepth(int $minDepth = null): static
     {
         if (null !== $minDepth) {
             $this->_minDepth = (int) $minDepth;
@@ -119,10 +114,7 @@ abstract class AbstractRenderer implements RendererInterface
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getMinDepth()
+    public function getMinDepth(): ?int
     {
         if (!is_int($this->_minDepth) || $this->_minDepth < 0) {
             return 0;
@@ -136,7 +128,7 @@ abstract class AbstractRenderer implements RendererInterface
      *
      * @return $this
      */
-    public function setMaxDepth($maxDepth = null)
+    public function setMaxDepth(int $maxDepth = null): static
     {
         if (null !== $maxDepth) {
             $this->_maxDepth = (int) $maxDepth;
@@ -147,48 +139,29 @@ abstract class AbstractRenderer implements RendererInterface
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getMaxDepth()
+    public function getMaxDepth(): ?int
     {
         return $this->_maxDepth;
     }
 
-    /**
-     * @param string $indent
-     *
-     * @return $this
-     */
-    public function setIndent($indent)
+    public function setIndent(string $indent): static
     {
         $this->_indent = $this->_getWhitespace($indent);
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getIndent()
+    public function getIndent(): string
     {
         return $this->_indent;
     }
 
-    /**
-     * @return string
-     */
-    public function getEOL()
+    public function getEOL(): string
     {
         return "\n";
     }
 
-    /**
-     * @param string $prefix
-     *
-     * @return $this
-     */
-    public function setPrefixForId($prefix)
+    public function setPrefixForId(string $prefix): static
     {
         if (is_string($prefix)) {
             $this->_prefixForId = trim($prefix);
@@ -197,45 +170,31 @@ abstract class AbstractRenderer implements RendererInterface
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
-    public function getPrefixForId()
+    public function getPrefixForId(): ?string
     {
         if (null === $this->_prefixForId) {
             $prefix = get_class($this);
             $this->_prefixForId = str_replace('\\', '-', strtolower(
-                trim(substr($prefix, strrpos($prefix, '_')), '_')
+                trim(substr($prefix, (int) strrpos($prefix, '_')), '_')
             )) . '-';
         }
 
         return $this->_prefixForId;
     }
 
-    /**
-     * @param bool $flag
-     *
-     * @return $this
-     */
-    public function skipPrefixForId($flag = true)
+    public function skipPrefixForId(bool $flag = true): static
     {
         $this->_skipPrefixForId = (bool) $flag;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRenderInvisible()
+    public function getRenderInvisible(): bool
     {
         return $this->_renderInvisible;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setRenderInvisible(bool $renderInvisible = true)
+    public function setRenderInvisible(bool $renderInvisible = true): static
     {
         $this->_renderInvisible = (bool) $renderInvisible;
 
@@ -251,7 +210,7 @@ abstract class AbstractRenderer implements RendererInterface
      *
      * @return array
      */
-    public function findActive(Container $container, $minDepth = null, $maxDepth = -1)
+    public function findActive(Container $container, int $minDepth = null, int $maxDepth = -1): array
     {
         if (!is_int($minDepth)) {
             $minDepth = $this->getMinDepth();
@@ -312,7 +271,7 @@ abstract class AbstractRenderer implements RendererInterface
      *
      * @return string  HTML string for the given page
      */
-    public function htmlify(Page $page)
+    public function htmlify(Page $page): string
     {
         $label = $page->getLabel();
         $title = $page->getTitle();
@@ -346,11 +305,11 @@ abstract class AbstractRenderer implements RendererInterface
      *   will not be accepted if it is the descendant of a non-accepted page.
      *
      * @param  Page $page
-     * @param  bool $recursive
+     * @param bool $recursive
      *
      * @return bool
      */
-    public function accept(Page $page, $recursive = true)
+    public function accept(Page $page, bool $recursive = true): bool
     {
         // accept by default
         $accept = true;
@@ -375,11 +334,11 @@ abstract class AbstractRenderer implements RendererInterface
     /**
      * Retrieve whitespace representation of $indent
      *
-     * @param  int|string $indent
+     * @param int|string $indent
      *
      * @return string
      */
-    protected function _getWhitespace($indent)
+    protected function _getWhitespace(int|string $indent): string
     {
         if (is_int($indent)) {
             $indent = str_repeat(' ', $indent);
@@ -391,11 +350,11 @@ abstract class AbstractRenderer implements RendererInterface
     /**
      * Converts an associative array to a string of tag attributes.
      *
-     * @param  array $attribs
+     * @param array $attribs
      *
      * @return string
      */
-    protected function _htmlAttribs($attribs)
+    protected function _htmlAttribs(array $attribs): string
     {
         // filter out null values and empty string values
         foreach ($attribs as $key => $value) {
@@ -443,11 +402,11 @@ abstract class AbstractRenderer implements RendererInterface
     /**
      * Normalize an ID
      *
-     * @param  string $value    ID
+     * @param string $value    ID
      *
      * @return string           Normalized ID
      */
-    protected function _normalizeId($value)
+    protected function _normalizeId(string $value): string
     {
         if (false === $this->_skipPrefixForId) {
             $prefix = $this->getPrefixForId();

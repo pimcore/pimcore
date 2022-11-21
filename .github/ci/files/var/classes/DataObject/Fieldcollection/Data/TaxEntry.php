@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Fields Summary:
@@ -14,13 +15,13 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class TaxEntry extends DataObject\Fieldcollection\Data\AbstractData
 {
-protected $type = "TaxEntry";
-protected $localizedfields;
-protected $percent;
+protected string $type = "TaxEntry";
+protected ?DataObject\Localizedfield $localizedfields;
+protected ?float $percent;
 
 
 /**
-* Get localizedfields - 
+* Get localizedfields -
 * @return \Pimcore\Model\DataObject\Localizedfield|null
 */
 public function getLocalizedfields(): ?\Pimcore\Model\DataObject\Localizedfield
@@ -38,8 +39,7 @@ public function getLocalizedfields(): ?\Pimcore\Model\DataObject\Localizedfield
 
 /**
 * Get name - Name
-* @return string|null
-*/
+ */
 public function getName($language = null): ?string
 {
 	$data = $this->getLocalizedfields()->getLocalizedValue("name", $language);
@@ -51,7 +51,7 @@ public function getName($language = null): ?string
 }
 
 /**
-* Set localizedfields - 
+* Set localizedfields -
 * @param \Pimcore\Model\DataObject\Localizedfield|null $localizedfields
 * @return $this
 */

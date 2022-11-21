@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Fields Summary:
@@ -15,11 +16,11 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class OrderPriceModifications extends DataObject\Fieldcollection\Data\AbstractData
 {
-protected $type = "OrderPriceModifications";
-protected $name;
-protected $netAmount;
-protected $pricingRuleId;
-protected $amount;
+protected string $type = "OrderPriceModifications";
+protected ?string $name;
+protected ?string $netAmount;
+protected ?int $pricingRuleId;
+protected ?string $amount;
 
 
 /**

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,10 +21,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class VersionEvent extends Event
 {
-    /**
-     * @var Version
-     */
-    protected $version;
+    protected Version $version;
 
     /**
      * DocumentEvent constructor.
@@ -35,18 +33,12 @@ class VersionEvent extends Event
         $this->version = $version;
     }
 
-    /**
-     * @return Version
-     */
-    public function getVersion()
+    public function getVersion(): Version
     {
         return $this->version;
     }
 
-    /**
-     * @param Version $version
-     */
-    public function setVersion($version)
+    public function setVersion(Version $version)
     {
         $this->version = $version;
     }

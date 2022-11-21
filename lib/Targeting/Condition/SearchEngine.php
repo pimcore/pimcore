@@ -24,12 +24,9 @@ class SearchEngine extends AbstractVariableCondition implements ConditionInterfa
     /**
      * @var string|null
      */
-    private $engine;
+    private mixed $engine = null;
 
-    /**
-     * @var array
-     */
-    private $validEngines = ['google', 'bing', 'yahoo'];
+    private array $validEngines = ['google', 'bing', 'yahoo'];
 
     /**
      * @param null|string $engine
@@ -53,7 +50,7 @@ class SearchEngine extends AbstractVariableCondition implements ConditionInterfa
     /**
      * {@inheritdoc}
      */
-    public static function fromConfig(array $config)
+    public static function fromConfig(array $config): static
     {
         return new static($config['searchengine'] ?? null);
     }

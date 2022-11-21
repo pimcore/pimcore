@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Inheritance: no
@@ -23,14 +24,10 @@ class OnlineShopVoucherSeries extends \Pimcore\Bundle\EcommerceFrameworkBundle\M
 {
 protected $o_classId = "EF_OSVS";
 protected $o_className = "OnlineShopVoucherSeries";
-protected $name;
-protected $tokenSettings;
+protected ?string $name = null;
+protected ?Fieldcollection $tokenSettings = null;
 
 
-/**
-* @param array $values
-* @return static
-*/
 public static function create(array $values = []): static
 {
 	$object = new static();
@@ -72,10 +69,7 @@ public function setName(?string $name): static
 	return $this;
 }
 
-/**
-* @return \Pimcore\Model\DataObject\Fieldcollection|null
-*/
-public function getTokenSettings()
+    public function getTokenSettings(): ?Fieldcollection
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("tokenSettings");

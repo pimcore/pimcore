@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,16 +19,13 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 
-class DefaultMockup implements ProductInterface, LinkGeneratorAwareInterface
+class DefaultMockup implements ProductInterface, LinkGeneratorAwareInterface, IndexableInterface
 {
-    /** @var int */
-    protected $id;
+    protected int $id;
 
-    /** @var array */
-    protected $params;
+    protected array $params;
 
-    /** @var array */
-    protected $relations;
+    protected array $relations;
 
     /**
      * contains link generators by class type (just for caching)
@@ -56,60 +54,36 @@ class DefaultMockup implements ProductInterface, LinkGeneratorAwareInterface
         return null;
     }
 
-    /**
-     * @return array
-     */
-    public function getParams()
+    public function getParams(): array
     {
         return $this->params;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return mixed
-     */
-    public function getParam($key)
+    public function getParam(string $key): mixed
     {
         return $this->params[$key];
     }
 
-    /**
-     * @param array $params
-     *
-     * @return $this
-     */
-    public function setParams($params)
+    public function setParams(array $params): static
     {
         $this->params = $params;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getRelations()
+    public function getRelations(): array
     {
         return $this->relations;
     }
 
-    /**
-     * @param array $relations
-     *
-     * @return $this
-     */
-    public function setRelations($relations)
+    public function setRelations(array $relations): static
     {
         $this->relations = $relations;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -175,7 +149,7 @@ class DefaultMockup implements ProductInterface, LinkGeneratorAwareInterface
         throw new \Exception("Object with {$this->id} not found.");
     }
 
-    public function getOriginalObject()
+    public function getOriginalObject(): DataObject|DataObject\AbstractObject|DataObject\Concrete|null
     {
         Logger::notice("Getting original object {$this->id}.");
 
@@ -204,14 +178,37 @@ class DefaultMockup implements ProductInterface, LinkGeneratorAwareInterface
         return $this->__call('getOSProductNumber', []);
     }
 
-    /**
-     * returns array of categories.
-     * has to be overwritten either in pimcore object or mapped sub class.
-     *
-     * @return array
-     */
-    public function getCategories()
+    public function getOSDoIndexProduct(): bool
     {
-        return $this->__call('getCategories', []);
+        return false;
+    }
+
+    public function getPriceSystemName(): ?string
+    {
+        return 'default';
+    }
+
+    public function isActive(bool $inProductList = false): bool
+    {
+        return false;
+    }
+
+    public function getOSIndexType(): ?string
+    {
+        return null;
+    }
+
+    public function getOSParentId(): int|null
+    {
+        return null;
+    }
+
+    public function getCategories(): ?array
+    {
+        return null;
+    }
+
+    public function getClassId(): ?string {
+        return null;
     }
 }

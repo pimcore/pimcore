@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,25 +17,21 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject\Concrete;
 
 trait Text
 {
     /**
      * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
         }
     }
 
-    /**
-     * @param string|null $data
-     *
-     * @return bool
-     */
-    public function isEmpty($data)
+    public function isEmpty(mixed $data): bool
     {
         return strlen((string) $data) < 1;
     }
@@ -42,21 +39,21 @@ trait Text
     /**
      * {@inheritdoc}
      */
-    public function isDiffChangeAllowed($object, $params = [])
+    public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
 
     /**
-     * @see Data::getVersionPreview
-     *
-     * @param string|null $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param mixed $data
+     * @param null|Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return string
+     * @see Data::getVersionPreview
+     *
      */
-    public function getVersionPreview($data, $object = null, $params = [])
+    public function getVersionPreview(mixed $data, Model\DataObject\Concrete $object = null, array $params = []): string
     {
         return htmlspecialchars((string)$data, ENT_QUOTES, 'UTF-8');
     }

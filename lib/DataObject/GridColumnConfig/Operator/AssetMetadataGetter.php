@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,25 +18,18 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Data\Hotspotimage;
+use Pimcore\Model\Element\ElementInterface;
 
 /**
  * @internal
  */
 final class AssetMetadataGetter extends AbstractOperator
 {
-    /**
-     * @var string
-     */
-    private $metaField;
+    private string $metaField;
 
-    /**
-     * @var string|null
-     */
-    private $locale;
+    private ?string $locale = null;
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -47,7 +41,7 @@ final class AssetMetadataGetter extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         $result = new \stdClass();
         $result->label = $this->label;
@@ -95,12 +89,7 @@ final class AssetMetadataGetter extends AbstractOperator
         return $result;
     }
 
-    /**
-     * @param Hotspotimage|Asset $value
-     *
-     * @return mixed
-     */
-    public function getMetadata($value)
+    public function getMetadata(Hotspotimage|Asset $value): mixed
     {
         $asset = $value;
         if ($value instanceof Hotspotimage) {
@@ -112,36 +101,26 @@ final class AssetMetadataGetter extends AbstractOperator
 
             return $metaValue;
         }
+
+        return null;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getMetaField()
+    public function getMetaField(): mixed
     {
         return $this->metaField;
     }
 
-    /**
-     * @param mixed $metaField
-     */
-    public function setMetaField($metaField)
+    public function setMetaField(mixed $metaField)
     {
         $this->metaField = $metaField;
     }
 
-    /**
-     * @param mixed $locale
-     */
-    public function setLocale($locale)
+    public function setLocale(mixed $locale)
     {
         $this->locale = $locale;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getLocale()
+    public function getLocale(): mixed
     {
         return $this->locale;
     }

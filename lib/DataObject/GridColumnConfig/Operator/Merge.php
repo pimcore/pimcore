@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,6 +16,8 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
+use Pimcore\Model\Element\ElementInterface;
+
 /**
  * @internal
  */
@@ -24,9 +27,7 @@ final class Merge extends AbstractOperator
 
     private bool $unique;
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -38,7 +39,7 @@ final class Merge extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         $result = new \stdClass();
         $result->label = $this->label;
@@ -76,34 +77,22 @@ final class Merge extends AbstractOperator
         return $result;
     }
 
-    /**
-     * @return bool
-     */
-    public function getFlatten()
+    public function getFlatten(): bool
     {
         return $this->flatten;
     }
 
-    /**
-     * @param bool $flatten
-     */
-    public function setFlatten($flatten)
+    public function setFlatten(bool $flatten)
     {
         $this->flatten = $flatten;
     }
 
-    /**
-     * @return bool
-     */
-    public function getUnique()
+    public function getUnique(): bool
     {
         return $this->unique;
     }
 
-    /**
-     * @param bool $unique
-     */
-    public function setUnique($unique)
+    public function setUnique(bool $unique)
     {
         $this->unique = $unique;
     }

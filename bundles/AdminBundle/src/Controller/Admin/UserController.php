@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -47,7 +48,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @return JsonResponse
      */
-    public function treeGetChildrenByIdAction(Request $request)
+    public function treeGetChildrenByIdAction(Request $request): JsonResponse
     {
         $list = new User\Listing();
         $list->setCondition('parentId = ?', (int)$request->get('node'));
@@ -67,12 +68,7 @@ class UserController extends AdminController implements KernelControllerEventInt
         return $this->adminJson($users);
     }
 
-    /**
-     * @param User|User\Folder $user
-     *
-     * @return array
-     */
-    protected function getTreeNodeConfig($user)
+    protected function getTreeNodeConfig(User|User\Folder $user): array
     {
         $tmpUser = [
             'id' => $user->getId(),
@@ -116,7 +112,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @return JsonResponse
      */
-    public function addAction(Request $request)
+    public function addAction(Request $request): JsonResponse
     {
         try {
             $type = $request->get('type');
@@ -210,7 +206,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @throws \Exception
      */
-    protected function populateChildNodes($node, &$currentList, $roleMode)
+    protected function populateChildNodes(User\AbstractUser $node, array &$currentList, bool $roleMode): array
     {
         $currentUser = \Pimcore\Tool\Admin::getCurrentUser();
 
@@ -245,7 +241,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @throws \Exception
      */
-    public function deleteAction(Request $request)
+    public function deleteAction(Request $request): JsonResponse
     {
         $user = User\AbstractUser::getById((int)$request->get('id'));
 
@@ -282,8 +278,9 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @throws \Exception
      */
-    public function updateAction(Request $request)
+    public function updateAction(Request $request): JsonResponse
     {
+        /** @var User|null $user */
         $user = User\UserRole::getById((int)$request->get('id'));
 
         if (!$user) {
@@ -393,7 +390,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @throws \Exception
      */
-    public function getAction(Request $request)
+    public function getAction(Request $request): JsonResponse
     {
         $userId = (int)$request->get('id');
         if ($userId < 1) {
@@ -500,7 +497,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @return JsonResponse
      */
-    public function getMinimalAction(Request $request)
+    public function getMinimalAction(Request $request): JsonResponse
     {
         $user = User::getById((int)$request->get('id'));
 
@@ -525,7 +522,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @return JsonResponse
      */
-    public function uploadCurrentUserImageAction(Request $request)
+    public function uploadCurrentUserImageAction(Request $request): JsonResponse
     {
         $user = $this->getAdminUser();
         if ($user != null) {
@@ -548,7 +545,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @return JsonResponse
      */
-    public function updateCurrentUserAction(Request $request)
+    public function updateCurrentUserAction(Request $request): JsonResponse
     {
         $user = $this->getAdminUser();
         if ($user != null) {
@@ -627,7 +624,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @return Response
      */
-    public function getCurrentUserAction(Request $request)
+    public function getCurrentUserAction(Request $request): Response
     {
         $user = $this->getAdminUser();
 
@@ -669,7 +666,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @return JsonResponse
      */
-    public function roleTreeGetChildrenByIdAction(Request $request)
+    public function roleTreeGetChildrenByIdAction(Request $request): JsonResponse
     {
         $list = new User\Role\Listing();
         $list->setCondition('parentId = ?', (int)$request->get('node'));
@@ -685,12 +682,7 @@ class UserController extends AdminController implements KernelControllerEventInt
         return $this->adminJson($roles);
     }
 
-    /**
-     * @param User\Role|User\Role\Folder $role
-     *
-     * @return array
-     */
-    protected function getRoleTreeNodeConfig($role)
+    protected function getRoleTreeNodeConfig(User\Role|User\Role\Folder $role): array
     {
         $tmpUser = [
             'id' => $role->getId(),
@@ -729,7 +721,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @return JsonResponse
      */
-    public function roleGetAction(Request $request)
+    public function roleGetAction(Request $request): JsonResponse
     {
         $role = User\Role::getById((int)$request->get('id'));
 
@@ -784,7 +776,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @return JsonResponse
      */
-    public function uploadImageAction(Request $request)
+    public function uploadImageAction(Request $request): JsonResponse
     {
         $userObj = User::getById($this->getUserId($request));
 
@@ -816,7 +808,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @return JsonResponse
      */
-    public function deleteImageAction(Request $request)
+    public function deleteImageAction(Request $request): JsonResponse
     {
         $userObj = User::getById($this->getUserId($request));
 
@@ -841,7 +833,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @return BinaryFileResponse
      */
-    public function renew2FaSecretAction(Request $request, GoogleAuthenticatorInterface $twoFactor)
+    public function renew2FaSecretAction(Request $request, GoogleAuthenticatorInterface $twoFactor): BinaryFileResponse
     {
         $user = $this->getAdminUser();
         $proxyUser = $this->getAdminUser(true);
@@ -878,7 +870,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @return JsonResponse
      */
-    public function disable2FaSecretAction(Request $request)
+    public function disable2FaSecretAction(Request $request): JsonResponse
     {
         $user = $this->getAdminUser();
         $success = false;
@@ -902,7 +894,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @return JsonResponse
      */
-    public function reset2FaSecretAction(Request $request)
+    public function reset2FaSecretAction(Request $request): JsonResponse
     {
         $user = User::getById((int)$request->get('id'));
         if (!$user) {
@@ -924,7 +916,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @return StreamedResponse
      */
-    public function getImageAction(Request $request)
+    public function getImageAction(Request $request): StreamedResponse
     {
         $userObj = User::getById($this->getUserId($request));
         if (!$userObj) {
@@ -948,7 +940,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @throws \Exception
      */
-    public function getTokenLoginLinkAction(Request $request)
+    public function getTokenLoginLinkAction(Request $request): JsonResponse
     {
         $user = User::getById((int) $request->get('id'));
 
@@ -991,7 +983,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @return JsonResponse
      */
-    public function searchAction(Request $request)
+    public function searchAction(Request $request): JsonResponse
     {
         $q = '%' . $request->get('query') . '%';
 
@@ -1022,9 +1014,6 @@ class UserController extends AdminController implements KernelControllerEventInt
         ]);
     }
 
-    /**
-     * @param ControllerEvent $event
-     */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         if (!$event->isMainRequest()) {
@@ -1048,7 +1037,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @Route("/user/get-users-for-sharing", name="pimcore_admin_user_getusersforsharing", methods={"GET"})
      */
-    public function getUsersForSharingAction(Request $request)
+    public function getUsersForSharingAction(Request $request): JsonResponse
     {
         $this->checkPermission('share_configurations');
 
@@ -1062,7 +1051,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @Route("/user/get-roles-for-sharing", name="pimcore_admin_user_getrolesforsharing", methods={"GET"}))
      */
-    public function getRolesForSharingAction(Request $request)
+    public function getRolesForSharingAction(Request $request): JsonResponse
     {
         $this->checkPermission('share_configurations');
 
@@ -1076,7 +1065,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @return JsonResponse
      */
-    public function getUsersAction(Request $request)
+    public function getUsersAction(Request $request): JsonResponse
     {
         $users = [];
 
@@ -1113,7 +1102,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @return JsonResponse
      */
-    public function getRolesAction(Request $request)
+    public function getRolesAction(Request $request): JsonResponse
     {
         $roles = [];
         $list = new User\Role\Listing();
@@ -1141,7 +1130,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @return JsonResponse
      */
-    public function getDefaultKeyBindingsAction(Request $request)
+    public function getDefaultKeyBindingsAction(Request $request): JsonResponse
     {
         $data = User::getDefaultKeyBindings();
 
@@ -1157,7 +1146,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      *
      * @throws \Exception
      */
-    public function invitationLinkAction(Request $request)
+    public function invitationLinkAction(Request $request): JsonResponse
     {
         $success = false;
         $message = '';
@@ -1209,12 +1198,7 @@ class UserController extends AdminController implements KernelControllerEventInt
         ]);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return int
-     */
-    protected function getUserId(Request $request)
+    protected function getUserId(Request $request): int
     {
         if ($request->get('id')) {
             if ($this->getAdminUser()->getId() != $request->get('id')) {

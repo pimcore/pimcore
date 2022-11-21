@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,7 +26,7 @@ interface CartProductActionRemoveInterface
      *
      * @param CartInterface $cart
      * @param ProductInterface $product
-     * @param int|float $quantity
+     * @param float|int $quantity
      */
-    public function trackCartProductActionRemove(CartInterface $cart, ProductInterface $product, $quantity = 1);
+    public function trackCartProductActionRemove(CartInterface $cart, ProductInterface $product, float|int $quantity = 1);
 }

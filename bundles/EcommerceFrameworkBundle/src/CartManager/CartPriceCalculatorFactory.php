@@ -22,25 +22,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CartPriceCalculatorFactory implements CartPriceCalculatorFactoryInterface
 {
-    /**
-     * @var EnvironmentInterface
-     */
-    protected $environment;
+    protected EnvironmentInterface $environment;
 
-    /**
-     * @var array
-     */
-    protected $modificatorConfig;
+    protected array $modificatorConfig;
 
-    /**
-     * @var array
-     */
-    protected $options;
+    protected array $options;
 
-    /**
-     * @param array $modificatorConfig
-     * @param array $options
-     */
     public function __construct(array $modificatorConfig, array $options = [])
     {
         $this->modificatorConfig = $modificatorConfig;

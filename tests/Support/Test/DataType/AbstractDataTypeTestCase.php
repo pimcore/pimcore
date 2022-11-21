@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,34 +31,17 @@ use Pimcore\Tests\Support\Util\TestHelper;
 
 abstract class AbstractDataTypeTestCase extends TestCase
 {
-    /**
-     * @var bool
-     */
-    protected $cleanupDbInSetup = true;
 
-    /**
-     * @var TestDataHelper
-     */
-    protected $testDataHelper;
+    protected bool $cleanupDbInSetup = true;
 
-    /**
-     * @var int
-     */
-    protected $seed = 1;
+    protected TestDataHelper $testDataHelper;
 
-    /**
-     * @var Unittest
-     */
-    protected $testObject;
+    protected int $seed = 1;
 
-    /**
-     * @var Unittest
-     */
-    protected $comparisonObject;
+    protected Unittest $testObject;
 
-    /**
-     * @param TestDataHelper $testData
-     */
+    protected Unittest $comparisonObject;
+
     public function _inject(TestDataHelper $testData)
     {
         $this->testDataHelper = $testData;
@@ -111,7 +95,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function needsDb()
+    protected function needsDb(): bool
     {
         return true;
     }

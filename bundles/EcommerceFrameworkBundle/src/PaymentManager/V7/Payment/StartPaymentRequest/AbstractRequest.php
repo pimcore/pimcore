@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,73 +25,36 @@ class AbstractRequest implements \ArrayAccess
         }
     }
 
-    /**
-     * @param string $name
-     * @param mixed $value
-     */
-    public function set($name, $value)
+    public function set(string $name, mixed $value)
     {
         $this->{$name} = $value;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return mixed
-     */
-    public function &get($name)
+    public function &get(string $name): mixed
     {
         return $this->{$name};
     }
 
-    /**
-     * @param mixed $offset
-     *
-     * @return mixed
-     */
-    #[\ReturnTypeWillChange]
-    public function offsetGet($offset)// : mixed
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->get($offset);
     }
 
-    /**
-     * @param mixed $offset
-     * @param mixed $value
-     *
-     * @return void
-     */
-    #[\ReturnTypeWillChange]
-    public function offsetSet($offset, $value)// : void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->set($offset, $value);
     }
 
-    /**
-     * @param mixed $offset
-     *
-     * @return bool
-     */
-    #[\ReturnTypeWillChange]
-    public function offsetExists($offset)// : bool
+    public function offsetExists(mixed $offset): bool
     {
         return isset($this->{$offset});
     }
 
-    /**
-     * @param mixed $offset
-     *
-     * @return void
-     */
-    #[\ReturnTypeWillChange]
-    public function offsetUnset($offset)// : void
+    public function offsetUnset(mixed $offset): void
     {
         $this->{$offset} = null;
     }
 
-    /**
-     * @return array
-     */
     public function asArray(): array
     {
         return get_object_vars($this);

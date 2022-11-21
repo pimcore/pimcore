@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,23 +17,19 @@
 namespace Pimcore\Tests\Support\Test;
 
 use Codeception\Test\Unit;
+use Pimcore\Tests\Support\Helper\DataType\Calculator;
 use Pimcore\Tests\Support\Util\TestHelper;
 
 abstract class TestCase extends Unit
 {
-    /**
-     * @var bool
-     */
-    protected $cleanupDbInSetup = true;
-
-    protected $backupGlobalsExcludeList = ['IDE_EVAL_CACHE'];     // xdebug
+    protected bool $cleanupDbInSetup = true;
 
     /**
      * Determine if the test needs a DB connection (will be skipped if no DB is present)
      *
      * @return bool
      */
-    protected function needsDb()
+    protected function needsDb(): bool
     {
         return false;
     }
@@ -43,6 +40,8 @@ abstract class TestCase extends Unit
     protected function setUp(): void
     {
         parent::setUp();
+
+        \Pimcore::getContainer()->set('test.calculatorservice', new Calculator());
 
         if ($this->needsDb()) {
             TestHelper::checkDbSupport();

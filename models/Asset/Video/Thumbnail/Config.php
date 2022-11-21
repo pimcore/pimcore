@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -45,70 +46,70 @@ final class Config extends Model\AbstractModel
      *
      * @var array
      */
-    protected $items = [];
+    protected array $items = [];
 
     /**
      * @internal
      *
      * @var array
      */
-    public $medias = [];
+    public array $medias = [];
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $name = '';
+    protected string $name = '';
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $description = '';
+    protected string $description = '';
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $group = '';
+    protected string $group = '';
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected $videoBitrate;
+    protected ?int $videoBitrate = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected $audioBitrate;
+    protected ?int $audioBitrate = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected $modificationDate;
+    protected ?int $modificationDate = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected $creationDate;
+    protected ?int $creationDate = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    public $filenameSuffix;
+    public ?string $filenameSuffix = null;
 
     /**
      * @param string $name
@@ -117,7 +118,7 @@ final class Config extends Model\AbstractModel
      *
      * @throws \Exception
      */
-    public static function getByName($name)
+    public static function getByName(string $name): ?Config
     {
         $cacheKey = 'videothumb_' . crc32($name);
 
@@ -146,7 +147,7 @@ final class Config extends Model\AbstractModel
      *
      * @return Config
      */
-    public static function getPreviewConfig()
+    public static function getPreviewConfig(): Config
     {
         $config = new self();
         $config->setName('pimcore-system-treepreview');
@@ -174,15 +175,15 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @internal
-     *
      * @param string $name
      * @param array $parameters
-     * @param string $media
+     * @param string|null $media
      *
-     * @return bool
+          * @return bool
+     *@internal
+     *
      */
-    public function addItem($name, $parameters, $media = null)
+    public function addItem(string $name, array $parameters, string $media = null): bool
     {
         $item = [
             'method' => $name,
@@ -201,15 +202,11 @@ final class Config extends Model\AbstractModel
     }
 
     /**
-     * @internal
      *
-     * @param int $position
-     * @param string $name
-     * @param array $parameters
+     *@internal
      *
-     * @return bool
      */
-    public function addItemAt($position, $name, $parameters, $media = null)
+    public function addItemAt(int $position, string $name, array $parameters, $media = null): bool
     {
         if (!$media || $media == 'default') {
             $itemContainer = &$this->items;
@@ -226,12 +223,7 @@ final class Config extends Model\AbstractModel
         return true;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function selectMedia($name)
+    public function selectMedia(string $name): bool
     {
         if (preg_match('/^[0-9a-f]{8}$/', $name)) {
             $hash = $name;
@@ -261,142 +253,87 @@ final class Config extends Model\AbstractModel
         $this->medias = [];
     }
 
-    /**
-     * @param string $description
-     *
-     * @return $this
-     */
-    public function setDescription($description)
+    public function setDescription(string $description): static
     {
         $this->description = $description;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @param array $items
-     *
-     * @return $this
-     */
-    public function setItems($items)
+    public function setItems(array $items): static
     {
         $this->items = $items;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getItems()
+    public function getItems(): array
     {
         return $this->items;
     }
 
-    /**
-     * @param array $medias
-     */
-    public function setMedias($medias)
+    public function setMedias(array $medias)
     {
         $this->medias = $medias;
     }
 
-    /**
-     * @return array
-     */
-    public function getMedias()
+    public function getMedias(): array
     {
         return $this->medias;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasMedias()
+    public function hasMedias(): bool
     {
         return !empty($this->medias);
     }
 
-    /**
-     * @param string $filenameSuffix
-     */
-    public function setFilenameSuffix($filenameSuffix)
+    public function setFilenameSuffix(string $filenameSuffix)
     {
         $this->filenameSuffix = $filenameSuffix;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getFilenameSuffix()
+    public function getFilenameSuffix(): ?string
     {
         return $this->filenameSuffix;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param int $audioBitrate
-     *
-     * @return $this
-     */
-    public function setAudioBitrate($audioBitrate)
+    public function setAudioBitrate(int $audioBitrate): static
     {
         $this->audioBitrate = (int) $audioBitrate;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getAudioBitrate()
+    public function getAudioBitrate(): ?int
     {
         return $this->audioBitrate;
     }
 
-    /**
-     * @param int $videoBitrate
-     *
-     * @return $this
-     */
-    public function setVideoBitrate($videoBitrate)
+    public function setVideoBitrate(int $videoBitrate): static
     {
         $this->videoBitrate = (int) $videoBitrate;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getVideoBitrate()
+    public function getVideoBitrate(): ?int
     {
         return $this->videoBitrate;
     }
@@ -406,7 +343,7 @@ final class Config extends Model\AbstractModel
      *
      * @return array
      */
-    public function getEstimatedDimensions()
+    public function getEstimatedDimensions(): array
     {
         $dimensions = [];
         $transformations = $this->getItems();
@@ -427,49 +364,31 @@ final class Config extends Model\AbstractModel
         return $dimensions;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getModificationDate()
+    public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
-    /**
-     * @param int $modificationDate
-     */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate)
     {
         $this->modificationDate = $modificationDate;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getCreationDate()
+    public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }
 
-    /**
-     * @param int $creationDate
-     */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate)
     {
         $this->creationDate = $creationDate;
     }
 
-    /**
-     * @return string
-     */
     public function getGroup(): string
     {
         return $this->group;
     }
 
-    /**
-     * @param string $group
-     */
     public function setGroup(string $group): void
     {
         $this->group = $group;

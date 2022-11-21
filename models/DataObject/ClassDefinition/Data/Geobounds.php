@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,6 +18,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
 
@@ -37,7 +39,7 @@ class Geobounds extends AbstractGeo implements
      *
      * @var string
      */
-    public $fieldtype = 'geobounds';
+    public string $fieldtype = 'geobounds';
 
     /**
      * Type for the column to query
@@ -68,15 +70,15 @@ class Geobounds extends AbstractGeo implements
     ];
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param DataObject\Data\Geobounds|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
+     * @see ResourcePersistenceAwareInterface::getDataForResource
+     *
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function getDataForResource(mixed $data, Concrete $object = null, array $params = []): array
     {
         if ($data instanceof DataObject\Data\Geobounds) {
             return [
@@ -98,7 +100,7 @@ class Geobounds extends AbstractGeo implements
     /**
      * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
     {
         $isEmpty = true;
 
@@ -115,15 +117,15 @@ class Geobounds extends AbstractGeo implements
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param array $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return DataObject\Data\Geobounds|null
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
+     *
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Geobounds
     {
         if ($data[$this->getName() . '__NElongitude'] && $data[$this->getName() . '__NElatitude'] && $data[$this->getName() . '__SWlongitude'] && $data[$this->getName() . '__SWlatitude']) {
             $ne = new DataObject\Data\GeoCoordinates($data[$this->getName() . '__NElatitude'], $data[$this->getName() . '__NElongitude']);
@@ -144,29 +146,29 @@ class Geobounds extends AbstractGeo implements
     }
 
     /**
-     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
-     * @param DataObject\Data\Geobounds $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
+     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
+     *
      */
-    public function getDataForQueryResource($data, $object = null, $params = [])
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
     /**
-     * @see Data::getDataForEditmode
-     *
-     * @param DataObject\Data\Geobounds|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array|null
+     * @see Data::getDataForEditmode
+     *
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data instanceof DataObject\Data\Geobounds) {
             return [
@@ -185,23 +187,23 @@ class Geobounds extends AbstractGeo implements
      * @param DataObject\Concrete|null $object
      * @param array $params
      *
-     * @return array
+     * @return array|null
      */
-    public function getDataForGrid($data, $object = null, $params = [])
+    public function getDataForGrid(?DataObject\Data\Geobounds $data, Concrete $object = null, array $params = []): ?array
     {
         return $this->getDataForEditmode($data, $object, $params);
     }
 
     /**
-     * @see Data::getDataFromEditmode
-     *
-     * @param array $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return DataObject\Data\Geobounds|null
+     *@see Data::getDataFromEditmode
+     *
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Geobounds
     {
         if ($data['NElongitude'] !== null && $data['NElatitude'] !== null && $data['SWlongitude'] !== null && $data['SWlatitude'] !== null) {
             $ne = new DataObject\Data\GeoCoordinates($data['NElatitude'], $data['NElongitude']);
@@ -214,15 +216,15 @@ class Geobounds extends AbstractGeo implements
     }
 
     /**
-     * @see Data::getVersionPreview
-     *
-     * @param DataObject\Data\Geobounds|null $data
+     * @param mixed $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
+     * @see Data::getVersionPreview
+     *
      */
-    public function getVersionPreview($data, $object = null, $params = [])
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof DataObject\Data\Geobounds) {
             return $data->getNorthEast()->getLongitude() . ',' . $data->getNorthEast()->getLatitude() . ' ' . $data->getSouthWest()->getLongitude() . ',' . $data->getSouthWest()->getLatitude();
@@ -234,7 +236,7 @@ class Geobounds extends AbstractGeo implements
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, $params = [])
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof DataObject\Data\Geobounds) {
@@ -244,10 +246,7 @@ class Geobounds extends AbstractGeo implements
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForSearchIndex($object, $params = [])
+    public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
     }
@@ -255,15 +254,12 @@ class Geobounds extends AbstractGeo implements
     /**
      * {@inheritdoc}
      */
-    public function isDiffChangeAllowed($object, $params = [])
+    public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+    public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof DataObject\Data\Geobounds) {
             return [
@@ -281,10 +277,7 @@ class Geobounds extends AbstractGeo implements
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+    public function denormalize(mixed $value, array $params = []): ?DataObject\Data\Geobounds
     {
         if (is_array($value)) {
             $ne = new DataObject\Data\GeoCoordinates($value['northEast']['latitude'], $value['northEast']['longitude']);
@@ -301,14 +294,7 @@ class Geobounds extends AbstractGeo implements
         return null;
     }
 
-    /**
-     *
-     * @param DataObject\Data\Geobounds|null $oldValue
-     * @param DataObject\Data\Geobounds|null $newValue
-     *
-     * @return bool
-     */
-    public function isEqual($oldValue, $newValue): bool
+    public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
         if ($oldValue === null && $newValue === null) {
             return true;
@@ -342,33 +328,21 @@ class Geobounds extends AbstractGeo implements
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\Geobounds::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\Geobounds::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\Geobounds::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\Geobounds::class . '|null';

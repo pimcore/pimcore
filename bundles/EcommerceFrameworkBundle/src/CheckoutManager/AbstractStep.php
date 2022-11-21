@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,15 +20,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 
 abstract class AbstractStep implements CheckoutStepInterface
 {
-    /**
-     * @var CartInterface
-     */
-    protected $cart;
+    protected CartInterface $cart;
 
-    /**
-     * @var array
-     */
-    protected $options = [];
+    protected array $options = [];
 
     /**
      * AbstractStep constructor.

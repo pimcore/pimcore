@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -39,12 +40,12 @@ interface TemplateAreabrickInterface extends AreabrickInterface
      *
      * @return string
      */
-    public function getTemplateLocation();
+    public function getTemplateLocation(): string;
 
     /**
      * Returns view suffix used to auto-build view names
      *
      * @return string
      */
-    public function getTemplateSuffix();
+    public function getTemplateSuffix(): string;
 }

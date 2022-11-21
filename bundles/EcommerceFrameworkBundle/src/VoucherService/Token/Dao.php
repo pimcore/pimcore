@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -41,7 +42,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      *
      * @throws NotFoundException
      */
-    public function getByCode($code)
+    public function getByCode(string $code)
     {
         $result = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE token = ?', [$code]);
         if (empty($result)) {
@@ -72,10 +73,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function apply()
+    public function apply(): bool
     {
         try {
             $this->db->executeQuery('UPDATE ' . self::TABLE_NAME . ' SET usages=usages+1 WHERE token = ?', [$this->model->getToken()]);
@@ -86,10 +84,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function unuse()
+    public function unuse(): bool
     {
         try {
             $this->db->executeQuery('UPDATE ' . self::TABLE_NAME . ' SET usages=usages-1 WHERE token = ?', [$this->model->getToken()]);

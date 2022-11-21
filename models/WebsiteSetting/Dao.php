@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -30,7 +31,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws NotFoundException
      */
-    public function getById($id = null)
+    public function getById(int $id = null)
     {
         if ($id != null) {
             $this->model->setId($id);
@@ -53,7 +54,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws NotFoundException
      */
-    public function getByName($name = null, $siteId = null, $language = null)
+    public function getByName(string $name = null, int $siteId = null, string $language = null)
     {
         if ($name != null) {
             $this->model->setName($name);

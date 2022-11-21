@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,6 +18,7 @@ namespace Pimcore\Tests\Support\Util;
 
 use Exception;
 use Pimcore\Localization\LocaleServiceInterface;
+use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -735,23 +737,28 @@ class TestHelper
             return;
         }
 
-        if ($cleanObjects) {
-            static::cleanUpTree(DataObject::getById(1), 'object');
-            codecept_debug(sprintf('Number of objects is: %d', static::getObjectCount()));
-        }
+        try {
+            if ($cleanObjects) {
+                static::cleanUpTree(DataObject::getById(1), 'object');
+                codecept_debug(sprintf('Number of objects is: %d', static::getObjectCount()));
+            }
 
-        if ($cleanAssets) {
-            static::cleanUpTree(Asset::getById(1), 'asset');
-            codecept_debug(sprintf('Number of assets is: %d', static::getAssetCount()));
-        }
+            if ($cleanAssets) {
+                static::cleanUpTree(Asset::getById(1), 'asset');
+                codecept_debug(sprintf('Number of assets is: %d', static::getAssetCount()));
+            }
 
-        if ($cleanDocuments) {
-            static::cleanUpTree(Document::getById(1), 'document');
-            codecept_debug(sprintf('Number of documents is: %d', static::getDocumentCount()));
-        }
+            if ($cleanDocuments) {
+                static::cleanUpTree(Document::getById(1), 'document');
+                codecept_debug(sprintf('Number of documents is: %d', static::getDocumentCount()));
+            }
 
-        if ($cleanTags) {
-            static::cleanUpTags();
+            if ($cleanTags) {
+                static::cleanUpTags();
+            }
+
+        } catch (\Exception $e) {
+            Logger::error((string) $e);
         }
 
         \Pimcore::collectGarbage();

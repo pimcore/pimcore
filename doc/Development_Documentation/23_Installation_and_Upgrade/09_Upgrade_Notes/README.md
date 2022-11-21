@@ -1,5 +1,7 @@
 # Upgrade Notes
 ## 11.0.0
+- [General] **Attention:** Added native php types for argument types, property types, return types and strict type declaration where possible. 
+ This results in **various bc breaks**. Please make sure to add the corresponding types to your implementation.
 - [UrlSlug] Removed `index` column and `index` index from `object_url_slugs` table as it was not being used anywhere.
 - Bumped Symfony packages to "^6.1". Pimcore 11 will only support Symfony 6.
 - `FrontendController::renderTemplate()`: Changed the visibility to `protected`.
@@ -104,7 +106,6 @@ Please make sure to set your preferred storage location ***before*** migration. 
   - `EcommerceFrameworkBundle\Tracking\TrackingManager` requires session from request stack.
 - `Element\Service::getValidKey()` strips all control/unassigned, invalid and some more special (e.g. tabs, line-breaks, form-feed & vertical whitespace) characters.
 - [Data Objects]: Removed setter functions for calculated values, since they weren´t used anyway.
-
 
 ## 10.5.10
 - [DataObject] Deprecated: Loading non-Concrete objects with the Concrete class will not be possible in Pimcore 11.

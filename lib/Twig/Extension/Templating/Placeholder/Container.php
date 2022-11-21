@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -66,49 +67,49 @@ class Container extends \ArrayObject
      *
      * @var string
      */
-    protected $_prefix = '';
+    protected string $_prefix = '';
 
     /**
      * What text to append the placeholder with when rendering
      *
      * @var string
      */
-    protected $_postfix = '';
+    protected string $_postfix = '';
 
     /**
      * What string to use between individual items in the placeholder when rendering
      *
      * @var string
      */
-    protected $_separator = '';
+    protected string $_separator = '';
 
     /**
      * What string to use as the indentation of output, this will typically be spaces. Eg: '    '
      *
      * @var string
      */
-    protected $_indent = '';
+    protected string $_indent = '';
 
     /**
      * Whether or not we're already capturing for this given container
      *
      * @var bool
      */
-    protected $_captureLock = false;
+    protected bool $_captureLock = false;
 
     /**
      * What type of capture (overwrite (set), append, prepend) to use
      *
      * @var string
      */
-    protected $_captureType;
+    protected string $_captureType;
 
     /**
      * Key to which to capture content
      *
-     * @var string
+     * @var string|null
      */
-    protected $_captureKey;
+    protected ?string $_captureKey = null;
 
     /**
      * Set a single value
@@ -117,7 +118,7 @@ class Container extends \ArrayObject
      *
      * @return void
      */
-    public function set($value)
+    public function set(mixed $value): void
     {
         $this->exchangeArray([$value]);
     }
@@ -129,7 +130,7 @@ class Container extends \ArrayObject
      *
      * @return void
      */
-    public function prepend($value)
+    public function prepend(mixed $value): void
     {
         $values = $this->getArrayCopy();
         array_unshift($values, $value);
@@ -144,7 +145,7 @@ class Container extends \ArrayObject
      *
      * @return mixed
      */
-    public function getValue()
+    public function getValue(): mixed
     {
         if (1 == count($this)) {
             $keys = $this->getKeys();
@@ -159,11 +160,11 @@ class Container extends \ArrayObject
     /**
      * Set prefix for __toString() serialization
      *
-     * @param  string $prefix
+     * @param string $prefix
      *
-     * @return Container
+     * @return $this
      */
-    public function setPrefix($prefix)
+    public function setPrefix(string $prefix): static
     {
         $this->_prefix = (string) $prefix;
 
@@ -175,7 +176,7 @@ class Container extends \ArrayObject
      *
      * @return string
      */
-    public function getPrefix()
+    public function getPrefix(): string
     {
         return $this->_prefix;
     }
@@ -183,11 +184,11 @@ class Container extends \ArrayObject
     /**
      * Set postfix for __toString() serialization
      *
-     * @param  string $postfix
+     * @param string $postfix
      *
-     * @return Container
+     * @return $this
      */
-    public function setPostfix($postfix)
+    public function setPostfix(string $postfix): static
     {
         $this->_postfix = (string) $postfix;
 
@@ -199,7 +200,7 @@ class Container extends \ArrayObject
      *
      * @return string
      */
-    public function getPostfix()
+    public function getPostfix(): string
     {
         return $this->_postfix;
     }
@@ -209,11 +210,11 @@ class Container extends \ArrayObject
      *
      * Used to implode elements in container
      *
-     * @param  string $separator
+     * @param string $separator
      *
-     * @return Container
+     * @return $this
      */
-    public function setSeparator($separator)
+    public function setSeparator(string $separator): static
     {
         $this->_separator = (string) $separator;
 
@@ -225,7 +226,7 @@ class Container extends \ArrayObject
      *
      * @return string
      */
-    public function getSeparator()
+    public function getSeparator(): string
     {
         return $this->_separator;
     }
@@ -234,11 +235,11 @@ class Container extends \ArrayObject
      * Set the indentation string for __toString() serialization,
      * optionally, if a number is passed, it will be the number of spaces
      *
-     * @param  string|int $indent
+     * @param int|string $indent
      *
-     * @return Container
+     * @return $this
      */
-    public function setIndent($indent)
+    public function setIndent(int|string $indent): static
     {
         $this->_indent = $this->getWhitespace($indent);
 
@@ -250,7 +251,7 @@ class Container extends \ArrayObject
      *
      * @return string
      */
-    public function getIndent()
+    public function getIndent(): string
     {
         return $this->_indent;
     }
@@ -258,11 +259,11 @@ class Container extends \ArrayObject
     /**
      * Retrieve whitespace representation of $indent
      *
-     * @param  int|string $indent
+     * @param int|string $indent
      *
      * @return string
      */
-    public function getWhitespace($indent)
+    public function getWhitespace(int|string $indent): string
     {
         if (is_int($indent)) {
             $indent = str_repeat(' ', $indent);
@@ -277,11 +278,11 @@ class Container extends \ArrayObject
      * @param int|string $type How to capture content into placeholder; append, prepend, or set
      * @param mixed $key
      *
-     * @throws Exception
-     *
      * @return void
+     *@throws Exception
+     *
      */
-    public function captureStart($type = self::APPEND, $key = null)
+    public function captureStart(int|string $type = self::APPEND, mixed $key = null): void
     {
         if ($this->_captureLock) {
             throw new Exception('Cannot nest placeholder captures for the same placeholder');
@@ -300,7 +301,7 @@ class Container extends \ArrayObject
      *
      * @return void
      */
-    public function captureEnd()
+    public function captureEnd(): void
     {
         $data = ob_get_clean();
         $key = null;
@@ -349,7 +350,7 @@ class Container extends \ArrayObject
      *
      * @return array
      */
-    public function getKeys()
+    public function getKeys(): array
     {
         $array = $this->getArrayCopy();
 
@@ -363,7 +364,7 @@ class Container extends \ArrayObject
      *
      * @return int
      */
-    public function nextIndex()
+    public function nextIndex(): int
     {
         $keys = $this->getKeys();
         if (0 == count($keys)) {
@@ -380,7 +381,7 @@ class Container extends \ArrayObject
      *
      * @return string
      */
-    public function toString($indent = null)
+    public function toString(int|string $indent = null): string
     {
         // Check items
         if (0 === $this->count()) {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,12 +33,6 @@ class CleanupPendingOrdersCommand extends AbstractCommand
         $this->setDescription('Cleans up orders with state pending payment after 1h -> delegates this to commit order processor');
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $checkoutManager = Factory::getInstance()->getCheckoutManager(new Cart());

@@ -24,7 +24,7 @@ class BundleCollection
     /**
      * @var ItemInterface[]
      */
-    private $items = [];
+    private array $items = [];
 
     /**
      * Adds a collection item
@@ -73,7 +73,7 @@ class BundleCollection
      *
      * @return bool
      */
-    public function hasItem(string $identifier)
+    public function hasItem(string $identifier): bool
     {
         return isset($this->items[$identifier]);
     }
@@ -109,7 +109,6 @@ class BundleCollection
     /**
      * Returns all bundle identifiers
      *
-     * @return array
      */
     public function getIdentifiers(string $environment = null): array
     {

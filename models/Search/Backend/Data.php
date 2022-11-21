@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -46,101 +47,84 @@ class Data extends \Pimcore\Model\AbstractModel
 
     protected ?int $index = null;
 
-    /**
-     * @var string
-     */
-    protected $fullPath;
+    protected string $fullPath;
 
     /**
      * document | object | asset
      *
      * @var string
      */
-    protected $maintype;
+    protected string $maintype;
 
     /**
      * webresource type (e.g. page, snippet ...)
      *
      * @var string
      */
-    protected $type;
+    protected string $type;
 
     /**
      * currently only relevant for objects where it portrays the class name
      *
      * @var string
      */
-    protected $subtype;
+    protected string $subtype;
 
     /**
      * published or not
      *
      * @var bool
      */
-    protected $published;
+    protected bool $published;
 
     /**
      * timestamp of creation date
      *
      * @var int|null
      */
-    protected $creationDate;
+    protected ?int $creationDate = null;
 
     /**
      * timestamp of modification date
      *
      * @var int|null
      */
-    protected $modificationDate;
+    protected ?int $modificationDate = null;
 
     /**
      * User-ID of the owner
      *
      * @var int
      */
-    protected $userOwner;
+    protected int $userOwner;
 
     /**
      * User-ID of the user last modified the element
      *
      * @var int|null
      */
-    protected $userModification;
+    protected ?int $userModification = null;
+
+    protected ?string $data = null;
+
+    protected string $properties;
 
     /**
-     * @var string|null
+     * @param Element\ElementInterface|null $element
      */
-    protected $data;
-
-    /**
-     * @var string
-     */
-    protected $properties;
-
-    /**
-     * @param Element\ElementInterface $element
-     */
-    public function __construct($element = null)
+    public function __construct(Element\ElementInterface $element = null)
     {
         if ($element instanceof Element\ElementInterface) {
             $this->setDataFromElement($element);
         }
     }
 
-    /**
-     * @return Data\Id|null
-     */
     public function getId(): ?Data\Id
     {
         return $this->id;
     }
 
-    /**
-     * @param Data\Id|null $id
-     *
-     * @return $this
-     */
-    public function setId(?Data\Id $id)
+    public function setId(?Data\Id $id): static
     {
         $this->id = $id;
 
@@ -171,220 +155,132 @@ class Data extends \Pimcore\Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getFullPath()
+    public function getFullPath(): string
     {
         return $this->fullPath;
     }
 
-    /**
-     * @param  string $fullpath
-     *
-     * @return $this
-     */
-    public function setFullPath($fullpath)
+    public function setFullPath(string $fullpath): static
     {
         $this->fullPath = $fullpath;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return $this
-     */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getSubtype()
+    public function getSubtype(): string
     {
         return $this->subtype;
     }
 
-    /**
-     * @param string $subtype
-     *
-     * @return $this
-     */
-    public function setSubtype($subtype)
+    public function setSubtype(string $subtype): static
     {
         $this->subtype = $subtype;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getCreationDate()
+    public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }
 
-    /**
-     * @param int $creationDate
-     *
-     * @return $this
-     */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = $creationDate;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getModificationDate()
+    public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
-    /**
-     * @param int $modificationDate
-     *
-     * @return $this
-     */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = $modificationDate;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getUserModification()
+    public function getUserModification(): ?int
     {
         return $this->userModification;
     }
 
-    /**
-     * @param int $userModification
-     *
-     * @return $this
-     */
-    public function setUserModification($userModification)
+    public function setUserModification(int $userModification): static
     {
         $this->userModification = $userModification;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getUserOwner()
+    public function getUserOwner(): int
     {
         return $this->userOwner;
     }
 
-    /**
-     * @param int $userOwner
-     *
-     * @return $this
-     */
-    public function setUserOwner($userOwner)
+    public function setUserOwner(int $userOwner): static
     {
         $this->userOwner = $userOwner;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isPublished()
+    public function isPublished(): bool
     {
         return (bool) $this->getPublished();
     }
 
-    /**
-     * @return bool
-     */
-    public function getPublished()
+    public function getPublished(): bool
     {
         return (bool) $this->published;
     }
 
-    /**
-     * @param bool $published
-     *
-     * @return $this
-     */
-    public function setPublished($published)
+    public function setPublished(bool $published): static
     {
-        $this->published = (bool) $published;
+        $this->published = $published;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getData()
+    public function getData(): ?string
     {
         return $this->data;
     }
 
-    /**
-     * @param  string $data
-     *
-     * @return $this
-     */
-    public function setData($data)
+    public function setData(string $data): static
     {
         $this->data = $data;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getProperties()
+    public function getProperties(): string
     {
         return $this->properties;
     }
 
-    /**
-     * @param  string $properties
-     *
-     * @return $this
-     */
-    public function setProperties($properties)
+    public function setProperties(string $properties): static
     {
         $this->properties = $properties;
 
         return $this;
     }
 
-    /**
-     * @param Element\ElementInterface $element
-     *
-     * @return $this
-     */
-    public function setDataFromElement(Element\ElementInterface $element)
+    public function setDataFromElement(Element\ElementInterface $element): static
     {
         $this->data = null;
 
@@ -537,12 +433,7 @@ class Data extends \Pimcore\Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @param string $data
-     *
-     * @return string
-     */
-    protected function cleanupData($data)
+    protected function cleanupData(string $data): string
     {
         $data = preg_replace('/(<\?.*?(\?>|$)|<[^<]+>)/s', '', $data);
 
@@ -578,11 +469,6 @@ class Data extends \Pimcore\Model\AbstractModel
         return $data;
     }
 
-    /**
-     * @param Element\ElementInterface $element
-     *
-     * @return self
-     */
     public static function getForElement(Element\ElementInterface $element): self
     {
         $data = new self();

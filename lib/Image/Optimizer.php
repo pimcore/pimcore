@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,12 +26,10 @@ class Optimizer implements ImageOptimizerInterface
     /**
      * @var OptimizerInterface[]
      */
-    private $optimizers = [];
+    private array $optimizers = [];
 
-    /**
-     * {@inheritdoc}
-     */
-    public function optimizeImage($path)
+
+    public function optimizeImage(string $path)
     {
         $extension = File::getFileExtension($path);
         $storage = Storage::get('thumbnail');
@@ -82,9 +81,6 @@ class Optimizer implements ImageOptimizerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function registerOptimizer(OptimizerInterface $optimizer)
     {
         if (in_array($optimizer, $this->optimizers)) {

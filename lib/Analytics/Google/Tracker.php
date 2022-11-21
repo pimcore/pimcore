@@ -48,35 +48,17 @@ class Tracker extends AbstractTracker
 
     const BLOCK_AFTER_SCRIPT_TAG = 'afterScriptTag';
 
-    /**
-     * @var SiteIdProvider
-     */
-    private $siteIdProvider;
+    private SiteIdProvider $siteIdProvider;
 
-    /**
-     * @var ConfigProvider
-     */
-    private $configProvider;
+    private ConfigProvider $configProvider;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @var Environment
-     */
-    private $twig;
+    private Environment $twig;
 
-    /**
-     * @var string|null
-     */
-    private $defaultPath;
+    private ?string $defaultPath = null;
 
-    /**
-     * @var array
-     */
-    private $blocks = [
+    private array $blocks = [
         self::BLOCK_BEFORE_SCRIPT_TAG,
         self::BLOCK_BEFORE_SCRIPT,
         self::BLOCK_BEFORE_INIT,
@@ -100,10 +82,7 @@ class Tracker extends AbstractTracker
         $this->twig = $twig;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getDefaultPath()
+    public function getDefaultPath(): ?string
     {
         return $this->defaultPath;
     }
@@ -118,12 +97,7 @@ class Tracker extends AbstractTracker
         return new CodeCollector($this->blocks, self::BLOCK_AFTER_TRACK);
     }
 
-    /**
-     * @param SiteId $siteId
-     *
-     * @return string|null
-     */
-    protected function buildCode(SiteId $siteId)
+    protected function buildCode(SiteId $siteId): ?string
     {
         $config = $this->configProvider->getConfig();
 
@@ -146,7 +120,7 @@ class Tracker extends AbstractTracker
      *
      * @return string
      */
-    public function generateCodeForSiteConfig(array $siteConfig, SiteId $siteId = null)
+    public function generateCodeForSiteConfig(array $siteConfig, SiteId $siteId = null): string
     {
         if (null === $siteId) {
             $siteId = $this->siteIdProvider->getForRequest();

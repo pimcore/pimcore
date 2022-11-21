@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -39,7 +40,7 @@ class Cse implements PaginateListingInterface
      *
      * @return self
      */
-    public static function search($query, $offset = 0, $perPage = 10, array $config = [], $facet = null)
+    public static function search(string $query, int $offset = 0, int $perPage = 10, array $config = [], string $facet = null): Cse
     {
         $list = new self();
         $list->setConfig($config);
@@ -59,7 +60,7 @@ class Cse implements PaginateListingInterface
      *
      * @throws Exception
      */
-    public function load()
+    public function load(): array
     {
         $client = Api::getSimpleClient();
         $config = $this->getConfig();
@@ -123,56 +124,29 @@ class Cse implements PaginateListingInterface
     /**
      * @var Item[]
      */
-    public $results = [];
+    public array $results = [];
 
-    /**
-     * @var int
-     */
-    public $total = 0;
+    public int $total = 0;
 
-    /**
-     * @var int
-     */
-    public $offset = 0;
+    public int $offset = 0;
 
-    /**
-     * @var int
-     */
-    public $perPage = 10;
+    public int $perPage = 10;
 
-    /**
-     * @var array
-     */
-    public $config = [];
+    public array $config = [];
 
-    /**
-     * @var string
-     */
-    public $query = '';
+    public string $query = '';
 
-    /**
-     * @var array
-     */
-    public $raw = [];
+    public array $raw = [];
 
-    /**
-     * @var array
-     */
-    public $facets = [];
+    public array $facets = [];
 
-    /**
-     * @param Search|null $googleResponse
-     */
-    public function __construct($googleResponse = null)
+    public function __construct(Search $googleResponse = null)
     {
         if ($googleResponse) {
             $this->readGoogleResponse($googleResponse);
         }
     }
 
-    /**
-     * @param Search $googleResponse
-     */
     public function readGoogleResponse(Search $googleResponse)
     {
         $items = [];
@@ -186,7 +160,6 @@ class Cse implements PaginateListingInterface
         }
         $this->setTotal($total);
 
-        /** @var Result[] $results */
         $results = $googleResponse->getItems();
         if (is_array($results)) {
             foreach ($results as $item) {
@@ -241,122 +214,74 @@ class Cse implements PaginateListingInterface
         $this->setResults($items);
     }
 
-    /**
-     * @param int $offset
-     *
-     * @return $this
-     */
-    public function setOffset($offset)
+    public function setOffset(int $offset): static
     {
         $this->offset = $offset;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getOffset()
+    public function getOffset(): int
     {
         return $this->offset;
     }
 
-    /**
-     * @param array $raw
-     *
-     * @return $this
-     */
-    public function setRaw($raw)
+    public function setRaw(array $raw): static
     {
         $this->raw = $raw;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getRaw()
+    public function getRaw(): array
     {
         return $this->raw;
     }
 
-    /**
-     * @param int $total
-     *
-     * @return $this
-     */
-    public function setTotal($total)
+    public function setTotal(int $total): static
     {
         $this->total = $total;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getTotal()
+    public function getTotal(): int
     {
         return $this->total;
     }
 
-    /**
-     * @param int $perPage
-     *
-     * @return $this
-     */
-    public function setPerPage($perPage)
+    public function setPerPage(int $perPage): static
     {
         $this->perPage = $perPage;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getPerPage()
+    public function getPerPage(): int
     {
         return $this->perPage;
     }
 
-    /**
-     * @param array $config
-     *
-     * @return $this
-     */
-    public function setConfig($config)
+    public function setConfig(array $config): static
     {
         $this->config = $config;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getConfig()
+    public function getConfig(): array
     {
         return $this->config;
     }
 
-    /**
-     * @param string $query
-     *
-     * @return $this
-     */
-    public function setQuery($query)
+    public function setQuery(string $query): static
     {
         $this->query = $query;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getQuery()
+    public function getQuery(): string
     {
         return $this->query;
     }
@@ -366,7 +291,7 @@ class Cse implements PaginateListingInterface
      *
      * @return $this
      */
-    public function setResults($results)
+    public function setResults(array $results): static
     {
         $this->results = $results;
 
@@ -380,7 +305,7 @@ class Cse implements PaginateListingInterface
      *
      * @throws Exception
      */
-    public function getResults($retry = true)
+    public function getResults(bool $retry = true): array
     {
         if (empty($this->results) && $retry) {
             $this->load();
@@ -389,22 +314,14 @@ class Cse implements PaginateListingInterface
         return $this->results;
     }
 
-    /**
-     * @param array $facets
-     *
-     * @return $this
-     */
-    public function setFacets($facets)
+    public function setFacets(array $facets): static
     {
         $this->facets = $facets;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getFacets()
+    public function getFacets(): array
     {
         return $this->facets;
     }
@@ -412,12 +329,7 @@ class Cse implements PaginateListingInterface
     /**
      * Methods for PaginateListingInterface
      */
-
-    /**
-     * @return int
-     */
-    #[ReturnTypeWillChange]
-    public function count()// : int
+    public function count(): int
     {
         $this->getResults();
 
@@ -432,7 +344,7 @@ class Cse implements PaginateListingInterface
      *
      * @throws Exception
      */
-    public function getItems($offset, $itemCountPerPage)
+    public function getItems(int $offset, int $itemCountPerPage): array
     {
         $this->setOffset($offset);
         $this->setPerPage($itemCountPerPage);
@@ -444,52 +356,32 @@ class Cse implements PaginateListingInterface
      * Methods for Iterator
      */
 
-    /**
-     * @return void
-     */
-    #[ReturnTypeWillChange]
-    public function rewind()// : void
+    public function rewind(): void
     {
         reset($this->results);
     }
 
-    /**
-     * @return Item|false
-     */
-    #[ReturnTypeWillChange]
-    public function current()// : Item|false
+    public function current(): Item|bool
     {
         $this->getResults();
 
         return current($this->results);
     }
 
-    /**
-     * @return int|null
-     */
-    #[ReturnTypeWillChange]
-    public function key()// : int|null
+    public function key(): ?int
     {
         $this->getResults();
 
         return key($this->results);
     }
 
-    /**
-     * @return void
-     */
-    #[ReturnTypeWillChange]
-    public function next()// : void
+    public function next(): void
     {
         $this->getResults();
         next($this->results);
     }
 
-    /**
-     * @return bool
-     */
-    #[ReturnTypeWillChange]
-    public function valid()// : bool
+    public function valid(): bool
     {
         $this->getResults();
 

@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -24,15 +25,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Listing;
  */
 class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
 {
-    /**
-     * @var string
-     */
-    protected $ruleClass = '\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule';
+    protected string $ruleClass = '\Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule';
 
-    /**
-     * @return array
-     */
-    public function load()
+    public function load(): array
     {
         $rules = [];
 
@@ -54,12 +49,12 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
         $this->ruleClass = $cartClass;
     }
 
-    public function getRuleClass()
+    public function getRuleClass(): string
     {
         return $this->ruleClass;
     }
 
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM `' . \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Dao::TABLE_NAME . '`' . $this->getCondition());

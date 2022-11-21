@@ -28,15 +28,9 @@ use Psr\Container\ContainerInterface;
  */
 final class Service
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $operatorFactories;
+    private ContainerInterface $operatorFactories;
 
-    /**
-     * @var ContainerInterface
-     */
-    private $valueFactories;
+    private ContainerInterface $valueFactories;
 
     public function __construct(
         ContainerInterface $operatorFactories,

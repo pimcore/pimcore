@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -41,9 +42,9 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      */
     const MAX_PROBABILITY = 0.005;
 
-    protected $template;
+    protected string $template;
 
-    protected $characterPools = [
+    protected array $characterPools = [
         'alphaNumeric' => '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ',
         'numeric' => '123456789',
         'alpha' => 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ',
@@ -59,10 +60,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function isValidSetting()
+    public function isValidSetting(): bool
     {
         if ($this->characterPoolExists($this->configuration->getCharacterType()) && $this->configuration->getLength() > 0) {
             return true;
@@ -76,7 +74,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      *
      * @return bool
      */
-    public function cleanUpCodes($filter = [])
+    public function cleanUpCodes(?array $filter = []): bool
     {
         return Listing::cleanUpTokens($this->seriesId, $filter);
     }
@@ -85,11 +83,11 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      * @param string $code
      * @param CartInterface $cart
      *
-     * @throws VoucherServiceException
-     *
      * @return bool
+     *@throws VoucherServiceException
+     *
      */
-    public function checkToken($code, CartInterface $cart)
+    public function checkToken(string $code, CartInterface $cart): bool
     {
         parent::checkToken($code, $cart);
         if ($token = Token::getByCode($code)) {
@@ -108,11 +106,11 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      * @param string $code
      * @param CartInterface $cart
      *
-     * @throws VoucherServiceException
-     *
      * @return bool
+     *@throws VoucherServiceException
+     *
      */
-    public function reserveToken($code, CartInterface $cart)
+    public function reserveToken(string $code, CartInterface $cart): bool
     {
         if (Token::getByCode($code)) {
             if (Reservation::create($code, $cart)) {
@@ -130,11 +128,11 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      * @param CartInterface $cart
      * @param AbstractOrder $order
      *
+     * @return bool|OnlineShopVoucherToken
      * @throws VoucherServiceException
      *
-     * @return bool|OnlineShopVoucherToken
      */
-    public function applyToken($code, CartInterface $cart, AbstractOrder $order)
+    public function applyToken(string $code, CartInterface $cart, AbstractOrder $order): OnlineShopVoucherToken|bool
     {
         if ($token = Token::getByCode($code)) {
             if ($token->isUsed()) {
@@ -166,7 +164,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      *
      * @return bool
      */
-    public function removeAppliedTokenFromOrder(OnlineShopVoucherToken $tokenObject, AbstractOrder $order)
+    public function removeAppliedTokenFromOrder(OnlineShopVoucherToken $tokenObject, AbstractOrder $order): bool
     {
         if ($token = Token::getByCode($tokenObject->getToken())) {
             $token->unuse();
@@ -178,13 +176,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         }
     }
 
-    /**
-     * @param string $code
-     * @param CartInterface $cart
-     *
-     * @return bool
-     */
-    public function releaseToken($code, CartInterface $cart)
+    public function releaseToken(string $code, CartInterface $cart): bool
     {
         return Reservation::releaseToken($code);
     }
@@ -194,15 +186,12 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      *
      * @return array|bool
      */
-    public function getCodes($filter = null)
+    public function getCodes(array $filter = null): bool|array
     {
         return Token\Listing::getCodes($this->seriesId, $filter);
     }
 
-    /**
-     * @return array
-     */
-    public function getStatistics($usagePeriod = null)
+    public function getStatistics(int $usagePeriod = null): array
     {
         $overallCount = Token\Listing::getCountBySeriesId($this->seriesId);
         $usageCount = Token\Listing::getCountByUsages(1, $this->seriesId);
@@ -227,9 +216,9 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      * may be reached several queries are generated.
      * returns the generated voucher codes if it was successfully - otherwise false
      *
-     * @return bool | array  - bool failed - array if codes are generated
+     * @return bool | string | array  - bool failed - array if codes are generated
      */
-    public function insertOrUpdateVoucherSeries()
+    public function insertOrUpdateVoucherSeries(): bool|string|array
     {
         $db = \Pimcore\Db::get();
 
@@ -260,7 +249,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      *
      * @return  int
      */
-    public function getFinalTokenLength()
+    public function getFinalTokenLength(): int
     {
         $separatorCount = $this->configuration->getSeparatorCount();
         $separator = $this->configuration->getSeparator();
@@ -281,7 +270,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      *
      * @return float
      */
-    public function getInsertProbability()
+    public function getInsertProbability(): float
     {
         $maxCount = $this->getMaxCount();
 
@@ -294,7 +283,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         return 1.0;
     }
 
-    protected function isValidGeneration()
+    protected function isValidGeneration(): bool
     {
         if (!$this->isValidSetting()) {
             return false;
@@ -324,7 +313,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      *
      * @return string
      */
-    protected function generateCode()
+    protected function generateCode(): string
     {
         $key = '';
         $charPool = $this->getCharacterPool();
@@ -344,7 +333,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      *
      * @return string formatted Code.
      */
-    protected function formatCode($code)
+    protected function formatCode(string $code): string
     {
         $separator = $this->configuration->getSeparator();
         $prefix = $this->getConfiguration()->getPrefix();
@@ -364,12 +353,12 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     /**
      * Checks whether a token is in the an array of tokens, the token is the key of the array.
      *
-     * @param string|array $tokens One or more tokens.
+     * @param array|string $tokens One or more tokens.
      * @param array $cTokens Array of tokens.
      *
      * @return bool
      */
-    protected function tokenExists($tokens, $cTokens)
+    protected function tokenExists(array|string $tokens, array $cTokens): bool
     {
         if (!is_array($tokens)) {
             $tokens = [$tokens];
@@ -390,7 +379,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      *
      * @return string
      */
-    protected function buildInsertQuery($insertTokens)
+    protected function buildInsertQuery(array $insertTokens): string
     {
         $finalLength = $this->getFinalTokenLength();
         $insertParts = [];
@@ -416,7 +405,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      *
      * @return array|bool
      */
-    public function generateCodes()
+    public function generateCodes(): bool|array
     {
         // Size of one segment of tokens to check against the db.
         $tokenCheckStep = ceil($this->configuration->getCount() / 250);
@@ -506,7 +495,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      * @param array $data
      * @param int $usagePeriod
      */
-    protected function prepareUsageStatisticData(&$data, $usagePeriod)
+    protected function prepareUsageStatisticData(array &$data, int $usagePeriod)
     {
         $now = new \DateTime();
         $periodData = [];
@@ -526,7 +515,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      *
      * @return string
      */
-    public function prepareConfigurationView(&$viewParamsBag, $params)
+    public function prepareConfigurationView(array &$viewParamsBag, array $params): string
     {
         $viewParamsBag['msg'] = [];
 
@@ -583,7 +572,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      *
      * @throws \Exception
      */
-    protected function getExportData(array $params)
+    protected function getExportData(array $params): array
     {
         $tokens = new Token\Listing();
         $tokens->setFilterConditions($params['id'], $params);
@@ -605,7 +594,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     /**
      * {@inheritdoc}
      */
-    public function cleanUpReservations($duration = 0)
+    public function cleanUpReservations(int $duration = 0): bool
     {
         return Reservation::cleanUpReservations($duration, $this->seriesId);
     }
@@ -618,7 +607,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      *
      * @return bool
      */
-    protected function characterPoolExists($poolName)
+    protected function characterPoolExists(string $poolName): bool
     {
         return array_key_exists($poolName, $this->getCharacterPools());
     }
@@ -628,7 +617,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      *
      * @return string
      */
-    public function getExampleToken()
+    public function getExampleToken(): string
     {
         return $this->formatCode($this->generateCode());
     }
@@ -637,26 +626,17 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      * Getters and Setters
      */
 
-    /**
-     * @return \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern
-     */
-    public function getConfiguration()
+    public function getConfiguration(): VoucherTokenTypePattern
     {
         return $this->configuration;
     }
 
-    /**
-     * @param \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern $configuration
-     */
-    public function setConfiguration($configuration)
+    public function setConfiguration(VoucherTokenTypePattern $configuration)
     {
         $this->configuration = $configuration;
     }
 
-    /**
-     * @return array
-     */
-    public function getCharacterPools()
+    public function getCharacterPools(): array
     {
         return $this->characterPools;
     }
@@ -666,10 +646,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         return $this->characterPools[$this->configuration->getCharacterType()];
     }
 
-    /**
-     * @param array $characterPools
-     */
-    public function setCharacterPools($characterPools)
+    public function setCharacterPools(array $characterPools)
     {
         $this->characterPools = $characterPools;
     }
@@ -677,33 +654,24 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     /**
      * @param array $pool Associative Array - the key represents the name, the value the characters of the character-pool. i.e.:"['numeric'=>'12345']"
      */
-    public function addCharacterPool($pool)
+    public function addCharacterPool(array $pool)
     {
         if (is_array($pool)) {
             $this->characterPools[] = $pool;
         }
     }
 
-    /**
-     * @param string $template
-     */
-    public function setTemplate($template)
+    public function setTemplate(string $template)
     {
         $this->template = $template;
     }
 
-    /**
-     * @param string|int|null $seriesId
-     */
-    public function setSeriesId($seriesId)
+    public function setSeriesId(int|string|null $seriesId)
     {
         $this->seriesId = $seriesId;
     }
 
-    /**
-     * @return string|int|null
-     */
-    public function getSeriesId()
+    public function getSeriesId(): int|string|null
     {
         return $this->seriesId;
     }

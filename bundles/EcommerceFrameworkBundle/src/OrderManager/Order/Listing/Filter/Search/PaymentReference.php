@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,18 +21,12 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListInterface;
 
 class PaymentReference extends AbstractSearch
 {
-    /**
-     * @return string
-     */
-    protected function getConditionColumn()
+    protected function getConditionColumn(): string
     {
         return 'paymentInfo.paymentReference';
     }
 
-    /**
-     * @return string
-     */
-    protected function getConditionValue()
+    protected function getConditionValue(): string
     {
         $value = parent::getConditionValue();
         $value = ',' . $value . ',';

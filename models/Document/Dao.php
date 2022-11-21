@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -37,7 +38,7 @@ class Dao extends Model\Element\Dao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById($id)
+    public function getById(int $id)
     {
         $data = $this->db->fetchAssociative("SELECT documents.*, tree_locks.locked FROM documents
             LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
@@ -57,7 +58,7 @@ class Dao extends Model\Element\Dao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByPath($path)
+    public function getByPath(string $path)
     {
         $params = $this->extractKeyAndPath($path);
         $data = $this->db->fetchAssociative('SELECT id FROM documents WHERE path = BINARY :path AND `key` = BINARY :key', $params);
@@ -184,13 +185,13 @@ class Dao extends Model\Element\Dao
     /**
      * Updates children path in order to the old document path specified in the $oldPath parameter.
      *
-     * @internal
-     *
      * @param string $oldPath
      *
      * @return array
+     *@internal
+     *
      */
-    public function updateChildPaths($oldPath)
+    public function updateChildPaths(string $oldPath): array
     {
         //get documents to empty their cache
         $documents = $this->db->fetchAllAssociative('SELECT id, CONCAT(path,`key`) AS path FROM documents WHERE path LIKE ?', [Helper::escapeLike($oldPath) . '%']);
@@ -216,9 +217,9 @@ class Dao extends Model\Element\Dao
     /**
      * Returns the current full document path from the database.
      *
-     * @return string
+     * @return string|null
      */
-    public function getCurrentFullPath()
+    public function getCurrentFullPath(): ?string
     {
         $path = null;
 
@@ -231,9 +232,6 @@ class Dao extends Model\Element\Dao
         return $path;
     }
 
-    /**
-     * @return int
-     */
     public function getVersionCountForUpdate(): int
     {
         if (!$this->model->getId()) {
@@ -258,7 +256,7 @@ class Dao extends Model\Element\Dao
      *
      * @return array
      */
-    public function getProperties($onlyInherited = false, $onlyDirect = false)
+    public function getProperties(bool $onlyInherited = false, bool $onlyDirect = false): array
     {
         $properties = [];
 
@@ -323,11 +321,11 @@ class Dao extends Model\Element\Dao
      * Quick check if there are children.
      *
      * @param bool|null $includingUnpublished
-     * @param Model\User $user
+     * @param Model\User|null $user
      *
      * @return bool
      */
-    public function hasChildren($includingUnpublished = null, $user = null)
+    public function hasChildren(bool $includingUnpublished = null, User $user = null): bool
     {
         if (!$this->model->getId()) {
             return false;
@@ -363,11 +361,11 @@ class Dao extends Model\Element\Dao
     /**
      * Returns the amount of children (not recursively),
      *
-     * @param Model\User $user
+     * @param Model\User|null $user
      *
      * @return int
      */
-    public function getChildAmount($user = null)
+    public function getChildAmount(User $user = null): int
     {
         if (!$this->model->getId()) {
             return 0;
@@ -397,7 +395,7 @@ class Dao extends Model\Element\Dao
      *
      * @return bool
      */
-    public function hasSiblings($includingUnpublished = null)
+    public function hasSiblings(bool $includingUnpublished = null): bool
     {
         if (!$this->model->getParentId()) {
             return false;
@@ -429,7 +427,7 @@ class Dao extends Model\Element\Dao
      *
      * @throws \Exception
      */
-    public function isLocked()
+    public function isLocked(): bool
     {
         // check for an locked element below this element
         $belowLocks = $this->db->fetchOne("SELECT tree_locks.id FROM tree_locks
@@ -472,7 +470,7 @@ class Dao extends Model\Element\Dao
      *
      * @return array
      */
-    public function unlockPropagate()
+    public function unlockPropagate(): array
     {
         $lockIds = $this->db->fetchFirstColumn('SELECT id from documents WHERE path LIKE ' . $this->db->quote(Helper::escapeLike($this->model->getRealFullPath()) . '/%') . ' OR id = ' . $this->model->getId());
         $this->db->executeStatement("DELETE FROM tree_locks WHERE type = 'document' AND id IN (" . implode(',', $lockIds) . ')');
@@ -488,7 +486,7 @@ class Dao extends Model\Element\Dao
      *
      * @throws \Doctrine\DBAL\Exception
      */
-    public function isInheritingPermission(string $type, array $userIds)
+    public function isInheritingPermission(string $type, array $userIds): int
     {
         return $this->InheritingPermission($type, $userIds, 'document');
     }
@@ -501,7 +499,7 @@ class Dao extends Model\Element\Dao
      *
      * @return bool
      */
-    public function isAllowed($type, $user)
+    public function isAllowed(string $type, User $user): bool
     {
         // collect properties via parent - ids
         $parentIds = [1];
@@ -554,7 +552,7 @@ class Dao extends Model\Element\Dao
      * @return array<string, int>
      *
      */
-    public function areAllowed(array $columns, User $user)
+    public function areAllowed(array $columns, User $user): array
     {
         return $this->permissionByTypes($columns, $user, 'document');
     }
@@ -564,7 +562,7 @@ class Dao extends Model\Element\Dao
      *
      * @param int $index
      */
-    public function saveIndex($index)
+    public function saveIndex(int $index)
     {
         $this->db->update('documents', [
             'index' => $index,
@@ -578,7 +576,7 @@ class Dao extends Model\Element\Dao
      *
      * @return int
      */
-    public function getNextIndex()
+    public function getNextIndex(): int
     {
         $index = $this->db->fetchOne('SELECT MAX(`index`) FROM documents WHERE parentId = ?', [$this->model->getParentId()]);
         $index++;
@@ -586,10 +584,7 @@ class Dao extends Model\Element\Dao
         return $index;
     }
 
-    /**
-     * @return bool
-     */
-    public function __isBasedOnLatestData()
+    public function __isBasedOnLatestData(): bool
     {
         $data = $this->db->fetchAssociative('SELECT modificationDate,versionCount from documents WHERE id = ?', [$this->model->getId()]);
         if ($data['modificationDate'] == $this->model->__getDataVersionTimestamp() && $data['versionCount'] == $this->model->getVersionCount()) {

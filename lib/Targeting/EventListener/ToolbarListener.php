@@ -42,40 +42,19 @@ class ToolbarListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
-    /**
-     * @var VisitorInfoStorageInterface
-     */
-    private $visitorInfoStorage;
+    private VisitorInfoStorageInterface $visitorInfoStorage;
 
-    /**
-     * @var DocumentResolver
-     */
-    private $documentResolver;
+    private DocumentResolver $documentResolver;
 
-    /**
-     * @var TargetingDataCollector
-     */
-    private $targetingDataCollector;
+    private TargetingDataCollector $targetingDataCollector;
 
-    /**
-     * @var OverrideHandler
-     */
-    private $overrideHandler;
+    private OverrideHandler $overrideHandler;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @var EngineInterface
-     */
-    private $templatingEngine;
+    private EngineInterface $templatingEngine;
 
-    /**
-     * @var CodeInjector
-     */
-    private $codeInjector;
+    private CodeInjector $codeInjector;
 
     public function __construct(
         VisitorInfoStorageInterface $visitorInfoStorage,

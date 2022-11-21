@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,45 +26,26 @@ use Pimcore\Model\Tool\CustomReport\Adapter\CustomReportAdapterInterface;
  */
 final class ReportAdapter implements AddressSourceAdapterInterface
 {
-    /**
-     * @var string
-     */
-    protected $emailFieldName;
+    protected string $emailFieldName;
 
-    /**
-     * @var CustomReportAdapterInterface
-     */
-    protected $reportAdapter;
+    protected CustomReportAdapterInterface $reportAdapter;
 
     /**
      * @var string[]
      */
-    protected $emailAddresses;
+    protected array $emailAddresses;
 
-    /**
-     * @var int|null
-     */
-    protected $elementsTotal;
+    protected int $elementsTotal = 0;
 
-    /**
-     * @var Listing|null
-     */
-    protected $list;
+    protected ?Listing $list = null;
 
-    /**
-     * @param string $emailFieldName
-     * @param CustomReportAdapterInterface $reportAdapter
-     */
-    public function __construct($emailFieldName, CustomReportAdapterInterface $reportAdapter)
+    public function __construct(string $emailFieldName, CustomReportAdapterInterface $reportAdapter)
     {
         $this->emailFieldName = $emailFieldName;
         $this->reportAdapter = $reportAdapter;
     }
 
-    /**
-     * @return Listing
-     */
-    protected function getListing()
+    protected function getListing(): ?Listing
     {
         $result = $this->reportAdapter->getData(null, $this->emailFieldName, 'ASC', null, null);
 
@@ -83,7 +65,7 @@ final class ReportAdapter implements AddressSourceAdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function getMailAddressesForBatchSending()
+    public function getMailAddressesForBatchSending(): array
     {
         if (!$this->list) {
             $this->getListing();
@@ -100,7 +82,7 @@ final class ReportAdapter implements AddressSourceAdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function getParamsForTestSending($emailAddress)
+    public function getParamsForTestSending(string $emailAddress): SendingParamContainer
     {
         if (!$this->list) {
             $this->getListing();
@@ -112,7 +94,7 @@ final class ReportAdapter implements AddressSourceAdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function getTotalRecordCount()
+    public function getTotalRecordCount(): int
     {
         if (!$this->list) {
             $this->getListing();
@@ -124,7 +106,7 @@ final class ReportAdapter implements AddressSourceAdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function getParamsForSingleSending($limit, $offset)
+    public function getParamsForSingleSending(int $limit, int $offset): array
     {
         if (!$this->list) {
             $this->getListing();

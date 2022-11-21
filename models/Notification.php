@@ -33,85 +33,60 @@ class Notification extends AbstractModel
     /**
      * @internal
      *
-     * @var int
+     * @var int|null
      */
-    protected $id;
+    protected ?int $id = null;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
-    protected $creationDate;
+    protected ?string $creationDate = null;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
-    protected $modificationDate;
+    protected ?string $modificationDate = null;
 
     /**
      * @internal
-     *
-     * @var User|null
      */
-    protected $sender;
+    protected ?User $sender = null;
 
     /**
      * @internal
-     *
-     * @var User|null
      */
-    protected $recipient;
+    protected ?User $recipient = null;
 
     /**
      * @internal
-     *
-     * @var string
      */
-    protected $title;
+    protected string $title;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
-    protected $type;
+    protected ?string $type = null;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
-    protected $message;
+    protected ?string $message = null;
 
     /**
      * @internal
-     *
-     * @var Element\ElementInterface|null
      */
-    protected $linkedElement;
+    protected ?Element\ElementInterface $linkedElement = null;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
-    protected $linkedElementType;
+    protected ?string $linkedElementType = null;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    protected $read = false;
+    protected bool $read = false;
 
-    /**
-     * @param int $id
-     *
-     * @return null|Notification
-     */
     public static function getById(int $id): ?Notification
     {
         $cacheKey = sprintf('notification_%d', $id);
@@ -131,9 +106,6 @@ class Notification extends AbstractModel
         return $notification;
     }
 
-    /**
-     * @return int|null
-     */
     public function getId(): ?int
     {
         return $this->id;
@@ -149,9 +121,6 @@ class Notification extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getCreationDate(): ?string
     {
         return $this->creationDate;
@@ -167,9 +136,6 @@ class Notification extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getModificationDate(): ?string
     {
         return $this->modificationDate;
@@ -185,9 +151,6 @@ class Notification extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return User|null
-     */
     public function getSender(): ?User
     {
         return $this->sender;
@@ -203,9 +166,6 @@ class Notification extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return null|User
-     */
     public function getRecipient(): ?User
     {
         return $this->recipient;
@@ -221,9 +181,6 @@ class Notification extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getTitle(): ?string
     {
         return $this->title;
@@ -239,9 +196,6 @@ class Notification extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getType(): ?string
     {
         return $this->type;
@@ -257,9 +211,6 @@ class Notification extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getMessage(): ?string
     {
         return $this->message;
@@ -275,9 +226,6 @@ class Notification extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return null|Element\ElementInterface
-     */
     public function getLinkedElement(): ?Element\ElementInterface
     {
         return $this->linkedElement;
@@ -289,7 +237,7 @@ class Notification extends AbstractModel
     public function setLinkedElement(?Element\ElementInterface $linkedElement): static
     {
         $this->linkedElement = $linkedElement;
-        $this->linkedElementType = Element\Service::getElementType($linkedElement);
+        $this->linkedElementType = $linkedElement instanceof Element\ElementInterface ? Element\Service::getElementType($linkedElement): null;
 
         return $this;
     }
@@ -304,9 +252,6 @@ class Notification extends AbstractModel
         return $this->linkedElementType;
     }
 
-    /**
-     * @return bool
-     */
     public function isRead(): bool
     {
         return $this->read;
@@ -322,9 +267,6 @@ class Notification extends AbstractModel
         return $this;
     }
 
-    /**
-     * Save notification
-     */
     public function save(): void
     {
         $this->dispatchEvent(new NotificationEvent($this), NotificationEvents::PRE_SAVE);
@@ -332,9 +274,6 @@ class Notification extends AbstractModel
         $this->dispatchEvent(new NotificationEvent($this), NotificationEvents::POST_SAVE);
     }
 
-    /**
-     * Delete notification
-     */
     public function delete(): void
     {
         $this->dispatchEvent(new NotificationEvent($this), NotificationEvents::PRE_DELETE);

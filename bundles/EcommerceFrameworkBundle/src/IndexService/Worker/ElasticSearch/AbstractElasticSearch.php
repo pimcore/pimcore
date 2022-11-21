@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -49,12 +50,9 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @var bool
      */
-    protected $storeCustomAttributes = true;
+    protected bool $storeCustomAttributes = true;
 
-    /**
-     * @var \Elasticsearch\Client|null
-     */
-    protected $elasticSearchClient = null;
+    protected ?\Elasticsearch\Client $elasticSearchClient = null;
 
     /**
      * index name of elastic search must be lower case
@@ -62,42 +60,28 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @var string
      */
-    protected $indexName;
+    protected string $indexName;
 
     /**
      * The Version number of the Index (we increase the Version number if the mapping cant be changed (reindexing process))
      *
-     * @var int
+     * @var int|null
      */
-    protected $indexVersion = null;
+    protected ?int $indexVersion = null;
 
-    /**
-     * @var array
-     */
-    protected $bulkIndexData = [];
+    protected array $bulkIndexData = [];
 
-    /**
-     * @var array
-     */
-    protected $indexStoreMetaData = [];
+    protected array $indexStoreMetaData = [];
 
-    /**
-     * @var int
-     */
-    protected $lastLockLogTimestamp = 0;
+    protected int $lastLockLogTimestamp = 0;
 
     /**
      * name for routing param for ES bulk requests
      *
      * @var string
      */
-    protected $routingParamName = 'routing';
+    protected string $routingParamName = 'routing';
 
-    /**
-     * @param ElasticSearchConfigInterface $tenantConfig
-     * @param Connection $db
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(ElasticSearchConfigInterface $tenantConfig, Connection $db, EventDispatcherInterface $eventDispatcher)
     {
         parent::__construct($tenantConfig, $db, $eventDispatcher);
@@ -110,7 +94,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @return bool
      */
-    public function getStoreCustomAttributes()
+    public function getStoreCustomAttributes(): bool
     {
         return $this->storeCustomAttributes;
     }
@@ -120,7 +104,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @param bool $storeCustomAttributes
      */
-    public function setStoreCustomAttributes($storeCustomAttributes)
+    public function setStoreCustomAttributes(bool $storeCustomAttributes)
     {
         $this->storeCustomAttributes = $storeCustomAttributes;
     }
@@ -132,17 +116,14 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @return string the name of the index, such as at_de_elastic_13
      */
-    public function getIndexNameVersion(int $indexVersionOverride = null)
+    public function getIndexNameVersion(int $indexVersionOverride = null): string
     {
         $indexVersion = $indexVersionOverride ?? $this->getIndexVersion();
 
         return $this->indexName . '-' . $indexVersion;
     }
 
-    /**
-     * @return int
-     */
-    public function getIndexVersion()
+    public function getIndexVersion(): ?int
     {
         if ($this->indexVersion === null) {
             $this->indexVersion = 0;
@@ -171,22 +152,14 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         return $this->indexVersion;
     }
 
-    /**
-     * @param int $indexVersion
-     *
-     * @return $this
-     */
-    public function setIndexVersion($indexVersion)
+    public function setIndexVersion(int $indexVersion): static
     {
         $this->indexVersion = $indexVersion;
 
         return $this;
     }
 
-    /**
-     * @return \Elasticsearch\Client|null
-     */
-    public function getElasticSearchClient()
+    public function getElasticSearchClient(): ?\Elasticsearch\Client
     {
         if (empty($this->elasticSearchClient)) {
             $builder = \Elasticsearch\ClientBuilder::create();
@@ -225,12 +198,12 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @throws \Exception
      */
-    public function createOrUpdateIndexStructures()
+    public function createOrUpdateIndexStructures(): void
     {
         $this->doCreateOrUpdateIndexStructures();
     }
 
-    protected function createMappingAttributes()
+    protected function createMappingAttributes(): array
     {
         $mappingAttributes = [];
         //add system attributes
@@ -324,7 +297,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @return array
      */
-    public function getSystemAttributes($includeTypes = false)
+    public function getSystemAttributes(bool $includeTypes = false): array
     {
         $systemAttributes = [
             'o_id' => 'long',
@@ -354,7 +327,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @throws \Exception
      */
-    public function deleteFromIndex(IndexableInterface $object)
+    public function deleteFromIndex(IndexableInterface $object): void
     {
         if (!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
@@ -378,7 +351,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @throws \Throwable
      */
-    public function updateIndex(IndexableInterface $object)
+    public function updateIndex(IndexableInterface $object): void
     {
         if (!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
@@ -400,7 +373,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         $this->fillupPreparationQueue($object);
     }
 
-    protected function doUpdateIndex($objectId, $data = null, $metadata = null)
+    protected function doUpdateIndex(int $objectId, array $data = null, array $metadata = null)
     {
         $isLocked = $this->checkIndexLock(false);
 
@@ -481,7 +454,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @return array|string
      */
-    protected function doPreIndexDataModification($data)
+    protected function doPreIndexDataModification(array|string $data): array|string
     {
         return $data;
     }
@@ -543,7 +516,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         $this->indexStoreMetaData = [];
     }
 
-    protected function getStoreTableName()
+    protected function getStoreTableName(): string
     {
         return self::STORE_TABLE_NAME;
     }
@@ -608,9 +581,9 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @param array|string $data
      *
-     * @return string
+     * @return array|string
      */
-    protected function convertArray($data)
+    protected function convertArray(array|string $data): array|string
     {
         return $data;
     }
@@ -621,7 +594,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @throws \Exception
      */
-    protected function doDeleteFromIndex($objectId, IndexableInterface $object = null)
+    protected function doDeleteFromIndex(int $objectId, IndexableInterface $object = null)
     {
         $esClient = $this->getElasticSearchClient();
 
@@ -707,7 +680,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         }
     }
 
-    protected function getMappingParams()
+    protected function getMappingParams(): array
     {
         $params = [
             'index' => $this->getIndexNameVersion(),
@@ -905,8 +878,6 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      * @param string $sourceIndexName the name of the source index in ES.
      * @param string $targetIndexName the name of the target index in ES. If existing, will be deleted
      *
-     * @throws BadRequest400Exception
-     * @throws NoNodesAvailableException
      */
     protected function performReindex(string $sourceIndexName, string $targetIndexName)
     {

@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -40,7 +41,7 @@ abstract class Dao extends Model\Document\Dao
      *
      * @return Document\Editable[]
      */
-    public function getEditables()
+    public function getEditables(): array
     {
         $editablesRaw = $this->db->fetchAllAssociative('SELECT * FROM documents_editables WHERE documentId = ?', [$this->model->getId()]);
 

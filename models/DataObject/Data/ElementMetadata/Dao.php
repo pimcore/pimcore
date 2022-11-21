@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -15,6 +16,7 @@
 
 namespace Pimcore\Model\DataObject\Data\ElementMetadata;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model\DataObject;
 
 /**
@@ -22,21 +24,31 @@ use Pimcore\Model\DataObject;
  *
  * @property \Pimcore\Model\DataObject\Data\ElementMetadata $model
  */
-class Dao extends DataObject\Data\ObjectMetadata\Dao
+class Dao extends DataObject\Data\AbstractMetadata\Dao
 {
-    /**
-     * @param DataObject\Concrete $source
-     * @param int $destinationId
-     * @param string $fieldname
-     * @param string $ownertype
-     * @param string $ownername
-     * @param string $position
-     * @param int $index
-     * @param string $destinationType
-     *
-     * @return DataObject\Data\ElementMetadata|null
-     */
-    public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index, $destinationType = 'object')
+    public function save(DataObject\Concrete $object, string $ownertype, string $ownername, string $position, int $index, string $type = 'object')
+    {
+        $table = $this->getTablename($object);
+
+        $dataTemplate = ['o_id' => $object->getId(),
+            'dest_id' => $this->model->getElement()->getId(),
+            'fieldname' => $this->model->getFieldname(),
+            'ownertype' => $ownertype,
+            'ownername' => $ownername ? $ownername : '',
+            'index' => $index ? $index : '0',
+            'position' => $position ? $position : '0',
+            'type' => $type ? $type : 'object', ];
+
+        foreach ($this->model->getColumns() as $column) {
+            $getter = 'get' . ucfirst($column);
+            $data = $dataTemplate;
+            $data['column'] = $column;
+            $data['data'] = $this->model->$getter();
+            Helper::insertOrUpdate($this->db, $table, $data);
+        }
+    }
+
+    public function load(DataObject\Concrete $source, int $destinationId, string $fieldname, string $ownertype, string $ownername, string $position, int $index, string $destinationType = 'object'): ?DataObject\Data\ElementMetadata
     {
         if ($destinationType == 'object') {
             $typeQuery = " AND (type = 'object' or type = '')";

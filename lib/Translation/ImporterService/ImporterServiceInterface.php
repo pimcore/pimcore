@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,14 +29,8 @@ interface ImporterServiceInterface
      *
      * @throws \Exception
      */
-    public function import(AttributeSet $attributeSet, bool $saveElement = true);
+    public function import(AttributeSet $attributeSet, bool $saveElement = true): void;
 
-    /**
-     * @param string $type
-     * @param ImporterInterface $importer
-     *
-     * @return ImporterServiceInterface
-     */
     public function registerImporter(string $type, ImporterInterface $importer): ImporterServiceInterface;
 
     /**

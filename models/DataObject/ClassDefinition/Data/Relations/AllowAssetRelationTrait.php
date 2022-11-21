@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,13 +27,13 @@ trait AllowAssetRelationTrait
     /**
      * Checks if an asset is an allowed relation
      *
-     * @internal
-     *
      * @param Asset $asset
      *
      * @return bool
+     *@internal
+     *
      */
-    protected function allowAssetRelation($asset)
+    protected function allowAssetRelation(Asset $asset): bool
     {
         if (!$asset instanceof Asset || $asset->getId() <= 0) {
             return false;

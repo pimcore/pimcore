@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -30,7 +31,7 @@ class Dao extends Model\User\AbstractUser\Dao
      *
      * @throws \Exception
      */
-    public function getById($id)
+    public function getById(int $id)
     {
         parent::getById($id);
 
@@ -44,7 +45,7 @@ class Dao extends Model\User\AbstractUser\Dao
      *
      * @throws \Exception
      */
-    public function getByName($name)
+    public function getByName(string $name)
     {
         parent::getByName($name);
 

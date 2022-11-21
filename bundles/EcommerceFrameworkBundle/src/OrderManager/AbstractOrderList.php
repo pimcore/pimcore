@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,115 +20,64 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 
 abstract class AbstractOrderList implements OrderListInterface
 {
-    /**
-     * @var int
-     */
-    protected $offset = 0;
+    protected int $offset = 0;
 
-    /**
-     * @var int
-     */
-    protected $limit = 30;
+    protected int $limit = 30;
 
-    /**
-     * @var int
-     */
-    protected $rowCount = 0;
+    protected int $rowCount = 0;
 
-    /**
-     * @var string
-     */
-    protected $listType = self::LIST_TYPE_ORDER;
+    protected string $listType = self::LIST_TYPE_ORDER;
 
-    /**
-     * @var string
-     */
-    protected $orderState = AbstractOrder::ORDER_STATE_COMMITTED;
+    protected string $orderState = AbstractOrder::ORDER_STATE_COMMITTED;
 
-    /**
-     * @var \ArrayIterator|null
-     */
-    protected $list;
+    protected ?\ArrayIterator $list = null;
 
-    /**
-     * @var string
-     */
-    protected $itemClassName;
+    protected string $itemClassName;
 
-    /**
-     * @return string
-     */
-    public function getItemClassName()
+    public function getItemClassName(): string
     {
         return $this->itemClassName;
     }
 
-    /**
-     * @param string $className
-     *
-     * @return $this
-     */
-    public function setItemClassName($className)
+    public function setItemClassName(string $className): static
     {
         $this->itemClassName = $className;
 
         return $this;
     }
 
-    /**
-     * @param array $row
-     *
-     * @return OrderListItemInterface
-     */
-    protected function createResultItem(array $row)
+    protected function createResultItem(array $row): OrderListItemInterface
     {
         $class = $this->getItemClassName();
 
         return new $class($row);
     }
 
-    /**
-     * @param string $type
-     *
-     * @return OrderListInterface
-     */
-    public function setListType($type)
+    public function setListType(string $type): OrderListInterface
     {
         $this->listType = $type;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getListType()
+    public function getListType(): string
     {
         return $this->listType;
     }
 
-    /**
-     * @return string
-     */
-    public function getOrderState()
+    public function getOrderState(): string
     {
         return $this->orderState;
     }
 
-    /**
-     * @param string $orderState
-     *
-     * @return $this
-     */
-    public function setOrderState($orderState)
+    public function setOrderState(string $orderState): static
     {
         $this->orderState = $orderState;
 
         return $this;
     }
 
-    /** @inheritDoc */
-    public function load()
+    public function load(): OrderListInterface|static
     {
         if ($this->list === null) {
             // load
@@ -143,12 +93,12 @@ abstract class AbstractOrderList implements OrderListInterface
     /**
      * Returns a collection of items for a page.
      *
-     * @param  int $offset           Page offset
-     * @param  int $itemCountPerPage Number of items per page
+     * @param int $offset           Page offset
+     * @param int $itemCountPerPage Number of items per page
      *
      * @return OrderListItemInterface[]
      */
-    public function getItems($offset, $itemCountPerPage)
+    public function getItems(int $offset, int $itemCountPerPage): array
     {
         // load
         $this->setLimit($itemCountPerPage, $offset)->load();
@@ -156,21 +106,12 @@ abstract class AbstractOrderList implements OrderListInterface
         return $this->list->getArrayCopy();
     }
 
-    /**
-     * @return int
-     */
-    public function getOffset()
+    public function getOffset(): int
     {
         return $this->offset;
     }
 
-    /**
-     * @param int $limit
-     * @param int $offset
-     *
-     * @return $this
-     */
-    public function setLimit($limit, $offset = 0)
+    public function setLimit(int $limit, int $offset = 0): static
     {
         $this->limit = (int)$limit;
         $this->offset = (int)$offset;
@@ -179,10 +120,7 @@ abstract class AbstractOrderList implements OrderListInterface
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getLimit()
+    public function getLimit(): int
     {
         return $this->limit;
     }
@@ -190,8 +128,8 @@ abstract class AbstractOrderList implements OrderListInterface
     /**
      * @return OrderListItemInterface|false
      */
-    #[\ReturnTypeWillChange]
-    public function current()// : OrderListItemInterface|false
+
+    public function current(): bool|OrderListItemInterface
     {
         $this->load();
         if ($this->count() > 0) {
@@ -201,116 +139,65 @@ abstract class AbstractOrderList implements OrderListInterface
         return false;
     }
 
-    /**
-     * @return void
-     */
-    #[\ReturnTypeWillChange]
-    public function next()// : void
+    public function next(): void
     {
         $this->load();
         $this->list->next();
     }
 
-    /**
-     * @return string|int|null
-     */
-    #[\ReturnTypeWillChange]
-    public function key()// : string|int|null
+    public function key(): int|string|null
     {
         $this->load();
 
         return $this->list->key();
     }
 
-    /**
-     * @return bool
-     */
-    #[\ReturnTypeWillChange]
-    public function valid()// : bool
+    public function valid(): bool
     {
         $this->load();
 
         return $this->list->valid();
     }
 
-    /**
-     * @return void
-     */
-    #[\ReturnTypeWillChange]
-    public function rewind()// : void
+    public function rewind(): void
     {
         $this->load();
         $this->list->rewind();
     }
 
-    /**
-     * @param int $position
-     *
-     * @return void
-     */
-    #[\ReturnTypeWillChange]
-    public function seek($position)// : void
+    public function seek(int $position): void
     {
         $this->load();
         $this->list->seek($position);
     }
 
-    /**
-     * @return int
-     */
-    #[\ReturnTypeWillChange]
-    public function count()// : int
+    public function count(): int
     {
         $this->load();
 
         return $this->rowCount;
     }
 
-    /**
-     * @param mixed $offset
-     *
-     * @return bool
-     */
-    #[\ReturnTypeWillChange]
-    public function offsetExists($offset)// : bool
+    public function offsetExists(mixed $offset): bool
     {
         $this->load();
 
         return $this->list->offsetExists($offset);
     }
 
-    /**
-     * @param mixed $offset
-     *
-     * @return OrderListItemInterface
-     */
-    #[\ReturnTypeWillChange]
-    public function offsetGet($offset)// : OrderListItemInterface
+    public function offsetGet(mixed $offset): OrderListItemInterface
     {
         $this->load();
 
         return $this->createResultItem($this->list->offsetGet($offset));
     }
 
-    /**
-     * @param mixed $offset
-     * @param mixed $value
-     *
-     * @return void
-     */
-    #[\ReturnTypeWillChange]
-    public function offsetSet($offset, $value)// : void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         // not allowed, read only
     }
 
-    /**
-     * @param mixed $offset
-     *
-     * @return void
-     */
-    #[\ReturnTypeWillChange]
-    public function offsetUnset($offset)// : void
+    public function offsetUnset(mixed $offset): void
     {
         // not allowed, read only
     }

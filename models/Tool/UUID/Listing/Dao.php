@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -30,7 +31,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @return array
      */
-    public function load()
+    public function load(): array
     {
         $items = $this->db->fetchFirstColumn('SELECT uuid FROM ' . UUID\Dao::TABLE_NAME .' '. $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         $result = [];
@@ -46,7 +47,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @return int
      */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM ' . UUID\Dao::TABLE_NAME .' ' . $this->getCondition(), $this->model->getConditionVariables());

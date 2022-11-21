@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,7 +32,7 @@ interface BracketInterface extends ConditionInterface
      *
      * @return $this
      */
-    public function addCondition(ConditionInterface $condition, $operator);
+    public function addCondition(ConditionInterface $condition, string $operator): static;
 
     /**
      * Returns all defined conditions with given type

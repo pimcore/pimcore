@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,12 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 class FreeShipping implements ActionInterface, CartActionInterface
 {
-    /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return ActionInterface
-     */
-    public function executeOnCart(EnvironmentInterface $environment)
+    public function executeOnCart(EnvironmentInterface $environment): ActionInterface
     {
         $priceCalculator = $environment->getCart()->getPriceCalculator();
 
@@ -43,22 +39,14 @@ class FreeShipping implements ActionInterface, CartActionInterface
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function toJSON()
+    public function toJSON(): string
     {
         return json_encode([
             'type' => 'FreeShipping',
         ]);
     }
 
-    /**
-     * @param string $string
-     *
-     * @return ActionInterface
-     */
-    public function fromJSON($string)
+    public function fromJSON(string $string): ActionInterface
     {
         return $this;
     }

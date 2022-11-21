@@ -33,25 +33,13 @@ class EnablePreviewTimeSliderListener implements EventSubscriberInterface
 {
     use ResponseInjectionTrait;
 
-    /**
-     * @var OutputTimestampResolver
-     */
-    protected $outputTimestampResolver;
+    protected OutputTimestampResolver $outputTimestampResolver;
 
-    /**
-     * @var RequestHelper
-     */
-    protected $requestHelper;
+    protected RequestHelper $requestHelper;
 
-    /**
-     * @var EditmodeResolver
-     */
-    protected $editmodeResolver;
+    protected EditmodeResolver $editmodeResolver;
 
-    /**
-     * @var DocumentResolver
-     */
-    protected $documentResolver;
+    protected DocumentResolver $documentResolver;
 
     public function __construct(OutputTimestampResolver $outputTimestampResolver, RequestHelper $requestHelper, EditmodeResolver $editmodeResolver, DocumentResolver $documentResolver)
     {

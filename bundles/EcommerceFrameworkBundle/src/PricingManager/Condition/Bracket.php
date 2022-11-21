@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,12 +25,12 @@ class Bracket implements BracketInterface
     /**
      * @var ConditionInterface[]
      */
-    protected $conditions = [];
+    protected array $conditions = [];
 
     /**
      * @var string[] BracketInterface::OPERATOR_*
      */
-    protected $operator = [];
+    protected array $operator = [];
 
     /**
      * @param ConditionInterface $condition
@@ -37,7 +38,7 @@ class Bracket implements BracketInterface
      *
      * @return $this
      */
-    public function addCondition(ConditionInterface $condition, $operator)
+    public function addCondition(ConditionInterface $condition, string $operator): static
     {
         $this->conditions[] = $condition;
         $this->operator[] = $operator;
@@ -45,12 +46,7 @@ class Bracket implements BracketInterface
         return $this;
     }
 
-    /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return bool
-     */
-    public function check(EnvironmentInterface $environment)
+    public function check(EnvironmentInterface $environment): bool
     {
         // A bracket without conditions is not restricted and thus doesn't fail
         if (empty($this->conditions)) {
@@ -113,10 +109,7 @@ class Bracket implements BracketInterface
         return $state ?? false;
     }
 
-    /**
-     * @return string
-     */
-    public function toJSON()
+    public function toJSON(): string
     {
         $json = ['type' => 'Bracket', 'conditions' => []];
         foreach ($this->conditions as $num => $condition) {
@@ -133,11 +126,11 @@ class Bracket implements BracketInterface
     /**
      * @param string $string
      *
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
-     *
      * @return $this
+     *@throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
+     *
      */
-    public function fromJSON($string)
+    public function fromJSON(string $string): static
     {
         $json = json_decode($string);
 

@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -41,7 +42,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      *
      * @throws NotFoundException
      */
-    public function get($code, CartInterface $cart = null)
+    public function get(string $code, CartInterface $cart = null)
     {
         $query = 'SELECT * FROM ' . self::TABLE_NAME . ' WHERE token = ?';
         $params[] = $code;
@@ -59,11 +60,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         $this->model->setCartId($result['cart_id']);
     }
 
-    /**
-     * @param string $code
-     * @param CartInterface $cart
-     */
-    public function create($code, $cart)
+    public function create(string $code, CartInterface $cart)
     {
         if (!Reservation::reservationExists($code, $cart)) {
             // Single Type Token --> only one token per Cart! --> Update on duplicate key!
@@ -73,10 +70,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         $this->get($code, $cart);
     }
 
-    /**
-     * @return bool
-     */
-    public function remove()
+    public function remove(): bool
     {
         $this->db->delete(self::TABLE_NAME, ['token' => $this->model->getToken()]);
 
@@ -84,11 +78,11 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     }
 
     /**
-     * @param null|int $seriesId
+     * @param int|null $seriesId
      *
      * @return bool|int
      */
-    public static function getReservedTokenCount($seriesId = null)
+    public static function getReservedTokenCount(int $seriesId = null): bool|int
     {
         $db = \Pimcore\Db::get();
 
@@ -112,12 +106,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @param string $token
-     *
-     * @return bool
-     */
-    public static function isReservedToken($token)
+    public static function isReservedToken(string $token): bool
     {
         $db = \Pimcore\Db::get();
 

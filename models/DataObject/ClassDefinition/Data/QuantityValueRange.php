@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,6 +21,7 @@ use Pimcore\Cache;
 use Pimcore\Cache\RuntimeCache;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Normalizer\NormalizerInterface;
@@ -36,7 +38,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
      *
      * @var string
      */
-    public $fieldtype = 'quantityValueRange';
+    public string $fieldtype = 'quantityValueRange';
 
     /**
      * @internal
@@ -159,13 +161,11 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param DataObject\Data\QuantityValueRange|null $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     *@see ResourcePersistenceAwareInterface::getDataForResource
+     *
      */
-    public function getDataForResource($data, $object = null, $params = []): array
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         if ($data instanceof DataObject\Data\QuantityValueRange) {
             return [
@@ -183,13 +183,11 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param array $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     *@see ResourcePersistenceAwareInterface::getDataFromResource
+     *
      */
-    public function getDataFromResource($data, $object = null, $params = []): ?DataObject\Data\QuantityValueRange
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\QuantityValueRange
     {
         if (isset($data[$this->getName() . '__minimum'], $data[$this->getName() . '__maximum'], $data[$this->getName() . '__unit'])) {
             $quantityValueRange = new DataObject\Data\QuantityValueRange(
@@ -211,25 +209,21 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     }
 
     /**
-     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
-     * @param DataObject\Data\QuantityValueRange $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
+     *
      */
-    public function getDataForQueryResource($data, $object = null, $params = []): array
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
     /**
+     * @param DataObject\Concrete|null $object
      * @see Data::getDataForEditmode
      *
-     * @param DataObject\Data\QuantityValueRange|null $data
-     * @param DataObject\Concrete|null $object
-     * @param mixed $params
      */
-    public function getDataForEditmode($data, $object = null, $params = []): ?array
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data instanceof DataObject\Data\QuantityValueRange) {
             return [
@@ -243,13 +237,13 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     }
 
     /**
+     * @param mixed $data
+     * @param DataObject\Concrete|null $object
+     * @param array $params
+     * @return DataObject\Data\QuantityValueRange|null
      * @see Data::getDataFromEditmode
-     *
-     * @param array $data
-     * @param DataObject\Concrete $object
-     * @param mixed $params
      */
-    public function getDataFromEditmode($data, $object = null, $params = []): ?DataObject\Data\QuantityValueRange
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\QuantityValueRange
     {
         if (\is_array($data) && (isset($data['minimum']) || isset($data['maximum']) || isset($data['unit']))) {
             if ($data['unit'] === -1 || empty($data['unit'])) {
@@ -268,13 +262,11 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     }
 
     /**
+     * @param DataObject\Concrete|null $object
      * @see Data::getVersionPreview
      *
-     * @param DataObject\Data\QuantityValueRange|null $data
-     * @param DataObject\Concrete|null $object
-     * @param mixed $params
      */
-    public function getVersionPreview($data, $object = null, $params = []): string
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof DataObject\Data\QuantityValueRange) {
             return $data->__toString();
@@ -288,7 +280,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
      *
      * @throws Exception
      */
-    public function getForCsvExport($object, $params = []): string
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
@@ -306,10 +298,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+    public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof DataObject\Data\QuantityValueRange) {
             return $value->toArray();
@@ -318,10 +307,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+    public function denormalize(mixed $value, array $params = []): ?DataObject\Data\QuantityValueRange
     {
         if (\is_array($value)) {
             return new DataObject\Data\QuantityValueRange($value['minimum'], $value['maximum'], $value['unitId']);
@@ -355,7 +341,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
     /**
      * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = []): void
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $fieldName = $this->getName();
 
@@ -453,11 +439,7 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
         return $obj;
     }
 
-    /**
-     * @param mixed $oldValue
-     * @param mixed $newValue
-     */
-    public function isEqual($oldValue, $newValue): bool
+    public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
         if ($oldValue === null && $newValue === null) {
             return true;
@@ -475,42 +457,27 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
             && (string) $oldValue->getUnitId() === (string) $newValue->getUnitId();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\QuantityValueRange::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\QuantityValueRange::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\QuantityValueRange::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\QuantityValueRange::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty($data): bool
+    public function isEmpty(mixed $data): bool
     {
         if ($data instanceof DataObject\Data\QuantityValueRange) {
             return empty($data->getValue()) && empty($data->getUnitId());

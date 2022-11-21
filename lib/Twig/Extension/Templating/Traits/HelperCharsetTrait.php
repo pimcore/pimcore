@@ -22,14 +22,14 @@ namespace Pimcore\Twig\Extension\Templating\Traits;
  */
 trait HelperCharsetTrait
 {
-    protected $charset = 'UTF-8';
+    protected string $charset = 'UTF-8';
 
     /**
      * Sets the default charset.
      *
      * @param string $charset The charset
      */
-    public function setCharset(string $charset)
+    public function setCharset(string $charset): void
     {
         $this->charset = $charset;
     }
@@ -39,7 +39,7 @@ trait HelperCharsetTrait
      *
      * @return string The default charset
      */
-    public function getCharset()
+    public function getCharset(): string
     {
         return $this->charset;
     }

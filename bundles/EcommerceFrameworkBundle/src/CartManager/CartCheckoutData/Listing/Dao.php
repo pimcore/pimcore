@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -24,10 +25,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData;
  */
 class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
 {
-    /**
-     * @return array
-     */
-    public function load()
+    public function load(): array
     {
         $items = [];
 
@@ -42,7 +40,7 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
         return $items;
     }
 
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         try {
             return (int)$this->db->fetchOne('SELECT COUNT(*) FROM `' . \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData\Dao::TABLE_NAME . '`' . $this->getCondition());

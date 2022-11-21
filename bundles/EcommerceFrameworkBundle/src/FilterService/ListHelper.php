@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,22 +26,15 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\OrderByFields;
  */
 class ListHelper
 {
-    /**
-     * @param \Pimcore\Model\DataObject\FilterDefinition $filterDefinition
-     * @param ProductListInterface $productList
-     * @param array $params
-     * @param FilterService $filterService
-     * @param bool $loadFullPage
-     * @param bool $excludeLimitOfFirstpage
-     */
     public function setupProductList(
         \Pimcore\Model\DataObject\FilterDefinition $filterDefinition,
-        ProductListInterface $productList,
-        &$params,
-        FilterService $filterService,
-        $loadFullPage,
-        $excludeLimitOfFirstpage = false
-    ) {
+        ProductListInterface                       $productList,
+        array                                      &$params,
+        FilterService                              $filterService,
+        bool                                       $loadFullPage,
+        bool                                       $excludeLimitOfFirstpage = false
+    ): void
+    {
         $orderByOptions = [];
         $orderKeysAsc = explode(',', $filterDefinition->getOrderByAsc());
         foreach ($orderKeysAsc as $orderByEntry) {
@@ -136,12 +130,7 @@ class ListHelper
         $params['orderByOptions'] = $orderByOptions;
     }
 
-    /**
-     * @param int $page
-     *
-     * @return string
-     */
-    public function createPagingQuerystring($page)
+    public function createPagingQuerystring(int $page): string
     {
         $params = $_REQUEST;
         $params['page'] = $page;
@@ -161,12 +150,7 @@ class ListHelper
         return $string;
     }
 
-    /**
-     * @param array $conditions
-     *
-     * @return AbstractCategory|null
-     */
-    public function getFirstFilteredCategory($conditions)
+    public function getFirstFilteredCategory(array $conditions): ?AbstractCategory
     {
         if (!empty($conditions)) {
             foreach ($conditions as $c) {

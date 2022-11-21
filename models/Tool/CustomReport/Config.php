@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,105 +28,51 @@ use Pimcore\Model;
  */
 class Config extends Model\AbstractModel implements \JsonSerializable
 {
-    /**
-     * @var string
-     */
-    protected $name = '';
+    protected string $name = '';
 
-    /**
-     * @var string
-     */
-    protected $sql = '';
+    protected string $sql = '';
 
-    /**
-     * @var array
-     */
-    protected $dataSourceConfig = [];
+    protected array $dataSourceConfig = [];
 
-    /**
-     * @var array
-     */
-    protected $columnConfiguration = [];
+    protected array $columnConfiguration = [];
 
-    /**
-     * @var string
-     */
-    protected $niceName = '';
+    protected string $niceName = '';
 
-    /**
-     * @var string
-     */
-    protected $group = '';
+    protected string $group = '';
 
-    /**
-     * @var string
-     */
-    protected $groupIconClass = '';
+    protected string $groupIconClass = '';
 
-    /**
-     * @var string
-     */
-    protected $iconClass = '';
+    protected string $iconClass = '';
 
-    /**
-     * @var bool
-     */
-    protected $menuShortcut = true;
+    protected bool $menuShortcut = true;
 
-    /**
-     * @var string
-     */
-    protected $reportClass = '';
+    protected string $reportClass = '';
 
-    /**
-     * @var string
-     */
-    protected $chartType = '';
+    protected string $chartType = '';
 
-    /**
-     * @var string
-     */
-    protected $pieColumn = '';
+    protected string $pieColumn = '';
 
-    /**
-     * @var string
-     */
-    protected $pieLabelColumn = '';
+    protected string $pieLabelColumn = '';
 
-    /**
-     * @var string
-     */
-    protected $xAxis = '';
+    protected string $xAxis = '';
 
-    /**
-     * @var string|array
-     */
-    protected $yAxis = [];
+    protected string|array $yAxis = [];
 
-    /**
-     * @var int|null
-     */
-    protected $modificationDate;
+    protected ?int $modificationDate = null;
 
-    /**
-     * @var int|null
-     */
-    protected $creationDate;
+    protected ?int $creationDate = null;
 
-    /**
-     * @var bool
-     */
-    protected $shareGlobally = true;
+    protected bool $shareGlobally = true;
 
     /**
      * @var string[]
      */
-    protected $sharedUserNames = [];
+    protected array $sharedUserNames = [];
 
     /**
      * @var string[]
      */
-    protected $sharedRoleNames = [];
+    protected array $sharedRoleNames = [];
 
     /**
      * @param string $name
@@ -134,7 +81,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
      *
      * @throws \Exception
      */
-    public static function getByName($name)
+    public static function getByName(string $name): ?Config
     {
         try {
             $report = new self();
@@ -154,7 +101,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
      *
      * @return array
      */
-    public static function getReportsList(Model\User $user = null)
+    public static function getReportsList(Model\User $user = null): array
     {
         $reports = [];
 
@@ -181,11 +128,11 @@ class Config extends Model\AbstractModel implements \JsonSerializable
      * @param \stdClass $configuration
      * @param Config|null $fullConfig
      *
-     * @deprecated Use ServiceLocator with id 'pimcore.custom_report.adapter.factories' to determine the factory for the adapter instead
-     *
      * @return Model\Tool\CustomReport\Adapter\CustomReportAdapterInterface
+     *@deprecated Use ServiceLocator with id 'pimcore.custom_report.adapter.factories' to determine the factory for the adapter instead
+     *
      */
-    public static function getAdapter($configuration, $fullConfig = null)
+    public static function getAdapter(\stdClass $configuration, Config $fullConfig = null): Adapter\CustomReportAdapterInterface
     {
         $type = $configuration->type ? $configuration->type : 'sql';
         $serviceLocator = \Pimcore::getContainer()->get('pimcore.custom_report.adapter.factories');
@@ -200,146 +147,92 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         return $factory->create($configuration, $fullConfig);
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $sql
-     */
-    public function setSql($sql)
+    public function setSql(string $sql)
     {
         $this->sql = $sql;
     }
 
-    /**
-     * @return string
-     */
-    public function getSql()
+    public function getSql(): string
     {
         return $this->sql;
     }
 
-    /**
-     * @param array $columnConfiguration
-     */
-    public function setColumnConfiguration($columnConfiguration)
+    public function setColumnConfiguration(array $columnConfiguration)
     {
         $this->columnConfiguration = $columnConfiguration;
     }
 
-    /**
-     * @return array
-     */
-    public function getColumnConfiguration()
+    public function getColumnConfiguration(): array
     {
         return $this->columnConfiguration;
     }
 
-    /**
-     * @param string $group
-     */
-    public function setGroup($group)
+    public function setGroup(string $group)
     {
         $this->group = $group;
     }
 
-    /**
-     * @return string
-     */
-    public function getGroup()
+    public function getGroup(): string
     {
         return $this->group;
     }
 
-    /**
-     * @param string $groupIconClass
-     */
-    public function setGroupIconClass($groupIconClass)
+    public function setGroupIconClass(string $groupIconClass)
     {
         $this->groupIconClass = $groupIconClass;
     }
 
-    /**
-     * @return string
-     */
-    public function getGroupIconClass()
+    public function getGroupIconClass(): string
     {
         return $this->groupIconClass;
     }
 
-    /**
-     * @param string $iconClass
-     */
-    public function setIconClass($iconClass)
+    public function setIconClass(string $iconClass)
     {
         $this->iconClass = $iconClass;
     }
 
-    /**
-     * @return string
-     */
-    public function getIconClass()
+    public function getIconClass(): string
     {
         return $this->iconClass;
     }
 
-    /**
-     * @param string $niceName
-     */
-    public function setNiceName($niceName)
+    public function setNiceName(string $niceName)
     {
         $this->niceName = $niceName;
     }
 
-    /**
-     * @return string
-     */
-    public function getNiceName()
+    public function getNiceName(): string
     {
         return $this->niceName;
     }
 
-    /**
-     * @param bool $menuShortcut
-     */
-    public function setMenuShortcut($menuShortcut)
+    public function setMenuShortcut(bool $menuShortcut)
     {
         $this->menuShortcut = (bool) $menuShortcut;
     }
 
-    /**
-     * @return bool
-     */
-    public function getMenuShortcut()
+    public function getMenuShortcut(): bool
     {
         return $this->menuShortcut;
     }
 
-    /**
-     * @param array $dataSourceConfig
-     */
-    public function setDataSourceConfig($dataSourceConfig)
+    public function setDataSourceConfig(array $dataSourceConfig)
     {
         $this->dataSourceConfig = $dataSourceConfig;
     }
 
-    /**
-     * @return \stdClass|null
-     */
-    public function getDataSourceConfig()
+    public function getDataSourceConfig(): ?\stdClass
     {
         if (is_array($this->dataSourceConfig) && isset($this->dataSourceConfig[0])) {
             $dataSourceConfig = new \stdClass();
@@ -355,146 +248,92 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         return null;
     }
 
-    /**
-     * @param string $chartType
-     */
-    public function setChartType($chartType)
+    public function setChartType(string $chartType)
     {
         $this->chartType = $chartType;
     }
 
-    /**
-     * @return string
-     */
-    public function getChartType()
+    public function getChartType(): string
     {
         return $this->chartType;
     }
 
-    /**
-     * @param string $pieColumn
-     */
-    public function setPieColumn($pieColumn)
+    public function setPieColumn(string $pieColumn)
     {
         $this->pieColumn = $pieColumn;
     }
 
-    /**
-     * @return string
-     */
-    public function getPieColumn()
+    public function getPieColumn(): string
     {
         return $this->pieColumn;
     }
 
-    /**
-     * @param string $xAxis
-     */
-    public function setXAxis($xAxis)
+    public function setXAxis(string $xAxis)
     {
         $this->xAxis = $xAxis;
     }
 
-    /**
-     * @return string
-     */
-    public function getXAxis()
+    public function getXAxis(): string
     {
         return $this->xAxis;
     }
 
-    /**
-     * @param array|string $yAxis
-     */
-    public function setYAxis($yAxis)
+    public function setYAxis(array|string $yAxis)
     {
         $this->yAxis = $yAxis;
     }
 
-    /**
-     * @return array|string
-     */
-    public function getYAxis()
+    public function getYAxis(): array|string
     {
         return $this->yAxis;
     }
 
-    /**
-     * @param string $pieLabelColumn
-     */
-    public function setPieLabelColumn($pieLabelColumn)
+    public function setPieLabelColumn(string $pieLabelColumn)
     {
         $this->pieLabelColumn = $pieLabelColumn;
     }
 
-    /**
-     * @return string
-     */
-    public function getPieLabelColumn()
+    public function getPieLabelColumn(): string
     {
         return $this->pieLabelColumn;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getModificationDate()
+    public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
-    /**
-     * @param int $modificationDate
-     */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate)
     {
         $this->modificationDate = $modificationDate;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getCreationDate()
+    public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }
 
-    /**
-     * @param int $creationDate
-     */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate)
     {
         $this->creationDate = $creationDate;
     }
 
-    /**
-     * @return string
-     */
-    public function getReportClass()
+    public function getReportClass(): string
     {
         return $this->reportClass;
     }
 
-    /**
-     * @param string $reportClass
-     */
-    public function setReportClass($reportClass)
+    public function setReportClass(string $reportClass)
     {
         $this->reportClass = $reportClass;
     }
 
-    /**
-     * @return bool
-     */
-    public function getShareGlobally()
+    public function getShareGlobally(): bool
     {
         return $this->shareGlobally;
     }
 
-    /**
-     * @param bool $shareGlobally
-     */
-    public function setShareGlobally($shareGlobally): void
+    public function setShareGlobally(bool $shareGlobally): void
     {
         $this->shareGlobally = $shareGlobally;
     }
@@ -502,7 +341,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     /**
      * @return int[]
      */
-    public function getSharedUserIds()
+    public function getSharedUserIds(): array
     {
         $sharedUserIds = [];
         if ($this->sharedUserNames) {
@@ -520,7 +359,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     /**
      * @return int[]
      */
-    public function getSharedRoleIds()
+    public function getSharedRoleIds(): array
     {
         $sharedRoleIds = [];
         if ($this->sharedRoleNames) {
@@ -538,7 +377,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     /**
      * @return string[]
      */
-    public function getSharedUserNames()
+    public function getSharedUserNames(): array
     {
         return $this->sharedUserNames;
     }
@@ -546,7 +385,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     /**
      * @param string[] $sharedUserNames
      */
-    public function setSharedUserNames($sharedUserNames): void
+    public function setSharedUserNames(array $sharedUserNames): void
     {
         $this->sharedUserNames = $sharedUserNames;
     }
@@ -554,7 +393,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     /**
      * @return string[]
      */
-    public function getSharedRoleNames()
+    public function getSharedRoleNames(): array
     {
         return $this->sharedRoleNames;
     }
@@ -562,7 +401,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     /**
      * @param string[] $sharedRoleNames
      */
-    public function setSharedRoleNames($sharedRoleNames): void
+    public function setSharedRoleNames(array $sharedRoleNames): void
     {
         $this->sharedRoleNames = $sharedRoleNames;
     }

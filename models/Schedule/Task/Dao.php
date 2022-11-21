@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -29,7 +30,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById($id)
+    public function getById(int $id)
     {
         $data = $this->db->fetchAssociative('SELECT * FROM schedule_tasks WHERE id = ?', [$id]);
         if (!$data) {

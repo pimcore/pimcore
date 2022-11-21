@@ -19,15 +19,9 @@ namespace Pimcore\Analytics\Google\Config;
 
 class ConfigProvider
 {
-    /**
-     * @var Config
-     */
-    private $config;
+    private ?Config $config = null;
 
-    /**
-     * @var array|null
-     */
-    private $configObject;
+    private ?array $configObject = null;
 
     /**
      * @param array|null $configObject

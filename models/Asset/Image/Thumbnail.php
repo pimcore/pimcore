@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -34,27 +35,21 @@ final class Thumbnail
      *
      * @var bool[]
      */
-    protected static $hasListenersCache = [];
+    protected static array $hasListenersCache = [];
 
     /**
      * @param Image $asset
      * @param string|array|Thumbnail\Config|null $config
      * @param bool $deferred
      */
-    public function __construct($asset, $config = null, $deferred = true)
+    public function __construct(Image $asset, array|string|Thumbnail\Config $config = null, bool $deferred = true)
     {
         $this->asset = $asset;
         $this->deferred = $deferred;
         $this->config = $this->createConfig($config);
     }
 
-    /**
-     * @param bool $deferredAllowed
-     * @param bool $cacheBuster
-     *
-     * @return string
-     */
-    public function getPath($deferredAllowed = true, $cacheBuster = false)
+    public function getPath(bool $deferredAllowed = true, bool $cacheBuster = false): string
     {
         $pathReference = null;
         if ($this->getConfig()) {
@@ -90,11 +85,6 @@ final class Thumbnail
         return $path;
     }
 
-    /**
-     * @param string $eventName
-     *
-     * @return bool
-     */
     protected function hasListeners(string $eventName): bool
     {
         if (!isset(self::$hasListenersCache[$eventName])) {
@@ -104,12 +94,7 @@ final class Thumbnail
         return self::$hasListenersCache[$eventName];
     }
 
-    /**
-     * @param string $filename
-     *
-     * @return bool
-     */
-    protected function useOriginalFile($filename)
+    protected function useOriginalFile(string $filename): bool
     {
         if ($this->getConfig()) {
             if (!$this->getConfig()->isRasterizeSVG() && preg_match("@\.svgz?$@", $filename)) {
@@ -121,11 +106,11 @@ final class Thumbnail
     }
 
     /**
+     * @param bool $deferredAllowed
      * @internal
      *
-     * @param bool $deferredAllowed
      */
-    public function generate($deferredAllowed = true)
+    public function generate(bool $deferredAllowed = true): void
     {
         $deferred = false;
         $generated = false;
@@ -216,7 +201,7 @@ final class Thumbnail
      *
      * @return string
      */
-    public function getHtml($options = [])
+    public function getHtml(array $options = []): string
     {
         /** @var Image $image */
         $image = $this->getAsset();
@@ -286,12 +271,6 @@ final class Thumbnail
         return $html;
     }
 
-    /**
-     * @param array $options
-     * @param array $removeAttributes
-     *
-     * @return string
-     */
     public function getImageTag(array $options = [], array $removeAttributes = []): string
     {
         /** @var Image $image */
@@ -387,7 +366,7 @@ final class Thumbnail
      *
      * @throws \Exception
      */
-    public function getMedia($name, $highRes = 1)
+    public function getMedia(string $name, int $highRes = 1): Thumbnail
     {
         $thumbConfig = $this->getConfig();
         $mediaConfigs = $thumbConfig->getMedias();

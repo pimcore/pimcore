@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -31,7 +32,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById($id)
+    public function getById(int $id)
     {
         $data = $this->db->fetchAssociative('SELECT * FROM tags WHERE id = ?', [$id]);
         if (!$data) {
@@ -49,7 +50,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @todo: not all save methods return a boolean, why this one?
      */
-    public function save()
+    public function save(): bool
     {
         if (strlen(trim(strip_tags($this->model->getName()))) < 1) {
             throw new \Exception(sprintf('Invalid name for Tag: %s', $this->model->getName()));
@@ -124,7 +125,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return Model\Element\Tag[]
      */
-    public function getTagsForElement($cType, $cId)
+    public function getTagsForElement(string $cType, int $cId): array
     {
         $tags = [];
         $tagIds = $this->db->fetchFirstColumn('SELECT tagid FROM tags_assignment WHERE cid = ? AND ctype = ?', [$cId, $cType]);
@@ -141,21 +142,12 @@ class Dao extends Model\Dao\AbstractDao
         return $tags;
     }
 
-    /**
-     * @param string $cType
-     * @param int $cId
-     */
-    public function addTagToElement($cType, $cId)
+    public function addTagToElement(string $cType, int $cId)
     {
         $this->doAddTagToElement($this->model->getId(), $cType, $cId);
     }
 
-    /**
-     * @param int $tagId
-     * @param string $cType
-     * @param int $cId
-     */
-    protected function doAddTagToElement($tagId, $cType, $cId)
+    protected function doAddTagToElement(int $tagId, string $cType, int $cId)
     {
         $data = [
             'tagid' => $tagId,
@@ -165,11 +157,7 @@ class Dao extends Model\Dao\AbstractDao
         Helper::insertOrUpdate($this->db, 'tags_assignment', $data);
     }
 
-    /**
-     * @param string $cType
-     * @param int $cId
-     */
-    public function removeTagFromElement($cType, $cId)
+    public function removeTagFromElement(string $cType, int $cId)
     {
         $this->db->delete('tags_assignment', [
             'tagid' => $this->model->getId(),
@@ -185,7 +173,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function setTagsForElement($cType, $cId, array $tags)
+    public function setTagsForElement(string $cType, int $cId, array $tags)
     {
         $this->db->beginTransaction();
 
@@ -204,13 +192,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @param string $cType
-     * @param array $cIds
-     * @param array $tagIds
-     * @param bool $replace
-     */
-    public function batchAssignTagsToElement($cType, array $cIds, array $tagIds, $replace)
+    public function batchAssignTagsToElement(string $cType, array $cIds, array $tagIds, bool $replace)
     {
         if ($replace) {
             $quotedCIds = [];
@@ -234,17 +216,18 @@ class Dao extends Model\Dao\AbstractDao
      * @param string $type              The type of elements to search for: 'document', 'asset' or 'object'
      * @param array  $subtypes          Filter by subtypes, eg. page, object, email, folder etc.
      * @param array  $classNames        For objects only: filter by classnames
-     * @param bool   $considerChildTags Look for elements having one of $tag's children assigned
+     * @param bool $considerChildTags Look for elements having one of $tag's children assigned
      *
      * @return array
      */
     public function getElementsForTag(
-        Tag $tag,
-        $type,
-        array $subtypes = [],
-        array $classNames = [],
-        $considerChildTags = false
-    ) {
+        Tag    $tag,
+        string $type,
+        array  $subtypes = [],
+        array  $classNames = [],
+        bool   $considerChildTags = false
+    ): array
+    {
         $elements = [];
 
         $map = [
@@ -302,7 +285,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return null|Tag
      */
-    public function getByPath($tagPath)
+    public function getByPath(string $tagPath): ?Tag
     {
         $parentTagId = 0;
 
@@ -333,10 +316,7 @@ class Dao extends Model\Dao\AbstractDao
         return $tag;
     }
 
-    /**
-     * @return bool
-     */
-    public function exists()
+    public function exists(): bool
     {
         if (is_null($this->model->getId())) {
             return false;

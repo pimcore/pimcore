@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,7 +28,7 @@ class DefaultClassificationStore implements InterpreterInterface
      *
      * @throws \Exception
      */
-    public function interpret($value, $config = null)
+    public function interpret($value, $config = null): ?array
     {
         if (!$value instanceof Classificationstore) {
             return null;

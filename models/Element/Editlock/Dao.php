@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -31,7 +32,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByElement($cid, $ctype)
+    public function getByElement(int $cid, string $ctype)
     {
         $data = $this->db->fetchAssociative('SELECT * FROM edit_lock WHERE cid = ? AND ctype = ?', [$cid, $ctype]);
 
@@ -55,7 +56,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @todo: not all save methods return a boolean, why this one?
      */
-    public function save()
+    public function save(): bool
     {
         $version = $this->model->getObjectVars();
         $data = [];
@@ -84,10 +85,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->delete('edit_lock', ['id' => $this->model->getId()]);
     }
 
-    /**
-     * @param string $sessionId
-     */
-    public function clearSession($sessionId)
+    public function clearSession(string $sessionId)
     {
         $this->db->delete('edit_lock', ['sessionId' => $sessionId]);
     }

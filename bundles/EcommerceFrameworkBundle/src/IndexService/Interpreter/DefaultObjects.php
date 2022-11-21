@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,7 +20,7 @@ use Pimcore\Model\DataObject\AbstractObject;
 
 class DefaultObjects implements RelationInterpreterInterface
 {
-    public function interpret($value, $config = null)
+    public function interpret($value, $config = null): array
     {
         $result = [];
 

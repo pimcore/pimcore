@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,10 +21,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
  */
 interface ProductInterface
 {
-    /**
-     * @return int
-     */
-    public function getId();
+    public function getId(): ?int;
 
     /**
      * called by default CommitOrderProcessor to get the product name to store it in the order item

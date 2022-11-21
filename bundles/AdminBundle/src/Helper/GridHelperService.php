@@ -30,13 +30,6 @@ use Pimcore\Model\DataObject\Objectbrick;
  */
 class GridHelperService
 {
-    /**
-     * @param string $filterJson
-     * @param ClassDefinition $class
-     * @param string $requestedLanguage
-     *
-     * @return array
-     */
     public function getFeatureAndSlugFilters(string $filterJson, ClassDefinition $class, string $requestedLanguage): array
     {
         $featureJoins = [];
@@ -171,14 +164,7 @@ class GridHelperService
         return $result;
     }
 
-    /**
-     *
-     * @param string $filterJson
-     * @param ClassDefinition $class
-     *
-     * @return string
-     */
-    public function getFilterCondition($filterJson, ClassDefinition $class, $tablePrefix = null): string
+    public function getFilterCondition(string $filterJson, ClassDefinition $class, $tablePrefix = null): string
     {
         $systemFields = Model\DataObject\Service::getSystemFields();
 
@@ -362,11 +348,6 @@ class GridHelperService
         return $conditionFilters;
     }
 
-    /**
-     * @param array $fields
-     *
-     * @return array
-     */
     protected function extractBricks(array $fields): array
     {
         $bricks = [];
@@ -402,7 +383,7 @@ class GridHelperService
      * @param ClassDefinition $class
      * @param array $featureAndSlugFilters
      */
-    public function addGridFeatureJoins(DataObject\Listing\Concrete $list, array $featureJoins, ClassDefinition $class, array $featureAndSlugFilters)
+    public function addGridFeatureJoins(DataObject\Listing\Concrete $list, array $featureJoins, ClassDefinition $class, array $featureAndSlugFilters): void
     {
         if ($featureJoins) {
             $me = $list;
@@ -457,7 +438,7 @@ class GridHelperService
      * @param array $slugJoins
      * @param array $featureAndSlugFilters
      */
-    public function addSlugJoins(DataObject\Listing\Concrete $list, array $slugJoins, array $featureAndSlugFilters)
+    public function addSlugJoins(DataObject\Listing\Concrete $list, array $slugJoins, array $featureAndSlugFilters): void
     {
         if ($slugJoins) {
             $me = $list;
@@ -687,7 +668,7 @@ class GridHelperService
         return $list;
     }
 
-    public function prepareAssetListingForGrid($allParams, $adminUser)
+    public function prepareAssetListingForGrid($allParams, $adminUser): Model\Asset\Listing
     {
         $db = \Pimcore\Db::get();
         $folder = Model\Asset::getById($allParams['folderId']);
@@ -841,12 +822,7 @@ class GridHelperService
         return $list;
     }
 
-    /**
-     * @param string $query
-     *
-     * @return string
-     */
-    protected function filterQueryParam(string $query)
+    protected function filterQueryParam(string $query): string
     {
         if ($query == '*') {
             $query = '';

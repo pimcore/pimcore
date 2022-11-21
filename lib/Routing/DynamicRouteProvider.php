@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,6 +23,7 @@ use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\Route as SymfonyRoute;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
@@ -29,15 +31,12 @@ use Symfony\Component\Routing\RouteCollection;
  */
 final class DynamicRouteProvider implements RouteProviderInterface
 {
-    /**
-     * @var SiteResolver
-     */
-    protected $siteResolver;
+    protected SiteResolver $siteResolver;
 
     /**
      * @var DynamicRouteHandlerInterface[]
      */
-    protected $handlers = [];
+    protected array $handlers = [];
 
     /**
      * @param SiteResolver $siteResolver
@@ -52,9 +51,6 @@ final class DynamicRouteProvider implements RouteProviderInterface
         }
     }
 
-    /**
-     * @param DynamicRouteHandlerInterface $handler
-     */
     public function addHandler(DynamicRouteHandlerInterface $handler)
     {
         if (!in_array($handler, $this->handlers, true)) {
@@ -85,7 +81,7 @@ final class DynamicRouteProvider implements RouteProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getRouteByName($name): Route
+    public function getRouteByName($name): SymfonyRoute
     {
         foreach ($this->handlers as $handler) {
             try {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -34,20 +35,11 @@ class NotesSubscriber implements EventSubscriberInterface
 
     const ADDITIONAL_DATA_NOTES_ADDITIONAL_FIELDS = 'additional';
 
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
+    private TranslatorInterface $translator;
 
-    /**
-     * @var bool
-     */
-    private $enabled = true;
+    private bool $enabled = true;
 
-    /**
-     * @var array
-     */
-    private $additionalData = [];
+    private array $additionalData = [];
 
     public function __construct(TranslatorInterface $translator)
     {
@@ -73,11 +65,6 @@ class NotesSubscriber implements EventSubscriberInterface
         $this->handleNotesPreWorkflow($transition, $subject);
     }
 
-    /**
-     * @param Event $event
-     *
-     * @throws ValidationException
-     */
     public function onWorkflowCompleted(Event $event)
     {
         if (!$this->checkEvent($event)) {
@@ -109,11 +96,6 @@ class NotesSubscriber implements EventSubscriberInterface
         $this->handleNotesPreWorkflow($globalAction, $subject);
     }
 
-    /**
-     * @param GlobalActionEvent $event
-     *
-     * @throws ValidationException
-     */
     public function onPostGlobalAction(GlobalActionEvent $event)
     {
         if (!$this->checkGlobalActionEvent($event)) {
@@ -157,9 +139,6 @@ class NotesSubscriber implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @throws ValidationException
-     */
     private function handleNotesPostWorkflow(Workflow\Notes\NotesAwareInterface $notesAware, ElementInterface $subject): void
     {
         $additionalFieldsData = [];
@@ -206,33 +185,21 @@ class NotesSubscriber implements EventSubscriberInterface
                && $event->getSubject() instanceof ElementInterface;
     }
 
-    /**
-     * @return bool
-     */
     public function isEnabled(): bool
     {
         return $this->enabled;
     }
 
-    /**
-     * @param bool $enabled
-     */
     public function setEnabled(bool $enabled): void
     {
         $this->enabled = $enabled;
     }
 
-    /**
-     * @return array
-     */
     public function getAdditionalData(): array
     {
         return $this->additionalData;
     }
 
-    /**
-     * @param array $additionalData
-     */
     public function setAdditionalData(array $additionalData = []): void
     {
         $this->additionalData = $additionalData;

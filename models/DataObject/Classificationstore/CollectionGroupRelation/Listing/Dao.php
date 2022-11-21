@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -30,7 +31,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @return array
      */
-    public function load()
+    public function load(): array
     {
         $condition = $this->getCondition();
         if ($condition) {
@@ -61,20 +62,14 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $configData;
     }
 
-    /**
-     * @return array
-     */
-    public function getDataArray()
+    public function getDataArray(): array
     {
         $configsData = $this->db->fetchAllAssociative('SELECT * FROM ' . DataObject\Classificationstore\CollectionGroupRelation\Dao::TABLE_NAME_RELATIONS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         return $configsData;
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         try {
             return (int) $this->db->fetchOne('SELECT COUNT(*) FROM ' . DataObject\Classificationstore\CollectionGroupRelation\Dao::TABLE_NAME_RELATIONS . ' '. $this->getCondition(), $this->model->getConditionVariables());

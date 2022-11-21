@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,14 +25,8 @@ abstract class AbstractPayment implements PaymentInterface
 {
     protected bool $recurringPaymentEnabled = false;
 
-    /**
-     * @var string
-     */
-    protected $configurationKey;
+    protected string $configurationKey;
 
-    /**
-     * @param array $options
-     */
     protected function processOptions(array $options)
     {
         if (isset($options['recurring_payment_enabled'])) {
@@ -39,11 +34,6 @@ abstract class AbstractPayment implements PaymentInterface
         }
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     *
-     * @return OptionsResolver
-     */
     protected function configureOptions(OptionsResolver $resolver): OptionsResolver
     {
         $resolver
@@ -53,10 +43,7 @@ abstract class AbstractPayment implements PaymentInterface
         return $resolver;
     }
 
-    /**
-     * @return bool
-     */
-    public function isRecurringPaymentEnabled()
+    public function isRecurringPaymentEnabled(): bool
     {
         return $this->recurringPaymentEnabled;
     }
@@ -74,14 +61,11 @@ abstract class AbstractPayment implements PaymentInterface
     /**
      * {@inheritdoc}
      */
-    public function getConfigurationKey()
+    public function getConfigurationKey(): string
     {
         return $this->configurationKey;
     }
 
-    /**
-     * @param string $configurationKey
-     */
     public function setConfigurationKey(string $configurationKey)
     {
         $this->configurationKey = $configurationKey;

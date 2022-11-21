@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,35 +26,17 @@ use Symfony\Component\Process\Process;
  */
 class Ffmpeg extends Adapter
 {
-    /**
-     * @var string
-     */
-    public $file;
+    public string $file;
 
-    /**
-     * @var string
-     */
-    protected $processId;
+    protected string $processId;
 
-    /**
-     * @var array
-     */
-    protected $arguments = [];
+    protected array $arguments = [];
 
-    /**
-     * @var array
-     */
-    protected $videoFilter = [];
+    protected array $videoFilter = [];
 
-    /**
-     * @var float|null
-     */
-    protected $inputSeeking = null;
+    protected ?float $inputSeeking = null;
 
-    /**
-     * @return bool
-     */
-    public function isAvailable()
+    public function isAvailable(): bool
     {
         try {
             $ffmpeg = self::getFfmpegCli();
@@ -73,18 +56,12 @@ class Ffmpeg extends Adapter
      *
      * @throws \Exception
      */
-    public static function getFfmpegCli()
+    public static function getFfmpegCli(): bool|string
     {
         return \Pimcore\Tool\Console::getExecutable('ffmpeg', true);
     }
 
-    /**
-     * @param string $file
-     * @param array $options
-     *
-     * @return $this
-     */
-    public function load($file, $options = [])
+    public function load(string $file, array $options = []): static
     {
         $this->file = $file;
         $this->setProcessId(uniqid());
@@ -97,7 +74,7 @@ class Ffmpeg extends Adapter
      *
      * @throws \Exception
      */
-    public function save()
+    public function save(): bool
     {
         $success = false;
 
@@ -232,7 +209,7 @@ class Ffmpeg extends Adapter
      * @param string $file
      * @param int|null $timeOffset
      */
-    public function saveImage($file, $timeOffset = null)
+    public function saveImage(string $file, int $timeOffset = null)
     {
         if (!is_numeric($timeOffset)) {
             $timeOffset = 5;
@@ -254,7 +231,7 @@ class Ffmpeg extends Adapter
      *
      * @throws \Exception
      */
-    protected function getVideoInfo()
+    protected function getVideoInfo(): string
     {
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/video-info-' . uniqid() . '.out';
 
@@ -275,10 +252,7 @@ class Ffmpeg extends Adapter
         return $contents;
     }
 
-    /**
-     * @return float|null
-     */
-    public function getDuration()
+    public function getDuration(): ?float
     {
         try {
             $output = $this->getVideoInfo();
@@ -303,10 +277,7 @@ class Ffmpeg extends Adapter
         return null;
     }
 
-    /**
-     * @return array|null
-     */
-    public function getDimensions()
+    public function getDimensions(): ?array
     {
         try {
             $output = $this->getVideoInfo();
@@ -341,66 +312,39 @@ class Ffmpeg extends Adapter
         @unlink($this->getConversionLogFile());
     }
 
-    /**
-     * @param string $processId
-     *
-     * @return $this
-     */
-    public function setProcessId($processId)
+    public function setProcessId(string $processId): static
     {
         $this->processId = $processId;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getProcessId()
+    public function getProcessId(): string
     {
         return $this->processId;
     }
 
-    /**
-     * @return string
-     */
-    protected function getConversionLogFile()
+    protected function getConversionLogFile(): string
     {
         return PIMCORE_LOG_DIRECTORY . '/ffmpeg-' . $this->getProcessId() . '-' . $this->getFormat() . '.log';
     }
 
-    /**
-     * @param string $key
-     * @param string $value
-     */
     public function addArgument(string $key, string $value): void
     {
         array_push($this->arguments, $key, $value);
     }
 
-    /**
-     * @param string $flag
-     */
     public function addFlag(string $flag): void
     {
         array_push($this->arguments, $flag);
     }
 
-    /**
-     *
-     * @return array
-     */
-    public function getArguments()
+    public function getArguments(): array
     {
         return $this->arguments;
     }
 
-    /**
-     * @param int $videoBitrate
-     *
-     * @return $this
-     */
-    public function setVideoBitrate($videoBitrate)
+    public function setVideoBitrate(int $videoBitrate): static
     {
         $videoBitrate = (int)$videoBitrate;
 
@@ -415,12 +359,7 @@ class Ffmpeg extends Adapter
         return $this;
     }
 
-    /**
-     * @param int $audioBitrate
-     *
-     * @return $this
-     */
-    public function setAudioBitrate($audioBitrate)
+    public function setAudioBitrate(int $audioBitrate): static
     {
         $audioBitrate = (int)$audioBitrate;
 
@@ -435,11 +374,7 @@ class Ffmpeg extends Adapter
         return $this;
     }
 
-    /**
-     * @param int $width
-     * @param int $height
-     */
-    public function resize($width, $height)
+    public function resize(int $width, int $height)
     {
         // ensure $width & $height are even (mp4 requires this)
         $width = ceil($width / 2) * 2;
@@ -447,30 +382,20 @@ class Ffmpeg extends Adapter
         $this->addArgument('-s', $width.'x'.$height);
     }
 
-    /**
-     * @param int $width
-     */
-    public function scaleByWidth($width)
+    public function scaleByWidth(int $width)
     {
         // ensure $width is even (mp4 requires this)
         $width = ceil($width / 2) * 2;
         $this->videoFilter[] = 'scale='.$width.':trunc(ow/a/2)*2';
     }
 
-    /**
-     * @param int $height
-     */
-    public function scaleByHeight($height)
+    public function scaleByHeight(int $height)
     {
         // ensure $height is even (mp4 requires this)
         $height = ceil($height / 2) * 2;
         $this->videoFilter[] = 'scale=trunc(oh/(ih/iw)/2)*2:'.$height;
     }
 
-    /**
-     * @param string|null $inputSeeking
-     * @param string|null $targetDuration
-     */
     public function cut(?string $inputSeeking = null, ?string $targetDuration = null): void
     {
         if (!empty($inputSeeking)) {
@@ -485,9 +410,6 @@ class Ffmpeg extends Adapter
         }
     }
 
-    /**
-     * @param int $fps
-     */
     public function setFramerate(int $fps): void
     {
         $this->videoFilter[] = 'fps='.$fps;
@@ -498,9 +420,6 @@ class Ffmpeg extends Adapter
         $this->addFlag('-an');
     }
 
-    /**
-     * @param string|null $effect
-     */
     public function colorChannelMixer(?string $effect = null): void
     {
         if (!empty($effect)) {

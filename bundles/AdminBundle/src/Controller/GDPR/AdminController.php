@@ -31,7 +31,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
     /**
      * @Route("/get-data-providers", name="pimcore_admin_gdpr_admin_getdataproviders", methods={"GET"})
      */
-    public function getDataProvidersAction(Manager $manager)
+    public function getDataProvidersAction(Manager $manager): \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
     {
         $response = [];
         foreach ($manager->getServices() as $service) {
@@ -44,9 +44,6 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         return $this->adminJson($response);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         if (!$event->isMainRequest()) {

@@ -26,10 +26,5 @@ interface PricingManagerLocatorInterface
      */
     public function getPricingManager(string $tenant = null): PricingManagerInterface;
 
-    /**
-     * @param string $tenant
-     *
-     * @return bool
-     */
     public function hasPricingManager(string $tenant): bool;
 }

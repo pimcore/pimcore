@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,9 +32,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class PimcoreUsersController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         if (!$event->isMainRequest()) {
@@ -51,7 +50,7 @@ class PimcoreUsersController extends \Pimcore\Bundle\AdminBundle\Controller\Admi
      *
      * @return JsonResponse
      */
-    public function searchUsersAction(Request $request, PimcoreUsers $pimcoreUsers)
+    public function searchUsersAction(Request $request, PimcoreUsers $pimcoreUsers): JsonResponse
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
@@ -76,7 +75,7 @@ class PimcoreUsersController extends \Pimcore\Bundle\AdminBundle\Controller\Admi
      *
      * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
      */
-    public function exportUserDataAction(Request $request, PimcoreUsers $pimcoreUsers)
+    public function exportUserDataAction(Request $request, PimcoreUsers $pimcoreUsers): JsonResponse
     {
         $this->checkPermission('users');
         $userData = $pimcoreUsers->getExportData((int)$request->get('id'));

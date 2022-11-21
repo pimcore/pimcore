@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,57 +31,27 @@ class DefaultMysql implements ProductListInterface
     /**
      * @var null|IndexableInterface[]
      */
-    protected $products = null;
+    protected ?array $products = null;
 
-    /**
-     * @var string
-     */
-    protected $tenantName;
+    protected string $tenantName;
 
-    /**
-     * @var MysqlConfigInterface
-     */
-    protected $tenantConfig;
+    protected MysqlConfigInterface $tenantConfig;
 
-    /**
-     * @var null|int
-     */
-    protected $totalCount = null;
+    protected ?int $totalCount = null;
 
-    /**
-     * @var string
-     */
-    protected $variantMode = ProductListInterface::VARIANT_MODE_INCLUDE;
+    protected string $variantMode = ProductListInterface::VARIANT_MODE_INCLUDE;
 
-    /**
-     * @var int
-     */
-    protected $limit;
+    protected int $limit;
 
-    /**
-     * @var int
-     */
-    protected $offset;
+    protected int $offset;
 
-    /**
-     * @var AbstractCategory
-     */
-    protected $category;
+    protected AbstractCategory $category;
 
-    /**
-     * @var DefaultMysql\Dao|null
-     */
-    protected $resource;
+    protected ?DefaultMysql\Dao $resource = null;
 
-    /**
-     * @var bool
-     */
-    protected $inProductList = true;
+    protected bool $inProductList = true;
 
-    /**
-     * @var Logger
-     */
-    protected $logger;
+    protected \Symfony\Bridge\Monolog\Logger|null|Logger $logger = null;
 
     public function __construct(MysqlConfigInterface $tenantConfig)
     {
@@ -92,7 +63,7 @@ class DefaultMysql implements ProductListInterface
     }
 
     /** @inheritDoc */
-    public function getProducts()
+    public function getProducts(): array
     {
         if ($this->products === null) {
             $this->load();
@@ -101,52 +72,35 @@ class DefaultMysql implements ProductListInterface
         return $this->products;
     }
 
-    /**
-     * @var array
-     */
-    protected $conditions = [];
+    protected array $conditions = [];
 
     /**
      * @var array<string[]>
      */
-    protected $relationConditions = [];
+    protected array $relationConditions = [];
 
     /**
      * @var string[][]
      */
-    protected $queryConditions = [];
+    protected array $queryConditions = [];
 
-    /**
-     * @var float|null
-     */
-    protected $conditionPriceFrom = null;
+    protected ?float $conditionPriceFrom = null;
 
-    /**
-     * @var float|null
-     */
-    protected $conditionPriceTo = null;
+    protected ?float $conditionPriceTo = null;
 
-    /**
-     * @param array|string $condition
-     * @param string $fieldname
-     */
-    public function addCondition($condition, $fieldname = '')
+    public function addCondition(array|string $condition, string $fieldname = '')
     {
         $this->products = null;
         $this->conditions[$fieldname][] = $condition;
     }
 
-    public function resetCondition($fieldname)
+    public function resetCondition(string $fieldname): void
     {
         $this->products = null;
         unset($this->conditions[$fieldname]);
     }
 
-    /**
-     * @param string $fieldname
-     * @param string $condition
-     */
-    public function addRelationCondition($fieldname, $condition)
+    public function addRelationCondition(string $fieldname, string|array $condition)
     {
         $this->products = null;
         $this->relationConditions[$fieldname][] = '`fieldname` = ' . $this->quote($fieldname) . ' AND '  . $condition;
@@ -173,7 +127,7 @@ class DefaultMysql implements ProductListInterface
      * @param string $condition
      * @param string $fieldname
      */
-    public function addQueryCondition($condition, $fieldname = '')
+    public function addQueryCondition(string $condition, string $fieldname = '')
     {
         $this->products = null;
         $this->queryConditions[$fieldname][] = $condition;
@@ -184,64 +138,55 @@ class DefaultMysql implements ProductListInterface
      *
      * @param string $fieldname
      */
-    public function resetQueryCondition($fieldname)
+    public function resetQueryCondition(string $fieldname)
     {
         $this->products = null;
         unset($this->queryConditions[$fieldname]);
     }
 
     /**
-     * @param null|float $from
-     * @param null|float $to
+     * @param float|null $from
+     * @param float|null $to
      */
-    public function addPriceCondition($from = null, $to = null)
+    public function addPriceCondition(?float $from = null, ?float $to = null)
     {
         $this->products = null;
         $this->conditionPriceFrom = $from;
         $this->conditionPriceTo = $to;
     }
 
-    /**
-     * @param bool $inProductList
-     */
-    public function setInProductList($inProductList)
+    public function setInProductList(bool $inProductList): void
     {
         $this->products = null;
         $this->inProductList = $inProductList;
     }
 
-    /**
-     * @return bool
-     */
-    public function getInProductList()
+    public function getInProductList(): bool
     {
         return $this->inProductList;
     }
 
-    protected $order;
+    protected string $order;
 
-    /**
-     * @var string | array
-     */
-    protected $orderKey;
+    protected string|array $orderKey;
 
-    protected $orderByPrice = false;
+    protected bool $orderByPrice = false;
 
-    public function setOrder($order)
+    public function setOrder(string $order)
     {
         $this->products = null;
         $this->order = $order;
     }
 
-    public function getOrder()
+    public function getOrder(): string
     {
         return $this->order;
     }
 
     /**
-     * @param string|array $orderKey either single field name, or array of field names or array of arrays (field name, direction)
+     * @param array|string $orderKey either single field name, or array of field names or array of arrays (field name, direction)
      */
-    public function setOrderKey($orderKey)
+    public function setOrderKey(array|string $orderKey)
     {
         $this->products = null;
         if ($orderKey == ProductListInterface::ORDERKEY_PRICE) {
@@ -253,12 +198,12 @@ class DefaultMysql implements ProductListInterface
         $this->orderKey = $orderKey;
     }
 
-    public function getOrderKey()
+    public function getOrderKey(): array|string
     {
         return $this->orderKey;
     }
 
-    public function setLimit($limit)
+    public function setLimit(int $limit)
     {
         if ($this->limit != $limit) {
             $this->products = null;
@@ -266,12 +211,12 @@ class DefaultMysql implements ProductListInterface
         $this->limit = $limit;
     }
 
-    public function getLimit()
+    public function getLimit(): int
     {
         return $this->limit;
     }
 
-    public function setOffset($offset)
+    public function setOffset(int $offset)
     {
         if ($this->offset != $offset) {
             $this->products = null;
@@ -279,7 +224,7 @@ class DefaultMysql implements ProductListInterface
         $this->offset = $offset;
     }
 
-    public function getOffset()
+    public function getOffset(): int
     {
         return $this->offset;
     }
@@ -290,23 +235,23 @@ class DefaultMysql implements ProductListInterface
         $this->category = $category;
     }
 
-    public function getCategory()
+    public function getCategory(): ?AbstractCategory
     {
         return $this->category;
     }
 
-    public function setVariantMode($variantMode)
+    public function setVariantMode(string $variantMode)
     {
         $this->products = null;
         $this->variantMode = $variantMode;
     }
 
-    public function getVariantMode()
+    public function getVariantMode(): string
     {
         return $this->variantMode;
     }
 
-    public function load()
+    public function load(): array
     {
         $objectRaws = [];
 
@@ -346,7 +291,7 @@ class DefaultMysql implements ProductListInterface
      *
      * @return array
      */
-    protected function loadWithoutPriceFilterWithoutPriceSorting()
+    protected function loadWithoutPriceFilterWithoutPriceSorting(): array
     {
         $objectRaws = $this->resource->load($this->buildQueryFromConditions(), $this->buildOrderBy(), $this->getLimit(), $this->getOffset());
         $this->totalCount = $this->resource->getLastRecordCount();
@@ -363,7 +308,7 @@ class DefaultMysql implements ProductListInterface
      *
      * @todo Not implemented yet
      */
-    protected function loadWithoutPriceFilterWithPriceSorting()
+    protected function loadWithoutPriceFilterWithPriceSorting(): array
     {
         $objectRaws = $this->resource->load($this->buildQueryFromConditions());
         $this->totalCount = $this->resource->getLastRecordCount();
@@ -394,7 +339,7 @@ class DefaultMysql implements ProductListInterface
      *
      * @todo Not implemented yet
      */
-    protected function loadWithPriceFilterWithoutPriceSorting()
+    protected function loadWithPriceFilterWithoutPriceSorting(): array
     {
         //check number of price systems
         //set $this->totalCount
@@ -410,7 +355,7 @@ class DefaultMysql implements ProductListInterface
      *
      * @todo Not implemented yet
      */
-    protected function loadWithPriceFilterWithPriceSorting()
+    protected function loadWithPriceFilterWithPriceSorting(): array
     {
         //check number of price systems
         //set $this->totalCount
@@ -424,7 +369,7 @@ class DefaultMysql implements ProductListInterface
      *
      * @return IndexableInterface|null
      */
-    protected function loadElementById($elementId)
+    protected function loadElementById(int $elementId): ?IndexableInterface
     {
         return $this->getCurrentTenantConfig()->getObjectMockupById($elementId);
     }
@@ -433,11 +378,9 @@ class DefaultMysql implements ProductListInterface
      * prepares all group by values for given field names and cache them in local variable
      * considers both - normal values and relation values
      *
-     * @param string $fieldname
      *
-     * @return void
      */
-    public function prepareGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
+    public function prepareGroupByValues(string $fieldname, bool $countValues = false, bool $fieldnameShouldBeExcluded = true): void
     {
         // not supported with mysql tables
     }
@@ -447,7 +390,7 @@ class DefaultMysql implements ProductListInterface
      *
      * @return void
      */
-    public function resetPreparedGroupByValues()
+    public function resetPreparedGroupByValues(): void
     {
         // not supported with mysql tables
     }
@@ -456,11 +399,9 @@ class DefaultMysql implements ProductListInterface
      * prepares all group by values for given field names and cache them in local variable
      * considers both - normal values and relation values
      *
-     * @param string $fieldname
      *
-     * @return void
      */
-    public function prepareGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
+    public function prepareGroupByRelationValues(string $fieldname, bool $countValues = false, bool $fieldnameShouldBeExcluded = true): void
     {
         // not supported with mysql tables
     }
@@ -469,11 +410,9 @@ class DefaultMysql implements ProductListInterface
      * prepares all group by values for given field names and cache them in local variable
      * considers both - normal values and relation values
      *
-     * @param string $fieldname
      *
-     * @return void
      */
-    public function prepareGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
+    public function prepareGroupBySystemValues(string $fieldname, bool $countValues = false, bool $fieldnameShouldBeExcluded = true): void
     {
         // not supported with mysql tables
     }
@@ -489,7 +428,7 @@ class DefaultMysql implements ProductListInterface
      *
      * @throws \Exception
      */
-    public function getGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
+    public function getGroupBySystemValues(string $fieldname, bool $countValues = false, bool $fieldnameShouldBeExcluded = true): array
     {
         // not supported with mysql tables
         return [];
@@ -504,7 +443,7 @@ class DefaultMysql implements ProductListInterface
      *
      * @throws \Exception
      */
-    public function getGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
+    public function getGroupByValues(string $fieldname, bool $countValues = false, bool $fieldnameShouldBeExcluded = true): array
     {
         $excludedFieldName = $fieldname;
         if (!$fieldnameShouldBeExcluded) {
@@ -526,7 +465,7 @@ class DefaultMysql implements ProductListInterface
      *
      * @throws \Exception
      */
-    public function getGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
+    public function getGroupByRelationValues(string $fieldname, bool $countValues = false, bool $fieldnameShouldBeExcluded = true): array
     {
         $excludedFieldName = $fieldname;
         if (!$fieldnameShouldBeExcluded) {
@@ -539,7 +478,7 @@ class DefaultMysql implements ProductListInterface
         }
     }
 
-    protected function buildQueryFromConditions($excludeConditions = false, $excludedFieldname = null, $variantMode = null)
+    protected function buildQueryFromConditions($excludeConditions = false, $excludedFieldname = null, $variantMode = null): string
     {
         if ($variantMode == null) {
             $variantMode = $this->getVariantMode();
@@ -612,7 +551,7 @@ class DefaultMysql implements ProductListInterface
         return $condition;
     }
 
-    protected function buildUserspecificConditions($excludedFieldname = null)
+    protected function buildUserspecificConditions($excludedFieldname = null): string
     {
         $condition = '';
         foreach ($this->relationConditions as $fieldname => $condArray) {
@@ -649,7 +588,7 @@ class DefaultMysql implements ProductListInterface
         return $condition;
     }
 
-    protected function buildOrderBy()
+    protected function buildOrderBy(): ?string
     {
         if (!empty($this->orderKey) && $this->orderKey !== ProductListInterface::ORDERKEY_PRICE) {
             $orderKeys = $this->orderKey;
@@ -699,10 +638,7 @@ class DefaultMysql implements ProductListInterface
         return $this->resource->quote($value);
     }
 
-    /**
-     * @return MysqlConfigInterface
-     */
-    public function getCurrentTenantConfig()
+    public function getCurrentTenantConfig(): MysqlConfigInterface
     {
         return $this->tenantConfig;
     }
@@ -716,7 +652,7 @@ class DefaultMysql implements ProductListInterface
      *
      * @return string
      */
-    public function buildSimularityOrderBy($fields, $objectId)
+    public function buildSimularityOrderBy(array $fields, int $objectId): string
     {
         return $this->resource->buildSimularityOrderBy($fields, $objectId);
     }
@@ -729,7 +665,7 @@ class DefaultMysql implements ProductListInterface
      *
      * @return string
      */
-    public function buildFulltextSearchWhere($fields, $searchstring)
+    public function buildFulltextSearchWhere(array $fields, string $searchstring): string
     {
         return $this->resource->buildFulltextSearchWhere($fields, $searchstring);
     }
@@ -740,11 +676,8 @@ class DefaultMysql implements ProductListInterface
      *  -----------------------------------------------------------------------------------------
      */
 
-    /**
-     * @return int
-     */
-    #[\ReturnTypeWillChange]
-    public function count()// : int
+
+    public function count(): int
     {
         if ($this->totalCount === null) {
             $this->totalCount = $this->resource->getCount($this->buildQueryFromConditions());
@@ -756,8 +689,8 @@ class DefaultMysql implements ProductListInterface
     /**
      * @return IndexableInterface|false
      */
-    #[\ReturnTypeWillChange]
-    public function current()// : IndexableInterface|false
+
+    public function current(): bool|IndexableInterface
     {
         $this->getProducts();
 
@@ -767,12 +700,12 @@ class DefaultMysql implements ProductListInterface
     /**
      * Returns an collection of items for a page.
      *
-     * @param  int $offset Page offset
-     * @param  int $itemCountPerPage Number of items per page
+     * @param int $offset Page offset
+     * @param int $itemCountPerPage Number of items per page
      *
      * @return array
      */
-    public function getItems($offset, $itemCountPerPage)
+    public function getItems(int $offset, int $itemCountPerPage): array
     {
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);
@@ -780,42 +713,26 @@ class DefaultMysql implements ProductListInterface
         return $this->getProducts();
     }
 
-    /**
-     * @return int|null
-     */
-    #[\ReturnTypeWillChange]
-    public function key()// : int|null
+    public function key(): ?int
     {
         $this->getProducts();
 
         return key($this->products);
     }
 
-    /**
-     * @return void
-     */
-    #[\ReturnTypeWillChange]
-    public function next()// : void
+    public function next(): void
     {
         $this->getProducts();
         next($this->products);
     }
 
-    /**
-     * @return void
-     */
-    #[\ReturnTypeWillChange]
-    public function rewind()// : void
+    public function rewind(): void
     {
         $this->getProducts();
         reset($this->products);
     }
 
-    /**
-     * @return bool
-     */
-    #[\ReturnTypeWillChange]
-    public function valid()// : bool
+    public function valid(): bool
     {
         return $this->current() !== false;
     }
@@ -851,7 +768,7 @@ class DefaultMysql implements ProductListInterface
      *
      * @return string
      */
-    public function getCacheIdentifier()
+    public function getCacheIdentifier(): string
     {
         return uniqid();
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,25 +25,14 @@ use Symfony\Component\Routing\Route;
  */
 final class DocumentRoute extends Route implements RouteObjectInterface
 {
-    /**
-     * @var Document|null
-     */
-    protected $document;
+    protected ?Document $document = null;
 
-    /**
-     * @return Document|null
-     */
     public function getDocument(): ?Document
     {
         return $this->document;
     }
 
-    /**
-     * @param Document $document
-     *
-     * @return $this
-     */
-    public function setDocument($document)
+    public function setDocument(Document $document): static
     {
         $this->document = $document;
 

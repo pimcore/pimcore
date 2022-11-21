@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -39,7 +40,7 @@ class InstallController extends AdminController
      *
      * @return Response
      */
-    public function checkAction(Request $request, Connection $db, ?Profiler $profiler)
+    public function checkAction(Request $request, Connection $db, ?Profiler $profiler): Response
     {
         if ($profiler) {
             $profiler->disable();

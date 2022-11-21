@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -32,31 +33,28 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      *
      * @var array
      */
-    protected $validColumns = [];
+    protected array $validColumns = [];
 
-    /**
-     * @var array
-     */
-    protected $fieldsToSave = ['cartId', 'productId', 'count', 'itemKey', 'parentItemKey', 'comment', 'addedDateTimestamp', 'sortIndex'];
+    protected array $fieldsToSave = ['cartId', 'productId', 'count', 'itemKey', 'parentItemKey', 'comment', 'addedDateTimestamp', 'sortIndex'];
 
     /**
      * Get the valid columns from the database
      *
      * @return void
      */
-    public function init()
+    public function init(): void
     {
         $this->validColumns = $this->getValidTableColumns(self::TABLE_NAME);
     }
 
     /**
-     * @param string|int $cartId
+     * @param int|string $cartId
      * @param string $itemKey
      * @param string $parentKey
      *
      * @throws NotFoundException
      */
-    public function getByCartIdItemKey($cartId, $itemKey, $parentKey = '')
+    public function getByCartIdItemKey(int|string $cartId, string $itemKey, string $parentKey = '')
     {
         $classRaw = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE itemKey=' . $this->db->quote($itemKey). ' AND cartId = ' . $this->db->quote($cartId) . ' AND parentItemKey = ' . $this->db->quote($parentKey));
         if (empty($classRaw)) {
@@ -78,10 +76,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         $this->update();
     }
 
-    /**
-     * @return void
-     */
-    public function update()
+    public function update(): void
     {
         $data = [];
         foreach ($this->fieldsToSave as $field) {
@@ -110,15 +105,12 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      *
      * @return void
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete(self::TABLE_NAME, ['itemKey' => $this->model->getItemKey(), 'cartId' => $this->model->getCartId(), 'parentItemKey' => $this->model->getParentItemKey()]);
     }
 
-    /**
-     * @param string|int $cartId
-     */
-    public function removeAllFromCart($cartId)
+    public function removeAllFromCart(int|string $cartId)
     {
         $this->db->delete(self::TABLE_NAME, ['cartId' => $cartId]);
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,7 +33,7 @@ use Pimcore\Model\DataObject\OnlineShopVoucherToken;
  */
 class Single extends AbstractTokenManager implements ExportableTokenManagerInterface
 {
-    protected $template;
+    protected string $template;
 
     public function __construct(AbstractVoucherTokenType $configuration)
     {
@@ -44,35 +45,23 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function isValidSetting()
+    public function isValidSetting(): bool
     {
         // TODO do some character matching etc
         return true;
     }
 
-    /**
-     * @return bool
-     */
-    public function cleanUpCodes($filter = [])
+    public function cleanUpCodes(?array $filter = []): bool
     {
         return true;
     }
 
-    public function cleanupReservations($duration = 0, $seriesId = null)
+    public function cleanupReservations(int $duration = 0, ?string $seriesId = null): bool
     {
         return Reservation::cleanUpReservations($duration, $seriesId);
     }
 
-    /**
-     * @param array $viewParamsBag
-     * @param array $params
-     *
-     * @return string
-     */
-    public function prepareConfigurationView(&$viewParamsBag, $params)
+    public function prepareConfigurationView(array &$viewParamsBag, array $params): string
     {
         $codes = $this->getCodes();
         if ($codes && $this->getConfiguration()->getToken() != $codes[0]['token']) {
@@ -118,7 +107,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
      *
      * @throws \Exception
      */
-    protected function getExportData(array $params)
+    protected function getExportData(array $params): array
     {
         $data = [];
         if ($codes = $this->getCodes()) {
@@ -130,18 +119,15 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
         return $data;
     }
 
-    /**
-     * @return int
-     */
-    public function getFinalTokenLength()
+    public function getFinalTokenLength(): int
     {
         return strlen($this->configuration->getToken());
     }
 
     /**
-     * @return bool | string - bool if failed - string if successfully created
+     * @return bool | array | string - bool if failed - string if successfully created
      */
-    public function insertOrUpdateVoucherSeries()
+    public function insertOrUpdateVoucherSeries(): bool|string|array
     {
         $db = \Pimcore\Db::get();
 
@@ -161,13 +147,13 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
     }
 
     /**
-     * @param null|array $params
+     * @param array|null $filter
      *
      * @return array|bool
      */
-    public function getCodes($params = null)
+    public function getCodes(array $filter = null): bool|array
     {
-        return Token\Listing::getCodes($this->seriesId, $params);
+        return Token\Listing::getCodes($this->seriesId, $filter);
     }
 
     protected function prepareUsageStatisticData(&$data, $usagePeriod)
@@ -182,10 +168,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
         $data = $periodData;
     }
 
-    /**
-     * @return array
-     */
-    public function getStatistics($usagePeriod = null)
+    public function getStatistics(int $usagePeriod = null): array
     {
         $token = Token::getByCode($this->configuration->getToken());
         $overallCount = $this->configuration->getUsages();
@@ -204,13 +187,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
         ];
     }
 
-    /**
-     * @param string $code
-     * @param CartInterface $cart
-     *
-     * @return bool
-     */
-    public function reserveToken($code, CartInterface $cart)
+    public function reserveToken(string $code, CartInterface $cart): bool
     {
         if (Token::getByCode($code)) {
             if (Reservation::create($code, $cart)) {
@@ -221,14 +198,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
         return false;
     }
 
-    /**
-     * @param string $code
-     * @param CartInterface $cart
-     * @param AbstractOrder $order
-     *
-     * @return bool|\Pimcore\Model\DataObject\OnlineShopVoucherToken
-     */
-    public function applyToken($code, CartInterface $cart, AbstractOrder $order)
+    public function applyToken(string $code, CartInterface $cart, AbstractOrder $order): OnlineShopVoucherToken|bool
     {
         if ($token = Token::getByCode($code)) {
             if ($token->check($this->configuration->getUsages(), true)) {
@@ -262,7 +232,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
      *
      * @return bool
      */
-    public function removeAppliedTokenFromOrder(OnlineShopVoucherToken $tokenObject, AbstractOrder $order)
+    public function removeAppliedTokenFromOrder(OnlineShopVoucherToken $tokenObject, AbstractOrder $order): bool
     {
         if ($token = Token::getByCode($tokenObject->getToken())) {
             return $token->unuse();
@@ -271,24 +241,12 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
         return false;
     }
 
-    /**
-     * @param string $code
-     * @param CartInterface $cart
-     *
-     * @return bool
-     */
-    public function releaseToken($code, CartInterface $cart)
+    public function releaseToken(string $code, CartInterface $cart): bool
     {
         return Reservation::releaseToken($code, $cart);
     }
 
-    /**
-     * @param string $code
-     * @param CartInterface $cart
-     *
-     * @return bool
-     */
-    public function checkToken($code, CartInterface $cart)
+    public function checkToken(string $code, CartInterface $cart): bool
     {
         parent::checkToken($code, $cart);
         if ($token = Token::getByCode($code)) {
@@ -300,42 +258,27 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
         return false;
     }
 
-    /**
-     * @return \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypeSingle
-     */
-    public function getConfiguration()
+    public function getConfiguration(): VoucherTokenTypeSingle
     {
         return $this->configuration;
     }
 
-    /**
-     * @param \Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypeSingle $configuration
-     */
-    public function setConfiguration($configuration)
+    public function setConfiguration(VoucherTokenTypeSingle $configuration)
     {
         $this->configuration = $configuration;
     }
 
-    /**
-     * @return string|int|null
-     */
-    public function getSeriesId()
+    public function getSeriesId(): int|string|null
     {
         return $this->seriesId;
     }
 
-    /**
-     * @param string|int|null $seriesId
-     */
-    public function setSeriesId($seriesId)
+    public function setSeriesId(int|string|null $seriesId)
     {
         $this->seriesId = $seriesId;
     }
 
-    /**
-     * @param string $template
-     */
-    public function setTemplate($template)
+    public function setTemplate(string $template)
     {
         $this->template = $template;
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,6 +19,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 
 class StructuredTable extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
@@ -32,64 +34,56 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      *
      * @var string
      */
-    public $fieldtype = 'structuredTable';
+    public string $fieldtype = 'structuredTable';
 
     /**
      * @internal
      *
      * @var string|int
      */
-    public $width = 0;
+    public string|int $width = 0;
 
     /**
      * @internal
      *
      * @var string|int
      */
-    public $height = 0;
+    public string|int $height = 0;
 
     /**
      * @internal
      *
      * @var int
      */
-    public $labelWidth = 0;
+    public int $labelWidth = 0;
 
     /**
      * v
      *
      * @var string
      */
-    public $labelFirstCell;
+    public string $labelFirstCell;
 
     /**
      * @internal
      *
      * @var array
      */
-    public $cols = [];
+    public array $cols = [];
 
     /**
      * @internal
      *
      * @var array
      */
-    public $rows = [];
+    public array $rows = [];
 
-    /**
-     * @return string|int
-     */
-    public function getWidth()
+    public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @param string|int $width
-     *
-     * @return $this
-     */
-    public function setWidth($width)
+    public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
             $width = (int)$width;
@@ -99,20 +93,12 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return $this;
     }
 
-    /**
-     * @return string|int
-     */
-    public function getHeight()
+    public function getHeight(): int|string
     {
         return $this->height;
     }
 
-    /**
-     * @param string|int $height
-     *
-     * @return $this
-     */
-    public function setHeight($height)
+    public function setHeight(int|string $height): static
     {
         if (is_numeric($height)) {
             $height = (int)$height;
@@ -122,60 +108,36 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getLabelWidth()
+    public function getLabelWidth(): int
     {
         return $this->labelWidth;
     }
 
-    /**
-     * @param int $labelWidth
-     *
-     * @return $this
-     */
-    public function setLabelWidth($labelWidth)
+    public function setLabelWidth(int $labelWidth): static
     {
         $this->labelWidth = (int)$labelWidth;
 
         return $this;
     }
 
-    /**
-     * @param string $labelFirstCell
-     *
-     * @return $this
-     */
-    public function setLabelFirstCell($labelFirstCell)
+    public function setLabelFirstCell(string $labelFirstCell): static
     {
         $this->labelFirstCell = $labelFirstCell;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getLabelFirstCell()
+    public function getLabelFirstCell(): string
     {
         return $this->labelFirstCell;
     }
 
-    /**
-     * @return array
-     */
-    public function getCols()
+    public function getCols(): array
     {
         return $this->cols;
     }
 
-    /**
-     * @param array $cols
-     *
-     * @return $this
-     */
-    public function setCols($cols)
+    public function setCols(array $cols): static
     {
         if (isset($cols['key'])) {
             $cols = [$cols];
@@ -192,20 +154,12 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getRows()
+    public function getRows(): array
     {
         return $this->rows;
     }
 
-    /**
-     * @param array $rows
-     *
-     * @return $this
-     */
-    public function setRows($rows)
+    public function setRows(array $rows): static
     {
         if (isset($rows['key'])) {
             $rows = [$rows];
@@ -224,15 +178,15 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param DataObject\Data\StructuredTable $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
+     * @see ResourcePersistenceAwareInterface::getDataForResource
+     *
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         $resourceData = [];
         if ($data instanceof DataObject\Data\StructuredTable) {
@@ -250,15 +204,15 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param array $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return DataObject\Data\StructuredTable
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
+     *
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function getDataFromResource(mixed $data, Concrete $object = null, array $params = []): DataObject\Data\StructuredTable
     {
         $structuredData = [];
         foreach ($this->getRows() as $r) {
@@ -280,29 +234,29 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
-     * @param DataObject\Data\StructuredTable $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
+     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
+     *
      */
-    public function getDataForQueryResource($data, $object = null, $params = [])
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
     /**
-     * @see Data::getDataForEditmode
-     *
-     * @param DataObject\Data\StructuredTable|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
+     * @see Data::getDataForEditmode
+     *
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         $editArray = [];
         if ($data instanceof DataObject\Data\StructuredTable) {
@@ -326,15 +280,15 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @see Data::getDataFromEditmode
-     *
-     * @param array $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return DataObject\Data\StructuredTable
+     *@see Data::getDataFromEditmode
+     *
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): DataObject\Data\StructuredTable
     {
         $table = new DataObject\Data\StructuredTable();
         $tableData = [];
@@ -351,11 +305,11 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * @param DataObject\Data\StructuredTable|null $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array|null
      */
-    public function getDataForGrid($data, $object = null, $params = [])
+    public function getDataForGrid(?DataObject\Data\StructuredTable $data, Concrete $object = null, array $params = []): ?array
     {
         if ($data instanceof DataObject\Data\StructuredTable) {
             if (!$data->isEmpty()) {
@@ -367,27 +321,27 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
+     * @param mixed $data
+     * @param null|DataObject\Concrete $object
+     * @param array $params
+     *
+     * @return string
      * @see Data::getVersionPreview
      *
-     * @param DataObject\Data\StructuredTable|null $data
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string|null
      */
-    public function getVersionPreview($data, $object = null, $params = [])
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof DataObject\Data\StructuredTable) {
             return $data->getHtmlTable($this->rows, $this->cols);
         }
 
-        return null;
+        return '';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
     {
         if (!$omitMandatoryCheck && $this->getMandatory()) {
             $empty = true;
@@ -414,7 +368,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, $params = [])
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $value = $this->getDataFromObjectParam($object, $params);
         $string = '';
@@ -434,7 +388,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * {@inheritdoc}
      */
-    public function getColumnType()
+    public function getColumnType(): array|string|null
     {
         $columns = [];
         foreach ($this->calculateDbColumns() as $c) {
@@ -447,7 +401,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * {@inheritdoc}
      */
-    public function getQueryColumnType()
+    public function getQueryColumnType(): array|string|null
     {
         $columns = [];
         foreach ($this->calculateDbColumns() as $c) {
@@ -457,10 +411,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return $columns;
     }
 
-    /**
-     * @return array
-     */
-    protected function calculateDbColumns()
+    protected function calculateDbColumns(): array
     {
         $rows = $this->getRows();
         $cols = $this->getCols();
@@ -487,11 +438,11 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
 
     /**
      * @param string $type text|number|bool
-     * @param int $length The length of the column, default is 255 for text
+     * @param int|null $length The length of the column, default is 255 for text
      *
      * @return string|null
      */
-    protected function typeMapper($type, $length = null)
+    protected function typeMapper(string $type, int $length = null): ?string
     {
         $mapper = [
             'text' => 'varchar('.($length > 0 ? $length : '190').')',
@@ -502,12 +453,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return $mapper[$type];
     }
 
-    /**
-     * @param DataObject\Data\StructuredTable|null $data
-     *
-     * @return bool
-     */
-    public function isEmpty($data)
+    public function isEmpty(mixed $data): bool
     {
         if ($data instanceof DataObject\Data\StructuredTable) {
             return $data->isEmpty();
@@ -519,7 +465,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * {@inheritdoc}
      */
-    public function isDiffChangeAllowed($object, $params = [])
+    public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
     }
@@ -527,11 +473,11 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /** See parent class.
      * @param mixed $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array|null
      */
-    public function getDiffDataForEditMode($data, $object = null, $params = [])
+    public function getDiffDataForEditMode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         $defaultData = parent::getDiffDataForEditMode($data, $object, $params);
         $html = $defaultData[0]['value'];
@@ -554,14 +500,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         $this->rows = $masterDefinition->rows;
     }
 
-    /**
-     *
-     * @param DataObject\Data\StructuredTable|null $oldValue
-     * @param DataObject\Data\StructuredTable|null $newValue
-     *
-     * @return bool
-     */
-    public function isEqual($oldValue, $newValue): bool
+    public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
         $oldData = $oldValue instanceof DataObject\Data\StructuredTable ? $oldValue->getData() : [];
         $newData = $newValue instanceof DataObject\Data\StructuredTable ? $newValue->getData() : [];
@@ -569,42 +508,27 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return $this->isEqualArray($oldData, $newData);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\StructuredTable::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\StructuredTable::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\StructuredTable::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\StructuredTable::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+    public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof DataObject\Data\StructuredTable) {
             $data = $value->getData();
@@ -615,10 +539,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+    public function denormalize(mixed $value, array $params = []): ?DataObject\Data\StructuredTable
     {
         if (is_array($value)) {
             $table = new DataObject\Data\StructuredTable();

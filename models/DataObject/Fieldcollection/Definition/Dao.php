@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -27,43 +28,24 @@ class Dao extends Model\Dao\AbstractDao
 {
     use DataObject\ClassDefinition\Helper\Dao;
 
-    /**
-     * @var array|null
-     */
-    protected $tableDefinitions = null;
+    protected array $tableDefinitions = [];
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     *
-     * @return string
-     */
-    public function getTableName(DataObject\ClassDefinition $class)
+    public function getTableName(DataObject\ClassDefinition $class): string
     {
         return 'object_collection_' . $this->model->getKey() . '_' . $class->getId();
     }
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     *
-     * @return string
-     */
-    public function getLocalizedTableName(DataObject\ClassDefinition $class)
+    public function getLocalizedTableName(DataObject\ClassDefinition $class): string
     {
         return 'object_collection_' . $this->model->getKey() . '_localized_' . $class->getId();
     }
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     */
     public function delete(DataObject\ClassDefinition $class)
     {
         $table = $this->getTableName($class);
         $this->db->executeQuery('DROP TABLE IF EXISTS `' . $table . '`');
     }
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     */
     public function createUpdateTable(DataObject\ClassDefinition $class)
     {
         $table = $this->getTableName($class);
@@ -117,12 +99,9 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $this->removeUnusedColumns($table, $columnsToRemove, $protectedColums);
-        $this->tableDefinitions = null;
+        $this->tableDefinitions = [];
     }
 
-    /**
-     * @param DataObject\ClassDefinition $classDefinition
-     */
     public function classSaved(DataObject\ClassDefinition $classDefinition)
     {
         $this->handleEncryption($classDefinition, [$this->getTableName($classDefinition)]);

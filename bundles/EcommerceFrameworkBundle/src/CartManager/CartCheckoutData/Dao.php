@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -33,27 +34,27 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      *
      * @var array
      */
-    protected $validColumns = [];
+    protected array $validColumns = [];
 
-    protected $fieldsToSave = ['cartId', 'key', 'data'];
+    protected array $fieldsToSave = ['cartId', 'key', 'data'];
 
     /**
      * Get the valid columns from the database
      *
      * @return void
      */
-    public function init()
+    public function init(): void
     {
         $this->validColumns = $this->getValidTableColumns(self::TABLE_NAME);
     }
 
     /**
-     * @param  string $key
-     * @param  string|int $cartId
+     * @param string $key
+     * @param int|string $cartId
      *
      * @throws NotFoundException
      */
-    public function getByKeyCartId($key, $cartId)
+    public function getByKeyCartId(string $key, int|string $cartId)
     {
         $classRaw = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE `key`=' . $this->db->quote($key). ' AND cartId = ' . $this->db->quote($cartId));
         if (empty($classRaw)) {
@@ -70,10 +71,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         $this->update();
     }
 
-    /**
-     * @return void
-     */
-    public function update()
+    public function update(): void
     {
         $data = [];
         foreach ($this->fieldsToSave as $field) {
@@ -102,15 +100,12 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      *
      * @return void
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete(self::TABLE_NAME, ['key' => $this->model->getKey(), 'cartId' => $this->model->getCartId()]);
     }
 
-    /**
-     * @param string|int $cartId
-     */
-    public function removeAllFromCart($cartId)
+    public function removeAllFromCart(int|string $cartId)
     {
         $this->db->delete(self::TABLE_NAME, ['cartId' => $cartId]);
     }

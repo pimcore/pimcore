@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -40,31 +41,17 @@ class AdminAuthenticationDoubleCheckListener implements EventSubscriberInterface
     use ControllerTypeTrait;
     use PimcoreContextAwareTrait;
 
-    /**
-     * @var RequestMatcherFactory
-     */
-    protected $requestMatcherFactory;
+    protected ?RequestMatcherFactory $requestMatcherFactory = null;
 
-    /**
-     * @var array
-     */
-    protected $unauthenticatedRoutes;
+    protected array $unauthenticatedRoutes;
 
     /**
      * @var RequestMatcherInterface[]
      */
-    protected $unauthenticatedMatchers;
+    protected ?array $unauthenticatedMatchers = null;
 
-    /**
-     * @var TokenStorageUserResolver
-     */
-    protected $tokenResolver;
+    protected TokenStorageUserResolver $tokenResolver;
 
-    /**
-     * @param RequestMatcherFactory $factory
-     * @param TokenStorageUserResolver $tokenResolver
-     * @param array $unauthenticatedRoutes
-     */
     public function __construct(
         RequestMatcherFactory $factory,
         TokenStorageUserResolver $tokenResolver,
@@ -128,7 +115,7 @@ class AdminAuthenticationDoubleCheckListener implements EventSubscriberInterface
      *
      * @return bool
      */
-    protected function requestNeedsAuthentication(Request $request)
+    protected function requestNeedsAuthentication(Request $request): bool
     {
         foreach ($this->getUnauthenticatedMatchers() as $matcher) {
             if ($matcher->matches($request)) {
@@ -144,7 +131,7 @@ class AdminAuthenticationDoubleCheckListener implements EventSubscriberInterface
      *
      * @return RequestMatcherInterface[]
      */
-    protected function getUnauthenticatedMatchers()
+    protected function getUnauthenticatedMatchers(): array
     {
         if (null === $this->unauthenticatedMatchers) {
             $this->unauthenticatedMatchers = $this->requestMatcherFactory->buildRequestMatchers($this->unauthenticatedRoutes);

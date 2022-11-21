@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,14 +19,12 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Loader\ImplementationLoader\LoaderInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField;
 use Pimcore\Tool;
 
 class Service
 {
-    /**
-     * @var bool
-     */
-    private static $doRemoveDynamicOptions = false;
+    private static bool $doRemoveDynamicOptions = false;
 
     /**
      * @internal
@@ -47,13 +46,7 @@ class Service
         self::$doRemoveDynamicOptions = $doRemoveDynamicOptions;
     }
 
-    /**
-     *
-     * @param  DataObject\ClassDefinition $class
-     *
-     * @return string
-     */
-    public static function generateClassDefinitionJson($class)
+    public static function generateClassDefinitionJson(DataObject\ClassDefinition $class): string
     {
         $class = clone $class;
         if ($class->layoutDefinitions instanceof Layout) {
@@ -98,15 +91,7 @@ class Service
         }
     }
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     * @param string $json
-     * @param bool $throwException
-     * @param bool $ignoreId
-     *
-     * @return bool
-     */
-    public static function importClassDefinitionFromJson($class, $json, $throwException = false, $ignoreId = false)
+    public static function importClassDefinitionFromJson(DataObject\ClassDefinition $class, string $json, bool $throwException = false, bool $ignoreId = false): bool
     {
         $userId = 0;
         $user = \Pimcore\Tool\Admin::getCurrentUser();
@@ -163,12 +148,7 @@ class Service
         return true;
     }
 
-    /**
-     * @param DataObject\Fieldcollection\Definition $fieldCollection
-     *
-     * @return string
-     */
-    public static function generateFieldCollectionJson($fieldCollection)
+    public static function generateFieldCollectionJson(DataObject\Fieldcollection\Definition $fieldCollection): string
     {
         $fieldCollection = clone $fieldCollection;
         if ($fieldCollection->layoutDefinitions instanceof Layout) {
@@ -183,14 +163,7 @@ class Service
         return json_encode($data, JSON_PRETTY_PRINT);
     }
 
-    /**
-     * @param DataObject\Fieldcollection\Definition $fieldCollection
-     * @param string $json
-     * @param bool $throwException
-     *
-     * @return bool
-     */
-    public static function importFieldCollectionFromJson($fieldCollection, $json, $throwException = false)
+    public static function importFieldCollectionFromJson(DataObject\Fieldcollection\Definition $fieldCollection, string $json, bool $throwException = false): bool
     {
         $importData = json_decode($json, true);
 
@@ -217,12 +190,7 @@ class Service
         return true;
     }
 
-    /**
-     * @param DataObject\Objectbrick\Definition $objectBrick
-     *
-     * @return string
-     */
-    public static function generateObjectBrickJson($objectBrick)
+    public static function generateObjectBrickJson(DataObject\Objectbrick\Definition $objectBrick): string
     {
         $objectBrick = clone $objectBrick;
 
@@ -269,14 +237,7 @@ class Service
         return json_encode($data, JSON_PRETTY_PRINT);
     }
 
-    /**
-     * @param DataObject\Objectbrick\Definition $objectBrick
-     * @param string $json
-     * @param bool $throwException
-     *
-     * @return bool
-     */
-    public static function importObjectBrickFromJson($objectBrick, $json, $throwException = false)
+    public static function importObjectBrickFromJson(DataObject\Objectbrick\Definition $objectBrick, string $json, bool $throwException = false): bool
     {
         $importData = json_decode($json, true);
 
@@ -324,17 +285,16 @@ class Service
     }
 
     /**
-     * @internal
-     *
      * @param array $array
      * @param bool $throwException
      * @param bool $insideLocalizedField
      *
-     * @return Data|Layout|false
+     * @return EncryptedField|bool|Data|Layout
      *
      * @throws \Exception
+     * @internal
      */
-    public static function generateLayoutTreeFromArray($array, $throwException = false, $insideLocalizedField = false)
+    public static function generateLayoutTreeFromArray(array $array, bool $throwException = false, bool $insideLocalizedField = false): Data\EncryptedField|bool|Data|Layout
     {
         if (is_array($array) && count($array) > 0) {
             if ($name = $array['name'] ?? false) {
@@ -410,12 +370,12 @@ class Service
     }
 
     /**
-     * @internal
-     *
      * @param array $tableDefinitions
      * @param array $tableNames
+     *@internal
+     *
      */
-    public static function updateTableDefinitions(&$tableDefinitions, $tableNames)
+    public static function updateTableDefinitions(array &$tableDefinitions, array $tableNames): void
     {
         if (!is_array($tableDefinitions)) {
             $tableDefinitions = [];
@@ -441,8 +401,6 @@ class Service
     }
 
     /**
-     * @internal
-     *
      * @param array $tableDefinitions
      * @param string $table
      * @param string $colName
@@ -451,8 +409,10 @@ class Service
      * @param string $null
      *
      * @return bool
+     *@internal
+     *
      */
-    public static function skipColumn($tableDefinitions, $table, $colName, $type, $default, $null)
+    public static function skipColumn(array $tableDefinitions, string $table, string $colName, string $type, string $default, string $null): bool
     {
         $tableDefinition = $tableDefinitions[$table] ?? false;
         if ($tableDefinition) {
@@ -474,16 +434,16 @@ class Service
     }
 
     /**
-     * @internal
-     *
      * @param array $implementsParts
      * @param string|null $newInterfaces A comma separated list of interfaces
      *
      * @return string
      *
      * @throws \Exception
+     *@internal
+     *
      */
-    public static function buildImplementsInterfacesCode($implementsParts, ?string $newInterfaces)
+    public static function buildImplementsInterfacesCode(array $implementsParts, ?string $newInterfaces): string
     {
         if ($newInterfaces) {
             $customParts = explode(',', $newInterfaces);
@@ -505,16 +465,16 @@ class Service
     }
 
     /**
-     * @internal
-     *
      * @param array $useParts
      * @param string|null $newTraits
      *
      * @return string
      *
      * @throws \Exception
+     *@internal
+     *
      */
-    public static function buildUseTraitsCode($useParts, ?string $newTraits)
+    public static function buildUseTraitsCode(array $useParts, ?string $newTraits): string
     {
         if (!is_array($useParts)) {
             $useParts = [];
@@ -536,15 +496,15 @@ class Service
     }
 
     /**
-     * @internal
-     *
      * @param array $useParts
      *
      * @return string
      *
      * @throws \Exception
+     *@internal
+     *
      */
-    public static function buildUseCode($useParts)
+    public static function buildUseCode(array $useParts): string
     {
         if ($useParts) {
             $result = '';

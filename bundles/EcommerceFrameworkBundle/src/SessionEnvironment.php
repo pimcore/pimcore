@@ -37,15 +37,9 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
 
     const SESSION_KEY_CHECKOUT_TENANT = 'currentcheckouttenant';
 
-    /**
-     * @var RequestStack
-     */
     protected RequestStack $requestStack;
 
-    /**
-     * @var bool
-     */
-    protected $sessionLoaded = false;
+    protected bool $sessionLoaded = false;
 
     public function __construct(RequestStack $requestStack, LocaleServiceInterface $localeService, array $options = [])
     {
@@ -77,10 +71,10 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
         $this->sessionLoaded = true;
     }
 
-    public function save()
+    public function save(): mixed
     {
         if ($this->isCli()) {
-            return;
+            return null;
         }
 
         $this->load();
@@ -92,6 +86,8 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
         $sessionBag->set(self::SESSION_KEY_ASSORTMENT_SUB_TENANT, $this->currentAssortmentSubTenant);
         $sessionBag->set(self::SESSION_KEY_CHECKOUT_TENANT, $this->currentCheckoutTenant);
         $sessionBag->set(self::SESSION_KEY_USE_GUEST_CART, $this->useGuestCart);
+
+        return $this;
     }
 
     public function clearEnvironment()
@@ -114,9 +110,6 @@ class SessionEnvironment extends Environment implements EnvironmentInterface
         $sessionBag->remove(self::SESSION_KEY_CHECKOUT_TENANT);
     }
 
-    /**
-     * @return AttributeBagInterface
-     */
     protected function getSessionBag(): AttributeBagInterface
     {
         /** @var AttributeBagInterface $sessionBag */

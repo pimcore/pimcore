@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,44 +30,26 @@ use Symfony\Component\Cache\CacheItem;
 
 abstract class AbstractCoreHandlerTest extends Unit
 {
-    /**
-     * @var TagAwareAdapterInterface
-     */
-    protected $cache;
+    protected TagAwareAdapterInterface $cache;
 
-    /**
-     * @var CoreCacheHandler|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $handler;
+    protected CoreCacheHandler|\PHPUnit_Framework_MockObject_MockObject $handler;
 
-    /**
-     * @var WriteLock
-     */
-    protected $writeLock;
+    protected WriteLock $writeLock;
 
-    /**
-     * @var int
-     */
-    protected $defaultLifetime = 2419200; // 28 days
+    protected int $defaultLifetime = 2419200; // 28 days
 
-    /**
-     * @var array
-     */
-    protected $sampleEntries = [
+    protected array $sampleEntries = [
         'A' => ['tag_a', 'tag_ab', 'tag_all'],
         'B' => ['tag_b', 'tag_ab', 'tag_bc', 'tag_all'],
         'C' => ['tag_c', 'tag_bc', 'tag_all'],
     ];
 
-    /**
-     * @var Logger
-     */
-    protected static $logger;
+    protected static Logger $logger;
 
     /**
      * @var HandlerInterface[]
      */
-    protected static $logHandlers = [];
+    protected static array $logHandlers = [];
 
     /**
      * {@inheritdoc}
@@ -87,7 +70,7 @@ abstract class AbstractCoreHandlerTest extends Unit
      *
      * @param string $name
      */
-    protected static function setupLogger($name)
+    protected static function setupLogger(string $name)
     {
         static::$logHandlers = [
             'buffer' => new BufferHandler(new StreamHandler('php://stdout')),
@@ -122,14 +105,11 @@ abstract class AbstractCoreHandlerTest extends Unit
     /**
      * Initializes item pool
      *
-     * @return PimcoreCacheItemPoolInterface
+     * @return TagAwareAdapterInterface
      */
-    abstract protected function createCachePool();
+    abstract protected function createCachePool(): TagAwareAdapterInterface;
 
-    /**
-     * @return WriteLock
-     */
-    protected function createWriteLock()
+    protected function createWriteLock(): WriteLock
     {
         $writeLock = new WriteLock($this->cache);
         $writeLock->setLogger(static::$logger);
@@ -137,10 +117,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         return $writeLock;
     }
 
-    /**
-     * @return CoreCacheHandler|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function createHandlerMock()
+    protected function createHandlerMock(): \PHPUnit_Framework_MockObject_MockObject|CoreCacheHandler
     {
         $mockMethods = ['isCli'];
 
@@ -193,7 +170,7 @@ abstract class AbstractCoreHandlerTest extends Unit
      *
      * @return mixed
      */
-    protected function getHandlerPropertyValue($property, CoreCacheHandler $handler = null)
+    protected function getHandlerPropertyValue(string $property, CoreCacheHandler $handler = null): mixed
     {
         if (null === $handler) {
             $handler = $this->handler;
@@ -207,12 +184,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         return $property->getValue($handler);
     }
 
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
-    protected function cacheHasItem($key)
+    protected function cacheHasItem(string $key): bool
     {
         $item = $this->cache->getItem($key);
 
@@ -225,7 +197,7 @@ abstract class AbstractCoreHandlerTest extends Unit
      * @param bool $write
      * @param bool $assertExisting
      */
-    protected function buildSampleEntries($write = true, $assertExisting = true)
+    protected function buildSampleEntries(bool $write = true, bool $assertExisting = true)
     {
         foreach ($this->sampleEntries as $key => $tags) {
             $this->handler->save($key, 'test', $tags);
@@ -254,7 +226,7 @@ abstract class AbstractCoreHandlerTest extends Unit
      *
      * @param string $key
      */
-    public function testExceptionOnInvalidItemKeySave($key)
+    public function testExceptionOnInvalidItemKeySave(string $key)
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->handler->save($key, 'foo');
@@ -267,7 +239,7 @@ abstract class AbstractCoreHandlerTest extends Unit
      *
      * @param string $key
      */
-    public function testExceptionOnInvalidItemKeyRemove($key)
+    public function testExceptionOnInvalidItemKeyRemove(string $key)
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->handler->remove($key);
@@ -565,7 +537,7 @@ abstract class AbstractCoreHandlerTest extends Unit
         }
     }
 
-    public function tagEntriesProvider()
+    public function tagEntriesProvider(): array
     {
         return [
             ['tag_a', ['A']],
@@ -577,16 +549,16 @@ abstract class AbstractCoreHandlerTest extends Unit
         ];
     }
 
-    public function tagsEntriesProvider()
+    public function tagsEntriesProvider(): array
     {
-        return array_merge($this->tagEntriesProvider(), [
+        return [
             [['tag_a', 'tag_b'], ['A', 'B']],
             [['tag_a', 'tag_c'], ['A', 'C']],
             [['tag_b', 'tag_c'], ['B', 'C']],
             [['tag_ab', 'tag_bc'], ['A', 'B', 'C']],
             [['tag_a', 'tag_bc'], ['A', 'B', 'C']],
             [['tag_c', 'tag_ab'], ['A', 'B', 'C']],
-        ]);
+        ];
     }
 
     protected function runClearedTagEntryAssertions(array $expectedRemoveEntries)
@@ -605,7 +577,7 @@ abstract class AbstractCoreHandlerTest extends Unit
      * @param string $tag
      * @param array $expectedRemoveEntries
      */
-    public function testClearTag($tag, array $expectedRemoveEntries)
+    public function testClearTag(string $tag, array $expectedRemoveEntries)
     {
         $this->buildSampleEntries();
 
@@ -621,13 +593,9 @@ abstract class AbstractCoreHandlerTest extends Unit
      * @param array $tags
      * @param array $expectedRemoveEntries
      */
-    public function testClearTags($tags, array $expectedRemoveEntries)
+    public function testClearTags(array $tags, array $expectedRemoveEntries)
     {
         $this->buildSampleEntries();
-
-        if (!is_array($tags)) {
-            $tags = [$tags];
-        }
 
         $this->handler->clearTags($tags);
         $this->runClearedTagEntryAssertions($expectedRemoveEntries);
@@ -761,14 +729,9 @@ abstract class AbstractCoreHandlerTest extends Unit
      *
      * @return array
      */
-    public static function invalidKeys()
+    public static function invalidKeys(): array
     {
         return [
-            [true],
-            [false],
-            [null],
-            [2],
-            [2.5],
             ['{str'],
             ['rand{'],
             ['rand{str'],
@@ -779,8 +742,6 @@ abstract class AbstractCoreHandlerTest extends Unit
             ['rand\\str'],
             ['rand@str'],
             ['rand:str'],
-            [new \stdClass()],
-            [['array']],
         ];
     }
 }

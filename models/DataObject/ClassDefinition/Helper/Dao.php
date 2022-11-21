@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -24,12 +25,7 @@ use Pimcore\Model\DataObject;
  */
 trait Dao
 {
-    /**
-     * @param DataObject\ClassDefinition\Data $field
-     * @param string $table
-     * @param string $columnTypeGetter
-     */
-    protected function addIndexToField($field, $table, $columnTypeGetter = 'getColumnType', $considerUniqueIndex = false, $isLocalized = false, $isFieldcollection = false)
+    protected function addIndexToField(DataObject\ClassDefinition\Data $field, string $table, string $columnTypeGetter = 'getColumnType', $considerUniqueIndex = false, $isLocalized = false, $isFieldcollection = false): void
     {
         $columnType = $field->$columnTypeGetter();
 
@@ -92,14 +88,7 @@ trait Dao
         }
     }
 
-    /**
-     * @param string $table
-     * @param string $colName
-     * @param string $type
-     * @param string $default
-     * @param string $null
-     */
-    protected function addModifyColumn($table, $colName, $type, $default, $null)
+    protected function addModifyColumn(string $table, string $colName, string $type, string $default, string $null): void
     {
         $existingColumns = $this->getValidTableColumns($table, false);
 
@@ -120,12 +109,7 @@ trait Dao
         }
     }
 
-    /**
-     * @param string $table
-     * @param array $columnsToRemove
-     * @param array $protectedColumns
-     */
-    protected function removeUnusedColumns($table, $columnsToRemove, $protectedColumns)
+    protected function removeUnusedColumns(string $table, array $columnsToRemove, array $protectedColumns): void
     {
         if (is_array($columnsToRemove) && count($columnsToRemove) > 0) {
             foreach ($columnsToRemove as $value) {
@@ -138,11 +122,7 @@ trait Dao
         }
     }
 
-    /**
-     * @param DataObject\ClassDefinition $classDefinition
-     * @param array $tables
-     */
-    protected function handleEncryption(DataObject\ClassDefinition $classDefinition, array $tables)
+    protected function handleEncryption(DataObject\ClassDefinition $classDefinition, array $tables): void
     {
         if ($classDefinition->getEncryption()) {
             $this->encryptTables($tables);
@@ -153,21 +133,14 @@ trait Dao
         }
     }
 
-    /**
-     * @param array $tables
-     */
-    protected function encryptTables(array $tables)
+    protected function encryptTables(array $tables): void
     {
         foreach ($tables as $table) {
             $this->db->executeQuery('ALTER TABLE ' . $this->db->quoteIdentifier($table) . ' ENCRYPTED=YES;');
         }
     }
 
-    /**
-     * @param DataObject\ClassDefinition $classDefinition
-     * @param array $tables
-     */
-    protected function decryptTables(DataObject\ClassDefinition $classDefinition, array $tables)
+    protected function decryptTables(DataObject\ClassDefinition $classDefinition, array $tables): void
     {
         foreach ($tables as $table) {
             if ($classDefinition->isEncryptedTable($table)) {
@@ -176,12 +149,7 @@ trait Dao
         }
     }
 
-    /**
-     * @param string $table
-     * @param array $columnsToRemove
-     * @param array $protectedColumns
-     */
-    protected function removeIndices($table, $columnsToRemove, $protectedColumns)
+    protected function removeIndices(string $table, array $columnsToRemove, array $protectedColumns): void
     {
         if (is_array($columnsToRemove) && count($columnsToRemove) > 0) {
             $lowerCaseColumns = array_map('strtolower', $protectedColumns);

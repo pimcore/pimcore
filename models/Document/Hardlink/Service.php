@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,6 +17,8 @@
 namespace Pimcore\Model\Document\Hardlink;
 
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\Hardlink\Wrapper\Hardlink;
+use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Tool\Serialize;
 
 class Service
@@ -23,11 +26,11 @@ class Service
     /**
      * @param Document $doc
      *
-     * @return Document\Hardlink\Wrapper\WrapperInterface|null
+     * @return WrapperInterface|Hardlink|null
      *
      * @throws \Exception
      */
-    public static function wrap(Document $doc)
+    public static function wrap(Document $doc): Wrapper\WrapperInterface|Wrapper\Hardlink|null
     {
         if ($doc instanceof Document\Hardlink) {
             if ($sourceDoc = $doc->getSourceDocument()) {
@@ -61,7 +64,7 @@ class Service
      *
      * @return Document\Hardlink\Wrapper\WrapperInterface
      */
-    public static function upperCastDocument(Document $doc)
+    public static function upperCastDocument(Document $doc): Wrapper\WrapperInterface
     {
         $to_class = 'Pimcore\\Model\\Document\\Hardlink\\Wrapper\\' . ucfirst($doc->getType());
 
@@ -81,18 +84,18 @@ class Service
     }
 
     /**
+     * @param Document\Hardlink $hardlink
+     * @param string $path
+     *
+     * @return WrapperInterface|Hardlink|null
+     * @throws \Exception
      * @internal
      *
      * this is used to get children below a hardlink by a path
      * for example: the requested path is /de/service/contact but /de/service is a hardlink to /en/service
      * then $hardlink would be /en/service and $path /de/service/contact and this function returns then /en/service/contact
-     *
-     * @param Document\Hardlink $hardlink
-     * @param string $path
-     *
-     * @return Document\Hardlink\Wrapper\WrapperInterface|null
      */
-    public static function getChildByPath(Document\Hardlink $hardlink, $path)
+    public static function getChildByPath(Document\Hardlink $hardlink, string $path): Wrapper\WrapperInterface|Wrapper\Hardlink|null
     {
         if ($hardlink->getChildrenFromSource() && $hardlink->getSourceDocument()) {
             $hardlinkRealPath = preg_replace('@^' . preg_quote($hardlink->getRealFullPath(), '@') . '@', $hardlink->getSourceDocument()->getRealFullPath(), $path);
@@ -115,14 +118,14 @@ class Service
     }
 
     /**
-     * @internal
-     *
      * @param Document\Hardlink $hardlink
      * @param string $path
      *
-     * @return Document\Hardlink\Wrapper\WrapperInterface|null
+     * @return WrapperInterface|Hardlink|null
+     * @throws \Exception
+     * @internal
      */
-    public static function getNearestChildByPath(Document\Hardlink $hardlink, $path)
+    public static function getNearestChildByPath(Document\Hardlink $hardlink, string $path): Wrapper\WrapperInterface|Wrapper\Hardlink|null
     {
         if ($hardlink->getChildrenFromSource() && $hardlink->getSourceDocument()) {
             $hardlinkRealPath = preg_replace('@^' . preg_quote($hardlink->getRealFullPath(), '@') . '@', $hardlink->getSourceDocument()->getRealFullPath(), $path);

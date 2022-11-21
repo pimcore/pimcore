@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -39,12 +40,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 abstract class ElementControllerBase extends AdminController
 {
-    /**
-     * @param ElementInterface $element
-     *
-     * @return array
-     */
-    protected function getTreeNodeConfig($element)
+    protected function getTreeNodeConfig(ElementInterface $element): array
     {
         return [];
     }
@@ -56,7 +52,7 @@ abstract class ElementControllerBase extends AdminController
      *
      * @return JsonResponse
      */
-    public function treeGetRootAction(Request $request)
+    public function treeGetRootAction(Request $request): JsonResponse
     {
         $type = $request->get('elementType');
         $allowedTypes = ['asset', 'document', 'object'];
@@ -87,7 +83,7 @@ abstract class ElementControllerBase extends AdminController
      *
      * @throws \Exception
      */
-    public function deleteInfoAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function deleteInfoAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
         $hasDependency = false;
         $errors = false;

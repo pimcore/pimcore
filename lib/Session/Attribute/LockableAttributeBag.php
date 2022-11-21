@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,10 +21,7 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 
 class LockableAttributeBag extends AttributeBag implements LockableAttributeBagInterface
 {
-    /**
-     * @var bool
-     */
-    protected $locked = false;
+    protected bool $locked = false;
 
     /**
      * {@inheritdoc}
@@ -44,7 +42,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
     /**
      * {@inheritdoc}
      */
-    public function isLocked()
+    public function isLocked(): bool
     {
         return $this->locked;
     }
@@ -74,6 +72,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
      *
      * @return mixed
      */
+
     public function remove($name): mixed
     {
         $this->checkLock();
@@ -86,6 +85,7 @@ class LockableAttributeBag extends AttributeBag implements LockableAttributeBagI
      *
      * @return mixed
      */
+
     public function clear(): mixed
     {
         $this->checkLock();

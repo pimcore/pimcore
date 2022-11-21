@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,14 +16,16 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory;
+use Pimcore\Model\Element\ElementInterface;
 
 class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\SelectCategory
 {
-    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList)
+    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList): void
     {
         $productList->prepareGroupBySystemValues($filterDefinition->getField(), true);
     }
@@ -58,16 +61,7 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
         ];
     }
 
-    /**
-     * @param AbstractFilterDefinitionType $filterDefinition
-     * @param ProductListInterface $productList
-     * @param array $currentFilter
-     * @param array $params
-     * @param bool $isPrecondition
-     *
-     * @return array
-     */
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter, array $params, bool $isPrecondition = false): array
     {
         $value = $params[$filterDefinition->getField()] ?? null;
         $isReload = $params['is_reload'] ?? null;
@@ -76,7 +70,7 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
             $value = null;
         } elseif (empty($value) && !$isReload && method_exists($filterDefinition, 'getPreSelect')) {
             $value = $filterDefinition->getPreSelect();
-            if (is_object($value)) {
+            if ($value instanceof ElementInterface) {
                 $value = $value->getId();
             }
         }

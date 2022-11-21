@@ -34,30 +34,15 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CartPriceCalculator implements CartPriceCalculatorInterface
 {
-    /**
-     * @var EnvironmentInterface
-     */
-    protected $environment;
+    protected EnvironmentInterface $environment;
 
-    /**
-     * @var CartInterface
-     */
-    protected $cart;
+    protected CartInterface $cart;
 
-    /**
-     * @var bool
-     */
-    protected $isCalculated = false;
+    protected bool $isCalculated = false;
 
-    /**
-     * @var PriceInterface
-     */
-    protected $subTotal;
+    protected PriceInterface $subTotal;
 
-    /**
-     * @var PriceInterface
-     */
-    protected $grandTotal;
+    protected PriceInterface $grandTotal;
 
     /**
      * Standard modificators are handled as configuration as they may
@@ -65,33 +50,25 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
      *
      * @var array
      */
-    protected $modificatorConfig = [];
+    protected array $modificatorConfig = [];
 
     /**
      * @var CartPriceModificatorInterface[]
      */
-    protected $modificators = [];
+    protected array $modificators = [];
 
     /**
      * @var ModificatedPriceInterface[]
      */
-    protected $modifications = [];
+    protected array $modifications = [];
 
     /**
      * @var RuleInterface[]
      */
-    protected $appliedPricingRules = [];
+    protected array $appliedPricingRules = [];
 
-    /**
-     * @var PricingManagerInterface|null
-     */
-    protected $pricingManager;
+    protected ?PricingManagerInterface $pricingManager = null;
 
-    /**
-     * @param EnvironmentInterface $environment
-     * @param CartInterface $cart
-     * @param array $modificatorConfig
-     */
     public function __construct(EnvironmentInterface $environment, CartInterface $cart, array $modificatorConfig = [])
     {
         $this->environment = $environment;
@@ -153,7 +130,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
     /**
      * @throws UnsupportedException
      */
-    public function calculate($ignorePricingRules = false)
+    public function calculate($ignorePricingRules = false): void
     {
         // sum up all item prices
         $subTotalNet = Decimal::zero();
@@ -273,7 +250,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
         $this->pricingManager = $pricingManager;
     }
 
-    public function getPricingManager()
+    public function getPricingManager(): ?PricingManagerInterface
     {
         if (empty($this->pricingManager)) {
             $this->pricingManager = Factory::getInstance()->getPricingManager();
@@ -287,7 +264,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
      *
      * @return Currency
      */
-    protected function getDefaultCurrency()
+    protected function getDefaultCurrency(): Currency
     {
         return $this->environment->getDefaultCurrency();
     }
@@ -341,20 +318,12 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
         return $this->subTotal;
     }
 
-    /**
-     * @return void
-     */
-    public function reset()
+    public function reset(): void
     {
         $this->isCalculated = false;
     }
 
-    /**
-     * @param CartPriceModificatorInterface $modificator
-     *
-     * @return CartPriceCalculatorInterface
-     */
-    public function addModificator(CartPriceModificatorInterface $modificator)
+    public function addModificator(CartPriceModificatorInterface $modificator): CartPriceCalculatorInterface
     {
         $this->reset();
         $this->modificators[] = $modificator;
@@ -370,12 +339,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
         return $this->modificators;
     }
 
-    /**
-     * @param CartPriceModificatorInterface $modificator
-     *
-     * @return CartPriceCalculatorInterface
-     */
-    public function removeModificator(CartPriceModificatorInterface $modificator)
+    public function removeModificator(CartPriceModificatorInterface $modificator): CartPriceCalculatorInterface
     {
         foreach ($this->modificators as $key => $mod) {
             if ($mod === $modificator) {
@@ -423,9 +387,6 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
         return array_values($uniqueItemRules);
     }
 
-    /**
-     * @return bool
-     */
     public function isCalculated(): bool
     {
         return $this->isCalculated;

@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -30,7 +31,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById($id)
+    public function getById(int $id)
     {
         if ($this->model->getType()) {
             $data = $this->db->fetchAssociative('SELECT * FROM users WHERE `type` = ? AND id = ?', [$this->model->getType(), $id]);
@@ -50,7 +51,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByName($name)
+    public function getByName(string $name)
     {
         $data = $this->db->fetchAssociative('SELECT * FROM users WHERE `type` = ? AND `name` = ?', [$this->model->getType(), $name]);
 
@@ -76,7 +77,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return bool
      */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
         if (!$this->model->getId()) {
             return false;

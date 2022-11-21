@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -31,7 +32,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByGridConfigAndSharedWithId($gridConfigId, $sharedWithUserId)
+    public function getByGridConfigAndSharedWithId(int $gridConfigId, int $sharedWithUserId)
     {
         $data = $this->db->fetchAssociative('SELECT * FROM gridconfig_shares WHERE gridConfigId = ? AND sharedWithUserId = ?', [$gridConfigId, $sharedWithUserId]);
 

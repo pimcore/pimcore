@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,41 +28,28 @@ trait LabelTrait
      *
      * @var int
      */
-    public $labelWidth = 100;
+    public int $labelWidth = 100;
 
     /**
      * @internal
      *
      * @var string
      */
-    public $labelAlign = 'left';
+    public string $labelAlign = 'left';
 
-    /**
-     * @param int $labelWidth
-     *
-     * @return $this
-     */
-    public function setLabelWidth($labelWidth)
+    public function setLabelWidth(int $labelWidth): static
     {
         $this->labelWidth = (int)$labelWidth;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getLabelWidth()
+    public function getLabelWidth(): int
     {
         return $this->labelWidth;
     }
 
-    /**
-     * @param string $labelAlign
-     *
-     * @return $this
-     */
-    public function setLabelAlign($labelAlign)
+    public function setLabelAlign(string $labelAlign): static
     {
         if (!empty($labelAlign)) {
             $this->labelAlign = $labelAlign;
@@ -70,9 +58,6 @@ trait LabelTrait
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getLabelAlign(): string
     {
         return $this->labelAlign;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,10 +23,5 @@ interface TrackingCodeAwareInterface
      */
     public function getTrackedCodes(): array;
 
-    /**
-     * @param string $code
-     *
-     * @return void
-     */
-    public function trackCode(string $code);
+    public function trackCode(string $code): void;
 }

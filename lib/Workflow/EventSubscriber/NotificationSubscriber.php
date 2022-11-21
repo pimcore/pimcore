@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -41,43 +42,18 @@ class NotificationSubscriber implements EventSubscriberInterface
 
     const DEFAULT_MAIL_TEMPLATE_PATH = '@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig';
 
-    /**
-     * @var NotificationEmailService
-     */
-    protected $mailService;
+    protected NotificationEmailService $mailService;
 
-    /**
-     * @var Workflow\Notification\PimcoreNotificationService
-     */
-    protected $pimcoreNotificationService;
+    protected Workflow\Notification\PimcoreNotificationService $pimcoreNotificationService;
 
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    protected TranslatorInterface $translator;
 
-    /**
-     * @var bool
-     */
-    protected $enabled = true;
+    protected bool $enabled = true;
 
-    /**
-     * @var Workflow\ExpressionService
-     */
-    protected $expressionService;
+    protected Workflow\ExpressionService $expressionService;
 
-    /**
-     * @var Workflow\Manager
-     */
-    protected $workflowManager;
+    protected Workflow\Manager $workflowManager;
 
-    /**
-     * @param NotificationEmailService $mailService
-     * @param Workflow\Notification\PimcoreNotificationService $pimcoreNotificationService
-     * @param TranslatorInterface $translator
-     * @param Workflow\ExpressionService $expressionService
-     * @param Workflow\Manager $workflowManager
-     */
     public function __construct(NotificationEmailService $mailService, Workflow\Notification\PimcoreNotificationService $pimcoreNotificationService, TranslatorInterface $translator, Workflow\ExpressionService $expressionService, Workflow\Manager $workflowManager)
     {
         $this->mailService = $mailService;
@@ -87,11 +63,6 @@ class NotificationSubscriber implements EventSubscriberInterface
         $this->workflowManager = $workflowManager;
     }
 
-    /**
-     * @param Event $event
-     *
-     * @throws ValidationException
-     */
     public function onWorkflowCompleted(Event $event)
     {
         if (!$this->checkEvent($event)) {
@@ -163,17 +134,11 @@ class NotificationSubscriber implements EventSubscriberInterface
             && $event->getSubject() instanceof ElementInterface;
     }
 
-    /**
-     * @return bool
-     */
     public function isEnabled(): bool
     {
         return $this->enabled;
     }
 
-    /**
-     * @param bool $enabled
-     */
     public function setEnabled(bool $enabled): void
     {
         $this->enabled = $enabled;

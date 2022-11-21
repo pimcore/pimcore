@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -32,16 +33,16 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      *
      * @var array
      */
-    protected $validColumns = [];
+    protected array $validColumns = [];
 
-    protected $fieldsToSave = ['name', 'userid', 'creationDateTimestamp', 'modificationDateTimestamp'];
+    protected array $fieldsToSave = ['name', 'userid', 'creationDateTimestamp', 'modificationDateTimestamp'];
 
     /**
      * Get the valid columns from the database
      *
      * @return void
      */
-    public function init()
+    public function init(): void
     {
         $this->validColumns = $this->getValidTableColumns(self::TABLE_NAME);
     }
@@ -51,7 +52,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      *
      * @throws NotFoundException
      */
-    public function getById($id)
+    public function getById(int $id)
     {
         $classRaw = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id=' . $this->db->quote($id));
         if (empty($classRaw['id'])) {
@@ -60,19 +61,13 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         $this->assignVariablesToModel($classRaw);
     }
 
-    /**
-     * @return void
-     */
-    public function create()
+    public function create(): void
     {
         $this->db->insert(self::TABLE_NAME, []);
         $this->model->setId($this->db->lastInsertId());
     }
 
-    /**
-     * @return void
-     */
-    public function save()
+    public function save(): void
     {
         if (!$this->model->getId()) {
             $this->create();
@@ -81,10 +76,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         $this->update();
     }
 
-    /**
-     * @return void
-     */
-    public function update()
+    public function update(): void
     {
         $data = [];
         foreach ($this->fieldsToSave as $field) {
@@ -109,14 +101,11 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
      *
      * @return void
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete(self::TABLE_NAME, ['id' => $this->model->getId()]);
     }
 
-    /**
-     * @param array $fields
-     */
     public function setFieldsToSave(array $fields)
     {
         $this->fieldsToSave = $fields;

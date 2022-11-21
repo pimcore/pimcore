@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -30,23 +31,12 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterf
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    /**
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array
-     */
-    public function save(DataObject\Concrete $object, $params = [])
+    public function save(DataObject\Concrete $object, array $params = []): array
     {
         return $this->delete($object, true);
     }
 
-    /**
-     * @param DataObject\Concrete $object
-     *
-     * @return array
-     */
-    public function load(DataObject\Concrete $object)
+    public function load(DataObject\Concrete $object): array
     {
         /** @var DataObject\ClassDefinition\Data\Fieldcollections $fieldDef */
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname(), ['suppressEnrichment' => true]);
@@ -150,7 +140,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return array
      */
-    public function delete(DataObject\Concrete $object, $saveMode = false)
+    public function delete(DataObject\Concrete $object, bool $saveMode = false): array
     {
         // empty or create all relevant tables
 

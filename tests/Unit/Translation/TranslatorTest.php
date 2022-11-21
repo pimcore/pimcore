@@ -24,21 +24,20 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TranslatorTest extends TestCase
 {
-    /** @var Translator */
-    protected $translator;
+    protected Translator $translator;
 
     /**
      * ['locale' => 'fallback']
      *
      * @var array
      */
-    protected $locales = [
+    protected array $locales = [
         'en' => '',
         'de' => 'en',
         'fr' => '',
     ];
 
-    protected $translations = [
+    protected array $translations = [
         'en' => [
             'simple_key' => 'EN Text',
             'fallback_key' => 'EN Fallback',

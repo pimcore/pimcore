@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,29 +16,20 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
+use Pimcore\Model\Element\ElementInterface;
+
 /**
  * @internal
  */
 final class PHPCode extends AbstractOperator
 {
-    /**
-     * @var \stdClass
-     */
-    private $config;
+    private \stdClass $config;
 
-    /**
-     * @var string
-     */
-    private $phpClass;
+    private string $phpClass;
 
-    /**
-     * @var OperatorInterface|null
-     */
-    private $instance;
+    private ?OperatorInterface $instance = null;
 
-    /**
-     * {@inheritdoc}
-     */
+
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -46,27 +38,18 @@ final class PHPCode extends AbstractOperator
         $this->phpClass = $config->phpClass ?? '';
     }
 
-    /**
-     * @return string
-     */
     public function getPhpClass(): string
     {
         return $this->phpClass;
     }
 
-    /**
-     * @param string $phpClass
-     */
     public function setPhpClass(string $phpClass)
     {
         $this->phpClass = $phpClass;
         $this->instance = null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->getInstance()->getLabel();
     }
@@ -74,7 +57,7 @@ final class PHPCode extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         try {
             return $this->getInstance()->getLabeledValue($element);

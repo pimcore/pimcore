@@ -21,39 +21,24 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class PathsEvent extends Event
 {
-    /**
-     * @var array
-     */
-    protected $paths = [];
+    protected array $paths = [];
 
-    /**
-     * @param array $paths
-     */
     public function __construct(array $paths = [])
     {
         $this->setPaths($paths);
     }
 
-    /**
-     * @return array
-     */
     public function getPaths(): array
     {
         return $this->paths;
     }
 
-    /**
-     * @param array $paths
-     */
     public function setPaths(array $paths)
     {
         $this->paths = [];
         $this->addPaths($paths);
     }
 
-    /**
-     * @param array $paths
-     */
     public function addPaths(array $paths)
     {
         $this->paths = array_merge($this->paths, $paths);

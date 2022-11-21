@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,30 +18,16 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
 abstract class AbstractData implements \JsonSerializable
 {
-    /**
-     * @var string
-     */
-    protected $id;
+    protected string $id;
 
-    /**
-     * @var array
-     */
-    protected $additionalAttributes = [];
+    protected array $additionalAttributes = [];
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @param string $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(string $id): static
     {
         $this->id = $id;
 
@@ -55,7 +42,7 @@ abstract class AbstractData implements \JsonSerializable
      *
      * @return $this
      */
-    public function mergeValues(array $data, $overwrite = false)
+    public function mergeValues(array $data, bool $overwrite = false): static
     {
         foreach ($data as $key => $value) {
             $getter = 'get' . ucfirst($key);
@@ -81,7 +68,7 @@ abstract class AbstractData implements \JsonSerializable
      *
      * @return $this
      */
-    public function addAdditionalAttribute($attribute, $value)
+    public function addAdditionalAttribute(string $attribute, mixed $value): static
     {
         $this->additionalAttributes[$attribute] = $value;
 
@@ -95,7 +82,7 @@ abstract class AbstractData implements \JsonSerializable
      *
      * @return mixed
      */
-    public function getAdditionalAttribute($attribute)
+    public function getAdditionalAttribute(string $attribute): mixed
     {
         return $this->additionalAttributes[$attribute];
     }
@@ -105,7 +92,7 @@ abstract class AbstractData implements \JsonSerializable
      *
      * @return array
      */
-    public function getAdditionalAttributes()
+    public function getAdditionalAttributes(): array
     {
         return $this->additionalAttributes;
     }
@@ -115,8 +102,8 @@ abstract class AbstractData implements \JsonSerializable
      *
      * @return array
      */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()// : array
+
+    public function jsonSerialize(): array
     {
         $json = [];
         $vars = get_object_vars($this);

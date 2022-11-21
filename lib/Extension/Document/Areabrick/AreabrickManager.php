@@ -26,24 +26,16 @@ use Psr\Container\ContainerInterface;
  */
 class AreabrickManager implements AreabrickManagerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+
+    protected ContainerInterface $container;
 
     /**
      * @var AreabrickInterface[]
      */
-    protected $bricks = [];
+    protected array $bricks = [];
 
-    /**
-     * @var array
-     */
-    protected $brickServiceIds = [];
+    protected array $brickServiceIds = [];
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -154,7 +146,7 @@ class AreabrickManager implements AreabrickManagerInterface
      *
      * @return AreabrickInterface|null
      */
-    protected function loadServiceBrick(string $id)
+    protected function loadServiceBrick(string $id): ?AreabrickInterface
     {
         if (!isset($this->brickServiceIds[$id])) {
             return null;

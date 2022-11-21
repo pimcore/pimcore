@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,11 +24,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class IndexUpdateListener implements EventSubscriberInterface
 {
-    /**
-     * @return array
-     */
-    #[\ReturnTypeWillChange]
-    public static function getSubscribedEvents()//: array
+
+    public static function getSubscribedEvents(): array
     {
         return [
             DataObjectEvents::POST_ADD => 'onObjectUpdate',

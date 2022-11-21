@@ -43,14 +43,8 @@ use Symfony\Component\HttpKernel\KernelInterface;
  */
 class BundleConfigLocator
 {
-    /**
-     * @var KernelInterface
-     */
-    private $kernel;
+    private KernelInterface $kernel;
 
-    /**
-     * @param KernelInterface $kernel
-     */
     public function __construct(KernelInterface $kernel)
     {
         $this->kernel = $kernel;
@@ -63,7 +57,7 @@ class BundleConfigLocator
      *
      * @return array
      */
-    public function locate(string $name)
+    public function locate(string $name): array
     {
         $result = [];
         foreach ($this->kernel->getBundles() as $bundle) {

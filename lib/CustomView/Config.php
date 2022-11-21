@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -43,11 +44,6 @@ final class Config
         return self::$locationAwareConfigRepository;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return array
-     */
     protected static function flipArray(mixed $data): array
     {
         if (empty($data['classes'])) {
@@ -65,7 +61,7 @@ final class Config
      * @internal
      *
      */
-    public static function get()
+    public static function get(): array
     {
         $config = [];
         $repository = self::getRepository();
@@ -90,7 +86,7 @@ final class Config
      *
      * @throws \Exception
      */
-    public static function save(array $data, ?array $deletedRecords)
+    public static function save(array $data, ?array $deletedRecords): void
     {
         $repository = self::getRepository();
 
@@ -122,9 +118,6 @@ final class Config
         }
     }
 
-    /**
-     * @return bool
-     */
     public static function isWriteable(): bool
     {
         return self::getRepository()->isWriteable();

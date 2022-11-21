@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,13 +21,7 @@ namespace Pimcore\Tool;
  */
 class Cast
 {
-    /**
-     * @param string $class
-     * @param object $object
-     *
-     * @return mixed
-     */
-    public static function castToClass($class, $object)
+    public static function castToClass(string $class, object $object): mixed
     {
         $class = ltrim($class, '\\');
 

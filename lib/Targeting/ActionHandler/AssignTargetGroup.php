@@ -27,10 +27,7 @@ class AssignTargetGroup implements ActionHandlerInterface
 {
     const STORAGE_KEY = 'tg';
 
-    /**
-     * @var TargetingStorageInterface
-     */
-    private $storage;
+    private TargetingStorageInterface $storage;
 
     // @phpstan-ignore-next-line
     public function __construct(

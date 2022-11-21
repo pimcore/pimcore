@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -51,10 +52,9 @@ class GoogleTagManager extends Tracker implements
     ];
 
     /** @var string[] */
-    protected $trackedCodes = [];
+    protected array $trackedCodes = [];
 
-    /** @var array */
-    protected $deferred = [];
+    protected array $deferred = [];
 
     protected function configureOptions(OptionsResolver $resolver)
     {
@@ -95,7 +95,7 @@ class GoogleTagManager extends Tracker implements
         $this->trackCode($result);
     }
 
-    public function trackCartProductActionAdd(CartInterface $cart, ProductInterface $product, $quantity = 1)
+    public function trackCartProductActionAdd(CartInterface $cart, ProductInterface $product, float|int $quantity = 1)
     {
         $item = $this->trackingItemBuilder->buildProductActionItem($product, $quantity);
 
@@ -117,7 +117,7 @@ class GoogleTagManager extends Tracker implements
         $this->trackCode($result);
     }
 
-    public function trackCartProductActionRemove(CartInterface $cart, ProductInterface $product, $quantity = 1)
+    public function trackCartProductActionRemove(CartInterface $cart, ProductInterface $product, float|int $quantity = 1)
     {
         $item = $this->trackingItemBuilder->buildProductActionItem($product, $quantity);
 
@@ -162,7 +162,7 @@ class GoogleTagManager extends Tracker implements
         $this->trackCode($result);
     }
 
-    public function trackCheckoutStep(CheckoutManagerCheckoutStepInterface $step, CartInterface $cart, $stepNumber = null, $checkoutOption = null)
+    public function trackCheckoutStep(CheckoutManagerCheckoutStepInterface $step, CartInterface $cart, string $stepNumber = null, string $checkoutOption = null)
     {
         $items = $this->trackingItemBuilder->buildCheckoutItemsByCart($cart);
 
@@ -214,7 +214,7 @@ class GoogleTagManager extends Tracker implements
      *
      * @return array
      */
-    protected function transformProductAction(ProductAction $item)
+    protected function transformProductAction(ProductAction $item): array
     {
         return $this->filterNullValues(
             array_merge([
@@ -239,7 +239,7 @@ class GoogleTagManager extends Tracker implements
      *
      * @return array
      */
-    protected function transformProductImpression(ProductImpression $item)
+    protected function transformProductImpression(ProductImpression $item): array
     {
         $data = $this->filterNullValues(
             array_merge([
@@ -265,7 +265,7 @@ class GoogleTagManager extends Tracker implements
      *
      * @return array
      */
-    protected function transformTransaction(Transaction $transaction)
+    protected function transformTransaction(Transaction $transaction): array
     {
         return $this->filterNullValues(
             array_merge([
@@ -280,12 +280,7 @@ class GoogleTagManager extends Tracker implements
         );
     }
 
-    /**
-     * @param array $items
-     *
-     * @return array
-     */
-    protected function transformCheckoutItems(array $items)
+    protected function transformCheckoutItems(array $items): array
     {
         return array_map(function (ProductAction $item) {
             return $this->transformProductAction($item);
@@ -338,7 +333,7 @@ class GoogleTagManager extends Tracker implements
         return $this->trackedCodes;
     }
 
-    public function trackCode(string $code)
+    public function trackCode(string $code): void
     {
         $this->trackedCodes[] = $code;
     }

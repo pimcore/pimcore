@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -30,7 +31,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function getById($id)
+    public function getById(int $id)
     {
         $data = $this->db->fetchAssociative('SELECT * FROM recyclebin WHERE id = ?', [$id]);
 
@@ -48,7 +49,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @todo: not all save methods return a boolean, why this one?
      */
-    public function save()
+    public function save(): bool
     {
         $version = $this->model->getObjectVars();
         $data = [];

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,6 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
@@ -51,14 +53,14 @@ class Video extends Data implements
      *
      * @var string
      */
-    public $fieldtype = 'video';
+    public string $fieldtype = 'video';
 
     /**
      * @internal
      *
      * @var string|int
      */
-    public $width = 0;
+    public string|int $width = 0;
 
     /**
      * Type for the column to query
@@ -67,7 +69,7 @@ class Video extends Data implements
      *
      * @var string|int
      */
-    public $height = 0;
+    public string|int $height = 0;
 
     /**
      * @internal
@@ -97,34 +99,26 @@ class Video extends Data implements
      *
      * @var array|null
      */
-    public $allowedTypes;
+    public ?array $allowedTypes = null;
 
     /**
      * @internal
      *
      * @var array
      */
-    public $supportedTypes = [
+    public array $supportedTypes = [
         self::TYPE_ASSET,
         self::TYPE_YOUTUBE,
         self::TYPE_VIMEO,
         self::TYPE_DAILYMOTION,
     ];
 
-    /**
-     * @return string|int
-     */
-    public function getWidth()
+    public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @param string|int $width
-     *
-     * @return $this
-     */
-    public function setWidth($width)
+    public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
             $width = (int)$width;
@@ -134,20 +128,12 @@ class Video extends Data implements
         return $this;
     }
 
-    /**
-     * @return string|int
-     */
-    public function getHeight()
+    public function getHeight(): int|string
     {
         return $this->height;
     }
 
-    /**
-     * @param string|int $height
-     *
-     * @return $this
-     */
-    public function setHeight($height)
+    public function setHeight(int|string $height): static
     {
         if (is_numeric($height)) {
             $height = (int)$height;
@@ -172,44 +158,33 @@ class Video extends Data implements
         return $this->uploadPath;
     }
 
-    /**
-     * @param array|null $allowedTypes
-     *
-     * @return $this
-     */
-    public function setAllowedTypes($allowedTypes): static
+    public function setAllowedTypes(?array $allowedTypes): static
     {
         $this->allowedTypes = $allowedTypes;
 
         return $this;
     }
 
-    /**
-     * @return array|null
-     */
     public function getAllowedTypes(): ?array
     {
         return $this->allowedTypes;
     }
 
-    /**
-     * @return array
-     */
     public function getSupportedTypes(): array
     {
         return $this->supportedTypes;
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param DataObject\Data\Video|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string|null
+     *@see ResourcePersistenceAwareInterface::getDataForResource
+     *
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         if ($data instanceof DataObject\Data\Video) {
             $data = clone $data;
@@ -231,15 +206,15 @@ class Video extends Data implements
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param string|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return DataObject\Data\Video|null
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
+     *
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function getDataFromResource(mixed $data, Concrete $object = null, array $params = []): ?DataObject\Data\Video
     {
         if ($data) {
             $raw = Serialize::unserialize($data);
@@ -277,29 +252,29 @@ class Video extends Data implements
     }
 
     /**
-     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
-     * @param DataObject\Data\Video $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string|null
+     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
+     *
      */
-    public function getDataForQueryResource($data, $object = null, $params = [])
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
     /**
-     * @see Data::getDataForEditmode
-     *
-     * @param DataObject\Data\Video|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array|null
+     * @see Data::getDataForEditmode
+     *
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data) {
             $data = clone $data;
@@ -317,15 +292,15 @@ class Video extends Data implements
     }
 
     /**
-     * @see Data::getDataFromEditmode
-     *
-     * @param array|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return DataObject\Data\Video|null
+     *@see Data::getDataFromEditmode
+     *
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?DataObject\Data\Video
     {
         $video = null;
 
@@ -360,11 +335,11 @@ class Video extends Data implements
     /**
      * @param array|null $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return DataObject\Data\Video
+     * @return DataObject\Data\Video|null
      */
-    public function getDataFromGridEditor($data, $object = null, $params = [])
+    public function getDataFromGridEditor(?array $data, Concrete $object = null, array $params = []): ?DataObject\Data\Video
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
@@ -372,11 +347,11 @@ class Video extends Data implements
     /**
      * @param DataObject\Data\Video|null $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
      */
-    public function getDataForGrid($data, $object = null, $params = [])
+    public function getDataForGrid(?DataObject\Data\Video $data, Concrete $object = null, array $params = []): array
     {
         $id = null;
         if ($data && $data->getData() instanceof Asset) {
@@ -391,15 +366,15 @@ class Video extends Data implements
     }
 
     /**
-     * @see Data::getVersionPreview
-     *
-     * @param DataObject\Data\Video|null $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
+     * @see Data::getVersionPreview
+     *
      */
-    public function getVersionPreview($data, $object = null, $params = [])
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data && $data->getType() == 'asset' && $data->getData() instanceof Asset) {
             return '<img src="/admin/asset/get-video-thumbnail?id=' . $data->getData()->getId() . '&width=100&height=100&aspectratio=true" />';
@@ -411,7 +386,7 @@ class Video extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, $params = [])
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data) {
@@ -426,10 +401,7 @@ class Video extends Data implements
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataForSearchIndex($object, $params = [])
+    public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof DataObject\Data\Video) {
@@ -441,10 +413,7 @@ class Video extends Data implements
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCacheTags($data, array $tags = [])
+    public function getCacheTags(mixed $data, array $tags = []): array
     {
         if ($data && $data->getData() instanceof Asset) {
             if (!array_key_exists($data->getData()->getCacheTag(), $tags)) {
@@ -464,7 +433,7 @@ class Video extends Data implements
     /**
      * { @inheritdoc }
      */
-    public function enrichFieldDefinition(/** array */ $context = []) /** : static */
+    public function enrichFieldDefinition(array $context = []): static
     {
         if (empty($this->getAllowedTypes()) && (isset($context['object']) || isset($context['containerType']))) {
             $this->setAllowedTypes($this->getSupportedTypes());
@@ -476,17 +445,12 @@ class Video extends Data implements
     /**
      * { @inheritdoc }
      */
-    public function enrichLayoutDefinition($object, $context = [])
+    public function enrichLayoutDefinition(?Concrete $object, array $context = []): static
     {
         return $this->enrichFieldDefinition($context);
     }
 
-    /**
-     * @param DataObject\Data\Video|null $data
-     *
-     * @return array
-     */
-    public function resolveDependencies($data)
+    public function resolveDependencies(mixed $data): array
     {
         $dependencies = [];
 
@@ -510,7 +474,7 @@ class Video extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function isDiffChangeAllowed($object, $params = [])
+    public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return false;
     }
@@ -520,11 +484,11 @@ class Video extends Data implements
      *
      * @param DataObject\Data\Video|null $data
      * @param DataObject\Concrete|null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array|string
      */
-    public function getDiffVersionPreview($data, $object = null, $params = [])
+    public function getDiffVersionPreview(?DataObject\Data\Video $data, Concrete $object = null, array $params = []): array|string
     {
         $versionPreview = null;
 
@@ -546,7 +510,7 @@ class Video extends Data implements
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds(/** mixed */ $container, /** array */ $idMapping, /** array */ $params = []) /** :mixed */
+    public function rewriteIds(mixed $container, array $idMapping, array $params = []): mixed
     {
         $data = $this->getDataFromObjectParam($container, $params);
 
@@ -565,13 +529,7 @@ class Video extends Data implements
         return $data;
     }
 
-    /**
-     * @param DataObject\Data\Video|null $oldValue
-     * @param DataObject\Data\Video|null $newValue
-     *
-     * @return bool
-     */
-    public function isEqual($oldValue, $newValue): bool
+    public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
         $oldData = [];
         $newData = [];
@@ -613,10 +571,7 @@ class Video extends Data implements
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+    public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof DataObject\Data\Video) {
             $result = [];
@@ -654,10 +609,7 @@ class Video extends Data implements
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+    public function denormalize(mixed $value, array $params = []): ?DataObject\Data\Video
     {
         if (is_array($value)) {
             $video = new DataObject\Data\Video();
@@ -683,33 +635,21 @@ class Video extends Data implements
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\Video::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . DataObject\Data\Video::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . DataObject\Data\Video::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . DataObject\Data\Video::class . '|null';

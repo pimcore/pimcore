@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,8 +21,5 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
  */
 final class ImageRenderer extends AbstractRenderer
 {
-    /**
-     * @var string
-     */
-    public $renderer = 'image';
+    public string $renderer = 'image';
 }

@@ -31,25 +31,13 @@ class CodeCollector
 
     const ACTION_APPEND = 'append';
 
-    /**
-     * @var string
-     */
-    private $defaultBlock;
+    private string $defaultBlock;
 
-    /**
-     * @var array
-     */
-    private $validBlocks;
+    private array $validBlocks;
 
-    /**
-     * @var array
-     */
-    private $codeParts = [];
+    private array $codeParts = [];
 
-    /**
-     * @var array
-     */
-    private $validActions = [
+    private array $validActions = [
         self::ACTION_PREPEND,
         self::ACTION_APPEND,
     ];
@@ -75,7 +63,7 @@ class CodeCollector
      * @param string $action
      * @param SiteId|null $siteId Restrict code part to a specific site
      */
-    public function addCodePart(string $code, string $block = null, string $action = self::ACTION_APPEND, SiteId $siteId = null)
+    public function addCodePart(string $code, string $block = null, string $action = self::ACTION_APPEND, SiteId $siteId = null): void
     {
         if (!in_array($action, $this->validActions)) {
             throw new \InvalidArgumentException(sprintf(
@@ -124,7 +112,7 @@ class CodeCollector
      * @param CodeBlock $codeBlock
      * @param string $block
      */
-    public function enrichCodeBlock(SiteId $siteId, CodeBlock $codeBlock, string $block)
+    public function enrichCodeBlock(SiteId $siteId, CodeBlock $codeBlock, string $block): void
     {
         // global parts not restricted to a config key
         $this->enrichBlock(self::CONFIG_KEY_GLOBAL, $codeBlock, $block);

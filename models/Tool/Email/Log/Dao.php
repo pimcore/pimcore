@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -30,14 +31,14 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @var string
      */
-    protected static $dbTable = 'email_log';
+    protected static string $dbTable = 'email_log';
 
     /**
      * Get the data for the object from database for the given id, or from the ID which is set in the object
      *
      * @param int|null $id
      */
-    public function getById($id = null)
+    public function getById(int $id = null)
     {
         if ($id != null) {
             $this->model->setId($id);
@@ -107,12 +108,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->model->setModificationDate($date);
     }
 
-    /**
-     * @param array|string $data
-     *
-     * @return array|string
-     */
-    protected function createJsonLoggingObject($data)
+    protected function createJsonLoggingObject(array|string $data): array|string
     {
         if (!is_array($data)) {
             return json_encode(new \stdClass());
@@ -135,7 +131,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return \stdClass
      */
-    protected function prepareLoggingData($key, $value)
+    protected function prepareLoggingData(string $key, mixed $value): \stdClass
     {
         $class = new \stdClass();
         $class->key = (string)$key; // key has to be a string otherwise the treeGrid won't work

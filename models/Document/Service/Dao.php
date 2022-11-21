@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -27,13 +28,7 @@ use Pimcore\Model\Site;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    /**
-     * @param Site $site
-     * @param string $path
-     *
-     * @return int
-     */
-    public function getDocumentIdByPrettyUrlInSite(Site $site, $path)
+    public function getDocumentIdByPrettyUrlInSite(Site $site, string $path): int
     {
         return (int) $this->db->fetchOne(
             'SELECT documents.id FROM documents
@@ -43,12 +38,7 @@ class Dao extends Model\Dao\AbstractDao
         );
     }
 
-    /**
-     * @param Document $document
-     *
-     * @return int
-     */
-    public function getTranslationSourceId(Document $document)
+    public function getTranslationSourceId(Document $document): int
     {
         $sourceId = $this->db->fetchOne('SELECT sourceId FROM documents_translations WHERE id = ?', [$document->getId()]);
         if (!$sourceId) {
@@ -64,7 +54,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return int[]
      */
-    public function getTranslations(Document $document, $task = 'open')
+    public function getTranslations(Document $document, string $task = 'open'): array
     {
         $sourceId = $this->getTranslationSourceId($document);
         $data = $this->db->fetchAllAssociative('SELECT id,language FROM documents_translations WHERE sourceId IN(?, ?) UNION SELECT sourceId as id,"source" FROM documents_translations WHERE id = ?', [$sourceId, $document->getId(), $document->getId()]);
@@ -104,7 +94,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param Document $translation
      * @param string|null $language
      */
-    public function addTranslation(Document $document, Document $translation, $language = null)
+    public function addTranslation(Document $document, Document $translation, string $language = null)
     {
         $sourceId = $this->getTranslationSourceId($document);
 
@@ -119,9 +109,6 @@ class Dao extends Model\Dao\AbstractDao
         ]);
     }
 
-    /**
-     * @param Document $document
-     */
     public function removeTranslation(Document $document)
     {
         // if $document is a source-document, we need to move them over to a new document
@@ -132,10 +119,6 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     * @param Document $document
-     * @param Document $targetDocument
-     */
     public function removeTranslationLink(Document $document, Document $targetDocument)
     {
         $sourceId = $this->getTranslationSourceId($document);

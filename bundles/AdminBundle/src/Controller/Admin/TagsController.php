@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -38,7 +39,7 @@ class TagsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function addAction(Request $request)
+    public function addAction(Request $request): JsonResponse
     {
         try {
             $tag = new Tag();
@@ -61,7 +62,7 @@ class TagsController extends AdminController
      *
      * @throws \Exception
      */
-    public function deleteAction(Request $request)
+    public function deleteAction(Request $request): JsonResponse
     {
         $tag = Tag::getById((int) $request->get('id'));
         if ($tag) {
@@ -82,7 +83,7 @@ class TagsController extends AdminController
      *
      * @throws \Exception
      */
-    public function updateAction(Request $request)
+    public function updateAction(Request $request): JsonResponse
     {
         $tag = Tag::getById((int) $request->get('id'));
         if ($tag) {
@@ -109,7 +110,7 @@ class TagsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function treeGetChildrenByIdAction(Request $request)
+    public function treeGetChildrenByIdAction(Request $request): JsonResponse
     {
         $showSelection = $request->get('showSelection') == 'true';
         $assignmentCId = (int)$request->get('assignmentCId');
@@ -161,16 +162,7 @@ class TagsController extends AdminController
         return $this->adminJson($tags);
     }
 
-    /**
-     * @param Tag $tag
-     * @param bool $showSelection
-     * @param array $assignedTagIds
-     * @param bool $loadChildren
-     * @param bool $recursiveChildren
-     *
-     * @return array
-     */
-    protected function convertTagToArray(Tag $tag, $showSelection, $assignedTagIds, $loadChildren = false, $recursiveChildren = false)
+    protected function convertTagToArray(Tag $tag, bool $showSelection, array $assignedTagIds, bool $loadChildren = false, bool $recursiveChildren = false): array
     {
         $tagArray = [
             'id' => $tag->getId(),
@@ -206,7 +198,7 @@ class TagsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function loadTagsForElementAction(Request $request)
+    public function loadTagsForElementAction(Request $request): JsonResponse
     {
         $assginmentCId = (int)$request->get('assignmentCId');
         $assginmentCType = strip_tags($request->get('assignmentCType'));
@@ -230,7 +222,7 @@ class TagsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function addTagToElementAction(Request $request)
+    public function addTagToElementAction(Request $request): JsonResponse
     {
         $assginmentCId = (int)$request->get('assignmentElementId');
         $assginmentCType = strip_tags($request->get('assignmentElementType'));
@@ -253,7 +245,7 @@ class TagsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function removeTagFromElementAction(Request $request)
+    public function removeTagFromElementAction(Request $request): JsonResponse
     {
         $assginmentCId = (int)$request->get('assignmentElementId');
         $assginmentCType = strip_tags($request->get('assignmentElementType'));
@@ -277,7 +269,7 @@ class TagsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function getBatchAssignmentJobsAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function getBatchAssignmentJobsAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
         $elementId = (int)$request->get('elementId');
         $elementType = strip_tags($request->get('elementType'));
@@ -415,7 +407,7 @@ class TagsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function doBatchAssignmentAction(Request $request)
+    public function doBatchAssignmentAction(Request $request): JsonResponse
     {
         $cType = strip_tags($request->get('elementType'));
         $assignedTags = json_decode($request->get('assignedTags'));

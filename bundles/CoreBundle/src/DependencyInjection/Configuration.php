@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -2093,9 +2094,6 @@ final class Configuration implements ConfigurationInterface
             ->end();
     }
 
-    /**
-     * @param ArrayNodeDefinition $rootNode
-     */
     private function addGlossaryNode(ArrayNodeDefinition $rootNode): void
     {
         $rootNode

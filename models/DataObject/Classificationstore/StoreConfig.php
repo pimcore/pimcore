@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,31 +28,23 @@ final class StoreConfig extends Model\AbstractModel
 {
     use RecursionBlockingEventDispatchHelperTrait;
 
-    /**
-     * @var int|null
-     */
-    protected $id;
+    protected ?int $id = null;
 
     /**
      * The store name.
      *
      * @var string|null
      */
-    protected $name;
+    protected ?string $name = null;
 
     /**
      * The store description.
      *
      * @var string|null
      */
-    protected $description;
+    protected ?string $description = null;
 
-    /**
-     * @param int $id
-     *
-     * @return self|null
-     */
-    public static function getById($id)
+    public static function getById(int $id): ?StoreConfig
     {
         try {
             $config = new self();
@@ -63,12 +56,7 @@ final class StoreConfig extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param string $name
-     *
-     * @return self|null
-     */
-    public static function getByName($name)
+    public static function getByName(string $name): ?StoreConfig
     {
         try {
             $config = new self();
@@ -80,10 +68,7 @@ final class StoreConfig extends Model\AbstractModel
         }
     }
 
-    /**
-     * @return Model\DataObject\Classificationstore\StoreConfig
-     */
-    public static function create()
+    public static function create(): StoreConfig
     {
         $config = new self();
         $config->save();
@@ -91,22 +76,14 @@ final class StoreConfig extends Model\AbstractModel
         return $config;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -116,7 +93,7 @@ final class StoreConfig extends Model\AbstractModel
      *
      * @return string|null
      */
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -128,7 +105,7 @@ final class StoreConfig extends Model\AbstractModel
      *
      * @return Model\DataObject\Classificationstore\StoreConfig
      */
-    public function setDescription($description)
+    public function setDescription(string $description): static
     {
         $this->description = $description;
 
@@ -170,18 +147,12 @@ final class StoreConfig extends Model\AbstractModel
         return $model;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     */
-    public function setId($id)
+    public function setId(int $id)
     {
         $this->id = $id;
     }

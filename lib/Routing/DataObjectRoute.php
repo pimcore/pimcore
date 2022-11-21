@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,15 +27,12 @@ use Symfony\Component\Routing\Route;
  */
 final class DataObjectRoute extends Route implements RouteObjectInterface
 {
-    protected ?Concrete $object;
+    protected ?Concrete $object = null;
 
-    protected ?UrlSlug $slug;
+    protected ?UrlSlug $slug = null;
 
-    protected ?Site $site;
+    protected ?Site $site = null;
 
-    /**
-     * @return Concrete|null
-     */
     public function getObject(): ?Concrete
     {
         return $this->object;
@@ -50,9 +48,6 @@ final class DataObjectRoute extends Route implements RouteObjectInterface
         return $this;
     }
 
-    /**
-     * @return UrlSlug|null
-     */
     public function getSlug(): ?UrlSlug
     {
         return $this->slug;
@@ -68,9 +63,6 @@ final class DataObjectRoute extends Route implements RouteObjectInterface
         return $this;
     }
 
-    /**
-     * @return Site|null
-     */
     public function getSite(): ?Site
     {
         return $this->site;

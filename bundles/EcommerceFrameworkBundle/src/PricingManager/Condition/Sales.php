@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,22 +25,14 @@ use Pimcore\Model\DataObject\OnlineShopOrderItem;
 
 class Sales extends AbstractOrder implements ConditionInterface
 {
-    /**
-     * @var int
-     */
-    protected $amount;
+    protected int $amount;
 
     /**
      * @var int[]
      */
-    protected $currentSalesAmount = [];
+    protected array $currentSalesAmount = [];
 
-    /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return bool
-     */
-    public function check(EnvironmentInterface $environment)
+    public function check(EnvironmentInterface $environment): bool
     {
         $rule = $environment->getRule();
         if ($rule) {
@@ -52,10 +45,7 @@ class Sales extends AbstractOrder implements ConditionInterface
         }
     }
 
-    /**
-     * @return string
-     */
-    public function toJSON()
+    public function toJSON(): string
     {
         // basic
         $json = [
@@ -65,12 +55,7 @@ class Sales extends AbstractOrder implements ConditionInterface
         return json_encode($json);
     }
 
-    /**
-     * @param string $string
-     *
-     * @return ConditionInterface
-     */
-    public function fromJSON($string)
+    public function fromJSON(string $string): ConditionInterface
     {
         $json = json_decode($string);
 
@@ -79,23 +64,17 @@ class Sales extends AbstractOrder implements ConditionInterface
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getAmount()
+    public function getAmount(): int
     {
         return $this->amount;
     }
 
-    /**
-     * @param int $amount
-     */
-    public function setAmount($amount)
+    public function setAmount(int $amount)
     {
         $this->amount = (int)$amount;
     }
 
-    protected function getCurrentAmount(RuleInterface $rule)
+    protected function getCurrentAmount(RuleInterface $rule): int
     {
         if (!array_key_exists($rule->getId(), $this->currentSalesAmount)) {
             $query = <<<'SQL'

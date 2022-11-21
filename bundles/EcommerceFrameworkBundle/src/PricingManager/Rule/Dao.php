@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Pimcore
  *
@@ -34,24 +35,18 @@ class Dao extends AbstractDao
      *
      * @var array
      */
-    protected $validColumns = [];
+    protected array $validColumns = [];
 
-    /**
-     * @var array
-     */
-    protected $fieldsToSave = ['name', 'label', 'description', 'behavior', 'active', 'prio', 'condition', 'actions'];
+    protected array $fieldsToSave = ['name', 'label', 'description', 'behavior', 'active', 'prio', 'condition', 'actions'];
 
-    /**
-     * @var array
-     */
-    protected $localizedFields = ['label', 'description'];
+    protected array $localizedFields = ['label', 'description'];
 
     /**
      * Get the valid columns from the database
      *
      * @return void
      */
-    public function init()
+    public function init(): void
     {
         $this->validColumns = $this->getValidTableColumns(self::TABLE_NAME);
     }
@@ -61,7 +56,7 @@ class Dao extends AbstractDao
      *
      * @throws NotFoundException
      */
-    public function getById($id)
+    public function getById(int $id)
     {
         $classRaw = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME . ' WHERE id=' . $this->db->quote($id));
         if (empty($classRaw)) {
@@ -84,7 +79,7 @@ class Dao extends AbstractDao
      *
      * @return void
      */
-    public function save()
+    public function save(): void
     {
         if (!$this->model->getId()) {
             $this->create();
@@ -93,10 +88,7 @@ class Dao extends AbstractDao
         $this->update();
     }
 
-    /**
-     * @return void
-     */
-    public function update()
+    public function update(): void
     {
         $data = [];
 
@@ -133,14 +125,11 @@ class Dao extends AbstractDao
      *
      * @return void
      */
-    public function delete()
+    public function delete(): void
     {
         $this->db->delete(self::TABLE_NAME, ['id' => $this->model->getId()]);
     }
 
-    /**
-     * @param array $fields
-     */
     public function setFieldsToSave(array $fields)
     {
         $this->fieldsToSave = $fields;

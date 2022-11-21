@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,27 +24,13 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 class Statistic extends \Pimcore\Model\AbstractModel
 {
-    /**
-     * @var int
-     */
-    public $id;
+    public int $id;
 
-    /**
-     * @var string
-     */
-    public $tokenSeriesId;
+    public string $tokenSeriesId;
 
-    /**
-     * @var int
-     */
-    public $date;
+    public int $date;
 
-    /**
-     * @param int $id
-     *
-     * @return bool|Statistic
-     */
-    public function getById($id)
+    public function getById(int $id): Statistic|bool
     {
         try {
             $config = new self();
@@ -60,11 +47,11 @@ class Statistic extends \Pimcore\Model\AbstractModel
      * @param int $seriesId
      * @param int|null $usagePeriod
      *
-     * @throws \Exception
-     *
      * @return bool|array
+     *@throws \Exception
+     *
      */
-    public static function getBySeriesId($seriesId, $usagePeriod = null)
+    public static function getBySeriesId(int $seriesId, int $usagePeriod = null): bool|array
     {
         $db = \Pimcore\Db::get();
 
@@ -87,12 +74,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
         }
     }
 
-    /**
-     * @param int $seriesId
-     *
-     * @return bool
-     */
-    public static function increaseUsageStatistic($seriesId)
+    public static function increaseUsageStatistic(int $seriesId): bool
     {
         $db = $db = \Pimcore\Db::get();
 
@@ -112,7 +94,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
      *
      * @return bool
      */
-    public static function cleanUpStatistics($duration, $seriesId = null)
+    public static function cleanUpStatistics(int $duration, string $seriesId = null): bool
     {
         $query = 'DELETE FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic\Dao::TABLE_NAME . ' WHERE DAY(DATEDIFF(date, NOW())) >= ?';
         $params[] = $duration;
@@ -133,50 +115,32 @@ class Statistic extends \Pimcore\Model\AbstractModel
         }
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     */
-    public function setId($id)
+    public function setId(int $id)
     {
         $this->id = $id;
     }
 
-    /**
-     * @return string
-     */
-    public function getTokenSeriesId()
+    public function getTokenSeriesId(): string
     {
         return $this->tokenSeriesId;
     }
 
-    /**
-     * @param string $tokenSeriesId
-     */
-    public function setTokenSeriesId($tokenSeriesId)
+    public function setTokenSeriesId(string $tokenSeriesId)
     {
         $this->tokenSeriesId = $tokenSeriesId;
     }
 
-    /**
-     * @return int
-     */
-    public function getDate()
+    public function getDate(): int
     {
         return $this->date;
     }
 
-    /**
-     * @param int $date
-     */
-    public function setDate($date)
+    public function setDate(int $date)
     {
         $this->date = $date;
     }
