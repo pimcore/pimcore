@@ -2,7 +2,7 @@
 
 In Pimcore E-Commerce Framework, price systems are responsible for price calculations. The easiest use case is getting
 the price from an attribute in the product object. The shipped 
-[AttributePriceSystem](https://github.com/pimcore/pimcore/blob/10.x/bundles/EcommerceFrameworkBundle/PriceSystem/AttributePriceSystem.php) 
+[AttributePriceSystem](https://github.com/pimcore/pimcore/blob/10.5/bundles/EcommerceFrameworkBundle/PriceSystem/AttributePriceSystem.php) 
 implementation does exactly that. 
 
 But there might be more complex use cases where price calculation is some custom logic that needs to be implemented. 

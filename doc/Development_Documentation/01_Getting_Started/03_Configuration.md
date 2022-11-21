@@ -37,7 +37,7 @@ $ bin/console config:dump-reference pimcore
 ## Pimcore constants
 
 Pimcore uses several constants for locating certain directories like logging, assets, versions etc. These constants are
-defined in [`lib/Bootstrap.php`](https://github.com/pimcore/pimcore/blob/10.x/lib/Bootstrap.php).
+defined in [`lib/Bootstrap.php`](https://github.com/pimcore/pimcore/blob/10.5/lib/Bootstrap.php).
 
 If you need to overwrite these constants (e.g. for using a special directory for assets or versions at an object storage
 at AWS S3), you have multiple ways to do so:
@@ -64,7 +64,7 @@ define("PIMCORE_CLASS_DIRECTORY", "/my/tmp/path");
 
 ```
 
-Please see [`lib/Bootstrap.php`](https://github.com/pimcore/pimcore/blob/10.x/lib/Bootstrap.php)
+Please see [`lib/Bootstrap.php`](https://github.com/pimcore/pimcore/blob/10.5/lib/Bootstrap.php)
 for a list of defined constants.
 
 

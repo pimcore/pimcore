@@ -100,7 +100,7 @@ or
 
 For documents, Pimcore also provides a function to handle hardlinks through the `pimcore_document_wrap_hardlink` method.
 
-See [PimcoreObjectExtension](https://github.com/pimcore/pimcore/blob/10.x/lib/Twig/Extension/PimcoreObjectExtension.php)
+See [PimcoreObjectExtension](https://github.com/pimcore/pimcore/blob/10.5/lib/Twig/Extension/PimcoreObjectExtension.php)
 for details.
 
 
