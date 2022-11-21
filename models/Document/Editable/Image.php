@@ -361,8 +361,6 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
                 }
             }
 
-            $this->setData($data);
-
             return $data;
         };
 
@@ -375,7 +373,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
                 $data['hotspots'] = $rewritePath($data['hotspots']);
             }
 
-
+            $this->setData($data);
         }
 
         return $this;
