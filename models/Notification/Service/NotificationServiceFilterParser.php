@@ -110,7 +110,7 @@ class NotificationServiceFilterParser
     {
         $result = null;
         $property = $this->getDbProperty($item);
-        $value = $item[self::KEY_VALUE];
+        $value = array_key_exists(self::KEY_VALUE, $item) ? $item[self::KEY_VALUE] : "";
 
         switch ($item[self::KEY_OPERATOR]) {
             case self::OPERATOR_LIKE:
