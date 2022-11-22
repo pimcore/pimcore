@@ -38,10 +38,7 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
 
     protected Helper\MySql $mySqlHelper;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
 
     public function __construct(MysqlConfigInterface $tenantConfig, Connection $db, EventDispatcherInterface $eventDispatcher, LoggerInterface $pimcoreEcommerceSqlLogger)
     {

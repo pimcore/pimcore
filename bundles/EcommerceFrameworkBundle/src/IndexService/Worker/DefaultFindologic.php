@@ -49,10 +49,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
 
     protected \SimpleXMLElement $batchData;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
 
     public function __construct(FindologicConfigInterface $tenantConfig, Connection $db, EventDispatcherInterface $eventDispatcher, LoggerInterface $pimcoreEcommerceFindlogic)
     {
