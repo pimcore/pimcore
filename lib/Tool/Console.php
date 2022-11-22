@@ -211,7 +211,7 @@ final class Console
      * @param string $script
      * @param array $arguments
      * @param string|null $outputFile
-     * @param float|null $timeout
+     * @param float $timeout
      *
      * @return string
      */
