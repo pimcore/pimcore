@@ -78,7 +78,7 @@ class Dao extends Model\Dao\AbstractDao
                     $preparedData = self::createJsonLoggingObject($value);
                     $value = json_encode($preparedData);
                 }
-                
+
                 $key = $this->db->quoteIdentifier($key);
                 $data[$key] = $value;
             }
