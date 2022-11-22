@@ -214,7 +214,7 @@ pimcore.element.helpers.gridColumnConfig = {
     filterUpdateFunction: function (grid, toolbarFilterInfo, clearFilterButton) {
         var filterStringConfig = [];
         var filterData = grid.getStore().getFilters().items;
-
+        console.log("Filter Update!");
         // reset
         toolbarFilterInfo.setTooltip(" ");
 
@@ -425,18 +425,27 @@ pimcore.element.helpers.gridColumnConfig = {
                     text: t("clear_relation_filter"),
                     iconCls: "pimcore_icon_filter_condition pimcore_icon_overlay_delete",
                     handler: function () {
+                        this.grid.getColumns()[columnIndex].filter.setActive(false);
                         this.filterByRelationWindow.close();
                         this.grid.store.filters.removeByKey("x-gridfilter-"+fieldInfo.dataIndex);
+                    
                     }.bind(this)
                 },
                 {
                     text: t("apply_filter"),
                     iconCls: "pimcore_icon_filter pimcore_icon_overlay_add",
                     handler: function () {
+                        console.log("HERE!");
                         if (formPanel.isValid() && typeof fieldInfo.getRelationFilter === "function") {
                             this.grid.filters.getStore().addFilter(
                                 fieldInfo.getRelationFilter(fieldInfo.dataIndex, editor)
                             );
+                            myColumn = this.grid.getColumns()[columnIndex];
+                            //myColumn.config.layout.layout.style.Style = 'italic';
+                            //temp = myColumn.getEditor();
+                            //temp.fieldInfo.layout.style = 'italic';
+                            this.grid.getColumns()[columnIndex].filter.setActive(true);
+                            //this.grid.getColumns()[columnIndex].fireEventArgs('filteractivate', [this, this.grid.getColumns()[columnIndex]] );
                             this.filterByRelationWindow.close();
                         }
                     }.bind(this)
