@@ -34,6 +34,50 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             }
             return true;
         }.bind(this));
+
+        this.fieldConfig.visibleFields = "key";
+
+        let storeConfig = {
+            data: this.data,
+            listeners: {
+                add: function () {
+                    this.dataChanged = true;
+                }.bind(this),
+                remove: function () {
+                    this.dataChanged = true;
+                }.bind(this),
+                clear: function () {
+                    this.dataChanged = true;
+                }.bind(this)
+            },
+        };
+
+        if (this.fieldConfig.displayMode == 'combo') {
+            storeConfig.proxy = {
+                type: 'ajax',
+                url: Routing.generate('pimcore_admin_dataobject_dataobject_relation_objects_list'),
+                extraParams: {
+                    fieldConfig: JSON.stringify(this.fieldConfig),
+                    data: this.data.id
+                },
+                reader: {
+                    type: 'json',
+                    rootProperty: 'options',
+                    successProperty: 'success',
+                    messageProperty: 'message'
+                }
+            };
+            storeConfig.fields = ['id', 'label'];
+            storeConfig.autoLoad = true;
+            storeConfig.listeners = {
+                beforeload: function(store) {
+                    store.getProxy().setExtraParam('unsavedChanges', this.object ? this.object.getSaveData().data : {});
+                    store.getProxy().setExtraParam('context', JSON.stringify(this.getContext()));
+                }.bind(this)
+            };
+        }
+
+        this.store = new Ext.data.JsonStore(storeConfig);
     },
 
 
@@ -95,7 +139,35 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
         href.cls = 'pimcore_droptarget_display_edit';
 
         href.fieldBodyCls = 'pimcore_droptarget_display x-form-trigger-wrap';
-        this.component = new Ext.form.field.Display(href);
+
+        if (this.fieldConfig.displayMode == 'combo') {
+            this.component = Ext.create('Ext.form.field.ComboBox', {
+                store: this.store,
+                autoLoadOnValue: true,
+                multiSelect: false,
+                height: 'auto',
+                width: this.fieldConfig.width ? this.fieldConfig.width : 300,
+                labelWidth: labelWidth,
+                value: this.data.id,
+                typeAhead: true,
+                minChars: 3,
+                filterPickList: true,
+                triggerAction: "all",
+                displayField: "label",
+                valueField: "id",
+                listeners: {
+                    change: function() {
+                        this.dataChanged = true;
+                    }.bind(this),
+                    focus: function() {
+                        this.store.getProxy().setExtraParam('data', '');
+                    }.bind(this)
+                }
+            });
+        } else {
+            this.component = new Ext.form.field.Display(href);
+        }
+
         if (this.data.published === false) {
             this.component.addCls("strikeThrough");
         }
@@ -119,7 +191,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
 
             el.getEl().on("contextmenu", this.onContextMenu.bind(this));
 
-            el.getEl().on('dblclick', function(){
+            el.getEl().on('dblclick', function () {
                 var subtype = this.data.subtype;
                 if (this.data.type === "object" && this.data.subtype !== "folder" && this.data.subtype !== null) {
                     subtype = "object";
