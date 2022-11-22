@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,7 +18,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
 class SessionCartItem extends AbstractCartItem implements CartItemInterface
 {
-    public function getCart()
+    public function getCart(): CartInterface|null
     {
         if (empty($this->cart)) {
             $this->cart = SessionCart::getById($this->cartId);
@@ -26,17 +27,17 @@ class SessionCartItem extends AbstractCartItem implements CartItemInterface
         return $this->cart;
     }
 
-    public function save()
+    public function save(): void
     {
         throw new \Exception('Not implemented, should not be needed for this cart type.');
     }
 
-    public static function getByCartIdItemKey($cartId, $itemKey, $parentKey = '')
+    public static function getByCartIdItemKey(int|string $cartId, string $itemKey, string $parentKey = ''): ?CartItemInterface
     {
         throw new \Exception('Not implemented, should not be needed for this cart type.');
     }
 
-    public static function removeAllFromCart($cartId)
+    public static function removeAllFromCart(int|string $cartId)
     {
         $cartItem = new self();
         $cart = $cartItem->getCart();
@@ -47,7 +48,7 @@ class SessionCartItem extends AbstractCartItem implements CartItemInterface
     /**
      * @return CartItemInterface[]
      */
-    public function getSubItems()
+    public function getSubItems(): array
     {
         return (array)$this->subItems;
     }

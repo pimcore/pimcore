@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,48 +28,21 @@ use Pimcore\Tool\Session;
  */
 final class Editlock extends Model\AbstractModel
 {
-    /**
-     * @var int
-     */
-    protected $id;
+    protected int $id;
 
-    /**
-     * @var int
-     */
-    protected $cid;
+    protected int $cid;
 
-    /**
-     * @var string
-     */
-    protected $ctype;
+    protected string $ctype;
 
-    /**
-     * @var int
-     */
-    protected $userId;
+    protected int $userId;
 
-    /**
-     * @var string
-     */
-    protected $sessionId;
+    protected string $sessionId;
 
-    /**
-     * @var int
-     */
-    protected $date;
+    protected int $date;
 
-    /**
-     * @var string
-     */
-    protected $cpath;
+    protected string $cpath;
 
-    /**
-     * @param int $cid
-     * @param string $ctype
-     *
-     * @return bool
-     */
-    public static function isLocked($cid, $ctype)
+    public static function isLocked(int $cid, string $ctype): bool
     {
         if ($lock = self::getByElement($cid, $ctype)) {
             if ((time() - $lock->getDate()) > 3600 || $lock->getSessionId() === Session::getSessionId()) {
@@ -84,13 +58,7 @@ final class Editlock extends Model\AbstractModel
         return false;
     }
 
-    /**
-     * @param int $cid
-     * @param string $ctype
-     *
-     * @return null|Editlock
-     */
-    public static function getByElement($cid, $ctype)
+    public static function getByElement(int $cid, string $ctype): ?Editlock
     {
         try {
             $lock = new self();
@@ -102,12 +70,7 @@ final class Editlock extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param string $sessionId
-     *
-     * @return bool|null
-     */
-    public static function clearSession($sessionId)
+    public static function clearSession(string $sessionId): ?bool
     {
         try {
             $lock = new self();
@@ -119,13 +82,7 @@ final class Editlock extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param int $cid
-     * @param string $ctype
-     *
-     * @return bool|Editlock
-     */
-    public static function lock($cid, $ctype)
+    public static function lock(int $cid, string $ctype): Editlock|bool
     {
         // try to get user
         if (!$user = \Pimcore\Tool\Admin::getCurrentUser()) {
@@ -143,13 +100,7 @@ final class Editlock extends Model\AbstractModel
         return $lock;
     }
 
-    /**
-     * @param int $cid
-     * @param string $ctype
-     *
-     * @return bool
-     */
-    public static function unlock($cid, $ctype)
+    public static function unlock(int $cid, string $ctype): bool
     {
         if ($lock = self::getByElement($cid, $ctype)) {
             $lock->delete();
@@ -158,110 +109,67 @@ final class Editlock extends Model\AbstractModel
         return true;
     }
 
-    /**
-     * @return int
-     */
-    public function getCid()
+    public function getCid(): int
     {
         return $this->cid;
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return int
-     */
-    public function getUserId()
+    public function getUserId(): int
     {
         return $this->userId;
     }
 
-    /**
-     * @param int $cid
-     *
-     * @return $this
-     */
-    public function setCid($cid)
+    public function setCid(int $cid): static
     {
         $this->cid = (int) $cid;
 
         return $this;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(int $id): static
     {
         $this->id = (int) $id;
 
         return $this;
     }
 
-    /**
-     * @param int $userId
-     *
-     * @return $this
-     */
-    public function setUserId($userId)
+    public function setUserId(int $userId): static
     {
         $this->userId = (int) $userId;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getCtype()
+    public function getCtype(): string
     {
         return $this->ctype;
     }
 
-    /**
-     * @param string $ctype
-     *
-     * @return $this
-     */
-    public function setCtype($ctype)
+    public function setCtype(string $ctype): static
     {
         $this->ctype = (string) $ctype;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getSessionId()
+    public function getSessionId(): string
     {
         return $this->sessionId;
     }
 
-    /**
-     * @param string $sessionId
-     *
-     * @return $this
-     */
-    public function setSessionId($sessionId)
+    public function setSessionId(string $sessionId): static
     {
         $this->sessionId = (string) $sessionId;
 
         return $this;
     }
 
-    /**
-     * @return Model\User|null
-     */
-    public function getUser()
+    public function getUser(): ?Model\User
     {
         if ($user = Model\User::getById($this->getUserId())) {
             return $user;
@@ -270,42 +178,26 @@ final class Editlock extends Model\AbstractModel
         return null;
     }
 
-    /**
-     * @return int
-     */
-    public function getDate()
+    public function getDate(): int
     {
         return $this->date;
     }
 
-    /**
-     * @param int $date
-     *
-     * @return $this
-     */
-    public function setDate($date)
+    public function setDate(int $date): static
     {
         $this->date = (int) $date;
 
         return $this;
     }
 
-    /**
-     * @param string $cpath
-     *
-     * @return $this
-     */
-    public function setCpath($cpath)
+    public function setCpath(string $cpath): static
     {
         $this->cpath = $cpath;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getCpath()
+    public function getCpath(): string
     {
         return $this->cpath;
     }

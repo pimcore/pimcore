@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,10 +21,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class QuantityValueUnitEvent extends Event
 {
-    /**
-     * @var Unit
-     */
-    protected $unit;
+    protected Unit $unit;
 
     /**
      * QuantityValueUnitEvent constructor.
@@ -35,17 +33,11 @@ class QuantityValueUnitEvent extends Event
         $this->unit = $unit;
     }
 
-    /**
-     * @return Unit
-     */
     public function getUnit(): Unit
     {
         return $this->unit;
     }
 
-    /**
-     * @param Unit $unit
-     */
     public function setUnit(Unit $unit)
     {
         $this->unit = $unit;

@@ -26,10 +26,7 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
  */
 class CollectionServiceLocator extends ServiceLocator implements \IteratorAggregate
 {
-    /**
-     * @var array
-     */
-    private $ids;
+    private array $ids;
 
     /**
      * {@inheritdoc}

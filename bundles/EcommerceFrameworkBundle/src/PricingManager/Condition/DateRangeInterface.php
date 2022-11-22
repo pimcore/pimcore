@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,27 +20,11 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
 
 interface DateRangeInterface extends ConditionInterface
 {
-    /**
-     * @param \DateTime $date
-     *
-     * @return DateRangeInterface
-     */
-    public function setStarting(\DateTime $date);
+    public function setStarting(\DateTime $date): DateRangeInterface;
 
-    /**
-     * @param \DateTime $date
-     *
-     * @return DateRangeInterface
-     */
-    public function setEnding(\DateTime $date);
+    public function setEnding(\DateTime $date): DateRangeInterface;
 
-    /**
-     * @return \DateTime|null
-     */
-    public function getStarting();
+    public function getStarting(): ?\DateTime;
 
-    /**
-     * @return \DateTime|null
-     */
-    public function getEnding();
+    public function getEnding(): ?\DateTime;
 }

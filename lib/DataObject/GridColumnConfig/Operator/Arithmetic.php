@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,6 +16,8 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
+use Pimcore\Model\Element\ElementInterface;
+
 /**
  * @internal
  */
@@ -22,14 +25,8 @@ final class Arithmetic extends AbstractOperator
 {
     private bool $skipNull;
 
-    /**
-     * @var string
-     */
-    private $operator;
+    private string $operator;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -41,23 +38,23 @@ final class Arithmetic extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         $result = new \stdClass();
         $result->label = $this->label;
         $result->value = 0;
 
-        $childs = $this->getChilds();
+        $children = $this->getChildren();
 
         if (!in_array($this->getOperator(), ['+', '-', '*', '/'])) {
             return $result;
         }
 
-        if (!$childs) {
+        if (!$children) {
             return $result;
         } else {
             $valueArray = [];
-            foreach ($childs as $c) {
+            foreach ($children as $c) {
                 $childResult = $c->getLabeledValue($element);
                 $isArrayType = $childResult->isArrayType ?? false;
                 $childValues = $childResult->value ?? null;
@@ -110,34 +107,22 @@ final class Arithmetic extends AbstractOperator
         return $result;
     }
 
-    /**
-     * @return bool
-     */
-    public function getSkipNull()
+    public function getSkipNull(): bool
     {
         return $this->skipNull;
     }
 
-    /**
-     * @param bool $skipNull
-     */
-    public function setSkipNull($skipNull)
+    public function setSkipNull(bool $skipNull)
     {
         $this->skipNull = $skipNull;
     }
 
-    /**
-     * @return string
-     */
-    public function getOperator()
+    public function getOperator(): string
     {
         return $this->operator;
     }
 
-    /**
-     * @param string $operator
-     */
-    public function setOperator($operator)
+    public function setOperator(string $operator)
     {
         $this->operator = $operator;
     }

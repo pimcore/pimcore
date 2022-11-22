@@ -27,15 +27,9 @@ class VisitedPagesCounter
 {
     const STORAGE_KEY = 'pgc';
 
-    /**
-     * @var TargetingStorageInterface
-     */
-    private $targetingStorage;
+    private TargetingStorageInterface $targetingStorage;
 
-    /**
-     * @var bool
-     */
-    private $incremented = false;
+    private bool $incremented = false;
 
     public function __construct(TargetingStorageInterface $targetingStorage)
     {
@@ -47,7 +41,7 @@ class VisitedPagesCounter
         return $this->targetingStorage->get($visitorInfo, $scope, self::STORAGE_KEY, 0);
     }
 
-    public function increment(VisitorInfo $visitorInfo, string $scope = TargetingStorageInterface::SCOPE_VISITOR, bool $force = false)
+    public function increment(VisitorInfo $visitorInfo, string $scope = TargetingStorageInterface::SCOPE_VISITOR, bool $force = false): void
     {
         if ($this->incremented && !$force) {
             return;

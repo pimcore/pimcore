@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,7 +29,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class RequirementsCheckCommand extends AbstractCommand
 {
     /** @var int[] $levelsToDisplay */
-    protected $levelsToDisplay = [];
+    protected array $levelsToDisplay = [];
 
     /**
      * {@inheritdoc}

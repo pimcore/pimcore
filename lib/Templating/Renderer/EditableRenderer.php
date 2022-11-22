@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -38,12 +39,7 @@ class EditableRenderer implements LoggerAwareInterface
     {
     }
 
-    /**
-     * @param string $type
-     *
-     * @return bool
-     */
-    public function editableExists($type)
+    public function editableExists(string $type): bool
     {
         return $this->editableLoader->supports($type);
     }

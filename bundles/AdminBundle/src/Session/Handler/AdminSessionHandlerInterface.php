@@ -27,10 +27,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
  */
 interface AdminSessionHandlerInterface
 {
-    /**
-     * @return string
-     */
-    public function getSessionName();
+    public function getSessionName(): string;
 
     /**
      * Returns the session ID
@@ -39,7 +36,7 @@ interface AdminSessionHandlerInterface
      *
      * @return string
      */
-    public function getSessionId();
+    public function getSessionId(): string;
 
     /**
      * Use the admin session and immediately close it after usage. The callable gets the session as its first argument.
@@ -48,7 +45,7 @@ interface AdminSessionHandlerInterface
      *
      * @return mixed Callable result
      */
-    public function useSession(callable $callable);
+    public function useSession(callable $callable): mixed;
 
     /**
      * Use an attribute bag and close the session immediately after usage. The callable gets the attribute bag and the
@@ -59,7 +56,7 @@ interface AdminSessionHandlerInterface
      *
      * @return mixed
      */
-    public function useSessionAttributeBag(callable $callable, string $name = 'pimcore_admin');
+    public function useSessionAttributeBag(callable $callable, string $name = 'pimcore_admin'): mixed;
 
     /**
      * Loads an attribute bag, optionally lock it if supported and close the session.

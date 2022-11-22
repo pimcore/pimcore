@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,14 +24,14 @@ use Symfony\Component\HttpFoundation\Request;
  */
 trait StaticPageContextAwareTrait
 {
-    private ?StaticPageResolver $staticPageResolver;
+    private ?StaticPageResolver $staticPageResolver = null;
 
     /**
      * @required
      *
      * @param StaticPageResolver $staticPageResolver
      */
-    public function setStaticPageResolver(StaticPageResolver $staticPageResolver)
+    public function setStaticPageResolver(StaticPageResolver $staticPageResolver): void
     {
         $this->staticPageResolver = $staticPageResolver;
     }

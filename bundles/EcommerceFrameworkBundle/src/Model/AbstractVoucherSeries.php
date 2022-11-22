@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,15 +21,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\TokenMan
 
 abstract class AbstractVoucherSeries extends \Pimcore\Model\DataObject\Concrete
 {
-    /**
-     * @return \Pimcore\Model\DataObject\Fieldcollection|null
-     */
-    abstract public function getTokenSettings();
+    abstract public function getTokenSettings(): ?\Pimcore\Model\DataObject\Fieldcollection;
 
-    /**
-     * @return TokenManagerInterface|null
-     */
-    public function getTokenManager()
+    public function getTokenManager(): ?TokenManagerInterface
     {
         $items = $this->getTokenSettings();
 
@@ -43,10 +38,7 @@ abstract class AbstractVoucherSeries extends \Pimcore\Model\DataObject\Concrete
         return null;
     }
 
-    /**
-     * @return array|bool
-     */
-    public function getExistingLengths()
+    public function getExistingLengths(): bool|array
     {
         $db = \Pimcore\Db::get();
 

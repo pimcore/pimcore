@@ -30,12 +30,12 @@ abstract class AbstractElementGenerator implements GeneratorInterface
     /**
      * @var FilterInterface[]
      */
-    private $filters = [];
+    private array $filters = [];
 
     /**
      * @var ProcessorInterface[]
      */
-    private $processors = [];
+    private array $processors = [];
 
     /**
      * @param FilterInterface[] $filters
@@ -122,7 +122,7 @@ abstract class AbstractElementGenerator implements GeneratorInterface
      *
      * @return null|Url
      */
-    protected function process(Url $url, ElementInterface $element, GeneratorContextInterface $context)
+    protected function process(Url $url, ElementInterface $element, GeneratorContextInterface $context): ?Url
     {
         foreach ($this->processors as $processor) {
             $url = $processor->process($url, $element, $context);

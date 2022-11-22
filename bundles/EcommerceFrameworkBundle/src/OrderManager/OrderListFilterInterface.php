@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,10 +18,5 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
 interface OrderListFilterInterface
 {
-    /**
-     * @param OrderListInterface $orderList
-     *
-     * @return OrderListFilterInterface
-     */
-    public function apply(OrderListInterface $orderList);
+    public function apply(OrderListInterface $orderList): OrderListFilterInterface;
 }

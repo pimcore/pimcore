@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -44,40 +45,19 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface, LoggerAware
 
     const LOGGER_NAME = 'commit-order-processor';
 
-    /**
-     * @var OrderManagerLocatorInterface
-     */
-    protected $orderManagers;
+    protected OrderManagerLocatorInterface $orderManagers;
 
-    /**
-     * @var LockFactory
-     */
-    private $lockFactory;
+    private LockFactory $lockFactory;
 
-    /**
-     * @var string
-     */
-    protected $confirmationMail = '/emails/order-confirmation';
+    protected string $confirmationMail = '/emails/order-confirmation';
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
+    protected EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @var ApplicationLogger
-     */
-    protected $applicationLogger;
+    protected ApplicationLogger $applicationLogger;
 
-    /**
-     * @var null | string
-     */
-    protected $lastPaymentStateResponseHash = null;
+    protected ?string $lastPaymentStateResponseHash = null;
 
-    /**
-     * @var null | StatusInterface
-     */
-    protected $lastPaymentStatus = null;
+    protected ?StatusInterface $lastPaymentStatus = null;
 
     public function __construct(LockFactory $lockFactory, OrderManagerLocatorInterface $orderManagers, EventDispatcherInterface $eventDispatcher, ApplicationLogger $applicationLogger, array $options = [])
     {
@@ -105,23 +85,14 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface, LoggerAware
         $resolver->setDefined('confirmation_mail');
     }
 
-    /**
-     * @param string $confirmationMail
-     */
-    public function setConfirmationMail($confirmationMail)
+    public function setConfirmationMail(string $confirmationMail)
     {
         if (!empty($confirmationMail)) {
             $this->confirmationMail = $confirmationMail;
         }
     }
 
-    /**
-     * @param array|StatusInterface $paymentResponseParams
-     * @param PaymentInterface $paymentProvider
-     *
-     * @return Status|StatusInterface
-     */
-    protected function getPaymentStatus($paymentResponseParams, PaymentInterface $paymentProvider)
+    protected function getPaymentStatus(StatusInterface|array $paymentResponseParams, PaymentInterface $paymentProvider): StatusInterface|Status|null
     {
         $responseHash = md5(serialize($paymentResponseParams));
 
@@ -156,7 +127,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface, LoggerAware
      *
      * @throws UnsupportedException
      */
-    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, PaymentInterface $paymentProvider)
+    public function handlePaymentResponseAndCommitOrderPayment(StatusInterface|array $paymentResponseParams, PaymentInterface $paymentProvider): AbstractOrder
     {
         $this->logger->info('Payment Provider Response received. ' . print_r($paymentResponseParams, true));
 
@@ -174,7 +145,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface, LoggerAware
     /**
      * {@inheritdoc}
      */
-    public function committedOrderWithSamePaymentExists($paymentResponseParams, PaymentInterface $paymentProvider)
+    public function committedOrderWithSamePaymentExists(StatusInterface|array $paymentResponseParams, PaymentInterface $paymentProvider): ?AbstractOrder
     {
         if (!$paymentResponseParams instanceof StatusInterface) {
             $paymentStatus = $this->getPaymentStatus($paymentResponseParams, $paymentProvider);
@@ -209,7 +180,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface, LoggerAware
      * @throws UnsupportedException|PaymentNotSuccessfulException
      * @throws \Exception
      */
-    public function commitOrderPayment(StatusInterface $paymentStatus, PaymentInterface $paymentProvider, AbstractOrder $sourceOrder = null)
+    public function commitOrderPayment(StatusInterface $paymentStatus, PaymentInterface $paymentProvider, AbstractOrder $sourceOrder = null): AbstractOrder
     {
         // acquire lock to make sure only one process is committing order payment
         $lock = $this->lockFactory->createLock(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
@@ -293,7 +264,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface, LoggerAware
     /**
      * {@inheritdoc}
      */
-    public function commitOrder(AbstractOrder $order)
+    public function commitOrder(AbstractOrder $order): AbstractOrder
     {
         $this->eventDispatcher->dispatch(new CommitOrderProcessorEvent($this, $order), CommitOrderProcessorEvents::PRE_COMMIT_ORDER);
 
@@ -323,9 +294,6 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface, LoggerAware
         // nothing to do
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function sendConfirmationMail(AbstractOrder $order)
     {
         $event = new SendConfirmationMailEvent($this, $order, $this->confirmationMail);
@@ -351,7 +319,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface, LoggerAware
     /**
      * @throws \Exception
      */
-    public function cleanUpPendingOrders()
+    public function cleanUpPendingOrders(): void
     {
         $dateTime = new \DateTime();
         $dateTime->sub(new \DateInterval('PT1H'));

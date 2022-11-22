@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,7 +23,7 @@ class AvailabilitySystem implements AvailabilitySystemInterface
     /**
      * {@inheritdoc}
      */
-    public function getAvailabilityInfo(CheckoutableInterface $product, $quantityScale = 1, $products = null)
+    public function getAvailabilityInfo(CheckoutableInterface $product, int $quantityScale = 1, array $products = null): Availability|AvailabilityInterface
     {
         return new Availability($product, true);
     }

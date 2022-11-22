@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -37,12 +38,7 @@ use function time;
  */
 class PublicServicesController extends Controller
 {
-    /**
-     * @param Request $request
-     *
-     * @return RedirectResponse|StreamedResponse
-     */
-    public function thumbnailAction(Request $request)
+    public function thumbnailAction(Request $request): RedirectResponse|StreamedResponse
     {
         $storage = Storage::get('thumbnail');
 
@@ -54,7 +50,7 @@ class PublicServicesController extends Controller
         $asset = Asset::getById($assetId);
 
         if ($asset) {
-            $prefix = preg_replace('@^cache-buster\-[\d]+\/@', '', $request->get('prefix'));
+            $prefix = preg_replace('@^cache-buster\-[\d]+\/@', '', $request->get('prefix') ?? '');
             $prefix = preg_replace('@' . $asset->getId() . '/$@', '', $prefix);
             if ($asset->getPath() === ('/' . $prefix)) {
                 // we need to check the path as well, this is important in the case you have restricted the public access to
@@ -198,12 +194,7 @@ class PublicServicesController extends Controller
         throw $this->createNotFoundException('Asset not found');
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return Response
-     */
-    public function robotsTxtAction(Request $request)
+    public function robotsTxtAction(Request $request): Response
     {
         // check for site
         $domain = \Pimcore\Tool::getHostname();
@@ -236,22 +227,12 @@ class PublicServicesController extends Controller
         ]);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return Response
-     */
-    public function commonFilesAction(Request $request)
+    public function commonFilesAction(Request $request): Response
     {
         return new Response("HTTP/1.1 404 Not Found\nFiltered by common files filter", 404);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return RedirectResponse
-     */
-    public function customAdminEntryPointAction(Request $request)
+    public function customAdminEntryPointAction(Request $request): RedirectResponse
     {
         $params = $request->query->all();
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -46,7 +47,7 @@ class TargetingController extends AdminController implements KernelControllerEve
      *
      * @return JsonResponse
      */
-    public function ruleListAction(Request $request)
+    public function ruleListAction(Request $request): JsonResponse
     {
         $targets = [];
 
@@ -73,7 +74,7 @@ class TargetingController extends AdminController implements KernelControllerEve
      *
      * @return JsonResponse
      */
-    public function ruleAddAction(Request $request)
+    public function ruleAddAction(Request $request): JsonResponse
     {
         $target = new Targeting\Rule();
         $target->setName($this->correctName($request->get('name')));
@@ -89,7 +90,7 @@ class TargetingController extends AdminController implements KernelControllerEve
      *
      * @return JsonResponse
      */
-    public function ruleDeleteAction(Request $request)
+    public function ruleDeleteAction(Request $request): JsonResponse
     {
         $success = false;
 
@@ -109,7 +110,7 @@ class TargetingController extends AdminController implements KernelControllerEve
      *
      * @return JsonResponse
      */
-    public function ruleGetAction(Request $request)
+    public function ruleGetAction(Request $request): JsonResponse
     {
         $target = Targeting\Rule::getById((int) $request->get('id'));
         if (!$target) {
@@ -127,7 +128,7 @@ class TargetingController extends AdminController implements KernelControllerEve
      *
      * @return JsonResponse
      */
-    public function ruleSaveAction(Request $request)
+    public function ruleSaveAction(Request $request): JsonResponse
     {
         $data = $this->decodeJson($request->get('data'));
 
@@ -151,7 +152,7 @@ class TargetingController extends AdminController implements KernelControllerEve
      *
      * @return JsonResponse
      */
-    public function ruleOrderAction(Request $request)
+    public function ruleOrderAction(Request $request): JsonResponse
     {
         $return = [
             'success' => false,
@@ -197,7 +198,7 @@ class TargetingController extends AdminController implements KernelControllerEve
      *
      * @return JsonResponse
      */
-    public function targetGroupListAction(Request $request)
+    public function targetGroupListAction(Request $request): JsonResponse
     {
         $targetGroups = [];
 
@@ -233,7 +234,7 @@ class TargetingController extends AdminController implements KernelControllerEve
      *
      * @return JsonResponse
      */
-    public function targetGroupAddAction(Request $request, CoreCacheHandler $cache)
+    public function targetGroupAddAction(Request $request, CoreCacheHandler $cache): JsonResponse
     {
         /** @var TargetGroup|TargetGroup\Dao $targetGroup */
         $targetGroup = new TargetGroup();
@@ -253,7 +254,7 @@ class TargetingController extends AdminController implements KernelControllerEve
      *
      * @return JsonResponse
      */
-    public function targetGroupDeleteAction(Request $request, CoreCacheHandler $cache)
+    public function targetGroupDeleteAction(Request $request, CoreCacheHandler $cache): JsonResponse
     {
         $success = false;
 
@@ -275,7 +276,7 @@ class TargetingController extends AdminController implements KernelControllerEve
      *
      * @return JsonResponse
      */
-    public function targetGroupGetAction(Request $request)
+    public function targetGroupGetAction(Request $request): JsonResponse
     {
         $targetGroup = TargetGroup::getById((int) $request->get('id'));
         if (!$targetGroup) {
@@ -294,7 +295,7 @@ class TargetingController extends AdminController implements KernelControllerEve
      *
      * @return JsonResponse
      */
-    public function targetGroupSaveAction(Request $request, CoreCacheHandler $cache)
+    public function targetGroupSaveAction(Request $request, CoreCacheHandler $cache): JsonResponse
     {
         $data = $this->decodeJson($request->get('data'));
 
@@ -311,9 +312,6 @@ class TargetingController extends AdminController implements KernelControllerEve
         return $this->adminJson(['success' => true]);
     }
 
-    /**
-     * @param ControllerEvent $event
-     */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         if (!$event->isMainRequest()) {

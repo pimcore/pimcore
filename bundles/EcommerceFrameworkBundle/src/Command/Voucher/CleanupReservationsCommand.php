@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,12 +32,6 @@ class CleanupReservationsCommand extends AbstractCommand
         $this->setDescription('Cleans the token reservations due to sysConfig duration settings');
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->output->writeln('<comment>*</comment> Cleaning up <info>reservations</info>');

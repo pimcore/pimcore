@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,19 +26,10 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 class Discount implements DiscountInterface
 {
-    /**
-     * @var Decimal
-     */
-    protected $amount;
+    protected Decimal $amount;
 
-    /**
-     * @var null|RuleInterface
-     */
-    protected $rule = null;
+    protected ?RuleInterface $rule = null;
 
-    /**
-     * @param RuleInterface $rule
-     */
     public function __construct(RuleInterface $rule)
     {
         $this->rule = $rule;
@@ -49,7 +41,7 @@ class Discount implements DiscountInterface
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         if ($this->rule) {
             return $this->rule->getName();
@@ -62,11 +54,11 @@ class Discount implements DiscountInterface
      * modify price
      *
      * @param PriceInterface $currentSubTotal
-     * @param CartInterface  $cart
+     * @param CartInterface $cart
      *
-     * @return PriceInterface
+     * @return ModificatedPrice
      */
-    public function modify(PriceInterface $currentSubTotal, CartInterface $cart)
+    public function modify(PriceInterface $currentSubTotal, CartInterface $cart): ModificatedPrice
     {
         $amount = $this->getAmount();
         if ($currentSubTotal->getAmount()->lessThan($amount->mul(-1))) {
@@ -87,25 +79,19 @@ class Discount implements DiscountInterface
         return $modificatedPrice;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setAmount(Decimal $amount)
+    public function setAmount(Decimal $amount): DiscountInterface|static
     {
         $this->amount = $amount;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAmount(): Decimal
     {
         return $this->amount;
     }
 
-    public function getRuleId()
+    public function getRuleId(): ?int
     {
         return $this->rule ? $this->rule->getId() : null;
     }

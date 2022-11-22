@@ -48,7 +48,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById($id = null)
+    public function getById(string $id = null)
     {
         if ($id != null) {
             $this->model->setId($id);
@@ -77,11 +77,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         }
     }
 
-    /**
-     * @param string $name
-     *
-     */
-    public function getByName($name)
+    public function getByName(string $name)
     {
         $list = new Listing();
         /** @var Model\DataObject\ClassDefinition\CustomLayout[] $definitions */
@@ -101,12 +97,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         }
     }
 
-    /**
-     * @param string $id
-     *
-     * @return string|null
-     */
-    public function getNameById($id)
+    public function getNameById(string $id): ?string
     {
         $name = null;
 
@@ -129,14 +120,15 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     }
 
     /**
-     * @deprecated
-     *
      * @param string $name
      * @param string $classId
      *
      * @return string|null
+     *
+     *@deprecated
+     *
      */
-    public function getIdByNameAndClassId($name, $classId)
+    public function getIdByNameAndClassId(string $name, string $classId): ?string
     {
         $id = null;
 
@@ -158,10 +150,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         return $id;
     }
 
-    /**
-     * @return UuidV4
-     */
-    public function getNewId()
+    public function getNewId(): UuidV4
     {
         $newId = Uid::v4();
         $this->model->setId((string) $newId);
@@ -176,7 +165,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @return UuidV4
      */
-    public function getLatestIdentifier($classId)
+    public function getLatestIdentifier(string $classId): UuidV4
     {
         return Uid::v4();
     }
@@ -189,7 +178,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     public function save()
     {
         if (!$this->model->getId()) {
-            $this->model->setId(Uid::v4());
+            $this->model->setId((string)Uid::v4());
         }
 
         $ts = time();
@@ -228,7 +217,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * {@inheritdoc}
      */
-    protected function prepareDataStructureForYaml(string $id, $data)
+    protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [
             'pimcore' => [

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -80,10 +81,6 @@ class FolderController extends DocumentControllerBase
         return $this->adminJson(['success' => true, 'treeData' => $treeData]);
     }
 
-    /**
-     * @param Request $request
-     * @param Document $folder
-     */
     protected function setValuesToDocument(Request $request, Document $folder)
     {
         $this->addPropertiesToDocument($request, $folder);

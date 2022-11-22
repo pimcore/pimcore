@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,34 +18,16 @@ namespace Pimcore\Extension\Document\Areabrick;
 
 class EditableDialogBoxConfiguration implements \JsonSerializable
 {
-    /**
-     * @var null|string
-     */
-    protected $id = null;
+    protected ?string $id = null;
 
-    /**
-     * @var null|int
-     */
-    protected $width = 550;
+    protected ?int $width = 550;
 
-    /**
-     * @var null|int
-     */
-    protected $height = 370;
+    protected ?int $height = 370;
 
-    /**
-     * @var array
-     */
-    protected $items = [];
+    protected array $items = [];
 
-    /**
-     * @var bool
-     */
-    protected $reloadOnClose = false;
+    protected bool $reloadOnClose = false;
 
-    /**
-     * @return string|null
-     */
     public function getId(): ?string
     {
         return $this->id;
@@ -60,9 +43,6 @@ class EditableDialogBoxConfiguration implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getWidth(): ?int
     {
         return $this->width;
@@ -78,9 +58,6 @@ class EditableDialogBoxConfiguration implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getHeight(): ?int
     {
         return $this->height;
@@ -96,9 +73,6 @@ class EditableDialogBoxConfiguration implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getItems(): array
     {
         return $this->items;
@@ -124,9 +98,6 @@ class EditableDialogBoxConfiguration implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getReloadOnClose(): bool
     {
         return $this->reloadOnClose;
@@ -142,11 +113,7 @@ class EditableDialogBoxConfiguration implements \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()// : array
+    public function jsonSerialize(): array
     {
         return get_object_vars($this);
     }

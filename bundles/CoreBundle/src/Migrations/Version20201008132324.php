@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,9 +24,6 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20201008132324 extends AbstractMigration
 {
-    /**
-     * @param Schema $schema
-     */
     public function up(Schema $schema): void
     {
         if ($schema->hasTable('locks')) {
@@ -33,9 +31,6 @@ final class Version20201008132324 extends AbstractMigration
         }
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function down(Schema $schema): void
     {
         $this->addSql('RENAME TABLE PLEASE_DELETE__locks TO locks;');

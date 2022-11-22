@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,20 +21,11 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 
 class PaymentNotAllowedException extends AbstractEcommerceException
 {
-    /**
-     * @var AbstractOrder
-     */
-    protected $order;
+    protected AbstractOrder $order;
 
-    /**
-     * @var CartInterface|null
-     */
-    protected $cart;
+    protected ?CartInterface $cart = null;
 
-    /**
-     * @var bool|null
-     */
-    protected $orderNeedsUpdate;
+    protected ?bool $orderNeedsUpdate = null;
 
     /**
      * PaymentNotAllowedException constructor.

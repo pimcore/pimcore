@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,87 +25,33 @@ use Pimcore\Model\DataObject\Concrete;
  */
 abstract class AbstractOffer extends Concrete
 {
-    /**
-     * @return string|null
-     */
     abstract public function getOffernumber(): ?string;
 
-    /**
-     * @param string|null $offernumber
-     */
     abstract public function setOffernumber(?string $offernumber);
 
-    /**
-     * @return string|null
-     */
     abstract public function getTotalPrice(): ?string;
 
-    /**
-     * @param string|null $totalPriceBeforeDiscount
-     *
-     * @return $this
-     */
-    abstract public function setTotalPriceBeforeDiscount(?string $totalPriceBeforeDiscount);
+    abstract public function setTotalPriceBeforeDiscount(?string $totalPriceBeforeDiscount): static;
 
-    /**
-     * @return string|null
-     */
     abstract public function getTotalPriceBeforeDiscount(): ?string;
 
-    /**
-     * @param string|null $totalPrice
-     *
-     * @return $this
-     */
-    abstract public function setTotalPrice(?string $totalPrice);
+    abstract public function setTotalPrice(?string $totalPrice): static;
 
-    /**
-     * @return string|null
-     */
     abstract public function getDiscount(): ?string;
 
-    /**
-     * @param string|null $discount
-     *
-     * @return $this
-     */
-    abstract public function setDiscount(?string $discount);
+    abstract public function setDiscount(?string $discount): static;
 
-    /**
-     * @return string|null
-     */
     abstract public function getDiscountType(): ?string;
 
-    /**
-     * @param string|null $discountType
-     *
-     * @return $this
-     */
-    abstract public function setDiscountType(?string $discountType);
+    abstract public function setDiscountType(?string $discountType): static;
 
-    /**
-     * @return \Carbon\Carbon|null
-     */
     abstract public function getDateCreated(): ?\Carbon\Carbon;
 
-    /**
-     * @param \Carbon\Carbon|null $dateCreated
-     *
-     * @return $this
-     */
-    abstract public function setDateCreated(?\Carbon\Carbon $dateCreated);
+    abstract public function setDateCreated(?\Carbon\Carbon $dateCreated): static;
 
-    /**
-     * @return \Carbon\Carbon|null
-     */
     abstract public function getDateValidUntil(): ?\Carbon\Carbon;
 
-    /**
-     * @param \Carbon\Carbon|null $dateValidUntil
-     *
-     * @return $this
-     */
-    abstract public function setDateValidUntil(?\Carbon\Carbon $dateValidUntil);
+    abstract public function setDateValidUntil(?\Carbon\Carbon $dateValidUntil): static;
 
     /**
      * @return AbstractOfferItem[]
@@ -131,7 +78,7 @@ abstract class AbstractOffer extends Concrete
      *
      * @return mixed
      */
-    public function getCustomer()
+    public function getCustomer(): mixed
     {
         throw new UnsupportedException('getCustomer is not implemented for ' . get_class($this));
     }
@@ -141,30 +88,16 @@ abstract class AbstractOffer extends Concrete
      *
      * @param mixed $customer
      */
-    public function setCustomer($customer)
+    public function setCustomer(mixed $customer)
     {
         throw new UnsupportedException('setCustomer is not implemented for ' . get_class($this));
     }
 
-    /**
-     * @return string|null
-     */
     abstract public function getCartId(): ?string;
 
-    /**
-     * @param string|null $cartId
-     *
-     * @return $this
-     */
-    abstract public function setCartId(?string $cartId);
+    abstract public function setCartId(?string $cartId): static;
 
-    /**
-     * @param AbstractOfferToolProduct $product
-     * @param int $amount
-     *
-     * @return AbstractOfferItem|null
-     */
-    public function addCustomItemFromProduct(AbstractOfferToolProduct $product, $amount = 1): ?AbstractOfferItem
+    public function addCustomItemFromProduct(AbstractOfferToolProduct $product, int $amount = 1): ?AbstractOfferItem
     {
         $item = $this->getCustomItemByProduct($product);
         if (empty($item)) {
@@ -202,12 +135,7 @@ abstract class AbstractOffer extends Concrete
         return $item;
     }
 
-    /**
-     * @param string $groupName
-     *
-     * @return AbstractOfferItem|null
-     */
-    public function getCustomItemsByGroup($groupName): ?AbstractOfferItem
+    public function getCustomItemsByGroup(string $groupName): ?AbstractOfferItem
     {
         $groupedItems = [];
         foreach ($this->getCustomItems() as $item) {
@@ -220,11 +148,6 @@ abstract class AbstractOffer extends Concrete
         return $groupedItems[$groupName] ?? null;
     }
 
-    /**
-     * @param AbstractOfferToolProduct $product
-     *
-     * @return null|AbstractOfferItem
-     */
     public function getCustomItemByProduct(AbstractOfferToolProduct $product): ?AbstractOfferItem
     {
         $items = $this->getCustomItems();

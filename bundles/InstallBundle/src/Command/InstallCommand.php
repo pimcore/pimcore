@@ -38,25 +38,13 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class InstallCommand extends Command
 {
-    /**
-     * @var Installer
-     */
-    private $installer;
+    private Installer $installer;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @var PimcoreStyle
-     */
-    private $io;
+    private PimcoreStyle $io;
 
-    /**
-     * @var array
-     */
-    private $options;
+    private ?array $options = null;
 
     public function __construct(
         Installer $installer,

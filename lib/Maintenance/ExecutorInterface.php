@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,21 +31,11 @@ interface ExecutorInterface
      */
     public function executeMaintenance(array $validJobs = [], array $excludedJobs = []);
 
-    /**
-     * @param string $name
-     * @param TaskInterface $task
-     */
-    public function registerTask($name, TaskInterface $task);
+    public function registerTask(string $name, TaskInterface $task);
 
-    /**
-     * @return array
-     */
-    public function getTaskNames();
+    public function getTaskNames(): array;
 
-    /**
-     * @return int
-     */
-    public function getLastExecution();
+    public function getLastExecution(): int;
 
     public function setLastExecution();
 }

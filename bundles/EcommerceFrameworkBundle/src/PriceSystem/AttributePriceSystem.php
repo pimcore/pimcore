@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,25 +29,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AttributePriceSystem extends CachingPriceSystem implements PriceSystemInterface
 {
-    /**
-     * @var EnvironmentInterface
-     */
-    protected $environment;
+    protected EnvironmentInterface $environment;
 
-    /**
-     * @var string
-     */
-    protected $attributeName;
+    protected string $attributeName;
 
-    /**
-     * @var string
-     */
-    protected $priceType;
+    protected string $priceType;
 
-    /**
-     * @var string
-     */
-    protected $priceClass;
+    protected string $priceClass;
 
     public function __construct(PricingManagerLocatorInterface $pricingManagers, EnvironmentInterface $environment, array $options = [])
     {
@@ -88,7 +77,7 @@ class AttributePriceSystem extends CachingPriceSystem implements PriceSystemInte
     /**
      * {@inheritdoc}
      */
-    public function createPriceInfoInstance($quantityScale, CheckoutableInterface $product, $products): PriceInfoInterface
+    public function createPriceInfoInstance(int|string|null $quantityScale, CheckoutableInterface $product, array $products): AbstractPriceInfo
     {
         $taxClass = $this->getTaxClassForProduct($product);
 
@@ -112,7 +101,7 @@ class AttributePriceSystem extends CachingPriceSystem implements PriceSystemInte
     /**
      * {@inheritdoc}
      */
-    public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit)
+    public function filterProductIds(array $productIds, ?float $fromPrice, ?float $toPrice, string $order, int $offset, int $limit): array
     {
         throw new UnsupportedException(__METHOD__  . ' is not supported for ' . get_class($this));
     }
@@ -125,7 +114,7 @@ class AttributePriceSystem extends CachingPriceSystem implements PriceSystemInte
      *
      * @return Decimal
      */
-    protected function calculateAmount(CheckoutableInterface $product, $products): Decimal
+    protected function calculateAmount(CheckoutableInterface $product, array $products): Decimal
     {
         $getter = 'get' . ucfirst($this->attributeName);
 

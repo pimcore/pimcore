@@ -30,20 +30,10 @@ use Symfony\Component\Routing\RouteCollection;
  */
 final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
 {
-    /**
-     * @var SiteResolver
-     */
-    private $siteResolver;
+    private SiteResolver $siteResolver;
 
-    /**
-     * @var Config
-     */
-    private $config;
+    private Config $config;
 
-    /**
-     * @param SiteResolver $siteResolver
-     * @param Config $config
-     */
     public function __construct(
         SiteResolver $siteResolver,
         Config $config
@@ -55,7 +45,7 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function getRouteByName(string $name)
+    public function getRouteByName(string $name): ?DataObjectRoute
     {
         if (preg_match('/^data_object_(\d+)_(\d+)_(.*)$/', $name, $match)) {
             $slug = DataObject\Data\UrlSlug::resolveSlug($match[3], (int) $match[2]);

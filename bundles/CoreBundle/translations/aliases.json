@@ -130,5 +130,8 @@
   "extensions": "bundles",
   "log_search_message": "message",
   "rgbaColor": "color",
-  "bool": "boolean"
+  "bool": "boolean",
+  "childs_from_source": "children_from_source",
+  "paste_recursive_as_childs": "paste_recursive_as_child",
+  "lock_and_propagate_to_childs": "lock_and_propagate_to_children"
 }

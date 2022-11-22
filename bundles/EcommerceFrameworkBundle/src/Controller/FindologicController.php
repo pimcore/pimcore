@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,7 +32,7 @@ class FindologicController extends FrontendController
     /**
      * create xml output for findologic
      */
-    public function exportAction(Request $request)
+    public function exportAction(Request $request): Response
     {
         // init
         $start = (int)$request->get('start');
@@ -102,10 +103,7 @@ XML;
         return $response;
     }
 
-    /**
-     * @return string
-     */
-    protected function getExportTableName()
+    protected function getExportTableName(): string
     {
         return 'ecommerceframework_productindex_export_findologic';
     }

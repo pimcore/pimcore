@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,28 +27,28 @@ interface PimcoreBundleInterface extends BundleInterface
      *
      * @return string
      */
-    public function getNiceName();
+    public function getNiceName(): string;
 
     /**
      * Bundle description as shown in extension manager
      *
      * @return string
      */
-    public function getDescription();
+    public function getDescription(): string;
 
     /**
      * Bundle version as shown in extension manager
      *
      * @return string
      */
-    public function getVersion();
+    public function getVersion(): string;
 
     /**
      * If the bundle has an installation routine, an installer is responsible of handling installation related tasks
      *
      * @return InstallerInterface|null
      */
-    public function getInstaller();
+    public function getInstaller(): ?InstallerInterface;
 
     /**
      * Get javascripts to include in admin interface
@@ -57,7 +58,7 @@ interface PimcoreBundleInterface extends BundleInterface
      *
      * @return string[]|RouteReferenceInterface[]
      */
-    public function getJsPaths();
+    public function getJsPaths(): array;
 
     /**
      * Get stylesheets to include in admin interface
@@ -67,7 +68,7 @@ interface PimcoreBundleInterface extends BundleInterface
      *
      * @return string[]|RouteReferenceInterface[]
      */
-    public function getCssPaths();
+    public function getCssPaths(): array;
 
     /**
      * Get javascripts to include in editmode
@@ -77,7 +78,7 @@ interface PimcoreBundleInterface extends BundleInterface
      *
      * @return string[]|RouteReferenceInterface[]
      */
-    public function getEditmodeJsPaths();
+    public function getEditmodeJsPaths(): array;
 
     /**
      * Get stylesheets to include in editmode
@@ -87,5 +88,5 @@ interface PimcoreBundleInterface extends BundleInterface
      *
      * @return string[]|RouteReferenceInterface[]
      */
-    public function getEditmodeCssPaths();
+    public function getEditmodeCssPaths(): array;
 }

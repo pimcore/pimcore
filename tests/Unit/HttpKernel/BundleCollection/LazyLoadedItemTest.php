@@ -131,10 +131,7 @@ class LazyLoadedItemTest extends TestCase
 
 class LazyLoadedItemTestBundleA extends Bundle
 {
-    /**
-     * @var int
-     */
-    private static $counter = 0;
+    private static int $counter = 0;
 
     public function __construct()
     {
@@ -154,10 +151,7 @@ class LazyLoadedItemTestBundleA extends Bundle
 
 class LazyLoadedItemTestBundleB extends AbstractPimcoreBundle
 {
-    /**
-     * @var int
-     */
-    private static $counter = 0;
+    private static int $counter = 0;
 
     public function __construct()
     {

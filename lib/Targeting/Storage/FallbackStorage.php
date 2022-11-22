@@ -35,25 +35,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class FallbackStorage implements TargetingStorageInterface
 {
-    /**
-     * @var TargetingStorageInterface
-     */
-    private $primaryStorage;
+    private TargetingStorageInterface $primaryStorage;
 
-    /**
-     * @var TargetingStorageInterface
-     */
-    private $fallbackStorage;
+    private TargetingStorageInterface $fallbackStorage;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @var array
-     */
-    private $options = [];
+    private array $options = [];
 
     public function __construct(
         TargetingStorageInterface $primaryStorage,
@@ -80,9 +68,6 @@ class FallbackStorage implements TargetingStorageInterface
         $resolver->setAllowedTypes('clear_after_migration', 'bool');
     }
 
-    /**
-     * {@inheritdoc }
-     */
     public function all(VisitorInfo $visitorInfo, string $scope): array
     {
         if ($visitorInfo->hasVisitorId()) {
@@ -94,9 +79,6 @@ class FallbackStorage implements TargetingStorageInterface
         }
     }
 
-    /**
-     * {@inheritdoc }
-     */
     public function has(VisitorInfo $visitorInfo, string $scope, string $name): bool
     {
         if ($visitorInfo->hasVisitorId()) {
@@ -110,10 +92,7 @@ class FallbackStorage implements TargetingStorageInterface
         }
     }
 
-    /**
-     * {@inheritdoc }
-     */
-    public function set(VisitorInfo $visitorInfo, string $scope, string $name, $value)
+    public function set(VisitorInfo $visitorInfo, string $scope, string $name, mixed $value)
     {
         if ($visitorInfo->hasVisitorId()) {
             $this->primaryStorage->set($visitorInfo, $scope, $name, $value);
@@ -125,7 +104,7 @@ class FallbackStorage implements TargetingStorageInterface
     /**
      * {@inheritdoc }
      */
-    public function get(VisitorInfo $visitorInfo, string $scope, string $name, $default = null)
+    public function get(VisitorInfo $visitorInfo, string $scope, string $name, mixed $default = null): mixed
     {
         if ($visitorInfo->hasVisitorId()) {
             if (!$this->primaryStorage->has($visitorInfo, $scope, $name)) {
@@ -150,18 +129,12 @@ class FallbackStorage implements TargetingStorageInterface
         }
     }
 
-    /**
-     * {@inheritdoc }
-     */
     public function migrateFromStorage(TargetingStorageInterface $storage, VisitorInfo $visitorInfo, string $scope): bool
     {
         throw new \LogicException('migrateFromStorage() is not supported in FallbackStorage');
     }
 
-    /**
-     * {@inheritdoc }
-     */
-    public function getCreatedAt(VisitorInfo $visitorInfo, string $scope)
+    public function getCreatedAt(VisitorInfo $visitorInfo, string $scope): ?\DateTimeImmutable
     {
         if ($visitorInfo->hasVisitorId()) {
             return $this->primaryStorage->getCreatedAt($visitorInfo, $scope);
@@ -170,10 +143,7 @@ class FallbackStorage implements TargetingStorageInterface
         }
     }
 
-    /**
-     * {@inheritdoc }
-     */
-    public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope)
+    public function getUpdatedAt(VisitorInfo $visitorInfo, string $scope): ?\DateTimeImmutable
     {
         if ($visitorInfo->hasVisitorId()) {
             return $this->primaryStorage->getUpdatedAt($visitorInfo, $scope);

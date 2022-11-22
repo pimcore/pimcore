@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,7 +33,7 @@ class DocumentResolver extends AbstractRequestResolver
      *
      * @return null|Document
      */
-    public function getDocument(Request $request = null)
+    public function getDocument(Request $request = null): ?Document
     {
         if (null === $request) {
             $request = $this->getCurrentRequest();
@@ -46,10 +47,6 @@ class DocumentResolver extends AbstractRequestResolver
         return null;
     }
 
-    /**
-     * @param Request $request
-     * @param Document $document
-     */
     public function setDocument(Request $request, Document $document)
     {
         $request->attributes->set(DynamicRouter::CONTENT_KEY, $document);

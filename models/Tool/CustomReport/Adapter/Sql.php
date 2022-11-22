@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,7 +26,7 @@ class Sql extends AbstractAdapter
     /**
      * {@inheritdoc}
      */
-    public function getData($filters, $sort, $dir, $offset, $limit, $fields = null, $drillDownFilters = null)
+    public function getData(?array $filters, ?string $sort, ?string $dir, ?int $offset, ?int $limit, array $fields = null, array $drillDownFilters = null): array
     {
         $db = Db::get();
 
@@ -55,7 +56,7 @@ class Sql extends AbstractAdapter
     /**
      * {@inheritdoc}
      */
-    public function getColumns($configuration)
+    public function getColumns(?\stdClass $configuration): array
     {
         $sql = '';
         if ($configuration) {
@@ -84,7 +85,7 @@ class Sql extends AbstractAdapter
      *
      * @return string
      */
-    protected function buildQueryString($config, $ignoreSelectAndGroupBy = false, $drillDownFilters = null, $selectField = null)
+    protected function buildQueryString(\stdClass $config, bool $ignoreSelectAndGroupBy = false, array $drillDownFilters = null, string $selectField = null): string
     {
         $config = (array)$config;
         $sql = '';
@@ -146,7 +147,7 @@ class Sql extends AbstractAdapter
      *
      * @return array|null
      */
-    protected function getBaseQuery($filters, $fields, $ignoreSelectAndGroupBy = false, $drillDownFilters = null, $selectField = null)
+    protected function getBaseQuery(array $filters, array $fields, bool $ignoreSelectAndGroupBy = false, array $drillDownFilters = null, string $selectField = null): ?array
     {
         $db = Db::get();
         $condition = ['1 = 1'];
@@ -228,7 +229,7 @@ class Sql extends AbstractAdapter
     /**
      * {@inheritdoc}
      */
-    public function getAvailableOptions($filters, $field, $drillDownFilters)
+    public function getAvailableOptions(array $filters, string $field, array $drillDownFilters): array
     {
         $db = Db::get();
         $baseQuery = $this->getBaseQuery($filters, [$field], false, $drillDownFilters);

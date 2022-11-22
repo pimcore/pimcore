@@ -30,12 +30,7 @@ use Pimcore\Normalizer\NormalizerInterface;
  */
 class Exporter
 {
-    /**
-     * @param Asset $theAsset
-     *
-     * @return array
-     */
-    public static function exportAsset(Asset $theAsset)
+    public static function exportAsset(Asset $theAsset): array
     {
         $webAsset = [];
         $webAsset['id'] = $theAsset->getId();
@@ -56,13 +51,7 @@ class Exporter
         return $resultItem;
     }
 
-    /**
-     * @param Concrete $object
-     * @param array $result
-     * @param Objectbrick $container
-     * @param Data\Objectbricks $brickFieldDef
-     */
-    public static function doExportBrick(Concrete $object, array &$result, Objectbrick $container, Data\Objectbricks $brickFieldDef)
+    public static function doExportBrick(Concrete $object, array &$result, Objectbrick $container, Data\Objectbricks $brickFieldDef): void
     {
         $allowedBrickTypes = $container->getAllowedBrickTypes();
         $resultContainer = [];
@@ -95,7 +84,7 @@ class Exporter
      *
      * @throws \Exception
      */
-    public static function doExportFieldcollection(Concrete $object, array &$result, Fieldcollection $container, Data\Fieldcollections $containerDef)
+    public static function doExportFieldcollection(Concrete $object, array &$result, Fieldcollection $container, Data\Fieldcollections $containerDef): void
     {
         $resultContainer = [];
 
@@ -135,10 +124,10 @@ class Exporter
      *
      * @throws \Exception
      */
-    public static function doExportObject(Concrete $object, &$result = [])
+    public static function doExportObject(Concrete $object, array &$result = []): void
     {
         $fDefs = $object->getClass()->getFieldDefinitions();
-        /** @var Data $fd */
+
         foreach ($fDefs as $fd) {
             $getter = 'get' . ucfirst($fd->getName());
             $value = $object->$getter();
@@ -156,12 +145,7 @@ class Exporter
         }
     }
 
-    /**
-     * @param AbstractObject $object
-     *
-     * @return array
-     */
-    public static function exportObject(AbstractObject $object)
+    public static function exportObject(AbstractObject $object): array
     {
         $webObject = [];
         $webObject['id'] = $object->getId();

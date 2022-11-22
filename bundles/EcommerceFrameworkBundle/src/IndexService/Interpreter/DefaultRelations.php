@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,7 +22,7 @@ use Pimcore\Model\Element\Service;
 
 class DefaultRelations implements RelationInterpreterInterface
 {
-    public function interpret($value, $config = null)
+    public function interpret($value, $config = null): array
     {
         $result = [];
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,9 +29,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class StorageCommand extends AbstractCommand
 {
-    /**
-     * @param ContainerInterface $locator
-     */
     public function __construct(private ContainerInterface $locator)
     {
         parent::__construct();
@@ -105,12 +103,6 @@ class StorageCommand extends AbstractCommand
         return 0;
     }
 
-    /**
-     * @param string $name
-     * @param string $type
-     *
-     * @return string
-     */
     public function getStorageName(string $name, string $type): string
     {
         return sprintf('pimcore.%s.storage.%s', $name, $type);

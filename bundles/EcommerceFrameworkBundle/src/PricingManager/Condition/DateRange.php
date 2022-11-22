@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,22 +22,11 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 
 class DateRange implements DateRangeInterface
 {
-    /**
-     * @var \DateTime|null
-     */
-    protected $starting;
+    protected ?\DateTime $starting = null;
 
-    /**
-     * @var \DateTime|null
-     */
-    protected $ending;
+    protected ?\DateTime $ending = null;
 
-    /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return bool
-     */
-    public function check(EnvironmentInterface $environment)
+    public function check(EnvironmentInterface $environment): bool
     {
         if ($this->getStarting() && $this->getEnding()) {
             return $this->getStarting()->getTimestamp() < time() && $this->getEnding()->getTimestamp() > time();
@@ -45,50 +35,31 @@ class DateRange implements DateRangeInterface
         return false;
     }
 
-    /**
-     * @param \DateTime $date
-     *
-     * @return DateRangeInterface
-     */
-    public function setStarting(\DateTime $date)
+    public function setStarting(\DateTime $date): DateRangeInterface
     {
         $this->starting = $date;
 
         return $this;
     }
 
-    /**
-     * @param \DateTime $date
-     *
-     * @return DateRangeInterface
-     */
-    public function setEnding(\DateTime $date)
+    public function setEnding(\DateTime $date): DateRangeInterface
     {
         $this->ending = $date;
 
         return $this;
     }
 
-    /**
-     * @return \DateTime|null
-     */
-    public function getStarting()
+    public function getStarting(): ?\DateTime
     {
         return $this->starting;
     }
 
-    /**
-     * @return \DateTime|null
-     */
-    public function getEnding()
+    public function getEnding(): ?\DateTime
     {
         return $this->ending;
     }
 
-    /**
-     * @return string
-     */
-    public function toJSON()
+    public function toJSON(): string
     {
         return json_encode([
             'type' => 'DateRange',
@@ -97,12 +68,7 @@ class DateRange implements DateRangeInterface
         ]);
     }
 
-    /**
-     * @param string $string
-     *
-     * @return ConditionInterface
-     */
-    public function fromJSON($string)
+    public function fromJSON(string $string): ConditionInterface
     {
         $json = json_decode($string);
 

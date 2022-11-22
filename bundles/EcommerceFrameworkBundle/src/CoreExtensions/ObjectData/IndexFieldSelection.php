@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,45 +18,33 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData;
 
 class IndexFieldSelection
 {
-    /**
-     * @var string
-     */
-    public $tenant;
+    public string $tenant;
 
-    /**
-     * @var string
-     */
-    public $field;
+    public string $field;
 
     /**
      * @var string|string[]
      */
-    public $preSelect;
+    public string|array $preSelect;
 
     /**
      * @param string $tenant
      * @param string $field
      * @param string|string[] $preSelect
      */
-    public function __construct($tenant, $field, $preSelect)
+    public function __construct(string $tenant, string $field, array|string $preSelect)
     {
         $this->field = $field;
         $this->preSelect = $preSelect;
         $this->tenant = $tenant;
     }
 
-    /**
-     * @param string $field
-     */
-    public function setField($field)
+    public function setField(string $field): void
     {
         $this->field = $field;
     }
 
-    /**
-     * @return string
-     */
-    public function getField()
+    public function getField(): string
     {
         return $this->field;
     }
@@ -63,7 +52,7 @@ class IndexFieldSelection
     /**
      * @param string|string[] $preSelect
      */
-    public function setPreSelect($preSelect)
+    public function setPreSelect(array|string $preSelect): void
     {
         $this->preSelect = $preSelect;
     }
@@ -71,23 +60,17 @@ class IndexFieldSelection
     /**
      * @return string|string[]
      */
-    public function getPreSelect()
+    public function getPreSelect(): array|string
     {
         return $this->preSelect;
     }
 
-    /**
-     * @param string $tenant
-     */
-    public function setTenant($tenant)
+    public function setTenant(string $tenant): void
     {
         $this->tenant = $tenant;
     }
 
-    /**
-     * @return string
-     */
-    public function getTenant()
+    public function getTenant(): string
     {
         return $this->tenant;
     }

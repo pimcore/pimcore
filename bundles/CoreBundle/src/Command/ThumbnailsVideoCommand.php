@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -131,11 +132,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
         }
     }
 
-    /**
-     * @param int $videoId
-     * @param string|Asset\Video\Thumbnail\Config $thumbnail
-     */
-    protected function waitTillFinished($videoId, $thumbnail)
+    protected function waitTillFinished(int $videoId, string|Asset\Video\Thumbnail\Config $thumbnail)
     {
         $finished = false;
 

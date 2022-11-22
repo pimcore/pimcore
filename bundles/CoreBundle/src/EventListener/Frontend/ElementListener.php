@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -134,13 +135,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         }
     }
 
-    /**
-     * @param Request $request
-     * @param Document $document
-     *
-     * @return Document
-     */
-    protected function handleVersion(Request $request, Document $document)
+    protected function handleVersion(Request $request, Document $document): Document
     {
         if ($v = $request->get('v')) {
             if ($version = Version::getById((int) $v)) {
@@ -235,13 +230,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         return $document;
     }
 
-    /**
-     * @param Document $document
-     * @param User $user
-     *
-     * @return Document
-     */
-    protected function handleEditmode(Document $document, User $user)
+    protected function handleEditmode(Document $document, User $user): Document
     {
         // check if there is the document in the session
         if ($documentFromSession = Document\Service::getElementFromSession('document', $document->getId())) {
@@ -271,9 +260,6 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
         return $document;
     }
 
-    /**
-     * @param Request $request
-     */
     protected function handleObjectParams(Request $request)
     {
         // object preview

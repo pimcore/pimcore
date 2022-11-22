@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,34 +30,28 @@ abstract class PrintAbstract extends Document\PageSnippet
      *
      * @var int|null
      */
-    protected $lastGenerated;
+    protected ?int $lastGenerated = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected $lastGenerateMessage;
+    protected ?string $lastGenerateMessage = null;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
-    protected $controller = 'web2print';
+    protected ?string $controller = 'web2print';
 
-    /**
-     * @param \DateTime $lastGenerated
-     */
     public function setLastGeneratedDate(\DateTime $lastGenerated)
     {
         $this->lastGenerated = $lastGenerated->getTimestamp();
     }
 
-    /**
-     * @return null|\DateTime
-     */
-    public function getLastGeneratedDate()
+    public function getLastGeneratedDate(): ?\DateTime
     {
         if ($this->lastGenerated) {
             $date = new \DateTime();
@@ -68,80 +63,49 @@ abstract class PrintAbstract extends Document\PageSnippet
         return null;
     }
 
-    /**
-     * @return null|TmpStore
-     */
-    public function getInProgress()
+    public function getInProgress(): ?TmpStore
     {
         return TmpStore::get($this->getLockKey());
     }
 
-    /**
-     * @param int $lastGenerated
-     */
-    public function setLastGenerated($lastGenerated)
+    public function setLastGenerated(int $lastGenerated)
     {
         $this->lastGenerated = $lastGenerated;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getLastGenerated()
+    public function getLastGenerated(): ?int
     {
         return $this->lastGenerated;
     }
 
-    /**
-     * @param string $lastGenerateMessage
-     */
-    public function setLastGenerateMessage($lastGenerateMessage)
+    public function setLastGenerateMessage(string $lastGenerateMessage)
     {
         $this->lastGenerateMessage = $lastGenerateMessage;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getLastGenerateMessage()
+    public function getLastGenerateMessage(): ?string
     {
         return $this->lastGenerateMessage;
     }
 
-    /**
-     * @param array $config
-     *
-     * @return bool
-     */
-    public function generatePdf($config)
+    public function generatePdf(array $config): bool
     {
         return Processor::getInstance()->preparePdfGeneration($this->getId(), $config);
     }
 
-    /**
-     * @param array $params
-     *
-     * @return string
-     */
-    public function renderDocument($params)
+    public function renderDocument(array $params): string
     {
         $html = Document\Service::render($this, $params, true);
 
         return $html;
     }
 
-    /**
-     * @return string
-     */
-    public function getPdfFileName()
+    public function getPdfFileName(): string
     {
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-document-' . $this->getId() . '.pdf';
     }
 
-    /**
-     * @return bool
-     */
-    public function pdfIsDirty()
+    public function pdfIsDirty(): bool
     {
         return $this->getLastGenerated() < $this->getModificationDate();
     }
@@ -151,7 +115,7 @@ abstract class PrintAbstract extends Document\PageSnippet
      *
      * @return string
      */
-    public function getLockKey()
+    public function getLockKey(): string
     {
         return 'web2print_pdf_generation_' . $this->getId();
     }

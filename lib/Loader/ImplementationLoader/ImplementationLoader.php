@@ -29,12 +29,9 @@ class ImplementationLoader implements LoaderInterface, ClassNameLoaderInterface
     /**
      * @var LoaderInterface[]
      */
-    protected $loaders;
+    protected array $loaders;
 
-    /**
-     * @var array
-     */
-    private $loaderCache = [];
+    private array $loaderCache = [];
 
     /**
      * @param LoaderInterface[] $loaders
@@ -57,9 +54,6 @@ class ImplementationLoader implements LoaderInterface, ClassNameLoaderInterface
         }
     }
 
-    /**
-     * @param LoaderInterface $loader
-     */
     public function addLoader(LoaderInterface $loader)
     {
         $this->loaders[] = $loader;
@@ -95,7 +89,7 @@ class ImplementationLoader implements LoaderInterface, ClassNameLoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function build(string $name, array $params = [])
+    public function build(string $name, array $params = []): mixed
     {
         $loader = $this->getLoader($name);
         if (null === $loader) {
@@ -105,9 +99,6 @@ class ImplementationLoader implements LoaderInterface, ClassNameLoaderInterface
         return $loader->build($name, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function supportsClassName(string $name): bool
     {
         $loader = $this->getLoader($name);
@@ -119,9 +110,6 @@ class ImplementationLoader implements LoaderInterface, ClassNameLoaderInterface
         return $loader->supportsClassName($name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getClassNameFor(string $name): string
     {
         $loader = $this->getLoader($name);

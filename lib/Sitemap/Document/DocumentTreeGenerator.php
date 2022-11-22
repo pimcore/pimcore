@@ -27,20 +27,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DocumentTreeGenerator extends AbstractElementGenerator
 {
-    /**
-     * @var DocumentUrlGeneratorInterface
-     */
-    private $urlGenerator;
+    private DocumentUrlGeneratorInterface $urlGenerator;
 
-    /**
-     * @var array
-     */
-    protected $options = [];
+    protected array $options = [];
 
-    /**
-     * @var int
-     */
-    private $currentBatchCount = 0;
+    private int $currentBatchCount = 0;
 
     public function __construct(
         DocumentUrlGeneratorInterface $urlGenerator,

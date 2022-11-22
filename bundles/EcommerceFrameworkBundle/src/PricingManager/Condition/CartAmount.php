@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,17 +22,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 class CartAmount implements CartAmountInterface
 {
-    /**
-     * @var float
-     */
-    protected $limit;
+    protected float $limit;
 
-    /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return bool
-     */
-    public function check(EnvironmentInterface $environment)
+    public function check(EnvironmentInterface $environment): bool
     {
         if (!$environment->getCart() || $environment->getProduct() !== null) {
             return false;
@@ -43,30 +36,19 @@ class CartAmount implements CartAmountInterface
         return $calculator->getSubTotal()->getAmount()->greaterThanOrEqual(Decimal::create($this->getLimit()));
     }
 
-    /**
-     * @param float $limit
-     *
-     * @return CartAmountInterface
-     */
-    public function setLimit($limit)
+    public function setLimit(float $limit): CartAmountInterface
     {
         $this->limit = $limit;
 
         return $this;
     }
 
-    /**
-     * @return float
-     */
-    public function getLimit()
+    public function getLimit(): float
     {
         return $this->limit;
     }
 
-    /**
-     * @return string
-     */
-    public function toJSON()
+    public function toJSON(): string
     {
         return json_encode([
             'type' => 'CartAmount',
@@ -74,12 +56,7 @@ class CartAmount implements CartAmountInterface
         ]);
     }
 
-    /**
-     * @param string $string
-     *
-     * @return ConditionInterface
-     */
-    public function fromJSON($string)
+    public function fromJSON(string $string): ConditionInterface
     {
         $json = json_decode($string);
         $this->setLimit($json->limit);

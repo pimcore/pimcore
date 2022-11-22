@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,21 +25,21 @@ class CatalogCategory extends AbstractObjectListCondition implements CategoryInt
     /**
      * @var AbstractCategory[]
      */
-    protected $categories = [];
+    protected array $categories = [];
 
     /**
      * Serialized category IDs
      *
      * @var array
      */
-    protected $categoryIds = [];
+    protected array $categoryIds = [];
 
     /**
      * @param AbstractCategory[] $categories
      *
      * @return CategoryInterface
      */
-    public function setCategories(array $categories)
+    public function setCategories(array $categories): CategoryInterface
     {
         $this->categories = $categories;
 
@@ -48,15 +49,12 @@ class CatalogCategory extends AbstractObjectListCondition implements CategoryInt
     /**
      * @return AbstractCategory[]
      */
-    public function getCategories()
+    public function getCategories(): array
     {
         return $this->categories;
     }
 
-    /**
-     * @return string
-     */
-    public function toJSON()
+    public function toJSON(): string
     {
         // basic
         $json = [
@@ -75,12 +73,7 @@ class CatalogCategory extends AbstractObjectListCondition implements CategoryInt
         return json_encode($json);
     }
 
-    /**
-     * @param string $string
-     *
-     * @return ConditionInterface
-     */
-    public function fromJSON($string)
+    public function fromJSON(string $string): ConditionInterface
     {
         $json = json_decode($string);
 
@@ -118,12 +111,7 @@ class CatalogCategory extends AbstractObjectListCondition implements CategoryInt
         $this->handleWakeup('categories', 'categoryIds');
     }
 
-    /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return bool
-     */
-    public function check(EnvironmentInterface $environment)
+    public function check(EnvironmentInterface $environment): bool
     {
         foreach ($environment->getCategories() as $category) {
             foreach ($this->getCategories() as $allow) {

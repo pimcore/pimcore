@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,42 +29,42 @@ final class TmpStore extends Model\AbstractModel
      *
      * @var string
      */
-    protected $id;
+    protected string $id;
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $tag;
+    protected string $tag;
 
     /**
      * @internal
      *
      * @var mixed
      */
-    protected $data;
+    protected mixed $data = null;
 
     /**
      * @internal
      *
      * @var int
      */
-    protected $date;
+    protected int $date;
 
     /**
      * @internal
      *
      * @var int
      */
-    protected $expiryDate;
+    protected int $expiryDate;
 
     /**
      * @internal
      *
      * @var bool
      */
-    protected $serialized = false;
+    protected bool $serialized = false;
 
     /**
      * @internal
@@ -94,7 +95,7 @@ final class TmpStore extends Model\AbstractModel
      *
      * @return bool
      */
-    public static function add($id, $data, $tag = null, $lifetime = null)
+    public static function add(string $id, mixed $data, string $tag = null, int $lifetime = null): bool
     {
         $instance = self::getInstance();
 
@@ -117,7 +118,7 @@ final class TmpStore extends Model\AbstractModel
      *
      * @return bool
      */
-    public static function set($id, $data, $tag = null, $lifetime = null)
+    public static function set(string $id, mixed $data, string $tag = null, int $lifetime = null): bool
     {
         $instance = self::getInstance();
 
@@ -128,23 +129,13 @@ final class TmpStore extends Model\AbstractModel
         return $instance->getDao()->add($id, $data, $tag, $lifetime);
     }
 
-    /**
-     * @param string $id
-     *
-     * @return void
-     */
-    public static function delete($id)
+    public static function delete(string $id): void
     {
         $instance = self::getInstance();
         $instance->getDao()->delete($id);
     }
 
-    /**
-     * @param string $id
-     *
-     * @return null|TmpStore
-     */
-    public static function get($id)
+    public static function get(string $id): ?TmpStore
     {
         $item = new self();
         if ($item->getById($id)) {
@@ -158,12 +149,7 @@ final class TmpStore extends Model\AbstractModel
         return null;
     }
 
-    /**
-     * @param string $tag
-     *
-     * @return array
-     */
-    public static function getIdsByTag($tag)
+    public static function getIdsByTag(string $tag): array
     {
         $instance = self::getInstance();
         $items = $instance->getDao()->getIdsByTag($tag);
@@ -171,98 +157,62 @@ final class TmpStore extends Model\AbstractModel
         return $items;
     }
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @param string $id
-     */
-    public function setId($id)
+    public function setId(string $id)
     {
         $this->id = $id;
     }
 
-    /**
-     * @return string
-     */
-    public function getTag()
+    public function getTag(): string
     {
         return $this->tag;
     }
 
-    /**
-     * @param string $tag
-     */
-    public function setTag($tag)
+    public function setTag(string $tag)
     {
         $this->tag = $tag;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->data;
     }
 
-    /**
-     * @param mixed $data
-     */
-    public function setData($data)
+    public function setData(mixed $data)
     {
         $this->data = $data;
     }
 
-    /**
-     * @return int
-     */
-    public function getDate()
+    public function getDate(): int
     {
         return $this->date;
     }
 
-    /**
-     * @param int $date
-     */
-    public function setDate($date)
+    public function setDate(int $date)
     {
         $this->date = $date;
     }
 
-    /**
-     * @return bool
-     */
-    public function isSerialized()
+    public function isSerialized(): bool
     {
         return $this->serialized;
     }
 
-    /**
-     * @param bool $serialized
-     */
-    public function setSerialized($serialized)
+    public function setSerialized(bool $serialized)
     {
         $this->serialized = $serialized;
     }
 
-    /**
-     * @return int
-     */
-    public function getExpiryDate()
+    public function getExpiryDate(): int
     {
         return $this->expiryDate;
     }
 
-    /**
-     * @param int $expiryDate
-     */
-    public function setExpiryDate($expiryDate)
+    public function setExpiryDate(int $expiryDate)
     {
         $this->expiryDate = $expiryDate;
     }
@@ -272,7 +222,7 @@ final class TmpStore extends Model\AbstractModel
      *
      * @return bool
      */
-    public function update($lifetime = null)
+    public function update(int $lifetime = null): bool
     {
         if (!$lifetime) {
             $lifetime = 86400;

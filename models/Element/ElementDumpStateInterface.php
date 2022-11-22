@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,8 +27,5 @@ interface ElementDumpStateInterface
      */
     public function setInDumpState(bool $dumpState);
 
-    /**
-     * @return bool
-     */
     public function isInDumpState(): bool;
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,10 +30,8 @@ use Pimcore\Tests\Support\Util\TestHelper;
  */
 class NormalizerTest extends ModelTestCase
 {
-    /** @var Image */
     protected Image $testAsset;
 
-    /** @var DataLoader */
     protected DataLoader $loader;
 
     protected function setUp(): void

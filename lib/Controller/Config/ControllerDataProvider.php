@@ -29,39 +29,23 @@ use Symfony\Component\HttpKernel\KernelInterface;
  */
 class ControllerDataProvider
 {
-    /**
-     * @var KernelInterface
-     */
-    private $kernel;
+    private ?KernelInterface $kernel = null;
 
     /**
      * id -> class mapping array of controllers defined as services
      *
      * @var array
      */
-    private $serviceControllers;
+    private array $serviceControllers;
 
-    /**
-     * @var array
-     */
-    private $bundles;
+    private ?array $bundles = null;
 
-    /**
-     * @var array
-     */
-    private $templates;
+    private ?array $templates = null;
 
-    /**
-     * @var array
-     */
-    private $templateNamePatterns = [
+    private array $templateNamePatterns = [
         '*.twig',
     ];
 
-    /**
-     * @param KernelInterface $kernel
-     * @param array $serviceControllers
-     */
     public function __construct(KernelInterface $kernel, array $serviceControllers)
     {
         $this->kernel = $kernel;

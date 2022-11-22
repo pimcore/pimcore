@@ -24,38 +24,21 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 class Price implements PriceInterface
 {
-    /**
-     * @var Currency
-     */
-    private $currency;
+    private Currency $currency;
 
-    /**
-     * @var Decimal
-     */
-    private $grossAmount;
+    private Decimal $grossAmount;
 
-    /**
-     * @var Decimal
-     */
-    private $netAmount;
+    private Decimal $netAmount;
 
-    /**
-     * @var string
-     */
-    private $taxEntryCombinationMode = TaxEntry::CALCULATION_MODE_COMBINE;
+    private string $taxEntryCombinationMode = TaxEntry::CALCULATION_MODE_COMBINE;
 
     private bool $minPrice;
 
     /**
      * @var TaxEntry[]
      */
-    private $taxEntries = [];
+    private array $taxEntries = [];
 
-    /**
-     * @param Decimal $amount
-     * @param Currency $currency
-     * @param bool $minPrice
-     */
     public function __construct(Decimal $amount, Currency $currency, bool $minPrice = false)
     {
         $this->grossAmount = $this->netAmount = $amount;
@@ -70,9 +53,6 @@ class Price implements PriceInterface
         return $string ?: '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isMinPrice(): bool
     {
         return $this->minPrice;
@@ -105,17 +85,11 @@ class Price implements PriceInterface
         return $this->grossAmount;
     }
 
-    /**
-     * @param Currency $currency
-     */
     public function setCurrency(Currency $currency)
     {
         $this->currency = $currency;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCurrency(): Currency
     {
         return $this->currency;
@@ -156,7 +130,7 @@ class Price implements PriceInterface
     /**
      * {@inheritdoc}
      */
-    public function setGrossAmount(Decimal $grossAmount, bool $recalc = false)
+    public function setGrossAmount(Decimal $grossAmount, bool $recalc = false): void
     {
         $this->grossAmount = $grossAmount;
 
@@ -168,7 +142,7 @@ class Price implements PriceInterface
     /**
      * {@inheritdoc}
      */
-    public function setNetAmount(Decimal $netAmount, bool $recalc = false)
+    public function setNetAmount(Decimal $netAmount, bool $recalc = false): void
     {
         $this->netAmount = $netAmount;
 
@@ -180,7 +154,7 @@ class Price implements PriceInterface
     /**
      * {@inheritdoc}
      */
-    public function setTaxEntries(array $taxEntries)
+    public function setTaxEntries(array $taxEntries): void
     {
         $this->taxEntries = $taxEntries;
     }
@@ -188,7 +162,7 @@ class Price implements PriceInterface
     /**
      * {@inheritdoc}
      */
-    public function setTaxEntryCombinationMode(string $taxEntryCombinationMode)
+    public function setTaxEntryCombinationMode(string $taxEntryCombinationMode): void
     {
         $this->taxEntryCombinationMode = $taxEntryCombinationMode;
     }

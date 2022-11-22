@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,20 +21,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class LocaleService implements LocaleServiceInterface
 {
-    /**
-     * @var string
-     */
-    protected $locale;
+    protected ?string $locale = null;
 
-    /**
-     * @var null|RequestStack
-     */
-    protected $requestStack;
+    protected ?RequestStack $requestStack = null;
 
-    /**
-     * @var Translator|null
-     */
-    protected $translator;
+    protected ?Translator $translator = null;
 
     /**
      * @param RequestStack|null $requestStack
@@ -45,12 +37,7 @@ class LocaleService implements LocaleServiceInterface
         $this->translator = $translator;
     }
 
-    /**
-     * @param string $locale
-     *
-     * @return bool
-     */
-    public function isLocale($locale)
+    public function isLocale(string $locale): bool
     {
         $locales = array_flip($this->getLocaleList());
         $exists = isset($locales[$locale]);
@@ -58,10 +45,7 @@ class LocaleService implements LocaleServiceInterface
         return $exists;
     }
 
-    /**
-     * @return string
-     */
-    public function findLocale()
+    public function findLocale(): string
     {
         if ($requestLocale = $this->getLocaleFromRequest()) {
             return $requestLocale;
@@ -75,10 +59,7 @@ class LocaleService implements LocaleServiceInterface
         return '';
     }
 
-    /**
-     * @return null|string
-     */
-    protected function getLocaleFromRequest()
+    protected function getLocaleFromRequest(): ?string
     {
         if ($this->requestStack) {
             $mainRequest = $this->requestStack->getMainRequest();
@@ -91,10 +72,7 @@ class LocaleService implements LocaleServiceInterface
         return null;
     }
 
-    /**
-     * @return array
-     */
-    public function getLocaleList()
+    public function getLocaleList(): array
     {
         return \ResourceBundle::getLocales('');
     }
@@ -104,7 +82,7 @@ class LocaleService implements LocaleServiceInterface
      *
      * @return array
      */
-    public function getDisplayRegions($locale = null)
+    public function getDisplayRegions(string $locale = null): array
     {
         if (!$locale) {
             $locale = $this->findLocale();
@@ -120,10 +98,7 @@ class LocaleService implements LocaleServiceInterface
         return $regions;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getLocale()
+    public function getLocale(): ?string
     {
         if (null === $this->locale) {
             $this->locale = $this->getLocaleFromRequest();
@@ -132,10 +107,7 @@ class LocaleService implements LocaleServiceInterface
         return $this->locale;
     }
 
-    /**
-     * @param string|null $locale
-     */
-    public function setLocale($locale)
+    public function setLocale(?string $locale)
     {
         $this->locale = $locale;
 
@@ -158,10 +130,7 @@ class LocaleService implements LocaleServiceInterface
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function hasLocale()
+    public function hasLocale(): bool
     {
         return $this->getLocale() !== null;
     }

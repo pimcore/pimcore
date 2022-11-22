@@ -48,30 +48,15 @@ class TargetingListener implements EventSubscriberInterface
     use ResponseInjectionTrait;
     use StaticPageContextAwareTrait;
 
-    /**
-     * @var VisitorInfoResolver
-     */
-    private $visitorInfoResolver;
+    private VisitorInfoResolver $visitorInfoResolver;
 
-    /**
-     * @var DelegatingActionHandler|ActionHandlerInterface
-     */
-    private $actionHandler;
+    private ActionHandlerInterface|DelegatingActionHandler $actionHandler;
 
-    /**
-     * @var VisitorInfoStorageInterface
-     */
-    private $visitorInfoStorage;
+    private VisitorInfoStorageInterface $visitorInfoStorage;
 
-    /**
-     * @var RequestHelper
-     */
-    private $requestHelper;
+    private RequestHelper $requestHelper;
 
-    /**
-     * @var TargetingCodeGenerator
-     */
-    private $codeGenerator;
+    private TargetingCodeGenerator $codeGenerator;
 
     public function __construct(
         VisitorInfoResolver $visitorInfoResolver,
@@ -87,10 +72,7 @@ class TargetingListener implements EventSubscriberInterface
         $this->codeGenerator = $codeGenerator;
     }
 
-    /**
-     * @return array
-     */
-    public static function getSubscribedEvents()//: array
+    public static function getSubscribedEvents(): array
     {
         return [
             // needs to run before ElementListener to make sure there's a

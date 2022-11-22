@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -55,21 +56,21 @@ class Placeholder extends AbstractExtension
      *
      * @var string
      */
-    protected $_regKey = 'Placeholder';
+    protected string $_regKey = 'Placeholder';
 
     /**
      * @var Container[]
      */
-    protected $containers = [];
+    protected array $containers = [];
 
     /**
      * Retrieve object instance; optionally add meta tag
      *
-     * @param null|string $containerName
+     * @param string|null $containerName
      *
      * @return Container
      */
-    public function __invoke($containerName = null)
+    public function __invoke(string $containerName = null): Container
     {
         $containerName = (string) $containerName;
         if (empty($this->containers[$containerName])) {

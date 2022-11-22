@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,5 +27,5 @@ class Lastname extends Model\DataObject\ClassDefinition\Data\Input
      *
      * @var string
      */
-    public $fieldtype = 'lastname';
+    public string $fieldtype = 'lastname';
 }

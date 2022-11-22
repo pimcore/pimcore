@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,10 +30,7 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class ConfigController extends AdminController
 {
-    /**
-     * @var RouterInterface
-     */
-    private $router;
+    private RouterInterface $router;
 
     /**
      * ConfigController constructor.
@@ -49,7 +47,7 @@ class ConfigController extends AdminController
      *
      * @return Response
      */
-    public function jsConfigAction()
+    public function jsConfigAction(): Response
     {
         $config = $this->getParameter('pimcore_ecommerce.pimcore.config');
 

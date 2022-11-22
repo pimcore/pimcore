@@ -29,12 +29,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class DumpTranslationEntriesListener implements EventSubscriberInterface
 {
-    /** @var TranslationEntriesDumper */
     private TranslationEntriesDumper $dumper;
 
-    /**
-     * @param TranslationEntriesDumper $dumper
-     */
     public function __construct(TranslationEntriesDumper $dumper)
     {
         $this->dumper = $dumper;
@@ -51,17 +47,11 @@ class DumpTranslationEntriesListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param TerminateEvent $event
-     */
     public function onKernelTerminate(TerminateEvent $event)
     {
         $this->dumper->dumpToDb();
     }
 
-    /**
-     * @param ConsoleTerminateEvent $event
-     */
     public function onConsoleTerminate(ConsoleTerminateEvent $event)
     {
         $this->dumper->dumpToDb();

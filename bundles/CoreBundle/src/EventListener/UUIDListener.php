@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -48,9 +49,6 @@ class UUIDListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param Event $e
-     */
     public function onPostAdd(Event $e)
     {
         if ($this->isEnabled()) {
@@ -62,9 +60,6 @@ class UUIDListener implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param Event $e
-     */
     public function onPostDelete(Event $e)
     {
         if ($this->isEnabled()) {
@@ -79,10 +74,7 @@ class UUIDListener implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @return bool
-     */
-    protected function isEnabled()
+    protected function isEnabled(): bool
     {
         $config = Config::getSystemConfiguration('general');
         if (!empty($config['instance_identifier'])) {
@@ -92,12 +84,7 @@ class UUIDListener implements EventSubscriberInterface
         return false;
     }
 
-    /**
-     * @param Event $event
-     *
-     * @return null|\Pimcore\Model\Element\ElementInterface|\Pimcore\Model\DataObject\ClassDefinition
-     */
-    protected function extractElement(Event $event)
+    protected function extractElement(Event $event): \Pimcore\Model\DataObject\ClassDefinition|\Pimcore\Model\Element\ElementInterface|null
     {
         $element = null;
 

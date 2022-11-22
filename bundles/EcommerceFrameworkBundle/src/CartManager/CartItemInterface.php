@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,147 +27,89 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
  */
 interface CartItemInterface
 {
-    /**
-     * @return CheckoutableInterface
-     */
-    public function getProduct();
+    public function getProduct(): CheckoutableInterface;
 
-    /**
-     * @return int
-     */
-    public function getCount();
+    public function getCount(): int;
 
-    /**
-     * @return string
-     */
-    public function getItemKey();
+    public function getItemKey(): string;
 
-    /**
-     * @param CheckoutableInterface $product
-     *
-     * @return void
-     */
-    public function setProduct(CheckoutableInterface $product);
+    public function setProduct(CheckoutableInterface $product): void;
 
-    /**
-     * @param int $count
-     *
-     * @return void
-     */
-    public function setCount($count);
+    public function setCount(int $count): void;
 
-    /**
-     * @param CartInterface $cart
-     *
-     * @return void
-     */
-    public function setCart(CartInterface $cart);
+    public function setCart(CartInterface $cart): void;
 
-    /**
-     * @return CartInterface|null
-     */
-    public function getCart();
+    public function getCart(): ?CartInterface;
 
     /**
      * @return CartItemInterface[]
      */
-    public function getSubItems();
+    public function getSubItems(): array;
 
     /**
      * @param CartItemInterface[] $subItems
      *
      * @return void
      */
-    public function setSubItems($subItems);
+    public function setSubItems(array $subItems): void;
 
-    /**
-     * @return PriceInterface
-     */
     public function getPrice(): PriceInterface;
 
-    /**
-     * @return PriceInterface
-     */
     public function getTotalPrice(): PriceInterface;
 
-    /**
-     * @return PriceInfoInterface
-     */
     public function getPriceInfo(): PriceInfoInterface;
 
-    /**
-     * @param string $comment
-     *
-     * @return void
-     */
-    public function setComment($comment);
+    public function setComment(string $comment): void;
 
-    /**
-     * @return string
-     */
-    public function getComment();
+    public function getComment(): string;
 
     /**
      * @return AbstractSetProductEntry[]
      */
-    public function getSetEntries();
+    public function getSetEntries(): array;
 
-    /**
-     * @return AvailabilityInterface
-     */
-    public function getAvailabilityInfo();
+    public function getAvailabilityInfo(): AvailabilityInterface;
 
     /**
      * @static
      *
-     * @param string|int $cartId
+     * @param int|string $cartId
      * @param string $itemKey
      * @param string $parentKey
      *
      * @return CartItemInterface|null
      */
-    public static function getByCartIdItemKey($cartId, $itemKey, $parentKey = '');
+    public static function getByCartIdItemKey(int|string $cartId, string $itemKey, string $parentKey = ''): ?CartItemInterface;
 
     /**
      * @static
      *
-     * @param string|int $cartId
+     * @param int|string $cartId
      */
-    public static function removeAllFromCart($cartId);
+    public static function removeAllFromCart(int|string $cartId);
 
-    /**
-     * @return void
-     */
-    public function save();
+    public function save(): void;
 
     /**
      * @param \DateTime|null $date
      *
      * @return void
      */
-    public function setAddedDate(\DateTime $date = null);
+    public function setAddedDate(\DateTime $date = null): void;
 
-    /**
-     * @return \DateTime
-     */
-    public function getAddedDate();
+    public function getAddedDate(): \DateTime;
 
     /**
      * @return int unix timestamp
      */
-    public function getAddedDateTimestamp();
+    public function getAddedDateTimestamp(): int;
 
-    /**
-     * @param int $time
-     *
-     * @return void
-     */
-    public function setAddedDateTimestamp($time);
+    public function setAddedDateTimestamp(int $time): void;
 
     /**
      * get item name
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 }

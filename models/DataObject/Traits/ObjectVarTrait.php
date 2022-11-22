@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,7 +29,7 @@ trait ObjectVarTrait
      *
      * @return array
      */
-    public function getObjectVars()
+    public function getObjectVars(): array
     {
         $data = get_object_vars($this);
 
@@ -43,12 +44,7 @@ trait ObjectVarTrait
         return $data;
     }
 
-    /**
-     * @param string $var
-     *
-     * @return mixed
-     */
-    public function getObjectVar($var)
+    public function getObjectVar(string $var): mixed
     {
         if (!property_exists($this, $var)) {
             return null;
@@ -66,7 +62,7 @@ trait ObjectVarTrait
      *
      * @throws \Exception
      */
-    public function setObjectVar($var, $value, bool $silent = false)
+    public function setObjectVar(string $var, mixed $value, bool $silent = false): static
     {
         if (!property_exists($this, $var)) {
             if ($silent) {

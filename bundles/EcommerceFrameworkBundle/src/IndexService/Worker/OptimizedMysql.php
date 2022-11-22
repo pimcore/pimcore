@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,16 +33,8 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
 
     const MOCKUP_CACHE_PREFIX = 'ecommerce_mockup';
 
-    /**
-     * @var Helper\MySql
-     */
-    protected $mySqlHelper;
+    protected Helper\MySql $mySqlHelper;
 
-    /**
-     * @param OptimizedMysqlConfig $tenantConfig
-     * @param Connection $db
-     * @param EventDispatcherInterface $eventDispatcher
-     */
     public function __construct(OptimizedMysqlConfig $tenantConfig, Connection $db, EventDispatcherInterface $eventDispatcher)
     {
         parent::__construct($tenantConfig, $db, $eventDispatcher);
@@ -49,13 +42,13 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
         $this->mySqlHelper = new Helper\MySql($tenantConfig, $db);
     }
 
-    public function createOrUpdateIndexStructures()
+    public function createOrUpdateIndexStructures(): void
     {
         $this->mySqlHelper->createOrUpdateIndexStructures();
         $this->createOrUpdateStoreTable();
     }
 
-    public function deleteFromIndex(IndexableInterface $object)
+    public function deleteFromIndex(IndexableInterface $object): void
     {
         if (!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
@@ -72,26 +65,26 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
         $this->doCleanupOldZombieData($object, $subObjectIds);
     }
 
-    protected function doDeleteFromIndex($objectId, IndexableInterface $object = null)
+    protected function doDeleteFromIndex(int $subObjectId, IndexableInterface $object = null)
     {
         try {
             $this->db->beginTransaction();
-            $this->db->delete($this->tenantConfig->getTablename(), ['o_id' => $objectId]);
-            $this->db->delete($this->tenantConfig->getRelationTablename(), ['src' => $objectId]);
+            $this->db->delete($this->tenantConfig->getTablename(), ['o_id' => $subObjectId]);
+            $this->db->delete($this->tenantConfig->getRelationTablename(), ['src' => $subObjectId]);
             if ($this->tenantConfig->getTenantRelationTablename()) {
-                $this->db->delete($this->tenantConfig->getTenantRelationTablename(), ['o_id' => $objectId]);
+                $this->db->delete($this->tenantConfig->getTenantRelationTablename(), ['o_id' => $subObjectId]);
             }
 
-            $this->deleteFromMockupCache($objectId);
-            $this->deleteFromStoreTable($objectId);
+            $this->deleteFromMockupCache($subObjectId);
+            $this->deleteFromStoreTable($subObjectId);
             $this->db->commit();
         } catch (\Exception $e) {
             $this->db->rollBack();
-            Logger::warn("Error during deleting from index tables for object $objectId: " . $e);
+            Logger::warn("Error during deleting from index tables for object $subObjectId: " . $e);
         }
     }
 
-    public function updateIndex(IndexableInterface $object)
+    public function updateIndex(IndexableInterface $object): void
     {
         if (!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
@@ -118,7 +111,7 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
      * @param array|null $data
      * @param array|null $metadata
      */
-    public function doUpdateIndex($objectId, $data = null, $metadata = null)
+    public function doUpdateIndex(int $objectId, array $data = null, array $metadata = null)
     {
         if (empty($data)) {
             $data = $this->db->fetchOne('SELECT data FROM ' . self::STORE_TABLE_NAME . ' WHERE o_id = ? AND tenant = ?', [$objectId, $this->name]);
@@ -156,17 +149,17 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
         return $this->mySqlHelper->getValidTableColumns($table);
     }
 
-    protected function getSystemAttributes()
+    protected function getSystemAttributes(): array
     {
         return $this->mySqlHelper->getSystemAttributes();
     }
 
-    protected function getStoreTableName()
+    protected function getStoreTableName(): string
     {
         return self::STORE_TABLE_NAME;
     }
 
-    protected function getMockupCachePrefix()
+    protected function getMockupCachePrefix(): string
     {
         return self::MOCKUP_CACHE_PREFIX;
     }
@@ -176,10 +169,7 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
         $this->mySqlHelper->__destruct();
     }
 
-    /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql
-     */
-    public function getProductList()
+    public function getProductList(): \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql
     {
         return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql($this->getTenantConfig());
     }

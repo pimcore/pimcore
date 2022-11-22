@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -34,20 +35,10 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class Router implements RouterInterface, RequestMatcherInterface, VersatileGeneratorInterface
 {
-    /**
-     * @var RequestContext
-     */
-    protected $context;
+    protected RequestContext $context;
 
-    /**
-     * @var RequestHelper
-     */
-    protected $requestHelper;
+    protected RequestHelper $requestHelper;
 
-    /**
-     * @param RequestContext $context
-     * @param RequestHelper $requestHelper
-     */
     public function __construct(RequestContext $context, RequestHelper $requestHelper)
     {
         $this->context = $context;
@@ -171,7 +162,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      *
      * @return string|null
      */
-    protected function getCurrentRoute()
+    protected function getCurrentRoute(): ?string
     {
         $route = null;
 

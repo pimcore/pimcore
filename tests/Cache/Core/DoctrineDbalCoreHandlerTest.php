@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,7 +30,7 @@ class DoctrineDbalCoreHandlerTest extends AbstractCoreHandlerTest
      *
      * @return TagAwareAdapter
      */
-    protected function createCachePool()
+    protected function createCachePool(): TagAwareAdapter
     {
         TestHelper::checkDbSupport();
         $doctrineDbalAdapter = new DoctrineDbalAdapter(\Pimcore::getContainer()->get('doctrine.dbal.default_connection'), '', $this->defaultLifetime);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,12 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 trait PreviewRequestTrait
 {
-    /**
-     * @param Request $request
-     *
-     * @return bool
-     */
-    protected function isPreviewRequest(Request $request)
+    protected function isPreviewRequest(Request $request): bool
     {
         if ($request->server->get('HTTP_X_PURPOSE') === 'preview') {
             return true;

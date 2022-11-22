@@ -26,14 +26,8 @@ use Pimcore\Model\User;
  */
 class PimcoreUsers implements DataProviderInterface
 {
-    /**
-     * @var TokenStorageUserResolver
-     */
-    protected $userResolver;
+    protected TokenStorageUserResolver $userResolver;
 
-    /**
-     * @param TokenStorageUserResolver $userResolver
-     */
     public function __construct(TokenStorageUserResolver $userResolver)
     {
         $this->userResolver = $userResolver;
@@ -134,11 +128,6 @@ class PimcoreUsers implements DataProviderInterface
         return $users;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return array
-     */
     public function getExportData(int $id): array
     {
         $user = User::getById($id);
@@ -153,11 +142,6 @@ class PimcoreUsers implements DataProviderInterface
         return $userData;
     }
 
-    /**
-     * @param User\AbstractUser $user
-     *
-     * @return array
-     */
     protected function getVersionDataForUser(User\AbstractUser $user): array
     {
         $db = Db::get();
@@ -166,11 +150,6 @@ class PimcoreUsers implements DataProviderInterface
         return $versions;
     }
 
-    /**
-     * @param User\AbstractUser $user
-     *
-     * @return array
-     */
     protected function getUsageLogDataForUser(User\AbstractUser $user): array
     {
         $pattern = ' ' . $user->getId() . '|';

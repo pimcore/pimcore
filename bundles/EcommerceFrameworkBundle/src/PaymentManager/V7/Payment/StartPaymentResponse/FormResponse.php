@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,10 +21,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class FormResponse extends AbstractResponse
 {
-    /**
-     * @var FormBuilderInterface
-     */
-    protected $form;
+    protected FormBuilderInterface $form;
 
     /**
      * FormResponse constructor.
@@ -37,9 +35,6 @@ class FormResponse extends AbstractResponse
         $this->form = $form;
     }
 
-    /**
-     * @return FormBuilderInterface
-     */
     public function getForm(): FormBuilderInterface
     {
         return $this->form;

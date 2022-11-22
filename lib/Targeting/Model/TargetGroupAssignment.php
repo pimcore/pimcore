@@ -21,20 +21,10 @@ use Pimcore\Model\Tool\Targeting\TargetGroup;
 
 class TargetGroupAssignment
 {
-    /**
-     * @var TargetGroup
-     */
-    private $targetGroup;
+    private TargetGroup $targetGroup;
 
-    /**
-     * @var int
-     */
-    private $count = 1;
+    private int $count = 1;
 
-    /**
-     * @param TargetGroup $targetGroup
-     * @param int $count
-     */
     public function __construct(TargetGroup $targetGroup, int $count = 1)
     {
         $this->targetGroup = $targetGroup;
@@ -52,7 +42,7 @@ class TargetGroupAssignment
         return $this->count;
     }
 
-    public function setCount(int $count)
+    public function setCount(int $count): void
     {
         if ($count < 0) {
             throw new \OutOfBoundsException('Count must be a positive integer');
@@ -61,7 +51,7 @@ class TargetGroupAssignment
         $this->count = $count;
     }
 
-    public function inc(int $amount = 1)
+    public function inc(int $amount = 1): void
     {
         $this->setCount($this->count += $amount);
     }

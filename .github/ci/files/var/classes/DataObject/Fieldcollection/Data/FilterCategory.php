@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Fields Summary:
@@ -14,16 +15,17 @@ namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\PreGetValueHookInterface;
+use Pimcore\Model\Element\AbstractElement;
 
 class FilterCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\CategoryFilterDefinitionType
 {
-protected $type = "FilterCategory";
-protected $label;
-protected $preSelect;
-protected $rootCategory;
-protected $includeParentCategories;
-protected $scriptPath;
-protected $availableCategories;
+protected string $type = "FilterCategory";
+protected ?string $label;
+protected \Pimcore\Model\Element\AbstractElement|null|DataObject\Category $preSelect;
+protected \Pimcore\Model\Element\AbstractElement|null|DataObject\Category $rootCategory;
+protected ?bool $includeParentCategories;
+protected ?string $scriptPath;
+protected array $availableCategories;
 
 
 /**
@@ -54,9 +56,9 @@ public function setLabel(?string $label): static
 
 /**
 * Get preSelect - Pre Select
-* @return \Pimcore\Model\DataObject\Category|null
+* @return DataObject\Category|\Pimcore\Model\Element\AbstractElement|\Pimcore\Model\Element\ElementInterface|null
 */
-public function getPreSelect(): ?\Pimcore\Model\Element\AbstractElement
+public function getPreSelect(): DataObject\Category|\Pimcore\Model\Element\ElementInterface|\Pimcore\Model\Element\AbstractElement|null
 {
 	$container = $this;
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation $fd */
@@ -92,9 +94,9 @@ public function setPreSelect(?\Pimcore\Model\Element\AbstractElement $preSelect)
 
 /**
 * Get rootCategory - Root Category
-* @return \Pimcore\Model\DataObject\Category|null
+* @return DataObject\Category|\Pimcore\Model\Element\AbstractElement|\Pimcore\Model\Element\ElementInterface|null
 */
-public function getRootCategory(): ?\Pimcore\Model\Element\AbstractElement
+public function getRootCategory(): DataObject\Category|\Pimcore\Model\Element\ElementInterface|\Pimcore\Model\Element\AbstractElement|null
 {
 	$container = $this;
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation $fd */

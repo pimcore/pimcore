@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -36,40 +37,28 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class Manager
 {
-    /**
-     * @var Registry
-     */
-    private $workflowRegistry;
+    private Registry $workflowRegistry;
 
-    /**
-     * @var NotesSubscriber
-     */
-    private $notesSubscriber;
+    private NotesSubscriber $notesSubscriber;
 
-    /**
-     * @var ExpressionService
-     */
-    private $expressionService;
+    private ExpressionService $expressionService;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
     /**
      * @var PlaceConfig[][]
      */
-    private $placeConfigs = [];
+    private array $placeConfigs = [];
 
     /**
      * @var GlobalAction[][]
      */
-    private $globalActions = [];
+    private array $globalActions = [];
 
     /**
      * @var WorkflowConfig[]
      */
-    private $workflows = [];
+    private array $workflows = [];
 
     public function __construct(Registry $workflowRegistry, NotesSubscriber $notesSubscriber, ExpressionService $expressionService, EventDispatcherInterface $eventDispatcher)
     {
@@ -80,12 +69,10 @@ class Manager
     }
 
     /**
-     * @param string $place
-     * @param array $placeConfig
      *
      * @return $this
      */
-    public function addPlaceConfig(string $workflowName, string $place, array $placeConfig)
+    public function addPlaceConfig(string $workflowName, string $place, array $placeConfig): static
     {
         $this->placeConfigs[$workflowName] = $this->placeConfigs[$workflowName] ?? [];
         $this->placeConfigs[$workflowName][$place] = new PlaceConfig($place, $placeConfig, $this->expressionService, $workflowName);
@@ -101,7 +88,7 @@ class Manager
      *
      * @return $this
      */
-    public function addGlobalAction(string $workflowName, string $action, array $actionConfig, CustomHtmlServiceInterface $customHtmlService = null)
+    public function addGlobalAction(string $workflowName, string $action, array $actionConfig, CustomHtmlServiceInterface $customHtmlService = null): static
     {
         $this->globalActions[$workflowName] = $this->globalActions[$workflowName] ?? [];
         $this->globalActions[$workflowName][$action] = new GlobalAction($action, $actionConfig, $this->expressionService, $workflowName, $customHtmlService);
@@ -156,12 +143,12 @@ class Manager
     /**
      * @return array|PlaceConfig[]
      */
-    public function getPlaceConfigsByWorkflowName(string $workflowName)
+    public function getPlaceConfigsByWorkflowName(string $workflowName): array
     {
         return $this->placeConfigs[$workflowName] ?? [];
     }
 
-    public function registerWorkflow(string $workflowName, array $options = [])
+    public function registerWorkflow(string $workflowName, array $options = []): void
     {
         $this->workflows[$workflowName] = new WorkflowConfig($workflowName, $options);
 
@@ -192,7 +179,7 @@ class Manager
      *
      * @return Workflow[]
      */
-    public function getAllWorkflowsForSubject($subject): array
+    public function getAllWorkflowsForSubject(object $subject): array
     {
         $workflows = [];
 
@@ -209,12 +196,7 @@ class Manager
         return $workflows;
     }
 
-    /**
-     * @param object $subject
-     *
-     * @return Workflow|null
-     */
-    public function getWorkflowIfExists($subject, string $workflowName): ?Workflow
+    public function getWorkflowIfExists(object $subject, string $workflowName): ?Workflow
     {
         try {
             $workflow = $this->workflowRegistry->get($subject, $workflowName);
@@ -226,14 +208,7 @@ class Manager
         return $workflow;
     }
 
-    /**
-     * @param string $workflowName
-     *
-     * @return Workflow
-     *
-     * @throws \Exception
-     */
-    public function getWorkflowByName(string $workflowName): Workflow
+    public function getWorkflowByName(string $workflowName): ?object
     {
         $config = $this->getWorkflowConfig($workflowName);
 
@@ -252,7 +227,7 @@ class Manager
      * @throws ValidationException
      * @throws \Exception
      */
-    public function applyWithAdditionalData(Workflow $workflow, $subject, string $transition, array $additionalData, $saveSubject = false)
+    public function applyWithAdditionalData(Workflow $workflow, Asset|PageSnippet|Concrete $subject, string $transition, array $additionalData, bool $saveSubject = false): Marking
     {
         $this->notesSubscriber->setAdditionalData($additionalData);
 
@@ -283,10 +258,9 @@ class Manager
      *
      * @return Marking
      *
-     * @throws ValidationException
      * @throws \Exception
      */
-    public function applyGlobalAction(Workflow $workflow, $subject, string $globalAction, array $additionalData, $saveSubject = false)
+    public function applyGlobalAction(Workflow $workflow, object $subject, string $globalAction, array $additionalData, bool $saveSubject = false): Marking
     {
         $globalActionObj = $this->getGlobalAction($workflow->getName(), $globalAction);
         if (!$globalActionObj) {

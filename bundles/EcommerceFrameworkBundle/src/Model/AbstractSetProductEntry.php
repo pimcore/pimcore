@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,12 +24,9 @@ class AbstractSetProductEntry
     /**
      * @var int
      */
-    private $quantity;
+    private mixed $quantity = null;
 
-    /**
-     * @var CheckoutableInterface
-     */
-    private $product;
+    private CheckoutableInterface $product;
 
     public function __construct(CheckoutableInterface $product, $quantity = 1)
     {
@@ -36,36 +34,22 @@ class AbstractSetProductEntry
         $this->quantity = $quantity;
     }
 
-    /**
-     * @param CheckoutableInterface $product
-     */
-    public function setProduct(CheckoutableInterface $product)
+    public function setProduct(CheckoutableInterface $product): void
     {
         $this->product = $product;
     }
 
-    /**
-     * @return CheckoutableInterface
-     */
-    public function getProduct()
+    public function getProduct(): CheckoutableInterface
     {
         return $this->product;
     }
 
-    /**
-     * @param int $quantity
-     *
-     * @return void
-     */
-    public function setQuantity($quantity)
+    public function setQuantity(int $quantity): void
     {
         $this->quantity = $quantity;
     }
 
-    /**
-     * @return int
-     */
-    public function getQuantity()
+    public function getQuantity(): int
     {
         return $this->quantity;
     }
@@ -75,7 +59,7 @@ class AbstractSetProductEntry
      *
      * @return int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->getProduct()->getId();
     }

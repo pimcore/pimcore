@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,7 +29,7 @@ interface ExportableTokenManagerInterface
      *
      * @return string
      */
-    public function exportCsv(array $params);
+    public function exportCsv(array $params): string;
 
     /**
      * Export tokens to plain text list
@@ -37,5 +38,5 @@ interface ExportableTokenManagerInterface
      *
      * @return string
      */
-    public function exportPlain(array $params);
+    public function exportPlain(array $params): string;
 }

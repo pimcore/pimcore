@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,10 +27,7 @@ class DeliveryDate extends AbstractStep implements CheckoutStepInterface
 
     const DATE = 'delivery_date';
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return 'deliverydate';
     }
@@ -37,7 +35,7 @@ class DeliveryDate extends AbstractStep implements CheckoutStepInterface
     /**
      * {@inheritdoc}
      */
-    public function commit($data)
+    public function commit(mixed $data): bool
     {
         if (empty($data->instantly) && empty($data->date)) {
             throw new InvalidConfigException('Instantly or Date not set.');
@@ -58,7 +56,7 @@ class DeliveryDate extends AbstractStep implements CheckoutStepInterface
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         $data = new \stdClass();
         $data->instantly = $this->cart->getCheckoutData(self::INSTANTLY);

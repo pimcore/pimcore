@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,20 +23,10 @@ use Pimcore\Maintenance\TaskInterface;
  */
 class HousekeepingTask implements TaskInterface
 {
-    /**
-     * @var int
-     */
-    protected $tmpFileTime;
+    protected int $tmpFileTime;
 
-    /**
-     * @var int
-     */
-    protected $profilerTime;
+    protected int $profilerTime;
 
-    /**
-     * @param int $tmpFileTime
-     * @param int $profilerTime
-     */
     public function __construct(int $tmpFileTime, int $profilerTime)
     {
         $this->tmpFileTime = $tmpFileTime;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -51,26 +52,17 @@ class PimcoreDataCollector extends DataCollector implements ResetInterface
         return 'pimcore';
     }
 
-    /**
-     * @return string|null
-     */
-    public function getContext()
+    public function getContext(): ?string
     {
         return $this->data['context'];
     }
 
-    /**
-     * @return string
-     */
-    public function getVersion()
+    public function getVersion(): string
     {
         return $this->data['version'];
     }
 
-    /**
-     * @return string
-     */
-    public function getRevision()
+    public function getRevision(): string
     {
         return $this->data['revision'];
     }

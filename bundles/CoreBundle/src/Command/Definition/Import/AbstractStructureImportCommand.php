@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -118,7 +119,7 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
      *
      * @return string
      */
-    protected function getPath()
+    protected function getPath(): string
     {
         $path = $this->input->getArgument('path');
         if (!file_exists($path) || !is_readable($path)) {
@@ -135,7 +136,7 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
      *
      * @return string|false
      */
-    protected function getJson($path)
+    protected function getJson(string $path): bool|string
     {
         $content = file_get_contents($path);
 
@@ -157,7 +158,7 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
      *
      * @return bool
      */
-    protected function askConfirmation($name)
+    protected function askConfirmation(string $name): bool
     {
         /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
@@ -178,7 +179,7 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
      *
      * @return string
      */
-    abstract protected function getType();
+    abstract protected function getType(): string;
 
     /**
      * Get definition name from filename (e.g. class_Customer_export.json -> Customer)
@@ -187,7 +188,7 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
      *
      * @return string|null
      */
-    abstract protected function getDefinitionName($filename);
+    abstract protected function getDefinitionName(string $filename): ?string;
 
     /**
      * Try to load definition by name
@@ -196,16 +197,16 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
      *
      * @return AbstractModel|null
      */
-    abstract protected function loadDefinition($name);
+    abstract protected function loadDefinition(string $name): ?AbstractModel;
 
     /**
      * Create a new definition
      *
      * @param string $name
      *
-     * @return AbstractModel
+     * @return AbstractModel|null
      */
-    abstract protected function createDefinition($name);
+    abstract protected function createDefinition(string $name): ?AbstractModel;
 
     /**
      * Process import
@@ -215,5 +216,5 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
      *
      * @return bool
      */
-    abstract protected function import(AbstractModel $definition, $json);
+    abstract protected function import(AbstractModel $definition, string $json): bool;
 }
