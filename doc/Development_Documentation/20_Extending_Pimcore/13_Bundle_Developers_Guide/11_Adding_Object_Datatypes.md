@@ -18,7 +18,7 @@ options in class editor.
    It needs to extend `pimcore.object.classes.data.data`, be located in namespace `pimcore.object.classes.data` and named after the 
    `$fieldtype` property of the corresponding PHP class.
      
-   For examples have a look at the Pimcore core datatypes at  
+   For examples have a look at the Pimcore core datatypes at 
    [github](https://github.com/pimcore/pimcore/tree/10.5/bundles/AdminBundle/Resources/public/js/pimcore/object/classes/data)
 
 
