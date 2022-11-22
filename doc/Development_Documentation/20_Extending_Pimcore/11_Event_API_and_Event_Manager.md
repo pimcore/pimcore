@@ -25,7 +25,7 @@ All Pimcore events are defined and documented as a constant on component specifi
 - [Data Object Class Definition](https://github.com/pimcore/pimcore/blob/10.5/lib/Event/DataObjectClassDefinitionEvents.php)
 - [Data Object Classification Store](https://github.com/pimcore/pimcore/blob/10.5/lib/Event/DataObjectClassificationStoreEvents.php)
 - [Data Object Custom Layouts](https://github.com/pimcore/pimcore/blob/10.5/lib/Event/DataObjectCustomLayoutEvents.php)
-- [Data Object Import](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/DataObjectImportEvents.php)
+- [Data Object Import](https://github.com/pimcore/pimcore/blob/10.5/lib/Event/Model/DataObjectImportEvent.php)
 - [Data Object Quantity Value Unit](https://github.com/pimcore/pimcore/blob/10.5/lib/Event/DataObjectQuantityValueEvents.php)
 - [Users / Roles](https://github.com/pimcore/pimcore/blob/10.5/lib/Event/UserRoleEvents.php)
 - [Workflows](https://github.com/pimcore/pimcore/blob/10.5/lib/Event/WorkflowEvents.php)
@@ -50,8 +50,6 @@ All Pimcore events are defined and documented as a constant on component specifi
 - [Ecommerce::Commit Order Processor](https://github.com/pimcore/pimcore/blob/10.5/lib/Event/Ecommerce/CommitOrderProcessorEvents.php)
 - [Ecommerce::Order Agent](https://github.com/pimcore/pimcore/blob/10.5/lib/Event/Ecommerce/OrderAgentEvents.php)
 - [Ecommerce::Order Manager](https://github.com/pimcore/pimcore/blob/10.5/lib/Event/Ecommerce/OrderManagerEvents.php)
-- [Ecommerce::Order Manager Item](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/Ecommerce/CheckoutManagerItemEvents.php)
-- [Ecommerce::Send Confirmation Mail](https://github.com/pimcore/pimcore/blob/10.x/lib/Event/Ecommerce/SendConfirmationMailEvents.php)
 
 ## Examples
 
