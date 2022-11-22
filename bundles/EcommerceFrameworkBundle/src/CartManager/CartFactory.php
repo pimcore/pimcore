@@ -22,14 +22,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CartFactory implements CartFactoryInterface
 {
-    /**
-     * @var array
-     */
-    protected $options;
+    protected array $options;
 
-    /**
-     * @param array $options
-     */
     public function __construct(array $options = [])
     {
         $resolver = new OptionsResolver();

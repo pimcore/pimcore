@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,17 +24,11 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20211028155535 extends AbstractMigration
 {
-    /**
-     * @param Schema $schema
-     */
     public function up(Schema $schema): void
     {
         $this->addSql('ALTER TABLE object_url_slugs MODIFY slug VARCHAR(765) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;');
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function down(Schema $schema): void
     {
         $this->addSql('ALTER TABLE object_url_slugs MODIFY slug VARCHAR(765) CHARACTER SET utf8 COLLATE utf8_bin;');

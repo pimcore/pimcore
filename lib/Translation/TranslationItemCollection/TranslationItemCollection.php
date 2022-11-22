@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,16 +24,9 @@ class TranslationItemCollection
     /**
      * @var TranslationItem[]
      */
-    private $items = [];
+    private array $items = [];
 
-    /**
-     * @param string $type
-     * @param string $id
-     * @param ElementInterface $element
-     *
-     * @return TranslationItemCollection
-     */
-    public function add(string $type, string $id, $element): TranslationItemCollection
+    public function add(string $type, string $id, ElementInterface $element): TranslationItemCollection
     {
         $this->items[] = new TranslationItem($type, $id, $element);
 

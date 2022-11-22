@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,19 +31,13 @@ class CsrfProtectionListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
-    /**
-     * @var Environment
-     */
-    protected $twig;
+    protected Environment $twig;
 
     /**
      * @var CsrfProtectionHandler $handler
      */
-    protected $csrfProtectionHandler;
+    protected CsrfProtectionHandler $csrfProtectionHandler;
 
-    /**
-     * @param CsrfProtectionHandler $csrfProtectionHandler
-     */
     public function __construct(CsrfProtectionHandler $csrfProtectionHandler)
     {
         $this->csrfProtectionHandler = $csrfProtectionHandler;
@@ -58,9 +53,6 @@ class CsrfProtectionListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param RequestEvent $event
-     */
     public function handleRequest(RequestEvent $event)
     {
         $request = $event->getRequest();

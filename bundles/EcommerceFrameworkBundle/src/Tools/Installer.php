@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,15 +33,9 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
  */
 class Installer extends AbstractInstaller
 {
-    /**
-     * @var string
-     */
-    private $installSourcesPath;
+    private string $installSourcesPath;
 
-    /**
-     * @var array
-     */
-    private $tablesToInstall = [
+    private array $tablesToInstall = [
         'ecommerceframework_cart' =>
             'CREATE TABLE IF NOT EXISTS `ecommerceframework_cart` (
               `id` int(20) NOT NULL AUTO_INCREMENT,
@@ -116,10 +111,7 @@ class Installer extends AbstractInstaller
             ) ENGINE=InnoDB AUTO_INCREMENT=0;",
     ];
 
-    /**
-     * @var array
-     */
-    private $classesToInstall = [
+    private array $classesToInstall = [
             'FilterDefinition' => 'EF_FD',
             'OfferToolCustomProduct' => 'EF_OTCP',
             'OfferToolOffer' => 'EF_OTO',
@@ -131,28 +123,16 @@ class Installer extends AbstractInstaller
             'OnlineShopVoucherToken' => 'EF_OSVT',
     ];
 
-    /**
-     * @var array
-     */
-    private $permissionsToInstall = [
+    private array $permissionsToInstall = [
         'bundle_ecommerce_pricing_rules',
         'bundle_ecommerce_back-office_order',
     ];
 
-    /**
-     * @var BundleInterface
-     */
-    protected $bundle;
+    protected BundleInterface $bundle;
 
-    /**
-     * @var Connection
-     */
-    protected $db;
+    protected Connection $db;
 
-    /**
-     * @var Schema|null
-     */
-    protected $schema;
+    protected ?Schema $schema = null;
 
     public function __construct(
         BundleInterface $bundle,
@@ -182,7 +162,7 @@ class Installer extends AbstractInstaller
     /**
      * {@inheritdoc}
      */
-    public function isInstalled()
+    public function isInstalled(): bool
     {
         $installed = false;
 
@@ -201,7 +181,7 @@ class Installer extends AbstractInstaller
     /**
      * {@inheritdoc}
      */
-    public function canBeInstalled()
+    public function canBeInstalled(): bool
     {
         return !$this->isInstalled();
     }
@@ -209,7 +189,7 @@ class Installer extends AbstractInstaller
     /**
      * {@inheritdoc}
      */
-    public function canBeUninstalled()
+    public function canBeUninstalled(): bool
     {
         return $this->isInstalled();
     }
@@ -399,14 +379,11 @@ class Installer extends AbstractInstaller
         return $results;
     }
 
-    public function needsReloadAfterInstall()
+    public function needsReloadAfterInstall(): bool
     {
         return true;
     }
 
-    /**
-     * @return Schema
-     */
     protected function getSchema(): Schema
     {
         return $this->schema ??= $this->db->getSchemaManager()->createSchema();

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -59,7 +60,7 @@ interface ProductListInterface extends PaginateListingInterface
      *
      * @return IndexableInterface[]
      */
-    public function getProducts();
+    public function getProducts(): array;
 
     /**
      * Adds filter condition to product list
@@ -69,7 +70,7 @@ interface ProductListInterface extends PaginateListingInterface
      * @param array|string $condition
      * @param string $fieldname
      */
-    public function addCondition($condition, $fieldname = '');
+    public function addCondition(array|string $condition, string $fieldname = '');
 
     /**
      * Adds query condition to product list for fulltext search
@@ -79,31 +80,31 @@ interface ProductListInterface extends PaginateListingInterface
      * @param string $condition
      * @param string $fieldname
      */
-    public function addQueryCondition($condition, $fieldname = '');
+    public function addQueryCondition(string $condition, string $fieldname = '');
 
     /**
      * Reset filter condition for fieldname
      *
      * @param string $fieldname
      *
-     * @return mixed
+     * @return void
      */
-    public function resetCondition($fieldname);
+    public function resetCondition(string $fieldname): void;
 
     /**
      * Reset query condition for fieldname
      *
      * @param string $fieldname
      */
-    public function resetQueryCondition($fieldname);
+    public function resetQueryCondition(string $fieldname);
 
     /**
      * Adds relation condition to product list
      *
      * @param string $fieldname
-     * @param string $condition
+     * @param string|array $condition
      */
-    public function addRelationCondition($fieldname, $condition);
+    public function addRelationCondition(string $fieldname, string|array $condition);
 
     /**
      * Resets all conditions of product list
@@ -113,95 +114,60 @@ interface ProductListInterface extends PaginateListingInterface
     /**
      * Adds price condition to product list
      *
-     * @param null|float $from
-     * @param null|float $to
+     * @param float|null $from
+     * @param float|null $to
      */
-    public function addPriceCondition($from = null, $to = null);
+    public function addPriceCondition(float $from = null, float $to = null);
 
-    /**
-     * @param bool $inProductList
-     *
-     * @return void
-     */
-    public function setInProductList($inProductList);
+    public function setInProductList(bool $inProductList): void;
 
-    /**
-     * @return bool
-     */
-    public function getInProductList();
+    public function getInProductList(): bool;
 
     /**
      * sets order direction
      *
      * @param string $order
      */
-    public function setOrder($order);
+    public function setOrder(string $order);
 
     /**
      * gets order direction
      *
      * @return string
      */
-    public function getOrder();
+    public function getOrder(): string;
 
     /**
      * sets order key
      *
-     * @param string|array $orderKey either single field name, or array of field names or array of arrays (field name, direction)
+     * @param array|string $orderKey either single field name, or array of field names or array of arrays (field name, direction)
      */
-    public function setOrderKey($orderKey);
+    public function setOrderKey(array|string $orderKey);
 
-    /**
-     * @return string|array
-     */
-    public function getOrderKey();
+    public function getOrderKey(): array|string;
 
-    /**
-     * @param int $limit
-     */
-    public function setLimit($limit);
+    public function setLimit(int $limit);
 
-    /**
-     * @return int
-     */
-    public function getLimit();
+    public function getLimit(): int;
 
-    /**
-     * @param int $offset
-     */
-    public function setOffset($offset);
+    public function setOffset(int $offset);
 
-    /**
-     * @return int
-     */
-    public function getOffset();
+    public function getOffset(): int;
 
-    /**
-     * @param AbstractCategory $category
-     */
     public function setCategory(AbstractCategory $category);
 
-    /**
-     * @return AbstractCategory|null
-     */
-    public function getCategory();
+    public function getCategory(): ?AbstractCategory;
 
-    /**
-     * @param string $variantMode
-     */
-    public function setVariantMode($variantMode);
+    public function setVariantMode(string $variantMode);
 
-    /**
-     * @return string
-     */
-    public function getVariantMode();
+    public function getVariantMode(): string;
 
     /**
      * loads search results from index and returns them
      *
      * @return IndexableInterface[]
      */
-    public function load();
+    public function load(): array;
 
     /**
      * prepares all group by values for given field names and cache them in local variable
@@ -213,7 +179,7 @@ interface ProductListInterface extends PaginateListingInterface
      *
      * @return void
      */
-    public function prepareGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true);
+    public function prepareGroupByValues(string $fieldname, bool $countValues = false, bool $fieldnameShouldBeExcluded = true): void;
 
     /**
      * prepares all group by values for given field names and cache them in local variable
@@ -225,7 +191,7 @@ interface ProductListInterface extends PaginateListingInterface
      *
      * @return void
      */
-    public function prepareGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true);
+    public function prepareGroupByRelationValues(string $fieldname, bool $countValues = false, bool $fieldnameShouldBeExcluded = true): void;
 
     /**
      * prepares all group by values for given field names and cache them in local variable
@@ -237,14 +203,14 @@ interface ProductListInterface extends PaginateListingInterface
      *
      * @return void
      */
-    public function prepareGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true);
+    public function prepareGroupBySystemValues(string $fieldname, bool $countValues = false, bool $fieldnameShouldBeExcluded = true): void;
 
     /**
      * resets all set prepared group by values
      *
      * @return void
      */
-    public function resetPreparedGroupByValues();
+    public function resetPreparedGroupByValues(): void;
 
     /**
      * loads group by values based on fieldname either from local variable if prepared or directly from product index
@@ -257,7 +223,7 @@ interface ProductListInterface extends PaginateListingInterface
      *
      * @throws \Exception
      */
-    public function getGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true);
+    public function getGroupByValues(string $fieldname, bool $countValues = false, bool $fieldnameShouldBeExcluded = true): array;
 
     /**
      * loads group by values based on relation fieldname either from local variable if prepared or directly from product index
@@ -270,7 +236,7 @@ interface ProductListInterface extends PaginateListingInterface
      *
      * @throws \Exception
      */
-    public function getGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true);
+    public function getGroupByRelationValues(string $fieldname, bool $countValues = false, bool $fieldnameShouldBeExcluded = true): array;
 
     /**
      * loads group by values based on relation fieldname either from local variable if prepared or directly from product index
@@ -283,5 +249,5 @@ interface ProductListInterface extends PaginateListingInterface
      *
      * @throws \Exception
      */
-    public function getGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true);
+    public function getGroupBySystemValues(string $fieldname, bool $countValues = false, bool $fieldnameShouldBeExcluded = true): array;
 }

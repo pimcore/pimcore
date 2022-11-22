@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 // constants generated in lib/Bootstrap.php
 define('PIMCORE_COMPOSER_PATH', '');

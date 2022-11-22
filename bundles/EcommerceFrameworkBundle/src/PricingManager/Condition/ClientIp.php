@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,27 +21,16 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 
 class ClientIp implements ConditionInterface
 {
-    /**
-     * @var int
-     */
-    protected $ip;
+    protected int $ip;
 
-    /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return bool
-     */
-    public function check(EnvironmentInterface $environment)
+    public function check(EnvironmentInterface $environment): bool
     {
         $clientIp = $_SERVER['HTTP_X_FORWARDED_FOR'] ?: $_SERVER['REMOTE_ADDR'];
 
         return $clientIp == $this->getIp();
     }
 
-    /**
-     * @return string
-     */
-    public function toJSON()
+    public function toJSON(): string
     {
         // basic
         $json = [
@@ -50,12 +40,7 @@ class ClientIp implements ConditionInterface
         return json_encode($json);
     }
 
-    /**
-     * @param string $string
-     *
-     * @return ConditionInterface
-     */
-    public function fromJSON($string)
+    public function fromJSON(string $string): ConditionInterface
     {
         $json = json_decode($string);
 
@@ -64,18 +49,12 @@ class ClientIp implements ConditionInterface
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getIp()
+    public function getIp(): int
     {
         return $this->ip;
     }
 
-    /**
-     * @param int $ip
-     */
-    public function setIp($ip)
+    public function setIp(int $ip)
     {
         $this->ip = $ip;
     }

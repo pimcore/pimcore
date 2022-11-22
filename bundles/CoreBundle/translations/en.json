@@ -140,7 +140,7 @@
     "add_hardlink": "Add Hardlink",
     "source_path": "Source path",
     "properties_from_source": "Use properties from source document",
-    "childs_from_source": "Use children from source document",
+    "children_from_source": "Use children from source document",
     "click_right_for_more_options": "Click right for more options",
     "move_to_tab": "Move to Tab",
     "not_supported": "Not supported",
@@ -227,7 +227,7 @@
     "or": "or",
     "paste_contents": "Paste only contents here",
     "paste_as_child": "Paste as child",
-    "paste_recursive_as_childs": "Paste as child (recursive)",
+    "paste_recursive_as_child": "Paste as child (recursive)",
     "view_original": "View Original",
     "feed": "Feed",
     "no_items_found": "No items found",
@@ -999,5 +999,8 @@
     "no_further_classes_allowed": "No further classes allowed",
     "address_not_found": "The entered address was not found",
     "possible_causes": "Possible causes",
-    "postal_code_format_error": "Postal code format, e.g. use \"5020 Salzburg, Söllheimer Straße 16\" instead of \"A-5020 Salzburg, Söllheimer Straße 16\""
+    "postal_code_format_error": "Postal code format, e.g. use \"5020 Salzburg, Söllheimer Straße 16\" instead of \"A-5020 Salzburg, Söllheimer Straße 16\"",
+    "display_mode": "Display Mode",
+    "display_mode_grid": "Grid view",
+    "display_mode_combo": "Tag field"
 }

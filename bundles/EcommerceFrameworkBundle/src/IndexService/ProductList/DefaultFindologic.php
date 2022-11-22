@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,123 +29,66 @@ class DefaultFindologic implements ProductListInterface
     /**
      * @var string
      */
-    protected $userIp = '';
+    protected mixed $userIp = '';
 
     /**
      * @var string
      */
-    protected $referer = '';
+    protected mixed $referer = '';
 
-    /**
-     * @var string
-     */
-    protected $revision = '0.1';
+    protected string $revision = '0.1';
 
     /**
      * @var IndexableInterface[]|null
      */
-    protected $products = null;
+    protected ?array $products = null;
 
-    /**
-     * @var string
-     */
-    protected $tenantName;
+    protected string $tenantName;
 
-    /**
-     * @var FindologicConfigInterface
-     */
-    protected $tenantConfig;
+    protected FindologicConfigInterface $tenantConfig;
 
-    /**
-     * @var null|int
-     */
-    protected $totalCount = null;
+    protected ?int $totalCount = null;
 
-    /**
-     * @var string
-     */
-    protected $variantMode = ProductListInterface::VARIANT_MODE_INCLUDE;
+    protected string $variantMode = ProductListInterface::VARIANT_MODE_INCLUDE;
 
-    /**
-     * @var int
-     */
-    protected $limit = 10;
+    protected int $limit = 10;
 
-    /**
-     * @var int
-     */
-    protected $offset = 0;
+    protected int $offset = 0;
 
-    /**
-     * @var AbstractCategory
-     */
-    protected $category;
+    protected AbstractCategory $category;
 
-    /**
-     * @var bool
-     */
-    protected $inProductList = true;
+    protected bool $inProductList = true;
 
     /**
      * json result from findologic
      *
      * @var \SimpleXMLElement
      */
-    protected $response;
+    protected \SimpleXMLElement $response;
 
     /**
      * @var array<string,\stdClass>
      */
-    protected $groupedValues;
+    protected ?array $groupedValues = null;
 
-    /**
-     * @var array
-     */
-    protected $conditions = [];
+    protected array $conditions = [];
 
-    /**
-     * @var array
-     */
-    protected $queryConditions = [];
+    protected array $queryConditions = [];
 
-    /**
-     * @var float|null
-     */
-    protected $conditionPriceFrom = null;
+    protected ?float $conditionPriceFrom = null;
 
-    /**
-     * @var float|null
-     */
-    protected $conditionPriceTo = null;
+    protected ?float $conditionPriceTo = null;
 
-    /**
-     * @var string
-     */
-    protected $order;
+    protected string $order;
 
-    /**
-     * @var string | array
-     */
-    protected $orderKey;
+    protected string|array $orderKey;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var array
-     */
-    protected $supportedOrderKeys = ['label', 'price', 'salesFrequency', 'dateAdded'];
+    protected array $supportedOrderKeys = ['label', 'price', 'salesFrequency', 'dateAdded'];
 
-    /**
-     * @var int
-     */
-    protected $timeout = 3;
+    protected int $timeout = 3;
 
-    /**
-     * @param FindologicConfigInterface $tenantConfig
-     */
     public function __construct(FindologicConfigInterface $tenantConfig, LoggerInterface $pimcoreEcommerceFindlogicLogger)
     {
         $this->tenantName = $tenantConfig->getTenantName();
@@ -159,7 +103,7 @@ class DefaultFindologic implements ProductListInterface
     }
 
     /** @inheritDoc */
-    public function getProducts()
+    public function getProducts(): array
     {
         if ($this->products === null) {
             $this->load();
@@ -168,22 +112,13 @@ class DefaultFindologic implements ProductListInterface
         return $this->products;
     }
 
-    /**
-     * @param array|string $condition
-     * @param string $fieldname
-     */
-    public function addCondition($condition, $fieldname = '')
+    public function addCondition(array|string $condition, string $fieldname = '')
     {
         $this->products = null;
         $this->conditions[$fieldname][] = $condition;
     }
 
-    /**
-     * @param string $fieldname
-     *
-     * @return void
-     */
-    public function resetCondition($fieldname)
+    public function resetCondition(string $fieldname): void
     {
         $this->products = null;
         unset($this->conditions[$fieldname]);
@@ -197,7 +132,7 @@ class DefaultFindologic implements ProductListInterface
      * @param string $condition
      * @param string $fieldname
      */
-    public function addQueryCondition($condition, $fieldname = '')
+    public function addQueryCondition(string $condition, string $fieldname = '')
     {
         $this->products = null;
         $this->queryConditions[$fieldname][] = $condition;
@@ -208,7 +143,7 @@ class DefaultFindologic implements ProductListInterface
      *
      * @param string $fieldname
      */
-    public function resetQueryCondition($fieldname)
+    public function resetQueryCondition(string $fieldname)
     {
         $this->products = null;
         unset($this->queryConditions[$fieldname]);
@@ -226,76 +161,60 @@ class DefaultFindologic implements ProductListInterface
         $this->products = null;
     }
 
-    /**
-     * @param string $fieldname
-     * @param string $condition
-     */
-    public function addRelationCondition($fieldname, $condition)
+    public function addRelationCondition(string $fieldname, array|string $condition)
     {
         $this->products = null;
         $this->addCondition($condition, $fieldname);
     }
 
     /**
-     * @param null|float $from
-     * @param null|float $to
+     * @param float|null $from
+     * @param float|null $to
      */
-    public function addPriceCondition($from = null, $to = null)
+    public function addPriceCondition(?float $from = null, ?float $to = null)
     {
         $this->products = null;
         $this->conditionPriceFrom = $from;
         $this->conditionPriceTo = $to;
     }
 
-    /**
-     * @param bool $inProductList
-     */
-    public function setInProductList($inProductList)
+    public function setInProductList(bool $inProductList): void
     {
         $this->products = null;
         $this->inProductList = (bool)$inProductList;
     }
 
-    /**
-     * @return bool
-     */
-    public function getInProductList()
+    public function getInProductList(): bool
     {
         return $this->inProductList;
     }
 
-    /**
-     * @param string $order
-     */
-    public function setOrder($order)
+    public function setOrder(string $order)
     {
         $this->products = null;
         $this->order = $order;
     }
 
-    /**
-     * @return string
-     */
-    public function getOrder()
+    public function getOrder(): string
     {
         return $this->order;
     }
 
     /**
-     * @param string|array $orderKey either single field name, or array of field names or array of arrays (field name, direction)
+     * @param array|string $orderKey either single field name, or array of field names or array of arrays (field name, direction)
      */
-    public function setOrderKey($orderKey)
+    public function setOrderKey(array|string $orderKey)
     {
         $this->products = null;
         $this->orderKey = $orderKey;
     }
 
-    public function getOrderKey()
+    public function getOrderKey(): array|string
     {
         return $this->orderKey;
     }
 
-    public function setLimit($limit)
+    public function setLimit(int $limit)
     {
         if ($this->limit != $limit) {
             $this->products = null;
@@ -303,12 +222,12 @@ class DefaultFindologic implements ProductListInterface
         $this->limit = $limit;
     }
 
-    public function getLimit()
+    public function getLimit(): int
     {
         return $this->limit;
     }
 
-    public function setOffset($offset)
+    public function setOffset(int $offset)
     {
         if ($this->offset != $offset) {
             $this->products = null;
@@ -316,7 +235,7 @@ class DefaultFindologic implements ProductListInterface
         $this->offset = $offset;
     }
 
-    public function getOffset()
+    public function getOffset(): int
     {
         return $this->offset;
     }
@@ -327,18 +246,18 @@ class DefaultFindologic implements ProductListInterface
         $this->category = $category;
     }
 
-    public function getCategory()
+    public function getCategory(): ?AbstractCategory
     {
         return $this->category;
     }
 
-    public function setVariantMode($variantMode)
+    public function setVariantMode(string $variantMode)
     {
         $this->products = null;
         $this->variantMode = $variantMode;
     }
 
-    public function getVariantMode()
+    public function getVariantMode(): string
     {
         return $this->variantMode;
     }
@@ -346,7 +265,7 @@ class DefaultFindologic implements ProductListInterface
     /**
      * @return IndexableInterface[]
      */
-    public function load()
+    public function load(): array
     {
         // init
         $params = [];
@@ -417,7 +336,7 @@ class DefaultFindologic implements ProductListInterface
      *
      * @return array
      */
-    protected function buildSystemConditions(array $filter)
+    protected function buildSystemConditions(array $filter): array
     {
         // add sub tenant filter
         $tenantCondition = $this->tenantConfig->getSubTenantCondition();
@@ -448,7 +367,7 @@ class DefaultFindologic implements ProductListInterface
      *
      * @return array
      */
-    protected function buildFilterConditions(array $params)
+    protected function buildFilterConditions(array $params): array
     {
         foreach ($this->conditions as $fieldname => $condition) {
             if (is_array($condition)) {
@@ -482,7 +401,7 @@ class DefaultFindologic implements ProductListInterface
      *
      * @return string
      */
-    public function buildCategoryTree(AbstractCategory $currentCat)
+    public function buildCategoryTree(AbstractCategory $currentCat): string
     {
         $catTree = $currentCat->getId();
         while ($currentCat->getParent() instanceof $currentCat) {
@@ -500,7 +419,7 @@ class DefaultFindologic implements ProductListInterface
      *
      * @return array
      */
-    protected function buildQueryConditions(array $params)
+    protected function buildQueryConditions(array $params): array
     {
         $query = '';
 
@@ -518,12 +437,7 @@ class DefaultFindologic implements ProductListInterface
         return $params;
     }
 
-    /**
-     * @param array $params
-     *
-     * @return array
-     */
-    protected function buildSorting(array $params)
+    protected function buildSorting(array $params): array
     {
         // add sorting
         if ($this->getOrderKey()) {
@@ -548,12 +462,12 @@ class DefaultFindologic implements ProductListInterface
      * considers both - normal values and relation values
      *
      * @param string $fieldname
-     * @param bool   $countValues
-     * @param bool   $fieldnameShouldBeExcluded
+     * @param bool $countValues
+     * @param bool $fieldnameShouldBeExcluded
      *
      * @throws \Exception
      */
-    public function prepareGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
+    public function prepareGroupByValues(string $fieldname, bool $countValues = false, bool $fieldnameShouldBeExcluded = true): void
     {
         // nothing todo
     }
@@ -563,7 +477,7 @@ class DefaultFindologic implements ProductListInterface
      *
      * @return void
      */
-    public function resetPreparedGroupByValues()
+    public function resetPreparedGroupByValues(): void
     {
         // nothing todo
     }
@@ -572,11 +486,9 @@ class DefaultFindologic implements ProductListInterface
      * prepares all group by values for given field names and cache them in local variable
      * considers both - normal values and relation values
      *
-     * @param string $fieldname
      *
-     * @return void
      */
-    public function prepareGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
+    public function prepareGroupByRelationValues(string $fieldname, bool $countValues = false, bool $fieldnameShouldBeExcluded = true): void
     {
         // nothing todo
     }
@@ -585,11 +497,9 @@ class DefaultFindologic implements ProductListInterface
      * prepares all group by values for given field names and cache them in local variable
      * considers both - normal values and relation values
      *
-     * @param string $fieldname
      *
-     * @return void
      */
-    public function prepareGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
+    public function prepareGroupBySystemValues(string $fieldname, bool $countValues = false, bool $fieldnameShouldBeExcluded = true): void
     {
         // nothing todo
     }
@@ -605,19 +515,12 @@ class DefaultFindologic implements ProductListInterface
      *
      * @throws \Exception
      */
-    public function getGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
+    public function getGroupBySystemValues(string $fieldname, bool $countValues = false, bool $fieldnameShouldBeExcluded = true): array
     {
         return $this->getGroupByValues($fieldname, $countValues, $fieldnameShouldBeExcluded);
     }
 
-    /**
-     * @param string $fieldname
-     * @param bool $countValues
-     * @param bool $fieldnameShouldBeExcluded
-     *
-     * @return array
-     */
-    public function getGroupByValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
+    public function getGroupByValues(string $fieldname, bool $countValues = false, bool $fieldnameShouldBeExcluded = true): array
     {
         // init
         $groups = [];
@@ -692,14 +595,7 @@ class DefaultFindologic implements ProductListInterface
         return $groups;
     }
 
-    /**
-     * @param string $fieldname
-     * @param bool   $countValues
-     * @param bool   $fieldnameShouldBeExcluded
-     *
-     * @return array
-     */
-    public function getGroupByRelationValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true)
+    public function getGroupByRelationValues(string $fieldname, bool $countValues = false, bool $fieldnameShouldBeExcluded = true): array
     {
         // init
         $relations = [];
@@ -757,7 +653,7 @@ class DefaultFindologic implements ProductListInterface
      *
      * @throws \Exception
      */
-    protected function sendRequest(array $params)
+    protected function sendRequest(array $params): \SimpleXMLElement
     {
         // add system params
         $params = [
@@ -795,30 +691,22 @@ class DefaultFindologic implements ProductListInterface
         return simplexml_load_string((string)$response->getBody());
     }
 
-    /**
-     * @return LoggerInterface
-     */
-    protected function getLogger()
+    protected function getLogger(): LoggerInterface
     {
         return $this->logger;
     }
 
-    /**
-     * @return int
-     */
-    #[\ReturnTypeWillChange]
-    public function count()// : int
+    public function count(): int
     {
         $this->getProducts();
 
-        return $this->totalCount;
+        return $this->totalCount ?? 0;
     }
 
     /**
      * @return IndexableInterface|false
      */
-    #[\ReturnTypeWillChange]
-    public function current()// : IndexableInterface|false
+    public function current(): bool|IndexableInterface
     {
         $this->getProducts();
 
@@ -828,12 +716,12 @@ class DefaultFindologic implements ProductListInterface
     /**
      * Returns an collection of items for a page.
      *
-     * @param  int $offset Page offset
-     * @param  int $itemCountPerPage Number of items per page
+     * @param int $offset Page offset
+     * @param int $itemCountPerPage Number of items per page
      *
      * @return array
      */
-    public function getItems($offset, $itemCountPerPage)
+    public function getItems(int $offset, int $itemCountPerPage): array
     {
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);
@@ -841,42 +729,26 @@ class DefaultFindologic implements ProductListInterface
         return $this->getProducts();
     }
 
-    /**
-     * @return int|null
-     */
-    #[\ReturnTypeWillChange]
-    public function key()// : int|null
+    public function key(): ?int
     {
         $this->getProducts();
 
         return key($this->products);
     }
 
-    /**
-     * @return void
-     */
-    #[\ReturnTypeWillChange]
-    public function next()// : void
+    public function next(): void
     {
         $this->getProducts();
         next($this->products);
     }
 
-    /**
-     * @return void
-     */
-    #[\ReturnTypeWillChange]
-    public function rewind()// : void
+    public function rewind(): void
     {
         $this->getProducts();
         reset($this->products);
     }
 
-    /**
-     * @return bool
-     */
-    #[\ReturnTypeWillChange]
-    public function valid()// : bool
+    public function valid(): bool
     {
         return $this->current() !== false;
     }

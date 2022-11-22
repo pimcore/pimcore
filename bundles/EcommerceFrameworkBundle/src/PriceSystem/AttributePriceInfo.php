@@ -22,15 +22,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
  */
 class AttributePriceInfo extends AbstractPriceInfo implements PriceInfoInterface
 {
-    /**
-     * @var PriceInterface
-     */
-    protected $price;
+    protected PriceInterface $price;
 
-    /**
-     * @var PriceInterface
-     */
-    protected $totalPrice;
+    protected PriceInterface $totalPrice;
 
     public function __construct(PriceInterface $price, $quantity, PriceInterface $totalPrice)
     {
@@ -57,7 +51,7 @@ class AttributePriceInfo extends AbstractPriceInfo implements PriceInfoInterface
      *
      * @return mixed
      */
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments)
     {
         return $this->product->$name($arguments);
     }

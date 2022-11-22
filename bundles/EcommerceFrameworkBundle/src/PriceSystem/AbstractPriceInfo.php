@@ -22,30 +22,18 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 
 class AbstractPriceInfo implements PriceInfoInterface
 {
-    /**
-     * @var PriceSystemInterface
-     */
-    private $priceSystem;
+    private PriceSystemInterface $priceSystem;
 
-    /**
-     * @var int
-     */
-    protected $quantity;
+    protected int $quantity;
 
-    /**
-     * @var CheckoutableInterface
-     */
-    protected $product;
+    protected ?CheckoutableInterface $product = null;
 
     /**
      * @var CheckoutableInterface[]
      */
-    protected $products;
+    protected array $products;
 
-    /**
-     * @return AbstractPriceInfo
-     */
-    public static function getInstance()
+    public static function getInstance(): AbstractPriceInfo
     {
         return new static(func_get_args());
     }
@@ -53,7 +41,7 @@ class AbstractPriceInfo implements PriceInfoInterface
     /**
      * {@inheritdoc}
      */
-    public function setQuantity($quantity)
+    public function setQuantity(int|string $quantity)
     {
         $this->quantity = $quantity;
     }
@@ -61,7 +49,7 @@ class AbstractPriceInfo implements PriceInfoInterface
     /**
      * {@inheritdoc}
      */
-    public function getQuantity()
+    public function getQuantity(): int|string
     {
         return $this->quantity;
     }
@@ -77,17 +65,14 @@ class AbstractPriceInfo implements PriceInfoInterface
     /**
      * {@inheritdoc}
      */
-    public function setPriceSystem(PriceSystemInterface $priceSystem)
+    public function setPriceSystem(PriceSystemInterface $priceSystem): static
     {
         $this->priceSystem = $priceSystem;
 
         return $this;
     }
 
-    /**
-     * @return PriceSystemInterface
-     */
-    protected function getPriceSystem()
+    protected function getPriceSystem(): PriceSystemInterface
     {
         return $this->priceSystem;
     }
@@ -111,7 +96,7 @@ class AbstractPriceInfo implements PriceInfoInterface
     /**
      * {@inheritdoc}
      */
-    public function setProduct(CheckoutableInterface $product)
+    public function setProduct(CheckoutableInterface $product): static
     {
         $this->product = $product;
 
@@ -121,7 +106,7 @@ class AbstractPriceInfo implements PriceInfoInterface
     /**
      * {@inheritdoc}
      */
-    public function getProduct()
+    public function getProduct(): ?CheckoutableInterface
     {
         return $this->product;
     }
@@ -131,7 +116,7 @@ class AbstractPriceInfo implements PriceInfoInterface
         $this->products = $products;
     }
 
-    public function getProducts()
+    public function getProducts(): array
     {
         return $this->products;
     }

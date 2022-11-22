@@ -25,60 +25,27 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 
 class Attribute
 {
-    /**
-     * @var string
-     */
-    private $name;
+    private string $name;
 
-    /**
-     * @var string
-     */
-    private $fieldName;
+    private string $fieldName;
 
-    /**
-     * @var string
-     */
-    private $type;
+    private ?string $type = null;
 
-    /**
-     * @var string
-     */
-    private $locale;
+    private ?string $locale = null;
 
-    /**
-     * @var string
-     */
-    private $filterGroup;
+    private ?string $filterGroup = null;
 
-    /**
-     * @var array
-     */
-    private $options = [];
+    private array $options = [];
 
-    /**
-     * @var GetterInterface
-     */
-    private $getter;
+    private ?GetterInterface $getter = null;
 
-    /**
-     * @var array
-     */
-    private $getterOptions = [];
+    private array $getterOptions = [];
 
-    /**
-     * @var InterpreterInterface
-     */
-    private $interpreter;
+    private ?InterpreterInterface $interpreter = null;
 
-    /**
-     * @var array
-     */
-    private $interpreterOptions = [];
+    private array $interpreterOptions = [];
 
-    /**
-     * @var bool
-     */
-    private $hideInFieldlistDatatype = false;
+    private bool $hideInFieldlistDatatype = false;
 
     public function __construct(
         string $name,
@@ -109,42 +76,27 @@ class Attribute
         $this->hideInFieldlistDatatype = $hideInFieldlistDatatype;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
     public function getFieldName(): string
     {
         return $this->fieldName;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getType()
+    public function getType(): ?string
     {
         return $this->type;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getLocale()
+    public function getLocale(): ?string
     {
         return $this->locale;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getFilterGroup()
+    public function getFilterGroup(): ?string
     {
         return $this->filterGroup;
     }
@@ -159,10 +111,7 @@ class Attribute
         return $this->options[$name] ?? $defaultValue;
     }
 
-    /**
-     * @return GetterInterface|null
-     */
-    public function getGetter()
+    public function getGetter(): ?GetterInterface
     {
         return $this->getter;
     }
@@ -172,10 +121,7 @@ class Attribute
         return $this->getterOptions;
     }
 
-    /**
-     * @return InterpreterInterface|null
-     */
-    public function getInterpreter()
+    public function getInterpreter(): ?InterpreterInterface
     {
         return $this->interpreter;
     }
@@ -200,7 +146,7 @@ class Attribute
      *
      * @return mixed
      */
-    public function getValue(IndexableInterface $object, $subObjectId = null, ConfigInterface $tenantConfig = null, $default = null)
+    public function getValue(IndexableInterface $object, int $subObjectId = null, ConfigInterface $tenantConfig = null, mixed $default = null): mixed
     {
         if (null !== $this->getter) {
             if ($this->getter instanceof ExtendedGetterInterface) {
@@ -225,7 +171,7 @@ class Attribute
      *
      * @return mixed
      */
-    public function interpretValue($value)
+    public function interpretValue(mixed $value): mixed
     {
         if (null !== $this->interpreter) {
             return $this->interpreter->interpret($value, $this->interpreterOptions);

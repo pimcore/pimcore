@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -42,9 +43,6 @@ class ElementTagsListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param ElementEventInterface $e
-     */
     public function onPostCopy(ElementEventInterface $e)
     {
         $elementType = Service::getElementType($e->getElement());
@@ -58,9 +56,6 @@ class ElementTagsListener implements EventSubscriberInterface
         );
     }
 
-    /**
-     * @param AssetEvent $e
-     */
     public function onPostAssetDelete(AssetEvent $e)
     {
         $asset = $e->getAsset();

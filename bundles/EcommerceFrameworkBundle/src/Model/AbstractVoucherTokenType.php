@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,10 +21,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
  */
 abstract class AbstractVoucherTokenType extends \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData
 {
-    /**
-     * @return bool
-     */
-    public function getOnlyTokenPerCart()
+    public function getOnlyTokenPerCart(): bool
     {
         return false;
     }

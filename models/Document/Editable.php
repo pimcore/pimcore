@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -245,40 +246,24 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         }
     }
 
-    /**
-     * @return mixed
-     */
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->getData();
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
-    public function setDocumentId($id)
+    public function setDocumentId(int $id): static
     {
         $this->documentId = (int) $id;
 
@@ -289,20 +274,12 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getDocumentId()
+    public function getDocumentId(): ?int
     {
         return $this->documentId;
     }
 
-    /**
-     * @param Document\PageSnippet $document
-     *
-     * @return $this
-     */
-    public function setDocument(Document\PageSnippet $document)
+    public function setDocument(Document\PageSnippet $document): static
     {
         $this->document = $document;
         $this->documentId = (int) $document->getId();
@@ -310,10 +287,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this;
     }
 
-    /**
-     * @return Document\PageSnippet
-     */
-    public function getDocument()
+    public function getDocument(): ?PageSnippet
     {
         if (!$this->document) {
             $this->document = Document\PageSnippet::getById($this->documentId);
@@ -322,20 +296,12 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this->document;
     }
 
-    /**
-     * @return array
-     */
-    public function getConfig()
+    public function getConfig(): array
     {
         return $this->config;
     }
 
-    /**
-     * @param array $config
-     *
-     * @return $this
-     */
-    public function setConfig($config)
+    public function setConfig(array $config): static
     {
         $this->config = $config;
 
@@ -356,18 +322,12 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getRealName()
+    public function getRealName(): string
     {
         return $this->realName;
     }
 
-    /**
-     * @param string $realName
-     */
-    public function setRealName($realName)
+    public function setRealName(string $realName)
     {
         $this->realName = $realName;
     }
@@ -416,7 +376,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * {@inheritdoc}
      */
-    final public function render()
+    final public function render(): mixed
     {
         if ($this->editmode) {
             if ($collector = $this->getEditableDefinitionCollector()) {
@@ -463,30 +423,19 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return '';
     }
 
-    /**
-     * @return bool
-     */
-    public function getEditmode()
+    public function getEditmode(): bool
     {
         return $this->editmode;
     }
 
-    /**
-     * @param bool $editmode
-     *
-     * @return $this
-     */
-    public function setEditmode($editmode)
+    public function setEditmode(bool $editmode): static
     {
         $this->editmode = (bool) $editmode;
 
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getDataForResource()
+    public function getDataForResource(): mixed
     {
         $this->checkValidity();
 
@@ -501,35 +450,24 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * This is a dummy and is mostly implemented by relation types
      */
-    public function resolveDependencies()
+    public function resolveDependencies(): array
     {
         return [];
     }
 
-    /**
-     * @return bool
-     */
-    public function checkValidity()
+    public function checkValidity(): bool
     {
         return true;
     }
 
-    /**
-     * @param bool $inherited
-     *
-     * @return $this
-     */
-    public function setInherited($inherited)
+    public function setInherited(bool $inherited): static
     {
         $this->inherited = $inherited;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getInherited()
+    public function getInherited(): bool
     {
         return $this->inherited;
     }

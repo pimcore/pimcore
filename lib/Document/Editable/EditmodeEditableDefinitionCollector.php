@@ -44,9 +44,6 @@ final class EditmodeEditableDefinitionCollector
         $this->editableDefinitions[$editable->getName()] = $editable->getEditmodeDefinition();
     }
 
-    /**
-     * @param Editable $editable
-     */
     public function remove(Editable $editable): void
     {
         if ($this->stopped) {
@@ -92,9 +89,6 @@ final class EditmodeEditableDefinitionCollector
         return $value;
     }
 
-    /**
-     * @return array
-     */
     public function getDefinitions(): array
     {
         $configs = [];

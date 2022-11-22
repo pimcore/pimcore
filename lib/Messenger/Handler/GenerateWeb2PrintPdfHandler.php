@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,7 +31,7 @@ class GenerateWeb2PrintPdfHandler
     {
     }
 
-    public function __invoke(GenerateWeb2PrintPdfMessage $message)
+    public function __invoke(GenerateWeb2PrintPdfMessage $message): void
     {
         $documentId = $message->getProcessId();
 

@@ -30,54 +30,33 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
 {
-    /**
-     * @var EnvironmentInterface
-     */
-    protected $environment;
+    protected EnvironmentInterface $environment;
 
-    /**
-     * @var OrderManagerLocatorInterface
-     */
-    protected $orderManagers;
+    protected OrderManagerLocatorInterface $orderManagers;
 
-    /**
-     * @var CommitOrderProcessorLocatorInterface
-     */
-    protected $commitOrderProcessors;
+    protected CommitOrderProcessorLocatorInterface $commitOrderProcessors;
 
     /**
      * Array of checkout step definitions
      *
      * @var array
      */
-    protected $checkoutStepDefinitions = [];
+    protected array $checkoutStepDefinitions = [];
 
-    /**
-     * @var PaymentInterface
-     */
-    protected $paymentProvider;
+    protected ?PaymentInterface $paymentProvider = null;
 
     /**
      * @var CheckoutManagerInterface[]
      */
-    protected $checkoutManagers = [];
+    protected array $checkoutManagers = [];
 
-    /**
-     * @var ServiceLocator|null
-     */
-    protected $handlePendingPaymentStrategyLocator;
+    protected ?ServiceLocator $handlePendingPaymentStrategyLocator = null;
 
-    /**
-     * @var string
-     */
-    protected $className = CheckoutManager::class;
+    protected string $className = CheckoutManager::class;
 
-    protected $handlePendingPaymentStrategy = null;
+    protected ?ServiceLocator $handlePendingPaymentStrategy = null;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher = null;
+    protected ?EventDispatcherInterface $eventDispatcher = null;
 
     public function __construct(
         EnvironmentInterface $environment,

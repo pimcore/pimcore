@@ -23,15 +23,9 @@ use Pimcore\Analytics\SiteId\SiteIdProvider;
 
 abstract class AbstractTracker implements TrackerInterface
 {
-    /**
-     * @var SiteIdProvider
-     */
-    private $siteIdProvider;
+    private SiteIdProvider $siteIdProvider;
 
-    /**
-     * @var CodeCollector
-     */
-    private $codeCollector;
+    private ?CodeCollector $codeCollector = null;
 
     public function __construct(SiteIdProvider $siteIdProvider)
     {
@@ -41,7 +35,7 @@ abstract class AbstractTracker implements TrackerInterface
     /**
      * {@inheritdoc}
      */
-    public function generateCode(SiteId $siteId = null)
+    public function generateCode(SiteId $siteId = null): ?string
     {
         if (null === $siteId) {
             $siteId = $this->siteIdProvider->getForRequest();
@@ -57,7 +51,7 @@ abstract class AbstractTracker implements TrackerInterface
      *
      * @return string|null
      */
-    abstract protected function buildCode(SiteId $siteId);
+    abstract protected function buildCode(SiteId $siteId): ?string;
 
     /**
      * {@inheritdoc}

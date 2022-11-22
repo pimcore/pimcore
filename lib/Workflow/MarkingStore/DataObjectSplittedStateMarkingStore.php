@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,25 +27,13 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
 {
     const ALLOWED_PLACE_FIELD_TYPES = ['input', 'select', 'multiselect'];
 
-    /**
-     * @var string
-     */
-    private $workflowName;
+    private string $workflowName;
 
-    /**
-     * @var array
-     */
-    private $stateMapping;
+    private array $stateMapping;
 
-    /**
-     * @var PropertyAccessorInterface
-     */
-    private $propertyAccessor;
+    private PropertyAccessorInterface $propertyAccessor;
 
-    /**
-     * @var Manager
-     */
-    private $workflowManager;
+    private Manager $workflowManager;
 
     public function __construct(string $workflowName, array $places, array $stateMapping, PropertyAccessorInterface $propertyAccessor, Manager $workflowManager)
     {
@@ -123,7 +112,7 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
      *
      * @return string[]
      */
-    public function getMappedPlaces(string $fieldName)
+    public function getMappedPlaces(string $fieldName): array
     {
         $places = [];
         foreach ($this->stateMapping as $place => $_fieldName) {

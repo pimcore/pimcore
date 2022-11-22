@@ -27,12 +27,7 @@ use Pimcore\Model\Listing\AbstractListing;
  */
 class Listing extends AbstractListing
 {
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
+    public function isValidOrderKey(string $key): bool
     {
         return true;
     }

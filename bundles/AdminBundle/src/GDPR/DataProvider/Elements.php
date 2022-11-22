@@ -22,12 +22,7 @@ namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
  */
 abstract class Elements implements DataProviderInterface
 {
-    /**
-     * @param string $query
-     *
-     * @return string
-     */
-    protected function prepareQueryString($query): string
+    protected function prepareQueryString(string $query): string
     {
         if ($query == '*') {
             $query = '';

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,12 +27,7 @@ use Pimcore\Model\Paginator\PaginateListingInterface;
  */
 class Listing extends \Pimcore\Model\Listing\AbstractListing implements PaginateListingInterface
 {
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
+    public function isValidOrderKey(string $key): bool
     {
         if ($key == 'id' || $key == 'token' || $key == 'series_id' || $key == 'usages' || $key == 'timestamp') {
             return true;
@@ -46,7 +42,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
      *
      * @throws \Exception
      */
-    public function setFilterConditions($seriesId, $filter = [])
+    public function setFilterConditions(?int $seriesId, array $filter = [])
     {
         if (isset($seriesId)) {
             $this->addConditionParam('voucherSeriesId = ?', $seriesId);
@@ -89,7 +85,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
         }
     }
 
-    public static function getBySeriesId($seriesId)
+    public static function getBySeriesId($seriesId): bool|Listing
     {
         try {
             $config = new self();
@@ -103,15 +99,12 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
         }
     }
 
-    /**
-     * @return array
-     */
-    public function getTokenList()
+    public function getTokenList(): array
     {
         return $this->getData();
     }
 
-    public static function getCodes($seriesId, $params)
+    public static function getCodes($seriesId, $params): bool|array
     {
         $db = \Pimcore\Db::get();
         $query = 'SELECT * FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . ' WHERE voucherSeriesId = ?';
@@ -220,11 +213,11 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
 
     /**
      * @param int $length
-     * @param string|int|null $seriesId
+     * @param int|string|null $seriesId
      *
      * @return null|string
      */
-    public static function getCountByLength($length, $seriesId = null)
+    public static function getCountByLength(int $length, int|string $seriesId = null): ?string
     {
         $query = 'SELECT COUNT(*) as count FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . ' WHERE length = ?';
         $params = [$length];
@@ -252,19 +245,12 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
      *
      * @return bool
      */
-    public static function cleanUpAllTokens($seriesId)
+    public static function cleanUpAllTokens(string $seriesId): bool
     {
         return self::cleanUpTokens($seriesId);
     }
 
-    /**
-     * @param string $seriesId
-     * @param array $filter
-     * @param int $maxUsages
-     *
-     * @return bool
-     */
-    public static function cleanUpTokens($seriesId, $filter = [], $maxUsages = 1)
+    public static function cleanUpTokens(string $seriesId, array $filter = [], int $maxUsages = 1): bool
     {
         $db = \Pimcore\Db::get();
 
@@ -316,12 +302,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
         }
     }
 
-    /**
-     * @param array|string $codes
-     *
-     * @return bool
-     */
-    public static function tokensExist($codes)
+    public static function tokensExist(array|string $codes): bool
     {
         $db = \Pimcore\Db::get();
 
@@ -340,20 +321,12 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
         return true;
     }
 
-    /**
-     * @return array
-     */
-    public function getTokens()
+    public function getTokens(): array
     {
         return $this->getData();
     }
 
-    /**
-     * @param array $tokens
-     *
-     * @return $this
-     */
-    public function setTokens($tokens)
+    public function setTokens(array $tokens): static
     {
         return $this->setData($tokens);
     }
@@ -361,12 +334,12 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
     /**
      * Returns an collection of items for a page.
      *
-     * @param  int $offset Page offset
-     * @param  int $itemCountPerPage Number of items per page
+     * @param int $offset Page offset
+     * @param int $itemCountPerPage Number of items per page
      *
      * @return array
      */
-    public function getItems($offset, $itemCountPerPage)
+    public function getItems(int $offset, int $itemCountPerPage): array
     {
         $this->setOffset($offset);
         $this->setLimit($itemCountPerPage);
@@ -374,11 +347,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
         return $this->load();
     }
 
-    /**
-     * @return int
-     */
-    #[\ReturnTypeWillChange]
-    public function count()// : int
+    public function count(): int
     {
         return $this->getTotalCount();
     }

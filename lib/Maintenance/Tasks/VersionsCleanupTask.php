@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,20 +30,10 @@ use Psr\Log\LoggerInterface;
  */
 class VersionsCleanupTask implements TaskInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @var Config
-     */
-    private $config;
+    private Config $config;
 
-    /**
-     * @param LoggerInterface $logger
-     * @param Config $config
-     */
     public function __construct(LoggerInterface $logger, Config $config)
     {
         $this->logger = $logger;

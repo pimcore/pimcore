@@ -36,42 +36,18 @@ class PimcoreBundleManager
 {
     private static ?OptionsResolver $optionsResolver = null;
 
-    /**
-     * @var PimcoreBundleLocator
-     */
-    protected $bundleLocator;
+    protected PimcoreBundleLocator $bundleLocator;
 
-    /**
-     * @var Kernel
-     */
-    protected $kernel;
+    protected Kernel $kernel;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
+    protected EventDispatcherInterface $dispatcher;
 
-    /**
-     * @var RouterInterface
-     */
-    protected $router;
+    protected RouterInterface $router;
 
-    /**
-     * @var array
-     */
-    protected $availableBundles;
+    protected ?array $availableBundles = null;
 
-    /**
-     * @var array
-     */
-    protected $manuallyRegisteredBundles;
+    protected ?array $manuallyRegisteredBundles = null;
 
-    /**
-     * @param PimcoreBundleLocator $bundleLocator
-     * @param Kernel $kernel
-     * @param EventDispatcherInterface $dispatcher
-     * @param RouterInterface $router
-     */
     public function __construct(
         PimcoreBundleLocator $bundleLocator,
         Kernel $kernel,
@@ -108,12 +84,6 @@ class PimcoreBundleManager
         return $bundles;
     }
 
-    /**
-     * @param string $id
-     * @param bool $onlyInstalled
-     *
-     * @return PimcoreBundleInterface
-     */
     public function getActiveBundle(string $id, bool $onlyInstalled = true): PimcoreBundleInterface
     {
         foreach ($this->getActiveBundles($onlyInstalled) as $bundle) {
@@ -153,7 +123,7 @@ class PimcoreBundleManager
         $manuallyRegisteredBundles = $this->getManuallyRegisteredBundles();
 
         if (!isset($manuallyRegisteredBundles[$bundleClass])) {
-            throw new \InvalidArgumentException(sprintf('Bundle "%s" is not registered. 
+            throw new \InvalidArgumentException(sprintf('Bundle "%s" is not registered.
                 Maybe you forgot to add it in the "config/bundles.php" or "Kernel::registerBundles()?', $bundleClass));
         }
 
@@ -255,19 +225,14 @@ class PimcoreBundleManager
      *
      * @return bool
      */
-    public function exists($bundle): bool
+    public function exists(string|PimcoreBundleInterface $bundle): bool
     {
         $identifier = $this->getBundleIdentifier($bundle);
 
         return $this->isValidBundleIdentifier($identifier);
     }
 
-    /**
-     * @param string|PimcoreBundleInterface $bundle
-     *
-     * @return string
-     */
-    public function getBundleIdentifier($bundle): string
+    public function getBundleIdentifier(string|PimcoreBundleInterface $bundle): string
     {
         $identifier = $bundle;
         if ($bundle instanceof PimcoreBundleInterface) {
@@ -277,11 +242,6 @@ class PimcoreBundleManager
         return $identifier;
     }
 
-    /**
-     * @param string $identifier
-     *
-     * @return bool
-     */
     protected function isValidBundleIdentifier(string $identifier): bool
     {
         $validNames = array_merge(
@@ -297,7 +257,7 @@ class PimcoreBundleManager
      *
      * @param string $identifier
      */
-    protected function validateBundleIdentifier(string $identifier)
+    protected function validateBundleIdentifier(string $identifier): void
     {
         if (!$this->isValidBundleIdentifier($identifier)) {
             throw new BundleNotFoundException(sprintf('Bundle "%s" is no valid bundle identifier', $identifier));
@@ -311,7 +271,7 @@ class PimcoreBundleManager
      *
      * @return bool
      */
-    public function isManuallyRegistered($bundle): bool
+    public function isManuallyRegistered(string|PimcoreBundleInterface $bundle): bool
     {
         $identifier = $this->getBundleIdentifier($bundle);
 
@@ -320,13 +280,7 @@ class PimcoreBundleManager
         return in_array($identifier, $this->getManuallyRegisteredBundleNames(false));
     }
 
-    /**
-     * @param PimcoreBundleInterface $bundle
-     * @param bool $throwException
-     *
-     * @return null|Installer\InstallerInterface
-     */
-    protected function loadBundleInstaller(PimcoreBundleInterface $bundle, bool $throwException = false)
+    protected function loadBundleInstaller(PimcoreBundleInterface $bundle, bool $throwException = false): ?Installer\InstallerInterface
     {
         if (null === $installer = $bundle->getInstaller()) {
             if ($throwException) {
@@ -347,7 +301,7 @@ class PimcoreBundleManager
      *
      * @return null|Installer\InstallerInterface
      */
-    public function getInstaller(PimcoreBundleInterface $bundle, bool $throwException = false)
+    public function getInstaller(PimcoreBundleInterface $bundle, bool $throwException = false): ?Installer\InstallerInterface
     {
         return $this->loadBundleInstaller($bundle, $throwException);
     }
@@ -359,7 +313,7 @@ class PimcoreBundleManager
      *
      * @throws InstallationException If the bundle can not be installed or doesn't define an installer
      */
-    public function install(PimcoreBundleInterface $bundle)
+    public function install(PimcoreBundleInterface $bundle): void
     {
         $installer = $this->loadBundleInstaller($bundle, true);
 
@@ -377,7 +331,7 @@ class PimcoreBundleManager
      *
      * @throws InstallationException If the bundle can not be uninstalled or doesn't define an installer
      */
-    public function uninstall(PimcoreBundleInterface $bundle)
+    public function uninstall(PimcoreBundleInterface $bundle): void
     {
         $installer = $this->loadBundleInstaller($bundle, true);
 

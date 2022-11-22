@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,15 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
  */
 interface ShippingInterface extends CartPriceModificatorInterface
 {
-    /**
-     * @param Decimal $charge
-     *
-     * @return CartPriceModificatorInterface
-     */
-    public function setCharge(Decimal $charge);
+    public function setCharge(Decimal $charge): CartPriceModificatorInterface;
 
-    /**
-     * @return Decimal
-     */
     public function getCharge(): Decimal;
 }

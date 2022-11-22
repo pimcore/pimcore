@@ -23,10 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class Language extends AbstractVariableCondition implements ConditionInterface
 {
-    /**
-     * @var string|null
-     */
-    private $language;
+    private ?string $language = null;
 
     /**
      * @param null|string $language
@@ -39,7 +36,7 @@ class Language extends AbstractVariableCondition implements ConditionInterface
     /**
      * {@inheritdoc}
      */
-    public static function fromConfig(array $config)
+    public static function fromConfig(array $config): static
     {
         return new static($config['language'] ?? null);
     }

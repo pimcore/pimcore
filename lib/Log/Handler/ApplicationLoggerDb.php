@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,17 +28,9 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
 
     const TABLE_ARCHIVE_PREFIX = 'application_logs_archive';
 
-    /**
-     * @var Connection
-     */
-    private $db;
+    private Connection $db;
 
-    /**
-     * @param Connection $db
-     * @param int|string|Level $level
-     * @param bool $bubble
-     */
-    public function __construct(Connection $db, $level = Level::Debug, $bubble = true)
+    public function __construct(Connection $db, int|string|Level $level = Level::Debug, $bubble = true)
     {
         $this->db = $db;
         parent::__construct($level, $bubble);
@@ -63,7 +56,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     /**
      * @return string[]
      */
-    public static function getComponents()
+    public static function getComponents(): array
     {
         $db = Db::get();
 
@@ -75,7 +68,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     /**
      * @return string[]
      */
-    public static function getPriorities()
+    public static function getPriorities(): array
     {
         $priorities = [];
         $priorityNames = [

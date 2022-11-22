@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,10 +16,10 @@
 
 namespace Pimcore\Event;
 
-final class ElementEvents
+final class NoteEvents
 {
     /**
-     * @Event("Pimcore\Event\Model\ElementEvent")
+     * @Event("Pimcore\Event\Model\NoteEvents")^
      *
      * @var string
      */

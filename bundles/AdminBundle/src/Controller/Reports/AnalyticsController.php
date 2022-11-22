@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -34,19 +35,14 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class AnalyticsController extends ReportsControllerBase implements KernelControllerEventInterface
 {
-    /**
-     * @var Analytics
-     */
-    protected $service;
+    protected Analytics $service;
 
     /**
      * @Route("/deeplink", name="pimcore_admin_reports_analytics_deeplink", methods={"GET"})
      *
-     * @param Request $request
      *
-     * @return RedirectResponse
      */
-    public function deeplinkAction(Request $request, SiteConfigProvider $siteConfigProvider)
+    public function deeplinkAction(Request $request, SiteConfigProvider $siteConfigProvider): RedirectResponse
     {
         $config = $siteConfigProvider->getSiteConfig();
 
@@ -64,7 +60,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
      *
      * @return JsonResponse
      */
-    public function getProfilesAction(Request $request)
+    public function getProfilesAction(Request $request): JsonResponse
     {
         try {
             $data = ['data' => []];
@@ -121,12 +117,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
         return Site::getById($siteId);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return string
-     */
-    protected function getFilterPath(Request $request)
+    protected function getFilterPath(Request $request): string
     {
         if ($request->get('type') == 'document' && $request->get('id')) {
             $doc = Document::getById((int) $request->get('id'));
@@ -158,7 +149,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
      *
      * @return JsonResponse
      */
-    public function chartmetricdataAction(Request $request, SiteConfigProvider $siteConfigProvider)
+    public function chartmetricdataAction(Request $request, SiteConfigProvider $siteConfigProvider): JsonResponse
     {
         $config = $siteConfigProvider->getSiteConfig($this->getSite($request));
 
@@ -241,7 +232,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
      *
      * @return JsonResponse
      */
-    public function summaryAction(Request $request, SiteConfigProvider $siteConfigProvider)
+    public function summaryAction(Request $request, SiteConfigProvider $siteConfigProvider): JsonResponse
     {
         $config = $siteConfigProvider->getSiteConfig($this->getSite($request));
 
@@ -319,7 +310,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
      *
      * @return JsonResponse
      */
-    public function sourceAction(Request $request, SiteConfigProvider $siteConfigProvider)
+    public function sourceAction(Request $request, SiteConfigProvider $siteConfigProvider): JsonResponse
     {
         $config = $siteConfigProvider->getSiteConfig($this->getSite($request));
 
@@ -373,7 +364,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
      *
      * @return JsonResponse
      */
-    public function dataExplorerAction(Request $request, SiteConfigProvider $siteConfigProvider)
+    public function dataExplorerAction(Request $request, SiteConfigProvider $siteConfigProvider): JsonResponse
     {
         $config = $siteConfigProvider->getSiteConfig($this->getSite($request));
 
@@ -443,7 +434,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
      *
      * @return JsonResponse
      */
-    public function getDimensionsAction(Request $request)
+    public function getDimensionsAction(Request $request): JsonResponse
     {
         return $this->adminJson(['data' => Google\Api::getAnalyticsDimensions()]);
     }
@@ -455,7 +446,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
      *
      * @return JsonResponse
      */
-    public function getMetricsAction(Request $request)
+    public function getMetricsAction(Request $request): JsonResponse
     {
         return $this->adminJson(['data' => Google\Api::getAnalyticsMetrics()]);
     }
@@ -467,7 +458,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
      *
      * @return JsonResponse
      */
-    public function getSegmentsAction(Request $request)
+    public function getSegmentsAction(Request $request): JsonResponse
     {
         $result = $this->service->management_segments->listManagementSegments();
 
@@ -483,13 +474,7 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
         return $this->adminJson(['data' => $data]);
     }
 
-    /**
-     * @param string $type
-     * @param string $value
-     *
-     * @return string
-     */
-    protected function formatDimension($type, $value)
+    protected function formatDimension(string $type, string $value): string
     {
         if (strpos($type, 'date') !== false) {
             $date = new \DateTime();
@@ -501,9 +486,6 @@ class AnalyticsController extends ReportsControllerBase implements KernelControl
         return $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         if (!$event->isMainRequest()) {

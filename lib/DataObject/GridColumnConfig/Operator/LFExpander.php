@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,6 +18,7 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 use Pimcore\DataObject\GridColumnConfig\ResultContainer;
 use Pimcore\Localization\LocaleServiceInterface;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool;
 
 /**
@@ -24,21 +26,15 @@ use Pimcore\Tool;
  */
 final class LFExpander extends AbstractOperator
 {
-    /**
-     * @var LocaleServiceInterface
-     */
-    private $localeService;
+    private \stdClass|LocaleServiceInterface $localeService;
 
     /**
      * @var string[]
      */
-    private $locales;
+    private array $locales;
 
     private bool $asArray;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct(LocaleServiceInterface $localeService, \stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -52,10 +48,10 @@ final class LFExpander extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): ResultContainer|\stdClass|null
     {
-        $childs = $this->getChilds();
-        if (isset($childs[0])) {
+        $children = $this->getChildren();
+        if (isset($children[0])) {
             if ($this->getAsArray()) {
                 $result = new ResultContainer();
                 $result->label = $this->label;
@@ -67,7 +63,7 @@ final class LFExpander extends AbstractOperator
                 foreach ($validLanguages as $validLanguage) {
                     $this->localeService->setLocale($validLanguage);
 
-                    $childValue = $childs[0]->getLabeledValue($element);
+                    $childValue = $children[0]->getLabeledValue($element);
                     if ($childValue && $childValue->value) {
                         $resultValues[] = $childValue;
                     } else {
@@ -81,7 +77,7 @@ final class LFExpander extends AbstractOperator
 
                 return $result;
             } else {
-                $value = $childs[0]->getLabeledValue($element);
+                $value = $children[0]->getLabeledValue($element);
             }
 
             return $value;
@@ -90,10 +86,7 @@ final class LFExpander extends AbstractOperator
         return null;
     }
 
-    /**
-     * @return bool
-     */
-    public function expandLocales()
+    public function expandLocales(): bool
     {
         return true;
     }
@@ -101,7 +94,7 @@ final class LFExpander extends AbstractOperator
     /**
      * @return string[]
      */
-    public function getValidLanguages()
+    public function getValidLanguages(): array
     {
         if ($this->locales) {
             $validLanguages = $this->locales;
@@ -112,18 +105,12 @@ final class LFExpander extends AbstractOperator
         return $validLanguages;
     }
 
-    /**
-     * @return bool
-     */
-    public function getAsArray()
+    public function getAsArray(): bool
     {
         return $this->asArray;
     }
 
-    /**
-     * @param bool $asArray
-     */
-    public function setAsArray($asArray)
+    public function setAsArray(bool $asArray)
     {
         $this->asArray = $asArray;
     }

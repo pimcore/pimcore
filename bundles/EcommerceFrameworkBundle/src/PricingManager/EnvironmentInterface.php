@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,108 +28,55 @@ interface EnvironmentInterface
 
     public const EXECUTION_MODE_CART = 'cart';
 
-    /**
-     * @param CartInterface $cart
-     *
-     * @return EnvironmentInterface
-     */
-    public function setCart(CartInterface $cart);
+    public function setCart(CartInterface $cart): EnvironmentInterface;
 
-    /**
-     * @return CartInterface|null
-     */
-    public function getCart();
+    public function getCart(): ?CartInterface;
 
-    /**
-     * @param CartItemInterface $cartItem
-     *
-     * @return EnvironmentInterface
-     */
-    public function setCartItem(CartItemInterface $cartItem);
+    public function setCartItem(CartItemInterface $cartItem): EnvironmentInterface;
 
-    /**
-     * @return CartItemInterface|null
-     */
-    public function getCartItem();
+    public function getCartItem(): ?CartItemInterface;
 
-    /**
-     * @param CheckoutableInterface $product
-     *
-     * @return EnvironmentInterface
-     */
-    public function setProduct(CheckoutableInterface $product);
+    public function setProduct(CheckoutableInterface $product): EnvironmentInterface;
 
-    /**
-     * @return CheckoutableInterface|null
-     */
-    public function getProduct();
+    public function getProduct(): ?CheckoutableInterface;
 
-    /**
-     * @param VisitorInfo $visitorInfo
-     *
-     * @return EnvironmentInterface
-     */
-    public function setVisitorInfo(VisitorInfo $visitorInfo);
+    public function setVisitorInfo(VisitorInfo $visitorInfo): EnvironmentInterface;
 
-    /**
-     * @return VisitorInfo|null
-     */
-    public function getVisitorInfo();
+    public function getVisitorInfo(): ?VisitorInfo;
 
-    /**
-     * @param RuleInterface $rule
-     *
-     * @return EnvironmentInterface
-     */
-    public function setRule($rule);
+    public function setRule(RuleInterface $rule): EnvironmentInterface;
 
-    /**
-     * @return RuleInterface|null
-     */
-    public function getRule();
+    public function getRule(): ?RuleInterface;
 
-    /**
-     * @param PriceInfoInterface $priceInfo
-     *
-     * @return EnvironmentInterface
-     */
-    public function setPriceInfo(PriceInfoInterface $priceInfo);
+    public function setPriceInfo(PriceInfoInterface $priceInfo): EnvironmentInterface;
 
-    /**
-     * @return PriceInfoInterface|null
-     */
-    public function getPriceInfo();
+    public function getPriceInfo(): ?PriceInfoInterface;
 
-    /**
-     * @param array $categories
-     *
-     * @return EnvironmentInterface
-     */
-    public function setCategories(array $categories);
+    public function setCategories(array $categories): EnvironmentInterface;
 
     /**
      * @return AbstractCategory[]
      */
-    public function getCategories();
+    public function getCategories(): array;
 
     /**
      * sets execution mode of system - either product or cart
      *
      * @param string $executionMode
      */
-    public function setExecutionMode($executionMode);
+    public function setExecutionMode(string $executionMode);
 
     /**
      * returns in with execution mode the system is - either product or cart
      *
      * @return string
      */
-    public function getExecutionMode();
+    public function getExecutionMode(): string;
 
     /**
      * returns hash of environment based on its content
      *
      * @return string
      */
-    public function getHash();
+    public function getHash(): string;
 }

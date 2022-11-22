@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,10 +24,7 @@ use Pimcore\Model\DataObject\Concrete;
 
 class Item extends AbstractOrderListItem implements OrderListItemInterface
 {
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->resultRow['Id'];
     }
@@ -39,7 +37,7 @@ class Item extends AbstractOrderListItem implements OrderListItemInterface
      *
      * @throws \Exception
      */
-    public function __call($method, $args)
+    public function __call(string $method, array $args)
     {
         $field = substr($method, 3);
         if (substr($method, 0, 3) == 'get' && array_key_exists($field, $this->resultRow)) {
@@ -54,10 +52,7 @@ class Item extends AbstractOrderListItem implements OrderListItemInterface
         throw new \Exception("Object with {$this->getId()} not found.");
     }
 
-    /**
-     * @return Order|OrderItem|null
-     */
-    public function reference()
+    public function reference(): OrderItem|Order|null
     {
         $object = Concrete::getById($this->getId());
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,23 +26,23 @@ interface FindologicConfigInterface extends ConfigInterface
     /**
      * returns findologic client parameters defined in the tenant config
      *
-     * @param string $setting
+     * @param string|null $setting
      *
-     * @return array|string
+     * @return array|string|null
      */
-    public function getClientConfig($setting = null);
+    public function getClientConfig(string $setting = null): array|string|null;
 
     /**
      * returns condition for current subtenant
      *
      * @return array
      */
-    public function getSubTenantCondition();
+    public function getSubTenantCondition(): array;
 
     /**
      * creates and returns tenant worker suitable for this tenant configuration
      *
      * @return DefaultFindologicWorker
      */
-    public function getTenantWorker();
+    public function getTenantWorker(): DefaultFindologicWorker;
 }

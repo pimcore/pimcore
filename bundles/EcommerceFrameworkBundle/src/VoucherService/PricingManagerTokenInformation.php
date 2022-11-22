@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,14 +25,14 @@ class PricingManagerTokenInformation
      *
      * @var string
      */
-    protected $tokenCode;
+    protected string $tokenCode;
 
     /**
      * Corresponding voucher token object
      *
      * @var Token
      */
-    protected $tokenObject;
+    protected Token $tokenObject;
 
     /**
      * List of error messages that are defined in voucher token conditions of all
@@ -40,14 +41,14 @@ class PricingManagerTokenInformation
      *
      * @var string[]
      */
-    protected $errorMessages;
+    protected array $errorMessages;
 
     /**
      * Flag that indicates if no pricing rules are defined for the given voucher token at all.
      *
      * @var bool
      */
-    protected $hasNoValidRule = false;
+    protected bool $hasNoValidRule = false;
 
     /**
      * List of not applied pricing rules that would take the given voucher token
@@ -55,42 +56,30 @@ class PricingManagerTokenInformation
      *
      * @var RuleInterface[]
      */
-    protected $notAppliedRules;
+    protected array $notAppliedRules;
 
     /**
      * List of applied pricing rules that require the given voucher token.
      *
      * @var RuleInterface[]
      */
-    protected $appliedRules;
+    protected array $appliedRules;
 
-    /**
-     * @return string
-     */
     public function getTokenCode(): string
     {
         return $this->tokenCode;
     }
 
-    /**
-     * @param string $tokenCode
-     */
     public function setTokenCode(string $tokenCode): void
     {
         $this->tokenCode = $tokenCode;
     }
 
-    /**
-     * @return Token
-     */
     public function getTokenObject(): Token
     {
         return $this->tokenObject;
     }
 
-    /**
-     * @param Token $tokenObject
-     */
     public function setTokenObject(Token $tokenObject): void
     {
         $this->tokenObject = $tokenObject;
@@ -112,17 +101,11 @@ class PricingManagerTokenInformation
         $this->errorMessages = $errorMessages;
     }
 
-    /**
-     * @return bool
-     */
     public function hasNoValidRule(): bool
     {
         return $this->hasNoValidRule;
     }
 
-    /**
-     * @param bool $hasNoValidRule
-     */
     public function setHasNoValidRule(bool $hasNoValidRule): void
     {
         $this->hasNoValidRule = $hasNoValidRule;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -51,17 +52,14 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
      *
      * @var array
      */
-    protected $dependencies = ['ec'];
+    protected array $dependencies = ['ec'];
 
-    /**
-     * @var bool
-     */
-    protected $dependenciesIncluded = false;
+    protected bool $dependenciesIncluded = false;
 
     /**
      * @var string[]
      */
-    protected $trackedCodes = [];
+    protected array $trackedCodes = [];
 
     protected function configureOptions(OptionsResolver $resolver)
     {
@@ -116,7 +114,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     /**
      * {@inheritdoc}
      */
-    public function trackCartProductActionAdd(CartInterface $cart, ProductInterface $product, $quantity = 1)
+    public function trackCartProductActionAdd(CartInterface $cart, ProductInterface $product, float|int $quantity = 1)
     {
         return $this->trackProductActionAdd($product, $quantity);
     }
@@ -125,9 +123,9 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
      * Track product action add
      *
      * @param ProductInterface $product
-     * @param int|float $quantity
+     * @param float|int $quantity
      */
-    public function trackProductActionAdd(ProductInterface $product, $quantity = 1)
+    public function trackProductActionAdd(ProductInterface $product, float|int $quantity = 1)
     {
         $this->ensureDependencies();
         $this->trackProductAction($product, 'add', $quantity);
@@ -136,7 +134,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     /**
      * {@inheritdoc}
      */
-    public function trackCartProductActionRemove(CartInterface $cart, ProductInterface $product, $quantity = 1)
+    public function trackCartProductActionRemove(CartInterface $cart, ProductInterface $product, float|int $quantity = 1)
     {
         $this->trackProductActionRemove($product, $quantity);
     }
@@ -145,20 +143,15 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
      * Track product remove from cart
      *
      * @param ProductInterface $product
-     * @param int|float $quantity
+     * @param float|int $quantity
      */
-    public function trackProductActionRemove(ProductInterface $product, $quantity = 1)
+    public function trackProductActionRemove(ProductInterface $product, float|int $quantity = 1)
     {
         $this->ensureDependencies();
         $this->trackProductAction($product, 'remove', $quantity);
     }
 
-    /**
-     * @param ProductInterface $product
-     * @param string $action
-     * @param int|float $quantity
-     */
-    protected function trackProductAction($product, $action, $quantity = 1)
+    protected function trackProductAction(ProductInterface $product, string $action, float|int $quantity = 1)
     {
         $item = $this->trackingItemBuilder->buildProductActionItem($product);
         $item->setQuantity($quantity);
@@ -199,7 +192,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
      * @param string|null $stepNumber
      * @param string|null $checkoutOption
      */
-    public function trackCheckoutStep(CheckoutManagerCheckoutStepInterface $step, CartInterface $cart, $stepNumber = null, $checkoutOption = null)
+    public function trackCheckoutStep(CheckoutManagerCheckoutStepInterface $step, CartInterface $cart, string $stepNumber = null, string $checkoutOption = null)
     {
         $this->ensureDependencies();
 
@@ -266,7 +259,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
         return $this->trackedCodes;
     }
 
-    public function trackCode(string $code)
+    public function trackCode(string $code): void
     {
         $this->trackedCodes[] = $code;
         $this->tracker->addCodePart($code, GoogleTracker::BLOCK_BEFORE_TRACK);
@@ -278,7 +271,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
      *
      * @return array
      */
-    protected function buildCheckoutCompleteCalls(Transaction $transaction, array $items)
+    protected function buildCheckoutCompleteCalls(Transaction $transaction, array $items): array
     {
         $calls = [];
         foreach ($items as $item) {
@@ -297,7 +290,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
      *
      * @return array
      */
-    protected function transformTransaction(Transaction $transaction)
+    protected function transformTransaction(Transaction $transaction): array
     {
         return array_merge([
             'id' => $transaction->getId(),                           // order ID - required
@@ -311,7 +304,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
         );
     }
 
-    protected function buildCheckoutCalls(array $items)
+    protected function buildCheckoutCalls(array $items): array
     {
         $calls = [];
         foreach ($items as $item) {
@@ -328,7 +321,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
      *
      * @return array
      */
-    protected function transformProductAction(ProductAction $item)
+    protected function transformProductAction(ProductAction $item): array
     {
         return $this->filterNullValues(
             array_merge([
@@ -353,7 +346,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
      *
      * @return array
      */
-    protected function transformProductImpression(ProductImpression $item)
+    protected function transformProductImpression(ProductImpression $item): array
     {
         $data = $this->filterNullValues(array_merge([
             'id' => $item->getId(),

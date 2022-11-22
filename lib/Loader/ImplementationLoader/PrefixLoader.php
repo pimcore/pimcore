@@ -29,24 +29,12 @@ use Pimcore\Tool;
  */
 class PrefixLoader extends AbstractClassNameLoader
 {
-    /**
-     * @var Inflector
-     */
-    private $inflector;
+    private Inflector $inflector;
 
-    /**
-     * @var array
-     */
-    private $prefixes = [];
+    private array $prefixes = [];
 
-    /**
-     * @var array
-     */
-    private $cache = [];
+    private array $cache = [];
 
-    /**
-     * @param array $prefixes
-     */
     public function __construct(array $prefixes = [])
     {
         $this->inflector = InflectorFactory::create()->build();
@@ -79,10 +67,7 @@ class PrefixLoader extends AbstractClassNameLoader
         return null !== $this->findClassName($name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getClassName(string $name)
+    protected function getClassName(string $name): string
     {
         return $this->findClassName($name);
     }
@@ -109,22 +94,11 @@ class PrefixLoader extends AbstractClassNameLoader
         return null;
     }
 
-    /**
-     * @param string $prefix
-     * @param string $name
-     *
-     * @return string
-     */
     protected function buildClassName(string $prefix, string $name): string
     {
         return $prefix . $this->normalizeName($name);
     }
 
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
     protected function normalizeName(string $name): string
     {
         return $this->inflector->classify($name);

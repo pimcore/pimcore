@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,10 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 
 interface CartPriceModificatorInterface
 {
-    /**
-     * @return string
-     */
-    public function getName();
+    public function getName(): string;
 
     /**
      * function which modifies the current sub total price
@@ -34,5 +32,5 @@ interface CartPriceModificatorInterface
      *
      * @return ModificatedPriceInterface
      */
-    public function modify(PriceInterface $currentSubTotal, CartInterface $cart);
+    public function modify(PriceInterface $currentSubTotal, CartInterface $cart): ModificatedPriceInterface;
 }

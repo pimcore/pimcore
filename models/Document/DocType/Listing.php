@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -36,12 +37,12 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
      *
      * @var array|null
      */
-    protected $docTypes = null;
+    protected ?array $docTypes = null;
 
     /**
      * @return \Pimcore\Model\Document\DocType[]
      */
-    public function getDocTypes()
+    public function getDocTypes(): array
     {
         if ($this->docTypes === null) {
             $this->getDao()->loadList();
@@ -50,12 +51,7 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
         return $this->docTypes;
     }
 
-    /**
-     * @param array $docTypes
-     *
-     * @return $this
-     */
-    public function setDocTypes($docTypes)
+    public function setDocTypes(array $docTypes): static
     {
         $this->docTypes = $docTypes;
 
@@ -65,7 +61,7 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
     /**
      * @return Model\Document\DocType[]
      */
-    public function load()
+    public function load(): array
     {
         return $this->getDocTypes();
     }

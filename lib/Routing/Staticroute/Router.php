@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -40,37 +41,24 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
 {
     use LoggerAwareTrait;
 
-    /**
-     * @var RequestContext
-     */
-    protected $context;
+    protected RequestContext $context;
 
     /**
-     * @var Staticroute[]
+     * @var Staticroute[]|null
      */
-    protected $staticRoutes;
+    protected ?array $staticRoutes = null;
 
-    /**
-     * @var array
-     */
-    protected $supportedNames;
+    protected ?array $supportedNames = null;
 
     /**
      * Params which are treated as _locale if no _locale attribute is set
      *
      * @var array
      */
-    protected $localeParams = [];
+    protected array $localeParams = [];
 
-    /**
-     * @var Config
-     */
-    protected $config;
+    protected Config $config;
 
-    /**
-     * @param RequestContext $context
-     * @param Config $config
-     */
     public function __construct(RequestContext $context, Config $config)
     {
         $this->context = $context;
@@ -93,17 +81,11 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
         return $this->context;
     }
 
-    /**
-     * @return array
-     */
     public function getLocaleParams(): array
     {
         return $this->localeParams;
     }
 
-    /**
-     * @param array $localeParams
-     */
     public function setLocaleParams(array $localeParams)
     {
         $this->localeParams = $localeParams;
@@ -112,7 +94,7 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
     /**
      * {@inheritdoc}
      */
-    public function supports($name)
+    public function supports($name): bool
     {
         return is_string($name) && in_array($name, $this->getSupportedNames());
     }
@@ -240,7 +222,7 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
      *
      * @return array
      */
-    protected function doMatch($pathinfo, Request $request = null)
+    protected function doMatch(string $pathinfo, Request $request = null): array
     {
         $pathinfo = urldecode($pathinfo);
 
@@ -275,12 +257,7 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
         throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $pathinfo));
     }
 
-    /**
-     * @param array $routeParams
-     *
-     * @return array
-     */
-    protected function processRouteParams(array $routeParams)
+    protected function processRouteParams(array $routeParams): array
     {
         $keys = [
             'module',
@@ -318,7 +295,7 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
     /**
      * @return Staticroute[]
      */
-    protected function getStaticRoutes()
+    protected function getStaticRoutes(): array
     {
         if (null === $this->staticRoutes) {
             /** @var Staticroute\Listing|Staticroute\Listing\Dao $list */
@@ -346,10 +323,7 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
         return $this->staticRoutes;
     }
 
-    /**
-     * @return array
-     */
-    protected function getSupportedNames()
+    protected function getSupportedNames(): array
     {
         if (null === $this->supportedNames) {
             $this->supportedNames = [];

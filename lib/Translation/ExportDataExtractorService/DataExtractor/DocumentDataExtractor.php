@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,10 +27,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
 {
     const EXPORTABLE_TAGS = ['wysiwyg', 'input', 'textarea', 'image', 'link'];
 
-    /**
-     * @var EditableUsageResolver
-     */
-    private $EditableUsageResolver;
+    private EditableUsageResolver $EditableUsageResolver;
 
     public function __construct(EditableUsageResolver $EditableUsageResolver)
     {
@@ -122,12 +120,6 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
         return $this;
     }
 
-    /**
-     * @param Document $document
-     * @param AttributeSet $result
-     *
-     * @return DocumentDataExtractor
-     */
     protected function addSettings(Document $document, AttributeSet $result): DocumentDataExtractor
     {
         $service = new Document\Service;

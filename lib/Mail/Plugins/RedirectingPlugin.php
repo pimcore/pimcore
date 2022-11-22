@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,7 +30,7 @@ final class RedirectingPlugin
      *
      * @var array
      */
-    private $recipient;
+    private array $recipient;
 
     /**
      * Create a new RedirectingPlugin.
@@ -51,7 +52,7 @@ final class RedirectingPlugin
      *
      * @param array $recipient
      */
-    public function setRecipient($recipient)
+    public function setRecipient(array $recipient): void
     {
         $this->recipient = $recipient;
     }
@@ -61,7 +62,7 @@ final class RedirectingPlugin
      *
      * @return array
      */
-    public function getRecipient()
+    public function getRecipient(): array
     {
         return $this->recipient;
     }
@@ -72,7 +73,7 @@ final class RedirectingPlugin
      * @param Mail $message
      *
      */
-    public function beforeSendPerformed(Mail $message)
+    public function beforeSendPerformed(Mail $message): void
     {
         // additional checks if message is Pimcore\Mail
         if ($message->doRedirectMailsToDebugMailAddresses()) {
@@ -104,7 +105,7 @@ final class RedirectingPlugin
      *
      * @param Mail $message
      */
-    public function sendPerformed(Mail $message)
+    public function sendPerformed(Mail $message): void
     {
         if ($message instanceof Mail && $message->doRedirectMailsToDebugMailAddresses()) {
             $this->setSenderAndReceiversParams($message);

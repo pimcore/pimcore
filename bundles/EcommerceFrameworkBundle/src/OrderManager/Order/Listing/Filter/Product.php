@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,25 +21,14 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListInterface;
 
 class Product implements OrderListFilterInterface
 {
-    /**
-     * @var \Pimcore\Model\DataObject\Concrete
-     */
-    protected $product;
+    protected \Pimcore\Model\DataObject\Concrete $product;
 
-    /**
-     * @param \Pimcore\Model\DataObject\Concrete $product
-     */
     public function __construct(\Pimcore\Model\DataObject\Concrete $product)
     {
         $this->product = $product;
     }
 
-    /**
-     * @param OrderListInterface $orderList
-     *
-     * @return OrderListFilterInterface
-     */
-    public function apply(OrderListInterface $orderList)
+    public function apply(OrderListInterface $orderList): OrderListFilterInterface
     {
         $db = \Pimcore\Db::get();
         $ids = [

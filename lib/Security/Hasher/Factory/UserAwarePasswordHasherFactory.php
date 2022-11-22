@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -40,7 +41,7 @@ class UserAwarePasswordHasherFactory extends AbstractHasherFactory
     /**
      * @var PasswordHasherInterface[]
      */
-    private $hashers = [];
+    private array $hashers = [];
 
     /**
      * {@inheritdoc}

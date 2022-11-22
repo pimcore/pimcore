@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,9 +32,6 @@ class AdminSecurityListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
-    /**
-     * @param ContentSecurityPolicyHandler $contentSecurityPolicyHandler
-     */
     public function __construct(
         protected RequestHelper $requestHelper,
         protected ContentSecurityPolicyHandler $contentSecurityPolicyHandler,

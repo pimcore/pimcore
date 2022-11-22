@@ -26,15 +26,9 @@ use Psr\Container\ContainerInterface;
  */
 class AttributeFactory
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $getters;
+    private ContainerInterface $getters;
 
-    /**
-     * @var ContainerInterface
-     */
-    private $interpreters;
+    private ContainerInterface $interpreters;
 
     public function __construct(
         ContainerInterface $getters,

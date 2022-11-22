@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,44 +24,26 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 class PriceInfo implements PriceInfoInterface
 {
-    /**
-     * @var PriceSystemPriceInfoInterface
-     */
-    protected $priceInfo;
+    protected PriceSystemPriceInfoInterface $priceInfo;
 
-    /**
-     * @var Decimal
-     */
-    protected $amount;
+    protected Decimal $amount;
 
     /**
      * @var RuleInterface[]
      */
-    protected $rules = [];
+    protected array $rules = [];
 
     /**
      * @var RuleInterface[]|null
      */
-    protected $validRules;
+    protected ?array $validRules = null;
 
-    /**
-     * @var bool
-     */
-    protected $rulesApplied = false;
+    protected bool $rulesApplied = false;
 
-    /**
-     * @var string
-     */
-    protected $priceEnvironmentHash;
+    protected string $priceEnvironmentHash = '';
 
-    /**
-     * @var EnvironmentInterface
-     */
-    protected $environment;
+    protected EnvironmentInterface $environment;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct(PriceSystemPriceInfoInterface $priceInfo, EnvironmentInterface $environment)
     {
         $this->amount = Decimal::create(0);
@@ -68,28 +51,19 @@ class PriceInfo implements PriceInfoInterface
         $this->environment = $environment;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function addRule(RuleInterface $rule)
+    public function addRule(RuleInterface $rule): static
     {
         $this->rules[] = $rule;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getEnvironment(): EnvironmentInterface
     {
         return $this->environment;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setEnvironment(EnvironmentInterface $environment)
+    public function setEnvironment(EnvironmentInterface $environment): static
     {
         $this->environment = $environment;
 
@@ -102,7 +76,7 @@ class PriceInfo implements PriceInfoInterface
      *
      * @return bool
      */
-    protected function environmentHashChanged()
+    protected function environmentHashChanged(): bool
     {
         $hash = $this->getEnvironment()->getHash();
         if ($this->priceEnvironmentHash != $hash) {
@@ -131,7 +105,7 @@ class PriceInfo implements PriceInfoInterface
                     $this->validRules[] = $rule;
 
                     // is this a stop rule?
-                    if ($rule->getBehavior() == 'stopExecute') {
+                    if ($rule->getBehavior() == Rule::ATTRIBUTE_BEHAVIOR_LASTRULE) {
                         break;
                     }
                 }
@@ -196,7 +170,7 @@ class PriceInfo implements PriceInfoInterface
     /**
      * {@inheritdoc}
      */
-    public function getQuantity()
+    public function getQuantity(): int|string
     {
         return $this->priceInfo->getQuantity();
     }
@@ -204,7 +178,7 @@ class PriceInfo implements PriceInfoInterface
     /**
      * {@inheritdoc}
      */
-    public function setQuantity($quantity)
+    public function setQuantity(int|string $quantity)
     {
         return $this->priceInfo->setQuantity($quantity);
     }
@@ -212,7 +186,7 @@ class PriceInfo implements PriceInfoInterface
     /**
      * {@inheritdoc}
      */
-    public function setPriceSystem(PriceSystemInterface $priceSystem)
+    public function setPriceSystem(PriceSystemInterface $priceSystem): static
     {
         $this->priceInfo->setPriceSystem($priceSystem);
 
@@ -222,7 +196,7 @@ class PriceInfo implements PriceInfoInterface
     /**
      * {@inheritdoc}
      */
-    public function setProduct(CheckoutableInterface $product)
+    public function setProduct(CheckoutableInterface $product): static
     {
         $this->priceInfo->setProduct($product);
 
@@ -232,24 +206,18 @@ class PriceInfo implements PriceInfoInterface
     /**
      * {@inheritdoc}
      */
-    public function getProduct()
+    public function getProduct(): ?CheckoutableInterface
     {
         return $this->priceInfo->getProduct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setAmount(Decimal $amount)
+    public function setAmount(Decimal $amount): static
     {
         $this->amount = $amount;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAmount(): Decimal
     {
         return $this->amount;
@@ -263,30 +231,21 @@ class PriceInfo implements PriceInfoInterface
      *
      * @return mixed
      */
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments)
     {
         return call_user_func_array([$this->priceInfo, $name], $arguments);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getOriginalPrice(): PriceInterface
     {
         return $this->priceInfo->getPrice();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getOriginalTotalPrice(): PriceInterface
     {
         return $this->priceInfo->getTotalPrice();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasDiscount(): bool
     {
         return $this->getPrice()->getAmount()->lessThan(
@@ -294,9 +253,6 @@ class PriceInfo implements PriceInfoInterface
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getDiscount(): PriceInterface
     {
         $discount = $this->getPrice()->getAmount()->sub($this->getOriginalPrice()->getAmount());
@@ -307,9 +263,6 @@ class PriceInfo implements PriceInfoInterface
         return $price;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTotalDiscount(): PriceInterface
     {
         $discount = $this->getTotalPrice()->getAmount()->sub($this->getOriginalTotalPrice()->getAmount());
@@ -323,7 +276,7 @@ class PriceInfo implements PriceInfoInterface
     /**
      * {@inheritdoc}
      */
-    public function getDiscountPercent()
+    public function getDiscountPercent(): float
     {
         $percent = $this->getPrice()->getAmount()->discountPercentageOf(
             $this->getOriginalPrice()->getAmount()
@@ -332,9 +285,6 @@ class PriceInfo implements PriceInfoInterface
         return round($percent, 2);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasRulesApplied(): bool
     {
         return (bool)$this->rulesApplied;

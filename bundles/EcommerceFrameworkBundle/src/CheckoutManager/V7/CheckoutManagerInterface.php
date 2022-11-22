@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -33,30 +34,30 @@ interface CheckoutManagerInterface
      *
      * @return CheckoutStepInterface[]
      */
-    public function getCheckoutSteps();
+    public function getCheckoutSteps(): array;
 
     /**
      * Returns checkout step with given name
      *
      * @param string $stepName
      *
-     * @return CheckoutStepInterface
+     * @return CheckoutStepInterface|null
      */
-    public function getCheckoutStep($stepName);
+    public function getCheckoutStep(string $stepName): ?CheckoutStepInterface;
 
     /**
      * Returns current checkout step
      *
      * @return CheckoutStepInterface
      */
-    public function getCurrentStep();
+    public function getCurrentStep(): CheckoutStepInterface;
 
     /**
      * Returns the cart the checkout is started with
      *
      * @return CartInterface
      */
-    public function getCart();
+    public function getCart(): CartInterface;
 
     /**
      * Commits checkout step
@@ -68,7 +69,7 @@ interface CheckoutManagerInterface
      *
      * @return bool
      */
-    public function commitStep(CheckoutStepInterface $step, $data);
+    public function commitStep(CheckoutStepInterface $step, mixed $data): bool;
 
     /**
      * Checks if checkout is finished (= all checkout steps are committed)
@@ -76,14 +77,14 @@ interface CheckoutManagerInterface
      *
      * @return bool
      */
-    public function isFinished();
+    public function isFinished(): bool;
 
     /**
      * Returns if there currently is an active payment (init or pending)
      *
      * @return bool
      */
-    public function hasActivePayment();
+    public function hasActivePayment(): bool;
 
     /**
      * Init payment for checkout - only possible if payment provider is configured
@@ -93,7 +94,7 @@ interface CheckoutManagerInterface
      *
      * @throws UnsupportedException
      */
-    public function initOrderPayment();
+    public function initOrderPayment(): AbstractPaymentInformation;
 
     /**
      * Starts payment for checkout and also starts payment provider
@@ -107,9 +108,6 @@ interface CheckoutManagerInterface
      */
     public function startOrderPaymentWithPaymentProvider(AbstractRequest $paymentConfig): StartPaymentResponseInterface;
 
-    /**
-     * @param HandlePendingPaymentsStrategyInterface $handlePendingPaymentsStrategy
-     */
     public function setHandlePendingPaymentsStrategy(HandlePendingPaymentsStrategyInterface $handlePendingPaymentsStrategy): void;
 
     /**
@@ -125,14 +123,14 @@ interface CheckoutManagerInterface
      *
      * @throws UnsupportedException
      */
-    public function cancelStartedOrderPayment();
+    public function cancelStartedOrderPayment(): ?AbstractOrder;
 
     /**
      * Returns order (creates it if not available yet)
      *
      * @return AbstractOrder
      */
-    public function getOrder();
+    public function getOrder(): AbstractOrder;
 
     /**
      * Facade method for
@@ -151,7 +149,7 @@ interface CheckoutManagerInterface
      *
      * @return AbstractOrder
      */
-    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams);
+    public function handlePaymentResponseAndCommitOrderPayment(StatusInterface|array $paymentResponseParams): AbstractOrder;
 
     /**
      * Start and commits payment based on a previously performed payment
@@ -162,7 +160,7 @@ interface CheckoutManagerInterface
      *
      * @return AbstractOrder
      */
-    public function startAndCommitRecurringOrderPayment(AbstractOrder $sourceOrder, string $customerId);
+    public function startAndCommitRecurringOrderPayment(AbstractOrder $sourceOrder, string $customerId): AbstractOrder;
 
     /**
      * Commits order - does not consider any payment
@@ -173,7 +171,7 @@ interface CheckoutManagerInterface
      *
      * @return AbstractOrder
      */
-    public function commitOrder();
+    public function commitOrder(): AbstractOrder;
 
     /**
      * Returns if checkout process and subsequently order is committed
@@ -181,19 +179,19 @@ interface CheckoutManagerInterface
      *
      * @return bool
      */
-    public function isCommitted();
+    public function isCommitted(): bool;
 
     /**
      * Returns payment adapter
      *
      * @return PaymentInterface|null
      */
-    public function getPayment();
+    public function getPayment(): ?PaymentInterface;
 
     /**
      * Cleans up orders with state pending payment after 1h -> delegates this to commit order processor
      *
      * @return void
      */
-    public function cleanUpPendingOrders();
+    public function cleanUpPendingOrders(): void;
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,19 +27,14 @@ use Symfony\Component\Process\Process;
  */
 class Composer
 {
-    protected static $options = [
+    protected static array $options = [
         'bin-dir' => 'bin',
         'public-dir' => 'public',
         'symfony-assets-install' => 'relative',
         'symfony-cache-warmup' => false,
     ];
 
-    /**
-     * @param Event $event
-     *
-     * @return string
-     */
-    protected static function getRootPath($event)
+    protected static function getRootPath(Event $event): string
     {
         $config = $event->getComposer()->getConfig();
         $rootPath = dirname($config->get('vendor-dir'));
@@ -46,38 +42,25 @@ class Composer
         return $rootPath;
     }
 
-    /**
-     * @param Event $event
-     */
-    public static function postCreateProject(Event $event)
+    public static function postCreateProject(Event $event): void
     {
         $rootPath = self::getRootPath($event);
         self::parametersYmlCheck($rootPath);
     }
 
-    /**
-     * @param Event $event
-     */
-    public static function postInstall(Event $event)
+    public static function postInstall(Event $event): void
     {
         $rootPath = self::getRootPath($event);
         self::parametersYmlCheck($rootPath);
     }
 
-    /**
-     * @param Event $event
-     */
-    public static function postUpdate(Event $event)
+    public static function postUpdate(Event $event): void
     {
         $rootPath = self::getRootPath($event);
         self::parametersYmlCheck($rootPath);
     }
 
-    /**
-     * @param Event $event
-     * @param string $consoleDir
-     */
-    public static function clearDataCache($event, $consoleDir)
+    public static function clearDataCache(Event $event, string $consoleDir): void
     {
         try {
             static::executeCommand($event, $consoleDir, ['pimcore:cache:clear'], 60);
@@ -91,7 +74,7 @@ class Composer
      *
      * @internal
      */
-    public static function parametersYmlCheck($rootPath)
+    public static function parametersYmlCheck(string $rootPath): void
     {
         // ensure that there's a parameters.yml, if not we'll create a temporary one, so that the requirement check works
         $parameters = '';
@@ -110,7 +93,7 @@ class Composer
         }
     }
 
-    public static function prePackageUpdate(PackageEvent $event)
+    public static function prePackageUpdate(PackageEvent $event): void
     {
         /** @var UpdateOperation $operation */
         $operation = $event->getOperation();
@@ -127,7 +110,7 @@ class Composer
      *
      * @internal
      */
-    protected static function executeCommand(Event $event, $consoleDir, array $cmd, $timeout = 900, $writeBuffer = true)
+    protected static function executeCommand(Event $event, $consoleDir, array $cmd, $timeout = 900, $writeBuffer = true): Process
     {
         $command = [static::getPhp(false)];
         $command = array_merge($command, static::getPhpArguments());
@@ -157,7 +140,7 @@ class Composer
     /**
      * @internal
      */
-    protected static function getPhp($includeArgs = true)
+    protected static function getPhp($includeArgs = true): string
     {
         $phpFinder = new PhpExecutableFinder();
         if (!$phpPath = $phpFinder->find($includeArgs)) {
@@ -172,7 +155,7 @@ class Composer
      *
      * @internal
      */
-    protected static function getPhpArguments()
+    protected static function getPhpArguments(): array
     {
         $ini = null;
         $arguments = [];
@@ -196,7 +179,7 @@ class Composer
         return $arguments;
     }
 
-    protected static function getOptions(Event $event)
+    protected static function getOptions(Event $event): array
     {
         $options = array_merge(static::$options, $event->getComposer()->getPackage()->getExtra());
 
@@ -219,7 +202,7 @@ class Composer
         return $options['bin-dir'];
     }
 
-    protected static function hasDirectory(Event $event, $configName, $path, $actionName)
+    protected static function hasDirectory(Event $event, $configName, $path, $actionName): bool
     {
         if (!is_dir($path)) {
             $event->getIO()->write(sprintf('The %s (%s) specified in composer.json was not found in %s, can not %s.', $configName, $path, getcwd(), $actionName));
@@ -250,7 +233,7 @@ class Composer
      *
      * @param Event $event
      */
-    public static function installAssets(Event $event)
+    public static function installAssets(Event $event): void
     {
         $options = static::getOptions($event);
         $consoleDir = static::getConsoleDir($event, 'install assets');
@@ -286,7 +269,7 @@ class Composer
      *
      * @param Event $event
      */
-    public static function clearCache(Event $event)
+    public static function clearCache(Event $event): void
     {
         $options = static::getOptions($event);
         $consoleDir = static::getConsoleDir($event, 'clear the cache');

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,28 +21,19 @@ use Psr\Log\LoggerInterface;
 
 class Db
 {
-    /**
-     * @return Connection
-     */
-    public static function getConnection()
+    public static function getConnection(): Connection
     {
         return self::get();
     }
 
-    /**
-     * @return Connection
-     */
-    public static function reset()
+    public static function reset(): Connection
     {
         self::close();
 
         return self::get();
     }
 
-    /**
-     * @return Connection
-     */
-    public static function get()
+    public static function get(): Connection
     {
         /** @var Connection $db */
         $db = \Pimcore::getContainer()->get('doctrine.dbal.default_connection');
@@ -49,7 +41,7 @@ class Db
         return $db;
     }
 
-    public static function close()
+    public static function close(): void
     {
         $db = \Pimcore::getContainer()->get('doctrine.dbal.default_connection');
         $db->close();

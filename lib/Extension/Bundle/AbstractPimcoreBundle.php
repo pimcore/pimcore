@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,7 +25,7 @@ abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInte
     /**
      * {@inheritdoc}
      */
-    public function getNiceName()
+    public function getNiceName(): string
     {
         return $this->getName();
     }
@@ -32,7 +33,7 @@ abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInte
     /**
      * {@inheritdoc}
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         return '';
     }
@@ -40,7 +41,7 @@ abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInte
     /**
      * {@inheritdoc}
      */
-    public function getVersion()
+    public function getVersion(): string
     {
         return '';
     }
@@ -48,7 +49,7 @@ abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInte
     /**
      * {@inheritdoc}
      */
-    public function getInstaller()
+    public function getInstaller(): ?Installer\InstallerInterface
     {
         return null;
     }
@@ -56,7 +57,7 @@ abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInte
     /**
      * {@inheritdoc}
      */
-    public function getJsPaths()
+    public function getJsPaths(): array
     {
         return [];
     }
@@ -64,7 +65,7 @@ abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInte
     /**
      * {@inheritdoc}
      */
-    public function getCssPaths()
+    public function getCssPaths(): array
     {
         return [];
     }
@@ -72,7 +73,7 @@ abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInte
     /**
      * {@inheritdoc}
      */
-    public function getEditmodeJsPaths()
+    public function getEditmodeJsPaths(): array
     {
         return [];
     }
@@ -80,7 +81,7 @@ abstract class AbstractPimcoreBundle extends Bundle implements PimcoreBundleInte
     /**
      * {@inheritdoc}
      */
-    public function getEditmodeCssPaths()
+    public function getEditmodeCssPaths(): array
     {
         return [];
     }

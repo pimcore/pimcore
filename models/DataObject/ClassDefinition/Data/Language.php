@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,7 +29,7 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
      *
      * @var string
      */
-    public $fieldtype = 'language';
+    public string $fieldtype = 'language';
 
     /**
      * @internal
@@ -60,20 +61,12 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
         $this->setOptions($options);
     }
 
-    /**
-     * @return bool
-     */
-    public function getOnlySystemLanguages()
+    public function getOnlySystemLanguages(): bool
     {
         return $this->onlySystemLanguages;
     }
 
-    /**
-     * @param int|bool $value
-     *
-     * @return $this
-     */
-    public function setOnlySystemLanguages($value)
+    public function setOnlySystemLanguages(bool|int $value): static
     {
         $this->onlySystemLanguages = (bool) $value;
 
@@ -93,11 +86,7 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
         return $obj;
     }
 
-    /**
-     * @return $this
-     */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()// : static
+    public function jsonSerialize(): static
     {
         if (Service::doRemoveDynamicOptions()) {
             $this->options = null;

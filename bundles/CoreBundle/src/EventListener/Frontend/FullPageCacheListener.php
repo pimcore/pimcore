@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -40,35 +41,17 @@ class FullPageCacheListener
     use PimcoreContextAwareTrait;
     use StaticPageContextAwareTrait;
 
-    /**
-     * @var bool
-     */
-    protected $enabled = true;
+    protected bool $enabled = true;
 
-    /**
-     * @var bool
-     */
-    protected $stopResponsePropagation = false;
+    protected bool $stopResponsePropagation = false;
 
-    /**
-     * @var null|int
-     */
-    protected $lifetime = null;
+    protected ?int $lifetime = null;
 
-    /**
-     * @var bool
-     */
-    protected $addExpireHeader = true;
+    protected bool $addExpireHeader = true;
 
-    /**
-     * @var string|null
-     */
-    protected $disableReason;
+    protected ?string $disableReason = null;
 
-    /**
-     * @var string
-     */
-    protected $defaultCacheKey;
+    protected string $defaultCacheKey;
 
     public function __construct(
         private VisitorInfoStorageInterface $visitorInfoStorage,
@@ -83,7 +66,7 @@ class FullPageCacheListener
      *
      * @return bool
      */
-    public function disable($reason = null)
+    public function disable(string $reason = null): bool
     {
         if ($reason) {
             $this->disableReason = $reason;
@@ -94,58 +77,41 @@ class FullPageCacheListener
         return true;
     }
 
-    /**
-     * @return bool
-     */
-    public function enable()
+    public function enable(): bool
     {
         $this->enabled = true;
 
         return true;
     }
 
-    /**
-     * @return bool
-     */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->enabled;
     }
 
-    /**
-     * @param int|null $lifetime
-     *
-     * @return $this
-     */
-    public function setLifetime($lifetime)
+    public function setLifetime(?int $lifetime): static
     {
         $this->lifetime = $lifetime;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getLifetime()
+    public function getLifetime(): ?int
     {
         return $this->lifetime;
     }
 
-    public function disableExpireHeader()
+    public function disableExpireHeader(): void
     {
         $this->addExpireHeader = false;
     }
 
-    public function enableExpireHeader()
+    public function enableExpireHeader(): void
     {
         $this->addExpireHeader = true;
     }
 
-    /**
-     * @param RequestEvent $event
-     */
-    public function onKernelRequest(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         if (!$this->isEnabled()) {
             return;
@@ -312,20 +278,14 @@ class FullPageCacheListener
         }
     }
 
-    /**
-     * @param KernelEvent $event
-     */
-    public function stopPropagationCheck(KernelEvent $event)
+    public function stopPropagationCheck(KernelEvent $event): void
     {
         if ($this->stopResponsePropagation) {
             $event->stopPropagation();
         }
     }
 
-    /**
-     * @param ResponseEvent $event
-     */
-    public function onKernelResponse(ResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;

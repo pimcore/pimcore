@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -117,10 +118,6 @@ class EmailController extends DocumentControllerBase
         }
     }
 
-    /**
-     * @param Request $request
-     * @param Document $page
-     */
     protected function setValuesToDocument(Request $request, Document $page): void
     {
         $this->addSettingsToDocument($request, $page);

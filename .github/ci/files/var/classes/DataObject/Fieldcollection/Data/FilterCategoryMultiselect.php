@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Fields Summary:
@@ -17,13 +18,13 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class FilterCategoryMultiselect extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\CategoryFilterDefinitionType
 {
-protected $type = "FilterCategoryMultiselect";
-protected $label;
-protected $preSelect;
-protected $useAndCondition;
-protected $includeParentCategories;
-protected $scriptPath;
-protected $availableCategories;
+protected string $type = "FilterCategoryMultiselect";
+protected ?string $label;
+protected array $preSelect;
+protected ?bool $useAndCondition;
+protected ?bool $includeParentCategories;
+protected ?string $scriptPath;
+protected array $availableCategories;
 
 
 /**

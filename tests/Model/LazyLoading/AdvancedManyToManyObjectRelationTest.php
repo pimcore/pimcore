@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,7 +27,7 @@ use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingTest;
 
 class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 {
-    protected function loadMetadataRelations($fieldname, $metaKey = 'metadata')
+    protected function loadMetadataRelations($fieldname, $metaKey = 'metadata'): array
     {
         $relations = $this->loadRelations();
 

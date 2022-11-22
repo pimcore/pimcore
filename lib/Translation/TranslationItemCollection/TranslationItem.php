@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,20 +20,11 @@ use Pimcore\Model\Element\ElementInterface;
 
 class TranslationItem
 {
-    /**
-     * @var string
-     */
-    private $type;
+    private string $type;
 
-    /**
-     * @var string
-     */
-    private $id;
+    private string $id;
 
-    /**
-     * @var ElementInterface
-     */
-    private $element;
+    private ElementInterface $element;
 
     /**
      * TranslationItem constructor.
@@ -41,33 +33,24 @@ class TranslationItem
      * @param string $id
      * @param ElementInterface $element
      */
-    public function __construct(string $type, string $id, $element)
+    public function __construct(string $type, string $id, ElementInterface $element)
     {
         $this->type = $type;
         $this->id = $id;
         $this->element = $element;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return string
-     */
     public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * @return ElementInterface
-     */
-    public function getElement()
+    public function getElement(): ElementInterface
     {
         return $this->element;
     }

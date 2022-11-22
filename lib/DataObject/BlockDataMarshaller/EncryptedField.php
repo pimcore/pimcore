@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,8 +29,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\BeforeEncryptionMarshallerInte
  */
 class EncryptedField implements MarshallerInterface
 {
-    /** @var MarshallerService */
-    protected $marshallerService;
+    protected MarshallerService $marshallerService;
 
     /**
      * EncryptedField constructor.
@@ -44,7 +44,7 @@ class EncryptedField implements MarshallerInterface
     /**
      * {@inheritdoc}
      */
-    public function marshal($value, $params = [])
+    public function marshal(mixed $value, array $params = []): mixed
     {
         if ($value !== null) {
             $fd = $params['fieldDefinition'];
@@ -65,7 +65,7 @@ class EncryptedField implements MarshallerInterface
     /**
      * {@inheritdoc}
      */
-    public function unmarshal($value, $params = [])
+    public function unmarshal(mixed $value, array $params = []): mixed
     {
         if ($value !== null) {
             $fd = $params['fieldDefinition'];
@@ -94,7 +94,7 @@ class EncryptedField implements MarshallerInterface
      * @throws \Defuse\Crypto\Exception\BadFormatException
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
-    public function encrypt($data, $params = [])
+    public function encrypt(mixed $data, array $params = []): string
     {
         if (!is_null($data)) {
             $object = $params['object'] ?? null;
@@ -129,7 +129,7 @@ class EncryptedField implements MarshallerInterface
      *
      * @throws \Exception
      */
-    public function decrypt($data, $params = [])
+    public function decrypt(?string $data, array $params = []): ?string
     {
         if ($data) {
             $object = $params['object'] ?? null;

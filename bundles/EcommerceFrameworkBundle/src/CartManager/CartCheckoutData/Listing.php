@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,12 +26,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData;
  */
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
+    public function isValidOrderKey(string $key): bool
     {
         if ($key == 'key' || $key == 'cartId') {
             return true;
@@ -39,20 +35,12 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
         return false;
     }
 
-    /**
-     * @return array
-     */
-    public function getCartCheckoutDataItems()
+    public function getCartCheckoutDataItems(): array
     {
         return $this->getData();
     }
 
-    /**
-     * @param array $cartCheckoutDataItems
-     *
-     * @return self
-     */
-    public function setCartCheckoutDataItems($cartCheckoutDataItems)
+    public function setCartCheckoutDataItems(array $cartCheckoutDataItems): Listing
     {
         return $this->setData($cartCheckoutDataItems);
     }

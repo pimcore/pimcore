@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,25 +20,13 @@ use Pimcore\Model\Element\ElementInterface;
 
 abstract class AbstractCustomHtmlService implements CustomHtmlServiceInterface
 {
-    /**
-     * @var string
-     */
-    protected $transitionName = '';
+    protected string $transitionName = '';
 
-    /**
-     * @var string
-     */
-    protected $actionName = '';
+    protected string $actionName = '';
 
-    /**
-     * @var bool
-     */
-    protected $isGlobalAction = false;
+    protected bool $isGlobalAction = false;
 
-    /**
-     * @var string
-     */
-    protected $position;
+    protected string $position;
 
     public function __construct(string $actionOrTransitionName, bool $isGlobalAction, string $position = '')
     {
@@ -56,33 +45,21 @@ abstract class AbstractCustomHtmlService implements CustomHtmlServiceInterface
         return '';
     }
 
-    /**
-     * @return string
-     */
     final public function getTransitionName(): string
     {
         return $this->transitionName;
     }
 
-    /**
-     * @return string
-     */
     final public function getActionName(): string
     {
         return $this->actionName;
     }
 
-    /**
-     * @return bool
-     */
     final public function isGlobalAction(): bool
     {
         return $this->isGlobalAction;
     }
 
-    /**
-     * @return string
-     */
     final public function getPosition(): string
     {
         return $this->position;

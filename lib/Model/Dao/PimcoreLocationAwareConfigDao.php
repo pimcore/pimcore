@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,9 +32,6 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
 
     private Config\LocationAwareConfigRepository $locationAwareConfigRepository;
 
-    /**
-     * {@inheritdoc}
-     */
     public function configure()
     {
         $params = func_get_arg(0);
@@ -53,12 +51,7 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
         );
     }
 
-    /**
-     * @param string $id
-     *
-     * @return mixed
-     */
-    protected function getDataByName(string $id)
+    protected function getDataByName(string $id): mixed
     {
         $this->id = $id;
 
@@ -80,9 +73,6 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
         return $data;
     }
 
-    /**
-     * @return array
-     */
     protected function loadIdList(): array
     {
         return $this->locationAwareConfigRepository->fetchAllKeys();
@@ -105,7 +95,7 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
      *
      * @throws \Exception
      */
-    protected function saveData(string $id, $data)
+    protected function saveData(string $id, array $data)
     {
         $dao = $this;
         $this->invalidateCache($id);
@@ -122,7 +112,7 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
      *
      * @return mixed
      */
-    protected function prepareDataStructureForYaml(string $id, $data)
+    protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return $data;
     }
@@ -137,9 +127,6 @@ abstract class PimcoreLocationAwareConfigDao implements DaoInterface
         return $this->locationAwareConfigRepository->getWriteTarget();
     }
 
-    /**
-     * @return bool
-     */
     public function isWriteable(): bool
     {
         return $this->locationAwareConfigRepository->isWriteable($this->id, $this->dataSource);

@@ -42,16 +42,15 @@ interface CartPriceCalculatorInterface
     /**
      * Calculates cart sums and saves results
      *
-     * @return void
      */
-    public function calculate($ignorePricingRules = false);
+    public function calculate($ignorePricingRules = false): void;
 
     /**
      * Reset calculations
      *
      * @return void
      */
-    public function reset();
+    public function reset(): void;
 
     /**
      * Returns sub total of cart
@@ -81,7 +80,7 @@ interface CartPriceCalculatorInterface
      *
      * @return CartPriceCalculatorInterface
      */
-    public function addModificator(CartPriceModificatorInterface $modificator);
+    public function addModificator(CartPriceModificatorInterface $modificator): CartPriceCalculatorInterface;
 
     /**
      * Manually remove a modificator from this cart.
@@ -90,7 +89,7 @@ interface CartPriceCalculatorInterface
      *
      * @return CartPriceCalculatorInterface
      */
-    public function removeModificator(CartPriceModificatorInterface $modificator);
+    public function removeModificator(CartPriceModificatorInterface $modificator): CartPriceCalculatorInterface;
 
     /**
      * Returns all modificators
@@ -108,8 +107,5 @@ interface CartPriceCalculatorInterface
      */
     public function getAppliedPricingRules(): array;
 
-    /**
-     * @return bool
-     */
     public function isCalculated(): bool;
 }

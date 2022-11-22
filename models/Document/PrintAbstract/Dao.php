@@ -31,7 +31,7 @@ class Dao extends Document\PageSnippet\Dao
      *
      * @var array
      */
-    protected $validColumnsPage = [];
+    protected array $validColumnsPage = [];
 
     /**
      * Get the valid columns from the database
@@ -45,11 +45,11 @@ class Dao extends Document\PageSnippet\Dao
     /**
      * Get the data for the object by the given id, or by the id which is set in the object
      *
-     * @param int $id
+     * @param int|null $id
      *
      * @throws \Exception
      */
-    public function getById($id = null)
+    public function getById(int $id = null)
     {
         if ($id != null) {
             $this->model->setId($id);

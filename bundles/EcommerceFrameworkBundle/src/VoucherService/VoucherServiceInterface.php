@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,7 +32,7 @@ interface VoucherServiceInterface
      *
      * @throws VoucherServiceException
      */
-    public function checkToken($code, CartInterface $cart);
+    public function checkToken(string $code, CartInterface $cart): bool;
 
     /**
      * Gets the correct token manager and calls its reserveToken() function.
@@ -41,7 +42,7 @@ interface VoucherServiceInterface
      *
      * @return bool
      */
-    public function reserveToken($code, CartInterface $cart);
+    public function reserveToken(string $code, CartInterface $cart): bool;
 
     /**
      * Gets the correct token manager and calls its releaseToken() function, which removes a reservations.
@@ -51,7 +52,7 @@ interface VoucherServiceInterface
      *
      * @return bool
      */
-    public function releaseToken($code, CartInterface $cart);
+    public function releaseToken(string $code, CartInterface $cart): bool;
 
     /**
      * Gets the correct token manager and calls its applyToken() function, which returns
@@ -64,7 +65,7 @@ interface VoucherServiceInterface
      *
      * @return bool
      */
-    public function applyToken($code, CartInterface $cart, AbstractOrder $order);
+    public function applyToken(string $code, CartInterface $cart, AbstractOrder $order): bool;
 
     /**
      * Gets the correct token manager and calls removeAppliedTokenFromOrder(), which cleans up the
@@ -75,7 +76,7 @@ interface VoucherServiceInterface
      *
      * @return mixed
      */
-    public function removeAppliedTokenFromOrder(\Pimcore\Model\DataObject\OnlineShopVoucherToken $tokenObject, AbstractOrder $order);
+    public function removeAppliedTokenFromOrder(\Pimcore\Model\DataObject\OnlineShopVoucherToken $tokenObject, AbstractOrder $order): mixed;
 
     /**
      * Returns detail information of added voucher codes and if they are considered by pricing rules
@@ -91,11 +92,11 @@ interface VoucherServiceInterface
      * Cleans the token reservations due to sysConfig duration settings, if no series Id is
      * set all reservations older than the set duration get removed.
      *
-     * @param null|string $seriesId
+     * @param string|null $seriesId
      *
      * @return bool
      */
-    public function cleanUpReservations($seriesId = null);
+    public function cleanUpReservations(string $seriesId = null): bool;
 
     /**
      * Removes all tokens from a voucher series and its reservations,
@@ -105,14 +106,14 @@ interface VoucherServiceInterface
      *
      * @return bool
      */
-    public function cleanUpVoucherSeries(\Pimcore\Model\DataObject\OnlineShopVoucherSeries $series);
+    public function cleanUpVoucherSeries(\Pimcore\Model\DataObject\OnlineShopVoucherSeries $series): bool;
 
     /**
      * Removes all statistics, optionally a seriesId can be passed, to only remove from one series.
      *
-     * @param null|string $seriesId
+     * @param string|null $seriesId
      *
      * @return bool
      */
-    public function cleanUpStatistics($seriesId = null);
+    public function cleanUpStatistics(string $seriesId = null): bool;
 }

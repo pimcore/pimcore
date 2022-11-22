@@ -70,12 +70,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->delete(self::TABLE_NAME, ['itemId' => $itemId, 'type' => $type, 'uuid' => $uuid]);
     }
 
-    /**
-     * @param string $uuid
-     *
-     * @return Model\Tool\UUID
-     */
-    public function getByUuid($uuid)
+    public function getByUuid(string $uuid): Model\Tool\UUID
     {
         $data = $this->db->fetchAssociative('SELECT * FROM ' . self::TABLE_NAME ." where uuid='" . $uuid . "'");
         $model = new Model\Tool\UUID();
@@ -84,12 +79,7 @@ class Dao extends Model\Dao\AbstractDao
         return $model;
     }
 
-    /**
-     * @param string $uuid
-     *
-     * @return bool
-     */
-    public function exists($uuid)
+    public function exists(string $uuid): bool
     {
         return (bool) $this->db->fetchOne('SELECT uuid FROM ' . self::TABLE_NAME . ' where uuid = ?', [$uuid]);
     }

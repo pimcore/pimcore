@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,7 +30,7 @@ class AssetUpdateTasksHandler
     {
     }
 
-    public function __invoke(AssetUpdateTasksMessage $message)
+    public function __invoke(AssetUpdateTasksMessage $message): void
     {
         $asset = Asset::getById($message->getId());
         if (!$asset) {

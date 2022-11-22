@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,10 +32,7 @@ class SessionBagListener implements EventSubscriberInterface
 
     const ATTRIBUTE_BAG_PAYMENT_ENVIRONMENT = 'ecommerceframework_payment_environment';
 
-    /**
-     * @return array
-     */
-    public static function getSubscribedEvents()// : array
+    public static function getSubscribedEvents(): array
     {
         return [
             //run after Symfony\Component\HttpKernel\EventListener\SessionListener
@@ -45,7 +43,7 @@ class SessionBagListener implements EventSubscriberInterface
     /**
      * @return string[]
      */
-    protected function getBagNames()
+    protected function getBagNames(): array
     {
         return [
             self::ATTRIBUTE_BAG_CART,
@@ -55,9 +53,6 @@ class SessionBagListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param RequestEvent $event
-     */
     public function onKernelRequest(RequestEvent $event)
     {
         if (!$event->isMainRequest()) {
@@ -74,10 +69,6 @@ class SessionBagListener implements EventSubscriberInterface
         $this->configure($session);
     }
 
-    /**
-     * @param SessionInterface $session
-     *
-     */
     public function configure(SessionInterface $session)
     {
         $bagNames = $this->getBagNames();

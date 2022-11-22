@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -52,9 +53,6 @@ class LoginController extends AdminController implements KernelControllerEventIn
     ) {
     }
 
-    /**
-     * @param ControllerEvent $event
-     */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         // use browser language for login page if possible
@@ -74,9 +72,6 @@ class LoginController extends AdminController implements KernelControllerEventIn
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function onKernelResponseEvent(ResponseEvent $event)
     {
         $response = $event->getResponse();
@@ -88,7 +83,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
      * @Route("/login", name="pimcore_admin_login")
      * @Route("/login/", name="pimcore_admin_login_fallback")
      */
-    public function loginAction(Request $request, CsrfProtectionHandler $csrfProtection, Config $config)
+    public function loginAction(Request $request, CsrfProtectionHandler $csrfProtection, Config $config): RedirectResponse|Response
     {
         if ($request->get('_route') === 'pimcore_admin_login_fallback') {
             return $this->redirectToRoute('pimcore_admin_login', $request->query->all(), Response::HTTP_MOVED_PERMANENTLY);
@@ -129,7 +124,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
     /**
      * @Route("/login/csrf-token", name="pimcore_admin_login_csrf_token")
      */
-    public function csrfTokenAction(Request $request, CsrfProtectionHandler $csrfProtection)
+    public function csrfTokenAction(Request $request, CsrfProtectionHandler $csrfProtection): \Symfony\Component\HttpFoundation\JsonResponse
     {
         if (!$this->getAdminUser()) {
             $csrfProtection->regenerateCsrfToken();
@@ -155,7 +150,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
      *
      * @see AdminLoginAuthenticator for the security implementation
      */
-    public function loginCheckAction()
+    public function loginCheckAction(): RedirectResponse
     {
         // just in case the authenticator didn't redirect
         return new RedirectResponse($this->generateUrl('pimcore_admin_login'));
@@ -164,7 +159,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
     /**
      * @Route("/login/lostpassword", name="pimcore_admin_login_lostpassword")
      */
-    public function lostpasswordAction(Request $request, CsrfProtectionHandler $csrfProtection, Config $config, EventDispatcherInterface $eventDispatcher)
+    public function lostpasswordAction(Request $request, CsrfProtectionHandler $csrfProtection, Config $config, EventDispatcherInterface $eventDispatcher): Response
     {
         $params = $this->buildLoginPageViewParams($config);
         $error = null;
@@ -277,7 +272,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
     /**
      * @Route("/login/2fa", name="pimcore_admin_2fa")
      */
-    public function twoFactorAuthenticationAction(Request $request, Config $config)
+    public function twoFactorAuthenticationAction(Request $request, Config $config): Response
     {
         $params = $this->buildLoginPageViewParams($config);
 
@@ -305,10 +300,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
     {
     }
 
-    /**
-     * @return bool
-     */
-    public function detectBrowser()
+    public function detectBrowser(): bool
     {
         $supported = false;
         $browser = new \Browser();

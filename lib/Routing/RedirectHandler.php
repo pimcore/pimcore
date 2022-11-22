@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -45,37 +46,19 @@ final class RedirectHandler implements LoggerAwareInterface
 
     const RESPONSE_HEADER_NAME_ID = 'X-Pimcore-Redirect-ID';
 
-    /**
-     * @var RequestHelper
-     */
-    private $requestHelper;
+    private RequestHelper $requestHelper;
+
+    private SiteResolver $siteResolver;
 
     /**
-     * @var SiteResolver
+     * @var Redirect[]|null
      */
-    private $siteResolver;
+    private ?array $redirects = null;
 
-    /**
-     * @var Redirect[]
-     */
-    private $redirects;
+    private Config $config;
 
-    /**
-     * @var Config
-     */
-    private $config;
+    private ?LockInterface $lock = null;
 
-    /**
-     * @var null|LockInterface
-     */
-    private $lock = null;
-
-    /**
-     * @param RequestHelper $requestHelper
-     * @param SiteResolver $siteResolver
-     * @param Config $config
-     * @param LockFactory $lockFactory
-     */
     public function __construct(RequestHelper $requestHelper, SiteResolver $siteResolver, Config $config, LockFactory $lockFactory)
     {
         $this->requestHelper = $requestHelper;
@@ -93,7 +76,7 @@ final class RedirectHandler implements LoggerAwareInterface
      *
      * @throws \Exception
      */
-    public function checkForRedirect(Request $request, $override = false, $sourceSite = null)
+    public function checkForRedirect(Request $request, bool $override = false, Site $sourceSite = null): ?RedirectResponse
     {
         // not for admin requests
         if ($this->requestHelper->isFrontendRequestByAdmin($request)) {
@@ -168,7 +151,7 @@ final class RedirectHandler implements LoggerAwareInterface
      *
      * @throws \Exception
      */
-    protected function buildRedirectResponse(Redirect $redirect, Request $request, $matches = [])
+    protected function buildRedirectResponse(Redirect $redirect, Request $request, array $matches = []): ?RedirectResponse
     {
         $this->dispatchEvent(new RedirectEvent($redirect), RedirectEvents::PRE_BUILD);
         $target = $redirect->getTarget();

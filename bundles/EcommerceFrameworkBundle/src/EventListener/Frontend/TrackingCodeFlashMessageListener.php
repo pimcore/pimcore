@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -38,15 +39,9 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
 
     const FLASH_MESSAGE_BAG_KEY = 'ecommerceframework_trackingcode_flashmessagelistener';
 
-    /**
-     * @var RequestStack
-     */
     protected RequestStack $requestStack;
 
-    /**
-     * @var TrackingManager
-     */
-    protected $trackingManger;
+    protected TrackingManager $trackingManger;
 
     public function __construct(RequestStack $requestStack, TrackingManager $trackingManager)
     {
@@ -103,9 +98,6 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
         return $session;
     }
 
-    /**
-     * @param ResponseEvent $event
-     */
     public function onKernelResponse(ResponseEvent $event)
     {
         $response = $event->getResponse();

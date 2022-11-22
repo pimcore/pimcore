@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,25 +28,13 @@ class TaxEntry
 
     const CALCULATION_MODE_FIXED = 'fixed';
 
-    /**
-     * @var TaxEntryFieldcollection|null
-     */
-    protected $entry;
+    protected ?TaxEntryFieldcollection $entry = null;
 
-    /**
-     * @var float
-     */
-    protected $percent;
+    protected float $percent;
 
-    /**
-     * @var Decimal
-     */
-    protected $amount;
+    protected Decimal $amount;
 
-    /**
-     * @var string|null
-     */
-    protected $taxId;
+    protected ?string $taxId = null;
 
     /**
      * @param float $percent
@@ -53,7 +42,7 @@ class TaxEntry
      * @param string|null $taxId
      * @param TaxEntryFieldcollection|null $entry
      */
-    public function __construct($percent, Decimal $amount, string $taxId = null, TaxEntryFieldcollection $entry = null)
+    public function __construct(float $percent, Decimal $amount, string $taxId = null, TaxEntryFieldcollection $entry = null)
     {
         $this->percent = $percent;
         $this->amount = $amount;
@@ -61,58 +50,37 @@ class TaxEntry
         $this->entry = $entry;
     }
 
-    /**
-     * @return float
-     */
-    public function getPercent()
+    public function getPercent(): float
     {
         return $this->percent;
     }
 
-    /**
-     * @param float $percent
-     */
-    public function setPercent($percent)
+    public function setPercent(float $percent): void
     {
         $this->percent = $percent;
     }
 
-    /**
-     * @param TaxEntryFieldcollection $entry
-     */
-    public function setEntry(TaxEntryFieldcollection $entry)
+    public function setEntry(TaxEntryFieldcollection $entry): void
     {
         $this->entry = $entry;
     }
 
-    /**
-     * @return TaxEntryFieldcollection
-     */
     public function getEntry(): TaxEntryFieldcollection
     {
         return $this->entry;
     }
 
-    /**
-     * @return Decimal
-     */
     public function getAmount(): Decimal
     {
         return $this->amount;
     }
 
-    /**
-     * @param Decimal $amount
-     */
-    public function setAmount(Decimal $amount)
+    public function setAmount(Decimal $amount): void
     {
         $this->amount = $amount;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getTaxId()
+    public function getTaxId(): ?string
     {
         return $this->taxId;
     }
@@ -120,7 +88,7 @@ class TaxEntry
     /**
      * @param string|null $taxId
      */
-    public function setTaxId(string $taxId = null)
+    public function setTaxId(string $taxId = null): void
     {
         $this->taxId = $taxId;
     }
@@ -133,7 +101,7 @@ class TaxEntry
      *
      * @return TaxEntry[]
      */
-    public static function convertTaxEntries(OnlineShopTaxClass $taxClass)
+    public static function convertTaxEntries(OnlineShopTaxClass $taxClass): array
     {
         $convertedTaxEntries = [];
         if ($taxEntries = $taxClass->getTaxEntries()) {

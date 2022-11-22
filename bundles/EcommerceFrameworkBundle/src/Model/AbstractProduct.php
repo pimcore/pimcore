@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -90,7 +91,7 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
      *
      * @return int|null
      */
-    public function getOSParentId()
+    public function getOSParentId(): int|null
     {
         return $this->getParentId();
     }
@@ -155,7 +156,6 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
      * default implementation checks if there is a price available and of the product is active.
      * may be overwritten in subclasses for additional logic
      *
-     * @return bool
      */
     public function getOSIsBookable($quantityScale = 1): bool
     {
@@ -191,7 +191,7 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
      *
      * @return PriceInterface|null
      */
-    public function getOSPrice($quantityScale = 1): ?PriceInterface
+    public function getOSPrice(int $quantityScale = 1): ?PriceInterface
     {
         return $this->getOSPriceInfo($quantityScale)->getPrice();
     }
@@ -204,7 +204,7 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
      *
      * @return PriceInfoInterface|null
      */
-    public function getOSPriceInfo($quantityScale = 1): ?PriceInfoInterface
+    public function getOSPriceInfo(int $quantityScale = 1): ?PriceInfoInterface
     {
         return $this->getPriceSystemImplementation()->getPriceInfo($this, $quantityScale);
     }
@@ -212,11 +212,11 @@ class AbstractProduct extends Concrete implements ProductInterface, IndexableInt
     /**
      * returns availability info based on given quantity
      *
-     * @param int $quantity
+     * @param int|null $quantity
      *
      * @return AvailabilityInterface|null
      */
-    public function getOSAvailabilityInfo($quantity = null): ?AvailabilityInterface
+    public function getOSAvailabilityInfo(int $quantity = null): ?AvailabilityInterface
     {
         return $this->getAvailabilitySystemImplementation()->getAvailabilityInfo($this, $quantity);
     }

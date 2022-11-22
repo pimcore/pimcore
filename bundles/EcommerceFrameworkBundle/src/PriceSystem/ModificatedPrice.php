@@ -23,15 +23,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 class ModificatedPrice extends Price implements ModificatedPriceInterface
 {
-    /**
-     * @var null|string
-     */
-    protected $description;
+    protected ?string $description = null;
 
-    /**
-     * @var null|RuleInterface
-     */
-    protected $rule;
+    protected ?RuleInterface $rule = null;
 
     public function __construct(Decimal $amount, Currency $currency, bool $minPrice = false, string $description = null)
     {
@@ -40,38 +34,24 @@ class ModificatedPrice extends Price implements ModificatedPriceInterface
         $this->description = $description;
     }
 
-    /**
-     * @return RuleInterface|null
-     */
-    public function getRule()
+    public function getRule(): ?RuleInterface
     {
         return $this->rule;
     }
 
-    /**
-     * @param RuleInterface|null $rule
-     *
-     * @return $this
-     */
-    public function setRule($rule)
+    public function setRule(?RuleInterface $rule): static
     {
         $this->rule = $rule;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
-        return $this->description;
+        return $this->description ?? '';
     }
 
-    /**
-     * @param string|null $description
-     */
-    public function setDescription(string $description = null)
+    public function setDescription(?string $description = null)
     {
         $this->description = $description;
     }

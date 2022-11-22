@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,14 +25,8 @@ use Symfony\Component\Routing\RouteCollection;
  */
 class BundleRoutingLoader extends Loader
 {
-    /**
-     * @var BundleConfigLocator
-     */
-    private $locator;
+    private BundleConfigLocator $locator;
 
-    /**
-     * @param BundleConfigLocator $locator
-     */
     public function __construct(BundleConfigLocator $locator)
     {
         $this->locator = $locator;

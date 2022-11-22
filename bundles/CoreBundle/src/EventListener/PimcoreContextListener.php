@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,10 +36,6 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
 
     const ATTRIBUTE_PIMCORE_CONTEXT_FORCE_RESOLVING = '_pimcore_context_force_resolving';
 
-    /**
-     * @param PimcoreContextResolver $resolver
-     * @param RequestStack $requestStack
-     */
     public function __construct(
         protected PimcoreContextResolver $resolver,
         protected RequestStack $requestStack
@@ -85,7 +82,7 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
      * @param string $context
      * @param Request $request
      */
-    protected function initializeContext($context, $request)
+    protected function initializeContext(string $context, Request $request)
     {
         if ($context == PimcoreContextResolver::CONTEXT_ADMIN) {
             \Pimcore::setAdminMode();

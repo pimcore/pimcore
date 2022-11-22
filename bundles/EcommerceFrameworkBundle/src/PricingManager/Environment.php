@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,87 +25,50 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 class Environment implements EnvironmentInterface
 {
-    /**
-     * @var CartInterface|null
-     */
-    protected $cart;
+    protected ?CartInterface $cart = null;
 
-    /**
-     * @var CartItemInterface|null
-     */
-    protected $cartItem;
+    protected ?CartItemInterface $cartItem = null;
 
-    /**
-     * @var CheckoutableInterface|null
-     */
-    protected $product;
+    protected ?CheckoutableInterface $product = null;
 
-    /**
-     * @var VisitorInfo|null
-     */
-    protected $visitorInfo;
+    protected ?VisitorInfo $visitorInfo = null;
 
-    /**
-     * @var RuleInterface|null
-     */
-    protected $rule;
+    protected ?RuleInterface $rule = null;
 
-    /**
-     * @var PriceInfoInterface|null
-     */
-    protected $priceInfo;
+    protected ?PriceInfoInterface $priceInfo = null;
 
     /**
      * @var AbstractCategory[]
      */
-    protected $categories = [];
+    protected array $categories = [];
 
-    /**
-     * @var AttributeBagInterface|null
-     */
-    protected $session;
+    protected ?AttributeBagInterface $session = null;
 
     /**
      * Execution mode of system - either product or cart
      *
      * @var string
      */
-    protected $executionMode = EnvironmentInterface::EXECUTION_MODE_PRODUCT;
+    protected string $executionMode = EnvironmentInterface::EXECUTION_MODE_PRODUCT;
 
-    /**
-     * @param CartInterface $cart
-     *
-     * @return EnvironmentInterface
-     */
-    public function setCart(CartInterface $cart)
+    public function setCart(CartInterface $cart): EnvironmentInterface
     {
         $this->cart = $cart;
 
         return $this;
     }
 
-    /**
-     * @return CartInterface|null
-     */
-    public function getCart()
+    public function getCart(): ?CartInterface
     {
         return $this->cart;
     }
 
-    /**
-     * @return CartItemInterface|null
-     */
-    public function getCartItem()
+    public function getCartItem(): ?CartItemInterface
     {
         return $this->cartItem;
     }
 
-    /**
-     * @param CartItemInterface $cartItem
-     *
-     * @return $this
-     */
-    public function setCartItem(CartItemInterface $cartItem)
+    public function setCartItem(CartItemInterface $cartItem): static
     {
         $this->cartItem = $cartItem;
 
@@ -116,87 +80,55 @@ class Environment implements EnvironmentInterface
      *
      * @return EnvironmentInterface
      */
-    public function setProduct(CheckoutableInterface $product = null)
+    public function setProduct(CheckoutableInterface $product = null): EnvironmentInterface
     {
         $this->product = $product;
 
         return $this;
     }
 
-    /**
-     * @return CheckoutableInterface|null
-     */
-    public function getProduct()
+    public function getProduct(): ?CheckoutableInterface
     {
         return $this->product;
     }
 
-    /**
-     * @param VisitorInfo $visitorInfo
-     *
-     * @return EnvironmentInterface
-     */
-    public function setVisitorInfo(VisitorInfo $visitorInfo)
+    public function setVisitorInfo(VisitorInfo $visitorInfo): EnvironmentInterface
     {
         $this->visitorInfo = $visitorInfo;
 
         return $this;
     }
 
-    /**
-     * @return VisitorInfo|null
-     */
-    public function getVisitorInfo()
+    public function getVisitorInfo(): ?VisitorInfo
     {
         return $this->visitorInfo;
     }
 
-    /**
-     * @param RuleInterface $rule
-     *
-     * @return EnvironmentInterface
-     */
-    public function setRule($rule)
+    public function setRule(RuleInterface $rule): EnvironmentInterface
     {
         $this->rule = $rule;
 
         return $this;
     }
 
-    /**
-     * @return RuleInterface|null
-     */
-    public function getRule()
+    public function getRule(): ?RuleInterface
     {
         return $this->rule;
     }
 
-    /**
-     * @param PriceInfoInterface $priceInfo
-     *
-     * @return EnvironmentInterface
-     */
-    public function setPriceInfo(PriceInfoInterface $priceInfo)
+    public function setPriceInfo(PriceInfoInterface $priceInfo): EnvironmentInterface
     {
         $this->priceInfo = $priceInfo;
 
         return $this;
     }
 
-    /**
-     * @return PriceInfoInterface|null
-     */
-    public function getPriceInfo()
+    public function getPriceInfo(): ?PriceInfoInterface
     {
         return $this->priceInfo;
     }
 
-    /**
-     * @param array $categories
-     *
-     * @return EnvironmentInterface
-     */
-    public function setCategories(array $categories)
+    public function setCategories(array $categories): EnvironmentInterface
     {
         $this->categories = $categories;
 
@@ -206,23 +138,17 @@ class Environment implements EnvironmentInterface
     /**
      * @return AbstractCategory[]
      */
-    public function getCategories()
+    public function getCategories(): array
     {
         return $this->categories;
     }
 
-    /**
-     * @param string $executionMode
-     */
-    public function setExecutionMode($executionMode)
+    public function setExecutionMode(string $executionMode)
     {
         $this->executionMode = $executionMode;
     }
 
-    /**
-     * @return string
-     */
-    public function getExecutionMode()
+    public function getExecutionMode(): string
     {
         return $this->executionMode;
     }
@@ -232,7 +158,7 @@ class Environment implements EnvironmentInterface
      *
      * @return string
      */
-    public function getHash()
+    public function getHash(): string
     {
         $hash = '';
         if ($this->getCart()) {

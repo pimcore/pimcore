@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,27 +27,13 @@ use Pimcore\Model;
  */
 class Blacklist extends Model\AbstractModel
 {
-    /**
-     * @var string|null
-     */
-    protected $address;
+    protected ?string $address = null;
 
-    /**
-     * @var int|null
-     */
-    protected $creationDate;
+    protected ?int $creationDate = null;
 
-    /**
-     * @var int|null
-     */
-    protected $modificationDate;
+    protected ?int $modificationDate = null;
 
-    /**
-     * @param string $addr
-     *
-     * @return null|Blacklist
-     */
-    public static function getByAddress($addr)
+    public static function getByAddress(string $addr): ?Blacklist
     {
         try {
             $address = new self();
@@ -58,34 +45,22 @@ class Blacklist extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param string $address
-     */
-    public function setAddress($address)
+    public function setAddress(string $address)
     {
         $this->address = $address;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getAddress()
+    public function getAddress(): ?string
     {
         return $this->address;
     }
 
-    /**
-     * @param int $creationDate
-     */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate)
     {
         $this->creationDate = (int) $creationDate;
     }
 
-    /**
-     * @return int
-     */
-    public function getCreationDate()
+    public function getCreationDate(): int
     {
         if (!$this->creationDate) {
             $this->creationDate = time();
@@ -94,18 +69,12 @@ class Blacklist extends Model\AbstractModel
         return $this->creationDate;
     }
 
-    /**
-     * @param int $modificationDate
-     */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate)
     {
         $this->modificationDate = (int) $modificationDate;
     }
 
-    /**
-     * @return int
-     */
-    public function getModificationDate()
+    public function getModificationDate(): int
     {
         if (!$this->modificationDate) {
             $this->modificationDate = time();

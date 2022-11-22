@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,12 +22,5 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManagerInterfac
 
 interface HandlePendingPaymentsStrategyInterface
 {
-    /**
-     * @param AbstractOrder $order
-     * @param CartInterface $cart
-     * @param OrderManagerInterface $orderManager
-     *
-     * @return AbstractOrder
-     */
     public function handlePaymentNotAllowed(AbstractOrder $order, CartInterface $cart, OrderManagerInterface $orderManager): AbstractOrder;
 }

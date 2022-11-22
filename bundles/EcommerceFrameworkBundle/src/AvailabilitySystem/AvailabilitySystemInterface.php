@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,5 +29,5 @@ interface AvailabilitySystemInterface
      *
      * @return AvailabilityInterface
      */
-    public function getAvailabilityInfo(CheckoutableInterface $product, $quantityScale = 1, $products = null);
+    public function getAvailabilityInfo(CheckoutableInterface $product, int $quantityScale = 1, array $products = null): AvailabilityInterface;
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,7 +31,7 @@ interface ConfigInterface
      *
      * @return string
      */
-    public function getTenantName();
+    public function getTenantName(): string;
 
     /**
      * Returns configured attributes for product index
@@ -49,9 +50,9 @@ interface ConfigInterface
     /**
      * return all supported filter types for product index
      *
-     * @return array
+     * @return array|null
      */
-    public function getFilterTypeConfig();
+    public function getFilterTypeConfig(): ?array;
 
     /**
      * returns if given product is active for this tenant
@@ -60,7 +61,7 @@ interface ConfigInterface
      *
      * @return bool
      */
-    public function isActive(IndexableInterface $object);
+    public function isActive(IndexableInterface $object): bool;
 
     /**
      * checks, if product should be in index for current tenant
@@ -69,7 +70,7 @@ interface ConfigInterface
      *
      * @return bool
      */
-    public function inIndex(IndexableInterface $object);
+    public function inIndex(IndexableInterface $object): bool;
 
     /**
      * Returns categories for given object in context of the current tenant.
@@ -80,7 +81,7 @@ interface ConfigInterface
      *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory[]
      */
-    public function getCategories(IndexableInterface $object, $subObjectId = null);
+    public function getCategories(IndexableInterface $object, int $subObjectId = null): array;
 
     /**
      * in case of subtenants returns a data structure containing all sub tenants
@@ -90,7 +91,7 @@ interface ConfigInterface
      *
      * @return mixed $subTenantData
      */
-    public function prepareSubTenantEntries(IndexableInterface $object, $subObjectId = null);
+    public function prepareSubTenantEntries(IndexableInterface $object, int $subObjectId = null): mixed;
 
     /**
      * populates index for tenant relations based on given data
@@ -101,7 +102,7 @@ interface ConfigInterface
      *
      * @return void
      */
-    public function updateSubTenantEntries($objectId, $subTenantData, $subObjectId = null);
+    public function updateSubTenantEntries(mixed $objectId, mixed $subTenantData, mixed $subObjectId = null): void;
 
     /**
      * Config <-> worker have a 1:1 relation as the config
@@ -120,7 +121,7 @@ interface ConfigInterface
      *
      * @return WorkerInterface
      */
-    public function getTenantWorker();
+    public function getTenantWorker(): WorkerInterface;
 
     /**
      * creates an array of sub ids for the given object
@@ -130,7 +131,7 @@ interface ConfigInterface
      *
      * @return IndexableInterface[]
      */
-    public function createSubIdsForObject(IndexableInterface $object);
+    public function createSubIdsForObject(IndexableInterface $object): array;
 
     /**
      * checks if there are some zombie subIds around and returns them for cleanup
@@ -140,7 +141,7 @@ interface ConfigInterface
      *
      * @return array
      */
-    public function getSubIdsToCleanup(IndexableInterface $object, array $subIds);
+    public function getSubIdsToCleanup(IndexableInterface $object, array $subIds): array;
 
     /**
      * creates virtual parent id for given sub id
@@ -151,7 +152,7 @@ interface ConfigInterface
      *
      * @return mixed
      */
-    public function createVirtualParentIdForSubId(IndexableInterface $object, $subId);
+    public function createVirtualParentIdForSubId(IndexableInterface $object, int $subId): mixed;
 
     /**
      * Gets object by id, can consider subIds and therefore return e.g. an array of values
@@ -162,7 +163,7 @@ interface ConfigInterface
      *
      * @return DataObject|null
      */
-    public function getObjectById($objectId, $onlyMainObject = false);
+    public function getObjectById(int $objectId, bool $onlyMainObject = false): ?DataObject;
 
     /**
      * Gets object mockup by id, can consider subIds and therefore return e.g. an array of values
@@ -172,7 +173,7 @@ interface ConfigInterface
      *
      * @return IndexableInterface|null
      */
-    public function getObjectMockupById($objectId);
+    public function getObjectMockupById(int $objectId): ?IndexableInterface;
 
     /**
      * returns column type for id
@@ -181,12 +182,12 @@ interface ConfigInterface
      *
      * @return string
      */
-    public function getIdColumnType($isPrimary);
+    public function getIdColumnType(bool $isPrimary): string;
 
     /**
      * Attribute configuration
      *
      * @return array
      */
-    public function getAttributeConfig();
+    public function getAttributeConfig(): array;
 }

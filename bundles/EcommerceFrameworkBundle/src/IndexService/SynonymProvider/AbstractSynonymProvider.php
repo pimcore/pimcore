@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,19 +18,13 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\SynonymProvider;
 
 abstract class AbstractSynonymProvider implements SynonymProviderInterface
 {
-    /**
-     * @var array
-     */
-    protected $options;
+    protected array $options;
 
     public function __construct(array $options = [])
     {
         $this->options = $options;
     }
 
-    /**
-     * @return array
-     */
     public function getOptions(): array
     {
         return $this->options;

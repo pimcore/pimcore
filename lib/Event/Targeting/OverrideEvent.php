@@ -21,15 +21,9 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class OverrideEvent extends Event
 {
-    /**
-     * @var string
-     */
-    private $type;
+    private string $type;
 
-    /**
-     * @var array
-     */
-    private $data = [];
+    private array $data = [];
 
     public function __construct(string $type, array $data)
     {

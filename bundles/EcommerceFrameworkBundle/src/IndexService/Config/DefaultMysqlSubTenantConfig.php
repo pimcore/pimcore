@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,15 +27,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
  */
 class DefaultMysqlSubTenantConfig extends DefaultMysql
 {
-    /**
-     * @var EnvironmentInterface
-     */
-    protected $environment;
+    protected EnvironmentInterface $environment;
 
-    /**
-     * @var Connection
-     */
-    protected $db;
+    protected Connection $db;
 
     /**
      * {@inheritdoc}
@@ -59,7 +54,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
      *
      * @return string
      */
-    public function getTablename()
+    public function getTablename(): string
     {
         return 'ecommerceframework_productindex_with_subtenants';
     }
@@ -69,7 +64,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
      *
      * @return string
      */
-    public function getRelationTablename()
+    public function getRelationTablename(): string
     {
         return 'ecommerceframework_productindex_with_subtenants_relations';
     }
@@ -79,7 +74,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
      *
      * @return string
      */
-    public function getTenantRelationTablename()
+    public function getTenantRelationTablename(): string
     {
         return 'ecommerceframework_productindex_with_subtenants_tenant_relations';
     }
@@ -91,7 +86,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
      *
      * @return bool
      */
-    public function inIndex(IndexableInterface $object)
+    public function inIndex(IndexableInterface $object): bool
     {
         $tenants = null;
         if (method_exists($object, 'getTenants')) {
@@ -109,7 +104,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
      *
      * @return string
      */
-    public function getJoins()
+    public function getJoins(): string
     {
         $currentSubTenant = $this->environment->getCurrentAssortmentSubTenant();
         if ($currentSubTenant) {
@@ -126,7 +121,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
      *
      * @return string
      */
-    public function getCondition()
+    public function getCondition(): string
     {
         $currentSubTenant = $this->environment->getCurrentAssortmentSubTenant();
         if ($currentSubTenant) {
@@ -147,7 +142,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
      *
      * @return array $subTenantData
      */
-    public function prepareSubTenantEntries(IndexableInterface $object, $subObjectId = null)
+    public function prepareSubTenantEntries(IndexableInterface $object, int $subObjectId = null): array
     {
         $subTenantData = [];
         if ($this->inIndex($object)) {
@@ -176,7 +171,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
      *
      * @return void
      */
-    public function updateSubTenantEntries($objectId, $subTenantData, $subObjectId = null)
+    public function updateSubTenantEntries(mixed $objectId, mixed $subTenantData, mixed $subObjectId = null): void
     {
         $this->db->delete($this->getTenantRelationTablename(), ['o_id' => $subObjectId ?: $objectId]);
 

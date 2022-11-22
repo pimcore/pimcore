@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,27 +36,18 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
 {
     use OptionsResolverTrait;
 
-    /**
-     * @var array
-     */
-    protected $clientConfig = [];
+    protected array $clientConfig = [];
 
-    /**
-     * @var array
-     */
-    protected $indexSettings = [];
+    protected array $indexSettings = [];
 
-    /**
-     * @var array
-     */
-    protected $elasticSearchClientParams = [];
+    protected array $elasticSearchClientParams = [];
 
     /**
      * contains the mapping for the fields in Elasticsearch
      *
      * @var array
      */
-    protected $fieldMapping = [
+    protected array $fieldMapping = [
         'o_id' => 'system.o_id',
         'o_classId' => 'system.o_classId',
         'o_virtualProductId' => 'system.o_virtualProductId',
@@ -70,13 +62,10 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         'inProductList' => 'system.inProductList',
     ];
 
-    /**
-     * @var EnvironmentInterface
-     */
-    protected $environment;
+    protected EnvironmentInterface $environment;
 
     /** @var SynonymProviderInterface[] */
-    protected $synonymProviders = [];
+    protected iterable $synonymProviders = [];
 
     /**
      * {@inheritdoc}
@@ -170,12 +159,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         $resolver->setAllowedTypes('store', 'bool');
     }
 
-    /**
-     * @param string $fieldName
-     *
-     * @return array
-     */
-    protected function extractPossibleFirstSubFieldnameParts($fieldName)
+    protected function extractPossibleFirstSubFieldnameParts(string $fieldName): array
     {
         $parts = [];
 
@@ -192,7 +176,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     }
 
     /** @inheritDoc */
-    public function getFieldNameMapped($fieldName, $considerSubFieldNames = false)
+    public function getFieldNameMapped(string $fieldName, bool $considerSubFieldNames = false): string
     {
         if (isset($this->fieldMapping[$fieldName])) {
             return $this->fieldMapping[$fieldName];
@@ -212,7 +196,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     }
 
     /** @inheritDoc */
-    public function getReverseMappedFieldName($fullFieldName)
+    public function getReverseMappedFieldName(string $fullFieldName): bool|int|string
     {
         //check for direct match of field name
         $fieldName = array_search($fullFieldName, $this->fieldMapping);
@@ -240,11 +224,11 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     }
 
     /**
-     * @param string $property
+     * @param string|null $property
      *
-     * @return array|string
+     * @return array|string|null
      */
-    public function getClientConfig($property = null)
+    public function getClientConfig(string $property = null): array|string|null
     {
         if ($property) {
             return $this->clientConfig[$property] ?? null;
@@ -253,18 +237,12 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         return $this->clientConfig;
     }
 
-    /**
-     * @return array
-     */
-    public function getIndexSettings()
+    public function getIndexSettings(): array
     {
         return $this->indexSettings;
     }
 
-    /**
-     * @return array
-     */
-    public function getElasticSearchClientParams()
+    public function getElasticSearchClientParams(): array
     {
         return $this->elasticSearchClientParams;
     }
@@ -276,7 +254,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      *
      * @return bool
      */
-    public function inIndex(IndexableInterface $object)
+    public function inIndex(IndexableInterface $object): bool
     {
         return true;
     }
@@ -289,7 +267,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      *
      * @return array $subTenantData
      */
-    public function prepareSubTenantEntries(IndexableInterface $object, $subObjectId = null)
+    public function prepareSubTenantEntries(IndexableInterface $object, int $subObjectId = null): array
     {
         return [];
     }
@@ -303,7 +281,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      *
      * @return void
      */
-    public function updateSubTenantEntries($objectId, $subTenantData, $subObjectId = null)
+    public function updateSubTenantEntries(mixed $objectId, mixed $subTenantData, mixed $subObjectId = null): void
     {
         // nothing to do
         return;
@@ -314,7 +292,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      *
      * @return array
      */
-    public function getSubTenantCondition()
+    public function getSubTenantCondition(): array
     {
         if ($currentSubTenant = $this->environment->getCurrentAssortmentSubTenant()) {
             return ['term' => ['subtenants.ids' => $currentSubTenant]];
@@ -347,7 +325,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      *
      * @return DefaultMockup
      */
-    public function createMockupObject($objectId, $data, $relations)
+    public function createMockupObject(int $objectId, mixed $data, array $relations): DefaultMockup
     {
         return new DefaultMockup($objectId, $data, $relations);
     }
@@ -360,10 +338,10 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      *
      * @return IndexableInterface|null
      */
-    public function getObjectMockupById($objectId)
+    public function getObjectMockupById(int $objectId): ?IndexableInterface
     {
         $listing = $this->getTenantWorker()->getProductList();
-        $listing->addCondition($objectId, 'o_id');
+        $listing->addCondition((string)$objectId, 'o_id');
         $listing->setLimit(1);
         $product = $listing->current();
 

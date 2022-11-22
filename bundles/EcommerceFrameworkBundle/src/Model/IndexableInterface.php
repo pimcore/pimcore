@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,10 +21,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
  */
 interface IndexableInterface
 {
-    /**
-     * @return int
-     */
-    public function getId();
+    public function getId(): ?int;
 
     /**
      * defines if product is included into the product index. If false, product doesn't appear in product index.
@@ -66,7 +64,7 @@ interface IndexableInterface
      *
      * @return int|string|null
      */
-    public function getOSParentId();
+    public function getOSParentId(): int|string|null;
 
     /**
      * returns array of categories.
@@ -81,5 +79,5 @@ interface IndexableInterface
      *
      * @return string|null
      */
-    public function getClassId();
+    public function getClassId(): ?string;
 }

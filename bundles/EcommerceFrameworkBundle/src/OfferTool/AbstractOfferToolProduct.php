@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -64,7 +65,6 @@ abstract class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concre
      * checks if product is bookable
      * returns always true in default implementation
      *
-     * @return bool
      */
     public function getOSIsBookable($quantityScale = 1): bool
     {
@@ -110,7 +110,7 @@ abstract class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concre
      *
      * @return PriceInterface|null
      */
-    public function getOSPrice($quantityScale = 1): ?PriceInterface
+    public function getOSPrice(int $quantityScale = 1): ?PriceInterface
     {
         return $this->getOSPriceInfo($quantityScale)->getPrice();
     }
@@ -123,7 +123,7 @@ abstract class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concre
      *
      * @return PriceInfoInterface|AbstractPriceInfo
      */
-    public function getOSPriceInfo($quantityScale = 1): ?PriceInfoInterface
+    public function getOSPriceInfo(int $quantityScale = 1): ?PriceInfoInterface
     {
         return $this->getPriceSystemImplementation()->getPriceInfo($this, $quantityScale);
     }
@@ -131,11 +131,11 @@ abstract class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concre
     /**
      * returns availability info based on given quantity
      *
-     * @param int $quantity
+     * @param int|null $quantity
      *
      * @return AvailabilityInterface|null
      */
-    public function getOSAvailabilityInfo($quantity = null): ?AvailabilityInterface
+    public function getOSAvailabilityInfo(int $quantity = null): ?AvailabilityInterface
     {
         return $this->getAvailabilitySystemImplementation()->getAvailabilityInfo($this, $quantity);
     }
@@ -143,12 +143,12 @@ abstract class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concre
     /**
      * @static
      *
-     * @param int $id
+     * @param int|string $id
      * @param array $params
      *
-     * @return AbstractOfferToolProduct|null
+     * @return static|null
      */
-    public static function getById($id, array $params = [])
+    public static function getById(int|string $id, array $params = []): ?static
     {
         $object = DataObject::getById($id, $params);
 

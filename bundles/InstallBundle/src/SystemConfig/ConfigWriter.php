@@ -25,10 +25,7 @@ use Symfony\Component\Yaml\Yaml;
  */
 final class ConfigWriter
 {
-    /**
-     * @var array
-     */
-    private $defaultConfig = [
+    private array $defaultConfig = [
         'pimcore' => [
             'general' => [
                 'language' => 'en',
@@ -43,7 +40,7 @@ final class ConfigWriter
         }
     }
 
-    public function writeSystemConfig()
+    public function writeSystemConfig(): void
     {
         $settings = null;
 
@@ -86,7 +83,7 @@ final class ConfigWriter
         File::put($configFile, $settingsYml);
     }
 
-    public function writeDbConfig(array $config = [])
+    public function writeDbConfig(array $config = []): void
     {
         if (count($config)) {
             $content = Yaml::dump($config);

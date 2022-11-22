@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -40,13 +41,13 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
      *
      * @return ProductImpression
      */
-    public function buildProductImpressionItem(ProductInterface $product, string $list = 'default')
+    public function buildProductImpressionItem(ProductInterface $product, string $list = 'default'): ProductImpression
     {
         $item = new ProductImpression();
         $this->initProductAttributes($item, $product);
 
         $item
-            ->setId($product->getId())
+            ->setId((string)$product->getId())
             ->setName($this->normalizeName($product->getOSName()))
             ->setCategories($this->getProductCategories($product))
             ->setList($list)
@@ -67,7 +68,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
      *
      * @return ProductAction
      */
-    public function buildProductViewItem(ProductInterface $product)
+    public function buildProductViewItem(ProductInterface $product): ProductAction
     {
         return $this->buildProductActionItem($product);
     }
@@ -101,7 +102,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
      *
      * @return ProductAction
      */
-    public function buildProductActionItem(ProductInterface $product, $quantity = 1)
+    public function buildProductActionItem(ProductInterface $product, int $quantity = 1): ProductAction
     {
         $item = new ProductAction();
         $item->setQuantity($quantity);
@@ -123,7 +124,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
      *
      * @return Transaction
      */
-    public function buildCheckoutTransaction(AbstractOrder $order)
+    public function buildCheckoutTransaction(AbstractOrder $order): Transaction
     {
         $transaction = new Transaction();
         $transaction
@@ -143,7 +144,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
      *
      * @return ProductAction[]
      */
-    public function buildCheckoutItems(AbstractOrder $order)
+    public function buildCheckoutItems(AbstractOrder $order): array
     {
         $items = [];
 
@@ -165,7 +166,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
      *
      * @return ProductAction[]
      */
-    public function buildCheckoutItemsByCart(CartInterface $cart)
+    public function buildCheckoutItemsByCart(CartInterface $cart): array
     {
         $items = [];
 
@@ -194,7 +195,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
      *
      * @return ProductAction
      */
-    public function buildCheckoutItem(AbstractOrder $order, AbstractOrderItem $orderItem)
+    public function buildCheckoutItem(AbstractOrder $order, AbstractOrderItem $orderItem): ProductAction
     {
         /** @var ProductInterface $product */
         $product = $orderItem->getProduct();
@@ -217,7 +218,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
      *
      * @return ProductAction
      */
-    public function buildCheckoutItemByCartItem(CartItemInterface $cartItem)
+    public function buildCheckoutItemByCartItem(CartItemInterface $cartItem): ProductAction
     {
         /** @var ProductInterface|AbstractObject $product */
         $product = $cartItem->getProduct();
@@ -239,7 +240,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
      *
      * @return array|string
      */
-    protected function getProductCategories(ProductInterface $product, $first = false)
+    protected function getProductCategories(ProductInterface $product, bool $first = false): array|string
     {
         $categories = [];
         if (method_exists($product, 'getCategories')) {
@@ -266,7 +267,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
      *
      * @return null|string
      */
-    protected function getProductBrand(ProductInterface $product)
+    protected function getProductBrand(ProductInterface $product): ?string
     {
         $brandName = null;
         if (method_exists($product, 'getBrand')) {
@@ -287,7 +288,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
      *
      * @return float
      */
-    protected function getOrderShipping(AbstractOrder $order)
+    protected function getOrderShipping(AbstractOrder $order): float
     {
         $shipping = Decimal::zero();
 
@@ -311,7 +312,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
      *
      * @return float
      */
-    protected function getOrderTax(AbstractOrder $order)
+    protected function getOrderTax(AbstractOrder $order): float
     {
         $tax = Decimal::zero();
         foreach ($order->getTaxInfo() as $taxInfo) {
@@ -328,7 +329,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
      *
      * @return string
      */
-    protected function normalizeName($name)
+    protected function normalizeName(string $name): string
     {
         return str_replace(["\n"], [' '], $name);
     }

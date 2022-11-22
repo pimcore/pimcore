@@ -27,9 +27,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class ResponseHeaderListener implements EventSubscriberInterface
 {
-    /**
-     * @param ResponseHeaderResolver $responseHeaderResolver
-     */
     public function __construct(private ResponseHeaderResolver $responseHeaderResolver)
     {
     }

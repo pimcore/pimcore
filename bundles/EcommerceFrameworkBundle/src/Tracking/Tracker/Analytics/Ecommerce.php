@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -59,7 +60,7 @@ class Ecommerce extends AbstractAnalyticsTracker implements CheckoutCompleteInte
      *
      * @return array
      */
-    protected function buildCheckoutCompleteCalls(Transaction $transaction, array $items)
+    protected function buildCheckoutCompleteCalls(Transaction $transaction, array $items): array
     {
         $calls = [
             $this->transformTransaction($transaction),
@@ -81,7 +82,7 @@ class Ecommerce extends AbstractAnalyticsTracker implements CheckoutCompleteInte
      *
      * @return array
      */
-    protected function transformTransaction(Transaction $transaction)
+    protected function transformTransaction(Transaction $transaction): array
     {
         return [
             '_addTrans',
@@ -100,7 +101,7 @@ class Ecommerce extends AbstractAnalyticsTracker implements CheckoutCompleteInte
      *
      * @return array
      */
-    protected function transformProductAction(ProductAction $item)
+    protected function transformProductAction(ProductAction $item): array
     {
         return [
             '_addItem',

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,10 +26,10 @@ interface CatalogProductInterface extends ConditionInterface
      *
      * @return CatalogProductInterface
      */
-    public function setProducts(array $products);
+    public function setProducts(array $products): CatalogProductInterface;
 
     /**
      * @return AbstractProduct[]
      */
-    public function getProducts();
+    public function getProducts(): array;
 }

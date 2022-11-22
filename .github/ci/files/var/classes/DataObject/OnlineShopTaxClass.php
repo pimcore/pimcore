@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Inheritance: no
@@ -23,14 +24,10 @@ class OnlineShopTaxClass extends Concrete
 {
 protected $o_classId = "EF_OSTC";
 protected $o_className = "OnlineShopTaxClass";
-protected $taxEntryCombinationType;
-protected $taxEntries;
+protected ?string $taxEntryCombinationType = null;
+protected ?Fieldcollection $taxEntries = null;
 
 
-/**
-* @param array $values
-* @return static
-*/
 public static function create(array $values = []): static
 {
 	$object = new static();
@@ -72,10 +69,7 @@ public function setTaxEntryCombinationType(?string $taxEntryCombinationType): st
 	return $this;
 }
 
-/**
-* @return \Pimcore\Model\DataObject\Fieldcollection|null
-*/
-public function getTaxEntries()
+    public function getTaxEntries(): ?Fieldcollection
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("taxEntries");

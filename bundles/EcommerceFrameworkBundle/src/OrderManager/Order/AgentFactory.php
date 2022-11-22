@@ -28,25 +28,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AgentFactory implements OrderAgentFactoryInterface
 {
-    /**
-     * @var EnvironmentInterface
-     */
-    protected $environment;
+    protected EnvironmentInterface $environment;
 
-    /**
-     * @var PaymentManagerInterface
-     */
-    protected $paymentManager;
+    protected PaymentManagerInterface $paymentManager;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
+    protected EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @var string
-     */
-    protected $agentClass = OrderAgent::class;
+    protected string $agentClass = OrderAgent::class;
 
     public function __construct(
         EnvironmentInterface $environment,

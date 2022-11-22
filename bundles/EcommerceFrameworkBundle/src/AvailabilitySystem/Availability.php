@@ -21,34 +21,21 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 
 class Availability implements AvailabilityInterface
 {
-    /**
-     * @var CheckoutableInterface
-     */
-    private $product;
+    private CheckoutableInterface $product;
 
     private bool $available;
 
-    /**
-     * @param CheckoutableInterface $product
-     * @param bool $available
-     */
     public function __construct(CheckoutableInterface $product, bool $available)
     {
         $this->product = $product;
         $this->available = $available;
     }
 
-    /**
-     * @return CheckoutableInterface
-     */
     public function getProduct(): CheckoutableInterface
     {
         return $this->product;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAvailable(): bool
     {
         return $this->available;

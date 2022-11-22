@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,10 +21,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSea
  */
 class DefaultElasticSearch7 extends AbstractElasticSearch
 {
-    /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch\DefaultElasticSearch7
-     */
-    public function getProductList()
+    public function getProductList(): \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch\DefaultElasticSearch7
     {
         return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch\DefaultElasticSearch7($this->tenantConfig);
     }
