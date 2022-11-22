@@ -6,7 +6,7 @@ executed by action handlers, which are services implementing the [`ActionHandler
 As with conditions, an action handler consists of 2 parts:
 
 * A PHP class implementing the [`ActionHandlerInterface`](https://github.com/pimcore/pimcore/blob/10.5/lib/Targeting/ActionHandler/ActionHandlerInterface.php).
-  Have a look at [existing implementations](https://github.com/pimcore/pimcore/tree/10.x/pimcore/lib/Pimcore/Targeting/ActionHandler)
+  Have a look at [existing implementations](https://github.com/pimcore/pimcore/tree/10.5/lib/Targeting/ActionHandler)
   to get an idea how to implement your own action handlers.
 * A frontend JS class defining the admin UI for your action handler as shown on the actions tab of a targeting rule. You
   can have a look at [Pimcore's core actions](https://github.com/pimcore/pimcore/blob/10.5/bundles/AdminBundle/Resources/public/js/pimcore/settings/targeting/actions.js)

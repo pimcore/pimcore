@@ -30,7 +30,7 @@ pimcore:
 
 Basically, a targeting storage is a class implementing the [`TargetingStorageInterface`](https://github.com/pimcore/pimcore/blob/10.5/lib/Targeting/Storage/TargetingStorageInterface.php)
 which is registered as service. Details how to handle data varies heavily on the underlying storage, but you can take the
-[core storages](https://github.com/pimcore/pimcore/tree/10.x/lib/Targeting/Storage) as starting point.
+[core storages](https://github.com/pimcore/pimcore/tree/10.5/lib/Targeting/Storage) as starting point.
 
 
 ## Core Storage Implementations

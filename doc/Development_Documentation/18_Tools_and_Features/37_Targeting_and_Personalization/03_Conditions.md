@@ -6,7 +6,7 @@ to implement `match()` method which always returns a boolean.
 To implement a condition, you need to implement 2 parts:
 
 * A PHP class implementing the [`ConditionInterface`](https://github.com/pimcore/pimcore/blob/10.5/lib/Targeting/Condition/ConditionInterface.php).
-  Have a look at [existing implementations](https://github.com/pimcore/pimcore/tree/10.x/lib/Targeting/Condition)
+  Have a look at [existing implementations](https://github.com/pimcore/pimcore/tree/10.5/lib/Targeting/Condition)
   to get an idea how to implement your own conditions.
 * A frontend JS class defining the admin UI for your condition. You can have a look at [Pimcore's core conditions](https://github.com/pimcore/pimcore/blob/10.5/bundles/AdminBundle/Resources/public/js/pimcore/settings/targeting/conditions.js)
   for UI examples and at the [Customer Management Framework](https://github.com/pimcore/customer-data-framework/blob/master/src/Resources/public/js/pimcore/targeting/conditions.js)
@@ -104,7 +104,7 @@ you need more control over how your condition is built you can either:
 
 If your condition needs any outside data, implement the [`DataProviderDependentInterface`](https://github.com/pimcore/pimcore/blob/10.5/lib/Targeting/DataProviderDependentInterface.php)
 and define a list of data provider keys which need to be set on the `VisitorInfo` before matching. We'll enhance our `TimeOfTheDay`
-condition on the [Data Providers](./05_Data_Providers.md) chapter. For further examples, you can take a look at [existing core conditions](https://github.com/pimcore/pimcore/tree/10.x/pimcore/lib/Pimcore/Targeting/Condition).
+condition on the [Data Providers](./05_Data_Providers.md) chapter. For further examples, you can take a look at [existing core conditions](https://github.com/pimcore/pimcore/tree/10.5/lib/Targeting/Condition).
 
 
 ## Condition Variables
