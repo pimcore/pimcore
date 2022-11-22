@@ -242,7 +242,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
-        return 'FIELDCOLLECTIONS';
+        return $this->getDiffVersionPreview($data, $object, $params)['html'];
     }
 
     /**
