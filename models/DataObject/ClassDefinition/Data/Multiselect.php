@@ -412,7 +412,7 @@ class Multiselect extends Data implements
      */
     public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {
-        if ($operator === '=') {
+        if ($operator === '=' || $operator === 'LIKE') {
             $name = $params['name'] ? $params['name'] : $this->name;
 
             $db = \Pimcore\Db::get();
@@ -429,7 +429,9 @@ class Multiselect extends Data implements
                 return $key . ' LIKE ' . implode(' OR ' . $key . ' LIKE ', $values);
             }
 
-            $value = "'%,".$value.",%'";
+            $value = $operator === '='
+                ? "'%,".$value.",%'"
+                : "'%,%".$value."%,%'";
 
             return $key.' LIKE '.$value.' ';
         }

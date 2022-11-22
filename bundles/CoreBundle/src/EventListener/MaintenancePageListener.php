@@ -45,6 +45,14 @@ class MaintenancePageListener
         return $this->templateCode;
     }
 
+    public function loadTemplateFromPath(string $path): void
+    {
+        $templateFile = PIMCORE_PROJECT_ROOT . $path;
+        if (file_exists($templateFile)) {
+            $this->setTemplateCode(file_get_contents($templateFile));
+        }
+    }
+
     public function loadTemplateFromResource(string $path): void
     {
         $templateFile = $this->kernel->locateResource($path);
