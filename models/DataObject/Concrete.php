@@ -517,11 +517,11 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @param string $fieldName
      * @param bool $forOwner
-     * @param string $remoteClassId
+     * @param string|null $remoteClassId
      *
      * @return array
      */
-    public function getRelationData(string $fieldName, bool $forOwner, string $remoteClassId): array
+    public function getRelationData(string $fieldName, bool $forOwner, ?string $remoteClassId = null): array
     {
         $relationData = $this->getDao()->getRelationData($fieldName, $forOwner, $remoteClassId);
 

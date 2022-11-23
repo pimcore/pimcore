@@ -62,7 +62,7 @@ class ElementController extends AdminController
      */
     public function unlockElementAction(Request $request): Response
     {
-        Element\Editlock::unlock($request->get('id'), $request->get('type'));
+        Element\Editlock::unlock((int)$request->get('id'), $request->get('type'));
 
         return $this->adminJson(['success' => true]);
     }

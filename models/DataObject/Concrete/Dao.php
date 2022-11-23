@@ -74,7 +74,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         return $relations;
     }
 
-    public function getRelationData(string $field, bool $forOwner, string $remoteClassId): array
+    public function getRelationData(string $field, bool $forOwner, ?string $remoteClassId = null): array
     {
         $id = $this->model->getId();
         if ($remoteClassId) {

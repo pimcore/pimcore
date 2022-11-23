@@ -782,7 +782,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return $this;
     }
 
-    public function getVisibleFields(): ?array
+    public function getVisibleFields(): array|null|string
     {
         return $this->visibleFields;
     }

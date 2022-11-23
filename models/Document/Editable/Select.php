@@ -66,7 +66,9 @@ class Select extends Model\Document\Editable
      */
     public function setDataFromResource(mixed $data): static
     {
-        $this->text = $data;
+        if(is_string($data)) {
+            $this->text = $data;
+        }
 
         return $this;
     }
