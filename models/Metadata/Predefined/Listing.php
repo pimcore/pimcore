@@ -109,7 +109,7 @@ class Listing extends JsonListing implements CallableFilterListingInterface, Cal
     {
         $list = new self();
 
-        foreach($list->load() as $item) {
+        foreach ($list->load() as $item) {
             if ($item->getName() != $key) {
                 continue;
             }
