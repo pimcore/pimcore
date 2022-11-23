@@ -1283,7 +1283,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     {
         $objectFromDatabase = DataObject\Concrete::getById((int) $request->get('id'));
 
-        if(!$objectFromDatabase instanceof DataObject\Concrete) {
+        if (!$objectFromDatabase instanceof DataObject\Concrete) {
             return $this->adminJson(['success' => false, 'message' => 'Could not find object']);
         }
 
