@@ -58,7 +58,9 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                 url: Routing.generate('pimcore_admin_dataobject_dataobject_relation_objects_list'),
                 extraParams: {
                     fieldConfig: JSON.stringify(this.fieldConfig),
-                    data: this.data.id
+                    data: JSON.stringify(
+                        (this.data.id && this.data.type) ? [{id: this.data.id, type: this.data.type}] : []
+                    )
                 },
                 reader: {
                     type: 'json',
@@ -144,6 +146,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             this.component = Ext.create('Ext.form.field.ComboBox', {
                 store: this.store,
                 autoLoadOnValue: true,
+                forceSelection: true,
                 multiSelect: false,
                 height: 'auto',
                 width: this.fieldConfig.width ? this.fieldConfig.width : 300,
@@ -156,8 +159,15 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                 displayField: "label",
                 valueField: "id",
                 listeners: {
-                    change: function() {
-                        this.dataChanged = true;
+                    change: function(comboBox, newValue) {
+                        if (newValue) {
+                            let record = this.store.getById(newValue);
+                            if (record) {
+                                this.dataChanged = true;
+                                this.data.id = record.get('id');
+                                this.data.type = record.get('type');
+                            }
+                        }
                     }.bind(this),
                     focus: function() {
                         this.store.getProxy().setExtraParam('data', '');
@@ -339,7 +349,18 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                     this.data.subtype = data["type"];
                     this.data.path = data["fullpath"];
                     this.dataChanged = true;
-                    this.component.setValue(data["fullpath"]);
+                    if (this.fieldConfig.displayMode == 'combo') {
+                        if (!this.component.getStore().getById(data.id)) {
+                            this.component.getStore().getProxy().setExtraParam('data', JSON.stringify([{id: this.data.id, type: this.data.type}]));
+                            this.component.getStore().on('load', function(){
+                                this.component.setValue(this.data.id);
+                            }.bind(this), this, { single: true });
+                            this.component.getStore().load();
+                        }
+                        this.component.setValue(this.data.id);
+                    } else {
+                        this.component.setValue(data["fullpath"]);
+                    }
                     this.requestNicePathData();
                 }
             } catch (e) {
@@ -377,7 +398,18 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             if (data.published === false) {
                 this.component.addCls("strikeThrough");
             }
-            this.component.setValue(data.path);
+            if (this.fieldConfig.displayMode == 'combo') {
+                if (!this.component.getStore().getById(data.id)) {
+                    this.component.getStore().getProxy().setExtraParam('data', JSON.stringify([{id: data.id, type: data.elementType}]));
+                    this.component.getStore().on('load', function(){
+                        this.component.setValue(data.id);
+                    }.bind(this), this, { single: true });
+                    this.component.getStore().load();
+                }
+                this.component.setValue(data.id);
+            } else {
+                this.component.setValue(data.path);
+            }
             this.requestNicePathData();
 
             return true;

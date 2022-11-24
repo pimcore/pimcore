@@ -575,23 +575,59 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
 
         $searchRequest = $request;
-        $searchRequest->request->set('type', 'object');
-        $searchRequest->request->set('subtype', 'object,variant');
-        $searchRequest->request->set('class', implode(',', $classes));
+
+        if ($fieldConfig['fieldtype'] == 'manyToOneRelation') {
+            $allowedTypes = $subTypes = [];
+            if ( $fieldConfig['assetsAllowed'] ) {
+                $allowedTypes[] = 'asset';
+                if ( !count($fieldConfig['assetTypes']) ) {
+                    $subTypes = array_merge($subTypes, ['folder', 'image', 'text', 'audio', 'video', 'document', 'archive', 'unknown']);
+                } else {
+                    foreach ($fieldConfig['assetTypes'] as $subType) {
+                        $subTypes[] = $subType['assetTypes'];
+                    }
+                }
+            }
+            if ( $fieldConfig['objectsAllowed'] ) {
+                $allowedTypes[] = 'object';
+                $subTypes = array_merge($subTypes, ['object', 'variant']);
+            }
+            if ( $fieldConfig['documentsAllowed'] ) {
+                $allowedTypes[] = 'document';
+                if ( !count($fieldConfig['documentTypes']) ) {
+                    $subTypes = array_merge($subTypes, ['page', 'snippet', 'folder', 'link', 'hardlink', 'email', 'newsletter']);
+                } else {
+                    foreach ($fieldConfig['documentTypes'] as $subType) {
+                        $subTypes[] = $subType['documentTypes'];
+                    }
+                }
+            }
+        } else {
+            $allowedTypes[] = 'object';
+            $subTypes = ['object', 'variant'];
+
+            $searchRequest->request->set('class', implode(',', $classes));
+        }
+
+        $searchRequest->request->set('type', implode(',', $allowedTypes));
+        $searchRequest->request->set('subtype', implode(',', $subTypes));
         $searchRequest->request->set('fields', $visibleFields);
         $searchRequest->attributes->set('unsavedChanges', $request->get('unsavedChanges', ''));
         $res = $this->forward(SearchController::class.'::findAction', ['request' => $searchRequest]);
         $objects = json_decode($res->getContent(), true)['data'];
 
-        if ($request->get('data')) {
-            foreach (explode(',', $request->get('data')) as $preSelectedElementId) {
-                $objects[] = ['id' => $preSelectedElementId];
+        if($request->get('data')) {
+            foreach(json_decode($request->get('data'), true) as $preSelectedElement) {
+                if (isset($preSelectedElement['id'], $preSelectedElement['type'])) {
+                    $objects[] = ['id' => $preSelectedElement['id'], 'type' => $preSelectedElement['type']];
+                }
             }
         }
 
         foreach ($objects as $objectData) {
             $option = [
                 'id' => $objectData['id'],
+                'type' => $objectData['type']
             ];
 
             $visibleFieldValues = [];
@@ -605,8 +641,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     DataObject\Concrete::setGetInheritedValues(true);
                     DataObject\Localizedfield::setGetFallbackValues(true);
 
-                    $object = DataObject\Concrete::getById($objectData['id']);
-                    if (!$object instanceof DataObject\Concrete) {
+                    $object = Element\Service::getElementById($objectData['type'], $objectData['id']);
+                    if (!$object instanceof Element\ElementInterface) {
                         continue;
                     }
 

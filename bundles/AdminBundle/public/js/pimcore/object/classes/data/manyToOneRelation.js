@@ -354,7 +354,7 @@ pimcore.object.classes.data.manyToOneRelation = Class.create(pimcore.object.clas
                 width: 400,
                 store: [
                     ['grid', t('display_mode_grid')],
-                    ['combo', t('display_mode_combo')],
+                    ['combo', t('display_mode_select')],
                 ]
             }
 
