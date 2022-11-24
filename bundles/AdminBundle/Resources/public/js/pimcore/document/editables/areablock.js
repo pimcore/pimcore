@@ -691,8 +691,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
     },
 
     getTypeMenu: function (scope, element, insertPosition) {
-        let menu = [];
-        let groupMenu;
+        const menu = [];
         const limits = this.config["limits"] || {};
 
         if (typeof this.config.group != "undefined") {
@@ -700,7 +699,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
             const maxHeight = Ext.getBody().getViewSize().height;
             for (let g = 0; g < groups.length; g++) {
                 if (groups[g].length > 0) {
-                    groupMenu = {
+                    let groupMenu = {
                         text: t(groups[g]),
                         iconCls: "pimcore_icon_area",
                         hideOnClick: false,
