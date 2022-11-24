@@ -115,6 +115,9 @@ class Breadcrumbs extends AbstractRenderer
         return $this->_template;
     }
 
+    /**
+     * @return $this
+     */
     public function setTemplate(array|string|null $template): static
     {
         $this->_template = $template;

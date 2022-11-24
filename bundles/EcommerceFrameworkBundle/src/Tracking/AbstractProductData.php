@@ -61,6 +61,9 @@ abstract class AbstractProductData extends AbstractData
         return $this->brand;
     }
 
+    /**
+     * @return $this
+     */
     public function setBrand(?string $brand = null): static
     {
         $this->brand = $brand;
