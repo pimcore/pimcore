@@ -26,9 +26,9 @@ abstract class AbstractProductData extends AbstractData
 
     protected array $categories;
 
-    protected string $variant;
+    protected ?string $variant = null;
 
-    protected int $position;
+    protected int $position = 0;
 
     protected float $price;
 
@@ -89,7 +89,7 @@ abstract class AbstractProductData extends AbstractData
         return $this;
     }
 
-    public function getVariant(): string
+    public function getVariant(): ?string
     {
         return $this->variant;
     }

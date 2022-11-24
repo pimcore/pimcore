@@ -75,16 +75,16 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
-    protected $o_classId;
+    protected ?string $o_classId = null;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
-    protected $o_className;
+    protected ?string $o_className = null;
 
     /**
      * @internal
@@ -385,7 +385,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $this;
     }
 
-    public function getClass(): ?ClassDefinition
+    public function getClass(): ClassDefinition
     {
         if (!$this->o_class) {
             $this->setClass(ClassDefinition::getById($this->getClassId()));
@@ -394,7 +394,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $this->o_class;
     }
 
-    public function getClassId(): string
+    public function getClassId(): ?string
     {
         return $this->o_classId;
     }
@@ -409,7 +409,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $this;
     }
 
-    public function getClassName(): string
+    public function getClassName(): ?string
     {
         return $this->o_className;
     }
