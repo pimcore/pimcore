@@ -575,9 +575,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         if ($fieldConfig['assetsAllowed'] ?? false) {
             $allowedTypes[] = 'asset';
 
-            if (empty($fieldConfig['assetTypes'])) {
-                $subTypes = array_merge($subTypes, ['folder', 'image', 'text', 'audio', 'video', 'document', 'archive', 'unknown']);
-            } else {
+            if (is_array($fieldConfig['assetTypes'])) {
                 foreach ($fieldConfig['assetTypes'] as $subType) {
                     $subTypes[] = $subType['assetTypes'];
                 }
@@ -598,9 +596,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         if ($fieldConfig['documentsAllowed']) {
             $allowedTypes[] = 'document';
 
-            if (empty($fieldConfig['documentTypes'])) {
-                $subTypes = array_merge($subTypes, ['page', 'snippet', 'folder', 'link', 'hardlink', 'email', 'newsletter']);
-            } else {
+            if (is_array($fieldConfig['documentTypes'])) {
                 foreach ($fieldConfig['documentTypes'] as $subType) {
                     $subTypes[] = $subType['documentTypes'];
                 }
