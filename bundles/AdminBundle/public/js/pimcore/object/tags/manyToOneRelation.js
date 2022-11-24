@@ -120,11 +120,9 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
 
     getLayoutEdit: function () {
 
-        var href = {
-            name: this.fieldConfig.name
-        };
+        var href = {};
 
-        var labelWidth = this.fieldConfig.labelWidth ? this.fieldConfig.labelWidth : 100;
+        href.labelWidth = this.fieldConfig.labelWidth ? this.fieldConfig.labelWidth : 100;
 
         if (this.data) {
             if (this.data.path) {
@@ -143,23 +141,19 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
         href.fieldBodyCls = 'pimcore_droptarget_display x-form-trigger-wrap';
 
         if (this.fieldConfig.displayMode == 'combo') {
-            this.component = Ext.create('Ext.form.field.ComboBox', {
+            Object.assign(href, {
                 store: this.store,
                 autoLoadOnValue: true,
                 forceSelection: true,
-                multiSelect: false,
                 height: 'auto',
-                width: this.fieldConfig.width ? this.fieldConfig.width : 300,
-                labelWidth: labelWidth,
                 value: this.data.id,
                 typeAhead: true,
-                minChars: 3,
                 filterPickList: true,
                 triggerAction: "all",
                 displayField: "label",
                 valueField: "id",
                 listeners: {
-                    change: function(comboBox, newValue) {
+                    change: function (comboBox, newValue) {
                         if (newValue) {
                             let record = this.store.getById(newValue);
                             if (record) {
@@ -169,11 +163,13 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                             }
                         }
                     }.bind(this),
-                    focus: function() {
+                    focus: function () {
                         this.store.getProxy().setExtraParam('data', '');
                     }.bind(this)
                 }
             });
+
+            this.component = Ext.create('Ext.form.field.ComboBox', href);
         } else {
             this.component = new Ext.form.field.Display(href);
         }

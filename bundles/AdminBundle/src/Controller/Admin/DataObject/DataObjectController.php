@@ -643,11 +643,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     }
 
                     $getter = 'get'.ucfirst($visibleField);
-                    $visibleFieldValue = $object->$getter();
-                    if ($visibleField === 'key' && $object instanceof DataObject\Concrete && count($classes) > 1) {
-                        $visibleFieldValue .= ' ('.$object->getClassName().')';
+                    if(method_exists($object, $getter)) {
+                        $visibleFieldValue = $object->$getter();
+                        if ($visibleField === 'key' && $object instanceof DataObject\Concrete && count($classes) > 1) {
+                            $visibleFieldValue .= ' ('.$object->getClassName().')';
+                        }
+                        $visibleFieldValues[] = $visibleFieldValue;
                     }
-                    $visibleFieldValues[] = $visibleFieldValue;
 
                     DataObject\Concrete::setGetInheritedValues($inheritValues);
                     DataObject\Localizedfield::setGetFallbackValues($fallbackValues);
