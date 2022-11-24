@@ -385,7 +385,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $this;
     }
 
-    public function getClass(): ClassDefinition
+    public function getClass(): ?ClassDefinition
     {
         if (!$this->o_class) {
             $this->setClass(ClassDefinition::getById($this->getClassId()));
