@@ -648,7 +648,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
                     $getter = 'get'.ucfirst($visibleField);
                     $visibleFieldValue = $object->$getter();
-                    if (count($classes) > 1 && $visibleField == 'key') {
+                    if ($visibleField === 'key' && $object instanceof DataObject\Concrete && count($classes) > 1) {
                         $visibleFieldValue .= ' ('.$object->getClassName().')';
                     }
                     $visibleFieldValues[] = $visibleFieldValue;
