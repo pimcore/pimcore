@@ -694,10 +694,10 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
         let menu = [];
         let groupMenu;
         const limits = this.config["limits"] || {};
-        const maxHeight = Ext.getBody().getViewSize().height;
 
         if (typeof this.config.group != "undefined") {
             const groups = Object.keys(this.config.group);
+            const maxHeight = Ext.getBody().getViewSize().height;
             for (let g = 0; g < groups.length; g++) {
                 if (groups[g].length > 0) {
                     groupMenu = {
@@ -730,7 +730,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.area_abstra
             }
         } else {
             for (let i = 0; i < this.config.types.length; i++) {
-                let type = this.config.types[i].type;
+                const type = this.config.types[i].type;
                 if (typeof limits[type] == "undefined" ||
                     typeof this.brickTypeUsageCounter[type] == "undefined" || this.brickTypeUsageCounter[type] < limits[type]) {
                     menu.push(this.getMenuConfigForBrick(this.config.types[i], scope, element, insertPosition));
