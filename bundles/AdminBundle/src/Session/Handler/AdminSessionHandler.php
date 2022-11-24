@@ -264,7 +264,10 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
 
     private function shouldWriteAndClose(): bool
     {
-        return $this->canWriteAndClose ??= $this->isAdminRequest($this->requestHelper->getMainRequest());
+        // main request is not available in CLI, so session should be written
+        // otherwise session should be written & closed in Admin context only.
+        return $this->canWriteAndClose ??= !$this->requestHelper->hasMainRequest()
+            || $this->isAdminRequest($this->requestHelper->getMainRequest());
     }
 
     private function isAdminRequest(Request $request): bool

@@ -1425,6 +1425,10 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     {
         $objectFromDatabase = DataObject\Concrete::getById((int) $request->get('id'));
 
+        if (!$objectFromDatabase instanceof DataObject\Concrete) {
+            return $this->adminJson(['success' => false, 'message' => 'Could not find object']);
+        }
+
         // set the latest available version for editmode
         $object = $this->getLatestVersion($objectFromDatabase);
         $object->setUserModification($this->getAdminUser()->getId());

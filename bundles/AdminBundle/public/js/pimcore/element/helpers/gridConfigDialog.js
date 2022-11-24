@@ -110,18 +110,29 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
             });
         }
 
+        var windowWidth = 950;
         this.window = new Ext.Window({
-            width: 950,
+            width: windowWidth,
+            maxWidth: Ext.getBody().getViewSize().width,
             height: '95%',
+            maxHeight: Ext.getBody().getViewSize().height,
             modal: true,
             title: t('grid_options'),
             layout: "fit",
             items: [this.tabPanel],
-            buttons: buttons
+            buttons: buttons,
+            constrainHeader: true
         });
 
         this.window.show();
         this.updatePreview();
+
+        window.addEventListener('resize', () => {
+            this.window.setWidth(windowWidth);
+            this.window.setMaxWidth(Ext.getBody().getViewSize().width);
+            this.window.setMaxHeight(Ext.getBody().getViewSize().height);
+            this.window.center();
+        });
     },
 
     getConfigPanel: function() {
