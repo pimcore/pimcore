@@ -1003,5 +1003,6 @@
     "display_mode": "Display Mode",
     "display_mode_grid": "Grid view",
     "display_mode_combo": "Tag field",
-    "display_mode_select": "Select field"
+    "display_mode_display": "Display path reference",
+    "display_mode_inline_search": "Inline Search"
 }
