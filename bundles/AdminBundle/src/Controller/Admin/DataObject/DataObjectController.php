@@ -560,14 +560,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     {
         $fieldConfig = json_decode($request->get('fieldConfig'), true);
 
-        $options = [];
-        $classes = [];
-        if (count($fieldConfig['classes']) > 0) {
-            foreach ($fieldConfig['classes'] as $classData) {
-                $classes[] = $classData['classes'];
-            }
-        }
-
         $visibleFields = is_array($fieldConfig['visibleFields']) ? $fieldConfig['visibleFields'] : explode(',', $fieldConfig['visibleFields']);
 
         if (!$visibleFields) {
@@ -576,41 +568,48 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         $searchRequest = $request;
 
-        if ($fieldConfig['fieldtype'] == 'manyToOneRelation') {
-            $allowedTypes = $subTypes = [];
-            if ( $fieldConfig['assetsAllowed'] ) {
-                $allowedTypes[] = 'asset';
-                if ( !count($fieldConfig['assetTypes']) ) {
-                    $subTypes = array_merge($subTypes, ['folder', 'image', 'text', 'audio', 'video', 'document', 'archive', 'unknown']);
-                } else {
-                    foreach ($fieldConfig['assetTypes'] as $subType) {
-                        $subTypes[] = $subType['assetTypes'];
-                    }
-                }
-            }
-            if ( $fieldConfig['objectsAllowed'] ) {
-                $allowedTypes[] = 'object';
-                $subTypes = array_merge($subTypes, ['object', 'variant']);
-            }
-            if ( $fieldConfig['documentsAllowed'] ) {
-                $allowedTypes[] = 'document';
-                if ( !count($fieldConfig['documentTypes']) ) {
-                    $subTypes = array_merge($subTypes, ['page', 'snippet', 'folder', 'link', 'hardlink', 'email', 'newsletter']);
-                } else {
-                    foreach ($fieldConfig['documentTypes'] as $subType) {
-                        $subTypes[] = $subType['documentTypes'];
-                    }
-                }
-            }
-        } else {
-            $allowedTypes[] = 'object';
-            $subTypes = ['object', 'variant'];
+        $allowedTypes = [];
+        $subTypes = [];
+        $classes = [];
 
-            $searchRequest->request->set('class', implode(',', $classes));
+        if ($fieldConfig['assetsAllowed'] ?? false) {
+            $allowedTypes[] = 'asset';
+
+            if (empty($fieldConfig['assetTypes'])) {
+                $subTypes = array_merge($subTypes, ['folder', 'image', 'text', 'audio', 'video', 'document', 'archive', 'unknown']);
+            } else {
+                foreach ($fieldConfig['assetTypes'] as $subType) {
+                    $subTypes[] = $subType['assetTypes'];
+                }
+            }
+        }
+
+        if ($fieldConfig['objectsAllowed']) {
+            $allowedTypes[] = 'object';
+            $subTypes = array_merge($subTypes, ['object', 'variant']);
+
+            if (is_array($fieldConfig['classes'])) {
+                foreach ($fieldConfig['classes'] as $classData) {
+                    $classes[] = $classData['classes'];
+                }
+            }
+        }
+
+        if ($fieldConfig['documentsAllowed']) {
+            $allowedTypes[] = 'document';
+
+            if (empty($fieldConfig['documentTypes'])) {
+                $subTypes = array_merge($subTypes, ['page', 'snippet', 'folder', 'link', 'hardlink', 'email', 'newsletter']);
+            } else {
+                foreach ($fieldConfig['documentTypes'] as $subType) {
+                    $subTypes[] = $subType['documentTypes'];
+                }
+            }
         }
 
         $searchRequest->request->set('type', implode(',', $allowedTypes));
         $searchRequest->request->set('subtype', implode(',', $subTypes));
+        $searchRequest->request->set('class', implode(',', $classes));
         $searchRequest->request->set('fields', $visibleFields);
         $searchRequest->attributes->set('unsavedChanges', $request->get('unsavedChanges', ''));
         $res = $this->forward(SearchController::class.'::findAction', ['request' => $searchRequest]);
@@ -624,6 +623,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             }
         }
 
+        $options = [];
         foreach ($objects as $objectData) {
             $option = [
                 'id' => $objectData['id'],
