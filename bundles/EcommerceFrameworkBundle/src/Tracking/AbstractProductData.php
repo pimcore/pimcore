@@ -22,7 +22,7 @@ abstract class AbstractProductData extends AbstractData
 
     protected string $name;
 
-    protected string $brand;
+    protected ?string $brand = null;
 
     protected array $categories;
 
@@ -56,12 +56,12 @@ abstract class AbstractProductData extends AbstractData
         return $this;
     }
 
-    public function getBrand(): string
+    public function getBrand(): ?string
     {
         return $this->brand;
     }
 
-    public function setBrand(string $brand): static
+    public function setBrand(?string $brand = null): static
     {
         $this->brand = $brand;
 
