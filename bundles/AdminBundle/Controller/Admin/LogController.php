@@ -181,18 +181,6 @@ class LogController extends AdminController implements KernelControllerEventInte
     }
 
     /**
-     * @param int $priority
-     *
-     * @return string
-     */
-    private function getPriorityName($priority)
-    {
-        $p = ApplicationLoggerDb::getPriorities();
-
-        return $p[$priority];
-    }
-
-    /**
      * @Route("/log/priority-json", name="pimcore_admin_log_priorityjson", methods={"GET"})
      *
      * @param Request $request
