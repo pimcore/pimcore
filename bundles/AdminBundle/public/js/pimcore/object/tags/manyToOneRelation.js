@@ -35,8 +35,6 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             return true;
         }.bind(this));
 
-        this.fieldConfig.visibleFields = "key";
-
         let storeConfig = {
             data: this.data,
             listeners: {
@@ -136,10 +134,6 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             href.width = 300;
         }
 
-        href.cls = 'pimcore_droptarget_display_edit';
-
-        href.fieldBodyCls = 'pimcore_droptarget_display x-form-trigger-wrap';
-
         if (this.fieldConfig.displayMode == 'combo') {
             Object.assign(href, {
                 store: this.store,
@@ -162,15 +156,14 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                                 this.data.type = record.get('type');
                             }
                         }
-                    }.bind(this),
-                    focus: function () {
-                        this.store.getProxy().setExtraParam('data', '');
                     }.bind(this)
                 }
             });
 
             this.component = Ext.create('Ext.form.field.ComboBox', href);
         } else {
+            href.cls = 'pimcore_droptarget_display_edit';
+            href.fieldBodyCls = 'pimcore_droptarget_display x-form-trigger-wrap';
             this.component = new Ext.form.field.Display(href);
         }
 
@@ -253,7 +246,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
 
         var compositeCfg = {
             fieldLabel: this.fieldConfig.title,
-            labelWidth: labelWidth,
+            labelWidth: href.labelWidth,
             layout: 'hbox',
             items: items,
             componentCls: this.getWrapperClassNames(),

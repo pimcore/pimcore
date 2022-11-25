@@ -571,34 +571,40 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $allowedTypes = [];
         $subTypes = [];
         $classes = [];
+        $allowClasses = true;
 
-        if ($fieldConfig['assetsAllowed'] ?? false) {
+        if ( $fieldConfig['assetsAllowed'] ?? false ) {
             $allowedTypes[] = 'asset';
+            $allowClasses = false;
 
-            if (is_array($fieldConfig['assetTypes'])) {
+            if ( is_array($fieldConfig['assetTypes']) ) {
                 foreach ($fieldConfig['assetTypes'] as $subType) {
                     $subTypes[] = $subType['assetTypes'];
                 }
             }
         }
 
-        if ($fieldConfig['objectsAllowed']) {
-            $allowedTypes[] = 'object';
-            $subTypes = array_merge($subTypes, ['object', 'variant']);
+        if ( $fieldConfig['documentsAllowed'] ?? false ) {
+            $allowedTypes[] = 'document';
+            $allowClasses = false;
 
-            if (is_array($fieldConfig['classes'])) {
-                foreach ($fieldConfig['classes'] as $classData) {
-                    $classes[] = $classData['classes'];
+            if ( is_array($fieldConfig['documentTypes']) ) {
+                foreach ($fieldConfig['documentTypes'] as $subType) {
+                    $subTypes[] = $subType['documentTypes'];
                 }
             }
         }
 
-        if ($fieldConfig['documentsAllowed']) {
-            $allowedTypes[] = 'document';
+        if ( ($fieldConfig['objectsAllowed'] ?? false) || $fieldConfig['fieldtype'] != 'manyToOneRelation' ) {
+            $allowedTypes[] = 'object';
 
-            if (is_array($fieldConfig['documentTypes'])) {
-                foreach ($fieldConfig['documentTypes'] as $subType) {
-                    $subTypes[] = $subType['documentTypes'];
+            if ( $allowClasses ) {
+                $subTypes = array_merge($subTypes, ['object', 'variant']);
+
+                if ( is_array($fieldConfig['classes']) ) {
+                    foreach ($fieldConfig['classes'] as $classData) {
+                        $classes[] = $classData['classes'];
+                    }
                 }
             }
         }
