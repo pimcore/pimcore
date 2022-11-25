@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Log;
 
 use Monolog\Logger;
+use Monolog\Level;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
@@ -63,7 +64,7 @@ class ApplicationLogger implements LoggerInterface
         if ($writer instanceof \Monolog\Handler\HandlerInterface) {
             if (!isset($this->loggers['default-monolog'])) {
                 // auto init Monolog logger
-                $this->loggers['default-monolog'] = new \Monolog\Logger('app');
+                $this->loggers['default-monolog'] = new Logger('app');
             }
             $this->loggers['default-monolog']->pushHandler($writer);
         } elseif ($writer instanceof \Psr\Log\LoggerInterface) {
@@ -364,19 +365,12 @@ class ApplicationLogger implements LoggerInterface
     /**
      * Logs a throwable to a given logger. This can be used to format an exception in the same format
      * as the logException method to any PSR/monolog logger (e.g. when consumed via DI)
-     *
-     * @param LoggerInterface $logger
-     * @param string $message
-     * @param \Throwable $exception
-     * @param mixed $level
-     * @param \Pimcore\Model\DataObject\AbstractObject|null $relatedObject
-     * @param array $context
      */
     public static function logExceptionObject(
         LoggerInterface $logger,
         string $message,
         \Throwable $exception,
-        mixed $level = Logger::ALERT,
+        int|string|Level $level = Level::Alert,
         \Pimcore\Model\DataObject\AbstractObject $relatedObject = null,
         array $context = []
     ) {

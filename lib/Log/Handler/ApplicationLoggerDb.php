@@ -18,14 +18,10 @@ namespace Pimcore\Log\Handler;
 
 use Doctrine\DBAL\Connection;
 use Monolog\Handler\AbstractProcessingHandler;
-use Monolog\Logger;
+use Monolog\Level;
+use Monolog\LogRecord;
 use Pimcore\Db;
-use Psr\Log\LogLevel;
 
-/**
- * @phpstan-import-type Level from \Monolog\Logger
- * @phpstan-import-type LevelName from \Monolog\Logger
- */
 class ApplicationLoggerDb extends AbstractProcessingHandler
 {
     const TABLE_NAME = 'application_logs';
@@ -34,31 +30,24 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
 
     private Connection $db;
 
-    /**
-     * @param Connection $db
-     * @param int|string $level
-     * @param bool $bubble
-     *
-     * @phpstan-param Level|LevelName|LogLevel::* $level
-     */
-    public function __construct(Connection $db, int|string $level = Logger::DEBUG, bool $bubble = true)
+    public function __construct(Connection $db, int|string|Level $level = Level::Debug, $bubble = true)
     {
         $this->db = $db;
         parent::__construct($level, $bubble);
     }
 
-    public function write(array $record): void
+    public function write(LogRecord $record): void
     {
         $data = [
             'pid' => getmypid(),
-            'priority' => strtolower($record['level_name']),
-            'message' => $record['message'],
-            'timestamp' => $record['datetime']->format('Y-m-d H:i:s'),
-            'component' => $record['context']['component'] ?? $record['channel'],
-            'fileobject' => $record['context']['fileObject'] ?? null,
-            'relatedobject' => $record['context']['relatedObject'] ?? null,
-            'relatedobjecttype' => $record['context']['relatedObjectType'] ?? null,
-            'source' => $record['context']['source'] ?? null,
+            'priority' => $record->level->toPsrLogLevel(),
+            'message' => $record->message,
+            'timestamp' => $record->datetime->format('Y-m-d H:i:s'),
+            'component' => $record->context['component'] ?? $record->channel,
+            'fileobject' => $record->context['fileObject'] ?? null,
+            'relatedobject' => $record->context['relatedObject'] ?? null,
+            'relatedobjecttype' => $record->context['relatedObjectType'] ?? null,
+            'source' => $record->context['source'] ?? null,
         ];
 
         $this->db->insert(self::TABLE_NAME, $data);

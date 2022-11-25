@@ -143,28 +143,7 @@ monolog:
 Of course you can also use the handler in combination with other log handlers such as the [Fingers Crossed Handler](https://symfony.com/doc/current/logging.html#handlers-that-modify-log-entries).
 See the [Symfony Logging Documentation](https://symfony.com/doc/current/logging.html) for details.
 
-As soon as the handler is configured, you can use it (as any other monolog logger) either by fetching a dedicated monolog
-channel logger or by using a DI tag to specify the channel you want to log to:
-
-```php
-<?php
-
-namespace App\Controller;
-
-use Pimcore\Controller\FrontendController;
-
-class TestController extends FrontendController
-{
-    public function testAction()
-    {
-        // fetch the channel logger by its known name monolog.logger.<channel>
-        $logger = $this->get('monolog.logger.application_logger');
-        $logger->error('Your error message');
-    }   
-}
-```
-
-Or use DI tags in combination with the `@logger` service to inject the channel logger you want to use:
+As soon as the handler is configured, you can use it (as any other monolog logger) by using a DI tag to specify the channel you want to log to:
 
 ```php
 <?php
@@ -205,6 +184,19 @@ services:
         tags:
             - { name: monolog.logger, channel: application_logger }
 ``` 
+
+It's also possible to autowire the logger channel by changing the argument name format to `(channel name in camel case) + Logger`. 
+
+An example for channel `foo_bar`:
+
+```php
+  public function __construct(LoggerInterface $fooBarLogger)
+  {
+      $this->logger = $fooBarLogger;
+  }
+```
+
+More details on [Logging Chanel Handlers](https://symfony.com/doc/current/logging/channels_handlers.html#how-to-autowire-logger-channels)
 
 ### Special context variables
 

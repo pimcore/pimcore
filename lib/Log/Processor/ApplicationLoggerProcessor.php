@@ -21,6 +21,7 @@ use Pimcore\Log\FileObject;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Document;
+use Monolog\LogRecord;
 
 /**
  * Make sure you add this processor when using the ApplicationLoggerDb handler as is
@@ -31,7 +32,7 @@ use Pimcore\Model\Document;
  */
 class ApplicationLoggerProcessor
 {
-    public function __invoke(array $record): array
+    public function __invoke(LogRecord $record): LogRecord
     {
         $record = $this->processFileObject($record);
         $record = $this->processRelatedObject($record);
@@ -40,9 +41,9 @@ class ApplicationLoggerProcessor
         return $record;
     }
 
-    private function processFileObject(array $record): array
+    private function processFileObject(LogRecord $record): LogRecord
     {
-        $context = $record['context'] ?? [];
+        $context = $record->context;
 
         if (isset($context['fileObject'])) {
             if (is_string($context['fileObject'])) {
@@ -52,24 +53,23 @@ class ApplicationLoggerProcessor
             }
         }
 
-        $record['context'] = $context;
-
-        return $record;
+        return $record->with(context: $context);
     }
 
-    private function processRelatedObject(array $record): array
+    private function processRelatedObject(LogRecord $record): LogRecord
     {
-        if (!isset($record['context']['relatedObject'])) {
+        $context = $record->context;
+        if (!isset($context['relatedObject'])) {
             // remove related object type if no object is set
-            if (isset($record['context']['relatedObjectType'])) {
-                unset($record['context']['relatedObjectType']);
+            if (isset($context['relatedObjectType'])) {
+                unset($context['relatedObjectType']);
             }
 
-            return $record;
+            return $record->with(context: $context);
         }
 
-        $relatedObject = $record['context']['relatedObject'];
-        $relatedObjectType = $record['context']['relatedObjectType'] ?? null;
+        $relatedObject = $context['relatedObject'];
+        $relatedObjectType = $context['relatedObjectType'] ?? null;
 
         if (null !== $relatedObject && is_object($relatedObject)) {
             if ($relatedObject instanceof AbstractObject) {
@@ -84,24 +84,25 @@ class ApplicationLoggerProcessor
             }
         }
 
-        $record['context']['relatedObject'] = $relatedObject;
-        $record['context']['relatedObjectType'] = $relatedObjectType;
+        $context['relatedObject'] = $relatedObject;
+        $context['relatedObjectType'] = $relatedObjectType;
 
-        return $record;
+        return $record->with(context: $context);
     }
 
-    private function processLoggingSource(array $record): array
+    private function processLoggingSource(LogRecord $record): LogRecord
     {
-        $source = $record['context']['source'] ?? null;
+        $context = $record->context;
+        $source = $context['source'] ?? null;
         if ($source) {
             return $record;
         }
 
-        $extra = $record['extra'];
+        $extra = $record->extra;
         if (!isset($extra['file']) || !isset($extra['line'])) {
-            $record['context']['source'] = null;
+            $context['source'] = null;
 
-            return $record;
+            return $record->with(context: $context);
         }
 
         if (isset($extra['class']) && isset($extra['function'])) {
@@ -133,9 +134,9 @@ class ApplicationLoggerProcessor
             );
         }
 
-        $record['context']['source'] = $source;
+        $context['source'] = $source;
 
-        return $record;
+        return $record->with(context: $context);
     }
 
     private function normalizeFilename(string $filename): string

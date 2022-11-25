@@ -68,7 +68,7 @@
     "lcobucci/jwt": "^4.0",
     "league/csv": "^9.7",
     "mjaschen/phpgeo": "^4.0",
-    "monolog/monolog": "^2.3",
+    "monolog/monolog": "^3.2.0",
     "mpratt/embera": "^2.0.14",
     "myclabs/deep-copy": "^1.11",
     "neitanod/forceutf8": "^2.0.4",
@@ -81,7 +81,7 @@
     "sensiolabs/ansi-to-html": "^1.1",
     "symfony-cmf/routing-bundle": "^3.0",
     "symfony/contracts": "^2.3",
-    "symfony/monolog-bundle": "^3.5",
+    "symfony/monolog-bundle": "^3.8",
     "symfony/asset": "^6.1",
     "symfony/cache": "^6.1",
     "symfony/config": "^6.1",
@@ -145,7 +145,6 @@
   },
   "conflict": {
     "symfony/symfony": "*",
-    "symfony/monolog-bundle": "3.6.0",
     "doctrine/doctrine-migrations-bundle": "3.1.0",
     "sabre/dav": "4.2.2"
   },

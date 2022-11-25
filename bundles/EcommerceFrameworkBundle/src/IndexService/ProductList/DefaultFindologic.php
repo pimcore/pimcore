@@ -22,6 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\FindologicConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
+use Psr\Log\LoggerInterface;
 
 class DefaultFindologic implements ProductListInterface
 {
@@ -82,19 +83,19 @@ class DefaultFindologic implements ProductListInterface
 
     protected string|array $orderKey;
 
-    protected \Symfony\Bridge\Monolog\Logger|null|Logger $logger = null;
+    protected LoggerInterface $logger;
 
     protected array $supportedOrderKeys = ['label', 'price', 'salesFrequency', 'dateAdded'];
 
     protected int $timeout = 3;
 
-    public function __construct(FindologicConfigInterface $tenantConfig)
+    public function __construct(FindologicConfigInterface $tenantConfig, LoggerInterface $pimcoreEcommerceFindologicLogger)
     {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
 
         // init logger
-        $this->logger = \Pimcore::getContainer()->get('monolog.logger.pimcore_ecommerce_findologic');
+        $this->logger = $pimcoreEcommerceFindologicLogger;
 
         // set defaults for required params
         $this->userIp = $_SERVER['HTTP_X_FORWARDED_FOR'] ?: $_SERVER['REMOTE_ADDR'];
@@ -690,7 +691,7 @@ class DefaultFindologic implements ProductListInterface
         return simplexml_load_string((string)$response->getBody());
     }
 
-    protected function getLogger(): Logger
+    protected function getLogger(): LoggerInterface
     {
         return $this->logger;
     }

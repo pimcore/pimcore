@@ -22,6 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Implementation of product list which works based on the product index of the online shop framework
@@ -51,14 +52,14 @@ class DefaultMysql implements ProductListInterface
 
     protected bool $inProductList = true;
 
-    protected \Symfony\Bridge\Monolog\Logger|null|Logger $logger = null;
+    protected LoggerInterface $logger;
 
-    public function __construct(MysqlConfigInterface $tenantConfig)
+    public function __construct(MysqlConfigInterface $tenantConfig, LoggerInterface $pimcoreEcommerceSqlLogger)
     {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
 
-        $this->logger = \Pimcore::getContainer()->get('monolog.logger.pimcore_ecommerce_sql');
+        $this->logger = $pimcoreEcommerceSqlLogger;
         $this->resource = new DefaultMysql\Dao($this, $this->logger);
     }
 
@@ -755,7 +756,6 @@ class DefaultMysql implements ProductListInterface
     public function __wakeup()
     {
         if (empty($this->resource)) {
-            $this->logger = \Pimcore::getContainer()->get('monolog.logger.pimcore_ecommerce_sql');
             $this->resource = new DefaultMysql\Dao($this, $this->logger);
         }
     }
