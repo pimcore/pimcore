@@ -89,13 +89,13 @@ class DefaultFindologic implements ProductListInterface
 
     protected int $timeout = 3;
 
-    public function __construct(FindologicConfigInterface $tenantConfig, LoggerInterface $pimcoreEcommerceFindlogicLogger)
+    public function __construct(FindologicConfigInterface $tenantConfig, LoggerInterface $pimcoreEcommerceFindologicLogger)
     {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
 
         // init logger
-        $this->logger = $pimcoreEcommerceFindlogicLogger;
+        $this->logger = $pimcoreEcommerceFindologicLogger;
 
         // set defaults for required params
         $this->userIp = $_SERVER['HTTP_X_FORWARDED_FOR'] ?: $_SERVER['REMOTE_ADDR'];
