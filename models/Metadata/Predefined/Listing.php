@@ -110,23 +110,23 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
     {
         $list = new self();
 
-        $definitions = array_filter($list->load(), function ($item) use ($key, $language, $targetSubtype) {
+        foreach ($list->load() as $item) {
             if ($item->getName() != $key) {
-                return false;
+                continue;
             }
 
             if ($language && $language != $item->getLanguage()) {
-                return false;
+                continue;
             }
 
             if ($targetSubtype && $targetSubtype != $item->getTargetSubtype()) {
-                return false;
+                continue;
             }
 
-            return true;
-        });
+            return $item;
+        }
 
-        return $definitions[0] ?? null;
+        return null;
     }
 
     /**
