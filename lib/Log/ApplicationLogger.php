@@ -16,8 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Log;
 
-use Monolog\Logger;
 use Monolog\Level;
+use Monolog\Logger;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;

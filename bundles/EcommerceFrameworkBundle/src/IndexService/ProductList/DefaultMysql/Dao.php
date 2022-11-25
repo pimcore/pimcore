@@ -16,10 +16,9 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql;
 
 use Doctrine\DBAL\Connection;
-use Monolog\Logger;
-use Psr\Log\LoggerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * @internal

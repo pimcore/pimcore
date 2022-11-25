@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore;
 
 use Doctrine\DBAL\Connection;
-use Psr\Log\LoggerInterface;
 
 class Db
 {

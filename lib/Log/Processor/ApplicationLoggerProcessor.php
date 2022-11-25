@@ -17,11 +17,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Log\Processor;
 
+use Monolog\LogRecord;
 use Pimcore\Log\FileObject;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Document;
-use Monolog\LogRecord;
 
 /**
  * Make sure you add this processor when using the ApplicationLoggerDb handler as is
