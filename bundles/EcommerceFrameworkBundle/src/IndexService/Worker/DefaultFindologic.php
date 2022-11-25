@@ -51,9 +51,9 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
 
     protected LoggerInterface $logger;
 
-    public function __construct(FindologicConfigInterface $tenantConfig, Connection $db, EventDispatcherInterface $eventDispatcher, LoggerInterface $pimcoreEcommerceFindlogic)
+    public function __construct(FindologicConfigInterface $tenantConfig, Connection $db, EventDispatcherInterface $eventDispatcher, LoggerInterface $pimcoreEcommerceFindologic)
     {
-        $this->logger = $pimcoreEcommerceFindlogic;
+        $this->logger = $pimcoreEcommerceFindologic;
         parent::__construct($tenantConfig, $db, $eventDispatcher);
     }
 
