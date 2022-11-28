@@ -584,7 +584,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $classes = [];
         $allowClasses = true;
 
-        if ($fieldConfig->getAssetsAllowed()) {
+        if (method_exists($fieldConfig, 'getAssetsAllowed') && $fieldConfig->getAssetsAllowed()) {
             $allowedTypes[] = 'asset';
             $allowClasses = false;
 
@@ -593,7 +593,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             }
         }
 
-        if ($fieldConfig->getDocumentsAllowed()) {
+        if (method_exists($fieldConfig, 'getDocumentsAllowed') && $fieldConfig->getDocumentsAllowed()) {
             $allowedTypes[] = 'document';
             $allowClasses = false;
 
@@ -602,7 +602,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             }
         }
 
-        if ($fieldConfig->getObjectsAllowed()) {
+        if (method_exists($fieldConfig, 'getObjectsAllowed') && $fieldConfig->getObjectsAllowed()) {
             $allowedTypes[] = 'object';
 
             if ( $allowClasses ) {
