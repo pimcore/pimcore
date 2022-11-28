@@ -53,7 +53,7 @@
     "doctrine/annotations": "^1.13.1",
     "doctrine/collections": "^1.6.5",
     "doctrine/persistence": "^3.0.3",
-    "doctrine/dbal": "^3.4.2",
+    "doctrine/dbal": "^3.5",
     "doctrine/doctrine-bundle": "^2.6.3",
     "doctrine/doctrine-migrations-bundle": "^3.2.2",
     "doctrine/inflector": "^2.0.2",

@@ -115,10 +115,10 @@ class LogController extends AdminController implements KernelControllerEventInte
         $totalQb->setMaxResults(null)
             ->setFirstResult(0)
             ->select('COUNT(id) as count');
-        $total = $totalQb->execute()->fetch();
+        $total = $totalQb->executeQuery()->fetch();
         $total = (int) $total['count'];
 
-        $stmt = $qb->execute();
+        $stmt = $qb->executeQuery();
         $result = $stmt->fetchAllAssociative();
 
         $logEntries = [];
