@@ -466,7 +466,8 @@ final class Thumbnail
             $thumb = $image->getThumbnail($thumbConfigRes, true);
 
             $descriptor = $highRes . 'x';
-            $srcSetValues[] = $this->addCacheBuster($thumb . ' ' . $descriptor, $options, $image);
+            # encode comma in thumbnail path as srcset is a comma separated list
+            $srcSetValues[] = str_replace(',', '%2C', $this->addCacheBuster($thumb . ' ' . $descriptor, $options, $image));
 
             if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
                 break;
