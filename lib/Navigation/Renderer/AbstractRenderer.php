@@ -218,7 +218,7 @@ abstract class AbstractRenderer implements RendererInterface
         if ((!is_int($maxDepth) || $maxDepth < 0) && null !== $maxDepth) {
             $maxDepth = $this->getMaxDepth();
         }
-        if(is_null($maxDepth)) {
+        if (is_null($maxDepth)) {
             $maxDepth = -1;
         }
 

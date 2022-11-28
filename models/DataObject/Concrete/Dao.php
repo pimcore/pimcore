@@ -42,9 +42,9 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         return;
     }
 
-    protected function getInheritanceHelper() {
-
-        if(!$this->inheritanceHelper) {
+    protected function getInheritanceHelper()
+    {
+        if (!$this->inheritanceHelper) {
             $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($this->model->getClassId());
         }
 

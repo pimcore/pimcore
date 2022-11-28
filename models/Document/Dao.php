@@ -277,7 +277,7 @@ class Dao extends Model\Element\Dao
                 $id = $this->model->getId();
                 $property = new Model\Property();
                 $property->setType($propertyRaw['type']);
-                if(isset($id)) {
+                if (isset($id)) {
                     $property->setCid($id);
                 }
                 $property->setName($propertyRaw['name']);

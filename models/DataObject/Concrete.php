@@ -396,9 +396,10 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     public function getClassId(): ?string
     {
-        if(isset($this->o_classId)) {
+        if (isset($this->o_classId)) {
             return (string)$this->o_classId;
         }
+
         return null;
     }
 

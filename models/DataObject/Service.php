@@ -1645,7 +1645,7 @@ class Service extends Model\Element\Service
         }
 
         if ($object instanceof Concrete) {
-            if(($class = $object->getClass()) !== null) {
+            if (($class = $object->getClass()) !== null) {
                 self::doResetDirtyMap($object, $class);
             }
         }

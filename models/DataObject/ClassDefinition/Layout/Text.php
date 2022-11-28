@@ -109,7 +109,7 @@ class Text extends Model\DataObject\ClassDefinition\Layout implements Model\Data
     {
         $renderer = null;
         $class = $this->getRenderingClass();
-        if(!empty($class)) {
+        if (!empty($class)) {
             $renderer = Model\DataObject\ClassDefinition\Helper\DynamicTextResolver::resolveRenderingClass(
                 $class
             );

@@ -279,7 +279,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $id = $this->getId();
         $property = new Model\Property();
         $property->setType($type);
-        if(isset($id)) {
+        if (isset($id)) {
             $property->setCid($id);
         }
         $property->setName($name);
