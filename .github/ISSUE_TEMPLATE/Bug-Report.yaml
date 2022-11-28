@@ -11,7 +11,7 @@ body:
               It's also important for us to make clear that **we're not working for you or your company**,
               but we enjoy to work together to solve existing bugs.
               So we would love to see PRs with bugfixes, discuss them and we are happy to merge them when they are ready.
-              For details see also our [contributing guidelines](https://github.com/pimcore/pimcore/blob/10.x/CONTRIBUTING.md).
+              For details see also our [contributing guidelines](https://github.com/pimcore/pimcore/blob/10.5/CONTRIBUTING.md).
 
               Bug reports that do not meet the conditions listed below will be closed/deleted without comment.
 

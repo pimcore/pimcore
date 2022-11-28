@@ -155,9 +155,9 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         if ($isBrickUpdate) {
-            $this->db->update($storetable, $data, ['o_id'=> $object->getId()]);
+            $this->db->update($storetable, Helper::quoteDataIdentifiers($this->db, $data), ['o_id'=> $object->getId()]);
         } else {
-            $this->db->insert($storetable, $data);
+            $this->db->insert($storetable, Helper::quoteDataIdentifiers($this->db, $data));
         }
 
         // get data for query table

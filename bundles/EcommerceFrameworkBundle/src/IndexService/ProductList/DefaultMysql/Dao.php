@@ -16,9 +16,9 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql;
 
 use Doctrine\DBAL\Connection;
-use Monolog\Logger;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * @internal
@@ -31,9 +31,9 @@ class Dao
 
     private int $lastRecordCount;
 
-    protected Logger $logger;
+    protected LoggerInterface $logger;
 
-    public function __construct(DefaultMysql $model, Logger $logger)
+    public function __construct(DefaultMysql $model, LoggerInterface $logger)
     {
         $this->model = $model;
         $this->db = \Pimcore\Db::get();

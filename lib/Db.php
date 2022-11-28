@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore;
 
 use Doctrine\DBAL\Connection;
-use Psr\Log\LoggerInterface;
 
 class Db
 {
@@ -39,18 +38,6 @@ class Db
         $db = \Pimcore::getContainer()->get('doctrine.dbal.default_connection');
 
         return $db;
-    }
-
-    /**
-     * @internal
-     *
-     * @return LoggerInterface
-     *
-     * @internal
-     */
-    public static function getLogger(): LoggerInterface
-    {
-        return \Pimcore::getContainer()->get('monolog.logger.doctrine');
     }
 
     public static function close(): void
