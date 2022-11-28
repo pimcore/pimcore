@@ -558,9 +558,20 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     public function optionsAction(Request $request): JsonResponse
     {
-        $fieldConfig = json_decode($request->get('fieldConfig'), true);
+        $fieldConfigData = json_decode($request->get('fieldConfig'), true);
+        $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.object.data');
+        if (!$loader->supports($fieldConfigData['fieldtype'])) {
+            return new JsonResponse([]);
+        }
 
-        $visibleFields = is_array($fieldConfig['visibleFields']) ? $fieldConfig['visibleFields'] : explode(',', $fieldConfig['visibleFields']);
+        /** @var AbstractRelations $fieldConfig */
+        $fieldConfig = $loader->build($fieldConfigData['fieldtype']);
+        $fieldConfig->setValues($fieldConfigData);
+
+        $visibleFields = null;
+        if(method_exists($fieldConfig, 'getVisibleFields')) {
+            $visibleFields = is_array($fieldConfig->getVisibleFields()) ? $fieldConfig->getVisibleFields() : explode(',', $fieldConfig->getVisibleFields());
+        }
 
         if (!$visibleFields) {
             $visibleFields = ['id', 'fullpath', 'classname'];
@@ -573,18 +584,16 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $classes = [];
         $allowClasses = true;
 
-        if ( $fieldConfig['assetsAllowed'] ?? false ) {
+        if ($fieldConfig->getAssetsAllowed()) {
             $allowedTypes[] = 'asset';
             $allowClasses = false;
 
-            if ( is_array($fieldConfig['assetTypes']) ) {
-                foreach ($fieldConfig['assetTypes'] as $subType) {
-                    $subTypes[] = $subType['assetTypes'];
-                }
+            foreach ($fieldConfig->getAssetTypes() as $subType) {
+                $subTypes[] = $subType['assetTypes'];
             }
         }
 
-        if ( $fieldConfig['documentsAllowed'] ?? false ) {
+        if ($fieldConfig->getDocumentsAllowed()) {
             $allowedTypes[] = 'document';
             $allowClasses = false;
 
@@ -595,16 +604,14 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             }
         }
 
-        if ( ($fieldConfig['objectsAllowed'] ?? false) || $fieldConfig['fieldtype'] != 'manyToOneRelation' ) {
+        if ($fieldConfig->getObjectsAllowed()) {
             $allowedTypes[] = 'object';
 
             if ( $allowClasses ) {
                 $subTypes = array_merge($subTypes, ['object', 'variant']);
 
-                if ( is_array($fieldConfig['classes']) ) {
-                    foreach ($fieldConfig['classes'] as $classData) {
-                        $classes[] = $classData['classes'];
-                    }
+                foreach ($fieldConfig->getClasses() as $classData) {
+                    $classes[] = $classData['classes'];
                 }
             }
         }

@@ -120,7 +120,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
 
         var href = {};
 
-        href.labelWidth = this.fieldConfig.labelWidth ? this.fieldConfig.labelWidth : 100;
+        var labelWidth = this.fieldConfig.labelWidth ? this.fieldConfig.labelWidth : 100;
 
         if (this.data) {
             if (this.data.path) {
@@ -138,6 +138,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             Object.assign(href, {
                 store: this.store,
                 autoLoadOnValue: true,
+                labelWidth: labelWidth,
                 forceSelection: true,
                 height: 'auto',
                 value: this.data.id,
@@ -246,7 +247,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
 
         var compositeCfg = {
             fieldLabel: this.fieldConfig.title,
-            labelWidth: href.labelWidth,
+            labelWidth: labelWidth,
             layout: 'hbox',
             items: items,
             componentCls: this.getWrapperClassNames(),
