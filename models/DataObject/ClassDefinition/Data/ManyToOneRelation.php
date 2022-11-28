@@ -641,4 +641,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
         return $this->getRelationFilterCondition($value, $operator, $name);
     }
+
+    public function getVisibleFields(): ?string
+    {
+        return 'fullpath';
+    }
 }
