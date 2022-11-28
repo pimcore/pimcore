@@ -77,14 +77,14 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @var string|null
      */
-    protected ?string $o_classId = null;
+    protected $o_classId = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected ?string $o_className = null;
+    protected $o_className = null;
 
     /**
      * @internal
@@ -396,7 +396,10 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
     public function getClassId(): ?string
     {
-        return $this->o_classId;
+        if(isset($this->o_classId)) {
+            return (string)$this->o_classId;
+        }
+        return null;
     }
 
     /**
