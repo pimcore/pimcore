@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -59,7 +60,7 @@ class UniversalEcommerce extends AbstractAnalyticsTracker implements CheckoutCom
      *
      * @return array
      */
-    protected function buildCheckoutCompleteCalls(Transaction $transaction, array $items)
+    protected function buildCheckoutCompleteCalls(Transaction $transaction, array $items): array
     {
         $calls = [
             'ecommerce:addTransaction' => [
@@ -82,7 +83,7 @@ class UniversalEcommerce extends AbstractAnalyticsTracker implements CheckoutCom
      *
      * @return array
      */
-    protected function transformTransaction(Transaction $transaction)
+    protected function transformTransaction(Transaction $transaction): array
     {
         return $this->filterNullValues(array_merge([
             'id' => $transaction->getId(),                     // Transaction ID. Required.
@@ -102,7 +103,7 @@ class UniversalEcommerce extends AbstractAnalyticsTracker implements CheckoutCom
      *
      * @return array
      */
-    protected function transformProductAction(ProductAction $item)
+    protected function transformProductAction(ProductAction $item): array
     {
         return $this->filterNullValues(array_merge([
             'id' => $item->getTransactionId(),                    // Transaction ID. Required.

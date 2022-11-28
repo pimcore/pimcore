@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,10 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 
 class UrlResponse extends AbstractResponse
 {
-    /**
-     * @var string
-     */
-    protected $url;
+    protected string $url;
 
     /**
      * UrlResponse constructor.
@@ -36,9 +34,6 @@ class UrlResponse extends AbstractResponse
         $this->url = $url;
     }
 
-    /**
-     * @return string
-     */
     public function getUrl(): string
     {
         return $this->url;

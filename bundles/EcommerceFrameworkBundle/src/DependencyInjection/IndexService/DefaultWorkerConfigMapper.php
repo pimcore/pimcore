@@ -34,7 +34,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\OptimizedMysql;
  */
 class DefaultWorkerConfigMapper
 {
-    private $mapping = [
+    private array $mapping = [
         OptimizedMysqlConfig::class => OptimizedMysql::class,
         DefaultMysqlConfig::class => DefaultMysql::class,
         DefaultMysqlSubTenantConfig::class => DefaultMysql::class,

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -36,25 +37,17 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
      *
      * @return bool
      */
-    public function isValidOrderKey($key)
+    public function isValidOrderKey(string $key): bool
     {
         return in_array($key, ['userId', 'name', 'creationDateTimestamp', 'modificationDateTimestamp']);
     }
 
-    /**
-     * @return array
-     */
-    public function getCarts()
+    public function getCarts(): array
     {
         return $this->getData();
     }
 
-    /**
-     * @param array $carts
-     *
-     * @return $this
-     */
-    public function setCarts($carts)
+    public function setCarts(array $carts): static
     {
         return $this->setData($carts);
     }

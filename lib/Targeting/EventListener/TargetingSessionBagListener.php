@@ -42,7 +42,7 @@ class TargetingSessionBagListener implements EventSubscriberInterface
      *
      * @return array
      */
-    public static function getSubscribedEvents()//: array
+    public static function getSubscribedEvents(): array
     {
         return [
             FullPageCacheEvents::IGNORED_SESSION_KEYS => 'configureIgnoredSessionKeys',
@@ -52,9 +52,6 @@ class TargetingSessionBagListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param RequestEvent $event
-     */
     public function onKernelRequest(RequestEvent $event)
     {
         if (!$this->isEnabled()) {
@@ -75,10 +72,6 @@ class TargetingSessionBagListener implements EventSubscriberInterface
         $this->configure($session);
     }
 
-    /**
-     * @param SessionInterface $session
-     *
-     */
     public function configure(SessionInterface $session)
     {
         $sessionBag = new AttributeBag('_' . self::TARGETING_BAG_SESSION);

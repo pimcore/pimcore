@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -46,11 +47,10 @@ use Pimcore\Tests\Support\Test\EcommerceTestCase;
 class AbstractRuleTest extends EcommerceTestCase
 {
     /**
-     * @return PricingManagerInterface
      *
      * @throws \Codeception\Exception\ModuleException
      */
-    protected function buildPricingManager($rules)
+    protected function buildPricingManager($rules): PricingManagerInterface
     {
         $rules = $this->buildRules($rules);
 
@@ -73,24 +73,12 @@ class AbstractRuleTest extends EcommerceTestCase
         ]);
     }
 
-    /**
-     * @param int|float|string|Decimal $value
-     *
-     * @return PriceInterface
-     *
-     * @throws \TypeError
-     */
-    protected function createPrice($value)
+    protected function createPrice(float|int|string|Decimal $value): Price|PriceInterface
     {
         return new Price(Decimal::create($value), new Currency('EUR'));
     }
 
-    /**
-     * @param CartInterface $cart
-     *
-     * @return CartPriceCalculator
-     */
-    protected function buildCartCalculator(CartInterface $cart, PricingManagerInterface $pricingManager, $withModificators = false)
+    protected function buildCartCalculator(CartInterface $cart, PricingManagerInterface $pricingManager, $withModificators = false): CartPriceCalculator
     {
         $calculator = new CartPriceCalculator($this->buildEnvironment(), $cart);
 
@@ -104,10 +92,7 @@ class AbstractRuleTest extends EcommerceTestCase
         return $calculator;
     }
 
-    /**
-     * @return CartInterface
-     */
-    protected function setUpCart(PricingManagerInterface $pricingManager, $withModificators = false)
+    protected function setUpCart(PricingManagerInterface $pricingManager, bool $withModificators = false): SessionCart|CartInterface|\PHPUnit_Framework_MockObject_Stub
     {
         $sessionBag = $this->buildSession()->getBag(SessionBagListener::ATTRIBUTE_BAG_CART);
 
@@ -138,7 +123,7 @@ class AbstractRuleTest extends EcommerceTestCase
      *
      * @throws \TypeError
      */
-    protected function setUpProduct(int $id, float $grossPrice, PricingManagerInterface $pricingManager = null, $categories = [], $taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): CheckoutableInterface
+    protected function setUpProduct(int $id, float $grossPrice, PricingManagerInterface $pricingManager = null, array $categories = [], array $taxes = [], string $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): CheckoutableInterface
     {
         $grossPrice = Decimal::create($grossPrice);
 
@@ -190,7 +175,7 @@ class AbstractRuleTest extends EcommerceTestCase
         return $product;
     }
 
-    protected function doAssertions($ruleDefinitions, $productDefinitions, $tests)
+    protected function doAssertions($ruleDefinitions, $productDefinitions, $tests): SessionCart|CartInterface|\PHPUnit_Framework_MockObject_Stub
     {
         $pricingManager = $this->buildPricingManager($ruleDefinitions);
 
@@ -273,7 +258,7 @@ class AbstractRuleTest extends EcommerceTestCase
         }
     }
 
-    protected function getShippingModificator($modificators)
+    protected function getShippingModificator($modificators): ShippingInterface
     {
         foreach ($modificators as $modificator) {
             if ($modificator instanceof ShippingInterface) {
@@ -289,7 +274,7 @@ class AbstractRuleTest extends EcommerceTestCase
      *
      * @return ActionInterface[]
      */
-    protected function buildActions($definitions)
+    protected function buildActions(array $definitions): array
     {
         $elements = [];
         foreach ($definitions as $definition) {
@@ -309,12 +294,7 @@ class AbstractRuleTest extends EcommerceTestCase
         return $elements;
     }
 
-    /**
-     * @param mixed $conditionDefinitions
-     *
-     * @return ConditionInterface
-     */
-    protected function buildConditions($conditionDefinitions)
+    protected function buildConditions(mixed $conditionDefinitions): mixed
     {
         if ($conditionDefinitions instanceof ConditionInterface) {
             return $conditionDefinitions;
@@ -352,7 +332,7 @@ class AbstractRuleTest extends EcommerceTestCase
      *
      * @return RuleInterface[]
      */
-    protected function buildRules($ruleDefinitions)
+    protected function buildRules(array $ruleDefinitions): array
     {
         $rules = [];
 
@@ -383,7 +363,7 @@ class AbstractRuleTest extends EcommerceTestCase
      *
      * @return AbstractProduct
      */
-    protected function mockProductForCondition($id, $parentId = null)
+    protected function mockProductForCondition(int $id, int $parentId = null): AbstractProduct
     {
         $product = $this->getMockBuilder(AbstractProduct::class)->getMock();
         $product->method('getId')->willReturn($id);

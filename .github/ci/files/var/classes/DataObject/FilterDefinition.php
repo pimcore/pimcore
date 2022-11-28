@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Inheritance: yes
@@ -26,6 +27,7 @@ namespace Pimcore\Model\DataObject;
 
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\DataObject\PreGetValueHookInterface;
+use Pimcore\Model\Element\AbstractElement;
 
 /**
 * @method static \Pimcore\Model\DataObject\FilterDefinition\Listing getList(array $config = [])
@@ -46,27 +48,24 @@ class FilterDefinition extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\Ab
 {
 protected $o_classId = "EF_FD";
 protected $o_className = "FilterDefinition";
-protected $pageLimit;
-protected $defaultOrderByInheritance;
-protected $defaultOrderBy;
-protected $orderByAsc;
-protected $orderByDesc;
-protected $ajaxReload;
-protected $infiniteScroll;
-protected $limitOnFirstLoad;
-protected $conditionsInheritance;
-protected $conditions;
-protected $filtersInheritance;
-protected $filters;
-protected $crossSellingCategory;
-protected $similarityFieldsInheritance;
-protected $similarityFields;
+protected ?float $pageLimit = null;
+protected ?string $defaultOrderByInheritance = null;
+protected ?Fieldcollection $defaultOrderBy = null;
+protected ?string $orderByAsc = null;
+protected ?string $orderByDesc = null;
+protected ?bool $ajaxReload = null;
+protected ?bool $infiniteScroll = null;
+protected ?float $limitOnFirstLoad = null;
+protected ?string $conditionsInheritance = null;
+protected ?Fieldcollection $conditions = null;
+protected ?string $filtersInheritance = null;
+protected ?Fieldcollection $filters = null;
+protected \Pimcore\Model\Element\AbstractElement|ProductCategory|null $crossSellingCategory;
+protected ?string $similarityFieldsInheritance = null;
+protected ?Fieldcollection $similarityFields = null;
 
 
-/**
-* @param array $values
-* @return static
-*/
+
 public static function create(array $values = []): static
 {
 	$object = new static();
@@ -76,9 +75,9 @@ public static function create(array $values = []): static
 
 /**
 * Get pageLimit - Results per Page
-* @return float|null
+* @return float|Fieldcollection|null
 */
-public function getPageLimit(): ?float
+public function getPageLimit(): Fieldcollection|float|null
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("pageLimit");
@@ -119,9 +118,9 @@ public function setPageLimit(?float $pageLimit): static
 
 /**
 * Get defaultOrderByInheritance - inherit Default OrderBy
-* @return string|null
+* @return Fieldcollection|string|null
 */
-public function getDefaultOrderByInheritance(): ?string
+public function getDefaultOrderByInheritance(): Fieldcollection|string|null
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("defaultOrderByInheritance");
@@ -159,10 +158,7 @@ public function setDefaultOrderByInheritance(?string $defaultOrderByInheritance)
 	return $this;
 }
 
-/**
-* @return \Pimcore\Model\DataObject\Fieldcollection|null
-*/
-public function getDefaultOrderBy()
+    public function getDefaultOrderBy(): ?Fieldcollection
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("defaultOrderBy");
@@ -190,9 +186,9 @@ public function setDefaultOrderBy(?\Pimcore\Model\DataObject\Fieldcollection $de
 
 /**
 * Get orderByAsc - OrderBy
-* @return string|null
+* @return Fieldcollection|string|null
 */
-public function getOrderByAsc(): ?string
+public function getOrderByAsc(): Fieldcollection|string|null
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("orderByAsc");
@@ -232,9 +228,9 @@ public function setOrderByAsc(?string $orderByAsc): static
 
 /**
 * Get orderByDesc - OrderBy Descending
-* @return string|null
+* @return Fieldcollection|string|null
 */
-public function getOrderByDesc(): ?string
+public function getOrderByDesc(): Fieldcollection|string|null
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("orderByDesc");
@@ -274,9 +270,9 @@ public function setOrderByDesc(?string $orderByDesc): static
 
 /**
 * Get ajaxReload - ajaxReload
-* @return bool|null
+* @return bool|Fieldcollection|null
 */
-public function getAjaxReload(): ?bool
+public function getAjaxReload(): Fieldcollection|bool|null
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("ajaxReload");
@@ -316,9 +312,9 @@ public function setAjaxReload(?bool $ajaxReload): static
 
 /**
 * Get infiniteScroll - Infinite Scroll
-* @return bool|null
+* @return bool|Fieldcollection|null
 */
-public function getInfiniteScroll(): ?bool
+public function getInfiniteScroll(): Fieldcollection|bool|null
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("infiniteScroll");
@@ -358,9 +354,9 @@ public function setInfiniteScroll(?bool $infiniteScroll): static
 
 /**
 * Get limitOnFirstLoad - Limit on First Load
-* @return float|null
+* @return float|Fieldcollection|null
 */
-public function getLimitOnFirstLoad(): ?float
+public function getLimitOnFirstLoad(): Fieldcollection|float|null
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("limitOnFirstLoad");
@@ -401,9 +397,9 @@ public function setLimitOnFirstLoad(?float $limitOnFirstLoad): static
 
 /**
 * Get conditionsInheritance - inherit Conditions
-* @return string|null
+* @return Fieldcollection|string|null
 */
-public function getConditionsInheritance(): ?string
+public function getConditionsInheritance(): Fieldcollection|string|null
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("conditionsInheritance");
@@ -441,10 +437,7 @@ public function setConditionsInheritance(?string $conditionsInheritance): static
 	return $this;
 }
 
-/**
-* @return \Pimcore\Model\DataObject\Fieldcollection|null
-*/
-public function getConditions()
+    public function getConditions(): ?Fieldcollection
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("conditions");
@@ -472,9 +465,9 @@ public function setConditions(?\Pimcore\Model\DataObject\Fieldcollection $condit
 
 /**
 * Get filtersInheritance - inherit Filters
-* @return string|null
+* @return Fieldcollection|string|null
 */
-public function getFiltersInheritance(): ?string
+public function getFiltersInheritance(): Fieldcollection|string|null
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("filtersInheritance");
@@ -512,10 +505,7 @@ public function setFiltersInheritance(?string $filtersInheritance): static
 	return $this;
 }
 
-/**
-* @return \Pimcore\Model\DataObject\Fieldcollection|null
-*/
-public function getFilters()
+    public function getFilters(): ?Fieldcollection
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("filters");
@@ -543,9 +533,9 @@ public function setFilters(?\Pimcore\Model\DataObject\Fieldcollection $filters):
 
 /**
 * Get crossSellingCategory - Base category for recommendations
-* @return \Pimcore\Model\DataObject\ProductCategory|null
+* @return Fieldcollection|ProductCategory|\Pimcore\Model\Element\AbstractElement|\Pimcore\Model\Element\ElementInterface|null
 */
-public function getCrossSellingCategory(): ?\Pimcore\Model\Element\AbstractElement
+public function getCrossSellingCategory(): Fieldcollection|ProductCategory|\Pimcore\Model\Element\ElementInterface|AbstractElement|null
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("crossSellingCategory");
@@ -571,11 +561,11 @@ public function getCrossSellingCategory(): ?\Pimcore\Model\Element\AbstractEleme
 	return $data;
 }
 
-/**
-* Set crossSellingCategory - Base category for recommendations
-* @param \Pimcore\Model\DataObject\ProductCategory|null $crossSellingCategory
-* @return $this
-*/
+    /**
+     * Set crossSellingCategory - Base category for recommendations
+     * @param AbstractElement|null $crossSellingCategory
+     * @return $this
+     */
 public function setCrossSellingCategory(?\Pimcore\Model\Element\AbstractElement $crossSellingCategory): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation $fd */
@@ -597,9 +587,9 @@ public function setCrossSellingCategory(?\Pimcore\Model\Element\AbstractElement 
 
 /**
 * Get similarityFieldsInheritance - inherit SimilarityFields
-* @return string|null
+* @return Fieldcollection|string|null
 */
-public function getSimilarityFieldsInheritance(): ?string
+public function getSimilarityFieldsInheritance(): Fieldcollection|string|null
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("similarityFieldsInheritance");
@@ -637,10 +627,7 @@ public function setSimilarityFieldsInheritance(?string $similarityFieldsInherita
 	return $this;
 }
 
-/**
-* @return \Pimcore\Model\DataObject\Fieldcollection|null
-*/
-public function getSimilarityFields()
+    public function getSimilarityFields(): ?Fieldcollection
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("similarityFields");

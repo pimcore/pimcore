@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,10 +32,7 @@ use Pimcore\Tests\Support\Test\EcommerceTestCase;
 
 class TaxCalculationTest extends EcommerceTestCase
 {
-    /**
-     * @var TaxCalculationService
-     */
-    private $calculationService;
+    private TaxCalculationService $calculationService;
 
     /**
      * {@inheritdoc}

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,24 +26,19 @@ class VoucherToken implements ConditionInterface
     /**
      * @var int[]
      */
-    protected $whiteListIds = [];
+    protected array $whiteListIds = [];
 
     /**
      * @var \stdClass[]
      */
-    protected $whiteList = [];
+    protected array $whiteList = [];
 
     /**
      * @var string[]
      */
-    protected $errorMessages = [];
+    protected array $errorMessages = [];
 
-    /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return bool
-     */
-    public function check(EnvironmentInterface $environment)
+    public function check(EnvironmentInterface $environment): bool
     {
         if (!($cart = $environment->getCart())) {
             return false;
@@ -61,7 +57,7 @@ class VoucherToken implements ConditionInterface
         return false;
     }
 
-    public function checkVoucherCode($code)
+    public function checkVoucherCode($code): bool
     {
         if (in_array(VoucherServiceToken::getByCode($code)->getVoucherSeriesId(), $this->whiteListIds)) {
             return true;
@@ -70,10 +66,7 @@ class VoucherToken implements ConditionInterface
         return false;
     }
 
-    /**
-     * @return string
-     */
-    public function toJSON()
+    public function toJSON(): string
     {
         // basic
         $json = [
@@ -93,12 +86,7 @@ class VoucherToken implements ConditionInterface
         return json_encode($json);
     }
 
-    /**
-     * @param string $string
-     *
-     * @return ConditionInterface
-     */
-    public function fromJSON($string)
+    public function fromJSON(string $string): ConditionInterface
     {
         $json = json_decode($string);
 
@@ -121,12 +109,7 @@ class VoucherToken implements ConditionInterface
         return $this;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return Concrete|null
-     */
-    protected function loadSeries($id)
+    protected function loadSeries(int $id): ?Concrete
     {
         return Concrete::getById($id);
     }
@@ -134,7 +117,7 @@ class VoucherToken implements ConditionInterface
     /**
      * @return int[]
      */
-    public function getWhiteListIds()
+    public function getWhiteListIds(): array
     {
         return $this->whiteListIds;
     }
@@ -142,7 +125,7 @@ class VoucherToken implements ConditionInterface
     /**
      * @param int[] $whiteListIds
      */
-    public function setWhiteListIds($whiteListIds)
+    public function setWhiteListIds(array $whiteListIds)
     {
         $this->whiteListIds = $whiteListIds;
     }
@@ -150,7 +133,7 @@ class VoucherToken implements ConditionInterface
     /**
      * @return \stdClass[]
      */
-    public function getWhiteList()
+    public function getWhiteList(): array
     {
         return $this->whiteList;
     }
@@ -158,7 +141,7 @@ class VoucherToken implements ConditionInterface
     /**
      * @param \stdClass[] $whiteList
      */
-    public function setWhiteList($whiteList)
+    public function setWhiteList(array $whiteList)
     {
         $this->whiteList = $whiteList;
     }
@@ -179,11 +162,6 @@ class VoucherToken implements ConditionInterface
         $this->errorMessages = $errorMessages;
     }
 
-    /**
-     * @param string $locale
-     *
-     * @return string
-     */
     public function getErrorMessage(string $locale): string
     {
         return $this->errorMessages[$locale];

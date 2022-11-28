@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Fields Summary:
@@ -19,15 +20,15 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class VoucherTokenTypePattern extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType
 {
-protected $type = "VoucherTokenTypePattern";
-protected $count;
-protected $prefix;
-protected $length;
-protected $characterType;
-protected $separator;
-protected $separatorCount;
-protected $allowOncePerCart;
-protected $onlyTokenPerCart;
+protected string $type = "VoucherTokenTypePattern";
+protected ?int $count;
+protected ?string $prefix;
+protected ?int $length;
+protected ?string $characterType;
+protected ?string $separator;
+protected ?int $separatorCount;
+protected ?bool $allowOncePerCart;
+protected ?bool $onlyTokenPerCart;
 
 
 /**

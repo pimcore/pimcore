@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,7 +16,6 @@
 
 namespace Pimcore\Tests\Support\Test;
 
-use Pimcore\Tests\Support\Helper\DataType\Calculator;
 use Pimcore\Tests\Support\ModelTester;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -27,10 +27,7 @@ use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
  */
 abstract class ModelTestCase extends TestCase
 {
-    /**
-     * @var SessionInterface
-     */
-    private $session;
+    private ?SessionInterface $session = null;
 
     /**
      * {@inheritdoc}
@@ -38,8 +35,6 @@ abstract class ModelTestCase extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        \Pimcore::getContainer()->set('test.calculatorservice', new Calculator());
 
         if ($this->needsDb()) {
             $this->setUpTestClasses();
@@ -56,7 +51,7 @@ abstract class ModelTestCase extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function needsDb()
+    protected function needsDb(): bool
     {
         return true;
     }

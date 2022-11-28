@@ -23,10 +23,7 @@ use Symfony\Component\Mime\Part\TextPart;
 
 class MailTest extends TestCase
 {
-    /**
-     * @var array
-     */
-    private $defaultSettings = [
+    private array $defaultSettings = [
         'from' => 'jane@doe.com',
         'to' => 'john@doe.com',
         'cc' => 'john-cc@doe.com',

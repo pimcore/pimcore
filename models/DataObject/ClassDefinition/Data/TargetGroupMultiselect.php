@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,7 +29,7 @@ class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multi
      *
      * @var string
      */
-    public $fieldtype = 'targetGroupMultiselect';
+    public string $fieldtype = 'targetGroupMultiselect';
 
     /**
      * @internal
@@ -69,11 +70,7 @@ class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multi
         return $obj;
     }
 
-    /**
-     * @return $this
-     */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()// : static
+    public function jsonSerialize(): static
     {
         if (Service::doRemoveDynamicOptions()) {
             $this->options = null;

@@ -22,15 +22,9 @@ use Psr\Container\ContainerInterface as PsrContainerInterface;
 
 abstract class NameServiceLocator
 {
-    /**
-     * @var PsrContainerInterface
-     */
-    protected $locator;
+    protected PsrContainerInterface $locator;
 
-    /**
-     * @var string
-     */
-    protected $defaultName = 'default';
+    protected string $defaultName = 'default';
 
     public function __construct(PsrContainerInterface $locator)
     {
@@ -48,7 +42,7 @@ abstract class NameServiceLocator
         return $this->locator->get($name);
     }
 
-    protected function resolveName(string $name = null)
+    protected function resolveName(string $name = null): string
     {
         if (empty($name)) {
             return $this->defaultName;

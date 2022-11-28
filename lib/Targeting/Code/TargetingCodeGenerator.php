@@ -34,20 +34,11 @@ class TargetingCodeGenerator
 
     const BLOCK_AFTER_SCRIPT_TAG = 'afterScriptTag';
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @var EngineInterface
-     */
-    private $templatingEngine;
+    private EngineInterface $templatingEngine;
 
-    /**
-     * @var array
-     */
-    private $blocks = [
+    private array $blocks = [
         self::BLOCK_BEFORE_SCRIPT_TAG,
         self::BLOCK_BEFORE_SCRIPT,
         self::BLOCK_AFTER_SCRIPT,

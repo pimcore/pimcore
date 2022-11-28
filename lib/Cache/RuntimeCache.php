@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,15 +20,9 @@ class RuntimeCache extends \ArrayObject
 {
     private const SERVICE_ID = __CLASS__;
 
-    /**
-     * @var self|null
-     */
-    protected static $tempInstance;
+    protected static ?RuntimeCache $tempInstance = null;
 
-    /**
-     * @var self|null
-     */
-    protected static $instance;
+    protected static ?RuntimeCache $instance = null;
 
     /**
      * Retrieves the default registry instance.
@@ -89,7 +84,7 @@ class RuntimeCache extends \ArrayObject
      *
      * @throws \Exception if no entry is registered for $index.
      */
-    public static function get($index)
+    public static function get(string $index): mixed
     {
         $instance = self::getInstance();
 
@@ -113,7 +108,7 @@ class RuntimeCache extends \ArrayObject
      *
      * @return void
      */
-    public static function set($index, $value)
+    public static function set(string $index, mixed $value): void
     {
         $instance = self::getInstance();
         $instance->offsetSet($index, $value);
@@ -123,11 +118,11 @@ class RuntimeCache extends \ArrayObject
      * Returns TRUE if the $index is a named value in the registry,
      * or FALSE if $index was not found in the registry.
      *
-     * @param  string $index
+     * @param string $index
      *
      * @return bool
      */
-    public static function isRegistered($index)
+    public static function isRegistered(string $index): bool
     {
         $instance = self::getInstance();
 
@@ -141,7 +136,7 @@ class RuntimeCache extends \ArrayObject
      * @param array $array data array
      * @param int $flags ArrayObject flags
      */
-    public function __construct($array = [], $flags = parent::ARRAY_AS_PROPS)
+    public function __construct($array = [], int $flags = parent::ARRAY_AS_PROPS)
     {
         parent::__construct($array, $flags);
     }
@@ -160,7 +155,7 @@ class RuntimeCache extends \ArrayObject
      * @param mixed $data
      * @param string $id
      */
-    public static function save($data, $id)
+    public static function save(mixed $data, string $id)
     {
         self::set($id, $data);
     }
@@ -172,15 +167,12 @@ class RuntimeCache extends \ArrayObject
      *
      * @return mixed
      */
-    public static function load($id)
+    public static function load(string $id): mixed
     {
         return self::get($id);
     }
 
-    /**
-     * @param array $keepItems
-     */
-    public static function clear($keepItems = [])
+    public static function clear(array $keepItems = [])
     {
         self::$instance = null;
         $newInstance = new self();

@@ -349,7 +349,7 @@ class DecimalTest extends TestCase
      * @param string $operation
      * @param array ...$arguments
      */
-    public function testImmutableOperations(int $input, int $expected, $operation, ...$arguments)
+    public function testImmutableOperations(int $input, int $expected, string $operation, ...$arguments)
     {
         $value = Decimal::create($input);
 
@@ -666,10 +666,6 @@ class DecimalTest extends TestCase
             [
                 15.00,
                 2.00,
-            ],
-            [
-                '15.00',
-                '2',
             ],
             [
                 Decimal::fromRawValue(150000),

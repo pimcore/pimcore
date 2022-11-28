@@ -36,7 +36,7 @@ class TaxCalculationService
      *
      * @throws UnsupportedException
      */
-    public function updateTaxes(PriceInterface $price, string $calculationMode = self::CALCULATION_FROM_NET)
+    public function updateTaxes(PriceInterface $price, string $calculationMode = self::CALCULATION_FROM_NET): PriceInterface
     {
         switch ($calculationMode) {
             case self::CALCULATION_FROM_NET:
@@ -120,7 +120,6 @@ class TaxCalculationService
             return $price;
         }
 
-        /** @var TaxEntry[] $reverseTaxEntries */
         $reverseTaxEntries = array_reverse($taxEntries);
 
         switch ($price->getTaxEntryCombinationMode()) {

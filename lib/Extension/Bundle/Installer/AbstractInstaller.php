@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,10 +22,7 @@ use Symfony\Component\Console\Output\Output;
 
 class AbstractInstaller implements InstallerInterface
 {
-    /**
-     * @var BufferedOutput
-     */
-    protected $output;
+    protected BufferedOutput $output;
 
     public function __construct()
     {
@@ -48,7 +46,7 @@ class AbstractInstaller implements InstallerInterface
     /**
      * {@inheritdoc}
      */
-    public function isInstalled()
+    public function isInstalled(): bool
     {
         return true;
     }
@@ -56,7 +54,7 @@ class AbstractInstaller implements InstallerInterface
     /**
      * {@inheritdoc}
      */
-    public function canBeInstalled()
+    public function canBeInstalled(): bool
     {
         return false;
     }
@@ -64,7 +62,7 @@ class AbstractInstaller implements InstallerInterface
     /**
      * {@inheritdoc}
      */
-    public function canBeUninstalled()
+    public function canBeUninstalled(): bool
     {
         return false;
     }
@@ -72,7 +70,7 @@ class AbstractInstaller implements InstallerInterface
     /**
      * {@inheritdoc}
      */
-    public function needsReloadAfterInstall()
+    public function needsReloadAfterInstall(): bool
     {
         return false;
     }

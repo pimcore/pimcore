@@ -58,7 +58,7 @@ interface TargetingDocumentInterface extends ElementInterface
      *
      * @return int|null
      */
-    public function getUseTargetGroup();
+    public function getUseTargetGroup(): ?int;
 
     /**
      * Checks if the document has targeting specific elements

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,7 +30,7 @@ class GeneratePagePreviewHandler
     {
     }
 
-    public function __invoke(GeneratePagePreviewMessage $message)
+    public function __invoke(GeneratePagePreviewMessage $message): void
     {
         try {
             Service::generatePagePreview($message->getPageId(), null, $message->getHostUrl());

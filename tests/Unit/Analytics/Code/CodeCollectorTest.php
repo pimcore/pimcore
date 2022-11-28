@@ -24,14 +24,11 @@ use Pimcore\Tests\Support\Test\TestCase;
 
 class CodeCollectorTest extends TestCase
 {
-    private $validBlocks = ['A', 'B'];
+    private array $validBlocks = ['A', 'B'];
 
-    private $defaultBlock = 'A';
+    private string $defaultBlock = 'A';
 
-    /**
-     * @var CodeCollector
-     */
-    private $collector;
+    private CodeCollector $collector;
 
     protected function setUp(): void
     {

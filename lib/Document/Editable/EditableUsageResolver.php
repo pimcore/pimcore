@@ -29,20 +29,11 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class EditableUsageResolver
 {
-    /**
-     * @var UsageRecorderSubscriber|null
-     */
-    protected $subscriber;
+    protected ?UsageRecorderSubscriber $subscriber = null;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
+    protected EventDispatcherInterface $dispatcher;
 
-    /**
-     * @var DocumentRenderer
-     */
-    protected $renderer;
+    protected DocumentRenderer $renderer;
 
     public function __construct(EventDispatcherInterface $eventDispatcher, DocumentRenderer $documentRenderer)
     {
@@ -50,12 +41,7 @@ class EditableUsageResolver
         $this->renderer = $documentRenderer;
     }
 
-    /**
-     * @param Document\PageSnippet $document
-     *
-     * @return array
-     */
-    public function getUsedEditableNames(Document\PageSnippet $document)
+    public function getUsedEditableNames(Document\PageSnippet $document): array
     {
         $this->registerEventSubscriber();
 
@@ -74,7 +60,7 @@ class EditableUsageResolver
         return $names;
     }
 
-    protected function registerEventSubscriber()
+    protected function registerEventSubscriber(): void
     {
         if (!$this->subscriber) {
             $this->subscriber = new UsageRecorderSubscriber();
@@ -82,7 +68,7 @@ class EditableUsageResolver
         }
     }
 
-    protected function unregisterEventSubscriber()
+    protected function unregisterEventSubscriber(): void
     {
         if ($this->subscriber) {
             $this->dispatcher->removeSubscriber($this->subscriber);

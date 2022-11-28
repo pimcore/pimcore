@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,10 +24,5 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
  */
 interface ProductActionInterface
 {
-    /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return ActionInterface
-     */
-    public function executeOnProduct(EnvironmentInterface $environment);
+    public function executeOnProduct(EnvironmentInterface $environment): ActionInterface;
 }

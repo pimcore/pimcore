@@ -33,7 +33,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById($id)
+    public function getById(int $id)
     {
         $data = $this->db->fetchAssociative('SELECT * FROM notes WHERE id = ?', [$id]);
 
@@ -88,7 +88,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function save()
+    public function save(): bool
     {
         $version = $this->model->getObjectVars();
 

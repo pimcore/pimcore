@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -438,14 +439,14 @@ class Model extends AbstractDefinitionHelper
 
             $panel->addChild($this->createDataChild('gender'));
 
-            $panel->addChild($this->createDataChild('geopoint', 'point', false, false));
-            $panel->addChild($this->createDataChild('geobounds', 'bounds', false, false));
-            $panel->addChild($this->createDataChild('geopolygon', 'polygon', false, false));
-            $panel->addChild($this->createDataChild('geopolyline', 'polyline', false, false));
+            $panel->addChild($this->createDataChild('geopoint', 'point', false));
+            $panel->addChild($this->createDataChild('geobounds', 'bounds', false));
+            $panel->addChild($this->createDataChild('geopolygon', 'polygon', false));
+            $panel->addChild($this->createDataChild('geopolyline', 'polyline', false));
 
-            $panel->addChild($this->createDataChild('indexFieldSelection', 'indexFieldSelection', false, false));
-            $panel->addChild($this->createDataChild('indexFieldSelectionCombo', 'indexFieldSelectionCombo', false, false));
-            $panel->addChild($this->createDataChild('indexFieldSelectionField', 'indexFieldSelectionField', false, false));
+            $panel->addChild($this->createDataChild('indexFieldSelection', 'indexFieldSelection', false));
+            $panel->addChild($this->createDataChild('indexFieldSelectionCombo', 'indexFieldSelectionCombo', false));
+            $panel->addChild($this->createDataChild('indexFieldSelectionField', 'indexFieldSelectionField', false));
 
             $panel->addChild($this->createDataChild('imageGallery'));
             $panel->addChild($this->createDataChild('input'));
@@ -476,8 +477,8 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('manyToManyObjectRelation', 'objects')
                 ->setClasses([]));
 
-            $panel->addChild($this->createDataChild('newsletterActive', 'newsletterActive', false, false));
-            $panel->addChild($this->createDataChild('newsletterConfirmed', 'newsletterConfirmed', false, false));
+            $panel->addChild($this->createDataChild('newsletterActive', 'newsletterActive', false));
+            $panel->addChild($this->createDataChild('newsletterConfirmed', 'newsletterConfirmed', false));
 
             $panel->addChild($this->createDataChild('inputQuantityValue'));
             $panel->addChild($this->createDataChild('quantityValue'));
@@ -496,7 +497,7 @@ class Model extends AbstractDefinitionHelper
             $passwordField->setAlgorithm(ClassDefinition\Data\Password::HASH_FUNCTION_PASSWORD_HASH);
             $panel->addChild($passwordField);
 
-            $panel->addChild($this->createDataChild('rgbaColor', 'rgbaColor', false, false));
+            $panel->addChild($this->createDataChild('rgbaColor', 'rgbaColor', false));
 
             $panel->addChild($this->createDataChild('select')->setOptions([
                 ['key' => 'Selection 1', 'value' => '1'],
@@ -509,7 +510,7 @@ class Model extends AbstractDefinitionHelper
 
             $panel->addChild($this->createDataChild('wysiwyg'));
 
-            $panel->addChild($this->createDataChild('video', 'video', false, false));
+            $panel->addChild($this->createDataChild('video', 'video', false));
 
             $panel->addChild($this->createDataChild('multiselect')->setOptions([
                 ['key' => 'Katze', 'value' => 'cat'],
@@ -530,7 +531,7 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('checkbox'));
             $panel->addChild($this->createDataChild('booleanSelect'));
             $panel->addChild($this->createDataChild('table'));
-            $panel->addChild($this->createDataChild('structuredTable', 'structuredtable', false, false)
+            $panel->addChild($this->createDataChild('structuredTable', 'structuredtable', false)
                 ->setCols([
                     ['position' => 1, 'key' => 'col1', 'type' => 'number', 'label' => 'collabel1'],
                     ['position' => 2, 'key' => 'col2', 'type' => 'text', 'label' => 'collabel2'],

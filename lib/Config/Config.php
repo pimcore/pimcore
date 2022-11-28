@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -50,14 +51,14 @@ final class Config implements Countable, Iterator, ArrayAccess
      *
      * @var bool
      */
-    protected $allowModifications;
+    protected bool $allowModifications;
 
     /**
      * Data within the configuration.
      *
      * @var array
      */
-    protected $data = [];
+    protected array $data = [];
 
     /**
      * Used when unsetting values during iteration to ensure we do not skip
@@ -65,7 +66,7 @@ final class Config implements Countable, Iterator, ArrayAccess
      *
      * @var bool
      */
-    protected $skipNextIteration;
+    protected bool $skipNextIteration;
 
     /**
      * Constructor.
@@ -74,9 +75,9 @@ final class Config implements Countable, Iterator, ArrayAccess
      * on construction.
      *
      * @param  array   $array
-     * @param  bool $allowModifications
+     * @param bool $allowModifications
      */
-    public function __construct(array $array, $allowModifications = false)
+    public function __construct(array $array, bool $allowModifications = false)
     {
         $this->allowModifications = (bool) $allowModifications;
 
@@ -92,12 +93,12 @@ final class Config implements Countable, Iterator, ArrayAccess
     /**
      * Retrieve a value and return $default if there is no element set.
      *
-     * @param  string $name
-     * @param  mixed  $default
+     * @param string $name
+     * @param mixed $default
      *
      * @return mixed
      */
-    public function get($name, $default = null)
+    public function get(string $name, mixed $default = null): mixed
     {
         if (array_key_exists($name, $this->data)) {
             return $this->data[$name];
@@ -109,11 +110,11 @@ final class Config implements Countable, Iterator, ArrayAccess
     /**
      * Magic function so that $obj->value will work.
      *
-     * @param  string $name
+     * @param string $name
      *
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         return $this->get($name);
     }
@@ -124,14 +125,14 @@ final class Config implements Countable, Iterator, ArrayAccess
      * Only allow setting of a property if $allowModifications  was set to true
      * on construction. Otherwise, throw an exception.
      *
-     * @param  string|null $name
+     * @param string|null $name
      * @param  mixed  $value
      *
      * @return void
      *
      * @throws Exception
      */
-    public function __set($name, $value)
+    public function __set(?string $name, mixed $value)
     {
         if ($this->allowModifications) {
             if (is_array($value)) {
@@ -174,7 +175,7 @@ final class Config implements Countable, Iterator, ArrayAccess
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         $array = [];
         $data = $this->data;
@@ -193,11 +194,11 @@ final class Config implements Countable, Iterator, ArrayAccess
     /**
      * isset() overloading
      *
-     * @param  string $name
+     * @param string $name
      *
      * @return bool
      */
-    public function __isset($name)
+    public function __isset(string $name)
     {
         return isset($this->data[$name]);
     }
@@ -205,13 +206,13 @@ final class Config implements Countable, Iterator, ArrayAccess
     /**
      * unset() overloading
      *
-     * @param  string $name
+     * @param string $name
      *
      * @return void
      *
      * @throws Exception
      */
-    public function __unset($name)
+    public function __unset(string $name)
     {
         if (! $this->allowModifications) {
             throw new Exception('Config is read only');
@@ -324,7 +325,7 @@ final class Config implements Countable, Iterator, ArrayAccess
      *
      * @return $this
      */
-    public function merge(Config $merge)
+    public function merge(Config $merge): static
     {
         foreach ($merge as $key => $value) {
             if (array_key_exists($key, $this->data)) {
@@ -361,7 +362,7 @@ final class Config implements Countable, Iterator, ArrayAccess
      *
      * @return void
      */
-    public function setReadOnly()
+    public function setReadOnly(): void
     {
         $this->allowModifications = false;
 
@@ -380,7 +381,7 @@ final class Config implements Countable, Iterator, ArrayAccess
      *
      * @return bool
      */
-    public function isReadOnly()
+    public function isReadOnly(): bool
     {
         return ! $this->allowModifications;
     }

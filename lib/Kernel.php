@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -52,10 +53,7 @@ abstract class Kernel extends SymfonyKernel
         registerBundles as microKernelRegisterBundles;
     }
 
-    /**
-     * @var BundleCollection
-     */
-    private $bundleCollection;
+    private BundleCollection $bundleCollection;
 
     /**
      * {@inheritdoc}
@@ -91,9 +89,6 @@ abstract class Kernel extends SymfonyKernel
         return PIMCORE_LOG_DIRECTORY;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureContainer(ContainerConfigurator $container): void
     {
         $projectDir = realpath($this->getProjectDir());
@@ -109,9 +104,6 @@ abstract class Kernel extends SymfonyKernel
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureRoutes(RoutingConfigurator $routes): void
     {
         $projectDir = realpath($this->getProjectDir());
@@ -270,10 +262,10 @@ abstract class Kernel extends SymfonyKernel
     {
         $collection = $this->createBundleCollection();
 
-        if (is_file($this->getProjectDir().'/config/bundles.php')) {
-            $flexBundles = [];
-            array_push($flexBundles, ...$this->microKernelRegisterBundles());
-            $collection->addBundles($flexBundles);
+        if (is_file($this->getBundlesPath())) {
+            foreach ($this->microKernelRegisterBundles() as $flexBundle) {
+                $collection->addBundle($flexBundle);
+            }
         }
 
         // core bundles (Symfony, Pimcore)

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,7 +36,7 @@ class PaymentProviderInstaller extends AbstractInstaller
     /**
      * {@inheritdoc}
      */
-    public function canBeInstalled()
+    public function canBeInstalled(): bool
     {
         return !$this->isInstalled();
     }
@@ -43,19 +44,19 @@ class PaymentProviderInstaller extends AbstractInstaller
     /**
      * {@inheritdoc}
      */
-    public function canBeUninstalled()
+    public function canBeUninstalled(): bool
     {
         return $this->isInstalled();
     }
 
-    public function install()
+    public function install(): bool
     {
         $this->installBricks();
 
         return true;
     }
 
-    public function uninstall()
+    public function uninstall(): bool
     {
         $this->unInstallBricks();
 
@@ -65,7 +66,7 @@ class PaymentProviderInstaller extends AbstractInstaller
     /**
      * {@inheritdoc}
      */
-    public function isInstalled()
+    public function isInstalled(): bool
     {
         $installed = false;
 
@@ -84,7 +85,7 @@ class PaymentProviderInstaller extends AbstractInstaller
     /**
      * {@inheritdoc}
      */
-    public function needsReloadAfterInstall()
+    public function needsReloadAfterInstall(): bool
     {
         return true;
     }

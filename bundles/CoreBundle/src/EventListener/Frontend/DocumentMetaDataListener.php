@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,10 +36,6 @@ class DocumentMetaDataListener implements EventSubscriberInterface
 
     public const FORCE_INJECTION = '_pimcore_force_document_meta_data_injection';
 
-    /**
-     * @param DocumentResolverService $documentResolverService
-     * @param HeadMeta $headMeta
-     */
     public function __construct(protected DocumentResolverService $documentResolverService, protected HeadMeta $headMeta)
     {
     }

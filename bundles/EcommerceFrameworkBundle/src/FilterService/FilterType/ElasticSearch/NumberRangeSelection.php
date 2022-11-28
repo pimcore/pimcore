@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,7 +23,7 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRangeSelection;
 
 class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\NumberRangeSelection
 {
-    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList)
+    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList): void
     {
         $productList->prepareGroupByValues($this->getField($filterDefinition), true);
     }
@@ -36,7 +37,7 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
      *
      * @return array
      */
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter, array $params, bool $isPrecondition = false): array
     {
         $field = $this->getField($filterDefinition);
         $rawValue = $params[$field] ?? null;

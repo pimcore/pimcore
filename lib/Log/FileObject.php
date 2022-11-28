@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,21 +23,15 @@ use Pimcore\Tool\Storage;
 
 final class FileObject
 {
-    /**
-     * @var string
-     */
-    protected $filename;
+    protected ?string $filename = null;
 
-    /**
-     * @var string
-     */
-    protected $data;
+    protected string $data;
 
     /**
      * @param string $data
-     * @param string $filename
+     * @param string|null $filename
      */
-    public function __construct($data, $filename = null)
+    public function __construct(string $data, string $filename = null)
     {
         $this->data = $data;
         $this->filename = $filename;
@@ -54,26 +49,17 @@ final class FileObject
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getSystemPath()
+    public function getSystemPath(): ?string
     {
         return $this->filename;
     }
 
-    /**
-     * @return string
-     */
-    public function getFilename()
+    public function getFilename(): string
     {
         return preg_replace('/^'.preg_quote(\PIMCORE_PROJECT_ROOT, '/').'/', '', $this->filename);
     }
 
-    /**
-     * @return string
-     */
-    public function getData()
+    public function getData(): string
     {
         return $this->data;
     }

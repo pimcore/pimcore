@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,16 +25,13 @@ interface QueryResourcePersistenceAwareInterface
      *
      * @param mixed $data
      * @param null|Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return mixed
      *
      * abstract public function getDataForQueryResource($data);
      */
-    public function getDataForQueryResource($data, $object = null, $params = []);
+    public function getDataForQueryResource(mixed $data, Concrete $object = null, array $params = []): mixed;
 
-    /**
-     * @return string|array|null
-     */
-    public function getQueryColumnType();
+    public function getQueryColumnType(): array|string|null;
 }

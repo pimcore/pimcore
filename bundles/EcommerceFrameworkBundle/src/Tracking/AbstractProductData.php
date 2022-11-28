@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,105 +18,57 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
 abstract class AbstractProductData extends AbstractData
 {
-    /**
-     * @var string
-     */
-    protected $transactionId;
+    protected string $transactionId;
 
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $name;
 
-    /**
-     * @var string
-     */
-    protected $brand;
+    protected string $brand;
 
-    /**
-     * @var array
-     */
-    protected $categories;
+    protected array $categories;
 
-    /**
-     * @var string
-     */
-    protected $variant;
+    protected string $variant;
 
-    /**
-     * @var int
-     */
-    protected $position;
+    protected int $position;
 
-    /**
-     * @var float
-     */
-    protected $price;
+    protected float $price;
 
-    /**
-     * @return string
-     */
-    public function getTransactionId()
+    public function getTransactionId(): string
     {
         return $this->transactionId;
     }
 
-    /**
-     * @param string $transactionId
-     *
-     * @return $this
-     */
-    public function setTransactionId($transactionId)
+    public function setTransactionId(string $transactionId): static
     {
         $this->transactionId = $transactionId;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getBrand()
+    public function getBrand(): string
     {
         return $this->brand;
     }
 
-    /**
-     * @param string $brand
-     *
-     * @return $this
-     */
-    public function setBrand($brand)
+    public function setBrand(string $brand): static
     {
         $this->brand = $brand;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getCategory()
+    public function getCategory(): ?string
     {
         if (is_array($this->categories) && count($this->categories) > 0) {
             return $this->categories[0];
@@ -124,80 +77,48 @@ abstract class AbstractProductData extends AbstractData
         return null;
     }
 
-    /**
-     * @return array
-     */
-    public function getCategories()
+    public function getCategories(): array
     {
         return $this->categories;
     }
 
-    /**
-     * @param array $categories
-     *
-     * @return $this
-     */
-    public function setCategories(array $categories)
+    public function setCategories(array $categories): static
     {
         $this->categories = $categories;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getVariant()
+    public function getVariant(): string
     {
         return $this->variant;
     }
 
-    /**
-     * @param string $variant
-     *
-     * @return $this
-     */
-    public function setVariant($variant)
+    public function setVariant(string $variant): static
     {
         $this->variant = $variant;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getPosition()
+    public function getPosition(): int
     {
         return $this->position;
     }
 
-    /**
-     * @param int $position
-     *
-     * @return $this
-     */
-    public function setPosition($position)
+    public function setPosition(int $position): static
     {
         $this->position = $position;
 
         return $this;
     }
 
-    /**
-     * @return float
-     */
-    public function getPrice()
+    public function getPrice(): float
     {
         return $this->price;
     }
 
-    /**
-     * @param float $price
-     *
-     * @return $this
-     */
-    public function setPrice($price)
+    public function setPrice(float $price): static
     {
         $this->price = $price;
 

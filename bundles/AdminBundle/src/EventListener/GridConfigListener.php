@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -41,10 +42,7 @@ class GridConfigListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param DataObjectEvent $event
-     */
-    public function onObjectDelete($event)
+    public function onObjectDelete(DataObjectEvent $event)
     {
         $object = $event->getObject();
         $objectId = $object->getId();
@@ -52,10 +50,7 @@ class GridConfigListener implements EventSubscriberInterface
         $this->cleanupGridConfigFavourites('objectId = ' . $objectId);
     }
 
-    /**
-     * @param ClassDefinitionEvent $event
-     */
-    public function onClassDelete($event)
+    public function onClassDelete(ClassDefinitionEvent $event)
     {
         $class = $event->getClassDefinition();
         $classId = $class->getId();
@@ -71,10 +66,7 @@ class GridConfigListener implements EventSubscriberInterface
         $this->cleanupGridConfigFavourites('classId = ' . $db->quote($classId));
     }
 
-    /**
-     * @param UserRoleEvent $event
-     */
-    public function onUserDelete($event)
+    public function onUserDelete(UserRoleEvent $event)
     {
         $user = $event->getUserRole();
         $userId = $user->getId();

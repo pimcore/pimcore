@@ -24,15 +24,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
  */
 interface DiscountInterface extends CartPriceModificatorInterface
 {
-    /**
-     * @param Decimal $amount
-     *
-     * @return DiscountInterface
-     */
-    public function setAmount(Decimal $amount);
+    public function setAmount(Decimal $amount): DiscountInterface;
 
-    /**
-     * @return Decimal
-     */
     public function getAmount(): Decimal;
 }

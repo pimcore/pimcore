@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,12 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface as Pr
 
 interface PricingManagerInterface
 {
-    /**
-     * @param PriceSystemPriceInfoInterface $priceinfo
-     *
-     * @return PriceSystemPriceInfoInterface
-     */
-    public function applyProductRules(PriceSystemPriceInfoInterface $priceinfo);
+    public function applyProductRules(PriceSystemPriceInfoInterface $priceinfo): PriceSystemPriceInfoInterface;
 
     /**
      * @param CartInterface $cart
@@ -58,7 +54,7 @@ interface PricingManagerInterface
      *
      * @throws InvalidConfigException
      */
-    public function getCondition($type);
+    public function getCondition(string $type): ConditionInterface;
 
     /**
      * Factory
@@ -67,14 +63,14 @@ interface PricingManagerInterface
      *
      * @return ActionInterface
      */
-    public function getAction($type);
+    public function getAction(string $type): ActionInterface;
 
     /**
      * Factory
      *
      * @return EnvironmentInterface
      */
-    public function getEnvironment();
+    public function getEnvironment(): EnvironmentInterface;
 
     /**
      * Wraps price info in pricing manager price info
@@ -83,5 +79,5 @@ interface PricingManagerInterface
      *
      * @return PriceSystemPriceInfoInterface|PriceInfoInterface
      */
-    public function getPriceInfo(PriceSystemPriceInfoInterface $priceInfo);
+    public function getPriceInfo(PriceSystemPriceInfoInterface $priceInfo): PriceInfoInterface|PriceSystemPriceInfoInterface;
 }

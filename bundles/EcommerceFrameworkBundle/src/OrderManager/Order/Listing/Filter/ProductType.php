@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,17 +21,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListInterface;
 
 class ProductType implements OrderListFilterInterface
 {
-    /**
-     * @var array
-     */
-    protected $types = [];
+    protected array $types = [];
 
-    /**
-     * @param OrderListInterface $orderList
-     *
-     * @return OrderListFilterInterface
-     */
-    public function apply(OrderListInterface $orderList)
+    public function apply(OrderListInterface $orderList): OrderListFilterInterface
     {
         $types = [];
         $orderList->joinOrderItemObjects();
@@ -46,20 +39,12 @@ class ProductType implements OrderListFilterInterface
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getTypes()
+    public function getTypes(): array
     {
         return $this->types;
     }
 
-    /**
-     * @param array $types
-     *
-     * @return $this
-     */
-    public function setTypes(array $types)
+    public function setTypes(array $types): static
     {
         $this->types = $types;
 

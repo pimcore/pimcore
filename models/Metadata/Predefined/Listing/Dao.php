@@ -30,7 +30,7 @@ class Dao extends Model\Metadata\Predefined\Dao
      *
      * @return \Pimcore\Model\Metadata\Predefined[]
      */
-    public function loadList()
+    public function loadList(): array
     {
         $properties = [];
         foreach ($this->loadIdList() as $id) {
@@ -48,10 +48,7 @@ class Dao extends Model\Metadata\Predefined\Dao
         return $properties;
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         return count($this->loadList());
     }

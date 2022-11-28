@@ -25,3 +25,13 @@ Pimcore\Bundle\CoreBundle\EventListener\MaintenancePageListener:
     tags:
         - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 620 }
 ```
+
+Use loadTemplateFromPath if the file is located outside a bundle.
+
+```yaml
+Pimcore\Bundle\CoreBundle\EventListener\MaintenancePageListener:
+    calls:
+        - [loadTemplateFromPath, ['/templates/maintenance.html']]
+    tags:
+        - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 620 }
+```

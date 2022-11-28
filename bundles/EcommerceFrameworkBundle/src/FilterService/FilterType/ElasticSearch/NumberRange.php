@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,7 +22,7 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRange;
 
 class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\NumberRange
 {
-    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList)
+    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList): void
     {
         $productList->prepareGroupByValues($this->getField($filterDefinition), true);
     }
@@ -35,7 +36,7 @@ class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
      *
      * @return array
      */
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter, array $params, bool $isPrecondition = false): array
     {
         $field = $this->getField($filterDefinition);
         $value = $params[$field] ?? null;
@@ -49,7 +50,7 @@ class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
 
         if (($value['from'] !== null || $value['to'] !== null) && ($value['from'] !== '' || $value['to'] !== '')) {
             $range = [];
-            if (strlen($value['from']) > 0) {
+            if (strlen((string)$value['from']) > 0) {
                 $range['gte'] = $value['from'];
             }
             if (strlen($value['to']) > 0) {

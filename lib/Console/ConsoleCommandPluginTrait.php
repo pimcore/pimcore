@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,26 +25,20 @@ trait ConsoleCommandPluginTrait
     /**
      * Handle system.console.init event and register console commands to the console application
      */
-    public function initConsoleCommands()
+    public function initConsoleCommands(): void
     {
         if (static::isCli()) {
             \Pimcore::getEventDispatcher()->addListener(SystemEvents::CONSOLE_INIT, [$this, 'handleSystemConsoleInitEvent']);
         }
     }
 
-    /**
-     * @param ConsoleEvent $e
-     */
-    public function handleSystemConsoleInitEvent(ConsoleEvent $e)
+    public function handleSystemConsoleInitEvent(ConsoleEvent $e): void
     {
         $application = $e->getApplication();
         $application->addCommands($this->getConsoleCommands());
     }
 
-    /**
-     * @return bool
-     */
-    public static function isCli()
+    public static function isCli(): bool
     {
         return php_sapi_name() === 'cli';
     }
@@ -54,5 +49,5 @@ trait ConsoleCommandPluginTrait
      *
      * @return Command[]
      */
-    abstract public function getConsoleCommands();
+    abstract public function getConsoleCommands(): array;
 }

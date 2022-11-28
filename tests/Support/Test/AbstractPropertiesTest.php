@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,41 +24,25 @@ use Pimcore\Tests\Support\Util\TestHelper;
 
 abstract class AbstractPropertiesTest extends ModelTestCase
 {
-    /**
-     * @var bool
-     */
-    protected $cleanupDbInSetup = true;
+    protected bool $cleanupDbInSetup = true;
 
-    /**
-     * @var PropertiesTestHelper
-     */
-    protected $propertiesTestHelper;
+    protected PropertiesTestHelper $propertiesTestHelper;
 
-    /** @var ElementInterface */
-    protected $testElement;
+    protected ElementInterface $testElement;
 
-    /**
-     * @param PropertiesTestHelper $testHelper
-     */
     public function _inject(PropertiesTestHelper $testHelper)
     {
         $this->propertiesTestHelper = $testHelper;
     }
 
-    /**
-     * @return ElementInterface
-     */
     abstract public function createElement(): ElementInterface;
 
-    /**
-     * @return ElementInterface
-     */
     abstract public function reloadElement(): ElementInterface;
 
     /**
      * {@inheritdoc}
      */
-    protected function needsDb()
+    protected function needsDb(): bool
     {
         return true;
     }

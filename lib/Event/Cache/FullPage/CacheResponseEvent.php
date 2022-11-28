@@ -25,10 +25,7 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class CacheResponseEvent extends Event
 {
-    /**
-     * @var Response
-     */
-    private $response;
+    private Response $response;
 
     private bool $cache;
 

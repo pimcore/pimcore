@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Fields Summary:
@@ -14,10 +15,10 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class VoucherTokenTypeSingle extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType
 {
-protected $type = "VoucherTokenTypeSingle";
-protected $token;
-protected $usages;
-protected $onlyTokenPerCart;
+protected string $type = "VoucherTokenTypeSingle";
+protected ?string $token;
+protected ?int $usages;
+protected ?bool $onlyTokenPerCart;
 
 
 /**

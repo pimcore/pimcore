@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,24 +25,16 @@ class Tenant implements ConditionInterface
     /**
      * @var string[]
      */
-    protected $tenant;
+    protected array $tenant;
 
-    /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return bool
-     */
-    public function check(EnvironmentInterface $environment)
+    public function check(EnvironmentInterface $environment): bool
     {
         $currentTenant = Factory::getInstance()->getEnvironment()->getCurrentCheckoutTenant();
 
         return in_array($currentTenant, $this->getTenant());
     }
 
-    /**
-     * @return string
-     */
-    public function toJSON()
+    public function toJSON(): string
     {
         // basic
         $json = [
@@ -51,12 +44,7 @@ class Tenant implements ConditionInterface
         return json_encode($json);
     }
 
-    /**
-     * @param string $string
-     *
-     * @return ConditionInterface
-     */
-    public function fromJSON($string)
+    public function fromJSON(string $string): ConditionInterface
     {
         $json = json_decode($string);
 
@@ -68,7 +56,7 @@ class Tenant implements ConditionInterface
     /**
      * @return string[]
      */
-    public function getTenant()
+    public function getTenant(): array
     {
         return $this->tenant;
     }
@@ -78,7 +66,7 @@ class Tenant implements ConditionInterface
      *
      * @return $this
      */
-    public function setTenant(array $tenant)
+    public function setTenant(array $tenant): static
     {
         $this->tenant = $tenant;
 

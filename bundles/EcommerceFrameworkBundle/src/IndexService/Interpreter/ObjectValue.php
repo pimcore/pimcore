@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,7 +24,7 @@ class ObjectValue implements InterpreterInterface
 {
     use OptionsResolverTrait;
 
-    public function interpret($value, $config = null)
+    public function interpret(mixed $value, ?array $config = null): mixed
     {
         $config = $this->resolveOptions($config ?? []);
         $targetList = $this->resolveOptions($config['target'], 'target');

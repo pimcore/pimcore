@@ -46,15 +46,9 @@ class NotificationServiceFilterParser
 
     const OPERATOR_LT = 'lt';
 
-    /**
-     * @var Request
-     */
-    private $request;
+    private Request $request;
 
-    /**
-     * @var array
-     */
-    private $properties;
+    private array $properties;
 
     /**
      * ExtJSFilterParser constructor.
@@ -70,9 +64,6 @@ class NotificationServiceFilterParser
         ];
     }
 
-    /**
-     * @return array
-     */
     public function parse(): array
     {
         $result = [];
@@ -106,11 +97,11 @@ class NotificationServiceFilterParser
     {
         $result = null;
         $property = $this->getDbProperty($item);
-        $value = $item[self::KEY_VALUE];
+        $value = $item[self::KEY_VALUE] ?? '';
 
         switch ($item[self::KEY_OPERATOR]) {
             case self::OPERATOR_LIKE:
-                $result = ["{$property} LIKE ?", ["%{$value}%"]];
+                $result = ["{$property} LIKE ?", "%{$value}%"];
 
                 break;
         }

@@ -27,35 +27,17 @@ use Pimcore\Targeting\VisitorInfoStorageInterface;
 
 class DocumentTargetingConfigurator
 {
-    /**
-     * @var VisitorInfoStorageInterface
-     */
-    private $visitorInfoStorage;
+    private VisitorInfoStorageInterface $visitorInfoStorage;
 
-    /**
-     * @var RequestHelper
-     */
-    private $requestHelper;
+    private RequestHelper $requestHelper;
 
-    /**
-     * @var UserLoader
-     */
-    private $userLoader;
+    private UserLoader $userLoader;
 
-    /**
-     * @var CoreCacheHandler
-     */
-    private $cache;
+    private CoreCacheHandler $cache;
 
-    /**
-     * @var array
-     */
-    private $targetGroupMapping = [];
+    private array $targetGroupMapping = [];
 
-    /**
-     * @var TargetGroup|null
-     */
-    private $overrideTargetGroup;
+    private ?TargetGroup $overrideTargetGroup = null;
 
     public function __construct(
         VisitorInfoStorageInterface $visitorInfoStorage,
@@ -75,7 +57,7 @@ class DocumentTargetingConfigurator
      *
      * @param Document $document
      */
-    public function configureTargetGroup(Document $document)
+    public function configureTargetGroup(Document $document): void
     {
         if (!$document instanceof TargetingDocumentInterface) {
             return;
@@ -156,12 +138,7 @@ class DocumentTargetingConfigurator
         return false;
     }
 
-    /**
-     * @param Document $document
-     *
-     * @return TargetGroup|null
-     */
-    public function getConfiguredTargetGroup(Document $document)
+    public function getConfiguredTargetGroup(Document $document): ?TargetGroup
     {
         if (isset($this->targetGroupMapping[$document->getId()])) {
             return $this->targetGroupMapping[$document->getId()];
@@ -244,15 +221,12 @@ class DocumentTargetingConfigurator
         return $targetGroups;
     }
 
-    public function setOverrideTargetGroup(TargetGroup $overrideTargetGroup = null)
+    public function setOverrideTargetGroup(TargetGroup $overrideTargetGroup = null): void
     {
         $this->overrideTargetGroup = $overrideTargetGroup;
     }
 
-    /**
-     * @return null|TargetGroup
-     */
-    public function getOverrideTargetGroup()
+    public function getOverrideTargetGroup(): ?TargetGroup
     {
         return $this->overrideTargetGroup;
     }

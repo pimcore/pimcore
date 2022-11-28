@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,20 +31,12 @@ use Pimcore\Tests\Support\Util\TestHelper;
  */
 class EditableTest extends ModelTestCase
 {
-    /**
-     * @var int
-     */
-    protected $seed = 1;
+    protected int $seed = 1;
 
-    /** @var Page */
-    protected $testPage;
+    protected Page $testPage;
 
-    /** @var TestDataHelper */
-    protected $testDataHelper;
+    protected TestDataHelper $testDataHelper;
 
-    /**
-     * @param TestDataHelper $testData
-     */
     public function _inject(TestDataHelper $testData)
     {
         $this->testDataHelper = $testData;
@@ -83,6 +76,7 @@ class EditableTest extends ModelTestCase
 
     public function testImage()
     {
+        $returnData = [];
         $this->createTestPage('image', $returnData);
 
         $this->reloadPage();
@@ -99,6 +93,7 @@ class EditableTest extends ModelTestCase
 
     public function testLink()
     {
+        $returnData = [];
         TestHelper::createEmptyObjects();
         $this->createTestPage('link', $returnData);
 
@@ -124,6 +119,7 @@ class EditableTest extends ModelTestCase
 
     public function testPdf()
     {
+        $returnData = [];
         $this->createTestPage('pdf', $returnData);
 
         $this->reloadPage();
@@ -132,6 +128,7 @@ class EditableTest extends ModelTestCase
 
     public function testRelation()
     {
+        $returnData = [];
         TestHelper::createEmptyObjects();
         $this->createTestPage('relation', $returnData);
 
@@ -141,6 +138,7 @@ class EditableTest extends ModelTestCase
 
     public function testRelations()
     {
+        $returnData = [];
         TestHelper::createEmptyObjects();
         $this->createTestPage('relations', $returnData);
 
@@ -156,7 +154,7 @@ class EditableTest extends ModelTestCase
         $this->testDataHelper->assertScheduledblock($this->testPage, 'scheduledblock', $this->seed);
     }
 
-    protected function createTestPage($fields = [], &$returnData = [])
+    protected function createTestPage($fields = [], &$returnData = []): Page|\Pimcore\Model\Document
     {
         $this->testPage = TestHelper::createEmptyDocumentPage();
         $this->assertInstanceOf(Page::class, $this->testPage);
@@ -176,7 +174,7 @@ class EditableTest extends ModelTestCase
      * @param array|string $fields
      * @param array $returnData
      */
-    protected function fillPage(Page $document, $fields = [], &$returnData = [])
+    protected function fillPage(Page $document, array|string $fields = [], array &$returnData = [])
     {
         // allow to pass only a string (e.g. input) -> fillInput($object, "input", $seed)
         if (!is_array($fields)) {
@@ -247,6 +245,7 @@ class EditableTest extends ModelTestCase
 
     public function testVideo()
     {
+        $returnData = [];
         TestHelper::createEmptyObjects();
         $this->createTestPage('video', $returnData);
 

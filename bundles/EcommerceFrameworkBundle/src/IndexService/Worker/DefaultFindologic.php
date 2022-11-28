@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,6 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\Concrete;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -41,17 +43,17 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
      *
      * @var array
      */
-    protected $supportedFields = [
+    protected array $supportedFields = [
         'id', 'ordernumber', 'name', 'summary', 'description', 'price',
     ];
 
-    /**
-     * @var \SimpleXMLElement
-     */
-    protected $batchData;
+    protected \SimpleXMLElement $batchData;
 
-    public function __construct(FindologicConfigInterface $tenantConfig, Connection $db, EventDispatcherInterface $eventDispatcher)
+    protected LoggerInterface $logger;
+
+    public function __construct(FindologicConfigInterface $tenantConfig, Connection $db, EventDispatcherInterface $eventDispatcher, LoggerInterface $pimcoreEcommerceFindologic)
     {
+        $this->logger = $pimcoreEcommerceFindologic;
         parent::__construct($tenantConfig, $db, $eventDispatcher);
     }
 
@@ -60,7 +62,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
      *
      * @return void
      */
-    public function createOrUpdateIndexStructures()
+    public function createOrUpdateIndexStructures(): void
     {
         $this->createOrUpdateStoreTable();
     }
@@ -72,7 +74,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
      *
      * @return void
      */
-    public function deleteFromIndex(IndexableInterface $object)
+    public function deleteFromIndex(IndexableInterface $object): void
     {
         $this->doDeleteFromIndex($object->getId(), $object);
     }
@@ -84,7 +86,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
      *
      * @return void
      */
-    public function updateIndex(IndexableInterface $object)
+    public function updateIndex(IndexableInterface $object): void
     {
         if (!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
@@ -101,7 +103,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
      * @param array|null $data
      * @param array|null $metadata
      */
-    protected function doUpdateIndex($objectId, $data = null, $metadata = null)
+    protected function doUpdateIndex(int $objectId, array $data = null, array $metadata = null)
     {
         $xml = $this->createXMLElement();
 
@@ -138,7 +140,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
          *
          * @return \SimpleXMLElement
          */
-        $addChildWithCDATA = function (\SimpleXMLElement $parent, $name, $value = null) {
+        $addChildWithCDATA = function (\SimpleXMLElement $parent, string $name, string $value = null) {
             $new_child = $parent->addChild($name);
 
             if ($new_child !== null) {
@@ -268,20 +270,16 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
     }
 
     /**
-     * @param int $objectId
+     * @param int $subObjectId
      * @param IndexableInterface|null $object
      */
-    protected function doDeleteFromIndex($objectId, IndexableInterface $object = null)
+    protected function doDeleteFromIndex(int $subObjectId, IndexableInterface $object = null)
     {
-        $this->db->executeQuery(sprintf('DELETE FROM %1$s WHERE id = %2$d', $this->getExportTableName(), $objectId));
-        $this->db->executeQuery(sprintf('DELETE FROM %1$s WHERE o_id = %2$d', $this->getStoreTableName(), $objectId));
+        $this->db->executeQuery(sprintf('DELETE FROM %1$s WHERE id = %2$d', $this->getExportTableName(), $subObjectId));
+        $this->db->executeQuery(sprintf('DELETE FROM %1$s WHERE o_id = %2$d', $this->getStoreTableName(), $subObjectId));
     }
 
-    /**
-     * @param int              $objectId
-     * @param \SimpleXMLElement $item
-     */
-    protected function updateExportItem($objectId, \SimpleXMLElement $item)
+    protected function updateExportItem(int $objectId, \SimpleXMLElement $item)
     {
         // save
         $query = <<<SQL
@@ -294,43 +292,28 @@ SQL;
         ]);
     }
 
-    /**
-     * @return string
-     */
-    protected function getStoreTableName()
+    protected function getStoreTableName(): string
     {
         return self::STORE_TABLE_NAME;
     }
 
-    /**
-     * @return string
-     */
-    protected function getMockupCachePrefix()
+    protected function getMockupCachePrefix(): string
     {
         return self::MOCKUP_CACHE_PREFIX;
     }
 
-    /**
-     * @return string
-     */
-    protected function getExportTableName()
+    protected function getExportTableName(): string
     {
         return self::EXPORT_TABLE_NAME;
     }
 
-    /**
-     * @return \SimpleXMLElement
-     */
-    protected function createXMLElement()
+    protected function createXMLElement(): \SimpleXMLElement
     {
         return new \SimpleXMLElement('<?xml version="1.0"?><item />');
     }
 
-    /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultFindologic
-     */
-    public function getProductList()
+    public function getProductList(): \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultFindologic
     {
-        return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultFindologic($this->getTenantConfig());
+        return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultFindologic($this->getTenantConfig(), $this->logger);
     }
 }

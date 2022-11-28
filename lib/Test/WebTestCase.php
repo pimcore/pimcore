@@ -21,11 +21,6 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 abstract class WebTestCase extends \Symfony\Bundle\FrameworkBundle\Test\WebTestCase
 {
-    /**
-     * @param array $options
-     *
-     * @return KernelInterface
-     */
     protected static function createKernel(array $options = []): KernelInterface
     {
         $kernel = parent::createKernel($options);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -119,7 +120,7 @@ class TestDataHelper extends AbstractTestDataHelper
 
         //set time for datetime isEqual comparison
         if ($field == 'datetime') {
-            $expected->setTime($value->format('H'), $value->format('i'), $value->format('s'));
+            $expected->setTime((int)$value->format('H'), (int)$value->format('i'), (int)$value->format('s'));
         }
 
         $this->assertIsEqual($object, $field, $expected, $value);
@@ -431,7 +432,6 @@ class TestDataHelper extends AbstractTestDataHelper
         /** @var DataObject\Data\ImageGallery $value */
         $value = $object->$getter();
         $this->assertInstanceOf(DataObject\Data\ImageGallery::class, $value);
-        /** @var DataObject\Data\Hotspotimage[] $items */
         $items = $value->getItems();
 
         $this->assertCount(2, $items);
@@ -493,7 +493,7 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertNotNull($link);
         $this->assertInstanceOf(DataObject\Data\Link::class, $link);
 
-        $document = Document::getByPath($link->getElement());
+        $document = Document::getByPath((string)$link->getElement());
         $expected = Document::getByPath('/' . static::DOCUMENT . $seed);
 
         foreach (['expected' => $expected, 'value' => $document] as $desc => $item) {
@@ -1224,7 +1224,7 @@ class TestDataHelper extends AbstractTestDataHelper
         }
 
         $link = new DataObject\Data\Link();
-        $link->setPath($doc);
+        $link->setPath((string)$doc);
 
         $object->$setter($link);
     }
@@ -1347,7 +1347,7 @@ class TestDataHelper extends AbstractTestDataHelper
     public function fillSelect(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
-        $object->$setter(1 + ($seed % 2));
+        $object->$setter((string)(1 + ($seed % 2)));
     }
 
     public function fillIndexFieldSelectionCombo(Concrete $object, string $field, int $seed = 1): void
@@ -1365,7 +1365,7 @@ class TestDataHelper extends AbstractTestDataHelper
     public function fillIndexFieldSelection(Concrete $object, string $field, int $seed = 1): void
     {
         $setter = 'set' . ucfirst($field);
-        $value = new IndexFieldSelection(null, 'carClass', null);
+        $value = new IndexFieldSelection('', 'carClass', '');
         $object->$setter($value);
     }
 
@@ -1424,7 +1424,7 @@ class TestDataHelper extends AbstractTestDataHelper
             $user->save();
         }
 
-        $object->$setter($user->getId());
+        $object->$setter((string)$user->getId());
     }
 
     public function fillVideo(Concrete $object, string $field, int $seed = 1, array &$returnData = []): void

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,20 +27,10 @@ class PimcoreUrl implements RuntimeExtensionInterface
 {
     use HelperCharsetTrait;
 
-    /**
-     * @var UrlGeneratorInterface
-     */
-    protected $generator;
+    protected UrlGeneratorInterface $generator;
 
-    /**
-     * @var RequestHelper
-     */
-    protected $requestHelper;
+    protected RequestHelper $requestHelper;
 
-    /**
-     * @param UrlGeneratorInterface $generator
-     * @param RequestHelper $requestHelper
-     */
     public function __construct(UrlGeneratorInterface $generator, RequestHelper $requestHelper)
     {
         $this->generator = $generator;
@@ -55,7 +46,7 @@ class PimcoreUrl implements RuntimeExtensionInterface
      *
      * @return string
      */
-    public function __invoke(array $urlOptions = [], $name = null, $reset = false, $encode = true, $relative = false)
+    public function __invoke(array $urlOptions = [], string $name = null, bool $reset = false, bool $encode = true, bool $relative = false): string
     {
         // merge all parameters from request to parameters
         if (!$reset && $this->requestHelper->hasMainRequest()) {
@@ -68,14 +59,14 @@ class PimcoreUrl implements RuntimeExtensionInterface
     /**
      * Generate URL with support to only pass parameters ZF1 style (defaults to current route).
      *
-     * @param string|array|null $name
+     * @param array|string|null $name
      * @param array|null $parameters
      * @param int $referenceType
      * @param bool $encode
      *
      * @return string
      */
-    protected function generateUrl($name = null, $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH, $encode = true)
+    protected function generateUrl(array|string $name = null, ?array $parameters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH, bool $encode = true): string
     {
         if ($encode !== true) {
             // encoding is default anyway, so we only set it when really necessary, to minimize the risk of
@@ -134,7 +125,7 @@ class PimcoreUrl implements RuntimeExtensionInterface
      *
      * @return string|null
      */
-    protected function getCurrentRoute()
+    protected function getCurrentRoute(): ?string
     {
         $route = null;
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -33,10 +34,7 @@ class Processor
 {
     use TemporaryFileHelperTrait;
 
-    /**
-     * @var array
-     */
-    protected static $argumentMapping = [
+    protected static array $argumentMapping = [
         'resize' => ['width', 'height'],
         'scaleByWidth' => ['width', 'forceResize'],
         'scaleByHeight' => ['height', 'forceResize'],
@@ -92,7 +90,7 @@ class Processor
      *
      * @throws \Exception
      */
-    public static function process(Asset $asset, Config $config, $fileSystemPath = null, $deferred = false, &$generated = false)
+    public static function process(Asset $asset, Config $config, mixed $fileSystemPath = null, bool $deferred = false, bool &$generated = false): array
     {
         $generated = false;
         $format = strtolower($config->getFormat());
@@ -254,7 +252,7 @@ class Processor
                 }
 
                 if (is_resource($fileSystemPath)) {
-                    $fileSystemPath = self::getLocalFileFromStream($fileSystemPath);
+                    $fileSystemPath = self::getLocalFileFromStream((string)$fileSystemPath);
                 }
 
                 if (!file_exists($fileSystemPath)) {

@@ -27,15 +27,9 @@ use Symfony\Component\Process\Process;
  */
 class CacheClearer
 {
-    /**
-     * @var int
-     */
-    private $processTimeout;
+    private int $processTimeout;
 
-    /**
-     * @var \Closure
-     */
-    private $runCallback;
+    private \Closure $runCallback;
 
     public function __construct(array $options = [])
     {
@@ -95,7 +89,7 @@ class CacheClearer
     /**
      * @param \Closure|null $runCallback
      */
-    public function setRunCallback(\Closure $runCallback = null)
+    public function setRunCallback(\Closure $runCallback = null): void
     {
         $this->runCallback = $runCallback;
     }

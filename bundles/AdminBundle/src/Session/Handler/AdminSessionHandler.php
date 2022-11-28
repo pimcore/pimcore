@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -39,19 +40,13 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
      * there is still an open session, this is especially important if something doesn't use the method use() but get()
      * so the session isn't closed automatically after the action is done
      */
-    private $openedSessions = 0;
+    private int $openedSessions = 0;
 
-    protected $readOnlySessionBagsCache = [];
+    protected array $readOnlySessionBagsCache = [];
 
-    /**
-     * @var bool|null
-     */
-    private $canWriteAndClose;
+    private ?bool $canWriteAndClose = null;
 
-    /**
-     * @var RequestHelper
-     */
-    protected $requestHelper;
+    protected RequestHelper $requestHelper;
 
     public function __construct(RequestHelper $requestHelper)
     {
@@ -61,7 +56,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     /**
      * {@inheritdoc}
      */
-    public function getSessionId()
+    public function getSessionId(): string
     {
         if (!$this->getSession()->isStarted()) {
             // this is just to initialize the session :)
@@ -78,10 +73,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
         return $this->requestHelper->getSession();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getSessionName()
+    public function getSessionName(): string
     {
         return $this->getSession()->getName();
     }
@@ -89,7 +81,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     /**
      * {@inheritdoc}
      */
-    public function useSession(callable $callable)
+    public function useSession(callable $callable): mixed
     {
         $session = $this->loadSession();
 
@@ -105,7 +97,7 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
     /**
      * {@inheritdoc}
      */
-    public function useSessionAttributeBag(callable $callable, string $name = 'pimcore_admin')
+    public function useSessionAttributeBag(callable $callable, string $name = 'pimcore_admin'): mixed
     {
         $session = $this->loadSession();
         $attributeBag = $this->loadAttributeBag($name, $session);
@@ -225,9 +217,6 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
         throw new \RuntimeException('Failed to get session ID from request');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function loadSession(): SessionInterface
     {
         $sessionName = $this->getSessionName();
@@ -275,7 +264,10 @@ class AdminSessionHandler implements LoggerAwareInterface, AdminSessionHandlerIn
 
     private function shouldWriteAndClose(): bool
     {
-        return $this->canWriteAndClose ??= $this->isAdminRequest($this->requestHelper->getMainRequest());
+        // main request is not available in CLI, so session should be written
+        // otherwise session should be written & closed in Admin context only.
+        return $this->canWriteAndClose ??= !$this->requestHelper->hasMainRequest()
+            || $this->isAdminRequest($this->requestHelper->getMainRequest());
     }
 
     private function isAdminRequest(Request $request): bool

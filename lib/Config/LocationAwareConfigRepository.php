@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -41,13 +42,6 @@ class LocationAwareConfigRepository
 
     protected ?string $defaultWriteLocation = self::LOCATION_SYMFONY_CONFIG;
 
-    /**
-     * @param array $containerConfig
-     * @param string|null $settingsStoreScope
-     * @param string|null $storageDirectory
-     * @param string|null $writeTargetEnvVariableName
-     * @param string|null $defaultWriteLocation
-     */
     public function __construct(
         array $containerConfig,
         ?string $settingsStoreScope,
@@ -62,12 +56,7 @@ class LocationAwareConfigRepository
         $this->defaultWriteLocation = $defaultWriteLocation ?: self::LOCATION_SYMFONY_CONFIG;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return array
-     */
-    public function loadConfigByKey(string $key)
+    public function loadConfigByKey(string $key): array
     {
         $dataSource = null;
 
@@ -154,11 +143,11 @@ class LocationAwareConfigRepository
     /**
      * @param string $key
      * @param mixed $data
-     * @param null|callable $yamlStructureCallback
+     * @param callable|null $yamlStructureCallback
      *
      * @throws \Exception
      */
-    public function saveConfig(string $key, $data, $yamlStructureCallback = null)
+    public function saveConfig(string $key, mixed $data, callable $yamlStructureCallback = null): void
     {
         $writeLocation = $this->getWriteTarget();
 
@@ -243,9 +232,6 @@ class LocationAwareConfigRepository
         $this->stopMessengerWorkers();
     }
 
-    /**
-     * @return array
-     */
     public function fetchAllKeys(): array
     {
         return array_unique(array_merge(

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,5 +30,5 @@ interface MockupConfigInterface
      *
      * @return mixed
      */
-    public function createMockupObject($objectId, $data, $relations);
+    public function createMockupObject(int $objectId, mixed $data, array $relations): mixed;
 }

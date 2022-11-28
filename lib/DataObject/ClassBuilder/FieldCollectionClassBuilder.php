@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -60,7 +61,7 @@ class FieldCollectionClassBuilder implements FieldCollectionClassBuilderInterfac
         $cd .= 'class ' . ucfirst($definition->getKey()) . ' extends ' . $extendClass . $implements . "\n";
         $cd .= '{' . "\n";
 
-        $cd .= 'protected $type = "' . $definition->getKey() . "\";\n";
+        $cd .= 'protected string $type = "' . $definition->getKey() . "\";\n";
 
         if (is_array($definition->getFieldDefinitions()) && count($definition->getFieldDefinitions())) {
             foreach ($definition->getFieldDefinitions() as $key => $def) {

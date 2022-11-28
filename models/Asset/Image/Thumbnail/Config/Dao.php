@@ -25,9 +25,6 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
 {
-    /**
-     * {@inheritdoc}
-     */
     public function configure()
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config');
@@ -45,7 +42,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws \Exception
      */
-    public function getByName($id = null)
+    public function getByName(string $id = null)
     {
         if ($id != null) {
             $this->model->setName($id);
@@ -68,11 +65,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
         }
     }
 
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
     public function exists(string $name): bool
     {
         return (bool) $this->getDataByName($this->model->getName());
@@ -83,7 +75,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws \Exception
      */
-    public function save($forceClearTempFiles = false)
+    public function save(bool $forceClearTempFiles = false)
     {
         $ts = time();
         if (!$this->model->getCreationDate()) {
@@ -118,7 +110,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * {@inheritdoc}
      */
-    protected function prepareDataStructureForYaml(string $id, $data)
+    protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [
             'pimcore' => [
@@ -140,7 +132,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @param bool $forceClearTempFiles force removing generated thumbnail files of saved thumbnail config
      */
-    public function delete($forceClearTempFiles = false)
+    public function delete(bool $forceClearTempFiles = false)
     {
         $this->deleteData($this->model->getName());
 

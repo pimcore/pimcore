@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -137,10 +138,6 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
         }
     }
 
-    /**
-     * @param Request $request
-     * @param Document $page
-     */
     protected function setValuesToDocument(Request $request, Document $page): void
     {
         $this->addSettingsToDocument($request, $page);

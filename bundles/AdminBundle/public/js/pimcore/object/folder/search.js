@@ -173,11 +173,21 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
             this.onlyDirectChildren = response.onlyDirectChildren;
             this.searchFilter = response.searchFilter;
+            this.filter = response.filter;
         } else {
             itemsPerPage = this.gridPageSize;
             fields = response;
             this.settings = settings;
             this.context = context;
+            if (settings.saveFilters) {
+                this.filter = [];
+                this.store.getFilters().items.forEach(item => {
+                    if (!item.config.value || item.config.value.length === 0) {
+                        item.config.value = item._value;
+                    }
+                    this.filter.push(item.config);
+                })
+            }
             this.buildColumnConfigMenu();
         }
 
@@ -324,6 +334,13 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             tbar: this.getToolbar(fromConfig, save)
         });
 
+        if (this.filter) {
+            this.filter.forEach(filt => {
+                this.store.setFilters(new Ext.util.Filter(filt))
+                this.filterUpdateFunction(this.grid, this.toolbarFilterInfo, this.clearFilterButton);
+            });
+        }
+
         this.grid.on("columnmove", function () {
             this.saveColumnConfigButton.show()
         }.bind(this));
@@ -394,6 +411,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         config.pageSize = this.pagingtoolbar.pageSize;
         config.searchFilter = this.searchField.getValue();
         config.onlyDirectChildren = this.checkboxOnlyDirectChildren.getValue();
+        config.filter = this.filter;
         return config;
     },
 

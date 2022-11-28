@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,7 +33,7 @@ class Listing extends Model\Listing\AbstractListing
      *
      * @return $this
      */
-    public function setTargets(array $targets)
+    public function setTargets(array $targets): static
     {
         return $this->setData($targets);
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,35 +23,17 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 abstract class AbstractWorker implements WorkerInterface
 {
-    /**
-     * @var Connection
-     */
-    protected $db;
+    protected Connection $db;
 
-    /**
-     * @var ConfigInterface
-     */
-    protected $tenantConfig;
+    protected ConfigInterface $tenantConfig;
 
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $name;
 
-    /**
-     * @var array
-     */
-    protected $indexColumns;
+    protected ?array $indexColumns = null;
 
-    /**
-     * @var array
-     */
-    protected $filterGroups;
+    protected ?array $filterGroups = null;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
+    protected EventDispatcherInterface $eventDispatcher;
 
     public function __construct(ConfigInterface $tenantConfig, Connection $db, EventDispatcherInterface $eventDispatcher)
     {
@@ -62,17 +45,17 @@ abstract class AbstractWorker implements WorkerInterface
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function getTenantConfig()
+    public function getTenantConfig(): ConfigInterface
     {
         return $this->tenantConfig;
     }
 
-    public function getGeneralSearchAttributes()
+    public function getGeneralSearchAttributes(): array
     {
         return $this->tenantConfig->getSearchAttributes();
     }
 
-    public function getIndexAttributes($considerHideInFieldList = false)
+    public function getIndexAttributes(bool $considerHideInFieldList = false): array
     {
         if (null === $this->indexColumns) {
             $indexColumns = [
@@ -91,14 +74,14 @@ abstract class AbstractWorker implements WorkerInterface
         return $this->indexColumns;
     }
 
-    public function getIndexAttributesByFilterGroup($filterGroup)
+    public function getIndexAttributesByFilterGroup(string $filterGroup): array
     {
         $this->getAllFilterGroups();
 
         return $this->filterGroups[$filterGroup] ?? [];
     }
 
-    public function getAllFilterGroups()
+    public function getAllFilterGroups(): array
     {
         if (null === $this->filterGroups) {
             $this->filterGroups = [];
@@ -115,7 +98,7 @@ abstract class AbstractWorker implements WorkerInterface
         return array_keys($this->filterGroups);
     }
 
-    protected function getSystemAttributes()
+    protected function getSystemAttributes(): array
     {
         return [];
     }
@@ -140,16 +123,16 @@ abstract class AbstractWorker implements WorkerInterface
      * @param int $subObjectId
      * @param IndexableInterface|null $object - might be empty (when object doesn't exist any more in pimcore
      */
-    abstract protected function doDeleteFromIndex($subObjectId, IndexableInterface $object = null);
+    abstract protected function doDeleteFromIndex(int $subObjectId, IndexableInterface $object = null);
 
     /**
      * Checks if given data is array and returns converted data suitable for search backend. For mysql it is a string with special delimiter.
      *
      * @param array|string $data
      *
-     * @return string
+     * @return array|string
      */
-    protected function convertArray($data)
+    protected function convertArray(array|string $data): array|string
     {
         if (is_array($data)) {
             return WorkerInterface::MULTISELECT_DELIMITER . implode(WorkerInterface::MULTISELECT_DELIMITER, $data) . WorkerInterface::MULTISELECT_DELIMITER;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,7 +21,7 @@ trait ColumnType
     /**
      * {@inheritdoc}
      */
-    public function getColumnType()
+    public function getColumnType(): array|string|null
     {
         if (property_exists($this, 'columnType')) {
             return $this->columnType;
@@ -34,7 +35,7 @@ trait ColumnType
      *
      * @return $this
      */
-    public function setColumnType($columnType)
+    public function setColumnType($columnType): static
     {
         if (property_exists($this, 'columnType')) {
             $this->columnType = $columnType;

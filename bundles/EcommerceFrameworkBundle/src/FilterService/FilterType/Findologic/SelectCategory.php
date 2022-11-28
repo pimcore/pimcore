@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,13 +21,14 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductList
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory;
+use Pimcore\Model\Element\ElementInterface;
 
 class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\SelectCategory
 {
     const FIELDNAME = 'cat';
 
     /** @inheritDoc */
-    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList)
+    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList): void
     {
         //$productList->prepareGroupBySystemValues($filterDefinition->getField(), true);
     }
@@ -69,16 +71,16 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
      *
      * @return array
      */
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter, array $params, bool $isPrecondition = false): array
     {
         $value = $params[$filterDefinition->getField()] ?? null;
         $isReload = $params['is_reload'] ?? null;
 
         if ($value == AbstractFilterType::EMPTY_STRING) {
             $value = null;
-        } elseif (empty($value) && !$isReload) {
+        } elseif (empty($value) && !$isReload && $filterDefinition instanceof FilterCategory) {
             $value = $filterDefinition->getPreSelect();
-            if (is_object($value)) {
+            if ($value instanceof ElementInterface) {
                 $value = $value->getId();
             }
         }

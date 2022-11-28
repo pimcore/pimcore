@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,27 +20,11 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ActionInterface;
 
 interface DiscountInterface extends ActionInterface
 {
-    /**
-     * @param float $amount
-     *
-     * @return void
-     */
-    public function setAmount($amount);
+    public function setAmount(float $amount): void;
 
-    /**
-     * @param float $percent
-     *
-     * @return void
-     */
-    public function setPercent($percent);
+    public function setPercent(float $percent): void;
 
-    /**
-     * @return float
-     */
-    public function getAmount();
+    public function getAmount(): float;
 
-    /**
-     * @return float
-     */
-    public function getPercent();
+    public function getPercent(): float;
 }

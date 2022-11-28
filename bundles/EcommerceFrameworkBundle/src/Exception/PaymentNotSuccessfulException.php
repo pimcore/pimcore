@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,15 +21,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 
 class PaymentNotSuccessfulException extends AbstractEcommerceException
 {
-    /**
-     * @var AbstractOrder
-     */
-    protected $order;
+    protected AbstractOrder $order;
 
-    /**
-     * @var StatusInterface
-     */
-    protected $status;
+    protected StatusInterface $status;
 
     /**
      * PaymentNotSuccessfulException constructor.
@@ -44,17 +39,11 @@ class PaymentNotSuccessfulException extends AbstractEcommerceException
         $this->status = $status;
     }
 
-    /**
-     * @return AbstractOrder
-     */
     public function getOrder(): AbstractOrder
     {
         return $this->order;
     }
 
-    /**
-     * @return StatusInterface
-     */
     public function getStatus(): StatusInterface
     {
         return $this->status;

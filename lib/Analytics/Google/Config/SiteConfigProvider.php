@@ -23,15 +23,9 @@ use Pimcore\Model\Site;
 
 class SiteConfigProvider
 {
-    /**
-     * @var SiteIdProvider
-     */
-    private $siteIdProvider;
+    private SiteIdProvider $siteIdProvider;
 
-    /**
-     * @var ConfigProvider
-     */
-    private $configProvider;
+    private ConfigProvider $configProvider;
 
     public function __construct(
         SiteIdProvider $siteIdProvider,
@@ -46,7 +40,7 @@ class SiteConfigProvider
      *
      * @return array|null
      */
-    public function getSiteConfig(Site $site = null)
+    public function getSiteConfig(Site $site = null): ?array
     {
         $siteId = $this->getSiteId($site);
         $config = $this->configProvider->getConfig();

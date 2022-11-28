@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,10 +25,7 @@ use Pimcore\Model\Document;
  */
 trait Wrapper
 {
-    /**
-     * @var Document\Hardlink
-     */
-    protected $hardLinkSource;
+    protected Document\Hardlink $hardLinkSource;
 
     protected ?Document $sourceDocument = null;
 
@@ -46,7 +44,7 @@ trait Wrapper
      *
      * @throws \Exception
      */
-    protected function update($params = [])
+    protected function update(array $params = [])
     {
         throw $this->getHardlinkError();
     }
@@ -59,10 +57,7 @@ trait Wrapper
         throw $this->getHardlinkError();
     }
 
-    /**
-     * @return array|null
-     */
-    public function getProperties()
+    public function getProperties(): array
     {
         if ($this->properties == null) {
             $hardLink = $this->getHardLinkSource();
@@ -107,7 +102,7 @@ trait Wrapper
         return $this->properties;
     }
 
-    public function getProperty($name, $asContainer = false)
+    public function getProperty(string $name, bool $asContainer = false): mixed
     {
         $result = parent::getProperty($name, $asContainer);
         if ($result instanceof Document) {
@@ -134,7 +129,7 @@ trait Wrapper
      *
      * @return Document[]
      */
-    public function getChildren($includingUnpublished = false)
+    public function getChildren(bool $includingUnpublished = false): array
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
         if (!isset($this->children[$cacheKey])) {
@@ -158,61 +153,39 @@ trait Wrapper
         return $this->children[$cacheKey];
     }
 
-    /**
-     * @param bool $unpublished
-     *
-     * @return bool
-     */
-    public function hasChildren($unpublished = false)
+    public function hasChildren(bool $includingUnpublished = false): bool
     {
         $hardLink = $this->getHardLinkSource();
 
         if ($hardLink->getChildrenFromSource() && $hardLink->getSourceDocument() && !\Pimcore::inAdmin()) {
-            return parent::hasChildren($unpublished);
+            return parent::hasChildren($includingUnpublished);
         }
 
         return false;
     }
 
-    /**
-     * @return \Exception
-     */
     protected function getHardlinkError(): \Exception
     {
         return new \Exception('Method not supported by hard linked documents');
     }
 
-    /**
-     * @param Document\Hardlink $hardLinkSource
-     *
-     * @return $this
-     */
-    public function setHardLinkSource($hardLinkSource)
+    public function setHardLinkSource(Document\Hardlink $hardLinkSource): static
     {
         $this->hardLinkSource = $hardLinkSource;
 
         return $this;
     }
 
-    /**
-     * @return Document\Hardlink
-     */
-    public function getHardLinkSource()
+    public function getHardLinkSource(): Document\Hardlink
     {
         return $this->hardLinkSource;
     }
 
-    /**
-     * @return Document|null
-     */
     public function getSourceDocument(): ?Document
     {
         return $this->sourceDocument;
     }
 
-    /**
-     * @param Document $sourceDocument
-     */
     public function setSourceDocument(Document $sourceDocument): void
     {
         $this->sourceDocument = $sourceDocument;

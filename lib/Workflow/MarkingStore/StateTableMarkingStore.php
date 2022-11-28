@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,10 +25,7 @@ use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 
 class StateTableMarkingStore implements MarkingStoreInterface
 {
-    /**
-     * @var string
-     */
-    private $workflowName;
+    private string $workflowName;
 
     public function __construct(string $workflowName)
     {
@@ -83,10 +81,7 @@ class StateTableMarkingStore implements MarkingStoreInterface
         $workflowState->save();
     }
 
-    /**
-     * @return string
-     */
-    public function getProperty()
+    public function getProperty(): string
     {
         return $this->workflowName;
     }

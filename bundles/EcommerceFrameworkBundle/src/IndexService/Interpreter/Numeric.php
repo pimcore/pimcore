@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,7 +18,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
 class Numeric implements InterpreterInterface
 {
-    public function interpret($value, $config = null)
+    public function interpret($value, $config = null): float
     {
         return (float)$value;
     }

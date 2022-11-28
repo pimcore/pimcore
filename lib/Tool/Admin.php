@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -33,11 +34,11 @@ class Admin
      *
      * @static
      *
-     * @param  string $language
+     * @param string $language
      *
      * @return string
      */
-    public static function getLanguageFile($language)
+    public static function getLanguageFile(string $language): string
     {
         $baseResource = \Pimcore::getContainer()->getParameter('pimcore_admin.translations.path');
         $languageFile = \Pimcore::getKernel()->locateResource($baseResource . '/' . $language . '.json');
@@ -52,7 +53,7 @@ class Admin
      *
      * @return array
      */
-    public static function getLanguages()
+    public static function getLanguages(): array
     {
         $baseResource = \Pimcore::getContainer()->getParameter('pimcore_admin.translations.path');
         $languageDir = \Pimcore::getKernel()->locateResource($baseResource);
@@ -96,7 +97,7 @@ class Admin
      *
      * @return array
      */
-    public static function getMinimizedScriptPath($scriptContent)
+    public static function getMinimizedScriptPath(string $scriptContent): array
     {
         $scriptPath = 'minified_javascript_core_'.md5($scriptContent).'.js';
 
@@ -111,12 +112,7 @@ class Admin
         return $params;
     }
 
-    /**
-     * @param string $file
-     *
-     * @return \stdClass
-     */
-    public static function determineCsvDialect($file)
+    public static function determineCsvDialect(string $file): \stdClass
     {
         // minimum 10 lines, to be sure take more
         $sample = '';
@@ -148,15 +144,12 @@ class Admin
      *
      * @return string
      */
-    public static function getMaintenanceModeFile()
+    public static function getMaintenanceModeFile(): string
     {
         return PIMCORE_CONFIGURATION_DIRECTORY . '/maintenance.php';
     }
 
-    /**
-     * @return string
-     */
-    public static function getMaintenanceModeScheduleLoginFile()
+    public static function getMaintenanceModeScheduleLoginFile(): string
     {
         return PIMCORE_CONFIGURATION_DIRECTORY . '/maintenance-schedule-login.php';
     }
@@ -166,7 +159,7 @@ class Admin
      *
      * @throws \Exception
      */
-    public static function activateMaintenanceMode($sessionId)
+    public static function activateMaintenanceMode(?string $sessionId): void
     {
         if (empty($sessionId)) {
             $sessionId = Session::getSessionId();
@@ -188,7 +181,7 @@ class Admin
     /**
      * @static
      */
-    public static function deactivateMaintenanceMode()
+    public static function deactivateMaintenanceMode(): void
     {
         @unlink(self::getMaintenanceModeFile());
 
@@ -200,7 +193,7 @@ class Admin
      *
      * @return bool
      */
-    public static function isInMaintenanceMode()
+    public static function isInMaintenanceMode(): bool
     {
         $file = self::getMaintenanceModeFile();
 
@@ -232,7 +225,7 @@ class Admin
         return false;
     }
 
-    public static function scheduleMaintenanceModeOnLogin()
+    public static function scheduleMaintenanceModeOnLogin(): void
     {
         File::putPhpFile(self::getMaintenanceModeScheduleLoginFile(), to_php_data_file_format([
             'schedule' => true,
@@ -243,7 +236,7 @@ class Admin
         \Pimcore::getEventDispatcher()->dispatch(new GenericEvent(), SystemEvents::MAINTENANCE_MODE_SCHEDULE_LOGIN);
     }
 
-    public static function unscheduleMaintenanceModeOnLogin()
+    public static function unscheduleMaintenanceModeOnLogin(): void
     {
         @unlink(self::getMaintenanceModeScheduleLoginFile());
 
@@ -255,7 +248,7 @@ class Admin
      *
      * @return \Pimcore\Model\User|null
      */
-    public static function getCurrentUser()
+    public static function getCurrentUser(): ?User
     {
         return \Pimcore::getContainer()
             ->get(TokenStorageUserResolver::class)
@@ -265,19 +258,12 @@ class Admin
     /**
      * @return true if in EXT JS5 mode
      */
-    public static function isExtJS6()
+    public static function isExtJS6(): bool
     {
         return true;
     }
 
-    /**
-     * @param User $user
-     * @param string|array $languages
-     * @param bool $returnLanguageArray
-     *
-     * @return string|array
-     */
-    public static function reorderWebsiteLanguages($user, $languages, $returnLanguageArray = false)
+    public static function reorderWebsiteLanguages(User $user, array|string $languages, bool $returnLanguageArray = false): array|string
     {
         if (!is_array($languages)) {
             $languages = explode(',', $languages);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -44,7 +45,7 @@ class NormalizerTest extends ModelTestCase
     /**
      * @inheritdoc
      */
-    protected function needsDb()
+    protected function needsDb(): bool
     {
         return true;
     }

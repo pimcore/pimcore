@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,7 +31,7 @@ trait ControllerTypeTrait
      *
      * @return mixed
      */
-    protected function getControllerType(ControllerEvent $event, $type)
+    protected function getControllerType(ControllerEvent $event, string $type): mixed
     {
         $callable = $event->getController();
 
@@ -54,7 +55,7 @@ trait ControllerTypeTrait
      *
      * @return bool
      */
-    protected function isControllerType(ControllerEvent $event, $type)
+    protected function isControllerType(ControllerEvent $event, string $type): bool
     {
         $controller = $this->getControllerType($event, $type);
 
