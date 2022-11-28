@@ -35,6 +35,8 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             return true;
         }.bind(this));
 
+        this.fieldConfig.visibleFields = "fullpath";
+
         let storeConfig = {
             data: this.data,
             listeners: {
@@ -133,8 +135,6 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
         } else {
             href.width = 300;
         }
-
-        this.fieldConfig.visibleFields = "fullpath";
 
         if (this.fieldConfig.displayMode == 'combo') {
             Object.assign(href, {
