@@ -584,7 +584,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $classes = [];
         $allowClasses = true;
 
-        if (method_exists($fieldConfig, 'getAssetsAllowed') && $fieldConfig->getAssetsAllowed()) {
+        if ($fieldConfig->getAssetsAllowed()) {
             $allowedTypes[] = 'asset';
             $allowClasses = false;
 
