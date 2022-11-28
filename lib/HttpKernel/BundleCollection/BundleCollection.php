@@ -52,10 +52,6 @@ class BundleCollection
 
     /**
      * Returns a collection item by identifier
-     *
-     * @param string $identifier
-     *
-     * @return ItemInterface
      */
     public function getItem(string $identifier): ItemInterface
     {
@@ -68,10 +64,6 @@ class BundleCollection
 
     /**
      * Checks if a specific item is registered
-     *
-     * @param string $identifier
-     *
-     * @return bool
      */
     public function hasItem(string $identifier): bool
     {
@@ -81,27 +73,17 @@ class BundleCollection
     /**
      * Returns all collection items ordered by priority and optionally filtered by matching environment
      *
-     * @param string|null $environment
-     *
      * @return ItemInterface[]
      */
-    public function getItems(string $environment = null): array
+    public function getItems(?string $environment = null): array
     {
         $items = array_values($this->items);
 
         if (null !== $environment) {
-            $items = array_filter($items, function (ItemInterface $item) use ($environment) {
-                return $item->matchesEnvironment($environment);
-            });
+            $items = array_filter($items, static fn(ItemInterface $item) => $item->matchesEnvironment($environment));
         }
 
-        usort($items, function (ItemInterface $a, ItemInterface $b) {
-            if ($a->getPriority() === $b->getPriority()) {
-                return 0;
-            }
-
-            return ($a->getPriority() > $b->getPriority()) ? -1 : 1;
-        });
+        usort($items, static fn(ItemInterface $a, ItemInterface $b) => $b->getPriority() <=> $a->getPriority());
 
         return $items;
     }
@@ -109,26 +91,27 @@ class BundleCollection
     /**
      * Returns all bundle identifiers
      *
+     * @return string[]
      */
     public function getIdentifiers(string $environment = null): array
     {
-        return array_map(function (ItemInterface $item) {
-            return $item->getBundleIdentifier();
-        }, $this->getItems($environment));
+        return array_map(
+            static fn(ItemInterface $item): string => $item->getBundleIdentifier(),
+            $this->getItems($environment),
+        );
     }
 
     /**
      * Get bundles matching environment ordered by priority
      *
-     * @param string $environment
-     *
      * @return BundleInterface[]
      */
     public function getBundles(string $environment): array
     {
-        return array_map(function (ItemInterface $item) {
-            return $item->getBundle();
-        }, $this->getItems($environment));
+        return array_map(
+            static fn(ItemInterface $item): BundleInterface => $item->getBundle(),
+            $this->getItems($environment),
+        );
     }
 
     /**
@@ -140,13 +123,9 @@ class BundleCollection
      */
     public function addBundle(BundleInterface|string $bundle, int $priority = 0, array $environments = []): static
     {
-        if ($bundle instanceof BundleInterface) {
-            $item = new Item($bundle, $priority, $environments);
-        } elseif (is_string($bundle)) {
-            $item = new LazyLoadedItem($bundle, $priority, $environments);
-        } else {
-            throw new \InvalidArgumentException('Bundle must be either an instance of BundleInterface or a string containing the bundle class name');
-        }
+        $item = $bundle instanceof BundleInterface
+            ? new Item($bundle, $priority, $environments)
+            : new LazyLoadedItem($bundle, $priority, $environments);
 
         return $this->add($item);
     }
