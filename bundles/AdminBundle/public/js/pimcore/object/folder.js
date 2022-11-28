@@ -454,9 +454,9 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
             modificationdate: this.data.general.modificationDate,
             creationdate: this.data.general.creationDate,
             usermodification: this.data.general.userModification,
-            usermodification_name: this.data.general.o_userModificationFullname,
+            usermodification_name: this.data.general.userModificationFullname,
             userowner: this.data.general.userOwner,
-            userowner_name: this.data.general.o_userOwnerFullname,
+            userowner_name: this.data.general.userOwnerFullname,
             deeplink: pimcore.helpers.getDeeplink("object", this.data.general.id, "folder")
         };
     },

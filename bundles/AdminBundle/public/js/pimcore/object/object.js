@@ -568,7 +568,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
-                text: t(this.data.general.o_title),
+                text: t(this.data.general.title),
                 scale: "medium"
             });
 
@@ -911,9 +911,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             modificationdate: this.data.general.modificationDate,
             creationdate: this.data.general.creationDate,
             usermodification: this.data.general.userModification,
-            usermodification_name: this.data.general.o_userModificationFullname,
+            usermodification_name: this.data.general.userModificationFullname,
             userowner: this.data.general.userOwner,
-            userowner_name: this.data.general.o_userOwnerFullname,
+            userowner_name: this.data.general.userOwnerFullname,
             deeplink: pimcore.helpers.getDeeplink("object", this.data.general.id, "object")
         };
     },
