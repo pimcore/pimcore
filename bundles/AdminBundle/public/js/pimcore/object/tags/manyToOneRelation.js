@@ -134,6 +134,8 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             href.width = 300;
         }
 
+        this.fieldConfig.visibleFields = "fullpath";
+
         if (this.fieldConfig.displayMode == 'combo') {
             Object.assign(href, {
                 store: this.store,
