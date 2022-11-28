@@ -26,15 +26,9 @@ use Symfony\Component\Lock\LockFactory;
 
 class StaticPageGenerator
 {
-    /**
-     * @var DocumentRenderer
-     */
-    protected $documentRenderer;
+    protected DocumentRenderer $documentRenderer;
 
-    /**
-     * @var LockFactory
-     */
-    private $lockFactory;
+    private LockFactory $lockFactory;
 
     public function __construct(DocumentRenderer $documentRenderer, LockFactory $lockFactory)
     {
@@ -42,23 +36,20 @@ class StaticPageGenerator
         $this->lockFactory = $lockFactory;
     }
 
-    /**
-     * @param Document\PageSnippet $document
-     *
-     * @return string
-     */
-    public function getStoragePath($document)
+    public function getStoragePath(Document\PageSnippet $document): string
     {
-        return $document->getRealFullPath() . '.html';
+        $path = $document->getRealFullPath();
+
+        if ($document instanceof Document\Page && $document->getPrettyUrl()) {
+            $path = $document->getPrettyUrl();
+        } elseif ($path === '/') {
+            $path = '/%home';
+        }
+
+        return $path . '.html';
     }
 
-    /**
-     * @param Document\PageSnippet $document
-     * @param array $params
-     *
-     * @return bool
-     */
-    public function generate($document, $params = [])
+    public function generate(Document\PageSnippet $document, array $params = []): bool
     {
         $storagePath = $this->getStoragePath($document);
 
@@ -102,7 +93,7 @@ class StaticPageGenerator
      *
      * @throws \League\Flysystem\FilesystemException
      */
-    public function remove($document)
+    public function remove(Document\PageSnippet $document): void
     {
         $storagePath = $this->getStoragePath($document);
         $storage = Storage::get('document_static');
@@ -110,12 +101,7 @@ class StaticPageGenerator
         $storage->delete($storagePath);
     }
 
-    /**
-     * @param Document\PageSnippet $document
-     *
-     * @return bool
-     */
-    public function pageExists($document)
+    public function pageExists(Document\PageSnippet $document): bool
     {
         $storagePath = $this->getStoragePath($document);
         $storage = Storage::get('document_static');
@@ -123,12 +109,7 @@ class StaticPageGenerator
         return $storage->fileExists($storagePath);
     }
 
-    /**
-     * @param Document\PageSnippet $document
-     *
-     * @return int|null
-     */
-    public function getLastModified($document)
+    public function getLastModified(Document\PageSnippet $document): ?int
     {
         $storagePath = $this->getStoragePath($document);
         $storage = Storage::get('document_static');

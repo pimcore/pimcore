@@ -43,40 +43,22 @@ class VisitorInfoResolver
 
     const STORAGE_KEY_MATCHED_VISITOR_RULES = 'vi:vru'; // visitorInfo:visitorRules
 
-    /**
-     * @var TargetingStorageInterface
-     */
-    private $targetingStorage;
+    private TargetingStorageInterface $targetingStorage;
 
-    /**
-     * @var VisitorInfoStorageInterface
-     */
-    private $visitorInfoStorage;
+    private VisitorInfoStorageInterface $visitorInfoStorage;
 
-    /**
-     * @var ConditionMatcherInterface
-     */
-    private $conditionMatcher;
+    private ConditionMatcherInterface $conditionMatcher;
 
-    /**
-     * @var DelegatingActionHandler|ActionHandlerInterface
-     */
-    private $actionHandler;
+    private ActionHandlerInterface|DelegatingActionHandler $actionHandler;
 
-    /**
-     * @var Connection
-     */
-    private $db;
+    private Connection $db;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
     /**
      * @var Rule[]|null
      */
-    private $targetingRules;
+    private ?array $targetingRules = null;
 
     private ?bool $targetingConfigured = null;
 
@@ -138,7 +120,7 @@ class VisitorInfoResolver
         return $this->targetingConfigured;
     }
 
-    private function matchTargetingRuleConditions(VisitorInfo $visitorInfo)
+    private function matchTargetingRuleConditions(VisitorInfo $visitorInfo): void
     {
         $rules = $this->getTargetingRules();
 
@@ -157,7 +139,7 @@ class VisitorInfoResolver
         }
     }
 
-    private function matchTargetingRuleCondition(VisitorInfo $visitorInfo, Rule $rule)
+    private function matchTargetingRuleCondition(VisitorInfo $visitorInfo, Rule $rule): void
     {
         $scopeWithVariables = Rule::SCOPE_SESSION_WITH_VARIABLES === $rule->getScope();
 
@@ -203,7 +185,7 @@ class VisitorInfoResolver
         $this->eventDispatcher->dispatch(new TargetingRuleEvent($visitorInfo, $rule), TargetingEvents::POST_RULE_ACTIONS);
     }
 
-    private function handleTargetingRuleActions(VisitorInfo $visitorInfo, Rule $rule)
+    private function handleTargetingRuleActions(VisitorInfo $visitorInfo, Rule $rule): void
     {
         $actions = $rule->getActions();
         if (!$actions || !is_array($actions)) {
@@ -247,7 +229,7 @@ class VisitorInfoResolver
         );
     }
 
-    private function markRuleAsMatchedInSession(VisitorInfo $visitorInfo, Rule $rule)
+    private function markRuleAsMatchedInSession(VisitorInfo $visitorInfo, Rule $rule): void
     {
         $this->markRuleAsMatched(
             $visitorInfo, $rule,
@@ -263,7 +245,7 @@ class VisitorInfoResolver
         );
     }
 
-    private function markRuleAsMatchedForVisitor(VisitorInfo $visitorInfo, Rule $rule)
+    private function markRuleAsMatchedForVisitor(VisitorInfo $visitorInfo, Rule $rule): void
     {
         $this->markRuleAsMatched(
             $visitorInfo, $rule,
@@ -278,7 +260,7 @@ class VisitorInfoResolver
         return in_array($rule->getId(), $matchedRules);
     }
 
-    private function markRuleAsMatched(VisitorInfo $visitorInfo, Rule $rule, string $scope, string $storageKey)
+    private function markRuleAsMatched(VisitorInfo $visitorInfo, Rule $rule, string $scope, string $storageKey): void
     {
         $matchedRules = $this->targetingStorage->get($visitorInfo, $scope, $storageKey, []);
 

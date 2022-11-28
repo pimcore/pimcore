@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Tests\Ecommerce;
 
-use Codeception\Util\Stub;
+use Codeception\Stub;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Shipping;
@@ -36,14 +36,14 @@ use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Fieldcollection\Data\TaxEntry as TaxEntryFieldcollection;
 use Pimcore\Model\DataObject\OnlineShopTaxClass;
-use Pimcore\Tests\Test\EcommerceTestCase;
+use Pimcore\Tests\Support\Test\EcommerceTestCase;
 
 class CartTaxManagementTest extends EcommerceTestCase
 {
-    private function buildTaxClass(array $taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE)
+    private function buildTaxClass(array $taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): OnlineShopTaxClass
     {
         $taxClass = new OnlineShopTaxClass();
-        $taxClass->setId(md5(serialize($taxes)));
+        $taxClass->setId((int)md5(serialize($taxes)));
 
         $taxEntries = new Fieldcollection();
         foreach ($taxes as $name => $tax) {
@@ -105,10 +105,7 @@ class CartTaxManagementTest extends EcommerceTestCase
         return $product;
     }
 
-    /**
-     * @return SessionCart
-     */
-    private function setUpCart()
+    private function setUpCart(): SessionCart
     {
         $sessionBag = $this->buildSession()->getBag(SessionBagListener::ATTRIBUTE_BAG_CART);
 
@@ -120,19 +117,12 @@ class CartTaxManagementTest extends EcommerceTestCase
             'isCartReadOnly' => function () {
                 return false;
             },
-            'modified' => function () {
-            },
         ]);
 
         return $cart;
     }
 
-    /**
-     * @param CartInterface $cart
-     *
-     * @return CartPriceCalculator
-     */
-    private function setUpCartCalculator(CartInterface $cart, $withModificators = false, $taxes = [])
+    private function setUpCartCalculator(CartInterface $cart, bool $withModificators = false, array $taxes = []): CartPriceCalculator
     {
         $calculator = new CartPriceCalculator($this->buildEnvironment(), $cart);
 

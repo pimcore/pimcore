@@ -27,20 +27,10 @@ use Pimcore\Model\Document\Editable;
  */
 final class BlockName implements \JsonSerializable
 {
-    /**
-     * @var string
-     */
-    private $name;
+    private string $name;
 
-    /**
-     * @var string
-     */
-    private $realName;
+    private string $realName;
 
-    /**
-     * @param string $name
-     * @param string $realName
-     */
     public function __construct(string $name, string $realName)
     {
         $this->name = $name;
@@ -72,25 +62,16 @@ final class BlockName implements \JsonSerializable
         return new self($editable->getName(), $editable->getRealName());
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
     public function getRealName(): string
     {
         return $this->realName;
     }
 
-    /**
-     * @return array
-     */
     public function jsonSerialize(): array
     {
         return [

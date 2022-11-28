@@ -12,7 +12,7 @@ of course you can use them also anywhere in your code or in your dependency inje
 Pimcore implements the standard Symfony framework event dispatcher and just adds some pimcore specific events, 
 so you can also subscribe to all Symfony core eventsand events triggered by arbitrary Symfony bundles. 
 
-For that reason it's recommended to have a look into the Symfony [Events and Event Listeners documentation](https://symfony.com/doc/5.2/event_dispatcher.html)
+For that reason it's recommended to have a look into the Symfony [Events and Event Listeners documentation](https://symfony.com/doc/current/event_dispatcher.html)
 first, which covers all basics in that matter. 
 
 ## Available Events

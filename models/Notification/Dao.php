@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * Pimcore
  *
@@ -82,10 +80,7 @@ class Dao extends AbstractDao
         ]);
     }
 
-    /**
-     * @param array $data
-     */
-    protected function assignVariablesToModel($data)
+    protected function assignVariablesToModel(array $data): void
     {
         $model = $this->getModel();
         $sender = null;
@@ -136,11 +131,6 @@ class Dao extends AbstractDao
         $model->setRead($data['read'] == 1 ? true : false);
     }
 
-    /**
-     * @param Notification $model
-     *
-     * @return array
-     */
     protected function getData(Notification $model): array
     {
         return [
@@ -157,9 +147,6 @@ class Dao extends AbstractDao
         ];
     }
 
-    /**
-     * @return Notification
-     */
     protected function getModel(): Notification
     {
         return $this->model;

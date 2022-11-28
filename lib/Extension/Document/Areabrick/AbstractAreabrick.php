@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,10 +28,7 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
 {
     use ContainerAwareTrait;
 
-    /**
-     * @var EditableRenderer
-     */
-    protected $editableRenderer;
+    protected EditableRenderer $editableRenderer;
 
     /**
      * Called in AreabrickPass
@@ -42,15 +40,12 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
         $this->editableRenderer = $editableRenderer;
     }
 
-    /**
-     * @var string
-     */
-    protected $id;
+    protected ?string $id = null;
 
     /**
      * {@inheritdoc}
      */
-    public function setId($id)
+    public function setId(string $id)
     {
         // make sure ID is only set once
         if (null !== $this->id) {
@@ -67,7 +62,7 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     /**
      * {@inheritdoc}
      */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
@@ -75,7 +70,7 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->id ? ucfirst($this->id) : '';
     }
@@ -83,7 +78,7 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     /**
      * {@inheritdoc}
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         return '';
     }
@@ -91,7 +86,7 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     /**
      * {@inheritdoc}
      */
-    public function getVersion()
+    public function getVersion(): string
     {
         return '';
     }
@@ -99,7 +94,7 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     /**
      * {@inheritdoc}
      */
-    public function getIcon()
+    public function getIcon(): ?string
     {
         return null;
     }
@@ -107,7 +102,7 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     /**
      * {@inheritdoc}
      */
-    public function hasTemplate()
+    public function hasTemplate(): bool
     {
         return true;
     }
@@ -115,7 +110,7 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     /**
      * {@inheritdoc}
      */
-    public function action(Info $info)
+    public function action(Info $info): ?\Symfony\Component\HttpFoundation\Response
     {
         // noop - implement as needed
         return null;
@@ -124,7 +119,7 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     /**
      * {@inheritdoc}
      */
-    public function postRenderAction(Info $info)
+    public function postRenderAction(Info $info): ?\Symfony\Component\HttpFoundation\Response
     {
         // noop - implement as needed
         return null;
@@ -133,17 +128,12 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     /**
      * {@inheritdoc}
      */
-    public function getHtmlTagOpen(Info $info)
+    public function getHtmlTagOpen(Info $info): string
     {
         return '<div class="pimcore_area_' . $info->getId() . ' pimcore_area_content '. $this->getOpenTagCssClass($info) .'">';
     }
 
-    /**
-     * @param Info $info
-     *
-     * @return string|null
-     */
-    protected function getOpenTagCssClass(Info $info)
+    protected function getOpenTagCssClass(Info $info): ?string
     {
         return null;
     }
@@ -151,20 +141,12 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     /**
      * {@inheritdoc}
      */
-    public function getHtmlTagClose(Info $info)
+    public function getHtmlTagClose(Info $info): string
     {
         return '</div>';
     }
 
-    /**
-     * @param PageSnippet $document
-     * @param string $type
-     * @param string $inputName
-     * @param array $options
-     *
-     * @return Editable\EditableInterface
-     */
-    protected function getDocumentEditable(PageSnippet $document, $type, $inputName, array $options = [])
+    protected function getDocumentEditable(PageSnippet $document, string $type, string $inputName, array $options = []): Editable\EditableInterface
     {
         return $this->editableRenderer->getEditable($document, $type, $inputName, $options);
     }

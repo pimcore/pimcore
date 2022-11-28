@@ -74,7 +74,7 @@ pimcore.elementservice.deleteElementsComplete = function(options, response) {
 pimcore.elementservice.deleteElementCheckDependencyComplete = function (window, res, options) {
 
     try {
-        var message = res.batchDelete ? t('delete_message_batch') : t('delete_message');
+        let message = res.batchDelete ? t('delete_message_batch') : t('delete_message');
         if (res.elementKey) {
             message += "<br /><b style='display: block; text-align: center; padding: 10px 0;'>\"" + htmlspecialchars(res.elementKey) + "\"</b>";
         }
@@ -84,6 +84,10 @@ pimcore.elementservice.deleteElementCheckDependencyComplete = function (window, 
 
         if (res['children'] > 100) {
             message += "<br /><br /><b>" + t("too_many_children_for_recyclebin") + "</b>";
+        }
+
+        if(res.itemResults[0].type === "folder") {
+            message += `<br /><br /><b> ${t('delete_entire_folder_question')} </b>`;
         }
 
         Ext.MessageBox.show({
@@ -510,9 +514,9 @@ pimcore.elementservice.editAssetKeyComplete = function (options, button, value, 
                 record = store.getById(id);
                 // check for ident filename in current level
 
-                var parentChilds = record.parentNode.childNodes;
-                for (var i = 0; i < parentChilds.length; i++) {
-                    if (parentChilds[i].data.text == value && this != parentChilds[i].data.text) {
+                var parentChildren = record.parentNode.childNodes;
+                for (var i = 0; i < parentChildren.length; i++) {
+                    if (parentChildren[i].data.text == value && this != parentChildren[i].data.text) {
                         Ext.MessageBox.alert(t('rename'), t('name_already_in_use'));
                         return;
                     }
@@ -680,9 +684,9 @@ pimcore.elementservice.isDisallowedDocumentKey = function (parentNodeId, key) {
 pimcore.elementservice.isKeyExistingInLevel = function(parentNode, key, node) {
 
     key = pimcore.helpers.getValidFilename(key, parentNode.data.elementType);
-    var parentChilds = parentNode.childNodes;
-    for (var i = 0; i < parentChilds.length; i++) {
-        if (parentChilds[i].data.text == key && node != parentChilds[i]) {
+    var parentChildren = parentNode.childNodes;
+    for (var i = 0; i < parentChildren.length; i++) {
+        if (parentChildren[i].data.text == key && node != parentChildren[i]) {
             Ext.MessageBox.alert(t('error'),
                 t('name_already_in_use'));
             return true;

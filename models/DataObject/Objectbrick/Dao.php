@@ -28,13 +28,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterf
  */
 class Dao extends Model\DataObject\Fieldcollection\Dao
 {
-    /**
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array
-     */
-    public function load(DataObject\Concrete $object, $params = [])
+    public function load(DataObject\Concrete $object, array $params = []): array
     {
         /** @var DataObject\ClassDefinition\Data\Objectbricks $fieldDef */
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
@@ -132,7 +126,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
      *
      * @return array
      */
-    public function delete(DataObject\Concrete $object, $saveMode = false)
+    public function delete(DataObject\Concrete $object, bool $saveMode = false): array
     {
         // this is to clean up also the inherited values
 

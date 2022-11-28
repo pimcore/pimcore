@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,8 +19,8 @@ namespace Pimcore\Tests\Model\DataType;
 use Pimcore\Model\DataObject\Data\Link;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\DataObject\unittestLink;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class LinkTest
@@ -50,7 +51,7 @@ class LinkTest extends ModelTestCase
      *
      * @throws \Exception
      */
-    protected function createLinkObject()
+    protected function createLinkObject(): unittestLink
     {
         $object = new unittestLink();
         $object->setParent(Service::createFolderByPath('/links'));

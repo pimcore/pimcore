@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,19 +33,10 @@ class UsageStatisticsListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
-    /**
-     * @var TokenStorageUserResolver
-     */
-    protected $userResolver;
+    protected TokenStorageUserResolver $userResolver;
 
-    /**
-     * @var Config
-     */
-    protected $config;
+    protected Config $config;
 
-    /**
-     * @param TokenStorageUserResolver $userResolver
-     */
     public function __construct(TokenStorageUserResolver $userResolver, Config $config)
     {
         $this->userResolver = $userResolver;
@@ -76,9 +68,6 @@ class UsageStatisticsListener implements EventSubscriberInterface
         $this->logUsageStatistics($request);
     }
 
-    /**
-     * @param Request $request
-     */
     protected function logUsageStatistics(Request $request)
     {
         if (!empty($this->config['general']['disable_usage_statistics'])) {
@@ -99,12 +88,7 @@ class UsageStatisticsListener implements EventSubscriberInterface
         Simple::log('usagelog', implode('|', $parts));
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return array
-     */
-    protected function getParams(Request $request)
+    protected function getParams(Request $request): array
     {
         $params = [];
         $disallowedKeys = ['_dc', 'module', 'controller', 'action', 'password'];

@@ -32,7 +32,10 @@ abstract class AbstractBundleCommand extends AbstractCommand
         parent::__construct($name);
     }
 
-    protected function configureDescriptionAndHelp(string $description, string $help = null): self
+    /**
+     * @return $this
+     */
+    protected function configureDescriptionAndHelp(string $description, string $help = null): static
     {
         if (null === $help) {
             $help = 'Bundle can be passed as fully qualified class name or as bundle short name (e.g. <comment>PimcoreEcommerceFrameworkBundle</comment>).';
@@ -45,7 +48,7 @@ abstract class AbstractBundleCommand extends AbstractCommand
         return $this;
     }
 
-    protected function configureFailWithoutErrorOption(): self
+    protected function configureFailWithoutErrorOption(): static
     {
         $this->addOption(
             'fail-without-error',
@@ -57,7 +60,7 @@ abstract class AbstractBundleCommand extends AbstractCommand
         return $this;
     }
 
-    protected function buildName(string $name)
+    protected function buildName(string $name): string
     {
         return sprintf('pimcore:bundle:%s', $name);
     }
@@ -104,7 +107,7 @@ abstract class AbstractBundleCommand extends AbstractCommand
         return $bundle;
     }
 
-    protected function setupInstaller(PimcoreBundleInterface $bundle)
+    protected function setupInstaller(PimcoreBundleInterface $bundle): ?\Pimcore\Extension\Bundle\Installer\InstallerInterface
     {
         $installer = $this->bundleManager->getInstaller($bundle);
         if (null === $installer) {
@@ -119,7 +122,7 @@ abstract class AbstractBundleCommand extends AbstractCommand
         return str_replace('/', '\\', $bundleIdentifier);
     }
 
-    protected function getShortClassName(string $className)
+    protected function getShortClassName(string $className): ?string
     {
         if (!class_exists($className)) {
             throw new \InvalidArgumentException(sprintf('Class "%s" does not exist', $className));

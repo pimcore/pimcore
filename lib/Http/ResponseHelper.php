@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,7 +30,7 @@ class ResponseHelper
      * @param Response $response
      * @param bool $force
      */
-    public function disableCache(Response $response, $force = false)
+    public function disableCache(Response $response, bool $force = false): void
     {
         if (!$response->headers->has('Cache-Control') || $force) {
             // set this headers to avoid problems with proxies, ...
@@ -54,11 +55,6 @@ class ResponseHelper
         }
     }
 
-    /**
-     * @param Response $response
-     *
-     * @return bool
-     */
     public function isHtmlResponse(Response $response): bool
     {
         if ($response instanceof BinaryFileResponse) {

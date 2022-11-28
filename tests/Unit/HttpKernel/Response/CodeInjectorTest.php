@@ -19,25 +19,16 @@ namespace Pimcore\Tests\Unit\HttpKernel\Response;
 
 use Pimcore\Http\Response\CodeInjector;
 use Pimcore\Http\ResponseHelper;
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 class CodeInjectorTest extends TestCase
 {
-    /**
-     * @var ResponseHelper|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $responseHelper;
+    private ResponseHelper|\PHPUnit_Framework_MockObject_MockObject $responseHelper;
 
-    /**
-     * @var CodeInjector
-     */
-    private $injector;
+    private CodeInjector $injector;
 
-    /**
-     * @var string
-     */
-    private $codePart = '<!-- INJECTED -->';
+    private string $codePart = '<!-- INJECTED -->';
 
     protected function setUp(): void
     {
@@ -88,7 +79,7 @@ class CodeInjectorTest extends TestCase
         $this->testInject($selector, $position, $source, $expected);
     }
 
-    private function testInject(string $selector, string $position, string $source, string $expected)
+    private function testInject(string $selector, string $position, string $source, string $expected): void
     {
         $result = $this->injector->injectIntoHtml($source, $this->codePart, $selector, $position);
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,13 +28,14 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\DuplicateFullPathException;
+use Pimcore\Model\Element\ElementInterface;
 
 /**
  * @method AbstractObject\Dao getDao()
  * @method array|null getPermissions(?string $type, Model\User $user, bool $quote = true)
  * @method bool __isBasedOnLatestData()
  * @method string getCurrentFullPath()
- * @method int getChildAmount($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], Model\User $user = null)
+ * @method int getChildAmount($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_FOLDER], Model\User $user = null)
  * @method array getChildPermissions(?string $type, Model\User $user, bool $quote = true)
  */
 abstract class AbstractObject extends Model\Element\AbstractElement
@@ -55,59 +57,117 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @var array
      */
-    public static $types = [self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT];
+    public static array $types = [self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT];
 
-    /**
-     * @var bool
-     */
-    private static $hideUnpublished = false;
+    private static bool $hideUnpublished = false;
 
-    /**
-     * @var bool
-     */
-    private static $getInheritedValues = false;
+    private static bool $getInheritedValues = false;
 
     /**
      * @internal
      *
      * @var bool
      */
-    protected static $disableDirtyDetection = false;
+    protected static bool $disableDirtyDetection = false;
 
     /**
      * @internal
      *
      * @var string[]
      */
-    protected static $objectColumns = ['id', 'parentid', 'type', 'key', 'classid', 'classname', 'path'];
+    protected static array $objectColumns = ['id', 'parentid', 'type', 'key', 'classid', 'classname', 'path'];
+
+    /**
+     * @internal
+     *
+     * @deprecated
+     *
+     * @var int|null
+     */
+    protected ?int $id = null;
+
+    /**
+     * @internal
+     *
+     * @deprecated
+     *
+     * @var int|null
+     */
+    protected ?int $parentId = null;
+
+    /**
+     * @internal
+     *
+     * @deprecated
+     */
+    protected ?Element\AbstractElement $parent = null;
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $type = 'object';
+    protected string $type = 'object';
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected $key;
+    protected ?string $key = null;
+
+    /**
+     * @internal
+     *
+     * @var string|null
+     */
+    protected ?string $path = null;
 
     /**
      * @internal
      *
      * @var int
      */
-    protected $index = 0;
+    protected int $index = 0;
+
+    /**
+     * @internal
+     *
+     * @deprecated
+     *
+     * @var int|null
+     */
+    protected ?int $creationDate = null;
+
+    /**
+     * @internal
+     *
+     * @deprecated
+     *
+     * @var int|null
+     */
+    protected ?int $modificationDate = null;
+
+    /**
+     * @internal
+     *
+     * @deprecated
+     */
+    protected ?int $userOwner = null;
+
+    /**
+     * @internal
+     *
+     * @deprecated
+     */
+    protected ?int $userModification = null;
 
     /**
      * @internal
      *
      * @var bool[]
      */
-    protected $hasChildren = [];
+    protected array $hasChildren = [];
 
     /**
      * Contains a list of sibling documents
@@ -116,7 +176,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @var array
      */
-    protected $siblings = [];
+    protected array $siblings = [];
 
     /**
      * Indicator if object has siblings or not
@@ -125,29 +185,55 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @var bool[]
      */
-    protected $hasSiblings = [];
+    protected array $hasSiblings = [];
 
     /**
      * @internal
      *
      * @var array
      */
-    protected $children = [];
+    protected array $children = [];
+
+    /**
+     * @internal
+     *
+     * @deprecated
+     *
+     * @var string
+     */
+    protected ?string $locked = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected $childrenSortBy;
+    protected ?string $childrenSortBy = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected $childrenSortOrder;
+    protected ?string $childrenSortOrder = null;
 
+    /**
+     * @internal
+     *
+     * @deprecated
+     *
+     * @var int
+     */
+    protected int $versionCount = 0;
+
+    /**
+     * @internal
+     *
+     * @deprecated
+     *
+     * @var array|null
+     */
+    protected ?array $properties = null;
 
     /**
      * {@inheritdoc}
@@ -172,7 +258,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @return bool
      */
-    public static function getHideUnpublished()
+    public static function getHideUnpublished(): bool
     {
         return self::$hideUnpublished;
     }
@@ -182,7 +268,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @param bool $hideUnpublished
      */
-    public static function setHideUnpublished($hideUnpublished)
+    public static function setHideUnpublished(bool $hideUnpublished)
     {
         self::$hideUnpublished = $hideUnpublished;
     }
@@ -192,7 +278,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @return bool
      */
-    public static function doHideUnpublished()
+    public static function doHideUnpublished(): bool
     {
         return self::$hideUnpublished;
     }
@@ -202,7 +288,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @param bool $getInheritedValues
      */
-    public static function setGetInheritedValues($getInheritedValues)
+    public static function setGetInheritedValues(bool $getInheritedValues)
     {
         self::$getInheritedValues = $getInheritedValues;
     }
@@ -212,7 +298,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @return bool
      */
-    public static function getGetInheritedValues()
+    public static function getGetInheritedValues(): bool
     {
         return self::$getInheritedValues;
     }
@@ -224,7 +310,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @return bool
      */
-    public static function doGetInheritedValues(Concrete $object = null)
+    public static function doGetInheritedValues(Concrete $object = null): bool
     {
         if (self::$getInheritedValues && $object !== null) {
             $class = $object->getClass();
@@ -240,7 +326,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @return array
      */
-    public static function getTypes()
+    public static function getTypes(): array
     {
         return self::$types;
     }
@@ -248,12 +334,8 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     /**
      * Static helper to get an object by the passed ID
      *
-     * @param int $id
-     * @param array $params
-     *
-     * @return static|null
      */
-    public static function getById($id, array $params = [])
+    public static function getById(int|string $id, array $params = []): ?static
     {
         if (!is_numeric($id) || $id < 1) {
             return null;
@@ -320,13 +402,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $object;
     }
 
-    /**
-     * @param string $path
-     * @param array $params
-     *
-     * @return static|null
-     */
-    public static function getByPath($path, array $params = [])
+    public static function getByPath(string $path, array $params = []): static|null
     {
         if (!$path) {
             return null;
@@ -351,7 +427,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @throws \Exception
      */
-    public static function getList($config = [])
+    public static function getList(array $config = []): Listing
     {
         $className = DataObject::class;
         // get classname
@@ -382,30 +458,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @deprecated will be removed in Pimcore 11
-     *
-     * @param array $config
-     *
-     * @return int total count
-     */
-    public static function getTotalCount($config = [])
-    {
-        $list = static::getList($config);
-        $count = $list->getTotalCount();
-
-        return $count;
-    }
-
-    /**
      * @internal
-     *
-     * @param AbstractObject $object
-     *
-     * @return bool
      */
-    protected static function typeMatch(AbstractObject $object)
+    protected static function typeMatch(AbstractObject $object): bool
     {
-        return in_array(static::class, [Concrete::class, __CLASS__], true) || $object instanceof static;
+        return static::class === self::class || $object instanceof static;
     }
 
     /**
@@ -414,7 +471,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @return DataObject[]
      */
-    public function getChildren(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = false)
+    public function getChildren(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER], bool $includingUnpublished = false): array
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
@@ -445,7 +502,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @return bool
      */
-    public function hasChildren($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = null)
+    public function hasChildren(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER], bool $includingUnpublished = null): bool
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
@@ -464,7 +521,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @return array
      */
-    public function getSiblings(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = false)
+    public function getSiblings(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER], bool $includingUnpublished = false): array
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
@@ -498,7 +555,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @return bool
      */
-    public function hasSiblings($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = null)
+    public function hasSiblings(array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER], bool $includingUnpublished = null): bool
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
 
@@ -583,24 +640,16 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return $this
-     *
-     * @throws \Exception
+     * @inheritDoc
      */
-    public function save()
+    public function save(array $parameters = []): static
     {
-        // additional parameters (e.g. "versionNote" for the version note)
-        $params = [];
-        if (func_num_args() && is_array(func_get_arg(0))) {
-            $params = func_get_arg(0);
-        }
-
         $isUpdate = false;
         $differentOldPath = null;
 
         try {
             $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
-            $preEvent = new DataObjectEvent($this, $params);
+            $preEvent = new DataObjectEvent($this, $parameters);
             if ($this->getId()) {
                 $isUpdate = true;
                 $this->dispatchEvent($preEvent, DataObjectEvents::PRE_UPDATE);
@@ -609,7 +658,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                 $this->dispatchEvent($preEvent, DataObjectEvents::PRE_ADD);
             }
 
-            $params = $preEvent->getArguments();
+            $parameters = $preEvent->getArguments();
 
             $this->correctPath();
 
@@ -649,7 +698,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
                         $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
                     }
 
-                    $this->update($isUpdate, $params);
+                    $this->update($isUpdate, $parameters);
 
                     self::setHideUnpublished($hideUnpublishedBackup);
 
@@ -703,7 +752,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             }
             $this->clearDependentCache($additionalTags);
 
-            $postEvent = new DataObjectEvent($this, $params);
+            $postEvent = new DataObjectEvent($this, $parameters);
             if ($isUpdate) {
                 if ($differentOldPath) {
                     $postEvent->setArgument('oldPath', $differentOldPath);
@@ -716,7 +765,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
 
             return $this;
         } catch (\Exception $e) {
-            $failureEvent = new DataObjectEvent($this, $params);
+            $failureEvent = new DataObjectEvent($this, $parameters);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
                 $this->dispatchEvent($failureEvent, DataObjectEvents::POST_UPDATE_FAILURE);
@@ -774,6 +823,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
             if ($duplicate instanceof self && $duplicate->getId() != $this->getId()) {
                 $duplicateFullPathException = new DuplicateFullPathException('Duplicate full path [ '.$this->getRealFullPath().' ] - cannot save object');
                 $duplicateFullPathException->setDuplicateElement($duplicate);
+                $duplicateFullPathException->setCauseElement($this);
 
                 throw $duplicateFullPathException;
             }
@@ -783,14 +833,15 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @internal
-     *
      * @param bool|null $isUpdate
      * @param array $params
      *
      * @throws \Exception
+     *
+     *@internal
+     *
      */
-    protected function update($isUpdate = null, $params = [])
+    protected function update(bool $isUpdate = null, array $params = [])
     {
         $this->updateModificationInfos();
 
@@ -830,21 +881,19 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         RuntimeCache::set(self::getCacheKey($this->getId()), $this);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function clearDependentCache($additionalTags = [])
+    public function clearDependentCache(array $additionalTags = [])
     {
         self::clearDependentCacheByObjectId($this->getId(), $additionalTags);
     }
 
     /**
-     * @internal
-     *
      * @param int $objectId
      * @param array $additionalTags
+     *
+     *@internal
+     *
      */
-    public static function clearDependentCacheByObjectId($objectId, $additionalTags = [])
+    public static function clearDependentCacheByObjectId(int $objectId, array $additionalTags = [])
     {
         if (!$objectId) {
             throw new \Exception('object ID missing');
@@ -861,46 +910,35 @@ abstract class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @internal
-     *
      * @param int $index
+     *
+     *@internal
+     *
      */
-    public function saveIndex($index)
+    public function saveIndex(int $index)
     {
         $this->getDao()->saveIndex($index);
         $this->clearDependentCache();
     }
 
-    /**
-     * @return string
-     */
-    public function getFullPath()
+    public function getFullPath(): string
     {
         $path = $this->getPath() . $this->getKey();
 
         return $path;
     }
 
-    /**
-     * @return string
-     */
-    public function getRealPath()
+    public function getRealPath(): string
     {
         return $this->getPath();
     }
 
-    /**
-     * @return string
-     */
-    public function getRealFullPath()
+    public function getRealFullPath(): string
     {
         return $this->getFullPath();
     }
 
-    /**
-     * @return int|null
-     */
-    public function getParentId()
+    public function getParentId(): ?int
     {
         $parentId = parent::getParentId();
 
@@ -912,36 +950,22 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $parentId;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getKey()
+    public function getKey(): ?string
     {
         return $this->key;
     }
 
-    /**
-     * @return int
-     */
-    public function getIndex()
+    public function getIndex(): int
     {
         return $this->index;
     }
 
-    /**
-     * @param int $parentId
-     *
-     * @return $this
-     */
-    public function setParentId($parentId)
+    public function setParentId(?int $parentId): static
     {
         $parentId = (int) $parentId;
         if ($parentId != $this->parentId) {
@@ -956,46 +980,28 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return $this
-     */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
         return $this;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return $this
-     */
-    public function setKey($key)
+    public function setKey(string $key): static
     {
         $this->key = (string)$key;
 
         return $this;
     }
 
-    /**
-     * @param int $index
-     *
-     * @return $this
-     */
-    public function setIndex($index)
+    public function setIndex(int $index): static
     {
         $this->index = (int) $index;
 
         return $this;
     }
 
-    /**
-     * @param string|null $childrenSortBy
-     */
-    public function setChildrenSortBy($childrenSortBy)
+    public function setChildrenSortBy(?string $childrenSortBy)
     {
         if ($this->childrenSortBy !== $childrenSortBy) {
             $this->children = [];
@@ -1011,7 +1017,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @return $this
      */
-    public function setChildren($children, array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = false)
+    public function setChildren(?array $children, array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER], bool $includingUnpublished = false): static
     {
         if ($children === null) {
             // unset all cached children
@@ -1027,34 +1033,24 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @return self|null
-     */
-    public function getParent() /** : ?self **/
+    public function getParent(): ?AbstractObject
     {
         $parent = parent::getParent();
 
         return $parent instanceof AbstractObject ? $parent : null;
     }
 
-    /**
-     * @param self|null $parent
-     *
-     * @return $this
-     */
-    public function setParent($parent)
+    public function setParent(?ElementInterface $parent): static
     {
         $newParentId = $parent instanceof self ? $parent->getId() : 0;
         $this->setParentId($newParentId);
+        /** @var Element\AbstractElement $parent */
         $this->parent = $parent;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getChildrenSortBy()
+    public function getChildrenSortBy(): string
     {
         return $this->childrenSortBy ?? self::OBJECT_CHILDREN_SORT_BY_DEFAULT;
     }
@@ -1067,7 +1063,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @throws \Exception
      */
-    public function __call($method, $args)
+    public function __call(string $method, array $args)
     {
         // compatibility mode (they do not have any set_oXyz() methods anymore)
         if (preg_match('/^(get|set)o_/i', $method)) {
@@ -1082,18 +1078,12 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return parent::__call($method, $args);
     }
 
-    /**
-     * @return bool
-     */
-    public static function doNotRestoreKeyAndPath()
+    public static function doNotRestoreKeyAndPath(): bool
     {
         return self::$doNotRestoreKeyAndPath;
     }
 
-    /**
-     * @param bool $doNotRestoreKeyAndPath
-     */
-    public static function setDoNotRestoreKeyAndPath($doNotRestoreKeyAndPath)
+    public static function setDoNotRestoreKeyAndPath(bool $doNotRestoreKeyAndPath)
     {
         self::$doNotRestoreKeyAndPath = (bool) $doNotRestoreKeyAndPath;
     }
@@ -1102,11 +1092,12 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @param string $fieldName
      * @param string|null $language
      *
-     * @throws \Exception
-     *
      * @return mixed
+     *
+     *@throws \Exception
+     *
      */
-    public function get($fieldName, $language = null)
+    public function get(string $fieldName, string $language = null): mixed
     {
         if (!$fieldName) {
             throw new \Exception('Field name must not be empty.');
@@ -1120,11 +1111,12 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @param mixed $value
      * @param string|null $language
      *
-     * @throws \Exception
-     *
      * @return mixed
+     *
+     *@throws \Exception
+     *
      */
-    public function set($fieldName, $value, $language = null)
+    public function set(string $fieldName, mixed $value, string $language = null): mixed
     {
         if (!$fieldName) {
             throw new \Exception('Field name must not be empty.');
@@ -1138,7 +1130,7 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @return bool
      */
-    public static function isDirtyDetectionDisabled()
+    public static function isDirtyDetectionDisabled(): bool
     {
         return self::$disableDirtyDetection;
     }
@@ -1176,9 +1168,9 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      *
      * @return string
      */
-    protected function getListingCacheKey(array $args = [])
+    protected function getListingCacheKey(array $args = []): string
     {
-        $objectTypes = $args[0] ?? [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER];
+        $objectTypes = $args[0] ?? [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT, self::OBJECT_TYPE_FOLDER];
         $includingUnpublished = (bool)($args[1] ?? false);
 
         if (is_array($objectTypes)) {
@@ -1202,9 +1194,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getChildrenSortOrder(): string
     {
         return $this->childrenSortOrder ?? self::OBJECT_CHILDREN_SORT_ORDER_DEFAULT;
@@ -1227,11 +1216,11 @@ abstract class AbstractObject extends Model\Element\AbstractElement
      * @param string $method
      * @param array $arguments
      *
-     * @return mixed|Listing|null
+     * @return mixed
      *
      * @throws \Exception
      */
-    public static function __callStatic($method, $arguments)
+    public static function __callStatic(string $method, array $arguments)
     {
         $propertyName = lcfirst(preg_replace('/^getBy/i', '', $method));
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,12 +36,12 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
     /**
      * @var Model\Tool\CustomReport\Config[]|null
      */
-    protected $reports = null;
+    protected ?array $reports = null;
 
     /**
      * @return Model\Tool\CustomReport\Config[]
      */
-    public function getReports()
+    public function getReports(): array
     {
         if ($this->reports === null) {
             $this->reports = $this->getDao()->loadList();
@@ -54,7 +55,7 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
      *
      * @return $this
      */
-    public function setReports($reports)
+    public function setReports(?array $reports): static
     {
         $this->reports = $reports;
 

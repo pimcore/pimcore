@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -59,7 +60,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
             );
     }
 
-    protected function fetchItems(InputInterface $input): array
+    protected function fetchItems(InputInterface $input, OutputInterface $output): array
     {
         $list = new Asset\Listing();
 
@@ -131,11 +132,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
         }
     }
 
-    /**
-     * @param int $videoId
-     * @param string|Asset\Video\Thumbnail\Config $thumbnail
-     */
-    protected function waitTillFinished($videoId, $thumbnail)
+    protected function waitTillFinished(int $videoId, string|Asset\Video\Thumbnail\Config $thumbnail)
     {
         $finished = false;
 
@@ -166,8 +163,8 @@ class ThumbnailsVideoCommand extends AbstractCommand
         }
     }
 
-    protected function getItemName(int $count): string
+    protected function getItemName(?int $count): string
     {
-        return $count == 1 ? 'thumbnail' : 'thumbnails';
+        return $count === 1 ? 'thumbnail' : 'thumbnails';
     }
 }

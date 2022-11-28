@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -36,7 +37,7 @@ class RecyclebinController extends AdminController implements KernelControllerEv
      *
      * @return JsonResponse
      */
-    public function listAction(Request $request)
+    public function listAction(Request $request): JsonResponse
     {
         if ($request->get('xaction') == 'destroy') {
             $item = Recyclebin\Item::getById(\Pimcore\Bundle\AdminBundle\Helper\QueryParams::getRecordIdForGridRequest($request->get('data')));
@@ -132,7 +133,6 @@ class RecyclebinController extends AdminController implements KernelControllerEv
             $items = $list->load();
             $data = [];
             if (is_array($items)) {
-                /** @var Recyclebin\Item $item */
                 foreach ($items as $item) {
                     $data[] = $item->getObjectVars();
                 }
@@ -149,7 +149,7 @@ class RecyclebinController extends AdminController implements KernelControllerEv
      *
      * @return JsonResponse
      */
-    public function restoreAction(Request $request)
+    public function restoreAction(Request $request): JsonResponse
     {
         $item = Recyclebin\Item::getById((int) $request->get('id'));
         if (!$item) {
@@ -165,7 +165,7 @@ class RecyclebinController extends AdminController implements KernelControllerEv
      *
      * @return JsonResponse
      */
-    public function flushAction()
+    public function flushAction(): JsonResponse
     {
         $bin = new Element\Recyclebin();
         $bin->flush();
@@ -180,7 +180,7 @@ class RecyclebinController extends AdminController implements KernelControllerEv
      *
      * @return JsonResponse
      */
-    public function addAction(Request $request)
+    public function addAction(Request $request): JsonResponse
     {
         try {
             $element = Element\Service::getElementById($request->get('type'), $request->get('id'));
@@ -201,9 +201,6 @@ class RecyclebinController extends AdminController implements KernelControllerEv
         return $this->adminJson(['success' => true]);
     }
 
-    /**
-     * @param ControllerEvent $event
-     */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         if (!$event->isMainRequest()) {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,28 +24,26 @@ use Pimcore\Model\User\Role;
  */
 class Folder extends Model\User\AbstractUser
 {
-    use Model\Element\ChildsCompatibilityTrait;
-
     /**
      * @internal
      *
      * @var array|null
      */
-    protected $children;
+    protected ?array $children = null;
 
     /**
      * @internal
      *
      * @var bool|null
      */
-    protected $hasChildren;
+    protected ?bool $hasChildren = null;
 
     /**
      * Returns true if the document has at least one child
      *
      * @return bool
      */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
         if ($this->hasChildren === null) {
             $this->hasChildren = $this->getDao()->hasChildren();
@@ -53,10 +52,7 @@ class Folder extends Model\User\AbstractUser
         return $this->hasChildren;
     }
 
-    /**
-     * @return array
-     */
-    public function getChildren()
+    public function getChildren(): array
     {
         if ($this->children === null) {
             if ($this->getId()) {
@@ -72,12 +68,7 @@ class Folder extends Model\User\AbstractUser
         return $this->children;
     }
 
-    /**
-     * @param array $children
-     *
-     * @return $this
-     */
-    public function setChildren($children)
+    public function setChildren(array $children): static
     {
         if (is_array($children)) {
             $this->children = $children;

@@ -26,23 +26,14 @@ use Pimcore\Sitemap\UrlGeneratorInterface;
  */
 class DocumentUrlGenerator implements DocumentUrlGeneratorInterface
 {
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private $urlGenerator;
+    private UrlGeneratorInterface $urlGenerator;
 
-    /**
-     * @param UrlGeneratorInterface $urlGenerator
-     */
     public function __construct(UrlGeneratorInterface $urlGenerator)
     {
         $this->urlGenerator = $urlGenerator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function generateUrl(string $path, array $options = [])
+    public function generateUrl(string $path, array $options = []): string
     {
         return $this->urlGenerator->generateUrl($path, $options);
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -33,7 +34,7 @@ class DocType extends Model\AbstractModel
      *
      * @var string|null
      */
-    protected $id;
+    protected ?string $id = null;
 
     /**
      * Name of the document-type
@@ -42,7 +43,7 @@ class DocType extends Model\AbstractModel
      *
      * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * Group of document-types
@@ -51,7 +52,7 @@ class DocType extends Model\AbstractModel
      *
      * @var string
      */
-    protected $group;
+    protected string $group;
 
     /**
      * The specified controller
@@ -60,7 +61,7 @@ class DocType extends Model\AbstractModel
      *
      * @var string
      */
-    protected $controller;
+    protected string $controller;
 
     /**
      * The specified template
@@ -69,7 +70,7 @@ class DocType extends Model\AbstractModel
      *
      * @var string|null
      */
-    protected $template;
+    protected ?string $template = null;
 
     /**
      * Type, must be one of the following: page,snippet,email
@@ -78,28 +79,28 @@ class DocType extends Model\AbstractModel
      *
      * @var string
      */
-    protected $type;
+    protected string $type;
 
     /**
      * @internal
      *
      * @var int
      */
-    protected $priority = 0;
+    protected int $priority = 0;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected $creationDate;
+    protected ?int $creationDate = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected $modificationDate;
+    protected ?int $modificationDate = null;
 
     /**
      * @internal
@@ -113,7 +114,7 @@ class DocType extends Model\AbstractModel
      *
      * @return self|null
      */
-    public static function getById($id)
+    public static function getById(string $id): ?DocType
     {
         if (empty($id)) {
             return null;
@@ -134,7 +135,7 @@ class DocType extends Model\AbstractModel
      *
      * @return DocType
      */
-    public static function create()
+    public static function create(): DocType
     {
         $type = new self();
         $type->save();
@@ -142,197 +143,119 @@ class DocType extends Model\AbstractModel
         return $type;
     }
 
-    /**
-     * @return string
-     */
-    public function getController()
+    public function getController(): string
     {
         return $this->controller;
     }
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getId(): ?string
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
-    public function getGroup()
+    public function getGroup(): string
     {
         return $this->group;
     }
 
-    /**
-     * @return string
-     */
-    public function getTemplate()
+    public function getTemplate(): ?string
     {
         return $this->template;
     }
 
-    /**
-     * @param string $controller
-     *
-     * @return $this
-     */
-    public function setController($controller)
+    public function setController(string $controller): static
     {
         $this->controller = $controller;
 
         return $this;
     }
 
-    /**
-     * @param string $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(string $id): static
     {
         $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * @param string $group
-     *
-     * @return $this
-     */
-    public function setGroup($group)
+    public function setGroup(string $group): static
     {
         $this->group = $group;
 
         return $this;
     }
 
-    /**
-     * @param string $template
-     *
-     * @return $this
-     */
-    public function setTemplate($template)
+    public function setTemplate(string $template): static
     {
         $this->template = $template;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return $this
-     */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
         return $this;
     }
 
-    /**
-     * @param int $priority
-     *
-     * @return $this
-     */
-    public function setPriority($priority)
+    public function setPriority(int $priority): static
     {
         $this->priority = (int) $priority;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getPriority()
+    public function getPriority(): int
     {
         return $this->priority;
     }
 
-    /**
-     * @param int $modificationDate
-     *
-     * @return $this
-     */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = (int) $modificationDate;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getModificationDate()
+    public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
-    /**
-     * @param int $creationDate
-     *
-     * @return $this
-     */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = (int) $creationDate;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getCreationDate()
+    public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }
 
-    /**
-     * @return bool
-     */
     public function getStaticGeneratorEnabled(): bool
     {
         return $this->staticGeneratorEnabled;
     }
 
-    /**
-     * @param bool $staticGeneratorEnabled
-     */
     public function setStaticGeneratorEnabled(bool $staticGeneratorEnabled): void
     {
         $this->staticGeneratorEnabled = $staticGeneratorEnabled;

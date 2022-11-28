@@ -25,10 +25,7 @@ use Symfony\Component\Yaml\Yaml;
  */
 final class ConfigWriter
 {
-    /**
-     * @var array
-     */
-    private $defaultConfig = [
+    private array $defaultConfig = [
         'pimcore' => [
             'general' => [
                 'language' => 'en',
@@ -43,15 +40,15 @@ final class ConfigWriter
         }
     }
 
-    public function writeSystemConfig()
+    public function writeSystemConfig(): void
     {
         $settings = null;
 
         // check for an initial configuration template
         // used eg. by the demo installer
         $configTemplatePaths = [
-            PIMCORE_CONFIGURATION_DIRECTORY . '/system.yml',
-            PIMCORE_CONFIGURATION_DIRECTORY . '/system.template.yml',
+            PIMCORE_CONFIGURATION_DIRECTORY . '/system.yaml',
+            PIMCORE_CONFIGURATION_DIRECTORY . '/system.template.yaml',
         ];
 
         foreach ($configTemplatePaths as $configTemplatePath) {
@@ -81,12 +78,12 @@ final class ConfigWriter
             $settings = $this->defaultConfig;
         }
 
-        $configFile = \Pimcore\Config::locateConfigFile('system.yml');
+        $configFile = \Pimcore\Config::locateConfigFile('system.yaml');
         $settingsYml = Yaml::dump($settings, 5);
         File::put($configFile, $settingsYml);
     }
 
-    public function writeDbConfig(array $config = [])
+    public function writeDbConfig(array $config = []): void
     {
         if (count($config)) {
             $content = Yaml::dump($config);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,215 +26,143 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 final class KeyGroupRelation extends Model\AbstractModel
 {
-    /**
-     * @var int
-     */
-    protected $keyId;
+    protected int $keyId;
 
-    /**
-     * @var int
-     */
-    protected $groupId;
+    protected int $groupId;
 
     /** The key
      * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * The key description.
      *
      * @var string
      */
-    protected $description;
+    protected string $description;
 
     /**
      * Field definition
      *
      * @var string
      */
-    protected $definition;
+    protected string $definition;
 
     /**
      * Field type
      *
      * @var string
      */
-    protected $type;
+    protected string $type;
 
-    /** @var int */
-    protected $sorter;
+    protected int $sorter;
 
     /** The group name
      * @var string
      */
-    protected $groupName;
+    protected string $groupName;
 
-    /** @var bool */
-    protected $mandatory;
+    protected bool $mandatory = false;
 
-    /** @var bool */
-    protected $enabled;
+    protected bool $enabled;
 
-    /**
-     * @return Model\DataObject\Classificationstore\KeyGroupRelation
-     */
-    public static function create()
+    public static function create(): KeyGroupRelation
     {
         return new self();
     }
 
-    /**
-     * @return int
-     */
-    public function getGroupId()
+    public function getGroupId(): int
     {
         return $this->groupId;
     }
 
-    /**
-     * @param int $groupId
-     */
-    public function setGroupId($groupId)
+    public function setGroupId(int $groupId)
     {
         $this->groupId = $groupId;
     }
 
-    /**
-     * @return int
-     */
-    public function getKeyId()
+    public function getKeyId(): int
     {
         return $this->keyId;
     }
 
-    /**
-     * @param int $keyId
-     */
-    public function setKeyId($keyId)
+    public function setKeyId(int $keyId)
     {
         $this->keyId = $keyId;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * @param string $description
-     */
-    public function setDescription($description)
+    public function setDescription(string $description)
     {
         $this->description = $description;
     }
 
-    /**
-     * @return string
-     */
-    public function getDefinition()
+    public function getDefinition(): string
     {
         return $this->definition;
     }
 
-    /**
-     * @param string $definition
-     */
-    public function setDefinition($definition)
+    public function setDefinition(string $definition)
     {
         $this->definition = $definition;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     */
-    public function setType($type)
+    public function setType(string $type)
     {
         $this->type = $type;
     }
 
-    /**
-     * @return int
-     */
-    public function getSorter()
+    public function getSorter(): int
     {
         return $this->sorter;
     }
 
-    /**
-     * @param int $sorter
-     */
-    public function setSorter($sorter)
+    public function setSorter(int $sorter)
     {
         $this->sorter = (int) $sorter;
     }
 
-    /**
-     * @return bool
-     */
-    public function isMandatory()
+    public function isMandatory(): bool
     {
         return $this->mandatory;
     }
 
-    /**
-     * @param bool $mandatory
-     */
-    public function setMandatory($mandatory)
+    public function setMandatory(bool $mandatory)
     {
         $this->mandatory = (bool)$mandatory;
     }
 
-    /**
-     * @return bool
-     */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->enabled;
     }
 
-    /**
-     * @param bool $enabled
-     */
-    public function setEnabled($enabled)
+    public function setEnabled(bool $enabled)
     {
         $this->enabled = $enabled;
     }
 
-    /**
-     * @param int $groupId
-     * @param int $keyId
-     *
-     * @return KeyGroupRelation|null
-     */
-    public static function getByGroupAndKeyId($groupId, $keyId)
+    public static function getByGroupAndKeyId(int $groupId, int $keyId): ?KeyGroupRelation
     {
         try {
             $relation = new self();

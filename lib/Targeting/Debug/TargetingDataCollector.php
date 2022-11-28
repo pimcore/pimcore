@@ -31,20 +31,11 @@ class TargetingDataCollector
 {
     use StopwatchTrait;
 
-    /**
-     * @var TargetingStorageInterface
-     */
-    private $targetingStorage;
+    private TargetingStorageInterface $targetingStorage;
 
-    /**
-     * @var DocumentTargetingConfigurator
-     */
-    private $targetingConfigurator;
+    private DocumentTargetingConfigurator $targetingConfigurator;
 
-    /**
-     * @var array
-     */
-    private $filteredVisitorInfoDataObjecKeys = [
+    private array $filteredVisitorInfoDataObjecKeys = [
         TargetingStorage::PROVIDER_KEY,
         VisitedPagesCounter::PROVIDER_KEY,
     ];
@@ -72,7 +63,7 @@ class TargetingDataCollector
         return $this->filteredVisitorInfoDataObjecKeys;
     }
 
-    public function setFilteredVisitorInfoDataObjecKeys(array $filteredVisitorInfoDataObjecKeys)
+    public function setFilteredVisitorInfoDataObjecKeys(array $filteredVisitorInfoDataObjecKeys): void
     {
         $this->filteredVisitorInfoDataObjecKeys = $filteredVisitorInfoDataObjecKeys;
     }
@@ -157,7 +148,7 @@ class TargetingDataCollector
      *
      * @return array|null
      */
-    public function collectDocumentTargetGroup(Document $document = null)
+    public function collectDocumentTargetGroup(Document $document = null): ?array
     {
         if (!$document instanceof TargetingDocumentInterface) {
             return null;

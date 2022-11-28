@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,31 +30,14 @@ use Pimcore\Tool\DomCrawler;
  */
 class Processor
 {
-    /**
-     * @var RequestHelper
-     */
-    private $requestHelper;
+    private RequestHelper $requestHelper;
 
-    /**
-     * @var EditmodeResolver
-     */
-    private $editmodeResolver;
+    private EditmodeResolver $editmodeResolver;
 
-    /**
-     * @var DocumentResolver
-     */
-    private $documentResolver;
+    private DocumentResolver $documentResolver;
 
-    /**
-     * @var array
-     */
-    private $blockedTags = [];
+    private array $blockedTags = [];
 
-    /**
-     * @param RequestHelper $requestHelper
-     * @param EditmodeResolver $editmodeResolver
-     * @param DocumentResolver $documentResolver
-     */
     public function __construct(
         RequestHelper $requestHelper,
         EditmodeResolver $editmodeResolver,
@@ -173,11 +157,6 @@ class Processor
         return $result;
     }
 
-    /**
-     * @param string $locale
-     *
-     * @return array
-     */
     private function getData(string $locale): array
     {
         $siteId = '';
@@ -207,11 +186,6 @@ class Processor
         return $data;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return array
-     */
     private function prepareData(array $data): array
     {
         $mappedData = [];

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,10 +18,7 @@ namespace Pimcore\Model\Dao;
 
 interface DaoInterface
 {
-    /**
-     * @param \Pimcore\Model\AbstractModel $model
-     */
-    public function setModel($model);
+    public function setModel(\Pimcore\Model\AbstractModel $model);
 
     public function configure();
 }

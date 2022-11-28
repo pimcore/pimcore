@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -38,9 +39,6 @@ class EventedControllerListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param ControllerEvent $event
-     */
     public function onKernelController(ControllerEvent $event)
     {
         $callable = $event->getController();
@@ -51,24 +49,17 @@ class EventedControllerListener implements EventSubscriberInterface
         $request = $event->getRequest();
         $controller = $callable[0];
 
+        $request->attributes->set('_event_controller', $controller);
+
         if ($controller instanceof KernelControllerEventInterface) {
-            $request->attributes->set('_event_controller', $controller);
             $controller->onKernelControllerEvent($event);
         }
     }
 
-    /**
-     * @param ResponseEvent $event
-     */
     public function onKernelResponse(ResponseEvent $event)
     {
         $request = $event->getRequest();
-        $eventedController = $request->attributes->get('_evented_controller');
         $eventController = $request->attributes->get('_event_controller');
-
-        if (!$eventedController && !$eventController) {
-            return;
-        }
 
         if ($eventController instanceof KernelResponseEventInterface) {
             $eventController->onKernelResponseEvent($event);

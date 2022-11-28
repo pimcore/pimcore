@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,10 +29,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ClassesRebuildCommand extends AbstractCommand
 {
-    /**
-     * @var ClassDefinitionManager
-     */
-    protected $classDefinitionManager;
+    protected ClassDefinitionManager $classDefinitionManager;
 
     protected function configure()
     {

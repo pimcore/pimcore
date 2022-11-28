@@ -19,10 +19,7 @@ namespace Pimcore\Targeting\Condition;
 
 abstract class AbstractVariableCondition implements ConditionInterface, VariableConditionInterface
 {
-    /**
-     * @var array
-     */
-    private $variables = [];
+    private array $variables = [];
 
     /**
      * {@inheritdoc}

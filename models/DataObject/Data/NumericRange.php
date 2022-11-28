@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,9 +23,9 @@ class NumericRange implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    protected int|null|float $minimum;
+    protected int|null|float $minimum = null;
 
-    protected int|null|float $maximum;
+    protected int|null|float $maximum = null;
 
     public function __construct(float|int|null $minimum, float|int|null $maximum)
     {

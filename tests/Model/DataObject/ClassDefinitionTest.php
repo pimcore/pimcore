@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,7 +18,7 @@ namespace Pimcore\Tests\Model\DataObject;
 
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
-use Pimcore\Tests\Test\ModelTestCase;
+use Pimcore\Tests\Support\Test\ModelTestCase;
 
 /**
  * Class ObjectTest
@@ -28,7 +29,7 @@ use Pimcore\Tests\Test\ModelTestCase;
  */
 class ClassDefinitionTest extends ModelTestCase
 {
-    private function testSetterCode(string $fieldName, string $expectedSetterCode, bool $localizedField = false)
+    private function testSetterCode(string $fieldName, string $expectedSetterCode, bool $localizedField = false): void
     {
         $class = ClassDefinition::getByName('unittest');
         if ($localizedField) {
@@ -140,26 +141,6 @@ public function setQuantityValue(?\Pimcore\Model\DataObject\Data\QuantityValue $
 
 ';
         $this->testSetterCode('quantityValue', $expectedSetterCode);
-    }
-
-    /**
-     * Verifies that the setter code gets created properly
-     */
-    public function testCalculatedValueSetterCode()
-    {
-        $expectedSetterCode =
-            '/**
-* Set calculatedValue - calculatedValue
-* @param \Pimcore\Model\DataObject\Data\CalculatedValue|null $calculatedValue
-* @return $this
-*/
-public function setCalculatedValue($calculatedValue): static
-{
-	return $this;
-}
-
-';
-        $this->testSetterCode('calculatedValue', $expectedSetterCode);
     }
 
     /**

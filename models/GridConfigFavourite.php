@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,37 +25,22 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 class GridConfigFavourite extends AbstractModel
 {
-    /**
-     * @var int
-     */
-    protected $ownerId;
+    protected int $ownerId;
 
-    /**
-     * @var string
-     */
-    protected $classId;
+    protected string $classId;
 
-    /**
-     * @var int
-     */
-    protected $objectId;
+    protected int $objectId;
 
-    /**
-     * @var int
-     */
-    protected $gridConfigId;
+    protected int $gridConfigId;
 
-    /**
-     * @var string
-     */
-    protected $searchType;
+    protected string $searchType;
 
     /**
      * enum('asset','object')
      *
      * @var string
      */
-    protected $type;
+    protected string $type;
 
     /**
      * @param int $ownerId
@@ -64,7 +50,7 @@ class GridConfigFavourite extends AbstractModel
      *
      * @return GridConfigFavourite|null
      */
-    public static function getByOwnerAndClassAndObjectId($ownerId, $classId, $objectId = null, $searchType = '')
+    public static function getByOwnerAndClassAndObjectId(int $ownerId, string $classId, int $objectId = null, ?string $searchType = ''): ?GridConfigFavourite
     {
         try {
             $favourite = new self();
@@ -92,81 +78,51 @@ class GridConfigFavourite extends AbstractModel
         $this->getDao()->delete();
     }
 
-    /**
-     * @return int
-     */
-    public function getOwnerId()
+    public function getOwnerId(): int
     {
         return $this->ownerId;
     }
 
-    /**
-     * @param int $ownerId
-     */
-    public function setOwnerId($ownerId)
+    public function setOwnerId(int $ownerId)
     {
         $this->ownerId = $ownerId;
     }
 
-    /**
-     * @return string
-     */
-    public function getClassId()
+    public function getClassId(): string
     {
         return $this->classId;
     }
 
-    /**
-     * @param string $classId
-     */
-    public function setClassId($classId)
+    public function setClassId(string $classId)
     {
         $this->classId = $classId;
     }
 
-    /**
-     * @return int
-     */
-    public function getGridConfigId()
+    public function getGridConfigId(): int
     {
         return $this->gridConfigId;
     }
 
-    /**
-     * @param int $gridConfigId
-     */
-    public function setGridConfigId($gridConfigId)
+    public function setGridConfigId(int $gridConfigId)
     {
         $this->gridConfigId = $gridConfigId;
     }
 
-    /**
-     * @return string
-     */
     public function getSearchType(): string
     {
         return $this->searchType;
     }
 
-    /**
-     * @param string $searchType
-     */
-    public function setSearchType($searchType)
+    public function setSearchType(string $searchType)
     {
         $this->searchType = $searchType;
     }
 
-    /**
-     * @return int
-     */
-    public function getObjectId()
+    public function getObjectId(): int
     {
         return $this->objectId;
     }
 
-    /**
-     * @param int $objectId
-     */
     public function setObjectId(int $objectId)
     {
         $this->objectId = $objectId;
@@ -177,7 +133,7 @@ class GridConfigFavourite extends AbstractModel
      *
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }

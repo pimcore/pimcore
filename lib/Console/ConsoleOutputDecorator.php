@@ -30,15 +30,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ConsoleOutputDecorator implements OutputInterface, ConsoleOutputInterface
 {
-    /**
-     * @var OutputInterface
-     */
-    private $output;
+    private OutputInterface $output;
 
-    /**
-     * @var OutputInterface
-     */
-    private $errorOutput;
+    private OutputInterface $errorOutput;
 
     public function __construct(OutputInterface $output, OutputInterface $errorOutput)
     {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -34,7 +35,7 @@ class Mail
      *
      * @throws \Exception
      */
-    public static function getDebugInformation($type, MailClient $mail)
+    public static function getDebugInformation(string $type, MailClient $mail): string
     {
         $type = strtolower($type);
 
@@ -93,7 +94,7 @@ class Mail
      *
      * @return string
      */
-    public static function getDebugInformationCssStyle()
+    public static function getDebugInformationCssStyle(): string
     {
         $style = <<<'CSS'
 <style type="text/css">
@@ -134,7 +135,7 @@ CSS;
      *
      * @return string
      */
-    public static function formatDebugReceivers(array $receivers)
+    public static function formatDebugReceivers(array $receivers): string
     {
         $formatedReceiversArray = [];
 
@@ -160,7 +161,7 @@ CSS;
      *
      * @return Model\Tool\Email\Log
      */
-    public static function logEmail(MailClient $mail, $recipients, $error = null)
+    public static function logEmail(MailClient $mail, array $recipients, string $error = null): Model\Tool\Email\Log
     {
         $emailLog = new Model\Tool\Email\Log();
 
@@ -225,7 +226,7 @@ CSS;
      *
      * @throws \Exception
      */
-    public static function setAbsolutePaths($string, ?Model\Document $document = null, $hostUrl = null)
+    public static function setAbsolutePaths(string $string, ?Model\Document $document = null, string $hostUrl = null): string
     {
         $replacePrefix = '';
 
@@ -302,7 +303,7 @@ CSS;
      *
      * @throws \Exception
      */
-    public static function embedAndModifyCss($string, ?Model\Document $document = null)
+    public static function embedAndModifyCss(string $string, ?Model\Document $document = null): string
     {
         $css = null;
 
@@ -359,7 +360,7 @@ CSS;
      *
      * @return string
      */
-    public static function normalizeCssContent($content, array $fileInfo)
+    public static function normalizeCssContent(string $content, array $fileInfo): string
     {
         preg_match_all("@url\s*\(\s*[\"']?(.*?)[\"']?\s*\)@is", $content, $matches);
         $hostUrl = Tool::getHostUrl();
@@ -392,7 +393,7 @@ CSS;
      *
      * @throws \Exception
      */
-    public static function getNormalizedFileInfo($path, ?Model\Document $document = null)
+    public static function getNormalizedFileInfo(string $path, ?Model\Document $document = null): array
     {
         $fileInfo = [];
         $hostUrl = Tool::getHostUrl();
@@ -417,7 +418,7 @@ CSS;
      *
      * @return array
      */
-    public static function parseEmailAddressField($emailString)
+    public static function parseEmailAddressField(string $emailString): array
     {
         $cleanedEmails = [];
         $emailArray = preg_split('/,|;/', $emailString);

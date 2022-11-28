@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,21 +23,15 @@ class Geobounds implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    /**
-     * @var GeoCoordinates|null
-     */
-    protected $northEast;
+    protected ?GeoCoordinates $northEast = null;
 
-    /**
-     * @var GeoCoordinates|null
-     */
-    protected $southWest;
+    protected ?GeoCoordinates $southWest = null;
 
     /**
      * @param GeoCoordinates|null $northEast
      * @param GeoCoordinates|null $southWest
      */
-    public function __construct($northEast = null, $southWest = null)
+    public function __construct(GeoCoordinates $northEast = null, GeoCoordinates $southWest = null)
     {
         if ($northEast) {
             $this->setNorthEast($northEast);
@@ -47,20 +42,12 @@ class Geobounds implements OwnerAwareFieldInterface
         $this->markMeDirty();
     }
 
-    /**
-     * @return GeoCoordinates|null
-     */
-    public function getNorthEast()
+    public function getNorthEast(): ?GeoCoordinates
     {
         return $this->northEast;
     }
 
-    /**
-     * @param GeoCoordinates $northEast
-     *
-     * @return $this
-     */
-    public function setNorthEast($northEast)
+    public function setNorthEast(GeoCoordinates $northEast): static
     {
         $this->northEast = $northEast;
         $this->markMeDirty();
@@ -68,20 +55,12 @@ class Geobounds implements OwnerAwareFieldInterface
         return $this;
     }
 
-    /**
-     * @return GeoCoordinates|null
-     */
-    public function getSouthWest()
+    public function getSouthWest(): ?GeoCoordinates
     {
         return $this->southWest;
     }
 
-    /**
-     * @param GeoCoordinates $southWest
-     *
-     * @return $this
-     */
-    public function setSouthWest($southWest)
+    public function setSouthWest(GeoCoordinates $southWest): static
     {
         $this->southWest = $southWest;
         $this->markMeDirty();

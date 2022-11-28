@@ -116,5 +116,11 @@ Ext.define('pimcore.object.preview', {
             },
             items: this.paramSelects,
         });
+    },
+
+    setLayoutFrameDimensions: function (width, height) {
+        this.getIframe().setStyle({
+            height: (height - 48) + "px"
+        });
     }
 });

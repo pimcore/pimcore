@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,10 +24,7 @@ class OrderAgentEvent extends Event
 {
     use ArgumentsAwareTrait;
 
-    /**
-     * @var OrderAgentInterface
-     */
-    protected $orderAgent;
+    protected OrderAgentInterface $orderAgent;
 
     /**
      * OrderAgentEvent constructor.
@@ -40,17 +38,11 @@ class OrderAgentEvent extends Event
         $this->arguments = $arguments;
     }
 
-    /**
-     * @return OrderAgentInterface
-     */
     public function getOrderAgent(): OrderAgentInterface
     {
         return $this->orderAgent;
     }
 
-    /**
-     * @param OrderAgentInterface $orderAgent
-     */
     public function setOrderAgent(OrderAgentInterface $orderAgent): void
     {
         $this->orderAgent = $orderAgent;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,42 +29,30 @@ final class DefaultAdapter implements AddressSourceAdapterInterface
     /**
      * @var string
      */
-    protected $class;
+    protected mixed $class = null;
 
     /**
      * @var string
      */
-    protected $condition;
+    protected mixed $condition = null;
 
     /**
      * @var int[]
      */
-    protected $targetGroups = [];
+    protected mixed $targetGroups = [];
 
-    /**
-     * @var int
-     */
-    protected $elementsTotal;
+    protected int $elementsTotal;
 
-    /**
-     * @var Listing|null
-     */
-    protected $list;
+    protected ?Listing $list = null;
 
-    /**
-     * @param array $params
-     */
-    public function __construct($params)
+    public function __construct(array $params)
     {
         $this->class = $params['class'];
         $this->condition = empty($params['condition']) ? $params['objectFilterSQL'] : $params['condition'];
         $this->targetGroups = $params['target_groups'] ?? [];
     }
 
-    /**
-     * @return Listing
-     */
-    protected function getListing()
+    protected function getListing(): ?Listing
     {
         if (empty($this->list)) {
             $objectList = '\\Pimcore\\Model\\DataObject\\' . ucfirst($this->class) . '\\Listing';
@@ -131,7 +120,7 @@ final class DefaultAdapter implements AddressSourceAdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function getMailAddressesForBatchSending()
+    public function getMailAddressesForBatchSending(): array
     {
         $listing = $this->getListing();
         $ids = $listing->loadIdList();
@@ -157,7 +146,7 @@ final class DefaultAdapter implements AddressSourceAdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function getParamsForTestSending($emailAddress)
+    public function getParamsForTestSending(string $emailAddress): SendingParamContainer
     {
         $listing = $this->getListing();
         $listing->setOrderKey('RAND()', false);
@@ -174,7 +163,7 @@ final class DefaultAdapter implements AddressSourceAdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function getTotalRecordCount()
+    public function getTotalRecordCount(): int
     {
         $this->getListing();
 
@@ -184,7 +173,7 @@ final class DefaultAdapter implements AddressSourceAdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function getParamsForSingleSending($limit, $offset)
+    public function getParamsForSingleSending(int $limit, int $offset): array
     {
         $listing = $this->getListing();
         $listing->setLimit($limit);

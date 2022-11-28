@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -44,4 +45,18 @@ final class TranslationEvents
      * @var string
      */
     const POST_DELETE = 'pimcore.translation.postDelete';
+
+    /**
+     * @Event("Pimcore\Event\Model\TranslationXliffEvent")
+     *
+     * @var string
+     */
+    const XLIFF_ATTRIBUTE_SET_EXPORT = 'pimcore.translation.xliff.attribute_set_export';
+
+    /**
+     * @Event("Pimcore\Event\Model\TranslationXliffEvent")
+     *
+     * @var string
+     */
+    const XLIFF_ATTRIBUTE_SET_IMPORT = 'pimcore.translation.xliff.attribute_set_import';
 }

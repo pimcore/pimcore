@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,14 +20,14 @@ use Pimcore\Config;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Localizedfield;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 class LocalizedFieldTest extends ModelTestCase
 {
     public function tearDown(): void
     {
-        Localizedfield::setStrictMode(Localizedfield::STRICT_DISABLED);
+        Localizedfield::setStrictMode((bool)Localizedfield::STRICT_DISABLED);
     }
 
     public function testStrictMode()

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,21 +16,17 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
+use Pimcore\Model\Element\ElementInterface;
+
 /**
  * @internal
  */
 final class Concatenator extends AbstractOperator
 {
-    /**
-     * @var string
-     */
-    private $glue;
+    private string $glue;
 
     private bool $forceValue;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -41,7 +38,7 @@ final class Concatenator extends AbstractOperator
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         $result = new \stdClass();
         $result->label = $this->label;
@@ -51,17 +48,19 @@ final class Concatenator extends AbstractOperator
             $hasValue = false;
         }
 
-        $childs = $this->getChilds();
+        $children = $this->getChildren();
         $valueArray = [];
 
-        foreach ($childs as $c) {
+        foreach ($children as $c) {
             $childResult = $c->getLabeledValue($element);
             $childValues = (array)($childResult->value ?? []);
 
             foreach ($childValues as $value) {
                 if (!$hasValue) {
-                    if (!empty($value) || (method_exists($value, 'isEmpty') && !$value->isEmpty())) {
-                        $hasValue = true;
+                    if (is_object($value) && method_exists($value, 'isEmpty')) {
+                        $hasValue = !$value->isEmpty();
+                    } else {
+                        $hasValue = !empty($value);
                     }
                 }
 

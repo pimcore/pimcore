@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,17 +26,11 @@ trait VarExport
      */
     protected $blockedVarsForExport = [];
 
-    /**
-     * @return array
-     */
     public function getBlockedVarsForExport(): array
     {
         return $this->blockedVarsForExport;
     }
 
-    /**
-     * @return array
-     */
     public function resolveBlockedVars(): array
     {
         $defaultBlockedVars = [

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,8 +28,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class RequirementsCheckCommand extends AbstractCommand
 {
-    /** @var array $levelsToDisplay */
-    protected $levelsToDisplay = [];
+    /** @var int[] $levelsToDisplay */
+    protected array $levelsToDisplay = [];
 
     /**
      * {@inheritdoc}
@@ -76,9 +77,6 @@ class RequirementsCheckCommand extends AbstractCommand
 
     /**
      * @param Requirements\Check[] $checks
-     * @param string $title
-     *
-     * @return void
      */
     protected function display(array $checks, string $title = ''): void
     {
@@ -95,12 +93,7 @@ class RequirementsCheckCommand extends AbstractCommand
         }
     }
 
-    /**
-     * @param string $state
-     *
-     * @return string
-     */
-    protected function displayState(string $state): string
+    protected function displayState(int $state): string
     {
         switch ($state) {
             case Requirements\Check::STATE_OK:

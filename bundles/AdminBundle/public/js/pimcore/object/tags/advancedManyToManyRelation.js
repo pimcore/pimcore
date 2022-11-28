@@ -286,6 +286,27 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             ]
         });
 
+        if (this.fieldConfig.assetInlineDownloadAllowed) {
+            columns.push({
+                xtype: 'actioncolumn',
+                menuText: t('download'),
+                width: 40,
+                sortable: false,
+                items: [
+                    {
+                        tooltip: t('download'),
+                        icon: "/bundles/pimcoreadmin/img/flat-color-icons/download-cloud.svg",
+                        handler: function (grid, rowIndex) {
+                            const data = grid.getStore().getAt(rowIndex);
+                            if (data.data.id && data.data.type && data.data.type === "asset") {
+                                pimcore.helpers.download(Routing.generate('pimcore_admin_asset_download', {id: data.data.id}));
+                            }
+                        }.bind(this)
+                    }
+                ]
+            })
+        }
+
         if (!readOnly) {
             columns.push({
                 xtype: 'actioncolumn',
@@ -557,12 +578,19 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
         toolbarItems = toolbarItems.concat(this.getFilterEditToolbarItems());
 
         if (!readOnly) {
-            toolbarItems = toolbarItems.concat([
-                {
+            if (this.fieldConfig.allowToClearRelation) {
+                toolbarItems.push({
                     xtype: "button",
                     iconCls: "pimcore_icon_delete",
-                    handler: this.empty.bind(this)
-                },
+                    handler: function () {
+                        pimcore.helpers.deleteConfirm(t('all'), t('relations'), function () {
+                            this.empty();
+                        }.bind(this));
+                    }.bind(this)
+                });
+            }
+
+            toolbarItems = toolbarItems.concat([
                 {
                     xtype: "button",
                     iconCls: "pimcore_icon_search",
@@ -747,7 +775,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
 
         // check max amount in field
         if (this.fieldConfig["maxItems"] && this.fieldConfig["maxItems"] >= 1) {
-            if (this.store.getCount() >= this.fieldConfig.maxItems) {
+            if ((this.store.getData().getSource() || this.store.getData()).count() >= this.fieldConfig.maxItems) {
                 Ext.Msg.alert(t("error"), t("limit_reached"));
                 return true;
             }
@@ -791,6 +819,12 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
     },
 
     uploadDialog: function () {
+        if (!this.fieldConfig.allowMultipleAssignments || (this.fieldConfig["maxItems"] && this.fieldConfig["maxItems"] >= 1)) {
+            if ((this.store.getData().getSource() || this.store.getData()).count() >= this.fieldConfig.maxItems) {
+                Ext.Msg.alert(t("error"), t("limit_reached"));
+                return true;
+            }
+        }
         pimcore.helpers.assetSingleUploadDialog(this.fieldConfig.assetUploadPath, "path", function (res) {
             try {
                 var data = Ext.decode(res.response.responseText);

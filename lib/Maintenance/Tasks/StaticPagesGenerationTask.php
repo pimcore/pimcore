@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,20 +26,10 @@ use Psr\Log\LoggerInterface;
  */
 class StaticPagesGenerationTask implements TaskInterface
 {
-    /**
-     * @var StaticPageGenerator
-     */
-    private $generator;
+    private StaticPageGenerator $generator;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @param StaticPageGenerator $generator
-     * @param LoggerInterface         $logger
-     */
     public function __construct(StaticPageGenerator $generator, LoggerInterface $logger)
     {
         $this->generator = $generator;

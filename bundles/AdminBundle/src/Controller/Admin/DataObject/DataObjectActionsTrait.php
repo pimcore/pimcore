@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,12 +31,6 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 trait DataObjectActionsTrait
 {
-    /**
-     * @param DataObject|null $object
-     * @param string $key
-     *
-     * @return array
-     */
     protected function renameObject(?DataObject $object, string $key): array
     {
         try {
@@ -54,16 +49,6 @@ trait DataObjectActionsTrait
         }
     }
 
-    /**
-     * @param array $allParams
-     * @param string $objectType
-     * @param Request $request
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param GridHelperService $gridHelperService
-     * @param LocaleServiceInterface $localeService
-     *
-     * @return array
-     */
     protected function gridProxy(
         array $allParams,
         string $objectType,
@@ -143,7 +128,7 @@ trait DataObjectActionsTrait
                         ['csvMode' => $csvMode]);
                 }
 
-                // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_object is insufficient and could lead security breach
+                // Like for treeGetChildrenByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_object is insufficient and could lead security breach
                 if ($object->isAllowed('list')) {
                     $objects[] = $o;
                 }
@@ -169,13 +154,6 @@ trait DataObjectActionsTrait
     }
 
     /**
-     * @param array $data
-     * @param DataObject\Concrete $object
-     * @param string $requestedLanguage
-     * @param LocaleServiceInterface $localeService
-     *
-     * @return array
-     *
      * @throws \Exception
      */
     private function prepareObjectData(
@@ -309,12 +287,6 @@ trait DataObjectActionsTrait
         return $objectData;
     }
 
-    /**
-     * @param DataObject\ClassDefinition $class
-     * @param string $key
-     *
-     * @return DataObject\ClassDefinition\Data|null
-     */
     protected function getFieldDefinition(DataObject\ClassDefinition $class, string $key): ?DataObject\ClassDefinition\Data
     {
         $fieldDefinition = $class->getFieldDefinition($key);
@@ -330,12 +302,6 @@ trait DataObjectActionsTrait
         return $fieldDefinition;
     }
 
-    /**
-     * @param string $brickType
-     * @param string $key
-     *
-     * @return DataObject\ClassDefinition\Data|null
-     */
     protected function getFieldDefinitionFromBrick(string $brickType, string $key): ?DataObject\ClassDefinition\Data
     {
         $brickDefinition = DataObject\Objectbrick\Definition::getByKey($brickType);

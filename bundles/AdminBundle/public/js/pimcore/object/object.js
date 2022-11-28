@@ -911,7 +911,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             modificationdate: this.data.general.modificationDate,
             creationdate: this.data.general.creationDate,
             usermodification: this.data.general.userModification,
+            usermodification_name: this.data.general.o_userModificationFullname,
             userowner: this.data.general.userOwner,
+            userowner_name: this.data.general.o_userOwnerFullname,
             deeplink: pimcore.helpers.getDeeplink("object", this.data.general.id, "object")
         };
     },
@@ -947,13 +949,12 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             }, {
                 name: "usermodification",
                 type: "user",
-                value: metainfo.usermodification
+                value: '<span data-uid="' + metainfo.usermodification + '">' + metainfo.usermodification_name + '</span>'
             }, {
                 name: "userowner",
                 type: "user",
-                value: metainfo.userowner
-            },
-            {
+                value: '<span data-uid="' + metainfo.userowner + '">' + metainfo.userowner_name + '</span>'
+            }, {
                 name: "deeplink",
                 value: metainfo.deeplink
             }

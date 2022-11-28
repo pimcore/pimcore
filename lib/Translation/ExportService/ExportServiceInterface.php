@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,8 +33,5 @@ interface ExportServiceInterface
      */
     public function exportTranslationItems(TranslationItemCollection $translationItems, string $sourceLanguage, array $targetLanguages, string $exportId = null): string;
 
-    /**
-     * @return ExporterInterface
-     */
     public function getTranslationExporter(): ExporterInterface;
 }

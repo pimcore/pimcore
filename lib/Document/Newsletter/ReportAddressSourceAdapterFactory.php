@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,14 +26,8 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
  */
 final class ReportAddressSourceAdapterFactory implements AddressSourceAdapterFactoryInterface
 {
-    /**
-     * @var ServiceLocator
-     */
-    private $reportAdapterServiceLocator;
+    private ServiceLocator $reportAdapterServiceLocator;
 
-    /**
-     * @param ServiceLocator $reportAdapterServiceLocator
-     */
     public function __construct(ServiceLocator $reportAdapterServiceLocator)
     {
         $this->reportAdapterServiceLocator = $reportAdapterServiceLocator;
@@ -41,7 +36,7 @@ final class ReportAddressSourceAdapterFactory implements AddressSourceAdapterFac
     /**
      * {@inheritdoc}
      */
-    public function create($params)
+    public function create(array $params): ReportAdapter|AddressSourceAdapterInterface
     {
         $config = Config::getByName($params['reportId']);
         $configuration = $config->getDataSourceConfig();

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,6 +19,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Asset;
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\UserNameTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
@@ -27,13 +29,18 @@ use Pimcore\Db\Helper;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\AssetEvents;
+use Pimcore\Event\Model\Asset\ResolveUploadTargetEvent;
 use Pimcore\File;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Messenger\AssetPreviewImageMessage;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\ValidationException;
 use Pimcore\Model\Metadata;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Tool;
@@ -61,11 +68,9 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     use AdminStyleTrait;
     use ElementEditLockHelperTrait;
     use ApplySchedulerDataTrait;
+    use UserNameTrait;
 
-    /**
-     * @var Asset\Service
-     */
-    protected $_assetService;
+    protected Asset\Service $_assetService;
 
     /**
      * @Route("/tree-get-root", name="pimcore_admin_asset_treegetroot", methods={"GET"})
@@ -74,7 +79,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return JsonResponse
      */
-    public function treeGetRootAction(Request $request)
+    public function treeGetRootAction(Request $request): JsonResponse
     {
         return parent::treeGetRootAction($request);
     }
@@ -87,7 +92,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return JsonResponse
      */
-    public function deleteInfoAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function deleteInfoAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
         return parent::deleteInfoAction($request, $eventDispatcher);
     }
@@ -95,11 +100,9 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     /**
      * @Route("/get-data-by-id", name="pimcore_admin_asset_getdatabyid", methods={"GET"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
-    public function getDataByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function getDataByIdAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
         $assetId = (int)$request->get('id');
         $type = (string)$request->get('type');
@@ -217,6 +220,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $asset->getScheduledTasks()
         );
 
+        $userOwnerName = $this->getUserName($asset->getUserOwner());
+        $userModificationName = ($asset->getUserOwner() == $asset->getUserModification()) ? $userOwnerName : $this->getUserName($asset->getUserModification());
+        $data['userOwnerUsername'] = $userOwnerName['userName'];
+        $data['userOwnerFullname'] = $userOwnerName['fullName'];
+        $data['userModificationUsername'] = $userModificationName['userName'];
+        $data['userModificationFullname'] = $userModificationName['fullName'];
+
         $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 
         $data['php'] = [
@@ -239,18 +249,16 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     }
 
     /**
-     * @Route("/tree-get-childs-by-id", name="pimcore_admin_asset_treegetchildsbyid", methods={"GET"})
+     * @Route("/tree-get-children-by-id", name="pimcore_admin_asset_treegetchildrenbyid", methods={"GET"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
-    public function treeGetChildsByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function treeGetChildrenByIdAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $assets = [];
-        $cv = false;
+        $cv = [];
         $asset = Asset::getById($allParams['node']);
 
         $filter = $request->get('filter');
@@ -341,7 +349,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return JsonResponse
      */
-    public function addAssetAction(Request $request, Config $config)
+    public function addAssetAction(Request $request, Config $config): JsonResponse
     {
         try {
             $res = $this->addAsset($request, $config);
@@ -375,7 +383,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return JsonResponse
      */
-    public function addAssetCompatibilityAction(Request $request, Config $config)
+    public function addAssetCompatibilityAction(Request $request, Config $config): JsonResponse
     {
         try {
             // this is a special action for the compatibility mode upload (without flash)
@@ -408,7 +416,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @throws \Exception
      */
-    public function existsAction(Request $request)
+    public function existsAction(Request $request): JsonResponse
     {
         $parentAsset = \Pimcore\Model\Asset::getById((int)$request->get('parentId'));
 
@@ -425,7 +433,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @throws \Exception
      */
-    protected function addAsset(Request $request, Config $config)
+    protected function addAsset(Request $request, Config $config): array
     {
         $defaultUploadPath = $config['assets']['default_upload_path'] ?? '/';
 
@@ -492,8 +500,11 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $context = $request->get('context');
         if ($context) {
             $context = json_decode($context, true);
-            $context = $context ? $context : [];
-            $event = new \Pimcore\Event\Model\Asset\ResolveUploadTargetEvent($parentId, $filename, $context);
+            $context = $context ?: [];
+
+            $this->validateManyToManyRelationAssetType($context, $filename, $sourcePath);
+
+            $event = new ResolveUploadTargetEvent($parentId, $filename, $context);
             \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::RESOLVE_UPLOAD_TARGET);
             $filename = Element\Service::getValidKey($event->getFilename(), 'asset');
             $parentId = $event->getParentId();
@@ -543,13 +554,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         ];
     }
 
-    /**
-     * @param string $targetPath
-     * @param string $filename
-     *
-     * @return string
-     */
-    protected function getSafeFilename($targetPath, $filename)
+    protected function getSafeFilename(string $targetPath, string $filename): string
     {
         $pathinfo = pathinfo($filename);
         $originalFilename = $pathinfo['filename'];
@@ -579,7 +584,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @throws \Exception
      */
-    public function replaceAssetAction(Request $request)
+    public function replaceAssetAction(Request $request): JsonResponse
     {
         $asset = Asset::getById((int) $request->get('id'));
 
@@ -633,7 +638,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return JsonResponse
      */
-    public function addFolderAction(Request $request)
+    public function addFolderAction(Request $request): JsonResponse
     {
         $success = false;
         $parentAsset = Asset::getById((int)$request->get('parentId'));
@@ -663,7 +668,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return JsonResponse
      */
-    public function deleteAction(Request $request)
+    public function deleteAction(Request $request): JsonResponse
     {
         $type = $request->get('type');
 
@@ -705,13 +710,9 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         throw $this->createAccessDeniedHttpException();
     }
 
-    /**
-     * @param Asset $element
-     *
-     * @return array
-     */
-    protected function getTreeNodeConfig($element)
+    protected function getTreeNodeConfig(ElementInterface $element): array
     {
+        /** @var Asset $asset */
         $asset = $element;
 
         $permissions =  $asset->getUserPermissions($this->getAdminUser());
@@ -795,13 +796,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         return $tmpAsset;
     }
 
-    /**
-     * @param Asset $asset
-     * @param array $params
-     *
-     * @return null|string
-     */
-    protected function getThumbnailUrl(Asset $asset, array $params = [])
+    protected function getThumbnailUrl(Asset $asset, array $params = []): ?string
     {
         $defaults = [
             'id' => $asset->getId(),
@@ -845,7 +840,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @throws \Exception
      */
-    public function updateAction(Request $request)
+    public function updateAction(Request $request): JsonResponse
     {
         $success = false;
         $allowUpdate = true;
@@ -963,7 +958,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @throws \Exception
      */
-    public function saveAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function saveAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
         $asset = Asset::getById((int) $request->get('id'));
 
@@ -1069,7 +1064,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return JsonResponse
      */
-    public function publishVersionAction(Request $request)
+    public function publishVersionAction(Request $request): JsonResponse
     {
         $version = Model\Version::getById((int) $request->get('id'));
         $asset = $version->loadData();
@@ -1098,7 +1093,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return Response
      */
-    public function showVersionAction(Request $request)
+    public function showVersionAction(Request $request): Response
     {
         $id = (int)$request->get('id');
         $version = Model\Version::getById($id);
@@ -1129,7 +1124,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return StreamedResponse
      */
-    public function downloadAction(Request $request)
+    public function downloadAction(Request $request): StreamedResponse
     {
         $asset = Asset::getById((int) $request->get('id'));
 
@@ -1142,6 +1137,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $stream = $asset->getStream();
+
+        if (!is_resource($stream)) {
+            throw $this->createNotFoundException('Unable to get resource for asset ' . $asset->getId());
+        }
 
         return new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
@@ -1159,7 +1158,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return BinaryFileResponse
      */
-    public function downloadImageThumbnailAction(Request $request)
+    public function downloadImageThumbnailAction(Request $request): BinaryFileResponse
     {
         $image = Asset\Image::getById((int) $request->get('id'));
 
@@ -1282,7 +1281,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return StreamedResponse
      */
-    public function getAssetAction(Request $request)
+    public function getAssetAction(Request $request): StreamedResponse
     {
         $image = Asset::getById((int)$request->get('id'));
 
@@ -1295,6 +1294,11 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         $stream = $image->getStream();
+
+        if (!is_resource($stream)) {
+            throw $this->createNotFoundException('Unable to get resource for asset ' . $image->getId());
+        }
+
         $response = new StreamedResponse(function () use ($stream) {
             fpassthru($stream);
         }, 200, [
@@ -1313,7 +1317,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return StreamedResponse|JsonResponse|BinaryFileResponse
      */
-    public function getImageThumbnailAction(Request $request)
+    public function getImageThumbnailAction(Request $request): BinaryFileResponse|JsonResponse|StreamedResponse
     {
         $fileinfo = $request->get('fileinfo');
         $image = Asset\Image::getById((int)$request->get('id'));
@@ -1407,7 +1411,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return StreamedResponse
      */
-    public function getFolderThumbnailAction(Request $request)
+    public function getFolderThumbnailAction(Request $request): StreamedResponse
     {
         $folder = null;
 
@@ -1445,7 +1449,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return StreamedResponse
      */
-    public function getVideoThumbnailAction(Request $request)
+    public function getVideoThumbnailAction(Request $request): StreamedResponse
     {
         $video = null;
 
@@ -1524,7 +1528,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return StreamedResponse|BinaryFileResponse
      */
-    public function getDocumentThumbnailAction(Request $request)
+    public function getDocumentThumbnailAction(Request $request): BinaryFileResponse|StreamedResponse
     {
         $document = Asset\Document::getById((int)$request->get('id'));
 
@@ -1578,9 +1582,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         return $response;
     }
 
-    /**
-     * @param Response $response
-     */
     protected function addThumbnailCacheHeaders(Response $response)
     {
         $lifetime = 300;
@@ -1600,7 +1601,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return StreamedResponse
      */
-    public function getPreviewDocumentAction(Request $request)
+    public function getPreviewDocumentAction(Request $request): StreamedResponse
     {
         $asset = Asset\Document::getById((int) $request->get('id'));
 
@@ -1656,7 +1657,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return Response
      */
-    public function getPreviewVideoAction(Request $request)
+    public function getPreviewVideoAction(Request $request): Response
     {
         $asset = Asset\Video::getById((int) $request->get('id'));
         $configName = $request->get('config');
@@ -1710,7 +1711,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return StreamedResponse
      */
-    public function serveVideoPreviewAction(Request $request)
+    public function serveVideoPreviewAction(Request $request): StreamedResponse
     {
         $asset = Asset\Video::getById((int) $request->get('id'));
         $configName = $request->get('config');
@@ -1756,7 +1757,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return Response
      */
-    public function imageEditorAction(Request $request)
+    public function imageEditorAction(Request $request): Response
     {
         $asset = Asset::getById((int) $request->get('id'));
 
@@ -1777,7 +1778,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return JsonResponse
      */
-    public function imageEditorSaveAction(Request $request)
+    public function imageEditorSaveAction(Request $request): JsonResponse
     {
         $asset = Asset::getById((int) $request->get('id'));
 
@@ -1802,11 +1803,9 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     /**
      * @Route("/get-folder-content-preview", name="pimcore_admin_asset_getfoldercontentpreview", methods={"GET"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
-    public function getFolderContentPreviewAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function getFolderContentPreviewAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
@@ -1868,7 +1867,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 $filenameDisplay = substr($filenameDisplay, 0, 25) . '...' . \Pimcore\File::getFileExtension($filenameDisplay);
             }
 
-            // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
+            // Like for treeGetChildrenByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
             if ($asset->isAllowed('list')) {
                 $assets[] = [
                     'id' => $asset->getId(),
@@ -1902,7 +1901,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return JsonResponse
      */
-    public function copyInfoAction(Request $request)
+    public function copyInfoAction(Request $request): JsonResponse
     {
         $transactionId = time();
         $pasteJobs = [];
@@ -1981,7 +1980,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return JsonResponse
      */
-    public function copyAction(Request $request)
+    public function copyAction(Request $request): JsonResponse
     {
         $success = false;
         $sourceId = (int)$request->get('sourceId');
@@ -2050,7 +2049,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return JsonResponse
      */
-    public function downloadAsZipJobsAction(Request $request)
+    public function downloadAsZipJobsAction(Request $request): JsonResponse
     {
         $jobId = uniqid();
         $filesPerJob = 5;
@@ -2127,7 +2126,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return JsonResponse
      */
-    public function downloadAsZipAddFilesAction(Request $request)
+    public function downloadAsZipAddFilesAction(Request $request): JsonResponse
     {
         $zipFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/download-zip-' . $request->get('jobId') . '.zip';
         $asset = Asset::getById((int) $request->get('id'));
@@ -2208,7 +2207,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      * Download all assets contained in the folder with parameter id as ZIP file.
      * The suggested filename is either [folder name].zip or assets.zip for the root folder.
      */
-    public function downloadAsZipAction(Request $request)
+    public function downloadAsZipAction(Request $request): BinaryFileResponse
     {
         $asset = Asset::getById((int) $request->get('id'));
         if (!$asset) {
@@ -2235,7 +2234,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return Response
      */
-    public function importZipAction(Request $request)
+    public function importZipAction(Request $request): Response
     {
         $jobId = uniqid();
         $filesPerJob = 5;
@@ -2305,7 +2304,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return JsonResponse
      */
-    public function importZipFilesAction(Request $request)
+    public function importZipFilesAction(Request $request): JsonResponse
     {
         $jobId = $request->get('jobId');
         $limit = (int)$request->get('limit');
@@ -2378,7 +2377,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return JsonResponse
      */
-    public function importServerAction(Request $request)
+    public function importServerAction(Request $request): JsonResponse
     {
         $success = true;
         $filesPerJob = 5;
@@ -2426,7 +2425,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return JsonResponse
      */
-    public function importServerFilesAction(Request $request)
+    public function importServerFilesAction(Request $request): JsonResponse
     {
         $assetFolder = Asset::getById((int) $request->get('parentId'));
         if (!$assetFolder) {
@@ -2481,7 +2480,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @throws \Exception
      */
-    public function importUrlAction(Request $request)
+    public function importUrlAction(Request $request): JsonResponse
     {
         $success = true;
 
@@ -2526,7 +2525,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return JsonResponse
      */
-    public function clearThumbnailAction(Request $request)
+    public function clearThumbnailAction(Request $request): JsonResponse
     {
         $success = false;
 
@@ -2556,7 +2555,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return JsonResponse
      */
-    public function gridProxyAction(Request $request, EventDispatcherInterface $eventDispatcher, GridHelperService $gridHelperService, CsrfProtectionHandler $csrfProtection)
+    public function gridProxyAction(Request $request, EventDispatcherInterface $eventDispatcher, GridHelperService $gridHelperService, CsrfProtectionHandler $csrfProtection): JsonResponse
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
@@ -2704,7 +2703,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
             $assets = [];
             foreach ($list->getAssets() as $index => $asset) {
-                // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
+                // Like for treeGetChildrenByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
                 if ($asset->isAllowed('list')) {
                     $a = Asset\Service::gridAssetData($asset, $allParams['fields'], $allParams['language'] ?? '');
                     $assets[] = $a;
@@ -2733,7 +2732,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return JsonResponse
      */
-    public function getTextAction(Request $request)
+    public function getTextAction(Request $request): JsonResponse
     {
         $asset = Asset::getById((int) $request->get('id'));
 
@@ -2761,7 +2760,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return JsonResponse
      */
-    public function detectImageFeaturesAction(Request $request)
+    public function detectImageFeaturesAction(Request $request): JsonResponse
     {
         $asset = Asset\Image::getById((int)$request->get('id'));
         if (!$asset instanceof Asset) {
@@ -2770,6 +2769,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         if ($asset->isAllowed('publish')) {
             $asset->detectFaces();
+            $asset->detectFocalPoint();
             $asset->removeCustomSetting('disableImageFeatureAutoDetection');
             $asset->save();
 
@@ -2786,7 +2786,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      *
      * @return JsonResponse
      */
-    public function deleteImageFeaturesAction(Request $request)
+    public function deleteImageFeaturesAction(Request $request): JsonResponse
     {
         $asset = Asset::getById((int)$request->get('id'));
         if (!$asset instanceof Asset) {
@@ -2804,9 +2804,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         throw $this->createAccessDeniedHttpException();
     }
 
-    /**
-     * @param ControllerEvent $event
-     */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         if (!$event->isMainRequest()) {
@@ -2818,5 +2815,36 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         ]);
 
         $this->_assetService = new Asset\Service($this->getAdminUser());
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    private function validateManyToManyRelationAssetType(array $context, string $filename, string $sourcePath): void
+    {
+        if (isset($context['containerType'], $context['objectId'], $context['fieldname'])
+            && 'object' === $context['containerType']
+            && $object = Concrete::getById($context['objectId'])
+        ) {
+            $fieldDefinition = $object->getClass()?->getFieldDefinition($context['fieldname']);
+            if (!$fieldDefinition instanceof ManyToManyRelation) {
+                return;
+            }
+
+            $mimeType = MimeTypes::getDefault()->guessMimeType($sourcePath);
+            $type = Asset::getTypeFromMimeMapping($mimeType, $filename);
+
+            $allowedAssetTypes = $fieldDefinition->getAssetTypes();
+            $allowedAssetTypes = array_column($allowedAssetTypes, 'assetTypes');
+
+            if (
+                !(
+                    $fieldDefinition->getAssetsAllowed()
+                    && ($allowedAssetTypes === [] || in_array($type, $allowedAssetTypes, true))
+                )
+            ) {
+                throw new ValidationException(sprintf('Invalid relation in field `%s` [type: %s]', $context['fieldname'], $type));
+            }
+        }
     }
 }

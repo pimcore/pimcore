@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,15 +26,9 @@ final class Config
 {
     private const CONFIG_ID = 'web_to_print';
 
-    /**
-     * @var LocationAwareConfigRepository|null
-     */
     private static ?LocationAwareConfigRepository $locationAwareConfigRepository = null;
 
-    /**
-     * @return LocationAwareConfigRepository
-     */
-    private static function getRepository()
+    private static function getRepository(): LocationAwareConfigRepository
     {
         if (!self::$locationAwareConfigRepository) {
             $config = [];
@@ -65,9 +60,6 @@ final class Config
         return self::getRepository()->isWriteable();
     }
 
-    /**
-     * @return array
-     */
     public static function get(): array
     {
         $repository = self::getRepository();
@@ -82,7 +74,7 @@ final class Config
      *
      * @throws \Exception
      */
-    public static function save(array $data)
+    public static function save(array $data): void
     {
         $repository = self::getRepository();
 

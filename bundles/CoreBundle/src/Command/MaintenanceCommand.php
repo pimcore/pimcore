@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,10 +28,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class MaintenanceCommand extends AbstractCommand
 {
-    /**
-     * @param ExecutorInterface $maintenanceExecutor
-     * @param LoggerInterface   $logger
-     */
     public function __construct(private ExecutorInterface $maintenanceExecutor, private LoggerInterface $logger)
     {
         parent::__construct();
@@ -86,11 +83,6 @@ class MaintenanceCommand extends AbstractCommand
 
     /**
      * Get an array option value, but still support the value being comma-separated for backwards compatibility
-     *
-     * @param InputInterface $input
-     * @param string         $name
-     *
-     * @return array
      */
     private function getArrayOptionValue(InputInterface $input, string $name): array
     {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,7 +22,7 @@ use Pimcore\Model\Element\ValidationException;
 
 class Helper
 {
-    public static function insertOrUpdate(Connection $connection, $table, array $data)
+    public static function insertOrUpdate(Connection $connection, $table, array $data): int|string
     {
         // extract and quote col names from the array keys
         $i = 0;
@@ -54,7 +55,7 @@ class Helper
         return $connection->executeStatement($sql, $bind);
     }
 
-    public static function fetchPairs(Connection $db, $sql, array $params = [], $types = [])
+    public static function fetchPairs(Connection $db, $sql, array $params = [], $types = []): array
     {
         $stmt = $db->executeQuery($sql, $params, $types);
         $data = [];
@@ -67,7 +68,7 @@ class Helper
         return $data;
     }
 
-    public static function selectAndDeleteWhere(Connection $db, $table, $idColumn = 'id', $where = '')
+    public static function selectAndDeleteWhere(Connection $db, $table, $idColumn = 'id', $where = ''): void
     {
         $sql = 'SELECT ' . $db->quoteIdentifier($idColumn) . '  FROM ' . $table;
 
@@ -86,7 +87,7 @@ class Helper
         }
     }
 
-    public static function queryIgnoreError(Connection $db, $sql, $exclusions = [])
+    public static function queryIgnoreError(Connection $db, $sql, $exclusions = []): ?\Doctrine\DBAL\Result
     {
         try {
             return $db->executeQuery($sql);
@@ -102,7 +103,7 @@ class Helper
         return null;
     }
 
-    public static function quoteInto(Connection $db, $text, $value, $type = null, $count = null)
+    public static function quoteInto(Connection $db, $text, $value, $type = null, $count = null): array|string
     {
         if ($count === null) {
             return str_replace('?', $db->quote($value, $type), $text);

@@ -7,7 +7,6 @@ backend or via code by a developer.
 * [Composite Indices](./05_Composite_Indices.md)
 * [Data Inheritance and Parent Class](./25_Inheritance.md)
 * [Object Variants](./70_Variants.md)
-* [Object Preview](./55_Preview.md)
 * [Custom Icons for objects](./10_Custom_Icons.md)
 * [Custom Layouts](./15_Custom_Layouts.md)
 * [Custom Views](./20_Custom_Views.md)

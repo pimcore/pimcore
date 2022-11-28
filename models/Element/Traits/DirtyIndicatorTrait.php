@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,25 +21,14 @@ namespace Pimcore\Model\Element\Traits;
  */
 trait DirtyIndicatorTrait
 {
-    /**
-     * @var array|null
-     */
-    protected $dirtyFields;
+    protected ?array $dirtyFields = null;
 
-    /**
-     * @return bool
-     */
-    public function hasDirtyFields()
+    public function hasDirtyFields(): bool
     {
         return is_array($this->dirtyFields) && count($this->dirtyFields);
     }
 
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function isFieldDirty($key)
+    public function isFieldDirty(string $key): bool
     {
         if (is_array($this->dirtyFields) && array_key_exists($key, $this->dirtyFields)) {
             return true;
@@ -53,7 +43,7 @@ trait DirtyIndicatorTrait
      * @param string $field
      * @param bool $dirty
      */
-    public function markFieldDirty($field, $dirty = true)
+    public function markFieldDirty(string $field, bool $dirty = true): void
     {
         if ($dirty && !is_array($this->dirtyFields)) {
             $this->dirtyFields = [];
@@ -66,7 +56,7 @@ trait DirtyIndicatorTrait
         }
     }
 
-    public function resetDirtyMap()
+    public function resetDirtyMap(): void
     {
         $this->dirtyFields = null;
     }

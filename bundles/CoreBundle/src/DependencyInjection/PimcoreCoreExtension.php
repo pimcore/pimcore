@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -45,10 +46,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
  */
 final class PimcoreCoreExtension extends ConfigurableExtension implements PrependExtensionInterface
 {
-    /**
-     * @return string
-     */
-    public function getAlias()
+    public function getAlias(): string
     {
         return 'pimcore';
     }
@@ -71,14 +69,9 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.extensions.bundles.search_paths', $config['bundles']['search_paths']);
         $container->setParameter('pimcore.extensions.bundles.handle_composer', $config['bundles']['handle_composer']);
 
-        // unauthenticated routes do not double-check for authentication
-        $container->setParameter('pimcore.admin.unauthenticated_routes', $config['admin']['unauthenticated_routes']);
-
         if (!$container->hasParameter('pimcore.encryption.secret')) {
             $container->setParameter('pimcore.encryption.secret', $config['encryption']['secret']);
         }
-
-        $container->setParameter('pimcore.admin.translations.path', $config['admin']['translations']['path']);
 
         $container->setParameter('pimcore.translations.admin_translation_mapping', $config['translations']['admin_translation_mapping']);
 
@@ -93,6 +86,11 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.documents.default_controller', $config['documents']['default_controller']);
         $container->setParameter('pimcore.documents.web_to_print.default_controller_print_page', $config['documents']['web_to_print']['default_controller_print_page']);
         $container->setParameter('pimcore.documents.web_to_print.default_controller_print_container', $config['documents']['web_to_print']['default_controller_print_container']);
+
+        //twig security policy whitelist config
+        $container->setParameter('pimcore.templating.twig.sandbox_security_policy.tags', $config['templating_engine']['twig']['sandbox_security_policy']['tags']);
+        $container->setParameter('pimcore.templating.twig.sandbox_security_policy.filters', $config['templating_engine']['twig']['sandbox_security_policy']['filters']);
+        $container->setParameter('pimcore.templating.twig.sandbox_security_policy.functions', $config['templating_engine']['twig']['sandbox_security_policy']['functions']);
 
         // register pimcore config on container
         // TODO is this bad practice?
@@ -140,7 +138,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $this->configureRouting($container, $config['routing']);
         $this->configureTranslations($container, $config['translations']);
         $this->configureTargeting($container, $loader, $config['targeting']);
-        $this->configurePasswordEncoders($container, $config);
         $this->configurePasswordHashers($container, $config);
         $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories');
         $this->configureAdapterFactories($container, $config['custom_report']['adapters'], 'pimcore.custom_report.adapter.factories');
@@ -156,11 +153,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $this->addContextRoutes($container, $config['context']);
     }
 
-    /**
-     * @param ContainerBuilder $container
-     * @param array $config
-     */
-    private function configureModelFactory(ContainerBuilder $container, array $config)
+    private function configureModelFactory(ContainerBuilder $container, array $config): void
     {
         $service = $container->getDefinition(Factory::class);
 
@@ -175,11 +168,8 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
     /**
      * Configure implementation loaders from config
-     *
-     * @param ContainerBuilder $container
-     * @param array $config
      */
-    private function configureImplementationLoaders(ContainerBuilder $container, array $config)
+    private function configureImplementationLoaders(ContainerBuilder $container, array $config): void
     {
         $services = [
             EditableLoader::class => [
@@ -230,7 +220,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         }
     }
 
-    private function configureRouting(ContainerBuilder $container, array $config)
+    private function configureRouting(ContainerBuilder $container, array $config): void
     {
         $container->setParameter(
             'pimcore.routing.static.locale_params',
@@ -238,7 +228,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         );
     }
 
-    private function configureTranslations(ContainerBuilder $container, array $config)
+    private function configureTranslations(ContainerBuilder $container, array $config): void
     {
         $parameter = $config['debugging']['parameter'];
 
@@ -256,7 +246,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         }
     }
 
-    private function configureTargeting(ContainerBuilder $container, LoaderInterface $loader, array $config)
+    private function configureTargeting(ContainerBuilder $container, LoaderInterface $loader, array $config): void
     {
         $container->setParameter('pimcore.targeting.enabled', $config['enabled']);
         $container->setParameter('pimcore.targeting.conditions', $config['conditions']);
@@ -307,12 +297,8 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
     /**
      * Configures a "typed locator" (a class exposing get/has for a specific type) wrapping
      * a standard service locator. Example: Pimcore\Targeting\DataProviderLocator
-     *
-     * @param ContainerBuilder $container
-     * @param string $locatorClass
-     * @param array $services
      */
-    private function configureTypedLocator(ContainerBuilder $container, string $locatorClass, array $services)
+    private function configureTypedLocator(ContainerBuilder $container, string $locatorClass, array $services): void
     {
         $serviceLocator = new Definition(ServiceLocator::class, [$services]);
         $serviceLocator
@@ -324,30 +310,9 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
     }
 
     /**
-     * Handle pimcore.security.encoder_factories mapping
-     *
-     * @param ContainerBuilder $container
-     * @param array $config
-     */
-    private function configurePasswordEncoders(ContainerBuilder $container, array $config)
-    {
-        $definition = $container->findDefinition('pimcore.security.encoder_factory');
-
-        $factoryMapping = [];
-        foreach ($config['security']['encoder_factories'] as $className => $factoryConfig) {
-            $factoryMapping[$className] = new Reference($factoryConfig['id']);
-        }
-
-        $definition->replaceArgument(1, $factoryMapping);
-    }
-
-    /**
      * Handle pimcore.security.password_hasher_factories mapping
-     *
-     * @param ContainerBuilder $container
-     * @param array $config
      */
-    private function configurePasswordHashers(ContainerBuilder $container, array $config)
+    private function configurePasswordHashers(ContainerBuilder $container, array $config): void
     {
         $definition = $container->findDefinition('pimcore.security.password_hasher_factory');
 
@@ -361,10 +326,8 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
     /**
      * Creates service locator which is used from static Pimcore\Google\Analytics class
-     *
-     * @param ContainerBuilder $container
      */
-    private function configureGoogleAnalyticsFallbackServiceLocator(ContainerBuilder $container)
+    private function configureGoogleAnalyticsFallbackServiceLocator(ContainerBuilder $container): void
     {
         $services = [
             AnalyticsGoogleTracker::class,
@@ -380,7 +343,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $serviceLocator->setArguments([$mapping]);
     }
 
-    private function configureSitemaps(ContainerBuilder $container, array $config)
+    private function configureSitemaps(ContainerBuilder $container, array $config): void
     {
         $listener = $container->getDefinition(SitemapGeneratorListener::class);
 
@@ -420,11 +383,8 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
 
     /**
      * Add context specific routes to context guesser
-     *
-     * @param ContainerBuilder $container
-     * @param array $config
      */
-    private function addContextRoutes(ContainerBuilder $container, array $config)
+    private function addContextRoutes(ContainerBuilder $container, array $config): void
     {
         $guesser = $container->getDefinition(PimcoreContextGuesser::class);
 
@@ -440,30 +400,17 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
      */
     public function prepend(ContainerBuilder $container)
     {
-        $securityConfigs = $container->getExtensionConfig('security');
+        /*$securityConfigs = $container->getExtensionConfig('security');
 
-        $loader = new YamlFileLoader(
-            $container,
-            new FileLocator(__DIR__ . '/../../config')
-        );
-
-        foreach ($securityConfigs as $config) {
-            if ($config['enable_authenticator_manager'] ?? false) {
-                $loader->load('authenticator_security.yaml');
-
-                $container->setParameter('security.authenticator.manager.enabled', true);
-            }
-        }
+        if (count($securityConfigs) > 1) {
+            $this->setExtensionConfig($container, 'security', $securityConfigs);
+        }*/
     }
 
     /**
      * Configure Adapter Factories
-     *
-     * @param ContainerBuilder $container
-     * @param array $factories
-     * @param string $serviceLocatorId
      */
-    private function configureAdapterFactories(ContainerBuilder $container, $factories, $serviceLocatorId)
+    private function configureAdapterFactories(ContainerBuilder $container, array $factories, string $serviceLocatorId): void
     {
         $serviceLocator = $container->getDefinition($serviceLocatorId);
         $arguments = [];
@@ -475,7 +422,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $serviceLocator->setArgument(0, $arguments);
     }
 
-    private function configureGlossary(ContainerBuilder $container, array $config)
+    private function configureGlossary(ContainerBuilder $container, array $config): void
     {
         $container->setParameter('pimcore.glossary.blocked_tags', $config['blocked_tags']);
     }

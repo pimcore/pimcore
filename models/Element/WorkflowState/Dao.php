@@ -49,7 +49,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @todo: not all save methods return a boolean, why this one?
      */
-    public function save()
+    public function save(): bool
     {
         $dataAttributes = $this->model->getObjectVars();
 

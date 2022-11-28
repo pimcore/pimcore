@@ -32,10 +32,7 @@ class InstallerKernel extends Kernel
 {
     use MicroKernelTrait;
 
-    /**
-     * @var string
-     */
-    private $projectRoot;
+    private string $projectRoot;
 
     public function __construct(string $projectRoot, string $environment, bool $debug)
     {
@@ -47,7 +44,7 @@ class InstallerKernel extends Kernel
     /**
      * {@inheritdoc}
      */
-    public function getProjectDir()
+    public function getProjectDir(): string
     {
         return $this->projectRoot;
     }
@@ -55,7 +52,7 @@ class InstallerKernel extends Kernel
     /**
      * {@inheritdoc}
      */
-    public function getLogDir()
+    public function getLogDir(): string
     {
         return $this->projectRoot . '/var/log';
     }
@@ -63,7 +60,7 @@ class InstallerKernel extends Kernel
     /**
      * {@inheritdoc}
      */
-    public function getCacheDir()
+    public function getCacheDir(): string
     {
         return $this->projectRoot . '/var/installer/cache';
     }
@@ -86,9 +83,6 @@ class InstallerKernel extends Kernel
         return $bundles;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureContainer(ContainerConfigurator $configurator): void
     {
         $configurator->parameters()->set('secret', uniqid('installer-', true));
@@ -104,9 +98,6 @@ class InstallerKernel extends Kernel
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureRoutes(RoutingConfigurator $routes): void
     {
         // nothing to do

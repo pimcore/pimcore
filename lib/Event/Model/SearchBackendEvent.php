@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,10 +21,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class SearchBackendEvent extends Event
 {
-    /**
-     * @var Data
-     */
-    protected $data;
+    protected Data $data;
 
     /**
      * Data constructor.
@@ -35,18 +33,12 @@ class SearchBackendEvent extends Event
         $this->data = $data;
     }
 
-    /**
-     * @return Data
-     */
-    public function getData()
+    public function getData(): Data
     {
         return $this->data;
     }
 
-    /**
-     * @param Data $data
-     */
-    public function setData($data)
+    public function setData(Data $data)
     {
         $this->data = $data;
     }

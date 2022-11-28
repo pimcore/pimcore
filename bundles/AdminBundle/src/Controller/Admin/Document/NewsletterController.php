@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -78,6 +79,7 @@ class NewsletterController extends DocumentControllerBase
 
         $this->addTranslationsData($email, $data);
         $this->minimizeProperties($email, $data);
+        $this->populateUsersNames($email, $data);
 
         $data['url'] = $email->getUrl();
 
@@ -125,10 +127,6 @@ class NewsletterController extends DocumentControllerBase
         }
     }
 
-    /**
-     * @param Request $request
-     * @param Document $page
-     */
     protected function setValuesToDocument(Request $request, Document $page)
     {
         $this->addSettingsToDocument($request, $page);

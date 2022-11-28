@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,11 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 trait ApplySchedulerDataTrait
 {
-    /**
-     * @param Request $request
-     * @param ElementInterface $element
-     */
-    protected function applySchedulerDataToElement(Request $request, ElementInterface $element)
+    protected function applySchedulerDataToElement(Request $request, ElementInterface $element): void
     {
         /** @var AdminController $this */
 

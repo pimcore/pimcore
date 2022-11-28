@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,12 +29,12 @@ use Spiritix\Html2Pdf\Output\StringOutput;
 
 class HeadlessChrome extends Processor
 {
-    private $nodePath = '';
+    private string $nodePath = '';
 
     /**
-     * {@internal}
+     * @internal
      */
-    protected function buildPdf(Document\PrintAbstract $document, $config)
+    protected function buildPdf(Document\PrintAbstract $document, object $config): string
     {
         $web2printConfig = Config::getWeb2PrintConfig();
         $web2printConfig = $web2printConfig['headlessChromeSettings'];
@@ -73,9 +74,9 @@ class HeadlessChrome extends Processor
     }
 
     /**
-     * {@internal}
+     * @internal
      */
-    public function getProcessingOptions()
+    public function getProcessingOptions(): array
     {
         $event = new PrintConfigEvent($this, [
             'options' => [],
@@ -86,9 +87,9 @@ class HeadlessChrome extends Processor
     }
 
     /**
-     * {@internal}
+     * @internal
      */
-    public function getPdfFromString($html, $params = [], $returnFilePath = false)
+    public function getPdfFromString(string $html, array $params = [], bool $returnFilePath = false): string
     {
         $params = $params ?: $this->getDefaultOptions();
         $input = new StringInput();
@@ -114,9 +115,6 @@ class HeadlessChrome extends Processor
         return $output->get();
     }
 
-    /**
-     * @return array
-     */
     private function getDefaultOptions(): array
     {
         return [
@@ -134,11 +132,9 @@ class HeadlessChrome extends Processor
     }
 
     /**
-     * @param string $nodePath
-     *
      * @return $this
      */
-    public function setNodePath(string $nodePath): self
+    public function setNodePath(string $nodePath): static
     {
         $this->nodePath = $nodePath;
 

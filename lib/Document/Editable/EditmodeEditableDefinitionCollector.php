@@ -44,9 +44,6 @@ final class EditmodeEditableDefinitionCollector
         $this->editableDefinitions[$editable->getName()] = $editable->getEditmodeDefinition();
     }
 
-    /**
-     * @param Editable $editable
-     */
     public function remove(Editable $editable): void
     {
         if ($this->stopped) {
@@ -79,12 +76,7 @@ final class EditmodeEditableDefinitionCollector
         $this->editableDefinitions = array_pop($this->stash);
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @return mixed
-     */
-    private function clearConfig($value)
+    private function clearConfig(mixed $value): mixed
     {
         if (is_array($value)) {
             foreach ($value as &$item) {
@@ -97,9 +89,6 @@ final class EditmodeEditableDefinitionCollector
         return $value;
     }
 
-    /**
-     * @return array
-     */
     public function getDefinitions(): array
     {
         $configs = [];

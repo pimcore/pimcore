@@ -245,6 +245,11 @@ input.cke_dialog_ui_input_tel {
     line-height: 38px;
     font-size: 10px;
     padding-left: 10px;
+
+    /* Hide overflowing text where surrounding area is too narrow to display it */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .pimcore_block_button_plus,
@@ -475,6 +480,9 @@ input.cke_dialog_ui_input_tel {
 .pimcore_areablock_toolbar {
     opacity: .9;
     border-color: #000;
+    overflow-y: auto;
+    max-height: calc(100vh - 15px);
+    color-scheme: dark;
 }
 
 .pimcore_areablock_toolbar.x-layer {

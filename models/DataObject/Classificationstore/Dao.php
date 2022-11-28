@@ -31,23 +31,14 @@ class Dao extends Model\Dao\AbstractDao
 {
     use DataObject\ClassDefinition\Helper\Dao;
 
-    /**
-     * @var array|null
-     */
-    protected $tableDefinitions = null;
+    protected array $tableDefinitions = [];
 
-    /**
-     * @return string
-     */
-    public function getDataTableName()
+    public function getDataTableName(): string
     {
         return 'object_classificationstore_data_' . $this->model->getClass()->getId();
     }
 
-    /**
-     * @return string
-     */
-    public function getGroupsTableName()
+    public function getGroupsTableName(): string
     {
         return 'object_classificationstore_groups_' . $this->model->getClass()->getId();
     }
@@ -265,7 +256,7 @@ class Dao extends Model\Dao\AbstractDao
             CONSTRAINT `'.self::getForeignKeyName($dataTable, 'id').'` FOREIGN KEY (`id`) REFERENCES objects (`id`) ON DELETE CASCADE
         ) DEFAULT CHARSET=utf8mb4;');
 
-        $this->tableDefinitions = null;
+        $this->tableDefinitions = [];
 
         $this->handleEncryption($this->model->getClass(), [$groupsTable, $dataTable]);
     }

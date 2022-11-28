@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -48,7 +49,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      *
      * @var int|string|null
      */
-    protected $id;
+    protected string|int|null $id;
 
     /**
      * one of self::ALLOWED_TYPES
@@ -57,7 +58,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      *
      * @var string|null
      */
-    protected $type;
+    protected ?string $type = null;
 
     /**
      * asset ID of poster image
@@ -66,65 +67,49 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      *
      * @var int|null
      */
-    protected $poster;
+    protected ?int $poster = null;
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $title = '';
+    protected string $title = '';
 
     /**
      * @internal
      *
      * @var string
      */
-    protected $description = '';
+    protected string $description = '';
 
     /**
      * @internal
      *
      * @var array|null
      */
-    protected $allowedTypes;
+    protected ?array $allowedTypes = null;
 
-    /**
-     * @param int|string|null $id
-     *
-     * @return Video
-     */
-    public function setId($id)
+    public function setId(int|string|null $id): static
     {
         $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @return int|string|null
-     */
-    public function getId()
+    public function getId(): int|string|null
     {
         return $this->id;
     }
 
-    /**
-     * @param string $title
-     *
-     * @return $this
-     */
-    public function setTitle($title)
+    public function setTitle(string $title): static
     {
         $this->title = $title;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getTitle()
+    public function getTitle(): string
     {
         if (!$this->title && $this->getVideoAsset()) {
             // default title for microformats
@@ -134,22 +119,14 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->title;
     }
 
-    /**
-     * @param string $description
-     *
-     * @return $this
-     */
-    public function setDescription($description)
+    public function setDescription(string $description): static
     {
         $this->description = $description;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         if (!$this->description) {
             // default description for microformats
@@ -159,32 +136,19 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->description;
     }
 
-    /**
-     * @param int|null $id
-     *
-     * @return $this
-     */
-    public function setPoster($id)
+    public function setPoster(?int $id): static
     {
         $this->poster = $id;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getPoster()
+    public function getPoster(): ?int
     {
         return $this->poster;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return $this
-     */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
@@ -194,27 +158,19 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return 'video';
     }
 
-    /**
-     * @param array $allowedTypes
-     *
-     * @return $this
-     */
-    public function setAllowedTypes($allowedTypes)
+    public function setAllowedTypes(array $allowedTypes): static
     {
         $this->allowedTypes = $allowedTypes;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getAllowedTypes()
+    public function getAllowedTypes(): array
     {
         if ($this->allowedTypes === null) {
             $this->updateAllowedTypesFromConfig($this->getConfig());
@@ -226,7 +182,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): mixed
     {
         $path = $this->id;
         if ($this->type === self::TYPE_ASSET && ($video = Asset::getById($this->id))) {
@@ -263,7 +219,26 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     /**
      * {@inheritdoc}
      */
-    public function getDataForResource()
+    protected function getDataEditmode()
+    {
+        $data = $this->getData();
+
+        $poster = Asset::getById($this->poster);
+        if ($poster) {
+            $data['poster'] = $poster->getRealFullPath();
+        }
+
+        if ($this->type === self::TYPE_ASSET && ($video = Asset::getById($this->id))) {
+            $data['path'] = $video->getRealFullPath();
+        }
+
+        return $data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDataForResource(): array
     {
         return [
             'id'           => $this->id,
@@ -295,11 +270,11 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         } elseif ($this->type === self::TYPE_ASSET) {
             return $this->getAssetCode($inAdmin);
         } elseif ($this->type === self::TYPE_YOUTUBE) {
-            return $this->getYoutubeCode();
+            return $this->getYoutubeCode($inAdmin);
         } elseif ($this->type === self::TYPE_VIMEO) {
-            return $this->getVimeoCode();
+            return $this->getVimeoCode($inAdmin);
         } elseif ($this->type === self::TYPE_DAILYMOTION) {
-            return $this->getDailymotionCode();
+            return $this->getDailymotionCode($inAdmin);
         } elseif ($this->type === 'url') {
             return $this->getUrlCode();
         }
@@ -310,7 +285,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     /**
      * {@inheritdoc}
      */
-    public function resolveDependencies()
+    public function resolveDependencies(): array
     {
         $dependencies = [];
 
@@ -336,10 +311,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function checkValidity()
+    public function checkValidity(): bool
     {
         $valid = true;
         if ($this->type === self::TYPE_ASSET && !empty($this->id)) {
@@ -378,7 +350,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromResource($data)
+    public function setDataFromResource(mixed $data): static
     {
         if (!empty($data)) {
             $data = \Pimcore\Tool\Serialize::unserialize($data);
@@ -396,7 +368,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     /**
      * {@inheritdoc}
      */
-    public function setDataFromEditmode($data)
+    public function setDataFromEditmode(mixed $data): static
     {
         if (isset($data['type'])
             && in_array($data['type'], self::ALLOWED_TYPES, true) === true
@@ -417,7 +389,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
             $data['path'] = $data['id'];
         }
 
-        $video = Asset::getByPath($data['path']);
+        $video = Asset::getByPath((string)$data['path']);
         if ($video instanceof Asset\Video) {
             $this->id = $video->getId();
         } else {
@@ -433,28 +405,17 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this;
     }
 
-    /**
-     * @return int|string
-     */
-    public function getWidth()
+    public function getWidth(): int|string
     {
         return $this->getConfig()['width'] ?? '100%';
     }
 
-    /**
-     * @return int|string
-     */
-    public function getHeight()
+    public function getHeight(): int|string
     {
         return $this->getConfig()['height'] ?? 300;
     }
 
-    /**
-     * @param bool $inAdmin
-     *
-     * @return string
-     */
-    private function getAssetCode($inAdmin = false)
+    private function getAssetCode(bool $inAdmin = false): string
     {
         $asset = Asset::getById($this->id);
         $config = $this->getConfig();
@@ -493,7 +454,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
                     $cacheService = \Pimcore::getContainer()->get(FullPageCacheListener::class);
                     $cacheService->disable('Video rendering in progress');
 
-                    return $this->getProgressCode($image);
+                    return $this->getProgressCode((string)$image);
                 }
 
                 return $this->getErrorCode('The video conversion failed, please see the log files in /var/log for more details.');
@@ -505,12 +466,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->getEmptyCode();
     }
 
-    /**
-     * @param Asset\Video $asset
-     *
-     * @return Asset\Image\Thumbnail|Asset\Video\ImageThumbnail
-     */
-    private function getPosterThumbnailImage(Asset\Video $asset)
+    private function getPosterThumbnailImage(Asset\Video $asset): Asset\Video\ImageThumbnail|Asset\Image\Thumbnail
     {
         $config = $this->getConfig();
         if (!array_key_exists('imagethumbnail', $config) || empty($config['imagethumbnail'])) {
@@ -543,24 +499,30 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $asset->getImageThumbnail($imageThumbnailConf);
     }
 
-    /**
-     * @return string
-     */
-    private function getUrlCode()
+    private function getUrlCode(): string
     {
         return $this->getHtml5Code(['mp4' => (string) $this->id]);
     }
 
-    /**
-     * @param string $message
-     *
-     * @return string
-     */
-    private function getErrorCode($message = '')
+    private function getErrorCode(string $message = ''): string
     {
         $width = $this->getWidth();
-        if (strpos($this->getWidth(), '%') === false) {
-            $width = ((int)$this->getWidth() - 1) . 'px';
+        // If contains at least one digit (0-9), then assume it is a value that can be calculated,
+        // otherwise it is likely be `auto`,`inherit`,etc..
+        if (preg_match('/[\d]/', $width)) {
+            // when is numeric, assume there are no length units nor %, and considering the value as pixels
+            if (is_numeric($width)) {
+                $width .= 'px';
+            }
+            $width = 'calc(' . $width . ' - 1px)';
+        }
+
+        $height = $this->getHeight();
+        if (preg_match('/[\d]/', $height)) {
+            if (is_numeric($height)) {
+                $height .= 'px';
+            }
+            $height = 'calc(' . $height . ' - 1px)';
         }
 
         // only display error message in debug mode
@@ -570,7 +532,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
 
         $code = '
         <div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video">
-            <div class="pimcore_editable_video_error" style="text-align:center; width: ' . $width . '; height: ' . ($this->getHeight() - 1) . 'px; border:1px solid #000; background: url(/bundles/pimcoreadmin/img/filetype-not-supported.svg) no-repeat center center #fff;">
+            <div class="pimcore_editable_video_error" style="text-align:center; width: ' . $width . '; height: ' . $height . '; border:1px solid #000; background: url(/bundles/pimcoreadmin/img/filetype-not-supported.svg) no-repeat center center #fff;">
                 ' . $message . '
             </div>
         </div>';
@@ -578,10 +540,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $code;
     }
 
-    /**
-     * @return string
-     */
-    private function parseYoutubeId()
+    private function parseYoutubeId(): string
     {
         $youtubeId = '';
         if ($this->type === self::TYPE_YOUTUBE) {
@@ -612,10 +571,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $youtubeId;
     }
 
-    /**
-     * @return string
-     */
-    private function getYoutubeCode()
+    private function getYoutubeCode(bool $inAdmin = false): string
     {
         if (!$this->id) {
             return $this->getEmptyCode();
@@ -627,6 +583,12 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         $youtubeId = $this->parseYoutubeId();
         if (!$youtubeId) {
             return $this->getEmptyCode();
+        }
+
+        if ($inAdmin && isset($config['editmodeImagePreview']) && $config['editmodeImagePreview'] === true) {
+            return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video '. ($config['class'] ?? '') .'">
+                <img src="https://img.youtube.com/vi/' . $youtubeId . '/0.jpg">
+            </div>';
         }
 
         $width = '100%';
@@ -707,10 +669,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $code;
     }
 
-    /**
-     * @return string
-     */
-    private function getVimeoCode()
+    private function getVimeoCode(bool $inAdmin = false): string
     {
         if (!$this->id) {
             return $this->getEmptyCode();
@@ -729,6 +688,12 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         }
 
         if (ctype_digit($vimeoId)) {
+            if ($inAdmin && isset($config['editmodeImagePreview']) && $config['editmodeImagePreview'] === true) {
+                return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video '. ($config['class'] ?? '') .'">
+                    <img src="https://vumbnail.com/' . $vimeoId . '.jpg">
+                </div>';
+            }
+
             $width = '100%';
             if (array_key_exists('width', $config)) {
                 $width = $config['width'];
@@ -786,10 +751,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->getEmptyCode();
     }
 
-    /**
-     * @return string
-     */
-    private function getDailymotionCode()
+    private function getDailymotionCode(bool $inAdmin = false): string
     {
         if (!$this->id) {
             return $this->getEmptyCode();
@@ -808,6 +770,11 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         }
 
         if ($dailymotionId) {
+            if ($inAdmin && isset($config['editmodeImagePreview']) && $config['editmodeImagePreview'] === true) {
+                return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video '. ($config['class'] ?? '') .'">
+                    <img src="https://www.dailymotion.com/thumbnail/video/' . $dailymotionId . '">
+                </div>';
+            }
             $width = $config['width'] ?? '100%';
 
             $height = $config['height'] ?? '300';
@@ -854,13 +821,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->getEmptyCode();
     }
 
-    /**
-     * @param array $urls
-     * @param Asset\Image\Thumbnail|Asset\Video\ImageThumbnail|null $thumbnail
-     *
-     * @return string
-     */
-    private function getHtml5Code($urls = [], $thumbnail = null)
+    private function getHtml5Code(array $urls = [], Asset\Video\ImageThumbnail|Asset\Image\Thumbnail $thumbnail = null): string
     {
         $code = '';
         $video = $this->getVideoAsset();
@@ -983,12 +944,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $code;
     }
 
-    /**
-     * @param string|null $thumbnail
-     *
-     * @return string
-     */
-    private function getProgressCode($thumbnail = null)
+    private function getProgressCode(string $thumbnail = null): string
     {
         $uid = $this->getUniqId();
         $code = '
@@ -1019,9 +975,6 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $code;
     }
 
-    /**
-     * @return string
-     */
     private function getEmptyCode(): string
     {
         $uid = 'video_' . uniqid();
@@ -1057,10 +1010,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return 'video_' . uniqid();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         if ($this->id) {
             return false;
@@ -1069,10 +1019,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return true;
     }
 
-    /**
-     * @return string
-     */
-    public function getVideoType()
+    public function getVideoType(): string
     {
         if (empty($this->type) === true) {
             $this->type = $this->getAllowedTypes()[0];
@@ -1081,10 +1028,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return $this->type;
     }
 
-    /**
-     * @return Asset\Video|null
-     */
-    public function getVideoAsset()
+    public function getVideoAsset(): ?Asset\Video
     {
         if ($this->getVideoType() === self::TYPE_ASSET) {
             return Asset\Video::getById($this->id);
@@ -1093,10 +1037,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return null;
     }
 
-    /**
-     * @return Asset\Image|null
-     */
-    public function getPosterAsset()
+    public function getPosterAsset(): ?Asset\Image
     {
         return Asset\Image::getById($this->poster);
     }
@@ -1108,7 +1049,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      *
      * TODO Pimcore 11: Change empty string return to null
      */
-    public function getImageThumbnail($config)
+    public function getImageThumbnail(string|Asset\Video\Thumbnail\Config $config): Asset\Video\ImageThumbnail|Asset\Image\Thumbnail|string
     {
         if ($this->poster && ($poster = Asset\Image::getById($this->poster))) {
             return $poster->getThumbnail($config);
@@ -1121,12 +1062,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
         return '';
     }
 
-    /**
-     * @param string|Asset\Video\Thumbnail\Config $config
-     *
-     * @return array
-     */
-    public function getThumbnail($config)
+    public function getThumbnail(string|Asset\Video\Thumbnail\Config $config): array
     {
         if ($this->getVideoAsset()) {
             return $this->getVideoAsset()->getThumbnail($config);
@@ -1138,7 +1074,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
     /**
      * { @inheritdoc }
      */
-    public function rewriteIds($idMapping) /** : void */
+    public function rewriteIds(array $idMapping): void
     {
         if ($this->type == self::TYPE_ASSET && array_key_exists(self::TYPE_ASSET, $idMapping) && array_key_exists($this->getId(), $idMapping[self::TYPE_ASSET])) {
             $this->setId($idMapping[self::TYPE_ASSET][$this->getId()]);

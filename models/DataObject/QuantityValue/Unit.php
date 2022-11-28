@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,57 +31,25 @@ class Unit extends Model\AbstractModel
 
     const CACHE_KEY = 'quantityvalue_units_table';
 
-    /**
-     * @var string
-     */
-    protected $id;
+    protected ?string $id = null;
 
-    /**
-     * @var string
-     */
-    protected $abbreviation;
+    protected string $abbreviation;
 
-    /**
-     * @var string
-     */
-    protected $group;
+    protected string $group;
 
-    /**
-     * @var string
-     */
-    protected $longname;
+    protected string $longname;
 
-    /**
-     * @var string
-     */
-    protected $baseunit;
+    protected string $baseunit;
 
-    /**
-     * @var string
-     */
-    protected $reference;
+    protected string $reference;
 
-    /**
-     * @var float|null
-     */
-    protected $factor;
+    protected ?float $factor = null;
 
-    /**
-     * @var float|null
-     */
-    protected $conversionOffset;
+    protected ?float $conversionOffset = null;
 
-    /**
-     * @var string
-     */
-    protected $converter;
+    protected string $converter;
 
-    /**
-     * @param string $abbreviation
-     *
-     * @return self|null
-     */
-    public static function getByAbbreviation($abbreviation)
+    public static function getByAbbreviation(string $abbreviation): ?Unit
     {
         try {
             $unit = new self();
@@ -92,12 +61,7 @@ class Unit extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param string $reference
-     *
-     * @return self|null
-     */
-    public static function getByReference($reference)
+    public static function getByReference(string $reference): ?Unit
     {
         try {
             $unit = new self();
@@ -109,12 +73,7 @@ class Unit extends Model\AbstractModel
         }
     }
 
-    /**
-     * @param string $id
-     *
-     * @return Unit|null
-     */
-    public static function getById($id)
+    public static function getById(string $id): ?Unit
     {
         try {
             $table = null;
@@ -151,12 +110,7 @@ class Unit extends Model\AbstractModel
         return null;
     }
 
-    /**
-     * @param array $values
-     *
-     * @return Unit
-     */
-    public static function create($values = [])
+    public static function create(array $values = []): Unit
     {
         $unit = new self();
         $unit->setValues($values);
@@ -202,32 +156,19 @@ class Unit extends Model\AbstractModel
         return ucfirst($this->getAbbreviation() . ' (' . $this->getId() . ')');
     }
 
-    /**
-     * @param string $abbreviation
-     *
-     * @return $this
-     */
-    public function setAbbreviation($abbreviation)
+    public function setAbbreviation(string $abbreviation): static
     {
         $this->abbreviation = $abbreviation;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getAbbreviation()
+    public function getAbbreviation(): string
     {
         return $this->abbreviation;
     }
 
-    /**
-     * @param int|Unit $baseunit
-     *
-     * @return $this
-     */
-    public function setBaseunit($baseunit)
+    public function setBaseunit(Unit|int $baseunit): static
     {
         if ($baseunit instanceof self) {
             $baseunit = $baseunit->getId();
@@ -237,10 +178,7 @@ class Unit extends Model\AbstractModel
         return $this;
     }
 
-    /**
-     * @return Unit|null
-     */
-    public function getBaseunit()
+    public function getBaseunit(): ?Unit
     {
         if ($this->baseunit) {
             return self::getById($this->baseunit);
@@ -249,140 +187,84 @@ class Unit extends Model\AbstractModel
         return null;
     }
 
-    /**
-     * @param float $factor
-     *
-     * @return $this
-     */
-    public function setFactor($factor)
+    public function setFactor(float $factor): static
     {
         $this->factor = $factor;
 
         return $this;
     }
 
-    /**
-     * @return float|null
-     */
-    public function getFactor()
+    public function getFactor(): ?float
     {
         return $this->factor;
     }
 
-    /**
-     * @param string $group
-     *
-     * @return $this
-     */
-    public function setGroup($group)
+    public function setGroup(string $group): static
     {
         $this->group = $group;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getGroup()
+    public function getGroup(): string
     {
         return $this->group;
     }
 
-    /**
-     * @param string $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(string $id): static
     {
         $this->id = (string) $id;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getId(): string
     {
         return (string) $this->id;
     }
 
-    /**
-     * @param string $longname
-     *
-     * @return $this
-     */
-    public function setLongname($longname)
+    public function setLongname(string $longname): static
     {
         $this->longname = $longname;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getLongname()
+    public function getLongname(): string
     {
         return $this->longname;
     }
 
-    /**
-     * @return string
-     */
-    public function getReference()
+    public function getReference(): string
     {
         return $this->reference;
     }
 
-    /**
-     * @param string $reference
-     *
-     * @return $this
-     */
-    public function setReference($reference)
+    public function setReference(string $reference): static
     {
         $this->reference = $reference;
 
         return $this;
     }
 
-    /**
-     * @return float|null
-     */
-    public function getConversionOffset()
+    public function getConversionOffset(): ?float
     {
         return $this->conversionOffset;
     }
 
-    /**
-     * @param float $conversionOffset
-     *
-     * @return $this
-     */
-    public function setConversionOffset($conversionOffset)
+    public function setConversionOffset(float $conversionOffset): static
     {
         $this->conversionOffset = $conversionOffset;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getConverter()
+    public function getConverter(): string
     {
         return $this->converter;
     }
 
-    /**
-     * @param string $converter
-     *
-     * @return $this
-     */
-    public function setConverter($converter)
+    public function setConverter(string $converter): static
     {
         $this->converter = (string)$converter;
 

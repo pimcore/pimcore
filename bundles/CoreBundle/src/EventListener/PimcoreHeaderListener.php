@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,9 +32,6 @@ class PimcoreHeaderListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param ResponseEvent $event
-     */
     public function onKernelResponse(ResponseEvent $event)
     {
         if ($event->isMainRequest()) {

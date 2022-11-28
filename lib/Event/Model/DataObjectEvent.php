@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,10 +24,7 @@ class DataObjectEvent extends Event implements ElementEventInterface
 {
     use ArgumentsAwareTrait;
 
-    /**
-     * @var AbstractObject
-     */
-    protected $object;
+    protected AbstractObject $object;
 
     /**
      * DataObjectEvent constructor.
@@ -40,26 +38,17 @@ class DataObjectEvent extends Event implements ElementEventInterface
         $this->arguments = $arguments;
     }
 
-    /**
-     * @return AbstractObject
-     */
-    public function getObject()
+    public function getObject(): AbstractObject
     {
         return $this->object;
     }
 
-    /**
-     * @param AbstractObject $object
-     */
-    public function setObject($object)
+    public function setObject(AbstractObject $object)
     {
         $this->object = $object;
     }
 
-    /**
-     * @return AbstractObject
-     */
-    public function getElement()
+    public function getElement(): AbstractObject
     {
         return $this->getObject();
     }

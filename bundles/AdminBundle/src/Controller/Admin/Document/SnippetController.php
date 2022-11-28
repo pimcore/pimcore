@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -38,7 +39,7 @@ class SnippetController extends DocumentControllerBase
      *
      * @throws \Exception
      */
-    public function getDataByIdAction(Request $request)
+    public function getDataByIdAction(Request $request): JsonResponse
     {
         $snippet = Document\Snippet::getById((int)$request->get('id'));
 
@@ -66,6 +67,7 @@ class SnippetController extends DocumentControllerBase
 
         $this->addTranslationsData($snippet, $data);
         $this->minimizeProperties($snippet, $data);
+        $this->populateUsersNames($snippet, $data);
 
         $data['url'] = $snippet->getUrl();
         $data['scheduledTasks'] = array_map(
@@ -91,7 +93,7 @@ class SnippetController extends DocumentControllerBase
      *
      * @throws \Exception
      */
-    public function saveAction(Request $request)
+    public function saveAction(Request $request): JsonResponse
     {
         $snippet = Document\Snippet::getById((int) $request->get('id'));
         if (!$snippet) {
@@ -139,10 +141,6 @@ class SnippetController extends DocumentControllerBase
         }
     }
 
-    /**
-     * @param Request $request
-     * @param Document $snippet
-     */
     protected function setValuesToDocument(Request $request, Document $snippet)
     {
         $this->addSettingsToDocument($request, $snippet);

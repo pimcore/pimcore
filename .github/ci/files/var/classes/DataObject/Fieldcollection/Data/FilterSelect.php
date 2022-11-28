@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 
 /**
-Fields Summary:
-- label [input]
-- field [indexFieldSelection]
-- scriptPath [input]
-*/
+ * Fields Summary:
+ * - label [input]
+ * - field [indexFieldSelection]
+ * - scriptPath [input]
+ */
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 
@@ -14,10 +15,10 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class FilterSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType
 {
-protected $type = "FilterSelect";
-protected $label;
-protected $field;
-protected $scriptPath;
+protected string $type = "FilterSelect";
+protected ?string $label = null;
+protected ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field = null;
+protected ?string $scriptPath = null;
 
 
 /**
@@ -37,9 +38,9 @@ public function getLabel(): ?string
 /**
 * Set label - Label
 * @param string|null $label
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterSelect
+* @return $this
 */
-public function setLabel(?string $label)
+public function setLabel(?string $label): static
 {
 	$this->label = $label;
 
@@ -63,9 +64,9 @@ public function getField(): ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtens
 /**
 * Set field - Field
 * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection|null $field
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterSelect
+* @return $this
 */
-public function setField(?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field)
+public function setField(?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field): static
 {
 	$this->field = $field;
 
@@ -89,9 +90,9 @@ public function getScriptPath(): ?string
 /**
 * Set scriptPath - Script Path
 * @param string|null $scriptPath
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterSelect
+* @return $this
 */
-public function setScriptPath(?string $scriptPath)
+public function setScriptPath(?string $scriptPath): static
 {
 	$this->scriptPath = $scriptPath;
 

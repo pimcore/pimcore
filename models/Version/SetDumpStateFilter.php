@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,7 +24,7 @@ use Pimcore\Model\Element\ElementDumpStateInterface;
  */
 final class SetDumpStateFilter implements Filter
 {
-    protected $state;
+    protected bool $state;
 
     public function __construct(bool $state)
     {

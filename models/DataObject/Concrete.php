@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -41,7 +42,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @var array|null
      */
-    protected $__rawRelationData = null;
+    protected ?array $__rawRelationData = null;
 
     /**
      * @internal
@@ -50,7 +51,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @var array
      */
-    public $__objectAwareFields = [];
+    public array $__objectAwareFields = [];
 
     /**
      * @internal
@@ -64,7 +65,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @var bool
      */
-    protected $published;
+    protected bool $published = false;
 
     /**
      * @internal
@@ -90,28 +91,28 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @var array|null
      */
-    protected $versions = null;
+    protected ?array $versions = null;
 
     /**
      * @internal
      *
      * @var bool|null
      */
-    protected $omitMandatoryCheck;
+    protected ?bool $omitMandatoryCheck = null;
 
     /**
      * @internal
      *
      * @var bool
      */
-    protected $allLazyKeysMarkedAsLoaded = false;
+    protected bool $allLazyKeysMarkedAsLoaded = false;
 
     /**
      * returns the class ID of the current object class
      *
      * @return string
      */
-    public static function classId()
+    public static function classId(): string
     {
         $v = get_class_vars(get_called_class());
 
@@ -121,7 +122,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * {@inheritdoc}
      */
-    protected function update($isUpdate = null, $params = [])
+    protected function update(bool $isUpdate = null, array $params = [])
     {
         $fieldDefinitions = $this->getClass()->getFieldDefinitions();
 
@@ -242,12 +243,12 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @param bool $setModificationDate
      * @param bool $saveOnlyVersion
-     * @param string $versionNote version note
+     * @param string|null $versionNote version note
      * @param bool $isAutoSave
      *
-     * @return Model\Version
+     * @return Model\Version|null
      */
-    public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null, $isAutoSave = false)
+    public function saveVersion(bool $setModificationDate = true, bool $saveOnlyVersion = true, string $versionNote = null, bool $isAutoSave = false): ?Model\Version
     {
         try {
             if ($setModificationDate) {
@@ -304,7 +305,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @return Model\Version[]
      */
-    public function getVersions()
+    public function getVersions(): array
     {
         if ($this->versions === null) {
             $this->setVersions($this->getDao()->getVersions());
@@ -318,19 +319,14 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @return $this
      */
-    public function setVersions($versions)
+    public function setVersions(array $versions): static
     {
         $this->versions = $versions;
 
         return $this;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return mixed
-     */
-    public function getValueForFieldName($key)
+    public function getValueForFieldName(string $key): mixed
     {
         if (isset($this->$key)) {
             return $this->$key;
@@ -346,11 +342,6 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return null;
     }
 
-    /**
-     * @param array $tags
-     *
-     * @return array
-     */
     public function getCacheTags(array $tags = []): array
     {
         $tags = parent::getCacheTags($tags);
@@ -385,20 +376,15 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @param ClassDefinition|null $class
-     *
      * @return $this
      */
-    public function setClass(?ClassDefinition $class)
+    public function setClass(?ClassDefinition $class): static
     {
         $this->class = $class;
 
         return $this;
     }
 
-    /**
-     * @return ClassDefinition|null
-     */
     public function getClass(): ?ClassDefinition
     {
         if (!$this->class) {
@@ -408,90 +394,64 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $this->class;
     }
 
-    /**
-     * @return string
-     */
-    public function getClassId()
+    public function getClassId(): string
     {
         return $this->classId;
     }
 
     /**
-     * @param string $classId
-     *
      * @return $this
      */
-    public function setClassId($classId)
+    public function setClassId(string $classId): static
     {
         $this->classId = $classId;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getClassName()
+    public function getClassName(): string
     {
         return $this->className;
     }
 
     /**
-     * @param string $className
-     *
      * @return $this
      */
-    public function setClassName($className)
+    public function setClassName(string $className): static
     {
         $this->className = $className;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getPublished()
+    public function getPublished(): bool
     {
-        return (bool) $this->published;
+        return $this->published;
     }
 
-    /**
-     * @return bool
-     */
-    public function isPublished()
+    public function isPublished(): bool
     {
         return (bool) $this->getPublished();
     }
 
     /**
-     * @param bool $published
-     *
      * @return $this
      */
-    public function setPublished($published)
+    public function setPublished(bool $published): static
     {
-        $this->published = (bool) $published;
+        $this->published = $published;
 
         return $this;
     }
 
-    /**
-     * @param bool $omitMandatoryCheck
-     *
-     * @return $this
-     */
-    public function setOmitMandatoryCheck($omitMandatoryCheck)
+    public function setOmitMandatoryCheck(bool $omitMandatoryCheck): static
     {
         $this->omitMandatoryCheck = $omitMandatoryCheck;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getOmitMandatoryCheck()
+    public function getOmitMandatoryCheck(): bool
     {
         if ($this->omitMandatoryCheck === null) {
             return !$this->isPublished();
@@ -508,7 +468,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @throws InheritanceParentNotFoundException
      */
-    public function getValueFromParent($key, $params = null)
+    public function getValueFromParent(string $key, mixed $params = null): mixed
     {
         $parent = $this->getNextParentForInheritance();
         if ($parent) {
@@ -528,16 +488,11 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @return Concrete|null
      */
-    public function getNextParentForInheritance()
+    public function getNextParentForInheritance(): ?Concrete
     {
         return $this->getClosestParentOfClass($this->getClassId());
     }
 
-    /**
-     * @param string $classId
-     *
-     * @return self|null
-     */
     public function getClosestParentOfClass(string $classId): ?self
     {
         $parent = $this->getParent();
@@ -566,7 +521,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @return array
      */
-    public function getRelationData($fieldName, $forOwner, $remoteClassId)
+    public function getRelationData(string $fieldName, bool $forOwner, string $remoteClassId): array
     {
         $relationData = $this->getDao()->getRelationData($fieldName, $forOwner, $remoteClassId);
 
@@ -581,7 +536,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @throws \Exception
      */
-    public static function __callStatic($method, $arguments)
+    public static function __callStatic(string $method, array $arguments)
     {
         // check for custom static getters like DataObject::getByMyfield()
         $propertyName = lcfirst(preg_replace('/^getBy/i', '', $method));
@@ -698,7 +653,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @throws \Exception
      */
-    public function save()
+    public function save(array $parameters = []): static
     {
         $isDirtyDetectionDisabled = DataObject::isDirtyDetectionDisabled();
 
@@ -709,12 +664,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         }
 
         try {
-            $params = [];
-            if (func_num_args() && is_array(func_get_arg(0))) {
-                $params = func_get_arg(0);
-            }
-
-            parent::save($params);
+            parent::save($parameters);
             if ($this instanceof DirtyIndicatorInterface) {
                 $this->resetDirtyMap();
             }
@@ -822,7 +772,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @return array
      */
-    protected function doRetrieveData(array $descriptor, string $table)
+    protected function doRetrieveData(array $descriptor, string $table): array
     {
         $db = Db::get();
         $conditionParts = Service::buildConditionPartsFromDescriptor($descriptor);
@@ -834,13 +784,14 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @internal
-     *
      * @param array $descriptor
      *
      * @return array
+     *
+     *@internal
+     *
      */
-    public function retrieveSlugData($descriptor)
+    public function retrieveSlugData(array $descriptor): array
     {
         $descriptor['objectId'] = $this->getId();
 
@@ -848,13 +799,14 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * @internal
-     *
      * @param array $descriptor
      *
      * @return array
+     *
+     *@internal
+     *
      */
-    public function retrieveRelationData($descriptor)
+    public function retrieveRelationData(array $descriptor): array
     {
         $descriptor['src_id'] = $this->getId();
 

@@ -21,20 +21,11 @@ use Presta\SitemapBundle\Service\UrlContainerInterface;
 
 class GeneratorContext implements GeneratorContextInterface
 {
-    /**
-     * @var UrlContainerInterface
-     */
-    private $urlContainer;
+    private UrlContainerInterface $urlContainer;
 
-    /**
-     * @var string|null
-     */
-    private $section;
+    private ?string $section = null;
 
-    /**
-     * @var array
-     */
-    private $parameters = [];
+    private array $parameters = [];
 
     public function __construct(UrlContainerInterface $urlContainer, string $section = null, array $parameters = [])
     {
@@ -48,10 +39,7 @@ class GeneratorContext implements GeneratorContextInterface
         return $this->urlContainer;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getSection()
+    public function getSection(): ?string
     {
         return $this->section;
     }
@@ -69,7 +57,7 @@ class GeneratorContext implements GeneratorContextInterface
     /**
      * {@inheritdoc}
      */
-    public function get($key, $default = null)
+    public function get(int|string $key, mixed $default = null): mixed
     {
         return array_key_exists($key, $this->parameters) ? $this->parameters[$key] : $default;
     }

@@ -30,20 +30,10 @@ use Symfony\Component\Routing\RouteCollection;
  */
 final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
 {
-    /**
-     * @var SiteResolver
-     */
-    private $siteResolver;
+    private SiteResolver $siteResolver;
 
-    /**
-     * @var Config
-     */
-    private $config;
+    private Config $config;
 
-    /**
-     * @param SiteResolver $siteResolver
-     * @param Config $config
-     */
     public function __construct(
         SiteResolver $siteResolver,
         Config $config
@@ -55,13 +45,13 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function getRouteByName(string $name)
+    public function getRouteByName(string $name): ?DataObjectRoute
     {
         if (preg_match('/^data_object_(\d+)_(\d+)_(.*)$/', $name, $match)) {
-            $slug = DataObject\Data\UrlSlug::resolveSlug($match[3], $match[2]);
+            $slug = DataObject\Data\UrlSlug::resolveSlug($match[3], (int) $match[2]);
             if ($slug && $slug->getObjectId() == $match[1]) {
                 /** @var DataObject\Concrete $object * */
-                $object = DataObject::getById($match[1]);
+                $object = DataObject::getById((int) $match[1]);
                 if ($object instanceof DataObject\Concrete && $object->isPublished()) {
                     return $this->buildRouteForFromSlug($slug, $object);
                 }
@@ -88,11 +78,6 @@ final class DataObjectRouteHandler implements DynamicRouteHandlerInterface
     }
 
     /**
-     * @param DataObject\Data\UrlSlug $slug
-     * @param DataObject\Concrete $object
-     *
-     * @return DataObjectRoute
-     *
      * @throws \Exception
      */
     private function buildRouteForFromSlug(DataObject\Data\UrlSlug $slug, DataObject\Concrete $object): DataObjectRoute

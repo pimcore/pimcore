@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,21 +24,17 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20201008101817 extends AbstractMigration
 {
-    /**
-     * @param Schema $schema
-     */
     public function up(Schema $schema): void
     {
-        $this->addSql('DROP VIEW IF EXISTS documents_editables;');
+        if (array_key_exists('documents_editables', $this->connection->getSchemaManager()->listViews())) {
+            $this->addSql('DROP VIEW IF EXISTS documents_editables;');
+        }
 
         if ($schema->hasTable('documents_elements')) {
             $this->addSql('RENAME TABLE documents_elements TO documents_editables;');
         }
     }
 
-    /**
-     * @param Schema $schema
-     */
     public function down(Schema $schema): void
     {
         $this->addSql('RENAME TABLE documents_editables TO documents_elements;');

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -91,7 +92,7 @@ class AdminLoginAuthenticator extends AdminAbstractAuthenticator implements Auth
                         $user = new User($event->getUser());
                         $this->saveUserToSession($user);
                     } else {
-                        throw new AuthenticationException('Failed to authenticate with username and password');
+                        return false;
                     }
                 }
 

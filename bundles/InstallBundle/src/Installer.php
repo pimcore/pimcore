@@ -48,22 +48,16 @@ class Installer
 {
     const EVENT_NAME_STEP = 'pimcore.installer.step';
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
     /**
      * Predefined DB credentials from config
      *
      * @var array
      */
-    private $dbCredentials;
+    private array $dbCredentials;
 
     private ?PimcoreStyle $commandLineOutput = null;
 
@@ -72,14 +66,14 @@ class Installer
      *
      * @var bool
      */
-    private $createDatabaseStructure = true;
+    private bool $createDatabaseStructure = true;
 
     /**
      * When false, skips importing all database data during install
      *
      * @var bool
      */
-    private $importDatabaseData = true;
+    private bool $importDatabaseData = true;
 
     /**
      * When false, skips importing database data dump files (if available) during install
@@ -87,27 +81,21 @@ class Installer
      *
      * @var bool
      */
-    private $importDatabaseDataDump = true;
+    private bool $importDatabaseDataDump = true;
 
     /**
-     * skip writing database.yml file
+     * skip writing database.yaml file
      *
      * @var bool
      */
-    private $skipDatabaseConfig = false;
+    private bool $skipDatabaseConfig = false;
 
-    /**
-     * @param bool $skipDatabaseConfig
-     */
     public function setSkipDatabaseConfig(bool $skipDatabaseConfig): void
     {
         $this->skipDatabaseConfig = $skipDatabaseConfig;
     }
 
-    /**
-     * @var array
-     */
-    private $stepEvents = [
+    private array $stepEvents = [
         'validate_parameters' => 'Validating input parameters...',
         'check_prerequisites' => 'Checking prerequisites...',
         'start_install' => 'Starting installation...',
@@ -128,35 +116,26 @@ class Installer
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function setDbCredentials(array $dbCredentials = [])
+    public function setDbCredentials(array $dbCredentials = []): void
     {
         $this->dbCredentials = $dbCredentials;
     }
 
-    public function setCommandLineOutput(PimcoreStyle $commandLineOutput)
+    public function setCommandLineOutput(PimcoreStyle $commandLineOutput): void
     {
         $this->commandLineOutput = $commandLineOutput;
     }
 
-    /**
-     * @param bool $createDatabaseStructure
-     */
     public function setCreateDatabaseStructure(bool $createDatabaseStructure): void
     {
         $this->createDatabaseStructure = $createDatabaseStructure;
     }
 
-    /**
-     * @param bool $importDatabaseData
-     */
     public function setImportDatabaseData(bool $importDatabaseData): void
     {
         $this->importDatabaseData = $importDatabaseData;
     }
 
-    /**
-     * @param bool $importDatabaseDataDump
-     */
     public function setImportDatabaseDataDump(bool $importDatabaseDataDump): void
     {
         $this->importDatabaseDataDump = $importDatabaseDataDump;
@@ -184,7 +163,7 @@ class Installer
      *
      * @return array
      */
-    public function formatPrerequisiteMessages(array $checks, array $filterStates = [Check::STATE_ERROR])
+    public function formatPrerequisiteMessages(array $checks, array $filterStates = [Check::STATE_ERROR]): array
     {
         $messages = [];
         foreach ($checks as $check) {
@@ -211,7 +190,7 @@ class Installer
         return count($this->stepEvents);
     }
 
-    private function dispatchStepEvent(string $type, string $message = null)
+    private function dispatchStepEvent(string $type, string $message = null): InstallerStepEvent
     {
         if (!isset($this->stepEvents[$type])) {
             throw new \InvalidArgumentException(sprintf('Trying to dispatch unsupported event type "%s"', $type));
@@ -243,7 +222,6 @@ class Installer
         try {
             $config = new Configuration();
 
-            /** @var Connection $db */
             $db = DriverManager::getConnection($dbConfig, $config);
 
             $this->dispatchStepEvent('check_prerequisites');
@@ -391,7 +369,7 @@ class Installer
         $errors = $this->setupDatabase($userCredentials, $errors);
 
         if (!$this->skipDatabaseConfig) {
-            // now we're able to write the server version to the database.yml
+            // now we're able to write the server version to the database.yaml
             $db = \Pimcore\Db::get();
             if ($db instanceof Connection) {
                 $connection = $db->getWrappedConnection();
@@ -417,7 +395,7 @@ class Installer
         return $errors;
     }
 
-    private function runCommand(array $arguments, string $taskName)
+    private function runCommand(array $arguments, string $taskName): void
     {
         $io = $this->commandLineOutput;
 
@@ -463,7 +441,7 @@ class Installer
         }
     }
 
-    private function markMigrationsAsDone()
+    private function markMigrationsAsDone(): void
     {
         $this->runCommand([
             'doctrine:migrations:sync-metadata-storage',
@@ -476,7 +454,7 @@ class Installer
         ], 'Marking all migrations as done');
     }
 
-    private function installClasses()
+    private function installClasses(): void
     {
         $this->runCommand([
             'pimcore:deployment:classes-rebuild',
@@ -484,7 +462,7 @@ class Installer
         ], 'Installing class definitions');
     }
 
-    private function installAssets(KernelInterface $kernel)
+    private function installAssets(KernelInterface $kernel): void
     {
         $this->logger->info('Running {command} command', ['command' => 'assets:install']);
 
@@ -523,7 +501,7 @@ class Installer
         }
     }
 
-    private function createConfigFiles(array $config)
+    private function createConfigFiles(array $config): void
     {
         $writer = new ConfigWriter();
 
@@ -534,7 +512,7 @@ class Installer
         $writer->writeSystemConfig();
     }
 
-    private function clearKernelCacheDir(KernelInterface $kernel)
+    private function clearKernelCacheDir(KernelInterface $kernel): void
     {
         // we don't use $kernel->getCacheDir() here, since we want to have a fully clean cache dir at this point
         $cacheDir = PIMCORE_SYMFONY_CACHE_DIRECTORY;
@@ -621,17 +599,14 @@ class Installer
         return $errors;
     }
 
-    /**
-     * @return array
-     */
-    protected function getDataFiles()
+    protected function getDataFiles(): array
     {
         $files = glob(PIMCORE_PROJECT_ROOT . '/dump/*.sql');
 
         return $files;
     }
 
-    protected function createOrUpdateUser($config = [])
+    protected function createOrUpdateUser($config = []): void
     {
         $defaultConfig = [
             'username' => 'admin',
@@ -641,7 +616,6 @@ class Installer
         $settings = array_replace_recursive($defaultConfig, $config);
 
         if ($user = User::getByName($settings['username'])) {
-            /** @var User $user */
             $user->delete();
         }
 
@@ -660,7 +634,7 @@ class Installer
      *
      * @throws \Exception
      */
-    public function insertDatabaseDump($file)
+    public function insertDatabaseDump(string $file): void
     {
         $db = \Pimcore\Db::get();
         $dumpFile = file_get_contents($file);
@@ -692,7 +666,7 @@ class Installer
         }
     }
 
-    protected function insertDatabaseContents()
+    protected function insertDatabaseContents(): void
     {
         $db = \Pimcore\Db::get();
         $db->insert('assets', Helper::quoteDataIdentifiers($db, [
@@ -755,7 +729,6 @@ class Installer
             'http_errors',
             'notes_events',
             'objects',
-            'plugins', // TODO: to be removed in Pimcore 11
             'predefined_properties',
             'asset_metadata',
             'recyclebin',

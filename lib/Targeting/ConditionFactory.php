@@ -24,20 +24,17 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class ConditionFactory implements ConditionFactoryInterface
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
     /**
      * @var string[]
      */
-    private $conditions = [];
+    private array $conditions = [];
 
     /**
      * @var string[]
      */
-    private $blacklistedKeys = ['type', 'operator', 'bracketLeft', 'bracketRight'];
+    private array $blacklistedKeys = ['type', 'operator', 'bracketLeft', 'bracketRight'];
 
     public function __construct(
         EventDispatcherInterface $eventDispatcher,

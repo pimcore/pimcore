@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,26 +22,17 @@ class ResultEvent extends Event
 {
     protected bool $result;
 
-    /**
-     * @param bool $result
-     */
-    public function __construct($result = true)
+    public function __construct(bool $result = true)
     {
         $this->setResult($result);
     }
 
-    /**
-     * @return bool
-     */
-    public function getResult()
+    public function getResult(): bool
     {
         return $this->result;
     }
 
-    /**
-     * @param bool $result
-     */
-    public function setResult($result)
+    public function setResult(bool $result)
     {
         $this->result = (bool)$result;
     }

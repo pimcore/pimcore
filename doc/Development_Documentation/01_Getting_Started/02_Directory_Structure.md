@@ -28,4 +28,4 @@ it is stored in the `src/` directory.
   
   
 For more information about the folder structure and the architecture in general, please have a look at the 
-[Symfony documentation](https://symfony.com/doc/5.2/best_practices.html#use-the-default-directory-structure). 
+[Symfony documentation](https://symfony.com/doc/current/best_practices.html#use-the-default-directory-structure). 

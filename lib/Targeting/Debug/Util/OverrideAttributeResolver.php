@@ -22,14 +22,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class OverrideAttributeResolver
 {
-    /**
-     * @param Request $request
-     * @param string $key
-     * @param mixed|null $value
-     *
-     * @return void
-     */
-    public static function setOverrideValue(Request $request, string $key, $value)
+    public static function setOverrideValue(Request $request, string $key, mixed $value): void
     {
         $overrides = $request->attributes->get(OverrideHandlerInterface::REQUEST_ATTRIBUTE, []);
         $overrides[$key] = $value;
@@ -40,11 +33,11 @@ class OverrideAttributeResolver
     /**
      * @param Request $request
      * @param string $key
-     * @param mixed|null $default
+     * @param mixed $default
      *
-     * @return mixed|null
+     * @return mixed
      */
-    public static function getOverrideValue(Request $request, string $key, $default = null)
+    public static function getOverrideValue(Request $request, string $key, mixed $default = null): mixed
     {
         $overrides = $request->attributes->get(OverrideHandlerInterface::REQUEST_ATTRIBUTE, []);
 

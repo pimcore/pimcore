@@ -26,14 +26,8 @@ use Twig\TwigFunction;
  */
 class NavigationExtension extends AbstractExtension
 {
-    /**
-     * @var Navigation
-     */
-    private $navigationExtension;
+    private Navigation $navigationExtension;
 
-    /**
-     * @param Navigation $navigationExtension
-     */
     public function __construct(Navigation $navigationExtension)
     {
         $this->navigationExtension = $navigationExtension;

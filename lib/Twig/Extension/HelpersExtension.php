@@ -31,20 +31,14 @@ use Twig\TwigTest;
  */
 class HelpersExtension extends AbstractExtension
 {
-    /**
-     * @var PimcoreUrl
-     */
-    private $pimcoreUrlHelper;
+    private PimcoreUrl $pimcoreUrlHelper;
 
     public function __construct(PimcoreUrl $pimcoreUrlHelper)
     {
         $this->pimcoreUrlHelper = $pimcoreUrlHelper;
     }
 
-    /**
-     * @return array
-     */
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('basename', [$this, 'basenameFilter']),
@@ -74,10 +68,7 @@ class HelpersExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function getTests()
+    public function getTests(): array
     {
         return [
             new TwigTest('instanceof', function ($object, $class) {
@@ -86,13 +77,7 @@ class HelpersExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * @param string $value
-     * @param string $suffix
-     *
-     * @return string
-     */
-    public function basenameFilter($value, $suffix = '')
+    public function basenameFilter(string $value, string $suffix = ''): string
     {
         return basename($value, $suffix);
     }
@@ -104,7 +89,7 @@ class HelpersExtension extends AbstractExtension
      *
      * @throws \Exception
      */
-    public function getImageVersionPreview($file)
+    public function getImageVersionPreview(string $file): string
     {
         $thumbnail = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/image-version-preview-' . uniqid() . '.png';
         $convert = \Pimcore\Image::getInstance();
@@ -124,7 +109,7 @@ class HelpersExtension extends AbstractExtension
      *
      * @throws \Exception
      */
-    public function breachAttackRandomContent()
+    public function breachAttackRandomContent(): string
     {
         $length = 50;
         $randomData = random_bytes($length);

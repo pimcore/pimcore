@@ -27,10 +27,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class VisitedPagesBefore extends AbstractVariableCondition implements DataProviderDependentInterface, EventDispatchingConditionInterface
 {
-    /**
-     * @var int
-     */
-    private $count;
+    private int $count;
 
     public function __construct(int $count)
     {
@@ -40,7 +37,7 @@ class VisitedPagesBefore extends AbstractVariableCondition implements DataProvid
     /**
      * {@inheritdoc}
      */
-    public static function fromConfig(array $config)
+    public static function fromConfig(array $config): static
     {
         return new static($config['number'] ?? 0);
     }

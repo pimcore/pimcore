@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,7 +17,9 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool\Serialize;
 
@@ -40,14 +43,14 @@ class RgbaColor extends Data implements
      *
      * @var string
      */
-    public $fieldtype = 'rgbaColor';
+    public string $fieldtype = 'rgbaColor';
 
     /**
      * @internal
      *
      * @var string|int
      */
-    public $width = 0;
+    public string|int $width = 0;
 
     /**
      * Type for the column to query
@@ -72,20 +75,12 @@ class RgbaColor extends Data implements
         'a' => 'VARCHAR(2) NULL DEFAULT NULL',
     ];
 
-    /**
-     * @return string|int
-     */
-    public function getWidth()
+    public function getWidth(): int|string
     {
         return $this->width;
     }
 
-    /**
-     * @param string|int $width
-     *
-     * @return $this
-     */
-    public function setWidth($width)
+    public function setWidth(int|string $width): static
     {
         if (is_numeric($width)) {
             $width = (int)$width;
@@ -96,15 +91,16 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param Model\DataObject\Data\RgbaColor|null $data
+     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
+     *
+     * @see ResourcePersistenceAwareInterface::getDataForResource
+     *
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         if ($data instanceof Model\DataObject\Data\RgbaColor) {
             $rgb = sprintf('%02x%02x%02x', $data->getR(), $data->getG(), $data->getB());
@@ -123,15 +119,16 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param array $data
+     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return Model\DataObject\Data\RgbaColor|null
+     *
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
+     *
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\RgbaColor
     {
         if (is_array($data) && isset($data[$this->getName() . '__rgb']) && isset($data[$this->getName() . '__a'])) {
             list($r, $g, $b) = sscanf($data[$this->getName() . '__rgb'], '%02x%02x%02x');
@@ -153,29 +150,31 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
-     * @param Model\DataObject\Data\RgbaColor $data
+     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
+     *
+     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
+     *
      */
-    public function getDataForQueryResource($data, $object = null, $params = [])
+    public function getDataForQueryResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
     /**
-     * @see Data::getDataForEditmode
-     *
-     * @param Model\DataObject\Data\RgbaColor|null $data
+     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string|null
+     *
+     * @see Data::getDataForEditmode
+     *
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         if ($data instanceof  Model\DataObject\Data\RgbaColor) {
             $rgba = sprintf('#%02x%02x%02x%02x', $data->getR(), $data->getG(), $data->getB(), $data->getA());
@@ -187,15 +186,15 @@ class RgbaColor extends Data implements
     }
 
     /**
-     * @see Data::getDataFromEditmode
-     *
-     * @param string|null $data
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param mixed $data
+     * @param DataObject\Concrete|null $object
+     * @param array $params
      *
      * @return Model\DataObject\Data\RgbaColor|null
+     *
+     * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\RgbaColor
     {
         if ($data) {
             $data = trim($data, '# ');
@@ -210,12 +209,12 @@ class RgbaColor extends Data implements
 
     /**
      * @param string|null $data
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param Model\DataObject\Concrete|null $object
+     * @param array $params
      *
      * @return Model\DataObject\Data\RgbaColor|null
      */
-    public function getDataFromGridEditor($data, $object = null, $params = [])
+    public function getDataFromGridEditor(?string $data, Concrete $object = null, array $params = []): ?Model\DataObject\Data\RgbaColor
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
@@ -223,7 +222,7 @@ class RgbaColor extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
     {
         parent::checkValidity($data, $omitMandatoryCheck);
 
@@ -235,7 +234,10 @@ class RgbaColor extends Data implements
         }
     }
 
-    private function checkColorComponent($color)
+    /**
+     * @throws Model\Element\ValidationException
+     */
+    private function checkColorComponent(?int $color): void
     {
         if (!is_null($color)) {
             if (!($color >= 0 && $color <= 255)) {
@@ -252,12 +254,7 @@ class RgbaColor extends Data implements
         $this->width = $masterDefinition->width;
     }
 
-    /**
-     * @param Model\DataObject\Data\RgbaColor|null $data
-     *
-     * @return bool
-     */
-    public function isEmpty($data)
+    public function isEmpty(mixed $data): bool
     {
         return $data === null;
     }
@@ -271,19 +268,19 @@ class RgbaColor extends Data implements
      *
      * @return string|null
      */
-    public function getDataForGrid($data, $object = null, $params = [])
+    public function getDataForGrid(?Model\DataObject\Data\RgbaColor $data, Concrete $object = null, array $params = []): ?string
     {
         return $this->getDataForEditmode($data, $object, $params);
     }
 
     /**
-     * @param Model\DataObject\Data\RgbaColor|null $data
+     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return string|null
+     * @return string
      */
-    public function getVersionPreview($data, $object = null, $params = [])
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof  Model\DataObject\Data\RgbaColor) {
             $value = $data->getHex(true, true);
@@ -293,13 +290,10 @@ class RgbaColor extends Data implements
             return $result;
         }
 
-        return null;
+        return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+    public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof Model\DataObject\Data\RgbaColor) {
             return [
@@ -313,10 +307,7 @@ class RgbaColor extends Data implements
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+    public function denormalize(mixed $value, array $params = []): ?Model\DataObject\Data\RgbaColor
     {
         if (is_array($value)) {
             $color = new Model\DataObject\Data\RgbaColor();
@@ -334,24 +325,24 @@ class RgbaColor extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, $params = [])
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
-        return $this->getDataForEditmode($data, $object, $params);
+        return $this->getDataForEditmode($data, $object, $params) ?? '';
     }
 
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param  string|array $value
-     * @param  string $operator
-     * @param  array $params
+     * @param mixed $value
+     * @param string $operator
+     * @param array $params
      *
      * @return string
      *
      */
-    public function getFilterCondition($value, $operator, $params = [])
+    public function getFilterCondition(mixed $value, string $operator, array $params = []): string
     {
         $params['name'] = $this->name;
 
@@ -365,13 +356,13 @@ class RgbaColor extends Data implements
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param string|array|object $value
+     * @param mixed $value
      * @param string $operator
      * @param array $params optional params used to change the behavior
      *
      * @return string
      */
-    public function getFilterConditionExt($value, $operator, $params = [])
+    public function getFilterConditionExt(mixed $value, string $operator, array $params = []): string
     {
         $db = \Pimcore\Db::get();
         $name = $params['name'] ? $params['name'] : $this->name;
@@ -396,24 +387,18 @@ class RgbaColor extends Data implements
     }
 
     /** { @inheritdoc } */
-    public function marshalBeforeEncryption(/** mixed */ $value, /**  Concrete */ $object = null, /** array */ $params = []) /** : mixed */
+    public function marshalBeforeEncryption(mixed $value, Concrete $object = null, array $params = []): mixed
     {
         return Serialize::serialize($value);
     }
 
     /** { @inheritdoc } */
-    public function unmarshalAfterDecryption(/** mixed */ $value, /**  Concrete */ $object = null, /** array */ $params = []) /** : mixed */
+    public function unmarshalAfterDecryption(mixed $value, Concrete $object = null, array $params = []): mixed
     {
         return Serialize::unserialize($value);
     }
 
-    /**
-     * @param Model\DataObject\Data\RgbaColor|null $oldValue
-     * @param Model\DataObject\Data\RgbaColor|null $newValue
-     *
-     * @return bool
-     */
-    public function isEqual($oldValue, $newValue): bool
+    public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
         $oldValue = $oldValue instanceof Model\DataObject\Data\RgbaColor ? $oldValue->getHex(true, false) : null;
         $newValue = $newValue instanceof Model\DataObject\Data\RgbaColor ? $newValue->getHex(true, false) : null;
@@ -421,33 +406,21 @@ class RgbaColor extends Data implements
         return $oldValue === $newValue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\RgbaColor::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\RgbaColor::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Model\DataObject\Data\RgbaColor::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Model\DataObject\Data\RgbaColor::class . '|null';

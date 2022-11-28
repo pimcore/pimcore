@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -16,7 +17,7 @@
 namespace Pimcore\Tests\Model\WebsiteSetting;
 
 use Pimcore\Model\WebsiteSetting;
-use Pimcore\Tests\Test\ModelTestCase;
+use Pimcore\Tests\Support\Test\ModelTestCase;
 
 class WebsiteSettingTest extends ModelTestCase
 {

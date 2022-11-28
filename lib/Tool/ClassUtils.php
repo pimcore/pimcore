@@ -27,11 +27,11 @@ class ClassUtils
     /**
      * Returns the base name for a class
      *
-     * @param string|object $class
+     * @param object|string $class
      *
      * @return string
      */
-    public static function getBaseName($class): string
+    public static function getBaseName(object|string $class): string
     {
         return (new \ReflectionClass($class))->getShortName();
     }

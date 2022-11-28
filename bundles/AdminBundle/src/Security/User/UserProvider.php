@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,25 +27,15 @@ class UserProvider implements UserProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadUserByIdentifier(string $username): UserInterface
+    public function loadUserByIdentifier(string $identifier): UserInterface
     {
-        $pimcoreUser = PimcoreUser::getByName($username);
+        $pimcoreUser = PimcoreUser::getByName($identifier);
 
         if ($pimcoreUser) {
             return new User($pimcoreUser);
         }
 
-        throw new UserNotFoundException(sprintf('User %s was not found', $username));
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @deprecated use loadUserByIdentifier() instead.
-     */
-    public function loadUserByUsername($identifier)
-    {
-        return $this->loadUserByIdentifier($identifier);
+        throw new UserNotFoundException(sprintf('User %s was not found', $identifier));
     }
 
     /**
@@ -54,7 +45,7 @@ class UserProvider implements UserProviderInterface
      *
      * @return UserInterface
      */
-    public function refreshUser(UserInterface $user)//: UserInterface
+    public function refreshUser(UserInterface $user): UserInterface|User
     {
         if (!$user instanceof User) {
             // user is not supported - we only support pimcore users
@@ -67,12 +58,7 @@ class UserProvider implements UserProviderInterface
         return $this->buildUser($refreshedPimcoreUser);
     }
 
-    /**
-     * @param PimcoreUser $pimcoreUser
-     *
-     * @return User
-     */
-    protected function buildUser(PimcoreUser $pimcoreUser)
+    protected function buildUser(PimcoreUser $pimcoreUser): User
     {
         return new User($pimcoreUser);
     }
@@ -82,7 +68,7 @@ class UserProvider implements UserProviderInterface
      *
      * @return bool
      */
-    public function supportsClass($class)//: bool
+    public function supportsClass($class): bool
     {
         return $class === User::class;
     }

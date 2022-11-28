@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,9 +32,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class SentMailController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         if (!$event->isMainRequest()) {
@@ -50,7 +48,7 @@ class SentMailController extends \Pimcore\Bundle\AdminBundle\Controller\AdminCon
      *
      * @return JsonResponse
      */
-    public function exportDataObjectAction(Request $request)
+    public function exportDataObjectAction(Request $request): JsonResponse
     {
         $this->checkPermission('emails');
 
