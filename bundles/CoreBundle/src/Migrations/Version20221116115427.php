@@ -14,20 +14,20 @@ final class Version20221116115427 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Add objectbricks permission';
+        return 'Add "object bricks" permission';
     }
 
     public function up(Schema $schema): void
     {
-        $this->addSql("INSERT INTO `users_permission_definitions` (`key`, `category`) VALUES ('objectbricks', '');");
+        $this->addSql("INSERT INTO `users_permission_definitions` (`key`, `category`) VALUES ('objectbricks', '')");
 
         $users = new Listing();
         /**
          * @var User $user
          */
         foreach ($users as $user) {
-            $permissions = $user->getPermissions();
-            if ($permissions) {
+            if ($user->isAllowed('classes')) {
+                $permissions = $user->getPermissions();
                 $permissions[] = 'objectbricks';
                 $user->setPermissions($permissions);
                 $user->save();
@@ -53,6 +53,6 @@ final class Version20221116115427 extends AbstractMigration
             }
         }
 
-        $this->addSql("DELETE FROM `users_permission_definitions` WHERE `key` = 'objectbricks';");
+        $this->addSql("DELETE FROM `users_permission_definitions` WHERE `key` = 'objectbricks'");
     }
 }
