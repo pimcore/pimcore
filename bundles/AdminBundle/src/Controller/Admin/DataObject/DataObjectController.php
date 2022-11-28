@@ -597,10 +597,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $allowedTypes[] = 'document';
             $allowClasses = false;
 
-            if ( is_array($fieldConfig['documentTypes']) ) {
-                foreach ($fieldConfig['documentTypes'] as $subType) {
-                    $subTypes[] = $subType['documentTypes'];
-                }
+            foreach ($fieldConfig->getDocumentTypes() as $subType) {
+                $subTypes[] = $subType['documentTypes'];
             }
         }
 
