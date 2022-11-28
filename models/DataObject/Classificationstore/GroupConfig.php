@@ -59,7 +59,7 @@ final class GroupConfig extends Model\AbstractModel
      *
      * @var string
      */
-    protected string $description;
+    protected string $description = '';
 
     protected ?int $creationDate = null;
 

@@ -20,7 +20,7 @@ class ProductAction extends AbstractProductData
 {
     protected int $quantity = 1;
 
-    protected string $coupon;
+    protected string $coupon = '';
 
     public function getQuantity(): float|int
     {

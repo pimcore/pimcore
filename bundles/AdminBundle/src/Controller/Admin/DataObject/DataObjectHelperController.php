@@ -370,10 +370,10 @@ class DataObjectHelperController extends AdminController
 
         if (empty($gridConfig)) {
             $availableFields = $this->getDefaultGridFields(
-                $request->get('no_system_columns'),
+                $request->get('no_system_columns', false),
                 $class,
                 $gridType,
-                $request->get('no_brick_columns'),
+                $request->get('no_brick_columns', false),
                 $fields,
                 $context,
                 $objectId,
@@ -410,7 +410,7 @@ class DataObjectHelperController extends AdminController
                                     $keyFieldDef = json_decode($keyDef->getDefinition(), true);
                                     if ($keyFieldDef) {
                                         $keyFieldDef = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($keyFieldDef, $keyDef->getType());
-                                        $fieldConfig = $this->getFieldGridConfig($keyFieldDef, $gridType, $sc['position'], true, null, $class, $objectId);
+                                        $fieldConfig = $this->getFieldGridConfig($keyFieldDef, $gridType, (string)$sc['position'], true, null, $class, $objectId);
                                         if ($fieldConfig) {
                                             $fieldConfig['key'] = $key;
                                             $fieldConfig['label'] = '#' . $keyFieldDef->getTitle();
@@ -452,7 +452,7 @@ class DataObjectHelperController extends AdminController
                             }
 
                             if ($fd !== null) {
-                                $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $sc['position'], true, $keyPrefix, $class, $objectId);
+                                $fieldConfig = $this->getFieldGridConfig($fd, $gridType, (string)$sc['position'], true, $keyPrefix, $class, $objectId);
                                 if (!empty($fieldConfig)) {
                                     if (isset($sc['width'])) {
                                         $fieldConfig['width'] = $sc['width'];
@@ -482,7 +482,7 @@ class DataObjectHelperController extends AdminController
                                 }
 
                                 if (!empty($fd)) {
-                                    $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $sc['position'], true, null, $class, $objectId);
+                                    $fieldConfig = $this->getFieldGridConfig($fd, $gridType, (string)$sc['position'], true, null, $class, $objectId);
                                     if (!empty($fieldConfig)) {
                                         if (isset($sc['width'])) {
                                             $fieldConfig['width'] = $sc['width'];

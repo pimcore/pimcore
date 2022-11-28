@@ -54,7 +54,7 @@ final class User extends User\UserRole
 
     protected bool $allowDirtyClose = false;
 
-    protected ?string $contentLanguages = null;
+    protected ?string $contentLanguages = '';
 
     protected ?string $activePerspective = null;
 
@@ -66,9 +66,9 @@ final class User extends User\UserRole
 
     protected int $lastLogin;
 
-    protected string $keyBindings;
+    protected ?string $keyBindings = null;
 
-    protected array $twoFactorAuthentication;
+    protected array $twoFactorAuthentication = [];
 
     public function getPassword(): ?string
     {

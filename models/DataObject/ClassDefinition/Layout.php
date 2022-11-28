@@ -97,9 +97,9 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
     /**
      * @internal
      *
-     * @var array
+     * @var array|string
      */
-    public array $permissions;
+    public array|string $permissions;
 
     /**
      * @internal
@@ -150,7 +150,7 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
         return $this->collapsible;
     }
 
-    public function getPermissions(): array
+    public function getPermissions(): array|string
     {
         return $this->permissions;
     }
@@ -212,7 +212,7 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
         return $this;
     }
 
-    public function setPermissions(array $permissions): static
+    public function setPermissions(array|string $permissions): static
     {
         $this->permissions = $permissions;
 

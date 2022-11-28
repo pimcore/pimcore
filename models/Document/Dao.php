@@ -274,14 +274,17 @@ class Dao extends Model\Element\Dao
 
         foreach ($propertiesRaw as $propertyRaw) {
             try {
+                $id = $this->model->getId();
                 $property = new Model\Property();
                 $property->setType($propertyRaw['type']);
-                $property->setCid($this->model->getId());
+                if(isset($id)) {
+                    $property->setCid($id);
+                }
                 $property->setName($propertyRaw['name']);
                 $property->setCtype('document');
                 $property->setDataFromResource($propertyRaw['data']);
                 $property->setInherited(true);
-                if ($propertyRaw['cid'] == $this->model->getId()) {
+                if ($propertyRaw['cid'] == $id) {
                     $property->setInherited(false);
                 }
                 $property->setInheritable(false);

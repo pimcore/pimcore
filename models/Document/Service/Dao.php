@@ -37,7 +37,7 @@ class Dao extends Model\Dao\AbstractDao
         );
     }
 
-    public function getTranslationSourceId(Document $document): int
+    public function getTranslationSourceId(Document $document): mixed
     {
         $sourceId = $this->db->fetchOne('SELECT sourceId FROM documents_translations WHERE id = ?', [$document->getId()]);
         if (!$sourceId) {

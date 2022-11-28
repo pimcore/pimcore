@@ -39,7 +39,16 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
     public function init()
     {
-        $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($this->model->getClassId());
+        return;
+    }
+
+    protected function getInheritanceHelper() {
+
+        if(!$this->inheritanceHelper) {
+            $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($this->model->getClassId());
+        }
+
+        return $this->inheritanceHelper;
     }
 
     /**
@@ -74,7 +83,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         return $relations;
     }
 
-    public function getRelationData(string $field, bool $forOwner, string $remoteClassId): array
+    public function getRelationData(string $field, bool $forOwner, ?string $remoteClassId = null): array
     {
         $id = $this->model->getId();
         if ($remoteClassId) {
@@ -281,7 +290,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
         // get data for query table
         $data = [];
-        $this->inheritanceHelper->resetFieldsToCheck();
+        $this->getInheritanceHelper()->resetFieldsToCheck();
         $oldData = $this->db->fetchAssociative('SELECT * FROM object_query_' . $this->model->getClassId() . ' WHERE oo_id = ?', [$this->model->getId()]);
 
         $inheritanceEnabled = $this->model->getClass()->getAllowInherit();
@@ -352,7 +361,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                                 }
 
                                 if ($doInsert) {
-                                    $this->inheritanceHelper->addRelationToCheck($key, $fd, array_keys($insertData));
+                                    $this->getInheritanceHelper()->addRelationToCheck($key, $fd, array_keys($insertData));
                                 }
                             } else {
                                 $oldDataValue = $oldData[$key] ?? null;
@@ -360,7 +369,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                                 if ($isEmpty && $oldDataValue == $parentDataValue) {
                                     // do nothing, ... value is still empty and parent data is equal to current data in query table
                                 } elseif ($oldDataValue != $insertData) {
-                                    $this->inheritanceHelper->addRelationToCheck($key, $fd);
+                                    $this->getInheritanceHelper()->addRelationToCheck($key, $fd);
                                 }
                             }
                         } else {
@@ -371,7 +380,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                                     if ($isEmpty && $oldDataValue == $parentDataValue) {
                                         // do nothing, ... value is still empty and parent data is equal to current data in query table
                                     } elseif ($oldDataValue != $insertDataValue) {
-                                        $this->inheritanceHelper->addFieldToCheck($insertDataKey, $fd);
+                                        $this->getInheritanceHelper()->addFieldToCheck($insertDataKey, $fd);
                                     }
                                 }
                             } else {
@@ -381,7 +390,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                                     // do nothing, ... value is still empty and parent data is equal to current data in query table
                                 } elseif ($oldDataValue != $insertData) {
                                     // data changed, do check and update
-                                    $this->inheritanceHelper->addFieldToCheck($key, $fd);
+                                    $this->getInheritanceHelper()->addFieldToCheck($key, $fd);
                                 }
                             }
                         }
@@ -400,12 +409,12 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
     public function saveChildData()
     {
-        $this->inheritanceHelper->doUpdate($this->model->getId(), false, [
+        $this->getInheritanceHelper()->doUpdate($this->model->getId(), false, [
             'inheritanceRelationContext' => [
                 'ownerType' => 'object',
             ],
         ]);
-        $this->inheritanceHelper->resetFieldsToCheck();
+        $this->getInheritanceHelper()->resetFieldsToCheck();
     }
 
     /**

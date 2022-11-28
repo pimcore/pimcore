@@ -596,7 +596,7 @@ class Service extends Model\Element\Service
         return $languageAllowed;
     }
 
-    public static function getLayoutPermissions(string $classId, array $permissionSet): ?array
+    public static function getLayoutPermissions(string $classId, ?array $permissionSet = null): ?array
     {
         $layoutPermissions = null;
 
@@ -1645,7 +1645,9 @@ class Service extends Model\Element\Service
         }
 
         if ($object instanceof Concrete) {
-            self::doResetDirtyMap($object, $object->getClass());
+            if(($class = $object->getClass()) !== null) {
+                self::doResetDirtyMap($object, $class);
+            }
         }
     }
 

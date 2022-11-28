@@ -1142,8 +1142,12 @@ final class ClassDefinition extends Model\AbstractModel
 
     public function getPreviewGenerator(): ?ClassDefinition\PreviewGeneratorInterface
     {
-        /** @var ClassDefinition\PreviewGeneratorInterface $interface */
-        $interface = DataObject\ClassDefinition\Helper\PreviewGeneratorResolver::resolveGenerator($this->getPreviewGeneratorReference());
+        $interface = null;
+
+        if($this->getPreviewGeneratorReference()) {
+            /** @var ClassDefinition\PreviewGeneratorInterface $interface */
+            $interface = DataObject\ClassDefinition\Helper\PreviewGeneratorResolver::resolveGenerator($this->getPreviewGeneratorReference());
+        }
 
         return $interface;
     }

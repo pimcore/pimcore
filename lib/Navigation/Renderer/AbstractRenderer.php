@@ -210,13 +210,16 @@ abstract class AbstractRenderer implements RendererInterface
      *
      * @return array
      */
-    public function findActive(Container $container, int $minDepth = null, int $maxDepth = -1): array
+    public function findActive(Container $container, int $minDepth = null, int $maxDepth = null): array
     {
         if (!is_int($minDepth)) {
             $minDepth = $this->getMinDepth();
         }
         if ((!is_int($maxDepth) || $maxDepth < 0) && null !== $maxDepth) {
             $maxDepth = $this->getMaxDepth();
+        }
+        if(is_null($maxDepth)) {
+            $maxDepth = -1;
         }
 
         $found = null;

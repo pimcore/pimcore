@@ -276,9 +276,12 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     {
         $this->getProperties();
 
+        $id = $this->getId();
         $property = new Model\Property();
         $property->setType($type);
-        $property->setCid($this->getId());
+        if(isset($id)) {
+            $property->setCid($id);
+        }
         $property->setName($name);
         $property->setCtype(Service::getElementType($this));
         $property->setData($data);

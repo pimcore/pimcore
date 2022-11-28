@@ -50,7 +50,7 @@ final class Version extends AbstractModel
 
     protected ?User $user = null;
 
-    protected string $note;
+    protected string $note = '';
 
     protected int $date;
 

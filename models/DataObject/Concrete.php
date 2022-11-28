@@ -75,16 +75,16 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
-    protected $o_classId;
+    protected $o_classId = null;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
-    protected $o_className;
+    protected $o_className = null;
 
     /**
      * @internal
@@ -394,9 +394,12 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $this->o_class;
     }
 
-    public function getClassId(): string
+    public function getClassId(): ?string
     {
-        return $this->o_classId;
+        if(isset($this->o_classId)) {
+            return (string)$this->o_classId;
+        }
+        return null;
     }
 
     /**
@@ -409,7 +412,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $this;
     }
 
-    public function getClassName(): string
+    public function getClassName(): ?string
     {
         return $this->o_className;
     }
@@ -517,11 +520,11 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @param string $fieldName
      * @param bool $forOwner
-     * @param string $remoteClassId
+     * @param string|null $remoteClassId
      *
      * @return array
      */
-    public function getRelationData(string $fieldName, bool $forOwner, string $remoteClassId): array
+    public function getRelationData(string $fieldName, bool $forOwner, ?string $remoteClassId = null): array
     {
         $relationData = $this->getDao()->getRelationData($fieldName, $forOwner, $remoteClassId);
 
