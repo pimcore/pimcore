@@ -45,20 +45,6 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @internal
      *
-     * @var string|int
-     */
-    public string|int $width = 0;
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $height = 0;
-
-    /**
-     * @internal
-     *
      * @var int|null
      */
     public ?int $cols = null;
