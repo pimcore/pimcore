@@ -144,6 +144,7 @@
     "symfony/polyfill-intl-icu": "^1.21",
     "symfony/polyfill-php81": "^1.23.0",
     "tijsverkoyen/css-to-inline-styles": "^2.2.3",
+    "twig/extra-bundle": "^3.4.0",
     "twig/twig": "^3.0.4",
     "twig/string-extra": "^3.0.4",
     "rybakit/twig-deferred-extension": "^3.0",
