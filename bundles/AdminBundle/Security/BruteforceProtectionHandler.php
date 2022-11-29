@@ -201,7 +201,7 @@ class BruteforceProtectionHandler implements LoggerAwareInterface
     {
         $entries = $this->getLogEntries();
         $entries[] = [
-            date(\DateTime::ISO8601),
+            date(\DateTimeInterface::ISO8601),
             $ip ?: '',
             $username ?: '',
         ];

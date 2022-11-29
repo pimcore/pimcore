@@ -11,8 +11,8 @@ The [Demo CMS profile](https://github.com/pimcore/demo) provides a simple login
 example using a `User` Pimcore object and a `form_login` authenticator which allows a site-wide login with public and
 secured areas:
  
-* [security.yaml](https://github.com/pimcore/demo/blob/10.x/config/packages/security.yaml)
-* [AccountController](https://github.com/pimcore/demo/blob/10.x/src/Controller/AccountController.php)
+* [security.yaml](https://github.com/pimcore/demo/blob/10.2/config/packages/security.yaml)
+* [AccountController](https://github.com/pimcore/demo/blob/10.2/src/Controller/AccountController.php)
 
 A simplified guide to this setup is illustrated in [Authenticate against Pimcore Objects](./01_Authenticate_Pimcore_Objects.md).
 

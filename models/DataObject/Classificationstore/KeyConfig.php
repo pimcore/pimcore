@@ -415,8 +415,12 @@ final class KeyConfig extends Model\AbstractModel
     private function removeCache(): void
     {
         // Remove runtime cache
-        RuntimeCache::getInstance()->offsetUnset(self::getCacheKey($this->getId()));
-        RuntimeCache::getInstance()->offsetUnset(self::getCacheKey($this->getStoreId(), $this->getName()));
+        if (RuntimeCache::getInstance()->offsetExists(self::getCacheKey($this->getId()))) {
+            RuntimeCache::getInstance()->offsetUnset(self::getCacheKey($this->getId()));
+        }
+        if (RuntimeCache::getInstance()->offsetExists(self::getCacheKey($this->getStoreId(), $this->getName()))) {
+            RuntimeCache::getInstance()->offsetUnset(self::getCacheKey($this->getStoreId(), $this->getName()));
+        }
 
         // Remove persisted cache
         Cache::remove(self::getCacheKey($this->getId()));

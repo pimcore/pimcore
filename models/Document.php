@@ -272,10 +272,11 @@ class Document extends Element\AbstractElement
                     $className = $oldStyleClass;
                 }
             }
+            /** @var Document $newDocument */
+            $newDocument = self::getModelFactory()->build($className);
 
-            if (get_class($document) !== $className) {
-                /** @var Document $document */
-                $document = self::getModelFactory()->build($className);
+            if (get_class($document) !== get_class($newDocument)) {
+                $document = $newDocument;
                 $document->getDao()->getById($id);
             }
 
