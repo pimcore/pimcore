@@ -60,3 +60,5 @@ abstract class AbstractTestDataHelper extends Module
         return $objects;
     }
 }
+
+@class_alias(AbstractTestDataHelper::class, 'Pimcore\Tests\Support\Helper\AbstractTestDataHelper');
