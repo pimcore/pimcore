@@ -62,6 +62,15 @@ class Service extends Model\Element\Service
     protected static $systemFields = ['o_path', 'o_key', 'o_id', 'o_published', 'o_creationDate', 'o_modificationDate', 'o_fullpath'];
 
     /**
+     * TODO Bc layer for bundles to support both Pimcore 10 & 11, remove with Pimcore 12
+     * @var string[]
+     */
+    protected static array $versionDependentSystemFields = ['id', 'parentId', 'type', 'key', 'path', 'index', 'published',
+                                                            'creationDate', 'modificationDate', 'userOwner', 'userModification',
+                                                            'classId', 'childrenSortBy', 'className', 'childrenSortOrder',
+                                                            'versionCount'];
+
+    /**
      * @param Model\User $user
      */
     public function __construct($user = null)
@@ -2084,5 +2093,44 @@ class Service extends Model\Element\Service
         }
 
         return null;
+    }
+
+    public static function getVersionDependentSystemFields(): array
+    {
+        return self::$versionDependentSystemFields;
+    }
+
+    /**
+     * TODO Bc layer for bundles to support both Pimcore 10 & 11, remove with Pimcore 12
+     *
+     * Returns the version dependent field name for all system fields defined in $versionDependentSystemFields.
+     *
+     * E.g.
+     * Pass o_id in Pimcore 10, get o_id
+     * Pass id in Pimcore 10, get o_id
+     * Pass o_id in Pimcore 11, get id
+     * Pass id in Pimcore 11, get id
+     *
+     */
+    public static function getVersionDependentSystemFieldName(string $fieldName): string {
+        $currentVersion = \Pimcore\Version::getVersion();
+
+        if(version_compare($currentVersion, "11", "<")) {
+            if(!str_starts_with($fieldName, 'o_'
+                && in_array($fieldName, self::getVersionDependentSystemFields()))) {
+                return 'o_' . $fieldName;
+            }
+        }
+        else  {
+            $newFieldName = $fieldName;
+            if(str_starts_with($newFieldName, 'o_')) {
+                $newFieldName = substr($newFieldName, 2);
+            }
+            if(in_array($newFieldName, self::getVersionDependentSystemFields())) {
+                return $newFieldName;
+            }
+        }
+
+        return $fieldName;
     }
 }
