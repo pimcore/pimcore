@@ -149,6 +149,7 @@ class EditableHandler implements LoggerAwareInterface
     }
 
     /**
+     * @deprecated Will be removed in Pimcore 11
      * @param Editable $editable
      * @param AreabrickInterface|string|bool $brick
      *
