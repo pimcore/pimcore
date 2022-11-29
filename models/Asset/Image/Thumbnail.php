@@ -206,6 +206,16 @@ final class Thumbnail
             unset($sourceTagAttributes['srcset']);
         }
 
+        if (!isset($options['disableWidthHeightAttributes'])) {
+            if ($thumb->getWidth()) {
+                $sourceTagAttributes['width'] = $thumb->getWidth();
+            }
+
+            if ($thumb->getHeight()) {
+                $sourceTagAttributes['height'] = $thumb->getHeight();
+            }
+        }
+
         $sourceTagAttributes['type'] = $thumb->getMimeType();
 
         $sourceCallback = $options['sourceCallback'] ?? null;

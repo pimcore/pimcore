@@ -35,3 +35,5 @@ class ModelTester extends \Codeception\Actor
 {
     use _generated\ModelTesterActions;
 }
+
+@class_alias(ModelTester::class, 'Pimcore\Tests\Support\ModelTester');

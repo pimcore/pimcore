@@ -362,3 +362,5 @@ class Pimcore extends Module
         // TODO: Implement makeHtmlSnapshot() method.
     }
 }
+
+@class_alias(Pimcore::class, 'Pimcore\Tests\Support\Helper\Pimcore');

@@ -480,6 +480,9 @@ input.cke_dialog_ui_input_tel {
 .pimcore_areablock_toolbar {
     opacity: .9;
     border-color: #000;
+    overflow-y: auto;
+    max-height: calc(100vh - 15px);
+    color-scheme: dark;
 }
 
 .pimcore_areablock_toolbar.x-layer {

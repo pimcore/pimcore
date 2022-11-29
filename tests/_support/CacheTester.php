@@ -39,3 +39,5 @@ class CacheTester extends \Codeception\Actor
      * Define custom actions here
      */
 }
+
+@class_alias(CacheTester::class, 'Pimcore\Tests\Support\CacheTester');

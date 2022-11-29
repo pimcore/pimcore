@@ -25,6 +25,8 @@ class ObjectBrickContainerClassBuilder implements ObjectBrickContainerClassBuild
         $className = $definition->getContainerClassName($classDefinition->getName(), $fieldName);
         $namespace = $definition->getContainerNamespace($classDefinition->getName(), $fieldName);
 
+        natcasesort($brickKeys);
+
         $cd = '<?php';
 
         $cd .= "\n\n";

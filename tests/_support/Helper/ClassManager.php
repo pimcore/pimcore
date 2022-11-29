@@ -262,3 +262,5 @@ class ClassManager extends Module
         return $path;
     }
 }
+
+@class_alias(ClassManager::class, 'Pimcore\Tests\Support\Helper\ClassManager');

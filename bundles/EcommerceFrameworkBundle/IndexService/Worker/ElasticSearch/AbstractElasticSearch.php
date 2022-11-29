@@ -948,7 +948,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      * - data is copied from old index to new index
      *
      * While in reindex
-     * - all index updates are stored into store table only, and transferred with next ecommerce:indexservice:process-queue update-index
+     * - all index updates are stored into store table only, and transferred with next ecommerce:indexservice:process-update-queue
      * - no index structure updates are allowed
      *
      * @throws BadRequest400Exception
