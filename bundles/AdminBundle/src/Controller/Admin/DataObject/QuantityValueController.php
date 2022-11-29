@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -40,7 +41,7 @@ class QuantityValueController extends AdminController
      *
      * @throws \Exception
      */
-    public function unitProxyGetAction(Request $request)
+    public function unitProxyGetAction(Request $request): JsonResponse
     {
         $list = new Unit\Listing();
 
@@ -97,7 +98,7 @@ class QuantityValueController extends AdminController
      *
      * @throws \Exception
      */
-    public function unitProxyAction(Request $request)
+    public function unitProxyAction(Request $request): JsonResponse
     {
         if ($request->get('data')) {
             if ($request->get('xaction') == 'destroy') {
@@ -151,12 +152,7 @@ class QuantityValueController extends AdminController
         return $this->adminJson(['success' => false]);
     }
 
-    /**
-     * @param string $comparison
-     *
-     * @return string
-     */
-    private function getOperator($comparison)
+    private function getOperator(string $comparison): string
     {
         $mapper = [
             'lt' => '<',
@@ -174,7 +170,7 @@ class QuantityValueController extends AdminController
      *
      * @return JsonResponse
      */
-    public function unitListAction(Request $request)
+    public function unitListAction(Request $request): JsonResponse
     {
         $list = new Unit\Listing();
         $list->setOrderKey(['baseunit', 'factor', 'abbreviation']);
@@ -219,7 +215,7 @@ class QuantityValueController extends AdminController
      *
      * @return JsonResponse
      */
-    public function convertAction(Request $request, UnitConversionService $conversionService)
+    public function convertAction(Request $request, UnitConversionService $conversionService): JsonResponse
     {
         $fromUnitId = $request->get('fromUnit');
         $toUnitId = $request->get('toUnit');
@@ -247,7 +243,7 @@ class QuantityValueController extends AdminController
      *
      * @return JsonResponse
      */
-    public function convertAllAction(Request $request, UnitConversionService $conversionService)
+    public function convertAllAction(Request $request, UnitConversionService $conversionService): JsonResponse
     {
         $unitId = $request->get('unit');
 

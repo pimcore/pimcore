@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,35 +28,17 @@ use Symfony\Component\Workflow\WorkflowInterface;
 
 class ExpressionService
 {
-    /**
-     * @var ExpressionLanguage
-     */
-    private $expressionLanguage;
+    private ExpressionLanguage $expressionLanguage;
 
-    /**
-     * @var TokenStorageInterface
-     */
-    private $tokenStorage;
+    private TokenStorageInterface $tokenStorage;
 
-    /**
-     * @var AuthorizationCheckerInterface
-     */
-    private $authenticationChecker;
+    private AuthorizationCheckerInterface $authenticationChecker;
 
-    /**
-     * @var AuthenticationTrustResolverInterface
-     */
-    private $trustResolver;
+    private AuthenticationTrustResolverInterface $trustResolver;
 
-    /**
-     * @var RoleHierarchyInterface|null
-     */
-    private $roleHierarchy;
+    private ?RoleHierarchyInterface $roleHierarchy = null;
 
-    /**
-     * @var ValidatorInterface|null
-     */
-    private $validator;
+    private ?ValidatorInterface $validator = null;
 
     public function __construct(ExpressionLanguage $expressionLanguage, TokenStorageInterface $tokenStorage, AuthorizationCheckerInterface $authenticationChecker, AuthenticationTrustResolverInterface $trustResolver, RoleHierarchyInterface $roleHierarchy = null, ValidatorInterface $validator = null)
     {
@@ -67,23 +50,13 @@ class ExpressionService
         $this->validator = $validator;
     }
 
-    /**
-     * @param object $subject
-     *
-     * @return mixed
-     */
-    public function evaluateExpression(WorkflowInterface $workflow, $subject, string $expression)
+    public function evaluateExpression(WorkflowInterface $workflow, object $subject, string $expression): mixed
     {
         return $this->expressionLanguage->evaluate($expression, $this->getVariables($subject));
     }
 
-    /**
-     * @param object $subject
-     *
-     * @return array
-     */
     // code should be sync with Symfony\Component\Security\Core\Authorization\Voter\ExpressionVoter
-    private function getVariables($subject)
+    private function getVariables(object $subject): array
     {
         $token = $this->tokenStorage->getToken() ?: new NullToken;
 

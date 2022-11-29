@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,8 +24,8 @@ use Pimcore\Model\Document\PrintAbstract;
 use Pimcore\Model\Document\Printpage;
 use Pimcore\Model\Document\Service;
 use Pimcore\Model\Element\Service as ElementService;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class DocumentTest
@@ -35,8 +36,7 @@ use Pimcore\Tests\Util\TestHelper;
  */
 class DocumentTest extends ModelTestCase
 {
-    /** @var Page */
-    protected $testPage;
+    protected ?Page $testPage = null;
 
     public function testCRUD()
     {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,23 +25,11 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 class GridConfigShare extends AbstractModel
 {
-    /**
-     * @var int
-     */
-    protected $gridConfigId;
+    protected int $gridConfigId;
 
-    /**
-     * @var int
-     */
-    protected $sharedWithUserId;
+    protected int $sharedWithUserId;
 
-    /**
-     * @param int $gridConfigId
-     * @param int $sharedWithUserId
-     *
-     * @return GridConfigShare|null
-     */
-    public static function getByGridConfigAndSharedWithId($gridConfigId, $sharedWithUserId)
+    public static function getByGridConfigAndSharedWithId(int $gridConfigId, int $sharedWithUserId): ?GridConfigShare
     {
         try {
             $share = new self();
@@ -68,33 +57,21 @@ class GridConfigShare extends AbstractModel
         $this->getDao()->delete();
     }
 
-    /**
-     * @return int
-     */
     public function getGridConfigId(): int
     {
         return $this->gridConfigId;
     }
 
-    /**
-     * @param int $gridConfigId
-     */
     public function setGridConfigId(int $gridConfigId)
     {
         $this->gridConfigId = $gridConfigId;
     }
 
-    /**
-     * @return int
-     */
     public function getSharedWithUserId(): int
     {
         return $this->sharedWithUserId;
     }
 
-    /**
-     * @param int $sharedWithUserId
-     */
     public function setSharedWithUserId(int $sharedWithUserId)
     {
         $this->sharedWithUserId = $sharedWithUserId;

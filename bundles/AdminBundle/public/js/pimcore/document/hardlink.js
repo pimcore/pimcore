@@ -23,7 +23,7 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
 
         const preOpenDocumentLink = new CustomEvent(pimcore.events.preOpenDocument, {
             detail: {
-                object: this,
+                document: this,
                 type: "link"
             }
         });
@@ -145,7 +145,7 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
 
             const postOpenDocumentLink = new CustomEvent(pimcore.events.postOpenDocument, {
                 detail: {
-                    object: this,
+                    document: this,
                     type: "link"
                 }
             });
@@ -461,7 +461,7 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
                     }, {
                         xtype: "checkbox",
                         name: "childrenFromSource",
-                        fieldLabel: t("childs_from_source"),
+                        fieldLabel: t("children_from_source"),
                         checked: this.data.childrenFromSource
                     }]
             });

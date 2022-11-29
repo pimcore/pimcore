@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -32,12 +33,6 @@ interface ExportDataExtractorServiceInterface
      */
     public function extract(TranslationItem $translationItem, string $sourceLanguage, array $targetLanguages): AttributeSet;
 
-    /**
-     * @param string $type
-     * @param DataExtractorInterface $dataExtractor
-     *
-     * @return $this
-     */
     public function registerDataExtractor(string $type, DataExtractorInterface $dataExtractor): ExportDataExtractorServiceInterface;
 
     /**

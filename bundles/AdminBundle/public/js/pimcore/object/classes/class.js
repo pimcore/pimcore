@@ -856,14 +856,6 @@ pimcore.object.classes.klass = Class.create({
                     value: this.data.previewGeneratorReference
                 },
                 {
-                    xtype: "textfield",
-                    fieldLabel: t("preview_url"),
-                    name: "previewUrl",
-                    width: 600,
-                    renderer: Ext.util.Format.htmlEncode,
-                    value: this.data.previewUrl
-                },
-                {
                     xtype: "fieldcontainer",
                     layout: "hbox",
                     fieldLabel: t("icon"),

@@ -11,7 +11,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-Ext.define('documentreemodel', {
+ Ext.define('documentreemodel', {
     extend: 'Ext.data.TreeModel',
     idProperty: 'id',
     fields: [{
@@ -30,7 +30,7 @@ pimcore.document.tree = Class.create({
     nodesToMove: [],
 
     initialize: function(config, perspectiveCfg) {
-        this.treeDataUrl = Routing.generate('pimcore_admin_document_document_treegetchildsbyid');
+        this.treeDataUrl = Routing.generate('pimcore_admin_document_document_treegetchildrenbyid');
         this.perspectiveCfg = perspectiveCfg;
         if (!perspectiveCfg) {
             this.perspectiveCfg = {
@@ -257,6 +257,7 @@ pimcore.document.tree = Class.create({
                     } else {
                         delete node.data.cls;
                     }
+                    pimcore.elementservice.nodeMoved("document", oldParent, newParent);
                     this.updateOpenDocumentPaths(node);
 
                 }
@@ -539,7 +540,7 @@ pimcore.document.tree = Class.create({
                 //paste
                 if (pimcore.cachedDocumentId && record.data.permissions.create && perspectiveCfg.inTreeContextMenu("document.paste")) {
                     pasteMenu.push({
-                        text: t("paste_recursive_as_childs"),
+                        text: t("paste_recursive_as_child"),
                         iconCls: "pimcore_icon_paste",
                         handler: this.pasteInfo.bind(this, tree, record, "recursive")
                     });
@@ -573,7 +574,7 @@ pimcore.document.tree = Class.create({
                     });
 
                     pasteInheritanceMenu.push({
-                        text: t("paste_recursive_as_childs"),
+                        text: t("paste_recursive_as_child"),
                         iconCls: "pimcore_icon_paste",
                         handler: this.pasteInfo.bind(this, tree, record, "recursive", true)
                     });
@@ -849,7 +850,7 @@ pimcore.document.tree = Class.create({
                     if (perspectiveCfg.inTreeContextMenu("document.lockAndPropagate")) {
                         if (record.data.type != "snippet") {
                             lockMenu.push({
-                                text: t('lock_and_propagate_to_childs'),
+                                text: t('lock_and_propagate_to_children'),
                                 iconCls: "pimcore_icon_lock pimcore_icon_overlay_go",
                                 handler: function () {
                                     pimcore.elementservice.lockElement({
@@ -933,8 +934,8 @@ pimcore.document.tree = Class.create({
         const prepareDocumentTreeContextMenu = new CustomEvent(pimcore.events.prepareDocumentTreeContextMenu, {
             detail: {
                 menu: menu,
-                object: this,
-                record: record
+                tree: this,
+                document: record
             }
         });
 

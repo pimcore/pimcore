@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,121 +23,87 @@ class DataObject extends AbstractWorkspace
      *
      * @var bool
      */
-    protected $save = false;
+    protected bool $save = false;
 
     /**
      * @internal
      *
      * @var bool
      */
-    protected $unpublish = false;
+    protected bool $unpublish = false;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
-    protected $lEdit = null;
+    protected ?string $lEdit = null;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
-    protected $lView = null;
+    protected ?string $lView = null;
 
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
-    protected $layouts = null;
+    protected ?string $layouts = null;
 
-    /**
-     * @param bool $save
-     *
-     * @return $this
-     */
-    public function setSave($save)
+    public function setSave(bool $save): static
     {
         $this->save = $save;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getSave()
+    public function getSave(): bool
     {
         return $this->save;
     }
 
-    /**
-     * @param bool $unpublish
-     *
-     * @return $this
-     */
-    public function setUnpublish($unpublish)
+    public function setUnpublish(bool $unpublish): static
     {
         $this->unpublish = $unpublish;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getUnpublish()
+    public function getUnpublish(): bool
     {
         return $this->unpublish;
     }
 
-    /**
-     * @param string $lEdit
-     */
-    public function setLEdit($lEdit)
+    public function setLEdit(string $lEdit)
     {
         //@TODO - at the moment disallowing all languages is not possible - the empty lEdit value means that every language is allowed to edit...
         $this->lEdit = $lEdit;
     }
 
-    /**
-     * @return string
-     */
-    public function getLEdit()
+    public function getLEdit(): ?string
     {
         return $this->lEdit;
     }
 
-    /**
-     * @param string $lView
-     */
-    public function setLView($lView)
+    public function setLView(string $lView)
     {
         $this->lView = $lView;
     }
 
-    /**
-     * @return string
-     */
-    public function getLView()
+    public function getLView(): ?string
     {
         return $this->lView;
     }
 
-    /**
-     * @param string $layouts
-     */
-    public function setLayouts($layouts)
+    public function setLayouts(string $layouts)
     {
         $this->layouts = $layouts;
     }
 
-    /**
-     * @return string
-     */
-    public function getLayouts()
+    public function getLayouts(): ?string
     {
         return $this->layouts;
     }

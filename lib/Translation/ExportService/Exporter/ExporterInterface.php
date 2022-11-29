@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,15 +28,7 @@ interface ExporterInterface
      */
     public function export(AttributeSet $attributeSet, string $exportId = null): string;
 
-    /**
-     * @param string $exportId
-     *
-     * @return string
-     */
     public function getExportFilePath(string $exportId): string;
 
-    /**
-     * @return string
-     */
     public function getContentType(): string;
 }

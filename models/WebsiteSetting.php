@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,52 +26,28 @@ use Pimcore\Model\Exception\NotFoundException;
  */
 final class WebsiteSetting extends AbstractModel
 {
-    /**
-     * @var int|null
-     */
-    protected $id;
+    protected ?int $id = null;
 
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $name;
 
-    /**
-     * @var string
-     */
-    protected $language;
+    protected string $language;
 
-    /**
-     * @var string
-     */
-    protected $type;
+    protected string $type;
 
-    /**
-     * @var mixed
-     */
-    protected $data;
+    protected mixed $data = null;
 
-    /**
-     * @var int|null
-     */
-    protected $siteId;
+    protected ?int $siteId = null;
 
-    /**
-     * @var int|null
-     */
-    protected $creationDate;
+    protected ?int $creationDate = null;
 
-    /**
-     * @var int|null
-     */
-    protected $modificationDate;
+    protected ?int $modificationDate = null;
 
     /**
      * this is a small per request cache to know which website setting is which is, this info is used in self::getByName()
      *
      * @var array
      */
-    protected static $nameIdMappingCache = [];
+    protected static array $nameIdMappingCache = [];
 
     /**
      * @param string $name
@@ -79,17 +56,12 @@ final class WebsiteSetting extends AbstractModel
      *
      * @return string
      */
-    protected static function getCacheKey($name, $siteId = null, $language = null): string
+    protected static function getCacheKey(string $name, int $siteId = null, string $language = null): string
     {
         return $name . '~~~' . $siteId . '~~~' . $language;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return self|null
-     */
-    public static function getById($id)
+    public static function getById(int $id): ?WebsiteSetting
     {
         $cacheKey = 'website_setting_' . $id;
 
@@ -121,7 +93,7 @@ final class WebsiteSetting extends AbstractModel
      *
      * @throws \Exception
      */
-    public static function getByName($name, $siteId = null, $language = null, $fallbackLanguage = null)
+    public static function getByName(string $name, int $siteId = null, string $language = null, string $fallbackLanguage = null): ?WebsiteSetting
     {
         $nameCacheKey = static::getCacheKey($name, $siteId, $language);
 
@@ -156,72 +128,43 @@ final class WebsiteSetting extends AbstractModel
         return $setting;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(int $id): static
     {
         $this->id = (int) $id;
 
         return $this;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param int $creationDate
-     *
-     * @return $this
-     */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = (int) $creationDate;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getCreationDate()
+    public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return $this
-     */
-    public function setData($data)
+    public function setData(mixed $data): static
     {
         if ($data instanceof ElementInterface) {
             $this->setType(Service::getElementType($data));
@@ -233,10 +176,7 @@ final class WebsiteSetting extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getData()
+    public function getData(): mixed
     {
         // lazy-load data of type asset, document, object
         if (in_array($this->getType(), ['document', 'asset', 'object']) && !$this->data instanceof ElementInterface && is_numeric($this->data)) {
@@ -246,42 +186,26 @@ final class WebsiteSetting extends AbstractModel
         return $this->data;
     }
 
-    /**
-     * @param int $modificationDate
-     *
-     * @return $this
-     */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = (int) $modificationDate;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getModificationDate()
+    public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
-    /**
-     * @param int $siteId
-     *
-     * @return $this
-     */
-    public function setSiteId($siteId)
+    public function setSiteId(int $siteId): static
     {
         $this->siteId = (int) $siteId;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getSiteId()
+    public function getSiteId(): ?int
     {
         return $this->siteId;
     }
@@ -293,7 +217,7 @@ final class WebsiteSetting extends AbstractModel
      *
      * @return $this
      */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
@@ -305,23 +229,17 @@ final class WebsiteSetting extends AbstractModel
      *
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return string
-     */
-    public function getLanguage()
+    public function getLanguage(): string
     {
         return $this->language;
     }
 
-    /**
-     * @param string $language
-     */
-    public function setLanguage($language)
+    public function setLanguage(string $language)
     {
         $this->language = $language;
     }

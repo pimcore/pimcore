@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,17 +29,13 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
      */
     class AdminerController extends AdminController implements KernelControllerEventInterface
     {
-        /**
-         * @var string
-         */
-        protected $adminerHome = '';
+        protected string $adminerHome = '';
 
         /**
          * @Route("/external_adminer/adminer", name="pimcore_admin_external_adminer_adminer")
          *
-         * @return Response
          */
-        public function adminerAction(?Profiler $profiler)
+        public function adminerAction(?Profiler $profiler): Response
         {
             if ($profiler) {
                 $profiler->disable();
@@ -69,7 +66,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
          *
          * @return Response
          */
-        public function proxyAction(Request $request)
+        public function proxyAction(Request $request): Response
         {
             $response = new Response();
             $content = '';
@@ -110,9 +107,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
             return $this->mergeAdminerHeaders($response);
         }
 
-        /**
-         * @param ControllerEvent $event
-         */
         public function onKernelControllerEvent(ControllerEvent $event)
         {
             if (!$event->isMainRequest()) {
@@ -139,7 +133,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
          *
          * @return Response
          */
-        protected function mergeAdminerHeaders(Response $response)
+        protected function mergeAdminerHeaders(Response $response): Response
         {
             if (!headers_sent()) {
                 $headersRaw = headers_list();
@@ -167,10 +161,7 @@ namespace {
 
     if (!function_exists('adminer_object')) {
         // adminer plugin
-        /**
-         * @return AdminerPimcore
-         */
-        function adminer_object()
+        function adminer_object(): AdminerPimcore
         {
             $pluginDir = PIMCORE_COMPOSER_PATH . '/vrana/adminer/plugins';
 
@@ -205,10 +196,7 @@ namespace {
 
             class AdminerPimcore extends \AdminerPlugin
             {
-                /**
-                 * @return string
-                 */
-                public function name()
+                public function name(): string
                 {
                     return '';
                 }
@@ -224,7 +212,7 @@ namespace {
                  *
                  * @return string
                  */
-                public function permanentLogin($create = false)
+                public function permanentLogin($create = false): string
                 {
                     // key used for permanent login
                     return Session::getSessionId();
@@ -236,15 +224,12 @@ namespace {
                  *
                  * @return bool
                  */
-                public function login($login, $password)
+                public function login($login, $password): bool
                 {
                     return true;
                 }
 
-                /**
-                 * @return array
-                 */
-                public function credentials()
+                public function credentials(): array
                 {
                     $params = \Pimcore\Db::get()->getParams();
 
@@ -263,10 +248,7 @@ namespace {
                     return $result;
                 }
 
-                /**
-                 * @return string
-                 */
-                public function database()
+                public function database(): string
                 {
                     $db = \Pimcore\Db::get();
                     // database name, will be escaped by Adminer

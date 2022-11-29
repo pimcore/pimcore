@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,7 +32,7 @@ class Service
      *
      * @return string|null
      */
-    public static function getClassNameForType($type): ?string
+    public static function getClassNameForType(string $type): ?string
     {
         return match ($type) {
             'user' => User::class,

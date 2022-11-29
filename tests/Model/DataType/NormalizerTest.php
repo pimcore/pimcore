@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,8 +23,8 @@ use Pimcore\Model\DataObject\Data\Link;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\User;
 use Pimcore\Normalizer\NormalizerInterface;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class NormalizerTest
@@ -44,7 +45,7 @@ class NormalizerTest extends ModelTestCase
     /**
      * @inheritdoc
      */
-    protected function needsDb()
+    protected function needsDb(): bool
     {
         return true;
     }
@@ -265,7 +266,7 @@ class NormalizerTest extends ModelTestCase
         $this->assertEquals($originalValue, $denormalizedValue);
     }
 
-    private function getDummyOwnerInfo()
+    private function getDummyOwnerInfo(): array
     {
         return [
             'owner' => 'dummy owner',

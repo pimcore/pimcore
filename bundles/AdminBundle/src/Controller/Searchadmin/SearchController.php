@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -44,17 +45,12 @@ class SearchController extends AdminController
 
     /**
      * @Route("/find", name="pimcore_admin_searchadmin_search_find", methods={"GET", "POST"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     *
      * @todo: $conditionTypeParts could be undefined
      * @todo: $conditionSubtypeParts could be undefined
      * @todo: $conditionClassnameParts could be undefined
      * @todo: $data could be undefined
      */
-    public function findAction(Request $request, EventDispatcherInterface $eventDispatcher, GridHelperService $gridHelperService)
+    public function findAction(Request $request, EventDispatcherInterface $eventDispatcher, GridHelperService $gridHelperService): JsonResponse
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
@@ -233,11 +229,8 @@ class SearchController extends AdminController
             }
         }
 
-        if (count($conditionParts) > 0) {
-            $condition = implode(' AND ', $conditionParts);
-            $searcherList->setCondition($condition);
-        }
-
+        $condition = implode(' AND ', $conditionParts);
+        $searcherList->setCondition($condition);
         $searcherList->setOffset($offset);
         $searcherList->setLimit($limit);
 
@@ -353,13 +346,14 @@ class SearchController extends AdminController
     }
 
     /**
-     * @internal
-     *
      * @param array $types
      *
      * @return string
+     *
+     *@internal
+     *
      */
-    protected function getPermittedPaths($types = ['asset', 'document', 'object'])
+    protected function getPermittedPaths(array $types = ['asset', 'document', 'object']): string
     {
         $user = $this->getAdminUser();
         $db = \Pimcore\Db::get();
@@ -417,12 +411,7 @@ class SearchController extends AdminController
         return '('.implode(' OR ', $allowedTypes) .')';
     }
 
-    /**
-     * @param string $query
-     *
-     * @return string
-     */
-    protected function filterQueryParam(string $query)
+    protected function filterQueryParam(string $query): string
     {
         if ($query == '*') {
             $query = '';
@@ -452,7 +441,7 @@ class SearchController extends AdminController
      *
      * @return JsonResponse
      */
-    public function quicksearchAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function quicksearchAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
         $query = $this->filterQueryParam($request->get('query', ''));
         if (!preg_match('/[\+\-\*"]/', $query)) {
@@ -525,7 +514,7 @@ class SearchController extends AdminController
      *
      * @return JsonResponse
      */
-    public function quicksearchByIdAction(Request $request, Config $config)
+    public function quicksearchByIdAction(Request $request, Config $config): JsonResponse
     {
         $type = $request->get('type');
         $id = $request->get('id');
@@ -571,12 +560,7 @@ class SearchController extends AdminController
         return $this->adminJson($data);
     }
 
-    /**
-     * @param string $path
-     *
-     * @return string
-     */
-    protected function shortenPath($path)
+    protected function shortenPath(string $path): string
     {
         $parts = explode('/', trim($path, '/'));
         $count = count($parts) - 1;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,14 +27,14 @@ final class CsvList implements AddressSourceAdapterInterface
     /**
      * @var string[]
      */
-    protected $emailAddresses;
+    protected array $emailAddresses;
 
     /**
      * IAddressSourceAdapter constructor.
      *
      * @param array $params
      */
-    public function __construct($params)
+    public function __construct(array $params)
     {
         $this->emailAddresses = array_filter(explode(',', $params['csvList']));
     }
@@ -41,7 +42,7 @@ final class CsvList implements AddressSourceAdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function getMailAddressesForBatchSending()
+    public function getMailAddressesForBatchSending(): array
     {
         $containers = [];
         foreach ($this->emailAddresses as $address) {
@@ -54,7 +55,7 @@ final class CsvList implements AddressSourceAdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function getParamsForTestSending($emailAddress)
+    public function getParamsForTestSending(string $emailAddress): SendingParamContainer
     {
         return new SendingParamContainer($emailAddress, [
             'emailAddress' => current($this->emailAddresses),
@@ -64,7 +65,7 @@ final class CsvList implements AddressSourceAdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function getTotalRecordCount()
+    public function getTotalRecordCount(): int
     {
         return count($this->emailAddresses);
     }
@@ -72,7 +73,7 @@ final class CsvList implements AddressSourceAdapterInterface
     /**
      * {@inheritdoc}
      */
-    public function getParamsForSingleSending($limit, $offset)
+    public function getParamsForSingleSending(int $limit, int $offset): array
     {
         $addresses = array_slice($this->emailAddresses, $offset, $limit);
 

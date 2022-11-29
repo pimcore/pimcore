@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,25 +26,13 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 abstract class SettingsStoreAwareInstaller extends AbstractInstaller
 {
-    /**
-     * @var BundleInterface
-     */
-    protected $bundle;
+    protected BundleInterface $bundle;
 
-    /**
-     * @var FilteredMigrationsRepository
-     */
-    protected $migrationRepository;
+    protected FilteredMigrationsRepository $migrationRepository;
 
-    /**
-     * @var FilteredTableMetadataStorage
-     */
-    protected $tableMetadataStorage;
+    protected FilteredTableMetadataStorage $tableMetadataStorage;
 
-    /**
-     * @var DependencyFactory
-     */
-    protected $dependencyFactory;
+    protected DependencyFactory $dependencyFactory;
 
     public function __construct(BundleInterface $bundle)
     {
@@ -145,28 +134,19 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
         $this->markUninstalled();
     }
 
-    /**
-     * @return bool
-     */
-    public function isInstalled()
+    public function isInstalled(): bool
     {
         $installSetting = SettingsStore::get($this->getSettingsStoreInstallationId(), 'pimcore');
 
         return (bool) ($installSetting ? $installSetting->getData() : false);
     }
 
-    /**
-     * @return bool
-     */
-    public function canBeInstalled()
+    public function canBeInstalled(): bool
     {
         return !$this->isInstalled();
     }
 
-    /**
-     * @return bool
-     */
-    public function canBeUninstalled()
+    public function canBeUninstalled(): bool
     {
         return $this->isInstalled();
     }

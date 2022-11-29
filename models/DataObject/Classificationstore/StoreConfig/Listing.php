@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,7 +29,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @return Model\DataObject\Classificationstore\StoreConfig[]
      */
-    public function getList()
+    public function getList(): array
     {
         return $this->getData();
     }
@@ -38,7 +39,7 @@ class Listing extends Model\Listing\AbstractListing
      *
      * @return $this
      */
-    public function setList($theList)
+    public function setList(?array $theList): static
     {
         return $this->setData($theList);
     }

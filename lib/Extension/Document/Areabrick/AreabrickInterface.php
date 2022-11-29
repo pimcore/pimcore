@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,56 +26,56 @@ interface AreabrickInterface
      *
      * @param string $id
      */
-    public function setId($id);
+    public function setId(string $id);
 
     /**
      * Brick ID - needs to be unique throughout the system.
      *
      * @return string
      */
-    public function getId();
+    public function getId(): string;
 
     /**
      * A descriptive name as shown in extension manager and edit mode.
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Area description as shown in extension manager.
      *
      * @return string
      */
-    public function getDescription();
+    public function getDescription(): string;
 
     /**
      * Area version as shown in extension manager.
      *
      * @return string
      */
-    public function getVersion();
+    public function getVersion(): string;
 
     /**
      * Icon as absolute path, e.g. /bundles/websitedemo/img/areas/foo/icon.png
      *
      * @return string|null
      */
-    public function getIcon();
+    public function getIcon(): ?string;
 
     /**
      * Determines if the brick has a view template
      *
      * @return bool
      */
-    public function hasTemplate();
+    public function hasTemplate(): bool;
 
     /**
      * Get view template
      *
      * @return string|null
      */
-    public function getTemplate();
+    public function getTemplate(): ?string;
 
     /**
      * Will be called before the view is rendered. Acts as extension point for custom area logic.
@@ -85,7 +86,7 @@ interface AreabrickInterface
      *
      * @return null|Response
      */
-    public function action(Info $info);
+    public function action(Info $info): ?Response;
 
     /**
      * Will be called after rendering.
@@ -96,7 +97,7 @@ interface AreabrickInterface
      *
      * @return null|Response
      */
-    public function postRenderAction(Info $info);
+    public function postRenderAction(Info $info): ?Response;
 
     /**
      * Returns the brick HTML open tag.
@@ -105,7 +106,7 @@ interface AreabrickInterface
      *
      * @return string
      */
-    public function getHtmlTagOpen(Info $info);
+    public function getHtmlTagOpen(Info $info): string;
 
     /**
      * Returns the brick HTML close tag.
@@ -114,7 +115,7 @@ interface AreabrickInterface
      *
      * @return string
      */
-    public function getHtmlTagClose(Info $info);
+    public function getHtmlTagClose(Info $info): string;
 
     /**
      * Whether the UI needs a reload after this brick was added or removed

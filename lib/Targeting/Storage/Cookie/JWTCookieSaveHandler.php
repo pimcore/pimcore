@@ -31,15 +31,9 @@ class JWTCookieSaveHandler extends AbstractCookieSaveHandler
 {
     const CLAIM_TARGETING_DATA = 'ptg';
 
-    /**
-     * @var Configuration
-     */
-    private $config;
+    private Configuration $config;
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface|NullLogger $logger;
 
     /**
      * @param non-empty-string $secret
@@ -64,7 +58,7 @@ class JWTCookieSaveHandler extends AbstractCookieSaveHandler
     /**
      * {@inheritdoc}
      */
-    protected function parseData(string $scope, string $name, $data): array
+    protected function parseData(string $scope, string $name, ?string $data): array
     {
         if (null === $data) {
             return [];
@@ -97,7 +91,7 @@ class JWTCookieSaveHandler extends AbstractCookieSaveHandler
     /**
      * {@inheritdoc}
      */
-    protected function prepareData(string $scope, string $name, $expire, $data)
+    protected function prepareData(string $scope, string $name, \DateTimeInterface|int|string $expire, ?array $data): bool|string|null
     {
         if (empty($data)) {
             return null;
@@ -113,14 +107,14 @@ class JWTCookieSaveHandler extends AbstractCookieSaveHandler
     /**
      * @param string $scope
      * @param string $name
-     * @param int|string|\DateTimeInterface $expire
+     * @param \DateTimeInterface|int|string $expire
      * @param array|null $data
      *
      * @return Builder
      *
      * @throws \Exception
      */
-    protected function createTokenBuilder(string $scope, string $name, $expire, $data): Builder
+    protected function createTokenBuilder(string $scope, string $name, \DateTimeInterface|int|string $expire, ?array $data): Builder
     {
         $time = new \DateTimeImmutable();
 

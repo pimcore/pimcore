@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,20 +25,14 @@ class OrderManagerItemEvent extends Event
 {
     use ArgumentsAwareTrait;
 
-    /**
-     * @var CartItemInterface
-     */
-    protected $cartItem;
+    protected CartItemInterface $cartItem;
 
     /**+
      * @var bool
      */
-    protected $isGiftItem;
+    protected bool $isGiftItem;
 
-    /**
-     * @var AbstractOrderItem
-     */
-    protected $orderItem;
+    protected ?AbstractOrderItem $orderItem = null;
 
     /**
      * OrderManagerItemEvent constructor.
@@ -55,49 +50,31 @@ class OrderManagerItemEvent extends Event
         $this->arguments = $arguments;
     }
 
-    /**
-     * @return CartItemInterface
-     */
     public function getCartItem(): CartItemInterface
     {
         return $this->cartItem;
     }
 
-    /**
-     * @param CartItemInterface $cartItem
-     */
     public function setCartItem(CartItemInterface $cartItem): void
     {
         $this->cartItem = $cartItem;
     }
 
-    /**
-     * @return bool
-     */
     public function isGiftItem(): bool
     {
         return $this->isGiftItem;
     }
 
-    /**
-     * @param bool $isGiftItem
-     */
     public function setIsGiftItem(bool $isGiftItem): void
     {
         $this->isGiftItem = $isGiftItem;
     }
 
-    /**
-     * @return AbstractOrderItem|null
-     */
     public function getOrderItem(): ?AbstractOrderItem
     {
         return $this->orderItem;
     }
 
-    /**
-     * @param AbstractOrderItem $orderItem
-     */
     public function setOrderItem(AbstractOrderItem $orderItem): void
     {
         $this->orderItem = $orderItem;

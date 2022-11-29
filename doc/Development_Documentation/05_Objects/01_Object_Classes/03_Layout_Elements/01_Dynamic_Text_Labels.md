@@ -67,3 +67,17 @@ Here is an example of Twig content in htmleditor source edit mode:
 ![Template Class Definition](../../../img/dynamic_textlabel_3.png)
 
 ![Template editmode](../../../img/dynamic_textlabel_4.png)
+
+### Sandbox Restrictions
+Dynamic Text renders user controlled twig templates in a sandbox with restrictive
+security policies for tags, filters & functions. Please use following configuration to allow more in template rendering:
+
+```yaml
+    pimcore:
+          templating_engine:
+              twig:
+                sandbox_security_policy:
+                  tags: ['if']
+                  filters: ['upper']
+                  functions: ['include', 'path']
+```

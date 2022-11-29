@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -83,6 +84,7 @@ class PageController extends DocumentControllerBase
 
         $this->addTranslationsData($page, $data);
         $this->minimizeProperties($page, $data);
+        $this->populateUsersNames($page, $data);
 
         if ($page->getContentMasterDocument()) {
             $data['contentMasterDocumentPath'] = $page->getContentMasterDocument()->getRealFullPath();
@@ -438,10 +440,6 @@ class PageController extends DocumentControllerBase
         ]);
     }
 
-    /**
-     * @param Request $request
-     * @param Document $page
-     */
     protected function setValuesToDocument(Request $request, Document $page)
     {
         $this->addSettingsToDocument($request, $page);

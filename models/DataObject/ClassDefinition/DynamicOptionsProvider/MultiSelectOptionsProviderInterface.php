@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,13 +20,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 interface MultiSelectOptionsProviderInterface
 {
-    /**
-     * @param array $context
-     * @param Data $fieldDefinition
-     *
-     * @return array
-     */
-    public function getOptions($context, $fieldDefinition);
+    public function getOptions(array $context, Data $fieldDefinition): array;
 
     /**
      * Whether options are depending on the object context (i.e. different options for different objects) or not.
@@ -38,5 +33,5 @@ interface MultiSelectOptionsProviderInterface
      *
      * @return bool
      */
-    public function hasStaticOptions($context, $fieldDefinition);
+    public function hasStaticOptions(array $context, Data $fieldDefinition): bool;
 }

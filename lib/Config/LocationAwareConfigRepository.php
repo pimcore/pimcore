@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,38 +32,16 @@ class LocationAwareConfigRepository
 
     public const LOCATION_DISABLED = 'disabled';
 
-    /**
-     * @var array
-     */
     protected array $containerConfig = [];
 
-    /**
-     * @var string|null
-     */
     protected ?string $settingsStoreScope = null;
 
-    /**
-     * @var string|null
-     */
     protected ?string $storageDirectory = null;
 
-    /**
-     * @var string|null
-     */
     protected ?string $writeTargetEnvVariableName = null;
 
-    /**
-     * @var string|null
-     */
     protected ?string $defaultWriteLocation = self::LOCATION_SYMFONY_CONFIG;
 
-    /**
-     * @param array $containerConfig
-     * @param string|null $settingsStoreScope
-     * @param string|null $storageDirectory
-     * @param string|null $writeTargetEnvVariableName
-     * @param string|null $defaultWriteLocation
-     */
     public function __construct(
         array $containerConfig,
         ?string $settingsStoreScope,
@@ -77,12 +56,7 @@ class LocationAwareConfigRepository
         $this->defaultWriteLocation = $defaultWriteLocation ?: self::LOCATION_SYMFONY_CONFIG;
     }
 
-    /**
-     * @param string $key
-     *
-     * @return array
-     */
-    public function loadConfigByKey(string $key)
+    public function loadConfigByKey(string $key): array
     {
         $dataSource = null;
 
@@ -100,13 +74,7 @@ class LocationAwareConfigRepository
         ];
     }
 
-    /**
-     * @param string $key
-     * @param string|null $dataSource
-     *
-     * @return mixed
-     */
-    private function getDataFromContainerConfig(string $key, ?string &$dataSource)
+    private function getDataFromContainerConfig(string $key, ?string &$dataSource): mixed
     {
         if (isset($this->containerConfig[$key])) {
             $dataSource = self::LOCATION_SYMFONY_CONFIG;
@@ -115,13 +83,7 @@ class LocationAwareConfigRepository
         return $this->containerConfig[$key] ?? null;
     }
 
-    /**
-     * @param string $key
-     * @param string|null $dataSource
-     *
-     * @return mixed
-     */
-    private function getDataFromSettingsStore(string $key, ?string &$dataSource)
+    private function getDataFromSettingsStore(string $key, ?string &$dataSource): mixed
     {
         $settingsStoreEntryData = null;
         $settingsStoreEntry = SettingsStore::get($key, $this->settingsStoreScope);
@@ -181,11 +143,11 @@ class LocationAwareConfigRepository
     /**
      * @param string $key
      * @param mixed $data
-     * @param null|callable $yamlStructureCallback
+     * @param callable|null $yamlStructureCallback
      *
      * @throws \Exception
      */
-    public function saveConfig(string $key, $data, $yamlStructureCallback = null)
+    public function saveConfig(string $key, mixed $data, callable $yamlStructureCallback = null): void
     {
         $writeLocation = $this->getWriteTarget();
 
@@ -203,13 +165,7 @@ class LocationAwareConfigRepository
         $this->stopMessengerWorkers();
     }
 
-    /**
-     * @param string $key
-     * @param array $data
-     *
-     * @throws \Exception
-     */
-    private function writeYaml(string $key, $data): void
+    private function writeYaml(string $key, array $data): void
     {
         $yamlFilename = $this->getVarConfigFile($key);
 
@@ -249,11 +205,6 @@ class LocationAwareConfigRepository
         }
     }
 
-    /**
-     * @param string $key
-     *
-     * @return string
-     */
     private function getVarConfigFile(string $key): string
     {
         return $this->storageDirectory . '/' . $key . '.yaml';
@@ -281,9 +232,6 @@ class LocationAwareConfigRepository
         $this->stopMessengerWorkers();
     }
 
-    /**
-     * @return array
-     */
     public function fetchAllKeys(): array
     {
         return array_unique(array_merge(
@@ -295,7 +243,7 @@ class LocationAwareConfigRepository
     private function invalidateConfigCache(): void
     {
         // invalidate container config cache if debug flag on kernel is set
-        $systemConfigFile = Config::locateConfigFile('system.yml');
+        $systemConfigFile = Config::locateConfigFile('system.yaml');
         if ($systemConfigFile) {
             touch($systemConfigFile);
         }

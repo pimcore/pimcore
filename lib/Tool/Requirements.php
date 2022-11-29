@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,7 +30,7 @@ final class Requirements
     /**
      * @return Check[]
      */
-    public static function checkFilesystem()
+    public static function checkFilesystem(): array
     {
         $checks = [];
 
@@ -71,7 +72,7 @@ final class Requirements
      *
      * @return Check[]
      */
-    public static function checkMysql(Connection $db)
+    public static function checkMysql(Connection $db): array
     {
         $checks = [];
 
@@ -348,7 +349,7 @@ final class Requirements
     /**
      * @return Check[]
      */
-    public static function checkExternalApplications()
+    public static function checkExternalApplications(): array
     {
         $checks = [];
 
@@ -484,7 +485,7 @@ final class Requirements
     /**
      * @return Check[]
      */
-    public static function checkPhp()
+    public static function checkPhp(): array
     {
         $checks = [];
 
@@ -703,7 +704,7 @@ final class Requirements
      *
      * @throws \Exception
      */
-    protected static function rscandir($base = '', &$data = [])
+    protected static function rscandir(string $base = '', array &$data = []): array
     {
         if (substr($base, -1, 1) != DIRECTORY_SEPARATOR) { //add trailing slash if it doesn't exists
             $base .= DIRECTORY_SEPARATOR;
@@ -726,11 +727,6 @@ final class Requirements
         return $data;
     }
 
-    /**
-     * @param Connection $db
-     *
-     * @return array
-     */
     public static function checkAll(Connection $db): array
     {
         return [

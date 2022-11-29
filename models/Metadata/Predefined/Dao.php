@@ -42,7 +42,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById($id = null)
+    public function getById(string $id = null)
     {
         if ($id != null) {
             $this->model->setId($id);
@@ -67,7 +67,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws \Exception
      */
-    public function getByNameAndLanguage($name = null, $language = null)
+    public function getByNameAndLanguage(string $name = null, string $language = null)
     {
         $list = new Listing();
         /** @var Model\Metadata\Predefined[] $definitions */
@@ -96,7 +96,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     public function save()
     {
         if (!$this->model->getId()) {
-            $this->model->setId(Uid::v4());
+            $this->model->setId((string)Uid::v4());
         }
         $ts = time();
         if (!$this->model->getCreationDate()) {
@@ -128,7 +128,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * {@inheritdoc}
      */
-    protected function prepareDataStructureForYaml(string $id, $data)
+    protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [
             'pimcore' => [

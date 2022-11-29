@@ -40,9 +40,6 @@ class PreAuthenticatedAdminSessionFactory implements AuthenticatorFactoryInterfa
         return $authenticatorId;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function create(ContainerBuilder $container, $id, $config, $userProvider, $defaultEntryPoint): array
     {
         $providerId = 'pimcore.security.authentication.provider.admin_pre_auth.' . $id;
@@ -74,9 +71,6 @@ class PreAuthenticatedAdminSessionFactory implements AuthenticatorFactoryInterfa
         return 0;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPosition(): string
     {
         return 'pre_auth';
@@ -90,9 +84,6 @@ class PreAuthenticatedAdminSessionFactory implements AuthenticatorFactoryInterfa
         return 'pimcore_admin_pre_auth';
     }
 
-    /**
-     * @param NodeDefinition $builder
-     */
     public function addConfiguration(NodeDefinition $builder)
     {
         // make sure only the pimcore_admin user provider can be used with this authentication provider

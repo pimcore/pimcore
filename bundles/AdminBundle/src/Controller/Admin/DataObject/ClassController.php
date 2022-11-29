@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -49,7 +50,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return JsonResponse
      */
-    public function getDocumentTypesAction(Request $request)
+    public function getDocumentTypesAction(Request $request): JsonResponse
     {
         $documentTypes = Document::getTypes();
         $typeItems = [];
@@ -69,7 +70,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return JsonResponse
      */
-    public function getAssetTypesAction(Request $request)
+    public function getAssetTypesAction(Request $request): JsonResponse
     {
         $assetTypes = Asset::getTypes();
         $typeItems = [];
@@ -89,7 +90,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return JsonResponse
      */
-    public function getTreeAction(Request $request)
+    public function getTreeAction(Request $request): JsonResponse
     {
         $defaultIcon = '/bundles/pimcoreadmin/img/flat-color-icons/class.svg';
 
@@ -226,7 +227,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return JsonResponse
      */
-    public function getAction(Request $request)
+    public function getAction(Request $request): JsonResponse
     {
         $class = DataObject\ClassDefinition::getById($request->get('id'));
         if (!$class) {
@@ -247,7 +248,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return JsonResponse
      */
-    public function getCustomLayoutAction(Request $request)
+    public function getCustomLayoutAction(Request $request): JsonResponse
     {
         $customLayout = DataObject\ClassDefinition\CustomLayout::getById($request->get('id'));
         if (!$customLayout) {
@@ -289,7 +290,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return JsonResponse
      */
-    public function addAction(Request $request)
+    public function addAction(Request $request): JsonResponse
     {
         $className = $request->get('className');
         $className = $this->correctClassname($className);
@@ -319,7 +320,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return JsonResponse
      */
-    public function addCustomLayoutAction(Request $request)
+    public function addCustomLayoutAction(Request $request): JsonResponse
     {
         $layoutId = $request->get('layoutIdentifier');
         $existingLayout = DataObject\ClassDefinition\CustomLayout::getById($layoutId);
@@ -356,7 +357,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return Response
      */
-    public function deleteAction(Request $request)
+    public function deleteAction(Request $request): Response
     {
         $class = DataObject\ClassDefinition::getById($request->get('id'));
         if ($class) {
@@ -373,7 +374,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return JsonResponse
      */
-    public function deleteCustomLayoutAction(Request $request)
+    public function deleteCustomLayoutAction(Request $request): JsonResponse
     {
         $customLayouts = new DataObject\ClassDefinition\CustomLayout\Listing();
         $id = $request->get('id');
@@ -397,7 +398,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return JsonResponse
      */
-    public function saveCustomLayoutAction(Request $request)
+    public function saveCustomLayoutAction(Request $request): JsonResponse
     {
         $customLayout = DataObject\ClassDefinition\CustomLayout::getById($request->get('id'));
         if (!$customLayout) {
@@ -444,7 +445,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @throws \Exception
      */
-    public function saveAction(Request $request)
+    public function saveAction(Request $request): JsonResponse
     {
         $class = DataObject\ClassDefinition::getById($request->get('id'));
         if (!$class) {
@@ -515,12 +516,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         }
     }
 
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
-    protected function correctClassname($name)
+    protected function correctClassname(string $name): string
     {
         $name = preg_replace('/[^a-zA-Z0-9_]+/', '', $name);
         $name = preg_replace('/^[0-9]+/', '', $name);
@@ -535,7 +531,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return Response
      */
-    public function importClassAction(Request $request)
+    public function importClassAction(Request $request): Response
     {
         $class = DataObject\ClassDefinition::getById($request->get('id'));
         if (!$class) {
@@ -562,7 +558,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return Response
      */
-    public function importCustomLayoutDefinitionAction(Request $request)
+    public function importCustomLayoutDefinitionAction(Request $request): Response
     {
         $success = false;
         $responseContent = [];
@@ -618,7 +614,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return JsonResponse
      */
-    public function getCustomLayoutDefinitionsAction(Request $request)
+    public function getCustomLayoutDefinitionsAction(Request $request): JsonResponse
     {
         $classIds = explode(',', $request->get('classId'));
         $list = new DataObject\ClassDefinition\CustomLayout\Listing();
@@ -646,7 +642,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return JsonResponse
      */
-    public function getAllLayoutsAction(Request $request)
+    public function getAllLayoutsAction(Request $request): JsonResponse
     {
         // get all classes
         $resultList = [];
@@ -699,7 +695,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return Response
      */
-    public function exportClassAction(Request $request)
+    public function exportClassAction(Request $request): Response
     {
         $id = $request->get('id');
         $class = DataObject\ClassDefinition::getById($id);
@@ -727,7 +723,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return Response
      */
-    public function exportCustomLayoutDefinitionAction(Request $request)
+    public function exportCustomLayoutDefinitionAction(Request $request): Response
     {
         $id = $request->get('id');
 
@@ -735,13 +731,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
             $customLayout = DataObject\ClassDefinition\CustomLayout::getById($id);
             if ($customLayout) {
                 $name = $customLayout->getName();
-                $customLayoutData = [
-                    'description' => $customLayout->getDescription(),
-                    'layoutDefinitions' => $customLayout->getLayoutDefinitions(),
-                    'default' => $customLayout->getDefault() ?: 0,
-                ];
-
-                $json = json_encode($customLayoutData, JSON_PRETTY_PRINT);
+                $json = DataObject\ClassDefinition\Service::generateCustomLayoutJson($customLayout);
 
                 $response = new Response($json);
                 $response->headers->set('Content-type', 'application/json');
@@ -768,7 +758,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return JsonResponse
      */
-    public function fieldcollectionGetAction(Request $request)
+    public function fieldcollectionGetAction(Request $request): JsonResponse
     {
         $fc = DataObject\Fieldcollection\Definition::getByKey($request->get('id'));
 
@@ -786,7 +776,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return JsonResponse
      */
-    public function fieldcollectionUpdateAction(Request $request)
+    public function fieldcollectionUpdateAction(Request $request): JsonResponse
     {
         try {
             $key = $request->get('key');
@@ -843,7 +833,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return Response
      */
-    public function importFieldcollectionAction(Request $request)
+    public function importFieldcollectionAction(Request $request): Response
     {
         $fieldCollection = DataObject\Fieldcollection\Definition::getByKey($request->get('id'));
 
@@ -869,7 +859,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return Response
      */
-    public function exportFieldcollectionAction(Request $request)
+    public function exportFieldcollectionAction(Request $request): Response
     {
         $fieldCollection = DataObject\Fieldcollection\Definition::getByKey($request->get('id'));
 
@@ -895,7 +885,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return JsonResponse
      */
-    public function fieldcollectionDeleteAction(Request $request)
+    public function fieldcollectionDeleteAction(Request $request): JsonResponse
     {
         $fc = DataObject\Fieldcollection\Definition::getByKey($request->get('id'));
         $fc->delete();
@@ -911,7 +901,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return JsonResponse
      */
-    public function fieldcollectionTreeAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function fieldcollectionTreeAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
         $list = new DataObject\Fieldcollection\Definition\Listing();
         $list = $list->load();
@@ -1018,7 +1008,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return JsonResponse
      */
-    public function fieldcollectionListAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function fieldcollectionListAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
         $user = \Pimcore\Tool\Admin::getCurrentUser();
         $currentLayoutId = $request->get('layoutId');
@@ -1071,7 +1061,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return JsonResponse
      */
-    public function getClassDefinitionForColumnConfigAction(Request $request)
+    public function getClassDefinitionForColumnConfigAction(Request $request): JsonResponse
     {
         $class = DataObject\ClassDefinition::getById($request->get('id'));
         if (!$class) {
@@ -1153,7 +1143,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return JsonResponse
      */
-    public function objectbrickGetAction(Request $request)
+    public function objectbrickGetAction(Request $request): JsonResponse
     {
         $fc = DataObject\Objectbrick\Definition::getByKey($request->get('id'));
 
@@ -1172,7 +1162,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return JsonResponse
      */
-    public function objectbrickUpdateAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function objectbrickUpdateAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
         try {
             $key = $request->get('key');
@@ -1238,7 +1228,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return JsonResponse
      */
-    public function importObjectbrickAction(Request $request)
+    public function importObjectbrickAction(Request $request): JsonResponse
     {
         $objectBrick = DataObject\Objectbrick\Definition::getByKey($request->get('id'));
 
@@ -1263,7 +1253,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return Response
      */
-    public function exportObjectbrickAction(Request $request)
+    public function exportObjectbrickAction(Request $request): Response
     {
         $objectBrick = DataObject\Objectbrick\Definition::getByKey($request->get('id'));
 
@@ -1289,7 +1279,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return JsonResponse
      */
-    public function objectbrickDeleteAction(Request $request)
+    public function objectbrickDeleteAction(Request $request): JsonResponse
     {
         $fc = DataObject\Objectbrick\Definition::getByKey($request->get('id'));
         $fc->delete();
@@ -1305,7 +1295,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return JsonResponse
      */
-    public function objectbrickTreeAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function objectbrickTreeAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
         $list = new DataObject\Objectbrick\Definition\Listing();
         $list = $list->load();
@@ -1431,9 +1421,14 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $event = new GenericEvent($this, [
             'list' => $definitions,
             'objectId' => $request->get('object_id'),
+            'forObjectEditor' => $forObjectEditor,
+            'layoutDefinitions' => $layoutDefinitions,
+            'fieldName' => $request->get('field_name'),
+            'object' => $object,
         ]);
         $eventDispatcher->dispatch($event, AdminEvents::CLASS_OBJECTBRICK_LIST_PRE_SEND_DATA);
         $definitions = $event->getArgument('list');
+        $layoutDefinitions = $event->getArgument('layoutDefinitions');
 
         if ($forObjectEditor) {
             return $this->adminJson(['objectbricks' => $definitions, 'layoutDefinitions' => $layoutDefinitions]);
@@ -1450,7 +1445,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return JsonResponse
      */
-    public function objectbrickListAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function objectbrickListAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
         $list = new DataObject\Objectbrick\Definition\Listing();
         $list = $list->load();
@@ -1521,7 +1516,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return JsonResponse
      */
-    public function bulkImportAction(Request $request)
+    public function bulkImportAction(Request $request): JsonResponse
     {
         $result = [];
 
@@ -1588,7 +1583,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @throws \Exception
      */
-    public function bulkCommitAction(Request $request)
+    public function bulkCommitAction(Request $request): JsonResponse
     {
         $data = json_decode($request->get('data'), true);
 
@@ -1693,7 +1688,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return Response
      */
-    public function bulkExportPrepareAction(Request $request)
+    public function bulkExportPrepareAction(Request $request): Response
     {
         $data = $request->get('data');
 
@@ -1709,9 +1704,9 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @param Request $request
      *
-     * @return Response
+     * @return JsonResponse
      */
-    public function bulkExportAction(Request $request)
+    public function bulkExportAction(Request $request): JsonResponse
     {
         $result = [];
 
@@ -1781,7 +1776,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return Response
      */
-    public function doBulkExportAction(Request $request)
+    public function doBulkExportAction(Request $request): Response
     {
         $session = Session::get('pimcore_objects');
         $list = $session->get('class_bulk_export_settings');
@@ -1790,30 +1785,32 @@ class ClassController extends AdminController implements KernelControllerEventIn
 
         foreach ($list as $item) {
             if ($item['type'] == 'fieldcollection') {
-                $fieldCollection = DataObject\Fieldcollection\Definition::getByKey($item['name']);
-                $key = $fieldCollection->getKey();
-                $fieldCollectionJson = json_decode(DataObject\ClassDefinition\Service::generateFieldCollectionJson($fieldCollection));
-                $fieldCollectionJson->key = $key;
-                $result['fieldcollection'][] = $fieldCollectionJson;
+                if ($fieldCollection = DataObject\Fieldcollection\Definition::getByKey($item['name'])) {
+                    $fieldCollectionJson = json_decode(DataObject\ClassDefinition\Service::generateFieldCollectionJson($fieldCollection));
+                    $fieldCollectionJson->key = $item['name'];
+                    $result['fieldcollection'][] = $fieldCollectionJson;
+                }
             } elseif ($item['type'] == 'class') {
-                $class = DataObject\ClassDefinition::getByName($item['name']);
-                $data = json_decode(json_encode($class));
-                unset($data->fieldDefinitions);
-                $result['class'][] = $data;
+                if ($class = DataObject\ClassDefinition::getByName($item['name'])) {
+                    $data = json_decode(DataObject\ClassDefinition\Service::generateClassDefinitionJson($class));
+                    $data->name = $item['name'];
+                    $result['class'][] = $data;
+                }
             } elseif ($item['type'] == 'objectbrick') {
-                $objectBrick = DataObject\Objectbrick\Definition::getByKey($item['name']);
-                $key = $objectBrick->getKey();
-                $objectBrickJson = json_decode(DataObject\ClassDefinition\Service::generateObjectBrickJson($objectBrick));
-                $objectBrickJson->key = $key;
-                $result['objectbrick'][] = $objectBrickJson;
+                if ($objectBrick = DataObject\Objectbrick\Definition::getByKey($item['name'])) {
+                    $objectBrickJson = json_decode(DataObject\ClassDefinition\Service::generateObjectBrickJson($objectBrick));
+                    $objectBrickJson->key = $item['name'];
+                    $result['objectbrick'][] = $objectBrickJson;
+                }
             } elseif ($item['type'] == 'customlayout') {
-                /** @var DataObject\ClassDefinition\CustomLayout $customLayout */
-                $customLayout = DataObject\ClassDefinition\CustomLayout::getById($item['name']);
-                $classId = $customLayout->getClassId();
-                $class = DataObject\ClassDefinition::getById($classId);
-                $customLayout = $customLayout->getObjectVars();
-                $customLayout['className'] = $class->getName();
-                $result['customlayout'][] = $customLayout;
+                if ($customLayout = DataObject\ClassDefinition\CustomLayout::getById($item['name'])) {
+                    $classId = $customLayout->getClassId();
+                    $class = DataObject\ClassDefinition::getById($classId);
+                    $customLayoutJson = json_decode(DataObject\ClassDefinition\Service::generateCustomLayoutJson($customLayout));
+                    $customLayoutJson->name = $customLayout->getName();
+                    $customLayoutJson->className = $class->getName();
+                    $result['customlayout'][] = $customLayoutJson;
+                }
             }
         }
 
@@ -1825,9 +1822,6 @@ class ClassController extends AdminController implements KernelControllerEventIn
         return $response;
     }
 
-    /**
-     * @param ControllerEvent $event
-     */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         if (!$event->isMainRequest()) {
@@ -1850,7 +1844,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return Response
      */
-    public function getFieldcollectionUsagesAction(Request $request)
+    public function getFieldcollectionUsagesAction(Request $request): Response
     {
         $key = $request->get('key');
         $result = [];
@@ -1882,7 +1876,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return Response
      */
-    public function getBrickUsagesAction(Request $request)
+    public function getBrickUsagesAction(Request $request): Response
     {
         $classId = $request->get('classId');
         $myclass = DataObject\ClassDefinition::getById($classId);
@@ -1914,7 +1908,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return Response
      */
-    public function getIconsAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function getIconsAction(Request $request, EventDispatcherInterface $eventDispatcher): Response
     {
         $classId = $request->get('classId');
 
@@ -1953,7 +1947,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return Response
      */
-    public function suggestClassIdentifierAction()
+    public function suggestClassIdentifierAction(): Response
     {
         $db = Db::get();
         $maxId = $db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM classes;');
@@ -1975,7 +1969,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return Response
      */
-    public function suggestCustomLayoutIdentifierAction(Request $request)
+    public function suggestCustomLayoutIdentifierAction(Request $request): Response
     {
         $classId = $request->get('classId');
 
@@ -2010,7 +2004,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return Response
      */
-    public function textLayoutPreviewAction(Request $request)
+    public function textLayoutPreviewAction(Request $request): Response
     {
         $objPath = $request->get('previewObject', '');
         $className = '\\Pimcore\\Model\\DataObject\\' . $request->get('className');
@@ -2057,7 +2051,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
      *
      * @return Response
      */
-    public function videoAllowedTypesAction(Request $request)
+    public function videoAllowedTypesAction(Request $request): Response
     {
         $videoDef = new DataObject\ClassDefinition\Data\Video();
         $res = [];

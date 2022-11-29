@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,21 +31,21 @@ class Folder extends Model\Asset
     /**
      * {@inheritdoc}
      */
-    protected $type = 'folder';
+    protected string $type = 'folder';
 
     /**
      * @internal
      *
      * @var Asset[]|null
      */
-    protected $children;
+    protected ?array $children = null;
 
     /**
      * @internal
      *
      * @var bool|null
      */
-    protected $hasChildren;
+    protected ?bool $hasChildren = null;
 
     /**
      * set the children of the document
@@ -53,7 +54,7 @@ class Folder extends Model\Asset
      *
      * @return $this
      */
-    public function setChildren($children)
+    public function setChildren(?array $children): static
     {
         $this->children = $children;
         if (is_array($children) && count($children) > 0) {
@@ -68,7 +69,7 @@ class Folder extends Model\Asset
     /**
      * @return Asset[]
      */
-    public function getChildren()
+    public function getChildren(): array
     {
         if ($this->children === null) {
             if ($this->getId()) {
@@ -86,10 +87,7 @@ class Folder extends Model\Asset
         return $this->children;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
         if (is_bool($this->hasChildren)) {
             if (($this->hasChildren && empty($this->children)) || (!$this->hasChildren && !empty($this->children))) {

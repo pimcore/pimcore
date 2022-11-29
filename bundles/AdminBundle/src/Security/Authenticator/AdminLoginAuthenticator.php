@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -57,7 +58,7 @@ class AdminLoginAuthenticator extends AdminAbstractAuthenticator implements Auth
             return $response;
         }
 
-        $event = new LoginRedirectEvent(self::PIMCORE_ADMIN_LOGIN, ['perspective' => strip_tags($request->get('perspective'))]);
+        $event = new LoginRedirectEvent(self::PIMCORE_ADMIN_LOGIN, ['perspective' => strip_tags($request->get('perspective', ''))]);
         $this->dispatcher->dispatch($event, AdminEvents::LOGIN_REDIRECT);
 
         $url = $this->router->generate($event->getRouteName(), $event->getRouteParams());
@@ -91,7 +92,7 @@ class AdminLoginAuthenticator extends AdminAbstractAuthenticator implements Auth
                         $user = new User($event->getUser());
                         $this->saveUserToSession($user);
                     } else {
-                        throw new AuthenticationException('Failed to authenticate with username and password');
+                        return false;
                     }
                 }
 

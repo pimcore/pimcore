@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,15 +22,9 @@ use Pimcore\Translation\TranslationItemCollection\TranslationItemCollection;
 
 class ExportService implements ExportServiceInterface
 {
-    /**
-     * @var ExportDataExtractorServiceInterface
-     */
-    private $exportDataExtractorService;
+    private ExportDataExtractorServiceInterface $exportDataExtractorService;
 
-    /**
-     * @var ExporterInterface
-     */
-    private $translationExporter;
+    private ExporterInterface $translationExporter;
 
     /**
      * ExportService constructor.
@@ -60,19 +55,11 @@ class ExportService implements ExportServiceInterface
         return $exportId;
     }
 
-    /**
-     * @return ExportDataExtractorServiceInterface
-     */
     public function getExportDataExtractorService(): ExportDataExtractorServiceInterface
     {
         return $this->exportDataExtractorService;
     }
 
-    /**
-     * @param ExportDataExtractorServiceInterface $exportDataExtractorService
-     *
-     * @return ExportService
-     */
     public function setExportDataExtractorService(ExportDataExtractorServiceInterface $exportDataExtractorService): ExportService
     {
         $this->exportDataExtractorService = $exportDataExtractorService;
@@ -80,19 +67,11 @@ class ExportService implements ExportServiceInterface
         return $this;
     }
 
-    /**
-     * @return ExporterInterface
-     */
     public function getTranslationExporter(): ExporterInterface
     {
         return $this->translationExporter;
     }
 
-    /**
-     * @param ExporterInterface $translationExporter
-     *
-     * @return ExportService
-     */
     public function setTranslationExporter(ExporterInterface $translationExporter): ExportService
     {
         $this->translationExporter = $translationExporter;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,7 +28,6 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /** @var String|null */
     private ?string $nonce = null;
 
     public const DEFAULT_OPT = 'default-src';
@@ -46,9 +46,6 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
 
     public const FRAME_OPT = 'frame-src';
 
-    /**
-     * @var array
-     */
     private array $allowedUrls = [
         self::CONNECT_OPT => [
             'https://liveupdate.pimcore.org/', // AdminBundle statistics & update-check service
@@ -81,9 +78,6 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
         ]);
     }
 
-    /**
-     * @return string
-     */
     public function getCspHeader(): string
     {
         $cspHeaderOptions = array_map(function ($k, $v) {
@@ -93,12 +87,6 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
         return implode(';', $cspHeaderOptions);
     }
 
-    /**
-     * @param string $key
-     * @param bool $flatten
-     *
-     * @return array|string
-     */
     private function getAllowedUrls(string $key, bool $flatten = true): array|string
     {
         if (!$flatten) {
@@ -109,12 +97,9 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
     }
 
     /**
-     * @param string $key
-     * @param array $value
-     *
      * @return $this
      */
-    public function addAllowedUrls(string $key, array $value): self
+    public function addAllowedUrls(string $key, array $value): static
     {
         if (!isset($this->allowedUrls[$key])) {
             $this->allowedUrls[$key] = [];
@@ -128,22 +113,15 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
     }
 
     /**
-     * @param string $key
-     * @param string $value
-     *
      * @return $this
      */
-    public function setCspHeader(string $key, string $value): self
+    public function setCspHeader(string $key, string $value): static
     {
         $this->cspHeaderOptions[$key] = $value;
 
         return $this;
     }
 
-    /**
-     *
-     * @return string
-     */
     public function getNonceHtmlAttribute(): string
     {
         return $this->config['admin_csp_header']['enabled'] ? ' nonce="' . $this->getNonce() . '"' : '';
@@ -151,8 +129,6 @@ class ContentSecurityPolicyHandler implements LoggerAwareInterface
 
     /**
      * Generates a random nonce parameter.
-     *
-     * @return string
      */
     private function getNonce(): string
     {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,7 +29,6 @@ use Symfony\Component\Security\Http\Authenticator\InteractiveAuthenticatorInterf
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\PreAuthenticatedUserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
-use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 
 /**
@@ -86,13 +86,8 @@ class PreAuthenticatedAdminSessionAuthenticator implements InteractiveAuthentica
 
     public function authenticate(Request $request): Passport
     {
-        $method = 'loadUserByIdentifier';
-        if (!method_exists($this->userProvider, 'loadUserByIdentifier')) {
-            $method = 'loadUserByUsername';
-        }
-
         return new SelfValidatingPassport(
-            new UserBadge($request->attributes->get('_pre_authenticated_username'), [$this->userProvider, $method]),
+            new UserBadge($request->attributes->get('_pre_authenticated_username'), $this->userProvider->loadUserByIdentifier(...)),
             [new PreAuthenticatedUserBadge()]
         );
     }
@@ -124,14 +119,5 @@ class PreAuthenticatedAdminSessionAuthenticator implements InteractiveAuthentica
                 $this->logger->info('Cleared pre-authenticated token due to an exception.', ['exception' => $exception]);
             }
         }
-    }
-
-    /**
-     * @deprecated
-     */
-    public function createAuthenticatedToken(PassportInterface $passport, string $firewallName): TokenInterface
-    {
-        /** @var Passport $passport */
-        return $this->createToken($passport, $firewallName);
     }
 }

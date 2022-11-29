@@ -31,50 +31,20 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class DocumentRenderer implements DocumentRendererInterface
 {
-    /**
-     * @var RequestHelper
-     */
-    private $requestHelper;
+    private RequestHelper $requestHelper;
 
-    /**
-     * @var ActionRenderer
-     */
-    private $actionRenderer;
+    private ActionRenderer $actionRenderer;
 
-    /**
-     * @var FragmentRendererInterface
-     */
-    private $fragmentRenderer;
+    private FragmentRendererInterface $fragmentRenderer;
 
-    /**
-     * @var DocumentRouteHandler
-     */
-    private $documentRouteHandler;
+    private DocumentRouteHandler $documentRouteHandler;
 
-    /**
-     * @var DocumentTargetingConfigurator
-     */
-    private $targetingConfigurator;
+    private DocumentTargetingConfigurator $targetingConfigurator;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @var LocaleService
-     */
-    private $localeService;
+    private LocaleService $localeService;
 
-    /**
-     * @param RequestHelper $requestHelper
-     * @param ActionRenderer $actionRenderer
-     * @param FragmentRendererInterface $fragmentRenderer
-     * @param DocumentRouteHandler $documentRouteHandler
-     * @param DocumentTargetingConfigurator $targetingConfigurator
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param LocaleService $localeService
-     */
     public function __construct(
         RequestHelper $requestHelper,
         ActionRenderer $actionRenderer,

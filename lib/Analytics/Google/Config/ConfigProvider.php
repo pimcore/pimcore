@@ -19,15 +19,9 @@ namespace Pimcore\Analytics\Google\Config;
 
 class ConfigProvider
 {
-    /**
-     * @var Config
-     */
-    private $config;
+    private ?Config $config = null;
 
-    /**
-     * @var array|null
-     */
-    private $configObject;
+    private ?array $configObject = null;
 
     /**
      * @param array|null $configObject
@@ -59,11 +53,6 @@ class ConfigProvider
     {
         $reportConfig = \Pimcore\Config::getReportConfig();
 
-        $config = $reportConfig['analytics'];
-        if (!is_array($config)) {
-            $config = [];
-        }
-
-        return $config;
+        return $reportConfig['analytics'] ?? [];
     }
 }

@@ -27,10 +27,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class DocumentTargetingOverrideHandler implements OverrideHandlerInterface
 {
-    /**
-     * @var DocumentTargetingConfigurator
-     */
-    private $documentTargetingConfigurator;
+    private DocumentTargetingConfigurator $documentTargetingConfigurator;
 
     public function __construct(DocumentTargetingConfigurator $documentTargetingConfigurator)
     {

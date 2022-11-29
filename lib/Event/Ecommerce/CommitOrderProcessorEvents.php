@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -46,7 +47,7 @@ final class CommitOrderProcessorEvents
     const POST_COMMIT_ORDER = 'pimcore.ecommerce.commitorderprocessor.postCommitOrder';
 
     /**
-     * @Event("Pimcore\Event\Model\Ecommerce\CommitOrderProcessorEvent")
+     * @Event("Pimcore\Event\Model\Ecommerce\SendConfirmationMailEvent")
      *
      * @var string
      */

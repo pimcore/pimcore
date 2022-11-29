@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -137,10 +138,6 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
         }
     }
 
-    /**
-     * @param Request $request
-     * @param Document $page
-     */
     protected function setValuesToDocument(Request $request, Document $page): void
     {
         $this->addSettingsToDocument($request, $page);
@@ -286,7 +283,7 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
 
         $returnValue = [];
 
-        $storedValues = $this->getStoredProcessingOptions($request->get('id'));
+        $storedValues = $this->getStoredProcessingOptions((int) $request->query->get('id'));
 
         foreach ($options as $option) {
             $value = $option['default'];
@@ -306,26 +303,20 @@ abstract class PrintpageControllerBase extends DocumentControllerBase
         return $this->adminJson(['options' => $returnValue]);
     }
 
-    /**
-     * @param int $documentId
-     *
-     * @return array|mixed
-     */
-    private function getStoredProcessingOptions($documentId): mixed
+    private function getStoredProcessingOptions(int $documentId): array
     {
         $filename = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-processingoptions-' . $documentId . '_' . $this->getAdminUser()->getId() . '.psf';
         if (file_exists($filename)) {
-            return \Pimcore\Tool\Serialize::unserialize(file_get_contents($filename));
-        } else {
-            return [];
+            $options = \Pimcore\Tool\Serialize::unserialize(file_get_contents($filename));
+            if (is_array($options)) {
+                return $options;
+            }
         }
+
+        return [];
     }
 
-    /**
-     * @param int $documentId
-     * @param array $options
-     */
-    private function saveProcessingOptions(int $documentId, array $options)
+    private function saveProcessingOptions(int $documentId, array $options): void
     {
         file_put_contents(PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-processingoptions-' . $documentId . '_' . $this->getAdminUser()->getId() . '.psf', \Pimcore\Tool\Serialize::serialize($options));
     }

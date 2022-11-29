@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -38,10 +39,7 @@ class ImportConfigListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param ClassDefinitionEvent $event
-     */
-    public function onClassDelete($event)
+    public function onClassDelete(ClassDefinitionEvent $event)
     {
         $class = $event->getClassDefinition();
         $classId = $class->getId();
@@ -56,10 +54,7 @@ class ImportConfigListener implements EventSubscriberInterface
         $this->cleanupImportConfigs('classId = ' . $db->quote($classId));
     }
 
-    /**
-     * @param UserRoleEvent $event
-     */
-    public function onUserDelete($event)
+    public function onUserDelete(UserRoleEvent $event)
     {
         $user = $event->getUserRole();
         $userId = $user->getId();

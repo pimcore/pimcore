@@ -46,15 +46,9 @@ class NotificationServiceFilterParser
 
     const OPERATOR_LT = 'lt';
 
-    /**
-     * @var Request
-     */
-    private $request;
+    private Request $request;
 
-    /**
-     * @var array
-     */
-    private $properties;
+    private array $properties;
 
     /**
      * ExtJSFilterParser constructor.
@@ -70,9 +64,6 @@ class NotificationServiceFilterParser
         ];
     }
 
-    /**
-     * @return array
-     */
     public function parse(): array
     {
         $result = [];
@@ -100,21 +91,17 @@ class NotificationServiceFilterParser
     }
 
     /**
-     * @param array $item
-     *
-     * @return array
-     *
      * @throws \Exception
      */
     private function parseString(array $item): array
     {
         $result = null;
         $property = $this->getDbProperty($item);
-        $value = $item[self::KEY_VALUE];
+        $value = $item[self::KEY_VALUE] ?? '';
 
         switch ($item[self::KEY_OPERATOR]) {
             case self::OPERATOR_LIKE:
-                $result = ["{$property} LIKE ?", ["%{$value}%"]];
+                $result = ["{$property} LIKE ?", "%{$value}%"];
 
                 break;
         }
@@ -127,10 +114,6 @@ class NotificationServiceFilterParser
     }
 
     /**
-     * @param array $item
-     *
-     * @return array
-     *
      * @throws \Exception
      */
     private function parseDate(array $item): array
@@ -161,11 +144,6 @@ class NotificationServiceFilterParser
         return $result;
     }
 
-    /**
-     * @param array $item
-     *
-     * @return string
-     */
     private function getDbProperty(array $item): string
     {
         $property = $item[self::KEY_PROPERTY];

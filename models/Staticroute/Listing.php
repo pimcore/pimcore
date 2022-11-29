@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -34,12 +35,12 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
     /**
      * @var \Pimcore\Model\Staticroute[]|null
      */
-    protected $routes = null;
+    protected ?array $routes = null;
 
     /**
      * @return \Pimcore\Model\Staticroute[]
      */
-    public function getRoutes()
+    public function getRoutes(): array
     {
         if ($this->routes === null) {
             $this->getDao()->loadList();
@@ -53,7 +54,7 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
      *
      * @return $this
      */
-    public function setRoutes($routes)
+    public function setRoutes(?array $routes): static
     {
         $this->routes = $routes;
 
@@ -63,7 +64,7 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
     /**
      * @return Model\Staticroute[]
      */
-    public function load()
+    public function load(): array
     {
         return $this->getRoutes();
     }
