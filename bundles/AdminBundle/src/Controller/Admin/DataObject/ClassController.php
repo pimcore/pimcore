@@ -1145,8 +1145,6 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function objectbrickGetAction(Request $request): JsonResponse
     {
-        $this->checkPermission('objectbricks');
-
         $fc = DataObject\Objectbrick\Definition::getByKey($request->get('id'));
 
         $isWriteable = $fc->isWritable();
@@ -1166,8 +1164,6 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function objectbrickUpdateAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
-        $this->checkPermission('objectbricks');
-
         try {
             $key = $request->get('key');
             $title = $request->get('title');
@@ -1234,8 +1230,6 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function importObjectbrickAction(Request $request): JsonResponse
     {
-        $this->checkPermission('objectbricks');
-
         $objectBrick = DataObject\Objectbrick\Definition::getByKey($request->get('id'));
 
         $data = file_get_contents($_FILES['Filedata']['tmp_name']);
@@ -1287,8 +1281,6 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function objectbrickDeleteAction(Request $request): JsonResponse
     {
-        $this->checkPermission('objectbricks');
-
         $fc = DataObject\Objectbrick\Definition::getByKey($request->get('id'));
         $fc->delete();
 
@@ -1305,8 +1297,6 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function objectbrickTreeAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
-        $this->checkPermission('objectbricks');
-
         $list = new DataObject\Objectbrick\Definition\Listing();
         $list = $list->load();
 
@@ -1457,8 +1447,6 @@ class ClassController extends AdminController implements KernelControllerEventIn
      */
     public function objectbrickListAction(Request $request, EventDispatcherInterface $eventDispatcher): JsonResponse
     {
-        $this->checkPermission('objectbricks');
-
         $list = new DataObject\Objectbrick\Definition\Listing();
         $list = $list->load();
 

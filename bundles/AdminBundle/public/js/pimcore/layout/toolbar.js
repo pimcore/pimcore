@@ -806,8 +806,8 @@
                              handler: this.editFieldcollections
                          });
                      }
-
-                     if (perspectiveCfg.inToolbar("settings.objects.objectbricks") && user.isAllowed("objectbricks")) {
+ 
+                     if (perspectiveCfg.inToolbar("settings.objects.objectbricks")) {
                          objectMenu.menu.items.push({
                              text: t("objectbricks"),
                              iconCls: "pimcore_nav_icon_objectbricks",
