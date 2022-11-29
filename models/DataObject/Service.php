@@ -2116,8 +2116,8 @@ class Service extends Model\Element\Service
         $currentVersion = \Pimcore\Version::getVersion();
 
         if(version_compare($currentVersion, "11", "<")) {
-            if(!str_starts_with($fieldName, 'o_'
-                && in_array($fieldName, self::getVersionDependentSystemFields()))) {
+            if(!str_starts_with($fieldName, 'o_')
+                && in_array($fieldName, self::getVersionDependentSystemFields())) {
                 return 'o_' . $fieldName;
             }
         }
