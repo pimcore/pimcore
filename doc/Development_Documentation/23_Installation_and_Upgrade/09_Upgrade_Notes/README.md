@@ -1,7 +1,7 @@
 # Upgrade Notes
 
 ## 10.6.0
-- [AreabrickManagerInterface] The `enable`, `disable`, `isEnabled` and `getState` methods of `Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface` are deprecated as maintaining state of extensions is deprecated. This impacts `\Pimcore\Document\Editable\EditableHandler::isEnabled` method which is also deprecated.
+- [AreabrickManagerInterface] The `enable`, `disable`, `isEnabled` and `getState` methods of `Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface` are deprecated as maintaining state of extensions is deprecated. This impacts `\Pimcore\Document\Editable\EditableHandler::isBrickEnabled()` method which is also deprecated.
 
 ## 10.5.10
 - [DataObject] Deprecated: Loading non-Concrete objects with the Concrete class will not be possible in Pimcore 11.
