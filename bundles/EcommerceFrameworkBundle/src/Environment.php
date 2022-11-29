@@ -150,7 +150,7 @@ class Environment implements EnvironmentInterface
         $this->currentAssortmentSubTenant = null;
         $this->currentCheckoutTenant = null;
         $this->currentTransientCheckoutTenant = null;
-        $this->useGuestCart = false;
+        $this->useGuestCart = null;
     }
 
     public function setDefaultCurrency(Currency $currency)

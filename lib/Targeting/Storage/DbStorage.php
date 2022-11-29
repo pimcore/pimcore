@@ -80,7 +80,7 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
 
         $this->addExpiryParam($qb, $scope);
 
-        $stmt = $qb->execute();
+        $stmt = $qb->executeQuery();
         $data = [];
 
         if ($stmt instanceof Result) {
@@ -114,7 +114,7 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
 
         $this->addExpiryParam($qb, $scope);
 
-        $stmt = $qb->execute();
+        $stmt = $qb->executeQuery();
         $result = 0;
 
         if ($stmt instanceof Result) {
@@ -179,7 +179,7 @@ EOF;
 
         $this->addExpiryParam($qb, $scope);
 
-        $stmt = $qb->execute();
+        $stmt = $qb->executeQuery();
         $result = false;
 
         if ($stmt instanceof Result) {
@@ -304,7 +304,7 @@ EOF;
 
         $this->addExpiryParam($qb, $scope);
 
-        $stmt = $qb->execute();
+        $stmt = $qb->executeQuery();
 
         if ($stmt instanceof Result) {
             return $this->convertToDateTime($stmt->fetchOne());

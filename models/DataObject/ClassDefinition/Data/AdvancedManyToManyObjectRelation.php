@@ -43,9 +43,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     /**
      * @internal
      *
-     * @var string|null
+     * @var array|string|null
      */
-    public ?string $visibleFields = null;
+    public array|string|null $visibleFields = null;
 
     /**
      * @internal
@@ -649,7 +649,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
         return $this;
     }
 
-    public function getVisibleFields(): ?string
+    public function getVisibleFields(): array|string|null
     {
         return $this->visibleFields;
     }

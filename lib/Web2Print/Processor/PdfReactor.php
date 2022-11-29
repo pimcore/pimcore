@@ -88,7 +88,7 @@ class PdfReactor extends Processor
     /**
      * @internal
      */
-    public function getPdfFromString(string $html, array $params = [], bool $returnFilePath = false): bool|string
+    public function getPdfFromString(string $html, array $params = [], bool $returnFilePath = false): string
     {
         $pdfreactor = $this->getClient();
 
@@ -117,7 +117,7 @@ class PdfReactor extends Processor
     /**
      * @internal
      */
-    protected function buildPdf(Document\PrintAbstract $document, object $config): bool|string
+    protected function buildPdf(Document\PrintAbstract $document, object $config): string
     {
         $this->includeApi();
 

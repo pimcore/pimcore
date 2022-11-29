@@ -30,7 +30,7 @@ class Price implements PriceInterface
 
     private Decimal $netAmount;
 
-    private string $taxEntryCombinationMode = TaxEntry::CALCULATION_MODE_COMBINE;
+    private ?string $taxEntryCombinationMode = TaxEntry::CALCULATION_MODE_COMBINE;
 
     private bool $minPrice;
 
@@ -122,7 +122,7 @@ class Price implements PriceInterface
     /**
      * {@inheritdoc}
      */
-    public function getTaxEntryCombinationMode(): string
+    public function getTaxEntryCombinationMode(): ?string
     {
         return $this->taxEntryCombinationMode;
     }
@@ -162,7 +162,7 @@ class Price implements PriceInterface
     /**
      * {@inheritdoc}
      */
-    public function setTaxEntryCombinationMode(string $taxEntryCombinationMode): void
+    public function setTaxEntryCombinationMode(?string $taxEntryCombinationMode = null): void
     {
         $this->taxEntryCombinationMode = $taxEntryCombinationMode;
     }

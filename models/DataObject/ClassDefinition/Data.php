@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * Pimcore
@@ -44,7 +43,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     public string $style;
 
-    public array $permissions;
+    public array|string $permissions;
 
     public string $datatype = 'data';
 
@@ -172,7 +171,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this->mandatory;
     }
 
-    public function getPermissions(): array
+    public function getPermissions(): array|string
     {
         return $this->permissions;
     }
@@ -198,7 +197,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
-    public function setPermissions(array $permissions): static
+    public function setPermissions(array|string $permissions): static
     {
         $this->permissions = $permissions;
 

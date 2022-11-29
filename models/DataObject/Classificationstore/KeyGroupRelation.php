@@ -40,7 +40,7 @@ final class KeyGroupRelation extends Model\AbstractModel
      *
      * @var string
      */
-    protected string $description;
+    protected string $description = '';
 
     /**
      * Field definition

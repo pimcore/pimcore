@@ -153,7 +153,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public ?array $permissionEdit = null;
 
     /**
-     * @param mixed $data
+     * @param mixed $localizedField
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
@@ -162,16 +162,16 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): array
+    public function getDataForEditmode(mixed $localizedField, DataObject\Concrete $object = null, array $params = []): array
     {
         $fieldData = [];
         $metaData = [];
 
-        if (!$data instanceof DataObject\Localizedfield) {
+        if (!$localizedField instanceof DataObject\Localizedfield) {
             return [];
         }
 
-        $result = $this->doGetDataForEditMode($data, $object, $fieldData, $metaData, 1, $params);
+        $result = $this->doGetDataForEditMode($localizedField, $object, $fieldData, $metaData, 1, $params);
 
         // replace the real data with the data for the editmode
         foreach ($result['data'] as $language => &$data) {
@@ -185,7 +185,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                     $childData->setContextualData($ownerType, $ownerName, $index, $language, null, null, $fieldDefinition);
                     $value = $fieldDefinition->getDataForEditmode($childData, $object, $params);
                 } else {
-                    $value = $fieldDefinition->getDataForEditmode($value, $object, array_merge($params, $data->getDao()->getFieldDefinitionParams($fieldDefinition->getName(), $language)));
+                    $value = $fieldDefinition->getDataForEditmode($value, $object, array_merge($params, $localizedField->getDao()->getFieldDefinitionParams($fieldDefinition->getName(), $language)));
                 }
             }
         }
