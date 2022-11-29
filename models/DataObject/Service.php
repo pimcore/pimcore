@@ -58,7 +58,7 @@ class Service extends Model\Element\Service
     protected static array $systemFields = ['path', 'key', 'id', 'published', 'creationDate', 'modificationDate', 'fullpath'];
 
     /**
-     * TODO Bc layer, remove with Pimcore 12
+     * TODO Bc layer for bundles to support both Pimcore 10 & 11, remove with Pimcore 12
      * @var string[]
      */
     protected static array $versionDependentSystemFields = ['id', 'parentId', 'type', 'key', 'path', 'index', 'published',
@@ -1971,20 +1971,39 @@ class Service extends Model\Element\Service
         return null;
     }
 
+    public static function getVersionDependentSystemFields(): array
+    {
+        return self::$versionDependentSystemFields;
+    }
+
     /**
-     * TODO Bc layer, remove with Pimcore 12
+     * TODO Bc layer for bundles to support both Pimcore 10 & 11, remove with Pimcore 12
+     *
+     * Returns the version dependent fieldname for all system fields defined in $versionDependentSystemFields.
+     *
+     * E.g.
+     * Pass o_id in Pimcore 10, get o_id
+     * Pass id in Pimcore 10, get o_id
+     * Pass o_id in Pimcore 11, get id
+     * Pass id in Pimcore 11, get id
+     *
      */
-    public function getVersionDependentSystemFieldName(string $fieldName): string {
+    public static function getVersionDependentSystemFieldName(string $fieldName): string {
         $currentVersion = \Pimcore\Version::getVersion();
-        if(str_starts_with($fieldName, 'o_') && version_compare($currentVersion, "11", ">=")) {
-            $newFieldName = substr($fieldName, 2);
-            if(in_array($newFieldName, $this->versionDependentSystemFields)) {
+
+        //@TODO change to version_compare
+        if(str_starts_with($currentVersion, '11.')) {
+            $newFieldName = $fieldName;
+            if(str_starts_with($newFieldName, 'o_')) {
+                $newFieldName = substr($newFieldName, 2);
+            }
+            if(in_array($newFieldName, self::getVersionDependentSystemFields())) {
                 return $newFieldName;
             }
         }
         else if(!str_starts_with($fieldName, 'o_')
                 && version_compare($currentVersion, "11", "<")
-                && in_array($fieldName, $this->versionDependentSystemFields)) {
+                && in_array($fieldName, self::getVersionDependentSystemFields())) {
             return 'o_' . $fieldName;
         }
         return $fieldName;
