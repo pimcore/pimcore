@@ -29,8 +29,9 @@ class Input extends Data implements
     VarExporterInterface,
     NormalizerInterface
 {
-    use Model\DataObject\ClassDefinition\Data\Extension\Text;
-    use Model\DataObject\Traits\SimpleComparisonTrait;
+    use DataObject\ClassDefinition\Data\Extension\Text;
+    use DataObject\Traits\DataWidthTrait;
+    use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
     use Model\DataObject\Traits\DefaultValueTrait;
@@ -40,22 +41,11 @@ class Input extends Data implements
      * Static type of this element
      *
      * @internal
-     *
-     * @var string
      */
     public string $fieldtype = 'input';
 
     /**
      * @internal
-     *
-     * @var string|int
-     */
-    public string|int $width = 0;
-
-    /**
-     * @internal
-     *
-     * @var string|null
      */
     public ?string $defaultValue = null;
 
@@ -81,22 +71,16 @@ class Input extends Data implements
      * Column length
      *
      * @internal
-     *
-     * @var int
      */
     public int $columnLength = 190;
 
     /**
      * @internal
-     *
-     * @var string
      */
     public string $regex = '';
 
     /**
      * @internal
-     *
-     * @var array
      */
     public array $regexFlags = [];
 
@@ -109,21 +93,6 @@ class Input extends Data implements
      * @internal
      */
     public bool $showCharCount = false;
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width): static
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
 
     /**
      * @param mixed $data

@@ -36,6 +36,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         getQueryColumnType as public genericGetQueryColumnType;
     }
     use Model\DataObject\Traits\DefaultValueTrait;
+    use Model\DataObject\Traits\DataWidthTrait;
 
     const DECIMAL_SIZE_DEFAULT = 64;
 
@@ -49,13 +50,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @var string
      */
     public string $fieldtype = 'quantityValue';
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $width = 0;
 
     /**
      * @internal
@@ -167,19 +161,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         'value' => 'double',
         'unit' => 'varchar(64)',
     ];
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width)
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-    }
 
     public function getUnitWidth(): int|string
     {

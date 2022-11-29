@@ -26,45 +26,33 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
 
     /**
      * @internal
-     *
-     * @var string
      */
-    public string $name;
+    public ?string $name = null;
 
     /**
      * @internal
-     *
-     * @var string
      */
-    public string $type;
+    public ?string $type = null;
 
     /**
      * @internal
-     *
-     * @var string
      */
-    public string $region;
+    public ?string $region = null;
 
     /**
      * @internal
-     *
-     * @var string
      */
-    public string $title;
+    public ?string $title = null;
 
     /**
      * @internal
-     *
-     * @var string|int
      */
-    public string|int $width = 0;
+    public string|int|null $width = 0;
 
     /**
      * @internal
-     *
-     * @var string|int
      */
-    public string|int $height = 0;
+    public string|int|null $height = 0;
 
     /**
      * @internal
@@ -75,17 +63,13 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $collapsed = false;
 
     /**
      * @internal
-     *
-     * @var string
      */
-    public string $bodyStyle;
+    public ?string $bodyStyle = null;
 
     /**
      * @internal
@@ -96,22 +80,16 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
 
     /**
      * @internal
-     *
-     * @var array|string
      */
-    public array|string $permissions;
+    public array|string|null $permissions;
 
     /**
      * @internal
-     *
-     * @var array
      */
     public array $children = [];
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $locked = false;
 
@@ -135,12 +113,12 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
         return $this->title;
     }
 
-    public function getWidth(): int|string
+    public function getWidth(): int|string|null
     {
         return $this->width;
     }
 
-    public function getHeight(): int|string
+    public function getHeight(): int|string|null
     {
         return $this->height;
     }
@@ -183,7 +161,7 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
         return $this;
     }
 
-    public function setWidth(int|string $width): static
+    public function setWidth(int|string|null $width): static
     {
         if (is_numeric($width)) {
             $width = (int)$width;
@@ -193,7 +171,7 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
         return $this;
     }
 
-    public function setHeight(int|string $height): static
+    public function setHeight(int|string|null $height): static
     {
         if (is_numeric($height)) {
             $height = (int)$height;

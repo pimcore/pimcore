@@ -37,66 +37,38 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      * Static type of this element
      *
      * @internal
-     *
-     * @var string
      */
     public string $fieldtype = 'localizedfields';
 
     /**
      * @internal
-     *
-     * @var array
      */
     public array $children = [];
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     public ?string $name = null;
 
     /**
      * @internal
-     *
-     * @var string
      */
-    public string $region;
+    public string|null $region = null;
 
     /**
      * @internal
-     *
-     * @var string
      */
-    public string $layout;
+    public string|null $layout = null;
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     public ?string $title = null;
 
     /**
      * @internal
-     *
-     * @var string|int
      */
-    public string|int $width = 0;
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $height = 0;
-
-    /**
-     * @internal
-     *
-     * @var int
-     */
-    public int $maxTabs;
+    public int|null $maxTabs = null;
 
     /**
      * @internal
@@ -110,45 +82,33 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
     /**
      * @internal
-     *
-     * @var string|null
      */
     public ?string $tabPosition = 'top';
 
     /**
      * @internal
-     *
-     * @var int
      */
-    public int $hideLabelsWhenTabsReached;
+    public ?int $hideLabelsWhenTabsReached = null;
 
     /**
      * contains further localized field definitions if there are more than one localized fields in on class
      *
      * @internal
-     *
-     * @var array
      */
     protected array $referencedFields = [];
 
     /**
      * @internal
-     *
-     * @var array|null
      */
     public ?array $fieldDefinitionsCache = null;
 
     /**
      * @internal
-     *
-     * @var array|null
      */
     public ?array $permissionView = null;
 
     /**
      * @internal
-     *
-     * @var array|null
      */
     public ?array $permissionEdit = null;
 
@@ -753,21 +713,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $dependencies;
     }
 
-    public function setHeight(int|string $height): static
-    {
-        if (is_numeric($height)) {
-            $height = (int)$height;
-        }
-        $this->height = $height;
-
-        return $this;
-    }
-
-    public function getHeight(): int|string
-    {
-        return $this->height;
-    }
-
     public function setLayout(mixed $layout): static
     {
         $this->layout = $layout;
@@ -818,21 +763,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function getRegion(): string
     {
         return $this->region;
-    }
-
-    public function setWidth(int|string $width): static
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
     }
 
     /**

@@ -68,7 +68,7 @@ final class User extends User\UserRole
 
     protected ?string $keyBindings = null;
 
-    protected array $twoFactorAuthentication = [];
+    protected ?array $twoFactorAuthentication = [];
 
     public function getPassword(): ?string
     {

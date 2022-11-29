@@ -41,6 +41,7 @@ class Select extends Data implements
     use DataObject\Traits\SimpleNormalizerTrait;
     use DataObject\Traits\DefaultValueTrait;
     use DataObject\ClassDefinition\DynamicOptionsProvider\SelectionProviderTrait;
+    use DataObject\Traits\DataWidthTrait;
 
     /**
      * Static type of this element
@@ -59,13 +60,6 @@ class Select extends Data implements
      * @var array|null
      */
     public ?array $options = null;
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $width = 0;
 
     /**
      * @internal
@@ -194,21 +188,6 @@ class Select extends Data implements
         } else {
             $this->options = null;
         }
-
-        return $this;
-    }
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width): static
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
 
         return $this;
     }
