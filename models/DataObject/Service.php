@@ -58,6 +58,15 @@ class Service extends Model\Element\Service
     protected static array $systemFields = ['path', 'key', 'id', 'published', 'creationDate', 'modificationDate', 'fullpath'];
 
     /**
+     * TODO Bc layer, remove with Pimcore 12
+     * @var string[]
+     */
+    protected static array $versionDependentSystemFields = ['id', 'parentId', 'type', 'key', 'path', 'index', 'published',
+                                                            'creationDate', 'modificationDate', 'userOwner', 'userModification',
+                                                            'classId', 'childrenSortBy', 'className', 'childrenSortOrder',
+                                                            'versionCount'];
+
+    /**
      * @param Model\User|null $user
      */
     public function __construct(Model\User $user = null)
@@ -1960,5 +1969,24 @@ class Service extends Model\Element\Service
         }
 
         return null;
+    }
+
+    /**
+     * TODO Bc layer, remove with Pimcore 12
+     */
+    public function getVersionDependentSystemFieldName(string $fieldName): string {
+        $currentVersion = \Pimcore\Version::getVersion();
+        if(str_starts_with($fieldName, 'o_') && version_compare($currentVersion, "11", ">=")) {
+            $newFieldName = substr($fieldName, 2);
+            if(in_array($newFieldName, $this->versionDependentSystemFields)) {
+                return $newFieldName;
+            }
+        }
+        else if(!str_starts_with($fieldName, 'o_')
+                && version_compare($currentVersion, "11", "<")
+                && in_array($fieldName, $this->versionDependentSystemFields)) {
+            return 'o_' . $fieldName;
+        }
+        return $fieldName;
     }
 }
