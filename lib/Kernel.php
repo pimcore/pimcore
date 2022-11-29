@@ -44,6 +44,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
 
 abstract class Kernel extends SymfonyKernel
 {
@@ -314,6 +315,7 @@ abstract class Kernel extends SymfonyKernel
             new FrameworkBundle(),
             new SecurityBundle(),
             new TwigBundle(),
+            new TwigExtraBundle(),
             new MonologBundle(),
             new DoctrineBundle(),
             new DoctrineMigrationsBundle(),

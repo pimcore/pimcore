@@ -119,3 +119,5 @@ abstract class AbstractPropertiesTest extends ModelTestCase
         $this->assertEquals($asset->getId(), $assetProperty->getId());
     }
 }
+
+@class_alias(AbstractPropertiesTest::class, 'Pimcore\Tests\Support\Test\AbstractPropertiesTest');

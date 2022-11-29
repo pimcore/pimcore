@@ -338,3 +338,5 @@ class Pimcore extends Module
         return $this->groups;
     }
 }
+
+@class_alias(Pimcore::class, 'Pimcore\Tests\Support\Helper\Pimcore');
