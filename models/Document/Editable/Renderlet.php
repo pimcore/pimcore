@@ -173,7 +173,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
         $data = \Pimcore\Tool\Serialize::unserialize($data);
 
         $this->id = $data['id'];
-        $this->type = $data['type'];
+        $this->type = (string) $data['type'];
         $this->subtype = $data['subtype'];
 
         $this->setElement();
@@ -204,7 +204,9 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
      */
     public function setElement(): static
     {
-        $this->o = Element\Service::getElementById($this->type, $this->id);
+        if($this->type && $this->id) {
+            $this->o = Element\Service::getElementById($this->type, $this->id);
+        }
 
         return $this;
     }

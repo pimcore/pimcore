@@ -30,7 +30,7 @@ class Document extends Url
 
     protected string $documentType = '';
 
-    protected string $realFullPath;
+    protected string $realFullPath = '';
 
     protected array $customSettings = [];
 

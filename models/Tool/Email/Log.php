@@ -31,10 +31,8 @@ class Log extends Model\AbstractModel
 {
     /**
      * EmailLog Id
-     *
-     * @var int
      */
-    protected int $id;
+    protected ?int $id = null;
 
     /**
      * Id of the email document or null if no document was given
@@ -174,12 +172,10 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the email log id
-     *
-     * @return int
      */
-    public function getId(): int
+    public function getId(): ?int
     {
-        return (int)$this->id;
+        return $this->id;
     }
 
     public function setId(int $id): static

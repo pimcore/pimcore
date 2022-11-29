@@ -30,7 +30,7 @@ use Pimcore\Model\DataObject\Concrete;
 
 abstract class AbstractCart extends AbstractModel implements CartInterface
 {
-    protected int $userId;
+    protected ?int $userId = null;
 
     /**
      * @var CartItemInterface[]|null

@@ -35,7 +35,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @var int
      */
-    protected int $id;
+    protected ?int $id;
 
     /**
      * The ALT text of the image
@@ -425,7 +425,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
 
     public function getImage(): Asset\Image|ElementDescriptor|ElementInterface|null
     {
-        if (!$this->image) {
+        if (!$this->image && $this->id) {
             $this->image = Asset\Image::getById($this->getId());
         }
 
@@ -450,9 +450,9 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this;
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
-        return (int) $this->id;
+        return $this->id;
     }
 
     public function getThumbnail(array|string|Asset\Image\Thumbnail\Config $conf, bool $deferred = true): Asset\Image\Thumbnail|string

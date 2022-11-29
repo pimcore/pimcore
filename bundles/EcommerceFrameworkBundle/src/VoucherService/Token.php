@@ -39,7 +39,7 @@ class Token extends AbstractModel
 
     public int $usages;
 
-    public int $timestamp;
+    public string $timestamp;
 
     public static function getByCode(string $code): ?Token
     {
@@ -135,12 +135,12 @@ class Token extends AbstractModel
         return false;
     }
 
-    public function getTimestamp(): int
+    public function getTimestamp(): string
     {
         return $this->timestamp;
     }
 
-    public function setTimestamp(int $timestamp)
+    public function setTimestamp(string $timestamp)
     {
         $this->timestamp = $timestamp;
     }

@@ -30,7 +30,7 @@ class Reservation extends AbstractModel
 
     public ?string $token = null;
 
-    public ?int $timestamp = null;
+    public ?string $timestamp = null;
 
     public ?string $cart_id = null;
 
@@ -218,12 +218,12 @@ class Reservation extends AbstractModel
         $this->id = $id;
     }
 
-    public function getTimestamp(): ?int
+    public function getTimestamp(): ?string
     {
         return $this->timestamp;
     }
 
-    public function setTimestamp(?int $timestamp): void
+    public function setTimestamp(?string $timestamp): void
     {
         $this->timestamp = $timestamp;
     }

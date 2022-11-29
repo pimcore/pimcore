@@ -40,11 +40,11 @@ interface PaymentInterface
     /**
      * Handles response of payment provider and creates payment status object
      *
-     * @param StatusInterface $response
+     * @param mixed $response
      *
      * @return StatusInterface
      */
-    public function handleResponse(StatusInterface $response): StatusInterface;
+    public function handleResponse(mixed $response): StatusInterface;
 
     /**
      * Returns the authorized data from payment provider
