@@ -2115,19 +2115,19 @@ class Service extends Model\Element\Service
     public static function getVersionDependentSystemFieldName(string $fieldName): string {
         $currentVersion = \Pimcore\Version::getVersion();
 
-        if(version_compare($currentVersion, "11", "<")) {
-            if(!str_starts_with($fieldName, 'o_')
-                && in_array($fieldName, self::getVersionDependentSystemFields())) {
-                return 'o_' . $fieldName;
-            }
-        }
-        else  {
+        if(version_compare($currentVersion, "11.0", ">=")) {
             $newFieldName = $fieldName;
             if(str_starts_with($newFieldName, 'o_')) {
                 $newFieldName = substr($newFieldName, 2);
             }
             if(in_array($newFieldName, self::getVersionDependentSystemFields())) {
                 return $newFieldName;
+            }
+        }
+        else  {
+            if(!str_starts_with($fieldName, 'o_')
+                && in_array($fieldName, self::getVersionDependentSystemFields())) {
+                return 'o_' . $fieldName;
             }
         }
 
