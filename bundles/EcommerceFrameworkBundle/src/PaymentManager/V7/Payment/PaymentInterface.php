@@ -44,7 +44,7 @@ interface PaymentInterface
      *
      * @return StatusInterface
      */
-    public function handleResponse(mixed $response): StatusInterface;
+    public function handleResponse(StatusInterface|array $response): StatusInterface;
 
     /**
      * Returns the authorized data from payment provider
