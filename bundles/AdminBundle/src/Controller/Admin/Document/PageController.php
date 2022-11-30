@@ -432,7 +432,7 @@ class PageController extends DocumentControllerBase
         $areablock->setEditmode(true);
         $areaBrickData = json_decode($request->get('areablockData'), true);
         $areablock->setDataFromEditmode($areaBrickData);
-        $htmlCode = trim($areablock->renderIndex($request->get('index'), true));
+        $htmlCode = trim($areablock->renderIndex((int) $request->get('index'), true));
 
         return new JsonResponse([
             'editableDefinitions' => $definitionCollector->getDefinitions(),

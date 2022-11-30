@@ -26,7 +26,7 @@ class Embed extends Model\Document\Editable
     /**
      * @internal
      */
-    protected ?string $url;
+    protected ?string $url = null;
 
     /**
      * {@inheritdoc}

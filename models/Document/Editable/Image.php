@@ -32,10 +32,8 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      * ID of the referenced image
      *
      * @internal
-     *
-     * @var int
      */
-    protected ?int $id;
+    protected ?int $id = null;
 
     /**
      * The ALT text of the image

@@ -43,10 +43,8 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
      * Contains the object
      *
      * @internal
-     *
-     * @var Document|Asset|DataObject|null
      */
-    protected Document|Asset|null|DataObject $o = null;
+    protected Document|Asset|null|DataObject|Element\ElementDescriptor $o = null;
 
     /**
      * Contains the type

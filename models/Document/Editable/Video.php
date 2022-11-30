@@ -49,7 +49,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
      *
      * @var int|string|null
      */
-    protected string|int|null $id;
+    protected string|int|null $id = null;
 
     /**
      * one of self::ALLOWED_TYPES
@@ -203,7 +203,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
             $path       = '';
         }
 
-        $poster = Asset::getById($this->poster);
+        $poster = $this->poster ? Asset::getById($this->poster) : null;
 
         return [
             'id'           => $this->id,
@@ -300,7 +300,7 @@ class Video extends Model\Document\Editable implements IdRewriterInterface
             }
         }
 
-        if ($poster = Asset::getById($this->poster)) {
+        if ($this->poster && $poster = Asset::getById($this->poster)) {
             $key = 'asset_' . $poster->getId();
             $dependencies[$key] = [
                 'id' => $poster->getId(),

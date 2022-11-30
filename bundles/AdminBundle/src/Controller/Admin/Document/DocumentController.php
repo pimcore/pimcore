@@ -270,7 +270,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 $createValues['key'] = Service::getValidKey($request->get('key'), 'document');
 
                 // check for a docType
-                $docType = Document\DocType::getById($request->get('docTypeId'));
+                $docType = Document\DocType::getById($request->get('docTypeId', ''));
                 if ($docType) {
                     $createValues['template'] = $docType->getTemplate();
                     $createValues['controller'] = $docType->getController();

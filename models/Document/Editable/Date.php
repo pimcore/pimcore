@@ -111,7 +111,7 @@ class Date extends Model\Document\Editable implements EditmodeDataInterface
      */
     public function setDataFromEditmode(mixed $data): static
     {
-        if (strlen($data) > 5) {
+        if (strlen((string) $data) > 5) {
             $timestamp = strtotime($data);
             $this->setDateFromTimestamp($timestamp);
         }
