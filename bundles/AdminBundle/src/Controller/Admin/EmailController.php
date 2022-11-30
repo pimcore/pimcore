@@ -145,7 +145,7 @@ class EmailController extends AdminController
             ]);
         } elseif ($type === 'params') {
             try {
-                $params = $emailLog->getParams(); //$this->decodeJson($emailLog->getParams());
+                $params = $emailLog->getParams();
             } catch (\Exception $e) {
                 Logger::warning('Could not decode JSON param string');
                 $params = [];
@@ -340,7 +340,7 @@ class EmailController extends AdminController
 
             // re-add params
             try {
-                $params = $emailLog->getParams(); //$this->decodeJson($emailLog->getParams());
+                $params = $emailLog->getParams();
             } catch (\Exception $e) {
                 Logger::warning('Could not decode JSON param string');
                 $params = [];
