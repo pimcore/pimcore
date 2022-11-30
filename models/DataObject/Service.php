@@ -65,10 +65,10 @@ class Service extends Model\Element\Service
      * TODO Bc layer for bundles to support both Pimcore 10 & 11, remove with Pimcore 12
      * @var string[]
      */
-    protected static array $versionDependentSystemFields = ['id', 'parentId', 'type', 'key', 'path', 'index', 'published',
-                                                            'creationDate', 'modificationDate', 'userOwner', 'userModification',
-                                                            'classId', 'childrenSortBy', 'className', 'childrenSortOrder',
-                                                            'versionCount'];
+    private const BC_VERSION_DEPENDENT_DATABASE_COLUMNS = ['id', 'parentId', 'type', 'key', 'path', 'index', 'published',
+                                                                'creationDate', 'modificationDate', 'userOwner', 'userModification',
+                                                                'classId', 'childrenSortBy', 'className', 'childrenSortOrder',
+                                                                'versionCount'];
 
     /**
      * @param Model\User $user
@@ -2095,11 +2095,6 @@ class Service extends Model\Element\Service
         return null;
     }
 
-    public static function getVersionDependentSystemFields(): array
-    {
-        return self::$versionDependentSystemFields;
-    }
-
     /**
      * TODO Bc layer for bundles to support both Pimcore 10 & 11, remove with Pimcore 12
      *
@@ -2112,21 +2107,21 @@ class Service extends Model\Element\Service
      * Pass id in Pimcore 11, get id
      *
      */
-    public static function getVersionDependentSystemFieldName(string $fieldName): string {
+    public static function getVersionDependentDatabaseColumnName(string $fieldName): string {
         $currentVersion = \Pimcore\Version::getVersion();
 
-        if(version_compare($currentVersion, "11.0", ">=")) {
+        if(str_starts_with($currentVersion, '11.')) {
             $newFieldName = $fieldName;
             if(str_starts_with($newFieldName, 'o_')) {
                 $newFieldName = substr($newFieldName, 2);
             }
-            if(in_array($newFieldName, self::getVersionDependentSystemFields())) {
+            if(in_array($newFieldName, self::BC_VERSION_DEPENDENT_DATABASE_COLUMNS)) {
                 return $newFieldName;
             }
         }
-        else  {
+        else {
             if(!str_starts_with($fieldName, 'o_')
-                && in_array($fieldName, self::getVersionDependentSystemFields())) {
+                && in_array($fieldName, self::BC_VERSION_DEPENDENT_DATABASE_COLUMNS)) {
                 return 'o_' . $fieldName;
             }
         }
