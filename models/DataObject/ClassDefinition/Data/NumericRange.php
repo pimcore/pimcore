@@ -33,6 +33,7 @@ class NumericRange extends Data implements
     VarExporterInterface,
     NormalizerInterface
 {
+    use DataObject\Traits\DataWidthTrait;
     use Extension\ColumnType {
         ColumnType::getColumnType as public genericGetColumnType;
     }
@@ -80,11 +81,6 @@ class NumericRange extends Data implements
     /**
      * @internal
      */
-    public string|int $width = 0;
-
-    /**
-     * @internal
-     */
     public bool $integer = false;
 
     /**
@@ -118,20 +114,6 @@ class NumericRange extends Data implements
      * @internal
      */
     public ?int $decimalPrecision = null;
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width): void
-    {
-        if (\is_numeric($width)) {
-            $width = (int) $width;
-        }
-
-        $this->width = $width;
-    }
 
     public function getInteger(): bool
     {

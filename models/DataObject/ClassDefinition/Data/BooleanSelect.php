@@ -30,7 +30,8 @@ class BooleanSelect extends Data implements
     VarExporterInterface,
     NormalizerInterface
 {
-    use Model\DataObject\Traits\SimpleComparisonTrait;
+    use DataObject\Traits\SimpleComparisonTrait;
+    use DataObject\Traits\DataWidthTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
     use DataObject\Traits\SimpleNormalizerTrait;
@@ -105,13 +106,6 @@ class BooleanSelect extends Data implements
     public array $options = self::DEFAULT_OPTIONS;
 
     /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $width = 0;
-
-    /**
      * Type for the column to query
      *
      * @internal
@@ -137,21 +131,6 @@ class BooleanSelect extends Data implements
     public function setOptions(array $options): static
     {
         // nothing to do
-        return $this;
-    }
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width): static
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
         return $this;
     }
 

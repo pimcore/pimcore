@@ -24,10 +24,12 @@ use Pimcore\Normalizer\NormalizerInterface;
 
 class StructuredTable extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
+    use Data\Extension\PositionSortTrait;
     use DataObject\Traits\SimpleComparisonTrait;
+    use DataObject\Traits\DataHeightTrait;
+    use DataObject\Traits\DataWidthTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use Data\Extension\PositionSortTrait;
 
     /**
      * Static type of this element
@@ -35,20 +37,6 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * @var string
      */
     public string $fieldtype = 'structuredTable';
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $width = 0;
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $height = 0;
 
     /**
      * @internal
@@ -77,36 +65,6 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * @var array
      */
     public array $rows = [];
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width): static
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
-
-    public function getHeight(): int|string
-    {
-        return $this->height;
-    }
-
-    public function setHeight(int|string $height): static
-    {
-        if (is_numeric($height)) {
-            $height = (int)$height;
-        }
-        $this->height = $height;
-
-        return $this;
-    }
 
     public function getLabelWidth(): int
     {

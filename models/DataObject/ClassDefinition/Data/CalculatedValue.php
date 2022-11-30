@@ -25,8 +25,9 @@ use Pimcore\Normalizer\NormalizerInterface;
 
 class CalculatedValue extends Data implements QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
-    use Extension\QueryColumnType;
+    use DataObject\Traits\DataWidthTrait;
     use DataObject\Traits\SimpleNormalizerTrait;
+    use Extension\QueryColumnType;
 
     /**
      * @internal
@@ -53,13 +54,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @var string
      */
     public string $elementType = 'input';
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $width = 0;
 
     /**
      * @internal
@@ -111,19 +105,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         }
 
         return $this;
-    }
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width)
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
     }
 
     public function getColumnLength(): int

@@ -23,6 +23,8 @@ use Pimcore\Normalizer\NormalizerInterface;
 
 class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
+    use DataObject\Traits\DataHeightTrait;
+    use DataObject\Traits\DataWidthTrait;
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
@@ -37,20 +39,6 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @var string
      */
     public string $fieldtype = 'textarea';
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $width = 0;
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $height = 0;
 
     /**
      * @internal
@@ -86,36 +74,6 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @var string
      */
     public $columnType = 'longtext';
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function getHeight(): int|string
-    {
-        return $this->height;
-    }
-
-    public function setWidth(int|string $width): static
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
-
-    public function setHeight(int|string $height): static
-    {
-        if (is_numeric($height)) {
-            $height = (int)$height;
-        }
-        $this->height = $height;
-
-        return $this;
-    }
 
     public function getMaxLength(): ?int
     {

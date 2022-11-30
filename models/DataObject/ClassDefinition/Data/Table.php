@@ -27,9 +27,11 @@ use Pimcore\Tool\Serialize;
 class Table extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
+    use DataObject\Traits\SimpleNormalizerTrait;
+    use DataObject\Traits\DataHeightTrait;
+    use DataObject\Traits\DataWidthTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\Traits\SimpleNormalizerTrait;
 
     /**
      * Static type of this element
@@ -39,20 +41,6 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @var string
      */
     public string $fieldtype = 'table';
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $width = 0;
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $height = 0;
 
     /**
      * @internal
@@ -116,36 +104,6 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @var string
      */
     public $columnType = 'longtext';
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width): static
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
-
-    public function getHeight(): int|string
-    {
-        return $this->height;
-    }
-
-    public function setHeight(int|string $height): static
-    {
-        if (is_numeric($height)) {
-            $height = (int)$height;
-        }
-        $this->height = $height;
-
-        return $this;
-    }
 
     public function getCols(): ?int
     {

@@ -29,22 +29,16 @@ class Panel extends Model\DataObject\ClassDefinition\Layout
      * Static type of this element
      *
      * @internal
-     *
-     * @var string
      */
     public string $fieldtype = 'panel';
 
     /**
      * @internal
-     *
-     * @var string
      */
-    public string $layout;
+    public ?string $layout = null;
 
     /**
      * @internal
-     *
-     * @var bool
      */
     public bool $border = false;
 

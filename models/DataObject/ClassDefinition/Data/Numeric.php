@@ -24,6 +24,7 @@ use Pimcore\Normalizer\NormalizerInterface;
 
 class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, PreSetDataInterface
 {
+    use DataObject\Traits\DataWidthTrait;
     use Model\DataObject\Traits\DefaultValueTrait;
     use Model\DataObject\Traits\SimpleNormalizerTrait;
     use Model\DataObject\Traits\SimpleComparisonTrait;
@@ -57,13 +58,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @var string
      */
     public string $fieldtype = 'numeric';
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $width = 0;
 
     /**
      * @internal
@@ -151,21 +145,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         }
 
         return 'float';
-    }
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width): static
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
     }
 
     public function getDefaultValue(): float|int|string|null
