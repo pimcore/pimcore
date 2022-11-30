@@ -133,7 +133,7 @@ class LogController extends AdminController implements KernelControllerEventInte
                 'pid' => $row['pid'],
                 'message' => $row['message'],
                 'timestamp' => $row['timestamp'],
-                'priority' => $this->getPriorityName($row['priority']),
+                'priority' => $row['priority'],
                 'fileobject' => $fileobject,
                 'relatedobject' => $row['relatedobject'],
                 'relatedobjecttype' => $row['relatedobjecttype'],
@@ -168,13 +168,6 @@ class LogController extends AdminController implements KernelControllerEventInte
         }
 
         return $dateTime;
-    }
-
-    private function getPriorityName(int $priority): string
-    {
-        $p = ApplicationLoggerDb::getPriorities();
-
-        return $p[$priority];
     }
 
     /**

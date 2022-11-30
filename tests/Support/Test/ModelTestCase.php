@@ -73,3 +73,5 @@ abstract class ModelTestCase extends TestCase
         return $this->session;
     }
 }
+
+@class_alias(ModelTestCase::class, 'Pimcore\Tests\Support\Test\ModelTestCase');

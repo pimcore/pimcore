@@ -120,6 +120,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('documents.yaml');
         $loader->load('event_listeners.yaml');
         $loader->load('templating.yaml');
+        $loader->load('templating_twig.yaml');
         $loader->load('profiler.yaml');
         $loader->load('migrations.yaml');
         $loader->load('analytics.yaml');
@@ -146,9 +147,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $this->configureGlossary($container, $config['glossary']);
 
         $container->setParameter('pimcore.workflow', $config['workflows']);
-
-        // load engine specific configuration only if engine is active
-        $loader->load('templating_twig.yaml');
 
         $this->addContextRoutes($container, $config['context']);
     }
