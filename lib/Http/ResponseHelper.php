@@ -18,6 +18,7 @@ namespace Pimcore\Http;
 
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * @internal
@@ -57,7 +58,7 @@ class ResponseHelper
 
     public function isHtmlResponse(Response $response): bool
     {
-        if ($response instanceof BinaryFileResponse) {
+        if ($response instanceof BinaryFileResponse || $response instanceof StreamedResponse) {
             return false;
         }
 
