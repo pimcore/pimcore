@@ -39,10 +39,6 @@ interface PaymentInterface
 
     /**
      * Handles response of payment provider and creates payment status object
-     *
-     * @param mixed $response
-     *
-     * @return StatusInterface
      */
     public function handleResponse(StatusInterface|array $response): StatusInterface;
 
