@@ -297,7 +297,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @see Data::getDataForEditmode
      *
      */
-    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?string
     {
         return $data;
     }
@@ -332,7 +332,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         return '******';
     }
 
-    public function getDataForGrid(string $data, Concrete $object, array $params = []): string
+    public function getDataForGrid(?string $data, Concrete $object, array $params = []): string
     {
         return '******';
     }

@@ -236,7 +236,7 @@ class Multiselect extends Data implements
      *
      * @return array|string|null
      */
-    public function getDataForGrid(array $data, Concrete $object = null, array $params = []): array|string|null
+    public function getDataForGrid(?array $data, Concrete $object = null, array $params = []): array|string|null
     {
         $optionsProvider = DataObject\ClassDefinition\Helper\OptionsProviderResolver::resolveProvider(
             $this->getOptionsProviderClass(),

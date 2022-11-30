@@ -98,7 +98,7 @@ class GridHelperService
 
                     $keyConfig = Model\DataObject\Classificationstore\KeyConfig::getById($keyid);
                     $type = $keyConfig->getType();
-                    $definition = json_decode($keyConfig->getDefinition());
+                    $definition = json_decode($keyConfig->getDefinition(), true);
                     $field = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
 
                     if ($field instanceof Model\DataObject\ClassDefinition\Data) {

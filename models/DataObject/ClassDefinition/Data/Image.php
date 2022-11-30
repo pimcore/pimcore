@@ -140,7 +140,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @return array|null
      */
-    public function getDataForGrid(Asset\Image $data, Concrete $object = null, array $params = []): ?array
+    public function getDataForGrid(?Asset\Image $data, Concrete $object = null, array $params = []): ?array
     {
         return $this->getDataForEditmode($data, $object, $params);
     }

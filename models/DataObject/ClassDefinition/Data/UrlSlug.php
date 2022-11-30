@@ -449,14 +449,14 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @param array $data
+     * @param ?array $data
      * @param Model\DataObject\Concrete|null $object
      * @param array $params
      * @param string $lineBreak
      *
      * @return string|null
      */
-    protected function getPreviewData(array $data, Concrete $object = null, array $params = [], string $lineBreak = '<br />'): ?string
+    protected function getPreviewData(?array $data, Concrete $object = null, array $params = [], string $lineBreak = '<br />'): ?string
     {
         if (is_array($data) && count($data) > 0) {
             $pathes = [];

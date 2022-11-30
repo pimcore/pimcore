@@ -130,7 +130,7 @@ final class DefaultValue extends AbstractValue
 
                     $keyConfig = Classificationstore\KeyConfig::getById($keyid);
                     $type = $keyConfig->getType();
-                    $definition = json_decode($keyConfig->getDefinition());
+                    $definition = json_decode($keyConfig->getDefinition(), true);
                     $definition = Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
 
                     $result = new \stdClass();

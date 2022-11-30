@@ -128,7 +128,7 @@ class Xliff12Exporter implements ExporterInterface
 
             $tNode = dom_import_simplexml($targetNode);
             $targetFragment = $no->createDocumentFragment();
-            $targetFragment->appendXML($this->xliffEscaper->escapeXliff($targetContent ?? ''));
+            $targetFragment->appendXML($this->xliffEscaper->escapeXliff($targetContent));
             @$tNode->appendChild($targetFragment);
         }
     }
