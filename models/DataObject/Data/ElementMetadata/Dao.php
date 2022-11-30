@@ -29,7 +29,7 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
     {
         $table = $this->getTablename($object);
 
-        $dataTemplate = ['o_id' => $object->getId(),
+        $dataTemplate = ['id' => $object->getId(),
             'dest_id' => $this->model->getElement()->getId(),
             'fieldname' => $this->model->getFieldname(),
             'ownertype' => $ownertype,
