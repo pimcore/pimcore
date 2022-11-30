@@ -37,13 +37,13 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
 
     public bool $noteditable = false;
 
-    public ?int $index = null;
+    public int|bool|null $index = null;
 
     public bool $locked = false;
 
-    public string $style;
+    public ?string $style = null;
 
-    public array|string $permissions;
+    public array|string|null $permissions = null;
 
     public string $datatype = 'data';
 
@@ -171,7 +171,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this->mandatory;
     }
 
-    public function getPermissions(): array|string
+    public function getPermissions(): array|string|null
     {
         return $this->permissions;
     }
@@ -197,7 +197,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
         return $this;
     }
 
-    public function setPermissions(array|string $permissions): static
+    public function setPermissions(array|string|null $permissions): static
     {
         $this->permissions = $permissions;
 

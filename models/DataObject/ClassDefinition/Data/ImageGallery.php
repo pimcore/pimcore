@@ -26,6 +26,8 @@ use Pimcore\Tool\Serialize;
 
 class ImageGallery extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface
 {
+    use DataObject\Traits\DataHeightTrait;
+    use DataObject\Traits\DataWidthTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -59,22 +61,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     /**
      * @internal
      *
-     * @var string|int
-     */
-    public string|int $width = 0;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $height = 0;
-
-    /**
-     * @internal
-     *
      * @var string
      */
     public string $uploadPath;
@@ -84,14 +70,14 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @var int
      */
-    public int $ratioX;
+    public ?int $ratioX = null;
 
     /**
      * @internal
      *
      * @var int
      */
-    public int $ratioY;
+    public ?int $ratioY = null;
 
     /**
      * @internal
@@ -128,32 +114,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     public function setPredefinedDataTemplates(string $predefinedDataTemplates)
     {
         $this->predefinedDataTemplates = $predefinedDataTemplates;
-    }
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width)
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-    }
-
-    public function getHeight(): int|string
-    {
-        return $this->height;
-    }
-
-    public function setHeight(int|string $height)
-    {
-        if (is_numeric($height)) {
-            $height = (int)$height;
-        }
-        $this->height = $height;
     }
 
     public function getUploadPath(): string

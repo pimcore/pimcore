@@ -14,35 +14,30 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\DataObject\ClassDefinition\Data;
-
-use Pimcore\Model\DataObject\Traits\DataHeightTrait;
-use Pimcore\Model\DataObject\Traits\DataWidthTrait;
+namespace Pimcore\Model\DataObject\Traits;
 
 /**
  * @internal
  */
-trait ImageTrait
+trait DataHeightTrait
 {
-    use DataWidthTrait;
-    use DataHeightTrait;
-
     /**
      * @internal
-     *
-     * @var string
      */
-    public string $uploadPath;
+    public string|int|null $height = 0;
 
-    public function setUploadPath(string $uploadPath): static
+    public function getHeight(): int|string|null
     {
-        $this->uploadPath = $uploadPath;
-
-        return $this;
+        return $this->height;
     }
 
-    public function getUploadPath(): string
+    public function setHeight(int|string|null $height): static
     {
-        return $this->uploadPath;
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
+        $this->height = $height;
+
+        return $this;
     }
 }

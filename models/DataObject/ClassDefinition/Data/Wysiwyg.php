@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
@@ -26,11 +25,13 @@ use Pimcore\Tool\Text;
 
 class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface, IdRewriterInterface, PreGetDataInterface
 {
+    use DataObject\ClassDefinition\Data\Extension\Text;
+    use DataObject\Traits\DataHeightTrait;
+    use DataObject\Traits\DataWidthTrait;
     use DataObject\Traits\SimpleComparisonTrait;
-    use Model\DataObject\ClassDefinition\Data\Extension\Text;
+    use DataObject\Traits\SimpleNormalizerTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\Traits\SimpleNormalizerTrait;
 
     /**
      * Static type of this element
@@ -40,20 +41,6 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @var string
      */
     public string $fieldtype = 'wysiwyg';
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $width = 0;
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $height = 0;
 
     /**
      * Type for the column to query
@@ -89,36 +76,6 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @var string|int
      */
     public string|int $maxCharacters = 0;
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function getHeight(): int|string
-    {
-        return $this->height;
-    }
-
-    public function setWidth(int|string $width): static
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
-
-    public function setHeight(int|string $height): static
-    {
-        if (is_numeric($height)) {
-            $height = (int)$height;
-        }
-        $this->height = $height;
-
-        return $this;
-    }
 
     public function setToolbarConfig(string $toolbarConfig)
     {

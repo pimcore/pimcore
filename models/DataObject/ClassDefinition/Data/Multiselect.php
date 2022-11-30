@@ -41,6 +41,8 @@ class Multiselect extends Data implements
     use Extension\QueryColumnType;
     use DataObject\Traits\SimpleNormalizerTrait;
     use DataObject\ClassDefinition\DynamicOptionsProvider\SelectionProviderTrait;
+    use DataObject\Traits\DataHeightTrait;
+    use DataObject\Traits\DataWidthTrait;
 
     /**
      * Static type of this element
@@ -59,20 +61,6 @@ class Multiselect extends Data implements
      * @var array|null
      */
     public ?array $options = null;
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $width = 0;
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $height = 0;
 
     /**
      * @internal
@@ -137,36 +125,6 @@ class Multiselect extends Data implements
     public function setOptions(array $options): static
     {
         $this->options = $options;
-
-        return $this;
-    }
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width): static
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
-
-    public function getHeight(): int|string
-    {
-        return $this->height;
-    }
-
-    public function setHeight(int|string $height): static
-    {
-        if (is_numeric($height)) {
-            $height = (int)$height;
-        }
-        $this->height = $height;
 
         return $this;
     }

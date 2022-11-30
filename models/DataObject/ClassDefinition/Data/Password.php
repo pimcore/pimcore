@@ -25,9 +25,10 @@ use Pimcore\Normalizer\NormalizerInterface;
 class Password extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
+    use DataObject\Traits\DataWidthTrait;
+    use DataObject\Traits\SimpleNormalizerTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\Traits\SimpleNormalizerTrait;
 
     const HASH_FUNCTION_PASSWORD_HASH = 'password_hash';
 
@@ -39,13 +40,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @var string
      */
     public string $fieldtype = 'password';
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $width = 0;
 
     /**
      * Type for the column to query
@@ -87,21 +81,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     public string $saltlocation = '';
 
     public ?int $minimumLength = null;
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width): static
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
 
     public function getMinimumLength(): ?int
     {
