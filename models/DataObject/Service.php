@@ -2107,7 +2107,8 @@ class Service extends Model\Element\Service
      * Pass id in Pimcore 11, get id
      *
      */
-    public static function getVersionDependentDatabaseColumnName(string $fieldName): string {
+    public static function getVersionDependentDatabaseColumnName(string $fieldName): string
+    {
         $currentVersion = \Pimcore\Version::getVersion();
 
         if(str_starts_with($currentVersion, '11.')) {
