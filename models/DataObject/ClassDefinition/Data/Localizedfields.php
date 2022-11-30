@@ -439,7 +439,10 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return is_array($this->children) && count($this->children) > 0;
     }
 
-    public function addChild(Data|Layout $child)
+    /**
+     * @param Data|Layout $child
+     */
+    public function addChild(mixed $child)
     {
         $this->children[] = $child;
         $this->fieldDefinitionsCache = null;

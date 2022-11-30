@@ -554,7 +554,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return false;
     }
 
-    public function addChild(Data|Layout $child)
+    /**
+     * @param Data|Layout $child
+     */
+    public function addChild(mixed $child)
     {
         $this->children[] = $child;
         $this->fieldDefinitionsCache = null;
