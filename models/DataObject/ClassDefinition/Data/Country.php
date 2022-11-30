@@ -22,6 +22,8 @@ use Pimcore\Model\DataObject\Concrete;
 
 class Country extends Model\DataObject\ClassDefinition\Data\Select
 {
+    use Model\DataObject\Traits\DataWidthTrait;
+
     /**
      * Static type of this element
      *
@@ -30,13 +32,6 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
      * @var string
      */
     public string $fieldtype = 'country';
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $width = 0;
 
     /**
      * Restrict selection to comma-separated list of countries.
@@ -53,21 +48,6 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
     public function isDiffChangeAllowed(Concrete $object, array $params = []): bool
     {
         return true;
-    }
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width): static
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
     }
 
     public function setRestrictTo(array|string|null $restrictTo)

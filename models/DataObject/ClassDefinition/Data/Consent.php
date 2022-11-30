@@ -24,6 +24,7 @@ use Pimcore\Normalizer\NormalizerInterface;
 
 class Consent extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
+    use DataObject\Traits\DataWidthTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -63,15 +64,6 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
         'consent' => 'tinyint(1)',
         'note' => 'int(11)',
     ];
-
-    /**
-     * Width of field
-     *
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $width = 0;
 
     /**
      * @param mixed $data
@@ -382,19 +374,6 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function getDataForSearchIndex(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         return '';
-    }
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width)
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
     }
 
     /**

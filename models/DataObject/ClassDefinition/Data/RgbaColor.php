@@ -33,6 +33,7 @@ class RgbaColor extends Data implements
     BeforeEncryptionMarshallerInterface,
     AfterDecryptionUnmarshallerInterface
 {
+    use DataObject\Traits\DataWidthTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -44,13 +45,6 @@ class RgbaColor extends Data implements
      * @var string
      */
     public string $fieldtype = 'rgbaColor';
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $width = 0;
 
     /**
      * Type for the column to query
@@ -74,21 +68,6 @@ class RgbaColor extends Data implements
     public $columnType = ['rgb' => 'VARCHAR(6) NULL DEFAULT NULL',
         'a' => 'VARCHAR(2) NULL DEFAULT NULL',
     ];
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width): static
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
 
     /**
      * @param mixed $data
