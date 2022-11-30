@@ -26,7 +26,6 @@ trait DataHeightTrait
      */
     public string|int|null $height = 0;
 
-
     public function getHeight(): int|string|null
     {
         return $this->height;
@@ -41,5 +40,4 @@ trait DataHeightTrait
 
         return $this;
     }
-
 }

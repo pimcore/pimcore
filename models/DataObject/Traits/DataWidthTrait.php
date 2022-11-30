@@ -26,7 +26,6 @@ trait DataWidthTrait
      */
     public string|int|null $width = 0;
 
-
     public function getWidth(): int|string|null
     {
         return $this->width;

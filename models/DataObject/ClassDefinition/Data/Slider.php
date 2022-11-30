@@ -91,7 +91,6 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      */
     public $columnType = 'double';
 
-
     public function getMinValue(): ?float
     {
         return $this->minValue;

@@ -31,6 +31,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 {
     use DataObject\Traits\DataHeightTrait;
     use DataObject\Traits\DataWidthTrait;
+
     /**
      * Static type of this element
      *
