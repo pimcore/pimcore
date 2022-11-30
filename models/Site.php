@@ -32,7 +32,7 @@ final class Site extends AbstractModel
 
     protected static ?Site $currentSite = null;
 
-    protected int $id;
+    protected ?int $id = null;
 
     protected array $domains;
 
@@ -207,7 +207,7 @@ final class Site extends AbstractModel
         self::$currentSite = $site;
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }

@@ -455,8 +455,8 @@ class TranslationController extends AdminController
                 $list->setOrder($sortingSettings['order']);
             }
 
-            $list->setLimit($request->get('limit'));
-            $list->setOffset($request->get('start'));
+            $list->setLimit((int) $request->get('limit', 50));
+            $list->setOffset((int) $request->get('start', 0));
 
             $condition = $this->getGridFilterCondition($request, $tableName, false, $admin);
             $filters = $this->getGridFilterCondition($request, $tableName, true, $admin);
@@ -687,8 +687,8 @@ class TranslationController extends AdminController
         $elements = [];
         $jobs = [];
         $exportId = uniqid();
-        $source = $request->get('source');
-        $target = $request->get('target');
+        $source = $request->get('source', '');
+        $target = $request->get('target', '');
         $type = $request->get('type');
 
         $source = str_replace('_', '-', $source);
@@ -896,7 +896,7 @@ class TranslationController extends AdminController
     public function xliffImportElementAction(Request $request, ImportDataExtractorInterface $importDataExtractor, ImporterServiceInterface $importerService): JsonResponse
     {
         $id = $request->get('id');
-        $step = $request->get('step');
+        $step = (int) $request->get('step');
 
         try {
             $attributeSet = $importDataExtractor->extractElement($id, $step);

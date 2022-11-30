@@ -870,7 +870,7 @@ class Mail extends Email
     /**
      * format Address from old params(string $address, string $name)
      */
-    private function formatAddress(string|array ...$addresses): array
+    private function formatAddress(Address|string|array ...$addresses): array
     {
         //old param style with string name as second param
         if (isset($addresses[1]) && is_string($addresses[1])) {

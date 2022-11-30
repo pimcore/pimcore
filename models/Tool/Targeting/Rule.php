@@ -36,7 +36,7 @@ class Rule extends Model\AbstractModel
 
     const SCOPE_VISITOR = 'visitor';
 
-    protected int $id;
+    protected ?int $id = null;
 
     protected string $name;
 
@@ -131,7 +131,7 @@ class Rule extends Model\AbstractModel
         return $this;
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }

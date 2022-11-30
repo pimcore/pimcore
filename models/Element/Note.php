@@ -35,15 +35,11 @@ final class Note extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     * @var string
      */
     protected string $type;
 
     /**
      * @internal
-     *
-     * @var int
      */
     protected int $cid;
 
@@ -56,8 +52,6 @@ final class Note extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     * @var int
      */
     protected int $date;
 
@@ -70,17 +64,13 @@ final class Note extends Model\AbstractModel
 
     /**
      * @internal
-     *
-     * @var string
      */
-    protected string $title;
+    protected string $title = '';
 
     /**
      * @internal
-     *
-     * @var string
      */
-    protected string $description;
+    protected string $description = '';
 
     /**
      * @internal

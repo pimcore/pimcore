@@ -52,7 +52,7 @@ final class Translation extends AbstractModel
 
     protected string $domain = self::DOMAIN_DEFAULT;
 
-    protected string $type = 'simple';
+    protected ?string $type = 'simple';
 
     /**
      * ID of the owner user
@@ -69,7 +69,7 @@ final class Translation extends AbstractModel
         return $this->type ?: 'simple';
     }
 
-    public function setType(string $type): void
+    public function setType(?string $type): void
     {
         $this->type = $type;
     }

@@ -418,10 +418,10 @@ CSS;
      *
      * @return array
      */
-    public static function parseEmailAddressField(string $emailString): array
+    public static function parseEmailAddressField(?string $emailString): array
     {
         $cleanedEmails = [];
-        $emailArray = preg_split('/,|;/', $emailString);
+        $emailArray = preg_split('/,|;/', ($emailString ?? ''));
         if ($emailArray) {
             foreach ($emailArray as $emailStringEntry) {
                 $entryAddress = trim($emailStringEntry);

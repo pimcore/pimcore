@@ -991,8 +991,8 @@ class SettingsController extends AdminController
             // get list of glossaries
 
             $list = new Glossary\Listing();
-            $list->setLimit($request->get('limit'));
-            $list->setOffset($request->get('start'));
+            $list->setLimit((int) $request->get('limit', 50));
+            $list->setOffset((int) $request->get('start', 0));
 
             $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
             if ($sortingSettings['orderKey']) {
@@ -1041,7 +1041,7 @@ class SettingsController extends AdminController
         $sites = [];
         if (!$excludeMainSite) {
             $sites[] = [
-                'id' => 'default',
+                'id' => 0,
                 'rootId' => 1,
                 'domains' => '',
                 'rootPath' => '/',
@@ -1614,7 +1614,9 @@ class SettingsController extends AdminController
 
             if (is_array($data)) {
                 foreach ($data as &$value) {
-                    $value = trim($value);
+                    if(is_string($value)) {
+                        $value = trim($value);
+                    }
                 }
             }
 
@@ -1663,8 +1665,8 @@ class SettingsController extends AdminController
         } else {
             $list = new WebsiteSetting\Listing();
 
-            $list->setLimit($request->get('limit'));
-            $list->setOffset($request->get('start'));
+            $list->setLimit((int) $request->get('limit', 50));
+            $list->setOffset((int) $request->get('start', 0));
 
             $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
             if ($sortingSettings['orderKey']) {

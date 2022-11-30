@@ -305,7 +305,7 @@ class DataObjectHelperController extends AdminController
         $gridConfig = [];
         $searchType = $request->get('searchType');
 
-        if (strlen($requestedGridConfigId) == 0 && $class) {
+        if (strlen($requestedGridConfigId ?? '') == 0 && $class) {
             // check if there is a favourite view
             $favourite = GridConfigFavourite::getByOwnerAndClassAndObjectId($userId, $class->getId(), $objectId ?: 0, $searchType);
             if (!$favourite && $objectId) {
@@ -1367,7 +1367,7 @@ class DataObjectHelperController extends AdminController
 
         $fields = $request->get('fields');
 
-        $addTitles = $request->get('initial');
+        $addTitles = (bool) $request->get('initial');
 
         $requestedLanguage = $this->extractLanguage($request);
 
@@ -1421,7 +1421,7 @@ class DataObjectHelperController extends AdminController
 
     public function encodeFunc($value): string
     {
-        $value = str_replace('"', '""', $value);
+        $value = str_replace('"', '""', (string) $value);
         //force wrap value in quotes and return
         return '"' . $value . '"';
     }
