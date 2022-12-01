@@ -555,6 +555,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
+     * typehint "mixed" is required for asset-metadata-definitions bundle
+     * since it doesn't extend Core Data Types
+     *
      * @param Data|Layout $child
      */
     public function addChild(mixed $child)
