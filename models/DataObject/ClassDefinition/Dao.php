@@ -114,7 +114,7 @@ class Dao extends Model\Dao\AbstractDao
         $objectView = 'object_' . $this->model->getId();
 
         // create object table if not exists
-        $protectedColumns = ['oo_id', 'oclassId', 'oo_className'];
+        $protectedColumns = ['oo_id', 'oo_classId', 'oo_className'];
         $protectedDatastoreColumns = ['oo_id'];
 
         $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $objectTable . "` (
