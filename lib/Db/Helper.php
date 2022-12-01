@@ -21,7 +21,7 @@ use Doctrine\DBAL\Driver\Result;
 use Pimcore\Model\Element\ValidationException;
 
 class Helper
-{    
+{
     public static function upsert(Connection $connection, string $table, array $data, array $keys): int|string
     {
         try {
@@ -35,7 +35,7 @@ class Helper
             return $connection->update($table, $data, $critera);
         }
     }
-    
+
     public static function insertOrUpdate(Connection $connection, $table, array $data): int|string
     {
         // extract and quote col names from the array keys
