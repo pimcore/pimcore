@@ -21,7 +21,21 @@ use Doctrine\DBAL\Driver\Result;
 use Pimcore\Model\Element\ValidationException;
 
 class Helper
-{
+{    
+    public static function upsert(Connection $connection, string $table, array $data, array $keys): int|string
+    {
+        try {
+            return $connection->insert($table, $data);
+        } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $exception) {
+            $critera = [];
+            foreach ($keys as $key) {
+                $critera[$key] = $data[$key] ?? throw new \LogicException(sprintf('Key "%1$s" passed for upsert not found in data', $key));
+            }
+
+            return $connection->update($table, $data, $critera);
+        }
+    }
+    
     public static function insertOrUpdate(Connection $connection, $table, array $data): int|string
     {
         // extract and quote col names from the array keys
