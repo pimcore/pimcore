@@ -1614,7 +1614,7 @@ class SettingsController extends AdminController
 
             if (is_array($data)) {
                 foreach ($data as &$value) {
-                    if(is_string($value)) {
+                    if (is_string($value)) {
                         $value = trim($value);
                     }
                 }

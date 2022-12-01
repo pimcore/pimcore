@@ -82,9 +82,10 @@ class Document extends Model\Asset
     public function getPageCount(): ?int
     {
         $pageCount = $this->getCustomSetting('document_page_count');
-        if($pageCount === null || $pageCount === '') {
+        if ($pageCount === null || $pageCount === '') {
             return null;
         }
+
         return (int) $this->getCustomSetting('document_page_count');
     }
 

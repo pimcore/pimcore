@@ -202,7 +202,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
      */
     public function setElement(): static
     {
-        if($this->type && $this->id) {
+        if ($this->type && $this->id) {
             $this->o = Element\Service::getElementById($this->type, $this->id);
         }
 

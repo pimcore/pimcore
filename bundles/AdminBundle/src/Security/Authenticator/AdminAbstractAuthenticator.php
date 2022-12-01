@@ -83,7 +83,7 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): ?Response
     {
         $securityUser = $token->getUser();
-        if(!$securityUser instanceof User) {
+        if (!$securityUser instanceof User) {
             throw new \Exception('Invalid user object. User has to be instance of ' . User::class);
         }
 
@@ -92,7 +92,7 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
 
         // set user language
         $request->setLocale($user->getLanguage());
-        if($this->translator instanceof LocaleAwareInterface) {
+        if ($this->translator instanceof LocaleAwareInterface) {
             $this->translator->setLocale($user->getLanguage());
         }
 

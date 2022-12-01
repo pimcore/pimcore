@@ -135,7 +135,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
      */
     public static function getAdapter(?\stdClass $configuration, Config $fullConfig = null): Adapter\CustomReportAdapterInterface
     {
-        if($configuration === null) {
+        if ($configuration === null) {
             $configuration = new \stdClass();
         }
 

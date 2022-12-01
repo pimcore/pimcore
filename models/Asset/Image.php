@@ -269,6 +269,7 @@ EOT;
      * Legacy method for backwards compatibility. Use getThumbnail($config)->getConfig() instead.
      *
      * @internal
+     *
      * @return Image\Thumbnail\Config|null
      */
     public function getThumbnailConfig(array|string|Image\Thumbnail\Config|null $config): ?Image\Thumbnail\Config

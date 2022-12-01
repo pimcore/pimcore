@@ -248,9 +248,10 @@ class Log extends Model\AbstractModel
      */
     public function getParams(): array
     {
-        if(is_string($this->params)) {
+        if (is_string($this->params)) {
             $this->params = json_decode($this->params, true);
         }
+
         return $this->params;
     }
 
