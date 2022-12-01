@@ -1,11 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Parameter \\#1 \\$target of method Pimcore\\\\Model\\\\DataObject\\\\Service\\:\\:copyContents\\(\\) expects Pimcore\\\\Model\\\\DataObject\\\\Concrete, Pimcore\\\\Model\\\\DataObject\\|null given\\.$#"
-			count: 1
-			path: bundles/AdminBundle/src/Controller/Admin/DataObject/DataObjectController.php
-
-		-
 			message: "#^Offset 'image' on array\\{\\} in empty\\(\\) does not exist\\.$#"
 			count: 1
 			path: bundles/AdminBundle/src/GDPR/DataProvider/DataObjects.php
@@ -36,11 +31,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/src/CartManager/CartPriceModificator/Discount.php
 
 		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/src/CartManager/CartPriceModificator/Shipping.php
-
-		-
 			message: "#^Parameter \\#1 \\$provider of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CheckoutManager\\\\V7\\\\CheckoutManager\\:\\:verifyRecurringPayment\\(\\) expects Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PaymentManager\\\\V7\\\\Payment\\\\RecurringPaymentInterface, Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PaymentManager\\\\V7\\\\Payment\\\\PaymentInterface given\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/src/CheckoutManager/V7/CheckoutManager.php
@@ -54,11 +44,6 @@ parameters:
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/src/CoreExtensions/ClassDefinition/IndexFieldSelectionCombo.php
-
-		-
-			message: "#^Parameter \\#2 \\$condition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ProductListInterface\\:\\:addRelationCondition\\(\\) expects string, array\\<string, array\\<string, array\\<int, mixed\\>\\>\\> given\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/src/FilterService/FilterType/ElasticSearch/MultiSelectRelation.php
 
 		-
 			message: "#^Parameter \\#1 \\$fieldname of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ProductListInterface\\:\\:getGroupByValues\\(\\) expects string, Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CoreExtensions\\\\ObjectData\\\\IndexFieldSelection\\|null given\\.$#"
@@ -81,24 +66,9 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/src/FilterService/ListHelper.php
 
 		-
-			message: "#^Parameter \\#1 \\$condition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ProductListInterface\\:\\:addCondition\\(\\) expects array\\|string, int given\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/src/IndexService/Config/ElasticSearch.php
-
-		-
 			message: "#^Comparison operation \"\\<\\=\" between int\\<1, max\\> and 0 is always false\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/src/IndexService/IndexUpdateService.php
-
-		-
-			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\ElasticSearch\\\\AbstractElasticSearch\\:\\:load\\(\\) should return array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\IndexableInterface\\> but returns array\\<int, Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\DefaultMockup\\>\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/src/IndexService/ProductList/ElasticSearch/AbstractElasticSearch.php
-
-		-
-			message: "#^Negated boolean expression is always false\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/src/OfferTool/DefaultService.php
 
 		-
 			message: "#^Parameter \\#1 \\$product of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OfferTool\\\\AbstractOfferItem\\:\\:setProduct\\(\\) expects Pimcore\\\\Model\\\\Element\\\\AbstractElement\\|null, Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface given\\.$#"
@@ -121,11 +91,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/src/OrderManager/V7/OrderManager.php
 
 		-
-			message: "#^Parameter \\#4 \\$orderId of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OrderManager\\\\V7\\\\OrderManager\\:\\:getRecurringPaymentSourceOrderList\\(\\) expects string, int\\|null given\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/src/OrderManager/V7/OrderManager.php
-
-		-
 			message: "#^Parameter \\#1 \\$categories of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PricingManager\\\\Condition\\\\CatalogCategory\\:\\:setCategories\\(\\) expects array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractCategory\\>, array\\<int, Pimcore\\\\Model\\\\DataObject\\\\Concrete\\> given\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/src/PricingManager/Condition/CatalogCategory.php
@@ -141,19 +106,9 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/src/PricingManager/PricingManager.php
 
 		-
-			message: "#^Parameter \\#1 \\$id of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Tracking\\\\AbstractData\\:\\:setId\\(\\) expects string, int given\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/src/Tracking/TrackingItemBuilder.php
-
-		-
 			message: "#^Parameter \\#3 \\$mode of function round expects 1\\|2\\|3\\|4, int given\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/src/Type/Decimal.php
-
-		-
-			message: "#^Parameter \\#1 \\$seriesId of static method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\VoucherService\\\\Token\\\\Listing\\:\\:cleanUpAllTokens\\(\\) expects string, int\\|null given\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/src/VoucherService/DefaultService.php
 
 		-
 			message: "#^Negated boolean expression is always false\\.$#"
@@ -244,9 +199,4 @@ parameters:
 			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
 			count: 1
 			path: models/Document/Hardlink/Wrapper/Snippet.php
-
-		-
-			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Asset\\|Pimcore\\\\Model\\\\DataObject\\|Pimcore\\\\Model\\\\Document\\>\\|null, array\\<Pimcore\\\\Model\\\\Element\\\\ElementInterface\\> given\\.$#"
-			count: 1
-			path: models/Element/Service.php
 

@@ -110,18 +110,29 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
             });
         }
 
+        var windowWidth = 950;
         this.window = new Ext.Window({
-            width: 950,
+            width: windowWidth,
+            maxWidth: Ext.getBody().getViewSize().width,
             height: '95%',
+            maxHeight: Ext.getBody().getViewSize().height,
             modal: true,
             title: t('grid_options'),
             layout: "fit",
             items: [this.tabPanel],
-            buttons: buttons
+            buttons: buttons,
+            constrainHeader: true
         });
 
         this.window.show();
         this.updatePreview();
+
+        window.addEventListener('resize', () => {
+            this.window.setWidth(windowWidth);
+            this.window.setMaxWidth(Ext.getBody().getViewSize().width);
+            this.window.setMaxHeight(Ext.getBody().getViewSize().height);
+            this.window.center();
+        });
     },
 
     getConfigPanel: function() {
@@ -268,8 +279,18 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
                 }
             )
 
+            this.saveFilters = new Ext.form.field.Checkbox(
+                {
+                    fieldLabel: "Save filters",
+                    inputValue: true,
+                    name: "saveFilters",
+                    value: this.settings.saveFilters
+                }
+            );
+
             items.push(this.shareGlobally);
             items.push(this.setAsFavourite);
+            items.push(this.saveFilters);
         }
 
         if (user.isAllowed("share_configurations")) {
@@ -301,10 +322,10 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
                 if (configElement) {
                     var treenode = configElement.getConfigTreeNode(configuration[i]);
 
-                    if (configuration[i].childs) {
-                        var childs = this.doBuildChannelConfigTree(configuration[i].childs);
-                        treenode.children = childs;
-                        if (childs.length > 0) {
+                    if (configuration[i].children) {
+                        var children = this.doBuildChannelConfigTree(configuration[i].children);
+                        treenode.children = children;
+                        if (children.length > 0) {
                             treenode.expandable = true;
                         }
                     }
@@ -327,14 +348,14 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
     },
 
     doGetRecursiveData: function (node) {
-        var childs = [];
+        var children = [];
         node.eachChild(function (child) {
             var attributes = child.data.configAttributes;
-            attributes.childs = this.doGetRecursiveData(child);
-            childs.push(attributes);
+            attributes.children = this.doGetRecursiveData(child);
+            children.push(attributes);
         }.bind(this));
 
-        return childs;
+        return children;
     },
 
     updatePreview: function () {
@@ -568,8 +589,8 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
 
         for (i = 0; i < len; i++) {
             var k = groupKeys[i];
-            var childs = groups[k];
-            childs.sort(
+            var children = groups[k];
+            children.sort(
                 function (x, y) {
                     return x.text < y.text ? -1 : 1;
                 }
@@ -582,7 +603,7 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
                 allowDrop: false,
                 leaf: false,
                 expanded: true,
-                children: childs
+                children: children
             };
 
             groupNodes.push(groupNode);

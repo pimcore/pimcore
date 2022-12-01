@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,43 +23,25 @@ namespace Pimcore\Event\Traits;
  */
 trait ElementDeleteInfoEventTrait
 {
-    /**
-     * @var bool
-     */
-    protected $deletionAllowed = true;
+    protected bool $deletionAllowed = true;
 
-    /**
-     * @var string
-     */
-    protected $reason;
+    protected string $reason;
 
-    /**
-     * @return bool
-     */
     public function getDeletionAllowed(): bool
     {
         return $this->deletionAllowed;
     }
 
-    /**
-     * @param bool $deletionAllowed
-     */
     public function setDeletionAllowed(bool $deletionAllowed): void
     {
         $this->deletionAllowed = $deletionAllowed;
     }
 
-    /**
-     * @return string
-     */
     public function getReason(): string
     {
         return $this->reason;
     }
 
-    /**
-     * @param string $reason
-     */
     public function setReason(string $reason): void
     {
         $this->reason = $reason;

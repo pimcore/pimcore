@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -77,3 +78,5 @@ abstract class AbstractDefinitionHelper extends Module
 
     abstract public function initializeDefinitions();
 }
+
+@class_alias(AbstractDefinitionHelper::class, 'Pimcore\Tests\Support\Helper\AbstractDefinitionHelper');

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,10 +31,7 @@ interface GiftInterface extends ActionInterface, CartActionInterface
      *
      * @return GiftInterface
      */
-    public function setProduct(AbstractProduct $product);
+    public function setProduct(AbstractProduct $product): GiftInterface;
 
-    /**
-     * @return AbstractProduct|null
-     */
-    public function getProduct();
+    public function getProduct(): ?AbstractProduct;
 }

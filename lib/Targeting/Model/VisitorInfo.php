@@ -30,70 +30,52 @@ class VisitorInfo implements \IteratorAggregate
 
     const ACTION_SCOPE_RESPONSE = 'response';
 
-    /**
-     * @var Request
-     */
-    private $request;
+    private Request $request;
 
-    /**
-     * @var string|null
-     */
-    private $visitorId;
+    private ?string $visitorId = null;
 
-    /**
-     * @var string|null
-     */
-    private $sessionId;
+    private ?string $sessionId = null;
 
     /**
      * Matched targeting rules
      *
      * @var Rule[]
      */
-    private $matchingTargetingRules = [];
+    private array $matchingTargetingRules = [];
 
     /**
      * Assigned target groups with count
      *
      * @var TargetGroupAssignment[]
      */
-    private $targetGroupAssignments = [];
+    private array $targetGroupAssignments = [];
 
     /**
      * Target group assignments sorted by count
      *
      * @var TargetGroupAssignment[]|null
      */
-    private $sortedTargetGroupAssignments;
+    private ?array $sortedTargetGroupAssignments = null;
 
     /**
      * Plain list of assigned target groups
      *
      * @var TargetGroup[]|null
      */
-    private $targetGroups;
+    private ?array $targetGroups = null;
 
-    /**
-     * @var array
-     */
-    private $data = [];
+    private array $data = [];
 
-    /**
-     * @var array
-     */
-    private $actions = [];
+    private array $actions = [];
 
     /**
      * List of frontend data providers which are expected to provide data
      *
      * @var array
      */
-    private $frontendDataProviders = [];
+    private array $frontendDataProviders = [];
 
-    /**
-     * @var Response
-     */
-    private $response;
+    private ?Response $response = null;
 
     public function __construct(Request $request, string $visitorId = null, string $sessionId = null)
     {
@@ -131,10 +113,7 @@ class VisitorInfo implements \IteratorAggregate
         return !empty($this->visitorId);
     }
 
-    /**
-     * @return string|null
-     */
-    public function getVisitorId()
+    public function getVisitorId(): ?string
     {
         return $this->visitorId;
     }
@@ -144,10 +123,7 @@ class VisitorInfo implements \IteratorAggregate
         return !empty($this->sessionId);
     }
 
-    /**
-     * @return string|null
-     */
-    public function getSessionId()
+    public function getSessionId(): ?string
     {
         return $this->sessionId;
     }
@@ -189,7 +165,6 @@ class VisitorInfo implements \IteratorAggregate
             return $this->sortedTargetGroupAssignments;
         }
 
-        /** @var TargetGroupAssignment[] $assignments */
         $assignments = array_values($this->targetGroupAssignments);
 
         // sort reverse (highest count first)
@@ -290,17 +265,11 @@ class VisitorInfo implements \IteratorAggregate
         return null !== $this->response;
     }
 
-    /**
-     * @return Response|null
-     */
-    public function getResponse()
+    public function getResponse(): ?Response
     {
         return $this->response;
     }
 
-    /**
-     * @param Response $response
-     */
     public function setResponse(Response $response)
     {
         $this->response = $response;
@@ -316,11 +285,7 @@ class VisitorInfo implements \IteratorAggregate
         $this->data = $data;
     }
 
-    /**
-     * @return \ArrayIterator
-     */
-    #[\ReturnTypeWillChange]
-    public function getIterator()// : \ArrayIterator
+    public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->data);
     }
@@ -331,12 +296,12 @@ class VisitorInfo implements \IteratorAggregate
     }
 
     /**
-     * @param string|int $key
+     * @param int|string $key
      * @param mixed $default
      *
      * @return mixed
      */
-    public function get($key, $default = null)
+    public function get(int|string $key, mixed $default = null): mixed
     {
         return $this->data[$key] ?? $default;
     }

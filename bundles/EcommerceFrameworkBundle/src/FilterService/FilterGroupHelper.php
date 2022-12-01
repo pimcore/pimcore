@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -41,7 +42,7 @@ class FilterGroupHelper
      *
      * @return string
      */
-    protected function getColumnTypeForColumnGroup($columnGroup)
+    protected function getColumnTypeForColumnGroup(string $columnGroup): string
     {
         return $columnGroup;
     }
@@ -55,7 +56,7 @@ class FilterGroupHelper
      *
      * @return array
      */
-    public function getGroupByValuesForFilterGroup($columnGroup, ProductListInterface $productList, $field)
+    public function getGroupByValuesForFilterGroup(string $columnGroup, ProductListInterface $productList, string $field): array
     {
         $columnType = $this->getColumnTypeForColumnGroup($columnGroup);
 

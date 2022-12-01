@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,10 +26,10 @@ interface CategoryInterface extends ConditionInterface
      *
      * @return CategoryInterface
      */
-    public function setCategories(array $categories);
+    public function setCategories(array $categories): CategoryInterface;
 
     /**
      * @return AbstractCategory[]
      */
-    public function getCategories();
+    public function getCategories(): array;
 }

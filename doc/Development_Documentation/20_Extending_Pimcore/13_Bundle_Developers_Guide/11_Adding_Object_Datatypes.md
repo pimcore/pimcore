@@ -18,8 +18,8 @@ options in class editor.
    It needs to extend `pimcore.object.classes.data.data`, be located in namespace `pimcore.object.classes.data` and named after the 
    `$fieldtype` property of the corresponding PHP class.
      
-   For examples have a look at the Pimcore core datatypes at  
-   [github](https://github.com/pimcore/pimcore/tree/11.x/bundles/AdminBundle/public/js/pimcore/object/classes/data)
+   For examples have a look at the Pimcore core datatypes at 
+   [github](https://github.com/pimcore/pimcore/tree/11.5/bundles/AdminBundle/public/js/pimcore/object/classes/data)
 
 
 3) Create JavaScript class for object editor (object tag):
@@ -29,8 +29,8 @@ is presented and an can be entered within Pimcore objects.
    It needs to extend `pimcore.object.tags.abstract`, be located in namespace `pimcore.object.tags` and named after the 
    `$fieldtype` property of the corresponding PHP class.
      
-   For examples have a look at the Pimcore core datatypes at  
-   [github](https://github.com/pimcore/pimcore/tree/11.x/bundles/AdminBundle/public/js/pimcore/object/tags)
+   For examples have a look at the Pimcore core datatypes at
+   [github](https://github.com/pimcore/pimcore/tree/11.5/bundles/AdminBundle/public/js/pimcore/object/tags)
    
    
 4) Register a datatype in Pimcore

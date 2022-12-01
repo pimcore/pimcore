@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,10 +24,7 @@ class AssetEvent extends Event implements ElementEventInterface
 {
     use ArgumentsAwareTrait;
 
-    /**
-     * @var Asset
-     */
-    protected $asset;
+    protected Asset $asset;
 
     /**
      * AssetEvent constructor.
@@ -40,26 +38,17 @@ class AssetEvent extends Event implements ElementEventInterface
         $this->arguments = $arguments;
     }
 
-    /**
-     * @return Asset
-     */
-    public function getAsset()
+    public function getAsset(): Asset
     {
         return $this->asset;
     }
 
-    /**
-     * @param Asset $asset
-     */
-    public function setAsset($asset)
+    public function setAsset(Asset $asset)
     {
         $this->asset = $asset;
     }
 
-    /**
-     * @return Asset
-     */
-    public function getElement()
+    public function getElement(): Asset
     {
         return $this->getAsset();
     }

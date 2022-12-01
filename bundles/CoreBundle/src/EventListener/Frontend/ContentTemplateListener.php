@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -33,9 +34,6 @@ class ContentTemplateListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
-    /**
-     * @param TemplateResolver $templateResolver
-     */
     public function __construct(protected TemplateResolver $templateResolver)
     {
     }

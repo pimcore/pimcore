@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,27 +21,13 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 
 class TargetGroup implements ConditionInterface
 {
-    /**
-     * @var int|null
-     */
-    protected $targetGroupId;
+    protected ?int $targetGroupId = null;
 
-    /**
-     * @var \Pimcore\Model\Tool\Targeting\TargetGroup|null
-     */
-    protected $targetGroup;
+    protected ?\Pimcore\Model\Tool\Targeting\TargetGroup $targetGroup = null;
 
-    /**
-     * @var int
-     */
-    protected $threshold = 0;
+    protected int $threshold = 0;
 
-    /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return bool
-     */
-    public function check(EnvironmentInterface $environment)
+    public function check(EnvironmentInterface $environment): bool
     {
         $visitorInfo = $environment->getVisitorInfo();
 
@@ -73,15 +60,9 @@ class TargetGroup implements ConditionInterface
         if ($this->targetGroupId) {
             $this->targetGroup = \Pimcore\Model\Tool\Targeting\TargetGroup::getById($this->targetGroupId);
         }
-        if ($this->threshold === null) {
-            $this->threshold = 0;
-        }
     }
 
-    /**
-     * @return string
-     */
-    public function toJSON()
+    public function toJSON(): string
     {
         // basic
         $json = [
@@ -91,12 +72,7 @@ class TargetGroup implements ConditionInterface
         return json_encode($json);
     }
 
-    /**
-     * @param string $string
-     *
-     * @return ConditionInterface
-     */
-    public function fromJSON($string)
+    public function fromJSON(string $string): ConditionInterface
     {
         $json = json_decode($string);
 
@@ -110,17 +86,11 @@ class TargetGroup implements ConditionInterface
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getTargetGroupId(): int
     {
         return $this->targetGroupId;
     }
 
-    /**
-     * @param int $targetGroupId
-     */
     public function setTargetGroupId(int $targetGroupId)
     {
         $this->targetGroupId = $targetGroupId;
@@ -131,34 +101,22 @@ class TargetGroup implements ConditionInterface
         }
     }
 
-    /**
-     * @return \Pimcore\Model\Tool\Targeting\TargetGroup
-     */
     public function getTargetGroup(): \Pimcore\Model\Tool\Targeting\TargetGroup
     {
         return $this->targetGroup;
     }
 
-    /**
-     * @param \Pimcore\Model\Tool\Targeting\TargetGroup $targetGroup
-     */
     public function setTargetGroup(\Pimcore\Model\Tool\Targeting\TargetGroup $targetGroup)
     {
         $this->targetGroup = $targetGroup;
         $this->targetGroupId = $targetGroup->getId();
     }
 
-    /**
-     * @return int
-     */
     public function getThreshold(): int
     {
         return $this->threshold;
     }
 
-    /**
-     * @param int $threshold
-     */
     public function setThreshold(int $threshold)
     {
         $this->threshold = $threshold;

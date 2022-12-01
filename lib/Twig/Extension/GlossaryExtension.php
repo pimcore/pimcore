@@ -26,15 +26,8 @@ use Twig\TwigFilter;
  */
 class GlossaryExtension extends AbstractExtension
 {
-    /**
-     * @var Processor
-     */
-    private $glossaryProcessor;
+    private Processor $glossaryProcessor;
 
-    /**
-     * @param Processor $glossaryProcessor
-     *
-     */
     public function __construct(Processor $glossaryProcessor)
     {
         $this->glossaryProcessor = $glossaryProcessor;
@@ -50,12 +43,6 @@ class GlossaryExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * @param string $string
-     * @param array $options
-     *
-     * @return string
-     */
     public function applyGlossary(string $string, array $options = []): string
     {
         if (empty($string) || !is_string($string)) {

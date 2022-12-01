@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,16 +22,14 @@ use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Model\DataObject\Service;
+use Pimcore\Model\Element\ElementInterface;
 
 /**
  * @internal
  */
 final class DefaultValue extends AbstractValue
 {
-    /**
-     * @var LocaleServiceInterface
-     */
-    protected $localeService;
+    protected ?LocaleServiceInterface $localeService = null;
 
     /**
      * {@inheritdoc}
@@ -168,7 +167,7 @@ final class DefaultValue extends AbstractValue
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         $attributeParts = explode('~', $this->attribute);
 

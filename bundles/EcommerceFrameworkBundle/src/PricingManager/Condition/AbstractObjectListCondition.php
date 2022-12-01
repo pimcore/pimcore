@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,7 +28,7 @@ abstract class AbstractObjectListCondition
      *
      * @return array
      */
-    protected function handleSleep($objectProperty, $idProperty)
+    protected function handleSleep(string $objectProperty, string $idProperty): array
     {
         $itemIds = [];
 
@@ -47,7 +48,7 @@ abstract class AbstractObjectListCondition
      * @param string $objectProperty
      * @param string $idProperty
      */
-    protected function handleWakeup($objectProperty, $idProperty)
+    protected function handleWakeup(string $objectProperty, string $idProperty): void
     {
         // support for legacy version with IDs serialized directly to property
         $source = (null !== $this->$objectProperty && count($this->$objectProperty) > 0)
@@ -75,7 +76,7 @@ abstract class AbstractObjectListCondition
      *
      * @return Concrete|null
      */
-    protected function loadObject($id)
+    protected function loadObject(int $id): ?Concrete
     {
         return Concrete::getById($id);
     }

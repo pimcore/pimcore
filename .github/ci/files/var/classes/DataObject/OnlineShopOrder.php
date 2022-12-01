@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Inheritance: no
@@ -49,6 +50,7 @@ namespace Pimcore\Model\DataObject;
 
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\DataObject\PreGetValueHookInterface;
+use Pimcore\Model\Element\AbstractElement;
 
 /**
 * @method static \Pimcore\Model\DataObject\OnlineShopOrder\Listing getList(array $config = [])
@@ -91,50 +93,46 @@ class OnlineShopOrder extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\Abs
 {
 protected $o_classId = "EF_OSO";
 protected $o_className = "OnlineShopOrder";
-protected $ordernumber;
-protected $orderState;
-protected $orderdate;
-protected $items;
-protected $comment;
-protected $customerOrderData;
-protected $voucherTokens;
-protected $giftItems;
-protected $priceModifications;
-protected $subTotalNetPrice;
-protected $subTotalPrice;
-protected $totalNetPrice;
-protected $totalPrice;
-protected $taxInfo;
-protected $currency;
-protected $cartId;
-protected $successorOrder;
-protected $cartHash;
-protected $customer;
-protected $customerFirstname;
-protected $customerLastname;
-protected $customerCompany;
-protected $customerStreet;
-protected $customerZip;
-protected $customerCity;
-protected $customerCountry;
-protected $customerEmail;
-protected $deliveryFirstname;
-protected $deliveryLastname;
-protected $deliveryCompany;
-protected $deliveryStreet;
-protected $deliveryZip;
-protected $deliveryCity;
-protected $deliveryCountry;
-protected $paymentProvider;
-protected $paymentInfo;
-protected $paymentReference;
-protected $customized;
+protected ?string $ordernumber;
+protected ?string $orderState;
+protected ?\Carbon\Carbon $orderdate;
+protected array $items;
+protected ?string $comment;
+protected ?string $customerOrderData;
+protected array $voucherTokens;
+protected array $giftItems;
+protected ?Fieldcollection $priceModifications;
+protected ?string $subTotalNetPrice;
+protected ?string $subTotalPrice;
+protected ?string $totalNetPrice;
+protected ?string $totalPrice;
+protected array $taxInfo;
+protected ?string $currency;
+protected ?string $cartId;
+protected \Pimcore\Model\Element\AbstractElement|null|OnlineShopOrder $successorOrder;
+protected ?int $cartHash;
+protected \Pimcore\Model\Element\AbstractElement|Customer|null $customer;
+protected ?string $customerFirstname;
+protected ?string $customerLastname;
+protected ?string $customerCompany;
+protected ?string $customerStreet;
+protected ?string $customerZip;
+protected ?string $customerCity;
+protected ?string $customerCountry;
+protected ?string $customerEmail;
+protected ?string $deliveryFirstname;
+protected ?string $deliveryLastname;
+protected ?string $deliveryCompany;
+protected ?string $deliveryStreet;
+protected ?string $deliveryZip;
+protected ?string $deliveryCity;
+protected ?string $deliveryCountry;
+protected Objectbrick|null|OnlineShopOrder\PaymentProvider $paymentProvider;
+protected ?Fieldcollection $paymentInfo;
+protected ?string $paymentReference;
+protected Objectbrick|OnlineShopOrder\Customized|null $customized;
 
 
-/**
-* @param array $values
-* @return static
-*/
 public static function create(array $values = []): static
 {
 	$object = new static();
@@ -441,10 +439,7 @@ public function setGiftItems(?array $giftItems): static
 	return $this;
 }
 
-/**
-* @return \Pimcore\Model\DataObject\Fieldcollection|null
-*/
-public function getPriceModifications()
+    public function getPriceModifications(): ?Fieldcollection
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("priceModifications");
@@ -714,9 +709,9 @@ public function setCartId(?string $cartId): static
 
 /**
 * Get successorOrder - Successor Order
-* @return \Pimcore\Model\DataObject\OnlineShopOrder|null
+* @return OnlineShopOrder|\Pimcore\Model\Element\AbstractElement|\Pimcore\Model\Element\ElementInterface|null
 */
-public function getSuccessorOrder(): ?\Pimcore\Model\Element\AbstractElement
+public function getSuccessorOrder(): OnlineShopOrder|\Pimcore\Model\Element\ElementInterface|\Pimcore\Model\Element\AbstractElement|null
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("successorOrder");
@@ -792,9 +787,9 @@ public function setCartHash(?int $cartHash): static
 
 /**
 * Get customer - Customer
-* @return \Pimcore\Model\DataObject\Customer|null
+* @return Customer|\Pimcore\Model\Element\AbstractElement|\Pimcore\Model\Element\ElementInterface|null
 */
-public function getCustomer(): ?\Pimcore\Model\Element\AbstractElement
+public function getCustomer(): Customer|\Pimcore\Model\Element\ElementInterface|\Pimcore\Model\Element\AbstractElement|null
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("customer");
@@ -1343,10 +1338,7 @@ public function setDeliveryCountry(?string $deliveryCountry): static
 	return $this;
 }
 
-/**
-* @return \Pimcore\Model\DataObject\OnlineShopOrder\PaymentProvider
-*/
-public function getPaymentProvider(): ?\Pimcore\Model\DataObject\Objectbrick
+    public function getPaymentProvider(): ?\Pimcore\Model\DataObject\Objectbrick
 {
 	$data = $this->paymentProvider;
 	if (!$data) {
@@ -1380,10 +1372,7 @@ public function setPaymentProvider(?\Pimcore\Model\DataObject\Objectbrick $payme
 	return $this;
 }
 
-/**
-* @return \Pimcore\Model\DataObject\Fieldcollection|null
-*/
-public function getPaymentInfo()
+    public function getPaymentInfo(): ?Fieldcollection
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("paymentInfo");
@@ -1443,10 +1432,7 @@ public function setPaymentReference(?string $paymentReference): static
 	return $this;
 }
 
-/**
-* @return \Pimcore\Model\DataObject\OnlineShopOrder\Customized
-*/
-public function getCustomized(): ?\Pimcore\Model\DataObject\Objectbrick
+    public function getCustomized(): ?\Pimcore\Model\DataObject\Objectbrick
 {
 	$data = $this->customized;
 	if (!$data) {

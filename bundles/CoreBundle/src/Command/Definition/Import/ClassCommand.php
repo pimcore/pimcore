@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,7 +30,7 @@ class ClassCommand extends AbstractStructureImportCommand
      *
      * @return string
      */
-    protected function getType()
+    protected function getType(): string
     {
         return 'Class';
     }
@@ -41,7 +42,7 @@ class ClassCommand extends AbstractStructureImportCommand
      *
      * @return string|null
      */
-    protected function getDefinitionName($filename)
+    protected function getDefinitionName(string $filename): ?string
     {
         $parts = [];
         if (1 === preg_match('/^class_(.*)_export\.json$/', $filename, $parts)) {
@@ -58,7 +59,7 @@ class ClassCommand extends AbstractStructureImportCommand
      *
      * @return AbstractModel|null
      */
-    protected function loadDefinition($name)
+    protected function loadDefinition(string $name): ?AbstractModel
     {
         return ClassDefinition::getByName($name);
     }
@@ -68,9 +69,9 @@ class ClassCommand extends AbstractStructureImportCommand
      *
      * @param string $name
      *
-     * @return AbstractModel
+     * @return ClassDefinition
      */
-    protected function createDefinition($name)
+    protected function createDefinition(string $name): ClassDefinition
     {
         $class = new ClassDefinition();
         $class->setName($name);
@@ -86,7 +87,7 @@ class ClassCommand extends AbstractStructureImportCommand
      *
      * @return bool
      */
-    protected function import(AbstractModel $definition, $json)
+    protected function import(AbstractModel $definition, string $json): bool
     {
         if (!$definition instanceof ClassDefinition) {
             return false;

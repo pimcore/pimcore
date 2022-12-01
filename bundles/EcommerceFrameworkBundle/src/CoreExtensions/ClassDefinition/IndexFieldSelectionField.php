@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,20 +25,20 @@ class IndexFieldSelectionField extends Textarea
      *
      * @var string
      */
-    public $fieldtype = 'indexFieldSelectionField';
+    public string $fieldtype = 'indexFieldSelectionField';
 
-    public $specificPriceField = false;
+    public bool $specificPriceField = false;
 
-    public $showAllFields = false;
+    public bool $showAllFields = false;
 
-    public $considerTenants = false;
+    public bool $considerTenants = false;
 
     public function setSpecificPriceField($specificPriceField)
     {
         $this->specificPriceField = $specificPriceField;
     }
 
-    public function getSpecificPriceField()
+    public function getSpecificPriceField(): bool
     {
         return $this->specificPriceField;
     }
@@ -47,7 +48,7 @@ class IndexFieldSelectionField extends Textarea
         $this->showAllFields = $showAllFields;
     }
 
-    public function getShowAllFields()
+    public function getShowAllFields(): bool
     {
         return $this->showAllFields;
     }
@@ -57,17 +58,12 @@ class IndexFieldSelectionField extends Textarea
         $this->considerTenants = $considerTenants;
     }
 
-    public function getConsiderTenants()
+    public function getConsiderTenants(): bool
     {
         return $this->considerTenants;
     }
 
-    /**
-     * @param array|string|null $data
-     *
-     * @return bool
-     */
-    public function isEmpty($data)
+    public function isEmpty(mixed $data): bool
     {
         if (is_string($data)) {
             return strlen($data) < 1;
@@ -80,13 +76,13 @@ class IndexFieldSelectionField extends Textarea
     }
 
     /**
-     * @param array|string $data
+     * @param mixed $data
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, $object = null, array $params = []): string
     {
         if (is_array($data)) {
             $data = implode(',', $data);

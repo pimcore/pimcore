@@ -48,7 +48,7 @@ class RedirectsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function redirectsAction(Request $request, RedirectHandler $redirectHandler)
+    public function redirectsAction(Request $request, RedirectHandler $redirectHandler): JsonResponse
     {
         // check permission for both update and listing
         $this->checkPermission('redirects');
@@ -187,7 +187,7 @@ class RedirectsController extends AdminController
      *
      * @return Response
      */
-    public function csvExportAction(Csv $csv)
+    public function csvExportAction(Csv $csv): Response
     {
         $this->checkPermission('redirects');
 
@@ -219,7 +219,7 @@ class RedirectsController extends AdminController
      *
      * @return Response
      */
-    public function csvImportAction(Request $request, Csv $csv)
+    public function csvImportAction(Request $request, Csv $csv): Response
     {
         $this->checkPermission('redirects');
 
@@ -243,7 +243,7 @@ class RedirectsController extends AdminController
      *
      * @return JsonResponse
      */
-    public function cleanupAction()
+    public function cleanupAction(): JsonResponse
     {
         $this->checkPermission('redirects');
 

@@ -106,10 +106,6 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         throw $this->createAccessDeniedHttpException();
     }
 
-    /**
-     * @param Request $request
-     * @param Model\Document $document
-     */
     protected function addPropertiesToDocument(Request $request, Model\Document $document)
     {
         // properties
@@ -155,10 +151,6 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         $document->getProperties();
     }
 
-    /**
-     * @param Request $request
-     * @param Model\Document $document
-     */
     protected function addSettingsToDocument(Request $request, Model\Document $document): void
     {
         // settings
@@ -170,10 +162,6 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         }
     }
 
-    /**
-     * @param Request $request
-     * @param Model\Document $document
-     */
     protected function addDataToDocument(Request $request, Model\Document $document): void
     {
         if ($document instanceof Model\Document\PageSnippet) {
@@ -197,10 +185,6 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         }
     }
 
-    /**
-     * @param Model\Document $document
-     * @param array $data
-     */
     protected function addTranslationsData(Model\Document $document, array &$data): void
     {
         $service = new Model\Document\Service;
@@ -240,10 +224,6 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         return $this->adminJson(['success' => true]);
     }
 
-    /**
-     * @param Model\Document $doc
-     * @param bool $useForSave
-     */
     protected function saveToSession(Model\Document $doc, bool $useForSave = false): void
     {
         // save to session
@@ -289,22 +269,11 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         return $this->adminJson(['success' => true]);
     }
 
-    /**
-     * @param Model\Document $document
-     * @param array $data
-     */
     protected function minimizeProperties(Model\Document $document, array &$data): void
     {
         $data['properties'] = Model\Element\Service::minimizePropertiesForEditmode($document->getProperties());
     }
 
-    /**
-     * @param Model\Document $document
-     * @param string $propertyName
-     * @param mixed $propertyValue
-     *
-     * @return bool
-     */
     protected function getPropertyInheritance(Model\Document $document, string $propertyName, mixed $propertyValue): bool
     {
         if ($document->getParent()) {
@@ -360,9 +329,6 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         return $this->adminJson(['success' => true]);
     }
 
-    /**
-     * @param ControllerEvent $event
-     */
     public function onKernelControllerEvent(ControllerEvent $event): void
     {
         if (!$event->isMainRequest()) {
@@ -373,17 +339,8 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         $this->checkPermission('documents');
     }
 
-    /**
-     * @param Request $request
-     * @param Model\Document $page
-     */
     abstract protected function setValuesToDocument(Request $request, Model\Document $page);
 
-    /**
-     * @param string $task
-     * @param Model\Document\PageSnippet $page
-     *
-     */
     protected function handleTask(string $task, Model\Document\PageSnippet $page)
     {
         if ($task === self::TASK_PUBLISH || $task === self::TASK_VERSION) {
@@ -391,11 +348,6 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         }
     }
 
-    /**
-     * @param Model\Document $document
-     *
-     * @return bool|JsonResponse
-     */
     protected function checkForLock(Model\Document $document): JsonResponse|bool
     {
         // check for lock

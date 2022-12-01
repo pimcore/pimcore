@@ -27,7 +27,7 @@ final class BlockStateStack implements \Countable, \JsonSerializable
     /**
      * @var BlockState[]
      */
-    private $states = [];
+    private array $states = [];
 
     public function __construct()
     {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,12 +31,9 @@ abstract class AbstractSearch implements OrderListFilterInterface
      *
      * @var string
      */
-    protected $value;
+    protected string $value;
 
-    /**
-     * @param string $value
-     */
-    public function __construct($value)
+    public function __construct(string $value)
     {
         $this->value = trim($value);
     }
@@ -45,24 +43,19 @@ abstract class AbstractSearch implements OrderListFilterInterface
      *
      * @return string
      */
-    abstract protected function getConditionColumn();
+    abstract protected function getConditionColumn(): string;
 
     /**
      * Pad the value with wildcards
      *
      * @return string
      */
-    protected function getConditionValue()
+    protected function getConditionValue(): string
     {
         return '%' . $this->value . '%';
     }
 
-    /**
-     * @param OrderListInterface $orderList
-     *
-     * @return $this
-     */
-    public function apply(OrderListInterface $orderList)
+    public function apply(OrderListInterface $orderList): static
     {
         if (empty($this->value)) {
             return $this;

@@ -17,7 +17,7 @@
      treeDataUrl: null,
  
      initialize: function(config, perspectiveCfg) {
-         this.treeDataUrl = Routing.generate('pimcore_admin_asset_treegetchildsbyid');
+         this.treeDataUrl = Routing.generate('pimcore_admin_asset_treegetchildrenbyid');
          this.perspectiveCfg = perspectiveCfg;
          if (!perspectiveCfg) {
              this.perspectiveCfg = {
@@ -777,7 +777,7 @@
  
                      if (record.data.type == "folder" && perspectiveCfg.inTreeContextMenu("asset.lockAndPropagate")) {
                          lockMenu.push({
-                             text: t('lock_and_propagate_to_childs'),
+                             text: t('lock_and_propagate_to_children'),
                              iconCls: "pimcore_icon_lock pimcore_icon_overlay_go",
                              handler: function () {
                                  pimcore.elementservice.lockElement({

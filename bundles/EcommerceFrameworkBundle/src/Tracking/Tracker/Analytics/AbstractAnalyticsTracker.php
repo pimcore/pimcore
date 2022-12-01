@@ -22,10 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker as EcommerceTracker
 
 abstract class AbstractAnalyticsTracker extends EcommerceTracker
 {
-    /**
-     * @var Tracker
-     */
-    protected $tracker;
+    protected Tracker $tracker;
 
     /**
      * @required

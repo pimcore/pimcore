@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,14 +32,8 @@ use Pimcore\Tests\Support\Util\TestHelper;
  */
 class ListingTest extends ModelTestCase
 {
-    /**
-     * @var TestDataHelper
-     */
-    protected $testDataHelper;
+    protected TestDataHelper $testDataHelper;
 
-    /**
-     * @param TestDataHelper $testData
-     */
     public function _inject(TestDataHelper $testData)
     {
         $this->testDataHelper = $testData;

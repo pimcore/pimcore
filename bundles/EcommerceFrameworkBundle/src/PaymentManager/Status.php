@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,35 +23,35 @@ class Status implements StatusInterface
      *
      * @var string
      */
-    protected $status;
+    protected string $status;
 
     /**
      * pimcore internal payment id, necessary to identify payment information in order object
      *
      * @var string
      */
-    protected $internalPaymentId;
+    protected string $internalPaymentId;
 
     /**
      * payment reference from payment provider
      *
      * @var string
      */
-    protected $paymentReference;
+    protected string $paymentReference;
 
     /**
      * payment message provided from payment provider - e.g. error message on error
      *
      * @var string
      */
-    protected $message;
+    protected string $message;
 
     /**
      * additional payment data
      *
      * @var array
      */
-    protected $data = [];
+    protected array $data = [];
 
     /**
      * @param string $internalPaymentId
@@ -59,7 +60,7 @@ class Status implements StatusInterface
      * @param string $status
      * @param array  $data  extended data
      */
-    public function __construct($internalPaymentId, $paymentReference, $message, $status, array $data = [])
+    public function __construct(string $internalPaymentId, string $paymentReference, string $message, string $status, array $data = [])
     {
         $this->internalPaymentId = $internalPaymentId;
         $this->paymentReference = $paymentReference;
@@ -68,42 +69,27 @@ class Status implements StatusInterface
         $this->data = $data;
     }
 
-    /**
-     * @return string
-     */
-    public function getInternalPaymentId()
+    public function getInternalPaymentId(): string
     {
         return $this->internalPaymentId;
     }
 
-    /**
-     * @return string
-     */
-    public function getMessage()
+    public function getMessage(): string
     {
         return $this->message;
     }
 
-    /**
-     * @return string
-     */
-    public function getPaymentReference()
+    public function getPaymentReference(): string
     {
         return $this->paymentReference;
     }
 
-    /**
-     * @return string
-     */
-    public function getStatus()
+    public function getStatus(): string
     {
         return $this->status;
     }
 
-    /**
-     * @return array
-     */
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }

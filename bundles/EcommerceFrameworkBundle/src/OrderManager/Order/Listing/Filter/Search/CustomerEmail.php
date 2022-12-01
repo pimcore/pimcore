@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,10 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Ab
 
 class CustomerEmail extends AbstractSearch
 {
-    /**
-     * @return string
-     */
-    protected function getConditionColumn()
+    protected function getConditionColumn(): string
     {
         return 'order.invoiceEmail';
     }

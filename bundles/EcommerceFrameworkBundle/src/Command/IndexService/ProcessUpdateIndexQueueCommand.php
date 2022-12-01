@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -37,20 +38,14 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
         Parallelization::runAfterBatch as parentRunAfterBatch;
     }
 
-    /**
-     * @var IndexUpdateService
-     */
-    protected $indexUpdateService;
+    protected IndexUpdateService $indexUpdateService;
 
-    /**
-     * @var IndexService
-     */
-    protected $indexService;
+    protected IndexService $indexService;
 
     /**
      * @var ProductCentricBatchProcessingWorker[] | null
      */
-    protected $childWorkerList = null;
+    protected ?array $childWorkerList = null;
 
     /**
      * @param IndexUpdateService $indexUpdateService
@@ -81,18 +76,12 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
     {
         $this->parentRunBeforeFirstCommand($input, $output);
         $this->initTimeout($input);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function fetchItems(InputInterface $input, OutputInterface $output): array
     {
         $tenantNameFilterList = $input->getOption('tenant');
@@ -104,9 +93,6 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
         return $rowsWithSerializedItems;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function runSingleCommand(string $serializedRow, InputInterface $input, OutputInterface $output): void
     {
         $row = unserialize($serializedRow);
@@ -124,9 +110,6 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function runAfterBatch(InputInterface $input, OutputInterface $output, array $items): void
     {
         if ($this->childWorkerList) {
@@ -175,17 +158,11 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
         return $workerList;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getItemName(?int $count): string
     {
         return 'combined product ID rows in store table index';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getSegmentSize(): int
     {
         return 500; // index updates per child process

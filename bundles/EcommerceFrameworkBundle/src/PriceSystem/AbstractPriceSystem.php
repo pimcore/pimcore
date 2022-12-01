@@ -28,10 +28,7 @@ use Pimcore\Model\WebsiteSetting;
 
 abstract class AbstractPriceSystem implements PriceSystemInterface
 {
-    /**
-     * @var PricingManagerLocatorInterface
-     */
-    protected $pricingManagers;
+    protected PricingManagerLocatorInterface $pricingManagers;
 
     public function __construct(PricingManagerLocatorInterface $pricingManagers)
     {
@@ -41,7 +38,7 @@ abstract class AbstractPriceSystem implements PriceSystemInterface
     /**
      * {@inheritdoc}
      */
-    public function getPriceInfo(CheckoutableInterface $product, $quantityScale = null, $products = null): PriceInfoInterface
+    public function getPriceInfo(CheckoutableInterface $product, int|string $quantityScale = null, array $products = null): PriceInfoInterface
     {
         return $this->initPriceInfoInstance($quantityScale, $product, $products);
     }
@@ -50,13 +47,13 @@ abstract class AbstractPriceSystem implements PriceSystemInterface
      * Returns shop-instance specific implementation of priceInfo, override this method in your own price system to
      * set any price values
      *
-     * @param null|int|string $quantityScale Numeric or string (allowed values: PriceInfoInterface::MIN_PRICE)
+     * @param int|string|null $quantityScale Numeric or string (allowed values: PriceInfoInterface::MIN_PRICE)
      * @param CheckoutableInterface $product
      * @param CheckoutableInterface[] $products
      *
      * @return PriceInfoInterface
      */
-    protected function initPriceInfoInstance($quantityScale, CheckoutableInterface $product, $products)
+    protected function initPriceInfoInstance(int|string|null $quantityScale, CheckoutableInterface $product, array $products): PriceInfoInterface
     {
         $priceInfo = $this->createPriceInfoInstance($quantityScale, $product, $products);
 
@@ -80,13 +77,13 @@ abstract class AbstractPriceSystem implements PriceSystemInterface
     }
 
     /**
-     * @param null|int|string $quantityScale Numeric or string (allowed values: PriceInfoInterface::MIN_PRICE)
+     * @param int|string|null $quantityScale Numeric or string (allowed values: PriceInfoInterface::MIN_PRICE)
      * @param CheckoutableInterface $product
      * @param CheckoutableInterface[] $products
      *
      * @return AbstractPriceInfo
      */
-    abstract public function createPriceInfoInstance($quantityScale, CheckoutableInterface $product, $products);
+    abstract public function createPriceInfoInstance(int|string|null $quantityScale, CheckoutableInterface $product, array $products): AbstractPriceInfo;
 
     /**
      * Sample implementation for getting the correct OnlineShopTaxClass. In this case Tax Class is retrieved from
@@ -96,7 +93,7 @@ abstract class AbstractPriceSystem implements PriceSystemInterface
      *
      * @return OnlineShopTaxClass
      */
-    protected function getDefaultTaxClass()
+    protected function getDefaultTaxClass(): OnlineShopTaxClass
     {
         $taxClass = WebsiteSetting::getByName('defaultTaxClass');
 
@@ -119,7 +116,7 @@ abstract class AbstractPriceSystem implements PriceSystemInterface
      *
      * @return OnlineShopTaxClass
      */
-    public function getTaxClassForProduct(CheckoutableInterface $product)
+    public function getTaxClassForProduct(CheckoutableInterface $product): OnlineShopTaxClass
     {
         return $this->getDefaultTaxClass();
     }
@@ -131,15 +128,12 @@ abstract class AbstractPriceSystem implements PriceSystemInterface
      *
      * @return OnlineShopTaxClass
      */
-    public function getTaxClassForPriceModification(CartPriceModificatorInterface $modificator)
+    public function getTaxClassForPriceModification(CartPriceModificatorInterface $modificator): OnlineShopTaxClass
     {
         return $this->getDefaultTaxClass();
     }
 
-    /**
-     * @return TaxCalculationService
-     */
-    protected function getTaxCalculationService()
+    protected function getTaxCalculationService(): TaxCalculationService
     {
         return new TaxCalculationService();
     }

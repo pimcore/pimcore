@@ -19,10 +19,7 @@ namespace Pimcore\Model\Document\Editable;
 
 interface BlockInterface
 {
-    /**
-     * @return \Generator
-     */
-    public function getIterator();
+    public function getIterator(): \Generator;
 
     /**
      * Is executed at the beginning of the loop and setup some general settings
@@ -59,24 +56,21 @@ interface BlockInterface
      *
      * @return int
      */
-    public function getCount();
+    public function getCount(): int;
 
     /**
      * Return current iteration step
      *
      * @return int
      */
-    public function getCurrent();
+    public function getCurrent(): int;
 
     /**
      * Return current index
      *
      * @return int
      */
-    public function getCurrentIndex();
+    public function getCurrentIndex(): int;
 
-    /**
-     * @return bool
-     */
-    public function isEmpty();
+    public function isEmpty(): bool;
 }

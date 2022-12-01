@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,7 +31,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     /**
      * @return Data[]
      */
-    public function getEntries()
+    public function getEntries(): array
     {
         return $this->getData();
     }
@@ -40,7 +41,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
      *
      * @return $this
      */
-    public function setEntries($entries)
+    public function setEntries(?array $entries): static
     {
         return $this->setData($entries);
     }

@@ -22,20 +22,10 @@ use Pimcore\Localization\LocaleServiceInterface;
 
 final class DefaultValueFactory implements ValueFactoryInterface
 {
-    /**
-     * @var string
-     */
-    private $className;
+    private string $className;
 
-    /**
-     * @var LocaleServiceInterface
-     */
-    private $localeService;
+    private LocaleServiceInterface $localeService;
 
-    /**
-     * @param string $className
-     * @param LocaleServiceInterface $localeService
-     */
     public function __construct(string $className, LocaleServiceInterface $localeService)
     {
         $this->className = $className;
@@ -45,7 +35,7 @@ final class DefaultValueFactory implements ValueFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function build(\stdClass $configElement, $context = null): ValueInterface
+    public function build(\stdClass $configElement, mixed $context = null): ValueInterface
     {
         return new $this->className($configElement, $context, $this->localeService);
     }

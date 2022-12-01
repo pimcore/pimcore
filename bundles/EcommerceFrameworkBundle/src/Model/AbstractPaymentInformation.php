@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,80 +23,29 @@ use Carbon\Carbon;
  */
 abstract class AbstractPaymentInformation extends \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData
 {
-    /**
-     * @return Carbon|null
-     */
     abstract public function getPaymentStart(): ?Carbon;
 
-    /**
-     * @param Carbon|null $paymentStart
-     *
-     * @return $this
-     */
-    abstract public function setPaymentStart(?Carbon $paymentStart);
+    abstract public function setPaymentStart(?Carbon $paymentStart): static;
 
-    /**
-     * @return Carbon|null
-     */
     abstract public function getPaymentFinish(): ?Carbon;
 
-    /**
-     * @param Carbon|null $paymentFinish
-     *
-     * @return $this
-     */
-    abstract public function setPaymentFinish(?Carbon $paymentFinish);
+    abstract public function setPaymentFinish(?Carbon $paymentFinish): static;
 
-    /**
-     * @return string|null
-     */
     abstract public function getPaymentReference(): ?string;
 
-    /**
-     * @param string|null $paymentReference
-     *
-     * @return $this
-     */
-    abstract public function setPaymentReference(?string $paymentReference);
+    abstract public function setPaymentReference(?string $paymentReference): static;
 
-    /**
-     * @return string|null
-     */
     abstract public function getPaymentState(): ?string;
 
-    /**
-     * @param string|null $paymentState
-     *
-     * @return $this
-     */
-    abstract public function setPaymentState(?string $paymentState);
+    abstract public function setPaymentState(?string $paymentState): static;
 
-    /**
-     * @return string|null
-     */
     abstract public function getMessage(): ?string;
 
-    /**
-     * @return string|null
-     */
     abstract public function getProviderData(): ?string;
 
-    /**
-     * @param string|null $message
-     *
-     * @return $this
-     */
-    abstract public function setMessage(?string $message);
+    abstract public function setMessage(?string $message): static;
 
-    /**
-     * @return string|null
-     */
     abstract public function getInternalPaymentId(): ?string;
 
-    /**
-     * @param string|null $internalPaymentId
-     *
-     * @return $this
-     */
-    abstract public function setInternalPaymentId(?string $internalPaymentId);
+    abstract public function setInternalPaymentId(?string $internalPaymentId): static;
 }

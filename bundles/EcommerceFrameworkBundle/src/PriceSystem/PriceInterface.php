@@ -37,14 +37,8 @@ interface PriceInterface
      */
     public function getAmount(): Decimal;
 
-    /**
-     * @return Currency
-     */
     public function getCurrency(): Currency;
 
-    /**
-     * @return bool
-     */
     public function isMinPrice(): bool;
 
     /**
@@ -81,9 +75,9 @@ interface PriceInterface
     /**
      * Returns tax entry combination mode needed for tax calculation
      *
-     * @return string
+     * @return string|null
      */
-    public function getTaxEntryCombinationMode(): string;
+    public function getTaxEntryCombinationMode(): ?string;
 
     /**
      * Sets gross amount of price. If $recalc is set to true, corresponding net price
@@ -94,7 +88,7 @@ interface PriceInterface
      *
      * @return void
      */
-    public function setGrossAmount(Decimal $grossAmount, bool $recalc = false);
+    public function setGrossAmount(Decimal $grossAmount, bool $recalc = false): void;
 
     /**
      * Sets net amount of price. If $recalc is set to true, corresponding gross price
@@ -105,7 +99,7 @@ interface PriceInterface
      *
      * @return void
      */
-    public function setNetAmount(Decimal $netAmount, bool $recalc = false);
+    public function setNetAmount(Decimal $netAmount, bool $recalc = false): void;
 
     /**
      * Sets tax entries for price.
@@ -114,14 +108,14 @@ interface PriceInterface
      *
      * @return void
      */
-    public function setTaxEntries(array $taxEntries);
+    public function setTaxEntries(array $taxEntries): void;
 
     /**
      * Sets $taxEntryCombinationMode for price.
      *
-     * @param string $taxEntryCombinationMode
+     * @param string|null $taxEntryCombinationMode
      *
      * @return void
      */
-    public function setTaxEntryCombinationMode(string $taxEntryCombinationMode);
+    public function setTaxEntryCombinationMode(?string $taxEntryCombinationMode = null): void;
 }

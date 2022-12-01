@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Fields Summary:
@@ -16,12 +17,12 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class FilterMultiRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType
 {
-protected $type = "FilterMultiRelation";
-protected $label;
-protected $field;
-protected $useAndCondition;
-protected $scriptPath;
-protected $availableRelations;
+protected string $type = "FilterMultiRelation";
+protected ?string $label;
+protected ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field;
+protected ?bool $useAndCondition;
+protected ?string $scriptPath;
+protected array $availableRelations;
 
 
 /**

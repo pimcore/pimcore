@@ -31,12 +31,9 @@ class Assets extends Elements implements DataProviderInterface
     /**
      * @var bool[]
      */
-    protected $exportIds = [];
+    protected array $exportIds = [];
 
-    /**
-     * @var array
-     */
-    protected $config = [];
+    protected ?array $config = [];
 
     public function __construct(array $config = null)
     {
@@ -66,7 +63,7 @@ class Assets extends Elements implements DataProviderInterface
      *
      * @return Response
      */
-    public function doExportData(Asset $asset)
+    public function doExportData(Asset $asset): Response
     {
         $this->exportIds = [];
         $this->exportIds[$asset->getId()] = true;

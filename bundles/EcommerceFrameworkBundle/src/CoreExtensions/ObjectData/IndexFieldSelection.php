@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -17,45 +18,33 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData;
 
 class IndexFieldSelection
 {
-    /**
-     * @var string
-     */
-    public $tenant;
+    public ?string $tenant = null;
+
+    public string $field;
 
     /**
-     * @var string
+     * @var string|string[]|null
      */
-    public $field;
+    public string|array|null $preSelect;
 
     /**
-     * @var string|string[]
-     */
-    public $preSelect;
-
-    /**
-     * @param string $tenant
+     * @param string|null $tenant
      * @param string $field
      * @param string|string[] $preSelect
      */
-    public function __construct($tenant, $field, $preSelect)
+    public function __construct(?string $tenant, string $field, array|string|null $preSelect)
     {
         $this->field = $field;
         $this->preSelect = $preSelect;
         $this->tenant = $tenant;
     }
 
-    /**
-     * @param string $field
-     */
-    public function setField($field)
+    public function setField(string $field): void
     {
         $this->field = $field;
     }
 
-    /**
-     * @return string
-     */
-    public function getField()
+    public function getField(): string
     {
         return $this->field;
     }
@@ -63,31 +52,25 @@ class IndexFieldSelection
     /**
      * @param string|string[] $preSelect
      */
-    public function setPreSelect($preSelect)
+    public function setPreSelect(array|string $preSelect): void
     {
         $this->preSelect = $preSelect;
     }
 
     /**
-     * @return string|string[]
+     * @return string|string[]|null
      */
-    public function getPreSelect()
+    public function getPreSelect(): array|string|null
     {
         return $this->preSelect;
     }
 
-    /**
-     * @param string $tenant
-     */
-    public function setTenant($tenant)
+    public function setTenant(string $tenant): void
     {
         $this->tenant = $tenant;
     }
 
-    /**
-     * @return string
-     */
-    public function getTenant()
+    public function getTenant(): ?string
     {
         return $this->tenant;
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\OnlineShopOrder;
 
@@ -9,21 +10,14 @@ class PaymentProvider extends \Pimcore\Model\DataObject\Objectbrick {
 protected $brickGetters = ['PaymentProviderUnzer'];
 
 
-protected $PaymentProviderUnzer = null;
+protected ?\Pimcore\Model\DataObject\Objectbrick\Data\PaymentProviderUnzer $PaymentProviderUnzer = null;
 
-/**
-* @return \Pimcore\Model\DataObject\Objectbrick\Data\PaymentProviderUnzer|null
-*/
-public function getPaymentProviderUnzer()
+    public function getPaymentProviderUnzer(): ?\Pimcore\Model\DataObject\Objectbrick\Data\PaymentProviderUnzer
 {
 	return $this->PaymentProviderUnzer;
 }
 
-/**
-* @param \Pimcore\Model\DataObject\Objectbrick\Data\PaymentProviderUnzer $PaymentProviderUnzer
-* @return \Pimcore\Model\DataObject\OnlineShopOrder\PaymentProvider
-*/
-public function setPaymentProviderUnzer($PaymentProviderUnzer)
+    public function setPaymentProviderUnzer(\Pimcore\Model\DataObject\Objectbrick\Data\PaymentProviderUnzer $PaymentProviderUnzer): static
 {
 	$this->PaymentProviderUnzer = $PaymentProviderUnzer;
 	return $this;

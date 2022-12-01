@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,10 +21,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
  */
 abstract class CategoryFilterDefinitionType extends AbstractFilterDefinitionType
 {
-    /**
-     * @return string
-     */
-    public function getField()
+    public function getField(): string
     {
         if ($this->getIncludeParentCategories()) {
             return 'parentCategoryIds';
@@ -32,9 +30,6 @@ abstract class CategoryFilterDefinitionType extends AbstractFilterDefinitionType
         }
     }
 
-    /**
-     * @return bool|null
-     */
     public function getIncludeParentCategories(): ?bool
     {
         return false;

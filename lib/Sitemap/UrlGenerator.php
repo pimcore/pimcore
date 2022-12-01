@@ -28,15 +28,9 @@ use Symfony\Component\Routing\RequestContext;
  */
 class UrlGenerator implements UrlGeneratorInterface
 {
-    /**
-     * @var RequestContext
-     */
-    private $requestContext;
+    private RequestContext $requestContext;
 
-    /**
-     * @var OptionsResolver
-     */
-    private $optionsResolver;
+    private OptionsResolver $optionsResolver;
 
     public function __construct(RequestContext $requestContext)
     {
@@ -77,10 +71,7 @@ class UrlGenerator implements UrlGeneratorInterface
         return $this->optionsResolver->resolve($options);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function generateUrl(string $path, array $options = [])
+    public function generateUrl(string $path, array $options = []): string
     {
         $options = $this->resolveOptions($options);
 

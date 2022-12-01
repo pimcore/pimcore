@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,21 +29,21 @@ class Dependency extends AbstractModel
      *
      * @var int
      */
-    protected $sourceId;
+    protected int $sourceId;
 
     /**
      * The type of the object to get dependencies for
      *
      * @var string
      */
-    protected $sourceType;
+    protected string $sourceType;
 
     /**
      * Contains the ID/type of objects which are required for the given source object (sourceId/sourceType)
      *
      * @var array
      */
-    protected $requires = [];
+    protected array $requires = [];
 
     /**
      * Static helper to get the dependencies for the given sourceId & type
@@ -52,7 +53,7 @@ class Dependency extends AbstractModel
      *
      * @return Dependency
      */
-    public static function getBySourceId($id, $type)
+    public static function getBySourceId(int $id, string $type): Dependency
     {
         $d = new self();
         $d->getDao()->getBySourceId($id, $type);
@@ -66,7 +67,7 @@ class Dependency extends AbstractModel
      * @param int $id
      * @param string $type
      */
-    public function addRequirement($id, $type)
+    public function addRequirement(int $id, string $type)
     {
         $this->requires[] = [
             'type' => $type,
@@ -80,7 +81,7 @@ class Dependency extends AbstractModel
      *
      * @param Element\ElementInterface $element
      */
-    public function cleanAllForElement($element)
+    public function cleanAllForElement(Element\ElementInterface $element)
     {
         $this->getDao()->cleanAllForElement($element);
     }
@@ -95,10 +96,7 @@ class Dependency extends AbstractModel
         $this->getDao()->clear();
     }
 
-    /**
-     * @return int
-     */
-    public function getSourceId()
+    public function getSourceId(): int
     {
         return $this->sourceId;
     }
@@ -109,7 +107,7 @@ class Dependency extends AbstractModel
      *
      * @return array
      */
-    public function getRequires($offset = null, $limit = null)
+    public function getRequires(int $offset = null, int $limit = null): array
     {
         if ($offset !== null) {
             return array_slice($this->requires, $offset, $limit);
@@ -124,7 +122,7 @@ class Dependency extends AbstractModel
      *
      * @return array
      */
-    public function getRequiredBy($offset = null, $limit = null)
+    public function getRequiredBy(int $offset = null, int $limit = null): array
     {
         return $this->getDao()->getRequiredBy($offset, $limit);
     }
@@ -137,67 +135,43 @@ class Dependency extends AbstractModel
      *
      * @return array
      */
-    public function getRequiredByWithPath($offset = null, $limit = null, $orderBy = null, $orderDirection = null)
+    public function getRequiredByWithPath(int $offset = null, int $limit = null, string $orderBy = null, string $orderDirection = null): array
     {
         return $this->getDao()->getRequiredByWithPath($offset, $limit, $orderBy, $orderDirection);
     }
 
-    /**
-     * @param int $sourceId
-     *
-     * @return $this
-     */
-    public function setSourceId($sourceId)
+    public function setSourceId(int $sourceId): static
     {
         $this->sourceId = (int) $sourceId;
 
         return $this;
     }
 
-    /**
-     * @param array $requires
-     *
-     * @return $this
-     */
-    public function setRequires($requires)
+    public function setRequires(array $requires): static
     {
         $this->requires = $requires;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getSourceType()
+    public function getSourceType(): string
     {
         return $this->sourceType;
     }
 
-    /**
-     * @param string $sourceType
-     *
-     * @return $this
-     */
-    public function setSourceType($sourceType)
+    public function setSourceType(string $sourceType): static
     {
         $this->sourceType = $sourceType;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getRequiresTotalCount()
+    public function getRequiresTotalCount(): int
     {
         return count($this->requires);
     }
 
-    /**
-     * @return int
-     */
-    public function getRequiredByTotalCount()
+    public function getRequiredByTotalCount(): int
     {
         return $this->getDao()->getRequiredByTotalCount();
     }
@@ -207,7 +181,7 @@ class Dependency extends AbstractModel
      *
      * @return bool
      */
-    public function isRequired()
+    public function isRequired(): bool
     {
         return $this->getRequiredByTotalCount() > 0;
     }

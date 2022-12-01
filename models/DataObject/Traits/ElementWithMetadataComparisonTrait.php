@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,23 +24,17 @@ use Pimcore\Model\Element\ElementInterface;
  */
 trait ElementWithMetadataComparisonTrait
 {
-    /**
-     * @param mixed $array1
-     * @param mixed $array2
-     *
-     * @return bool
-     */
-    public function isEqual($array1, $array2): bool
+    public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
-        $count1 = is_array($array1) ? count($array1) : 0;
-        $count2 = is_array($array2) ? count($array2) : 0;
+        $count1 = is_array($oldValue) ? count($oldValue) : 0;
+        $count2 = is_array($newValue) ? count($newValue) : 0;
 
         if ($count1 !== $count2) {
             return false;
         }
 
-        $values1 = array_filter(array_values(is_array($array1) ? $array1 : []));
-        $values2 = array_filter(array_values(is_array($array2) ? $array2 : []));
+        $values1 = array_filter(array_values(is_array($oldValue) ? $oldValue : []));
+        $values2 = array_filter(array_values(is_array($newValue) ? $newValue : []));
 
         for ($i = 0; $i < $count1; $i++) {
             /** @var ElementMetadata|null $container1 */

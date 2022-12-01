@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,31 +30,14 @@ use Pimcore\Tool\DomCrawler;
  */
 class Processor
 {
-    /**
-     * @var RequestHelper
-     */
-    private $requestHelper;
+    private RequestHelper $requestHelper;
 
-    /**
-     * @var EditmodeResolver
-     */
-    private $editmodeResolver;
+    private EditmodeResolver $editmodeResolver;
 
-    /**
-     * @var DocumentResolver
-     */
-    private $documentResolver;
+    private DocumentResolver $documentResolver;
 
-    /**
-     * @var array
-     */
-    private $blockedTags = [];
+    private array $blockedTags = [];
 
-    /**
-     * @param RequestHelper $requestHelper
-     * @param EditmodeResolver $editmodeResolver
-     * @param DocumentResolver $documentResolver
-     */
     public function __construct(
         RequestHelper $requestHelper,
         EditmodeResolver $editmodeResolver,
@@ -110,20 +94,22 @@ class Processor
         ];
 
         foreach ($data as $entry) {
+            $linkTarget = $entry['linkTarget'] ?? '';
+            $linkTargetTrimmed = rtrim((string)$linkTarget, ' /');
             if ($document instanceof Document) {
                 // check if the current document is the target link (id check)
-                if ($entry['linkType'] == 'internal' && $document->getId() == $entry['linkTarget']) {
+                if ($entry['linkType'] == 'internal' && $document->getId() == $linkTarget) {
                     continue;
                 }
 
                 // check if the current document is the target link (path check)
-                if ($document->getFullPath() == rtrim($entry['linkTarget'], ' /')) {
+                if ($document->getFullPath() == $linkTargetTrimmed) {
                     continue;
                 }
             }
 
             // check if the current URI is the target link (path check)
-            if ($uri === rtrim($entry['linkTarget'], ' /')) {
+            if ($uri === $linkTargetTrimmed) {
                 continue;
             }
 

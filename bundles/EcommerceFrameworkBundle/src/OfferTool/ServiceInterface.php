@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,33 +31,18 @@ interface ServiceInterface
      *
      * @return AbstractOffer
      */
-    public function createNewOfferFromCart(CartInterface $cart, array $excludeItems = []);
+    public function createNewOfferFromCart(CartInterface $cart, array $excludeItems = []): AbstractOffer;
 
-    /**
-     * @param AbstractOffer $offer
-     * @param CartInterface $cart
-     * @param array $excludeItems
-     *
-     * @return AbstractOffer
-     */
-    public function updateOfferFromCart(AbstractOffer $offer, CartInterface $cart, array $excludeItems = []);
+    public function updateOfferFromCart(AbstractOffer $offer, CartInterface $cart, array $excludeItems = []): AbstractOffer;
 
-    /**
-     * @param AbstractOffer $offer
-     *
-     * @return AbstractOffer
-     */
-    public function updateTotalPriceOfOffer(AbstractOffer $offer);
+    public function updateTotalPriceOfOffer(AbstractOffer $offer): AbstractOffer;
 
     /**
      * @param CartInterface $cart
      *
      * @return AbstractOffer[]
      */
-    public function getOffersForCart(CartInterface $cart);
+    public function getOffersForCart(CartInterface $cart): array;
 
-    /**
-     * @return AbstractOfferItem
-     */
-    public function getNewOfferItemObject();
+    public function getNewOfferItemObject(): AbstractOfferItem;
 }

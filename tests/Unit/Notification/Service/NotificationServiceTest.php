@@ -24,8 +24,7 @@ use Pimcore\Tests\Support\Util\TestHelper;
 
 class NotificationServiceTest extends TestCase
 {
-    /** @var NotificationService $notificationService */
-    protected $notificationService;
+    protected NotificationService $notificationService;
 
     /**
      * {@inheritdoc}
@@ -37,9 +36,6 @@ class NotificationServiceTest extends TestCase
         $this->notificationService = \Pimcore::getContainer()->get(NotificationService::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function _after()
     {
         $user = User::getByName('notification-user');

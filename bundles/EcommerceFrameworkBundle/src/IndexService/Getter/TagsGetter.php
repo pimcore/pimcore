@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,7 +26,7 @@ class TagsGetter implements GetterInterface
 {
     use OptionsResolverTrait;
 
-    public function get($element, $config = null)
+    public function get($element, $config = null): array
     {
         $config = $this->resolveOptions($config ?? []);
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,11 +24,6 @@ use Pimcore\Translation\TranslationItemCollection\TranslationItem;
 
 abstract class AbstractElementDataExtractor implements DataExtractorInterface
 {
-    /**
-     * @param TranslationItem $translationItem
-     *
-     * @return AttributeSet
-     */
     protected function createResultInstance(TranslationItem $translationItem): AttributeSet
     {
         return new AttributeSet($translationItem);
@@ -60,20 +56,11 @@ abstract class AbstractElementDataExtractor implements DataExtractorInterface
         return $result;
     }
 
-    /**
-     * @param Property $property
-     *
-     * @return bool
-     */
     protected function doExportProperty(Property $property): bool
     {
         return $property->getType() === 'text' && !$property->isInherited() && !empty($property->getData());
     }
 
-    /**
-     * @param ElementInterface $element
-     * @param AttributeSet $result
-     */
     protected function addProperties(ElementInterface $element, AttributeSet $result)
     {
         foreach ($element->getProperties() ?: [] as $property) {

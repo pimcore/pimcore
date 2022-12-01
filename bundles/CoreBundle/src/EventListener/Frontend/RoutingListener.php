@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -41,12 +42,6 @@ class RoutingListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
-    /**
-     * @param RequestHelper $requestHelper
-     * @param RedirectHandler $redirectHandler
-     * @param SiteResolver $siteResolver
-     * @param Config $config
-     */
     public function __construct(
         protected RequestHelper $requestHelper,
         protected RedirectHandler $redirectHandler,
@@ -134,7 +129,7 @@ class RoutingListener implements EventSubscriberInterface
      *
      * @return string
      */
-    protected function resolveSite(Request $request, $path)
+    protected function resolveSite(Request $request, string $path): string
     {
         // check for a registered site
         // do not initialize a site if it is a "special" admin request
@@ -155,11 +150,7 @@ class RoutingListener implements EventSubscriberInterface
         return $path;
     }
 
-    /**
-     * @param RequestEvent $event
-     * @param string $path
-     */
-    protected function handleFrontControllerRedirect(RequestEvent $event, $path)
+    protected function handleFrontControllerRedirect(RequestEvent $event, string $path)
     {
         $request = $event->getRequest();
 

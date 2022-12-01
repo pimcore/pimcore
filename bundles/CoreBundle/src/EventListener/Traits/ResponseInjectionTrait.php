@@ -25,32 +25,24 @@ use Symfony\Component\HttpFoundation\Response;
  */
 trait ResponseInjectionTrait
 {
-    /**
-     * @var ResponseHelper
-     */
-    private $responseHelper;
+    private ResponseHelper $responseHelper;
 
     /**
      * @required
      *
      * @param ResponseHelper $responseHelper
      */
-    public function setResponseHelper(ResponseHelper $responseHelper)
+    public function setResponseHelper(ResponseHelper $responseHelper): void
     {
         $this->responseHelper = $responseHelper;
     }
 
-    /**
-     * @param Response $response
-     *
-     * @return bool
-     */
     protected function isHtmlResponse(Response $response): bool
     {
         return $this->responseHelper->isHtmlResponse($response);
     }
 
-    protected function injectBeforeHeadEnd(Response $response, $code)
+    protected function injectBeforeHeadEnd(Response $response, $code): void
     {
         $content = $response->getContent();
 

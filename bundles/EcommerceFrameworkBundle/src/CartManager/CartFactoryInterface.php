@@ -21,11 +21,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 
 interface CartFactoryInterface
 {
-    /**
-     * @param EnvironmentInterface $environment
-     *
-     * @return string
-     */
     public function getCartClassName(EnvironmentInterface $environment): string;
 
     /**

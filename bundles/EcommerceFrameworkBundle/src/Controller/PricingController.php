@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,9 +36,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class PricingController extends AdminController implements KernelControllerEventInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         // permission check
@@ -50,7 +48,7 @@ class PricingController extends AdminController implements KernelControllerEvent
     /**
      * @Route("/list", name="pimcore_ecommerceframework_pricing_list", methods={"GET"})
      */
-    public function listAction()
+    public function listAction(): JsonResponse
     {
         $rules = new Rule\Listing();
         $rules->setOrderKey('prio');
@@ -92,7 +90,7 @@ class PricingController extends AdminController implements KernelControllerEvent
      *
      * @throws NotFoundHttpException
      */
-    public function getAction(Request $request)
+    public function getAction(Request $request): JsonResponse
     {
         $rule = Rule::getById((int) $request->get('id'));
         if ($rule) {
@@ -137,7 +135,7 @@ class PricingController extends AdminController implements KernelControllerEvent
      *
      * @return JsonResponse
      */
-    public function addAction(Request $request)
+    public function addAction(Request $request): JsonResponse
     {
         // send json respone
         $return = [
@@ -170,7 +168,7 @@ class PricingController extends AdminController implements KernelControllerEvent
      *
      * @return JsonResponse
      */
-    public function deleteAction(Request $request)
+    public function deleteAction(Request $request): JsonResponse
     {
         // send json respone
         $return = [
@@ -199,7 +197,7 @@ class PricingController extends AdminController implements KernelControllerEvent
      * @return JsonResponse
      * copy existing rule
      */
-    public function copyAction(Request $request)
+    public function copyAction(Request $request): JsonResponse
     {
         // send json respone
         $return = [
@@ -252,7 +250,7 @@ class PricingController extends AdminController implements KernelControllerEvent
      * @return JsonResponse
      * rename exiting rule
      */
-    public function renameAction(Request $request)
+    public function renameAction(Request $request): JsonResponse
     {
         // send json respone
         $return = [
@@ -300,7 +298,7 @@ class PricingController extends AdminController implements KernelControllerEvent
      *
      * @return JsonResponse
      */
-    public function saveAction(Request $request)
+    public function saveAction(Request $request): JsonResponse
     {
         // send json respone
         $return = [
@@ -392,7 +390,7 @@ class PricingController extends AdminController implements KernelControllerEvent
      *
      * @return JsonResponse
      */
-    public function saveOrderAction(Request $request)
+    public function saveOrderAction(Request $request): JsonResponse
     {
         // send json respone
         $return = [
@@ -419,7 +417,7 @@ class PricingController extends AdminController implements KernelControllerEvent
      *
      * @return JsonResponse
      */
-    public function getConfigAction()
+    public function getConfigAction(): JsonResponse
     {
         $pricingManager = Factory::getInstance()->getPricingManager();
 

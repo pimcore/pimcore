@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,12 +28,12 @@ trait AdminStyleTrait
 {
     /**
      * @param ElementInterface $element
-     * @param null|int $context
+     * @param int|null $context
      * @param array $data
      *
      * @throws \Exception
      */
-    protected function addAdminStyle(ElementInterface $element, $context = null, &$data = [])
+    protected function addAdminStyle(ElementInterface $element, int $context = null, array &$data = []): void
     {
         $event = new ElementAdminStyleEvent($element, new AdminStyle($element), $context);
         \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE);

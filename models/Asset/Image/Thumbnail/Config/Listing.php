@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,12 +36,12 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
      *
      * @var Model\Asset\Image\Thumbnail\Config[]|null
      */
-    protected $thumbnails = null;
+    protected ?array $thumbnails = null;
 
     /**
      * @return Model\Asset\Image\Thumbnail\Config[]
      */
-    public function getThumbnails()
+    public function getThumbnails(): array
     {
         if ($this->thumbnails === null) {
             $this->getDao()->loadList();
@@ -54,7 +55,7 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
      *
      * @return $this
      */
-    public function setThumbnails($thumbnails)
+    public function setThumbnails(?array $thumbnails): static
     {
         $this->thumbnails = $thumbnails;
 
@@ -64,9 +65,9 @@ class Listing extends AbstractModel implements CallableFilterListingInterface, C
     /**
      * Alias of getThumbnails()
      *
-     * @return Model\Asset\Image\Thumbnail\Config[]|null
+     * @return Model\Asset\Image\Thumbnail\Config[]
      */
-    public function load()
+    public function load(): array
     {
         return $this->getThumbnails();
     }

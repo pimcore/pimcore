@@ -26,15 +26,12 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 class BundleCollectionTest extends TestCase
 {
-    /**
-     * @var BundleCollection
-     */
-    private $collection;
+    private BundleCollection $collection;
 
     /**
      * @var BundleInterface[]
      */
-    private $bundles;
+    private array $bundles;
 
     /**
      * {@inheritdoc}

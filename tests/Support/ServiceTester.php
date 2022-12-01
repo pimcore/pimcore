@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,3 +36,5 @@ class ServiceTester extends \Codeception\Actor
 {
     use _generated\ServiceTesterActions;
 }
+
+@class_alias(ServiceTester::class, 'Pimcore\Tests\Support\ServiceTester');

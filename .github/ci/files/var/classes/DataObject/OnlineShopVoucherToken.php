@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Inheritance: no
@@ -14,6 +15,7 @@ namespace Pimcore\Model\DataObject;
 
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use Pimcore\Model\DataObject\PreGetValueHookInterface;
+use Pimcore\Model\Element\AbstractElement;
 
 /**
 * @method static \Pimcore\Model\DataObject\OnlineShopVoucherToken\Listing getList(array $config = [])
@@ -26,15 +28,11 @@ class OnlineShopVoucherToken extends Concrete
 {
 protected $o_classId = "EF_OSVT";
 protected $o_className = "OnlineShopVoucherToken";
-protected $tokenId;
-protected $token;
-protected $voucherSeries;
+protected ?float $tokenId = null;
+protected ?string $token = null;
+protected \Pimcore\Model\Element\AbstractElement|null|OnlineShopVoucherSeries $voucherSeries;
 
 
-/**
-* @param array $values
-* @return static
-*/
 public static function create(array $values = []): static
 {
 	$object = new static();
@@ -113,9 +111,9 @@ public function setToken(?string $token): static
 
 /**
 * Get voucherSeries - Voucher Series
-* @return \Pimcore\Model\DataObject\OnlineShopVoucherSeries|null
+* @return OnlineShopVoucherSeries|\Pimcore\Model\Element\AbstractElement|\Pimcore\Model\Element\ElementInterface|null
 */
-public function getVoucherSeries(): ?\Pimcore\Model\Element\AbstractElement
+public function getVoucherSeries(): OnlineShopVoucherSeries|\Pimcore\Model\Element\ElementInterface|\Pimcore\Model\Element\AbstractElement|null
 {
 	if ($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {
 		$preValue = $this->preGetValue("voucherSeries");

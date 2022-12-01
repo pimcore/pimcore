@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -28,29 +29,15 @@ abstract class AbstractFilterType
 {
     const EMPTY_STRING = '$$EMPTY$$';
 
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
+    protected TranslatorInterface $translator;
+
+    protected EngineInterface $templatingEngine;
+
+    protected string $template;
+
+    protected ?Request $request = null;
 
     /**
-     * @var EngineInterface
-     */
-    protected $templatingEngine;
-
-    /**
-     * @var string
-     */
-    protected $template;
-
-    /**
-     * @var Request
-     */
-    protected $request;
-
-    /**
-     * @param TranslatorInterface $translator
-     * @param EngineInterface $templatingEngine
      * @param string $template for rendering the filter frontend
      * @param array $options for additional options
      */
@@ -69,12 +56,12 @@ abstract class AbstractFilterType
         $this->processOptions($options);
     }
 
-    protected function processOptions(array $options)
+    protected function processOptions(array $options): void
     {
         // noop - to implemented by filter types supporting options
     }
 
-    protected function getField(AbstractFilterDefinitionType $filterDefinition)
+    protected function getField(AbstractFilterDefinitionType $filterDefinition): string|IndexFieldSelection|null
     {
         $field = $filterDefinition->getField();
         if ($field instanceof IndexFieldSelection) {
@@ -84,7 +71,7 @@ abstract class AbstractFilterType
         return $field;
     }
 
-    protected function getTemplate(AbstractFilterDefinitionType $filterDefinition)
+    protected function getTemplate(AbstractFilterDefinitionType $filterDefinition): ?string
     {
         $template = $this->template;
         if (!empty($filterDefinition->getScriptPath())) {
@@ -94,7 +81,7 @@ abstract class AbstractFilterType
         return $template;
     }
 
-    protected function getPreSelect(AbstractFilterDefinitionType $filterDefinition)
+    protected function getPreSelect(AbstractFilterDefinitionType $filterDefinition): array|string|null
     {
         $field = $filterDefinition->getField();
         if ($field instanceof IndexFieldSelection) {
@@ -116,7 +103,7 @@ abstract class AbstractFilterType
      *
      * @return string
      */
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): string
     {
         return $this->render(
             $this->getTemplate($filterDefinition),
@@ -153,7 +140,7 @@ abstract class AbstractFilterType
      *
      * @throws InvalidConfigException
      */
-    abstract public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false);
+    abstract public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter, array $params, bool $isPrecondition = false): array;
 
     /**
      * calls prepareGroupByValues of productlist if necessary
@@ -161,9 +148,8 @@ abstract class AbstractFilterType
      * @param AbstractFilterDefinitionType $filterDefinition
      * @param ProductListInterface $productList
      *
-     * @throws InvalidConfigException
      */
-    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList)
+    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList): void
     {
         //by default do thing here
     }
@@ -176,7 +162,7 @@ abstract class AbstractFilterType
      *
      * @return array
      */
-    protected function sortResult(AbstractFilterDefinitionType $filterDefinition, array $result)
+    protected function sortResult(AbstractFilterDefinitionType $filterDefinition, array $result): array
     {
         return $result;
     }
@@ -189,7 +175,7 @@ abstract class AbstractFilterType
      *
      * @return string
      */
-    protected function render($template, array $parameters = [])
+    protected function render(string $template, array $parameters = []): string
     {
         return $this->templatingEngine->render($template, $parameters);
     }

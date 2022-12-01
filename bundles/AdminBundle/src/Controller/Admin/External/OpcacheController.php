@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -36,7 +37,7 @@ class OpcacheController extends AdminController implements KernelControllerEvent
      *
      * @return Response
      */
-    public function indexAction(Request $request, ?Profiler $profiler)
+    public function indexAction(Request $request, ?Profiler $profiler): Response
     {
         if ($profiler) {
             $profiler->disable();
@@ -51,9 +52,6 @@ class OpcacheController extends AdminController implements KernelControllerEvent
         return new Response($content);
     }
 
-    /**
-     * @param ControllerEvent $event
-     */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         if (!$event->isMainRequest()) {

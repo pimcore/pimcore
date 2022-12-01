@@ -34,10 +34,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class Csv
 {
-    /**
-     * @var array
-     */
-    private $columns = [
+    private array $columns = [
         'id',
         'type',
         'source',
@@ -52,15 +49,9 @@ class Csv
         'expiry',
     ];
 
-    /**
-     * @var ArrayNormalizer
-     */
-    private $importNormalizer;
+    private ?ArrayNormalizer $importNormalizer = null;
 
-    /**
-     * @var OptionsResolver
-     */
-    private $importResolver;
+    private ?OptionsResolver $importResolver = null;
 
     /**
      * @param Redirect\Listing $list

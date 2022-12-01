@@ -13,14 +13,22 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Event;
+namespace Pimcore\Event\Model;
 
-final class ElementEvents
+use Pimcore\Translation\AttributeSet\AttributeSet;
+use Symfony\Contracts\EventDispatcher\Event;
+
+class TranslationXliffEvent extends Event
 {
-    /**
-     * @Event("Pimcore\Event\Model\ElementEvent")
-     *
-     * @var string
-     */
-    const POST_ADD = 'pimcore.element.note.postAdd';
+    protected AttributeSet $attributeSet;
+
+    public function __construct(AttributeSet $attributeSet)
+    {
+        $this->attributeSet = $attributeSet;
+    }
+
+    public function getAttributeSet(): AttributeSet
+    {
+        return $this->attributeSet;
+    }
 }

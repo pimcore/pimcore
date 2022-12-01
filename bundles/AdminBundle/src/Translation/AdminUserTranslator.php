@@ -26,15 +26,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class AdminUserTranslator implements TranslatorInterface, LocaleAwareInterface
 {
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
+    private TranslatorInterface $translator;
 
-    /**
-     * @var UserLoader
-     */
-    private $userLoader;
+    private UserLoader $userLoader;
 
     public function __construct(TranslatorInterface $translator, UserLoader $userLoader)
     {

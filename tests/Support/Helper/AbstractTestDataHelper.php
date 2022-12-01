@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -48,10 +49,14 @@ abstract class AbstractTestDataHelper extends Module
     {
         $list = new DataObject\Listing();
         $list->setOrderKey('o_id');
-        $list->setCondition($condition);
+        if (isset($condition)) {
+            $list->setCondition($condition);
+        }
 
         $objects = $list->load();
 
         return $objects;
     }
 }
+
+@class_alias(AbstractTestDataHelper::class, 'Pimcore\Tests\Support\Helper\AbstractTestDataHelper');

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,21 +25,15 @@ use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 
 class DataObjectMultipleStateMarkingStore implements MarkingStoreInterface
 {
-    /**
-     * @var string
-     */
-    private $property;
+    private string $property;
 
-    /**
-     * @var \Symfony\Component\PropertyAccess\PropertyAccessor|PropertyAccessorInterface
-     */
-    private $propertyAccessor;
+    private \Symfony\Component\PropertyAccess\PropertyAccessor|PropertyAccessorInterface $propertyAccessor;
 
     /**
      * @param string $property
      * @param PropertyAccessorInterface|null $propertyAccessor
      */
-    public function __construct($property = 'marking', PropertyAccessorInterface $propertyAccessor = null)
+    public function __construct(string $property = 'marking', PropertyAccessorInterface $propertyAccessor = null)
     {
         $this->property = $property;
         $this->propertyAccessor = $propertyAccessor ?: PropertyAccess::createPropertyAccessor();

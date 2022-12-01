@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,5 +28,5 @@ interface PreGetDataInterface
      *
      * @return mixed
      */
-    public function preGetData(/** mixed */ $container, /** array */ $params = []) /**: mixed */;
+    public function preGetData(mixed $container, array $params = []): mixed;
 }

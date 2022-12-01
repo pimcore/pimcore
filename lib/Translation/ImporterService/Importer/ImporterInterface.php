@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,5 +28,5 @@ interface ImporterInterface
      *
      * @throws \Exception
      */
-    public function import(AttributeSet $attributeSet, bool $saveElement = true);
+    public function import(AttributeSet $attributeSet, bool $saveElement = true): void;
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -40,13 +41,6 @@ class ResponseExceptionListener implements EventSubscriberInterface
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;
 
-    /**
-     * @param DocumentRenderer $documentRenderer
-     * @param Connection $db
-     * @param Config $config
-     * @param Document\Service $documentService
-     * @param SiteResolver $siteResolver
-     */
     public function __construct(
         protected DocumentRenderer $documentRenderer,
         protected Connection $db,
@@ -131,7 +125,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
             // we are even not able to render the error page, so we send the client a unicorn
             $response = 'Page not found. 🦄';
             $this->logger->emergency('Unable to render error page, exception thrown');
-            $this->logger->emergency($e);
+            $this->logger->emergency((string)$e);
         }
 
         $event->setResponse(new Response($response, $statusCode, $headers));

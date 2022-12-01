@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,7 +25,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class Bootstrap
 {
-    public static function startup()
+    public static function startup(): Kernel|\App\Kernel|KernelInterface
     {
         self::setProjectRoot();
         self::bootstrap();
@@ -33,10 +34,7 @@ class Bootstrap
         return $kernel;
     }
 
-    /**
-     * @return KernelInterface
-     */
-    public static function startupCli()
+    public static function startupCli(): Kernel|KernelInterface
     {
         // ensure the cli arguments are set
         if (!isset($_SERVER['argv'])) {
@@ -91,7 +89,7 @@ class Bootstrap
         return $kernel;
     }
 
-    public static function setProjectRoot()
+    public static function setProjectRoot(): void
     {
         // this should already be defined at this point, but we include a fallback for backwards compatibility here
         if (!defined('PIMCORE_PROJECT_ROOT')) {
@@ -104,7 +102,7 @@ class Bootstrap
         }
     }
 
-    public static function bootstrap()
+    public static function bootstrap(): void
     {
         if (defined('PIMCORE_PROJECT_ROOT') && file_exists(PIMCORE_PROJECT_ROOT . '/vendor/autoload.php')) {
             // PIMCORE_PROJECT_ROOT is usually always set at this point (self::setProjectRoot()), so it makes sense to check this first
@@ -155,7 +153,7 @@ class Bootstrap
         }
     }
 
-    public static function defineConstants()
+    public static function defineConstants(): void
     {
         self::prepareEnvVariables();
 
@@ -227,10 +225,7 @@ class Bootstrap
         }
     }
 
-    /**
-     * @return KernelInterface
-     */
-    public static function kernel()
+    public static function kernel(): Kernel|\App\Kernel|KernelInterface
     {
         $environment = Config::getEnvironment();
 

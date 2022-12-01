@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,20 +26,9 @@ interface RecurringPaymentInterface extends PaymentInterface
      *
      * @return bool
      */
-    public function isRecurringPaymentEnabled();
+    public function isRecurringPaymentEnabled(): bool;
 
-    /**
-     * @param AbstractOrder $sourceOrder
-     * @param object $paymentBrick
-     *
-     * @return mixed
-     */
-    public function setRecurringPaymentSourceOrderData(AbstractOrder $sourceOrder, $paymentBrick);
+    public function setRecurringPaymentSourceOrderData(AbstractOrder $sourceOrder, object $paymentBrick): mixed;
 
-    /**
-     * @param Concrete $orderListing
-     *
-     * @return Concrete
-     */
-    public function applyRecurringPaymentCondition(Concrete $orderListing, $additionalParameters = []);
+    public function applyRecurringPaymentCondition(Concrete $orderListing, $additionalParameters = []): Concrete;
 }

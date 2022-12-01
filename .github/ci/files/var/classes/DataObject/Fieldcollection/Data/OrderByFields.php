@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Fields Summary:
@@ -13,9 +14,9 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class OrderByFields extends DataObject\Fieldcollection\Data\AbstractData
 {
-protected $type = "OrderByFields";
-protected $field;
-protected $direction;
+protected string $type = "OrderByFields";
+protected ?string $field;
+protected ?string $direction;
 
 
 /**

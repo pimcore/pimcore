@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,7 +31,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @return Model\Tool\Email\Log[]
      */
-    public function getEmailLogs()
+    public function getEmailLogs(): array
     {
         return $this->getData();
     }
@@ -42,7 +43,7 @@ class Listing extends Model\Listing\AbstractListing
      *
      * @return $this
      */
-    public function setEmailLogs($emailLogs)
+    public function setEmailLogs(array $emailLogs): static
     {
         return $this->setData($emailLogs);
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,7 +36,7 @@ class DefaultClassificationAttributeGetter implements GetterInterface
      *
      * @return mixed
      */
-    public function get($object, $config = null)
+    public function get($object, $config = null): mixed
     {
         $config = $this->resolveOptions($config ?? []);
         $sourceList = $config['source'];

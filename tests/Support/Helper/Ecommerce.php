@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -65,3 +66,5 @@ class Ecommerce extends Module
         }
     }
 }
+
+@class_alias(Ecommerce::class, 'Pimcore\Tests\Support\Helper\Ecommerce');

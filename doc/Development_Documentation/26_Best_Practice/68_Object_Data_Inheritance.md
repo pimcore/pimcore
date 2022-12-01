@@ -16,7 +16,7 @@ In lots of domains, data maintenance effort can be reduced even more. Products f
 attributes, maybe even images etc. 
 
 To take advantage of data inheritance for these use cases too, we recommend the concept of virtual products. 
-Virutal products are objects of the same type as products, with a special flag set. 
+Virtual products are objects of the same type as products, with a special flag set. 
 
 ![Object Type](img/object-type.jpg)
 

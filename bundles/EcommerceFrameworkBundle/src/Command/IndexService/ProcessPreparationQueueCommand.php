@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -38,15 +39,9 @@ class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
         Parallelization::runAfterBatch as parentRunAfterBatch;
     }
 
-    /**
-     * @var IndexUpdateService
-     */
-    protected $indexUpdateService;
+    protected IndexUpdateService $indexUpdateService;
 
-    /**
-     * @var IndexService
-     */
-    protected $indexService;
+    protected IndexService $indexService;
 
     /**
      * @param IndexUpdateService $indexUpdateService
@@ -77,18 +72,12 @@ class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
     {
         $this->parentRunBeforeFirstCommand($input, $output);
         $this->initTimeout($input);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function fetchItems(InputInterface $input, OutputInterface $output): array
     {
         $tenantNameFilterList = $input->getOption('tenant');
@@ -100,9 +89,6 @@ class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
         return $rowsWithSerializedItems;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function runSingleCommand(string $serializedRow, InputInterface $input, OutputInterface $output): void
     {
         $row = unserialize($serializedRow);

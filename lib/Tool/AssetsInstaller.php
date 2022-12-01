@@ -28,15 +28,9 @@ use Symfony\Component\Process\Process;
  */
 class AssetsInstaller
 {
-    /**
-     * @var \Closure|null
-     */
-    private $runCallback;
+    private ?\Closure $runCallback = null;
 
-    /**
-     * @var string|null
-     */
-    private $composerJsonSetting;
+    private ?string $composerJsonSetting = null;
 
     /**
      * Runs this assets:install command
@@ -100,7 +94,7 @@ class AssetsInstaller
      *
      * @return array
      */
-    public function resolveOptions(array $options = [])
+    public function resolveOptions(array $options = []): array
     {
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
@@ -111,7 +105,7 @@ class AssetsInstaller
     /**
      * @param \Closure|null $runCallback
      */
-    public function setRunCallback(\Closure $runCallback = null)
+    public function setRunCallback(\Closure $runCallback = null): void
     {
         $this->runCallback = $runCallback;
     }

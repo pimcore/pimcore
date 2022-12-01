@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -247,7 +248,7 @@ class Pimcore extends Module
         // use a dedicated setup connection as the framework connection is bound to the DB and will
         // fail if the DB doesn't exist
         $setupConnection = DriverManager::getConnection($params, $config);
-        $schemaManager = $setupConnection->getSchemaManager();
+        $schemaManager = $setupConnection->createSchemaManager();
 
         $databases = $schemaManager->listDatabases();
         if (in_array($dbName, $databases)) {
@@ -337,3 +338,5 @@ class Pimcore extends Module
         return $this->groups;
     }
 }
+
+@class_alias(Pimcore::class, 'Pimcore\Tests\Support\Helper\Pimcore');

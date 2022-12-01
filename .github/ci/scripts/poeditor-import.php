@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * This script imports all translations from all languages from POEditor which have a

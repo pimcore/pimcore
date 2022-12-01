@@ -25,15 +25,9 @@ use Psr\Container\ContainerInterface;
 
 class DelegatingActionHandler implements ActionHandlerInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $actionHandlers;
+    private ContainerInterface $actionHandlers;
 
-    /**
-     * @var DataLoaderInterface
-     */
-    private $dataLoader;
+    private DataLoaderInterface $dataLoader;
 
     public function __construct(
         ContainerInterface $actionHandlers,

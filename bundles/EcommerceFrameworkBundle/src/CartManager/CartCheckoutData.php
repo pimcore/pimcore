@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -51,7 +52,7 @@ class CartCheckoutData extends AbstractCartCheckoutData
         return $checkoutDataItem;
     }
 
-    public static function removeAllFromCart($cartId)
+    public static function removeAllFromCart(int|string $cartId)
     {
         $checkoutDataItem = new self();
         $checkoutDataItem->getDao()->removeAllFromCart($cartId);

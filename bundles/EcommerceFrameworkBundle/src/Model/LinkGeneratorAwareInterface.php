@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,8 +23,5 @@ use Pimcore\Model\DataObject;
  */
 interface LinkGeneratorAwareInterface
 {
-    /**
-     * @return DataObject\ClassDefinition\LinkGeneratorInterface|null
-     */
     public function getLinkGenerator(): ?DataObject\ClassDefinition\LinkGeneratorInterface;
 }

@@ -22,19 +22,16 @@ namespace Pimcore\Composer;
  */
 class PackageInfo
 {
-    /**
-     * @var array
-     */
-    private $installedPackages;
+    private ?array $installedPackages = null;
 
     /**
      * Gets installed packages, optionally filtered by type
      *
-     * @param string|array|null $type
+     * @param array|string|null $type
      *
      * @return array
      */
-    public function getInstalledPackages($type = null): array
+    public function getInstalledPackages(array|string $type = null): array
     {
         $packages = $this->readInstalledPackages();
 

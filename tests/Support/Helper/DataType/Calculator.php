@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -36,3 +37,5 @@ class Calculator implements CalculatorClassInterface
     {
     }
 }
+
+@class_alias(Calculator::class, 'Pimcore\Tests\Support\Helper\DataType\Calculator');

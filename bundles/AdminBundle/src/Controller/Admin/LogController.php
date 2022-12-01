@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -35,9 +36,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class LogController extends AdminController implements KernelControllerEventInterface
 {
-    /**
-     * @param ControllerEvent $event
-     */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         if (!$this->getAdminUser()->isAllowed('application_logging')) {
@@ -48,11 +46,9 @@ class LogController extends AdminController implements KernelControllerEventInte
     /**
      * @Route("/log/show", name="pimcore_admin_log_show", methods={"GET", "POST"})
      *
-     * @param Request $request
      *
-     * @return JsonResponse
      */
-    public function showAction(Request $request, Connection $db)
+    public function showAction(Request $request, Connection $db): JsonResponse
     {
         $qb = $db->createQueryBuilder();
         $qb
@@ -119,10 +115,10 @@ class LogController extends AdminController implements KernelControllerEventInte
         $totalQb->setMaxResults(null)
             ->setFirstResult(0)
             ->select('COUNT(id) as count');
-        $total = $totalQb->execute()->fetch();
+        $total = $totalQb->executeQuery()->fetch();
         $total = (int) $total['count'];
 
-        $stmt = $qb->execute();
+        $stmt = $qb->executeQuery();
         $result = $stmt->fetchAllAssociative();
 
         $logEntries = [];
@@ -137,7 +133,7 @@ class LogController extends AdminController implements KernelControllerEventInte
                 'pid' => $row['pid'],
                 'message' => $row['message'],
                 'timestamp' => $row['timestamp'],
-                'priority' => $this->getPriorityName($row['priority']),
+                'priority' => $row['priority'],
                 'fileobject' => $fileobject,
                 'relatedobject' => $row['relatedobject'],
                 'relatedobjecttype' => $row['relatedobjecttype'],
@@ -174,13 +170,6 @@ class LogController extends AdminController implements KernelControllerEventInte
         return $dateTime;
     }
 
-    private function getPriorityName(int $priority): string
-    {
-        $p = ApplicationLoggerDb::getPriorities();
-
-        return $p[$priority];
-    }
-
     /**
      * @Route("/log/priority-json", name="pimcore_admin_log_priorityjson", methods={"GET"})
      *
@@ -188,7 +177,7 @@ class LogController extends AdminController implements KernelControllerEventInte
      *
      * @return JsonResponse
      */
-    public function priorityJsonAction(Request $request)
+    public function priorityJsonAction(Request $request): JsonResponse
     {
         $priorities[] = ['key' => '-1', 'value' => '-'];
         foreach (ApplicationLoggerDb::getPriorities() as $key => $p) {
@@ -205,7 +194,7 @@ class LogController extends AdminController implements KernelControllerEventInte
      *
      * @return JsonResponse
      */
-    public function componentJsonAction(Request $request)
+    public function componentJsonAction(Request $request): JsonResponse
     {
         $components[] = ['key' => '', 'value' => '-'];
         foreach (ApplicationLoggerDb::getComponents() as $p) {
@@ -220,11 +209,11 @@ class LogController extends AdminController implements KernelControllerEventInte
      *
      * @param Request $request
      *
-     * @return Response
+     * @return StreamedResponse|Response
      *
      * @throws \Exception
      */
-    public function showFileObjectAction(Request $request)
+    public function showFileObjectAction(Request $request): StreamedResponse|Response
     {
         $filePath = $request->get('filePath');
         $storage = Storage::get('application_log');
