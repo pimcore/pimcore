@@ -1114,6 +1114,10 @@ class Service extends Model\AbstractModel
 
         // replace all 4 byte unicode characters
         $key = preg_replace('/[\x{10000}-\x{10FFFF}]/u', '-', $key);
+
+        // replace non-printable characters
+        $key = preg_replace('/[\x00-\x08\x0B\x0C\xC2\xA0\xAD\x0E-\x1F\x7F-\x9F\x{200B}-\x{200D}\x{FEFF}]/u', '', $key);
+
         // replace slashes with a hyphen
         $key = str_replace('/', '-', $key);
 
