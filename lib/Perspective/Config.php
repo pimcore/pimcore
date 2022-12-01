@@ -89,6 +89,7 @@ final class Config
         $repository = self::getRepository();
 
         foreach ($data as $key => $value) {
+            $key = (string) $key;
             list($configKey, $dataSource) = $repository->loadConfigByKey($key);
             if ($repository->isWriteable($key, $dataSource) === true) {
                 unset($value['writeable']);
