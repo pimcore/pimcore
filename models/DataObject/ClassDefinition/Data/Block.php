@@ -479,7 +479,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      */
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
-        return 'not supported';
+        return $this->getDiffVersionPreview($data, $object, $params)['html'];
     }
 
     /**
@@ -505,15 +505,43 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @param DataObject\Concrete|null $object
      * @param array $params
      *
-     * @return string
+     * @return array
      */
-    public function getDiffVersionPreview(?array $data, Concrete $object = null, array $params = []): string
+    public function getDiffVersionPreview(?array $data, Concrete $object = null, array $params = []): array
     {
-        if ($data) {
-            return 'not supported';
+        $html = '';
+        if (is_array($data)) {
+            $html = '<table>';
+
+            foreach ($data as $index => $item) {
+                if (!is_array($item)) {
+                    continue;
+                }
+
+                $html .= '<tr><th><b>'.$index.'</b></th><th>&nbsp;</th><th>&nbsp;</th></tr>';
+
+                foreach($this->getFieldDefinitions() as $fieldDefinition) {
+                    $title = !empty($fieldDefinition->title) ? $fieldDefinition->title : $fieldDefinition->getName();
+                    $html .= '<tr><td>&nbsp;</td><td>'.$title.'</td><td>';
+
+                    $blockElement = $item[$fieldDefinition->getName()];
+                    if($blockElement instanceof DataObject\Data\BlockElement) {
+                        $html .= $fieldDefinition->getVersionPreview($blockElement->getData(), $object, $params);
+                    } else {
+                        $html .= 'invalid data';
+                    }
+                    $html .= '</td></tr>';
+                }
+            }
+
+            $html .= '</table>';
         }
 
-        return '';
+        $value = [];
+        $value['html'] = $html;
+        $value['type'] = 'html';
+
+        return $value;
     }
 
     /**
