@@ -26,7 +26,7 @@ trait OwnerAwareFieldTrait
 {
     protected mixed $_owner = null;
 
-    protected ?string $_fieldname;
+    protected ?string $_fieldname = null;
 
     protected ?string $_language = null;
 
