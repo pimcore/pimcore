@@ -399,7 +399,13 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return is_array($this->children) && count($this->children) > 0;
     }
 
-    public function addChild(Data|Layout $child)
+    /**
+     * typehint "mixed" is required for asset-metadata-definitions bundle
+     * since it doesn't extend Core Data Types
+     *
+     * @param Data|Layout $child
+     */
+    public function addChild(mixed $child)
     {
         $this->children[] = $child;
         $this->fieldDefinitionsCache = null;

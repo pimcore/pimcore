@@ -27,10 +27,8 @@ class Select extends Model\Document\Editable
      * Contains the current selected value
      *
      * @internal
-     *
-     * @var string
      */
-    protected string $text;
+    protected ?string $text = null;
 
     /**
      * {@inheritdoc}
@@ -45,7 +43,7 @@ class Select extends Model\Document\Editable
      */
     public function getData(): mixed
     {
-        return $this->text;
+        return (string) $this->text;
     }
 
     public function getText(): string

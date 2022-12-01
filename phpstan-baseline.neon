@@ -81,11 +81,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/src/OrderManager/Order/Listing.php
 
 		-
-			message: "#^Parameter \\#2 \\$value of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OrderManager\\\\OrderListInterface\\:\\:addCondition\\(\\) expects string\\|null, int\\|null given\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/src/OrderManager/Order/Listing/Filter/CustomerObject.php
-
-		-
 			message: "#^Parameter \\#1 \\$product of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractOrderItem\\:\\:setProduct\\(\\) expects Pimcore\\\\Model\\\\Element\\\\AbstractElement\\|null, Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface given\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/src/OrderManager/V7/OrderManager.php

@@ -730,7 +730,7 @@ class Service extends Model\Element\Service
 
                     $keyConfig = Model\DataObject\Classificationstore\KeyConfig::getById($keyid);
                     $type = $keyConfig->getType();
-                    $definition = json_decode($keyConfig->getDefinition());
+                    $definition = json_decode($keyConfig->getDefinition(), true);
                     $definition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
 
                     if (method_exists($definition, 'getDataForGrid')) {
@@ -1880,7 +1880,7 @@ class Service extends Model\Element\Service
                         if (method_exists($object, $getter)) {
                             $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyId);
                             $type = $keyConfig->getType();
-                            $definition = json_decode($keyConfig->getDefinition());
+                            $definition = json_decode($keyConfig->getDefinition(), true);
                             $fieldDefinition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
 
                             /** @var DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */

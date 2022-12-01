@@ -108,7 +108,7 @@ class Xliff12Exporter implements ExporterInterface
         return 'application/x-xliff+xml';
     }
 
-    protected function addTransUnitNode(\SimpleXMLElement $xml, string $name, string $sourceContent, string $sourceLang, string $targetContent, string $targetLang)
+    protected function addTransUnitNode(\SimpleXMLElement $xml, string $name, string $sourceContent, string $sourceLang, ?string $targetContent, string $targetLang)
     {
         $transUnit = $xml->addChild('trans-unit');
         $transUnit->addAttribute('id', htmlentities($name));

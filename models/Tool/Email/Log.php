@@ -31,10 +31,8 @@ class Log extends Model\AbstractModel
 {
     /**
      * EmailLog Id
-     *
-     * @var int
      */
-    protected int $id;
+    protected ?int $id = null;
 
     /**
      * Id of the email document or null if no document was given
@@ -45,10 +43,8 @@ class Log extends Model\AbstractModel
 
     /**
      * Parameters passed for replacement
-     *
-     * @var array
      */
-    protected array $params;
+    protected string|array $params;
 
     /**
      * Modification date as timestamp
@@ -74,9 +70,9 @@ class Log extends Model\AbstractModel
     /**
      * Contains the reply to email addresses (multiple recipients are separated by a ",")
      *
-     * @var string
+     * @var ?string
      */
-    protected string $replyTo;
+    protected ?string $replyTo = null;
 
     /**
      * The "to" recipients (multiple recipients are separated by a ",")
@@ -125,14 +121,14 @@ class Log extends Model\AbstractModel
      *
      * @var string
      */
-    protected string $bodyHtml;
+    protected string $bodyHtml = '';
 
     /**
      * Contains the rendered text content of the email
      *
      * @var string
      */
-    protected string $bodyText;
+    protected string $bodyText = '';
 
     /**
      * Contains the rendered subject of the email
@@ -174,12 +170,10 @@ class Log extends Model\AbstractModel
 
     /**
      * Returns the email log id
-     *
-     * @return int
      */
-    public function getId(): int
+    public function getId(): ?int
     {
-        return (int)$this->id;
+        return $this->id;
     }
 
     public function setId(int $id): static
@@ -240,7 +234,7 @@ class Log extends Model\AbstractModel
         return $this->documentId;
     }
 
-    public function setParams(array $params): static
+    public function setParams(string|array $params): static
     {
         $this->params = $params;
 
@@ -254,6 +248,9 @@ class Log extends Model\AbstractModel
      */
     public function getParams(): array
     {
+        if(is_string($this->params)) {
+            $this->params = json_decode($this->params, true);
+        }
         return $this->params;
     }
 
@@ -513,9 +510,9 @@ class Log extends Model\AbstractModel
     /**
      * Returns the "replyTo" email address
      *
-     * @return string
+     * @return ?string
      */
-    public function getReplyTo(): string
+    public function getReplyTo(): ?string
     {
         return $this->replyTo;
     }

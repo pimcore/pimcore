@@ -132,8 +132,8 @@ class RedirectsController extends AdminController
             // get list of routes
 
             $list = new Redirect\Listing();
-            $list->setLimit($request->get('limit'));
-            $list->setOffset($request->get('start'));
+            $list->setLimit((int)$request->get('limit', 50));
+            $list->setOffset((int)$request->get('start', 0));
 
             $sortingSettings = QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
             if ($sortingSettings['orderKey']) {

@@ -194,8 +194,12 @@ class ElementController extends AdminController
 
         $list = new Element\Note\Listing();
 
-        $list->setLimit($request->get('limit'));
-        $list->setOffset($request->get('start'));
+        $offset = (int) $request->get('start', 0);
+        $limit = $request->get('limit');
+        $limit = $limit ? (int) $limit : null;
+
+        $list->setLimit($limit);
+        $list->setOffset($offset);
 
         $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
         if ($sortingSettings['orderKey'] && $sortingSettings['order']) {
@@ -742,8 +746,8 @@ class ElementController extends AdminController
         $id = $request->get('id');
         $type = $request->get('elementType');
         $allowedTypes = ['asset', 'document', 'object'];
-        $offset = $request->get('start');
-        $limit = $request->get('limit');
+        $offset = (int) $request->get('start', 0);
+        $limit = (int) $request->get('limit', 25);
 
         if ($id && in_array($type, $allowedTypes)) {
             $element = Model\Element\Service::getElementById($type, $id);
@@ -775,8 +779,8 @@ class ElementController extends AdminController
         $id = $request->get('id');
         $type = $request->get('elementType');
         $allowedTypes = ['asset', 'document', 'object'];
-        $offset = $request->get('start');
-        $limit = $request->get('limit');
+        $offset = (int) $request->get('start', 0);
+        $limit = (int) $request->get('limit', 25);
 
         if ($id && in_array($type, $allowedTypes)) {
             $element = Model\Element\Service::getElementById($type, $id);

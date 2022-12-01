@@ -51,8 +51,8 @@ class RecyclebinController extends AdminController implements KernelControllerEv
             $db = \Pimcore\Db::get();
 
             $list = new Recyclebin\Item\Listing();
-            $list->setLimit($request->get('limit'));
-            $list->setOffset($request->get('start'));
+            $list->setLimit((int) $request->get('limit', 50));
+            $list->setOffset((int) $request->get('start', 0));
 
             $list->setOrderKey('date');
             $list->setOrder('DESC');

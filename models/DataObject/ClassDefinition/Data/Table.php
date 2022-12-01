@@ -316,14 +316,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         return $data;
     }
 
-    /**
-     * @param array $data
-     * @param null|DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array|null
-     */
-    public function getDataForGrid(array $data, Concrete $object = null, array $params = []): ?array
+    public function getDataForGrid(?array $data, Concrete $object = null, array $params = []): ?array
     {
         return $this->getDataForEditmode($data, $object, $params);
     }

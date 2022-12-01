@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CheckoutManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CheckoutManagerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\CancelPaymentOrRecreateOrderStrategy;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\HandlePendingPaymentsStrategyInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface;
@@ -54,7 +55,7 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
 
     protected string $className = CheckoutManager::class;
 
-    protected ?ServiceLocator $handlePendingPaymentStrategy = null;
+    protected ?HandlePendingPaymentsStrategyInterface $handlePendingPaymentStrategy = null;
 
     protected ?EventDispatcherInterface $eventDispatcher = null;
 

@@ -521,7 +521,7 @@ class Document extends Element\AbstractElement
                 // dont't add a reference to yourself
                 continue;
             } else {
-                $d->addRequirement($requirement['id'], $requirement['type']);
+                $d->addRequirement((int) $requirement['id'], $requirement['type']);
             }
         }
         $d->save();

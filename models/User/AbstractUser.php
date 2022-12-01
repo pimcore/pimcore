@@ -35,7 +35,7 @@ class AbstractUser extends Model\AbstractModel
 
     protected ?string $name = null;
 
-    protected string $type;
+    protected string $type = '';
 
     public static function getById(int $id): static|null
     {

@@ -201,7 +201,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
-        return $data;
+        return $data ?? '';
     }
 
     public function resolveDependencies(mixed $data): array

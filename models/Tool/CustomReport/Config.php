@@ -50,13 +50,13 @@ class Config extends Model\AbstractModel implements \JsonSerializable
 
     protected string $chartType = '';
 
-    protected string $pieColumn = '';
+    protected ?string $pieColumn = null;
 
-    protected string $pieLabelColumn = '';
+    protected ?string $pieLabelColumn = null;
 
-    protected string $xAxis = '';
+    protected ?string $xAxis = null;
 
-    protected string|array $yAxis = [];
+    protected null|string|array $yAxis = null;
 
     protected ?int $modificationDate = null;
 
@@ -125,7 +125,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
-     * @param \stdClass $configuration
+     * @param ?\stdClass $configuration
      * @param Config|null $fullConfig
      *
      * @return Model\Tool\CustomReport\Adapter\CustomReportAdapterInterface
@@ -133,9 +133,13 @@ class Config extends Model\AbstractModel implements \JsonSerializable
      *@deprecated Use ServiceLocator with id 'pimcore.custom_report.adapter.factories' to determine the factory for the adapter instead
      *
      */
-    public static function getAdapter(\stdClass $configuration, Config $fullConfig = null): Adapter\CustomReportAdapterInterface
+    public static function getAdapter(?\stdClass $configuration, Config $fullConfig = null): Adapter\CustomReportAdapterInterface
     {
-        $type = $configuration->type ? $configuration->type : 'sql';
+        if($configuration === null) {
+            $configuration = new \stdClass();
+        }
+
+        $type = $configuration->type ?: 'sql';
         $serviceLocator = \Pimcore::getContainer()->get('pimcore.custom_report.adapter.factories');
 
         if (!$serviceLocator->has($type)) {
@@ -259,42 +263,42 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         return $this->chartType;
     }
 
-    public function setPieColumn(string $pieColumn)
+    public function setPieColumn(?string $pieColumn)
     {
         $this->pieColumn = $pieColumn;
     }
 
-    public function getPieColumn(): string
+    public function getPieColumn(): ?string
     {
         return $this->pieColumn;
     }
 
-    public function setXAxis(string $xAxis)
+    public function setXAxis(?string $xAxis)
     {
         $this->xAxis = $xAxis;
     }
 
-    public function getXAxis(): string
+    public function getXAxis(): ?string
     {
         return $this->xAxis;
     }
 
-    public function setYAxis(array|string $yAxis)
+    public function setYAxis(array|string|null $yAxis)
     {
         $this->yAxis = $yAxis;
     }
 
-    public function getYAxis(): array|string
+    public function getYAxis(): array|string|null
     {
         return $this->yAxis;
     }
 
-    public function setPieLabelColumn(string $pieLabelColumn)
+    public function setPieLabelColumn(?string $pieLabelColumn)
     {
         $this->pieLabelColumn = $pieLabelColumn;
     }
 
-    public function getPieLabelColumn(): string
+    public function getPieLabelColumn(): ?string
     {
         return $this->pieLabelColumn;
     }

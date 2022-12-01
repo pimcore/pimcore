@@ -54,7 +54,7 @@ final class KeyConfig extends Model\AbstractModel
      *
      * @var string
      */
-    protected string $description;
+    protected string $description = '';
 
     /**
      * The key type ("text", "number", etc...)
