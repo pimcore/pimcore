@@ -59,7 +59,7 @@ final class ImageThumbnail
         $this->asset = $asset;
         $this->timeOffset = $timeOffset;
         $this->imageAsset = $imageAsset;
-        $this->config = $this->createConfig($config);
+        $this->config = $this->createConfig($config ?? []);
         $this->deferred = $deferred;
     }
 
