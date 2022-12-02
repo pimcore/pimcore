@@ -42,7 +42,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @var string
      */
-    protected string $alt;
+    protected ?string $alt = null;
 
     /**
      * Contains the imageobject itself
@@ -65,28 +65,28 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @var float
      */
-    protected float $cropWidth;
+    protected float $cropWidth = 0.0;
 
     /**
      * @internal
      *
      * @var float
      */
-    protected float $cropHeight;
+    protected float $cropHeight = 0.0;
 
     /**
      * @internal
      *
      * @var float
      */
-    protected float $cropTop;
+    protected float $cropTop = 0.0;
 
     /**
      * @internal
      *
      * @var float
      */
-    protected float $cropLeft;
+    protected float $cropLeft = 0.0;
 
     /**
      * @internal
@@ -109,7 +109,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @var string
      */
-    protected string $thumbnail;
+    protected ?string $thumbnail = null;
 
     /**
      * {@inheritdoc}
