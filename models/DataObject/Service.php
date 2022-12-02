@@ -1810,8 +1810,7 @@ class Service extends Model\Element\Service
     {
         $objectData = [];
         $mappedFieldnames = [];
-        $index = 0;
-        foreach ($fields as $field) {
+        foreach ($fields as $index => $field) {
             if (static::isHelperGridColumnConfig($field) && $validLanguages = static::expandGridColumnForExport($helperDefinitions, $field)) {
                 $currentLocale = $localeService->getLocale();
                 $mappedFieldnameBase = self::mapFieldname($field, $helperDefinitions);
@@ -1835,7 +1834,6 @@ class Service extends Model\Element\Service
 
                 $objectData[$index] = ['fieldName' => $field, 'data' => $fieldData];
             }
-            $index++;
         }
 
         if ($returnMappedFieldNames) {
