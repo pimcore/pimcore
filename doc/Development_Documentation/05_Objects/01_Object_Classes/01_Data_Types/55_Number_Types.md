@@ -19,7 +19,7 @@ The numeric data field can be configured with a default value. In the GUI it is 
 ![Numeric Range Field](../../../img/classes-datatypes-number7.jpg)
 
 The `numericRange` object field consists of two `numeric` fields (minimum and maximum) and so can be configured
-the same way. Programmatically the values are represented by a [NumericRange](https://github.com/pimcore/pimcore/tree/10.x/models/DataObject/Data/NumericRange.php) Object.
+the same way. Programmatically the values are represented by a [NumericRange](https://github.com/pimcore/pimcore/tree/11.x/models/DataObject/Data/NumericRange.php) Object.
 
 
 ## Slider
@@ -78,7 +78,7 @@ $object->save();
 
 The `quantityValueRange` object field is basically the same as the `quantityValue` field,
 except that is has two input fields (minimum and maximum). Programmatically the values are
-represented by a [QuantityValueRange](https://github.com/pimcore/pimcore/tree/10.x/models/DataObject/Data/QuantityValueRange.php) Object.
+represented by a [QuantityValueRange](https://github.com/pimcore/pimcore/tree/11.x/models/DataObject/Data/QuantityValueRange.php) Object.
 
 
 ### Quantity Value Unit Conversion
