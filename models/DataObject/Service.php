@@ -1837,7 +1837,6 @@ class Service extends Model\Element\Service
         }
 
         if ($returnMappedFieldNames) {
-            $tmp = [];
             foreach ($mappedFieldnames as $key => $value) {
                 $objectData[$key]['fieldName'] = $value;
             }
