@@ -126,7 +126,7 @@ final class TmpStore extends Model\AbstractModel
             $lifetime = self::getDefaultLifetime();
         }
 
-        return $instance->getDao()->add($id, $data, $tag, $lifetime);
+        return $instance->getDao()->add($id, $data, $tag ?? '', $lifetime);
     }
 
     public static function delete(string $id): void
