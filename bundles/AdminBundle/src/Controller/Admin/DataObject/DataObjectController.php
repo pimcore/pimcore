@@ -638,19 +638,47 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             $visibleFieldValues = [];
             foreach ($visibleFields as $visibleField) {
+                if ($visibleField === 'fullpath' && $fieldConfig instanceof DataObject\ClassDefinition\PathFormatterAwareInterface) {
+                    $object = Element\Service::getElementById($objectData['type'], $objectData['id']);
+                    if (!$object instanceof Element\ElementInterface) {
+                        continue;
+                    }
+
+                    $formatter = $fieldConfig->getPathFormatterClass();
+
+                    if (null !== $formatter) {
+                        $pathFormatter = DataObject\ClassDefinition\Helper\PathFormatterResolver::resolvePathFormatter(
+                            $fieldConfig->getPathFormatterClass()
+                        );
+
+                        if ($pathFormatter instanceof DataObject\ClassDefinition\PathFormatterInterface) {
+                            $objectData['fullpath'] =
+                                $pathFormatter->formatPath(
+                                    [],
+                                    $object,
+                                    [$objectData],
+                                    [
+                                        'fd' => $fieldConfig,
+                                        'context' => []
+                                    ]
+                                );
+                        }
+                    }
+                }
+
                 if (isset($objectData[$visibleField])) {
                     $visibleFieldValues[] = $objectData[$visibleField];
                 } else {
+                    $object = Element\Service::getElementById($objectData['type'], $objectData['id']);
+                    if (!$object instanceof Element\ElementInterface) {
+                        continue;
+                    }
+
                     $inheritValues = DataObject\Concrete::getGetInheritedValues();
                     $fallbackValues = DataObject\Localizedfield::getGetFallbackValues();
 
                     DataObject\Concrete::setGetInheritedValues(true);
                     DataObject\Localizedfield::setGetFallbackValues(true);
-
-                    $object = Element\Service::getElementById($objectData['type'], $objectData['id']);
-                    if (!$object instanceof Element\ElementInterface) {
-                        continue;
-                    }
 
                     $getter = 'get'.ucfirst($visibleField);
                     if(method_exists($object, $getter)) {
