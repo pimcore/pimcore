@@ -16,26 +16,16 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Model\DataObject\Traits\DataHeightTrait;
+use Pimcore\Model\DataObject\Traits\DataWidthTrait;
+
 /**
  * @internal
  */
 trait ImageTrait
 {
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $width = 0;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $height = 0;
+    use DataWidthTrait;
+    use DataHeightTrait;
 
     /**
      * @internal
@@ -43,36 +33,6 @@ trait ImageTrait
      * @var string
      */
     public string $uploadPath;
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width): static
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
-
-    public function getHeight(): int|string
-    {
-        return $this->height;
-    }
-
-    public function setHeight(int|string $height): static
-    {
-        if (is_numeric($height)) {
-            $height = (int)$height;
-        }
-        $this->height = $height;
-
-        return $this;
-    }
 
     public function setUploadPath(string $uploadPath): static
     {

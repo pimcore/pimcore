@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * Pimcore
@@ -46,7 +45,7 @@ final class Thumbnail
     {
         $this->asset = $asset;
         $this->deferred = $deferred;
-        $this->config = $this->createConfig($config);
+        $this->config = $this->createConfig($config ?? []);
     }
 
     public function getPath(bool $deferredAllowed = true, bool $cacheBuster = false): string

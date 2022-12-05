@@ -14,15 +14,30 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
+namespace Pimcore\Model\DataObject\Traits;
 
 /**
- * Abstract base class for voucher token type field collections
+ * @internal
  */
-abstract class AbstractVoucherTokenType extends \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData
+trait DataHeightTrait
 {
-    public function getOnlyTokenPerCart(): ?bool
+    /**
+     * @internal
+     */
+    public string|int|null $height = 0;
+
+    public function getHeight(): int|string|null
     {
-        return false;
+        return $this->height;
+    }
+
+    public function setHeight(int|string|null $height): static
+    {
+        if (is_numeric($height)) {
+            $height = (int)$height;
+        }
+        $this->height = $height;
+
+        return $this;
     }
 }

@@ -14,15 +14,30 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
+namespace Pimcore\Model\DataObject\Traits;
 
 /**
- * Abstract base class for voucher token type field collections
+ * @internal
  */
-abstract class AbstractVoucherTokenType extends \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData
+trait DataWidthTrait
 {
-    public function getOnlyTokenPerCart(): ?bool
+    /**
+     * @internal
+     */
+    public string|int|null $width = 0;
+
+    public function getWidth(): int|string|null
     {
-        return false;
+        return $this->width;
+    }
+
+    public function setWidth(int|string|null $width): static
+    {
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
+
+        return $this;
     }
 }

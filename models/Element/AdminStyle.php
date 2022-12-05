@@ -29,9 +29,9 @@ class AdminStyle
 {
     protected string|bool|null $elementCssClass = '';
 
-    protected string|bool|null $elementIcon;
+    protected string|bool|null $elementIcon = null;
 
-    protected string|bool|null $elementIconClass;
+    protected string|bool|null $elementIconClass = null;
 
     protected ?array $elementQtipConfig = null;
 

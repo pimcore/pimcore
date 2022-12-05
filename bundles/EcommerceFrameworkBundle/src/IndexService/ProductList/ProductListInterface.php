@@ -133,9 +133,9 @@ interface ProductListInterface extends PaginateListingInterface
     /**
      * gets order direction
      *
-     * @return string
+     * @return ?string
      */
-    public function getOrder(): string;
+    public function getOrder(): ?string;
 
     /**
      * sets order key
@@ -148,7 +148,7 @@ interface ProductListInterface extends PaginateListingInterface
 
     public function setLimit(int $limit);
 
-    public function getLimit(): int;
+    public function getLimit(): ?int;
 
     public function setOffset(int $offset);
 

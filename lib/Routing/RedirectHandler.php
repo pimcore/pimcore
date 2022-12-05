@@ -242,12 +242,16 @@ final class RedirectHandler implements LoggerAwareInterface
         }
 
         $cacheKey = 'system_route_redirect';
-        if (($this->redirects = Cache::load($cacheKey)) === false) {
+        $valueFromCache = Cache::load($cacheKey);
+        $this->redirects = $valueFromCache === false ? null : $valueFromCache;
+        if (!isset($this->redirects)) {
             // acquire lock to avoid concurrent redirect cache warm-up
             $this->lock->acquire(true);
 
             //check again if redirects are cached to avoid re-warming cache
-            if (($this->redirects = Cache::load($cacheKey)) === false) {
+            $valueFromCache = Cache::load($cacheKey);
+            $this->redirects = $valueFromCache === false ? null : $valueFromCache;
+            if (!isset($this->redirects)) {
                 try {
                     $list = new Redirect\Listing();
                     $list->setCondition('active = 1 AND regex = 1');

@@ -27,10 +27,8 @@ class Textarea extends Model\Document\Editable implements EditmodeDataInterface
      * Contains the text
      *
      * @internal
-     *
-     * @var string
      */
-    protected string $text;
+    protected ?string $text = null;
 
     /**
      * {@inheritdoc}
@@ -45,7 +43,7 @@ class Textarea extends Model\Document\Editable implements EditmodeDataInterface
      */
     public function getData(): mixed
     {
-        return $this->text;
+        return (string) $this->text;
     }
 
     public function getText(): string
@@ -77,7 +75,7 @@ class Textarea extends Model\Document\Editable implements EditmodeDataInterface
      */
     public function getDataEditmode(): string
     {
-        return htmlentities($this->text);
+        return htmlentities((string)$this->text);
     }
 
     /**

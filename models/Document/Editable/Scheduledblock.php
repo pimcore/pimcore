@@ -192,7 +192,7 @@ class Scheduledblock extends Block implements BlockInterface
         // this will be removed in blockDestruct
         $elements = $this->filterElements();
 
-        $this->getBlockState()->pushIndex($elements[$this->current]['key']);
+        $this->getBlockState()->pushIndex((int) $elements[$this->current]['key']);
     }
 
     /**
@@ -224,7 +224,7 @@ class Scheduledblock extends Block implements BlockInterface
      */
     public function getCurrentIndex(): int
     {
-        return $this->indices[$this->getCurrent()]['key'];
+        return (int) $this->indices[$this->getCurrent()]['key'];
     }
 
     public function getIterator(): \Generator

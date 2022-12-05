@@ -40,10 +40,8 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
      * Contains the object for the snippet
      *
      * @internal
-     *
-     * @var Document\Snippet|null
      */
-    protected ?Document\Snippet $snippet = null;
+    protected Document\Snippet|Model\Element\ElementDescriptor|null $snippet = null;
 
     /**
      * {@inheritdoc}

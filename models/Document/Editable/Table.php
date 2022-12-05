@@ -30,7 +30,7 @@ class Table extends Model\Document\Editable
      *
      * @var array
      */
-    protected array $data;
+    protected array $data = [];
 
     /**
      * {@inheritdoc}

@@ -27,10 +27,12 @@ use Pimcore\Normalizer\NormalizerInterface;
 
 class ManyToManyObjectRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, VarExporterInterface, NormalizerInterface, PreGetDataInterface, PreSetDataInterface, LayoutDefinitionEnrichmentInterface
 {
-    use Extension\QueryColumnType;
     use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\ManyToManyRelationTrait;
     use DataObject\ClassDefinition\Data\Extension\RelationFilterConditionParser;
+    use DataObject\Traits\DataWidthTrait;
+    use DataObject\Traits\DataHeightTrait;
+    use Extension\QueryColumnType;
 
     /**
      * Static type of this element
@@ -40,22 +42,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @var string
      */
     public string $fieldtype = 'manyToManyObjectRelation';
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $width = 0;
-
-    /**
-     * Type for the column to query
-     *
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $height = 0;
 
     /**
      * @internal
@@ -81,9 +67,9 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @internal
      *
-     * @var string|null
+     * @var array|string|null
      */
-    public ?string $visibleFields = null;
+    public array|string|null $visibleFields = null;
 
     /**
      * @internal
@@ -314,36 +300,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         }
 
         return '';
-    }
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width): static
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
-
-    public function getHeight(): int|string
-    {
-        return $this->height;
-    }
-
-    public function setHeight(int|string $height): static
-    {
-        if (is_numeric($height)) {
-            $height = (int)$height;
-        }
-        $this->height = $height;
-
-        return $this;
     }
 
     /**
@@ -673,7 +629,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      */
     protected function buildUniqueKeyForDiffEditor(array $item): string
     {
-        return $item['id'];
+        return (string) $item['id'];
     }
 
     /**
@@ -781,7 +737,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return $this;
     }
 
-    public function getVisibleFields(): ?string
+    public function getVisibleFields(): array|null|string
     {
         return $this->visibleFields;
     }

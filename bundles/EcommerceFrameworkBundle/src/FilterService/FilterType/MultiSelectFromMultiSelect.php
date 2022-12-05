@@ -41,7 +41,7 @@ class MultiSelectFromMultiSelect extends SelectFromMultiSelect
 
         $values = [];
         foreach ($rawValues as $v) {
-            $explode = explode(WorkerInterface::MULTISELECT_DELIMITER, $v['value']);
+            $explode = explode(WorkerInterface::MULTISELECT_DELIMITER, (string) $v['value']);
             foreach ($explode as $e) {
                 if (!empty($e)) {
                     if (!empty($values[$e])) {

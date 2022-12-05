@@ -27,6 +27,7 @@ use Pimcore\Normalizer\NormalizerInterface;
 
 class QuantityValueRange extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface, VarExporterInterface, NormalizerInterface
 {
+    use DataObject\Traits\DataWidthTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -38,11 +39,6 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
      * @var string
      */
     public string $fieldtype = 'quantityValueRange';
-
-    /**
-     * @internal
-     */
-    public string|int $width = 0;
 
     /**
      * @internal
@@ -90,20 +86,6 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
         'maximum' => 'double',
         'unit' => 'varchar(64)',
     ];
-
-    public function getWidth(): string|int
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width): void
-    {
-        if (\is_numeric($width)) {
-            $width = (int) $width;
-        }
-
-        $this->width = $width;
-    }
 
     public function getUnitWidth(): string|int
     {

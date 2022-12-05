@@ -33,6 +33,7 @@ class DateRange extends Data implements
     VarExporterInterface,
     NormalizerInterface
 {
+    use DataObject\Traits\DataWidthTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -68,25 +69,6 @@ class DateRange extends Data implements
         'start_date' => 'bigint(20)',
         'end_date' => 'bigint(20)',
     ];
-
-    /**
-     * @internal
-     */
-    public string|int $width = 0;
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width): void
-    {
-        if (\is_numeric($width)) {
-            $width = (int) $width;
-        }
-
-        $this->width = $width;
-    }
 
     /**
      * @param DataObject\Concrete|null $object

@@ -21,10 +21,15 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\AfterDecryptionUnmarshallerInt
 use Pimcore\Model\DataObject\ClassDefinition\Data\BeforeEncryptionMarshallerInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Traits\DataHeightTrait;
+use Pimcore\Model\DataObject\Traits\DataWidthTrait;
 use Pimcore\Tool\Serialize;
 
 abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterface, BeforeEncryptionMarshallerInterface, AfterDecryptionUnmarshallerInterface
 {
+    use DataHeightTrait;
+    use DataWidthTrait;
+
     /**
      * @internal
      *
@@ -45,20 +50,6 @@ abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterfa
      * @var int
      */
     public int $zoom = 1;
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $width = 0;
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $height = 0;
 
     /**
      * @internal
@@ -99,36 +90,6 @@ abstract class AbstractGeo extends Data implements TypeDeclarationSupportInterfa
     public function setZoom(int $zoom): static
     {
         $this->zoom = (int) $zoom;
-
-        return $this;
-    }
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width): static
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
-
-    public function getHeight(): int|string
-    {
-        return $this->height;
-    }
-
-    public function setHeight(int|string $height): static
-    {
-        if (is_numeric($height)) {
-            $height = (int)$height;
-        }
-        $this->height = $height;
 
         return $this;
     }

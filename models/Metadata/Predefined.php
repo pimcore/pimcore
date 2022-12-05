@@ -31,7 +31,7 @@ use Pimcore\Model;
  */
 final class Predefined extends Model\AbstractModel
 {
-    protected string $id;
+    protected ?string $id = null;
 
     protected string $name;
 
@@ -143,7 +143,7 @@ final class Predefined extends Model\AbstractModel
         return $this;
     }
 
-    public function getId(): string
+    public function getId(): ?string
     {
         return $this->id;
     }

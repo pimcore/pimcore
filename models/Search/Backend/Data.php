@@ -336,7 +336,7 @@ class Data extends \Pimcore\Model\AbstractModel
                             }
 
                             ob_start();
-                            $this->data .= strip_tags($editable->frontend()).' ';
+                            $this->data .= strip_tags((string) $editable->frontend()).' ';
                             $this->data .= ob_get_clean();
                         }
                     }

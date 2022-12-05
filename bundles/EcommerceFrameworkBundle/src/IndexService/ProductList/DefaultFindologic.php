@@ -55,7 +55,7 @@ class DefaultFindologic implements ProductListInterface
 
     protected int $offset = 0;
 
-    protected AbstractCategory $category;
+    protected ?AbstractCategory $category = null;
 
     protected bool $inProductList = true;
 
@@ -79,7 +79,7 @@ class DefaultFindologic implements ProductListInterface
 
     protected ?float $conditionPriceTo = null;
 
-    protected string $order;
+    protected ?string $order = null;
 
     protected string|array $orderKey;
 
@@ -195,7 +195,7 @@ class DefaultFindologic implements ProductListInterface
         $this->order = $order;
     }
 
-    public function getOrder(): string
+    public function getOrder(): ?string
     {
         return $this->order;
     }
@@ -222,7 +222,7 @@ class DefaultFindologic implements ProductListInterface
         $this->limit = $limit;
     }
 
-    public function getLimit(): int
+    public function getLimit(): ?int
     {
         return $this->limit;
     }

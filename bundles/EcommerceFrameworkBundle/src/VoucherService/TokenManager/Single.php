@@ -250,7 +250,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
     {
         parent::checkToken($code, $cart);
         if ($token = Token::getByCode($code)) {
-            if ($token->check($this->configuration->getUsages())) {
+            if ($token->check((int)$this->configuration->getUsages())) {
                 return true;
             }
         }

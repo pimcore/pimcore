@@ -315,9 +315,9 @@ final class Config extends Model\AbstractModel
         return $this->name;
     }
 
-    public function setAudioBitrate(int $audioBitrate): static
+    public function setAudioBitrate(?int $audioBitrate): static
     {
-        $this->audioBitrate = (int) $audioBitrate;
+        $this->audioBitrate = $audioBitrate;
 
         return $this;
     }
@@ -327,9 +327,9 @@ final class Config extends Model\AbstractModel
         return $this->audioBitrate;
     }
 
-    public function setVideoBitrate(int $videoBitrate): static
+    public function setVideoBitrate(?int $videoBitrate): static
     {
-        $this->videoBitrate = (int) $videoBitrate;
+        $this->videoBitrate = $videoBitrate;
 
         return $this;
     }

@@ -32,10 +32,8 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      * ID of the referenced image
      *
      * @internal
-     *
-     * @var int
      */
-    protected int $id;
+    protected ?int $id = null;
 
     /**
      * The ALT text of the image
@@ -44,7 +42,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @var string
      */
-    protected string $alt;
+    protected ?string $alt = null;
 
     /**
      * Contains the imageobject itself
@@ -67,28 +65,28 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @var float
      */
-    protected float $cropWidth;
+    protected float $cropWidth = 0.0;
 
     /**
      * @internal
      *
      * @var float
      */
-    protected float $cropHeight;
+    protected float $cropHeight = 0.0;
 
     /**
      * @internal
      *
      * @var float
      */
-    protected float $cropTop;
+    protected float $cropTop = 0.0;
 
     /**
      * @internal
      *
      * @var float
      */
-    protected float $cropLeft;
+    protected float $cropLeft = 0.0;
 
     /**
      * @internal
@@ -111,7 +109,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @var string
      */
-    protected string $thumbnail;
+    protected ?string $thumbnail = null;
 
     /**
      * {@inheritdoc}
@@ -425,7 +423,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
 
     public function getImage(): Asset\Image|ElementDescriptor|ElementInterface|null
     {
-        if (!$this->image) {
+        if (!$this->image && $this->id) {
             $this->image = Asset\Image::getById($this->getId());
         }
 
@@ -450,9 +448,9 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         return $this;
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
-        return (int) $this->id;
+        return $this->id;
     }
 
     public function getThumbnail(array|string|Asset\Image\Thumbnail\Config $conf, bool $deferred = true): Asset\Image\Thumbnail|string

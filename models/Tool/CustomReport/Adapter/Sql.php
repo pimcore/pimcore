@@ -30,7 +30,7 @@ class Sql extends AbstractAdapter
     {
         $db = Db::get();
 
-        $baseQuery = $this->getBaseQuery($filters, $fields, false, $drillDownFilters);
+        $baseQuery = $this->getBaseQuery($filters ?? [], $fields ?? [], false, $drillDownFilters ?? []);
         $data = [];
         $total = 0;
 

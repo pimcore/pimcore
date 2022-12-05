@@ -104,7 +104,7 @@ class UsageStatisticsListener implements EventSubscriberInterface
                 $value = json_decode($value);
                 if (is_array($value)) {
                     array_walk_recursive($value, function (&$item, $key) {
-                        if (strpos($key, 'pass') !== false) {
+                        if (strpos((string)$key, 'pass') !== false) {
                             $item = '*************';
                         }
                     });

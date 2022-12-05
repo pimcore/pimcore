@@ -29,6 +29,9 @@ use Pimcore\Tool;
 
 class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface, VarExporterInterface
 {
+    use DataObject\Traits\DataHeightTrait;
+    use DataObject\Traits\DataWidthTrait;
+
     /**
      * Static type of this element
      *
@@ -72,20 +75,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * @var string|null
      */
     public ?string $title = null;
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $width = 0;
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $height = 0;
 
     /**
      * @internal
@@ -498,7 +487,13 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return false;
     }
 
-    public function addChild(Data|Layout $child)
+    /**
+     * typehint "mixed" is required for asset-metadata-definitions bundle
+     * since it doesn't extend Core Data Types
+     *
+     * @param Data|Layout $child
+     */
+    public function addChild(mixed $child)
     {
         $this->children[] = $child;
         $this->fieldDefinitionsCache = null;
@@ -592,21 +587,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $keyConfig;
     }
 
-    public function setHeight(int|string $height): static
-    {
-        if (is_numeric($height)) {
-            $height = (int)$height;
-        }
-        $this->height = $height;
-
-        return $this;
-    }
-
-    public function getHeight(): int|string
-    {
-        return $this->height;
-    }
-
     public function setLayout(mixed $layout): static
     {
         $this->layout = $layout;
@@ -653,21 +633,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public function getTitle(): string
     {
         return $this->title;
-    }
-
-    public function setWidth(int|string $width): static
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
-    }
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
     }
 
     /**

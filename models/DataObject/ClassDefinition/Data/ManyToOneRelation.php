@@ -35,6 +35,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     use DataObject\ClassDefinition\Data\Relations\AllowAssetRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\AllowDocumentRelationTrait;
     use DataObject\ClassDefinition\Data\Extension\RelationFilterConditionParser;
+    use DataObject\Traits\DataWidthTrait;
 
     /**
      * Static type of this element
@@ -44,13 +45,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @var string
      */
     public string $fieldtype = 'manyToOneRelation';
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public string|int $width = 0;
 
     /**
      * @internal
@@ -334,21 +328,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         }
 
         return '';
-    }
-
-    public function getWidth(): int|string
-    {
-        return $this->width;
-    }
-
-    public function setWidth(int|string $width): static
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-
-        return $this;
     }
 
     /**

@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 /**
  * Pimcore
@@ -696,7 +695,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $this->applyChanges($object, $this->decodeJson($request->get('changedData')));
         }
 
-        $fieldDefinitionConfig = json_decode($request->get('fieldDefinition'));
+        $fieldDefinitionConfig = json_decode($request->get('fieldDefinition'), true);
         /**
          * @var DataObject\ClassDefinition\Data\Select|DataObject\ClassDefinition\Data\Multiselect $fieldDefinition
          */

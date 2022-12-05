@@ -68,9 +68,9 @@ class Breadcrumbs extends AbstractRenderer
     /**
      * Partial view script to use for rendering menu
      *
-     * @var string|array
+     * @var string|array|null
      */
-    protected string|array $_template;
+    protected string|array|null $_template = null;
 
     // Accessors:
 
@@ -110,12 +110,15 @@ class Breadcrumbs extends AbstractRenderer
         return $this->_linkLast;
     }
 
-    public function getTemplate(): array|string
+    public function getTemplate(): array|string|null
     {
         return $this->_template;
     }
 
-    public function setTemplate(array|string $template): static
+    /**
+     * @return $this
+     */
+    public function setTemplate(array|string|null $template): static
     {
         $this->_template = $template;
 

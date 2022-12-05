@@ -199,7 +199,7 @@ class CustomReportController extends ReportsControllerBase
         $data = $this->decodeJson($request->get('configuration'));
 
         if (!is_array($data['yAxis'])) {
-            $data['yAxis'] = strlen($data['yAxis']) ? [$data['yAxis']] : [];
+            $data['yAxis'] = strlen($data['yAxis'] ?? '') ? [$data['yAxis']] : [];
         }
 
         foreach ($data as $key => $value) {
@@ -317,8 +317,8 @@ class CustomReportController extends ReportsControllerBase
     {
         $this->checkPermission('reports');
 
-        $offset = $request->get('start', 0);
-        $limit = $request->get('limit', 40);
+        $offset = (int) $request->get('start', 0);
+        $limit = (int) $request->get('limit', 40);
         $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
         $sort = null;
         $dir = null;
@@ -370,7 +370,7 @@ class CustomReportController extends ReportsControllerBase
         $configuration = $config->getDataSourceConfig();
 
         $adapter = CustomReport\Config::getAdapter($configuration, $config);
-        $result = $adapter->getAvailableOptions($filters, $field, $drillDownFilters);
+        $result = $adapter->getAvailableOptions($filters ?? [], $field ?? '', $drillDownFilters ?? []);
 
         return $this->adminJson([
             'success' => true,

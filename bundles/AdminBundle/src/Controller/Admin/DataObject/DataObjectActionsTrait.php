@@ -199,7 +199,7 @@ trait DataObjectActionsTrait
                         $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyId);
                         if ($keyConfig) {
                             $fieldDefinition = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(
-                                json_decode($keyConfig->getDefinition()),
+                                json_decode($keyConfig->getDefinition(), true),
                                 $keyConfig->getType()
                             );
                             if ($fieldDefinition && method_exists($fieldDefinition, 'getDataFromGridEditor')) {
