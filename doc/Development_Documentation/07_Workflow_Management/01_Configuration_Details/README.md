@@ -287,6 +287,8 @@ pimcore:
                     objectLayout:         false
 
                     # An expression to block the action
+                    # @todo: update the documentation: guard or condition with has_role() cause the error:
+                    # The function "has_role" does not exist around position 30 for expression `has_role('ROLE') Server threw exception - could not perform action. Please reload the admin interface and try again.
                     guard:                ~ # Example: is_fully_authenticated() and has_role('ROLE_JOURNALIST') and subject.getTitle() == 'My first article'
 
                     # Optionally set the current place of the workflow. Can be used for example to reset the workflow to the initial place.
