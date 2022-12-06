@@ -49,7 +49,7 @@ pimcore.settings.targetingToolbar = Class.create({
                 bodyStyle: "padding: 20px; font-size: 14px;",
                 html: t("targeting_toolbar_browser_note", null,
                     {
-                            targetingLink: 'https://pimcore.com/docs/6.x/Development_Documentation/Tools_and_Features/Targeting_and_Personalization/index.html#page_Debugging-Targeting-Data'
+                            targetingLink: 'https://pimcore.com/docs/pimcore/11.0/Development_Documentation/Tools_and_Features/Targeting_and_Personalization/index.html#page_Debugging-Targeting-Data'
                     })
             }],
             buttons: buttons
