@@ -14,8 +14,6 @@
 pimcore.registerNS("pimcore.document.editables.image");
 pimcore.document.editables.image = Class.create(pimcore.document.editable, {
 
-    type: "image",
-
     initialize: function($super, id, name, config, data, inherited) {
         $super(id, name, config, data, inherited);
 
