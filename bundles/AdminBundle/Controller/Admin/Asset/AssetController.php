@@ -527,6 +527,17 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             throw new \Exception('Something went wrong, please check upload_max_filesize and post_max_size in your php.ini as well as the write permissions of your temporary directories.');
         }
 
+        // check if there is a requested type and if matches the asset type of the uploaded file
+        $type = $request->get('type');
+        if($type) {
+            $mimetype = MimeTypes::getDefault()->guessMimeType($sourcePath);
+            $assetType = Asset::getTypeFromMimeMapping($mimetype, $filename);
+
+            if($type !== $assetType) {
+                throw new \Exception("Mime type does not match with asset type: $type");
+            }
+        }
+
         if ($request->get('allowOverwrite') && Asset\Service::pathExists($parentAsset->getRealFullPath().'/'.$filename)) {
             $asset = Asset::getByPath($parentAsset->getRealFullPath().'/'.$filename);
             $asset->setStream(fopen($sourcePath, 'rb', false, File::getContext()));
