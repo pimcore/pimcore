@@ -22,6 +22,7 @@ use Pimcore\Document\Editable\EditmodeEditableDefinitionCollector;
 use Pimcore\Document\StaticPageGenerator;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
+use Pimcore\Localization\LocaleService;
 use Pimcore\Messenger\GeneratePagePreviewMessage;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
@@ -390,6 +391,7 @@ class PageController extends DocumentControllerBase
      * @param Environment $twig
      * @param EditableRenderer $editableRenderer
      * @param DocumentResolver $documentResolver
+     * @param LocaleService $localeService
      *
      * @return JsonResponse
      *
@@ -402,7 +404,8 @@ class PageController extends DocumentControllerBase
         EditmodeEditableDefinitionCollector $definitionCollector,
         Environment $twig,
         EditableRenderer $editableRenderer,
-        DocumentResolver $documentResolver
+        DocumentResolver $documentResolver,
+        LocaleService $localeService
     ): JsonResponse {
         $blockStateStackData = json_decode($request->get('blockStateStack'), true);
         $blockStateStack->loadArray($blockStateStackData);
@@ -422,6 +425,9 @@ class PageController extends DocumentControllerBase
         // we can't use EditmodeResolver::setForceEditmode() here, because it would also render included documents in editmode
         // so we use the attribute as a workaround
         $request->attributes->set(EditmodeResolver::ATTRIBUTE_EDITMODE, true);
+
+        // setting locale manually here before rendering, to make sure editables use the right locale from document
+        $localeService->setLocale($document->getProperty('language'));
 
         $areaBlockConfig = json_decode($request->get('areablockConfig'), true);
         /** @var Document\Editable\Areablock $areablock */
