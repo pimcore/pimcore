@@ -534,7 +534,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $assetType = Asset::getTypeFromMimeMapping($mimetype, $filename);
 
             if($type !== $assetType) {
-                throw new \Exception("Mime type does not match asset type: $type");
+                throw new \Exception("Mime type does not match with asset type: $type");
             }
         }
 
