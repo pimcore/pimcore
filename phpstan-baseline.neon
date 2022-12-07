@@ -296,7 +296,7 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/AbstractElasticSearch.php
 
 		-
-			message: "#^Call to static method (.*) on an unknown class Elasticsearch\\\\Client\\.$#"
+			message: "#^Call to static method (.*) on an unknown class Elasticsearch\\\\ClientBuilder\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/AbstractElasticSearch.php
 
@@ -304,3 +304,8 @@ parameters:
 			message: "#^PHPDoc tag \\@throws with type Elasticsearch\\\\Common\\\\Exceptions\\\\BadRequest400Exception\\|Elasticsearch\\\\Common\\\\Exceptions\\\\NoNodesAvailableException is not subtype of Throwable$#"
 			count: 2
 			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/AbstractElasticSearch.php
+
+		-
+			message: "#^PHPDoc type Elastic\\\\Elasticsearch\\\\Client\\|null of property (.*) is not covariant with PHPDoc type Elasticsearch\\\Client\\|null of overridden property (.*) \\.#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/DefaultElasticSearch8.php
