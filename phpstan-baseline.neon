@@ -306,6 +306,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/AbstractElasticSearch.php
 
 		-
-			message: "#^PHPDoc type Elastic\\\\Elasticsearch\\\\Client\\|null of property (.*) is not covariant with PHPDoc type Elasticsearch\\\\Client\\|null of overridden property (.*) \\.$#"
+			message: "#^PHPDoc type Elastic\\\\Elasticsearch\\\\Client\|null of property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\Worker\\\\ElasticSearch\\\\DefaultElasticSearch8\\:\\:\\$elasticSearchClient is not covariant with PHPDoc type Elasticsearch\\\\Client\\|null of overridden property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\Worker\\\\ElasticSearch\\\\AbstractElasticSearch\\:\\:\\$elasticSearchClient\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/DefaultElasticSearch8.php
