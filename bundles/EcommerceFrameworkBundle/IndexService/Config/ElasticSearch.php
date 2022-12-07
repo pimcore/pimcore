@@ -168,6 +168,12 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
 
         $resolver->setDefault('store', true);
         $resolver->setAllowedTypes('store', 'bool');
+
+        $resolver->setDefined('es_client_name');
+        $resolver->setAllowedTypes('es_client_name', 'string');
+
+        //set options to deprecated
+        $resolver->setDeprecated('es_client_params');
     }
 
     /**

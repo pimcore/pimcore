@@ -260,3 +260,52 @@ parameters:
 			count: 1
 			path: models/Element/Service.php
 
+		-
+			message: "#^Class Elasticsearch\\\\Client not found\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/ElasticSearch/AbstractElasticSearch.php
+
+		-
+			message: "#^PHPDoc tag (.*) contains unknown class Elasticsearch\\\\Client\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/ElasticSearch/AbstractElasticSearch.php
+
+		-
+			message: "#^Call to method (.*) on an unknown class Elasticsearch\\\\Client\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/ElasticSearch/AbstractElasticSearch.php
+
+		-
+			message: "#^Property (.*) has unknown class Elasticsearch\\\\Client as its type\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/AbstractElasticSearch.php
+
+		-
+			message: "#^(.*) Elasticsearch\\\\Common\\\\Exceptions\\\\Missing404Exception not found\\.$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/AbstractElasticSearch.php
+
+		-
+			message: "#^Method (.*) has invalid return type Elasticsearch\\\\Client\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/AbstractElasticSearch.php
+
+		-
+			message: "#^Call to method (.*) on an unknown class Elasticsearch\\\\Client\\.$#"
+			count: 26
+			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/AbstractElasticSearch.php
+
+		-
+			message: "#^Call to static method (.*) on an unknown class Elasticsearch\\\\ClientBuilder\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/AbstractElasticSearch.php
+
+		-
+			message: "#^PHPDoc tag \\@throws with type Elasticsearch\\\\Common\\\\Exceptions\\\\BadRequest400Exception\\|Elasticsearch\\\\Common\\\\Exceptions\\\\NoNodesAvailableException is not subtype of Throwable$#"
+			count: 2
+			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/AbstractElasticSearch.php
+
+		-
+			message: "#^PHPDoc type Elastic\\\\Elasticsearch\\\\Client\\|null of property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\Worker\\\\ElasticSearch\\\\DefaultElasticSearch8\\:\\:\\$elasticSearchClient is not covariant with PHPDoc type Elasticsearch\\\\Client\\|null of overridden property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\Worker\\\\ElasticSearch\\\\AbstractElasticSearch\\:\\:\\$elasticSearchClient\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/DefaultElasticSearch8.php

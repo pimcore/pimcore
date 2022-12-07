@@ -30,6 +30,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInte
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerLocatorInterface;
+use Pimcore\Bundle\ElasticsearchClientBundle\DependencyInjection\PimcoreElasticsearchClientExtension;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
@@ -464,6 +465,13 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $worker = new ChildDefinition($tenantConfig['worker_id']);
             $worker->setArgument('$tenantConfig', new Reference($configId));
             $worker->addTag('pimcore_ecommerce.index_service.worker', ['tenant' => $tenant]);
+
+            if(!empty($tenantConfig['config_options']['es_client_name'])) {
+                $worker->addMethodCall(
+                    'setElasticSearchClient',
+                    [new Reference(PimcoreElasticsearchClientExtension::CLIENT_SERVICE_PREFIX . $tenantConfig['config_options']['es_client_name'])]
+                );
+            }
 
             $container->setDefinition($configId, $config);
             $container->setDefinition($workerId, $worker);
