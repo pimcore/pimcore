@@ -2063,7 +2063,7 @@ class Service extends Model\Element\Service
                                     $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
                                     $value = $brick->{'get' . ucfirst($innerContainer)}();
 
-                                    if($value instanceof Localizedfield){
+                                    if ($value instanceof Localizedfield) {
                                         $params['language'] = $requestedLanguage;
                                     }
                                 }
