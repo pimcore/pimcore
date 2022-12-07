@@ -21,37 +21,12 @@ final class Version20221116115427 extends AbstractMigration
     {
         $this->addSql("INSERT INTO `users_permission_definitions` (`key`, `category`) VALUES ('objectbricks', '')");
 
-        $users = new Listing();
-        /**
-         * @var User $user
-         */
-        foreach ($users as $user) {
-            if ($user->isAllowed('classes')) {
-                $permissions = $user->getPermissions();
-                $permissions[] = 'objectbricks';
-                $user->setPermissions($permissions);
-                $user->save();
-            }
-        }
+        $this->addSql('UPDATE `users` SET `permissions`=CONCAT(`permissions`, \',objectbricks\') WHERE `permissions` REGEXP \'(?:^|,)classes(?:^|,)\'');
     }
 
     public function down(Schema $schema): void
     {
-        $users = new Listing();
-        /**
-         * @var User $user
-         */
-        foreach ($users as $user) {
-            $permissions = $user->getPermissions();
-            if ($permissions) {
-                $permissions = \array_filter($permissions, static function ($element) {
-                    return $element !== "objectbricks";
-                });
-
-                $user->setPermissions($permissions);
-                $user->save();
-            }
-        }
+        $this->addSql('UPDATE `users` SET `permissions`=REGEXP_REPLACE(`permissions`, \'(?:^|,)objectbricks(?:^|,)\', \'\') WHERE `permissions` REGEXP \'(?:^|,)objectbricks(?:^|,)\'');
 
         $this->addSql("DELETE FROM `users_permission_definitions` WHERE `key` = 'objectbricks'");
     }
