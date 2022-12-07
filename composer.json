@@ -171,6 +171,7 @@
   "require-dev": {
     "codeception/codeception": "^4.1.12",
     "codeception/phpunit-wrapper": "^9",
+    "pimcore/elasticsearch-client": "^1.0.0",
     "phpstan/phpstan": "^1.8.8",
     "phpstan/phpstan-symfony": "^1.2.14",
     "phpunit/phpunit": "^9.3",
