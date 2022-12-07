@@ -48,10 +48,10 @@ A voucher token is always applied to a cart. To do so, use following snippet.
 ```php
 <?php
 
-if($token = strip_tags($request->get('voucher-code'))) {
+if ($token = strip_tags($request->get('voucher-code', ''))) {
     try {
         $success = $cart->addVoucherToken($token);
-        if($success) {
+        if ($success) {
             $this->addFlash('success', $translator->trans('cart.voucher-code-added'));
         } else {
             $this->addFlash('danger', $translator->trans('cart.voucher-code-cound-not-be-added'));
@@ -100,7 +100,7 @@ See an sample snippet to display the voucher information to the customer:
 ```twig
 <form method="post" action="{{ path('shop-cart-apply-voucher') }}" class="card p-2 mb-4">
 
-    {% if(cart.pricingManagerTokenInformationDetails | length > 0) %}
+    {% if (cart.pricingManagerTokenInformationDetails | length > 0) %}
 
         <ul class="list-group pb-3">
 

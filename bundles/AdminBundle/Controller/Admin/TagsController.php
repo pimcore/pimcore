@@ -42,7 +42,7 @@ class TagsController extends AdminController
     {
         try {
             $tag = new Tag();
-            $tag->setName(strip_tags($request->get('text')));
+            $tag->setName(strip_tags($request->get('text', '')));
             $tag->setParentId((int)$request->get('parentId'));
             $tag->save();
 
@@ -91,7 +91,7 @@ class TagsController extends AdminController
                 $tag->setParentId((int)$parentId);
             }
             if ($request->get('text')) {
-                $tag->setName(strip_tags($request->get('text')));
+                $tag->setName(strip_tags($request->get('text', '')));
             }
 
             $tag->save();
@@ -113,7 +113,7 @@ class TagsController extends AdminController
     {
         $showSelection = $request->get('showSelection') == 'true';
         $assignmentCId = (int)$request->get('assignmentCId');
-        $assignmentCType = strip_tags($request->get('assignmentCType'));
+        $assignmentCType = strip_tags($request->get('assignmentCType', ''));
 
         $recursiveChildren = false;
         $assignedTagIds = [];
@@ -209,7 +209,7 @@ class TagsController extends AdminController
     public function loadTagsForElementAction(Request $request)
     {
         $assginmentCId = (int)$request->get('assignmentCId');
-        $assginmentCType = strip_tags($request->get('assignmentCType'));
+        $assginmentCType = strip_tags($request->get('assignmentCType', ''));
 
         $assignedTagArray = [];
         if ($assginmentCId && $assginmentCType) {
@@ -233,7 +233,7 @@ class TagsController extends AdminController
     public function addTagToElementAction(Request $request)
     {
         $assginmentCId = (int)$request->get('assignmentElementId');
-        $assginmentCType = strip_tags($request->get('assignmentElementType'));
+        $assginmentCType = strip_tags($request->get('assignmentElementType', ''));
         $tagId = (int)$request->get('tagId');
 
         $tag = Tag::getById($tagId);
@@ -256,7 +256,7 @@ class TagsController extends AdminController
     public function removeTagFromElementAction(Request $request)
     {
         $assginmentCId = (int)$request->get('assignmentElementId');
-        $assginmentCType = strip_tags($request->get('assignmentElementType'));
+        $assginmentCType = strip_tags($request->get('assignmentElementType', ''));
         $tagId = (int)$request->get('tagId');
 
         $tag = Tag::getById($tagId);
@@ -280,7 +280,7 @@ class TagsController extends AdminController
     public function getBatchAssignmentJobsAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $elementId = (int)$request->get('elementId');
-        $elementType = strip_tags($request->get('elementType'));
+        $elementType = strip_tags($request->get('elementType', ''));
 
         $idList = [];
         switch ($elementType) {
@@ -423,7 +423,7 @@ class TagsController extends AdminController
      */
     public function doBatchAssignmentAction(Request $request)
     {
-        $cType = strip_tags($request->get('elementType'));
+        $cType = strip_tags($request->get('elementType', ''));
         $assignedTags = json_decode($request->get('assignedTags'));
         $elementIds = json_decode($request->get('childrenIds'));
         $doCleanupTags = $request->get('removeAndApply') == 'true';
