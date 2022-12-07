@@ -48,7 +48,7 @@ A voucher token is always applied to a cart. To do so, use following snippet.
 ```php
 <?php
 
-if($token = strip_tags($request->get('voucher-code'))) {
+if($token = strip_tags($request->get('voucher-code', ''))) {
     try {
         $success = $cart->addVoucherToken($token);
         if($success) {
