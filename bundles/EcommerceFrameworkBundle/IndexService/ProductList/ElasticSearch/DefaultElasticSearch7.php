@@ -15,6 +15,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch;
 
+/**
+ * @deprecated
+ */
 class DefaultElasticSearch7 extends AbstractElasticSearch
 {
 }
