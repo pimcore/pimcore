@@ -49,14 +49,16 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
 
         var i;
 
+        console.log(".");
         for (i = 0; i < this.fieldConfig.columns.length; i++) {
             var defaultValue = null;
             switch(this.fieldConfig.columns[i].type.toLowerCase()){
                 case "bool":
-                case "colbool":
+                case "columnbool":
                     defaultValue = (this.fieldConfig.columns[i].value).toLowerCase() == "true";
                     break;
                 case "text":
+                case "number":
                     defaultValue = this.fieldConfig.columns[i].value;
                     break;
             }
