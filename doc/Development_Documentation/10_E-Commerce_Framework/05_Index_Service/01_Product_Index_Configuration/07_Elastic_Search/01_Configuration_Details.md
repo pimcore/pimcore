@@ -6,7 +6,7 @@ Following aspects need to be considered in index configuration:
 In the `config_options` area general elasticsearch settings can be made - like hosts, index settings, etc. 
 
 ##### `client_config`
-- `logging`: `true`/`false` to activate logging of elasticsearch client
+- `logging`: (deprecated, for Elasticsearch 7 only) `true`/`false` to activate logging of elasticsearch client
 - `indexName`: index name to be used, if not provided tenant name is used as index name 
 
 ##### `index_settings`
@@ -14,8 +14,26 @@ Index settings that are used when creating a new index. They are passed 1:1 as
 settings param to the body of the create index command. Details see 
 also [elasticsearch Docs](https://www.elastic.co/guide/en/elasticsearch/client/php-api/current/_index_management_operations.html). 
 
+#### `es_client_name` (for Elasticsearch 8 only)
+Elasticsearch 8 client configuration takes place via 
+[Pimcore Elasticsearch Client Bundle](https://github.com/pimcore/elasticsearch-client) and has two parts.
 
-##### `es_client_params`
+1) Configuring an elasticsearch client in separate configuration
+```yaml
+# Configure an elasticsearch client 
+pimcore_elasticsearch_client:
+    es_clients:
+        default:
+            hosts: ['elastic:9200']
+            username: 'elastic'
+            password: 'somethingsecret'
+            logger_channel: 'pimcore.elasticsearch'    
+```
+
+2) Define the client name to be used by an elasticsearch tenant. This will be done via the `es_client_name` configuration 
+   in the `config_options`. 
+
+##### `es_client_params` (deprecated, for Elasticsearch 7 only)
 - `hosts`: Array of hosts of the elasticsearch cluster to use. 
 - `timeoutMs`: optional parameter for setting the client timeout (frontend) in milliseconds.
 - `timeoutMsBackend`: optional parameter for setting the client timeout (CLI) in milliseconds. This value is typically higher than ``timeoutMs``.
@@ -30,11 +48,18 @@ pimcore_ecommerce_framework:
     index_service:
         tenants:
             MyEsTenant:
+                worker_id: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\DefaultElasticSearch8
+                config_id: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch
+                
                 config_options:
                     client_config:
                         logging: false
                         indexName: 'ecommerce-demo-elasticsearch'
 
+                    # elasticsearch client name, for Elasticsearch 8 only
+                    es_client_name: default
+                    
+                    # deprecated, for Elasticsearch 7 only
                     es_client_params:
                         hosts:
                             - '%elasticsearch.host%'
@@ -69,8 +94,7 @@ pimcore_ecommerce_framework:
 
 
 ## Data Types for attributes
-The type of the data attributes needs to be set to elasticsearch data types. Be careful, some types changed between
-elasticsearch 5 and 6 (like string vs. keyword/text). 
+The type of the data attributes needs to be set to elasticsearch data types..
 
 ```yml
 pimcore_ecommerce_framework:
