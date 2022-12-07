@@ -254,6 +254,10 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
+        if ($data === '') {
+            return null;
+        }
+        
         return $data;
     }
 
