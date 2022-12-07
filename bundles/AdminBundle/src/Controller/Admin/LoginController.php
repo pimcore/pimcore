@@ -233,7 +233,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
 
         if (preg_match('/(document|asset|object)_([0-9]+)_([a-z]+)/', $queryString, $deeplink)) {
             $deeplink = $deeplink[0];
-            $perspective = strip_tags($request->get('perspective'));
+            $perspective = strip_tags($request->get('perspective', '')); // strip_tags needs empty string as default value
 
             if (strpos($queryString, 'token')) {
                 $event = new LoginRedirectEvent('pimcore_admin_login', [
