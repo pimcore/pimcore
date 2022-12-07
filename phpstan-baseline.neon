@@ -261,12 +261,12 @@ parameters:
 			path: models/Element/Service.php
 
 		-
-			message: "#^Class Elasticsearch\Client not found\\.$#"
+			message: "#^Class Elasticsearch\\\\Client not found\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/ElasticSearch/AbstractElasticSearch.php
 
 		-
-			message: "#^PHPDoc tag (.*) contains unknown class Elasticsearch\Client.\\.$#"
+			message: "#^PHPDoc tag (.*) contains unknown class Elasticsearch\\\\Client.\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/ElasticSearch/AbstractElasticSearch.php
 
