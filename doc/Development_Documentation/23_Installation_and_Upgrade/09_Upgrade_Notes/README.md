@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 10.6 
+- Elasticsearch 7 support has been deprecated, elasticsearch 8 supported was added.
+
 ## 10.5.8
 - [Nginx] Static pages nginx config has been updated to fix the issue for home static page generation. please adapt the following configuration:
 ```nginx
