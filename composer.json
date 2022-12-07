@@ -80,7 +80,7 @@
     "sensio/framework-extra-bundle": "^6.2",
     "sensiolabs/ansi-to-html": "^1.1",
     "symfony-cmf/routing-bundle": "^3.0",
-    "symfony/contracts": "^2.3",
+    "symfony/contracts": "^3.2",
     "symfony/monolog-bundle": "^3.8",
     "symfony/asset": "^6.1",
     "symfony/cache": "^6.1",
@@ -139,7 +139,7 @@
     "league/html-to-markdown": "^5.1",
     "matthiasmullie/minify": "^1.3",
     "onnov/detect-encoding": "^2.0",
-    "knplabs/knp-paginator-bundle": "^5.4.2",
+    "knplabs/knp-paginator-bundle": "^6.0.0",
     "masterminds/html5" : "^2.7",
     "league/flysystem-bundle" : "^3.0",
     "spatie/image-optimizer": "^1.6.2"
