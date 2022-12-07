@@ -64,7 +64,7 @@ class DefaultElasticSearch8 extends AbstractElasticSearch
                     }
                 }
             } catch (ClientResponseException $e) {
-                if($e->getCode() === 404) {
+                if ($e->getCode() === 404) {
                     $this->indexVersion = 0;
                 } else {
                     throw $e;
@@ -184,7 +184,6 @@ class DefaultElasticSearch8 extends AbstractElasticSearch
         $this->cleanupUnusedEsIndices();
     }
 
-
     protected function cleanupUnusedEsIndices(): void
     {
         $esClient = $this->getElasticSearchClient();
@@ -231,7 +230,7 @@ class DefaultElasticSearch8 extends AbstractElasticSearch
                     $this->routingParamName => $storeEntry['o_virtualProductId'],
                 ]);
             } catch (ClientResponseException $e) {
-                if($e->getCode() !== 404) {
+                if ($e->getCode() !== 404) {
                     throw $e;
                 }
             }
@@ -345,7 +344,6 @@ class DefaultElasticSearch8 extends AbstractElasticSearch
         }
     }
 
-
     /**
      * Create an ES index with the specified version.
      *
@@ -374,8 +372,6 @@ class DefaultElasticSearch8 extends AbstractElasticSearch
             throw new \Exception('Index creation failed. IndexName: ' . $indexName);
         }
     }
-
-
 
     /**
      * puts current mapping to index with given name
@@ -417,7 +413,6 @@ class DefaultElasticSearch8 extends AbstractElasticSearch
         }
     }
 
-
     /**
      * Blocks all write operations
      *
@@ -442,8 +437,6 @@ class DefaultElasticSearch8 extends AbstractElasticSearch
         }
     }
 
-
-
     /**
      * Unblocks all write operations
      *
@@ -467,7 +460,6 @@ class DefaultElasticSearch8 extends AbstractElasticSearch
             ]);
         }
     }
-
 
     /**
      *
@@ -537,6 +529,4 @@ class DefaultElasticSearch8 extends AbstractElasticSearch
             }
         }
     }
-
-
 }

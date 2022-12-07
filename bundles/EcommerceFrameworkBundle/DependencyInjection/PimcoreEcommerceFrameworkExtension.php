@@ -466,7 +466,7 @@ final class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $worker->setArgument('$tenantConfig', new Reference($configId));
             $worker->addTag('pimcore_ecommerce.index_service.worker', ['tenant' => $tenant]);
 
-            if(!empty($tenantConfig['config_options']['es_client_name'])) {
+            if (!empty($tenantConfig['config_options']['es_client_name'])) {
                 $worker->addMethodCall(
                     'setElasticSearchClient',
                     [new Reference(PimcoreElasticsearchClientExtension::CLIENT_SERVICE_PREFIX . $tenantConfig['config_options']['es_client_name'])]
