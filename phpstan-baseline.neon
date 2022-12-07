@@ -281,8 +281,8 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/AbstractElasticSearch.php
 
 		-
-			message: "#^Caught class Elasticsearch\\\\Common\\\\Exceptions\\\\Missing404Exception not found\\.$#"
-			count: 1
+			message: "#^(.*) Elasticsearch\\\\Common\\\\Exceptions\\\\Missing404Exception not found\\.$#"
+			count: 2
 			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/AbstractElasticSearch.php
 
 		-
@@ -306,6 +306,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/AbstractElasticSearch.php
 
 		-
-			message: "#^PHPDoc type Elastic\\\\Elasticsearch\\\\Client\\|null of property (.*) is not covariant with PHPDoc type Elasticsearch\\\\Client\\|null of overridden property (.*) \\.#"
+			message: "#^PHPDoc type Elastic\\\\Elasticsearch\\\\Client\\|null of property (.*) is not covariant with PHPDoc type Elasticsearch\\\\Client\\|null of overridden property (.*) \\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/DefaultElasticSearch8.php
