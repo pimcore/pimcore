@@ -19,7 +19,6 @@ use Elastic\Elasticsearch\Client;
 
 class DefaultElasticSearch8 extends AbstractElasticSearch
 {
-
     /**
      * send a request to elasticsearch
      *
@@ -64,5 +63,4 @@ class DefaultElasticSearch8 extends AbstractElasticSearch
 
         return $result;
     }
-
 }
