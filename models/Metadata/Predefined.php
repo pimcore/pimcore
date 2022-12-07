@@ -143,7 +143,6 @@ final class Predefined extends Model\AbstractModel
     public static function create()
     {
         $type = new self();
-        $type->save();
 
         return $type;
     }

@@ -1387,7 +1387,7 @@ class DataObjectHelperController extends AdminController
 
         $fields = $request->get('fields');
 
-        $addTitles = $request->get('initial');
+        $addTitles = (bool) $request->get('initial');
 
         $requestedLanguage = $this->extractLanguage($request);
 

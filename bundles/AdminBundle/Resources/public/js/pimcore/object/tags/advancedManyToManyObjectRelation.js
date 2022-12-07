@@ -133,7 +133,9 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
                 if (fc.layout.key === "fullpath") {
                     fc.renderer = this.fullPathRenderCheck.bind(this);
-                } else if(fc.layout.layout.fieldtype == "select" || fc.layout.layout.fieldtype == "multiselect") {
+                } else if (fc.layout.layout.fieldtype == 'select'
+                    || fc.layout.layout.fieldtype == 'multiselect'
+                    || fc.layout.layout.fieldtype == 'booleanSelect') {
                     fc.layout.layout.options.forEach(option => {
                         option.key = t(option.key);
                     });

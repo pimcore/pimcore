@@ -1123,3 +1123,5 @@ class Model extends AbstractDefinitionHelper
         $this->setupUnit('km');
     }
 }
+
+@class_alias(Model::class, 'Pimcore\Tests\Support\Helper\Model');

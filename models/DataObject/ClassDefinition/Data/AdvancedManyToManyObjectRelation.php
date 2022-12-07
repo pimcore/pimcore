@@ -416,6 +416,10 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                     throw new Element\ValidationException('Invalid object relation to object [' . $id . '] in field ' . $this->getName() . ' , tried to assign ' . $o->getId());
                 }
             }
+
+            if ($this->getMaxItems() && count($data) > $this->getMaxItems()) {
+                throw new Element\ValidationException('Number of allowed relations in field `' . $this->getName() . '` exceeded (max. ' . $this->getMaxItems() . ')');
+            }
         }
     }
 
@@ -863,8 +867,15 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                 $this->visibleFieldDefinitions[$field]['fieldtype'] = $fd->getFieldType();
                 $this->visibleFieldDefinitions[$field]['noteditable'] = true;
 
-                if ($fd instanceof DataObject\ClassDefinition\Data\Select || $fd instanceof DataObject\ClassDefinition\Data\Multiselect) {
-                    if ($fd->getOptionsProviderClass()) {
+                if (
+                    $fd instanceof DataObject\ClassDefinition\Data\Select
+                    || $fd instanceof DataObject\ClassDefinition\Data\Multiselect
+                    || $fd instanceof DataObject\ClassDefinition\Data\BooleanSelect
+                ) {
+                    if (
+                        $fd instanceof DataObject\ClassDefinition\Data\Select
+                        || $fd instanceof DataObject\ClassDefinition\Data\Multiselect
+                    ) {
                         $this->visibleFieldDefinitions[$field]['optionsProviderClass'] = $fd->getOptionsProviderClass();
                     }
 

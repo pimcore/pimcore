@@ -233,10 +233,8 @@ class SearchController extends AdminController
             }
         }
 
-        if (count($conditionParts) > 0) {
-            $condition = implode(' AND ', $conditionParts);
-            $searcherList->setCondition($condition);
-        }
+        $condition = implode(' AND ', $conditionParts);
+        $searcherList->setCondition($condition);
 
         $searcherList->setOffset($offset);
         $searcherList->setLimit($limit);

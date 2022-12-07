@@ -95,6 +95,11 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $container->setParameter('pimcore.documents.web_to_print.default_controller_print_page', $config['documents']['web_to_print']['default_controller_print_page']);
         $container->setParameter('pimcore.documents.web_to_print.default_controller_print_container', $config['documents']['web_to_print']['default_controller_print_container']);
 
+        //twig security policy whitelist config
+        $container->setParameter('pimcore.templating.twig.sandbox_security_policy.tags', $config['templating_engine']['twig']['sandbox_security_policy']['tags']);
+        $container->setParameter('pimcore.templating.twig.sandbox_security_policy.filters', $config['templating_engine']['twig']['sandbox_security_policy']['filters']);
+        $container->setParameter('pimcore.templating.twig.sandbox_security_policy.functions', $config['templating_engine']['twig']['sandbox_security_policy']['functions']);
+
         // register pimcore config on container
         // TODO is this bad practice?
         // TODO only extract what we need as parameter?
@@ -123,6 +128,7 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $loader->load('documents.yaml');
         $loader->load('event_listeners.yaml');
         $loader->load('templating.yaml');
+        $loader->load('templating_twig.yaml');
         $loader->load('profiler.yaml');
         $loader->load('migrations.yaml');
         $loader->load('analytics.yaml');
@@ -150,9 +156,6 @@ final class PimcoreCoreExtension extends ConfigurableExtension implements Prepen
         $this->configureGlossary($container, $config['glossary']);
 
         $container->setParameter('pimcore.workflow', $config['workflows']);
-
-        // load engine specific configuration only if engine is active
-        $loader->load('templating_twig.yaml');
 
         $this->addContextRoutes($container, $config['context']);
     }

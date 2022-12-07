@@ -27,13 +27,17 @@ use Pimcore\Db\Helper;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\AssetEvents;
+use Pimcore\Event\Model\Asset\ResolveUploadTargetEvent;
 use Pimcore\File;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Messenger\AssetPreviewImageMessage;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\ValidationException;
 use Pimcore\Model\Metadata;
 use Pimcore\Model\Schedule\Task;
 use Pimcore\Tool;
@@ -490,8 +494,11 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $context = $request->get('context');
         if ($context) {
             $context = json_decode($context, true);
-            $context = $context ? $context : [];
-            $event = new \Pimcore\Event\Model\Asset\ResolveUploadTargetEvent($parentId, $filename, $context);
+            $context = $context ?: [];
+
+            $this->validateManyToManyRelationAssetType($context, $filename, $sourcePath);
+
+            $event = new ResolveUploadTargetEvent($parentId, $filename, $context);
             \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::RESOLVE_UPLOAD_TARGET);
             $filename = Element\Service::getValidKey($event->getFilename(), 'asset');
             $parentId = $event->getParentId();
@@ -2819,5 +2826,36 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         ]);
 
         $this->_assetService = new Asset\Service($this->getAdminUser());
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    private function validateManyToManyRelationAssetType(array $context, string $filename, string $sourcePath): void
+    {
+        if (isset($context['containerType'], $context['objectId'], $context['fieldname'])
+            && 'object' === $context['containerType']
+            && $object = Concrete::getById($context['objectId'])
+        ) {
+            $fieldDefinition = $object->getClass()?->getFieldDefinition($context['fieldname']);
+            if (!$fieldDefinition instanceof ManyToManyRelation) {
+                return;
+            }
+
+            $mimeType = MimeTypes::getDefault()->guessMimeType($sourcePath);
+            $type = Asset::getTypeFromMimeMapping($mimeType, $filename);
+
+            $allowedAssetTypes = $fieldDefinition->getAssetTypes();
+            $allowedAssetTypes = array_column($allowedAssetTypes, 'assetTypes');
+
+            if (
+                !(
+                    $fieldDefinition->getAssetsAllowed()
+                    && ($allowedAssetTypes === [] || in_array($type, $allowedAssetTypes, true))
+                )
+            ) {
+                throw new ValidationException(sprintf('Invalid relation in field `%s` [type: %s]', $context['fieldname'], $type));
+            }
+        }
     }
 }

@@ -2,7 +2,7 @@
 Basically findologic worker works as described in the [optimized architecture](README.md). But there is an additional 
 speciality with the export: 
 
-Executing `php bin/console ecommerce:indexservice:process-queue update-index` does not write the data directly to 
+Executing `php bin/console ecommerce:indexservice:process-update-queue` does not write the data directly to 
 Findologic, but into an extra table 
 `\Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFindologic::EXPORT_TABLE_NAME` 
 (default is `ecommerceframework_productindex_export_findologic`). 

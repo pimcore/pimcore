@@ -481,7 +481,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             $this->addAdminStyle($object, ElementAdminStyleEvent::CONTEXT_EDITOR, $objectData['general']);
 
-            $currentLayoutId = $request->get('layoutId', 0);
+            $currentLayoutId = $request->get('layoutId');
 
             $validLayouts = DataObject\Service::getValidLayouts($object);
 
@@ -513,7 +513,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             }
 
             if ($currentLayoutId === null && count($validLayouts) > 0) {
-                $currentLayoutId = reset($validLayouts)->getId();
+                $currentLayoutId = $validLayouts[0]->getId();
             }
 
             if (!empty($validLayouts)) {
@@ -1282,6 +1282,10 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     public function saveAction(Request $request)
     {
         $objectFromDatabase = DataObject\Concrete::getById((int) $request->get('id'));
+
+        if (!$objectFromDatabase instanceof DataObject\Concrete) {
+            return $this->adminJson(['success' => false, 'message' => 'Could not find object']);
+        }
 
         // set the latest available version for editmode
         $object = $this->getLatestVersion($objectFromDatabase);

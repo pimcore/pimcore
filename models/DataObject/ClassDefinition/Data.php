@@ -1355,7 +1355,7 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
                                     $items = $container->getItems();
                                 }
 
-                                if ($items && count($items) > $originalIndex) {
+                                if ($items && (count($items) > $originalIndex || count($items) > --$originalIndex)) {
                                     $item = $items[$originalIndex];
 
                                     if ($context['containerType'] === 'block') {

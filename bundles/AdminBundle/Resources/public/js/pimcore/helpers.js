@@ -1790,17 +1790,9 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
         listeners: {
             keyup: function (el) {
                 const value = el.getValue();
+                const pathRegex = new RegExp('^(/|(/[^/]+)+/?)$');
 
-                // if it doesn't start with a single "/", we assume it's an external link
-                if (value && !value.startsWith('/') && !'http://'.startsWith(value) && !'https://'.startsWith(value)) {
-                    if (!value.match(/^https?:\/\//)) {
-                        el.setValue("https://" + value.replace(/^\/+/, ''));
-                    }
-                    internalTypeField.setValue(null);
-                    linkTypeField.setValue("direct");
-                }
-                // if it starts with "//", we assume it is a protocol-relative URL
-                else if (value.startsWith('//')) {
+                if(value && !value.match(pathRegex)) {
                     internalTypeField.setValue(null);
                     linkTypeField.setValue("direct");
                 }
@@ -2293,7 +2285,7 @@ pimcore.helpers.showAbout = function () {
     html += '<br><b>Version: ' + pimcore.settings.version + '</b>';
     html += '<br><b>Git Hash: <a href="https://github.com/pimcore/pimcore/commit/' + pimcore.settings.build + '" target="_blank">' + pimcore.settings.build + '</a></b>';
     html += '<br><br>&copy; by pimcore GmbH (<a href="https://pimcore.com/" target="_blank">pimcore.com</a>)';
-    html += '<br><br><a href="https://github.com/pimcore/pimcore/blob/10.x/LICENSE.md" target="_blank">License</a> | ';
+    html += '<br><br><a href="https://github.com/pimcore/pimcore/blob/10.5/LICENSE.md" target="_blank">License</a> | ';
     html += '<a href="https://pimcore.com/en/about/contact" target="_blank">Contact</a>';
     html += '<img src="/bundles/pimcoreadmin/img/austria-heart.svg" style="position:absolute;top:172px;right:45px;width:32px;">';
     html += '</div>';
