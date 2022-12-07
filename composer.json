@@ -167,10 +167,12 @@
     "symfony/symfony": "*",
     "symfony/monolog-bundle": "3.6.0",
     "doctrine/doctrine-migrations-bundle": "3.1.0",
-    "sabre/dav": "4.2.2"
+    "sabre/dav": "4.2.2",
+    "thecodingmachine/safe": "<2.0"
   },
   "require-dev": {
     "codeception/codeception": "^4.1.12",
+    "codeception/module-symfony": "^1.6.0",
     "codeception/phpunit-wrapper": "^9",
     "phpstan/phpstan": "^1.9",
     "phpstan/phpstan-symfony": "^1.2.14",

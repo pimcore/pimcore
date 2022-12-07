@@ -242,7 +242,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
         if (preg_match('/(document|asset|object)_([0-9]+)_([a-z]+)/', $queryString, $deeplink)) {
             $deeplink = $deeplink[0];
-            $perspective = strip_tags($request->get('perspective'));
+            $perspective = strip_tags($request->get('perspective', ''));
 
             if (strpos($queryString, 'token')) {
                 $event = new LoginRedirectEvent('pimcore_admin_login', [

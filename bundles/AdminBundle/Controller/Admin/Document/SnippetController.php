@@ -129,11 +129,14 @@ class SnippetController extends DocumentControllerBase
         } else {
             $this->saveToSession($snippet);
 
-            $draftData = [
-                'id' => $version->getId(),
-                'modificationDate' => $version->getDate(),
-                'isAutoSave' => $version->isAutoSave(),
-            ];
+            $draftData = [];
+            if ($version) {
+                $draftData = [
+                    'id' => $version->getId(),
+                    'modificationDate' => $version->getDate(),
+                    'isAutoSave' => $version->isAutoSave(),
+                ];
+            }
 
             return $this->adminJson(['success' => true, 'draft' => $draftData]);
         }

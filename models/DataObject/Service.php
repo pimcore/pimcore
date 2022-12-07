@@ -2072,6 +2072,10 @@ class Service extends Model\Element\Service
                                 if ($brickDescriptor) {
                                     $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
                                     $value = $brick->{'get' . ucfirst($innerContainer)}();
+
+                                    if ($value instanceof Localizedfield) {
+                                        $params['language'] = $requestedLanguage;
+                                    }
                                 }
 
                                 return $fieldDefinition->getForCsvExport($value, $params);
