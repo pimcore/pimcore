@@ -33,7 +33,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
 
-class Pimcore extends Module
+class Pimcore extends Module\Symfony
 {
     /**
      * @var null|ContainerInterface
@@ -77,7 +77,7 @@ class Pimcore extends Module
     }
 
     /**
-     * @return \Symfony\Component\HttpKernel\KernelInterface|null
+     * @return \Symfony\Component\HttpKernel\Kernel|Kernel
      */
     public function getKernel()
     {
