@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
@@ -202,7 +201,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
-        return $data;
+        return $data ?? '';
     }
 
     public function resolveDependencies(mixed $data): array

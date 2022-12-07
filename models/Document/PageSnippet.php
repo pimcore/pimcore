@@ -419,7 +419,7 @@ abstract class PageSnippet extends Model\Document
             }
         }
 
-        $this->contentMasterDocumentId = $contentMasterDocumentId;
+        $this->contentMasterDocumentId = ($contentMasterDocumentId ? (int) $contentMasterDocumentId : null);
 
         return $this;
     }

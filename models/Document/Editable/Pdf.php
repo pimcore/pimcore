@@ -64,7 +64,7 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
     {
         $pages = 0;
 
-        if ($asset = Asset\Document::getById($this->id)) {
+        if ($this->id && $asset = Asset\Document::getById($this->id)) {
             $pages = $asset->getPageCount();
         }
 
@@ -76,7 +76,7 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
 
     public function getCacheTags(Model\Document\PageSnippet $ownerDocument, array $tags = []): array
     {
-        $asset = Asset::getById($this->id);
+        $asset = $this->id ? Asset::getById($this->id) : null;
         if ($asset instanceof Asset) {
             if (!array_key_exists($asset->getCacheTag(), $tags)) {
                 $tags = $asset->getCacheTags($tags);
@@ -93,7 +93,7 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
     {
         $dependencies = [];
 
-        $asset = Asset::getById($this->id);
+        $asset = $this->id ? Asset::getById($this->id) : null;
         if ($asset instanceof Asset) {
             $key = 'asset_' . $asset->getId();
             $dependencies[$key] = [
@@ -139,7 +139,7 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
      */
     public function setDataFromEditmode(mixed $data): static
     {
-        $pdf = Asset::getById($data['id']);
+        $pdf = $data['id'] ? Asset::getById($data['id']) : null;
         if ($pdf instanceof Asset\Document) {
             $this->id = $pdf->getId();
         }
@@ -152,7 +152,7 @@ class Pdf extends Model\Document\Editable implements EditmodeDataInterface
      */
     public function frontend()
     {
-        $asset = Asset::getById($this->id);
+        $asset = $this->id ? Asset::getById($this->id) : null;
 
         $config = $this->getConfig();
         $thumbnailConfig = ['width' => 1000];

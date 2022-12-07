@@ -444,9 +444,9 @@ final class Config extends Model\AbstractModel
         return $this->quality;
     }
 
-    public function setHighResolution(float $highResolution)
+    public function setHighResolution(?float $highResolution)
     {
-        $this->highResolution = (float) $highResolution;
+        $this->highResolution = $highResolution;
     }
 
     public function getHighResolution(): ?float

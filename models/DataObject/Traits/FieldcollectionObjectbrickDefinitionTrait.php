@@ -24,42 +24,25 @@ use Pimcore\Model\DataObject\ClassDefinition\Layout;
  */
 trait FieldcollectionObjectbrickDefinitionTrait
 {
-    /**
-     * @var string|null
-     */
-    public $key;
+    public ?string $key = null;
 
-    /**
-     * @var string|null
-     */
-    public $parentClass;
+    public ?string $parentClass = null;
 
     /**
      * Comma separated list of interfaces
-     *
-     * @var string|null
      */
-    public $implementsInterfaces;
+    public ?string $implementsInterfaces = null;
 
-    /**
-     * @var string
-     */
-    public $title;
+    public ?string $title = null;
 
-    /**
-     * @var string
-     */
-    public $group;
+    public ?string $group = null;
 
-    /**
-     * @var Layout|null
-     */
-    public $layoutDefinitions;
+    public ?Layout $layoutDefinitions = null;
 
     /**
      * @var Data[]
      */
-    protected $fieldDefinitions = [];
+    protected array $fieldDefinitions = [];
 
     public function getKey(): ?string
     {
@@ -95,7 +78,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
         return $this;
     }
 
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->title;
     }
@@ -105,7 +88,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return $this
      */
-    public function setTitle($title): static
+    public function setTitle(?string $title): static
     {
         $this->title = $title;
 
@@ -122,7 +105,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return $this
      */
-    public function setLayoutDefinitions($layoutDefinitions): static
+    public function setLayoutDefinitions(?Layout $layoutDefinitions): static
     {
         $this->layoutDefinitions = $layoutDefinitions;
 
@@ -137,7 +120,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return Data[]
      */
-    public function getFieldDefinitions($context = [])
+    public function getFieldDefinitions(array $context = [])
     {
         if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
             return $this->fieldDefinitions;
@@ -172,7 +155,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return $this
      */
-    public function addFieldDefinition($key, $data): static
+    public function addFieldDefinition(string $key, Data $data): static
     {
         $this->fieldDefinitions[$key] = $data;
 
@@ -185,7 +168,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return Data|null
      */
-    public function getFieldDefinition($key, $context = []): ?Data
+    public function getFieldDefinition(string $key, array $context = []): ?Data
     {
         if (is_array($this->fieldDefinitions)) {
             $fieldDefinition = null;
@@ -209,7 +192,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
         return null;
     }
 
-    public function getGroup(): string
+    public function getGroup(): ?string
     {
         return $this->group;
     }
@@ -219,7 +202,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
      *
      * @return $this
      */
-    public function setGroup($group): static
+    public function setGroup(?string $group): static
     {
         $this->group = $group;
 

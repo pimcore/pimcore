@@ -56,7 +56,7 @@ class PimcoreObjectExtension extends AbstractExtension
     public function getFieldDefinitionFromJson(array|string $definition, string $type): ?DataObject\ClassDefinition\Data
     {
         if (is_json($definition)) {
-            $definition = json_decode($definition);
+            $definition = json_decode($definition, true);
         }
 
         return DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);

@@ -109,7 +109,7 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
         }
 
         if (!empty($data)) {
-            $targetGroup = Tool\Targeting\TargetGroup::getById($data);
+            $targetGroup = Tool\Targeting\TargetGroup::getById((int)$data);
 
             if (!$targetGroup instanceof Tool\Targeting\TargetGroup) {
                 throw new Model\Element\ValidationException('Invalid target group reference');

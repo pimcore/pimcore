@@ -735,7 +735,7 @@ class AssetHelperController extends AdminController
 
         $fields = $request->get('fields');
 
-        $addTitles = $request->get('initial');
+        $addTitles = (bool) $request->get('initial');
 
         $csv = $this->getCsvData($request, $language, $list, $fields, $addTitles);
 
@@ -765,7 +765,7 @@ class AssetHelperController extends AdminController
 
     public function encodeFunc($value): string
     {
-        $value = str_replace('"', '""', $value);
+        $value = str_replace('"', '""', (string) $value);
         //force wrap value in quotes and return
         return '"' . $value . '"';
     }

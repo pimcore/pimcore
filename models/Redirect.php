@@ -46,17 +46,17 @@ final class Redirect extends AbstractModel
         self::TYPE_AUTO_CREATE,
     ];
 
-    protected int $id;
+    protected ?int $id = null;
 
     protected string $type;
 
-    protected string $source;
+    protected ?string $source = null;
 
     protected ?int $sourceSite = null;
 
     protected bool $passThroughParameters = false;
 
-    protected string $target;
+    protected ?string $target = null;
 
     protected ?int $targetSite = null;
 
@@ -127,17 +127,17 @@ final class Redirect extends AbstractModel
         return $redirect;
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getSource(): string
+    public function getSource(): ?string
     {
         return $this->source;
     }
 
-    public function getTarget(): string
+    public function getTarget(): ?string
     {
         return $this->target;
     }

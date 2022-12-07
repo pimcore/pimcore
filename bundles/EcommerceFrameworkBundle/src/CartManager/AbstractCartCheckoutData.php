@@ -20,7 +20,7 @@ abstract class AbstractCartCheckoutData extends \Pimcore\Model\AbstractModel
 {
     protected string $key;
 
-    protected array $data;
+    protected array|string|null $data = null;
 
     protected ?CartInterface $cart = null;
 
@@ -61,12 +61,12 @@ abstract class AbstractCartCheckoutData extends \Pimcore\Model\AbstractModel
         return $this->key;
     }
 
-    public function setData($data)
+    public function setData(array|string|null $data)
     {
         $this->data = $data;
     }
 
-    public function getData(): array
+    public function getData(): array|string|null
     {
         return $this->data;
     }

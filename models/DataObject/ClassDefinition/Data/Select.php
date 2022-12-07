@@ -281,7 +281,7 @@ class Select extends Data implements
      */
     public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
-        return htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+        return htmlspecialchars((string) $data, ENT_QUOTES, 'UTF-8');
     }
 
     /**

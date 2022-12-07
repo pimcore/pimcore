@@ -630,7 +630,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      */
     protected function buildUniqueKeyForDiffEditor(array $item): string
     {
-        return $item['id'];
+        return (string) $item['id'];
     }
 
     /**

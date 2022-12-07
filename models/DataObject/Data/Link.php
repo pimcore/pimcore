@@ -37,7 +37,7 @@ class Link implements OwnerAwareFieldInterface
 
     protected ?int $internal = null;
 
-    protected string $direct;
+    protected ?string $direct = null;
 
     protected ?string $linktype = null;
 
@@ -98,12 +98,12 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
-    public function getDirect(): string
+    public function getDirect(): ?string
     {
         return $this->direct;
     }
 
-    public function setDirect(string $direct): static
+    public function setDirect(?string $direct): static
     {
         $this->direct = $direct;
         $this->markMeDirty();

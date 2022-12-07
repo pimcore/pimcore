@@ -25,7 +25,7 @@ use Pimcore\Model;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    public function add(string $id, mixed $data, string $tag, int $lifetime): bool
+    public function add(string $id, mixed $data, ?string $tag = null, ?int $lifetime = null): bool
     {
         try {
             $serialized = false;

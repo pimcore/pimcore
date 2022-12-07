@@ -55,8 +55,8 @@ class EmailController extends AdminController
         if ($request->get('documentId')) {
             $list->setCondition('documentId = ' . (int)$request->get('documentId'));
         }
-        $list->setLimit($request->get('limit'));
-        $list->setOffset($request->get('start'));
+        $list->setLimit((int)$request->get('limit', 50));
+        $list->setOffset((int)$request->get('start', 0));
         $list->setOrderKey('sentDate');
 
         if ($request->get('filter')) {
@@ -145,7 +145,7 @@ class EmailController extends AdminController
             ]);
         } elseif ($type === 'params') {
             try {
-                $params = $this->decodeJson($emailLog->getParams());
+                $params = $emailLog->getParams();
             } catch (\Exception $e) {
                 Logger::warning('Could not decode JSON param string');
                 $params = [];
@@ -340,7 +340,7 @@ class EmailController extends AdminController
 
             // re-add params
             try {
-                $params = $this->decodeJson($emailLog->getParams());
+                $params = $emailLog->getParams();
             } catch (\Exception $e) {
                 Logger::warning('Could not decode JSON param string');
                 $params = [];
@@ -491,8 +491,8 @@ class EmailController extends AdminController
 
             $list = new Tool\Email\Blacklist\Listing();
 
-            $list->setLimit($request->get('limit'));
-            $list->setOffset($request->get('start'));
+            $list->setLimit((int) $request->get('limit', 50));
+            $list->setOffset((int) $request->get('start', 0));
 
             $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($request->query->all());
             if ($sortingSettings['orderKey']) {

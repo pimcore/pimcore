@@ -104,7 +104,7 @@ class SelectCategory extends AbstractFilterType
         $currentFilter[$filterDefinition->getField()] = $value;
 
         if (!empty($value)) {
-            $value = '%,' . trim($value) . ',%';
+            $value = '%,' . trim((string)$value) . ',%';
 
             $db = Db::get();
 

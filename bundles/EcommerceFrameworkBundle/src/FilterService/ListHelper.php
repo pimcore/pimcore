@@ -35,14 +35,14 @@ class ListHelper
         bool $excludeLimitOfFirstpage = false
     ): void {
         $orderByOptions = [];
-        $orderKeysAsc = explode(',', $filterDefinition->getOrderByAsc());
+        $orderKeysAsc = explode(',', ($filterDefinition->getOrderByAsc() ?? ''));
         foreach ($orderKeysAsc as $orderByEntry) {
             if (!empty($orderByEntry)) {
                 $orderByOptions[$orderByEntry]['asc'] = true;
             }
         }
 
-        $orderKeysDesc = explode(',', $filterDefinition->getOrderByDesc());
+        $orderKeysDesc = explode(',', ($filterDefinition->getOrderByDesc() ?? ''));
         foreach ($orderKeysDesc as $orderByEntry) {
             if (!empty($orderByEntry)) {
                 $orderByOptions[$orderByEntry]['desc'] = true;
@@ -72,14 +72,14 @@ class ListHelper
                 $productList->setLimit($pageLimit);
             } elseif ($loadFullPage && $excludeLimitOfFirstpage) {
                 $offset += $limitOnFirstLoad;
-                $productList->setLimit($pageLimit - $limitOnFirstLoad);
+                $productList->setLimit(intval($pageLimit - $limitOnFirstLoad));
             } else {
-                $productList->setLimit($limitOnFirstLoad);
+                $productList->setLimit((int)$limitOnFirstLoad);
             }
         } else {
-            $productList->setLimit($pageLimit);
+            $productList->setLimit((int)$pageLimit);
         }
-        $productList->setOffset($offset);
+        $productList->setOffset((int)$offset);
 
         $params['pageLimit'] = $pageLimit;
 

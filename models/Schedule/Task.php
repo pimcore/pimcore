@@ -26,7 +26,7 @@ use Pimcore\Model;
  */
 class Task extends Model\AbstractModel
 {
-    protected int $id;
+    protected ?int $id = null;
 
     protected int $cid;
 
@@ -78,7 +78,7 @@ class Task extends Model\AbstractModel
         $this->setValues($data);
     }
 
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }

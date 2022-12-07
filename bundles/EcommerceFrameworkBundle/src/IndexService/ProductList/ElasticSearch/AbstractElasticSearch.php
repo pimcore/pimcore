@@ -59,9 +59,9 @@ abstract class AbstractElasticSearch implements ProductListInterface
 
     protected string $variantMode = ProductListInterface::VARIANT_MODE_INCLUDE;
 
-    protected int $limit;
+    protected ?int $limit = null;
 
-    protected string $order;
+    protected ?string $order = null;
 
     protected string|array $orderKey;
 
@@ -283,9 +283,9 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * gets order direction
      *
-     * @return string
+     * @return ?string
      */
-    public function getOrder(): string
+    public function getOrder(): ?string
     {
         return $this->order;
     }
@@ -340,7 +340,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
         }
     }
 
-    public function getLimit(): int
+    public function getLimit(): ?int
     {
         return $this->limit;
     }

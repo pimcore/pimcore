@@ -482,7 +482,7 @@ class Menu extends AbstractRenderer
         $attribs = array_merge($attribs, $page->getCustomHtmlAttribs());
 
         return '<' . $element . $this->_htmlAttribs($attribs) . '>'
-             . htmlspecialchars($label, ENT_COMPAT, 'UTF-8')
+             . htmlspecialchars((string) $label, ENT_COMPAT, 'UTF-8')
              . '</' . $element . '>';
     }
 

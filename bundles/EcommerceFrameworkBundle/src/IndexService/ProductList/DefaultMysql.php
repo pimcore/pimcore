@@ -41,11 +41,11 @@ class DefaultMysql implements ProductListInterface
 
     protected string $variantMode = ProductListInterface::VARIANT_MODE_INCLUDE;
 
-    protected int $limit;
+    protected ?int $limit = null;
 
-    protected int $offset;
+    protected int $offset = 0;
 
-    protected AbstractCategory $category;
+    protected ?AbstractCategory $category = null;
 
     protected ?DefaultMysql\Dao $resource = null;
 
@@ -166,9 +166,9 @@ class DefaultMysql implements ProductListInterface
         return $this->inProductList;
     }
 
-    protected string $order;
+    protected ?string $order = null;
 
-    protected string|array $orderKey;
+    protected null|string|array $orderKey = null;
 
     protected bool $orderByPrice = false;
 
@@ -178,7 +178,7 @@ class DefaultMysql implements ProductListInterface
         $this->order = $order;
     }
 
-    public function getOrder(): string
+    public function getOrder(): ?string
     {
         return $this->order;
     }
@@ -211,7 +211,7 @@ class DefaultMysql implements ProductListInterface
         $this->limit = $limit;
     }
 
-    public function getLimit(): int
+    public function getLimit(): ?int
     {
         return $this->limit;
     }
