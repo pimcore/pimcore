@@ -719,7 +719,7 @@ CREATE TABLE `users_workspaces_object` (
   PRIMARY KEY (`cid`, `userId`),
   KEY `userId` (`userId`),
   UNIQUE INDEX `cpath_userId` (`cpath`,`userId`),
-  CONSTRAINT `fk_users_workspaces_object_objects` FOREIGN KEY (`cid`) REFERENCES `objects` (`o_id`) ON UPDATE NO ACTION ON DELETE CASCADE,
+  CONSTRAINT `fk_users_workspaces_object_objects` FOREIGN KEY (`cid`) REFERENCES `objects` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE,
   CONSTRAINT `fk_users_workspaces_object_users` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
@@ -993,7 +993,7 @@ CREATE TABLE `object_url_slugs` (
       INDEX `slug` (`slug`),
       INDEX `siteId` (`siteId`),
       INDEX `fieldname_ownertype_position_objectId` (`fieldname`,`ownertype`,`position`,`objectId`),
-      CONSTRAINT `fk_object_url_slugs__objectId` FOREIGN KEY (`objectId`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+      CONSTRAINT `fk_object_url_slugs__objectId` FOREIGN KEY (`objectId`) REFERENCES objects (`id`) ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `webdav_locks`;
