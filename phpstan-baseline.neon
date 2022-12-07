@@ -266,7 +266,7 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/ElasticSearch/AbstractElasticSearch.php
 
 		-
-			message: "#^PHPDoc tag (.*) contains unknown class Elasticsearch\\\\Client.\\.$#"
+			message: "#^PHPDoc tag (.*) contains unknown class Elasticsearch\\\\Client\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/ElasticSearch/AbstractElasticSearch.php
 
@@ -277,5 +277,5 @@ parameters:
 
 		-
 			message: "#^Call to method (.*) on an unknown class Elasticsearch\\\\Client\\.$#"
-			count: 27
+			count: 26
 			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/AbstractElasticSearch.php
