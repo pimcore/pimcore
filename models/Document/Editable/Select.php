@@ -27,7 +27,7 @@ class Select extends Model\Document\Editable
      *
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $text;
 
@@ -40,7 +40,7 @@ class Select extends Model\Document\Editable
     }
 
     /**
-     * {@inheritdoc}
+     * @return mixed
      */
     public function getData()
     {
@@ -65,6 +65,8 @@ class Select extends Model\Document\Editable
 
     /**
      * {@inheritdoc}
+     *
+     * @return $this
      */
     public function setDataFromResource($data)
     {

@@ -27,7 +27,7 @@ class Textarea extends Model\Document\Editable implements EditmodeDataInterface
      *
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $text;
 
@@ -40,7 +40,7 @@ class Textarea extends Model\Document\Editable implements EditmodeDataInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return mixed
      */
     public function getData()
     {
@@ -75,7 +75,7 @@ class Textarea extends Model\Document\Editable implements EditmodeDataInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getDataEditmode() /** : mixed */
     {
@@ -84,6 +84,8 @@ class Textarea extends Model\Document\Editable implements EditmodeDataInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @return $this
      */
     public function setDataFromResource($data)
     {
@@ -94,6 +96,8 @@ class Textarea extends Model\Document\Editable implements EditmodeDataInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @return $this
      */
     public function setDataFromEditmode($data)
     {

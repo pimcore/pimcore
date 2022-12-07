@@ -25,12 +25,14 @@ class Embed extends Model\Document\Editable
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $url;
 
     /**
      * {@inheritdoc}
+     *
+     * @return string
      */
     public function getType()
     {
@@ -39,6 +41,8 @@ class Embed extends Model\Document\Editable
 
     /**
      * {@inheritdoc}
+     *
+     * @return mixed
      */
     public function getData()
     {
@@ -48,7 +52,7 @@ class Embed extends Model\Document\Editable
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getUrl()
     {
@@ -57,6 +61,8 @@ class Embed extends Model\Document\Editable
 
     /**
      * {@inheritdoc}
+     *
+     * @return array
      */
     public function getDataForResource()
     {
@@ -113,6 +119,8 @@ class Embed extends Model\Document\Editable
 
     /**
      * {@inheritdoc}
+     *
+     * @return $this
      */
     public function setDataFromResource($data)
     {
@@ -127,6 +135,8 @@ class Embed extends Model\Document\Editable
 
     /**
      * {@inheritdoc}
+     *
+     * @return $this
      */
     public function setDataFromEditmode($data)
     {
@@ -139,6 +149,8 @@ class Embed extends Model\Document\Editable
 
     /**
      * {@inheritdoc}
+     *
+     * @return bool
      */
     public function isEmpty()
     {

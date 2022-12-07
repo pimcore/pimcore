@@ -26,7 +26,7 @@ class InputQuantityValue extends AbstractQuantityValue
 
     /**
      * @param string|null $value
-     * @param Unit|string|null $unit
+     * @param string|Unit|null $unit
      */
     public function __construct($value = null, $unit = null)
     {
@@ -35,7 +35,7 @@ class InputQuantityValue extends AbstractQuantityValue
     }
 
     /**
-     * @param string $value
+     * @param float|int|string|null $value
      */
     public function setValue($value)
     {
@@ -44,7 +44,7 @@ class InputQuantityValue extends AbstractQuantityValue
     }
 
     /**
-     * @return string
+     * @return float|int|string|null
      */
     public function getValue()
     {
