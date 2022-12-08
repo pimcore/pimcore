@@ -524,4 +524,42 @@ class Service
 
         return '';
     }
+
+    /**
+     * @internal
+     */
+    public static function buildFieldConstantsCode(Data ...$fieldDefinitions): string
+    {
+        $fieldConstants = '';
+        foreach ($fieldDefinitions as $fieldDefinition) {
+            if (!$fieldDefinition instanceof Data\Localizedfields) {
+                $fieldConstants .= static::buildFieldConstantCode($fieldDefinition) . "\n";
+                continue;
+            }
+
+            foreach ($fieldDefinition->getFieldDefinitions() as $localizedFieldDefinition) {
+                $fieldConstants .= static::buildFieldConstantCode($localizedFieldDefinition) . "\n";
+            }
+        }
+
+        return $fieldConstants . "\n";
+    }
+
+    /**
+     * @internal
+     */
+    public static function buildFieldConstantCode(Data $fieldDefinition): string
+    {
+        $nameUpperSnakeCase = static::camelCaseToUpperSnakeCase($fieldDefinition->getName());
+        return 'public const FIELD_' . $nameUpperSnakeCase . ' = \'' . $fieldDefinition->getName() . '\';';
+    }
+
+    /**
+     * @internal
+     */
+    public static function camelCaseToUpperSnakeCase(string $camelCase): string
+    {
+        $snakeCase = ltrim(preg_replace('/[A-Z]+/', '_\\0', $camelCase), '_');
+        return strtoupper($snakeCase);
+    }
 }
