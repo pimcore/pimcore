@@ -53,18 +53,30 @@ trait Parallelization
                 '1'
             )
             ->addOption(
+                'main-process',
+                'm',
+                InputOption::VALUE_NONE,
+                'To execute the processing in the main process (no child processes will be spawned).',
+            )
+            ->addOption(
                 'child',
                 null,
                 InputOption::VALUE_NONE,
                 'Set on child processes. For internal use only.'
-            )->addOption(
+            )
+            ->addOption(
                 'batch-size',
                 null,
                 InputOption::VALUE_OPTIONAL,
                 'Sets the number of items to process per child process or in a batch',
                 '50'
             )
-        ;
+            ->addOption(
+                'segment-size',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Set the segment size.',
+            );
     }
 
     protected function getParallelExecutableFactory(
