@@ -24,9 +24,6 @@ use Symfony\Component\Process\Process;
 
 final class Console
 {
-    /**
-     * @var ?string system environment
-     */
     private static ?string $systemEnvironment = null;
 
     protected static array $executableCache = [];
