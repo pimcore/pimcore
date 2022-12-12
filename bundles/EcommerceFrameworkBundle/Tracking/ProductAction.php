@@ -18,7 +18,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 class ProductAction extends AbstractProductData
 {
     /**
-     * @var int
+     * @var int|float
      */
     protected $quantity = 1;
 

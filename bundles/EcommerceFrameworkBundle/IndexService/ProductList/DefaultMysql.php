@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Implementation of product list which works based on the product index of the online shop framework
@@ -53,7 +54,7 @@ class DefaultMysql implements ProductListInterface
     protected $variantMode = ProductListInterface::VARIANT_MODE_INCLUDE;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $limit;
 
@@ -63,7 +64,7 @@ class DefaultMysql implements ProductListInterface
     protected $offset;
 
     /**
-     * @var AbstractCategory
+     * @var AbstractCategory|null
      */
     protected $category;
 
@@ -78,7 +79,7 @@ class DefaultMysql implements ProductListInterface
     protected $inProductList = true;
 
     /**
-     * @var Logger
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -91,7 +92,9 @@ class DefaultMysql implements ProductListInterface
         $this->resource = new DefaultMysql\Dao($this, $this->logger);
     }
 
-    /** @inheritDoc */
+    /**
+     * {@inheritDoc}
+     */
     public function getProducts()
     {
         if ($this->products === null) {
@@ -144,7 +147,7 @@ class DefaultMysql implements ProductListInterface
 
     /**
      * @param string $fieldname
-     * @param string $condition
+     * @param string|array $condition
      */
     public function addRelationCondition($fieldname, $condition)
     {
@@ -218,13 +221,19 @@ class DefaultMysql implements ProductListInterface
         return $this->inProductList;
     }
 
+    /**
+     * @var string|null
+     */
     protected $order;
 
     /**
-     * @var string | array
+     * @var string|array|null
      */
     protected $orderKey;
 
+    /**
+     * @var bool
+     */
     protected $orderByPrice = false;
 
     public function setOrder($order)
@@ -434,6 +443,8 @@ class DefaultMysql implements ProductListInterface
      * considers both - normal values and relation values
      *
      * @param string $fieldname
+     * @param bool $countValues
+     * @param bool $fieldnameShouldBeExcluded
      *
      * @return void
      */
@@ -457,6 +468,8 @@ class DefaultMysql implements ProductListInterface
      * considers both - normal values and relation values
      *
      * @param string $fieldname
+     * @param bool $countValues
+     * @param bool $fieldnameShouldBeExcluded
      *
      * @return void
      */
@@ -470,6 +483,8 @@ class DefaultMysql implements ProductListInterface
      * considers both - normal values and relation values
      *
      * @param string $fieldname
+     * @param bool $countValues
+     * @param bool $fieldnameShouldBeExcluded
      *
      * @return void
      */
@@ -767,8 +782,8 @@ class DefaultMysql implements ProductListInterface
     /**
      * Returns an collection of items for a page.
      *
-     * @param  int $offset Page offset
-     * @param  int $itemCountPerPage Number of items per page
+     * @param int $offset Page offset
+     * @param int $itemCountPerPage Number of items per page
      *
      * @return array
      */

@@ -110,7 +110,7 @@ class Rule extends AbstractModel implements RuleInterface
      * @param string $key
      * @param mixed $value
      *
-     * @return AbstractModel
+     * @return $this
      *
      * @internal
      */
@@ -167,7 +167,7 @@ class Rule extends AbstractModel implements RuleInterface
 
     /**
      * @param string $label
-     * @param string $locale
+     * @param string|null $locale
      *
      * @return $this
      */

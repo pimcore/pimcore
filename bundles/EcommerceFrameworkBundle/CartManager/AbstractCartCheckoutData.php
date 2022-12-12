@@ -17,8 +17,14 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
 abstract class AbstractCartCheckoutData extends \Pimcore\Model\AbstractModel
 {
+    /**
+     * @var string
+     */
     protected $key;
 
+    /**
+     * @var array|string|null
+     */
     protected $data;
 
     /**
@@ -31,11 +37,17 @@ abstract class AbstractCartCheckoutData extends \Pimcore\Model\AbstractModel
         $this->cart = $cart;
     }
 
+    /**
+     * @return CartInterface|null
+     */
     public function getCart()
     {
         return $this->cart;
     }
 
+    /**
+     * @return int|string|null
+     */
     public function getCartId()
     {
         return $this->getCart()->getId();
@@ -56,21 +68,33 @@ abstract class AbstractCartCheckoutData extends \Pimcore\Model\AbstractModel
         throw new \Exception('Not implemented.');
     }
 
+    /**
+     * @param string $key
+     */
     public function setKey($key)
     {
         $this->key = $key;
     }
 
+    /**
+     * @return string
+     */
     public function getKey()
     {
         return $this->key;
     }
 
+    /**
+     * @param array|string|null $data
+     */
     public function setData($data)
     {
         $this->data = $data;
     }
 
+    /**
+     * @return array|string|null
+     */
     public function getData()
     {
         return $this->data;
