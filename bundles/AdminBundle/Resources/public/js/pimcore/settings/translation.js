@@ -616,7 +616,7 @@ pimcore.settings.translation.domain = Class.create({
         }
 
         if(value) {
-            let html = /<([A-Za-z][A-Za-z0-9]*)\b[^>]*>(.*?)<\/\1>/.test(value);
+            let html = /<\/?[a-z][\s\S]*>/i.test(value);
             let plain = value.match(/\n/gm)
 
             if (html || plain) {
