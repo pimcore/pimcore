@@ -80,6 +80,25 @@ final class AdminEvents
     const LOGIN_LOGOUT = 'pimcore.admin.login.logout';
 
     /**
+     * The LOGIN_BEFORE_RENDER event is triggered before the login view is rendered.
+     *
+     * Allows overriding the parameters and including templates.
+     * ```php
+     * public function getContent(GenericEvent $event): void
+     * {
+     *     $parameters = $event->getArgument('parameters');
+     *     $parameters['includeTemplates']['VendorBundleName'] = '@VendorBundleName/path/to/template.html.twig';
+     *     $event->setArgument('parameters', $parameters);
+     * }
+     * ```
+     *
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
+     *
+     * @var string
+     */
+    const LOGIN_BEFORE_RENDER = 'pimcore.admin.login.beforeRender';
+
+    /**
      * The INDEX_SETTINGS event is triggered when the settings object is built for the index page.
      *
      * @Event("Pimcore\Event\Admin\IndexActionSettingsEvent")
