@@ -35,7 +35,7 @@ final class SettingsStore extends Model\AbstractModel
     /**
      * @internal
      *
-     * @var string
+     * @var string|null
      */
     protected $scope;
 

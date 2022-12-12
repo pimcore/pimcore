@@ -84,8 +84,6 @@ class Textarea extends Model\Document\Editable implements EditmodeDataInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return $this
      */
     public function setDataFromResource($data)
     {
@@ -96,8 +94,6 @@ class Textarea extends Model\Document\Editable implements EditmodeDataInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return $this
      */
     public function setDataFromEditmode($data)
     {
