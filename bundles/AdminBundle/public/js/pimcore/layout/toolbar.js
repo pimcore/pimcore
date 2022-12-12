@@ -468,17 +468,6 @@
                          );
                      }
  
-                     if (perspectiveCfg.inToolbar("extras.systemtools.fileexplorer")) {
-                         systemItems.push(
-                             {
-                                 text: t("server_fileexplorer"),
-                                 iconCls: "pimcore_nav_icon_fileexplorer",
-                                 itemId: 'pimcore_menu_extras_system_info_server_fileexplorer',
-                                 handler: this.showFilexplorer
-                             }
-                         );
-                     }
- 
                      extrasItems.push({
                          text: t("system_infos_and_tools"),
                          iconCls: "pimcore_nav_icon_info",
@@ -1607,15 +1596,6 @@
                  });
              }
          });
-     },
- 
-     showFilexplorer: function () {
-         try {
-             pimcore.globalmanager.get("fileexplorer").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("fileexplorer", new pimcore.settings.fileexplorer.explorer());
-         }
      },
  
      showMaintenance: function () {

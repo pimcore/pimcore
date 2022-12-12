@@ -1,0 +1,11 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Pimcore\Bundle\FileExplorerBundle\Controller\Admin\:
+        resource: '../src/Controller/Admin'
+        public: true
+        tags: [ 'controller.service_arguments' ]
