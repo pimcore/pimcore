@@ -33,7 +33,7 @@ final class Predefined extends Model\AbstractModel
 
     protected string $name;
 
-    protected string $description;
+    protected ?string $description = null;
 
     protected ?string $key = null;
 
@@ -41,7 +41,7 @@ final class Predefined extends Model\AbstractModel
 
     protected string $data;
 
-    protected string $config;
+    protected ?string $config = null;
 
     protected string $ctype;
 
@@ -153,7 +153,7 @@ final class Predefined extends Model\AbstractModel
         return $this;
     }
 
-    public function getConfig(): string
+    public function getConfig(): ?string
     {
         return $this->config;
     }
@@ -196,7 +196,7 @@ final class Predefined extends Model\AbstractModel
         return $this;
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }

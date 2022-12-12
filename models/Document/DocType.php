@@ -59,9 +59,9 @@ class DocType extends Model\AbstractModel
      *
      * @internal
      *
-     * @var string
+     * @var ?string
      */
-    protected string $controller;
+    protected ?string $controller = null;
 
     /**
      * The specified template
@@ -143,7 +143,7 @@ class DocType extends Model\AbstractModel
         return $type;
     }
 
-    public function getController(): string
+    public function getController(): ?string
     {
         return $this->controller;
     }
