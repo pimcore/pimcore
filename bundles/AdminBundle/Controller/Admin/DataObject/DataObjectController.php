@@ -244,6 +244,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      */
     protected function getTreeNodeConfig($element): array
     {
+        /** @var DataObject $child */
         $child = $element;
 
         $tmpObject = [
