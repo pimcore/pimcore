@@ -316,6 +316,9 @@ class CustomLayout extends Model\AbstractModel
         return $this->default;
     }
 
+    /**
+     * @return $this
+     */
     public function setDefault(bool $default): static
     {
         $this->default = $default;
