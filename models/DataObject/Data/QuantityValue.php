@@ -24,7 +24,7 @@ class QuantityValue extends AbstractQuantityValue
     use ObjectVarTrait;
 
     /**
-     * @var float|int|null
+     * @var float|int|null|string
      */
     protected $value;
 

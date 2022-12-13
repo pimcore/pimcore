@@ -27,11 +27,13 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
 {
     use DataObject\Traits\OwnerAwareFieldTrait;
 
-    /** @var DataObject\AbstractObject|null */
+    /**
+     * @var DataObject\AbstractObject|null
+     */
     protected $object;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $objectId;
 
@@ -164,7 +166,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getFieldname()
     {

@@ -20,7 +20,7 @@ use Pimcore\Model\DataObject\QuantityValue\Unit;
 class InputQuantityValue extends AbstractQuantityValue
 {
     /**
-     * @var string|null
+     * @var float|int|string|null
      */
     protected $value;
 
@@ -44,7 +44,7 @@ class InputQuantityValue extends AbstractQuantityValue
     }
 
     /**
-     * @return float|int|string|null
+     * @return string
      */
     public function getValue()
     {

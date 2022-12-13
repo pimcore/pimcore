@@ -208,7 +208,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getElementType()
     {
@@ -216,7 +216,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getElementId()
     {
