@@ -80,7 +80,7 @@ class CustomLayout extends Model\AbstractModel
     /**
      * @var bool
      */
-    protected $default = false;
+    protected $default = 0;
 
     /**
      * @param string $id
