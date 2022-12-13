@@ -201,7 +201,7 @@ class DataObjectHelperController extends AdminController
      */
     public function gridDeleteColumnConfigAction(Request $request, EventDispatcherInterface $eventDispatcher, Config $config): JsonResponse
     {
-        $gridConfigId = $request->get('gridConfigId');
+        $gridConfigId = (int)$request->get('gridConfigId');
         $gridConfig = GridConfig::getById($gridConfigId);
         $success = false;
         if ($gridConfig) {
@@ -799,7 +799,7 @@ class DataObjectHelperController extends AdminController
      */
     public function gridMarkFavouriteColumnConfigAction(Request $request): JsonResponse
     {
-        $objectId = $request->get('objectId');
+        $objectId = (int)$request->get('objectId');
         $object = DataObject::getById($objectId);
 
         if ($object->isAllowed('list')) {
@@ -823,7 +823,7 @@ class DataObjectHelperController extends AdminController
 
             try {
                 if ($gridConfigId != 0) {
-                    $gridConfig = GridConfig::getById($gridConfigId);
+                    $gridConfig = GridConfig::getById((int)$gridConfigId);
                     $favourite->setGridConfigId($gridConfig->getId());
                 }
                 $favourite->setObjectId($objectId);
@@ -910,7 +910,10 @@ class DataObjectHelperController extends AdminController
                 $metadata = json_decode($metadata, true);
 
                 $gridConfigId = $metadata['gridConfigId'];
-                $gridConfig = GridConfig::getById($gridConfigId);
+                $gridConfig = null;
+                if($gridConfigId) {
+                    $gridConfig = GridConfig::getById($gridConfigId);
+                }
 
                 if ($gridConfig && $gridConfig->getOwnerId() != $this->getAdminUser()->getId() && !$this->getAdminUser()->isAdmin()) {
                     throw new \Exception("don't mess around with somebody elses configuration");
