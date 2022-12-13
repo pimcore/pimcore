@@ -293,15 +293,6 @@
  
              var extrasItems = [];
  
-             if (user.isAllowed("glossary") && perspectiveCfg.inToolbar("extras.glossary")) {
-                 extrasItems.push({
-                     text: t("glossary"),
-                     iconCls: "pimcore_nav_icon_glossary",
-                     itemId: 'pimcore_menu_extras_glossary',
-                     handler: this.editGlossary
-                 });
-             }
- 
              if (user.isAllowed("redirects") && perspectiveCfg.inToolbar("extras.redirects")) {
                  extrasItems.push({
                      text: t("redirects"),
@@ -1466,15 +1457,7 @@
          }
      },
  
-     editGlossary: function () {
- 
-         try {
-             pimcore.globalmanager.get("glossary").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("glossary", new pimcore.settings.glossary());
-         }
-     },
+
  
      systemSettings: function () {
  

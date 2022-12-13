@@ -13,17 +13,19 @@
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Model\Glossary;
+namespace  Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 
-use Pimcore\Model;
+
+use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
+use Pimcore\Model\Dao\AbstractDao;
 use Pimcore\Model\Exception\NotFoundException;
 
 /**
  * @internal
  *
- * @property \Pimcore\Model\Glossary $model
+ * @property Glossary $model
  */
-class Dao extends Model\Dao\AbstractDao
+class Dao extends AbstractDao
 {
     /**
      * Get the data for the object from database for the given id, or from the ID which is set in the object

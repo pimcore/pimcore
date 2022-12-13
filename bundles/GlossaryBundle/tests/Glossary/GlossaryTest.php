@@ -15,9 +15,9 @@ declare(strict_types=1);
  *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-namespace Pimcore\Tests\Unit\Document\Glossary;
+namespace Pimcore\Bundle\GlossaryBundle\Tests\Glossary;
 
-use Pimcore\Model\Glossary;
+use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
 use Pimcore\Tests\Support\Helper\Pimcore;
 use Pimcore\Tests\Support\Test\TestCase;
 use Pimcore\Tool\Glossary\Processor;

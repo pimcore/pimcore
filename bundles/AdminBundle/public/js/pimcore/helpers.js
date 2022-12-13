@@ -2751,13 +2751,6 @@ pimcore.helpers.searchAndReplaceAssignments = function() {
     }
 };
 
-pimcore.helpers.glossary = function() {
-    var user = pimcore.globalmanager.get("user");
-    if (user.isAllowed("glossary")) {
-        pimcore.layout.toolbar.prototype.editGlossary();
-    }
-};
-
 pimcore.helpers.redirects = function() {
     var user = pimcore.globalmanager.get("user");
     if (user.isAllowed("redirects")) {
@@ -2923,7 +2916,6 @@ pimcore.helpers.keyBindingMapping = {
     "showElementHistory": pimcore.helpers.showElementHistory,
     "closeAllTabs": pimcore.helpers.closeAllTabs,
     "searchAndReplaceAssignments": pimcore.helpers.searchAndReplaceAssignments,
-    "glossary": pimcore.helpers.glossary,
     "redirects": pimcore.helpers.redirects,
     "sharedTranslations": pimcore.helpers.sharedTranslations,
     "recycleBin": pimcore.helpers.recycleBin,

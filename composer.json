@@ -181,7 +181,8 @@
       "Pimcore\\Bundle\\AdminBundle\\": "bundles/AdminBundle/src/",
       "Pimcore\\Bundle\\InstallBundle\\": "bundles/InstallBundle/src/",
       "Pimcore\\Bundle\\CoreBundle\\": "bundles/CoreBundle/src/",
-      "Pimcore\\Bundle\\EcommerceFrameworkBundle\\": "bundles/EcommerceFrameworkBundle/src/"
+      "Pimcore\\Bundle\\EcommerceFrameworkBundle\\": "bundles/EcommerceFrameworkBundle/src/",
+      "Pimcore\\Bundle\\GlossaryBundle\\": "bundles/GlossaryBundle/src/"
     },
     "classmap": [
       "lib/Pimcore.php"
@@ -194,7 +195,8 @@
   "autoload-dev": {
     "psr-4": {
       "Pimcore\\Model\\DataObject\\": "var/classes/DataObject",
-      "Pimcore\\Tests\\": "tests"
+      "Pimcore\\Tests\\": "tests",
+      "Pimcore\\Bundle\\GlossaryBundle\\Tests\\": "bundles/GlossaryBundle/tests/"
     },
     "files": [
       "src/Kernel.php"
