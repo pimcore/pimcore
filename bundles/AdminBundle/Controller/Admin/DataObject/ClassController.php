@@ -615,7 +615,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
             $result[] = [
                 'id' => $item->getId(),
                 'name' => $item->getName() . ' (ID: ' . $item->getId() . ')',
-                'default' => $item->getDefault(),
+                'default' => $item->getDefault() ?: 0,
             ];
         }
 

@@ -80,7 +80,7 @@ class CustomLayout extends Model\AbstractModel
     /**
      * @var bool
      */
-    protected $default = false;
+    protected $default = 0;
 
     /**
      * @param string $id
@@ -462,8 +462,9 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @return bool
+     * @return int
      */
+    #[\ReturnTypeWillChange]
     public function getDefault()
     {
         return $this->default;
@@ -476,7 +477,7 @@ class CustomLayout extends Model\AbstractModel
      */
     public function setDefault($default)
     {
-        $this->default = (bool)$default;
+        $this->default = (int)$default;
 
         return $this;
     }
