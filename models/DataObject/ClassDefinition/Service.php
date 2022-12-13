@@ -534,6 +534,7 @@ class Service
         foreach ($fieldDefinitions as $fieldDefinition) {
             if (!$fieldDefinition instanceof Data\Localizedfields) {
                 $fieldConstants .= static::buildFieldConstantCode($fieldDefinition) . "\n";
+
                 continue;
             }
 
@@ -551,6 +552,7 @@ class Service
     public static function buildFieldConstantCode(Data $fieldDefinition): string
     {
         $nameUpperSnakeCase = static::camelCaseToUpperSnakeCase($fieldDefinition->getName());
+
         return 'public const FIELD_' . $nameUpperSnakeCase . ' = \'' . $fieldDefinition->getName() . '\';';
     }
 
@@ -560,6 +562,7 @@ class Service
     public static function camelCaseToUpperSnakeCase(string $camelCase): string
     {
         $snakeCase = ltrim(preg_replace('/[A-Z]+/', '_\\0', $camelCase), '_');
+
         return strtoupper($snakeCase);
     }
 }
