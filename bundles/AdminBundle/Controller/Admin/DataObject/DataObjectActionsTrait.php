@@ -190,9 +190,12 @@ trait DataObjectActionsTrait
         if (!$user->isAdmin()) {
             $languagePermissions = $object->getPermissions('lEdit', $user);
 
-            //sets allowed all languages modification when the lEdit column is empty
-            $allLanguagesAllowed = $languagePermissions['lEdit'] == '';
-            $languagePermissions = explode(',', $languagePermissions['lEdit']);
+            if ($languagePermissions['lEdit']) {
+                $languagePermissions = explode(',', $languagePermissions['lEdit']);
+            } else {
+                //sets allowed all languages modification when the lEdit column is empty
+                $allLanguagesAllowed = true;
+            }
         }
 
         $class = $object->getClass();
