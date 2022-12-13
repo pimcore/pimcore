@@ -185,16 +185,12 @@ trait DataObjectActionsTrait
         LocaleServiceInterface $localeService
     ): array {
         $user = Tool\Admin::getCurrentUser();
-        $allLanguagesAllowed = false;
         $languagePermissions = [];
         if (!$user->isAdmin()) {
             $languagePermissions = $object->getPermissions('lEdit', $user);
 
             if ($languagePermissions['lEdit']) {
                 $languagePermissions = explode(',', $languagePermissions['lEdit']);
-            } else {
-                //sets allowed all languages modification when the lEdit column is empty
-                $allLanguagesAllowed = true;
             }
         }
 
@@ -292,7 +288,7 @@ trait DataObjectActionsTrait
                             $field = $localized->getFieldDefinition($key);
                             if ($field) {
                                 $currentLocale = $localeService->findLocale();
-                                if (!$allLanguagesAllowed && !in_array($currentLocale, $languagePermissions)) {
+                                if (!in_array($currentLocale, $languagePermissions)) {
                                     continue;
                                 }
                             }
