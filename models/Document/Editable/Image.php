@@ -50,7 +50,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
      *
      * @internal
      *
-     * @var Asset\Image|ElementInterface|Element\ElementDescriptor|null
+     * @var Asset\Image|ElementDescriptor|ElementInterface|null
      */
     protected $image;
 
@@ -253,7 +253,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
 
         $image = $this->getImage();
 
-        if ($image instanceof Asset) {
+        if ($image instanceof Asset\Image) {
             $thumbnailName = $this->config['thumbnail'] ?? null;
             if ($thumbnailName || $this->cropPercent) {
                 // create a thumbnail first
@@ -508,7 +508,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     public function getThumbnail($conf, $deferred = true)
     {
         $image = $this->getImage();
-        if ($image instanceof Asset) {
+        if ($image instanceof Asset\Image) {
             $thumbConfig = $image->getThumbnailConfig($conf);
             if ($thumbConfig && $this->cropPercent) {
                 $this->applyCustomCropping($thumbConfig);
