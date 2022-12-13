@@ -126,7 +126,7 @@ class UserController extends AdminController implements KernelControllerEventInt
             ]);
 
             if ($request->get('rid')) {
-                $rid = $request->get('rid');
+                $rid = (int)$request->get('rid');
                 $rObject = $className::getById($rid);
                 if ($rObject) {
                     if ($type == 'user' || $type == 'role') {
