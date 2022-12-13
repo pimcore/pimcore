@@ -111,8 +111,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [DataObjects] Removed `o_` prefix for data object properties and database columns.
 - [DataObjects] Due to the removal of the `o_` prefix the property names `hasChildren`, `siblings`, `hasSiblings`, `childrenSortBy`, `childrenSortOrder`, `versionCount`, `dirtyLanguages` and `dirtyFields`
    were added to the list of reserved words. Please check your implementation and rename the properties as necessary. 
-- [Ecommerce] Please make sure to rebuild your product index tables if necessary. These tables can contain db column names with a `o_` prefix, which has to be removed.
-- [ElasticSearch] Please make sure to rebuild your elastic search indexes. This is necessary for certain changes to take effect.  
+- [Ecommerce][IndexService] Please make sure to rebuild your product index to make sure changes apply accordingly (this is relevant for mysql and elasticsearch indices). As an alternative you could manually rename and remove `o_` from all index columns/fields.
 
 ## 10.6.0
 - [AreabrickManagerInterface] The `enable`, `disable`, `isEnabled` and `getState` methods of `Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface` are deprecated as maintaining state of extensions is deprecated. This impacts `\Pimcore\Document\Editable\EditableHandler::isBrickEnabled()` method which is also deprecated.
