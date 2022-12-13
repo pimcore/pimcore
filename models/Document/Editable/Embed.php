@@ -31,8 +31,6 @@ class Embed extends Model\Document\Editable
 
     /**
      * {@inheritdoc}
-     *
-     * @return string
      */
     public function getType()
     {
@@ -119,8 +117,6 @@ class Embed extends Model\Document\Editable
 
     /**
      * {@inheritdoc}
-     *
-     * @return $this
      */
     public function setDataFromResource($data)
     {
@@ -135,8 +131,6 @@ class Embed extends Model\Document\Editable
 
     /**
      * {@inheritdoc}
-     *
-     * @return $this
      */
     public function setDataFromEditmode($data)
     {
@@ -149,8 +143,6 @@ class Embed extends Model\Document\Editable
 
     /**
      * {@inheritdoc}
-     *
-     * @return bool
      */
     public function isEmpty()
     {

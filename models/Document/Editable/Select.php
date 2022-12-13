@@ -65,8 +65,6 @@ class Select extends Model\Document\Editable
 
     /**
      * {@inheritdoc}
-     *
-     * @return $this
      */
     public function setDataFromResource($data)
     {

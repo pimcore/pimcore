@@ -66,9 +66,7 @@ class Numeric extends Model\Document\Editable
     }
 
     /**
-     * @var mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -78,9 +76,7 @@ class Numeric extends Model\Document\Editable
     }
 
     /**
-     * @var mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {

@@ -161,8 +161,6 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
 
     /**
      * {@inheritdoc}
-     *
-     * @return $this
      */
     public function setDataFromResource($data)
     {
@@ -176,8 +174,6 @@ class Snippet extends Model\Document\Editable implements IdRewriterInterface, Ed
 
     /**
      * {@inheritdoc}
-     *
-     * @return $this
      */
     public function setDataFromEditmode($data)
     {

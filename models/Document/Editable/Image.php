@@ -114,8 +114,6 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
 
     /**
      * {@inheritdoc}
-     *
-     * @return string
      */
     public function getType()
     {
@@ -310,9 +308,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     }
 
     /**
-     * @var mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromResource($data)
     {
@@ -362,9 +358,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
     }
 
     /**
-     * @var mixed $data
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setDataFromEditmode($data)
     {
