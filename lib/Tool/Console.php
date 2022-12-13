@@ -24,10 +24,7 @@ use Symfony\Component\Process\Process;
 
 final class Console
 {
-    /**
-     * @var string system environment
-     */
-    private static string $systemEnvironment;
+    private static ?string $systemEnvironment = null;
 
     protected static array $executableCache = [];
 
@@ -282,7 +279,7 @@ final class Console
 
     /**
      * @param string $cmd
-     * @param string $outputFile
+     * @param ?string $outputFile
      * @param bool $useNohup
      *
      * @return int
@@ -292,7 +289,7 @@ final class Console
      * @static
      *
      */
-    protected static function execInBackgroundUnix(string $cmd, string $outputFile, bool $useNohup = true): int
+    protected static function execInBackgroundUnix(string $cmd, ?string $outputFile, bool $useNohup = true): int
     {
         if (!$outputFile) {
             $outputFile = '/dev/null';

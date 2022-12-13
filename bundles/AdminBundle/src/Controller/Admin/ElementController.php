@@ -78,7 +78,7 @@ class ElementController extends AdminController
     {
         $request = json_decode($request->getContent(), true) ?? [];
         foreach ($request['elements'] as $elementIdentifierData) {
-            Element\Editlock::unlock($elementIdentifierData['id'], $elementIdentifierData['type']);
+            Element\Editlock::unlock((int)$elementIdentifierData['id'], $elementIdentifierData['type']);
         }
 
         return $this->adminJson(['success' => true]);

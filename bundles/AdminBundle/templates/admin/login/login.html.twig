@@ -96,6 +96,10 @@
 
 </script>
 
+{% for includeTemplate in includeTemplates %}
+    {{ include(includeTemplate) }}
+{% endfor %}
+
 {{ pimcore_breach_attack_random_content() }}
 
 {% endblock %}
