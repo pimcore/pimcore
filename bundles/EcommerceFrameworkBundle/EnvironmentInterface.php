@@ -34,7 +34,7 @@ interface EnvironmentInterface extends ComponentInterface
      *
      * @param int $userId
      *
-     * @return static
+     * @return $this
      */
     public function setCurrentUserId($userId);
 
