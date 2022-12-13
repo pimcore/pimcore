@@ -1055,29 +1055,6 @@ abstract class AbstractObject extends Model\Element\AbstractElement
         return $this->childrenSortBy ?? self::OBJECT_CHILDREN_SORT_BY_DEFAULT;
     }
 
-    /**
-     * @param string $method
-     * @param array $args
-     *
-     * @return mixed
-     *
-     * @throws \Exception
-     */
-    public function __call(string $method, array $args)
-    {
-        // compatibility mode (they do not have any set_oXyz() methods anymore)
-        if (preg_match('/^(get|set)o_/i', $method)) {
-            $newMethod = preg_replace('/^(get|set)o_/i', '$1', $method);
-            if (method_exists($this, $newMethod)) {
-                $r = call_user_func_array([$this, $newMethod], $args);
-
-                return $r;
-            }
-        }
-
-        return parent::__call($method, $args);
-    }
-
     public static function doNotRestoreKeyAndPath(): bool
     {
         return self::$doNotRestoreKeyAndPath;

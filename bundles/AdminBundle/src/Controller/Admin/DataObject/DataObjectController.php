@@ -1320,7 +1320,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $db = Db::get();
             $children = $db->fetchAllAssociative(
                 'SELECT id, modificationDate, versionCount FROM objects'
-                .' WHERE parentId = ? ORDER BY index ASC',
+                .' WHERE parentId = ? ORDER BY `index` ASC',
                 [$parentObject->getId()]
             );
             $index = 0;
@@ -1368,13 +1368,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     (
                         SELECT newIndex, id
                         FROM (
-                            With cte As (SELECT index, id FROM ' . $list->getDao()->getTableName() . ' WHERE parentId = ? AND id != ? AND type IN (\''.implode(
+                            With cte As (SELECT `index`, id FROM ' . $list->getDao()->getTableName() . ' WHERE parentId = ? AND id != ? AND type IN (\''.implode(
                     "','", [
                         DataObject::OBJECT_TYPE_OBJECT,
                         DataObject::OBJECT_TYPE_VARIANT,
                         DataObject::OBJECT_TYPE_FOLDER,
                     ]
-                ).'\') ORDER BY indexLIMIT '. $updatedObject->getParent()->getChildAmount() .')
+                ).'\') ORDER BY `index` LIMIT '. $updatedObject->getParent()->getChildAmount() .')
                             SELECT @n := IF(@n = ? - 1,@n + 2,@n + 1) AS newIndex, id
                             FROM cte,
                             (SELECT @n := -1) variable
@@ -1390,8 +1390,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             );
 
             $siblings = $db->fetchAllAssociative(
-                'SELECT id, modificationDate, versionCount, key, index FROM objects'
-                ." WHERE parentId = ? AND id != ? AND type IN ('object', 'variant','folder') ORDER BY indexASC",
+                'SELECT id, modificationDate, versionCount, `key`, `index` FROM objects'
+                ." WHERE parentId = ? AND id != ? AND type IN ('object', 'variant','folder') ORDER BY `index` ASC",
                 [$updatedObject->getParentId(), $updatedObject->getId()]
             );
             $index = 0;

@@ -611,14 +611,10 @@ class Service extends Model\AbstractModel
             //$p = object2array($p);
             $allowedProperties = [
                 'key',
-                'key',
                 'filename',
                 'path',
-                'path',
                 'id',
-                'id',
-                'type',
-                'type',
+                'type'
             ];
 
             if ($p->getData() instanceof Document || $p->getData() instanceof Asset || $p->getData() instanceof DataObject\AbstractObject) {
