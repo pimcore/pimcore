@@ -191,7 +191,7 @@ class SearchController extends AdminController
             foreach ($subtypes as $subtype) {
                 $conditionSubtypeParts[] = $db->quote($subtype);
             }
-            $conditionParts[] = '( type IN (' . implode(',', $conditionSubtypeParts) . ') )';
+            $conditionParts[] = '( `type` IN (' . implode(',', $conditionSubtypeParts) . ') )';
         }
 
         if (is_array($classnames) && !empty($classnames[0])) {

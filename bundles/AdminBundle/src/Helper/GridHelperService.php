@@ -567,7 +567,7 @@ class GridHelperService
         } else {
             $quotedPath = $list->quote($folder->getRealFullPath());
             $quotedWildcardPath = $list->quote($list->escapeLike(str_replace('//', '/', $folder->getRealFullPath() . '/')) . '%');
-            $conditionFilters[] = '(path = ' . $quotedPath . ' OR path LIKE ' . $quotedWildcardPath . ')';
+            $conditionFilters[] = '(`path` = ' . $quotedPath . ' OR `path` like ' . $quotedWildcardPath . ')';
         }
 
         if (!$adminUser->isAdmin()) {

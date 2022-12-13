@@ -386,11 +386,11 @@ class InheritanceHelper
 
                 $query = "
                 WITH RECURSIVE cte(id, classId, parentId, path) as (
-                    SELECT c.id AS id, c.classId AS classId, c.parentid AS parentId, c.path AS path
+                    SELECT c.id AS id, c.classId AS classId, c.parentid AS parentId, c.path as `path`
                     FROM objects c
                     WHERE c.parentid = $currentParentId
                     UNION ALL
-                    SELECT p.id AS id, p.classId AS classId, p.parentid AS parentId, p.path AS path
+                    SELECT p.id AS id, p.classId AS classId, p.parentid AS parentId, p.path as `path`
                     FROM objects p
                     INNER JOIN cte on (p.parentid = cte.id)
                 ) SELECT l.language AS `language`,
@@ -405,11 +405,11 @@ class InheritanceHelper
             } else {
                 $query = "
                     WITH RECURSIVE cte(id, classId, parentId, path) as (
-                        SELECT c.id AS id, c.classId AS classId, c.parentid AS parentId, c.path AS path
+                        SELECT c.id AS id, c.classId AS classId, c.parentid AS parentId, c.path as `path`
                         FROM objects c
                         WHERE c.parentid = $currentParentId
                         UNION ALL
-                        SELECT p.id AS id, p.classId AS classId, p.parentid AS parentId, p.path AS path
+                        SELECT p.id AS id, p.classId AS classId, p.parentid AS parentId, p.path as `path`
                         FROM objects p
                         INNER JOIN cte on (p.parentid = cte.id)
                     )	SELECT x.id AS id,

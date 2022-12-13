@@ -216,7 +216,7 @@ class PageController extends DocumentControllerBase
     public function generatePreviewsAction(Request $request, MessageBusInterface $messengerBusPimcoreCore): JsonResponse
     {
         $list = new Document\Listing();
-        $list->setCondition('type = ?', ['page']);
+        $list->setCondition('`type` = ?', ['page']);
 
         foreach ($list->loadIdList() as $docId) {
             $messengerBusPimcoreCore->dispatch(

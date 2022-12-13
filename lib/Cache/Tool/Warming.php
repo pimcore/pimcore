@@ -44,7 +44,7 @@ class Warming
         }
 
         $list = new Document\Listing();
-        $list->setCondition("type IN ('" . implode("','", $types) . "')");
+        $list->setCondition("`type` IN ('" . implode("','", $types) . "')");
 
         self::loadToCache($list);
     }
@@ -67,7 +67,7 @@ class Warming
         }
 
         $list = new DataObject\Listing();
-        $list->setCondition("type IN ('" . implode("','", $types) . "')" . $classesCondition);
+        $list->setCondition("`type` IN ('" . implode("','", $types) . "')" . $classesCondition);
 
         self::loadToCache($list);
     }
@@ -84,7 +84,7 @@ class Warming
         }
 
         $list = new Asset\Listing();
-        $list->setCondition("type IN ('" . implode("','", $types) . "')");
+        $list->setCondition("`type` IN ('" . implode("','", $types) . "')");
 
         self::loadToCache($list);
     }

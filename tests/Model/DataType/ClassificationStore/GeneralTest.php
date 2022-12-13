@@ -680,7 +680,7 @@ class GeneralTest extends AbstractClassificationStoreTest
 
         $list = new \Pimcore\Model\DataObject\Inheritance\Listing();
 
-        $list->setCondition("(path = '/tmp' OR path LIKE '/tmp/%') AND 1 = 1");
+        $list->setCondition("(`path` = '/tmp' OR `path` like '/tmp/%') AND 1 = 1");
         $list->setLimit(25);
         $list->setOffset(0);
         $list->setGroupBy('oo_id');

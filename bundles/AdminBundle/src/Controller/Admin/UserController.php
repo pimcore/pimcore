@@ -1107,7 +1107,7 @@ class UserController extends AdminController implements KernelControllerEventInt
         $roles = [];
         $list = new User\Role\Listing();
 
-        $list->setCondition('type = "role"');
+        $list->setCondition('`type` = "role"');
         $list->load();
         $roleList = $list->getRoles();
 

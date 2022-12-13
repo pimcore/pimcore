@@ -241,17 +241,17 @@ class Dao extends Model\Dao\AbstractDao
         $query = "
             SELECT id, type, path
             FROM (
-                SELECT d.sourceid as id, d.sourcetype as type, CONCAT(o.path, o.key) as path
+                SELECT d.sourceid as id, d.sourcetype as `type`, CONCAT(o.path, o.key) as `path`
                 FROM dependencies d
                 JOIN objects o ON o.id = d.sourceid
                 WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND d.sourceType = 'object'
                 UNION
-                SELECT d.sourceid as id, d.sourcetype as type, CONCAT(doc.path, doc.key) as path
+                SELECT d.sourceid as id, d.sourcetype as `type`, CONCAT(doc.path, doc.key) as `path`
                 FROM dependencies d
                 JOIN documents doc ON doc.id = d.sourceid
                 WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND d.sourceType = 'document'
                 UNION
-                SELECT d.sourceid as id, d.sourcetype as type, CONCAT(a.path, a.filename) as path
+                SELECT d.sourceid as id, d.sourcetype as `type`, CONCAT(a.path, a.filename) as `path`
                 FROM dependencies d
                 JOIN assets a ON a.id = d.sourceid
                 WHERE d.targettype = '" . $targetType. "' AND d.targetid = " . $targetId . " AND d.sourceType = 'asset'

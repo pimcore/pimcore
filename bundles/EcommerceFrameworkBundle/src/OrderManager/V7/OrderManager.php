@@ -409,7 +409,7 @@ class OrderManager implements OrderManagerInterface
         $key = $this->buildOrderItemKey($item, $isGiftItem);
 
         $orderItemList = $this->buildOrderItemList();
-        $orderItemList->setCondition('parentId = ? AND key = ?', [$parent->getId(), $key]);
+        $orderItemList->setCondition('parentId = ? AND `key` = ?', [$parent->getId(), $key]);
 
         /** @var AbstractOrderItem[] $orderItems */
         $orderItems = $orderItemList->load();

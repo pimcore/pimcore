@@ -256,7 +256,7 @@ class Dao extends Model\Dao\AbstractDao
             foreach ($subtypes as $subType) {
                 $quotedSubTypes[] = $this->db->quote($subType);
             }
-            $select->andWhere('type IN (' . implode(',', $quotedSubTypes) . ')');
+            $select->andWhere('`type` IN (' . implode(',', $quotedSubTypes) . ')');
         }
 
         if ('object' === $type && ! empty($classNames)) {

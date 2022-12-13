@@ -675,7 +675,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $parentAsset = Asset::getById((int) $request->get('id'));
 
             $list = new Asset\Listing();
-            $list->setCondition('path LIKE ?', [Helper::escapeLike($parentAsset->getRealFullPath()) . '/%']);
+            $list->setCondition('`path` LIKE ?', [Helper::escapeLike($parentAsset->getRealFullPath()) . '/%']);
             $list->setLimit((int)$request->get('amount'));
             $list->setOrderKey('LENGTH(path)', false);
             $list->setOrder('DESC');
@@ -1932,7 +1932,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             if ($asset->hasChildren()) {
                 // get amount of children
                 $list = new Asset\Listing();
-                $list->setCondition('path LIKE ?', [$list->escapeLike($asset->getRealFullPath()) . '/%']);
+                $list->setCondition('`path` LIKE ?', [$list->escapeLike($asset->getRealFullPath()) . '/%']);
                 $list->setOrderKey('LENGTH(path)', false);
                 $list->setOrder('ASC');
                 $childIds = $list->loadIdList();
@@ -2159,7 +2159,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                     //add a condition if id numbers are specified
                     $conditionFilters[] = 'id IN (' . implode(',', $selectedIds) . ')';
                 }
-                $conditionFilters[] = "type != 'folder' AND path LIKE " . $db->quote(Helper::escapeLike($parentPath) . '/%');
+                $conditionFilters[] = "`type` != 'folder' AND `path` like " . $db->quote(Helper::escapeLike($parentPath) . '/%');
                 if (!$this->getAdminUser()->isAdmin()) {
                     $userIds = $this->getAdminUser()->getRoles();
                     $userIds[] = $this->getAdminUser()->getId();

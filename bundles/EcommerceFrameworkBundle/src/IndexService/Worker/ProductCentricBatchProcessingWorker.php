@@ -142,7 +142,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
     {
         if ($object instanceof Concrete) {
             //need check, if there are sub objects because update on empty result set is too slow
-            $objects = $this->db->fetchFirstColumn('SELECT id FROM objects WHERE path LIKE ?', [Helper::escapeLike($object->getFullPath()) . '/%']);
+            $objects = $this->db->fetchFirstColumn('SELECT id FROM objects WHERE `path` like ?', [Helper::escapeLike($object->getFullPath()) . '/%']);
             if ($objects) {
                 $this->executeTransactionalQuery(function () use ($objects) {
                     $updateStatement = 'UPDATE ' . $this->getStoreTableName() . ' SET in_preparation_queue = 1 WHERE tenant = ? AND id IN ('.implode(',', $objects).')';

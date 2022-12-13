@@ -47,7 +47,7 @@ class FindologicController extends FrontendController
         }
         // load export items
         elseif ($request->get('type')) {
-            $query = "SELECT SQL_CALC_FOUND_ROWS id, data FROM {$this->getExportTableName()} WHERE shop_key = :shop_key and type = :type LIMIT {$start}, {$count}";
+            $query = "SELECT SQL_CALC_FOUND_ROWS id, data FROM {$this->getExportTableName()} WHERE shop_key = :shop_key and `type` = :type LIMIT {$start}, {$count}";
             $items = $db->fetchAllAssociative($query, ['shop_key' => $shopKey, 'type' => $request->get('type')]);
         } else {
             $query = "SELECT SQL_CALC_FOUND_ROWS id, data FROM {$this->getExportTableName()} WHERE shop_key = :shop_key LIMIT {$start}, {$count}";

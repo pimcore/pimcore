@@ -518,7 +518,7 @@ class DefaultMysql implements ProductListInterface
 
             case ProductListInterface::VARIANT_MODE_VARIANTS_ONLY:
 
-                $condition .= " AND type = 'variant'";
+                $condition .= " AND `type` = 'variant'";
 
                 break;
         }

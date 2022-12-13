@@ -1059,7 +1059,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $parentObject = DataObject::getById((int) $request->get('id'));
 
             $list = new DataObject\Listing();
-            $list->setCondition('path LIKE ' . $list->quote($list->escapeLike($parentObject->getRealFullPath()) . '/%'));
+            $list->setCondition('`path` LIKE ' . $list->quote($list->escapeLike($parentObject->getRealFullPath()) . '/%'));
             $list->setLimit((int)$request->get('amount'));
             $list->setOrderKey('LENGTH(path)', false);
             $list->setOrder('DESC');
@@ -1881,7 +1881,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             if ($object->hasChildren(DataObject::$types)) {
                 // get amount of children
                 $list = new DataObject\Listing();
-                $list->setCondition('path LIKE ' . $list->quote($list->escapeLike($object->getRealFullPath()) . '/%'));
+                $list->setCondition('`path` LIKE ' . $list->quote($list->escapeLike($object->getRealFullPath()) . '/%'));
                 $list->setOrderKey('LENGTH(path)', false);
                 $list->setOrder('ASC');
                 $list->setObjectTypes(DataObject::$types);

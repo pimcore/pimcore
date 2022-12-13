@@ -59,7 +59,7 @@ class Dao extends Model\Element\Dao
     public function getByPath(string $path)
     {
         $params = $this->extractKeyAndPath($path);
-        $data = $this->db->fetchAssociative('SELECT id FROM objects WHERE path = :path AND `key` = :key', $params);
+        $data = $this->db->fetchAssociative('SELECT id FROM objects WHERE `path` = :path AND `key` = :key', $params);
 
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
@@ -165,7 +165,7 @@ class Dao extends Model\Element\Dao
     {
         if ($this->hasChildren(DataObject::$types)) {
             //get objects to empty their cache
-            $objects = $this->db->fetchFirstColumn('SELECT id FROM objects WHERE path LIKE ?', [Helper::escapeLike($oldPath) . '%']);
+            $objects = $this->db->fetchFirstColumn('SELECT id FROM objects WHERE `path` like ?', [Helper::escapeLike($oldPath) . '%']);
 
             $userId = '0';
             if ($user = \Pimcore\Tool\Admin::getCurrentUser()) {
@@ -174,7 +174,7 @@ class Dao extends Model\Element\Dao
 
             //update object child paths
             // we don't update the modification date here, as this can have side-effects when there's an unpublished version for an element
-            $this->db->executeQuery('update objects set path = replace(path,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . "), userModification = '" . $userId . "' where path like " . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
+            $this->db->executeQuery('update objects set `path` = replace(path,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . "), userModification = '" . $userId . "' where `path` like " . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
 
             //update object child permission paths
             $this->db->executeQuery('update users_workspaces_object set cpath = replace(cpath,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . ') where cpath like ' . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
@@ -206,7 +206,7 @@ class Dao extends Model\Element\Dao
         $path = null;
 
         try {
-            $path = $this->db->fetchOne('SELECT CONCAT(path,`key`) as path FROM objects WHERE id = ?', [$this->model->getId()]);
+            $path = $this->db->fetchOne('SELECT CONCAT(path,`key`) as `path` FROM objects WHERE id = ?', [$this->model->getId()]);
         } catch (\Exception $e) {
             Logger::error('could not get current object path from DB');
         }
@@ -449,8 +449,8 @@ class Dao extends Model\Element\Dao
 
     public function unlockPropagate(): array
     {
-        $lockIds = $this->db->fetchFirstColumn('SELECT id from objects WHERE path LIKE ' . $this->db->quote(Helper::escapeLike($this->model->getRealFullPath()) . '/%') . ' OR id = ' . $this->model->getId());
-        $this->db->executeStatement("DELETE FROM tree_locks WHERE type = 'object' AND id IN (" . implode(',', $lockIds) . ')');
+        $lockIds = $this->db->fetchFirstColumn('SELECT id from objects WHERE `path` like ' . $this->db->quote(Helper::escapeLike($this->model->getRealFullPath()) . '/%') . ' OR id = ' . $this->model->getId());
+        $this->db->executeStatement("DELETE FROM tree_locks WHERE `type` = 'object' AND id IN (" . implode(',', $lockIds) . ')');
 
         return $lockIds;
     }
@@ -468,7 +468,7 @@ class Dao extends Model\Element\Dao
         $classIds = [];
         do {
             $classId = $this->db->fetchOne(
-                "SELECT classId FROM objects WHERE path LIKE ? AND type = 'object'".($classIds ? ' AND classId NOT IN ('.rtrim(str_repeat('?,', count($classIds)), ',').')' : '').' LIMIT 1',
+                "SELECT classId FROM objects WHERE `path` like ? AND `type` = 'object'".($classIds ? ' AND classId NOT IN ('.rtrim(str_repeat('?,', count($classIds)), ',').')' : '').' LIMIT 1',
                 array_merge([Helper::escapeLike($path).'/%'], $classIds));
             if ($classId) {
                 $classIds[] = $classId;
