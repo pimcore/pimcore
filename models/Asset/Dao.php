@@ -422,7 +422,7 @@ class Dao extends Model\Element\Dao
         }
 
         $parentIds = $this->getParentIds();
-        $inhertitedLocks = $this->db->fetchOne('SELECT id FROM tree_locks WHERE id IN (' . implode(',', $parentIds) . ") AND type='asset' AND locked = 'propagate' LIMIT 1");
+        $inhertitedLocks = $this->db->fetchOne('SELECT id FROM tree_locks WHERE id IN (' . implode(',', $parentIds) . ") AND `type`='asset' AND locked = 'propagate' LIMIT 1");
 
         if ($inhertitedLocks > 0) {
             return true;

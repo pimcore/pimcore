@@ -839,7 +839,7 @@ class DataObjectHelperController extends AdminController
                     . ' and classId = ' . $db->quote($classId).
                     ' and searchType = ' . $db->quote($searchType)
                     . ' and objectId != ' . $objectId . ' and objectId != 0'
-                    . ' and type != ' . $db->quote($type));
+                    . ' and `type` != ' . $db->quote($type));
                 $specializedConfigs = $count > 0;
             } catch (\Exception $e) {
                 $favourite->delete();

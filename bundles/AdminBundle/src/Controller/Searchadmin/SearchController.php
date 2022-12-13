@@ -458,7 +458,7 @@ class SearchController extends AdminController
         $conditionParts[] = $this->getPermittedPaths();
 
         $matchCondition = '( MATCH (`data`,`properties`) AGAINST (' . $db->quote($query) . ' IN BOOLEAN MODE) )';
-        $conditionParts[] = '(' . $matchCondition . " AND type != 'folder') ";
+        $conditionParts[] = '(' . $matchCondition . " AND `type` != 'folder') ";
 
         $queryCondition = implode(' AND ', $conditionParts);
 

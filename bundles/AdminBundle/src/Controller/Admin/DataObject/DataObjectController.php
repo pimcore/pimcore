@@ -1368,7 +1368,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     (
                         SELECT newIndex, id
                         FROM (
-                            With cte As (SELECT `index`, id FROM ' . $list->getDao()->getTableName() . ' WHERE parentId = ? AND id != ? AND type IN (\''.implode(
+                            With cte As (SELECT `index`, id FROM ' . $list->getDao()->getTableName() . ' WHERE parentId = ? AND id != ? AND `type` IN (\''.implode(
                     "','", [
                         DataObject::OBJECT_TYPE_OBJECT,
                         DataObject::OBJECT_TYPE_VARIANT,
@@ -1391,7 +1391,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             $siblings = $db->fetchAllAssociative(
                 'SELECT id, modificationDate, versionCount, `key`, `index` FROM objects'
-                ." WHERE parentId = ? AND id != ? AND type IN ('object', 'variant','folder') ORDER BY `index` ASC",
+                ." WHERE parentId = ? AND id != ? AND `type` IN ('object', 'variant','folder') ORDER BY `index` ASC",
                 [$updatedObject->getParentId(), $updatedObject->getId()]
             );
             $index = 0;

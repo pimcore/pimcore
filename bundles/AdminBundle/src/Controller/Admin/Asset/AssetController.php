@@ -1829,7 +1829,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $conditionFilters = [];
         $list = new Asset\Listing();
-        $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote(Helper::escapeLike($folder->getRealFullPath()) . '/%')) . " AND type != 'folder'";
+        $conditionFilters[] = '`path` LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote(Helper::escapeLike($folder->getRealFullPath()) . '/%')) . " AND `type` != 'folder'";
 
         if (!$this->getAdminUser()->isAdmin()) {
             $userIds = $this->getAdminUser()->getRoles();
@@ -2078,7 +2078,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 //add a condition if id numbers are specified
                 $conditionFilters[] = 'id IN (' . implode(',', $quotedSelectedIds) . ')';
             }
-            $conditionFilters[] = 'path LIKE ' . $db->quote(Helper::escapeLike($parentPath) . '/%') . ' AND type != ' . $db->quote('folder');
+            $conditionFilters[] = '`path` LIKE ' . $db->quote(Helper::escapeLike($parentPath) . '/%') . ' AND `type` != ' . $db->quote('folder');
             if (!$this->getAdminUser()->isAdmin()) {
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();

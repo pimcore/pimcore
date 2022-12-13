@@ -331,7 +331,7 @@ class Dao extends Model\Element\Dao
         }
 
         if (!empty($objectTypes)) {
-            $sql .= " AND type IN ('" . implode("','", $objectTypes) . "')";
+            $sql .= " AND `type` IN ('" . implode("','", $objectTypes) . "')";
         }
 
         $sql .= ' LIMIT 1';
@@ -366,7 +366,7 @@ class Dao extends Model\Element\Dao
             $sql .= ' AND published = 1';
         }
 
-        $sql .= " AND type IN ('" . implode("','", $objectTypes) . "') LIMIT 1";
+        $sql .= " AND `type` IN ('" . implode("','", $objectTypes) . "') LIMIT 1";
 
         $c = $this->db->fetchOne($sql, $params);
 
@@ -390,7 +390,7 @@ class Dao extends Model\Element\Dao
         $query = 'SELECT COUNT(*) AS count FROM objects o WHERE parentId = ?';
 
         if (!empty($objectTypes)) {
-            $query .= sprintf(' AND type IN (\'%s\')', implode("','", $objectTypes));
+            $query .= sprintf(' AND `type` IN (\'%s\')', implode("','", $objectTypes));
         }
 
         if ($user && !$user->isAdmin()) {
@@ -438,7 +438,7 @@ class Dao extends Model\Element\Dao
         }
 
         $parentIds = $this->getParentIds();
-        $inhertitedLocks = $this->db->fetchOne('SELECT id FROM tree_locks WHERE id IN (' . implode(',', $parentIds) . ") AND type='object' AND locked = 'propagate' LIMIT 1");
+        $inhertitedLocks = $this->db->fetchOne('SELECT id FROM tree_locks WHERE id IN (' . implode(',', $parentIds) . ") AND `type`='object' AND locked = 'propagate' LIMIT 1");
 
         if ($inhertitedLocks > 0) {
             return true;

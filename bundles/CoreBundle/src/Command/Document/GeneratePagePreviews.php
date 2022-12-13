@@ -77,7 +77,7 @@ class GeneratePagePreviews extends AbstractCommand
                 $parent = Document::getByPath($parentIdOrPath);
             }
             if ($parent instanceof Document) {
-                $conditions[] = 'path LIKE ' . $db->quote($parent->getRealFullPath() . '%');
+                $conditions[] = '`path` LIKE ' . $db->quote($parent->getRealFullPath() . '%');
             } else {
                 $this->writeError($parentIdOrPath . ' is not a valid id or path!');
                 exit(1);
@@ -86,7 +86,7 @@ class GeneratePagePreviews extends AbstractCommand
 
         $regex = $input->getOption('exclude-patterns');
         if ($regex) {
-            $conditions[] = 'path NOT REGEXP ' . $db->quote($regex);
+            $conditions[] = '`path` NOT REGEXP ' . $db->quote($regex);
         }
 
         $filter = "type = 'page'";

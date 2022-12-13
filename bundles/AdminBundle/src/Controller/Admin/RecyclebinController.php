@@ -66,7 +66,7 @@ class RecyclebinController extends AdminController implements KernelControllerEv
             $conditionFilters = [];
 
             if ($request->get('filterFullText')) {
-                $conditionFilters[] = 'path LIKE ' . $list->quote('%'. $list->escapeLike($request->get('filterFullText')) .'%');
+                $conditionFilters[] = '`path` LIKE ' . $list->quote('%'. $list->escapeLike($request->get('filterFullText')) .'%');
             }
 
             $filters = $request->get('filter');

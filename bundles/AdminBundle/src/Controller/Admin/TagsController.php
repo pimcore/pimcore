@@ -316,7 +316,7 @@ class TagsController extends AdminController
     private function getSubObjectIds(\Pimcore\Model\DataObject\AbstractObject $object, EventDispatcherInterface $eventDispatcher): array
     {
         $childrenList = new \Pimcore\Model\DataObject\Listing();
-        $condition = 'path LIKE ?';
+        $condition = '`path` LIKE ?';
         if (!$this->getAdminUser()->isAdmin()) {
             $userIds = $this->getAdminUser()->getRoles();
             $userIds[] = $this->getAdminUser()->getId();
@@ -346,7 +346,7 @@ class TagsController extends AdminController
     private function getSubAssetIds(\Pimcore\Model\Asset $asset, EventDispatcherInterface $eventDispatcher): array
     {
         $childrenList = new \Pimcore\Model\Asset\Listing();
-        $condition = 'path LIKE ?';
+        $condition = '`path` LIKE ?';
         if (!$this->getAdminUser()->isAdmin()) {
             $userIds = $this->getAdminUser()->getRoles();
             $userIds[] = $this->getAdminUser()->getId();
@@ -376,7 +376,7 @@ class TagsController extends AdminController
     private function getSubDocumentIds(\Pimcore\Model\Document $document, EventDispatcherInterface $eventDispatcher): array
     {
         $childrenList = new \Pimcore\Model\Document\Listing();
-        $condition = 'path LIKE ?';
+        $condition = '`path` LIKE ?';
         if (!$this->getAdminUser()->isAdmin()) {
             $userIds = $this->getAdminUser()->getRoles();
             $userIds[] = $this->getAdminUser()->getId();
