@@ -279,7 +279,7 @@ trait DataObjectActionsTrait
                     $brick->$valueSetter($value);
                 }
             } else {
-                if (!$user->isAdmin() && $languagePermissions) {
+                if ($languagePermissions) {
                     $fd = $class->getFieldDefinition($key);
                     if (!$fd) {
                         // try to get via localized fields
