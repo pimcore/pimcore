@@ -108,7 +108,9 @@ Please make sure to set your preferred storage location ***before*** migration. 
   - `EcommerceFrameworkBundle\Tracking\TrackingManager` requires session from request stack.
 - `Element\Service::getValidKey()` strips all control/unassigned, invalid and some more special (e.g. tabs, line-breaks, form-feed & vertical whitespace) characters.
 - [Data Objects]: Removed setter functions for calculated values, since they weren´t used anyway.
-
+- [Ecommerce] Elasticsearch 7 support was removed
+- [Ecommerce] Config option `es_client_params` in `index_service` was removed 
+ 
 ## 10.6.0
 - [AreabrickManagerInterface] The `enable`, `disable`, `isEnabled` and `getState` methods of `Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface` are deprecated as maintaining state of extensions is deprecated. This impacts `\Pimcore\Document\Editable\EditableHandler::isBrickEnabled()` method which is also deprecated.
 - [Twig] Pimcore now requires the `twig/extra-bundle` which eases the usage of Twig's "extra" extensions.

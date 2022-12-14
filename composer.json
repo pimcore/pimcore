@@ -152,6 +152,7 @@
   },
   "require-dev": {
     "codeception/codeception": "^5.0.3",
+    "codeception/module-symfony": "^3.1.0",
     "codeception/phpunit-wrapper": "^9",
     "pimcore/elasticsearch-client": "^1.0.0",
     "phpstan/phpstan": "^1.9.3",
