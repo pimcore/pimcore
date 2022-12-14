@@ -25,13 +25,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 interface ElasticSearchConfigInterface extends ConfigInterface
 {
     /**
-     * returns elastic search client parameters defined in the tenant config
-     *
-     * @return array
-     */
-    public function getElasticSearchClientParams(): array;
-
-    /**
      * returns condition for current subtenant
      *
      * @return array
