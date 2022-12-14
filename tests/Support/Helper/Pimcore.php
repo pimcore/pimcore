@@ -37,7 +37,6 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class Pimcore extends Module\Symfony
 {
-    protected static ?ContainerInterface $testServiceContainer = null;
 
     protected array $groups = [];
 
@@ -79,20 +78,6 @@ class Pimcore extends Module\Symfony
     public function getContainer(): ContainerInterface
     {
         return $this->kernel->getContainer();
-    }
-
-    /**
-     *
-     * @throws \Exception
-     */
-    public function grabService(string $serviceId): ?object
-    {
-        if (empty(self::$testServiceContainer)) {
-            $container = $this->getContainer();
-            self::$testServiceContainer = $container->has('test.service_container') ? $container->get('test.service_container') : $container;
-        }
-
-        return self::$testServiceContainer->get($serviceId);
     }
 
     public function _initialize(): void
