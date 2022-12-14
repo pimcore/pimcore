@@ -572,7 +572,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
         foreach ($this->getFieldDefinitions() as $fd) {
             //TODO Pimcore 11 remove method_exists call
-            if (!$fd instanceof DataContainerAwareInterface && method_exists($fd, 'classSaved')) {
+            if (!$fd instanceof DataContainerAwareInterface && ($fd instanceof ClassSavedInterface || method_exists($fd, 'classSaved'))) {
                 $fd->classSaved($class, $params);
             }
         }
