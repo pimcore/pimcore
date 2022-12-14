@@ -906,8 +906,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      * - all index updates are stored into store table only, and transferred with next ecommerce:indexservice:process-update-queue
      * - no index structure updates are allowed
      *
-     * @throws BadRequest400Exception
-     * @throws NoNodesAvailableException
+     * @throws \Exception
      */
     public function startReindexMode()
     {

@@ -20,6 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\Definition\Attribute;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\SynonymProvider\SynonymProviderInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\AbstractElasticSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\AbstractElasticSearch as DefaultElasticSearchWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
@@ -30,7 +31,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Default configuration for elastic search as product index implementation.
  *
- * @method WorkerInterface getTenantWorker()
+ * @method AbstractElasticSearch getTenantWorker()
  */
 class ElasticSearch extends AbstractConfig implements MockupConfigInterface, ElasticSearchConfigInterface
 {
