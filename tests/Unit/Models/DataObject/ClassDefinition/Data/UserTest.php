@@ -1,15 +1,28 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace Pimcore\Tests\Unit\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Model\DataObject\ClassDefinition\Data\User;
-use Pimcore\Tests\Test\TestCase;
 use function PHPUnit\Framework\assertEmpty;
 use function PHPUnit\Framework\assertNotEmpty;
+use Pimcore\Model\DataObject\ClassDefinition\Data\User;
+use Pimcore\Tests\Test\TestCase;
 
 class UserTest extends TestCase
 {
-    private const SAMPLE_USER_DATA = array(
+    private const SAMPLE_USER_DATA = [
         'name' => 'pimcoreUser',
         'title' => 'Pimcore User',
         'tooltip' => '',
@@ -25,7 +38,7 @@ class UserTest extends TestCase
         'invisible' => false,
         'visibleGridView' => false,
         'visibleSearch' => false,
-        'blockedVarsForExport' => array(),
+        'blockedVarsForExport' => [],
         'options' => null,
         'width' => '',
         'defaultValue' => null,
@@ -35,7 +48,7 @@ class UserTest extends TestCase
         'dynamicOptions' => false,
         'defaultValueGenerator' => '',
         'unique' => false,
-    );
+    ];
 
     private bool $inAdmin;
 
