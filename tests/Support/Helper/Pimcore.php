@@ -328,11 +328,6 @@ class Pimcore extends Module\Symfony
         DataObject\Localizedfield::setGetFallbackValues(true);
     }
 
-    public function makeHtmlSnapshot($name = null)
-    {
-        // TODO: Implement makeHtmlSnapshot() method.
-    }
-
     public function getGroups(): array
     {
         return $this->groups;
