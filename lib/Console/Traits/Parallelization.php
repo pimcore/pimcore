@@ -34,7 +34,8 @@ trait Parallelization
     use ParallelizationBase;
 
     /**
-     * @deprecated Deprecated since 2.0.0 and will be removed in 3.0.0. Use ParallelizationInput::configureCommand() instead.
+     * @deprecated Deprecated since webmozarts/console-parallelization 2.0.0 and will be removed in webmozarts/console-parallelization 3.0.0. Use ParallelizationInput::configureCommand() instead.
+     *
      */
     protected static function configureParallelization(Command $command): void
     {
