@@ -85,7 +85,7 @@ class Pimcore extends Module\Symfony
      *
      * @throws \Exception
      */
-    public function grabService(string $serviceId): ?object
+    public function grabService(string $serviceId): object
     {
         if (empty(self::$testServiceContainer)) {
             $container = $this->getContainer();
