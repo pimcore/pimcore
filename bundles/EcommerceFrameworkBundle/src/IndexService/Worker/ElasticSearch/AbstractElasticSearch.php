@@ -17,9 +17,8 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch;
 
 use Doctrine\DBAL\Connection;
-use Elasticsearch\Common\Exceptions\BadRequest400Exception;
-use Elasticsearch\Common\Exceptions\Missing404Exception;
-use Elasticsearch\Common\Exceptions\NoNodesAvailableException;
+use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\Exception\ClientResponseException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
@@ -53,7 +52,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      */
     protected bool $storeCustomAttributes = true;
 
-    protected ?\Elasticsearch\Client $elasticSearchClient = null;
+    protected ?Client $elasticSearchClient = null;
 
     /**
      * index name of elastic search must be lower case
@@ -126,7 +125,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         return $this->indexName . '-' . $indexVersion;
     }
 
-    public function getIndexVersion(): ?int
+    public function getIndexVersion(): int
     {
         if ($this->indexVersion === null) {
             $this->indexVersion = 0;
@@ -135,7 +134,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             try {
                 $result = $esClient->indices()->getAlias([
                     'name' => $this->indexName,
-                ]);
+                ])->asArray();
 
                 if (is_array($result)) {
                     $aliasIndexName = array_key_first($result);
@@ -147,8 +146,12 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                         }
                     }
                 }
-            } catch (Missing404Exception $e) {
-                $this->indexVersion = 0;
+            } catch (ClientResponseException $e) {
+                if ($e->getCode() === 404) {
+                    $this->indexVersion = 0;
+                } else {
+                    throw $e;
+                }
             }
         }
 
@@ -162,36 +165,16 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         return $this;
     }
 
-    public function getElasticSearchClient(): ?\Elasticsearch\Client
+    /**
+     * @param Client|null $elasticSearchClient
+     */
+    public function setElasticSearchClient(?Client $elasticSearchClient): void
     {
-        if (empty($this->elasticSearchClient)) {
-            $builder = \Elasticsearch\ClientBuilder::create();
-            if ($this->tenantConfig->getClientConfig('logging')) {
-                $builder->setLogger($this->logger);
-            }
+        $this->elasticSearchClient = $elasticSearchClient;
+    }
 
-            $esSearchParams = $this->tenantConfig->getElasticSearchClientParams();
-            $builder->setHosts($esSearchParams['hosts']);
-
-            // timeout for search queries is important, because long queries can block PHP FPM
-            // distinguish CLI, because reindexing scripts tend to run longer than frontend search queries
-            $timeoutMsParamName = php_sapi_name() == 'cli' ? 'timeoutMsBackend' : 'timeoutMs';
-            if (isset($esSearchParams[$timeoutMsParamName])) {
-                $timeoutMs = $esSearchParams[$timeoutMsParamName];
-            } else {
-                $timeoutMs = php_sapi_name() == 'cli' ? self::DEFAULT_TIMEOUT_MS_BACKEND : self::DEFAULT_TIMEOUT_MS_FRONTEND;
-            }
-            $builder->setConnectionParams([
-                'client' => [
-                    'curl' => [
-                        CURLOPT_TIMEOUT_MS => $timeoutMs,
-                    ],
-                ],
-            ]);
-
-            $this->elasticSearchClient = $builder->build();
-        }
-
+    public function getElasticSearchClient(): ?Client
+    {
         return $this->elasticSearchClient;
     }
 
@@ -470,7 +453,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             $esClient = $this->getElasticSearchClient();
             $responses = $esClient->bulk([
                 'body' => $this->bulkIndexData,
-            ]);
+            ])->asArray();
 
             // save update status
             foreach ($responses['items'] as $response) {
@@ -549,7 +532,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                 ],
             ],
         ];
-        $result = $esClient->indices()->updateAliases($params);
+        $result = $esClient->indices()->updateAliases($params)->asArray();
         if (!$result['acknowledged']) {
             //set current index version
             throw new \Exception('Switching Alias failed for ' . $this->getIndexNameVersion());
@@ -559,10 +542,11 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         $this->cleanupUnusedEsIndices();
     }
 
+
     protected function cleanupUnusedEsIndices(): void
     {
         $esClient = $this->getElasticSearchClient();
-        $stats = $esClient->indices()->stats();
+        $stats = $esClient->indices()->stats()->asArray();
         foreach ($stats['indices'] as $key => $data) {
             preg_match('/'.$this->indexName.'-(\d+)/', $key, $matches);
             if (is_array($matches) && count($matches) > 1) {
@@ -614,13 +598,11 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                 }
                 $esClient->delete([
                     'index' => $this->getIndexNameVersion(),
-                    'type' => $tenantConfig->getElasticSearchClientParams()['indexType'],
                     'id' => $objectId,
                     $this->routingParamName => $storeEntry['o_virtualProductId'],
                 ]);
-            } catch (\Exception $e) {
-                //if \Elasticsearch\Common\Exceptions\Missing404Exception <- the object is not in the index so its ok.
-                if ($e instanceof Missing404Exception == false) {
+            } catch (ClientResponseException $e) {
+                if ($e->getCode() !== 404) {
                     throw $e;
                 }
             }
@@ -636,7 +618,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
 
         $esClient = $this->getElasticSearchClient();
 
-        $result = $esClient->indices()->exists(['index' => $this->getIndexNameVersion()]);
+        $result = $esClient->indices()->exists(['index' => $this->getIndexNameVersion()])->asBool();
 
         if (!$result) {
             $indexName = $this->getIndexNameVersion();
@@ -659,7 +641,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
 
             $currentSettings = $esClient->indices()->getSettings([
                 'index' => $this->getIndexNameVersion(),
-            ]);
+            ])->asArray();
             $currentSettings = $currentSettings[$this->getIndexNameVersion()]['settings']['index'];
 
             $settingsIntersection = array_intersect_key($currentSettings, $configuredSettings);
@@ -704,7 +686,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         $esClient = $this->getElasticSearchClient();
 
         try {
-            $result = $esClient->indices()->getAlias(['index' => $this->indexName]);
+            $result = $esClient->indices()->getAlias(['index' => $this->indexName])->asArray();
         } catch (\Exception $e) {
             Logger::error((string) $e);
 
@@ -726,7 +708,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     {
         $esClient = $this->getElasticSearchClient();
         //create alias for new index if alias doesn't exist so far
-        $aliasExists = $esClient->indices()->existsAlias(['name' => $this->indexName]);
+        $aliasExists = $esClient->indices()->existsAlias(['name' => $this->indexName])->asBool();
         if (!$aliasExists) {
             Logger::info("Index-Actions - create alias for index since it doesn't exist at all. Name: " . $this->indexName);
             $params['body'] = [
@@ -739,7 +721,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                     ],
                 ],
             ];
-            $result = $esClient->indices()->updateAliases($params);
+            $result = $esClient->indices()->updateAliases($params)->asArray();
             if (!$result) {
                 throw new \Exception('Alias '.$this->indexName.' could not be created.');
             }
@@ -768,7 +750,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         $result = $esClient->indices()->create([
             'index' => $indexName,
             'body' => ['settings' => $configuredSettings],
-        ]);
+        ])->asArray();
 
         if (!$result['acknowledged']) {
             throw new \Exception('Index creation failed. IndexName: ' . $indexName);
@@ -788,7 +770,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
 
         $params = $this->getMappingParams();
         $params['index'] = $indexName;
-        $result = $esClient->indices()->putMapping($params);
+        $result = $esClient->indices()->putMapping($params)->asArray();
 
         if (!$result['acknowledged']) {
             throw new \Exception('Putting mapping to index failed. IndexName: ' . $indexName);
@@ -805,10 +787,10 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     protected function deleteEsIndexIfExisting(string $indexName)
     {
         $esClient = $this->getElasticSearchClient();
-        $result = $esClient->indices()->exists(['index' => $indexName]);
+        $result = $esClient->indices()->exists(['index' => $indexName])->asBool();
         if ($result) {
             Logger::info('Deleted index '.$indexName.'.');
-            $result = $esClient->indices()->delete(['index' => $indexName]);
+            $result = $esClient->indices()->delete(['index' => $indexName])->asArray();
             if (!array_key_exists('acknowledged', $result) && !$result['acknowledged']) {
                 Logger::error("Could not delete index {$indexName} while cleanup. Please remove the index manually.");
             }
@@ -823,7 +805,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     protected function blockIndexWrite(string $indexName)
     {
         $esClient = $this->getElasticSearchClient();
-        $result = $esClient->indices()->exists(['index' => $indexName]);
+        $result = $esClient->indices()->exists(['index' => $indexName])->asBool();
         if ($result) {
             Logger::info('Block write index '.$indexName.'.');
             $esClient->indices()->putSettings([
@@ -847,7 +829,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     protected function unblockIndexWrite(string $indexName)
     {
         $esClient = $this->getElasticSearchClient();
-        $result = $esClient->indices()->exists(['index' => $indexName]);
+        $result = $esClient->indices()->exists(['index' => $indexName])->asBool();
         if ($result) {
             Logger::info('Unlock write index '.$indexName.'.');
             $esClient->indices()->putSettings([
@@ -924,8 +906,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      * - all index updates are stored into store table only, and transferred with next ecommerce:indexservice:process-update-queue
      * - no index structure updates are allowed
      *
-     * @throws BadRequest400Exception
-     * @throws NoNodesAvailableException
+     * @throws \Exception
      */
     public function startReindexMode()
     {
@@ -986,7 +967,8 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             $esClient = $this->getElasticSearchClient();
 
             if (!$skipComparison) {
-                $indexSettingsCurrentEs = $esClient->indices()->getSettings(['index' => $indexName])[$indexName]['settings']['index'];
+                $settings = $esClient->indices()->getSettings(['index' => $indexName])->asArray();
+                $indexSettingsCurrentEs = $settings[$indexName]['settings']['index'];
                 $indexSettingsSynonymPartEs = $this->extractMinimalSynonymFiltersTreeFromIndexSettings($indexSettingsCurrentEs);
 
                 if ($indexSettingsSynonymPartEs == $indexSettingsSynonymPartLocalConfig) {
@@ -1005,7 +987,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                 'body' => [
                     'index' => $indexSettingsSynonymPartLocalConfig,
                 ],
-            ]);
+            ])->asArray();
 
             $esClient->indices()->open(['index' => $indexName]);
 
