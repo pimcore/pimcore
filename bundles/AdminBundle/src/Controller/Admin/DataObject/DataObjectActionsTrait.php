@@ -163,14 +163,13 @@ trait DataObjectActionsTrait
         LocaleServiceInterface $localeService
     ): array {
         $user = Tool\Admin::getCurrentUser();
-        $allLanguagesAllowed = false;
         $languagePermissions = [];
         if (!$user->isAdmin()) {
             $languagePermissions = $object->getPermissions('lEdit', $user);
 
-            //sets allowed all languages modification when the lEdit column is empty
-            $allLanguagesAllowed = $languagePermissions['lEdit'] == '';
-            $languagePermissions = explode(',', $languagePermissions['lEdit']);
+            if ($languagePermissions['lEdit']) {
+                $languagePermissions = explode(',', $languagePermissions['lEdit']);
+            }
         }
 
         $class = $object->getClass();
@@ -258,7 +257,7 @@ trait DataObjectActionsTrait
                     $brick->$valueSetter($value);
                 }
             } else {
-                if (!$user->isAdmin() && $languagePermissions) {
+                if ($languagePermissions) {
                     $fd = $class->getFieldDefinition($key);
                     if (!$fd) {
                         // try to get via localized fields
@@ -267,7 +266,7 @@ trait DataObjectActionsTrait
                             $field = $localized->getFieldDefinition($key);
                             if ($field) {
                                 $currentLocale = $localeService->findLocale();
-                                if (!$allLanguagesAllowed && !in_array($currentLocale, $languagePermissions)) {
+                                if (!in_array($currentLocale, $languagePermissions)) {
                                     continue;
                                 }
                             }

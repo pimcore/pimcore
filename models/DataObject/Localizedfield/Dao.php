@@ -64,7 +64,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $context = $this->model->getContext();
         if ($context) {
-            $containerType = $context['containerType'];
+            $containerType = $context['containerType'] ?? null;
             if ($containerType == 'objectbrick') {
                 $containerKey = $context['containerKey'];
 

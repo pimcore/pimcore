@@ -681,7 +681,7 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @Route("/get-export-jobs", name="pimcore_admin_asset_assethelper_getexportjobs", methods={"GET"})
+     * @Route("/get-export-jobs", name="pimcore_admin_asset_assethelper_getexportjobs", methods={"POST"})
      *
      * @param Request $request
      * @param GridHelperService $gridHelperService

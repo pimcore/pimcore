@@ -68,5 +68,8 @@ services:
     Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\DefaultElasticSearch7:
         parent: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractWorker
 
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\DefaultElasticSearch8:
+        parent: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractWorker
+
     Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFindologic:
         parent: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractWorker
