@@ -112,7 +112,7 @@ class RecyclebinController extends AdminController implements KernelControllerEv
 
                     $field = $db->quoteIdentifier($filterField);
                     if (($filter['field'] ?? false) == 'fullpath') {
-                        $field = 'CONCAT(path,filename)';
+                        $field = 'CONCAT(`path`,filename)';
                     }
 
                     if ($filter['type'] == 'date' && $operator == '=') {

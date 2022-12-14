@@ -288,7 +288,7 @@ class PageController extends DocumentControllerBase
         }
 
         $list = new Document\Listing();
-        $list->setCondition('(CONCAT(path, `key`) = ? OR id IN (SELECT id from documents_page WHERE prettyUrl = ?))
+        $list->setCondition('(CONCAT(`path`, `key`) = ? OR id IN (SELECT id from documents_page WHERE prettyUrl = ?))
             AND id != ?', [
             $path, $path, $docId,
         ]);

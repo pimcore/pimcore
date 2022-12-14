@@ -194,7 +194,7 @@ class Dao extends Model\Element\Dao
     public function updateChildPaths(string $oldPath): array
     {
         //get documents to empty their cache
-        $documents = $this->db->fetchAllAssociative('SELECT id, CONCAT(path,`key`) as `path` FROM documents WHERE `path` like ?', [Helper::escapeLike($oldPath) . '%']);
+        $documents = $this->db->fetchAllAssociative('SELECT id, CONCAT(`path`,`key`) as `path` FROM documents WHERE `path` like ?', [Helper::escapeLike($oldPath) . '%']);
 
         $userId = '0';
         if ($user = \Pimcore\Tool\Admin::getCurrentUser()) {
@@ -203,7 +203,7 @@ class Dao extends Model\Element\Dao
 
         //update documents child paths
         // we don't update the modification date here, as this can have side-effects when there's an unpublished version for an element
-        $this->db->executeQuery('update documents set `path` = replace(path,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . "), userModification = '" . $userId . "' where `path` like " . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
+        $this->db->executeQuery('update documents set `path` = replace(`path`,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . "), userModification = '" . $userId . "' where `path` like " . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
 
         //update documents child permission paths
         $this->db->executeQuery('update users_workspaces_document set cpath = replace(cpath,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . ') where cpath like ' . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
@@ -224,7 +224,7 @@ class Dao extends Model\Element\Dao
         $path = null;
 
         try {
-            $path = $this->db->fetchOne('SELECT CONCAT(path,`key`) as `path` FROM documents WHERE id = ?', [$this->model->getId()]);
+            $path = $this->db->fetchOne('SELECT CONCAT(`path`,`key`) as `path` FROM documents WHERE id = ?', [$this->model->getId()]);
         } catch (\Exception $e) {
             Logger::error('could not  get current document path from DB');
         }

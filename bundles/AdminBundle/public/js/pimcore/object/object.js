@@ -568,7 +568,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
-                text: t(this.data.general.title),
+                text: t(this.data.general.classTitle),
                 scale: "medium"
             });
 
@@ -905,7 +905,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         return {
             id: this.data.general.id,
             path: this.data.general.fullpath,
-            parentid: this.data.general.parentid,
+            parentid: this.data.general.parentId,
             classid: this.data.general.classId,
             "class": this.data.general.className,
             modificationdate: this.data.general.modificationDate,

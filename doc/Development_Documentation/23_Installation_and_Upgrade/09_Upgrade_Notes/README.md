@@ -109,7 +109,7 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - `Element\Service::getValidKey()` strips all control/unassigned, invalid and some more special (e.g. tabs, line-breaks, form-feed & vertical whitespace) characters.
 - [Data Objects]: Removed setter functions for calculated values, since they weren´t used anyway.
 - [DataObjects] Removed `o_` prefix for data object properties and database columns.
-- [DataObjects] Due to the removal of the `o_` prefix the property names `hasChildren`, `siblings`, `hasSiblings`, `childrenSortBy`, `childrenSortOrder`, `versionCount`, `dirtyLanguages` and `dirtyFields`
+- [DataObjects] Due to the removal of the `o_` prefix the property names `classTitle`, `hasChildren`, `siblings`, `hasSiblings`, `childrenSortBy`, `childrenSortOrder`, `versionCount`, `dirtyLanguages` and `dirtyFields`
    were added to the list of reserved words. Please check your implementation and rename the properties as necessary. 
 - [Ecommerce][IndexService] Please make sure to rebuild your product index to make sure changes apply accordingly (this is relevant for mysql and elasticsearch indices). As an alternative you could manually rename and remove `o_` from all index columns/fields.
 

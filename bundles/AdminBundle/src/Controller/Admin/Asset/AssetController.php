@@ -677,7 +677,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $list = new Asset\Listing();
             $list->setCondition('`path` LIKE ?', [Helper::escapeLike($parentAsset->getRealFullPath()) . '/%']);
             $list->setLimit((int)$request->get('amount'));
-            $list->setOrderKey('LENGTH(path)', false);
+            $list->setOrderKey('LENGTH(`path`)', false);
             $list->setOrder('DESC');
 
             $deletedItems = [];
@@ -1835,9 +1835,9 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $userIds = $this->getAdminUser()->getRoles();
             $userIds[] = $this->getAdminUser()->getId();
             $conditionFilters[] = ' (
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(`path`, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(`path`, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                  )';
         }
 
@@ -1933,7 +1933,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 // get amount of children
                 $list = new Asset\Listing();
                 $list->setCondition('`path` LIKE ?', [$list->escapeLike($asset->getRealFullPath()) . '/%']);
-                $list->setOrderKey('LENGTH(path)', false);
+                $list->setOrderKey('LENGTH(`path`)', false);
                 $list->setOrder('ASC');
                 $childIds = $list->loadIdList();
 
@@ -2083,9 +2083,9 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
                 $conditionFilters[] = ' (
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(`path`, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(`path`, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                  )';
             }
 
@@ -2093,7 +2093,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
             $assetList = new Asset\Listing();
             $assetList->setCondition($condition);
-            $assetList->setOrderKey('LENGTH(path)', false);
+            $assetList->setOrderKey('LENGTH(`path`)', false);
             $assetList->setOrder('ASC');
 
             for ($i = 0; $i < ceil($assetList->getTotalCount() / $filesPerJob); $i++) {
@@ -2164,9 +2164,9 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                     $userIds = $this->getAdminUser()->getRoles();
                     $userIds[] = $this->getAdminUser()->getId();
                     $conditionFilters[] = ' (
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(`path`, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(`path`, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                  )';
                 }
 
@@ -2174,7 +2174,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
                 $assetList = new Asset\Listing();
                 $assetList->setCondition($condition);
-                $assetList->setOrderKey('LENGTH(path) ASC, id ASC', false);
+                $assetList->setOrderKey('LENGTH(`path`) ASC, id ASC', false);
                 $assetList->setOffset((int)$request->get('offset'));
                 $assetList->setLimit((int)$request->get('limit'));
 

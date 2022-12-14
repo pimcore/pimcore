@@ -417,7 +417,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                     $objectData['general'][$key] = $value;
                 }
             }
-            $objectData['general']['title'] = $objectFromDatabase->getClass()->getTitle() ?: $objectFromDatabase->getClassName();
+            $objectData['general']['classTitle'] = $objectFromDatabase->getClass()->getTitle() ?: $objectFromDatabase->getClassName();
             $objectData['general']['fullpath'] = $objectFromDatabase->getRealFullPath();
             $objectData['general']['locked'] = $objectFromDatabase->isLocked();
             $objectData['general']['php'] = [
@@ -1061,7 +1061,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             $list = new DataObject\Listing();
             $list->setCondition('`path` LIKE ' . $list->quote($list->escapeLike($parentObject->getRealFullPath()) . '/%'));
             $list->setLimit((int)$request->get('amount'));
-            $list->setOrderKey('LENGTH(path)', false);
+            $list->setOrderKey('LENGTH(`path`)', false);
             $list->setOrder('DESC');
 
             $deletedItems = [];
@@ -1882,7 +1882,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 // get amount of children
                 $list = new DataObject\Listing();
                 $list->setCondition('`path` LIKE ' . $list->quote($list->escapeLike($object->getRealFullPath()) . '/%'));
-                $list->setOrderKey('LENGTH(path)', false);
+                $list->setOrderKey('LENGTH(`path`)', false);
                 $list->setOrder('ASC');
                 $list->setObjectTypes(DataObject::$types);
                 $childIds = $list->loadIdList();

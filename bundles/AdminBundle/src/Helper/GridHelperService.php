@@ -313,9 +313,9 @@ class GridHelperService
                     } elseif (in_array($filterField, $systemFields)) {
                         // system field
                         if ($filterField == 'fullpath') {
-                            $conditionPartsFilters[] = 'concat(path, key) ' . $operator . ' ' . $db->quote('%' . $filter['value'] . '%');
+                            $conditionPartsFilters[] = 'concat(`path`, `key`) ' . $operator . ' ' . $db->quote('%' . $filter['value'] . '%');
                         } elseif ($filterField == 'key') {
-                            $conditionPartsFilters[] = 'key ' . $operator . ' ' . $db->quote('%' . $filter['value'] . '%');
+                            $conditionPartsFilters[] = '`key` ' . $operator . ' ' . $db->quote('%' . $filter['value'] . '%');
                         } elseif ($filterField == 'id') {
                             $conditionPartsFilters[] = 'oo_id ' . $operator . ' ' . $db->quote($filter['value']);
                         } else {
@@ -528,7 +528,7 @@ class GridHelperService
                 if (array_key_exists($orderKey, $colMappings)) {
                     $orderKey = $colMappings[$orderKey];
                 } elseif ($orderKey === 'fullpath') {
-                    $orderKey = 'CAST(CONCAT(path, key) AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
+                    $orderKey = 'CAST(CONCAT(`path`, `key`) AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
                     $doNotQuote = true;
                 } elseif ($class->getFieldDefinition($orderKey) instanceof ClassDefinition\Data\QuantityValue) {
                     $orderKey = 'concat(' . $orderKey . '__unit, ' . $orderKey . '__value)';
@@ -574,9 +574,9 @@ class GridHelperService
             $userIds = $adminUser->getRoles();
             $userIds[] = $adminUser->getId();
             $conditionFilters[] = ' (
-                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path,key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(`path`,`key`),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
-                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path,key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(`path`,`key`))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                  )';
         }
 
@@ -688,7 +688,7 @@ class GridHelperService
         if ($sortingSettings['orderKey']) {
             $orderKey = explode('~', $sortingSettings['orderKey'])[0];
             if ($orderKey === 'fullpath') {
-                $orderKey = 'CAST(CONCAT(path,filename) AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
+                $orderKey = 'CAST(CONCAT(`path`,filename) AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
                 $orderKeyQuote = false;
             } elseif ($orderKey === 'filename') {
                 $orderKey = 'CAST(filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
@@ -767,7 +767,7 @@ class GridHelperService
 
                 if (isset($filterDef[1]) && $filterDef[1] == 'system') {
                     if ($filterField == 'fullpath') {
-                        $filterField = 'CONCAT(path,filename)';
+                        $filterField = 'CONCAT(`path`,filename)';
                     } else {
                         $filterField = $db->quoteIdentifier($filterField);
                     }
@@ -787,9 +787,9 @@ class GridHelperService
             $userIds = $adminUser->getRoles();
             $userIds[] = $adminUser->getId();
             $conditionFilters[] = ' (
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(`path`, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
-                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(`path`, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                  )';
         }
 

@@ -295,7 +295,7 @@ class Dao extends Model\Element\Dao
         $path = null;
 
         try {
-            $path = $this->db->fetchOne('SELECT CONCAT(path,filename) as `path` FROM assets WHERE id = ?', [$this->model->getId()]);
+            $path = $this->db->fetchOne('SELECT CONCAT(`path`,filename) as `path` FROM assets WHERE id = ?', [$this->model->getId()]);
         } catch (\Exception $e) {
             Logger::error('could not get  current asset path from DB');
         }
@@ -341,7 +341,7 @@ class Dao extends Model\Element\Dao
 
             $inheritedPermission = $this->isInheritingPermission('list', $userIds);
 
-            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_asset uwa WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(path,filename),cpath)=1 AND
+            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_asset uwa WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(`path`,filename),cpath)=1 AND
                 NOT EXISTS(SELECT list FROM users_workspaces_asset WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwa.cpath))';
             $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
 
@@ -402,7 +402,7 @@ class Dao extends Model\Element\Dao
 
             $inheritedPermission = $this->isInheritingPermission('list', $userIds);
 
-            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_asset uwa WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(path,filename),cpath)=1 AND
+            $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_asset uwa WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(`path`,filename),cpath)=1 AND
                 NOT EXISTS(SELECT list FROM users_workspaces_asset WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwa.cpath))';
             $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
 

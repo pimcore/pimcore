@@ -174,7 +174,7 @@ class Dao extends Model\Element\Dao
 
             //update object child paths
             // we don't update the modification date here, as this can have side-effects when there's an unpublished version for an element
-            $this->db->executeQuery('update objects set `path` = replace(path,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . "), userModification = '" . $userId . "' where `path` like " . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
+            $this->db->executeQuery('update objects set `path` = replace(`path`,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . "), userModification = '" . $userId . "' where `path` like " . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
 
             //update object child permission paths
             $this->db->executeQuery('update users_workspaces_object set cpath = replace(cpath,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . ') where cpath like ' . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
@@ -206,7 +206,7 @@ class Dao extends Model\Element\Dao
         $path = null;
 
         try {
-            $path = $this->db->fetchOne('SELECT CONCAT(path,`key`) as `path` FROM objects WHERE id = ?', [$this->model->getId()]);
+            $path = $this->db->fetchOne('SELECT CONCAT(`path`,`key`) as `path` FROM objects WHERE id = ?', [$this->model->getId()]);
         } catch (\Exception $e) {
             Logger::error('could not get current object path from DB');
         }
@@ -419,7 +419,7 @@ class Dao extends Model\Element\Dao
      */
     public function getTypeById(int $id): array
     {
-        $t = $this->db->fetchAssociative('SELECT type,className,classId FROM objects WHERE id = ?', [$id]);
+        $t = $this->db->fetchAssociative('SELECT `type`,`className`,`classId` FROM objects WHERE `id` = ?', [$id]);
 
         if (!$t) {
             throw new Model\Exception\NotFoundException('object with ID ' . $id . ' not found');

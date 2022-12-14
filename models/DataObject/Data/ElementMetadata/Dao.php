@@ -50,7 +50,7 @@ class Dao extends DataObject\Data\AbstractMetadata\Dao
     public function load(DataObject\Concrete $source, int $destinationId, string $fieldname, string $ownertype, string $ownername, string $position, int $index, string $destinationType = 'object'): ?DataObject\Data\ElementMetadata
     {
         if ($destinationType == 'object') {
-            $typeQuery = " AND (type = 'object' or `type` = '')";
+            $typeQuery = " AND (`type` = 'object' or `type` = '')";
         } else {
             $typeQuery = ' AND `type` = ' . $this->db->quote($destinationType);
         }

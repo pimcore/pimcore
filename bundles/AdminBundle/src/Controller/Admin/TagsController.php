@@ -321,9 +321,9 @@ class TagsController extends AdminController
             $userIds = $this->getAdminUser()->getRoles();
             $userIds[] = $this->getAdminUser()->getId();
             $condition .= ' AND (
-                (SELECT `view` FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path,key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                (SELECT `view` FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ') and LOCATE(CONCAT(`path`,`key`),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                     OR
-                (SELECT `view` FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path,key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                (SELECT `view` FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(`path`,`key`))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
              )';
         }
 
@@ -351,9 +351,9 @@ class TagsController extends AdminController
             $userIds = $this->getAdminUser()->getRoles();
             $userIds[] = $this->getAdminUser()->getId();
             $condition .= ' AND (
-                (SELECT `view` FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path,filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                (SELECT `view` FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') and LOCATE(CONCAT(`path`,filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                     OR
-                (SELECT `view` FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path,filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                (SELECT `view` FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(`path`,filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
             )';
         }
 
@@ -381,9 +381,9 @@ class TagsController extends AdminController
             $userIds = $this->getAdminUser()->getRoles();
             $userIds[] = $this->getAdminUser()->getId();
             $condition .= ' AND (
-                (SELECT `view` FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path,`key`),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                (SELECT `view` FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ') and LOCATE(CONCAT(`path`,`key`),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                     OR
-                (SELECT `view` FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path,`key`))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                (SELECT `view` FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(`path`,`key`))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
             )';
         }
 

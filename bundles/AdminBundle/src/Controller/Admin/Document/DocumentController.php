@@ -180,7 +180,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
                 $inheritedPermission = $document->getDao()->isInheritingPermission('list', $userIds);
 
-                $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_document uwd WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(path,`key`),cpath)=1 AND
+                $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_document uwd WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(`path`,`key`),cpath)=1 AND
                 NOT EXISTS(SELECT list FROM users_workspaces_document WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwd.cpath))';
                 $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
 
@@ -416,7 +416,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
             $list = new Document\Listing();
             $list->setCondition('`path` LIKE ?', [$list->escapeLike($parentDocument->getRealFullPath()) . '/%']);
             $list->setLimit((int)$request->get('amount'));
-            $list->setOrderKey('LENGTH(path)', false);
+            $list->setOrderKey('LENGTH(`path`)', false);
             $list->setOrder('DESC');
 
             $documents = $list->load();
@@ -931,7 +931,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 // get amount of children
                 $list = new Document\Listing();
                 $list->setCondition('`path` LIKE ?', [$list->escapeLike($document->getRealFullPath()) . '/%']);
-                $list->setOrderKey('LENGTH(path)', false);
+                $list->setOrderKey('LENGTH(`path`)', false);
                 $list->setOrder('ASC');
                 $childIds = $list->loadIdList();
 
