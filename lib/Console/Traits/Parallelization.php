@@ -33,6 +33,9 @@ trait Parallelization
 
     use ParallelizationBase;
 
+    /**
+     * @deprecated Deprecated since 2.0.0 and will be removed in 3.0.0. Use ParallelizationInput::configureCommand() instead.
+     */
     protected static function configureParallelization(Command $command): void
     {
         // we need to override WebmozartParallelization::configureParallelization here
@@ -69,7 +72,6 @@ trait Parallelization
                 null,
                 InputOption::VALUE_OPTIONAL,
                 'Sets the number of items to process per child process or in a batch',
-                '50'
             )
             ->addOption(
                 'segment-size',
@@ -88,20 +90,12 @@ trait Parallelization
         ErrorHandler $errorHandler
     ): ParallelExecutorFactory {
         return ParallelExecutorFactory::create(...func_get_args())
-            ->withSegmentSize($this->getSegmentSize())
-            ->withScriptPath($this->getConsolePath())
             ->withRunBeforeFirstCommand($this->runBeforeFirstCommand(...))
             ->withRunAfterLastCommand($this->runAfterLastCommand(...))
             ->withRunAfterBatch($this->runAfterBatch(...));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getSegmentSize(): int
-    {
-        return (int)$this->input->getOption('batch-size');
-    }
+
 
     protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
     {
@@ -156,10 +150,5 @@ trait Parallelization
             $this->lock->release();
             $this->lock = null;
         }
-    }
-
-    public function getConsolePath(): string
-    {
-        return PIMCORE_PROJECT_ROOT . '/bin/console';
     }
 }
