@@ -26,23 +26,12 @@ use Pimcore\Logger;
  */
 class DefaultElasticSearch8 extends AbstractElasticSearch
 {
-    /**
-     * @var Client|null
-     */
-    protected $elasticSearchClient = null;
-
-    /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch\DefaultElasticSearch8
-     */
-    public function getProductList()
+    public function getProductList(): \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch\DefaultElasticSearch8
     {
         return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch\DefaultElasticSearch8($this->tenantConfig);
     }
 
-    /**
-     * @return int
-     */
-    public function getIndexVersion()
+    public function getIndexVersion(): int
     {
         if ($this->indexVersion === null) {
             $this->indexVersion = 0;
@@ -83,10 +72,7 @@ class DefaultElasticSearch8 extends AbstractElasticSearch
         $this->elasticSearchClient = $elasticSearchClient;
     }
 
-    /**
-     * @return Client|null
-     */
-    public function getElasticSearchClient()
+    public function getElasticSearchClient(): ?\Elasticsearch\Client
     {
         return $this->elasticSearchClient;
     }

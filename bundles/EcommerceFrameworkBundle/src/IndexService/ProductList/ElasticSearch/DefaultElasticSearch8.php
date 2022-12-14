@@ -21,12 +21,8 @@ class DefaultElasticSearch8 extends AbstractElasticSearch
 {
     /**
      * send a request to elasticsearch
-     *
-     * @param array $params
-     *
-     * @return array
      */
-    protected function sendRequest(array $params)
+    protected function sendRequest(array $params): array
     {
         /**
          * @var Client $esClient
