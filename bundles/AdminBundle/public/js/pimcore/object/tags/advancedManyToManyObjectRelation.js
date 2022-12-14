@@ -218,10 +218,14 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 let renderer = null;
                 let listeners = null;
 
-                if (this.fieldConfig.columns[i].type == "number" && !readOnly) {
+            if (this.fieldConfig.columns[i].type == "number") {
+                if(!readOnly) {
                 cellEditor = function() {
                         return new Ext.form.NumberField({});
                     }.bind();
+                }
+
+                renderer = Ext.util.Format.numberRenderer();
                 } else if (this.fieldConfig.columns[i].type == "text" && !readOnly) {
                 cellEditor = function() {
                         return new Ext.form.TextField({});
