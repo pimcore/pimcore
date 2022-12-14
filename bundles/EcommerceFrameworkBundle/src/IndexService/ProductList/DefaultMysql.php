@@ -124,10 +124,10 @@ class DefaultMysql implements ProductListInterface
      * Fieldname is optional but highly recommended - needed for resetting condition based on fieldname
      * and exclude functionality in group by results
      *
-     * @param string $condition
+     * @param string|array $condition
      * @param string $fieldname
      */
-    public function addQueryCondition(string $condition, string $fieldname = '')
+    public function addQueryCondition(string|array $condition, string $fieldname = '')
     {
         $this->products = null;
         $this->queryConditions[$fieldname][] = $condition;

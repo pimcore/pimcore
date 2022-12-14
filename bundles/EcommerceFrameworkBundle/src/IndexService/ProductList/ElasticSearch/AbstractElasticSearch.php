@@ -63,7 +63,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
 
     protected ?string $order = null;
 
-    protected string|array $orderKey;
+    protected null|string|array $orderKey = null;
 
     protected bool $orderByPrice = false;
 
@@ -219,10 +219,10 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * Fieldname is optional but highly recommended - needed for resetting condition based on fieldname
      * and exclude functionality in group by results
      *
-     * @param string $condition
+     * @param string|array $condition
      * @param string $fieldname - must be set for elastic search
      */
-    public function addQueryCondition(string $condition, string $fieldname = '')
+    public function addQueryCondition(string|array $condition, string $fieldname = '')
     {
         $this->queryConditions[$fieldname][] = $condition;
         $this->preparedGroupByValuesLoaded = false;
@@ -315,7 +315,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
 
     public function getOrderKey(): array|string
     {
-        return $this->orderKey;
+        return $this->orderKey ?? '';
     }
 
     /**
@@ -417,7 +417,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
         $this->products = $this->productPositionMap = [];
         $i = 0;
         foreach ($objectRaws as $raw) {
-            $product = $this->loadElementById($raw);
+            $product = $this->loadElementById((int) $raw);
             if ($product) {
                 $this->products[] = $product;
                 $this->productPositionMap[$product->getId()] = $i;
@@ -452,7 +452,6 @@ abstract class AbstractElasticSearch implements ProductListInterface
 
         $params = [];
         $params['index'] = $this->getIndexName();
-        $params['type'] = $this->getTenantConfig()->getElasticSearchClientParams()['indexType'];
         $params['track_total_hits'] = true;
         $params['rest_total_hits_as_int'] = true;
 
