@@ -339,8 +339,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         }
 
         $data = $data['data'];
-        $activeGroups = $data['activeGroups'];
-        $groupCollectionMapping = $data['groupCollectionMapping'];
+        $activeGroups = $data['activeGroups'] ?? [];
+        $groupCollectionMapping = $data['groupCollectionMapping'] ?? [];
 
         $correctedMapping = [];
 

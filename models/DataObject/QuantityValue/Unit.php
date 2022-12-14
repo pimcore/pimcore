@@ -38,7 +38,7 @@ class Unit extends Model\AbstractModel
 
     protected string $longname;
 
-    protected string $baseunit;
+    protected ?string $baseunit = null;
 
     protected string $reference;
 
