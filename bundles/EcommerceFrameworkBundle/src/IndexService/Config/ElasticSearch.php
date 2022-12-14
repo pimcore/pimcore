@@ -31,7 +31,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Default configuration for elastic search as product index implementation.
  *
- * @method AbstractElasticSearch getTenantWorker()
  */
 class ElasticSearch extends AbstractConfig implements MockupConfigInterface, ElasticSearchConfigInterface
 {
