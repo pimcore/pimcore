@@ -30,7 +30,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Default configuration for elastic search as product index implementation.
  *
- * @method DefaultElasticSearchWorker getTenantWorker()
  */
 class ElasticSearch extends AbstractConfig implements MockupConfigInterface, ElasticSearchConfigInterface
 {
@@ -127,12 +126,6 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         // TODO validate client config and other settings/params?
         $this->clientConfig = $options['client_config'];
         $this->indexSettings = $options['index_settings'];
-        $this->elasticSearchClientParams = $options['es_client_params'];
-
-        //add default type for elasticsearch
-        if (empty($this->elasticSearchClientParams['indexType'])) {
-            $this->elasticSearchClientParams['indexType'] = '_doc';
-        }
     }
 
     protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
@@ -140,7 +133,6 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         $arrayFields = [
             'client_config',
             'index_settings',
-            'es_client_params',
             'mapping',
         ];
 
@@ -161,8 +153,6 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         $resolver->setDefined('es_client_name');
         $resolver->setAllowedTypes('es_client_name', 'string');
 
-        //set options to deprecated
-        $resolver->setDeprecated('es_client_params');
     }
 
     protected function extractPossibleFirstSubFieldnameParts(string $fieldName): array
@@ -246,11 +236,6 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     public function getIndexSettings(): array
     {
         return $this->indexSettings;
-    }
-
-    public function getElasticSearchClientParams(): array
-    {
-        return $this->elasticSearchClientParams;
     }
 
     /**

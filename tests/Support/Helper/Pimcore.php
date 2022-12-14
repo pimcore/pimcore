@@ -37,8 +37,6 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class Pimcore extends Module\Symfony
 {
-    protected static ?ContainerInterface $testServiceContainer = null;
-
     protected array $groups = [];
 
     public function __construct(ModuleContainer $moduleContainer, $config = null)
@@ -81,20 +79,6 @@ class Pimcore extends Module\Symfony
         return $this->kernel->getContainer();
     }
 
-    /**
-     *
-     * @throws \Exception
-     */
-    public function grabService(string $serviceId): ?object
-    {
-        if (empty(self::$testServiceContainer)) {
-            $container = $this->getContainer();
-            self::$testServiceContainer = $container->has('test.service_container') ? $container->get('test.service_container') : $container;
-        }
-
-        return self::$testServiceContainer->get($serviceId);
-    }
-
     public function _initialize(): void
     {
         // don't initialize the kernel multiple times if running multiple suites
@@ -134,6 +118,7 @@ class Pimcore extends Module\Symfony
 
         // dispatch kernel booted event - will be used from services which need to reset state between tests
         $this->kernel->getContainer()->get('event_dispatcher')->dispatch(new GenericEvent(), TestEvents::KERNEL_BOOTED);
+
     }
 
     protected function setupPimcoreDirectories(): void
@@ -296,6 +281,10 @@ class Pimcore extends Module\Symfony
 
     public function _before(TestInterface $test): void
     {
+        //need to load initialize that service first, before module/symfony does its magic
+        //related to https://github.com/pimcore/pimcore/pull/10331
+        $this->grabService(\Pimcore\Helper\LongRunningHelper::class);
+
         parent::_before($test);
 
         $this->groups = $test->getMetadata()->getGroups();
@@ -328,7 +317,7 @@ class Pimcore extends Module\Symfony
         DataObject\Localizedfield::setGetFallbackValues(true);
     }
 
-    public function makeHtmlSnapshot($name = null)
+    public function makeHtmlSnapshot(?string $name = null): void
     {
         // TODO: Implement makeHtmlSnapshot() method.
     }
