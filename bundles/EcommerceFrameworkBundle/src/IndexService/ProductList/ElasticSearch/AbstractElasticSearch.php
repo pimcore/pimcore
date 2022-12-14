@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch;
 
 use Elastic\Elasticsearch\Client;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface;
@@ -1163,10 +1164,16 @@ abstract class AbstractElasticSearch implements ProductListInterface
      */
     protected function sendRequest(array $params): array
     {
+
+        $worker = $this->tenantConfig->getTenantWorker();
+        if(!$worker instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\AbstractElasticSearch) {
+            throw new InvalidConfigException('Invalid worker configured, AbstractElasticSearch compatible worker expected.');
+        }
+
         /**
          * @var Client $esClient
          */
-        $esClient = $this->tenantConfig->getTenantWorker()->getElasticSearchClient();
+        $esClient = $worker->getElasticSearchClient();
         $result = [];
 
         if ($esClient instanceof Client) {
