@@ -282,6 +282,7 @@ class Pimcore extends Module\Symfony
     public function _before(TestInterface $test): void
     {
         //need to load initialize that service first, before module/symfony does its magic
+        //related to https://github.com/pimcore/pimcore/pull/10331
         $this->grabService(\Pimcore\Helper\LongRunningHelper::class);
 
         parent::_before($test);
