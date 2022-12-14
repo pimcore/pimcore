@@ -75,3 +75,5 @@
   - Use `Pimcore\Db\Helper::queryIgnoreError()` instead of `queryIgnoreError()`
   - Use `Pimcore\Db\Helper::selectAndDeleteWhere()` instead of `selectAndDeleteWhere()`
   - Use `Pimcore\Db\Helper::escapeLike()` instead of `escapeLike()`
+
+- [Ecommerce] Switch to ElasticSearch8 implementations in case you are using elasticsearch indices. 
