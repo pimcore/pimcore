@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
+use Elastic\Elasticsearch\Client;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface;
@@ -1161,39 +1161,30 @@ abstract class AbstractElasticSearch implements ProductListInterface
 
     /**
      * send a request to elasticsearch
-     *
-     * @param array $params
-     *
-     * @return array
      */
     protected function sendRequest(array $params): array
     {
-        $tenantWorker = $this->tenantConfig->getTenantWorker();
-        if (!($tenantWorker instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\AbstractElasticSearch)) {
-            throw new InvalidConfigException('Invalid tenant worker configured. Should be instance of AbstractElasticSearch.');
-        }
-
         /**
-         * @var \Elasticsearch\Client $esClient
+         * @var Client $esClient
          */
-        $esClient = $tenantWorker->getElasticSearchClient();
+        $esClient = $this->tenantConfig->getTenantWorker()->getElasticSearchClient();
         $result = [];
 
-        if ($esClient instanceof \Elasticsearch\Client) {
+        if ($esClient instanceof Client) {
             if ($this->doScrollRequest) {
                 $params = array_merge(['scroll' => $this->scrollRequestKeepAlive], $params);
                 //kind of dirty hack :/
                 $params['body']['size'] = $this->getLimit();
             }
 
-            $result = $esClient->search($params);
+            $result = $esClient->search($params)->asArray();
 
             if ($this->doScrollRequest) {
                 $additionalHits = [];
                 $scrollId = $result['_scroll_id'];
 
                 while (true) {
-                    $additionalResult = $esClient->scroll(['scroll_id' => $scrollId, 'scroll' => $this->scrollRequestKeepAlive]);
+                    $additionalResult = $esClient->scroll(['scroll_id' => $scrollId, 'scroll' => $this->scrollRequestKeepAlive])->asArray();
 
                     if (count($additionalResult['hits']['hits'])) {
                         $additionalHits = array_merge($additionalHits, $additionalResult['hits']['hits']);
