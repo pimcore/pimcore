@@ -73,7 +73,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
             }
         }
 
-        return $data;
+        return $data ? (string) $data : null;
     }
 
     /**
