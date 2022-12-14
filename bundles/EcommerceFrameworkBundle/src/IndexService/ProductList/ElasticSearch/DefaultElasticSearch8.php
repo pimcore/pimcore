@@ -15,9 +15,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch;
 
-use Elastic\Elasticsearch\Client;
-
 class DefaultElasticSearch8 extends AbstractElasticSearch
 {
-
 }

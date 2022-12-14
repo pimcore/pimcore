@@ -118,7 +118,6 @@ class Pimcore extends Module\Symfony
 
         // dispatch kernel booted event - will be used from services which need to reset state between tests
         $this->kernel->getContainer()->get('event_dispatcher')->dispatch(new GenericEvent(), TestEvents::KERNEL_BOOTED);
-
     }
 
     protected function setupPimcoreDirectories(): void

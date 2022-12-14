@@ -1164,9 +1164,8 @@ abstract class AbstractElasticSearch implements ProductListInterface
      */
     protected function sendRequest(array $params): array
     {
-
         $worker = $this->tenantConfig->getTenantWorker();
-        if(!$worker instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\AbstractElasticSearch) {
+        if (!$worker instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\AbstractElasticSearch) {
             throw new InvalidConfigException('Invalid worker configured, AbstractElasticSearch compatible worker expected.');
         }
 

@@ -542,7 +542,6 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         $this->cleanupUnusedEsIndices();
     }
 
-
     protected function cleanupUnusedEsIndices(): void
     {
         $esClient = $this->getElasticSearchClient();

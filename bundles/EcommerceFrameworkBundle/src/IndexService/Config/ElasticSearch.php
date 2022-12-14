@@ -152,7 +152,6 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
 
         $resolver->setDefined('es_client_name');
         $resolver->setAllowedTypes('es_client_name', 'string');
-
     }
 
     protected function extractPossibleFirstSubFieldnameParts(string $fieldName): array

@@ -24,7 +24,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
  */
 interface ElasticSearchConfigInterface extends ConfigInterface
 {
-
     /**
      * returns condition for current subtenant
      *
