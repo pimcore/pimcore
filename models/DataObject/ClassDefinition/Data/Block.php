@@ -1146,7 +1146,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return '\\' .DataObject\Data\BlockElement::class . '[][]';
     }
 
-    public function normalize(mixed $value, array $params = []): array
+    public function normalize(mixed $value, array $params = []): ?array
     {
         $result = null;
         if ($value) {
