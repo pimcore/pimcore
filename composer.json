@@ -147,16 +147,18 @@
   "conflict": {
     "symfony/symfony": "*",
     "doctrine/doctrine-migrations-bundle": "3.1.0",
-    "sabre/dav": "4.2.2"
+    "sabre/dav": "4.2.2",
+    "thecodingmachine/safe": "<2.0"
   },
   "require-dev": {
     "codeception/codeception": "^5.0.3",
     "codeception/phpunit-wrapper": "^9",
-    "phpstan/phpstan": "1.9.2",
+    "pimcore/elasticsearch-client": "^1.0.0",
+    "phpstan/phpstan": "^1.9.3",
     "phpstan/phpstan-symfony": "^1.2.14",
     "phpunit/phpunit": "^9.3",
     "spiritix/php-chrome-html2pdf": "^1.6",
-    "elasticsearch/elasticsearch": "^7.11",
+    "elasticsearch/elasticsearch": "^8.0",
     "composer/composer": "*",
     "chrome-php/chrome": "^1.4.0",
     "webmozarts/console-parallelization": "^2.0.0-beta.2"

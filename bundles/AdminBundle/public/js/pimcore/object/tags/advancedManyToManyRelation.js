@@ -113,10 +113,14 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             var renderer = null;
             var listeners = null;
 
-            if (this.fieldConfig.columns[i].type == "number" && !readOnly) {
-                cellEditor = function () {
-                    return new Ext.form.NumberField({});
-                };
+            if (this.fieldConfig.columns[i].type == "number") {
+                if(!readOnly) {
+                    cellEditor = function () {
+                        return new Ext.form.NumberField({});
+                    };
+                }
+
+                renderer = Ext.util.Format.numberRenderer();
             } else if (this.fieldConfig.columns[i].type == "text" && !readOnly) {
                 cellEditor = function () {
                     return new Ext.form.TextField({});
@@ -820,7 +824,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
 
     uploadDialog: function () {
         if (!this.fieldConfig.allowMultipleAssignments || (this.fieldConfig["maxItems"] && this.fieldConfig["maxItems"] >= 1)) {
-            if ((this.store.getData().getSource() || this.store.getData()).count() >= this.fieldConfig.maxItems) {
+            if (this.fieldConfig.maxItems && (this.store.getData().getSource() || this.store.getData()).count() >= this.fieldConfig.maxItems) {
                 Ext.Msg.alert(t("error"), t("limit_reached"));
                 return true;
             }

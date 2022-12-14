@@ -18,6 +18,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
     dirty: false,
     addedTypes: {},
     preventDelete: {},
+    inheritedCount: 0,
 
     initialize: function (data, fieldConfig) {
 
@@ -236,7 +237,12 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             if (!this.layoutDefinitions[type]) {
                 return;
             }
-            if (this.fieldConfig.maxItems && this.getCurrentElementsCount() >= this.fieldConfig.maxItems) {
+
+            if(blockData && blockData.inherited) {
+                this.inheritedCount++;
+            }
+
+            if (this.fieldConfig.maxItems && this.getCurrentElementsCount() >= this.fieldConfig.maxItems + this.inheritedCount) {
                 Ext.Msg.alert(t("error"), t("limit_reached"));
                 return;
             }

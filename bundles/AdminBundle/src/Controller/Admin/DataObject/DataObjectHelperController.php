@@ -1280,7 +1280,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/get-export-jobs", name="getexportjobs", methods={"GET"})
+     * @Route("/get-export-jobs", name="getexportjobs", methods={"POST"})
      *
      * @param Request $request
      * @param GridHelperService $gridHelperService
