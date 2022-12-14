@@ -64,7 +64,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
 
     protected ?string $order = null;
 
-    protected null|string|array $orderKey = null;
+    protected string|array $orderKey = '';
 
     protected bool $orderByPrice = false;
 
@@ -316,7 +316,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
 
     public function getOrderKey(): array|string
     {
-        return $this->orderKey ?? '';
+        return $this->orderKey;
     }
 
     /**
