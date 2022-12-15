@@ -80,7 +80,7 @@
     "sensio/framework-extra-bundle": "^6.2",
     "sensiolabs/ansi-to-html": "^1.1",
     "symfony-cmf/routing-bundle": "^3.0",
-    "symfony/contracts": "^3.2",
+    "symfony/contracts": "^2.3 || ^3.2",
     "symfony/monolog-bundle": "^3.8",
     "symfony/asset": "^6.1",
     "symfony/cache": "^6.1",
