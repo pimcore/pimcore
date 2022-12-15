@@ -652,16 +652,18 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                         );
 
                         if ($pathFormatter instanceof DataObject\ClassDefinition\PathFormatterInterface) {
-                            $objectData['fullpath'] =
-                                $pathFormatter->formatPath(
-                                    [],
-                                    $object,
-                                    [$objectData],
-                                    [
-                                        'fd' => $fieldConfig,
-                                        'context' => []
-                                    ]
-                                );
+                            $formattedPath = $pathFormatter->formatPath(
+                                [],
+                                $object,
+                                [$objectData],
+                                [
+                                    'fd' => $fieldConfig,
+                                    'context' => []
+                                ]
+                            )[0] ?? null;
+                            if($formattedPath) {
+                                $objectData['fullpath'] = $formattedPath;
+                            }
                         }
                     }
                 }
