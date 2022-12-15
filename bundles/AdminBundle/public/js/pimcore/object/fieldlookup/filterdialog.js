@@ -192,13 +192,13 @@ pimcore.object.fieldlookup.filterdialog = Class.create({
 
         if (record.data.dataType == "system") {
             var mapping = {
-                id: "o_id",
-                key: "o_key",
-                published: "o_published",
-                creationDate: "o_creationDate",
-                modificationDate: "o_modificationDate",
-                classname: "o_className",
-                filename: "o_key"
+                id: "id",
+                key: "key",
+                published: "published",
+                creationDate: "creationDate",
+                modificationDate: "modificationDate",
+                classname: "className",
+                filename: "key"
             };
 
             if (mapping[fieldname]) {

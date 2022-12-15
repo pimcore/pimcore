@@ -277,7 +277,7 @@ class DefaultMysql implements ProductListInterface
 
         $this->products = [];
         foreach ($objectRaws as $raw) {
-            $product = $this->loadElementById($raw['o_id']);
+            $product = $this->loadElementById($raw['id']);
             if ($product) {
                 $this->products[] = $product;
             }
@@ -315,7 +315,7 @@ class DefaultMysql implements ProductListInterface
 
         $priceSystemArrays = [];
         foreach ($objectRaws as $raw) {
-            $priceSystemArrays[$raw['priceSystemName']][] = $raw['o_id'];
+            $priceSystemArrays[$raw['priceSystemName']][] = $raw['id'];
         }
         if (count($priceSystemArrays) == 1) {
             $priceSystemName = key($priceSystemArrays);
@@ -484,7 +484,7 @@ class DefaultMysql implements ProductListInterface
             $variantMode = $this->getVariantMode();
         }
 
-        $preCondition = 'active = 1 AND o_virtualProductActive = 1';
+        $preCondition = 'active = 1 AND virtualProductActive = 1';
         if ($this->inProductList) {
             $preCondition .= ' AND inProductList = 1';
         }
@@ -506,19 +506,19 @@ class DefaultMysql implements ProductListInterface
             case ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT:
 
                 //make sure, that only variant objects are considered
-                $condition .= ' AND a.o_id != o_virtualProductId ';
+                $condition .= ' AND a.id != virtualProductId ';
 
                 break;
 
             case ProductListInterface::VARIANT_MODE_HIDE:
 
-                $condition .= " AND o_type != 'variant'";
+                $condition .= " AND `type` != 'variant'";
 
                 break;
 
             case ProductListInterface::VARIANT_MODE_VARIANTS_ONLY:
 
-                $condition .= " AND o_type = 'variant'";
+                $condition .= " AND `type` = 'variant'";
 
                 break;
         }
@@ -561,7 +561,7 @@ class DefaultMysql implements ProductListInterface
                         $condition .= ' AND ';
                     }
 
-                    $condition .= 'a.o_id IN (SELECT DISTINCT src FROM ' . $this->getCurrentTenantConfig()->getRelationTablename() . ' WHERE ' . $cond . ')';
+                    $condition .= 'a.id IN (SELECT DISTINCT src FROM ' . $this->getCurrentTenantConfig()->getRelationTablename() . ' WHERE ' . $cond . ')';
                 }
             }
         }
@@ -597,7 +597,7 @@ class DefaultMysql implements ProductListInterface
             }
 
             // add sorting for primary id to prevent mysql paging problem...
-            $orderKeys[] = 'a.o_id';
+            $orderKeys[] = 'a.id';
 
             $directionOrderKeys = [];
             foreach ($orderKeys as $key) {

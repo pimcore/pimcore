@@ -701,17 +701,17 @@ class Installer
             'description' => '',
         ]));
         $db->insert('objects', Helper::quoteDataIdentifiers($db, [
-            'o_id' => 1,
-            'o_parentId' => 0,
-            'o_type' => 'folder',
-            'o_key' => '',
-            'o_path' => '/',
-            'o_index' => 999999,
-            'o_published' => 1,
-            'o_creationDate' => time(),
-            'o_modificationDate' => time(),
-            'o_userOwner' => 1,
-            'o_userModification' => 1,
+            'id' => 1,
+            'parentId' => 0,
+            'type' => 'folder',
+            'key' => '',
+            'path' => '/',
+            'index' => 999999,
+            'published' => 1,
+            'creationDate' => time(),
+            'modificationDate' => time(),
+            'userOwner' => 1,
+            'userModification' => 1,
         ]));
         $userPermissions = [
             'application_logging',

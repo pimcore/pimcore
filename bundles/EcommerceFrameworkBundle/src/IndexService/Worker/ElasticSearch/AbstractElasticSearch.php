@@ -285,12 +285,12 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     public function getSystemAttributes(bool $includeTypes = false): array
     {
         $systemAttributes = [
-            'o_id' => 'long',
-            'o_classId' => 'keyword',
-            'o_parentId' => 'long',
-            'o_virtualProductId' => 'long',
-            'o_virtualProductActive' => 'boolean',
-            'o_type' => 'keyword',
+            'id' => 'long',
+            'classId' => 'keyword',
+            'parentId' => 'long',
+            'virtualProductId' => 'long',
+            'virtualProductActive' => 'boolean',
+            'type' => 'keyword',
             'categoryIds' => 'long',
             'categoryPaths' => 'keyword',
             'parentCategoryIds' => 'long',
@@ -367,7 +367,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         }
 
         if (empty($data)) {
-            $dataEntry = $this->db->fetchAssociative('SELECT data, metadata FROM ' . $this->getStoreTableName() . ' WHERE o_id = ? AND tenant = ?', [$objectId, $this->name]);
+            $dataEntry = $this->db->fetchAssociative('SELECT data, metadata FROM ' . $this->getStoreTableName() . ' WHERE id = ? AND tenant = ?', [$objectId, $this->name]);
             if ($dataEntry) {
                 $data = json_decode($dataEntry['data'], true);
                 $metadata = $dataEntry['metadata'];
@@ -409,7 +409,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             }
 
             //check if parent should exist and if so, consider parent relation at indexing
-            $routingId = $indexSystemData['o_type'] == ProductListInterface::PRODUCT_TYPE_VARIANT ? $indexSystemData['o_virtualProductId'] : $indexSystemData['o_id'];
+            $routingId = $indexSystemData['type'] == ProductListInterface::PRODUCT_TYPE_VARIANT ? $indexSystemData['virtualProductId'] : $indexSystemData['id'];
 
             if ($metadata !== null && $routingId != $metadata) {
                 //routing has changed, need to delete old ES entry
@@ -417,14 +417,14 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             }
 
             $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_id' => $objectId, $this->routingParamName => $routingId]];
-            $bulkIndexData = array_filter(['system' => array_filter($indexSystemData), 'type' => $indexSystemData['o_type'], 'attributes' => array_filter($indexAttributeData, function ($value) {
+            $bulkIndexData = array_filter(['system' => array_filter($indexSystemData), 'type' => $indexSystemData['type'], 'attributes' => array_filter($indexAttributeData, function ($value) {
                 return $value !== null;
             }), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
 
-            if ($indexSystemData['o_type'] == ProductListInterface::PRODUCT_TYPE_VARIANT) {
-                $bulkIndexData[self::RELATION_FIELD] = ['name' => $indexSystemData['o_type'], 'parent' => $indexSystemData['o_virtualProductId']];
+            if ($indexSystemData['type'] == ProductListInterface::PRODUCT_TYPE_VARIANT) {
+                $bulkIndexData[self::RELATION_FIELD] = ['name' => $indexSystemData['type'], 'parent' => $indexSystemData['virtualProductId']];
             } else {
-                $bulkIndexData[self::RELATION_FIELD] = ['name' => $indexSystemData['o_type']];
+                $bulkIndexData[self::RELATION_FIELD] = ['name' => $indexSystemData['type']];
             }
             $this->bulkIndexData[] = $bulkIndexData;
             $this->indexStoreMetaData[$objectId] = $routingId;
@@ -481,12 +481,12 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                         $this->db->update(
                             $this->getStoreTableName(),
                             $data,
-                            ['o_id' => $response[$operation]['_id'], 'tenant' => $this->name]
+                            ['id' => $response[$operation]['_id'], 'tenant' => $this->name]
                         );
                     } else {
                         //update crc sums in store table to mark element as indexed
                         $this->db->executeQuery(
-                            'UPDATE ' . $this->getStoreTableName() . ' SET crc_index = crc_current, update_status = ?, update_error = ?, metadata = ? WHERE o_id = ? and tenant = ?',
+                            'UPDATE ' . $this->getStoreTableName() . ' SET crc_index = crc_current, update_status = ?, update_error = ?, metadata = ? WHERE id = ? and tenant = ?',
                             [$data['update_status'], $data['update_error'], $data['metadata'], $response[$operation]['_id'], $this->name]
                         );
                     }
@@ -583,7 +583,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     {
         $esClient = $this->getElasticSearchClient();
 
-        $storeEntry = \Pimcore\Db::get()->fetchAssociative('SELECT * FROM ' . $this->getStoreTableName() . ' WHERE  o_id=? AND tenant=? ', [$objectId, $this->getTenantConfig()->getTenantName()]);
+        $storeEntry = \Pimcore\Db::get()->fetchAssociative('SELECT * FROM ' . $this->getStoreTableName() . ' WHERE  id=? AND tenant=? ', [$objectId, $this->getTenantConfig()->getTenantName()]);
         if ($storeEntry) {
             $isLocked = $this->checkIndexLock(false);
             if ($isLocked) {
@@ -598,7 +598,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                 $esClient->delete([
                     'index' => $this->getIndexNameVersion(),
                     'id' => $objectId,
-                    $this->routingParamName => $storeEntry['o_virtualProductId'],
+                    $this->routingParamName => $storeEntry['virtualProductId'],
                 ]);
             } catch (ClientResponseException $e) {
                 if ($e->getCode() !== 404) {

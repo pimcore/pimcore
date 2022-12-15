@@ -446,8 +446,8 @@ class Dao extends Listing\Dao\AbstractDao
         $list = $this->loadIdList();
 
         $objects = array();
-        foreach ($list as $o_id) {
-            if ($object = Model\Vote::getById($o_id)) {
+        foreach ($list as $id) {
+            if ($object = Model\Vote::getById($id)) {
                 $objects[] = $object;
             }
         }

@@ -65,33 +65,33 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      *
      * @var bool
      */
-    protected bool $o_published = false;
+    protected bool $published = false;
 
     /**
      * @internal
      */
-    protected ?ClassDefinition $o_class = null;
-
-    /**
-     * @internal
-     *
-     * @var string|null
-     */
-    protected $o_classId = null;
+    protected ?ClassDefinition $class = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected $o_className = null;
+    protected $classId = null;
+
+    /**
+     * @internal
+     *
+     * @var string|null
+     */
+    protected $className = null;
 
     /**
      * @internal
      *
      * @var array|null
      */
-    protected ?array $o_versions = null;
+    protected ?array $versions = null;
 
     /**
      * @internal
@@ -116,7 +116,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     {
         $v = get_class_vars(get_called_class());
 
-        return $v['o_classId'];
+        return $v['classId'];
     }
 
     /**
@@ -200,7 +200,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
 
             $newVersionCount = $this->getVersionCount();
 
-            if (($newVersionCount != $oldVersionCount + 1) || ($this instanceof DirtyIndicatorInterface && $this->isFieldDirty('o_parentId'))) {
+            if (($newVersionCount != $oldVersionCount + 1) || ($this instanceof DirtyIndicatorInterface && $this->isFieldDirty('parentId'))) {
                 self::disableDirtyDetection();
             }
 
@@ -307,21 +307,21 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
      */
     public function getVersions(): array
     {
-        if ($this->o_versions === null) {
+        if ($this->versions === null) {
             $this->setVersions($this->getDao()->getVersions());
         }
 
-        return $this->o_versions;
+        return $this->versions;
     }
 
     /**
-     * @param Model\Version[] $o_versions
+     * @param Model\Version[] $versions
      *
      * @return $this
      */
-    public function setVersions(array $o_versions): static
+    public function setVersions(array $versions): static
     {
-        $this->o_versions = $o_versions;
+        $this->versions = $versions;
 
         return $this;
     }
@@ -378,26 +378,26 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @return $this
      */
-    public function setClass(?ClassDefinition $o_class): static
+    public function setClass(?ClassDefinition $class): static
     {
-        $this->o_class = $o_class;
+        $this->class = $class;
 
         return $this;
     }
 
     public function getClass(): ?ClassDefinition
     {
-        if (!$this->o_class) {
+        if (!$this->class) {
             $this->setClass(ClassDefinition::getById($this->getClassId()));
         }
 
-        return $this->o_class;
+        return $this->class;
     }
 
     public function getClassId(): ?string
     {
-        if (isset($this->o_classId)) {
-            return (string)$this->o_classId;
+        if (isset($this->classId)) {
+            return (string)$this->classId;
         }
 
         return null;
@@ -406,31 +406,31 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @return $this
      */
-    public function setClassId(string $o_classId): static
+    public function setClassId(string $classId): static
     {
-        $this->o_classId = $o_classId;
+        $this->classId = $classId;
 
         return $this;
     }
 
     public function getClassName(): ?string
     {
-        return $this->o_className;
+        return $this->className;
     }
 
     /**
      * @return $this
      */
-    public function setClassName(string $o_className): static
+    public function setClassName(string $className): static
     {
-        $this->o_className = $o_className;
+        $this->className = $className;
 
         return $this;
     }
 
     public function getPublished(): bool
     {
-        return $this->o_published;
+        return $this->published;
     }
 
     public function isPublished(): bool
@@ -441,9 +441,9 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * @return $this
      */
-    public function setPublished(bool $o_published): static
+    public function setPublished(bool $published): static
     {
-        $this->o_published = $o_published;
+        $this->published = $published;
 
         return $this;
     }
@@ -763,8 +763,8 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     public function __clone()
     {
         parent::__clone();
-        $this->o_class = null;
-        $this->o_versions = null;
+        $this->class = null;
+        $this->versions = null;
         $this->scheduledTasks = null;
     }
 

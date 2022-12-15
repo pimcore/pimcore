@@ -21,16 +21,16 @@ namespace Pimcore\Model\Element\Traits;
  */
 trait DirtyIndicatorTrait
 {
-    protected ?array $o_dirtyFields = null;
+    protected ?array $dirtyFields = null;
 
     public function hasDirtyFields(): bool
     {
-        return is_array($this->o_dirtyFields) && count($this->o_dirtyFields);
+        return is_array($this->dirtyFields) && count($this->dirtyFields);
     }
 
     public function isFieldDirty(string $key): bool
     {
-        if (is_array($this->o_dirtyFields) && array_key_exists($key, $this->o_dirtyFields)) {
+        if (is_array($this->dirtyFields) && array_key_exists($key, $this->dirtyFields)) {
             return true;
         }
 
@@ -45,19 +45,19 @@ trait DirtyIndicatorTrait
      */
     public function markFieldDirty(string $field, bool $dirty = true): void
     {
-        if ($dirty && !is_array($this->o_dirtyFields)) {
-            $this->o_dirtyFields = [];
+        if ($dirty && !is_array($this->dirtyFields)) {
+            $this->dirtyFields = [];
         }
 
         if ($dirty) {
-            $this->o_dirtyFields[$field] = true;
+            $this->dirtyFields[$field] = true;
         } else {
-            unset($this->o_dirtyFields[$field]);
+            unset($this->dirtyFields[$field]);
         }
     }
 
     public function resetDirtyMap(): void
     {
-        $this->o_dirtyFields = null;
+        $this->dirtyFields = null;
     }
 }

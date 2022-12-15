@@ -55,7 +55,7 @@ class Service extends Model\Element\Service
      *
      * @var array
      */
-    protected static array $systemFields = ['o_path', 'o_key', 'o_id', 'o_published', 'o_creationDate', 'o_modificationDate', 'o_fullpath'];
+    protected static array $systemFields = ['path', 'key', 'id', 'published', 'creationDate', 'modificationDate', 'fullpath'];
 
     /**
      * TODO Bc layer for bundles to support both Pimcore 10 & 11, remove with Pimcore 12
@@ -1352,9 +1352,9 @@ class Service extends Model\Element\Service
         }
 
         if (!$element->getId()) {
-            $list->setCondition('o_parentId = ? AND `o_key` = ? ', [$parent->getId(), $key]);
+            $list->setCondition('parentId = ? AND `key` = ? ', [$parent->getId(), $key]);
         } else {
-            $list->setCondition('o_parentId = ? AND `o_key` = ? AND o_id != ? ', [$parent->getId(), $key, $element->getId()]);
+            $list->setCondition('parentId = ? AND `key` = ? AND id != ? ', [$parent->getId(), $key, $element->getId()]);
         }
         $check = $list->loadIdList();
         if (!empty($check)) {

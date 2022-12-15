@@ -80,7 +80,7 @@ class Sales extends AbstractOrder implements ConditionInterface
             $query = <<<'SQL'
 SELECT 1
 
-	, count(priceRule.o_id) as "count"
+	, count(priceRule.id) as "count"
 	, sum(orderItem.totalPrice) as "amount"
 
 	-- DEBUG INFOS
@@ -100,13 +100,13 @@ FROM object_query_%2$d as `order`
 	JOIN object_%1$d as orderItem
 		ON ( 1
 			AND orderItem.origin__id is null
-    	    AND orderItem.o_id = orderItems.dest_id
+    	    AND orderItem.id = orderItems.dest_id
 		)
 
 	-- add active price rules
 	JOIN object_collection_PriceRule_%1$d as priceRule
 		ON( 1
-			AND priceRule.o_id = orderItem.oo_id
+			AND priceRule.id = orderItem.oo_id
 			AND priceRule.fieldname = "priceRules"
 			AND priceRule.ruleId = %3$d
 		)

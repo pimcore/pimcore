@@ -47,12 +47,12 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      * @var array
      */
     protected array $fieldMapping = [
-        'o_id' => 'system.o_id',
-        'o_classId' => 'system.o_classId',
-        'o_virtualProductId' => 'system.o_virtualProductId',
-        'o_virtualProductActive' => 'system.o_virtualProductActive',
-        'o_parentId' => 'system.o_parentId',
-        'o_type' => 'system.o_type',
+        'id' => 'system.id',
+        'classId' => 'system.classId',
+        'virtualProductId' => 'system.virtualProductId',
+        'virtualProductActive' => 'system.virtualProductActive',
+        'parentId' => 'system.parentid',
+        'type' => 'system.type',
         'categoryIds' => 'system.categoryIds',
         'parentCategoryIds' => 'system.parentCategoryIds',
         'categoryPaths' => 'system.categoryPaths',
@@ -331,7 +331,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     public function getObjectMockupById(int $objectId): ?IndexableInterface
     {
         $listing = $this->getTenantWorker()->getProductList();
-        $listing->addCondition((string)$objectId, 'o_id');
+        $listing->addCondition((string)$objectId, 'id');
         $listing->setLimit(1);
         $product = $listing->current();
 

@@ -653,7 +653,7 @@ pimcore.helpers.handleCtrlS = function (keyCode, e) {
             }
         }
         else if (el.object) {
-            if (el.object.data.general.o_published) {
+            if (el.object.data.general.published) {
                 el.object.publish();
             } else {
                 el.object.save('version');

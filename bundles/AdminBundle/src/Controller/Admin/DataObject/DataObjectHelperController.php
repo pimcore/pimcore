@@ -839,7 +839,7 @@ class DataObjectHelperController extends AdminController
                     . ' and classId = ' . $db->quote($classId).
                     ' and searchType = ' . $db->quote($searchType)
                     . ' and objectId != ' . $objectId . ' and objectId != 0'
-                    . ' and type != ' . $db->quote($type));
+                    . ' and `type` != ' . $db->quote($type));
                 $specializedConfigs = $count > 0;
             } catch (\Exception $e) {
                 $favourite->delete();
@@ -1357,8 +1357,8 @@ class DataObjectHelperController extends AdminController
         }
 
         $list->setObjectTypes(DataObject::$types);
-        $list->setCondition('o_id IN (' . implode(',', $quotedIds) . ')');
-        $list->setOrderKey(' FIELD(o_id, ' . implode(',', $quotedIds) . ')', false);
+        $list->setCondition('id IN (' . implode(',', $quotedIds) . ')');
+        $list->setOrderKey(' FIELD(id, ' . implode(',', $quotedIds) . ')', false);
 
         $beforeListExportEvent = new GenericEvent($this, [
             'list' => $list,

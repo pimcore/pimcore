@@ -929,7 +929,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             $brickField = $context['brickField'];
             $fieldname = $context['fieldname'];
             $query = 'select ' . $db->quoteIdentifier($brickField) . ' from object_brick_store_' . $brickType . '_' . $object->getClassId()
-                . ' where  o_id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($fieldname);
+                . ' where  id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($fieldname);
             $data = $db->fetchOne($query);
             $data = $this->getDataFromResource($data, $object, $params);
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
@@ -941,7 +941,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             //TODO index!!!!!!!!!!!!!!
 
             $query = 'select ' . $db->quoteIdentifier($field) . ' from object_collection_' . $collectionType . '_' . $object->getClassId()
-                . ' where  o_id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($fcField) . ' and `index` = ' . $context['index'];
+                . ' where  id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($fcField) . ' and `index` = ' . $context['index'];
             $data = $db->fetchOne($query);
             $data = $this->getDataFromResource($data, $object, $params);
         }

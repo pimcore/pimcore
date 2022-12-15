@@ -180,7 +180,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
                 $inheritedPermission = $document->getDao()->isInheritingPermission('list', $userIds);
 
-                $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_document uwd WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(path,`key`),cpath)=1 AND
+                $anyAllowedRowOrChildren = 'EXISTS(SELECT list FROM users_workspaces_document uwd WHERE userId IN (' . implode(',', $userIds) . ') AND list=1 AND LOCATE(CONCAT(`path`,`key`),cpath)=1 AND
                 NOT EXISTS(SELECT list FROM users_workspaces_document WHERE userId =' . $currentUserId . '  AND list=0 AND cpath = uwd.cpath))';
                 $isDisallowedCurrentRow = 'EXISTS(SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ')  AND cid = id AND list=0)';
 
@@ -414,9 +414,9 @@ class DocumentController extends ElementControllerBase implements KernelControll
             $parentDocument = Document::getById((int) $request->get('id'));
 
             $list = new Document\Listing();
-            $list->setCondition('path LIKE ?', [$list->escapeLike($parentDocument->getRealFullPath()) . '/%']);
+            $list->setCondition('`path` LIKE ?', [$list->escapeLike($parentDocument->getRealFullPath()) . '/%']);
             $list->setLimit((int)$request->get('amount'));
-            $list->setOrderKey('LENGTH(path)', false);
+            $list->setOrderKey('LENGTH(`path`)', false);
             $list->setOrder('DESC');
 
             $documents = $list->load();
@@ -581,7 +581,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
                     if ($document->hasChildren()) {
                         $list = new Document\Listing();
-                        $list->setCondition('path LIKE :path', [
+                        $list->setCondition('`path` LIKE :path', [
                             'path' => $list->escapeLike($document->getRealFullPath()) . '/%',
                         ]);
 
@@ -930,8 +930,8 @@ class DocumentController extends ElementControllerBase implements KernelControll
             if ($document->hasChildren()) {
                 // get amount of children
                 $list = new Document\Listing();
-                $list->setCondition('path LIKE ?', [$list->escapeLike($document->getRealFullPath()) . '/%']);
-                $list->setOrderKey('LENGTH(path)', false);
+                $list->setCondition('`path` LIKE ?', [$list->escapeLike($document->getRealFullPath()) . '/%']);
+                $list->setOrderKey('LENGTH(`path`)', false);
                 $list->setOrder('ASC');
                 $childIds = $list->loadIdList();
 
@@ -1301,7 +1301,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 // only display document if listing is allowed for the current user
                 if ($childDocument->isAllowed('list')) {
                     $list = new Document\Listing();
-                    $list->setCondition('path LIKE ? and type = ?', [$list->escapeLike($childDocument->getRealFullPath()). '/%', 'page']);
+                    $list->setCondition('`path` LIKE ? and `type` = ?', [$list->escapeLike($childDocument->getRealFullPath()). '/%', 'page']);
 
                     if ($childDocument instanceof Document\Page || $list->getTotalCount() > 0) {
                         $documents[] = $this->getSeoNodeConfig($childDocument);

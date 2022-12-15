@@ -756,7 +756,7 @@ CREATE OR REPLACE VIEW `object_localized_{$this->model->getClass()->getId()}_{$l
 SELECT {$selectViewFields}
 FROM `{$defaultTable}`
     JOIN `objects`
-        ON (`objects`.`o_id` = `{$defaultTable}`.`oo_id`)
+        ON (`objects`.`id` = `{$defaultTable}`.`oo_id`)
 QUERY;
 
                 // join fallback languages
@@ -798,7 +798,7 @@ QUERY;
               INDEX `index` (`index`),
               INDEX `fieldname` (`fieldname`),
               INDEX `language` (`language`),
-              CONSTRAINT `".self::getForeignKeyName($table, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+              CONSTRAINT `".self::getForeignKeyName($table, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`id`) ON DELETE CASCADE
             ) DEFAULT CHARSET=utf8mb4;'
             );
         } else {
@@ -808,7 +808,7 @@ QUERY;
               `language` varchar(10) NOT NULL DEFAULT '',
               PRIMARY KEY (`ooo_id`,`language`),
               INDEX `language` (`language`),
-              CONSTRAINT `".self::getForeignKeyName($table, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+              CONSTRAINT `".self::getForeignKeyName($table, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`id`) ON DELETE CASCADE
             ) DEFAULT CHARSET=utf8mb4;'
             );
         }
@@ -874,7 +874,7 @@ QUERY;
                       `language` varchar(10) NOT NULL DEFAULT '',
                       PRIMARY KEY (`ooo_id`,`language`),
                       INDEX `language` (`language`),
-                      CONSTRAINT `".self::getForeignKeyName($queryTable, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+                      CONSTRAINT `".self::getForeignKeyName($queryTable, 'ooo_id').'` FOREIGN KEY (`ooo_id`) REFERENCES objects (`id`) ON DELETE CASCADE
                     ) DEFAULT CHARSET=utf8mb4;'
                 );
 

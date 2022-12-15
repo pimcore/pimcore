@@ -652,7 +652,7 @@ class OrderAgent implements OrderAgentInterface
                 }
             }
 
-            $noteList->addConditionParam('type = ?', 'order-agent');
+            $noteList->addConditionParam('`type` = ?', 'order-agent');
             $noteList->addConditionParam(sprintf('cid in(%s)', implode(',', $cid)), '');
 
             $noteList->setOrderKey('date');
