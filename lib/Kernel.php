@@ -326,7 +326,7 @@ abstract class Kernel extends SymfonyKernel
             new SchebTwoFactorBundle(),
             new FOSJsRoutingBundle(),
             new FlysystemBundle(),
-            new KnpPaginatorBundle()
+            new KnpPaginatorBundle(),
         ], 100);
 
         // pimcore bundles
