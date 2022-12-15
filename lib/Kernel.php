@@ -19,6 +19,7 @@ namespace Pimcore;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
 use FOS\JsRoutingBundle\FOSJsRoutingBundle;
+use Knp\Bundle\PaginatorBundle\KnpPaginatorBundle;
 use League\FlysystemBundle\FlysystemBundle;
 use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
@@ -325,6 +326,7 @@ abstract class Kernel extends SymfonyKernel
             new SchebTwoFactorBundle(),
             new FOSJsRoutingBundle(),
             new FlysystemBundle(),
+            new KnpPaginatorBundle()
         ], 100);
 
         // pimcore bundles
