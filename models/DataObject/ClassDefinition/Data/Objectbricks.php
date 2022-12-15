@@ -911,7 +911,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
                             }
                             // defer creation
                             if (!$fd instanceof DataContainerAwareInterface) {
-                                $fd->classSaved($class);
+                                $fd->classSaved($class, $params);
                             }
                         }
                     }

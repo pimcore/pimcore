@@ -694,11 +694,11 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                                     'Implement the %s interface instead.', ClassSavedInterface::class));
                             }
                             // defer creation
-                            $fd->classSaved($class);
+                            $fd->classSaved($class, $params);
                         }
                     }
 
-                    $definition->getDao()->classSaved($class);
+                    $definition->getDao()->classSaved($class, $params);
                 } else {
                     Logger::warn("Removed unknown allowed type [ $allowedType ] from allowed types of field collection");
                     unset($this->allowedTypes[$i]);
