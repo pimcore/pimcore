@@ -312,7 +312,6 @@ parameters:
 
 		-
 			message: "#^PHPDoc tag \\@param references unknown parameter\\: \\$params$#"
-			count: 3
 			paths:
 			    - models/DataObject/ClassDefinition/Data/AdvancedManyToManyObjectRelation.php
 			    - models/DataObject/ClassDefinition/Data/ClassSavedInterface.php
