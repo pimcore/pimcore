@@ -50,7 +50,7 @@ class LoginFailedEvent extends Event
         return $default;
     }
 
-    public function getUser(): User
+    public function getUser(): ?User
     {
         return $this->user;
     }
