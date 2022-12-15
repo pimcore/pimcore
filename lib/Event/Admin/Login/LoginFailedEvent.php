@@ -23,7 +23,7 @@ class LoginFailedEvent extends Event
 {
     protected array $credentials;
 
-    protected User $user;
+    protected ?User $user = null;
 
     public function __construct(array $credentials)
     {
