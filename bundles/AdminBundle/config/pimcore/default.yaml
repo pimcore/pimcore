@@ -19,6 +19,135 @@ pimcore_admin:
     translations:
         path: "@PimcoreCoreBundle/translations"
 
+    user:
+        default_key_bindings:
+            save:
+                key: 'S'
+                ctrl: true
+            publish:
+                key: 'P'
+                ctrl: true
+                shift: true
+            unpublish:
+                key: 'U'
+                ctrl: true
+                shift: true
+            rename:
+                key: 'R'
+                alt: true
+                shift: true
+            refresh:
+                key: 't'
+            openAsset:
+                key: 'A'
+                ctrl: true
+                shift: true
+            openObject:
+                key: 'O'
+                ctrl: true
+                shift: true
+            openDocument:
+                key: 'D'
+                ctrl: true
+                shift: true
+            openClassEditor:
+                key: 'C'
+                ctrl: true
+                shift: true
+            openInTree:
+                key: 'L'
+                ctrl: true
+                shift: true
+            showMetaInfo:
+                key: 'I'
+                alt: true
+            searchDocument:
+                key: 'W'
+                alt: true
+            searchAsset:
+                key: 'A'
+                alt: true
+            searchObject:
+                key: 'O'
+                alt: true
+            showElementHistory:
+                key: 'H'
+                alt: true
+            closeAllTabs:
+                key: 'T'
+                alt: true
+            searchAndReplaceAssignments:
+                key: 'S'
+                alt: true
+            redirects:
+                key: 'R'
+                ctrl: false
+                alt: true
+            sharedTranslations:
+                key: 'T'
+                ctrl: true
+                alt: true
+            recycleBin:
+                key: 'R'
+                ctrl: true
+                alt: true
+            notesEvents:
+                key: 'N'
+                ctrl: true
+                alt: true
+            applicationLogger:
+                key: 'L'
+                ctrl: true
+                alt: true
+            reports:
+                key: 'M'
+                ctrl: true
+                alt: true
+            tagManager:
+                key: 'H'
+                ctrl: true
+                alt: true
+            seoDocumentEditor:
+                key: 'S'
+                ctrl: true
+                alt: true
+            robots:
+                key: 'J'
+                ctrl: true
+                alt: true
+            httpErrorLog:
+                key: 'O'
+                ctrl: true
+                alt: true
+            customReports:
+                key: 'C'
+                ctrl: true
+                alt: true
+            tagConfiguration:
+                key: 'N'
+                ctrl: true
+                alt: true
+            users:
+                key: 'U'
+                ctrl: true
+                alt: true
+            roles:
+                key: 'P'
+                ctrl: true
+                alt: true
+            clearAllCaches:
+                key: 'Q'
+                ctrl: false
+                alt: true
+            clearDataCache:
+                key: 'C'
+                ctrl: false
+                alt: true
+            quickSearch:
+                key: 'F'
+                ctrl: true
+                shift: true
+
 # adds support for admin related routes that will be used to determine the request context in PimcoreContextGuesser
 pimcore:
     web_profiler:

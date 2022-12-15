@@ -28,6 +28,8 @@ final class User extends User\UserRole
 {
     use TemporaryFileHelperTrait;
 
+    protected const DEFAULT_KEY_BINDINGS = 'default_key_bindings';
+
     protected string $type = 'user';
 
     protected ?string $password = null;
@@ -615,6 +617,35 @@ final class User extends User\UserRole
      */
     public static function getDefaultKeyBindings(): string
     {
+        $userConfig = \Pimcore\Config::getSystemConfiguration('user');
+        // make sure the default key binding node is in the config
+        if(is_array($userConfig) && array_key_exists(self::DEFAULT_KEY_BINDINGS, $userConfig)) {
+            $defaultKeyBindingsConfig = $userConfig[self::DEFAULT_KEY_BINDINGS];
+            $defaultKeyBindings = [];
+            if(!empty($defaultKeyBindingsConfig)) {
+                foreach($defaultKeyBindingsConfig as $action => $keys) {
+                    $defaultKeyBinding = [
+                        'action' => $action,
+                    ];
+
+                    // we do not check if the keys are empty because key is required
+                    foreach($keys as $index => $value) {
+                        if($index === 'key') {
+                            $value = ord($value);
+                        }
+                        $defaultKeyBinding[$index] = $value;
+                    }
+                    $defaultKeyBindings[] = $defaultKeyBinding;
+                }
+            }
+        }
+
+        if(!empty($defaultKeyBindings)) {
+            return json_encode($defaultKeyBindings);
+        }
+
+        // keep for legacy reasons
+
         return json_encode(
             [
                 [
@@ -709,12 +740,6 @@ final class User extends User\UserRole
                 [
                     'action' => 'searchAndReplaceAssignments',
                     'key' => ord('S'),
-                    'alt' => true,
-                ],
-                [
-                    'action' => 'glossary',
-                    'key' => ord('G'),
-                    'shift' => true,
                     'alt' => true,
                 ],
                 [
