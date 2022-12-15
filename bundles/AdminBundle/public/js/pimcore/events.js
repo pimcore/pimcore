@@ -23,7 +23,7 @@
   * viewport is passed as parameter
   */
  pimcore.events.pimcoreReady = "pimcore.ready";
- 
+
  /**
   * before asset is opened
   * asset and type are passed as parameters
@@ -228,4 +228,9 @@
   * grid and object are passed as parameters
   */
  pimcore.events.prepareDocumentTypesGrid = "pimcore.documentTypesGrid.prepare";
- 
+
+/**
+ * before key bindings are registered
+ * enable registering outside of core
+ */
+ pimcore.events.preRegisterKeyBindings = "pimcore.keyBindings.preRegister";

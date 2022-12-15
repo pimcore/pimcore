@@ -23,14 +23,11 @@ class GlossaryBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 
-    public function getComposerPackageName(): string
-    {
-        return 'pimcore/glossary-bundle';
-    }
-
     public function getCssPaths(): array
     {
-        return [];
+        return [
+            '/bundles/glossary/css/glossary.css',
+        ];
     }
 
     public function getJsPaths(): array

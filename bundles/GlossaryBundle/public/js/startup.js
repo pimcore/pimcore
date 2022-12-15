@@ -1,7 +1,9 @@
 pimcore.registerNS("pimcore.glossary");
 
+
 pimcore.glossary = Class.create({
     initialize: function () {
+        document.addEventListener(pimcore.events.preRegisterKeyBindings, this.registerKeyBinding.bind(this));
         document.addEventListener(pimcore.events.pimcoreReady, this.pimcoreReady.bind(this));
     },
 
@@ -20,14 +22,6 @@ pimcore.glossary = Class.create({
                 handler: this.editGlossary,
             });
         }
-
-
-        // trying to readd shortcut functionality, but does not work yet.
-        if (user.isAllowed("glossary")) {
-            pimcore.helpers.keyBindingMapping.glossary = function() {
-                glossary.editGlossary();
-            }
-        }
     },
 
     editGlossary: function() {
@@ -37,6 +31,15 @@ pimcore.glossary = Class.create({
             pimcore.globalmanager.add("glossary", new pimcore.settings.glossary());
         }
     },
+
+    registerKeyBinding: function(e) {
+        const user = pimcore.globalmanager.get('user');
+        if (user.isAllowed("glossary")) {
+            pimcore.helpers.keyBindingMapping.glossary = function() {
+                glossary.editGlossary();
+            }
+        }
+    }
 })
 
 const glossary = new pimcore.glossary();

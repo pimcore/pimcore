@@ -23,6 +23,9 @@ pimcore.helpers.registerKeyBindings = function (bindEl, ExtJS) {
     var user = pimcore.globalmanager.get("user");
     var bindings = [];
 
+    // firing event to enable bundles/extensions to add key bindings
+    document.dispatchEvent(new CustomEvent(pimcore.events.preRegisterKeyBindings));
+
     var decodedKeyBindings = Ext.decode(user.keyBindings);
     if (decodedKeyBindings) {
         for (var i = 0; i < decodedKeyBindings.length; i++) {
