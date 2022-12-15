@@ -73,7 +73,7 @@ class Dao extends Model\Element\Dao
      */
     public function create()
     {
-        $this->db->insert('objects', Helper::quoteDataIdentifiers($this->db,[
+        $this->db->insert('objects', Helper::quoteDataIdentifiers($this->db, [
             'key' => $this->model->getKey(),
             'path' => $this->model->getRealPath(),
         ]));

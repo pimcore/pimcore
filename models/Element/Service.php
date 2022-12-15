@@ -614,7 +614,7 @@ class Service extends Model\AbstractModel
                 'filename',
                 'path',
                 'id',
-                'type'
+                'type',
             ];
 
             if ($p->getData() instanceof Document || $p->getData() instanceof Asset || $p->getData() instanceof DataObject\AbstractObject) {

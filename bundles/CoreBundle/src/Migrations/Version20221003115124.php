@@ -29,31 +29,31 @@ final class Version20221003115124 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql("ALTER TABLE objects CHANGE o_id id int(11) unsigned auto_increment NOT NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE o_parentId parentId int(11) unsigned DEFAULT NULL NULL;");
+        $this->addSql('ALTER TABLE objects CHANGE o_id id int(11) unsigned auto_increment NOT NULL;');
+        $this->addSql('ALTER TABLE objects CHANGE o_parentId parentId int(11) unsigned DEFAULT NULL NULL;');
         $this->addSql("ALTER TABLE objects CHANGE o_type `type` enum('object','folder','variant') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
         $this->addSql("ALTER TABLE objects CHANGE o_key `key` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT '' NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE o_path `path` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE o_index `index` int(11) unsigned DEFAULT 0 NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE o_published published tinyint(1) unsigned DEFAULT 1 NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE o_creationDate creationDate int(11) unsigned DEFAULT NULL NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE o_modificationDate modificationDate int(11) unsigned DEFAULT NULL NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE o_userOwner userOwner int(11) unsigned DEFAULT NULL NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE o_userModification userModification int(11) unsigned DEFAULT NULL NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE o_classId classId varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE o_className className varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
+        $this->addSql('ALTER TABLE objects CHANGE o_path `path` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL NULL;');
+        $this->addSql('ALTER TABLE objects CHANGE o_index `index` int(11) unsigned DEFAULT 0 NULL;');
+        $this->addSql('ALTER TABLE objects CHANGE o_published published tinyint(1) unsigned DEFAULT 1 NULL;');
+        $this->addSql('ALTER TABLE objects CHANGE o_creationDate creationDate int(11) unsigned DEFAULT NULL NULL;');
+        $this->addSql('ALTER TABLE objects CHANGE o_modificationDate modificationDate int(11) unsigned DEFAULT NULL NULL;');
+        $this->addSql('ALTER TABLE objects CHANGE o_userOwner userOwner int(11) unsigned DEFAULT NULL NULL;');
+        $this->addSql('ALTER TABLE objects CHANGE o_userModification userModification int(11) unsigned DEFAULT NULL NULL;');
+        $this->addSql('ALTER TABLE objects CHANGE o_classId classId varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;');
+        $this->addSql('ALTER TABLE objects CHANGE o_className className varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;');
         $this->addSql("ALTER TABLE objects CHANGE o_childrenSortBy childrenSortBy enum('key','index') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
         $this->addSql("ALTER TABLE objects CHANGE o_childrenSortOrder childrenSortOrder enum('ASC','DESC') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE o_versionCount versionCount int(10) unsigned DEFAULT 0 NOT NULL;");
+        $this->addSql('ALTER TABLE objects CHANGE o_versionCount versionCount int(10) unsigned DEFAULT 0 NOT NULL;');
 
-        foreach($schema->getTables() as $table) {
-            if($table->hasColumn("o_id")) {
+        foreach ($schema->getTables() as $table) {
+            if ($table->hasColumn('o_id')) {
                 $tableName = $table->getName();
-                if (str_starts_with($tableName, "object_brick_") ||
-                    str_starts_with($tableName, "object_metadata_") ||
-                    str_starts_with($tableName, "object_collection_")) {
+                if (str_starts_with($tableName, 'object_brick_') ||
+                    str_starts_with($tableName, 'object_metadata_') ||
+                    str_starts_with($tableName, 'object_collection_')) {
                     $this->addSql("ALTER TABLE $tableName CHANGE o_id id int(10) unsigned DEFAULT 0 NOT NULL;");
-                } else if (str_starts_with($tableName, "object_classificationstore_")) {
+                } elseif (str_starts_with($tableName, 'object_classificationstore_')) {
                     $this->addSql("ALTER TABLE $tableName CHANGE o_id id int(11) unsigned NOT NULL;");
                 }
             }
@@ -62,31 +62,31 @@ final class Version20221003115124 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql("ALTER TABLE objects CHANGE id o_id int(11) unsigned auto_increment NOT NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE parentId o_parentId int(11) unsigned DEFAULT NULL NULL;");
+        $this->addSql('ALTER TABLE objects CHANGE id o_id int(11) unsigned auto_increment NOT NULL;');
+        $this->addSql('ALTER TABLE objects CHANGE parentId o_parentId int(11) unsigned DEFAULT NULL NULL;');
         $this->addSql("ALTER TABLE objects CHANGE `type` `o_type` enum('object','folder','variant') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
         $this->addSql("ALTER TABLE objects CHANGE `key` `o_key` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT '' NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE `path` `o_path` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE `index` `o_index` int(11) unsigned DEFAULT 0 NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE published o_published tinyint(1) unsigned DEFAULT 1 NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE creationDate o_creationDate int(11) unsigned DEFAULT NULL NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE modificationDate o_modificationDate int(11) unsigned DEFAULT NULL NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE userOwner o_userOwner int(11) unsigned DEFAULT NULL NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE userModification o_userModification int(11) unsigned DEFAULT NULL NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE classId o_classId varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE className o_className varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
+        $this->addSql('ALTER TABLE objects CHANGE `path` `o_path` varchar(765) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin DEFAULT NULL NULL;');
+        $this->addSql('ALTER TABLE objects CHANGE `index` `o_index` int(11) unsigned DEFAULT 0 NULL;');
+        $this->addSql('ALTER TABLE objects CHANGE published o_published tinyint(1) unsigned DEFAULT 1 NULL;');
+        $this->addSql('ALTER TABLE objects CHANGE creationDate o_creationDate int(11) unsigned DEFAULT NULL NULL;');
+        $this->addSql('ALTER TABLE objects CHANGE modificationDate o_modificationDate int(11) unsigned DEFAULT NULL NULL;');
+        $this->addSql('ALTER TABLE objects CHANGE userOwner o_userOwner int(11) unsigned DEFAULT NULL NULL;');
+        $this->addSql('ALTER TABLE objects CHANGE userModification o_userModification int(11) unsigned DEFAULT NULL NULL;');
+        $this->addSql('ALTER TABLE objects CHANGE classId o_classId varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;');
+        $this->addSql('ALTER TABLE objects CHANGE className o_className varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;');
         $this->addSql("ALTER TABLE objects CHANGE childrenSortBy o_childrenSortBy enum('key','index') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
         $this->addSql("ALTER TABLE objects CHANGE childrenSortOrder o_childrenSortOrder enum('ASC','DESC') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL NULL;");
-        $this->addSql("ALTER TABLE objects CHANGE versionCount o_versionCount int(10) unsigned DEFAULT 0 NOT NULL;");
+        $this->addSql('ALTER TABLE objects CHANGE versionCount o_versionCount int(10) unsigned DEFAULT 0 NOT NULL;');
 
-        foreach($schema->getTables() as $table) {
-            if($table->hasColumn("id")) {
+        foreach ($schema->getTables() as $table) {
+            if ($table->hasColumn('id')) {
                 $tableName = $table->getName();
-                if (str_starts_with($tableName, "object_brick_") ||
-                    str_starts_with($tableName, "object_metadata_") ||
-                    str_starts_with($tableName, "object_collection_")) {
+                if (str_starts_with($tableName, 'object_brick_') ||
+                    str_starts_with($tableName, 'object_metadata_') ||
+                    str_starts_with($tableName, 'object_collection_')) {
                     $this->addSql("ALTER TABLE $tableName CHANGE id o_id int(10) unsigned DEFAULT 0 NOT NULL;");
-                } else if (str_starts_with($tableName, "object_classificationstore_")) {
+                } elseif (str_starts_with($tableName, 'object_classificationstore_')) {
                     $this->addSql("ALTER TABLE $tableName CHANGE id o_id int(11) unsigned NOT NULL;");
                 }
             }
