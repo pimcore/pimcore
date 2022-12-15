@@ -522,7 +522,13 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
         if (data.published === false) {
             this.component.addCls("strikeThrough");
         }
-        this.component.setValue(data.fullpath);
+
+        if (this.fieldConfig.displayMode == 'combo') {
+            this.component.setValue(data.id);
+        } else {
+            this.component.setValue(data.fullpath);
+        }
+
         this.requestNicePathData();
     },
 
