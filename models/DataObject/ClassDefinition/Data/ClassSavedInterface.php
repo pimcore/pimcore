@@ -7,8 +7,8 @@ use Pimcore\Model\DataObject;
 interface ClassSavedInterface
 {
     /**
-     * @param DataObject\ClassDefinition $class
+     * @param $class
      * @param array $params
      */
-    public function classSaved(/** DataObject\ClassDefinition */ $class, /** array */ $params = []) /** void */;
+    public function classSaved($class/**, $params = [] **/);
 }

@@ -603,7 +603,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * @param DataObject\ClassDefinition $class
      * @param array $params
      */
-    public function classSaved($class, $params = [])
+    public function classSaved($class/**, $params = []**/)
     {
         $classificationStore = new DataObject\Classificationstore();
         $classificationStore->setClass($class);

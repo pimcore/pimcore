@@ -757,7 +757,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
      * @param DataObject\ClassDefinition $class
      * @param array $params
      */
-    public function classSaved($class, $params = [])
+    public function classSaved($class/**, $params = []**/)
     {
         /** @var DataObject\Data\ObjectMetadata $temp */
         $temp = \Pimcore::getContainer()->get('pimcore.model.factory')

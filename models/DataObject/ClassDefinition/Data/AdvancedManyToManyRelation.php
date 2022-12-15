@@ -774,9 +774,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
 
     /**
      * @param DataObject\ClassDefinition $class
-     * @param array $params
      */
-    public function classSaved($class, $params = [])
+    public function classSaved($class/**, $params = [] **/)
     {
         /** @var DataObject\Data\ElementMetadata $temp */
         $temp = \Pimcore::getContainer()->get('pimcore.model.factory')
