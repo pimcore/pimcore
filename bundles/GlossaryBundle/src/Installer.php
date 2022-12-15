@@ -23,18 +23,53 @@ use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
  */
 class Installer extends SettingsStoreAwareInstaller
 {
-    public function install()
+    public function install(): void
     {
         $this->installDatabaseTable();
+        $this->addUserPermission();
         parent::install();
     }
 
-    public function uninstall() {
+    public function uninstall(): void
+    {
         $this->uninstallDatabaseTable();
+        $this->removeUserPermission();
         parent::uninstall();
     }
 
-    private function installDatabaseTable()
+    private function addUserPermission(): void
+    {
+        $db = \Pimcore\Db::get();
+
+        // keep array in case more permissions are needed in the future
+        $userPermissions = [
+            'glossary'
+        ];
+
+        foreach ($userPermissions as $permission) {
+            $db->insert('users_permission_definitions', [
+                $db->quoteIdentifier('key') => $permission,
+            ]);
+        }
+    }
+
+    private function removeUserPermission(): void
+    {
+        $db = \Pimcore\Db::get();
+
+        // keep array in case more permissions are needed in the future
+        $userPermissions = [
+            'glossary'
+        ];
+
+        foreach ($userPermissions as $permission) {
+            $db->delete('users_permission_definitions', [
+                $db->quoteIdentifier('key') => $permission,
+            ]);
+        }
+    }
+
+    private function installDatabaseTable(): void
     {
         $sqlPath = __DIR__ . '/Resources/install/';
         $sqlFileNames = ['install.sql'];
@@ -46,7 +81,7 @@ class Installer extends SettingsStoreAwareInstaller
         }
     }
 
-    private function uninstallDatabaseTable()
+    private function uninstallDatabaseTable(): void
     {
         $sqlPath = __DIR__ . '/Resources/uninstall/';
         $sqlFileNames = ['uninstall.sql'];

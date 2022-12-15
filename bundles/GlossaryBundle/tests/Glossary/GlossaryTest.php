@@ -18,9 +18,10 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\GlossaryBundle\Tests\Glossary;
 
 use Pimcore\Bundle\GlossaryBundle\Model\Glossary;
+use Pimcore\Bundle\GlossaryBundle\Tool\Processor;
 use Pimcore\Tests\Support\Helper\Pimcore;
 use Pimcore\Tests\Support\Test\TestCase;
-use Pimcore\Tool\Glossary\Processor;
+
 
 class GlossaryTest extends TestCase
 {
