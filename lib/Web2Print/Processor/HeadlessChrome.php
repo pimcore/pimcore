@@ -38,6 +38,7 @@ class HeadlessChrome extends Processor
         $web2printConfig = Config::getWeb2PrintConfig();
         $web2printConfig = $web2printConfig->get('headlessChromeSettings');
         $web2printConfig = json_decode($web2printConfig, true);
+        $web2printConfig = array_merge($web2printConfig, ($config->headlessChromeSettings ?? []));
 
         $params = ['document' => $document];
         $this->updateStatus($document->getId(), 10, 'start_html_rendering');
