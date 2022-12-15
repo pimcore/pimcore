@@ -8,6 +8,7 @@
   This method will return the field/column name for the current version and provide a way to support both version for bundles. 
   E.g. passing `o_id` in Pimcore 10 will return `o_id`, but `id` in Pimcore 11. 
 - [Ecommerce] Elasticsearch 7 support has been deprecated, elasticsearch 8 supported was added.
+- [ClassSavedInterface] Introduced additional interface implementing the `classSaved` method.
 
 
 ## 10.5.10
