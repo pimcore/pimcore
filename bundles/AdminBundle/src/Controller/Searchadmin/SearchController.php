@@ -129,7 +129,7 @@ class SearchController extends AdminController
 
             foreach ($params as $paramConditionObject) {
                 //this loop divides filter parameters to localized and unlocalized groups
-                $definitionExists = in_array('o_' . $paramConditionObject['property'], DataObject\Service::getSystemFields())
+                $definitionExists = in_array($paramConditionObject['property'], DataObject\Service::getSystemFields())
                     || $class->getFieldDefinition($paramConditionObject['property']);
                 if ($definitionExists) { //TODO: for sure, we can add additional condition like getLocalizedFieldDefinition()->getFieldDefiniton(...
                     $unlocalizedFieldsFilters[] = $paramConditionObject;
@@ -155,15 +155,15 @@ class SearchController extends AdminController
                 $join .= ' `' . $ob . '`';
 
                 if ($localizedConditionFilters) {
-                    $localizedJoin = $join . ' ON `' . $ob . '`.o_id = `object_localized_data_' . $class->getId() . '`.ooo_id';
+                    $localizedJoin = $join . ' ON `' . $ob . '`.id = `object_localized_data_' . $class->getId() . '`.ooo_id';
                 }
 
-                $join .= ' ON `' . $ob . '`.o_id = `object_' . $class->getId() . '`.o_id';
+                $join .= ' ON `' . $ob . '`.id = `object_' . $class->getId() . '`.id';
             }
 
             if (null !== $conditionFilters) {
                 //add condition query for non localised fields
-                $conditionParts[] = '( id IN (SELECT `object_' . $class->getId() . '`.o_id FROM object_' . $class->getId()
+                $conditionParts[] = '( id IN (SELECT `object_' . $class->getId() . '`.id FROM object_' . $class->getId()
                     . $join . ' WHERE ' . $conditionFilters . ') )';
             }
 
@@ -191,7 +191,7 @@ class SearchController extends AdminController
             foreach ($subtypes as $subtype) {
                 $conditionSubtypeParts[] = $db->quote($subtype);
             }
-            $conditionParts[] = '( type IN (' . implode(',', $conditionSubtypeParts) . ') )';
+            $conditionParts[] = '( `type` IN (' . implode(',', $conditionSubtypeParts) . ') )';
         }
 
         if (is_array($classnames) && !empty($classnames[0])) {
@@ -458,7 +458,7 @@ class SearchController extends AdminController
         $conditionParts[] = $this->getPermittedPaths();
 
         $matchCondition = '( MATCH (`data`,`properties`) AGAINST (' . $db->quote($query) . ' IN BOOLEAN MODE) )';
-        $conditionParts[] = '(' . $matchCondition . " AND type != 'folder') ";
+        $conditionParts[] = '(' . $matchCondition . " AND `type` != 'folder') ";
 
         $queryCondition = implode(' AND ', $conditionParts);
 

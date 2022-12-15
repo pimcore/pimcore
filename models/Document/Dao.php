@@ -60,7 +60,7 @@ class Dao extends Model\Element\Dao
     public function getByPath(string $path)
     {
         $params = $this->extractKeyAndPath($path);
-        $data = $this->db->fetchAssociative('SELECT id FROM documents WHERE path = BINARY :path AND `key` = BINARY :key', $params);
+        $data = $this->db->fetchAssociative('SELECT id FROM documents WHERE `path` = BINARY :path AND `key` = BINARY :key', $params);
 
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
@@ -194,7 +194,7 @@ class Dao extends Model\Element\Dao
     public function updateChildPaths(string $oldPath): array
     {
         //get documents to empty their cache
-        $documents = $this->db->fetchAllAssociative('SELECT id, CONCAT(path,`key`) AS path FROM documents WHERE path LIKE ?', [Helper::escapeLike($oldPath) . '%']);
+        $documents = $this->db->fetchAllAssociative('SELECT id, CONCAT(`path`,`key`) as `path` FROM documents WHERE `path` like ?', [Helper::escapeLike($oldPath) . '%']);
 
         $userId = '0';
         if ($user = \Pimcore\Tool\Admin::getCurrentUser()) {
@@ -203,7 +203,7 @@ class Dao extends Model\Element\Dao
 
         //update documents child paths
         // we don't update the modification date here, as this can have side-effects when there's an unpublished version for an element
-        $this->db->executeQuery('update documents set path = replace(path,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . "), userModification = '" . $userId . "' where path like " . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
+        $this->db->executeQuery('update documents set `path` = replace(`path`,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . "), userModification = '" . $userId . "' where `path` like " . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
 
         //update documents child permission paths
         $this->db->executeQuery('update users_workspaces_document set cpath = replace(cpath,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . ') where cpath like ' . $this->db->quote(Helper::escapeLike($oldPath) . '/%') . ';');
@@ -224,7 +224,7 @@ class Dao extends Model\Element\Dao
         $path = null;
 
         try {
-            $path = $this->db->fetchOne('SELECT CONCAT(path,`key`) as path FROM documents WHERE id = ?', [$this->model->getId()]);
+            $path = $this->db->fetchOne('SELECT CONCAT(`path`,`key`) as `path` FROM documents WHERE id = ?', [$this->model->getId()]);
         } catch (\Exception $e) {
             Logger::error('could not  get current document path from DB');
         }
@@ -442,7 +442,7 @@ class Dao extends Model\Element\Dao
         }
 
         $parentIds = $this->getParentIds();
-        $inhertitedLocks = $this->db->fetchOne('SELECT id FROM tree_locks WHERE id IN (' . implode(',', $parentIds) . ") AND type='document' AND locked = 'propagate' LIMIT 1");
+        $inhertitedLocks = $this->db->fetchOne('SELECT id FROM tree_locks WHERE id IN (' . implode(',', $parentIds) . ") AND `type`='document' AND locked = 'propagate' LIMIT 1");
 
         if ($inhertitedLocks > 0) {
             return true;
@@ -475,8 +475,8 @@ class Dao extends Model\Element\Dao
      */
     public function unlockPropagate(): array
     {
-        $lockIds = $this->db->fetchFirstColumn('SELECT id from documents WHERE path LIKE ' . $this->db->quote(Helper::escapeLike($this->model->getRealFullPath()) . '/%') . ' OR id = ' . $this->model->getId());
-        $this->db->executeStatement("DELETE FROM tree_locks WHERE type = 'document' AND id IN (" . implode(',', $lockIds) . ')');
+        $lockIds = $this->db->fetchFirstColumn('SELECT id from documents WHERE `path` like ' . $this->db->quote(Helper::escapeLike($this->model->getRealFullPath()) . '/%') . ' OR id = ' . $this->model->getId());
+        $this->db->executeStatement("DELETE FROM tree_locks WHERE `type` = 'document' AND id IN (" . implode(',', $lockIds) . ')');
 
         return $lockIds;
     }

@@ -73,7 +73,7 @@ class Device implements DataProviderInterface
             return;
         }
 
-        $userAgent = $visitorInfo->getRequest()->headers->get('User-Agent');
+        $userAgent = $visitorInfo->getRequest()->headers->get('User-Agent', '');
 
         $result = $this->loadData($userAgent);
         $result = $this->handleOverrides($visitorInfo->getRequest(), $result);

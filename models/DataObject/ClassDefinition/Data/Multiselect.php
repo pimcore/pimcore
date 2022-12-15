@@ -271,12 +271,12 @@ class Multiselect extends Data implements
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
-     * @return string
+     * @return mixed
      *
      * @see Data::getDataFromEditmode
      *
      */
-    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): string
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): mixed
     {
         return $data;
     }

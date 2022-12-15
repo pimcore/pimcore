@@ -56,10 +56,10 @@ class Dao extends Model\Dao\AbstractDao
         $dataTable = $this->getDataTableName();
         $fieldname = $this->model->getFieldname();
 
-        $dataExists = $this->db->fetchOne('SELECT `o_id` FROM `'.$dataTable."` WHERE
-         `o_id` = '".$objectId."' AND `fieldname` = '".$fieldname."' LIMIT 1");
+        $dataExists = $this->db->fetchOne('SELECT `id` FROM `'.$dataTable."` WHERE
+         `id` = '".$objectId."' AND `fieldname` = '".$fieldname."' LIMIT 1");
         if ($dataExists) {
-            $this->db->delete($dataTable, ['o_id' => $objectId, 'fieldname' => $fieldname]);
+            $this->db->delete($dataTable, ['id' => $objectId, 'fieldname' => $fieldname]);
         }
 
         $items = $this->model->getItems();
@@ -78,7 +78,7 @@ class Dao extends Model\Dao\AbstractDao
                 foreach ($keyData as $language => $value) {
                     $collectionId = $collectionMapping[$groupId] ?? null;
                     $data = [
-                        'o_id' => $objectId,
+                        'id' => $objectId,
                         'collectionId' => $collectionId,
                         'groupId' => $groupId,
                         'keyId' => $keyId,
@@ -117,17 +117,17 @@ class Dao extends Model\Dao\AbstractDao
 
         $groupsTable = $this->getGroupsTableName();
 
-        $dataExists = $this->db->fetchOne('SELECT `o_id` FROM `'.$groupsTable."` WHERE
-         `o_id` = '".$objectId."' AND `fieldname` = '".$fieldname."' LIMIT 1");
+        $dataExists = $this->db->fetchOne('SELECT `id` FROM `'.$groupsTable."` WHERE
+         `id` = '".$objectId."' AND `fieldname` = '".$fieldname."' LIMIT 1");
         if ($dataExists) {
-            $this->db->delete($groupsTable, ['o_id' => $objectId, 'fieldname' => $fieldname]);
+            $this->db->delete($groupsTable, ['id' => $objectId, 'fieldname' => $fieldname]);
         }
 
         if (is_array($activeGroups)) {
             foreach ($activeGroups as $activeGroupId => $enabled) {
                 if ($enabled) {
                     $data = [
-                        'o_id' => $objectId,
+                        'id' => $objectId,
                         'groupId' => $activeGroupId,
                         'fieldname' => $fieldname,
                     ];
@@ -145,8 +145,8 @@ class Dao extends Model\Dao\AbstractDao
         $groupsTable = $this->getGroupsTableName();
 
         // remove relations
-        $this->db->delete($dataTable, ['o_id' => $objectId]);
-        $this->db->delete($groupsTable, ['o_id' => $objectId]);
+        $this->db->delete($dataTable, ['id' => $objectId]);
+        $this->db->delete($groupsTable, ['id' => $objectId]);
     }
 
     /**
@@ -161,7 +161,7 @@ class Dao extends Model\Dao\AbstractDao
         $fieldname = $this->model->getFieldname();
         $groupsTableName = $this->getGroupsTableName();
 
-        $query = 'SELECT * FROM ' . $groupsTableName . ' WHERE o_id = ' . $this->db->quote($objectId) . ' AND fieldname = ' . $this->db->quote($fieldname);
+        $query = 'SELECT * FROM ' . $groupsTableName . ' WHERE id = ' . $this->db->quote($objectId) . ' AND fieldname = ' . $this->db->quote($fieldname);
 
         $data = $this->db->fetchAllAssociative($query);
         $list = [];
@@ -170,7 +170,7 @@ class Dao extends Model\Dao\AbstractDao
             $list[$item['groupId']] = true;
         }
 
-        $query = 'SELECT * FROM ' . $dataTableName . ' WHERE o_id = ' . $this->db->quote($objectId) . ' AND fieldname = ' . $this->db->quote($fieldname);
+        $query = 'SELECT * FROM ' . $dataTableName . ' WHERE id = ' . $this->db->quote($objectId) . ' AND fieldname = ' . $this->db->quote($fieldname);
 
         $data = $this->db->fetchAllAssociative($query);
 
@@ -233,15 +233,15 @@ class Dao extends Model\Dao\AbstractDao
         $dataTable = $this->getDataTableName();
 
         $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $groupsTable . '` (
-            `o_id` INT(11) UNSIGNED NOT NULL,
+            `id` INT(11) UNSIGNED NOT NULL,
             `groupId` BIGINT(20) NOT NULL,
             `fieldname` VARCHAR(70) NOT NULL,
-            PRIMARY KEY (`o_id`, `fieldname`, `groupId`),
-            CONSTRAINT `'.self::getForeignKeyName($groupsTable, 'o_id').'` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+            PRIMARY KEY (`id`, `fieldname`, `groupId`),
+            CONSTRAINT `'.self::getForeignKeyName($groupsTable, 'id').'` FOREIGN KEY (`id`) REFERENCES objects (`id`) ON DELETE CASCADE
         ) DEFAULT CHARSET=utf8mb4;');
 
         $this->db->executeQuery('CREATE TABLE IF NOT EXISTS `' . $dataTable . '` (
-            `o_id` INT(11) UNSIGNED NOT NULL,
+            `id` INT(11) UNSIGNED NOT NULL,
             `collectionId` BIGINT(20) NULL,
             `groupId` BIGINT(20) NOT NULL,
             `keyId` BIGINT(20) NOT NULL,
@@ -250,10 +250,10 @@ class Dao extends Model\Dao\AbstractDao
             `fieldname` VARCHAR(70) NOT NULL,
             `language` VARCHAR(10) NOT NULL,
             `type` VARCHAR(50) NULL,
-            PRIMARY KEY (`o_id`, `fieldname`, `groupId`, `keyId`, `language`),
+            PRIMARY KEY (`id`, `fieldname`, `groupId`, `keyId`, `language`),
             INDEX `keyId` (`keyId`),
             INDEX `language` (`language`),
-            CONSTRAINT `'.self::getForeignKeyName($dataTable, 'o_id').'` FOREIGN KEY (`o_id`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+            CONSTRAINT `'.self::getForeignKeyName($dataTable, 'id').'` FOREIGN KEY (`id`) REFERENCES objects (`id`) ON DELETE CASCADE
         ) DEFAULT CHARSET=utf8mb4;');
 
         $this->tableDefinitions = [];

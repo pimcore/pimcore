@@ -24,7 +24,7 @@ trait DataWidthTrait
     /**
      * @internal
      */
-    public string|int|null $width = 0;
+    public string|int|null $width = null;
 
     public function getWidth(): int|string|null
     {

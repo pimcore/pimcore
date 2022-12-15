@@ -26,7 +26,7 @@ class Folder extends DataObject
     /**
      * {@inheritdoc}
      */
-    protected string $o_type = 'folder';
+    protected string $type = 'folder';
 
     public static function create(array $values): Folder
     {

@@ -162,7 +162,7 @@ class DataObjects extends Elements implements DataProviderInterface
             $conditionParts[] = '( MATCH (`data`,`properties`) AGAINST ("' . $db->quote($queryString) . '" IN BOOLEAN MODE) )';
         }
 
-        $conditionParts[] = '( maintype = "object" AND type IN ("object", "variant") )';
+        $conditionParts[] = '( maintype = "object" AND `type` IN ("object", "variant") )';
 
         $classnames = [];
         if ($this->config['classes']) {

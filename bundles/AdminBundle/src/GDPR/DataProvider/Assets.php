@@ -148,7 +148,7 @@ class Assets extends Elements implements DataProviderInterface
             foreach ($this->config['types'] as $type) {
                 $typesList[] = $db->quote($type);
             }
-            $typesPart = ' AND type IN (' . implode(',', $typesList) . ')';
+            $typesPart = ' AND `type` IN (' . implode(',', $typesList) . ')';
         }
 
         $conditionParts[] = '( maintype = "asset" ' . $typesPart . ')';

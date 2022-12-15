@@ -208,7 +208,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 }
 
                 $relation = new DataObject\Classificationstore\KeyGroupRelation\Listing();
-                $relation->setCondition("type = 'calculatedValue' and groupId = " . $relation->quote($groupId));
+                $relation->setCondition("`type` = 'calculatedValue' and groupId = " . $relation->quote($groupId));
                 $relation = $relation->load();
                 foreach ($relation as $key) {
                     $keyId = $key->getKeyId();
@@ -339,8 +339,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         }
 
         $data = $data['data'];
-        $activeGroups = $data['activeGroups'];
-        $groupCollectionMapping = $data['groupCollectionMapping'];
+        $activeGroups = $data['activeGroups'] ?? [];
+        $groupCollectionMapping = $data['groupCollectionMapping'] ?? [];
 
         $correctedMapping = [];
 

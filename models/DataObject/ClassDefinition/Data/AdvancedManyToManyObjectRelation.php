@@ -139,7 +139,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
             }
 
             $existingTargets = $db->fetchFirstColumn(
-                'SELECT o_id FROM objects WHERE o_id IN ('.implode(',', $targets).')'
+                'SELECT id FROM objects WHERE id IN ('.implode(',', $targets).')'
             );
 
             foreach ($data as $key => $relation) {
@@ -509,12 +509,12 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
                 $ownerName = '/' . $context['containerType'] . '~' . $containerName . '/%';
             }
 
-            $sql = Db\Helper::quoteInto($db, 'o_id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
+            $sql = Db\Helper::quoteInto($db, 'id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
                 . Db\Helper::quoteInto($db, 'ownername LIKE ?', $ownerName)
                 . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
                 . ' AND ' . Db\Helper::quoteInto($db, 'position = ?', $position);
         } else {
-            $sql = Db\Helper::quoteInto($db, 'o_id = ?', $objectId) . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
+            $sql = Db\Helper::quoteInto($db, 'id = ?', $objectId) . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
                 . ' AND ' . Db\Helper::quoteInto($db, 'position = ?', $position);
 
             if ($context) {
@@ -595,13 +595,13 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
             $index = $context['index'];
             $db->executeStatement(
                 'DELETE FROM object_metadata_' . $object->getClassId()
-                . ' WHERE ' . Db\Helper::quoteInto($db, 'o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
+                . ' WHERE ' . Db\Helper::quoteInto($db, 'id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
                 . Db\Helper::quoteInto($db, 'ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/' . "$index . /%")
                 . ' AND ' . Db\Helper::quoteInto($db, 'fieldname = ?', $this->getName())
             );
         } else {
             $deleteConditions = [
-                'o_id' => $object->getId(),
+                'id' => $object->getId(),
                 'fieldname' => $this->getName(),
             ];
             if ($context) {

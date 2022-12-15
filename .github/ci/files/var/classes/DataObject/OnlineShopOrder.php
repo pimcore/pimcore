@@ -91,8 +91,8 @@ use Pimcore\Model\Element\AbstractElement;
 
 class OnlineShopOrder extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder
 {
-protected $o_classId = "EF_OSO";
-protected $o_className = "OnlineShopOrder";
+protected $classId = "EF_OSO";
+protected $className = "OnlineShopOrder";
 protected ?string $ordernumber;
 protected ?string $orderState;
 protected ?\Carbon\Carbon $orderdate;

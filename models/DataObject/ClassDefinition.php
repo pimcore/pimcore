@@ -566,7 +566,7 @@ final class ClassDefinition extends Model\AbstractModel
 
         // delete all objects using this class
         $list = new Listing();
-        $list->setCondition('o_classId = ?', $this->getId());
+        $list->setCondition('classId = ?', $this->getId());
         $list->load();
 
         foreach ($list->getObjects() as $o) {

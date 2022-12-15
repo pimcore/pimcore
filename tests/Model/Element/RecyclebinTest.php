@@ -108,7 +108,7 @@ class RecyclebinTest extends ModelTestCase
         $parent->delete();
 
         $recycledItems = new Item\Listing();
-        $recycledItems->setCondition('path = ?', $parentPath);
+        $recycledItems->setCondition('`path` = ?', $parentPath);
 
         $this->assertEquals(2, $recycledItems->current()->getAmount(), 'Expected 2 recycled item');
 
@@ -157,7 +157,7 @@ class RecyclebinTest extends ModelTestCase
 
         //restore deleted items (parent + child)
         $recycledItems = new Item\Listing();
-        $recycledItems->setCondition('path = ?', $sourceObjectPath);
+        $recycledItems->setCondition('`path` = ?', $sourceObjectPath);
         $recycledItems->current()->restore();
 
         //load relation and check if relation loads correctly

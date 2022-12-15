@@ -41,8 +41,8 @@ use Pimcore\Model\Element\AbstractElement;
 
 class OnlineShopOrderItem extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem
 {
-protected $o_classId = "EF_OSOI";
-protected $o_className = "OnlineShopOrderItem";
+protected $classId = "EF_OSOI";
+protected $className = "OnlineShopOrderItem";
 protected ?string $orderState = null;
 protected \Pimcore\Model\Element\AbstractElement|AbstractObject|null $product = null;
 protected ?string $productNumber = null;

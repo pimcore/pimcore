@@ -687,7 +687,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
     },
 
     getLocalStorageKey: function (legacyKey = true) {
-        let key = "pimcore_lfSplitView_" + this.object.data.general.o_className;
+        let key = "pimcore_lfSplitView_" + this.object.data.general.className;
         if(legacyKey === false) {
             key = key + "_" + pimcore.currentuser.id;
         }

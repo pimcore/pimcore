@@ -718,7 +718,7 @@ class TranslationController extends AdminController
                         );
                     }
                     $list->setCondition(
-                        ($el instanceof DataObject ? 'o_' : '') . 'path LIKE ?',
+                        'path LIKE ?',
                         [$list->escapeLike($el->getRealFullPath() . ($el->getRealFullPath() != '/' ? '/' : '')) . '%']
                     );
                     $children = $list->load();

@@ -121,7 +121,7 @@ abstract class AdminAbstractAuthenticator extends AbstractAuthenticator implemen
         } else {
             $url = $this->router->generate('pimcore_admin_index', [
                 '_dc' => time(),
-                'perspective' => strip_tags($request->get('perspective')),
+                'perspective' => strip_tags($request->get('perspective', '')),
             ]);
         }
 

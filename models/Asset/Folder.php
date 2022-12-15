@@ -125,7 +125,7 @@ class Folder extends Model\Asset
 
         $limit = 42;
         $db = \Pimcore\Db::get();
-        $condition = "path LIKE :path AND type IN ('image', 'video', 'document')";
+        $condition = "`path` LIKE :path AND `type` IN ('image', 'video', 'document')";
         $conditionParams = [
             'path' => Helper::escapeLike($this->getRealFullPath()) . '/%',
         ];
