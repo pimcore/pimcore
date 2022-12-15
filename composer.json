@@ -195,8 +195,7 @@
   "autoload-dev": {
     "psr-4": {
       "Pimcore\\Model\\DataObject\\": "var/classes/DataObject",
-      "Pimcore\\Tests\\": "tests",
-      "Pimcore\\Bundle\\GlossaryBundle\\Tests\\": "bundles/GlossaryBundle/tests/"
+      "Pimcore\\Tests\\": "tests"
     },
     "files": [
       "src/Kernel.php"
