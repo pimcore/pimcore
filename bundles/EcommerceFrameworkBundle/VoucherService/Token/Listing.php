@@ -222,7 +222,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
      * @param int $length
      * @param string|int|null $seriesId
      *
-     * @return null|string
+     * @return null|int
      */
     public static function getCountByLength($length, $seriesId = null)
     {
@@ -361,8 +361,8 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
     /**
      * Returns an collection of items for a page.
      *
-     * @param  int $offset Page offset
-     * @param  int $itemCountPerPage Number of items per page
+     * @param int $offset Page offset
+     * @param int $itemCountPerPage Number of items per page
      *
      * @return array
      */
