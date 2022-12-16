@@ -95,11 +95,11 @@ class Pimcore extends Module\Symfony
     /**
      * @param string $serviceId
      *
-     * @return object|null
+     * @return object
      *
      * @throws \Exception
      */
-    public function grabService(string $serviceId)
+    public function grabService(string $serviceId): object
     {
         if (empty(self::$testServiceContainer)) {
             $container = $this->getContainer();
