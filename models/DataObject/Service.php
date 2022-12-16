@@ -66,10 +66,10 @@ class Service extends Model\Element\Service
      *
      * @var string[]
      */
-    private const BC_VERSION_DEPENDENT_DATABASE_COLUMNS = ['id', 'parentId', 'type', 'key', 'path', 'index', 'published',
-                                                                'creationDate', 'modificationDate', 'userOwner', 'userModification',
-                                                                'classId', 'childrenSortBy', 'className', 'childrenSortOrder',
-                                                                'versionCount', ];
+    private const BC_VERSION_DEPENDENT_DATABASE_COLUMNS = ['id', 'parentid', 'type', 'key', 'path', 'index', 'published',
+                                                                'creationdate', 'modificationdate', 'userowner', 'usermodification',
+                                                                'classid', 'childrensortby', 'classname', 'childrensortorder',
+                                                                'versioncount', ];
 
     /**
      * @param Model\User $user
@@ -2116,6 +2116,7 @@ class Service extends Model\Element\Service
     {
         $currentVersion = \Pimcore\Version::getVersion();
 
+        $fieldName = strtolower($fieldName);
         if (str_starts_with($currentVersion, '11.')) {
             $newFieldName = $fieldName;
             if (str_starts_with($newFieldName, 'o_')) {
