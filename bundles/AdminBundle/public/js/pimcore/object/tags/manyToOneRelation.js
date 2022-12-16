@@ -653,7 +653,11 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                     this.component.removeCls("grid_nicepath_requested");
 
                     if (typeof responseData[target["nicePathKey"]] !== "undefined") {
-                        this.component.setValue(responseData[target["nicePathKey"]]);
+                        if (this.fieldConfig.displayMode == 'combo') {
+                            this.component.setValue(target["id"]);
+                        } else {
+                            this.component.setValue(responseData[target["nicePathKey"]]);
+                        }
                     }
 
                 }.bind(this, target)
