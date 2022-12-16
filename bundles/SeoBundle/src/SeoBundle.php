@@ -33,10 +33,21 @@ class SeoBundle extends AbstractPimcoreBundle
     public function getJsPaths(): array
     {
         return [
-            '/bundles/seo/js/seopanel.js',
             '/bundles/seo/js/startup.js',
+            '/bundles/seo/js/httpErrorLog.js',
+            '/bundles/seo/js/robotstxt.js',
+            '/bundles/seo/js/seopanel.js',
         ];
     }
+
+    /**
+     * @return Installer
+     */
+    public function getInstaller(): Installer
+    {
+        return $this->container->get(Installer::class);
+    }
+
 
     public function getPath(): string
     {

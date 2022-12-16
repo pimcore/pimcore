@@ -21,6 +21,7 @@ pimcore.seo.seopanel = Class.create({
 
     activate: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        console.log(tabPanel);
         tabPanel.setActiveItem("pimcore_document_seopanel");
     },
 
@@ -42,7 +43,7 @@ pimcore.seo.seopanel = Class.create({
             tabPanel.setActiveItem("pimcore_document_seopanel");
 
             this.panel.on("destroy", function () {
-                pimcore.globalmanager.remove("document_seopanel");
+                pimcore.globalmanager.remove("seo_seopanel");
             }.bind(this));
 
             pimcore.layout.refresh();

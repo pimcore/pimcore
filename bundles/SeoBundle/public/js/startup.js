@@ -76,7 +76,7 @@ pimcore.seo = Class.create({
             pimcore.globalmanager.get("robotstxt").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("robotstxt", new pimcore.settings.robotstxt());
+            pimcore.globalmanager.add("robotstxt", new pimcore.seo.robotstxt());
         }
     },
 
@@ -85,7 +85,7 @@ pimcore.seo = Class.create({
             pimcore.globalmanager.get("http_error_log").activate();
         }
         catch (e) {
-            pimcore.globalmanager.add("http_error_log", new pimcore.settings.httpErrorLog());
+            pimcore.globalmanager.add("http_error_log", new pimcore.seo.httpErrorLog());
         }
     },
 
