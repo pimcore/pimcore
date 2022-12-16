@@ -23,6 +23,7 @@ use Pimcore\Event\Traits\RecursionBlockingEventDispatchHelperTrait;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Symfony\Component\Uid\UuidV4;
 
 /**
  * @method \Pimcore\Model\DataObject\ClassDefinition\CustomLayout\Dao getDao()
@@ -143,7 +144,7 @@ class CustomLayout extends Model\AbstractModel
     /**
      * @param string $field
      *
-     * @return Data|null
+     * @return Data|Layout|null
      */
     public function getFieldDefinition($field)
     {
@@ -343,7 +344,7 @@ class CustomLayout extends Model\AbstractModel
      *
      * @param string $classId
      *
-     * @return int|null
+     * @return UuidV4|null
      */
     public static function getIdentifier($classId)
     {
@@ -462,7 +463,7 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return bool
      */
     #[\ReturnTypeWillChange]
     public function getDefault()
