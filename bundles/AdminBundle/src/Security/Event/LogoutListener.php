@@ -88,7 +88,7 @@ class LogoutListener implements EventSubscriberInterface, LoggerAwareInterface
                 $adminSession->remove('user');
             }
 
-            Session::invalidate();
+            $adminSession->clear();
 
             return $event;
         });
