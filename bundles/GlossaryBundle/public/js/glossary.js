@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.settings.glossary");
-pimcore.settings.glossary = Class.create({
+pimcore.registerNS("pimcore.glossary.glossary");
+pimcore.glossary.glossary = Class.create({
 
     initialize: function () {
         this.languages = pimcore.settings.websiteLanguages;

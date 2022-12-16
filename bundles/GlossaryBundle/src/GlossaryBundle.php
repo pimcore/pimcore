@@ -33,8 +33,8 @@ class GlossaryBundle extends AbstractPimcoreBundle
     public function getJsPaths(): array
     {
         return [
-            '/bundles/glossary/js/glossary.js',
             '/bundles/glossary/js/startup.js',
+            '/bundles/glossary/js/glossary.js',
         ];
     }
 

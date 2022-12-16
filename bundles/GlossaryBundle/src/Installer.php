@@ -23,6 +23,10 @@ use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
  */
 class Installer extends SettingsStoreAwareInstaller
 {
+    protected const USER_PERMISSIONS = [
+        'glossary'
+    ];
+
     public function install(): void
     {
         $this->installDatabaseTable();
@@ -41,12 +45,7 @@ class Installer extends SettingsStoreAwareInstaller
     {
         $db = \Pimcore\Db::get();
 
-        // keep array in case more permissions are needed in the future
-        $userPermissions = [
-            'glossary'
-        ];
-
-        foreach ($userPermissions as $permission) {
+        foreach (self::USER_PERMISSIONS as $permission) {
             $db->insert('users_permission_definitions', [
                 $db->quoteIdentifier('key') => $permission,
             ]);
@@ -57,12 +56,7 @@ class Installer extends SettingsStoreAwareInstaller
     {
         $db = \Pimcore\Db::get();
 
-        // keep array in case more permissions are needed in the future
-        $userPermissions = [
-            'glossary'
-        ];
-
-        foreach ($userPermissions as $permission) {
+        foreach (self::USER_PERMISSIONS as $permission) {
             $db->delete('users_permission_definitions', [
                 $db->quoteIdentifier('key') => $permission,
             ]);
