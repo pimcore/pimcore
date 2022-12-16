@@ -1506,34 +1506,7 @@
              pimcore.globalmanager.add("objectbricks", new pimcore.object.objectbrick());
          }
      },
- 
-     showDocumentSeo: function () {
-         try {
-             pimcore.globalmanager.get("document_seopanel").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("document_seopanel", new pimcore.document.seopanel());
-         }
-     },
- 
-     showRobotsTxt: function () {
-         try {
-             pimcore.globalmanager.get("robotstxt").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("robotstxt", new pimcore.settings.robotstxt());
-         }
-     },
- 
-     showHttpErrorLog: function () {
-         try {
-             pimcore.globalmanager.get("http_error_log").activate();
-         }
-         catch (e) {
-             pimcore.globalmanager.add("http_error_log", new pimcore.settings.httpErrorLog());
-         }
-     },
- 
+
      clearCache: function (params) {
          Ext.Msg.confirm(t('warning'), t('system_performance_stability_warning'), function(btn){
              if (btn == 'yes'){

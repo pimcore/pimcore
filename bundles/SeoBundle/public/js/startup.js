@@ -10,7 +10,6 @@ pimcore.seo = Class.create({
     pimcoreReady: function (e) {
         const user = pimcore.globalmanager.get('user');
         const perspectiveCfg = pimcore.globalmanager.get("perspective");
-        console.log("ready");
 
         if (perspectiveCfg.inToolbar("marketing") && perspectiveCfg.inToolbar("marketing.seo")) {
             var seoMenu = [];
@@ -42,30 +41,53 @@ pimcore.seo = Class.create({
                 });
             }
 
-            const toolbar = pimcore.globalmanager.get('layout_toolbar');
-            console.log(toolbar);
-
-
             // get index of marketing.targeting
             if (seoMenu.length > 0) {
-               //marketingItems.push({
-               //    text: t("search_engine_optimization"),
-               //    iconCls: "pimcore_nav_icon_seo",
-               //    itemId: 'pimcore_menu_marketing_seo',
-               //    hideOnClick: false,
-               //    menu: {
-               //        cls: "pimcore_navigation_flyout",
-               //        shadow: false,
-               //        items: seoMenu
-               //    }
-               //});
+                const toolbar = pimcore.globalmanager.get('layout_toolbar');
+                // try to insert it after the marketing_personalization
+                // setting constant index, user maybe does not have the rights for marketing_personalization
+                const index = 2;
+                toolbar.marketingMenu.insert(index, {
+                    text: t("search_engine_optimization"),
+                    iconCls: "pimcore_nav_icon_seo",
+                    itemId: 'pimcore_menu_marketing_seo',
+                    hideOnClick: false,
+                    menu: {
+                        cls: "pimcore_navigation_flyout",
+                        shadow: false,
+                        items: seoMenu
+                    }
+                });
             }
         }
-
-        console.log('Ready');
     },
 
+    showDocumentSeo: function () {
+        try {
+            pimcore.globalmanager.get("seo_seopanel").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("seo_seopanel", new pimcore.seo.seopanel());
+        }
+    },
 
+    showRobotsTxt: function () {
+        try {
+            pimcore.globalmanager.get("robotstxt").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("robotstxt", new pimcore.settings.robotstxt());
+        }
+    },
+
+    showHttpErrorLog: function () {
+        try {
+            pimcore.globalmanager.get("http_error_log").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("http_error_log", new pimcore.settings.httpErrorLog());
+        }
+    },
 
     registerKeyBinding: function(e) {
         const user = pimcore.globalmanager.get('user');
