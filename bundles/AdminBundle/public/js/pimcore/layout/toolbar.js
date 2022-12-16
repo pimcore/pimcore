@@ -554,52 +554,7 @@
                      }
                  });
              }
- 
-             if (perspectiveCfg.inToolbar("marketing.seo")) {
-                 var seoMenu = [];
- 
-                 if (user.isAllowed("documents") && user.isAllowed("seo_document_editor") && perspectiveCfg.inToolbar("marketing.seo.documents")) {
-                     seoMenu.push({
-                         text: t("seo_document_editor"),
-                         iconCls: "pimcore_nav_icon_document_seo",
-                         itemId: 'pimcore_menu_marketing_seo_document_editor',
-                         handler: this.showDocumentSeo
-                     });
-                 }
- 
-                 if (user.isAllowed("robots.txt") && perspectiveCfg.inToolbar("marketing.seo.robots")) {
-                     seoMenu.push({
-                         text: "robots.txt",
-                         iconCls: "pimcore_nav_icon_robots",
-                         itemId: 'pimcore_menu_marketing_seo_robots_txt',
-                         handler: this.showRobotsTxt
-                     });
-                 }
- 
-                 if (user.isAllowed("http_errors") && perspectiveCfg.inToolbar("marketing.seo.httperrors")) {
-                     seoMenu.push({
-                         text: t("http_errors"),
-                         iconCls: "pimcore_nav_icon_httperrorlog",
-                         itemId: 'pimcore_menu_marketing_seo_http_errors',
-                         handler: this.showHttpErrorLog
-                     });
-                 }
- 
-                 if (seoMenu.length > 0) {
-                     marketingItems.push({
-                         text: t("search_engine_optimization"),
-                         iconCls: "pimcore_nav_icon_seo",
-                         itemId: 'pimcore_menu_marketing_seo',
-                         hideOnClick: false,
-                         menu: {
-                             cls: "pimcore_navigation_flyout",
-                             shadow: false,
-                             items: seoMenu
-                         }
-                     });
-                 }
-             }
- 
+
              if (user.isAllowed("reports_config")) {
                  if (perspectiveCfg.inToolbar("settings.customReports")) {
                      marketingItems.push({

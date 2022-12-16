@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-pimcore.registerNS("pimcore.document.seopanel");
-pimcore.document.seopanel = Class.create({
+pimcore.registerNS("pimcore.seo.seopanel");
+pimcore.seo.seopanel = Class.create({
 
     initialize: function () {
         this.getTabPanel();
@@ -48,7 +48,7 @@ pimcore.document.seopanel = Class.create({
             pimcore.layout.refresh();
 
             Ext.Ajax.request({
-                url: Routing.generate('pimcore_admin_document_document_seopaneltreeroot'),
+                url: Routing.generate('pimcore_seo_document_document_seopaneltreeroot'),
                 success: function (response) {
                     var res = Ext.decode(response.responseText);
                     if(res["id"]) {
@@ -104,7 +104,7 @@ pimcore.document.seopanel = Class.create({
         var store = Ext.create('Ext.data.TreeStore', {
             proxy: {
                 type: 'ajax',
-                url: Routing.generate('pimcore_admin_document_document_seopaneltree')
+                url: Routing.generate('pimcore_seo_document_document_seopaneltree')
             }
         });
 
@@ -259,7 +259,7 @@ pimcore.document.seopanel = Class.create({
             success: function (node) {
                 if (values.id == 1) {
                     Ext.Ajax.request({
-                        url: Routing.generate('pimcore_admin_document_document_seopaneltreeroot'),
+                        url: Routing.generate('pimcore_seo_document_document_seopaneltreeroot'),
                         success: function (response) {
                             var cfg = Ext.decode(response.responseText);
                             if(cfg.id) { // We are the root node

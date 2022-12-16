@@ -1,0 +1,6 @@
+_pimcore_seo_backend:
+    resource: "@SeoBundle/src/Controller/"
+    type:     annotation
+    prefix:   /admin/seo
+    options:
+        expose: true
