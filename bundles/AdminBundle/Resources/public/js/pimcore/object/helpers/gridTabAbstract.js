@@ -178,6 +178,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 }.bind(this),
                 "keydown": function (field, key) {
                     if (key.getKey() == key.ENTER) {
+                        this.sqlFilter = field.getValue();
                         this.updateSqlFilter();
                     }
                 }.bind(this)
