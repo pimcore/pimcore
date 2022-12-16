@@ -55,7 +55,7 @@ class ExpressionSupportStrategy implements WorkflowSupportStrategyInterface
         }
 
         $ret = $this->expressionService->evaluateExpression($workflow, $subject, $this->expression);
-        return is_bool($ret) ? (bool)$ret : false;
+        return filter_var($ret, FILTER_VALIDATE_BOOL) ? (bool)$ret : false;
     }
 
     private function supportsClass(object $subject): bool
