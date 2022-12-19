@@ -1,7 +1,7 @@
 # Bundle Collection
 
 The `BundleCollection` is a container which is used to register every used bundle. As Pimcore gathers bundles from multiple 
-sources - registered via code in `App\Kernel` and registered through the extension manager config, it makes sense to have 
+sources - registered via code in `App\Kernel` and registered through `config/bundles.php` config, it makes sense to have 
 a unified API how bundles can be registered. 
 
 While Symfony's standard edition uses a `registerBundles` method building an array of bundles to load, Pimcore expects you
@@ -57,7 +57,7 @@ class Kernel extends PimcoreKernel
 
 If a bundle depends on other bundles, e.g. because it uses features provided by a third-party bundle you need to
 make sure that third-party bundle is loaded together with your bundle. You can either instruct your users to manually
-load the bundles your bundle depends on in their `App\Kernel` or you can implement the [`DependentBundleInterface`](https://github.com/pimcore/pimcore/blob/10.x/lib/HttpKernel/Bundle/DependentBundleInterface.php)
+load the bundles your bundle depends on in their `App\Kernel` or you can implement the [`DependentBundleInterface`](https://github.com/pimcore/pimcore/blob/11.x/lib/HttpKernel/Bundle/DependentBundleInterface.php)
 and define a list of bundles which should be loaded together with your bundle:
 
 ```php

@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Tests\Unit\Document\Tag\Block;
 
 use Pimcore\Document\Editable\Block\BlockStateStack;
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 
 class BlockStateStackTest extends TestCase
 {

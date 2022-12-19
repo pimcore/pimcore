@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,32 +23,18 @@ use Pimcore\Model\DataObject\LazyLoadedFieldsInterface;
  */
 trait LazyLoadedRelationTrait
 {
-    /**
-     * @var array
-     */
-    protected $loadedLazyKeys = [];
+    protected array $loadedLazyKeys = [];
 
-    /**
-     * @param string $key
-     */
-    public function markLazyKeyAsLoaded(string $key)
+    public function markLazyKeyAsLoaded(string $key): void
     {
         $this->loadedLazyKeys[$key] = 1;
     }
 
-    /**
-     * @param string $key
-     */
-    public function unmarkLazyKeyAsLoaded(string $key)
+    public function unmarkLazyKeyAsLoaded(string $key): void
     {
         unset($this->loadedLazyKeys[$key]);
     }
 
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
     public function isLazyKeyLoaded(string $key): bool
     {
         if ($this->isAllLazyKeysMarkedAsLoaded()) {
@@ -59,12 +46,6 @@ trait LazyLoadedRelationTrait
         return $isset;
     }
 
-    /**
-     * @param string $name
-     * @param string $language
-     *
-     * @return string
-     */
     public function buildLazyKey(string $name, string $language): string
     {
         return $name . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;

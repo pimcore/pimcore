@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -26,83 +27,59 @@ class Button extends Model\DataObject\ClassDefinition\Layout
      *
      * @var string
      */
-    public $fieldtype = 'button';
+    public string $fieldtype = 'button';
 
     /**
      * @internal
      *
      * @var string
      */
-    public $handler;
+    public string $handler;
 
     /**
      * @internal
      *
      * @var string
      */
-    public $text;
+    public string $text;
 
     /**
      * @internal
      *
      * @var string
      */
-    public $icon;
+    public string $icon;
 
-    /**
-     * @return string
-     */
-    public function getText()
+    public function getText(): string
     {
         return $this->text;
     }
 
-    /**
-     * @param string $text
-     *
-     * @return $this
-     */
-    public function setText($text)
+    public function setText(string $text): static
     {
         $this->text = $text;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getHandler()
+    public function getHandler(): string
     {
         return $this->handler;
     }
 
-    /**
-     * @param string $handler
-     *
-     * @return $this
-     */
-    public function setHandler($handler)
+    public function setHandler(string $handler): static
     {
         $this->handler = $handler;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getIcon()
+    public function getIcon(): string
     {
         return $this->icon;
     }
 
-    /**
-     * @param string $icon
-     *
-     * @return $this
-     */
-    public function setIcon($icon)
+    public function setIcon(string $icon): static
     {
         $this->icon = $icon;
 

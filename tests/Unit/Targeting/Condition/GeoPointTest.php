@@ -21,7 +21,7 @@ use Pimcore\Targeting\Condition\GeoPoint;
 use Pimcore\Targeting\DataProvider\GeoLocation;
 use Pimcore\Targeting\Model\GeoLocation as GeoLocationModel;
 use Pimcore\Targeting\Model\VisitorInfo;
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -29,7 +29,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class GeoPointTest extends TestCase
 {
-    private $points = [
+    private array $points = [
         // sbg - muc = ~118 km
         // sbg - ber = ~521 km
         // sbg - bkk = ~8689 km

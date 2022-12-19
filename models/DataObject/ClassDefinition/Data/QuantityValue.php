@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,7 +21,9 @@ use Pimcore\Cache\RuntimeCache;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
 use Pimcore\Normalizer\NormalizerInterface;
 
@@ -33,6 +36,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         getQueryColumnType as public genericGetQueryColumnType;
     }
     use Model\DataObject\Traits\DefaultValueTrait;
+    use Model\DataObject\Traits\DataWidthTrait;
 
     const DECIMAL_SIZE_DEFAULT = 64;
 
@@ -45,77 +49,68 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @var string
      */
-    public $fieldtype = 'quantityValue';
+    public string $fieldtype = 'quantityValue';
 
     /**
      * @internal
      *
      * @var string|int
      */
-    public $width = 0;
-
-    /**
-     * @internal
-     *
-     * @var string|int
-     */
-    public $unitWidth;
+    public string|int $unitWidth;
 
     /**
      * @internal
      *
      * @var float|int|string|null
      */
-    public $defaultValue;
+    public string|int|null|float $defaultValue = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    public $defaultUnit;
+    public ?string $defaultUnit = null;
 
     /**
      * @internal
      *
-     * @var array
+     * @var array|null
      */
-    public $validUnits;
-
-    /**
-     * @internal
-     *
-     * @var bool
-     */
-    public $integer = false;
+    public ?array $validUnits = null;
 
     /**
      * @internal
      *
      * @var bool
      */
-    public $unsigned = false;
+    public bool $integer = false;
+
+    /**
+     * @internal
+     *
+     * @var bool
+     */
+    public bool $unsigned = false;
 
     /**
      * @internal
      *
      * @var float|null
      */
-    public $minValue;
+    public ?float $minValue = null;
 
     /**
      * @internal
      *
      * @var float|null
      */
-    public $maxValue;
+    public ?float $maxValue = null;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $unique;
+    public bool $unique = false;
 
     /**
      * This is the x part in DECIMAL(x, y) and denotes the total amount of digits. In MySQL this is called precision
@@ -126,7 +121,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @var int|null
      */
-    public $decimalSize;
+    public ?int $decimalSize = null;
 
     /**
      * This is the y part in DECIMAL(x, y) and denotes amount of digits after a comma. In MySQL this is called scale. See
@@ -136,14 +131,12 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @var int|null
      */
-    public $decimalPrecision;
+    public ?int $decimalPrecision = null;
 
     /**
      * @internal
-     *
-     * @var bool
      */
-    public $autoConvert;
+    public bool $autoConvert = false;
 
     /**
      * Type for the column to query
@@ -169,37 +162,12 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         'unit' => 'varchar(64)',
     ];
 
-    /**
-     * @return string|int
-     */
-    public function getWidth()
-    {
-        return $this->width;
-    }
-
-    /**
-     * @param string|int $width
-     */
-    public function setWidth($width)
-    {
-        if (is_numeric($width)) {
-            $width = (int)$width;
-        }
-        $this->width = $width;
-    }
-
-    /**
-     * @return string|int
-     */
-    public function getUnitWidth()
+    public function getUnitWidth(): int|string
     {
         return $this->unitWidth;
     }
 
-    /**
-     * @param string|int $unitWidth
-     */
-    public function setUnitWidth($unitWidth)
+    public function setUnitWidth(int|string $unitWidth)
     {
         if (is_numeric($unitWidth)) {
             $unitWidth = (int)$unitWidth;
@@ -207,10 +175,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         $this->unitWidth = $unitWidth;
     }
 
-    /**
-     * @return float|int|string|null
-     */
-    public function getDefaultValue()
+    public function getDefaultValue(): float|int|string|null
     {
         if ($this->defaultValue !== null) {
             return $this->toNumeric($this->defaultValue);
@@ -219,10 +184,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         return null;
     }
 
-    /**
-     * @param float|int|string|null $defaultValue
-     */
-    public function setDefaultValue($defaultValue)
+    public function setDefaultValue(float|int|string|null $defaultValue)
     {
         if ((string)$defaultValue !== '') {
             $this->defaultValue = $defaultValue;
@@ -231,114 +193,72 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         }
     }
 
-    /**
-     * @param  array $validUnits
-     */
-    public function setValidUnits($validUnits)
+    public function setValidUnits(array $validUnits)
     {
         $this->validUnits = $validUnits;
     }
 
-    /**
-     * @return array
-     */
-    public function getValidUnits()
+    public function getValidUnits(): array
     {
         return $this->validUnits;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getDefaultUnit()
+    public function getDefaultUnit(): ?string
     {
         return $this->defaultUnit;
     }
 
-    /**
-     * @param string $defaultUnit
-     */
-    public function setDefaultUnit($defaultUnit)
+    public function setDefaultUnit(string $defaultUnit)
     {
         $this->defaultUnit = $defaultUnit;
     }
 
-    /**
-     * @param bool $integer
-     */
-    public function setInteger($integer)
+    public function setInteger(bool $integer)
     {
         $this->integer = $integer;
     }
 
-    /**
-     * @return bool
-     */
-    public function getInteger()
+    public function getInteger(): bool
     {
         return $this->integer;
     }
 
-    /**
-     * @param float|null $maxValue
-     */
-    public function setMaxValue($maxValue)
+    public function setMaxValue(?float $maxValue)
     {
         $this->maxValue = $maxValue;
     }
 
-    /**
-     * @return float|null
-     */
-    public function getMaxValue()
+    public function getMaxValue(): ?float
     {
         return $this->maxValue;
     }
 
-    /**
-     * @param float|null $minValue
-     */
-    public function setMinValue($minValue)
+    public function setMinValue(?float $minValue)
     {
         $this->minValue = $minValue;
     }
 
-    /**
-     * @return float|null
-     */
-    public function getMinValue()
+    public function getMinValue(): ?float
     {
         return $this->minValue;
     }
 
-    /**
-     * @param bool $unsigned
-     */
-    public function setUnsigned($unsigned)
+    public function setUnsigned(bool $unsigned)
     {
         $this->unsigned = $unsigned;
     }
 
-    /**
-     * @return bool
-     */
-    public function getUnsigned()
+    public function getUnsigned(): bool
     {
         return $this->unsigned;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getDecimalSize()
+    public function getDecimalSize(): ?int
     {
         return $this->decimalSize;
     }
 
-    /**
-     * @param int|null $decimalSize
-     */
-    public function setDecimalSize($decimalSize)
+    public function setDecimalSize(?int $decimalSize)
     {
         if (!is_numeric($decimalSize)) {
             $decimalSize = null;
@@ -347,10 +267,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         $this->decimalSize = $decimalSize;
     }
 
-    /**
-     * @param int|null $decimalPrecision
-     */
-    public function setDecimalPrecision($decimalPrecision)
+    public function setDecimalPrecision(?int $decimalPrecision)
     {
         if (!is_numeric($decimalPrecision)) {
             $decimalPrecision = null;
@@ -359,42 +276,27 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         $this->decimalPrecision = $decimalPrecision;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getDecimalPrecision()
+    public function getDecimalPrecision(): ?int
     {
         return $this->decimalPrecision;
     }
 
-    /**
-     * @return bool
-     */
-    public function getUnique()
+    public function getUnique(): bool
     {
         return $this->unique;
     }
 
-    /**
-     * @param bool $unique
-     */
-    public function setUnique($unique)
+    public function setUnique(bool $unique)
     {
         $this->unique = (bool) $unique;
     }
 
-    /**
-     * @return bool
-     */
     public function isAutoConvert(): bool
     {
         return $this->autoConvert;
     }
 
-    /**
-     * @param bool $autoConvert
-     */
-    public function setAutoConvert($autoConvert)
+    public function setAutoConvert(bool $autoConvert)
     {
         $this->autoConvert = (bool)$autoConvert;
     }
@@ -402,7 +304,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * {@inheritdoc}
      */
-    public function getColumnType()
+    public function getColumnType(): array|string|null
     {
         if ($this->getInteger()) {
             return [
@@ -424,7 +326,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * {@inheritdoc}
      */
-    public function getQueryColumnType()
+    public function getQueryColumnType(): array|string|null
     {
         if ($this->getInteger()) {
             return [
@@ -443,17 +345,11 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         return $this->genericGetQueryColumnType();
     }
 
-    /**
-     * @return bool
-     */
     private function isDecimalType(): bool
     {
         return null !== $this->getDecimalSize() || null !== $this->getDecimalPrecision();
     }
 
-    /**
-     * @return string
-     */
     private function buildDecimalColumnType(): string
     {
         // decimalPrecision already existed in earlier versions to denote the amount of digits after the
@@ -495,15 +391,16 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param Model\DataObject\Data\QuantityValue $data
+     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
+     *
+     * @see ResourcePersistenceAwareInterface::getDataForResource
+     *
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function getDataForResource(mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         $data = $this->handleDefaultValue($data, $object, $params);
 
@@ -521,15 +418,16 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param array $data
+     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return Model\DataObject\Data\QuantityValue|null
+     *
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
+     *
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function getDataFromResource(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\QuantityValue
     {
         if ($data[$this->getName() . '__value'] !== null || $data[$this->getName() . '__unit']) {
             if (!is_numeric($data[$this->getName() . '__value'])) {
@@ -552,29 +450,31 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
-     *
-     * @param Model\DataObject\Data\QuantityValue $data
+     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
+     *
+     *@see QueryResourcePersistenceAwareInterface::getDataForQueryResource
+     *
      */
-    public function getDataForQueryResource($data, $object = null, $params = [])
+    public function getDataForQueryResource(mixed $data, Concrete $object = null, array $params = []): array
     {
         return $this->getDataForResource($data, $object, $params);
     }
 
     /**
-     * @see Data::getDataForEditmode
-     *
-     * @param Model\DataObject\Data\AbstractQuantityValue|null $data
+     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array|null
+     *
+     * @see Data::getDataForEditmode
+     *
      */
-    public function getDataForEditmode($data, $object = null, $params = [])
+    public function getDataForEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?array
     {
         if ($data instanceof Model\DataObject\Data\AbstractQuantityValue) {
             return [
@@ -588,28 +488,28 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 
     /**
      * @param array $data
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param Model\DataObject\Concrete|null $object
+     * @param array $params
      *
      * @return Model\DataObject\Data\QuantityValue|null
      */
-    public function getDataFromGridEditor($data, $object = null, $params = [])
+    public function getDataFromGridEditor(array $data, Concrete $object = null, array $params = []): ?Model\DataObject\Data\QuantityValue
     {
         return $this->getDataFromEditmode($data, $object, $params);
     }
 
     /**
-     * @see Data::getDataFromEditmode
-     *
-     * @param array $data
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param mixed $data
+     * @param DataObject\Concrete|null $object
+     * @param array $params
      *
      * @return Model\DataObject\Data\QuantityValue|null
+     *
+     * @see Data::getDataFromEditmode
      */
-    public function getDataFromEditmode($data, $object = null, $params = [])
+    public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\QuantityValue
     {
-        if (strlen($data['value']) > 0 || $data['unit']) {
+        if (strlen((string)$data['value']) > 0 || $data['unit']) {
             if (empty($data['unit']) || $data['unit'] == -1) {
                 return new Model\DataObject\Data\QuantityValue($data['value'], null);
             }
@@ -621,15 +521,16 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @see Data::getVersionPreview
-     *
-     * @param Model\DataObject\Data\QuantityValue|null $data
+     * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return string
+     *
+     * @see Data::getVersionPreview
+     *
      */
-    public function getVersionPreview($data, $object = null, $params = [])
+    public function getVersionPreview(mixed $data, DataObject\Concrete $object = null, array $params = []): string
     {
         if ($data instanceof Model\DataObject\Data\AbstractQuantityValue) {
             $unit = '';
@@ -640,7 +541,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
                 }
             }
 
-            return htmlspecialchars($data->getValue() . $unit, ENT_QUOTES, 'UTF-8');
+            return htmlspecialchars((string)$data->getValue() . $unit, ENT_QUOTES, 'UTF-8');
         }
 
         return '';
@@ -649,7 +550,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * {@inheritdoc}
      */
-    public function checkValidity($data, $omitMandatoryCheck = false, $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
     {
         if (
             !$omitMandatoryCheck
@@ -698,7 +599,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * {@inheritdoc}
      */
-    public function getForCsvExport($object, $params = [])
+    public function getForCsvExport(DataObject\Localizedfield|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData|DataObject\Concrete $object, array $params = []): string
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Model\DataObject\Data\AbstractQuantityValue) {
@@ -717,7 +618,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @return array|null
      */
-    public function getDataForGrid($data, $object = null, $params = [])
+    public function getDataForGrid(?Model\DataObject\Data\QuantityValue $data, Concrete $object = null, array $params = []): ?array
     {
         if ($data instanceof  Model\DataObject\Data\AbstractQuantityValue) {
             $unit = $data->getUnit();
@@ -783,12 +684,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         }
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @return float|int|string
-     */
-    private function toNumeric($value)
+    private function toNumeric(mixed $value): float|int|string
     {
         $value = str_replace(',', '.', (string) $value);
 
@@ -803,10 +699,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         return (float) $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function doGetDefaultValue($object, $context = [])
+    protected function doGetDefaultValue(Concrete $object, array $context = []): ?Model\DataObject\Data\QuantityValue
     {
         if ($this->getDefaultValue() || $this->getDefaultUnit()) {
             return new Model\DataObject\Data\QuantityValue($this->getDefaultValue(), $this->getDefaultUnit());
@@ -832,7 +725,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     /**
      * {@inheritdoc}
      */
-    public function getFilterCondition($value, $operator, $params = [])
+    public function getFilterCondition(mixed $value, string $operator, array $params = []): string
     {
         /** @var UnitConversionService $converter */
         $converter = \Pimcore::getContainer()->get(UnitConversionService::class);
@@ -873,13 +766,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         return implode(' OR ', $conditions);
     }
 
-    /**
-     * @param mixed $oldValue
-     * @param mixed $newValue
-     *
-     * @return bool
-     */
-    public function isEqual($oldValue, $newValue): bool
+    public function isEqual(mixed $oldValue, mixed $newValue): bool
     {
         if ($oldValue === null && $newValue === null) {
             return true;
@@ -897,12 +784,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
             && $this->prepareUnitIdForComparison($oldValue->getUnitId()) === $this->prepareUnitIdForComparison($newValue->getUnitId());
     }
 
-    /**
-     * @param mixed $unitId
-     *
-     * @return string
-     */
-    private function prepareUnitIdForComparison($unitId): string
+    private function prepareUnitIdForComparison(mixed $unitId): string
     {
         $unitId = (string) $unitId;
         if (empty($unitId)) {
@@ -912,42 +794,27 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         return $unitId;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\QuantityValue::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getReturnTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\QuantityValue::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocInputType(): ?string
     {
         return '\\' . Model\DataObject\Data\QuantityValue::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPhpdocReturnType(): ?string
     {
         return '\\' . Model\DataObject\Data\QuantityValue::class . '|null';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function normalize($value, $params = [])
+    public function normalize(mixed $value, array $params = []): ?array
     {
         if ($value instanceof Model\DataObject\Data\QuantityValue) {
             return [
@@ -955,12 +822,11 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
                 'unitId' => $value->getUnitId(),
             ];
         }
+
+        return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize($value, $params = [])
+    public function denormalize(mixed $value, array $params = []): ?Model\DataObject\Data\QuantityValue
     {
         if (is_array($value)) {
             return new Model\DataObject\Data\QuantityValue($value['value'], $value['unitId']);
@@ -969,10 +835,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEmpty($data)
+    public function isEmpty(mixed $data): bool
     {
         if ($data instanceof Model\DataObject\Data\QuantityValue) {
             return empty($data->getValue()) && empty($data->getUnitId());

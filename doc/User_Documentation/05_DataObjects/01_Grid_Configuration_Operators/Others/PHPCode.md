@@ -7,6 +7,7 @@ Allows you to provide a custom operator implementation.
 ![Sample](../../../img/gridconfig/operator_phpcode_sample.png)
 
 Sample implementation.
+
 ```php
 <?php
 
@@ -28,10 +29,10 @@ class OperatorSample extends AbstractOperator
 
     public function getLabeledValue($element)
     {
-        $childs = $this->getChilds();
+        $children = $this->getChildren();
 
         $result = new ResultContainer();
-        $result->setValue($element->getId() . " huhu " .  count($childs) . " " . $this->additionalData);
+        $result->setValue($element->getId() . " huhu " .  count($children) . " " . $this->additionalData);
 
         return $result;
     }

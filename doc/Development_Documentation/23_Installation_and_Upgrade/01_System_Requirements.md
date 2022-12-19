@@ -3,8 +3,8 @@
 For production, we highly recommend a *nix based system.
 
 > Also have a look at our official [Docker images](https://hub.docker.com/r/pimcore/pimcore) and the
-> docker-compose files in our [skeleton](https://github.com/pimcore/skeleton/blob/10.x/docker-compose.yml) 
-> and [demo application](https://github.com/pimcore/demo/blob/10.x/docker-compose.yml).  
+> docker-compose files in our [skeleton](https://github.com/pimcore/skeleton/blob/11.x/docker-compose.yaml) 
+> and [demo application](https://github.com/pimcore/demo/blob/11.x/docker-compose.yaml).  
 
 
 ### Webserver 
@@ -14,7 +14,7 @@ For production, we highly recommend a *nix based system.
 - Nginx
 
 
-### PHP >= 8.0
+### PHP >= 8.1
 Both **mod_php** and **FCGI (FPM)** are supported.  
 
 #### Required Settings and Modules & Extensions
@@ -99,7 +99,6 @@ On Debian based systems, you can use the following command to install all requir
 - FFMPEG (>= 3)
 - Ghostscript (>= 9.16)
 - LibreOffice (>= 4.3)
-- wkhtmltopdf (>= 0.12) (deprecated)
 - Chromium/Chrome
 - xvfb
 - timeout (GNU core utils)

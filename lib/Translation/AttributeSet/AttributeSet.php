@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,25 +20,19 @@ use Pimcore\Translation\TranslationItemCollection\TranslationItem;
 
 class AttributeSet
 {
-    /**
-     * @var TranslationItem
-     */
-    private $translationItem;
+    private TranslationItem $translationItem;
 
-    /**
-     * @var string
-     */
-    private $sourceLanguage = '';
+    private string $sourceLanguage = '';
 
     /**
      * @var string[]
      */
-    private $targetLanguages = [];
+    private array $targetLanguages = [];
 
     /**
      * @var Attribute[];
      */
-    private $attributes = [];
+    private array $attributes = [];
 
     /**
      * DataExtractorResult constructor.
@@ -49,19 +44,11 @@ class AttributeSet
         $this->translationItem = $translationItem;
     }
 
-    /**
-     * @return TranslationItem
-     */
     public function getTranslationItem(): TranslationItem
     {
         return $this->translationItem;
     }
 
-    /**
-     * @param TranslationItem $translationItem
-     *
-     * @return AttributeSet
-     */
     public function setTranslationItem(TranslationItem $translationItem): AttributeSet
     {
         $this->translationItem = $translationItem;
@@ -69,19 +56,11 @@ class AttributeSet
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getSourceLanguage(): string
     {
         return $this->sourceLanguage;
     }
 
-    /**
-     * @param string $sourceLanguage
-     *
-     * @return AttributeSet
-     */
     public function setSourceLanguage(string $sourceLanguage): AttributeSet
     {
         $this->sourceLanguage = $sourceLanguage;

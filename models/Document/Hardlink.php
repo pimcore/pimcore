@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -36,25 +37,22 @@ class Hardlink extends Document
      *
      * @var int
      */
-    protected $sourceId;
+    protected int $sourceId;
 
     /**
      * @internal
      *
      * @var bool
      */
-    protected $propertiesFromSource;
+    protected bool $propertiesFromSource;
 
     /**
      * @internal
      *
      * @var bool
      */
-    protected $childrenFromSource;
+    protected bool $childrenFromSource;
 
-    /**
-     * @return Document|null
-     */
     public function getSourceDocument(): ?Document
     {
         if ($this->getSourceId()) {
@@ -84,9 +82,6 @@ class Hardlink extends Document
         return $dependencies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCacheTags(array $tags = []): array
     {
         $tags = parent::getCacheTags($tags);
@@ -100,62 +95,38 @@ class Hardlink extends Document
         return $tags;
     }
 
-    /**
-     * @param bool $childrenFromSource
-     *
-     * @return Hardlink
-     */
-    public function setChildrenFromSource($childrenFromSource)
+    public function setChildrenFromSource(bool $childrenFromSource): static
     {
         $this->childrenFromSource = (bool) $childrenFromSource;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getChildrenFromSource()
+    public function getChildrenFromSource(): bool
     {
         return $this->childrenFromSource;
     }
 
-    /**
-     * @param int $sourceId
-     *
-     * @return $this
-     */
-    public function setSourceId($sourceId)
+    public function setSourceId(int $sourceId): static
     {
         $this->sourceId = (int) $sourceId;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getSourceId()
+    public function getSourceId(): int
     {
         return $this->sourceId;
     }
 
-    /**
-     * @param bool $propertiesFromSource
-     *
-     * @return $this
-     */
-    public function setPropertiesFromSource($propertiesFromSource)
+    public function setPropertiesFromSource(bool $propertiesFromSource): static
     {
         $this->propertiesFromSource = (bool) $propertiesFromSource;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getPropertiesFromSource()
+    public function getPropertiesFromSource(): bool
     {
         return $this->propertiesFromSource;
     }
@@ -163,7 +134,7 @@ class Hardlink extends Document
     /**
      * {@inheritdoc}
      */
-    public function getProperties()
+    public function getProperties(): array
     {
         if ($this->properties === null) {
             $properties = parent::getProperties();
@@ -196,7 +167,7 @@ class Hardlink extends Document
     /**
      * {@inheritdoc}
      */
-    public function getChildren($includingUnpublished = false)
+    public function getChildren(bool $includingUnpublished = false): array
     {
         $cacheKey = $this->getListingCacheKey(func_get_args());
         if (!isset($this->children[$cacheKey])) {
@@ -222,9 +193,9 @@ class Hardlink extends Document
     /**
      * {@inheritdoc}
      */
-    public function hasChildren($unpublished = false)
+    public function hasChildren(bool $includingUnpublished = false): bool
     {
-        return count($this->getChildren($unpublished)) > 0;
+        return count($this->getChildren($includingUnpublished)) > 0;
     }
 
     /**
@@ -247,7 +218,7 @@ class Hardlink extends Document
     /**
      * {@inheritdoc}
      */
-    protected function update($params = [])
+    protected function update(array $params = [])
     {
         parent::update($params);
         $this->saveScheduledTasks();

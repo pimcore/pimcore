@@ -24,10 +24,7 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 final class Session
 {
-    /**
-     * @var AdminSessionHandlerInterface
-     */
-    private static $handler;
+    private static ?AdminSessionHandlerInterface $handler = null;
 
     public static function getHandler(): AdminSessionHandlerInterface
     {
@@ -38,72 +35,42 @@ final class Session
         return static::$handler;
     }
 
-    public static function setHandler(AdminSessionHandlerInterface $handler)
+    public static function setHandler(AdminSessionHandlerInterface $handler): void
     {
         static::$handler = $handler;
     }
 
-    /**
-     * @param callable $func
-     * @param string $namespace
-     *
-     * @return mixed
-     */
-    public static function useSession($func, string $namespace = 'pimcore_admin')
+    public static function useSession(callable $func, string $namespace = 'pimcore_admin'): mixed
     {
         return static::getHandler()->useSessionAttributeBag($func, $namespace);
     }
 
-    /**
-     * @return string
-     */
-    public static function getSessionId()
+    public static function getSessionId(): string
     {
         return static::getHandler()->getSessionId();
     }
 
-    /**
-     * @return string
-     */
-    public static function getSessionName()
+    public static function getSessionName(): string
     {
         return static::getHandler()->getSessionName();
     }
 
-    /**
-     * @return bool
-     */
     public static function invalidate(): bool
     {
         return static::getHandler()->invalidate();
     }
 
-    /**
-     * @return bool
-     */
     public static function regenerateId(): bool
     {
         return static::getHandler()->regenerateId();
     }
 
-    /**
-     * @param Request $request
-     * @param bool    $checkRequestParams
-     *
-     * @return bool
-     */
     public static function requestHasSessionId(Request $request, bool $checkRequestParams = false): bool
     {
         return static::getHandler()->requestHasSessionId($request, $checkRequestParams);
     }
 
-    /**
-     * @param Request $request
-     * @param bool    $checkRequestParams
-     *
-     * @return string
-     */
-    public static function getSessionIdFromRequest(Request $request, bool $checkRequestParams = false)
+    public static function getSessionIdFromRequest(Request $request, bool $checkRequestParams = false): string
     {
         return static::getHandler()->getSessionIdFromRequest($request, $checkRequestParams);
     }
@@ -115,7 +82,7 @@ final class Session
      *
      * @return AttributeBagInterface|null
      */
-    public static function get(string $namespace = 'pimcore_admin')
+    public static function get(string $namespace = 'pimcore_admin'): ?AttributeBagInterface
     {
         $bag = static::getHandler()->loadAttributeBag($namespace);
         if ($bag instanceof AttributeBagInterface) {
@@ -125,11 +92,6 @@ final class Session
         return null;
     }
 
-    /**
-     * @param string $namespace
-     *
-     * @return AttributeBagInterface
-     */
     public static function getReadOnly(string $namespace = 'pimcore_admin'): AttributeBagInterface
     {
         return static::getHandler()->getReadOnlyAttributeBag($namespace);

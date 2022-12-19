@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -34,5 +35,5 @@ interface LockableAttributeBagInterface extends AttributeBagInterface
      *
      * @return bool
      */
-    public function isLocked();
+    public function isLocked(): bool;
 }

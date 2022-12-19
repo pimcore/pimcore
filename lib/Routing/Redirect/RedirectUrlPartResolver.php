@@ -25,15 +25,9 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class RedirectUrlPartResolver
 {
-    /**
-     * @var Request
-     */
-    private $request;
+    private Request $request;
 
-    /**
-     * @var array
-     */
-    private $parts = [];
+    private array $parts = [];
 
     /**
      * RedirectUrlPartResolver constructor.
@@ -45,11 +39,6 @@ class RedirectUrlPartResolver
         $this->request = $request;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return string
-     */
     public function getRequestUriPart(string $type): string
     {
         if (isset($this->parts[$type])) {

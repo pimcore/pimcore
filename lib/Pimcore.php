@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,37 +22,19 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 class Pimcore
 {
-    /**
-     * @var bool|null
-     */
-    private static $adminMode;
+    private static bool $adminMode = false;
 
-    /**
-     * @var bool
-     */
-    private static $shutdownEnabled = true;
+    private static bool $shutdownEnabled = true;
 
-    /**
-     * @var KernelInterface|null
-     */
     private static ?KernelInterface $kernel = null;
 
-    /**
-     * @var \Composer\Autoload\ClassLoader
-     */
-    private static $autoloader;
+    private static \Composer\Autoload\ClassLoader $autoloader;
 
-    /**
-     * @return bool
-     */
     public static function inDebugMode(): bool
     {
         return (bool) self::getKernel()->isDebug();
     }
 
-    /**
-     * @return bool
-     */
     public static function inDevMode(): bool
     {
         if (!isset($_SERVER['PIMCORE_DEV_MODE']) || !is_bool($_SERVER['PIMCORE_DEV_MODE'])) {
@@ -70,7 +53,7 @@ class Pimcore
      *
      * @internal
      */
-    public static function setAdminMode()
+    public static function setAdminMode(): void
     {
         self::$adminMode = true;
     }
@@ -80,7 +63,7 @@ class Pimcore
      *
      * @internal
      */
-    public static function unsetAdminMode()
+    public static function unsetAdminMode(): void
     {
         self::$adminMode = false;
     }
@@ -90,19 +73,12 @@ class Pimcore
      *
      * @return bool
      */
-    public static function inAdmin()
+    public static function inAdmin(): bool
     {
-        if (self::$adminMode !== null) {
-            return self::$adminMode;
-        }
-
-        return false;
+        return self::$adminMode;
     }
 
-    /**
-     * @return bool
-     */
-    public static function isInstalled()
+    public static function isInstalled(): bool
     {
         try {
             \Pimcore\Db::get()->fetchOne('SELECT id FROM assets LIMIT 1');
@@ -118,7 +94,7 @@ class Pimcore
      *
      * @return EventDispatcherInterface
      */
-    public static function getEventDispatcher()
+    public static function getEventDispatcher(): EventDispatcherInterface
     {
         return self::getContainer()->get('event_dispatcher');
     }
@@ -126,9 +102,9 @@ class Pimcore
     /**
      * @internal
      *
-     * @return KernelInterface
+     * @return KernelInterface|null
      */
-    public static function getKernel()
+    public static function getKernel(): ?KernelInterface
     {
         return self::$kernel;
     }
@@ -138,7 +114,7 @@ class Pimcore
      *
      * @return bool
      */
-    public static function hasKernel()
+    public static function hasKernel(): bool
     {
         if (self::$kernel) {
             return true;
@@ -152,7 +128,7 @@ class Pimcore
      *
      * @param KernelInterface $kernel
      */
-    public static function setKernel(KernelInterface $kernel)
+    public static function setKernel(KernelInterface $kernel): void
     {
         self::$kernel = $kernel;
     }
@@ -167,7 +143,7 @@ class Pimcore
      *
      * @return ContainerInterface|null
      */
-    public static function getContainer()
+    public static function getContainer(): ?ContainerInterface
     {
         return static::getKernel()->getContainer();
     }
@@ -177,7 +153,7 @@ class Pimcore
      *
      * @internal
      */
-    public static function hasContainer()
+    public static function hasContainer(): bool
     {
         if (static::hasKernel()) {
             try {
@@ -207,7 +183,7 @@ class Pimcore
      *
      * @internal
      */
-    public static function setAutoloader(\Composer\Autoload\ClassLoader $autoloader)
+    public static function setAutoloader(\Composer\Autoload\ClassLoader $autoloader): void
     {
         self::$autoloader = $autoloader;
     }
@@ -219,7 +195,7 @@ class Pimcore
      *
      * @param array $keepItems
      */
-    public static function collectGarbage($keepItems = [])
+    public static function collectGarbage(array $keepItems = []): void
     {
         $longRunningHelper = self::getContainer()->get(\Pimcore\Helper\LongRunningHelper::class);
         $longRunningHelper->cleanUp([
@@ -234,7 +210,7 @@ class Pimcore
      *
      * @static
      */
-    public static function deleteTemporaryFiles()
+    public static function deleteTemporaryFiles(): void
     {
         /** @var \Pimcore\Helper\LongRunningHelper $longRunningHelper */
         $longRunningHelper = self::getContainer()->get(\Pimcore\Helper\LongRunningHelper::class);
@@ -246,7 +222,7 @@ class Pimcore
      *
      * @internal
      */
-    public static function shutdown()
+    public static function shutdown(): void
     {
         try {
             self::getContainer();
@@ -263,7 +239,7 @@ class Pimcore
     /**
      * @internal
      */
-    public static function disableShutdown()
+    public static function disableShutdown(): void
     {
         self::$shutdownEnabled = false;
     }
@@ -271,7 +247,7 @@ class Pimcore
     /**
      * @internal
      */
-    public static function enableShutdown()
+    public static function enableShutdown(): void
     {
         self::$shutdownEnabled = true;
     }
@@ -300,7 +276,7 @@ class Pimcore
      *
      * @throws Exception
      */
-    public static function initLogger()
+    public static function initLogger(): void
     {
         // special request log -> if parameter pimcore_log is set
         if (array_key_exists('pimcore_log', $_REQUEST) && self::inDebugMode()) {

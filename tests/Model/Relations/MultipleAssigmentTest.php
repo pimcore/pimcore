@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -21,8 +22,8 @@ use Pimcore\Model\DataObject\Data\ObjectMetadata;
 use Pimcore\Model\DataObject\MultipleAssignments;
 use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class MultipleAssigmentTest

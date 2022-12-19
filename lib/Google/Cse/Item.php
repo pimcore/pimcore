@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,81 +21,37 @@ use Pimcore\Model;
 
 class Item
 {
-    /**
-     * @var Result
-     */
-    public $raw;
+    public Result $raw;
 
-    /**
-     * @var string
-     */
-    public $title;
+    public string $title;
 
-    /**
-     * @var string
-     */
-    public $htmlTitle;
+    public string $htmlTitle;
 
-    /**
-     * @var string
-     */
-    public $link;
+    public string $link;
 
-    /**
-     * @var string
-     */
-    public $displayLink;
+    public string $displayLink;
 
-    /**
-     * @var string
-     */
-    public $snippet;
+    public string $snippet;
 
-    /**
-     * @var string
-     */
-    public $htmlSnippet;
+    public string $htmlSnippet;
 
-    /**
-     * @var string
-     */
-    public $formattedUrl;
+    public string $formattedUrl;
 
-    /**
-     * @var string
-     */
-    public $htmlFormattedUrl;
+    public string $htmlFormattedUrl;
 
-    /**
-     * @var Model\Asset\Image|string|null
-     */
-    public $image;
+    public string|Model\Asset\Image|null $image;
 
-    /**
-     * @var Model\Document|null
-     */
-    public $document;
+    public ?Model\Document $document = null;
 
-    /**
-     * @var string
-     */
-    public $type;
+    public string $type;
 
-    /**
-     * @param Result $data
-     */
     public function __construct(Result $data)
     {
         $this->setRaw($data);
         $this->setValues($data);
     }
 
-    /**
-     * @param Result $data
-     *
-     * @return $this
-     */
-    public function setValues(Result $data)
+    public function setValues(Result $data): static
     {
         $properties = get_object_vars($data);
         foreach ($properties as $key => $value) {
@@ -104,13 +61,7 @@ class Item
         return $this;
     }
 
-    /**
-     * @param string $key
-     * @param mixed $value
-     *
-     * @return $this
-     */
-    public function setValue($key, $value)
+    public function setValue(string $key, mixed $value): static
     {
         $method = 'set' . $key;
         if (method_exists($this, $method)) {
@@ -120,162 +71,98 @@ class Item
         return $this;
     }
 
-    /**
-     * @param string $displayLink
-     *
-     * @return $this
-     */
-    public function setDisplayLink($displayLink)
+    public function setDisplayLink(string $displayLink): static
     {
         $this->displayLink = $displayLink;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getDisplayLink()
+    public function getDisplayLink(): string
     {
         return $this->displayLink;
     }
 
-    /**
-     * @param Model\Document $document
-     *
-     * @return $this
-     */
-    public function setDocument($document)
+    public function setDocument(Model\Document $document): static
     {
         $this->document = $document;
 
         return $this;
     }
 
-    /**
-     * @return Model\Document|null
-     */
-    public function getDocument()
+    public function getDocument(): ?Model\Document
     {
         return $this->document;
     }
 
-    /**
-     * @param string $formattedUrl
-     *
-     * @return $this
-     */
-    public function setFormattedUrl($formattedUrl)
+    public function setFormattedUrl(string $formattedUrl): static
     {
         $this->formattedUrl = $formattedUrl;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getFormattedUrl()
+    public function getFormattedUrl(): string
     {
         return $this->formattedUrl;
     }
 
-    /**
-     * @param string $htmlFormattedUrl
-     *
-     * @return $this
-     */
-    public function setHtmlFormattedUrl($htmlFormattedUrl)
+    public function setHtmlFormattedUrl(string $htmlFormattedUrl): static
     {
         $this->htmlFormattedUrl = $htmlFormattedUrl;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getHtmlFormattedUrl()
+    public function getHtmlFormattedUrl(): string
     {
         return $this->htmlFormattedUrl;
     }
 
-    /**
-     * @param string $htmlSnippet
-     *
-     * @return $this
-     */
-    public function setHtmlSnippet($htmlSnippet)
+    public function setHtmlSnippet(string $htmlSnippet): static
     {
         $this->htmlSnippet = $htmlSnippet;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getHtmlSnippet()
+    public function getHtmlSnippet(): string
     {
         return $this->htmlSnippet;
     }
 
-    /**
-     * @param string $htmlTitle
-     *
-     * @return $this
-     */
-    public function setHtmlTitle($htmlTitle)
+    public function setHtmlTitle(string $htmlTitle): static
     {
         $this->htmlTitle = $htmlTitle;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getHtmlTitle()
+    public function getHtmlTitle(): string
     {
         return $this->htmlTitle;
     }
 
-    /**
-     * @param Model\Asset\Image|string $image
-     *
-     * @return $this
-     */
-    public function setImage($image)
+    public function setImage(Model\Asset\Image|string $image): static
     {
         $this->image = $image;
 
         return $this;
     }
 
-    /**
-     * @return Model\Asset\Image|string|null
-     */
-    public function getImage()
+    public function getImage(): Model\Asset\Image|string|null
     {
         return $this->image;
     }
 
-    /**
-     * @param string $link
-     *
-     * @return $this
-     */
-    public function setLink($link)
+    public function setLink(string $link): static
     {
         $this->link = $link;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getLink()
+    public function getLink(): string
     {
         return $this->link;
     }
@@ -284,77 +171,50 @@ class Item
      * @param Result $raw
      * @return $this
      */
-    public function setRaw(Result $raw)
+    public function setRaw(Result $raw): static
     {
         $this->raw = $raw;
 
         return $this;
     }
 
-    /**
-     * @return Result
-     */
-    public function getRaw()
+    public function getRaw(): Result
     {
         return $this->raw;
     }
 
-    /**
-     * @param string $snippet
-     *
-     * @return $this
-     */
-    public function setSnippet($snippet)
+    public function setSnippet(string $snippet): static
     {
         $this->snippet = $snippet;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getSnippet()
+    public function getSnippet(): string
     {
         return $this->snippet;
     }
 
-    /**
-     * @param string $title
-     *
-     * @return $this
-     */
-    public function setTitle($title)
+    public function setTitle(string $title): static
     {
         $this->title = $title;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title;
     }
 
-    /**
-     * @param string $type
-     *
-     * @return $this
-     */
-    public function setType($type)
+    public function setType(string $type): static
     {
         $this->type = $type;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }

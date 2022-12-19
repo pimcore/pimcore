@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,7 +30,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @return Model\Schedule\Task[]
      */
-    public function getTasks()
+    public function getTasks(): array
     {
         return $this->getData();
     }
@@ -39,7 +40,7 @@ class Listing extends Model\Listing\AbstractListing
      *
      * @return $this
      */
-    public function setTasks($tasks)
+    public function setTasks(?array $tasks): static
     {
         return $this->setData($tasks);
     }
