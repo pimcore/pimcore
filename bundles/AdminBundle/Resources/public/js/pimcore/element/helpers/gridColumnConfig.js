@@ -566,7 +566,19 @@ pimcore.element.helpers.gridColumnConfig = {
                     text: t("save"),
                     handler: function () {
                         if (formPanel.isValid()) {
-                            this.batchProcess(jobs, append, remove, editor, fieldInfo, true);
+                            if (jobs.length > 25) {
+                                Ext.Msg.confirm("Confirmation", sprintf(t('batch_confirmation'), `<b>${new Intl.NumberFormat(navigator.language).format(jobs.length)}</b>`),
+                                    (btn) => {
+                                        if (btn === "yes") {
+                                            this.batchProcess(jobs, append, remove, editor, fieldInfo, true);
+                                        } else {
+                                            this.batchWin.close()
+                                            return;
+                                        }
+                                    });
+                            } else {
+                                this.batchProcess(jobs, append, remove, editor, fieldInfo, true);
+                            }
                         }
                     }.bind(this)
                 }
