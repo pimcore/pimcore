@@ -16,6 +16,7 @@
 namespace Pimcore\Model\Element;
 
 use Pimcore\Event\ElementEvents;
+use Pimcore\Event\NoteEvents;
 use Pimcore\Event\Model\ElementEvent;
 use Pimcore\Model;
 
@@ -156,6 +157,7 @@ final class Note extends Model\AbstractModel
 
         if (!$isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(new ElementEvent($this), ElementEvents::POST_ADD);
+            \Pimcore::getEventDispatcher()->dispatch(new ElementEvent($this), NoteEvents::POST_ADD);
         }
     }
 
