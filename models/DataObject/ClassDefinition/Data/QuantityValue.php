@@ -525,7 +525,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @param mixed $data
      * @param null|Model\DataObject\Concrete $object
-     * @param arrqy $params
+     * @param array $params
      *
      * @return Model\DataObject\Data\QuantityValue|null
      */

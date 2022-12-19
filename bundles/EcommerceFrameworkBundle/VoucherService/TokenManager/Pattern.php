@@ -200,8 +200,6 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     }
 
     /**
-     * @var int|null $usagePeriod
-     *
      * @return array
      */
     public function getStatistics($usagePeriod = null)

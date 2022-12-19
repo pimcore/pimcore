@@ -366,8 +366,9 @@ class Multiselect extends Data implements
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
-     * @return string
+     * @return string|null (will be string)
      */
+    #[\ReturnTypeWillChange]
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if (is_array($data)) {
@@ -446,8 +447,9 @@ class Multiselect extends Data implements
      * @param string $operator
      * @param array $params optional params used to change the behavior
      *
-     * @return string
+     * @return string|null (will be string)
      */
+    #[\ReturnTypeWillChange]
     public function getFilterConditionExt($value, $operator, $params = [])
     {
         if ($operator === '=' || $operator === 'LIKE') {
@@ -524,8 +526,9 @@ class Multiselect extends Data implements
     }
 
     /**
-     * @param DataObject\ClassDefinition\Data $masterDefinition
+     * @param DataObject\ClassDefinition\Data\Multiselect $masterDefinition (will be DataObject\ClassDefinition\Data)
      */
+    #[\ReturnTypeWillChange]
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
         $this->maxItems = $masterDefinition->maxItems;

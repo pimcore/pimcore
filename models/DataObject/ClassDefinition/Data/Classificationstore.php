@@ -477,7 +477,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @param mixedl $data
+     * @param mixed $data
      *
      * @return bool
      */

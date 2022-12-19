@@ -944,11 +944,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @var Localizedfield|AbstractData|DataObject\Objectbrick\Data\AbstractData|Concrete $load
-     * @var array $params
-     *
-     * @return mixed
-     */
+     * {@inheritdoc}
+     **/
     public function load($container, $params = [])
     {
         $field = $this->getName();

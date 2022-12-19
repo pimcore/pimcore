@@ -346,8 +346,9 @@ class CustomLayout extends Model\AbstractModel
      *
      * @param string $classId
      *
-     * @return UuidV4|null
+     * @return int|null (will be changed to UuidV4|null)
      */
+    #[\ReturnTypeWillChange]
     public static function getIdentifier($classId)
     {
         try {
