@@ -986,5 +986,6 @@
     "could_not_open_zip_file": "The uploaded zip file could not be opened.",
     "objects_sort_method": "Change data objects sort method",
     "link_recursion_error": "The link is redirecting to itself, causing an infinite loop",
-    "invalid_option": "Option '{option}' is not a valid option for field '{field}'. Field got reset to default value."
+    "invalid_option": "Option '{option}' is not a valid option for field '{field}'. Field got reset to default value.",
+    "batch_confirmation": "You are about to update %s dataObjects. Do you want to continue ?"
 }
