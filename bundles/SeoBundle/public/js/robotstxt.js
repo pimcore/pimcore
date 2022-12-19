@@ -92,7 +92,7 @@ pimcore.seo.robotstxt = Class.create({
         if (!this.panel) {
             this.panel = new Ext.Panel({
                 id: "pimcore_robotstxt",
-                title: "robots.txt",
+                title: t("robots.txt"),
                 iconCls: "pimcore_icon_robots",
                 border: false,
                 layout: "fit",

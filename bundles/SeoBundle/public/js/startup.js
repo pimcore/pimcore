@@ -3,7 +3,8 @@ pimcore.registerNS("pimcore.seo");
 
 pimcore.seo = Class.create({
     initialize: function () {
-        document.addEventListener(pimcore.events.preRegisterKeyBindings, this.registerKeyBinding.bind(this));
+        // TODO mattamon add key event once the new event is merged
+        //document.addEventListener(pimcore.events.preRegisterKeyBindings, this.registerKeyBinding.bind(this));
         document.addEventListener(pimcore.events.pimcoreReady, this.pimcoreReady.bind(this));
     },
 
@@ -25,7 +26,7 @@ pimcore.seo = Class.create({
 
             if (user.isAllowed("robots.txt") && perspectiveCfg.inToolbar("marketing.seo.robots")) {
                 seoMenu.push({
-                    text: "robots.txt",
+                    text: t("robots.txt"),
                     iconCls: "pimcore_nav_icon_robots",
                     itemId: 'pimcore_menu_marketing_seo_robots_txt',
                     handler: this.showRobotsTxt

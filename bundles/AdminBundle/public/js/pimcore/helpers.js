@@ -2804,27 +2804,6 @@ pimcore.helpers.reports = function() {
     }
 };
 
-pimcore.helpers.seoDocumentEditor = function() {
-    var user = pimcore.globalmanager.get("user");
-    if (user.isAllowed("documents") && user.isAllowed("seo_document_editor")) {
-        pimcore.layout.toolbar.prototype.showDocumentSeo();
-    }
-};
-
-pimcore.helpers.robots = function() {
-    var user = pimcore.globalmanager.get("user");
-    if (user.isAllowed("robots.txt")) {
-        pimcore.layout.toolbar.prototype.showRobotsTxt();
-    }
-};
-
-pimcore.helpers.httpErrorLog = function() {
-    var user = pimcore.globalmanager.get("user");
-    if (user.isAllowed("http_errors")) {
-        pimcore.layout.toolbar.prototype.showHttpErrorLog();
-    }
-};
-
 pimcore.helpers.customReports = function() {
     var user = pimcore.globalmanager.get("user");
     if (user.isAllowed("reports")) {
@@ -2935,9 +2914,6 @@ pimcore.helpers.keyBindingMapping = {
     "applicationLogger": pimcore.helpers.applicationLogger,
     "reports": pimcore.helpers.reports,
     "tagManager": pimcore.helpers.tagManager,
-    "seoDocumentEditor": pimcore.helpers.seoDocumentEditor,
-    "robots": pimcore.helpers.robots,
-    "httpErrorLog": pimcore.helpers.httpErrorLog,
     "customReports": pimcore.helpers.customReports,
     "tagConfiguration": pimcore.helpers.tagConfiguration,
     "users": pimcore.helpers.users,
