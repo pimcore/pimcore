@@ -207,9 +207,7 @@ class AssetHelperController extends AdminController
 
                 try {
                     $userIds = [$this->getAdminUser()->getId()];
-                    if ($this->getAdminUser()->getRoles()) {
-                        $userIds = array_merge($userIds, $this->getAdminUser()->getRoles());
-                    }
+                    $userIds = array_merge($userIds, $this->getAdminUser()->getRoles());
                     $userIds = implode(',', $userIds);
                     $shared = ($savedGridConfig->getOwnerId() != $userId && $savedGridConfig->isShareGlobally()) || $db->fetchOne('select * from gridconfig_shares where sharedWithUserId IN (' . $userIds . ') and gridConfigId = ' . $savedGridConfig->getId());
                 } catch (\Exception $e) {
