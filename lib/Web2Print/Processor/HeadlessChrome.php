@@ -38,7 +38,6 @@ class HeadlessChrome extends Processor
         $web2printConfig = Config::getWeb2PrintConfig();
         $web2printConfig = $web2printConfig->get('headlessChromeSettings');
         $web2printConfig = json_decode($web2printConfig, true);
-        $web2printConfig = array_merge($web2printConfig, ($config->headlessChromeSettings ?? []));
 
         $params = ['document' => $document];
         $this->updateStatus($document->getId(), 10, 'start_html_rendering');
@@ -92,6 +91,16 @@ class HeadlessChrome extends Processor
     public function getPdfFromString($html, $params = [], $returnFilePath = false)
     {
         $params = $params ?: $this->getDefaultOptions();
+
+        $event = new PrintConfigEvent($this, [
+            'params' => $params,
+            'html' => $html,
+        ]);
+
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRINT_MODIFY_PROCESSING_CONFIG);
+
+        ['html' => $html, 'params' => $params] = $event->getArguments();
+
         $input = new StringInput();
         $input->setHtml($html);
 
