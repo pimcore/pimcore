@@ -26,7 +26,7 @@ class DocumentImporter extends AbstractElementImporter
      */
     protected function importAttribute(Element\ElementInterface $element, string $targetLanguage, Attribute $attribute)
     {
-        if ($targetLanguage != $element->getProperty ("language")) {
+        if ($targetLanguage != $element->getProperty('language')) {
             return;
         }
 
