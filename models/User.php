@@ -856,14 +856,9 @@ final class User extends User\UserRole
         $this->keyBindings = $keyBindings;
     }
 
-    /**
-     * @param string|null $key
-     *
-     * @return mixed
-     */
     public function getTwoFactorAuthentication(string $key = null): mixed
     {
-        if (!is_array($this->twoFactorAuthentication) || empty($this->twoFactorAuthentication)) {
+        if ($this->twoFactorAuthentication === null) {
             // set defaults if no data is present
             $this->twoFactorAuthentication = [
                 'required' => false,
@@ -874,21 +869,16 @@ final class User extends User\UserRole
         }
 
         if ($key) {
-            if (isset($this->twoFactorAuthentication[$key])) {
-                return $this->twoFactorAuthentication[$key];
-            } else {
-                return null;
-            }
-        } else {
-            return $this->twoFactorAuthentication;
+            return $this->twoFactorAuthentication[$key] ?? null;
         }
+
+        return $this->twoFactorAuthentication;
     }
 
     /**
      * You can either pass an array for setting the entire 2fa settings, or a key and a value as the second argument
      *
      * @param array<string, mixed>|string $key
-     * @param mixed $value
      */
     public function setTwoFactorAuthentication(array|string $key, mixed $value = null): void
     {
@@ -897,7 +887,7 @@ final class User extends User\UserRole
         } elseif (is_array($key)) {
             $this->twoFactorAuthentication = $key;
         } else {
-            if (!is_array($this->twoFactorAuthentication)) {
+            if ($this->twoFactorAuthentication === null) {
                 // load defaults
                 $this->getTwoFactorAuthentication();
             }
