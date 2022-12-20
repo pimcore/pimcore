@@ -79,13 +79,14 @@ pimcore.element.tag.assignment = Class.create({
                 store: gridStore,
                 columnLines: true,
                 stripeRows: true,
+                resizable: true,
                 columns: {
                     items: [
                         {
                             text: t("name"),
                             dataIndex: 'path',
                             sortable: true,
-                            width: 400
+                            flex: 1
                         },
                         {
                             xtype: 'actioncolumn',
