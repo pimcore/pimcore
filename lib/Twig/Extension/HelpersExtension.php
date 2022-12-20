@@ -92,13 +92,13 @@ class HelpersExtension extends AbstractExtension
      */
     public function getImageVersionPreview(string $file): string
     {
-        $thumbnail = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/image-version-preview-'.uniqid().'.png';
+        $thumbnail = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/image-version-preview-' . uniqid() . '.png';
         $convert = \Pimcore\Image::getInstance();
         $convert->load($file);
         $convert->contain(500, 500);
         $convert->save($thumbnail, 'png');
 
-        $dataUri = 'data:image/png;base64,'.base64_encode(file_get_contents($thumbnail));
+        $dataUri = 'data:image/png;base64,' . base64_encode(file_get_contents($thumbnail));
         unlink($thumbnail);
         unlink($file);
 
