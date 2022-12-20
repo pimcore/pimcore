@@ -297,8 +297,7 @@ abstract class Processor
         } catch (SecurityError $e) {
             Logger::err((string) $e);
 
-            throw new \Exception(sprintf("Failed rendering the print template: %s. Please check your twig sandbox security policy or contact the administrator."
-                , $e->getMessage()));
+            throw new \Exception(sprintf('Failed rendering the print template: %s. Please check your twig sandbox security policy or contact the administrator.', $e->getMessage()));
         } finally {
             $templatingEngine->disableSandboxExtensionFromTwigEnvironment();
         }
