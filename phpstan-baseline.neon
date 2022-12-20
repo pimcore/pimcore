@@ -194,11 +194,3 @@ parameters:
 			message: "#^Parameter \\#1 \\$children of method Pimcore\\\\Model\\\\Document\\:\\:setChildren\\(\\) expects array\\<Pimcore\\\\Model\\\\Document\\>\\|null, array\\<int, Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\WrapperInterface\\> given\\.$#"
 			count: 1
 			path: models/Document/Hardlink/Wrapper/Snippet.php
-
-
-		-
-			message: "#^PHPDoc tag \\@param references unknown parameter\\: \\$params$#"
-			paths:
-			    - models/DataObject/ClassDefinition/Data/AdvancedManyToManyObjectRelation.php
-			    - models/DataObject/ClassDefinition/Data/ClassSavedInterface.php
-			    - models/DataObject/ClassDefinition/Data/Classificationstore.php
