@@ -24,15 +24,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class VisitedPagesCountListener implements EventSubscriberInterface
 {
-    /**
-     * @var VisitedPagesCounter
-     */
-    private $visitedPagesCounter;
+    private VisitedPagesCounter $visitedPagesCounter;
 
-    /**
-     * @var bool
-     */
-    private $recordPageCount = false;
+    private bool $recordPageCount = false;
 
     public function __construct(VisitedPagesCounter $visitedPagesCounter)
     {
@@ -44,7 +38,7 @@ class VisitedPagesCountListener implements EventSubscriberInterface
      *
      * @return array
      */
-    public static function getSubscribedEvents()// : array
+    public static function getSubscribedEvents(): array
     {
         return [
             TargetingEvents::VISITED_PAGES_COUNT_MATCH => 'onVisitedPagesCountMatch', // triggered from conditions depending on page count

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,26 +16,21 @@
 
 namespace Pimcore\Tests\Ecommerce\CartManager;
 
-use Codeception\Util\Stub;
+use Codeception\Stub;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\EcommerceTester;
+use Pimcore\Tests\Support\Test\TestCase;
 
 class SessionCartTest extends TestCase
 {
-    /**
-     * @var \EcommerceFramework\UnitTester
-     */
-    protected $tester;
+    protected EcommerceTester $tester;
 
     // tests
 
-    /**
-     * @return SessionCart
-     */
-    protected function buildCart()
+    protected function buildCart(): SessionCart
     {
         $cart = Stub::construct('\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\SessionCart', [], [
             'getSession' => function () {
@@ -43,19 +39,12 @@ class SessionCartTest extends TestCase
             'isCartReadOnly' => function () {
                 return false;
             },
-            'modified' => function () {
-            },
         ]);
 
         return $cart;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return AbstractProduct
-     */
-    protected function buildProduct(int $id)
+    protected function buildProduct(int $id): AbstractProduct
     {
         $product = $this->getMockBuilder(AbstractProduct::class)->getMock();
         $product->method('getId')->willReturn($id);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -30,17 +31,14 @@ class PasswordFieldHasher extends AbstractUserAwarePasswordHasher
 {
     use CheckPasswordLengthTrait;
 
-    /**
-     * @var string
-     */
-    protected $fieldName = 'password';
+    protected string $fieldName = 'password';
 
     /**
      * If true, the user password hash will be updated if necessary.
      *
      * @var bool
      */
-    protected $updateHash = true;
+    protected bool $updateHash = true;
 
     /**
      * @param string $fieldName
@@ -50,25 +48,16 @@ class PasswordFieldHasher extends AbstractUserAwarePasswordHasher
         $this->fieldName = $fieldName;
     }
 
-    /**
-     * @return bool
-     */
-    public function getUpdateHash()
+    public function getUpdateHash(): bool
     {
         return $this->updateHash;
     }
 
-    /**
-     * @param bool $updateHash
-     */
-    public function setUpdateHash($updateHash)
+    public function setUpdateHash(bool $updateHash)
     {
         $this->updateHash = (bool)$updateHash;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hashPassword($raw, $salt): string
     {
         if ($this->isPasswordTooLong($raw)) {
@@ -78,9 +67,6 @@ class PasswordFieldHasher extends AbstractUserAwarePasswordHasher
         return $this->getFieldDefinition()->calculateHash($raw);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isPasswordValid($encoded, $raw): bool
     {
         if ($this->isPasswordTooLong($raw)) {
@@ -95,7 +81,7 @@ class PasswordFieldHasher extends AbstractUserAwarePasswordHasher
      *
      * @throws RuntimeException
      */
-    protected function getFieldDefinition()
+    protected function getFieldDefinition(): Password
     {
         $field = $this->getUser()->getClass()->getFieldDefinition($this->fieldName);
 

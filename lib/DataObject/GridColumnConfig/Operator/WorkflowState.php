@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,6 +16,7 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Workflow\Place\StatusInfo;
 
 /**
@@ -22,15 +24,12 @@ use Pimcore\Workflow\Place\StatusInfo;
  */
 final class WorkflowState extends AbstractOperator
 {
-    /**
-     * @var StatusInfo
-     */
-    private $statusInfo;
+    private StatusInfo $statusInfo;
 
     /**
      * {@inheritdoc}
      */
-    public function getLabeledValue($element)
+    public function getLabeledValue(array|ElementInterface $element): \Pimcore\DataObject\GridColumnConfig\ResultContainer|\stdClass|null
     {
         $result = new \stdClass();
         $result->label = $this->label;

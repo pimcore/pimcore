@@ -28,11 +28,8 @@ class IgnoredSessionKeysEvent extends Event
      *
      * @var array
      */
-    private $keys = [];
+    private array $keys = [];
 
-    /**
-     * @param array $keys
-     */
     public function __construct(array $keys = [])
     {
         $this->keys = $keys;

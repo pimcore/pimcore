@@ -24,10 +24,7 @@ use Pimcore\Targeting\Storage\TargetingStorageInterface;
 
 class TimeOnSite implements ConditionInterface, DataProviderDependentInterface
 {
-    /**
-     * @var int
-     */
-    private $seconds;
+    private int $seconds;
 
     public function __construct(int $seconds)
     {
@@ -41,7 +38,7 @@ class TimeOnSite implements ConditionInterface, DataProviderDependentInterface
     /**
      * {@inheritdoc}
      */
-    public static function fromConfig(array $config)
+    public static function fromConfig(array $config): static
     {
         $seconds = $config['seconds'] ?? 0;
         $seconds += ($config['minutes'] ?? 0) * 60;

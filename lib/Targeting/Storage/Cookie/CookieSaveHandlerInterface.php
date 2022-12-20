@@ -39,8 +39,8 @@ interface CookieSaveHandlerInterface
      * @param Response $response
      * @param string $scope
      * @param string $name
-     * @param int|string|\DateTimeInterface $expire
+     * @param \DateTimeInterface|int|string $expire
      * @param array|null $data
      */
-    public function save(Response $response, string $scope, string $name, $expire, $data);
+    public function save(Response $response, string $scope, string $name, \DateTimeInterface|int|string $expire, ?array $data);
 }

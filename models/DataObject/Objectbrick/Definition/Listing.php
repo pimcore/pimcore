@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,7 +23,7 @@ class Listing
     /**
      * @return Definition[]
      */
-    public function load()
+    public function load(): array
     {
         $fields = [];
         $objectBricksFolder = PIMCORE_CLASS_DEFINITION_DIRECTORY . '/objectbricks';

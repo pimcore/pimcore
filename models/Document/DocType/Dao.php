@@ -33,7 +33,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             'containerConfig' => $config['documents']['doc_types']['definitions'],
             'settingsStoreScope' => 'pimcore_document_types',
             'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_DOCUMENT_TYPES'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/document-types',
-            'legacyConfigFile' => 'document-types.php',
             'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_DOCUMENT_TYPES',
         ]);
     }
@@ -69,7 +68,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     public function save()
     {
         if (!$this->model->getId()) {
-            $this->model->setId(Uid::v4());
+            $this->model->setId((string)Uid::v4());
         }
         $ts = time();
         if (!$this->model->getCreationDate()) {
@@ -101,7 +100,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * {@inheritdoc}
      */
-    protected function prepareDataStructureForYaml(string $id, $data)
+    protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [
             'pimcore' => [

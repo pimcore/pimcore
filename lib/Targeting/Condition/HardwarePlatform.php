@@ -23,10 +23,7 @@ use Pimcore\Targeting\Model\VisitorInfo;
 
 class HardwarePlatform extends AbstractVariableCondition implements DataProviderDependentInterface
 {
-    /**
-     * @var null|string
-     */
-    private $platform;
+    private ?string $platform = null;
 
     /**
      * Mapping from admin UI values to DeviceDetector results. If value
@@ -34,7 +31,7 @@ class HardwarePlatform extends AbstractVariableCondition implements DataProvider
      *
      * @var array
      */
-    protected static $deviceMapping = [
+    protected static array $deviceMapping = [
         'smartphone' => 'mobile',
         'phablet' => 'mobile',
         'feature phone' => 'mobile',
@@ -48,7 +45,7 @@ class HardwarePlatform extends AbstractVariableCondition implements DataProvider
     /**
      * {@inheritdoc}
      */
-    public static function fromConfig(array $config)
+    public static function fromConfig(array $config): static
     {
         return new static($config['platform'] ?? null);
     }

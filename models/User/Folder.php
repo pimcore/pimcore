@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,15 +21,9 @@ namespace Pimcore\Model\User;
  */
 class Folder extends UserRole\Folder
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected $type = 'userfolder';
+    protected string $type = 'userfolder';
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getChildren()
+    public function getChildren(): array
     {
         if ($this->children === null) {
             if ($this->getId()) {

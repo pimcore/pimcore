@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -15,19 +16,12 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
 
-use Pimcore\Model\DataObject\ImportDataServiceInterface;
-
 /**
  * @internal
  */
 class ImportClassResolver extends ClassResolver
 {
-    /**
-     * @param string $importServiceOrClass
-     *
-     * @return ImportDataServiceInterface|null
-     */
-    public static function resolveClassOrService($importServiceOrClass)
+    public static function resolveClassOrService(string $importServiceOrClass): ?object
     {
         return self::resolve($importServiceOrClass);
     }

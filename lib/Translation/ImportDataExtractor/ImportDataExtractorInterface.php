@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,11 +30,6 @@ interface ImportDataExtractorInterface
      */
     public function extractElement(string $importId, int $stepId): ?AttributeSet;
 
-    /**
-     * @param string $importId
-     *
-     * @return string
-     */
     public function getImportFilePath(string $importId): string;
 
     /**

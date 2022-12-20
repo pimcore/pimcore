@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -27,60 +28,39 @@ class EncryptedField implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
 
-    /**
-     * @var Data
-     */
-    protected $delegate;
+    protected Data $delegate;
 
-    /**
-     * @var mixed
-     */
-    protected $plain;
+    protected mixed $plain = null;
 
-    /**
-     * @var mixed
-     */
-    protected $encrypted;
+    protected mixed $encrypted = null;
 
     /**
      * @param mixed $plain
      * @param Data $delegate
      */
-    public function __construct(Data $delegate, $plain)
+    public function __construct(Data $delegate, mixed $plain)
     {
         $this->plain = $plain;
         $this->delegate = $delegate;
         $this->markMeDirty();
     }
 
-    /**
-     * @return Data
-     */
     public function getDelegate(): Data
     {
         return $this->delegate;
     }
 
-    /**
-     * @param Data $delegate
-     */
     public function setDelegate(Data $delegate)
     {
         $this->delegate = $delegate;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getPlain()
+    public function getPlain(): mixed
     {
         return $this->plain;
     }
 
-    /**
-     * @param mixed $plain
-     */
-    public function setPlain($plain)
+    public function setPlain(mixed $plain)
     {
         $this->plain = $plain;
         $this->markMeDirty();

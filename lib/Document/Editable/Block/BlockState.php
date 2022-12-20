@@ -31,12 +31,12 @@ final class BlockState implements \JsonSerializable
     /**
      * @var BlockName[]
      */
-    private $blocks = [];
+    private array $blocks = [];
 
     /**
      * @var int[]
      */
-    private $indexes = [];
+    private array $indexes = [];
 
     /**
      * @return BlockName[]

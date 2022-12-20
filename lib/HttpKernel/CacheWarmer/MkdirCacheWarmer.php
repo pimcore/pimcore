@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -25,15 +26,9 @@ use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
  */
 class MkdirCacheWarmer implements CacheWarmerInterface
 {
-    /**
-     * @var int
-     */
-    private $mode;
+    private int $mode;
 
-    /**
-     * @param int $mode
-     */
-    public function __construct($mode = 0775)
+    public function __construct(int $mode = 0775)
     {
         $this->mode = $mode;
     }

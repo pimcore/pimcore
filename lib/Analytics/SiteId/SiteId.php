@@ -28,15 +28,9 @@ class SiteId
 {
     const CONFIG_KEY_MAIN_DOMAIN = 'default';
 
-    /**
-     * @var string
-     */
-    private $configKey;
+    private string $configKey;
 
-    /**
-     * @var Site|null
-     */
-    private $site;
+    private ?Site $site = null;
 
     private function __construct(string $configKey, Site $site = null)
     {
@@ -61,10 +55,7 @@ class SiteId
         return $this->configKey;
     }
 
-    /**
-     * @return Site|null
-     */
-    public function getSite()
+    public function getSite(): ?Site
     {
         return $this->site;
     }

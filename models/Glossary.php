@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -29,77 +30,72 @@ class Glossary extends AbstractModel
      *
      * @var int|null
      */
-    protected $id;
+    protected ?int $id = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected $text;
+    protected ?string $text = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected $link;
+    protected ?string $link = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected $abbr;
+    protected ?string $abbr = null;
 
     /**
      * @internal
      *
      * @var string|null
      */
-    protected $language;
+    protected ?string $language = null;
 
     /**
      * @internal
      *
      * @var bool
      */
-    protected $casesensitive = false;
+    protected bool $casesensitive = false;
 
     /**
      * @internal
      *
      * @var bool
      */
-    protected $exactmatch = false;
+    protected bool $exactmatch = false;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected $site;
+    protected ?int $site = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected $creationDate;
+    protected ?int $creationDate = null;
 
     /**
      * @internal
      *
      * @var int|null
      */
-    protected $modificationDate;
+    protected ?int $modificationDate = null;
 
-    /**
-     * @param int $id
-     *
-     * @return self|null
-     */
-    public static function getById($id)
+    public static function getById(int $id): ?Glossary
     {
         try {
             $glossary = new self();
@@ -112,10 +108,7 @@ class Glossary extends AbstractModel
         }
     }
 
-    /**
-     * @return Glossary
-     */
-    public static function create()
+    public static function create(): Glossary
     {
         $glossary = new self();
         $glossary->save();
@@ -123,152 +116,91 @@ class Glossary extends AbstractModel
         return $glossary;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return $this
-     */
-    public function setId($id)
+    public function setId(int $id): static
     {
         $this->id = (int) $id;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @param string $text
-     *
-     * @return $this
-     */
-    public function setText($text)
+    public function setText(string $text): static
     {
         $this->text = $text;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getText()
+    public function getText(): ?string
     {
         return $this->text;
     }
 
-    /**
-     * @param string $link
-     *
-     * @return $this
-     */
-    public function setLink($link)
+    public function setLink(string $link): static
     {
         $this->link = $link;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getLink()
+    public function getLink(): ?string
     {
         return $this->link;
     }
 
-    /**
-     * @param string $abbr
-     *
-     * @return $this
-     */
-    public function setAbbr($abbr)
+    public function setAbbr(string $abbr): static
     {
         $this->abbr = $abbr;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getAbbr()
+    public function getAbbr(): ?string
     {
         return $this->abbr;
     }
 
-    /**
-     * @param string $language
-     *
-     * @return $this
-     */
-    public function setLanguage($language)
+    public function setLanguage(string $language): static
     {
         $this->language = $language;
 
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getLanguage()
+    public function getLanguage(): ?string
     {
         return $this->language;
     }
 
-    /**
-     * @param bool $casesensitive
-     *
-     * @return $this
-     */
-    public function setCasesensitive($casesensitive)
+    public function setCasesensitive(bool $casesensitive): static
     {
         $this->casesensitive = (bool) $casesensitive;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getCasesensitive()
+    public function getCasesensitive(): bool
     {
         return $this->casesensitive;
     }
 
-    /**
-     * @param bool $exactmatch
-     *
-     * @return $this
-     */
-    public function setExactmatch($exactmatch)
+    public function setExactmatch(bool $exactmatch): static
     {
         $this->exactmatch = (bool) $exactmatch;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function getExactmatch()
+    public function getExactmatch(): bool
     {
         return $this->exactmatch;
     }
 
-    /**
-     * @param Site|int $site
-     *
-     * @return $this
-     */
-    public function setSite($site)
+    public function setSite(Site|int $site): static
     {
         if ($site instanceof Site) {
             $site = $site->getId();
@@ -278,50 +210,31 @@ class Glossary extends AbstractModel
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getSite()
+    public function getSite(): ?int
     {
         return $this->site;
     }
 
-    /**
-     * @param int $modificationDate
-     *
-     * @return $this
-     */
-    public function setModificationDate($modificationDate)
+    public function setModificationDate(int $modificationDate): static
     {
         $this->modificationDate = (int) $modificationDate;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getModificationDate()
+    public function getModificationDate(): ?int
     {
         return $this->modificationDate;
     }
 
-    /**
-     * @param int $creationDate
-     *
-     * @return $this
-     */
-    public function setCreationDate($creationDate)
+    public function setCreationDate(int $creationDate): static
     {
         $this->creationDate = (int) $creationDate;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getCreationDate()
+    public function getCreationDate(): ?int
     {
         return $this->creationDate;
     }

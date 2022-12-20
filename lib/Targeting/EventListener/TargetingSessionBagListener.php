@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Targeting\EventListener;
 
+use Pimcore\Config;
 use Pimcore\Event\Cache\FullPage\IgnoredSessionKeysEvent;
 use Pimcore\Event\Cache\FullPage\PrepareResponseEvent;
 use Pimcore\Event\FullPageCacheEvents;
@@ -32,26 +33,31 @@ class TargetingSessionBagListener implements EventSubscriberInterface
 
     const TARGETING_BAG_VISITOR = 'pimcore_targeting_visitor';
 
+    public function __construct(protected Config $config)
+    {
+    }
+
     /**
      * {@inheritdoc}
      *
      * @return array
      */
-    public static function getSubscribedEvents()//: array
+    public static function getSubscribedEvents(): array
     {
         return [
             FullPageCacheEvents::IGNORED_SESSION_KEYS => 'configureIgnoredSessionKeys',
             FullPageCacheEvents::PREPARE_RESPONSE => 'prepareFullPageCacheResponse',
-            //run after Symfony\Component\HttpKernel\EventListener\SessionListener
+            // add session support by registering the session configurator and session storage
             KernelEvents::REQUEST => ['onKernelRequest', 127],
         ];
     }
 
-    /**
-     * @param RequestEvent $event
-     */
     public function onKernelRequest(RequestEvent $event)
     {
+        if (!$this->isEnabled()) {
+            return;
+        }
+
         if (!$event->isMainRequest()) {
             return;
         }
@@ -66,10 +72,6 @@ class TargetingSessionBagListener implements EventSubscriberInterface
         $this->configure($session);
     }
 
-    /**
-     * @param SessionInterface $session
-     *
-     */
     public function configure(SessionInterface $session)
     {
         $sessionBag = new AttributeBag('_' . self::TARGETING_BAG_SESSION);
@@ -84,6 +86,10 @@ class TargetingSessionBagListener implements EventSubscriberInterface
 
     public function configureIgnoredSessionKeys(IgnoredSessionKeysEvent $event)
     {
+        if (!$this->isEnabled()) {
+            return;
+        }
+
         // configures full page cache to ignore session data in targeting storage
         $event->setKeys(array_merge($event->getKeys(), [
             '_' . self::TARGETING_BAG_SESSION,
@@ -98,6 +104,10 @@ class TargetingSessionBagListener implements EventSubscriberInterface
      */
     public function prepareFullPageCacheResponse(PrepareResponseEvent $event)
     {
+        if (!$this->isEnabled()) {
+            return;
+        }
+
         $request = $event->getRequest();
         $response = $event->getResponse();
 
@@ -121,5 +131,10 @@ class TargetingSessionBagListener implements EventSubscriberInterface
                 );
             }
         }
+    }
+
+    protected function isEnabled()
+    {
+        return $this->config['targeting']['session']['enabled'];
     }
 }

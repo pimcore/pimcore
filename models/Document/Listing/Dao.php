@@ -34,7 +34,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @return array
      */
-    public function load()
+    public function load(): array
     {
         $documents = [];
         $select = $this->getQueryBuilder(['documents.id', 'documents.type']);
@@ -74,7 +74,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @return int[]
      */
-    public function loadIdList()
+    public function loadIdList(): array
     {
         $queryBuilder = $this->getQueryBuilder(['documents.id']);
         $documentIds = $this->db->fetchFirstColumn((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
@@ -82,21 +82,15 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return array_map('intval', $documentIds);
     }
 
-    /**
-     * @return array
-     */
-    public function loadIdPathList()
+    public function loadIdPathList(): array
     {
-        $queryBuilder = $this->getQueryBuilder(['documents.id', 'CONCAT(documents.path, documents.key) as path']);
+        $queryBuilder = $this->getQueryBuilder(['documents.id', 'CONCAT(documents.path, documents.key) as `path`']);
         $documentIds = $this->db->fetchAllAssociative((string) $queryBuilder, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return $documentIds;
     }
 
-    /**
-     * @return int
-     */
-    public function getCount()
+    public function getCount(): int
     {
         if ($this->model->isLoaded()) {
             return count($this->model->getDocuments());
@@ -107,10 +101,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
     }
 
-    /**
-     * @return int
-     */
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         $queryBuilder = $this->getQueryBuilder();
         $this->prepareQueryBuilderForTotalCount($queryBuilder, 'documents.id');

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -31,7 +32,7 @@ class Listing extends Model\Listing\AbstractListing
      *
      * @return $this
      */
-    public function setNotes($notes)
+    public function setNotes(?array $notes): static
     {
         return $this->setData($notes);
     }
@@ -39,7 +40,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @return Model\Element\Note[]
      */
-    public function getNotes()
+    public function getNotes(): array
     {
         return $this->getData();
     }

@@ -33,7 +33,6 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
             'containerConfig' => $config['properties']['predefined']['definitions'],
             'settingsStoreScope' => 'pimcore_predefined_properties',
             'storageDirectory' => $_SERVER['PIMCORE_CONFIG_STORAGE_DIR_PREDEFINED_PROPERTIES'] ?? PIMCORE_CONFIGURATION_DIRECTORY . '/predefined-properties',
-            'legacyConfigFile' => 'predefined-properties.php',
             'writeTargetEnvVariableName' => 'PIMCORE_WRITE_TARGET_PREDEFINED_PROPERTIES',
         ]);
     }
@@ -43,7 +42,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById($id = null)
+    public function getById(string $id = null)
     {
         if ($id != null) {
             $this->model->setId($id);
@@ -70,7 +69,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByKey($key = null)
+    public function getByKey(string $key = null)
     {
         if ($key != null) {
             $this->model->setKey($key);
@@ -100,7 +99,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     public function save()
     {
         if (!$this->model->getId()) {
-            $this->model->setId(Uid::v4());
+            $this->model->setId((string)Uid::v4());
         }
         $ts = time();
         if (!$this->model->getCreationDate()) {
@@ -132,7 +131,7 @@ class Dao extends Model\Dao\PimcoreLocationAwareConfigDao
     /**
      * {@inheritdoc}
      */
-    protected function prepareDataStructureForYaml(string $id, $data)
+    protected function prepareDataStructureForYaml(string $id, mixed $data): mixed
     {
         return [
             'pimcore' => [

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,10 +25,7 @@ use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 
 class StateTableMarkingStore implements MarkingStoreInterface
 {
-    /**
-     * @var string
-     */
-    private $workflowName;
+    private string $workflowName;
 
     public function __construct(string $workflowName)
     {
@@ -39,7 +37,7 @@ class StateTableMarkingStore implements MarkingStoreInterface
      *
      * @return Marking
      */
-    public function getMarking($subject)// : Marking
+    public function getMarking($subject): Marking
     {
         $subject = $this->checkIfSubjectIsValid($subject);
 
@@ -83,20 +81,15 @@ class StateTableMarkingStore implements MarkingStoreInterface
         $workflowState->save();
     }
 
-    /**
-     * @return string
-     */
-    public function getProperty()
+    public function getProperty(): string
     {
         return $this->workflowName;
     }
 
     /**
-     * @param object $subject
-     *
-     * @return ElementInterface
+     * @throws LogicException
      */
-    private function checkIfSubjectIsValid($subject): ElementInterface
+    private function checkIfSubjectIsValid(object $subject): ElementInterface
     {
         if (!$subject instanceof ElementInterface) {
             throw new LogicException('state_table marking store works for pimcore elements (documents, assets, data objects) only.');

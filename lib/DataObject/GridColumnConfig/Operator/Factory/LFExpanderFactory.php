@@ -26,22 +26,13 @@ use Pimcore\Localization\LocaleServiceInterface;
  */
 final class LFExpanderFactory implements OperatorFactoryInterface
 {
-    /**
-     * @var LocaleServiceInterface
-     */
-    private $localeService;
+    private LocaleServiceInterface $localeService;
 
-    /**
-     * @param LocaleServiceInterface $localeService
-     */
     public function __construct(LocaleServiceInterface $localeService)
     {
         $this->localeService = $localeService;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function build(\stdClass $configElement, $context = null): OperatorInterface
     {
         return new LFExpander($this->localeService, $configElement, $context);

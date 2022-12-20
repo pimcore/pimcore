@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -19,8 +20,8 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Classificationstore;
 use Pimcore\Model\DataObject\Inheritance;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class ClassificationstoreTest
@@ -57,9 +58,6 @@ class ClassificationstoreTest extends ModelTestCase
         }
     }
 
-    /**
-     * @param Classificationstore\StoreConfig $store
-     */
     protected function configureStore(Classificationstore\StoreConfig $store)
     {
         $group = Classificationstore\GroupConfig::getByName('group1', $store->getId());

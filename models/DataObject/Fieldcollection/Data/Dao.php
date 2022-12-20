@@ -15,6 +15,7 @@
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 
+use Pimcore\Db\Helper;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
@@ -33,11 +34,11 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function save(Model\DataObject\Concrete $object, $params = [], $saveRelationalData = true)
+    public function save(Model\DataObject\Concrete $object, array $params = [], bool|array $saveRelationalData = true)
     {
         $tableName = $this->model->getDefinition()->getTableName($object->getClass());
         $data = [
-            'o_id' => $object->getId(),
+            'id' => $object->getId(),
             'index' => $this->model->getIndex(),
             'fieldname' => $this->model->getFieldname(),
         ];
@@ -92,6 +93,6 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insert($tableName, $data);
+        $this->db->insert($tableName, Helper::quoteDataIdentifiers($this->db, $data));
     }
 }
