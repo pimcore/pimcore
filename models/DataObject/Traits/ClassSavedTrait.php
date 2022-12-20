@@ -31,7 +31,7 @@ trait ClassSavedTrait
     public function postSave(mixed $containerDefinition, array $params = []): void
     {
         if ($containerDefinition instanceof ClassDefinition) {
-            $this->classSaved($containerDefinition, $params);
+            $this->classSaved($containerDefinition);
         }
     }
 }
