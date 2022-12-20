@@ -309,3 +309,10 @@ parameters:
 			message: "#^PHPDoc type Elastic\\\\Elasticsearch\\\\Client\\|null of property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\Worker\\\\ElasticSearch\\\\DefaultElasticSearch8\\:\\:\\$elasticSearchClient is not covariant with PHPDoc type Elasticsearch\\\\Client\\|null of overridden property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\Worker\\\\ElasticSearch\\\\AbstractElasticSearch\\:\\:\\$elasticSearchClient\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/DefaultElasticSearch8.php
+
+		-
+			message: "#^PHPDoc tag \\@param references unknown parameter\\: \\$params$#"
+			paths:
+			    - models/DataObject/ClassDefinition/Data/AdvancedManyToManyObjectRelation.php
+			    - models/DataObject/ClassDefinition/Data/ClassSavedInterface.php
+			    - models/DataObject/ClassDefinition/Data/Classificationstore.php
