@@ -192,7 +192,7 @@ pimcore.object.helpers.classTree = Class.create({
 
         newNode = fn();
 
-        if (con.children) {
+        if (con.children && newNode) {
             for (var i = 0; i < con.children.length; i++) {
                 this.recursiveAddNode(con.children[i], newNode, brickDescriptor, config);
             }

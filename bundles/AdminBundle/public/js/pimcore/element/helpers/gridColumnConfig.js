@@ -713,6 +713,7 @@ pimcore.element.helpers.gridColumnConfig = {
         settings = Ext.encode(settings);
         params["settings"] = settings;
         Ext.Ajax.request({
+            method: 'POST',
             url: this.exportPrepareUrl,
             params: params,
             success: function (response) {

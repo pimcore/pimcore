@@ -206,7 +206,7 @@ class ObjectTest extends ModelTestCase
     }
 
     /**
-     * Verifies that when an object gets cloned, the o_* fields references get renewed
+     * Verifies that when an object gets cloned, the fields get copied properly
      */
     public function testCloning()
     {
@@ -218,7 +218,7 @@ class ObjectTest extends ModelTestCase
         $this->assertEquals(null, $clone->getId(), 'Setting ID on original object should have no impact on the cloned object');
 
         $otherClone = clone $object;
-        $this->assertEquals(123, $otherClone->getId(), 'Shallow clone should copy the o_* fields');
+        $this->assertEquals(123, $otherClone->getId(), 'Shallow clone should copy the fields');
     }
 
     /**

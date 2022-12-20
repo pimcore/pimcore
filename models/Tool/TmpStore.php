@@ -95,7 +95,7 @@ final class TmpStore extends Model\AbstractModel
      *
      * @return bool
      */
-    public static function add(string $id, mixed $data, string $tag = null, int $lifetime = null): bool
+    public static function add(string $id, mixed $data, ?string $tag = null, ?int $lifetime = null): bool
     {
         $instance = self::getInstance();
 
@@ -126,7 +126,7 @@ final class TmpStore extends Model\AbstractModel
             $lifetime = self::getDefaultLifetime();
         }
 
-        return $instance->getDao()->add($id, $data, $tag, $lifetime);
+        return $instance->getDao()->add($id, $data, $tag ?? '', $lifetime);
     }
 
     public static function delete(string $id): void

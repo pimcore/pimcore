@@ -125,8 +125,8 @@ Following sample implementation does that by using a sql query:
 
         // Create a query for sorting prices and applying offset and limit
         $idString = implode(",", $productIds);
-        $sql = "SELECT o_id FROM object_12 a LEFT JOIN app_prices b" .
-            " ON a.o_id = b.productId WHERE o_id IN ($idString) ORDER BY ISNULL(b.price), b.price $order, o_id $limit;";
+        $sql = "SELECT id FROM object_12 a LEFT JOIN app_prices b" .
+            " ON a.id = b.productId WHERE id IN ($idString) ORDER BY ISNULL(b.price), b.price $order, id $limit;";
 
         $sortedIds = $db->fetchAllAssociative($sql);
 

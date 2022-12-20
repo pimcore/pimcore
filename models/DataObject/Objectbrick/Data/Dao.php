@@ -47,14 +47,14 @@ class Dao extends Model\Dao\AbstractDao
         $storetable = $this->model->getDefinition()->getTableName($object->getClass(), false);
         $querytable = $this->model->getDefinition()->getTableName($object->getClass(), true);
 
-        $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($object->getClassId(), 'o_id', $storetable, $querytable, null, 'o_id');
+        $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($object->getClassId(), 'id', $storetable, $querytable, null, 'id');
 
         DataObject::setGetInheritedValues(false);
 
         $fieldDefinitions = $this->model->getDefinition()->getFieldDefinitions();
 
         $data = [];
-        $data['o_id'] = $object->getId();
+        $data['id'] = $object->getId();
         $data['fieldname'] = $this->model->getFieldname();
 
         $dirtyRelations = [];
@@ -98,7 +98,7 @@ class Dao extends Model\Dao\AbstractDao
             $isBrickUpdate = false; // used to indicate whether we want to consider the default value
         } else {
             // or brick has been added
-            $existsResult = $this->db->fetchOne('SELECT o_id FROM ' . $storetable . ' WHERE o_id = ? LIMIT 1', [$object->getId()]);
+            $existsResult = $this->db->fetchOne('SELECT id FROM ' . $storetable . ' WHERE id = ? LIMIT 1', [$object->getId()]);
             $isBrickUpdate = $existsResult ? true : false;  // used to indicate whether we want to consider the default value
         }
 
@@ -155,7 +155,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         if ($isBrickUpdate) {
-            $this->db->update($storetable, Helper::quoteDataIdentifiers($this->db, $data), ['o_id'=> $object->getId()]);
+            $this->db->update($storetable, Helper::quoteDataIdentifiers($this->db, $data), ['id'=> $object->getId()]);
         } else {
             $this->db->insert($storetable, Helper::quoteDataIdentifiers($this->db, $data));
         }
@@ -165,11 +165,11 @@ class Dao extends Model\Dao\AbstractDao
         // this is special because we have to call each getter to get the inherited values from a possible parent object
 
         $data = [];
-        $data['o_id'] = $object->getId();
+        $data['id'] = $object->getId();
         $data['fieldname'] = $this->model->getFieldname();
 
         $this->inheritanceHelper->resetFieldsToCheck();
-        $oldData = $this->db->fetchAssociative('SELECT * FROM ' . $querytable . ' WHERE o_id = ?', [$object->getId()]);
+        $oldData = $this->db->fetchAssociative('SELECT * FROM ' . $querytable . ' WHERE id = ?', [$object->getId()]);
 
         $inheritanceEnabled = $object->getClass()->getAllowInherit();
         $parentData = null;
@@ -181,7 +181,7 @@ class Dao extends Model\Dao\AbstractDao
                 // we cannot DataObject::setGetInheritedValues(true); and then $this->model->$method();
                 // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
                 // so the data of the parent cannot be changed while this transaction is on progress
-                $parentData = $this->db->fetchAssociative('SELECT * FROM ' . $querytable . ' WHERE o_id = ? FOR UPDATE', [$parentForInheritance->getId()]);
+                $parentData = $this->db->fetchAssociative('SELECT * FROM ' . $querytable . ' WHERE id = ? FOR UPDATE', [$parentForInheritance->getId()]);
             }
         }
 
@@ -290,13 +290,13 @@ class Dao extends Model\Dao\AbstractDao
     {
         // update data for store table
         $storeTable = $this->model->getDefinition()->getTableName($object->getClass(), false);
-        $this->db->delete($storeTable, ['o_id' => $object->getId()]);
+        $this->db->delete($storeTable, ['id' => $object->getId()]);
 
         // update data for query table
         $queryTable = $this->model->getDefinition()->getTableName($object->getClass(), true);
 
-        $oldData = $this->db->fetchAssociative('SELECT * FROM ' . $queryTable . ' WHERE o_id = ?', [$object->getId()]);
-        $this->db->delete($queryTable, ['o_id' => $object->getId()]);
+        $oldData = $this->db->fetchAssociative('SELECT * FROM ' . $queryTable . ' WHERE id = ?', [$object->getId()]);
+        $this->db->delete($queryTable, ['id' => $object->getId()]);
 
         //update data for relations table
         $this->db->delete('object_relations_' . $object->getClassId(), [
@@ -306,7 +306,7 @@ class Dao extends Model\Dao\AbstractDao
             'position' => $this->model->getType(),
         ]);
 
-        $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($object->getClassId(), 'o_id', $storeTable, $queryTable);
+        $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($object->getClassId(), 'id', $storeTable, $queryTable);
         $this->inheritanceHelper->resetFieldsToCheck();
 
         $objectVars = $this->model->getObjectVars();
@@ -377,16 +377,16 @@ class Dao extends Model\Dao\AbstractDao
             $src = 'dest_id';
         }
 
-        $relations = $this->db->fetchAllAssociative('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.o_className as subtype, concat(o.o_path ,o.o_key) as path , r.index, o.o_published as published
+        $relations = $this->db->fetchAllAssociative('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.className as subtype, concat(o.path ,o.key) as `path` , r.index, o.published
             FROM objects o, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'objectbrick'
             AND r." . $src . ' = ?
-            AND o.o_id = r.' . $dest . "
+            AND o.id = r.' . $dest . "
             AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')
             AND r.type='object'
 
-            UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type,  a.type as subtype,  concat(a.path,a.filename) as path, r.index, "null" as published
+            UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type,  a.type as subtype,  concat(a.path,a.filename) as `path`, r.index, "null" as published
             FROM assets a, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'objectbrick'
@@ -395,7 +395,7 @@ class Dao extends Model\Dao\AbstractDao
             AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')
             AND r.type='asset'
 
-            UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, d.type as subtype, concat(d.path,d.key) as path, r.index, d.published as published
+            UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, d.type as subtype, concat(d.path,d.key) as `path`, r.index, d.published as published
             FROM documents d, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'objectbrick'

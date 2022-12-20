@@ -241,7 +241,7 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     public function filterByPath(float|array|int|string $data, string $operator = '='): static
     {
-        $this->addFilterByField('o_path', $operator, $data);
+        $this->addFilterByField('path', $operator, $data);
 
         return $this;
     }
@@ -256,7 +256,7 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     public function filterByKey(float|array|int|string $data, string $operator = '='): static
     {
-        $this->addFilterByField('o_key', $operator, $data);
+        $this->addFilterByField('key', $operator, $data);
 
         return $this;
     }
@@ -271,7 +271,7 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     public function filterById(float|array|int|string $data, string $operator = '='): static
     {
-        $this->addFilterByField('o_id', $operator, $data);
+        $this->addFilterByField('id', $operator, $data);
 
         return $this;
     }
@@ -286,7 +286,7 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     public function filterByPublished(float|array|int|string $data, string $operator = '='): static
     {
-        $this->addFilterByField('o_published', $operator, $data);
+        $this->addFilterByField('published', $operator, $data);
 
         return $this;
     }
@@ -301,7 +301,7 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     public function filterByCreationDate(float|array|int|string $data, string $operator = '='): static
     {
-        $this->addFilterByField('o_creationDate', $operator, $data);
+        $this->addFilterByField('creationDate', $operator, $data);
 
         return $this;
     }
@@ -316,7 +316,7 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     public function filterByModificationDate(float|array|int|string $data, string $operator = '='): static
     {
-        $this->addFilterByField('o_modificationDate', $operator, $data);
+        $this->addFilterByField('modificationDate', $operator, $data);
 
         return $this;
     }

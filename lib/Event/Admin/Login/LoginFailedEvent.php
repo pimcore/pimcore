@@ -23,7 +23,7 @@ class LoginFailedEvent extends Event
 {
     protected array $credentials;
 
-    protected User $user;
+    protected ?User $user = null;
 
     public function __construct(array $credentials)
     {
@@ -50,7 +50,7 @@ class LoginFailedEvent extends Event
         return $default;
     }
 
-    public function getUser(): User
+    public function getUser(): ?User
     {
         return $this->user;
     }

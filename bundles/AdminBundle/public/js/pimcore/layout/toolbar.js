@@ -1160,7 +1160,7 @@
                      iconCls: "pimcore_nav_icon_maintenance",
                      itemId: 'pimcore_menu_notifications_maintenance',
                      handler: function () {
-                         window.open('https://pimcore.com/docs/6.x/Development_Documentation/Getting_Started/Installation.html#page_5-Maintenance-Cron-Job');
+                         window.open('https://pimcore.com/docs/pimcore/11.0/Development_Documentation/Getting_Started/Installation.html#page_5-Maintenance-Cron-Job');
                      }
                  });
                  pimcore.notification.helper.incrementCount();

@@ -653,7 +653,7 @@ pimcore.helpers.handleCtrlS = function (keyCode, e) {
             }
         }
         else if (el.object) {
-            if (el.object.data.general.o_published) {
+            if (el.object.data.general.published) {
                 el.object.publish();
             } else {
                 el.object.save('version');
@@ -949,7 +949,7 @@ pimcore.helpers.openMemorizedTabs = function () {
     }
 };
 
-pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success, failure, context) {
+pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success, failure, context, type) {
 
     var params = {};
     params['parent' + ucfirst(parentType)] = parent;
@@ -957,6 +957,10 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
     var url = Routing.generate('pimcore_admin_asset_addassetcompatibility', params);
     if (context) {
         url += "&context=" + Ext.encode(context);
+    }
+
+    if(type) {
+        url += "&type=" + type;
     }
 
     pimcore.helpers.uploadDialog(url, 'Filedata', success, failure);
@@ -2275,7 +2279,7 @@ pimcore.helpers.showAbout = function () {
     html += '<br><b>Version: ' + pimcore.settings.version + '</b>';
     html += '<br><b>Git Hash: <a href="https://github.com/pimcore/pimcore/commit/' + pimcore.settings.build + '" target="_blank">' + pimcore.settings.build + '</a></b>';
     html += '<br><br>&copy; by pimcore GmbH (<a href="https://pimcore.com/" target="_blank">pimcore.com</a>)';
-    html += '<br><br><a href="https://github.com/pimcore/pimcore/blob/10.5/LICENSE.md" target="_blank">License</a> | ';
+    html += '<br><br><a href="https://github.com/pimcore/pimcore/blob/11.x/LICENSE.md" target="_blank">License</a> | ';
     html += '<a href="https://pimcore.com/en/about/contact" target="_blank">Contact</a>';
     html += '<img src="/bundles/pimcoreadmin/img/austria-heart.svg" style="position:absolute;top:172px;right:45px;width:32px;">';
     html += '</div>';

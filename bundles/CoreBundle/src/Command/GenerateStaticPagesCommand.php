@@ -64,7 +64,7 @@ class GenerateStaticPagesCommand extends AbstractCommand
                 throw new \InvalidArgumentException(sprintf('Document with path %s not found', $path));
             }
 
-            $ids = $db->fetchFirstColumn('SELECT documents.id FROM `documents_page` LEFT JOIN documents ON documents_page.id = documents.id WHERE `staticGeneratorEnabled` = 1  AND (documents.id = :id OR path LIKE :path)', [
+            $ids = $db->fetchFirstColumn('SELECT documents.id FROM `documents_page` LEFT JOIN documents ON documents_page.id = documents.id WHERE `staticGeneratorEnabled` = 1  AND (documents.id = :id OR `path` like :path)', [
                 'id' => $parent->getId(),
                 'path' => $parent->getFullPath() . '/%',
             ]);

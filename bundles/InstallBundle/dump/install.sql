@@ -352,31 +352,31 @@ CREATE TABLE `notes_data` (
 
 DROP TABLE IF EXISTS `objects`;
 CREATE TABLE `objects` (
-  `o_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `o_parentId` int(11) unsigned DEFAULT NULL,
-  `o_type` enum('object','folder','variant') DEFAULT NULL,
-  `o_key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin default '',
-  `o_path` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
-  `o_index` int(11) unsigned DEFAULT '0',
-  `o_published` tinyint(1) unsigned DEFAULT '1',
-  `o_creationDate` int(11) unsigned DEFAULT NULL,
-  `o_modificationDate` int(11) unsigned DEFAULT NULL,
-  `o_userOwner` int(11) unsigned DEFAULT NULL,
-  `o_userModification` int(11) unsigned DEFAULT NULL,
-  `o_classId` VARCHAR(50) NULL DEFAULT NULL,
-  `o_className` varchar(255) DEFAULT NULL,
-  `o_childrenSortBy` ENUM('key','index') NULL DEFAULT NULL,
-  `o_childrenSortOrder` ENUM('ASC','DESC') NULL DEFAULT NULL,
-  `o_versionCount` INT UNSIGNED NOT NULL DEFAULT '0',
-  PRIMARY KEY (`o_id`),
-  UNIQUE KEY `fullpath` (`o_path`,`o_key`),
-  KEY `key` (`o_key`),
-  KEY `index` (`o_index`),
-  KEY `published` (`o_published`),
-  KEY `parentId` (`o_parentId`),
-  KEY `type_path_classId` (`o_type`, `o_path`, `o_classId`),
-  KEY `o_modificationDate` (`o_modificationDate`),
-  KEY `o_classId` (`o_classId`)
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `parentId` int(11) unsigned DEFAULT NULL,
+  `type` enum('object','folder','variant') DEFAULT NULL,
+  `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin default '',
+  `path` varchar(765) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL, /* path in utf8 (3-byte) using the full key length of 3072 bytes */
+  `index` int(11) unsigned DEFAULT '0',
+  `published` tinyint(1) unsigned DEFAULT '1',
+  `creationDate` int(11) unsigned DEFAULT NULL,
+  `modificationDate` int(11) unsigned DEFAULT NULL,
+  `userOwner` int(11) unsigned DEFAULT NULL,
+  `userModification` int(11) unsigned DEFAULT NULL,
+  `classId` VARCHAR(50) NULL DEFAULT NULL,
+  `className` varchar(255) DEFAULT NULL,
+  `childrenSortBy` ENUM('key','index') NULL DEFAULT NULL,
+  `childrenSortOrder` ENUM('ASC','DESC') NULL DEFAULT NULL,
+  `versionCount` INT UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `fullpath` (`path`,`key`),
+  KEY `key` (`key`),
+  KEY `index` (`index`),
+  KEY `published` (`published`),
+  KEY `parentId` (`parentId`),
+  KEY `type_path_classId` (`type`, `path`, `classId`),
+  KEY `modificationDate` (`modificationDate`),
+  KEY `classId` (`classId`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `properties`;
@@ -719,7 +719,7 @@ CREATE TABLE `users_workspaces_object` (
   PRIMARY KEY (`cid`, `userId`),
   KEY `userId` (`userId`),
   UNIQUE INDEX `cpath_userId` (`cpath`,`userId`),
-  CONSTRAINT `fk_users_workspaces_object_objects` FOREIGN KEY (`cid`) REFERENCES `objects` (`o_id`) ON UPDATE NO ACTION ON DELETE CASCADE,
+  CONSTRAINT `fk_users_workspaces_object_objects` FOREIGN KEY (`cid`) REFERENCES `objects` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE,
   CONSTRAINT `fk_users_workspaces_object_users` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
@@ -993,7 +993,7 @@ CREATE TABLE `object_url_slugs` (
       INDEX `slug` (`slug`),
       INDEX `siteId` (`siteId`),
       INDEX `fieldname_ownertype_position_objectId` (`fieldname`,`ownertype`,`position`,`objectId`),
-      CONSTRAINT `fk_object_url_slugs__objectId` FOREIGN KEY (`objectId`) REFERENCES objects (`o_id`) ON DELETE CASCADE
+      CONSTRAINT `fk_object_url_slugs__objectId` FOREIGN KEY (`objectId`) REFERENCES objects (`id`) ON DELETE CASCADE
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `webdav_locks`;

@@ -45,7 +45,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
             $tableName = $definition->getTableName($object->getClass(), false);
 
             try {
-                $results = $this->db->fetchAllAssociative('SELECT * FROM '.$tableName.' WHERE o_id = ? AND fieldname = ?', [$object->getId(), $this->model->getFieldname()]);
+                $results = $this->db->fetchAllAssociative('SELECT * FROM '.$tableName.' WHERE id = ? AND fieldname = ?', [$object->getId(), $this->model->getFieldname()]);
             } catch (\Exception $e) {
                 $results = [];
             }
@@ -135,7 +135,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
         foreach ($fieldDef->getAllowedTypes() as $type) {
             if ($definition = DataObject\Objectbrick\Definition::getByKey($type)) {
                 $tableName = $definition->getTableName($object->getClass(), true);
-                $this->db->delete($tableName, ['o_id' => $object->getId()]);
+                $this->db->delete($tableName, ['id' => $object->getId()]);
             }
         }
 

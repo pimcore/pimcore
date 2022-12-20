@@ -335,21 +335,7 @@ class Service extends Model\AbstractModel
             // now do the query;
             foreach ($mapping as $elementType => $idList) {
                 $idList = array_keys($mapping[$elementType]);
-                switch ($elementType) {
-                    case 'document':
-                        $idColumn = 'id';
-                        $publishedColumn = 'published';
-
-                        break;
-                    case 'object':
-                        $idColumn = 'o_id';
-                        $publishedColumn = 'o_published';
-
-                        break;
-                    default:
-                        throw new \Exception('unknown type');
-                }
-                $query = 'SELECT ' . $idColumn . ' FROM ' . $elementType . 's WHERE ' . $publishedColumn . '=1 AND ' . $idColumn . ' IN (' . implode(',', $idList) . ');';
+                $query = 'SELECT id FROM ' . $elementType . 's WHERE published=1 AND id IN (' . implode(',', $idList) . ');';
                 $publishedIds = $db->fetchFirstColumn($query);
                 $publishedMapping[$elementType] = $publishedIds;
             }
@@ -625,13 +611,9 @@ class Service extends Model\AbstractModel
             //$p = object2array($p);
             $allowedProperties = [
                 'key',
-                'o_key',
                 'filename',
                 'path',
-                'o_path',
                 'id',
-                'o_id',
-                'o_type',
                 'type',
             ];
 

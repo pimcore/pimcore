@@ -243,11 +243,11 @@ pimcore.settings.document.doctypes = Class.create({
                     handler: function (grid, rowIndex) {
                         var rec = grid.getStore().getAt(rowIndex);
                         try {
-                            pimcore.globalmanager.get("translationadminmanager").activate(rec.data.name);
+                            pimcore.globalmanager.get("translationdomainmanager").activate(rec.data.name);
                         }
                         catch (e) {
-                            pimcore.globalmanager.add("translationadminmanager",
-                                new pimcore.settings.translation.admin(rec.data.name));
+                            pimcore.globalmanager.add("translationdomainmanager",
+                                new pimcore.settings.translation.domain("admin",rec.data.name));
                         }
                     }.bind(this)
                 }]

@@ -121,7 +121,7 @@ Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField::setStrictMode(fals
 
 A slug is the part of a URL which identifies a particular page on a website in an easy 
 to read form. In other words, it’s the part of the URL that explains the page’s content.
-For example, if the URL is `https://demo.pimcore.fun/slug`, and the slug simply is `/slug`.
+For example, if the URL is `https://demo.pimcore.fun/slug`, then the slug simply is `/slug`.
 
 ![URL Slug](../../../img/classes-datatypes-urlslug.png)
 

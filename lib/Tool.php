@@ -56,11 +56,11 @@ final class Tool
      *
      * @static
      *
-     * @param string $language
+     * @param ?string $language
      *
      * @return bool
      */
-    public static function isValidLanguage(string $language): bool
+    public static function isValidLanguage(?string $language): bool
     {
         $language = (string) $language; // cast to string
         $languages = self::getValidLanguages();

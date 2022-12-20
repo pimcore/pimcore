@@ -509,7 +509,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function getDataFromEditmode(mixed $data, DataObject\Concrete $object = null, array $params = []): ?Model\DataObject\Data\QuantityValue
     {
-        if (strlen($data['value']) > 0 || $data['unit']) {
+        if (strlen((string)$data['value']) > 0 || $data['unit']) {
             if (empty($data['unit']) || $data['unit'] == -1) {
                 return new Model\DataObject\Data\QuantityValue($data['value'], null);
             }
@@ -541,7 +541,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
                 }
             }
 
-            return htmlspecialchars($data->getValue() . $unit, ENT_QUOTES, 'UTF-8');
+            return htmlspecialchars((string)$data->getValue() . $unit, ENT_QUOTES, 'UTF-8');
         }
 
         return '';
