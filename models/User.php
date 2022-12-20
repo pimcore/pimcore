@@ -44,9 +44,6 @@ final class User extends User\UserRole
 
     protected bool $active = true;
 
-    /**
-     * @var string[]
-     */
     protected array $roles = [];
 
     protected bool $welcomescreen = false;
@@ -297,8 +294,6 @@ final class User extends User\UserRole
     }
 
     /**
-     * @param string[]|string $roles
-     *
      * @return $this
      */
     public function setRoles(array|string $roles): static
