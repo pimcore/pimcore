@@ -54,7 +54,9 @@ services:
             $firewallName: !abstract defined by the factory
 
 
-    Pimcore\Bundle\AdminBundle\Security\Event\LogoutListener: ~
+    Pimcore\Bundle\AdminBundle\Security\Event\LogoutListener:
+        tags:
+            - { name: 'kernel.event_subscriber', dispatcher: 'security.event_dispatcher.pimcore_admin'}
 
     Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver:
         public: true
