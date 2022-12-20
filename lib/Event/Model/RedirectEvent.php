@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -23,10 +24,7 @@ class RedirectEvent extends Event
 {
     use ArgumentsAwareTrait;
 
-    /**
-     * @var Redirect
-     */
-    protected $redirect;
+    protected Redirect $redirect;
 
     /**
      * @param Redirect $redirect
@@ -38,17 +36,11 @@ class RedirectEvent extends Event
         $this->arguments = $arguments;
     }
 
-    /**
-     * @return Redirect
-     */
     public function getRedirect(): Redirect
     {
         return $this->redirect;
     }
 
-    /**
-     * @param Redirect $redirect
-     */
     public function setRedirect(Redirect $redirect): void
     {
         $this->redirect = $redirect;

@@ -1,15 +1,16 @@
 <?php
+declare(strict_types=1);
 
 /**
-Fields Summary:
-- label [input]
-- field [indexFieldSelection]
-- ranges [structuredTable]
-- preSelectFrom [numeric]
-- preSelectTo [numeric]
-- scriptPath [input]
-- unit [input]
-*/
+ * Fields Summary:
+ * - label [input]
+ * - field [indexFieldSelection]
+ * - ranges [structuredTable]
+ * - preSelectFrom [numeric]
+ * - preSelectTo [numeric]
+ * - scriptPath [input]
+ * - unit [input]
+ */
 
 namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 
@@ -18,14 +19,14 @@ use Pimcore\Model\DataObject\PreGetValueHookInterface;
 
 class FilterNumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType
 {
-protected $type = "FilterNumberRangeSelection";
-protected $label;
-protected $field;
-protected $ranges;
-protected $preSelectFrom;
-protected $preSelectTo;
-protected $scriptPath;
-protected $unit;
+protected string $type = "FilterNumberRangeSelection";
+protected ?string $label;
+protected ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field;
+protected ?DataObject\Data\StructuredTable $ranges;
+protected ?float $preSelectFrom;
+protected ?float $preSelectTo;
+protected ?string $scriptPath;
+protected ?string $unit;
 
 
 /**
@@ -45,9 +46,9 @@ public function getLabel(): ?string
 /**
 * Set label - Label
 * @param string|null $label
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRangeSelection
+* @return $this
 */
-public function setLabel(?string $label)
+public function setLabel(?string $label): static
 {
 	$this->label = $label;
 
@@ -71,9 +72,9 @@ public function getField(): ?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtens
 /**
 * Set field - Field
 * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection|null $field
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRangeSelection
+* @return $this
 */
-public function setField(?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field)
+public function setField(?\Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection $field): static
 {
 	$this->field = $field;
 
@@ -97,9 +98,9 @@ public function getRanges(): ?\Pimcore\Model\DataObject\Data\StructuredTable
 /**
 * Set ranges - Ranges
 * @param \Pimcore\Model\DataObject\Data\StructuredTable|null $ranges
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRangeSelection
+* @return $this
 */
-public function setRanges(?\Pimcore\Model\DataObject\Data\StructuredTable $ranges)
+public function setRanges(?\Pimcore\Model\DataObject\Data\StructuredTable $ranges): static
 {
 	$this->ranges = $ranges;
 
@@ -123,14 +124,13 @@ public function getPreSelectFrom(): ?float
 /**
 * Set preSelectFrom - Pre Select From
 * @param float|null $preSelectFrom
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRangeSelection
+* @return $this
 */
-public function setPreSelectFrom(?float $preSelectFrom)
+public function setPreSelectFrom(?float $preSelectFrom): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("preSelectFrom");
 	$this->preSelectFrom = $fd->preSetData($this, $preSelectFrom);
-
 	return $this;
 }
 
@@ -151,14 +151,13 @@ public function getPreSelectTo(): ?float
 /**
 * Set preSelectTo - Pre Select To
 * @param float|null $preSelectTo
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRangeSelection
+* @return $this
 */
-public function setPreSelectTo(?float $preSelectTo)
+public function setPreSelectTo(?float $preSelectTo): static
 {
 	/** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric $fd */
 	$fd = $this->getDefinition()->getFieldDefinition("preSelectTo");
 	$this->preSelectTo = $fd->preSetData($this, $preSelectTo);
-
 	return $this;
 }
 
@@ -179,9 +178,9 @@ public function getScriptPath(): ?string
 /**
 * Set scriptPath - Script Path
 * @param string|null $scriptPath
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRangeSelection
+* @return $this
 */
-public function setScriptPath(?string $scriptPath)
+public function setScriptPath(?string $scriptPath): static
 {
 	$this->scriptPath = $scriptPath;
 
@@ -205,9 +204,9 @@ public function getUnit(): ?string
 /**
 * Set unit - Unit
 * @param string|null $unit
-* @return \Pimcore\Model\DataObject\Fieldcollection\Data\FilterNumberRangeSelection
+* @return $this
 */
-public function setUnit(?string $unit)
+public function setUnit(?string $unit): static
 {
 	$this->unit = $unit;
 

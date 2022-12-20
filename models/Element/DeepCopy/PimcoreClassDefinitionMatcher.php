@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -24,8 +25,7 @@ use Pimcore\Model\DataObject\Concrete;
  */
 class PimcoreClassDefinitionMatcher implements Matcher
 {
-    /** @var string $matchType */
-    private $matchType;
+    private string $matchType;
 
     /**
      * PimcoreClassDefinitionMatcher constructor.

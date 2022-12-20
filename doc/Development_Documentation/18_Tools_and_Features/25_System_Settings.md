@@ -2,7 +2,7 @@
 
 In system settings (*Settings* > *System Settings*) system wide settings for Pimcore can be made. Changes should 
 be made with care and only by developers. 
-These settings are saved in `var/config/system.yml`. 
+These settings are saved in `var/config/system.yaml`. 
 
 
 ## Appearance & Branding 

@@ -26,10 +26,7 @@ class DataLoader implements DataLoaderInterface
 {
     use StopwatchTrait;
 
-    /**
-     * @var ContainerInterface
-     */
-    private $dataProviders;
+    private ContainerInterface $dataProviders;
 
     public function __construct(ContainerInterface $dataProviders)
     {
@@ -39,7 +36,7 @@ class DataLoader implements DataLoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadDataFromProviders(VisitorInfo $visitorInfo, $providerKeys)
+    public function loadDataFromProviders(VisitorInfo $visitorInfo, array|string $providerKeys)
     {
         if (!is_array($providerKeys)) {
             $providerKeys = [(string)$providerKeys];

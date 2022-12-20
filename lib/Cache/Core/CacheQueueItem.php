@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,45 +21,30 @@ namespace Pimcore\Cache\Core;
  */
 class CacheQueueItem
 {
-    /**
-     * @var string
-     */
-    protected $key;
+    protected string $key;
 
-    /**
-     * @var mixed
-     */
-    protected $data;
+    protected mixed $data = null;
 
-    /**
-     * @var array
-     */
-    protected $tags = [];
+    protected array $tags = [];
 
     /**
      * @param int|\DateInterval|null $lifetime
      */
-    protected $lifetime = null;
+    protected int|null|\DateInterval $lifetime = null;
 
-    /**
-     * @var int
-     */
-    protected $priority = 0;
+    protected int $priority = 0;
 
-    /**
-     * @var bool
-     */
-    protected $force = false;
+    protected bool $force = false;
 
     /**
      * @param string $key
      * @param mixed $data
      * @param array $tags
-     * @param int|\DateInterval|null $lifetime
+     * @param \DateInterval|int|null $lifetime
      * @param int|null $priority
      * @param bool $force
      */
-    public function __construct($key, $data, array $tags = [], $lifetime = null, $priority = 0, $force = false)
+    public function __construct(string $key, mixed $data, array $tags = [], \DateInterval|int $lifetime = null, ?int $priority = 0, bool $force = false)
     {
         $this->key = $key;
         $this->data = $data;
@@ -68,58 +54,37 @@ class CacheQueueItem
         $this->force = (bool)$force;
     }
 
-    /**
-     * @return string
-     */
-    public function getKey()
+    public function getKey(): string
     {
         return $this->key;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getData()
+    public function getData(): mixed
     {
         return $this->data;
     }
 
-    /**
-     * @param mixed $data
-     */
-    public function setData($data): void
+    public function setData(mixed $data): void
     {
         $this->data = $data;
     }
 
-    /**
-     * @return array
-     */
-    public function getTags()
+    public function getTags(): array
     {
         return $this->tags;
     }
 
-    /**
-     * @return int|\DateInterval|null
-     */
-    public function getLifetime()
+    public function getLifetime(): \DateInterval|int|null
     {
         return $this->lifetime;
     }
 
-    /**
-     * @return int
-     */
-    public function getPriority()
+    public function getPriority(): int
     {
         return $this->priority;
     }
 
-    /**
-     * @return bool
-     */
-    public function isForce()
+    public function isForce(): bool
     {
         return $this->force;
     }

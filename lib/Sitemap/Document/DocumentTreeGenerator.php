@@ -27,20 +27,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DocumentTreeGenerator extends AbstractElementGenerator
 {
-    /**
-     * @var DocumentUrlGeneratorInterface
-     */
-    private $urlGenerator;
+    private DocumentUrlGeneratorInterface $urlGenerator;
 
-    /**
-     * @var array
-     */
-    protected $options = [];
+    protected array $options = [];
 
-    /**
-     * @var int
-     */
-    private $currentBatchCount = 0;
+    private int $currentBatchCount = 0;
 
     public function __construct(
         DocumentUrlGeneratorInterface $urlGenerator,
@@ -95,7 +86,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
         }
     }
 
-    private function populateCollection(UrlContainerInterface $urlContainer, Document $rootDocument, string $section, Site $site = null)
+    private function populateCollection(UrlContainerInterface $urlContainer, Document $rootDocument, string $section, Site $site = null): void
     {
         $context = new DocumentGeneratorContext($urlContainer, $section, $site);
         $visit = $this->visit($rootDocument, $context);
@@ -110,13 +101,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
         }
     }
 
-    /**
-     * @param Document $document
-     * @param DocumentGeneratorContext $context
-     *
-     * @return Url|null
-     */
-    private function createUrl(Document $document, DocumentGeneratorContext $context)
+    private function createUrl(Document $document, DocumentGeneratorContext $context): ?Url
     {
         $url = $this->urlGenerator->generateDocumentUrl(
             $document,
@@ -131,11 +116,6 @@ class DocumentTreeGenerator extends AbstractElementGenerator
     }
 
     /**
-     * @param Document $document
-     * @param DocumentGeneratorContext $context
-     *
-     * @return \Generator
-     *
      * @throws \Exception
      */
     private function visit(Document $document, DocumentGeneratorContext $context): \Generator

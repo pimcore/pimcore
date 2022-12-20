@@ -18,9 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Twig\Extension;
 
 use Pimcore\Tool\Glossary\Processor;
-use Pimcore\Twig\TokenParser\GlossaryTokenParser;
 use Twig\Extension\AbstractExtension;
-use Twig\TokenParser\TokenParserInterface;
 use Twig\TwigFilter;
 
 /**
@@ -28,15 +26,8 @@ use Twig\TwigFilter;
  */
 class GlossaryExtension extends AbstractExtension
 {
-    /**
-     * @var Processor
-     */
-    private $glossaryProcessor;
+    private Processor $glossaryProcessor;
 
-    /**
-     * @param Processor $glossaryProcessor
-     *
-     */
     public function __construct(Processor $glossaryProcessor)
     {
         $this->glossaryProcessor = $glossaryProcessor;
@@ -52,12 +43,6 @@ class GlossaryExtension extends AbstractExtension
         ];
     }
 
-    /**
-     * @param string $string
-     * @param array $options
-     *
-     * @return string
-     */
     public function applyGlossary(string $string, array $options = []): string
     {
         if (empty($string) || !is_string($string)) {
@@ -65,43 +50,5 @@ class GlossaryExtension extends AbstractExtension
         }
 
         return $this->glossaryProcessor->process($string, $options);
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return TokenParserInterface[]
-     */
-    public function getTokenParsers(): array
-    {
-        return [
-            new GlossaryTokenParser(),
-        ];
-    }
-
-    /**
-     * @deprecated
-     */
-    public function start()
-    {
-        ob_start();
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param array $options
-     */
-    public function stop(array $options = [])
-    {
-        $contents = ob_get_clean();
-
-        if (empty($contents) || !is_string($contents)) {
-            $result = $contents;
-        } else {
-            $result = $this->glossaryProcessor->process($contents, $options);
-        }
-
-        echo $result;
     }
 }

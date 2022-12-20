@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -22,14 +23,14 @@ class SendingParamContainer
      *
      * @var string
      */
-    protected $email;
+    protected string $email;
 
     /**
      * @internal
      *
      * @var array|null
      */
-    protected $params;
+    protected ?array $params = null;
 
     /**
      * SendingParamContainer constructor.
@@ -37,40 +38,28 @@ class SendingParamContainer
      * @param string $email
      * @param array|null $params
      */
-    public function __construct($email, array $params = null)
+    public function __construct(string $email, array $params = null)
     {
         $this->email = $email;
         $this->params = $params;
     }
 
-    /**
-     * @return string
-     */
-    public function getEmail()
+    public function getEmail(): string
     {
         return $this->email;
     }
 
-    /**
-     * @param string $email
-     */
-    public function setEmail($email)
+    public function setEmail(string $email): void
     {
         $this->email = $email;
     }
 
-    /**
-     * @return array|null
-     */
-    public function getParams()
+    public function getParams(): ?array
     {
         return $this->params;
     }
 
-    /**
-     * @param array|null $params
-     */
-    public function setParams($params)
+    public function setParams(?array $params): void
     {
         $this->params = $params;
     }

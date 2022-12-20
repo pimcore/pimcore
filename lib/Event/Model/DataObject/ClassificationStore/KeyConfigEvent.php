@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,10 +21,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 class KeyConfigEvent extends Event
 {
-    /**
-     * @var KeyConfig
-     */
-    protected $keyConfig;
+    protected KeyConfig $keyConfig;
 
     /**
      * DocumentEvent constructor.
@@ -35,18 +33,12 @@ class KeyConfigEvent extends Event
         $this->keyConfig = $keyConfig;
     }
 
-    /**
-     * @return KeyConfig
-     */
-    public function getKeyConfig()
+    public function getKeyConfig(): KeyConfig
     {
         return $this->keyConfig;
     }
 
-    /**
-     * @param KeyConfig $keyConfig
-     */
-    public function setKeyConfig($keyConfig)
+    public function setKeyConfig(KeyConfig $keyConfig)
     {
         $this->keyConfig = $keyConfig;
     }

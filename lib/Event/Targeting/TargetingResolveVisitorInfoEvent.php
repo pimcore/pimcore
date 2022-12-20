@@ -21,9 +21,6 @@ use Pimcore\Targeting\Model\VisitorInfo;
 
 class TargetingResolveVisitorInfoEvent extends TargetingEvent
 {
-    /**
-     * @param VisitorInfo $visitorInfo
-     */
     public function setVisitorInfo(VisitorInfo $visitorInfo)
     {
         $this->visitorInfo = $visitorInfo;

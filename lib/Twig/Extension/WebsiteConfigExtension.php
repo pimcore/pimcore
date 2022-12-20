@@ -42,7 +42,7 @@ class WebsiteConfigExtension extends AbstractExtension
      *
      * @return mixed
      */
-    public function getWebsiteConfig($key = null, $default = null, $language = null): mixed
+    public function getWebsiteConfig(string $key = null, mixed $default = null, string $language = null): mixed
     {
         return Config::getWebsiteConfigValue($key, $default, $language);
     }

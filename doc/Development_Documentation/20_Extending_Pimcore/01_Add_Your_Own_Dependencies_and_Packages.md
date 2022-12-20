@@ -14,7 +14,7 @@ composer require mtdowling/cron-expression
 You can install third party bundles via composer as shown above (as Pimcore is a standard Symfony application, you should
 be able to use any third-party Symfony bundle).
 
-To load a bundle with the application, it must first be enabled in `config/bundles.php` (see [bundles documentation](https://symfony.com/doc/5.2/bundles.html)).
+To load a bundle with the application, it must first be enabled in `config/bundles.php` (see [bundles documentation](https://symfony.com/doc/current/bundles.html)).
 As Pimcore defines a `registerBundles` method base Kernel class, which is returns a list of default bundles and priority can be important for config auto loading, the
 Pimcore Kernel exposes a `registerBundlesToCollection`  method which allows to add bundles to a `BundleCollection` with
 an optional priority (higher priority is loaded first) and a list of environments to handle (e.g. load only in `dev`
@@ -59,10 +59,7 @@ You can read more about the bundle collection and handling of dependencies in [B
 
 For more information see [Pimcore Bundles](./13_Bundle_Developers_Guide/05_Pimcore_Bundles).
 
-Pimcore bundles can be registered on the kernel by enabling them in the extension manager. The extension manager also allows
-you to set a priority and environments to handle (as comma-separated string).
-
-You can also enable pimcore bundles manually by adding them via code as shown above. Bundles which are manually enabled
-can't be enabled or disabled through the extension manager. Instead, the extension manager will only expose functionality
-to interact with the bundle installer (install/uninstall/update). 
+Just like third party bundles, Pimcore bundles can be registered on the kernel by enabling them in the `config/bundles.php`
+or manually by adding them via code as shown above. You can use `pimcore:bundle:*` commands
+to list or interact with the bundle installer (install/uninstall/update). 
 

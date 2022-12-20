@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -77,6 +78,25 @@ final class AdminEvents
      * @var string
      */
     const LOGIN_LOGOUT = 'pimcore.admin.login.logout';
+
+    /**
+     * The LOGIN_BEFORE_RENDER event is triggered before the login view is rendered.
+     *
+     * Allows overriding the parameters and including templates.
+     * ```php
+     * public function getContent(GenericEvent $event): void
+     * {
+     *     $parameters = $event->getArgument('parameters');
+     *     $parameters['includeTemplates']['VendorBundleName'] = '@VendorBundleName/path/to/template.html.twig';
+     *     $event->setArgument('parameters', $parameters);
+     * }
+     * ```
+     *
+     * @Event("Symfony\Component\EventDispatcher\GenericEvent")
+     *
+     * @var string
+     */
+    const LOGIN_BEFORE_RENDER = 'pimcore.admin.login.beforeRender';
 
     /**
      * The INDEX_SETTINGS event is triggered when the settings object is built for the index page.
@@ -344,7 +364,7 @@ final class AdminEvents
      *
      * @var string
      */
-    const ASSET_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = 'pimcore.admin.asset.treeGetChildsById.preSendData';
+    const ASSET_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = 'pimcore.admin.asset.treeGetChildrenById.preSendData';
 
     /**
      * Fired before the request params are parsed.
@@ -369,7 +389,7 @@ final class AdminEvents
      *
      * @var string
      */
-    const DOCUMENT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = 'pimcore.admin.document.treeGetChildsById.preSendData';
+    const DOCUMENT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = 'pimcore.admin.document.treeGetChildrenById.preSendData';
 
     /**
      * Fired before the request params are parsed.
@@ -408,7 +428,7 @@ final class AdminEvents
      *
      * @var string
      */
-    const OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = 'pimcore.admin.dataobject.treeGetChildsById.preSendData';
+    const OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA = 'pimcore.admin.dataobject.treeGetChildrenById.preSendData';
 
     /**
      * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\ClassController

@@ -33,11 +33,6 @@ pimcore_elasticsearch_client:
 2) Define the client name to be used by an elasticsearch tenant. This will be done via the `es_client_name` configuration 
    in the `config_options`. 
 
-##### `es_client_params` (deprecated, for Elasticsearch 7 only)
-- `hosts`: Array of hosts of the elasticsearch cluster to use. 
-- `timeoutMs`: optional parameter for setting the client timeout (frontend) in milliseconds.
-- `timeoutMsBackend`: optional parameter for setting the client timeout (CLI) in milliseconds. This value is typically higher than ``timeoutMs``.
-
 ##### `synonym_providers`
 Specify synonym providers for synonym filters defined in filter section of index settings. 
 For details see [Synonyms](./02_Synonyms.md).
@@ -58,13 +53,6 @@ pimcore_ecommerce_framework:
 
                     # elasticsearch client name, for Elasticsearch 8 only
                     es_client_name: default
-                    
-                    # deprecated, for Elasticsearch 7 only
-                    es_client_params:
-                        hosts:
-                            - '%elasticsearch.host%'
-                        timeoutMs: 20000, # 20 seconds
-                        timeoutMsBackend: 120000 # 2 minutes
 
                     index_settings:
                         number_of_shards: 5

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -33,10 +34,7 @@ class Processor
 {
     use TemporaryFileHelperTrait;
 
-    /**
-     * @var array
-     */
-    protected static $argumentMapping = [
+    protected static array $argumentMapping = [
         'resize' => ['width', 'height'],
         'scaleByWidth' => ['width', 'forceResize'],
         'scaleByHeight' => ['height', 'forceResize'],
@@ -61,14 +59,7 @@ class Processor
         'mirror' => ['mode'],
     ];
 
-    /**
-     * @param string $format
-     * @param array $allowed
-     * @param string $fallback
-     *
-     * @return string
-     */
-    private static function getAllowedFormat($format, $allowed = [], $fallback = 'png')
+    private static function getAllowedFormat(string $format, array $allowed = [], string $fallback = 'png'): string
     {
         $typeMappings = [
             'jpg' => 'jpeg',
@@ -99,7 +90,7 @@ class Processor
      *
      * @throws \Exception
      */
-    public static function process(Asset $asset, Config $config, $fileSystemPath = null, $deferred = false, &$generated = false)
+    public static function process(Asset $asset, Config $config, mixed $fileSystemPath = null, bool $deferred = false, bool &$generated = false): array
     {
         $generated = false;
         $format = strtolower($config->getFormat());
@@ -472,12 +463,6 @@ class Processor
         ];
     }
 
-    /**
-     * @param Config $config
-     * @param string $transformationType
-     *
-     * @return bool
-     */
     private static function containsTransformationType(Config $config, string $transformationType): bool
     {
         $transformations = $config->getItems();

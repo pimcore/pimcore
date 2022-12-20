@@ -19,7 +19,7 @@ namespace Pimcore\Tests\Unit\Document\Tag\Block;
 
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Document\Editable\Block\BlockState;
-use Pimcore\Tests\Test\TestCase;
+use Pimcore\Tests\Support\Test\TestCase;
 
 /**
  * @covers BlockState

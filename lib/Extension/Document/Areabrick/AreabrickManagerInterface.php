@@ -57,40 +57,4 @@ interface AreabrickManagerInterface
      * @return array
      */
     public function getBrickIds(): array;
-
-    /**
-     * @deprecated will be removed in Pimcore 11
-     * Enables an areabrick
-     *
-     * @param string $id
-     */
-    public function enable(string $id);
-
-    /**
-     * @deprecated will be removed in Pimcore 11
-     * Disables an areabrick
-     *
-     * @param string $id
-     */
-    public function disable(string $id);
-
-    /**
-     * @deprecated will be removed in Pimcore 11
-     * Determines if an areabrick is enabled. Bricks are enabled by default an can be switched off by setting
-     * the state explicitely to false in the extension config.
-     *
-     * @param string $id
-     *
-     * @return bool
-     */
-    public function isEnabled(string $id): bool;
-
-    /**
-     * @deprecated will be removed in Pimcore 11
-     * Enables/disables an areabrick
-     *
-     * @param string $id
-     * @param bool $state
-     */
-    public function setState(string $id, bool $state);
 }

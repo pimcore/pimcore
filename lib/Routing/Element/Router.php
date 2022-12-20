@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -34,20 +35,10 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class Router implements RouterInterface, RequestMatcherInterface, VersatileGeneratorInterface
 {
-    /**
-     * @var RequestContext
-     */
-    protected $context;
+    protected RequestContext $context;
 
-    /**
-     * @var RequestHelper
-     */
-    protected $requestHelper;
+    protected RequestHelper $requestHelper;
 
-    /**
-     * @param RequestContext $context
-     * @param RequestHelper $requestHelper
-     */
     public function __construct(RequestContext $context, RequestHelper $requestHelper)
     {
         $this->context = $context;
@@ -67,7 +58,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      *
      * @return RequestContext
      */
-    public function getContext()// : RequestContext
+    public function getContext(): RequestContext
     {
         return $this->context;
     }
@@ -77,7 +68,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      *
      * @return bool
      */
-    public function supports($name)// : bool
+    public function supports($name): bool
     {
         return $name === 'pimcore_element';
     }
@@ -87,7 +78,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      *
      * @return string
      */
-    public function getRouteDebugMessage($name, array $parameters = [])// : string
+    public function getRouteDebugMessage($name, array $parameters = []): string
     {
         $element = $parameters['element'] ?? null;
         if ($element instanceof ElementInterface) {
@@ -102,7 +93,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      *
      * @return string
      */
-    public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH)// : string
+    public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH): string
     {
         $element = $parameters['element'] ?? null;
         unset($parameters['element']);
@@ -171,7 +162,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      *
      * @return string|null
      */
-    protected function getCurrentRoute()
+    protected function getCurrentRoute(): ?string
     {
         $route = null;
 
@@ -191,7 +182,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      *
      * @return array
      */
-    public function matchRequest(Request $request)// : array
+    public function matchRequest(Request $request): array
     {
         throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $request->getPathInfo()));
     }
@@ -201,7 +192,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      *
      * @return array
      */
-    public function match($pathinfo)// : array
+    public function match($pathinfo): array
     {
         throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $pathinfo));
     }
@@ -211,7 +202,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      *
      * @return RouteCollection
      */
-    public function getRouteCollection()// : RouteCollection
+    public function getRouteCollection(): RouteCollection
     {
         return new RouteCollection();
     }

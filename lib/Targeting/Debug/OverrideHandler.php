@@ -25,23 +25,20 @@ use Symfony\Component\HttpFoundation\Request;
 
 class OverrideHandler
 {
-    /**
-     * @var FormFactoryInterface
-     */
-    private $formFactory;
+    private FormFactoryInterface $formFactory;
 
     /**
-     * @var iterable|OverrideHandlerInterface[]
+     * @var OverrideHandlerInterface[]
      */
-    private $overrideHandlers;
+    private iterable $overrideHandlers;
 
     /**
      * @param FormFactoryInterface $formFactory
-     * @param iterable|OverrideHandlerInterface[] $overrideHandlers
+     * @param OverrideHandlerInterface[] $overrideHandlers
      */
     public function __construct(
         FormFactoryInterface $formFactory,
-        $overrideHandlers
+        array $overrideHandlers
     ) {
         $this->formFactory = $formFactory;
         $this->overrideHandlers = $overrideHandlers;
@@ -78,14 +75,14 @@ class OverrideHandler
         return $formBuilder->getForm();
     }
 
-    public function handleRequest(Request $request)
+    public function handleRequest(Request $request): void
     {
         $form = $this->getForm($request);
 
         $this->handleForm($form, $request);
     }
 
-    public function handleForm(FormInterface $form, Request $request)
+    public function handleForm(FormInterface $form, Request $request): void
     {
         $form->handleRequest($request);
 

@@ -26,10 +26,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 final class UsageRecorderSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @var array
-     */
-    protected $recordedEditableNames = [];
+    protected array $recordedEditableNames = [];
 
     /**
      * {@inheritdoc}
@@ -41,25 +38,16 @@ final class UsageRecorderSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param EditableNameEvent $event
-     */
     public function onBuildEditableName(EditableNameEvent $event)
     {
         $this->recordedEditableNames[] = $event->getEditableName();
     }
 
-    /**
-     * @return array
-     */
     public function getRecordedEditableNames(): array
     {
         return $this->recordedEditableNames;
     }
 
-    /**
-     * @param array $recordedEditableNames
-     */
     public function setRecordedEditableNames(array $recordedEditableNames): void
     {
         $this->recordedEditableNames = $recordedEditableNames;

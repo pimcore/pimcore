@@ -23,17 +23,14 @@ use Pimcore\Targeting\Model\VisitorInfo;
 
 class OperatingSystem extends AbstractVariableCondition implements DataProviderDependentInterface
 {
-    /**
-     * @var null|string
-     */
-    private $system;
+    private ?string $system = null;
 
     /**
      * Mapping from admin UI values to DeviceDetector results
      *
      * @var array
      */
-    protected static $osMapping = [
+    protected static array $osMapping = [
         'MAC' => 'macos',
         'WIN' => 'windows',
         'LIN' => 'linux',
@@ -49,7 +46,7 @@ class OperatingSystem extends AbstractVariableCondition implements DataProviderD
     /**
      * {@inheritdoc}
      */
-    public static function fromConfig(array $config)
+    public static function fromConfig(array $config): static
     {
         return new static($config['system'] ?? null);
     }

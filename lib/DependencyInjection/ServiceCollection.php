@@ -24,20 +24,10 @@ use Psr\Container\ContainerInterface;
  */
 class ServiceCollection implements \IteratorAggregate
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private ContainerInterface $container;
 
-    /**
-     * @var array
-     */
-    private $ids = [];
+    private array $ids = [];
 
-    /**
-     * @param ContainerInterface $container
-     * @param array $ids
-     */
     public function __construct(ContainerInterface $container, array $ids)
     {
         $this->container = $container;

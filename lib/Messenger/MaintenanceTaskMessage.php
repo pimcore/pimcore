@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -20,17 +21,12 @@ namespace Pimcore\Messenger;
  */
 class MaintenanceTaskMessage
 {
-    public function __construct(protected string $name, protected bool $force)
+    public function __construct(protected string $name)
     {
     }
 
     public function getName(): string
     {
         return $this->name;
-    }
-
-    public function getForce(): bool
-    {
-        return $this->force;
     }
 }

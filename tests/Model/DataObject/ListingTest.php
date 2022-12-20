@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -18,9 +19,9 @@ namespace Pimcore\Tests\Model\DataObject;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Unittest;
-use Pimcore\Tests\Helper\DataType\TestDataHelper;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
+use Pimcore\Tests\Support\Helper\DataType\TestDataHelper;
+use Pimcore\Tests\Support\Test\ModelTestCase;
+use Pimcore\Tests\Support\Util\TestHelper;
 
 /**
  * Class ListingTest
@@ -31,14 +32,8 @@ use Pimcore\Tests\Util\TestHelper;
  */
 class ListingTest extends ModelTestCase
 {
-    /**
-     * @var TestDataHelper
-     */
-    protected $testDataHelper;
+    protected TestDataHelper $testDataHelper;
 
-    /**
-     * @param TestDataHelper $testData
-     */
     public function _inject(TestDataHelper $testData)
     {
         $this->testDataHelper = $testData;

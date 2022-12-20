@@ -23,17 +23,8 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 class Item extends AbstractItem
 {
-    /**
-     * @var BundleInterface
-     */
-    private $bundle;
+    private BundleInterface $bundle;
 
-    /**
-     * @param BundleInterface $bundle
-     * @param int $priority
-     * @param array $environments
-     * @param string $source
-     */
     public function __construct(
         BundleInterface $bundle,
         int $priority = 0,
@@ -45,33 +36,21 @@ class Item extends AbstractItem
         parent::__construct($priority, $environments, $source);
     }
 
-    /**
-     * @return string
-     */
     public function getBundleIdentifier(): string
     {
         return get_class($this->bundle);
     }
 
-    /**
-     * @return BundleInterface
-     */
     public function getBundle(): BundleInterface
     {
         return $this->bundle;
     }
 
-    /**
-     * @return bool
-     */
     public function isPimcoreBundle(): bool
     {
         return $this->bundle instanceof PimcoreBundleInterface;
     }
 
-    /**
-     * @param BundleCollection $collection
-     */
     public function registerDependencies(BundleCollection $collection)
     {
         if ($this->bundle instanceof DependentBundleInterface) {
