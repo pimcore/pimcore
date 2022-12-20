@@ -618,9 +618,9 @@ class DefaultMysql implements ProductListInterface
 
                 if ($this->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
                     if (strtoupper($this->order) == 'DESC') {
-                        $orderByStringArray[] = 'max(' . $key . ') ' . $direction;
+                        $orderByStringArray[] = 'max(`' . $key . '`) ' . $direction;
                     } else {
-                        $orderByStringArray[] = 'min(' . $key . ') ' . $direction;
+                        $orderByStringArray[] = 'min(`' . $key . '`) ' . $direction;
                     }
                 } else {
                     $orderByStringArray[] = $key . ' ' . $direction;

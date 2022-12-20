@@ -283,7 +283,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
                     'SELECT '
                     . $identifier . ' id, '
                     . $typeCol . ' type' . $className
-                    . ' ,concat(' . $pathCol . ',' . $keyCol . ') fullpath FROM ' . $targetType . 's'
+                    . ' ,concat(' . $db->quoteIdentifier($pathCol) . ',' . $db->quoteIdentifier($keyCol) . ') fullpath FROM ' . $targetType . 's'
                     . ' WHERE ' . $identifier . ' IN (' . implode(',', $targetIds) . ')'
                 );
 
