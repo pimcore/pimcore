@@ -24,7 +24,7 @@ use Pimcore\Model\Element;
 use Pimcore\Normalizer\NormalizerInterface;
 use Pimcore\Tool;
 
-class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface, VarExporterInterface
+class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface, NormalizerInterface, PreGetDataInterface, LayoutDefinitionEnrichmentInterface, VarExporterInterface, ClassSavedInterface
 {
     use Element\ChildsCompatibilityTrait;
 
@@ -603,7 +603,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * @param DataObject\ClassDefinition $class
      * @param array $params
      */
-    public function classSaved($class, $params = [])
+    public function classSaved($class/**, $params = []**/)
     {
         $classificationStore = new DataObject\Classificationstore();
         $classificationStore->setClass($class);
