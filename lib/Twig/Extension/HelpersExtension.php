@@ -58,6 +58,7 @@ class HelpersExtension extends AbstractExtension
             }),
             new TwigFunction('pimcore_file_extension', [File::class, 'getFileExtension']),
             new TwigFunction('pimcore_image_version_preview', [$this, 'getImageVersionPreview']),
+            new TwigFunction('pimcore_asset_version_preview', [$this, 'getAssetVersionPreview']),
             new TwigFunction('pimcore_breach_attack_random_content', [$this, 'breachAttackRandomContent'], [
                 'is_safe' => ['html'],
             ]),
@@ -91,14 +92,29 @@ class HelpersExtension extends AbstractExtension
      */
     public function getImageVersionPreview(string $file): string
     {
-        $thumbnail = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/image-version-preview-' . uniqid() . '.png';
+        $thumbnail = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/image-version-preview-'.uniqid().'.png';
         $convert = \Pimcore\Image::getInstance();
         $convert->load($file);
         $convert->contain(500, 500);
         $convert->save($thumbnail, 'png');
 
-        $dataUri = 'data:image/png;base64,' . base64_encode(file_get_contents($thumbnail));
+        $dataUri = 'data:image/png;base64,'.base64_encode(file_get_contents($thumbnail));
         unlink($thumbnail);
+        unlink($file);
+
+        return $dataUri;
+    }
+
+    /**
+     * @param string $file
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    public function getAssetVersionPreview($file)
+    {
+        $dataUri = 'data:application/pdf;base64,'.base64_encode(file_get_contents($file));
         unlink($file);
 
         return $dataUri;
