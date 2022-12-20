@@ -44,7 +44,7 @@ trait ObjectVarTrait
     }
 
     /**
-     * @param string $var
+     * @param string|null $var
      *
      * @return mixed
      */
