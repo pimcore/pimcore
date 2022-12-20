@@ -28,7 +28,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementInterface;
 
-class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewriterInterface, PreGetDataInterface
+class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewriterInterface, PreGetDataInterface, ClassSavedInterface
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
     use DataObject\ClassDefinition\Data\Extension\PositionSortTrait;
@@ -755,7 +755,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation implements IdRewrite
         return $this->columnKeys;
     }
 
-    public function classSaved(DataObject\ClassDefinition $class)
+    public function classSaved(DataObject\ClassDefinition $class, $params = [])
     {
         /** @var DataObject\Data\ElementMetadata $temp */
         $temp = \Pimcore::getContainer()->get('pimcore.model.factory')

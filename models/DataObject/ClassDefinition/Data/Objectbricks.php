@@ -822,11 +822,14 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
                     foreach ($fieldDefinition as $fd) {
                         //TODO Pimcore 11 remove method_exists call
-                        if (method_exists($fd, 'classSaved')) {
-                            // defer creation
-                            if (!$fd instanceof DataContainerAwareInterface) {
-                                $fd->classSaved($class);
+                        if (!$fd instanceof DataContainerAwareInterface && ($fd instanceof ClassSavedInterface || method_exists($fd, 'classSaved'))) {
+                            if (!$fd instanceof ClassSavedInterface) {
+                                trigger_deprecation('pimcore/pimcore', '10.6',
+                                    sprintf('Usage of method_exists is deprecated since version 10.6 and will be removed in Pimcore 11.' .
+                                    'Implement the %s interface instead.', ClassSavedInterface::class));
                             }
+                            // defer creation
+                            $fd->classSaved($class, $params);
                         }
                     }
 
