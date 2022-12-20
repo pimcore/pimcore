@@ -24,8 +24,8 @@ It is easily possible to implement custom source adapters for special use cases.
 
 - JavaScript Class: This class defines the user interface in the configuration of the custom report. It has to be located in 
 the namespace `pimcore.report.custom.definition`, named like the adapter (e.g. `pimcore.report.custom.definition.mySource`)
- and implement the methods `initialize`, `getElement` and `getValues`. As sample see [analytics](https://github.com/pimcore/pimcore/blob/10.x/bundles/AdminBundle/Resources/public/js/pimcore/report/custom/definitions/analytics.js)
-- PHP Adapter Class: This class is the server side implementation of the adapter. It is responsible for retrieving and preparing the options, columns and data. It has to extend the abstract class `Pimcore\Model\Tool\CustomReport\Adapter\AbstractAdapter` (or implement `Pimcore\Model\Tool\CustomReport\Adapter\CustomReportAdapterInterface`). As examples see [Analytics adapter](https://github.com/pimcore/pimcore/blob/10.x/models/Tool/CustomReport/Adapter/Analytics.php) and [Sql adapter](https://github.com/pimcore/pimcore/blob/10.x/models/Tool/CustomReport/Adapter/Sql.php).
+ and implement the methods `initialize`, `getElement` and `getValues`. As sample see [analytics](https://github.com/pimcore/pimcore/blob/10.5/bundles/AdminBundle/Resources/public/js/pimcore/report/custom/definitions/analytics.js)
+- PHP Adapter Class: This class is the server side implementation of the adapter. It is responsible for retrieving and preparing the options, columns and data. It has to extend the abstract class `Pimcore\Model\Tool\CustomReport\Adapter\AbstractAdapter` (or implement `Pimcore\Model\Tool\CustomReport\Adapter\CustomReportAdapterInterface`). As examples see [Analytics adapter](https://github.com/pimcore/pimcore/blob/10.5/models/Tool/CustomReport/Adapter/Analytics.php) and [Sql adapter](https://github.com/pimcore/pimcore/blob/10.5/models/Tool/CustomReport/Adapter/Sql.php).
 - Register your Adapter Factory as Service
    - If you are using a simple adapter class without dependency injection parameters, you can use the `DefaultCustomReportAdapterFactory` providing the adapter class' FQN as single argument
       ```yml
@@ -47,5 +47,5 @@ pimcore:
 ## Custom JS Class for Report Visualization
 If you need to fully customize the appearance of the report, you can specify a custom java script class that should 
 be used when opening the report in Pimcore Backend. This class can be specified in `Report Class` option and should extend
-the default java script class for the reports which is `pimcore.report.custom.report``. 
+the default java script class for the reports which is `pimcore.report.custom.report`. 
 

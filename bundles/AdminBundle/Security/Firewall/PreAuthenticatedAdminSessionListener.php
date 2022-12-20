@@ -26,6 +26,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 /**
+ * @deprecated will be removed in Pimcore 11
+ *
  * Checks if there's an existing admin session and stores its token on the security token storage.
  *
  * @package Pimcore\Bundle\AdminBundle\Security\Firewall

@@ -15,8 +15,8 @@ by setting the `PIMCORE_SKIP_DOTENV_FILE` environment variable to a truthy value
 
 In addition to Symfony configurations, Pimcore also supports environment specific configs for: 
 
-* <https://github.com/pimcore/demo/tree/10.x/config/pimcore> 
-* <https://github.com/pimcore/demo/tree/10.x/var/config>
+* <https://github.com/pimcore/demo/tree/10.2/config/pimcore> 
+* <https://github.com/pimcore/demo/tree/10.2/var/config>
 
 The environment specific config file has priority over the default config, so if your 
 current environment is `dev` Pimcore first checks if e.g. `var/config/image-thumbnails_dev.php`

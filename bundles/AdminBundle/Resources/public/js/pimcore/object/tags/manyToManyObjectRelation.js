@@ -342,9 +342,12 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 fc.editor = null;
                 fc.sortable = false;
 
-                if(fc.layout.key === "fullpath") {
+                if (fc.layout.key === "fullpath") {
                     fc.renderer = this.fullPathRenderCheck.bind(this);
-                } else if(fc.layout.layout.fieldtype == "select" || fc.layout.layout.fieldtype == "multiselect") {
+                } else if (fc.layout.layout.fieldtype == 'select'
+                    || fc.layout.layout.fieldtype == 'multiselect'
+                    || fc.layout.layout.fieldtype == 'booleanSelect'
+                ) {
                     fc.layout.layout.options.forEach(option => {
                         option.key = t(option.key);
                     });
@@ -752,7 +755,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
 
         // check max amount in field
         if (this.fieldConfig["maxItems"] && this.fieldConfig["maxItems"] >= 1) {
-            if (this.store.getCount() >= this.fieldConfig.maxItems) {
+            if ((this.store.getData().getSource() || this.store.getData()).count() >= this.fieldConfig.maxItems) {
                 Ext.Msg.alert(t("error"), t("limit_reached"));
                 return true;
             }

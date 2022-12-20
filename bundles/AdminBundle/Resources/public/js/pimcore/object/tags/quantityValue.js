@@ -362,6 +362,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
 
     getLayoutShow: function () {
         this.getLayoutEdit();
+        this.component.setDisabled(true);
         this.unitField.setReadOnly(true);
         this.inputField.setReadOnly(true);
 

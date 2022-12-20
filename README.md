@@ -76,7 +76,7 @@ The DXP/CMS part of Pimcore for managing unstructured content such as the pages 
 
 #### Demo (Community Edition)
 _Admin-URL_ (stable): [https://demo.pimcore.fun/admin/](https://demo.pimcore.fun/admin/)  
-_Admin-URL_ (dev): [https://10.x-dev.pimcore.fun/admin/](https://10.x-dev.pimcore.fun/admin/)  
+_Admin-URL_ (dev): [https://11.x-dev.pimcore.fun/admin/](https://11.x-dev.pimcore.fun/admin/)  
 _Username_: `admin`  
 _Password_: `demo`
 

@@ -267,10 +267,12 @@ Ext.onReady(function () {
                 pimcore.helpers.showNotification(t("error"), t("config_not_writeable"), "error", errorMessage);
             } else if (response.status === 403) {
                 pimcore.helpers.showNotification(t("access_denied"), t("access_denied_description"), "error");
+            } else if (response.status === 500) {
+                pimcore.helpers.showNotification(t("error"), t("error_general"), "error", errorMessage);
             } else {
-                var message = t("error_general");
-                if(jsonData && jsonData['message']) {
-                    message = jsonData['message'] + "<br><br>" + t("error_general");
+                let message = t("error");
+                if (jsonData && jsonData['message']) {
+                    message = jsonData['message'];
                 }
 
                 pimcore.helpers.showNotification(t("error"), message, "error", errorMessage);

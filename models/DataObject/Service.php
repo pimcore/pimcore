@@ -1270,7 +1270,7 @@ class Service extends Model\Element\Service
 
             foreach ($customFieldDefinitions as $key => $def) {
                 if ($def instanceof ClassDefinition\Data\Localizedfields) {
-                    if (!$mergedFieldDefinition[$key]) {
+                    if (empty($mergedFieldDefinition[$key])) {
                         continue;
                     }
                     $customLocalizedFieldDefinitions = $def->getFieldDefinitions();
@@ -2062,6 +2062,10 @@ class Service extends Model\Element\Service
                                 if ($brickDescriptor) {
                                     $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
                                     $value = $brick->{'get' . ucfirst($innerContainer)}();
+
+                                    if ($value instanceof Localizedfield) {
+                                        $params['language'] = $requestedLanguage;
+                                    }
                                 }
 
                                 return $fieldDefinition->getForCsvExport($value, $params);

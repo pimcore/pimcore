@@ -45,6 +45,7 @@ pimcore.document.area_abstract = Class.create(pimcore.document.editable, {
                                 } else {
                                     editablesInBox[editableName].render();
                                 }
+                                editablesInBox[editableName].setInherited(editablesInBox[editableName].inherited);
                             });
                         }, 200);
                     }

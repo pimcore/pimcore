@@ -374,11 +374,11 @@ class FullPageCacheListener
                     // add expire header
                     $date = new \DateTime('now');
                     $date->add(new \DateInterval('PT' . $this->lifetime . 'S'));
-                    $response->headers->set('Expires', $date->format(\DateTime::RFC1123), true);
+                    $response->headers->set('Expires', $date->format(\DateTimeInterface::RFC1123), true);
                 }
 
                 $now = new \DateTime('now');
-                $response->headers->set('X-Pimcore-Cache-Date', $now->format(\DateTime::ISO8601));
+                $response->headers->set('X-Pimcore-Cache-Date', $now->format(\DateTimeInterface::ISO8601));
 
                 $cacheKey = $this->defaultCacheKey;
                 $deviceDetector = Tool\DeviceDetector::getInstance();
