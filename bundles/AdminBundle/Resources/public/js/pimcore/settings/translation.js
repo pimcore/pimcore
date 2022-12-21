@@ -339,9 +339,11 @@ pimcore.settings.translation.domain = Class.create({
 
         var store = this.store;
 
+        this.store.getProxy().getReader().setMessageProperty('message');
         this.store.getProxy().on('exception', function (proxy, request, operation) {
-            store.load();
-        });
+            pimcore.helpers.showNotification(t("error"), t(operation.getError()), "error");
+            this.store.load();
+        }.bind(this));
 
         let proxy = store.getProxy();
         proxy.extraParams["domain"] = this.domain;
