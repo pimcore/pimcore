@@ -631,6 +631,19 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertObjects($this->testObject, 'lobjects', $this->seed, 'de');
     }
 
+    public function testLocalizedInputNumberAsString()
+    {
+        $this->createTestObject();
+        $this->testObject->setLinput("0001", "en");
+        $this->testObject->setLinput("0.1000", "de");
+        $this->testObject->save();
+
+        $expectedEN = $this->testObject->getLinput("en");
+        $expectedDE = $this->testObject->getLinput("de");
+        $this->testDataHelper->assertIsNotEqual($this->testObject, 'linput', $expectedEN, "000001");
+        $this->testDataHelper->assertIsNotEqual($this->testObject, 'linput', $expectedDE, "0.100000");
+    }
+
     public function testLocalizedUrlSlug()
     {
         $this->createTestObject([
