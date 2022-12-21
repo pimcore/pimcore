@@ -29,12 +29,12 @@ abstract class AbstractVariableCondition implements ConditionInterface, Variable
         return $this->variables;
     }
 
-    final protected function setMatchedVariables(array $variables)
+    final protected function setMatchedVariables(array $variables): void
     {
         $this->variables = $variables;
     }
 
-    final protected function setMatchedVariable(string $key, $value)
+    final protected function setMatchedVariable(string $key, $value): void
     {
         $this->variables[$key] = $value;
     }

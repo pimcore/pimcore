@@ -277,7 +277,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd) {
@@ -289,7 +289,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     /**
      * @param Model\DataObject\ClassDefinition\Data\EncryptedField $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->datatype = $masterDefinition->datatype;
     }
@@ -385,7 +385,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         return $this->delegateDatatype;
     }
 
-    public function setDelegateDatatype(string $delegateDatatype)
+    public function setDelegateDatatype(string $delegateDatatype): void
     {
         $this->delegateDatatype = $delegateDatatype;
     }
@@ -400,7 +400,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      *
      * @param mixed $data
      */
-    public function setupDelegate(mixed $data)
+    public function setupDelegate(mixed $data): void
     {
         $this->delegate = null;
 
@@ -422,7 +422,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         return self::$strictMode;
     }
 
-    public static function setStrictMode(int $strictMode)
+    public static function setStrictMode(int $strictMode): void
     {
         self::$strictMode = $strictMode;
     }
@@ -432,7 +432,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         return $this->delegate;
     }
 
-    public function setDelegate(Data|array|null $delegate)
+    public function setDelegate(Data|array|null $delegate): void
     {
         $this->delegate = $delegate;
     }

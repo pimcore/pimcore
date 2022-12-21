@@ -68,17 +68,17 @@ abstract class AdminController extends Controller implements AdminControllerInte
         return true;
     }
 
-    public function getTranslator()
+    public function getTranslator(): TranslatorInterface
     {
         return $this->container->get('translator');
     }
 
-    public function getBundleManager()
+    public function getBundleManager(): PimcoreBundleManager
     {
         return $this->container->get(PimcoreBundleManager::class);
     }
 
-    public function getTokenResolver()
+    public function getTokenResolver(): TokenStorageUserResolver
     {
         return $this->container->get(TokenStorageUserResolver::class);
     }
@@ -106,7 +106,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
      *
      * @throws AccessDeniedHttpException
      */
-    protected function checkPermission(string $permission)
+    protected function checkPermission(string $permission): void
     {
         if (!$this->getAdminUser() || !$this->getAdminUser()->isAllowed($permission)) {
             Logger::error(
@@ -138,7 +138,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
     /**
      * @param string[] $permissions
      */
-    protected function checkPermissionsHasOneOf(array $permissions)
+    protected function checkPermissionsHasOneOf(array $permissions): void
     {
         $allowed = false;
         $permission = null;
@@ -170,7 +170,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
      * @param string $permission
      * @param array $unrestrictedActions
      */
-    protected function checkActionPermission(ControllerEvent $event, string $permission, array $unrestrictedActions = [])
+    protected function checkActionPermission(ControllerEvent $event, string $permission, array $unrestrictedActions = []): void
     {
         $actionName = null;
         $controller = $event->getController();

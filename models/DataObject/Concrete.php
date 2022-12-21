@@ -122,7 +122,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * {@inheritdoc}
      */
-    protected function update(bool $isUpdate = null, array $params = [])
+    protected function update(bool $isUpdate = null, array $params = []): void
     {
         $fieldDefinitions = $this->getClass()->getFieldDefinitions();
 
@@ -225,7 +225,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
     /**
      * {@inheritdoc}
      */
-    protected function doDelete()
+    protected function doDelete(): void
     {
         // Dispatch Symfony Message Bus to delete versions
         \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
@@ -712,7 +712,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         return $this->allLazyKeysMarkedAsLoaded;
     }
 
-    public function markAllLazyLoadedKeysAsLoaded()
+    public function markAllLazyLoadedKeysAsLoaded(): void
     {
         $this->allLazyKeysMarkedAsLoaded = true;
     }

@@ -36,7 +36,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class PricingController extends AdminController implements KernelControllerEventInterface
 {
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         // permission check
         $access = $this->getAdminUser()->isAllowed('bundle_ecommerce_pricing_rules');

@@ -44,7 +44,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         return $this->adminJson($response);
     }
 
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;

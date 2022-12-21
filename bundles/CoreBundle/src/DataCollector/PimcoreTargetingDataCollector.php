@@ -42,7 +42,7 @@ class PimcoreTargetingDataCollector extends DataCollector implements ResetInterf
         return 'pimcore_targeting';
     }
 
-    public function collect(Request $request, Response $response, ?\Throwable $exception = null)
+    public function collect(Request $request, Response $response, ?\Throwable $exception = null): void
     {
         $this->data = [];
 
@@ -66,7 +66,7 @@ class PimcoreTargetingDataCollector extends DataCollector implements ResetInterf
         $this->data = $this->cloneVar($data);
     }
 
-    public function reset()
+    public function reset(): void
     {
         $this->data = [];
     }

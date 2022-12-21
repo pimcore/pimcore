@@ -44,7 +44,7 @@ abstract class ModelTestCase extends TestCase
     /**
      * Set up test classes before running tests
      */
-    protected function setUpTestClasses()
+    protected function setUpTestClasses(): void
     {
     }
 

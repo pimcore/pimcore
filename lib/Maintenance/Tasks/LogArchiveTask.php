@@ -46,7 +46,7 @@ class LogArchiveTask implements TaskInterface
     /**
      * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): void
     {
         $db = $this->db;
         $storage = Storage::get('application_log');

@@ -51,7 +51,7 @@ final class WorkflowState extends AbstractOperator
      *
      * @required
      */
-    public function setWorkflowStatusInfo(StatusInfo $statusInfo)
+    public function setWorkflowStatusInfo(StatusInfo $statusInfo): void
     {
         $this->statusInfo = $statusInfo;
     }

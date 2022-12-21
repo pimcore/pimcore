@@ -201,7 +201,7 @@ class RecyclebinController extends AdminController implements KernelControllerEv
         return $this->adminJson(['success' => true]);
     }
 
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         if (!$event->isMainRequest()) {
             return;

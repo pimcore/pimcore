@@ -28,7 +28,7 @@ class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
         $productList->prepareGroupByValues($this->getField($filterDefinition), true);
     }
 
-    protected function loadAllAvailableRelations($availableRelations, $availableRelationsArray = [])
+    protected function loadAllAvailableRelations(array $availableRelations, array $availableRelationsArray = []): array
     {
         foreach ($availableRelations as $rel) {
             if ($rel instanceof Folder) {

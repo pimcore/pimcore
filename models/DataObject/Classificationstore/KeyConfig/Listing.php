@@ -51,7 +51,7 @@ class Listing extends Model\Listing\AbstractListing
         return $this->includeDisabled;
     }
 
-    public function setIncludeDisabled(bool $includeDisabled)
+    public function setIncludeDisabled(bool $includeDisabled): void
     {
         $this->includeDisabled = (bool) $includeDisabled;
     }

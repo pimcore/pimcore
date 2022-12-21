@@ -42,7 +42,7 @@ class Image extends Model\Asset
     /**
      * {@inheritdoc}
      */
-    protected function update(array $params = [])
+    protected function update(array $params = []): void
     {
         if ($this->getDataChanged()) {
             foreach (['imageWidth', 'imageHeight', 'imageDimensionsCalculated'] as $key) {

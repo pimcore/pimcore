@@ -215,7 +215,7 @@ class Link implements OwnerAwareFieldInterface
         return $this;
     }
 
-    public function setAttributes(string $attributes)
+    public function setAttributes(string $attributes): void
     {
         $this->attributes = $attributes;
         $this->markMeDirty();
@@ -226,7 +226,7 @@ class Link implements OwnerAwareFieldInterface
         return $this->attributes;
     }
 
-    public function setClass(string $class)
+    public function setClass(string $class): void
     {
         $this->class = $class;
         $this->markMeDirty();

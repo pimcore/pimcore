@@ -405,7 +405,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      *
      * @param Data|Layout $child
      */
-    public function addChild(mixed $child)
+    public function addChild(mixed $child): void
     {
         $this->children[] = $child;
         $this->fieldDefinitionsCache = null;
@@ -414,7 +414,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     /**
      * @param Data[] $referencedFields
      */
-    public function setReferencedFields(array $referencedFields)
+    public function setReferencedFields(array $referencedFields): void
     {
         $this->referencedFields = $referencedFields;
         $this->fieldDefinitionsCache = null;
@@ -428,7 +428,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $this->referencedFields;
     }
 
-    public function addReferencedField(Data $field)
+    public function addReferencedField(Data $field): void
     {
         $this->referencedFields[] = $field;
         $this->fieldDefinitionsCache = null;
@@ -472,7 +472,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $localizedFields;
     }
 
-    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
+    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
         $localizedFields = $this->getDataFromObjectParam($object, $params);
 
@@ -490,7 +490,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      * @param DataObject\ClassDefinition $class
      * @param array $params
      */
-    public function classSaved(DataObject\ClassDefinition $class, array $params = [])
+    public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
         // create a dummy instance just for updating the tables
         $localizedFields = new DataObject\Localizedfield();
@@ -773,7 +773,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         $config = \Pimcore\Config::getSystemConfiguration('general');
         $languages = [];
@@ -1040,7 +1040,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $this;
     }
 
-    public function setMaxTabs(int $maxTabs)
+    public function setMaxTabs(int $maxTabs): void
     {
         $this->maxTabs = $maxTabs;
     }
@@ -1050,7 +1050,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return $this->maxTabs;
     }
 
-    public function setLabelWidth(int $labelWidth)
+    public function setLabelWidth(int $labelWidth): void
     {
         $this->labelWidth = (int)$labelWidth;
     }

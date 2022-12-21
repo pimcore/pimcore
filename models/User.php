@@ -379,7 +379,7 @@ final class User extends User\UserRole
         return sprintf('/user-image/user-thumbnail-%s.png', $this->getId());
     }
 
-    public function setImage(?string $path)
+    public function setImage(?string $path): void
     {
         $storage = Tool\Storage::get('admin');
         $originalFileStoragePath = $this->getOriginalImageStoragePath();
@@ -445,7 +445,7 @@ final class User extends User\UserRole
         return [];
     }
 
-    public function setContentLanguages(array|string|null $contentLanguages)
+    public function setContentLanguages(array|string|null $contentLanguages): void
     {
         if (is_array($contentLanguages)) {
             $contentLanguages = implode(',', $contentLanguages);
@@ -462,7 +462,7 @@ final class User extends User\UserRole
         return $this->activePerspective;
     }
 
-    public function setActivePerspective(?string $activePerspective)
+    public function setActivePerspective(?string $activePerspective): void
     {
         $this->activePerspective = $activePerspective;
     }
@@ -827,7 +827,7 @@ final class User extends User\UserRole
         return $this->keyBindings ? $this->keyBindings : self::getDefaultKeyBindings();
     }
 
-    public function setKeyBindings(string $keyBindings)
+    public function setKeyBindings(string $keyBindings): void
     {
         $this->keyBindings = $keyBindings;
     }
@@ -866,7 +866,7 @@ final class User extends User\UserRole
      * @param array|string $key
      * @param mixed $value
      */
-    public function setTwoFactorAuthentication(array|string $key, mixed $value = null)
+    public function setTwoFactorAuthentication(array|string $key, mixed $value = null): void
     {
         if (is_string($key) && $value === null && strlen($key) > 3) {
             $this->twoFactorAuthentication = json_decode($key, true);

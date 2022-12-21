@@ -110,7 +110,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * {@inheritdoc}
      */
-    public function setLocale(string $locale)
+    public function setLocale(string $locale): void
     {
         if ($this->translator instanceof LocaleAwareInterface) {
             $this->translator->setLocale($locale);
@@ -155,7 +155,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      * @param string $domain
      * @param string $locale
      */
-    public function lazyInitialize(string $domain, string $locale)
+    public function lazyInitialize(string $domain, string $locale): void
     {
         $cacheKey = $this->getCacheKey($domain, $locale);
 
@@ -268,7 +268,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * Reset Catalogues initialization
      */
-    public function resetCache()
+    public function resetCache(): void
     {
         $this->initializedCatalogues = [];
     }
@@ -375,7 +375,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      *@internal
      *
      */
-    public function setAdminPath(string $adminPath)
+    public function setAdminPath(string $adminPath): void
     {
         $this->adminPath = $adminPath;
     }
@@ -416,7 +416,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      *@internal
      *
      */
-    public function setKernel(Kernel $kernel)
+    public function setKernel(Kernel $kernel): void
     {
         $this->kernel = $kernel;
     }
@@ -426,7 +426,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         return $this->disableTranslations;
     }
 
-    public function setDisableTranslations(bool $disableTranslations)
+    public function setDisableTranslations(bool $disableTranslations): void
     {
         $this->disableTranslations = $disableTranslations;
     }
@@ -442,13 +442,8 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
     /**
      * Passes through all unknown calls onto the translator object.
-     *
-     * @param string $method
-     * @param array $args
-     *
-     * @return mixed
      */
-    public function __call(string $method, array $args)
+    public function __call(string $method, array $args): mixed
     {
         return call_user_func_array([$this->translator, $method], $args);
     }

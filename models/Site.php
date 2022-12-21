@@ -277,7 +277,7 @@ final class Site extends AbstractModel
         return $this->rootPath;
     }
 
-    public function setErrorDocument(string $errorDocument)
+    public function setErrorDocument(string $errorDocument): void
     {
         $this->errorDocument = $errorDocument;
     }
@@ -302,7 +302,7 @@ final class Site extends AbstractModel
         return $this->localizedErrorDocuments;
     }
 
-    public function setMainDomain(string $mainDomain)
+    public function setMainDomain(string $mainDomain): void
     {
         $this->mainDomain = $mainDomain;
     }
@@ -312,7 +312,7 @@ final class Site extends AbstractModel
         return $this->mainDomain;
     }
 
-    public function setRedirectToMainDomain(bool $redirectToMainDomain)
+    public function setRedirectToMainDomain(bool $redirectToMainDomain): void
     {
         $this->redirectToMainDomain = (bool) $redirectToMainDomain;
     }
@@ -325,7 +325,7 @@ final class Site extends AbstractModel
     /**
      * @internal
      */
-    public function clearDependentCache()
+    public function clearDependentCache(): void
     {
         // this is mostly called in Site\Dao not here
         try {

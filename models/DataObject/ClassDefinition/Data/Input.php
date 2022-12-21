@@ -196,7 +196,7 @@ class Input extends Data implements
         return $this;
     }
 
-    public function setRegex(string $regex)
+    public function setRegex(string $regex): void
     {
         $this->regex = $regex;
     }
@@ -221,7 +221,7 @@ class Input extends Data implements
         return $this->unique;
     }
 
-    public function setUnique(bool $unique)
+    public function setUnique(bool $unique): void
     {
         $this->unique = (bool) $unique;
     }
@@ -231,7 +231,7 @@ class Input extends Data implements
         return $this->showCharCount;
     }
 
-    public function setShowCharCount(bool $showCharCount)
+    public function setShowCharCount(bool $showCharCount): void
     {
         $this->showCharCount = (bool) $showCharCount;
     }
@@ -255,7 +255,7 @@ class Input extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getRegex() && is_string($data) && strlen($data) > 0) {
             if (!preg_match('#' . $this->getRegex() . '#' . implode('', $this->getRegexFlags()), $data)) {
@@ -269,7 +269,7 @@ class Input extends Data implements
     /**
      * @param Model\DataObject\ClassDefinition\Data\Input $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->columnLength = $masterDefinition->columnLength;
     }

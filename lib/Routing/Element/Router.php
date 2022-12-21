@@ -48,7 +48,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     /**
      * {@inheritdoc}
      */
-    public function setContext(RequestContext $context)
+    public function setContext(RequestContext $context): void
     {
         $this->context = $context;
     }
@@ -68,7 +68,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      *
      * @return bool
      */
-    public function supports($name): bool
+    public function supports(string $name): bool
     {
         return $name === 'pimcore_element';
     }
@@ -78,7 +78,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      *
      * @return string
      */
-    public function getRouteDebugMessage($name, array $parameters = []): string
+    public function getRouteDebugMessage(string $name, array $parameters = []): string
     {
         $element = $parameters['element'] ?? null;
         if ($element instanceof ElementInterface) {
@@ -192,7 +192,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      *
      * @return array
      */
-    public function match($pathinfo): array
+    public function match(string $pathinfo): array
     {
         throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $pathinfo));
     }

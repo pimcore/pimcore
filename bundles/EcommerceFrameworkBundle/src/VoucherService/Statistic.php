@@ -49,8 +49,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
      *
      * @return bool|array
      *
-     *@throws \Exception
-     *
+     * @throws \Exception
      */
     public static function getBySeriesId(int $seriesId, int $usagePeriod = null): bool|array
     {
@@ -89,13 +88,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
         }
     }
 
-    /**
-     * @param int $duration days
-     * @param string|null $seriesId
-     *
-     * @return bool
-     */
-    public static function cleanUpStatistics(int $duration, string $seriesId = null): bool
+    public static function cleanUpStatistics(int $duration, int $seriesId = null): bool
     {
         $query = 'DELETE FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic\Dao::TABLE_NAME . ' WHERE DAY(DATEDIFF(date, NOW())) >= ?';
         $params[] = $duration;
@@ -121,7 +114,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
         return $this->id;
     }
 
-    public function setId(int $id)
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
@@ -131,7 +124,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
         return $this->tokenSeriesId;
     }
 
-    public function setTokenSeriesId(string $tokenSeriesId)
+    public function setTokenSeriesId(string $tokenSeriesId): void
     {
         $this->tokenSeriesId = $tokenSeriesId;
     }
@@ -141,7 +134,7 @@ class Statistic extends \Pimcore\Model\AbstractModel
         return $this->date;
     }
 
-    public function setDate(int $date)
+    public function setDate(int $date): void
     {
         $this->date = $date;
     }

@@ -49,7 +49,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         }
     }
 
-    public function save()
+    public function save(): void
     {
         $oldFullPath = $this->db->fetchOne('SELECT fullpath FROM search_backend_data WHERE id = :id and maintype = :type FOR UPDATE', [
             'id' => $this->model->getId()->getId(),
@@ -88,7 +88,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     /**
      * Deletes from database
      */
-    public function delete()
+    public function delete(): void
     {
         if ($this->model->getId() instanceof Model\Search\Backend\Data\Id) {
             $this->db->delete('search_backend_data', [

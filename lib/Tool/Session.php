@@ -100,8 +100,8 @@ final class Session
     /**
      * Saves the session if it is the last admin session which was opene
      */
-    public static function writeClose()
+    public static function writeClose(): void
     {
-        return static::getHandler()->writeClose();
+        static::getHandler()->writeClose();
     }
 }

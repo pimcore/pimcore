@@ -34,7 +34,7 @@ abstract class AbstractCookieSaveHandler implements CookieSaveHandlerInterface
         $this->options = $resolver->resolve($options);
     }
 
-    protected function configureOptions(OptionsResolver $resolver)
+    protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'domain' => null,
@@ -61,7 +61,7 @@ abstract class AbstractCookieSaveHandler implements CookieSaveHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function save(Response $response, string $scope, string $name, \DateTimeInterface|int|string $expire, ?array $data)
+    public function save(Response $response, string $scope, string $name, \DateTimeInterface|int|string $expire, ?array $data): void
     {
         $value = $this->prepareData($scope, $name, $expire, $data);
 

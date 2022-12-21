@@ -309,7 +309,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $container;
     }
 
-    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
+    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
         $container = new DataObject\Fieldcollection([], $this->getName());
         $container->delete($object);
@@ -386,7 +386,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if ($data instanceof DataObject\Fieldcollection) {
             $validationExceptions = [];
@@ -613,7 +613,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * @param DataObject\ClassDefinition\Data\Fieldcollections $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->allowedTypes = $masterDefinition->allowedTypes;
         $this->lazyLoading = $masterDefinition->lazyLoading;
@@ -626,7 +626,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @param DataObject\ClassDefinition $class
      * @param array $params
      */
-    public function classSaved(DataObject\ClassDefinition $class, array $params = [])
+    public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
         if (is_array($this->allowedTypes)) {
             foreach ($this->allowedTypes as $i => $allowedType) {
@@ -650,7 +650,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         }
     }
 
-    public function setDisallowAddRemove(bool $disallowAddRemove)
+    public function setDisallowAddRemove(bool $disallowAddRemove): void
     {
         $this->disallowAddRemove = (bool) $disallowAddRemove;
     }
@@ -660,7 +660,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $this->disallowAddRemove;
     }
 
-    public function setDisallowReorder(bool $disallowReorder)
+    public function setDisallowReorder(bool $disallowReorder): void
     {
         $this->disallowReorder = (bool) $disallowReorder;
     }
@@ -685,7 +685,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $this->collapsed;
     }
 
-    public function setCollapsed(bool $collapsed)
+    public function setCollapsed(bool $collapsed): void
     {
         $this->collapsed = (bool) $collapsed;
     }
@@ -695,7 +695,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         return $this->collapsible;
     }
 
-    public function setCollapsible(bool $collapsible)
+    public function setCollapsible(bool $collapsible): void
     {
         $this->collapsible = (bool) $collapsible;
     }
@@ -704,7 +704,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @param DataObject\ClassDefinition\Data[] $container
      * @param DataObject\ClassDefinition\Data[] $list
      */
-    public static function collectCalculatedValueItems(array $container, array &$list = [])
+    public static function collectCalculatedValueItems(array $container, array &$list = []): void
     {
         if (is_array($container)) {
             foreach ($container as $childDef) {

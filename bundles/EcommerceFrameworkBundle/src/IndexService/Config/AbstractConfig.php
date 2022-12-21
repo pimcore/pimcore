@@ -90,7 +90,7 @@ abstract class AbstractConfig implements ConfigInterface
      *
      * @param AttributeFactory $attributeFactory
      */
-    public function setAttributeFactory(AttributeFactory $attributeFactory)
+    public function setAttributeFactory(AttributeFactory $attributeFactory): void
     {
         if (null !== $this->attributeFactory) {
             throw new \RuntimeException('Attribute factory is already set.');
@@ -108,7 +108,7 @@ abstract class AbstractConfig implements ConfigInterface
         }
     }
 
-    protected function buildAttributes(array $attributes)
+    protected function buildAttributes(array $attributes): void
     {
         foreach ($attributes as $attribute) {
             if ($attribute instanceof Attribute) {
@@ -125,12 +125,12 @@ abstract class AbstractConfig implements ConfigInterface
         }
     }
 
-    protected function addAttribute(Attribute $attribute)
+    protected function addAttribute(Attribute $attribute): void
     {
         $this->attributes[$attribute->getName()] = $attribute;
     }
 
-    protected function addSearchAttribute(string $searchAttribute)
+    protected function addSearchAttribute(string $searchAttribute): void
     {
         if (!isset($this->attributes[$searchAttribute])) {
             throw new \InvalidArgumentException(sprintf(
@@ -143,7 +143,7 @@ abstract class AbstractConfig implements ConfigInterface
         $this->searchAttributes[] = $searchAttribute;
     }
 
-    protected function processOptions(array $options)
+    protected function processOptions(array $options): void
     {
         // noop - to implemented by configs supporting options
     }
@@ -151,7 +151,7 @@ abstract class AbstractConfig implements ConfigInterface
     /**
      * {@inheritdoc}
      */
-    public function setTenantWorker(WorkerInterface $tenantWorker)
+    public function setTenantWorker(WorkerInterface $tenantWorker): void
     {
         $this->checkTenantWorker($tenantWorker);
         $this->tenantWorker = $tenantWorker;
@@ -163,7 +163,7 @@ abstract class AbstractConfig implements ConfigInterface
      *
      * @param WorkerInterface $tenantWorker
      */
-    protected function checkTenantWorker(WorkerInterface $tenantWorker)
+    protected function checkTenantWorker(WorkerInterface $tenantWorker): void
     {
         if (null !== $this->tenantWorker) {
             throw new \LogicException(sprintf('Worker for tenant "%s" is already set', $this->tenantName));

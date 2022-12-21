@@ -171,7 +171,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @throws Element\ValidationException
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && !$data instanceof Asset\Image) {
             throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
@@ -308,7 +308,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @param Model\DataObject\ClassDefinition\Data\Image $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(Model\DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->uploadPath = $masterDefinition->uploadPath;
     }

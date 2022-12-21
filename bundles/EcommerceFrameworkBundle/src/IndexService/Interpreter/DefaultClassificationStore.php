@@ -28,7 +28,7 @@ class DefaultClassificationStore implements InterpreterInterface
      *
      * @throws \Exception
      */
-    public function interpret($value, $config = null): ?array
+    public function interpret(mixed $value, ?array $config = null): ?array
     {
         if (!$value instanceof Classificationstore) {
             return null;

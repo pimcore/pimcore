@@ -409,7 +409,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
@@ -635,7 +635,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * @param DataObject\ClassDefinition\Data\ManyToManyRelation $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->maxItems = $masterDefinition->maxItems;
         $this->assetUploadPath = $masterDefinition->assetUploadPath;

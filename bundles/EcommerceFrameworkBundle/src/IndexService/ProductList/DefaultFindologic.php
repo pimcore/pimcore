@@ -112,7 +112,7 @@ class DefaultFindologic implements ProductListInterface
         return $this->products;
     }
 
-    public function addCondition(array|string $condition, string $fieldname = '')
+    public function addCondition(array|string $condition, string $fieldname = ''): void
     {
         $this->products = null;
         $this->conditions[$fieldname][] = $condition;
@@ -132,7 +132,7 @@ class DefaultFindologic implements ProductListInterface
      * @param string|array $condition
      * @param string $fieldname
      */
-    public function addQueryCondition(string|array $condition, string $fieldname = '')
+    public function addQueryCondition(string|array $condition, string $fieldname = ''): void
     {
         $this->products = null;
         $this->queryConditions[$fieldname][] = $condition;
@@ -143,7 +143,7 @@ class DefaultFindologic implements ProductListInterface
      *
      * @param string $fieldname
      */
-    public function resetQueryCondition(string $fieldname)
+    public function resetQueryCondition(string $fieldname): void
     {
         $this->products = null;
         unset($this->queryConditions[$fieldname]);
@@ -152,7 +152,7 @@ class DefaultFindologic implements ProductListInterface
     /**
      * resets all conditions of product list
      */
-    public function resetConditions()
+    public function resetConditions(): void
     {
         $this->conditions = [];
         $this->queryConditions = [];
@@ -161,7 +161,7 @@ class DefaultFindologic implements ProductListInterface
         $this->products = null;
     }
 
-    public function addRelationCondition(string $fieldname, array|string $condition)
+    public function addRelationCondition(string $fieldname, array|string $condition): void
     {
         $this->products = null;
         $this->addCondition($condition, $fieldname);
@@ -171,7 +171,7 @@ class DefaultFindologic implements ProductListInterface
      * @param float|null $from
      * @param float|null $to
      */
-    public function addPriceCondition(?float $from = null, ?float $to = null)
+    public function addPriceCondition(?float $from = null, ?float $to = null): void
     {
         $this->products = null;
         $this->conditionPriceFrom = $from;
@@ -189,7 +189,7 @@ class DefaultFindologic implements ProductListInterface
         return $this->inProductList;
     }
 
-    public function setOrder(string $order)
+    public function setOrder(string $order): void
     {
         $this->products = null;
         $this->order = $order;
@@ -203,7 +203,7 @@ class DefaultFindologic implements ProductListInterface
     /**
      * @param array|string $orderKey either single field name, or array of field names or array of arrays (field name, direction)
      */
-    public function setOrderKey(array|string $orderKey)
+    public function setOrderKey(array|string $orderKey): void
     {
         $this->products = null;
         $this->orderKey = $orderKey;
@@ -214,7 +214,7 @@ class DefaultFindologic implements ProductListInterface
         return $this->orderKey;
     }
 
-    public function setLimit(int $limit)
+    public function setLimit(int $limit): void
     {
         if ($this->limit != $limit) {
             $this->products = null;
@@ -227,7 +227,7 @@ class DefaultFindologic implements ProductListInterface
         return $this->limit;
     }
 
-    public function setOffset(int $offset)
+    public function setOffset(int $offset): void
     {
         if ($this->offset != $offset) {
             $this->products = null;
@@ -240,7 +240,7 @@ class DefaultFindologic implements ProductListInterface
         return $this->offset;
     }
 
-    public function setCategory(AbstractCategory $category)
+    public function setCategory(AbstractCategory $category): void
     {
         $this->products = null;
         $this->category = $category;
@@ -251,7 +251,7 @@ class DefaultFindologic implements ProductListInterface
         return $this->category;
     }
 
-    public function setVariantMode(string $variantMode)
+    public function setVariantMode(string $variantMode): void
     {
         $this->products = null;
         $this->variantMode = $variantMode;
@@ -609,7 +609,7 @@ class DefaultFindologic implements ProductListInterface
         return $relations;
     }
 
-    protected function doLoadGroupByValues()
+    protected function doLoadGroupByValues(): void
     {
         // init
         $params = [];

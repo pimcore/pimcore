@@ -72,7 +72,7 @@ final class CollectionGroupRelation extends Model\AbstractModel
         return $this->groupId;
     }
 
-    public function setGroupId(int $groupId)
+    public function setGroupId(int $groupId): void
     {
         $this->groupId = $groupId;
     }
@@ -82,7 +82,7 @@ final class CollectionGroupRelation extends Model\AbstractModel
         return $this->name;
     }
 
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -92,7 +92,7 @@ final class CollectionGroupRelation extends Model\AbstractModel
         return $this->description;
     }
 
-    public function setDescription(string $description)
+    public function setDescription(string $description): void
     {
         $this->description = $description;
     }
@@ -102,7 +102,7 @@ final class CollectionGroupRelation extends Model\AbstractModel
         return $this->colId;
     }
 
-    public function setColId(int $colId)
+    public function setColId(int $colId): void
     {
         $this->colId = $colId;
     }
@@ -112,7 +112,7 @@ final class CollectionGroupRelation extends Model\AbstractModel
         return $this->sorter;
     }
 
-    public function setSorter(int $sorter)
+    public function setSorter(int $sorter): void
     {
         $this->sorter = (int) $sorter;
     }

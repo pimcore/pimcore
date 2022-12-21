@@ -149,13 +149,8 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
 
     /**
      * Overloading: set property value
-     *
-     * @param string $key
-     * @param  mixed $value
-     *
-     * @return void
      */
-    public function __set(string $key, mixed $value)
+    public function __set(string $key, mixed $value): void
     {
         $container = $this->getContainer();
         $container[$key] = $value;
@@ -211,13 +206,8 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      * Overload
      *
      * Proxy to container methods
-     *
-     * @param string $method
-     * @param array $args
-     *
-     * @return mixed
      */
-    public function __call(string $method, array $args)
+    public function __call(string $method, array $args): mixed
     {
         $container = $this->getContainer();
         if (method_exists($container, $method)) {

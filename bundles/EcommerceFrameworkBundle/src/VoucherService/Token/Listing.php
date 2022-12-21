@@ -42,7 +42,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
      *
      * @throws \Exception
      */
-    public function setFilterConditions(?int $seriesId, array $filter = [])
+    public function setFilterConditions(?int $seriesId, array $filter = []): void
     {
         if (isset($seriesId)) {
             $this->addConditionParam('voucherSeriesId = ?', $seriesId);
@@ -85,7 +85,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
         }
     }
 
-    public static function getBySeriesId($seriesId): bool|Listing
+    public static function getBySeriesId(int $seriesId): bool|Listing
     {
         try {
             $config = new self();
@@ -104,7 +104,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
         return $this->getData();
     }
 
-    public static function getCodes($seriesId, $params): bool|array
+    public static function getCodes(int $seriesId, ?array $params): bool|array
     {
         $db = \Pimcore\Db::get();
         $query = 'SELECT * FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . ' WHERE voucherSeriesId = ?';
@@ -159,7 +159,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
         return $codes;
     }
 
-    public static function getCountByUsages($usages = 1, $seriesId = null)
+    public static function getCountByUsages(int $usages = 1, ?int $seriesId = null)
     {
         $query = 'SELECT COUNT(*) as count FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . ' WHERE usages >= ? ';
         $params[] = $usages;
@@ -177,7 +177,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
         }
     }
 
-    public static function getCountBySeriesId($seriesId)
+    public static function getCountBySeriesId(int $seriesId)
     {
         $query = 'SELECT COUNT(*) as count FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . ' WHERE voucherSeriesId = ?';
         $params[] = $seriesId;
@@ -191,7 +191,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
         }
     }
 
-    public static function getCountByReservation($seriesId = null)
+    public static function getCountByReservation(?int $seriesId = null)
     {
         $query = 'SELECT COUNT(t.id) FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . ' as t
             INNER JOIN ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation\Dao::TABLE_NAME . ' as r ON t.token = r.token';
@@ -211,13 +211,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
         }
     }
 
-    /**
-     * @param int $length
-     * @param int|string|null $seriesId
-     *
-     * @return null|int
-     */
-    public static function getCountByLength(int $length, int|string $seriesId = null): ?int
+    public static function getCountByLength(int $length, int $seriesId = null): ?int
     {
         $query = 'SELECT COUNT(*) as count FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . ' WHERE length = ?';
         $params = [$length];
@@ -240,17 +234,13 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements Paginate
     /**
      * Use with care, cleans all tokens of a series and the dependent
      * reservations.
-     *
-     * @param string $seriesId
-     *
-     * @return bool
      */
-    public static function cleanUpAllTokens(string $seriesId): bool
+    public static function cleanUpAllTokens(int $seriesId): bool
     {
         return self::cleanUpTokens($seriesId);
     }
 
-    public static function cleanUpTokens(string $seriesId, array $filter = [], int $maxUsages = 1): bool
+    public static function cleanUpTokens(int $seriesId, array $filter = [], int $maxUsages = 1): bool
     {
         $db = \Pimcore\Db::get();
 

@@ -28,7 +28,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ListCommand extends AbstractBundleCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName($this->buildName('list'))

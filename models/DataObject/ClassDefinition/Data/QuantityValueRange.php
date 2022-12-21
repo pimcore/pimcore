@@ -136,9 +136,9 @@ class QuantityValueRange extends Data implements ResourcePersistenceAwareInterfa
         return $this->autoConvert;
     }
 
-    public function setAutoConvert($autoConvert): void
+    public function setAutoConvert(bool $autoConvert): void
     {
-        $this->autoConvert = (bool) $autoConvert;
+        $this->autoConvert = $autoConvert;
     }
 
     /**

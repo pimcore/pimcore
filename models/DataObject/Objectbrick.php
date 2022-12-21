@@ -313,7 +313,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      *@internal
      *
      */
-    public function loadLazyField(string $brick, string $brickField, string $field)
+    public function loadLazyField(string $brick, string $brickField, string $field): void
     {
         $item = $this->get($brick);
         if ($item && !$item->isLazyKeyLoaded($field)) {
@@ -341,7 +341,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     /**
      * @internal
      */
-    public function loadLazyData()
+    public function loadLazyData(): void
     {
         $allowedBrickTypes = $this->getAllowedBrickTypes();
         if (is_array($allowedBrickTypes)) {

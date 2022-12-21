@@ -29,7 +29,7 @@ final class AssetMetadataGetter extends AbstractOperator
 
     private ?string $locale = null;
 
-    public function __construct(\stdClass $config, $context = null)
+    public function __construct(\stdClass $config, array $context = [])
     {
         parent::__construct($config, $context);
 
@@ -109,12 +109,12 @@ final class AssetMetadataGetter extends AbstractOperator
         return $this->metaField;
     }
 
-    public function setMetaField(mixed $metaField)
+    public function setMetaField(mixed $metaField): void
     {
         $this->metaField = $metaField;
     }
 
-    public function setLocale(mixed $locale)
+    public function setLocale(mixed $locale): void
     {
         $this->locale = $locale;
     }

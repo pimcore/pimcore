@@ -54,7 +54,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
     ) {
     }
 
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         // use browser language for login page if possible
         $locale = 'en';
@@ -73,7 +73,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
         }
     }
 
-    public function onKernelResponseEvent(ResponseEvent $event)
+    public function onKernelResponseEvent(ResponseEvent $event): void
     {
         $response = $event->getResponse();
         $response->headers->set('X-Frame-Options', 'deny', true);
@@ -152,7 +152,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
     /**
      * @Route("/logout", name="pimcore_admin_logout" , methods={"POST"})
      */
-    public function logoutAction()
+    public function logoutAction(): void
     {
         // this route will never be matched, but will be handled by the logout handler
     }
@@ -310,7 +310,7 @@ class LoginController extends AdminController implements KernelControllerEventIn
      *
      * @param Request $request
      */
-    public function twoFactorAuthenticationVerifyAction(Request $request)
+    public function twoFactorAuthenticationVerifyAction(Request $request): void
     {
     }
 

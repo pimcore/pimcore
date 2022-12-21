@@ -256,11 +256,7 @@ class Service extends Model\AbstractModel
         return null;
     }
 
-    /**
-     * @static
-     *
-     */
-    public static function doHideUnpublished($element): bool
+    public static function doHideUnpublished(?ElementInterface $element): bool
     {
         return ($element instanceof AbstractObject && DataObject::doHideUnpublished())
             || ($element instanceof Document && Document::doHideUnpublished());
@@ -273,8 +269,7 @@ class Service extends Model\AbstractModel
      *
      * @return bool
      *
-     *@internal
-     *
+     * @internal
      */
     public static function isPublished(ElementInterface $element = null): bool
     {
@@ -658,7 +653,7 @@ class Service extends Model\AbstractModel
      *@internal
      *
      */
-    protected function updateChildren(DataObject|Document|Asset\Folder $target, ElementInterface $new)
+    protected function updateChildren(DataObject|Document|Asset\Folder $target, ElementInterface $new): void
     {
         //check in case of recursion
         $found = false;
@@ -1006,7 +1001,7 @@ class Service extends Model\AbstractModel
      * @internal
      *
      */
-    public static function addTreeFilterJoins(array $cv, Asset\Listing|DataObject\Listing|Document\Listing $childrenList)
+    public static function addTreeFilterJoins(array $cv, Asset\Listing|DataObject\Listing|Document\Listing $childrenList): void
     {
         if ($cv) {
             $childrenList->onCreateQueryBuilder(static function (DoctrineQueryBuilder $select) use ($cv) {
@@ -1455,7 +1450,7 @@ class Service extends Model\AbstractModel
      *@internal
      *
      */
-    public static function saveElementToSession(ElementInterface $element, string $postfix = '', bool $clone = true)
+    public static function saveElementToSession(ElementInterface $element, string $postfix = '', bool $clone = true): void
     {
         if ($clone) {
             $context = [
@@ -1501,7 +1496,7 @@ class Service extends Model\AbstractModel
      *@internal
      *
      */
-    public static function removeElementFromSession(string $type, int $elementId, string $postfix = '')
+    public static function removeElementFromSession(string $type, int $elementId, string $postfix = ''): void
     {
         $tmpStoreKey = self::getSessionKey($type, $elementId, $postfix);
         TmpStore::delete($tmpStoreKey);

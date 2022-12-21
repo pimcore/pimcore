@@ -30,5 +30,5 @@ interface RecurringPaymentInterface extends PaymentInterface
 
     public function setRecurringPaymentSourceOrderData(AbstractOrder $sourceOrder, object $paymentBrick): mixed;
 
-    public function applyRecurringPaymentCondition(Concrete $orderListing, $additionalParameters = []): Concrete;
+    public function applyRecurringPaymentCondition(Concrete $orderListing, array $additionalParameters = []): Concrete;
 }

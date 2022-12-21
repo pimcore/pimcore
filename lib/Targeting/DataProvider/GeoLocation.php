@@ -45,7 +45,7 @@ class GeoLocation implements DataProviderInterface
         $this->logger = $logger;
     }
 
-    public function load(VisitorInfo $visitorInfo)
+    public function load(VisitorInfo $visitorInfo): void
     {
         $location = $this->loadLocation($visitorInfo);
         $location = $this->handleOverrides($visitorInfo->getRequest(), $location);

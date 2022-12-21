@@ -41,7 +41,7 @@ class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multisel
      *
      * @throws \Exception
      */
-    public function configureOptions()
+    public function configureOptions(): void
     {
         $validLanguages = (array) Tool::getValidLanguages();
         $locales = Tool::getSupportedLocales();

@@ -38,7 +38,7 @@ class SearchBackendEvent extends Event
         return $this->data;
     }
 
-    public function setData(Data $data)
+    public function setData(Data $data): void
     {
         $this->data = $data;
     }

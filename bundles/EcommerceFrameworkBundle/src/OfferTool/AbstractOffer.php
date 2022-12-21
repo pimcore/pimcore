@@ -88,7 +88,7 @@ abstract class AbstractOffer extends Concrete
      *
      * @param mixed $customer
      */
-    public function setCustomer(mixed $customer)
+    public function setCustomer(mixed $customer): void
     {
         throw new UnsupportedException('setCustomer is not implemented for ' . get_class($this));
     }

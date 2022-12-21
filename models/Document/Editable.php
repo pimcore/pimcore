@@ -239,7 +239,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * Sends data to the output stream
      */
-    protected function outputEditmode(string $value)
+    protected function outputEditmode(string $value): void
     {
         if ($this->getEditmode()) {
             echo $value . "\n";
@@ -327,12 +327,12 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this->realName;
     }
 
-    public function setRealName(string $realName)
+    public function setRealName(string $realName): void
     {
         $this->realName = $realName;
     }
 
-    final public function setParentBlockNames($parentNames)
+    final public function setParentBlockNames($parentNames): void
     {
         if (is_array($parentNames)) {
             // unfortunately we cannot make a type hint here, because of compatibility reasons

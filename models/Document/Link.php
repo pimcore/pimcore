@@ -383,7 +383,7 @@ class Link extends Model\Document
     /**
      * {@inheritdoc}
      */
-    protected function update(array $params = [])
+    protected function update(array $params = []): void
     {
         parent::update($params);
 

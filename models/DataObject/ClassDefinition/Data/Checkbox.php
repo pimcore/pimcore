@@ -177,7 +177,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && $data === null) {
             throw new Model\Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
@@ -210,7 +210,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @param DataObject\ClassDefinition\Data\Checkbox $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->defaultValue = $masterDefinition->defaultValue;
     }

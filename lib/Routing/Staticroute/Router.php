@@ -68,7 +68,7 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
     /**
      * {@inheritdoc}
      */
-    public function setContext(RequestContext $context)
+    public function setContext(RequestContext $context): void
     {
         $this->context = $context;
     }
@@ -86,7 +86,7 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
         return $this->localeParams;
     }
 
-    public function setLocaleParams(array $localeParams)
+    public function setLocaleParams(array $localeParams): void
     {
         $this->localeParams = $localeParams;
     }
@@ -94,7 +94,7 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
     /**
      * {@inheritdoc}
      */
-    public function supports($name): bool
+    public function supports(string $name): bool
     {
         return is_string($name) && in_array($name, $this->getSupportedNames());
     }
@@ -110,9 +110,9 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
     /**
      * {@inheritdoc}
      */
-    public function getRouteDebugMessage($name, array $parameters = []): string
+    public function getRouteDebugMessage(string $name, array $parameters = []): string
     {
-        return (string)$name;
+        return $name;
     }
 
     /**
@@ -211,7 +211,7 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
      *
      * @return array
      */
-    public function match($pathinfo): array
+    public function match(string $pathinfo): array
     {
         return $this->doMatch($pathinfo);
     }

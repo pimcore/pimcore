@@ -102,7 +102,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         }
     }
 
-    public function save(DataObject\Concrete $object, string $ownertype, string $ownername, string $position, int $index)
+    public function save(DataObject\Concrete $object, string $ownertype, string $ownername, string $position, int $index): void
     {
         $this->getDao()->save($object, $ownertype, $ownername, $position, $index);
     }
@@ -191,7 +191,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         return (int) $this->objectId;
     }
 
-    public function setObjectId(?int $objectId)
+    public function setObjectId(?int $objectId): void
     {
         $this->objectId = $objectId;
     }

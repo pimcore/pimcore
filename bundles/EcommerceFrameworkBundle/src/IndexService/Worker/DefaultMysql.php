@@ -71,7 +71,7 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
         $this->doCleanupOldZombieData($object, $subObjectIds);
     }
 
-    protected function doDeleteFromIndex(int $subObjectId, IndexableInterface $object = null)
+    protected function doDeleteFromIndex(int $subObjectId, IndexableInterface $object = null): void
     {
         $this->db->delete($this->tenantConfig->getTablename(), ['id' => $subObjectId]);
         $this->db->delete($this->tenantConfig->getRelationTablename(), ['src' => $subObjectId]);
@@ -232,7 +232,7 @@ class DefaultMysql extends AbstractWorker implements WorkerInterface
         $this->doCleanupOldZombieData($object, $subObjectIds);
     }
 
-    protected function getValidTableColumns($table)
+    protected function getValidTableColumns(string $table)
     {
         return $this->mySqlHelper->getValidTableColumns($table);
     }

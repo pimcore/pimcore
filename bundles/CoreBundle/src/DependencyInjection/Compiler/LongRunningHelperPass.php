@@ -32,7 +32,7 @@ final class LongRunningHelperPass implements CompilerPassInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $helperDefinition = $container->getDefinition(LongRunningHelper::class);
         foreach ($container->getDefinitions() as $serviceId => $definition) {

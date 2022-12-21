@@ -115,7 +115,7 @@ final class StoreConfig extends Model\AbstractModel
     /**
      * Deletes the key value group configuration
      */
-    public function delete()
+    public function delete(): void
     {
         $this->dispatchEvent(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_PRE_DELETE);
         $this->getDao()->delete();
@@ -125,7 +125,7 @@ final class StoreConfig extends Model\AbstractModel
     /**
      * Saves the store config
      */
-    public function save()
+    public function save(): void
     {
         $isUpdate = false;
 
@@ -136,15 +136,13 @@ final class StoreConfig extends Model\AbstractModel
             $this->dispatchEvent(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_PRE_ADD);
         }
 
-        $model = $this->getDao()->save();
+        $this->getDao()->save();
 
         if ($isUpdate) {
             $this->dispatchEvent(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_POST_UPDATE);
         } else {
             $this->dispatchEvent(new StoreConfigEvent($this), DataObjectClassificationStoreEvents::STORE_CONFIG_POST_ADD);
         }
-
-        return $model;
     }
 
     public function getId(): ?int
@@ -152,7 +150,7 @@ final class StoreConfig extends Model\AbstractModel
         return $this->id;
     }
 
-    public function setId(int $id)
+    public function setId(int $id): void
     {
         $this->id = $id;
     }

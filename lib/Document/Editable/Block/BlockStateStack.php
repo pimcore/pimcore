@@ -40,7 +40,7 @@ final class BlockStateStack implements \Countable, \JsonSerializable
      *
      * @param BlockState|null $blockState
      */
-    public function push(BlockState $blockState = null)
+    public function push(BlockState $blockState = null): void
     {
         if (null === $blockState) {
             $blockState = new BlockState();
@@ -91,7 +91,7 @@ final class BlockStateStack implements \Countable, \JsonSerializable
         return $this->states;
     }
 
-    public function loadArray(array $array)
+    public function loadArray(array $array): void
     {
         $this->states = [];
 

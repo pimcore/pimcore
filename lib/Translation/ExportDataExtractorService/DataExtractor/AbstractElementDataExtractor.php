@@ -61,7 +61,7 @@ abstract class AbstractElementDataExtractor implements DataExtractorInterface
         return $property->getType() === 'text' && !$property->isInherited() && !empty($property->getData());
     }
 
-    protected function addProperties(ElementInterface $element, AttributeSet $result)
+    protected function addProperties(ElementInterface $element, AttributeSet $result): void
     {
         foreach ($element->getProperties() ?: [] as $property) {
             if ($this->doExportProperty($property)) {

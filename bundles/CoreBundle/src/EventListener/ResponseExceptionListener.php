@@ -60,7 +60,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelException(ExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
 
@@ -79,7 +79,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
         }
     }
 
-    protected function handleErrorPage(ExceptionEvent $event)
+    protected function handleErrorPage(ExceptionEvent $event): void
     {
         if (\Pimcore::inDebugMode()) {
             return;
@@ -131,7 +131,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
         $event->setResponse(new Response($response, $statusCode, $headers));
     }
 
-    protected function logToHttpErrorLog(Request $request, $statusCode)
+    protected function logToHttpErrorLog(Request $request, int $statusCode): void
     {
         $uri = $request->getUri();
         $exists = $this->db->fetchOne('SELECT date FROM http_error_log WHERE uri = ?', [$uri]);
@@ -140,7 +140,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
         } else {
             $this->db->insert('http_error_log', [
                 'uri' => $uri,
-                'code' => (int) $statusCode,
+                'code' => $statusCode,
                 'parametersGet' => serialize($_GET),
                 'parametersPost' => serialize($_POST),
                 'cookies' => serialize($_COOKIE),

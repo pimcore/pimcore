@@ -30,7 +30,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getById(int $id)
+    public function getById(int $id): void
     {
         if ($this->model->getType()) {
             $data = $this->db->fetchAssociative('SELECT * FROM users WHERE `type` = ? AND id = ?', [$this->model->getType(), $id]);
@@ -50,7 +50,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws Model\Exception\NotFoundException
      */
-    public function getByName(string $name)
+    public function getByName(string $name): void
     {
         $data = $this->db->fetchAssociative('SELECT * FROM users WHERE `type` = ? AND `name` = ?', [$this->model->getType(), $name]);
 
@@ -61,7 +61,7 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    public function create()
+    public function create(): void
     {
         $this->db->insert('users', [
             'name' => $this->model->getName(),
@@ -90,7 +90,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @throws \Exception
      */
-    public function update()
+    public function update(): void
     {
         if (strlen($this->model->getName()) < 2) {
             throw new \Exception('Name of user/role must be at least 2 characters long');
@@ -120,7 +120,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         $userId = $this->model->getId();
         Logger::debug('delete user with ID: ' . $userId);
@@ -131,7 +131,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @throws \Exception
      */
-    public function setLastLoginDate()
+    public function setLastLoginDate(): void
     {
         $data['lastLogin'] = (new \DateTime())->getTimestamp();
         $this->db->update('users', $data, ['id' => $this->model->getId()]);

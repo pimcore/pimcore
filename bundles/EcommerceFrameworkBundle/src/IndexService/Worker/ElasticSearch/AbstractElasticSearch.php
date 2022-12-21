@@ -106,7 +106,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @param bool $storeCustomAttributes
      */
-    public function setStoreCustomAttributes(bool $storeCustomAttributes)
+    public function setStoreCustomAttributes(bool $storeCustomAttributes): void
     {
         $this->storeCustomAttributes = $storeCustomAttributes;
     }
@@ -358,7 +358,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         $this->fillupPreparationQueue($object);
     }
 
-    protected function doUpdateIndex(int $objectId, array $data = null, array $metadata = null)
+    protected function doUpdateIndex(int $objectId, array $data = null, array $metadata = null): void
     {
         $isLocked = $this->checkIndexLock(false);
 
@@ -511,7 +511,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @throws \Exception
      */
-    public function switchIndexAlias()
+    public function switchIndexAlias(): void
     {
         Logger::info('Index-Actions - Switching Alias');
         $esClient = $this->getElasticSearchClient();
@@ -579,7 +579,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @throws \Exception
      */
-    protected function doDeleteFromIndex(int $objectId, IndexableInterface $object = null)
+    protected function doDeleteFromIndex(int $objectId, IndexableInterface $object = null): void
     {
         $esClient = $this->getElasticSearchClient();
 
@@ -609,7 +609,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         }
     }
 
-    protected function doCreateOrUpdateIndexStructures()
+    protected function doCreateOrUpdateIndexStructures(): void
     {
         $this->checkIndexLock(true);
 
@@ -703,7 +703,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @throws \Exception if alias could not be created.
      */
-    protected function createEsAliasIfMissing()
+    protected function createEsAliasIfMissing(): void
     {
         $esClient = $this->getElasticSearchClient();
         //create alias for new index if alias doesn't exist so far
@@ -734,7 +734,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @throws \Exception is thrown if index cannot be created, for instance if connection fails or index is already existing.
      */
-    protected function createEsIndex(string $indexName)
+    protected function createEsIndex(string $indexName): void
     {
         $esClient = $this->getElasticSearchClient();
 
@@ -763,7 +763,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @throws \Exception
      */
-    protected function putIndexMapping(string $indexName)
+    protected function putIndexMapping(string $indexName): void
     {
         $esClient = $this->getElasticSearchClient();
 
@@ -783,7 +783,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @param string $indexName the name of the index.
      */
-    protected function deleteEsIndexIfExisting(string $indexName)
+    protected function deleteEsIndexIfExisting(string $indexName): void
     {
         $esClient = $this->getElasticSearchClient();
         $result = $esClient->indices()->exists(['index' => $indexName])->asBool();
@@ -801,7 +801,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @param string $indexName the name of the index.
      */
-    protected function blockIndexWrite(string $indexName)
+    protected function blockIndexWrite(string $indexName): void
     {
         $esClient = $this->getElasticSearchClient();
         $result = $esClient->indices()->exists(['index' => $indexName])->asBool();
@@ -825,7 +825,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @param string $indexName the name of the index.
      */
-    protected function unblockIndexWrite(string $indexName)
+    protected function unblockIndexWrite(string $indexName): void
     {
         $esClient = $this->getElasticSearchClient();
         $result = $esClient->indices()->exists(['index' => $indexName])->asBool();
@@ -862,7 +862,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      * @param string $targetIndexName the name of the target index in ES. If existing, will be deleted
      *
      */
-    protected function performReindex(string $sourceIndexName, string $targetIndexName)
+    protected function performReindex(string $sourceIndexName, string $targetIndexName): void
     {
         $esClient = $this->getElasticSearchClient();
 
@@ -907,7 +907,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @throws \Exception
      */
-    public function startReindexMode()
+    public function startReindexMode(): void
     {
         try {
             $this->activateIndexLock(); //lock all other processes
@@ -945,7 +945,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @throws \Exception is thrown if the synonym transmission fails.
      */
-    public function updateSynonyms(string $indexNameOverride = '', bool $skipComparison = false, bool $skipLocking = true)
+    public function updateSynonyms(string $indexNameOverride = '', bool $skipComparison = false, bool $skipLocking = true): void
     {
         try {
             if (!$skipLocking) {
@@ -1093,12 +1093,12 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         return false;
     }
 
-    protected function activateIndexLock()
+    protected function activateIndexLock(): void
     {
         TmpStore::set(self::REINDEXING_LOCK_KEY, 1, null, 60 * 10);
     }
 
-    protected function releaseIndexLock()
+    protected function releaseIndexLock(): void
     {
         TmpStore::delete(self::REINDEXING_LOCK_KEY);
         $this->lastLockLogTimestamp = 0;

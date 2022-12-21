@@ -43,7 +43,7 @@ class AssetEvent extends Event implements ElementEventInterface
         return $this->asset;
     }
 
-    public function setAsset(Asset $asset)
+    public function setAsset(Asset $asset): void
     {
         $this->asset = $asset;
     }

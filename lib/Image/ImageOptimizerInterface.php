@@ -20,7 +20,7 @@ use Pimcore\Image\Optimizer\OptimizerInterface;
 
 interface ImageOptimizerInterface
 {
-    public function optimizeImage(string $path);
+    public function optimizeImage(string $path): void;
 
-    public function registerOptimizer(OptimizerInterface $optimizer);
+    public function registerOptimizer(OptimizerInterface $optimizer): void;
 }

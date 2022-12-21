@@ -42,7 +42,7 @@ trait ResponseInjectionTrait
         return $this->responseHelper->isHtmlResponse($response);
     }
 
-    protected function injectBeforeHeadEnd(Response $response, $code): void
+    protected function injectBeforeHeadEnd(Response $response, string $code): void
     {
         $content = $response->getContent();
 

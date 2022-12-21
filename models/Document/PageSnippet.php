@@ -123,7 +123,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * {@inheritdoc}
      */
-    protected function update(array $params = [])
+    protected function update(array $params = []): void
     {
         // update elements
         $editables = $this->getEditables();
@@ -215,7 +215,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * {@inheritdoc}
      */
-    protected function doDelete()
+    protected function doDelete(): void
     {
         // Dispatch Symfony Message Bus to delete versions
         \Pimcore::getContainer()->get('messenger.bus.pimcore-core')->dispatch(
@@ -601,7 +601,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @internal
      */
-    protected function checkMissingRequiredEditable()
+    protected function checkMissingRequiredEditable(): void
     {
         // load data which must be requested
         $this->getProperties();

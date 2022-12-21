@@ -77,7 +77,7 @@ final class KeyGroupRelation extends Model\AbstractModel
         return $this->groupId;
     }
 
-    public function setGroupId(int $groupId)
+    public function setGroupId(int $groupId): void
     {
         $this->groupId = $groupId;
     }
@@ -87,7 +87,7 @@ final class KeyGroupRelation extends Model\AbstractModel
         return $this->keyId;
     }
 
-    public function setKeyId(int $keyId)
+    public function setKeyId(int $keyId): void
     {
         $this->keyId = $keyId;
     }
@@ -97,7 +97,7 @@ final class KeyGroupRelation extends Model\AbstractModel
         return $this->name;
     }
 
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -107,7 +107,7 @@ final class KeyGroupRelation extends Model\AbstractModel
         return $this->description;
     }
 
-    public function setDescription(string $description)
+    public function setDescription(string $description): void
     {
         $this->description = $description;
     }
@@ -117,7 +117,7 @@ final class KeyGroupRelation extends Model\AbstractModel
         return $this->definition;
     }
 
-    public function setDefinition(string $definition)
+    public function setDefinition(string $definition): void
     {
         $this->definition = $definition;
     }
@@ -127,7 +127,7 @@ final class KeyGroupRelation extends Model\AbstractModel
         return $this->type;
     }
 
-    public function setType(string $type)
+    public function setType(string $type): void
     {
         $this->type = $type;
     }
@@ -137,7 +137,7 @@ final class KeyGroupRelation extends Model\AbstractModel
         return $this->sorter;
     }
 
-    public function setSorter(int $sorter)
+    public function setSorter(int $sorter): void
     {
         $this->sorter = (int) $sorter;
     }
@@ -147,7 +147,7 @@ final class KeyGroupRelation extends Model\AbstractModel
         return $this->mandatory;
     }
 
-    public function setMandatory(bool $mandatory)
+    public function setMandatory(bool $mandatory): void
     {
         $this->mandatory = (bool)$mandatory;
     }
@@ -157,7 +157,7 @@ final class KeyGroupRelation extends Model\AbstractModel
         return $this->enabled;
     }
 
-    public function setEnabled(bool $enabled)
+    public function setEnabled(bool $enabled): void
     {
         $this->enabled = $enabled;
     }

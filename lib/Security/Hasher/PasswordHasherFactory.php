@@ -17,8 +17,10 @@ declare(strict_types=1);
 namespace Pimcore\Security\Hasher;
 
 use Pimcore\Security\Hasher\Factory\UserAwarePasswordHasherFactory;
+use Symfony\Component\PasswordHasher\Hasher\PasswordHasherAwareInterface;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -37,14 +39,14 @@ class PasswordHasherFactory implements PasswordHasherFactoryInterface
     /**
      * @param PasswordHasherFactoryInterface[] $passwordHasherFactories
      */
-    public function __construct(protected PasswordHasherFactoryInterface $frameworkFactory, protected  array $passwordHasherFactories = [])
+    public function __construct(protected PasswordHasherFactoryInterface $frameworkFactory, protected array $passwordHasherFactories = [])
     {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getPasswordHasher($user): PasswordHasherInterface
+    public function getPasswordHasher(string|PasswordAuthenticatedUserInterface|PasswordHasherAwareInterface $user): PasswordHasherInterface
     {
         if ($hasher = $this->getPasswordHasherFromFactory($user)) {
             return $hasher;
@@ -56,10 +58,8 @@ class PasswordHasherFactory implements PasswordHasherFactoryInterface
 
     /**
      * Returns the password hasher factory to use for the given account.
-     *
-     * @param string|UserInterface $user A UserInterface instance or a class name
      */
-    private function getPasswordHasherFromFactory(UserInterface|string $user): ?PasswordHasherInterface
+    private function getPasswordHasherFromFactory(string|PasswordAuthenticatedUserInterface|PasswordHasherAwareInterface $user): ?PasswordHasherInterface
     {
         $factoryKey = null;
 

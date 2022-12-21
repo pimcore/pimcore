@@ -234,7 +234,7 @@ class Layout implements Model\DataObject\ClassDefinition\Data\VarExporterInterfa
      *
      * @param Data|Layout $child
      */
-    public function addChild(mixed $child)
+    public function addChild(mixed $child): void
     {
         $this->children[] = $child;
     }

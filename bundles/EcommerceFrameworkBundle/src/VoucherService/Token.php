@@ -62,7 +62,7 @@ class Token extends AbstractModel
         return false;
     }
 
-    public static function isUsedToken($code, $maxUsages = 1): bool
+    public static function isUsedToken(string $code, int $maxUsages = 1): bool
     {
         $db = Db::get();
         $query = 'SELECT usages FROM ' . Dao::TABLE_NAME . ' WHERE token = ? ';
@@ -140,7 +140,7 @@ class Token extends AbstractModel
         return $this->timestamp;
     }
 
-    public function setTimestamp(string $timestamp)
+    public function setTimestamp(string $timestamp): void
     {
         $this->timestamp = $timestamp;
     }
@@ -150,7 +150,7 @@ class Token extends AbstractModel
         return $this->voucherSeriesId;
     }
 
-    public function setVoucherSeriesId(int $voucherSeriesId)
+    public function setVoucherSeriesId(int $voucherSeriesId): void
     {
         $this->voucherSeriesId = $voucherSeriesId;
     }
@@ -160,7 +160,7 @@ class Token extends AbstractModel
         return $this->token;
     }
 
-    public function setToken(string $token)
+    public function setToken(string $token): void
     {
         $this->token = $token;
     }
@@ -170,7 +170,7 @@ class Token extends AbstractModel
         return $this->length;
     }
 
-    public function setLength(int $length)
+    public function setLength(int $length): void
     {
         $this->length = $length;
     }
@@ -180,7 +180,7 @@ class Token extends AbstractModel
         return $this->type;
     }
 
-    public function setType(string $type)
+    public function setType(string $type): void
     {
         $this->type = $type;
     }
@@ -190,7 +190,7 @@ class Token extends AbstractModel
         return $this->usages;
     }
 
-    public function setUsages(int $usages)
+    public function setUsages(int $usages): void
     {
         $this->usages = $usages;
     }
@@ -200,7 +200,7 @@ class Token extends AbstractModel
         return $this->id;
     }
 
-    public function setId($id)
+    public function setId($id): void
     {
         $this->id = $id;
     }

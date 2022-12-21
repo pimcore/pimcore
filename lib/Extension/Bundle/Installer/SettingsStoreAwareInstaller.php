@@ -80,7 +80,7 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
         return null;
     }
 
-    protected function markInstalled()
+    protected function markInstalled(): void
     {
         $migrationVersion = $this->getLastMigrationVersionClassName();
         if ($migrationVersion) {
@@ -106,7 +106,7 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
         SettingsStore::set($this->getSettingsStoreInstallationId(), true, 'bool', 'pimcore');
     }
 
-    protected function markUninstalled()
+    protected function markUninstalled(): void
     {
         SettingsStore::set($this->getSettingsStoreInstallationId(), false, 'bool', 'pimcore');
 
@@ -122,13 +122,13 @@ abstract class SettingsStoreAwareInstaller extends AbstractInstaller
         }
     }
 
-    public function install()
+    public function install(): void
     {
         parent::install();
         $this->markInstalled();
     }
 
-    public function uninstall()
+    public function uninstall(): void
     {
         parent::uninstall();
         $this->markUninstalled();

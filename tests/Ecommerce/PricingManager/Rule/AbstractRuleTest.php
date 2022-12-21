@@ -218,7 +218,7 @@ class AbstractRuleTest extends EcommerceTestCase
         return $cart;
     }
 
-    protected function doAssertionsWithGiftItem($ruleDefinitions, $productDefinitions, $tests, $hasGiftItem)
+    protected function doAssertionsWithGiftItem($ruleDefinitions, $productDefinitions, $tests, $hasGiftItem): void
     {
         $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
 
@@ -238,7 +238,7 @@ class AbstractRuleTest extends EcommerceTestCase
         }
     }
 
-    protected function doAssertionsWithShippingCosts($ruleDefinitions, $productDefinitions, $tests, $noShippingCosts)
+    protected function doAssertionsWithShippingCosts($ruleDefinitions, $productDefinitions, $tests, $noShippingCosts): void
     {
         $this->doAssertions($ruleDefinitions, $productDefinitions, $tests);
 

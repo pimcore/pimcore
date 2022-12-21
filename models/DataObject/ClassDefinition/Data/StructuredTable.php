@@ -305,7 +305,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory()) {
             $empty = true;
@@ -456,7 +456,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     /**
      * @param DataObject\ClassDefinition\Data\StructuredTable $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->labelWidth = $masterDefinition->labelWidth;
         $this->labelFirstCell = $masterDefinition->labelFirstCell;

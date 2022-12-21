@@ -110,7 +110,7 @@ class Folder extends DAV\Collection
      *
      * @return null
      */
-    public function createFile($name, $data = null)
+    public function createFile($name, $data = null): null
     {
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-dav-tmp-file-' . uniqid();
         if (is_resource($data)) {
@@ -143,7 +143,7 @@ class Folder extends DAV\Collection
      *
      * @throws DAV\Exception\Forbidden
      */
-    public function createDirectory($name)
+    public function createDirectory($name): void
     {
         $user = AdminTool::getCurrentUser();
 
@@ -163,7 +163,7 @@ class Folder extends DAV\Collection
      * @throws DAV\Exception\Forbidden
      * @throws \Exception
      */
-    public function delete()
+    public function delete(): void
     {
         if ($this->asset->isAllowed('delete')) {
             $this->asset->delete();

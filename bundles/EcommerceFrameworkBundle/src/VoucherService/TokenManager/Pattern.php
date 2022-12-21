@@ -498,7 +498,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
      * @param array $data
      * @param int $usagePeriod
      */
-    protected function prepareUsageStatisticData(array &$data, int $usagePeriod)
+    protected function prepareUsageStatisticData(array &$data, int $usagePeriod): void
     {
         $now = new \DateTime();
         $periodData = [];
@@ -633,7 +633,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         return $this->configuration;
     }
 
-    public function setConfiguration(VoucherTokenTypePattern $configuration)
+    public function setConfiguration(VoucherTokenTypePattern $configuration): void
     {
         $this->configuration = $configuration;
     }
@@ -648,7 +648,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         return $this->characterPools[$this->configuration->getCharacterType()];
     }
 
-    public function setCharacterPools(array $characterPools)
+    public function setCharacterPools(array $characterPools): void
     {
         $this->characterPools = $characterPools;
     }
@@ -656,24 +656,24 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     /**
      * @param array $pool Associative Array - the key represents the name, the value the characters of the character-pool. i.e.:"['numeric'=>'12345']"
      */
-    public function addCharacterPool(array $pool)
+    public function addCharacterPool(array $pool): void
     {
         if (is_array($pool)) {
             $this->characterPools[] = $pool;
         }
     }
 
-    public function setTemplate(string $template)
+    public function setTemplate(string $template): void
     {
         $this->template = $template;
     }
 
-    public function setSeriesId(int|string|null $seriesId)
+    public function setSeriesId(int|null $seriesId): void
     {
         $this->seriesId = $seriesId;
     }
 
-    public function getSeriesId(): int|string|null
+    public function getSeriesId(): int|null
     {
         return $this->seriesId;
     }

@@ -33,7 +33,7 @@ abstract class AbstractAnalyticsTracker extends EcommerceTracker
      *
      * @param Tracker $tracker
      */
-    public function setTracker(Tracker $tracker)
+    public function setTracker(Tracker $tracker): void
     {
         $this->tracker = $tracker;
     }

@@ -87,7 +87,7 @@ class Tracker extends AbstractTracker
         return $this->defaultPath;
     }
 
-    public function setDefaultPath(string $defaultPath = null)
+    public function setDefaultPath(string $defaultPath = null): void
     {
         $this->defaultPath = $defaultPath;
     }

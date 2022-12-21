@@ -21,6 +21,7 @@ use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
 use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
 use Pimcore\Model;
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\Editable\Area\Info;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Pimcore\Tool;
 use Pimcore\Tool\HtmlUtils;
@@ -106,8 +107,9 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     *@internal
+     * @internal
      *
+     * @return ($return is true ? string : void)
      */
     public function renderIndex(int $index, bool $return = false)
     {
@@ -296,7 +298,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function blockConstruct()
+    public function blockConstruct(): void
     {
         // set the current block suffix for the child elements (0, 1, 3, ...)
         // this will be removed in blockDestruct
@@ -306,7 +308,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function blockDestruct()
+    public function blockDestruct(): void
     {
         $this->getBlockState()->popIndex();
     }
@@ -355,7 +357,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function start($return = false): string|static
+    public function start(bool $return = false)
     {
         if (($this->config['manual'] ?? false) === true) {
             // in manual mode $this->render() is not called for the areablock, so we need to add
@@ -377,17 +379,15 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
         if ($return) {
             return $html;
-        } else {
-            $this->outputEditmode($html);
         }
 
-        return $this;
+        $this->outputEditmode($html);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function end($return = false)
+    public function end(bool $return = false)
     {
         $this->current = 0;
 
@@ -398,15 +398,15 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
         if ($return) {
             return $html;
-        } else {
-            $this->outputEditmode($html);
         }
+
+        $this->outputEditmode($html);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function blockStart($info = null): array
+    public function blockStart(?Info $info = null): array
     {
         $this->blockStarted = true;
         $attributes = [
@@ -475,7 +475,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      *
      * @internal
      */
-    protected function renderDialogBoxEditables(array $config, EditableRenderer $editableRenderer, string $dialogId, string &$html)
+    protected function renderDialogBoxEditables(array $config, EditableRenderer $editableRenderer, string $dialogId, string &$html): void
     {
         if (isset($config['items']) && is_array($config['items'])) {
             // layout component

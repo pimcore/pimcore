@@ -79,7 +79,7 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * @internal
      */
-    public function configureOptions()
+    public function configureOptions(): void
     {
         /** @var Tool\Targeting\TargetGroup\Listing|Tool\Targeting\TargetGroup\Listing\Dao $list */
         $list = new Tool\Targeting\TargetGroup\Listing();
@@ -102,7 +102,7 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');

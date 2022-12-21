@@ -107,7 +107,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
             return $this->mergeAdminerHeaders($response);
         }
 
-        public function onKernelControllerEvent(ControllerEvent $event)
+        public function onKernelControllerEvent(ControllerEvent $event): void
         {
             if (!$event->isMainRequest()) {
                 return;

@@ -65,7 +65,7 @@ class StateTableMarkingStore implements MarkingStoreInterface
      *
      * @throws \Exception
      */
-    public function setMarking($subject, Marking $marking, array $context = [])
+    public function setMarking(object $subject, Marking $marking, array $context = []): void
     {
         $subject = $this->checkIfSubjectIsValid($subject);
         $type = Service::getElementType($subject);

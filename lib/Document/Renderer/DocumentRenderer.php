@@ -68,7 +68,7 @@ class DocumentRenderer implements DocumentRendererInterface
      *
      * @param ContainerService $containerService
      */
-    public function setContainerService(ContainerService $containerService)
+    public function setContainerService(ContainerService $containerService): void
     {
         // we have to ensure that the ContainerService was initialized at the time this service is created
         // this is necessary, since the ContainerService registers a listener for DocumentEvents::RENDERER_PRE_RENDER

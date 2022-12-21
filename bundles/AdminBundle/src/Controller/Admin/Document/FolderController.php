@@ -81,8 +81,8 @@ class FolderController extends DocumentControllerBase
         return $this->adminJson(['success' => true, 'treeData' => $treeData]);
     }
 
-    protected function setValuesToDocument(Request $request, Document $folder)
+    protected function setValuesToDocument(Request $request, Document $page): void
     {
-        $this->addPropertiesToDocument($request, $folder);
+        $this->addPropertiesToDocument($request, $page);
     }
 }

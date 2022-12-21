@@ -91,7 +91,7 @@ class TargetGroup implements ConditionInterface
         return $this->targetGroupId;
     }
 
-    public function setTargetGroupId(int $targetGroupId)
+    public function setTargetGroupId(int $targetGroupId): void
     {
         $this->targetGroupId = $targetGroupId;
         if ($this->targetGroupId) {
@@ -106,7 +106,7 @@ class TargetGroup implements ConditionInterface
         return $this->targetGroup;
     }
 
-    public function setTargetGroup(\Pimcore\Model\Tool\Targeting\TargetGroup $targetGroup)
+    public function setTargetGroup(\Pimcore\Model\Tool\Targeting\TargetGroup $targetGroup): void
     {
         $this->targetGroup = $targetGroup;
         $this->targetGroupId = $targetGroup->getId();
@@ -117,7 +117,7 @@ class TargetGroup implements ConditionInterface
         return $this->threshold;
     }
 
-    public function setThreshold(int $threshold)
+    public function setThreshold(int $threshold): void
     {
         $this->threshold = $threshold;
     }

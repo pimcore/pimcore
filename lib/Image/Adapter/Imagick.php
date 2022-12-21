@@ -306,7 +306,7 @@ class Imagick extends Adapter
     /**
      * {@inheritdoc}
      */
-    protected function destroy()
+    protected function destroy(): void
     {
         if ($this->resource) {
             $this->resource->clear();
@@ -420,7 +420,7 @@ class Imagick extends Adapter
      *@internal
      *
      */
-    public static function setCMYKColorProfile(string $CMYKColorProfile)
+    public static function setCMYKColorProfile(string $CMYKColorProfile): void
     {
         self::$CMYKColorProfile = $CMYKColorProfile;
     }
@@ -452,7 +452,7 @@ class Imagick extends Adapter
      * @internal
      *
      */
-    public static function setRGBColorProfile(string $RGBColorProfile)
+    public static function setRGBColorProfile(string $RGBColorProfile): void
     {
         self::$RGBColorProfile = $RGBColorProfile;
     }
@@ -664,7 +664,7 @@ class Imagick extends Adapter
     /**
      * Workaround for Imagick PHP extension v3.4.4 which removed Imagick::roundCorners
      */
-    private function internalRoundCorners(int $width, int $height)
+    private function internalRoundCorners(int $width, int $height): void
     {
         $imageWidth = $this->resource->getImageWidth();
         $imageHeight = $this->resource->getImageHeight();
@@ -840,7 +840,7 @@ class Imagick extends Adapter
         return $this;
     }
 
-    public function sharpen($radius = 0, $sigma = 1.0, $amount = 1.0, $threshold = 0.05): static
+    public function sharpen(float $radius = 0, float $sigma = 1.0, float $amount = 1.0, float $threshold = 0.05): static
     {
         $this->preModify();
         $this->resource->normalizeImage();
@@ -883,7 +883,7 @@ class Imagick extends Adapter
         return $this;
     }
 
-    public function isVectorGraphic($imagePath = null): bool
+    public function isVectorGraphic(?string $imagePath = null): bool
     {
         if (!$imagePath) {
             $imagePath = $this->imagePath;

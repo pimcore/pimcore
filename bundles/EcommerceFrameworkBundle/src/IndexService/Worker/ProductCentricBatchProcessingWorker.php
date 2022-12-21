@@ -52,9 +52,9 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
      * @param array|null $data
      * @param array|null $metadata
      */
-    abstract protected function doUpdateIndex(int $objectId, array $data = null, array $metadata = null);
+    abstract protected function doUpdateIndex(int $objectId, array $data = null, array $metadata = null): void;
 
-    public function updateItemInIndex($objectId): void
+    public function updateItemInIndex(int $objectId): void
     {
         $this->doUpdateIndex($objectId);
     }
@@ -67,7 +67,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
     /**
      * creates store table
      */
-    protected function createOrUpdateStoreTable()
+    protected function createOrUpdateStoreTable(): void
     {
         $primaryIdColumnType = $this->tenantConfig->getIdColumnType(true);
         $idColumnType = $this->tenantConfig->getIdColumnType(false);
@@ -99,7 +99,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
      * @param array $data
      * @param int $subObjectId
      */
-    protected function insertDataToIndex(array $data, int $subObjectId)
+    protected function insertDataToIndex(array $data, int $subObjectId): void
     {
         $currentEntry = $this->db->fetchAssociative('SELECT crc_current, in_preparation_queue FROM ' . $this->getStoreTableName() . ' WHERE id = ? AND tenant = ?', [$subObjectId, $this->name]);
         if (!$currentEntry) {
@@ -126,7 +126,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
      *
      * @param int $objectId
      */
-    protected function deleteFromStoreTable(int $objectId)
+    protected function deleteFromStoreTable(int $objectId): void
     {
         $this->db->delete($this->getStoreTableName(), ['id' => (string)$objectId, 'tenant' => $this->name]);
     }
@@ -138,7 +138,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractWorker implem
      *
      * @throws \Exception
      */
-    public function fillupPreparationQueue(IndexableInterface $object)
+    public function fillupPreparationQueue(IndexableInterface $object): void
     {
         if ($object instanceof Concrete) {
             //need check, if there are sub objects because update on empty result set is too slow

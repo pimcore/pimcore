@@ -219,7 +219,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function start(): static
+    public function start()
     {
         // set name suffix for the whole block element, this will be added to all child elements of the block
         $this->getBlockState()->pushBlock(BlockName::createFromEditable($this));
@@ -228,14 +228,12 @@ class Block extends Model\Document\Editable implements BlockInterface
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
         $this->outputEditmode('<div ' . $attributeString . '>');
-
-        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function end()
+    public function end(bool $return = false)
     {
         $this->current = 0;
 
@@ -251,7 +249,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function blockConstruct()
+    public function blockConstruct(): void
     {
         // set the current block suffix for the child elements (0, 1, 3, ...)
         // this will be removed in blockDestruct
@@ -261,7 +259,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function blockDestruct()
+    public function blockDestruct(): void
     {
         $blockState = $this->getBlockState();
         if ($blockState->hasIndexes()) {
@@ -272,7 +270,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     /**
      * {@inheritdoc}
      */
-    public function blockStart($showControls = true, $return = false, $additionalClass = '')
+    public function blockStart(bool $showControls = true, bool $return = false, string $additionalClass = '')
     {
         $attr = $this->getBlockAttributes();
 
@@ -302,6 +300,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     /**
      * Custom position of button controls between blockStart -> blockEnd
      *
+     * @return ($return is true ? string : void)
      */
     public function blockControls(bool $return = false)
     {
@@ -330,7 +329,7 @@ EOT;
     /**
      * {@inheritdoc}
      */
-    public function blockEnd($return = false)
+    public function blockEnd(bool $return = false)
     {
         // close outer element
         $html = '</div>';

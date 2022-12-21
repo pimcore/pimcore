@@ -22,6 +22,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Objectbrick;
+use Pimcore\Model\User;
 
 /**
  * @internal
@@ -162,7 +163,7 @@ class GridHelperService
         return $result;
     }
 
-    public function getFilterCondition(string $filterJson, ClassDefinition $class, $tablePrefix = null): string
+    public function getFilterCondition(string $filterJson, ClassDefinition $class, ?string $tablePrefix = null): string
     {
         $systemFields = Model\DataObject\Service::getSystemFields();
 
@@ -478,7 +479,7 @@ class GridHelperService
         }
     }
 
-    public function prepareListingForGrid(array $requestParams, string $requestedLanguage, $adminUser): DataObject\Listing\Concrete
+    public function prepareListingForGrid(array $requestParams, string $requestedLanguage, User $adminUser): DataObject\Listing\Concrete
     {
         $folder = Model\DataObject::getById((int) $requestParams['folderId']);
         $class = ClassDefinition::getById($requestParams['classId']);
@@ -666,7 +667,7 @@ class GridHelperService
         return $list;
     }
 
-    public function prepareAssetListingForGrid($allParams, $adminUser): Model\Asset\Listing
+    public function prepareAssetListingForGrid(array $allParams, User $adminUser): Model\Asset\Listing
     {
         $db = \Pimcore\Db::get();
         $folder = Model\Asset::getById($allParams['folderId']);

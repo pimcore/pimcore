@@ -306,7 +306,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
@@ -482,7 +482,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @param DataObject\ClassDefinition\Data\ManyToManyObjectRelation $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->maxItems = $masterDefinition->maxItems;
         $this->relationType = $masterDefinition->relationType;
@@ -636,7 +636,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @internal
      */
-    protected function processDiffDataForEditMode($originalData, $data, $object = null, $params = []): array
+    protected function processDiffDataForEditMode(mixed $originalData, mixed $data, DataObject\Concrete $object = null, array $params = []): array
     {
         if ($data) {
             $data = $data[0];
@@ -748,7 +748,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return $this->allowToCreateNewObject;
     }
 
-    public function setAllowToCreateNewObject(bool $allowToCreateNewObject)
+    public function setAllowToCreateNewObject(bool $allowToCreateNewObject): void
     {
         $this->allowToCreateNewObject = (bool)$allowToCreateNewObject;
     }
@@ -771,7 +771,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return (bool) $this->optimizedAdminLoading;
     }
 
-    public function setOptimizedAdminLoading(bool $optimizedAdminLoading)
+    public function setOptimizedAdminLoading(bool $optimizedAdminLoading): void
     {
         $this->optimizedAdminLoading = $optimizedAdminLoading;
     }

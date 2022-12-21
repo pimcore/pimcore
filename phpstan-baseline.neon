@@ -1,24 +1,9 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Offset 'image' on array\\{\\} in empty\\(\\) does not exist\\.$#"
-			count: 1
-			path: bundles/AdminBundle/src/GDPR/DataProvider/DataObjects.php
-
-		-
-			message: "#^Offset 'object' on array\\{\\} in empty\\(\\) does not exist\\.$#"
-			count: 1
-			path: bundles/AdminBundle/src/GDPR/DataProvider/DataObjects.php
-
-		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 3
 			path: bundles/CoreBundle/src/DependencyInjection/PimcoreCoreExtension.php
-
-		-
-			message: "#^If condition is always false\\.$#"
-			count: 1
-			path: bundles/CoreBundle/src/EventListener/Frontend/RoutingListener.php
 
 		-
 			message: "#^Strict comparison using \\=\\=\\= between null and string will always evaluate to false\\.$#"

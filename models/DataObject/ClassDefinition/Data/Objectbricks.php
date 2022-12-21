@@ -385,7 +385,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         return null;
     }
 
-    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = [])
+    public function delete(Localizedfield|AbstractData|\Pimcore\Model\DataObject\Objectbrick\Data\AbstractData|Concrete $object, array $params = []): void
     {
         $container = $this->load($object);
         if ($container) {
@@ -526,7 +526,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if ($data instanceof DataObject\Objectbrick) {
             $validationExceptions = [];
@@ -799,7 +799,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     /**
      * @param DataObject\ClassDefinition\Data\Objectbricks $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->allowedTypes = $masterDefinition->allowedTypes;
         $this->maxItems = $masterDefinition->maxItems;
@@ -811,7 +811,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      * @param DataObject\ClassDefinition $class
      * @param array $params
      */
-    public function classSaved(DataObject\ClassDefinition $class, array $params = [])
+    public function classSaved(DataObject\ClassDefinition $class, array $params = []): void
     {
         if (is_array($this->allowedTypes)) {
             foreach ($this->allowedTypes as $allowedType) {
@@ -837,7 +837,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
      * @param DataObject\ClassDefinition\Data[] $container
      * @param CalculatedValue[] $list
      */
-    public static function collectCalculatedValueItems(array $container, array &$list = [])
+    public static function collectCalculatedValueItems(array $container, array &$list = []): void
     {
         if (is_array($container)) {
             foreach ($container as $childDef) {

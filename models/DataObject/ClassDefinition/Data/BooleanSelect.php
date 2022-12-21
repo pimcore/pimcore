@@ -101,7 +101,7 @@ class BooleanSelect extends Data implements
     /**
      * @internal
      *
-     * @var array|array[]
+     * @var array<int, array{key: string, value: int}>
      */
     public array $options = self::DEFAULT_OPTIONS;
 
@@ -266,7 +266,7 @@ class BooleanSelect extends Data implements
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         //TODO mandatory probably doesn't make much sense
         if (!$omitMandatoryCheck && $this->getMandatory() && $this->isEmpty($data)) {
@@ -282,7 +282,7 @@ class BooleanSelect extends Data implements
     /**
      * @param DataObject\ClassDefinition\Data\BooleanSelect $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition): void
     {
         $this->options = $masterDefinition->options;
         $this->width = $masterDefinition->width;
@@ -301,14 +301,14 @@ class BooleanSelect extends Data implements
         return $this;
     }
 
-    public function setOptionsEntry($value, $label)
+    public function setOptionsEntry(int $value, string $label): void
     {
         if (!is_array($this->options)) {
             $this->options = [
-                ['key' => $label,
-                'value' => $value,
+                [
+                    'key' => $label,
+                    'value' => $value,
                 ],
-
             ];
         } else {
             foreach ($this->options as $idx => $option) {
@@ -327,7 +327,7 @@ class BooleanSelect extends Data implements
         return $this->noLabel;
     }
 
-    public function setNoLabel($noLabel): static
+    public function setNoLabel(string $noLabel): static
     {
         $this->noLabel = $noLabel;
         $this->setOptionsEntry(self::NO_VALUE, $noLabel);
@@ -340,7 +340,7 @@ class BooleanSelect extends Data implements
         return $this->emptyLabel;
     }
 
-    public function setEmptyLabel($emptyLabel): static
+    public function setEmptyLabel(string $emptyLabel): static
     {
         $this->emptyLabel = $emptyLabel;
         $this->setOptionsEntry(self::EMPTY_VALUE_EDITMODE, $emptyLabel);

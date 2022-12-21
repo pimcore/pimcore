@@ -36,7 +36,7 @@ class DataLoader implements DataLoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadDataFromProviders(VisitorInfo $visitorInfo, array|string $providerKeys)
+    public function loadDataFromProviders(VisitorInfo $visitorInfo, array|string $providerKeys): void
     {
         if (!is_array($providerKeys)) {
             $providerKeys = [(string)$providerKeys];

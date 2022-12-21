@@ -122,7 +122,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
     /**
      * @param array[]|null $crop
      */
-    public function setCrop(?array $crop)
+    public function setCrop(?array $crop): void
     {
         $this->crop = $crop;
         $this->markMeDirty();

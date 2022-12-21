@@ -103,7 +103,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * @internal
      */
-    public function configureOptions()
+    public function configureOptions(): void
     {
         $list = new Model\User\Listing();
         $list->setOrder('asc');
@@ -133,7 +133,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
     /**
      * {@inheritdoc}
      */
-    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = [])
+    public function checkValidity(mixed $data, bool $omitMandatoryCheck = false, array $params = []): void
     {
         if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
@@ -207,7 +207,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         return $this->unique;
     }
 
-    public function setUnique(bool $unique)
+    public function setUnique(bool $unique): void
     {
         $this->unique = (bool) $unique;
     }

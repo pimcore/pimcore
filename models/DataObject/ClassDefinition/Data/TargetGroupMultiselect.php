@@ -34,7 +34,7 @@ class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multi
     /**
      * @internal
      */
-    public function configureOptions()
+    public function configureOptions(): void
     {
         /** @var Tool\Targeting\TargetGroup\Listing|Tool\Targeting\TargetGroup\Listing\Dao $list */
         $list = new Tool\Targeting\TargetGroup\Listing();

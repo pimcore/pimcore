@@ -55,7 +55,7 @@ class VoucherController extends FrontendController implements KernelControllerEv
         $this->translator = $translator;
     }
 
-    public function onKernelControllerEvent(ControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event): void
     {
         // set language
         $user = $this->tokenResolver->getUser();

@@ -25,12 +25,9 @@ interface ModelInterface
     public function setDao(Dao\AbstractDao $dao): static;
 
     /**
-     * @param string|null $key
-     * @param bool $forceDetection
-     *
      * @throws \Exception
      */
-    public function initDao(string $key = null, bool $forceDetection = false);
+    public function initDao(string $key = null, bool $forceDetection = false): void;
 
     public function setValues(array $data = []): static;
 

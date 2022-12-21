@@ -25,7 +25,7 @@ class ProductImpression extends AbstractProductData
         return $this->list;
     }
 
-    public function setList(string $list)
+    public function setList(string $list): void
     {
         $this->list = $list;
     }

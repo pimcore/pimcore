@@ -302,7 +302,7 @@ class Link extends Model\Document\Editable implements IdRewriterInterface, Editm
         return $this->data['text'] ?? '';
     }
 
-    public function setText(string $text)
+    public function setText(string $text): void
     {
         $this->data['text'] = $text;
     }

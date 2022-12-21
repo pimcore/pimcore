@@ -446,7 +446,7 @@ class PageController extends DocumentControllerBase
         ]);
     }
 
-    protected function setValuesToDocument(Request $request, Document $page)
+    protected function setValuesToDocument(Request $request, Document $page): void
     {
         $this->addSettingsToDocument($request, $page);
         $this->addDataToDocument($request, $page);

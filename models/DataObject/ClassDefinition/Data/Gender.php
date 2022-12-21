@@ -30,7 +30,7 @@ class Gender extends Model\DataObject\ClassDefinition\Data\Select
      */
     public string $fieldtype = 'gender';
 
-    public function configureOptions()
+    public function configureOptions(): void
     {
         $options = [
             ['key' => 'male', 'value' => 'male'],

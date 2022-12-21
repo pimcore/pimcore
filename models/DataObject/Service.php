@@ -761,7 +761,7 @@ class Service extends Model\Element\Service
      *
      * @param AbstractObject $object
      */
-    public static function loadAllObjectFields(AbstractObject $object)
+    public static function loadAllObjectFields(AbstractObject $object): void
     {
         $object->getProperties();
 
@@ -1035,7 +1035,7 @@ class Service extends Model\Element\Service
         return $superLayout;
     }
 
-    public static function createSuperLayout(ClassDefinition\Data|ClassDefinition\Layout $layout)
+    public static function createSuperLayout(ClassDefinition\Data|ClassDefinition\Layout $layout): void
     {
         if ($layout instanceof ClassDefinition\Data) {
             $layout->setInvisible(false);
@@ -1096,7 +1096,7 @@ class Service extends Model\Element\Service
     /** Synchronizes a custom layout with its master layout
      * @param ClassDefinition\CustomLayout $customLayout
      */
-    public static function synchronizeCustomLayout(ClassDefinition\CustomLayout $customLayout)
+    public static function synchronizeCustomLayout(ClassDefinition\CustomLayout $customLayout): void
     {
         $classId = $customLayout->getClassId();
         $class = ClassDefinition::getById($classId);
@@ -1374,7 +1374,7 @@ class Service extends Model\Element\Service
      *
      * @internal
      */
-    public static function enrichLayoutDefinition(ClassDefinition\Data|ClassDefinition\Layout|null &$layout, Concrete $object = null, array $context = [])
+    public static function enrichLayoutDefinition(ClassDefinition\Data|ClassDefinition\Layout|null &$layout, Concrete $object = null, array $context = []): void
     {
         if (is_null($layout)) {
             return;
@@ -1421,7 +1421,7 @@ class Service extends Model\Element\Service
      *
      * @internal
      */
-    public static function enrichLayoutPermissions(ClassDefinition\Data &$layout, array $allowedView, array $allowedEdit)
+    public static function enrichLayoutPermissions(ClassDefinition\Data &$layout, array $allowedView, array $allowedEdit): void
     {
         if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields || $layout instanceof Model\DataObject\ClassDefinition\Data\Classificationstore && $layout->localized === true) {
             if (is_array($allowedView) && count($allowedView) > 0) {
@@ -1624,7 +1624,7 @@ class Service extends Model\Element\Service
         return self::$systemFields;
     }
 
-    public static function doResetDirtyMap(Model\AbstractModel $container, ClassDefinition|ClassDefinition\Data $fd)
+    public static function doResetDirtyMap(Model\AbstractModel $container, ClassDefinition|ClassDefinition\Data $fd): void
     {
         if (!method_exists($fd, 'getFieldDefinitions')) {
             return;
@@ -1648,7 +1648,7 @@ class Service extends Model\Element\Service
         }
     }
 
-    public static function recursiveResetDirtyMap(AbstractObject $object)
+    public static function recursiveResetDirtyMap(AbstractObject $object): void
     {
         if ($object instanceof DirtyIndicatorInterface) {
             $object->resetDirtyMap();
