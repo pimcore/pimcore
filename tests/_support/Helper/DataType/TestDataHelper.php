@@ -21,6 +21,7 @@ use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
@@ -108,15 +109,48 @@ class TestDataHelper extends AbstractTestDataHelper
     /**
      * @param Concrete $object
      * @param string $field
+     * @return Data|null
+     */
+    public function getFieldDefinition(Concrete $object, string $field): ?Data {
+        $cd = $object->getClass();
+        $fd = $cd->getFieldDefinition($field);
+        if (!$fd) {
+            $localizedFields = $cd->getFieldDefinition('localizedfields');
+            if($localizedFields instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                $fd = $localizedFields->getFieldDefinition($field);
+            }
+        }
+        return $fd;
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
      * @param mixed $expected
      * @param mixed $value
      *
      */
     public function assertIsEqual($object, $field, $expected, $value)
     {
-        $fd = $object->getClass()->getFieldDefinition($field);
+        $fd = $this->getFieldDefinition($object, $field);
         if ($fd instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
             $this->assertTrue($fd->isEqual($expected, $value), sprintf('Expected isEqual() returns true for data type: %s', ucfirst($field)));
+        }
+    }
+
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param mixed $expected
+     * @param mixed $value
+     * @return void
+     */
+    public function assertIsNotEqual(Concrete $object, string $field, mixed $expected, mixed $value): void
+    {
+        $fd = $this->getFieldDefinition($object, $field);
+        if ($fd instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
+            $this->assertFalse($fd->isEqual($expected, $value), sprintf('Expected isEqual() returns false for data type: %s', ucfirst($field)));
         }
     }
 
