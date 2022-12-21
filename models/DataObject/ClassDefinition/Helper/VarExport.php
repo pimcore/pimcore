@@ -21,10 +21,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Helper;
  */
 trait VarExport
 {
-    /**
-     * @var array
-     */
-    protected $blockedVarsForExport = [];
+    protected array $blockedVarsForExport = [];
 
     public function getBlockedVarsForExport(): array
     {
