@@ -106,12 +106,8 @@ class TestDataHelper extends AbstractTestDataHelper
         $this->assertEquals($expected, $value);
     }
 
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @return Data|null
-     */
-    public function getFieldDefinition(Concrete $object, string $field): ?Data {
+    public function getFieldDefinition(Concrete $object, string $field): ?Data
+    {
         $cd = $object->getClass();
         $fd = $cd->getFieldDefinition($field);
         if (!$fd) {
@@ -138,14 +134,6 @@ class TestDataHelper extends AbstractTestDataHelper
         }
     }
 
-
-    /**
-     * @param Concrete $object
-     * @param string $field
-     * @param mixed $expected
-     * @param mixed $value
-     * @return void
-     */
     public function assertIsNotEqual(Concrete $object, string $field, mixed $expected, mixed $value): void
     {
         $fd = $this->getFieldDefinition($object, $field);
