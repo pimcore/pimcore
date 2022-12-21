@@ -1,5 +1,10 @@
 # Upgrade Notes
 
+## 10.5.13
+- [FieldDefinition] The `isEqual` method inside the `SimpleComparisonTrait` is now strict. The `isEqual` method checks if a string has changed before saving it to the DB.
+  If your custom FieldDefinition implements the `SimpleComparisonTrait`, please check if it's still working with the new `isEqual` comparison mode.
+  These changes currently affect the following fields: `password`, `input`, `wysiwyg` and `textarea`.
+
 ## 10.5.10
 - [DataObject] Deprecated: Loading non-Concrete objects with the Concrete class will not be possible in Pimcore 11.
 
