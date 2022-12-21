@@ -91,6 +91,16 @@ class HeadlessChrome extends Processor
     public function getPdfFromString($html, $params = [], $returnFilePath = false)
     {
         $params = $params ?: $this->getDefaultOptions();
+
+        $event = new PrintConfigEvent($this, [
+            'params' => $params,
+            'html' => $html,
+        ]);
+
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRINT_MODIFY_PROCESSING_CONFIG);
+
+        ['html' => $html, 'params' => $params] = $event->getArguments();
+
         $input = new StringInput();
         $input->setHtml($html);
 

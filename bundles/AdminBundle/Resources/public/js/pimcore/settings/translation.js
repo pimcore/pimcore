@@ -339,11 +339,11 @@ pimcore.settings.translation.domain = Class.create({
 
         var store = this.store;
 
+        this.store.getProxy().getReader().setMessageProperty('message');
         this.store.getProxy().on('exception', function (proxy, request, operation) {
-            operation.config.records.forEach(function (item) {
-                store.remove(item);
-            });
-        });
+            pimcore.helpers.showNotification(t("error"), t(operation.getError()), "error");
+            this.store.load();
+        }.bind(this));
 
         let proxy = store.getProxy();
         proxy.extraParams["domain"] = this.domain;
@@ -616,7 +616,7 @@ pimcore.settings.translation.domain = Class.create({
         }
 
         if(value) {
-            let html = /<([A-Za-z][A-Za-z0-9]*)\b[^>]*>(.*?)<\/\1>/.test(value);
+            let html = /<\/?[a-z][\s\S]*>/i.test(value);
             let plain = value.match(/\n/gm)
 
             if (html || plain) {
