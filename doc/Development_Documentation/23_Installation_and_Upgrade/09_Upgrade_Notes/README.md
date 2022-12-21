@@ -1,9 +1,6 @@
 # Upgrade Notes
 
 ## 10.5.13
-- [FieldDefinition] The `isEqual` method inside the `SimpleComparisonTrait` is now strict. The `isEqual` method checks if a string has changed before saving it to the DB.
-  If your custom FieldDefinition implements the `SimpleComparisonTrait`, please check if it's still working with the new `isEqual` comparison mode.
-  These changes currently affect the following fields: `password`, `input`, `wysiwyg` and `textarea`.
 - [Web2Print] Print document twig expressions are now executed in a sandbox with restrictive security policies (just like Sending mails and Dataobject Text Layouts introduced in 10.5.9).
 
 ## 10.5.10
