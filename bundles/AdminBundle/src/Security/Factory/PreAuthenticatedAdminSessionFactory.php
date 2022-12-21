@@ -40,29 +40,6 @@ class PreAuthenticatedAdminSessionFactory implements AuthenticatorFactoryInterfa
         return $authenticatorId;
     }
 
-    public function create(ContainerBuilder $container, $id, $config, $userProvider, $defaultEntryPoint): array
-    {
-        $providerId = 'pimcore.security.authentication.provider.admin_pre_auth.' . $id;
-        $listenerId = 'pimcore.security.authentication.listener.admin_pre_auth.' . $id;
-
-        $container
-            ->setDefinition(
-                $providerId,
-                new ChildDefinition('pimcore.security.authentication.provider.admin_pre_auth')
-            )
-            ->replaceArgument(0, new Reference($userProvider))
-            ->replaceArgument(2, $id);
-
-        $container
-            ->setDefinition(
-                $listenerId,
-                new ChildDefinition('pimcore.security.authentication.listener.admin_pre_auth')
-            )
-            ->replaceArgument(2, $id);
-
-        return [$providerId, $listenerId, $defaultEntryPoint];
-    }
-
     /**
      * {@inheritdoc}
      */
