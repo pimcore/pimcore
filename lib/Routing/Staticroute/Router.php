@@ -113,7 +113,7 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
     public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH): string
     {
         if (!in_array($name, $this->getSupportedNames())) {
-            throw new RouteNotFoundException();
+            throw new RouteNotFoundException('Not supported name');
         }
         // ABSOLUTE_URL = http://example.com
         // NETWORK_PATH = //example.com
