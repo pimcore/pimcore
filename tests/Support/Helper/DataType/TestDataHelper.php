@@ -105,7 +105,7 @@ class TestDataHelper extends AbstractTestDataHelper
 
         return $fd;
     }
-    
+
     public function assertIsEqual(Concrete $object, string $field, mixed $expected, mixed $value): void
     {
         $fd = $this->getFieldDefinition($object, $field);
