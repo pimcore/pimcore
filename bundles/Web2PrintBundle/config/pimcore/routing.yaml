@@ -1,0 +1,14 @@
+_pimcore_web2print_backend:
+    resource: "@Web2PrintBundle/src/Controller/"
+    type:     annotation
+    prefix:   /admin/web2print
+    options:
+        expose: true
+
+
+_pimcore_web2print_document:
+    resource: "@Web2PrintBundle/src/Controller/Document/"
+    type:     annotation
+    prefix:   /admin/web2print/document
+    options:
+        expose: true

@@ -16,10 +16,10 @@ declare(strict_types=1);
 
 namespace Pimcore\Messenger\Handler;
 
+use Pimcore\Bundle\Web2PrintBundle\Exception\NotPreparedException;
+use Pimcore\Bundle\Web2PrintBundle\Processor;
 use Pimcore\Config;
 use Pimcore\Messenger\GenerateWeb2PrintPdfMessage;
-use Pimcore\Web2Print\Exception\NotPreparedException;
-use Pimcore\Web2Print\Processor;
 use Psr\Log\LoggerInterface;
 
 /**

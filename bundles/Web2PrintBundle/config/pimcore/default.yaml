@@ -1,0 +1,5 @@
+pimcore:
+    models:
+        class_overrides:
+            Pimcore\Model\Document\Printcontainer: Pimcore\Bundle\Web2PrintBundle\Model\Document\Printcontainer
+            Pimcore\Model\Document\Printpage: Pimcore\Bundle\Web2PrintBundle\Model\Document\Printpage

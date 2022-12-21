@@ -5,4 +5,7 @@ return [
     "Pimcore\\Bundle\\EcommerceFrameworkBundle\\PimcoreEcommerceFrameworkBundle" => [
         "all" => TRUE
     ],
+    "Pimcore\\Bundle\\Web2PrintBundle\\Web2PrintBundle" => [
+        "all" => TRUE
+    ],
 ];

@@ -243,7 +243,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'video-thumbnails-writeable'          => (new \Pimcore\Model\Asset\Video\Thumbnail\Config())->isWriteable(),
             'custom-reports-writeable'            => (new \Pimcore\Model\Tool\CustomReport\Config())->isWriteable(),
             'document-types-writeable'            => (new DocType())->isWriteable(),
-            'web2print-writeable'                 => \Pimcore\Web2Print\Config::isWriteable(),
+            'web2print-writeable'                 => \Pimcore\Bundle\Web2PrintBundle\Config::isWriteable(),
             'predefined-properties-writeable'     => (new \Pimcore\Model\Property\Predefined())->isWriteable(),
             'predefined-asset-metadata-writeable' => (new \Pimcore\Model\Metadata\Predefined())->isWriteable(),
             'staticroutes-writeable'              => (new Staticroute())->isWriteable(),

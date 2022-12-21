@@ -1,0 +1,28 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+
+    #
+    # INSTALLER
+    #
+    Pimcore\Bundle\Web2PrintBundle\Installer:
+        public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('Web2PrintBundle')"
+
+    #
+    # CONTROLLERS
+    #
+
+    # auto-register all controllers as services
+    Pimcore\Bundle\Web2PrintBundle\Controller\:
+        resource: '../src/Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+
+    # TWIG TEMPLATING
+    Pimcore\Bundle\Web2PrintBundle\Twig\Extension\PrintCatalogExtension:
+        tags: [ 'twig.extension' ]
