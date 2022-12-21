@@ -339,7 +339,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
         $this->checkPermission('documents');
     }
 
-    abstract protected function setValuesToDocument(Request $request, Model\Document $page): void;
+    abstract protected function setValuesToDocument(Request $request, Model\Document $document): void;
 
     protected function handleTask(string $task, Model\Document\PageSnippet $page): void
     {

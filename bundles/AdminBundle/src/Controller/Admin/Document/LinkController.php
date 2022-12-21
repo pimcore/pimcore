@@ -111,9 +111,9 @@ class LinkController extends DocumentControllerBase
 
     /**
      * @param Request $request
-     * @param Document\Link $page
+     * @param Document\Link $document
      */
-    protected function setValuesToDocument(Request $request, Document $page): void
+    protected function setValuesToDocument(Request $request, Document $document): void
     {
         // data
         if ($request->get('data')) {
@@ -163,10 +163,10 @@ class LinkController extends DocumentControllerBase
 
             unset($data['path']);
 
-            $page->setValues($data);
+            $document->setValues($data);
         }
 
-        $this->addPropertiesToDocument($request, $page);
-        $this->applySchedulerDataToElement($request, $page);
+        $this->addPropertiesToDocument($request, $document);
+        $this->applySchedulerDataToElement($request, $document);
     }
 }
