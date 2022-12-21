@@ -398,7 +398,7 @@ class TranslationController extends AdminController
                 if ($t) {
                     return $this->adminJson([
                         'message' => 'identifier_already_exists',
-                        'success' => false
+                        'success' => false,
                     ]);
                 }
 
