@@ -80,7 +80,7 @@ class Gift implements GiftInterface
      *
      * @internal
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         if (is_object($this->product)) {
             $this->productPath = $this->product->getFullPath();

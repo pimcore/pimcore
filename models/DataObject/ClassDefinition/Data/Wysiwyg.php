@@ -209,7 +209,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return Text::getDependenciesOfWysiwygText($data);
     }
 
-    public function getCacheTags(mixed $data, $tags = []): array
+    public function getCacheTags(mixed $data, array $tags = []): array
     {
         return Text::getCacheTagsOfWysiwygText($data, $tags);
     }

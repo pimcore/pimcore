@@ -717,7 +717,7 @@ class Concrete extends DataObject implements LazyLoadedFieldsInterface
         $this->allLazyKeysMarkedAsLoaded = true;
     }
 
-    public function __sleep()
+    public function __sleep(): array
     {
         $parentVars = parent::__sleep();
 

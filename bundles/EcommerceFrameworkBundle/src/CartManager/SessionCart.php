@@ -135,7 +135,7 @@ class SessionCart extends AbstractCart implements CartInterface
      *
      * @internal
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $vars = parent::__sleep();
 

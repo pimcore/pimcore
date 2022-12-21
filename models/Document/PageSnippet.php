@@ -505,7 +505,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * {@inheritdoc}
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $parentVars = parent::__sleep();

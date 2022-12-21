@@ -757,7 +757,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     /**
      * @return array
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $vars = get_object_vars($this);
         $blockedVars = $this->getBlockedVarsForExport();
@@ -1192,7 +1192,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         return $code;
     }
 
-    public static function __set_state($data)
+    public static function __set_state(array $data): static
     {
         $obj = new static();
         $obj->setValues($data);

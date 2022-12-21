@@ -745,7 +745,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @return array
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $vars = get_object_vars($this);
         $blockedVars = $this->getBlockedVarsForExport();
@@ -1113,7 +1113,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return '?array';
     }
 
-    private function setBlockElementOwner(DataObject\Data\BlockElement $blockElement, $params = []): void
+    private function setBlockElementOwner(DataObject\Data\BlockElement $blockElement, array $params = []): void
     {
         if (!isset($params['owner'])) {
             throw new \Error('owner missing');
@@ -1212,7 +1212,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return null;
     }
 
-    public static function __set_state($data)
+    public static function __set_state(array $data): static
     {
         $obj = new static();
         $obj->setValues($data);

@@ -19,6 +19,9 @@ namespace Pimcore\Targeting\Condition;
 
 abstract class AbstractVariableCondition implements ConditionInterface, VariableConditionInterface
 {
+    /**
+     * @var array<string, mixed>
+     */
     private array $variables = [];
 
     /**
@@ -34,7 +37,7 @@ abstract class AbstractVariableCondition implements ConditionInterface, Variable
         $this->variables = $variables;
     }
 
-    final protected function setMatchedVariable(string $key, $value): void
+    final protected function setMatchedVariable(string $key, mixed $value): void
     {
         $this->variables[$key] = $value;
     }

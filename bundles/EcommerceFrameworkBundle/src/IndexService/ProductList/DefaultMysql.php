@@ -739,7 +739,7 @@ class DefaultMysql implements ProductListInterface
      *
      * @internal
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $vars = get_object_vars($this);
 

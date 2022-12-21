@@ -390,7 +390,7 @@ class Link extends Model\Document
         $this->saveScheduledTasks();
     }
 
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $parentVars = parent::__sleep();

@@ -47,7 +47,7 @@ class TargetGroup implements ConditionInterface
      *
      * @internal
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         return ['targetGroupId', 'threshold'];
     }

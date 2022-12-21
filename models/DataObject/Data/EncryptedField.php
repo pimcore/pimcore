@@ -71,7 +71,7 @@ class EncryptedField implements OwnerAwareFieldInterface
      *
      * @throws \Exception
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         if ($this->plain) {
             try {

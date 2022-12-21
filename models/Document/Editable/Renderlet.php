@@ -280,7 +280,7 @@ class Renderlet extends Model\Document\Editable implements IdRewriterInterface, 
     /**
      * {@inheritdoc}
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $parentVars = parent::__sleep();

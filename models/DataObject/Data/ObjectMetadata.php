@@ -206,7 +206,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     /**
      * @return array
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $blockedVars = ['object'];

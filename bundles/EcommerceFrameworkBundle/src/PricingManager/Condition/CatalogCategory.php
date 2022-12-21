@@ -96,7 +96,7 @@ class CatalogCategory extends AbstractObjectListCondition implements CategoryInt
      *
      * @internal
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         return $this->handleSleep('categories', 'categoryIds');
     }

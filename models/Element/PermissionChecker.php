@@ -150,7 +150,7 @@ class PermissionChecker
         return $result;
     }
 
-    protected static function collectParentIds($element): array
+    protected static function collectParentIds(ElementInterface $element): array
     {
         // collect properties via parent - ids
         $parentIds = [1];
@@ -182,7 +182,7 @@ class PermissionChecker
         return $detailEntry;
     }
 
-    protected static function getUserPermissions($user, &$details): void
+    protected static function getUserPermissions(User $user, array &$details): void
     {
         if ($user->isAdmin()) {
             $details[] = self::createDetail($user, 'ADMIN', true, null, null);

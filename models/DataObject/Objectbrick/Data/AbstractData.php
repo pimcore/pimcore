@@ -229,7 +229,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     /**
      * @return array
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $parentVars = parent::__sleep();
         $blockedVars = ['loadedLazyKeys', 'object'];

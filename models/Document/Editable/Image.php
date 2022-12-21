@@ -683,7 +683,7 @@ class Image extends Model\Document\Editable implements IdRewriterInterface, Edit
         }
     }
 
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $parentVars = parent::__sleep();

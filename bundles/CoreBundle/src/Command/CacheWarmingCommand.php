@@ -142,7 +142,7 @@ class CacheWarmingCommand extends AbstractCommand
         return 0;
     }
 
-    protected function writeWarmingMessage(string $type, array $types, $extra = ''): void
+    protected function writeWarmingMessage(string $type, array $types, string $extra = ''): void
     {
         $output = sprintf('Warming <comment>%s</comment> cache', $type);
         if (null !== $types && count($types) > 0) {

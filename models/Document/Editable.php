@@ -332,14 +332,9 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         $this->realName = $realName;
     }
 
-    final public function setParentBlockNames($parentNames): void
+    final public function setParentBlockNames(array $parentNames): void
     {
-        if (is_array($parentNames)) {
-            // unfortunately we cannot make a type hint here, because of compatibility reasons
-            // old versions where 'parentBlockNames' was not excluded in __sleep() have still this property
-            // in the serialized data, and mostly with the value NULL, on restore this would lead to an error
-            $this->parentBlockNames = $parentNames;
-        }
+        $this->parentBlockNames = $parentNames;
     }
 
     final public function getParentBlockNames(): array
@@ -352,7 +347,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @return array
      */
-    public function __sleep()
+    public function __sleep(): array
     {
         $finalVars = [];
         $parentVars = parent::__sleep();

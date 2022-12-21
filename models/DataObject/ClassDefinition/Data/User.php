@@ -152,12 +152,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         return '';
     }
 
-    /**
-     * @param array $data
-     *
-     * @return static
-     */
-    public static function __set_state($data)
+    public static function __set_state(array $data): static
     {
         $obj = parent::__set_state($data);
 
@@ -168,7 +163,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
         return $obj;
     }
 
-    public function __sleep()
+    public function __sleep(): array
     {
         $vars = get_object_vars($this);
         unset($vars['options']);
