@@ -66,20 +66,13 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     /**
      * {@inheritdoc}
      *
-     * @return bool
-     */
-    public function supports($name): bool
-    {
-        return $name === 'pimcore_element';
-    }
-
-    /**
-     * {@inheritdoc}
-     *
      * @return string
      */
     public function getRouteDebugMessage($name, array $parameters = []): string
     {
+        if ($name !== 'pimcore_element') {
+            return sprintf('Route name %s is not pimcore_element', $name);
+        }
         $element = $parameters['element'] ?? null;
         if ($element instanceof ElementInterface) {
             return sprintf('Element (Type: %s, ID: %d)', $element->getType(), $element->getId());
@@ -95,6 +88,9 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      */
     public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH): string
     {
+        if ($name !== 'pimcore_element') {
+            throw new RouteNotFoundException($this->getRouteDebugMessage($name, $parameters));
+        }
         $element = $parameters['element'] ?? null;
         unset($parameters['element']);
         if ($element instanceof Document || $element instanceof Asset) {
@@ -154,7 +150,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             );
         }
 
-        throw new RouteNotFoundException('Could not generate URL for non elements');
+        throw new RouteNotFoundException($this->getRouteDebugMessage($name, $parameters));
     }
 
     /**
