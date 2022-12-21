@@ -244,8 +244,8 @@ class Video extends Model\Asset
         if (!$width || !$height) {
             $dimensions = $this->getDimensionsFromBackend();
             if ($dimensions) {
-                $this->setCustomSetting('videoWidth', $dimensions['width']);
-                $this->setCustomSetting('videoHeight', $dimensions['height']);
+                $this->setCustomSetting('videoWidth', (int) $dimensions['width']);
+                $this->setCustomSetting('videoHeight', (int) $dimensions['height']);
 
                 Model\Version::disable();
                 $this->save(); // auto save
@@ -265,7 +265,7 @@ class Video extends Model\Asset
     {
         $dimensions = $this->getDimensions();
         if ($dimensions) {
-            return $dimensions['width'];
+            return (int) $dimensions['width'];
         }
 
         return null;
@@ -275,7 +275,7 @@ class Video extends Model\Asset
     {
         $dimensions = $this->getDimensions();
         if ($dimensions) {
-            return $dimensions['height'];
+            return (int) $dimensions['height'];
         }
 
         return null;
