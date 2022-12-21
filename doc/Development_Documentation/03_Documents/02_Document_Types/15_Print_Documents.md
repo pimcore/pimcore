@@ -59,6 +59,20 @@ Depending on the renderer, there might be settings possible for the rendering pr
 The provided settings might be extended in future. 
 For details of settings please see section below or renderer documentation.
 
+### Sandbox Restrictions
+Print document renders user controlled twig templates in a sandbox with restrictive
+security policies for tags, filters & functions. Please use following configuration to allow more in template rendering:
+
+```yaml
+    pimcore:
+          templating_engine:
+              twig:
+                sandbox_security_policy:
+                  tags: ['if']
+                  filters: ['upper']
+                  functions: ['include', 'path']
+```
+
 ## Special PDFreactor Settings
 
 **Printermarks**: With PDFreactor there comes a out-of-the-box feature to add printermarks to the PDF. 
@@ -99,4 +113,3 @@ There are two possible workflows for images:
 2) Keep RGB style PNG/Jpeg images in the CMYK PDF files and let the printing house take care of converting them to the correct colorspace.
 
 Option 2) is preferred, as colorspace conversions are tricky and error-prone due to tightly coupled printer hardware dependencies.
-

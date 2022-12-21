@@ -127,6 +127,9 @@ Please make sure to set your preferred storage location ***before*** migration. 
 - [ClassSavedInterface] Introduced additional interface implementing the `classSaved` method. The interface will be used by field definitions in `Pimcore\Model\DataObject\ClassDefinition\Data\*`. If your custom field definition implements the `classSaved` method, please use the `ClassSavedInterface` interface. Make sure that you either provide a default value (e.g. `$params = []`) for `$params` or don't use a second parameter in the method signature at all. Note that using the `classSaved` method without implementing the interface is deprecated and won't work in Pimcore 11. 
 
 
+## 10.5.13
+- [Web2Print] Print document twig expressions are now executed in a sandbox with restrictive security policies (just like Sending mails and Dataobject Text Layouts introduced in 10.5.9).
+
 ## 10.5.10
 - [DataObject] Deprecated: Loading non-Concrete objects with the Concrete class will not be possible in Pimcore 11.
 
