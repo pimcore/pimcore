@@ -94,14 +94,6 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
     /**
      * {@inheritdoc}
      */
-    public function supports($name): bool
-    {
-        return is_string($name) && in_array($name, $this->getSupportedNames());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getRouteCollection(): RouteCollection
     {
         return new RouteCollection();
@@ -120,6 +112,9 @@ final class Router implements RouterInterface, RequestMatcherInterface, Versatil
      */
     public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH): string
     {
+        if (!in_array($name, $this->getSupportedNames())) {
+            throw new RouteNotFoundException();
+        }
         // ABSOLUTE_URL = http://example.com
         // NETWORK_PATH = //example.com
         $needsHostname = self::ABSOLUTE_URL === $referenceType || self::NETWORK_PATH === $referenceType;
