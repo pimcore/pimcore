@@ -60,11 +60,14 @@ class LogoutListener implements EventSubscriberInterface, LoggerAwareInterface
     ) {
     }
 
-    public function onLogout(LogoutEvent $event): RedirectResponse|Response
+    /**
+     * @param LogoutEvent $event
+     */
+    public function onLogout(LogoutEvent $event): void
     {
         $request = $event->getRequest();
 
-        return $this->onLogoutSuccess($request);
+        $event->setResponse($this->onLogoutSuccess($request));
     }
 
     public function onLogoutSuccess(Request $request): RedirectResponse|Response
@@ -88,7 +91,7 @@ class LogoutListener implements EventSubscriberInterface, LoggerAwareInterface
                 $adminSession->remove('user');
             }
 
-            Session::invalidate();
+            $adminSession->clear();
 
             return $event;
         });
