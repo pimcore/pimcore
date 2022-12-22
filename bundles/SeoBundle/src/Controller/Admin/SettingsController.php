@@ -26,7 +26,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class SettingsController extends AdminController
 {
     /**
-     * @Route("/robots-txt", name="pimcore_admin_seo_settings_robotstxtget", methods={"GET"})
+     * @Route("/robots-txt", name="pimcore_seo_settings_robotstxtget", methods={"GET"})
      *
      * @return JsonResponse
      */
@@ -44,7 +44,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/robots-txt", name="pimcore_admin_seo_settings_robotstxtput", methods={"PUT"})
+     * @Route("/robots-txt", name="pimcore_seo_settings_robotstxtput", methods={"PUT"})
      *
      * @param Request $request
      *

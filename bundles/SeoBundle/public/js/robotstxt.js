@@ -26,7 +26,7 @@ pimcore.settings.robotstxt = Class.create({
         this.panel.setLoading(true);
 
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_seo_settings_robotstxtget'),
+            url: Routing.generate('pimcore_seo_settings_robotstxtget'),
             success: function (response) {
 
                 try {
@@ -176,7 +176,7 @@ pimcore.settings.robotstxt = Class.create({
 
     save : function () {
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_seo_settings_robotstxtput'),
+            url: Routing.generate('pimcore_seo_settings_robotstxtput'),
             method: "PUT",
             params: this.getValues(),
             success: function (response) {

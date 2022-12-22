@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class MiscController extends AdminController
 {
     /**
-     * @Route("/http-error-log", name="pimcore_admin_seo_misc_httperrorlog", methods={"POST"})
+     * @Route("/http-error-log", name="pimcore_seo_misc_httperrorlog", methods={"POST"})
      *
      * @param Request $request
      *
@@ -66,7 +66,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/http-error-log-detail", name="pimcore_admin_seo_misc_httperrorlogdetail", methods={"GET"})
+     * @Route("/http-error-log-detail", name="pimcore_seo_misc_httperrorlogdetail", methods={"GET"})
      *
      * @param Request $request
      * @param Profiler|null $profiler
@@ -96,7 +96,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/http-error-log-flush", name="pimcore_admin_seo_misc_httperrorlogflush", methods={"DELETE"})
+     * @Route("/http-error-log-flush", name="pimcore_seo_misc_httperrorlogflush", methods={"DELETE"})
      *
      * @param Request $request
      *

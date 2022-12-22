@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\SeoBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
+use Pimcore\Bundle\SeoBundle\SeoBundle;
 use Pimcore\Model\Tool\SettingsStore;
 
 /**
@@ -35,6 +36,9 @@ final class Version20221216140012 extends AbstractMigration
             SettingsStore::set('BUNDLE_INSTALLED__Pimcore\\Bundle\\SeoBundle\\SeoBundle', true, 'bool', 'pimcore');
         }
 
-        $this->warnIf(null !== SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\SeoBundle\\SeoBundle', 'pimcore'), 'Please make sure to enable the bundle manually in config/bundles.php');
+        $this->warnIf(
+            null !== SettingsStore::get('BUNDLE_INSTALLED__Pimcore\\Bundle\\SeoBundle\\SeoBundle', 'pimcore'),
+            sprintf('Please make sure to enable the %s manually in config/bundles.php', SeoBundle::class)
+        );
     }
 }
